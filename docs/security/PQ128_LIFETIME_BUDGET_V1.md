@@ -216,15 +216,24 @@ in both modes, and the actual lifetime failure bound remains null.
 
 ### Current composed-source mapping
 
-The current 15-path lock is reviewed against exact source
-`0f0592ace4b08a1d39e1ffad31beee76ddc4fd66`. Its current lock-byte SHA-256 is
-`8771ac5c7bfff29266a89e7b65bf1d57a021fd38a0461b7cc937db58c34557b0`. The
-[composition review](PQ_COMPOSITION_SOURCE_LOCK_REVIEW_20261108.md) retains the old lock's actual refusal,
-the old mapping, every old/new Git-blob comparison and each changed-path review.
-Only the reviewed path mapping and experiment revision changed. The eight
-unknown event terms, four unknown shared-primitive query budgets, null actual
-lifetime bound and HOLD remain unchanged. Complete dependency coverage and
-cryptographic provenance are still not established.
+The current 15-path lock is independently reviewed against exact source
+`66b7064be597039ce871b5b12ad5568850a2dd46`. Its current lock-byte SHA-256 is
+`29ba9abdbb39d96bece885a0cd821fd9ad428413974cd530d26434f5a7daf84a`.
+The [current composition review](../../evidence/cell-storage-convergence-f2568-20261109/README.md)
+and its [source-maintenance inventory](../../evidence/cell-storage-convergence-f2568-20261109/ci-source-maintenance19.members.json)
+preserve the prior files, the original refusal, all 15 Git regular-blob and
+working-file comparisons, and isolated original Python controls.
+Only the `cell/pq.rs` fingerprint and the declaration revision change;
+the manifest differs only at `experiment.source_revision`.
+
+The preceding mapping named `0f0592ace4b08a1d39e1ffad31beee76ddc4fd66`
+and lock SHA-256 `8771ac5c7bfff29266a89e7b65bf1d57a021fd38a0461b7cc937db58c34557b0`.
+Its [earlier composition review](PQ_COMPOSITION_SOURCE_LOCK_REVIEW_20261108.md)
+remains unchanged. The eight unknown event terms, four unknown shared-primitive
+query budgets, null actual lifetime bound and HOLD remain unchanged.
+Complete dependency coverage and cryptographic provenance remain unestablished;
+all qualification flags remain false. CI continues to verify the reviewed
+mapping and cannot silently regenerate it from arbitrary current bytes.
 
 ### Original source-lock generation record
 

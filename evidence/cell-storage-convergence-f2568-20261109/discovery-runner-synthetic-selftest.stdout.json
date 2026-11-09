@@ -1,0 +1,27 @@
+{
+  "schema": "discovery-runner-synthetic-selftest-v1",
+  "passed": true,
+  "native_commands_executed": 0,
+  "native_results_claimed": false,
+  "runner_sha256": "0062ab0290065261d06a04a79ab29b89a70a3068ccb8c6bb56c9d3012106a042",
+  "checks": [
+    "syntax and retained environment/provider helper identity",
+    "exact three synthetic target reds accepted",
+    "exact three synthetic greens accepted",
+    "synthetic single clamp red accepted",
+    "synthetic single green accepted",
+    "compile failure is not red",
+    "empty successful output is not green",
+    "fixture panic is not red",
+    "wrong authority count is not red",
+    "wrong native return code is not red",
+    "extra panic is not red",
+    "missing authority premise is not red",
+    "duplicate selected case is rejected",
+    "ignored selected case is rejected",
+    "missing signed TCP ACK is not mutation red",
+    "wrong TCP observation is not mutation red",
+    "expired wall fixture is not mutation red",
+    "known source restores and unknown concurrent source survives"
+  ]
+}

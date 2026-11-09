@@ -1,0 +1,492 @@
+{
+  "base_head": "6244d34a5d9a1da993125e00facfb91a846ec489",
+  "base_tree": "cc9cd341aaf0a0405bd0e85e21af6f64217c32f2",
+  "cargo_configs": [],
+  "commands": [
+    {
+      "command": [
+        "/home/qq/.cargo/bin/rustup",
+        "run",
+        "1.95.0",
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "ended_unix": 1794200939.4001691,
+      "exit_code": 0,
+      "name": "strict-workspace-clippy",
+      "started_unix": 1794200916.9465423,
+      "stderr": {
+        "bytes": 351,
+        "path": "/home/qq/work/chain-cell-storage-convergence-prep13-clippy/strict-workspace-clippy.stderr",
+        "sha256": "ca4743a1ec6e5b5ea968223ce88ce6e7e5ada7062d4da7b04e290cbaab814a55"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-cell-storage-convergence-prep13-clippy/strict-workspace-clippy.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "configuration_sha256": "52d03870130ed374f45f9f5cd78b08537f66044dc44a8c63e7306b1f64d9d425",
+  "errors": [],
+  "mounts": {
+    "native_tmp": {
+      "capacity_bytes": 1966736678912,
+      "device_id": 66306,
+      "free_bytes": 562569736192,
+      "mount": {
+        "fstype": "ext4",
+        "options": "rw,relatime",
+        "source": "/dev/nvme0n1p2",
+        "target": "/"
+      },
+      "path": "/home/qq/work/chain-cell-storage-convergence-prep13-clippy-tmp",
+      "used_bytes": 1304186691584
+    },
+    "out": {
+      "capacity_bytes": 1966736678912,
+      "device_id": 66306,
+      "free_bytes": 562569736192,
+      "mount": {
+        "fstype": "ext4",
+        "options": "rw,relatime",
+        "source": "/dev/nvme0n1p2",
+        "target": "/"
+      },
+      "path": "/home/qq/work/chain-cell-storage-convergence-prep13-clippy",
+      "used_bytes": 1304186691584
+    },
+    "root": {
+      "capacity_bytes": 1966736678912,
+      "device_id": 66306,
+      "free_bytes": 562569736192,
+      "mount": {
+        "fstype": "ext4",
+        "options": "rw,relatime",
+        "source": "/dev/nvme0n1p2",
+        "target": "/"
+      },
+      "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109",
+      "used_bytes": 1304186691584
+    },
+    "target": {
+      "capacity_bytes": 1966736678912,
+      "device_id": 66306,
+      "free_bytes": 562569736192,
+      "mount": {
+        "fstype": "ext4",
+        "options": "rw,relatime",
+        "source": "/dev/nvme0n1p2",
+        "target": "/"
+      },
+      "path": "/home/qq/work/chain-cell-storage-convergence-f2568-target",
+      "used_bytes": 1304186691584
+    }
+  },
+  "native_tests_executed": 0,
+  "passed": true,
+  "provider_after": {
+    "actual_version": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+    "exports": {
+      "OPENSSL_CONF": "/dev/null",
+      "OPENSSL_DIR": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install",
+      "OPENSSL_MODULES": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/ossl-modules",
+      "OPENSSL_STATIC": "1",
+      "TRNM_PQ_OPENSSL": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+      "TRNM_PQ_OPENSSL_SHA256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62",
+      "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+    },
+    "native_backend_inputs": [
+      {
+        "bytes": 8985944,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+        "sha256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62"
+      },
+      {
+        "bytes": 3449,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/include/openssl/opensslv.h",
+        "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+      },
+      {
+        "bytes": 4729,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/include/openssl/configuration.h",
+        "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+      },
+      {
+        "bytes": 12442360,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/libcrypto.a",
+        "sha256": "17042eb9e4235d2b7051c7253add6f3fda619a324c6d6e3e3b35c46157196b0e"
+      },
+      {
+        "bytes": 2149026,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/libssl.a",
+        "sha256": "d7cddef12614789118f792fb4b07748c9a413d241895c1501fe12e3998658d90"
+      }
+    ],
+    "preparation_script": {
+      "bytes": 8110,
+      "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109/scripts/ci/prepare_pq_provider.sh",
+      "sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa"
+    },
+    "receipt": {
+      "backend_exported": true,
+      "build_directory": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV",
+      "cli_executable": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+      "cli_sha256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62",
+      "cli_version_output": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+      "elapsed_wall_seconds": 60,
+      "exit_code": 0,
+      "github_actions_reported": false,
+      "independent_cryptographic_implementation_claim": false,
+      "install_prefix": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install",
+      "last_stage": "complete",
+      "ml_dsa_65_sign_verify_and_wrong_message_rejection": true,
+      "native_backend_inputs": [
+        {
+          "bytes": 8985944,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+          "sha256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62"
+        },
+        {
+          "bytes": 3449,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/include/openssl/opensslv.h",
+          "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+        },
+        {
+          "bytes": 4729,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/include/openssl/configuration.h",
+          "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+        },
+        {
+          "bytes": 12442360,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/libcrypto.a",
+          "sha256": "17042eb9e4235d2b7051c7253add6f3fda619a324c6d6e3e3b35c46157196b0e"
+        },
+        {
+          "bytes": 2149026,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/libssl.a",
+          "sha256": "d7cddef12614789118f792fb4b07748c9a413d241895c1501fe12e3998658d90"
+        }
+      ],
+      "native_rust_pq_tests_run_by_preparation": false,
+      "openssl_conf": "/dev/null",
+      "openssl_modules": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/ossl-modules",
+      "preparation_script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+      "production_activation": false,
+      "result": "PREPARED_AND_SMOKE_VERIFIED",
+      "runner_environment_reported": null,
+      "schema": "trnm-ci-pq-provider-v3",
+      "source_archive_sha256_expected": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+      "source_digest_verified": true,
+      "source_transport": "download",
+      "source_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+      "static_build": true,
+      "upstream_full_tests_run": false,
+      "version": "3.5.9",
+      "whole_chain_quantum_security_qualified": false
+    },
+    "receipt_file": {
+      "bytes": 3067,
+      "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/observations/pq-provider/provider.json",
+      "sha256": "f8caa27f65326ca7891999adeba8b282a54f7f5fbb82f33220e525ae98ea6e2e"
+    },
+    "validation_file": {
+      "bytes": 1155,
+      "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/validated-provider.json",
+      "sha256": "c000e5f1b3b987e485a1440820c131b6df4b591e0c5d9631623ee3f0dda18468"
+    }
+  },
+  "provider_before": {
+    "actual_version": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+    "exports": {
+      "OPENSSL_CONF": "/dev/null",
+      "OPENSSL_DIR": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install",
+      "OPENSSL_MODULES": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/ossl-modules",
+      "OPENSSL_STATIC": "1",
+      "TRNM_PQ_OPENSSL": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+      "TRNM_PQ_OPENSSL_SHA256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62",
+      "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+    },
+    "native_backend_inputs": [
+      {
+        "bytes": 8985944,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+        "sha256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62"
+      },
+      {
+        "bytes": 3449,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/include/openssl/opensslv.h",
+        "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+      },
+      {
+        "bytes": 4729,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/include/openssl/configuration.h",
+        "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+      },
+      {
+        "bytes": 12442360,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/libcrypto.a",
+        "sha256": "17042eb9e4235d2b7051c7253add6f3fda619a324c6d6e3e3b35c46157196b0e"
+      },
+      {
+        "bytes": 2149026,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/libssl.a",
+        "sha256": "d7cddef12614789118f792fb4b07748c9a413d241895c1501fe12e3998658d90"
+      }
+    ],
+    "preparation_script": {
+      "bytes": 8110,
+      "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109/scripts/ci/prepare_pq_provider.sh",
+      "sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa"
+    },
+    "receipt": {
+      "backend_exported": true,
+      "build_directory": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV",
+      "cli_executable": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+      "cli_sha256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62",
+      "cli_version_output": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+      "elapsed_wall_seconds": 60,
+      "exit_code": 0,
+      "github_actions_reported": false,
+      "independent_cryptographic_implementation_claim": false,
+      "install_prefix": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install",
+      "last_stage": "complete",
+      "ml_dsa_65_sign_verify_and_wrong_message_rejection": true,
+      "native_backend_inputs": [
+        {
+          "bytes": 8985944,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+          "sha256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62"
+        },
+        {
+          "bytes": 3449,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/include/openssl/opensslv.h",
+          "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+        },
+        {
+          "bytes": 4729,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/include/openssl/configuration.h",
+          "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+        },
+        {
+          "bytes": 12442360,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/libcrypto.a",
+          "sha256": "17042eb9e4235d2b7051c7253add6f3fda619a324c6d6e3e3b35c46157196b0e"
+        },
+        {
+          "bytes": 2149026,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/libssl.a",
+          "sha256": "d7cddef12614789118f792fb4b07748c9a413d241895c1501fe12e3998658d90"
+        }
+      ],
+      "native_rust_pq_tests_run_by_preparation": false,
+      "openssl_conf": "/dev/null",
+      "openssl_modules": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/ossl-modules",
+      "preparation_script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+      "production_activation": false,
+      "result": "PREPARED_AND_SMOKE_VERIFIED",
+      "runner_environment_reported": null,
+      "schema": "trnm-ci-pq-provider-v3",
+      "source_archive_sha256_expected": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+      "source_digest_verified": true,
+      "source_transport": "download",
+      "source_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+      "static_build": true,
+      "upstream_full_tests_run": false,
+      "version": "3.5.9",
+      "whole_chain_quantum_security_qualified": false
+    },
+    "receipt_file": {
+      "bytes": 3067,
+      "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/observations/pq-provider/provider.json",
+      "sha256": "f8caa27f65326ca7891999adeba8b282a54f7f5fbb82f33220e525ae98ea6e2e"
+    },
+    "validation_file": {
+      "bytes": 1155,
+      "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/validated-provider.json",
+      "sha256": "c000e5f1b3b987e485a1440820c131b6df4b591e0c5d9631623ee3f0dda18468"
+    }
+  },
+  "provider_unchanged": true,
+  "removed_environment_names": [],
+  "rustup": {
+    "bytes": 21347088,
+    "path": "/home/qq/.cargo/bin/rustup",
+    "sha256": "b1c8cb14e30889e7e2999e6b69e62d9e9b9ffc0f4df8180564d306d9680e6c55"
+  },
+  "schema": "cell-storage-convergence-preparation-clippy-v1",
+  "scope": "uncommitted preparation Clippy only; no final committed-source acceptance or qualification",
+  "setup_checks": [
+    {
+      "command": [
+        "findmnt",
+        "--json",
+        "-T",
+        "/home/qq/work/chain-cell-storage-convergence-f2568-20261109",
+        "-o",
+        "TARGET,SOURCE,FSTYPE,OPTIONS"
+      ],
+      "exit_code": 0,
+      "label": "mount-root",
+      "stderr": "",
+      "stdout": "{\n   \"filesystems\": [\n      {\n         \"target\": \"/\",\n         \"source\": \"/dev/nvme0n1p2\",\n         \"fstype\": \"ext4\",\n         \"options\": \"rw,relatime\"\n      }\n   ]\n}\n"
+    },
+    {
+      "command": [
+        "findmnt",
+        "--json",
+        "-T",
+        "/home/qq/work/chain-cell-storage-convergence-prep13-clippy",
+        "-o",
+        "TARGET,SOURCE,FSTYPE,OPTIONS"
+      ],
+      "exit_code": 0,
+      "label": "mount-out",
+      "stderr": "",
+      "stdout": "{\n   \"filesystems\": [\n      {\n         \"target\": \"/\",\n         \"source\": \"/dev/nvme0n1p2\",\n         \"fstype\": \"ext4\",\n         \"options\": \"rw,relatime\"\n      }\n   ]\n}\n"
+    },
+    {
+      "command": [
+        "findmnt",
+        "--json",
+        "-T",
+        "/home/qq/work/chain-cell-storage-convergence-f2568-target",
+        "-o",
+        "TARGET,SOURCE,FSTYPE,OPTIONS"
+      ],
+      "exit_code": 0,
+      "label": "mount-target",
+      "stderr": "",
+      "stdout": "{\n   \"filesystems\": [\n      {\n         \"target\": \"/\",\n         \"source\": \"/dev/nvme0n1p2\",\n         \"fstype\": \"ext4\",\n         \"options\": \"rw,relatime\"\n      }\n   ]\n}\n"
+    },
+    {
+      "command": [
+        "findmnt",
+        "--json",
+        "-T",
+        "/home/qq/work/chain-cell-storage-convergence-prep13-clippy-tmp",
+        "-o",
+        "TARGET,SOURCE,FSTYPE,OPTIONS"
+      ],
+      "exit_code": 0,
+      "label": "mount-native_tmp",
+      "stderr": "",
+      "stdout": "{\n   \"filesystems\": [\n      {\n         \"target\": \"/\",\n         \"source\": \"/dev/nvme0n1p2\",\n         \"fstype\": \"ext4\",\n         \"options\": \"rw,relatime\"\n      }\n   ]\n}\n"
+    },
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "label": "preflight",
+      "stderr": "",
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-cell-storage-convergence-f2568-20261109\", \"remote_policy_mutated\": false}\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "label": "head",
+      "stderr": "",
+      "stdout": "6244d34a5d9a1da993125e00facfb91a846ec489\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit_code": 0,
+      "label": "tree",
+      "stderr": "",
+      "stdout": "cc9cd341aaf0a0405bd0e85e21af6f64217c32f2\n"
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "exit_code": 0,
+      "label": "status-before",
+      "stderr": "",
+      "stdout": " M trillionnium/crates/trnm-data-availability/Cargo.toml\n M trillionnium/crates/trnm-data-availability/src/cell.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs\n M trillionnium/crates/trnm-data-availability/src/cell/erasure.rs\n M trillionnium/crates/trnm-data-availability/src/cell/residency.rs\n M trillionnium/crates/trnm-data-availability/src/cell/retention.rs\n M trillionnium/crates/trnm-pon-node/src/lib.rs\n M trillionnium/crates/trnm-pon-node/src/store/storage_service.rs\n M trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs\n?? formal/pon-nakamoto-v1/vectors/cell-storage-owner-vectors-v1.json\n?? formal/pon-nakamoto-v1/vectors/cell-version-retention-v3.json\n?? scripts/cell_sealed_bootstrap_v1.py\n?? scripts/cell_storage_descriptor_reference.py\n?? scripts/cell_version_retention_v3_vector.py\n?? scripts/llm_cell_sealed_worker_v1.py\n?? scripts/prepare_cell_sealed_research_v1.py\n?? scripts/test_llm_cell_sealed_worker_v1.py\n?? trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_next_use_v1.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/provider.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/provider/\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/\n?? trillionnium/crates/trnm-data-availability/src/cell/host_handoff.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/host_handoff/\n?? trillionnium/crates/trnm-data-availability/src/cell/residency/version.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/residency/version_tests.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/catalog_inventory.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/payload_read.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/payload_read/\n?? trillionnium/crates/trnm-data-availability/src/cell/snapshot_schedule.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/snapshot_schedule/\n?? trillionnium/crates/trnm-data-availability/src/cell/version_retention.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/version_retention/\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs\n"
+    },
+    {
+      "command": [
+        "/home/qq/.cargo/bin/rustup",
+        "run",
+        "1.95.0",
+        "rustc",
+        "-Vv"
+      ],
+      "exit_code": 0,
+      "label": "rustc-version",
+      "stderr": "",
+      "stdout": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n"
+    },
+    {
+      "command": [
+        "/home/qq/.cargo/bin/rustup",
+        "run",
+        "1.95.0",
+        "cargo",
+        "-Vv"
+      ],
+      "exit_code": 0,
+      "label": "cargo-version",
+      "stderr": "",
+      "stdout": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\nrelease: 1.95.0\ncommit-hash: f2d3ce0bd7f24a49f8f72d9000448f8838c4e850\ncommit-date: 2026-03-21\nhost: x86_64-unknown-linux-gnu\nlibgit2: 1.9.2 (sys:0.20.4 vendored)\nlibcurl: 8.15.0-DEV (sys:0.4.83+curl-8.15.0 vendored ssl:OpenSSL/3.5.4)\nssl: OpenSSL 3.5.4 30 Sep 2025\nos: Ubuntu 26.4.0 (resolute) [64-bit]\n"
+    },
+    {
+      "command": [
+        "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+        "version"
+      ],
+      "exit_code": 0,
+      "label": "provider-version-before",
+      "stderr": "",
+      "stdout": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)\n"
+    },
+    {
+      "command": [
+        "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+        "version"
+      ],
+      "exit_code": 0,
+      "label": "provider-version-after",
+      "stderr": "",
+      "stdout": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)\n"
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "exit_code": 0,
+      "label": "status-after",
+      "stderr": "",
+      "stdout": " M trillionnium/crates/trnm-data-availability/Cargo.toml\n M trillionnium/crates/trnm-data-availability/src/cell.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs\n M trillionnium/crates/trnm-data-availability/src/cell/erasure.rs\n M trillionnium/crates/trnm-data-availability/src/cell/residency.rs\n M trillionnium/crates/trnm-data-availability/src/cell/retention.rs\n M trillionnium/crates/trnm-pon-node/src/lib.rs\n M trillionnium/crates/trnm-pon-node/src/store/storage_service.rs\n M trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs\n?? formal/pon-nakamoto-v1/vectors/cell-storage-owner-vectors-v1.json\n?? formal/pon-nakamoto-v1/vectors/cell-version-retention-v3.json\n?? scripts/cell_sealed_bootstrap_v1.py\n?? scripts/cell_storage_descriptor_reference.py\n?? scripts/cell_version_retention_v3_vector.py\n?? scripts/llm_cell_sealed_worker_v1.py\n?? scripts/prepare_cell_sealed_research_v1.py\n?? scripts/test_llm_cell_sealed_worker_v1.py\n?? trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_next_use_v1.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/provider.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/provider/\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/\n?? trillionnium/crates/trnm-data-availability/src/cell/host_handoff.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/host_handoff/\n?? trillionnium/crates/trnm-data-availability/src/cell/residency/version.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/residency/version_tests.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/catalog_inventory.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/payload_read.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/payload_read/\n?? trillionnium/crates/trnm-data-availability/src/cell/snapshot_schedule.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/snapshot_schedule/\n?? trillionnium/crates/trnm-data-availability/src/cell/version_retention.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/version_retention/\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs\n"
+    }
+  ],
+  "source_unchanged": true,
+  "started_unix": 1794200916.7705183,
+  "state": "complete",
+  "status_after": "M trillionnium/crates/trnm-data-availability/Cargo.toml\n M trillionnium/crates/trnm-data-availability/src/cell.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs\n M trillionnium/crates/trnm-data-availability/src/cell/erasure.rs\n M trillionnium/crates/trnm-data-availability/src/cell/residency.rs\n M trillionnium/crates/trnm-data-availability/src/cell/retention.rs\n M trillionnium/crates/trnm-pon-node/src/lib.rs\n M trillionnium/crates/trnm-pon-node/src/store/storage_service.rs\n M trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs\n?? formal/pon-nakamoto-v1/vectors/cell-storage-owner-vectors-v1.json\n?? formal/pon-nakamoto-v1/vectors/cell-version-retention-v3.json\n?? scripts/cell_sealed_bootstrap_v1.py\n?? scripts/cell_storage_descriptor_reference.py\n?? scripts/cell_version_retention_v3_vector.py\n?? scripts/llm_cell_sealed_worker_v1.py\n?? scripts/prepare_cell_sealed_research_v1.py\n?? scripts/test_llm_cell_sealed_worker_v1.py\n?? trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_next_use_v1.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/provider.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/provider/\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/\n?? trillionnium/crates/trnm-data-availability/src/cell/host_handoff.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/host_handoff/\n?? trillionnium/crates/trnm-data-availability/src/cell/residency/version.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/residency/version_tests.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/catalog_inventory.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/payload_read.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/payload_read/\n?? trillionnium/crates/trnm-data-availability/src/cell/snapshot_schedule.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/snapshot_schedule/\n?? trillionnium/crates/trnm-data-availability/src/cell/version_retention.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/version_retention/\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs",
+  "status_before": "M trillionnium/crates/trnm-data-availability/Cargo.toml\n M trillionnium/crates/trnm-data-availability/src/cell.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs\n M trillionnium/crates/trnm-data-availability/src/cell/erasure.rs\n M trillionnium/crates/trnm-data-availability/src/cell/residency.rs\n M trillionnium/crates/trnm-data-availability/src/cell/retention.rs\n M trillionnium/crates/trnm-pon-node/src/lib.rs\n M trillionnium/crates/trnm-pon-node/src/store/storage_service.rs\n M trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs\n?? formal/pon-nakamoto-v1/vectors/cell-storage-owner-vectors-v1.json\n?? formal/pon-nakamoto-v1/vectors/cell-version-retention-v3.json\n?? scripts/cell_sealed_bootstrap_v1.py\n?? scripts/cell_storage_descriptor_reference.py\n?? scripts/cell_version_retention_v3_vector.py\n?? scripts/llm_cell_sealed_worker_v1.py\n?? scripts/prepare_cell_sealed_research_v1.py\n?? scripts/test_llm_cell_sealed_worker_v1.py\n?? trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_next_use_v1.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/provider.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/provider/\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/\n?? trillionnium/crates/trnm-data-availability/src/cell/host_handoff.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/host_handoff/\n?? trillionnium/crates/trnm-data-availability/src/cell/residency/version.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/residency/version_tests.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/catalog_inventory.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/payload_read.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/payload_read/\n?? trillionnium/crates/trnm-data-availability/src/cell/snapshot_schedule.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/snapshot_schedule/\n?? trillionnium/crates/trnm-data-availability/src/cell/version_retention.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/version_retention/\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs"
+}

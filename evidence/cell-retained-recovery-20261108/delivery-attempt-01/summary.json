@@ -1,0 +1,207 @@
+{
+  "phase": "exact",
+  "head": "6e2b93a966cf324a63971f4a9dbe03a1c10eaf38",
+  "tree": "a6c4493af73697ce48af3cc0d0e0a07fbf3c7a60",
+  "initial_git_status": "",
+  "started_unix": 1794159843.100784,
+  "platform": "Linux",
+  "machine": "x86_64",
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "build_jobs": 2,
+  "test_threads": 1,
+  "incremental": false,
+  "debug_info": 0,
+  "production_qualified": false,
+  "independent_wan_qualified": false,
+  "gates": [
+    {
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.06083889299998191,
+      "log": "preflight.log",
+      "log_sha256": "9d7d491625803521ee8da8cc6a8752f5a5aed2ba84fd714fc6bfea00102fe6b9",
+      "log_bytes": 178
+    },
+    {
+      "name": "source-before",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "6e2b93a966cf324a63971f4a9dbe03a1c10eaf38",
+        "--output",
+        "/workspace/scratch/2b54b253422c/validation/exact-delivery-01/source-before.json"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 5.08099715499975,
+      "log": "source-before.log",
+      "log_sha256": "2811a4e5742355f95357fb2136f19322ec1d1726f529eec12d6eec142260c2b4",
+      "log_bytes": 423
+    },
+    {
+      "name": "graph-workspace-default",
+      "command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.3664418880002813,
+      "log": "graph-workspace-default.log",
+      "log_sha256": "5d9261d3ad6b4221a44f4e748d095e09d5c4bab065de8da006b3c11bed9d94cc",
+      "log_bytes": 840321
+    },
+    {
+      "name": "graph-workspace-all-features",
+      "command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.12917142199967202,
+      "log": "graph-workspace-all-features.log",
+      "log_sha256": "03045afea83de451f6d1e2839d9ae889821ffcc5430c973c17400bfbc17c7d6f",
+      "log_bytes": 855471
+    },
+    {
+      "name": "graph-fuzz",
+      "command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.09632633199998963,
+      "log": "graph-fuzz.log",
+      "log_sha256": "a36127511ef4f29e482f60c90812eefb48a5e2092646639044465a9a0b5a90d7",
+      "log_bytes": 722892
+    },
+    {
+      "name": "format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 11.36470108200001,
+      "log": "format.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0
+    },
+    {
+      "name": "independent-version-vector",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/cell_complete_version_vector.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.036557415000061155,
+      "log": "independent-version-vector.log",
+      "log_sha256": "a52fe4645753dc3f3f7bbb47038dee80d69e9c30465a2596fa1d1130d7be4f9d",
+      "log_bytes": 43
+    },
+    {
+      "name": "complete-cell-tests",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--",
+        "--test-threads=1"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 46.000306650999846,
+      "log": "complete-cell-tests.log",
+      "log_sha256": "4b78aedb6e33ef6dad33b3ffa846ddfbcc75263082b97fe435b2247a31fd20f5",
+      "log_bytes": 60454
+    },
+    {
+      "name": "workspace-strict-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.5528204089996507,
+      "log": "workspace-strict-clippy.log",
+      "log_sha256": "970c742910792bfbe48abef0e530c79a74dbeaab153744556de13c44dbdb2074",
+      "log_bytes": 60
+    },
+    {
+      "name": "source-negative-controls",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 2.865748082999744,
+      "log": "source-negative-controls.log",
+      "log_sha256": "9ba849e08b99c62ed3d29e2667f0304ecb5e736dc7ae8a6312e96b93fd5eedfd",
+      "log_bytes": 6898
+    },
+    {
+      "name": "pq-source-negative-controls",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "returncode": 1,
+      "elapsed_seconds": 3.9136897380003575,
+      "log": "pq-source-negative-controls.log",
+      "log_sha256": "f2a5bad4ed9bc769fda27afb875f3cb99ee03efc2178a35f99df6d1d10b7e30a",
+      "log_bytes": 338508
+    }
+  ],
+  "finished_unix": 1794159913.6602395,
+  "complete": false,
+  "all_passed": false
+}

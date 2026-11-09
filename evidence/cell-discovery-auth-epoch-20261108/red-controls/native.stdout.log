@@ -1,0 +1,25 @@
+
+running 2 tests
+test cell::discovery::classic_prior_operations_expiry_red::expired_prior_operations_cannot_permanently_exclude_a_new_signed_provider ... FAILED
+test cell::discovery::pq::pq_prior_operations_expiry_red::pq_expired_prior_operations_cannot_permanently_exclude_a_new_pinned_provider ... FAILED
+
+failures:
+
+---- cell::discovery::classic_prior_operations_expiry_red::expired_prior_operations_cannot_permanently_exclude_a_new_signed_provider stdout ----
+
+thread 'cell::discovery::classic_prior_operations_expiry_red::expired_prior_operations_cannot_permanently_exclude_a_new_signed_provider' (1044026) panicked at crates/trnm-data-availability/src/cell/discovery/classic_prior_operations_expiry_red.rs:80:5:
+expired identities permanently exclude a fresh signed provider: Err(Invalid("discovery identity capacity"))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- cell::discovery::pq::pq_prior_operations_expiry_red::pq_expired_prior_operations_cannot_permanently_exclude_a_new_pinned_provider stdout ----
+
+thread 'cell::discovery::pq::pq_prior_operations_expiry_red::pq_expired_prior_operations_cannot_permanently_exclude_a_new_pinned_provider' (1044080) panicked at crates/trnm-data-availability/src/cell/discovery/pq/pq_prior_operations_expiry_red.rs:99:5:
+expired pinned identities permanently exclude a fresh pinned provider: Err(Invalid("discovery identity capacity"))
+
+
+failures:
+    cell::discovery::classic_prior_operations_expiry_red::expired_prior_operations_cannot_permanently_exclude_a_new_signed_provider
+    cell::discovery::pq::pq_prior_operations_expiry_red::pq_expired_prior_operations_cannot_permanently_exclude_a_new_pinned_provider
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 428 filtered out; finished in 2.52s
+

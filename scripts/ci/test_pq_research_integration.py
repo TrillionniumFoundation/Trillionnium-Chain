@@ -759,6 +759,115 @@ class CorpusGateTests(unittest.TestCase):
         self.assertFalse(check(self.root)["node_activated"])
 
 
+    def storage_owner_dependency_fixture(self):
+        # Independent literal roster: removing a production requirement must not
+        # silently remove this negative control.
+        dependencies = (
+            ".github/workflows/pon-next-architecture-security.yml",
+            "docs/development/specs/pon/CELL_STORAGE_CONVERGENCE_DEV_V1.md",
+            "evidence/cell-storage-convergence-f2568-20261109/controls/original-auth-server-tests.rs",
+            "formal/pon-nakamoto-v1/vectors/cell-storage-owner-vectors-v1.json",
+            "formal/pon-nakamoto-v1/vectors/cell-version-retention-v3.json",
+            "scripts/cell_storage_descriptor_reference.py",
+            "scripts/cell_version_retention_v3_vector.py",
+            "scripts/ci/test_cell_storage_convergence_ci.py",
+            "trillionnium/crates/trnm-data-availability/src/cell.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/erasure.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/erasure/provider.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/erasure/provider/admission.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/erasure/provider/contract.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/erasure/provider/tests.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/codec.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/file.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/host_handoff.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/host_handoff/tests.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/residency.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/residency/version.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/residency/version_tests.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/retention/catalog_inventory.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/retention/payload_read.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/retention/payload_read/tests.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/snapshot_schedule.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/snapshot_schedule/tests.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/version_retention.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/version_retention/catalog.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/version_retention/codec.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/version_retention/inventory.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/version_retention/owner.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests/residency.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests/shard_plan.rs",
+            "trillionnium/crates/trnm-pon-node/src/lib.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/storage_service/version.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs",
+            "scripts/cell_sealed_bootstrap_v1.py",
+            "scripts/llm_cell_sealed_worker_v1.py",
+            "scripts/prepare_cell_sealed_research_v1.py",
+            "scripts/test_llm_cell_sealed_worker_v1.py",
+            "trillionnium/crates/trnm-data-availability/Cargo.toml",
+            "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_next_use_v1.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/host_handoff/fd_handoff.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/host_handoff/tests/research_fds.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests/shard_plan_capacity.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/recovery.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/recovery/execute.rs",
+            "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs",
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        for name in dependencies:
+            if name not in self.pins:
+                self.put(name, name.encode())
+            if name not in self.manifest["required_paths"]:
+                self.manifest["required_paths"].append(name)
+        self.save()
+        result = check(self.root)
+        self.assertFalse(result["cryptographic_acceptance"])
+        self.assertFalse(result["node_activated"])
+        return dependencies
+
+    def test_storage_owner_dependencies_cannot_omit_requirements_or_pins(self):
+        dependencies = self.storage_owner_dependency_fixture()
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        self.assertFalse(check(self.root)["node_activated"])
+
+    def test_storage_owner_dependencies_cannot_mutate_under_retained_blob_pins(self):
+        for name in self.storage_owner_dependency_fixture():
+            with self.subTest(path=name):
+                source = self.root / name
+                original = source.read_bytes()
+                try:
+                    source.write_bytes(original + b" changed storage owner input")
+                    with self.assertRaisesRegex(IntegrityError, "changed source"):
+                        check(self.root)
+                finally:
+                    source.write_bytes(original)
+        self.assertFalse(check(self.root)["cryptographic_acceptance"])
+
+
 
 if __name__ == "__main__":
     unittest.main()

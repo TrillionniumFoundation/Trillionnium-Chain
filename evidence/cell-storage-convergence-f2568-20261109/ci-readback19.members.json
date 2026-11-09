@@ -1,0 +1,691 @@
+{
+  "archive": {
+    "bytes": 219388,
+    "path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-package01/mldsa-current-view66-evidence.tar.xz",
+    "sha256": "c0c96b959bf0994b1cff6fcd1f2983de99171a334ead688ac4c9b4264bfffe53"
+  },
+  "archive_reopened_and_all_members_verified": true,
+  "basis_commit": "66b7064be597039ce871b5b12ad5568850a2dd46",
+  "canonical_mutations": 0,
+  "ci_reruns": 0,
+  "controls_scope": "Exact new unittest class AST from candidate source; original classes/functions statically unchanged, not executed by this bounded preparation. Each case invokes the unchanged actual workflow Python predicate; no substitute parser.",
+  "member_count": 96,
+  "members": [
+    {
+      "bytes": 45457,
+      "mode": 384,
+      "path": "preparation/after/.github/workflows/pon-pq-system-continuation.yml",
+      "sha256": "778e063314658f9ec7f3709ed171a32a50ee4305a12152392ba26fbdb663da6a",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/after/.github/workflows/pon-pq-system-continuation.yml"
+    },
+    {
+      "bytes": 177800,
+      "mode": 384,
+      "path": "preparation/after/scripts/ci/test_ci_contract.py",
+      "sha256": "f5aac6de2839a9b1c07d4a03ad9ca11f29c80c3178addb4ec5b23f371935d594",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/after/scripts/ci/test_ci_contract.py"
+    },
+    {
+      "bytes": 1255,
+      "mode": 384,
+      "path": "preparation/after/tests/fixtures/ci/cell-current-api-readback-v2-66b7064.json",
+      "sha256": "d4576c31378caf413a8aa6104697d9c5251d696f14475275447f0cd1241ca250",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/after/tests/fixtures/ci/cell-current-api-readback-v2-66b7064.json"
+    },
+    {
+      "bytes": 1159,
+      "mode": 384,
+      "path": "preparation/after/tests/fixtures/ci/cell-current-api-readback-v2-66b7064.log",
+      "sha256": "43059fa21c3542eff4f0c4aeb3552207847a8b483d214ce1e1514f79a4c09553",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/after/tests/fixtures/ci/cell-current-api-readback-v2-66b7064.log"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "preparation/agent-paths.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/agent-paths.stderr"
+    },
+    {
+      "bytes": 10,
+      "mode": 384,
+      "path": "preparation/agent-paths.stdout",
+      "sha256": "954ec5dad7eaf581ad4bfa090369b244ac0120b43722ef2efff5ba89fc52046f",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/agent-paths.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "preparation/agents-0.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/agents-0.stderr"
+    },
+    {
+      "bytes": 1416,
+      "mode": 384,
+      "path": "preparation/agents-0.stdout",
+      "sha256": "082d3f5d3d134efe1273f3bd1cc28a9d41db41be6f8996de8cc9545386094631",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/agents-0.stdout"
+    },
+    {
+      "bytes": 45457,
+      "mode": 384,
+      "path": "preparation/before/.github/workflows/pon-pq-system-continuation.yml",
+      "sha256": "07c93ac69d837c91c917c4bd65f077bf04a90545b09d2fc2f58066c3d0057775",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/before/.github/workflows/pon-pq-system-continuation.yml"
+    },
+    {
+      "bytes": 171572,
+      "mode": 384,
+      "path": "preparation/before/scripts/ci/test_ci_contract.py",
+      "sha256": "a90460a6b657c02edd13ba9b67c66254f669e55bf835d7b3e72ebc6697092a34",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/before/scripts/ci/test_ci_contract.py"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "preparation/case-name-references.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/case-name-references.stderr"
+    },
+    {
+      "bytes": 1034,
+      "mode": 384,
+      "path": "preparation/case-name-references.stdout",
+      "sha256": "8e82bc070fb8d71de1c7efa37fb3e01287bf4f8558b42178a6839a8f911552d1",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/case-name-references.stdout"
+    },
+    {
+      "bytes": 12632,
+      "mode": 384,
+      "path": "preparation/cell-current-api-exact364.patch",
+      "sha256": "179812142c63dc9393f76bba898c4d9aded0e60b8ad10370a3bd28ffa72f701d",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/cell-current-api-exact364.patch"
+    },
+    {
+      "bytes": 3088,
+      "mode": 384,
+      "path": "preparation/commands.json",
+      "sha256": "9d81c383d59465f045901163b1444c1d4b93147ac9f1a085b1062a2a3ba0e56f",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/commands.json"
+    },
+    {
+      "bytes": 1454,
+      "mode": 384,
+      "path": "preparation/control-commands.json",
+      "sha256": "774a22cae6fe5038c727df488c32c7308ac4d0073210a384a5d249922b70dec9",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/control-commands.json"
+    },
+    {
+      "bytes": 1270,
+      "mode": 384,
+      "path": "preparation/current-workflow-controls.stderr",
+      "sha256": "fc1b7f51bb4bce3f503f05269b2c3e07a2e44701f5f26243f7da9d792ccfe246",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/current-workflow-controls.stderr"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "preparation/current-workflow-controls.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/current-workflow-controls.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "preparation/head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/head.stderr"
+    },
+    {
+      "bytes": 41,
+      "mode": 384,
+      "path": "preparation/head.stdout",
+      "sha256": "eba4bb3da71542eec801e06874a3d20d9a102e25ecec185dd8a9a8065e137eb2",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/head.stdout"
+    },
+    {
+      "bytes": 1061,
+      "mode": 384,
+      "path": "preparation/original-workflow-red.stderr",
+      "sha256": "6dbf5c793607a79704f18c9fefddfaa545accc6dca0f2000e7b1251c79ce8579",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/original-workflow-red.stderr"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "preparation/original-workflow-red.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/original-workflow-red.stdout"
+    },
+    {
+      "bytes": 190,
+      "mode": 384,
+      "path": "preparation/patch-apply.stderr",
+      "sha256": "36792aa95c525f2ab62e54525ab9180141442eb7ea9689737563002719ea7986",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/patch-apply.stderr"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "preparation/patch-apply.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/patch-apply.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "preparation/patch-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/patch-check.stderr"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "preparation/patch-check.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/patch-check.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "preparation/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/preflight.stderr"
+    },
+    {
+      "bytes": 182,
+      "mode": 384,
+      "path": "preparation/preflight.stdout",
+      "sha256": "b47768e49448992440ff194cb210f19365c6d23f5aef97e4589703fcafdde70b",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/preflight.stdout"
+    },
+    {
+      "bytes": 4127,
+      "mode": 384,
+      "path": "preparation/result.json",
+      "sha256": "67d18d30eea22be3d190b387c6de3f5b669a949c4a6820b0e3f6f94f1d6550ed",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/result.json"
+    },
+    {
+      "bytes": 866,
+      "mode": 384,
+      "path": "preparation/run_exact_new_class.py",
+      "sha256": "ef51aa5ba7cee370e8b74d605252413ac016bed1aabd78bdf0957c4a0e2d1aca",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/run_exact_new_class.py"
+    },
+    {
+      "bytes": 425,
+      "mode": 384,
+      "path": "preparation/source-before.json",
+      "sha256": "7a2b1672496fbec8bd2c4d34cc97b41f13c15f11145e18919198118e51d85397",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/source-before.json"
+    },
+    {
+      "bytes": 1566,
+      "mode": 384,
+      "path": "preparation/source-identity.json",
+      "sha256": "fb3002e33247b0974f979c92abcc53b9bdbf2eafed87fb1c6e619a6bc89353dd",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/source-identity.json"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "preparation/status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/status.stderr"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "preparation/status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-mldsa-current-view66-preparation/status.stdout"
+    },
+    {
+      "bytes": 67149,
+      "mode": 384,
+      "path": "original-ci/artifact-readback.json",
+      "sha256": "d490c485d3aaea5e0d5129214acbc37a14f2a02b4432ddec724e2c726850bcb2",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/artifact-readback.json"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/artifacts/13658154988.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/artifacts/13658154988.stderr"
+    },
+    {
+      "bytes": 11661,
+      "mode": 384,
+      "path": "original-ci/artifacts/13658154988.zip",
+      "sha256": "d2d1c0fb2c52d268530396c220d4d555fe0fb9e5403b1e352ef9af3c7e96c71a",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/artifacts/13658154988.zip"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/artifacts/13658189813.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/artifacts/13658189813.stderr"
+    },
+    {
+      "bytes": 14289,
+      "mode": 384,
+      "path": "original-ci/artifacts/13658189813.zip",
+      "sha256": "51df0b909672705e690323e8b708ac3ea5dfe9815e66214e5070d35c5402330f",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/artifacts/13658189813.zip"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/artifacts/13658607245.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/artifacts/13658607245.stderr"
+    },
+    {
+      "bytes": 12035,
+      "mode": 384,
+      "path": "original-ci/artifacts/13658607245.zip",
+      "sha256": "f969420d9826c222886a5ebf4b1d61e8adc96d99438532f53e16196c798863a9",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/artifacts/13658607245.zip"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/artifacts/13658656946.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/artifacts/13658656946.stderr"
+    },
+    {
+      "bytes": 12055,
+      "mode": 384,
+      "path": "original-ci/artifacts/13658656946.zip",
+      "sha256": "adf36d76966f9e8df65428a0502424e3dfda5efc46603cd145519e515918f2b3",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/artifacts/13658656946.zip"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/artifacts/13659065587.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/artifacts/13659065587.stderr"
+    },
+    {
+      "bytes": 11694,
+      "mode": 384,
+      "path": "original-ci/artifacts/13659065587.zip",
+      "sha256": "1544840d60b1a9520fab8dcee9236cd151ab800e5239b564106333cdcfd93c2d",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/artifacts/13659065587.zip"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/artifacts/13659110994.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/artifacts/13659110994.stderr"
+    },
+    {
+      "bytes": 13835,
+      "mode": 384,
+      "path": "original-ci/artifacts/13659110994.zip",
+      "sha256": "23825e116d70721a882a5a350aa95e74eae5e8b626e1f2d88c750f52fb6ab0eb",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/artifacts/13659110994.zip"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/artifacts/13659150957.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/artifacts/13659150957.stderr"
+    },
+    {
+      "bytes": 14288,
+      "mode": 384,
+      "path": "original-ci/artifacts/13659150957.zip",
+      "sha256": "8da516ced7372258a13cc63d70039d6cedec0ec2725f875ed8bcc09831d803b7",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/artifacts/13659150957.zip"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/artifacts/13659325432.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/artifacts/13659325432.stderr"
+    },
+    {
+      "bytes": 13843,
+      "mode": 384,
+      "path": "original-ci/artifacts/13659325432.zip",
+      "sha256": "06cf9d4aca9876b880e9a683e3ae167636ceebff89acdba9302f520d0c5144e2",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/artifacts/13659325432.zip"
+    },
+    {
+      "bytes": 49118,
+      "mode": 384,
+      "path": "original-ci/combined-pr-original.json",
+      "sha256": "dfd3c5ac44204de900655176b6217730cd80422e8ff02acb64752969306eab01",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/combined-pr-original.json"
+    },
+    {
+      "bytes": 13554,
+      "mode": 384,
+      "path": "original-ci/commands.json",
+      "sha256": "84dede9e29b2d8eb1f134c40fa8b2f0743c1df050ddfcb504c3650365517eb1b",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/commands.json"
+    },
+    {
+      "bytes": 41971,
+      "mode": 384,
+      "path": "original-ci/index.json",
+      "sha256": "50d597750b8a32965c922d3b6f9160b675609a710d51f4926c3247414a82d0e3",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/index.json"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/job-129052160043-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160043-log.stderr"
+    },
+    {
+      "bytes": 157572,
+      "mode": 384,
+      "path": "original-ci/job-129052160043-log.stdout",
+      "sha256": "2e55936669b01d2c82185cdb6a0505980e60b12b9badc2ad0e1b2ff446e4eca6",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160043-log.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/job-129052160043-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160043-metadata.stderr"
+    },
+    {
+      "bytes": 5319,
+      "mode": 384,
+      "path": "original-ci/job-129052160043-metadata.stdout",
+      "sha256": "4c193086edcbea808ce373773653d21479a8e01d7876e284a3d01d93a4c7cd09",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160043-metadata.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/job-129052160266-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160266-log.stderr"
+    },
+    {
+      "bytes": 156832,
+      "mode": 384,
+      "path": "original-ci/job-129052160266-log.stdout",
+      "sha256": "3aa7a390530d7c5422cbf6aeb1b445bcfbcc42037850decca25c10519ee15d03",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160266-log.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/job-129052160266-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160266-metadata.stderr"
+    },
+    {
+      "bytes": 5314,
+      "mode": 384,
+      "path": "original-ci/job-129052160266-metadata.stdout",
+      "sha256": "3fb8dc3e0d13038545bfd10f81019ea790cacba107bad3643b6f4030d6926ff0",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160266-metadata.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/job-129052160318-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160318-log.stderr"
+    },
+    {
+      "bytes": 172013,
+      "mode": 384,
+      "path": "original-ci/job-129052160318-log.stdout",
+      "sha256": "572e36a60c43801b14627da879d772f3c2b8fc66bb100aad721a6ec6e4b106de",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160318-log.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/job-129052160318-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160318-metadata.stderr"
+    },
+    {
+      "bytes": 3192,
+      "mode": 384,
+      "path": "original-ci/job-129052160318-metadata.stdout",
+      "sha256": "e2d98339726a816e1425e353e75ba0a873ea40924d33df210ccf35f8486161e0",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160318-metadata.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/job-129052160399-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160399-log.stderr"
+    },
+    {
+      "bytes": 156787,
+      "mode": 384,
+      "path": "original-ci/job-129052160399-log.stdout",
+      "sha256": "c9d59c82cd9ab037337fb50ec8fbf65203c0279ce9f515438c6a4637f6068ca3",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160399-log.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/job-129052160399-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160399-metadata.stderr"
+    },
+    {
+      "bytes": 5306,
+      "mode": 384,
+      "path": "original-ci/job-129052160399-metadata.stdout",
+      "sha256": "215c4371821962f6898f987cf5b6d9963d769c866c07fd2fe22363c185336d12",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160399-metadata.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/job-129052160409-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160409-log.stderr"
+    },
+    {
+      "bytes": 171334,
+      "mode": 384,
+      "path": "original-ci/job-129052160409-log.stdout",
+      "sha256": "007ae304c6b42d7dfc6824425b6a8450a570f179f1585089e5f6119aca654b7c",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160409-log.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/job-129052160409-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160409-metadata.stderr"
+    },
+    {
+      "bytes": 3171,
+      "mode": 384,
+      "path": "original-ci/job-129052160409-metadata.stdout",
+      "sha256": "5d797393d07451dc10ea775a349bd20fcb83ae3a9b7cb18ece2f1f25c0b6bff1",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160409-metadata.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/job-129052160414-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160414-log.stderr"
+    },
+    {
+      "bytes": 171376,
+      "mode": 384,
+      "path": "original-ci/job-129052160414-log.stdout",
+      "sha256": "0545881eaaecdd05e285ff09f4c6e999429ab29b7cf887ecb84c31d36ef36a2c",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160414-log.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/job-129052160414-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160414-metadata.stderr"
+    },
+    {
+      "bytes": 3179,
+      "mode": 384,
+      "path": "original-ci/job-129052160414-metadata.stdout",
+      "sha256": "f0f2a45c46dd5514c672811813b2d24c085bfb0c5afd62ddd3237fe3bfaf5a99",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160414-metadata.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/job-129052160447-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160447-log.stderr"
+    },
+    {
+      "bytes": 157542,
+      "mode": 384,
+      "path": "original-ci/job-129052160447-log.stdout",
+      "sha256": "ceaa4b30ed6d1570b4cf96e4d63f7e7f38fcc41a61f96bfb4796b9599c4c0333",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160447-log.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/job-129052160447-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160447-metadata.stderr"
+    },
+    {
+      "bytes": 5327,
+      "mode": 384,
+      "path": "original-ci/job-129052160447-metadata.stdout",
+      "sha256": "869ae0ebac401b4f4286c2998b400f14aadf12dfdec1bb9bbd0c177a575f0d01",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160447-metadata.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/job-129052160549-log.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160549-log.stderr"
+    },
+    {
+      "bytes": 171975,
+      "mode": 384,
+      "path": "original-ci/job-129052160549-log.stdout",
+      "sha256": "dd3d89655e4ca8aaedfbf00ed473f5d9ee2c0bc2ed62e13d5d687a906025cb41",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160549-log.stdout"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/job-129052160549-metadata.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160549-metadata.stderr"
+    },
+    {
+      "bytes": 3184,
+      "mode": 384,
+      "path": "original-ci/job-129052160549-metadata.stdout",
+      "sha256": "60bedfa497b03bb14f0e5511216f561ff3202c9a4deba1a0499fe1d7e6f89137",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/job-129052160549-metadata.stdout"
+    },
+    {
+      "bytes": 2081,
+      "mode": 384,
+      "path": "original-ci/request.json",
+      "sha256": "cb1453d4bacfc846130a16aa5397d78e54d3660810f67474ec778c3b6c72a7b3",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/request.json"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/run-42584869964.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/run-42584869964.stderr"
+    },
+    {
+      "bytes": 15184,
+      "mode": 384,
+      "path": "original-ci/run-42584869964.stdout",
+      "sha256": "bf0da30d2070c139b23f114f50d7cacb59a326d2109a43ae887c66acbf3ca734",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/run-42584869964.stdout"
+    },
+    {
+      "bytes": 344,
+      "mode": 384,
+      "path": "original-ci/run-artifacts-command.json",
+      "sha256": "c954013854e7a19c853fe2484a786238b228873422dc4538ed9a6d5ff4868fdf",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/run-artifacts-command.json"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/run-artifacts.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/run-artifacts.stderr.log"
+    },
+    {
+      "bytes": 13424,
+      "mode": 384,
+      "path": "original-ci/run-artifacts.stdout.json",
+      "sha256": "a1d0e7992fb1092267d412362a986147d13d96118cea0491a4c34ef9eba5ade4",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/run-artifacts.stdout.json"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/workflow-source/base.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/workflow-source/base.stderr"
+    },
+    {
+      "bytes": 45457,
+      "mode": 384,
+      "path": "original-ci/workflow-source/base.yml",
+      "sha256": "07c93ac69d837c91c917c4bd65f077bf04a90545b09d2fc2f58066c3d0057775",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/workflow-source/base.yml"
+    },
+    {
+      "bytes": 1537,
+      "mode": 384,
+      "path": "original-ci/workflow-source/comparison.json",
+      "sha256": "41c497e2286428884625e98f027e0d55ab989f6364ae75478734f3c7358ee21b",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/workflow-source/comparison.json"
+    },
+    {
+      "bytes": 0,
+      "mode": 384,
+      "path": "original-ci/workflow-source/head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/workflow-source/head.stderr"
+    },
+    {
+      "bytes": 45457,
+      "mode": 384,
+      "path": "original-ci/workflow-source/head.yml",
+      "sha256": "07c93ac69d837c91c917c4bd65f077bf04a90545b09d2fc2f58066c3d0057775",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-convergence-ci-failure66-read01/workflow-source/head.yml"
+    }
+  ],
+  "native_or_model_commands_executed": 0,
+  "original_ci_jobs_remain_failed": true,
+  "payload_bytes": 2220461,
+  "schema": "cell-current-api-exact364-evidence-package-v1"
+}

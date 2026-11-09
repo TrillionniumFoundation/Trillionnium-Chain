@@ -176,6 +176,14 @@ local observations, not throughput/tail-latency or population estimates.
 
 ## Remaining qualification
 
+The [retained recovery extension](CELL_RETAINED_RECOVERY_V1.md) now connects
+this unchanged codec to streaming full-closure byte verification and exact
+enumeration of a separately pinned provider/failure-domain declaration. It
+checks repeated-index copies against the verified codeword and retains
+per-chunk fault counterexamples. Supplied shard bytes and declared provider
+labels still do not prove authenticated current custody or independent WAN
+service; those remain separate obligations below.
+
 This component supplies bounded erasure encoding and reconstruction. It does
 not supply DHT routing, distributed placement, independent custody, repair
 funding, durable availability, an operator's delivery guarantee, WAN admission,

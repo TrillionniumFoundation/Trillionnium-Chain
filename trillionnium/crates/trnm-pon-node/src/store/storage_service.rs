@@ -19,6 +19,26 @@ use trnm_service_settlement::native_budget::{
     NativeBudgetResourcesV1, NativeBudgetStoreV1, NativeFundingSourceV1,
 };
 
+mod shard;
+pub use shard::{
+    native_cell_shard_repair_subject_v1, NativeCellRetainedShardPlanReadbackV1,
+    NativeCellRetainedShardPlanRequestV1, NativeCellRetainedShardPlanTargetsV1,
+    NativeCellRetainedShardSlotReadbackV1, NativeCellRetainedShardVerificationBudgetV1,
+    NativeCellShardDamageV1, NativeCellShardEffectReadbackV1, NativeCellShardRecoveryActionV1,
+    NativeCellShardRecoveryBudgetV1, NativeCellShardRecoveryCpuV1,
+    NativeCellShardRecoveryFailureV1, NativeCellShardRecoveryLimitsV1,
+    NativeCellShardRecoveryReadbackV1, NativeCellShardRecoveryRequestV1,
+    NativeCellShardRecoveryUsageV1, NativeCellShardRepairRequestV1,
+    NativeCellShardRetentionRequestV1,
+};
+
+mod version;
+pub use version::{
+    native_cell_version_repair_subject_v3, NativeCellVersionEffectReadbackV3,
+    NativeCellVersionRepairRequestV3, NativeCellVersionRetentionRequestV3,
+    NativeCellVersionRetirementReadbackV3,
+};
+
 mod release;
 pub use release::{
     native_cell_release_repair_subject_v2, NativeCellReleaseEffectReadbackV2,

@@ -1,0 +1,27 @@
+{
+  "schema": "commit66-independent-archive-readback-v1",
+  "result": "PASS",
+  "commit": "66b7064be597039ce871b5b12ad5568850a2dd46",
+  "tree": "75ac72605e3647de5a09557bfd7012dc99b0dec6",
+  "archive": {
+    "path": "/home/qq/work/chain-cell-storage-convergence-verification66-package01/evidence.tar.xz",
+    "bytes": 146556,
+    "sha256": "c449e2945143ed6d9deacbb96416cdad3982f948c6c3fdea4567944702e1bffc"
+  },
+  "manifest": {
+    "path": "/home/qq/work/chain-cell-storage-convergence-verification66-package01/evidence.members.json",
+    "bytes": 68349,
+    "sha256": "2d87b86269bd38b9b0bacd63b4f979111a9fc49ed2c512fd95e11155d09c0104"
+  },
+  "member_count": 104,
+  "payload_bytes": 3535264,
+  "member_paths_modes_lengths_hashes_match": true,
+  "full_manifest_inventory_equals_independently_reviewed_before_inventory": true,
+  "packager_rechecked_all_source_versions_and_bytes_after_archive": true,
+  "no_excluded_members": true,
+  "archive_only_reads_no_extraction": true,
+  "repository_tests_models_executed_by_audit": 0,
+  "canonical_or_original_evidence_mutations": 0,
+  "gate_success_inferred_from_packaging": false,
+  "scope": "Only recorded commit66 observations; standalone audit and original stdin readback are separate control sidecars; no successor qualification."
+}

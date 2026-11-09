@@ -1,0 +1,50 @@
+{
+  "argv": [
+    "/home/qq/work/chain-cell-storage-convergence-f2568-target/debug/examples/cell_sealed_research_next_use_v1",
+    "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/source-inputs.v1.json",
+    "b759b6087b15a7513e6609c9ec7b6bfb57c994c2a5073ae5b987ec6291a3b383"
+  ],
+  "base_head": "6244d34a5d9a1da993125e00facfb91a846ec489",
+  "base_tree": "cc9cd341aaf0a0405bd0e85e21af6f64217c32f2",
+  "binary_before": {
+    "bytes": 62930352,
+    "path": "/home/qq/work/chain-cell-storage-convergence-f2568-target/debug/examples/cell_sealed_research_next_use_v1",
+    "sha256": "4d492555e3b529b5e7ec04677a6d58efa837d08edac9c88ca12b9b98c99aef7e"
+  },
+  "binary_unchanged": true,
+  "completed": true,
+  "execution_succeeded": false,
+  "input": {
+    "max_snapshot_bytes": 536870912,
+    "operation": "ee00c73aa357f5582e0aec4bd8e35f869ef95286db61150827c19e4abfa394e0",
+    "output": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/native-attempt-01",
+    "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/source-inputs.v1.json",
+    "runtime_rss_bytes": 8589934592,
+    "seconds": 300,
+    "sha256": "b759b6087b15a7513e6609c9ec7b6bfb57c994c2a5073ae5b987ec6291a3b383",
+    "threads": 4
+  },
+  "manifest_unchanged": true,
+  "model_elapsed_seconds": 300.1173210144043,
+  "model_ended_unix": 1794201555.050205,
+  "model_exit_code": 1,
+  "model_started_unix": 1794201254.932884,
+  "provider_binary_unchanged": true,
+  "schema": "cell-sealed-research-native-attempt-observation-v1",
+  "scope": "uncommitted real-model research preparation; no ordinary Hepta FinalUse/M12/service qualification",
+  "source_unchanged": true,
+  "started_unix": 1794201254.7649403,
+  "status_after": "M trillionnium/crates/trnm-data-availability/Cargo.toml\n M trillionnium/crates/trnm-data-availability/src/cell.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs\n M trillionnium/crates/trnm-data-availability/src/cell/erasure.rs\n M trillionnium/crates/trnm-data-availability/src/cell/residency.rs\n M trillionnium/crates/trnm-data-availability/src/cell/retention.rs\n M trillionnium/crates/trnm-pon-node/src/lib.rs\n M trillionnium/crates/trnm-pon-node/src/store/storage_service.rs\n M trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs\n?? formal/pon-nakamoto-v1/vectors/cell-storage-owner-vectors-v1.json\n?? formal/pon-nakamoto-v1/vectors/cell-version-retention-v3.json\n?? scripts/cell_sealed_bootstrap_v1.py\n?? scripts/cell_storage_descriptor_reference.py\n?? scripts/cell_version_retention_v3_vector.py\n?? scripts/llm_cell_sealed_worker_v1.py\n?? scripts/prepare_cell_sealed_research_v1.py\n?? scripts/test_llm_cell_sealed_worker_v1.py\n?? trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_next_use_v1.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/provider.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/provider/\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/\n?? trillionnium/crates/trnm-data-availability/src/cell/host_handoff.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/host_handoff/\n?? trillionnium/crates/trnm-data-availability/src/cell/residency/version.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/residency/version_tests.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/catalog_inventory.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/payload_read.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/payload_read/\n?? trillionnium/crates/trnm-data-availability/src/cell/snapshot_schedule.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/snapshot_schedule/\n?? trillionnium/crates/trnm-data-availability/src/cell/version_retention.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/version_retention/\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs",
+  "status_before": "M trillionnium/crates/trnm-data-availability/Cargo.toml\n M trillionnium/crates/trnm-data-availability/src/cell.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs\n M trillionnium/crates/trnm-data-availability/src/cell/erasure.rs\n M trillionnium/crates/trnm-data-availability/src/cell/residency.rs\n M trillionnium/crates/trnm-data-availability/src/cell/retention.rs\n M trillionnium/crates/trnm-pon-node/src/lib.rs\n M trillionnium/crates/trnm-pon-node/src/store/storage_service.rs\n M trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs\n?? formal/pon-nakamoto-v1/vectors/cell-storage-owner-vectors-v1.json\n?? formal/pon-nakamoto-v1/vectors/cell-version-retention-v3.json\n?? scripts/cell_sealed_bootstrap_v1.py\n?? scripts/cell_storage_descriptor_reference.py\n?? scripts/cell_version_retention_v3_vector.py\n?? scripts/llm_cell_sealed_worker_v1.py\n?? scripts/prepare_cell_sealed_research_v1.py\n?? scripts/test_llm_cell_sealed_worker_v1.py\n?? trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_next_use_v1.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/provider.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/provider/\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/\n?? trillionnium/crates/trnm-data-availability/src/cell/host_handoff.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/host_handoff/\n?? trillionnium/crates/trnm-data-availability/src/cell/residency/version.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/residency/version_tests.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/catalog_inventory.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/payload_read.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retention/payload_read/\n?? trillionnium/crates/trnm-data-availability/src/cell/snapshot_schedule.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/snapshot_schedule/\n?? trillionnium/crates/trnm-data-availability/src/cell/version_retention.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/version_retention/\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs\n?? trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs",
+  "status_unchanged": true,
+  "stderr": {
+    "bytes": 85,
+    "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-01/native.stderr",
+    "sha256": "f2c417782e51cafce959ea0b34cbe99e5a11176466c64096f9323d568ccce2ac"
+  },
+  "stdout": {
+    "bytes": 1779,
+    "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/model-execution-observation-01/native.stdout",
+    "sha256": "f873534338a1322f355b07006216598551002fac12adb5baef81e5c375846519"
+  }
+}
