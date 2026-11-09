@@ -1,0 +1,16 @@
+{
+  "schema": "trnm-pq-evidence-assembly-observations-v1",
+  "initial_assembly_exit_code": 1,
+  "initial_failure": "Frozen raw archive digest mismatch; assembler refused to finalize manifest.",
+  "observation_kind": "Tool-reported assembly failure plus direct byte/member comparison; not a reconstructed raw process stream.",
+  "expected_raw_archive_sha256": "2ad20733ada2fb647f800be1a5ad78ea741a1d395d313f000b3aeee404a168af",
+  "first_assembly_raw_archive_sha256": "d1d99667154f1c185134b028e375875d78372855b1a2f5ed8c7ce26a41a4c2b4",
+  "member_sets_and_all_member_bytes_identical": true,
+  "first_order_difference_index": 34,
+  "frozen_member_at_difference": "frozen-campaign-c9fb3fa6/native-v3/commands.json",
+  "regenerated_member_at_difference": "frozen-campaign-c9fb3fa6/native-v3-runner-controls.stderr",
+  "cause": "Staging sorted pathlib components; assembly sorted complete archive-path strings. Directory/file ordering differed, producing different compressed bytes.",
+  "correction": "Reuse the three frozen archives byte-for-byte, verify every member against its expected source bytes, and retain exact frozen digest checks. Newly completed follow-up data is separately archived.",
+  "source_code_or_test_results_changed": false,
+  "failed_attempt_committed_or_published": false
+}

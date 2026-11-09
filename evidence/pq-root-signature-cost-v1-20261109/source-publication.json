@@ -1,0 +1,51 @@
+{
+  "schema": "trnm-pq-signature-cost-source-publication-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "baseline_commit": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+  "locally_executed_source_commit": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+  "published_source_commit": "5840295dd0442804e80449ec7eb4b74dc3e68a3b",
+  "complete_source_tree": "704b67dc07f94e1770452f154d72c002b5ac1af0",
+  "source_commit_metadata_equal": false,
+  "complete_source_tree_equal": true,
+  "all_15_published_source_blob_ids_equal_local": true,
+  "published_source_was_independently_executed": false,
+  "publication_channel": "Connected GitHub API",
+  "publication_commit_created_at": "2026-11-09T13:41:23Z",
+  "tree_readback_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/5840295dd0442804e80449ec7eb4b74dc3e68a3b",
+  "branch": "fix/chain-pq-signature-20261109",
+  "pull_request": 839,
+  "pull_request_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/839",
+  "pull_request_created_at": "2026-11-09T13:44:43Z",
+  "pull_request_base": "fix/chain-root-effects-v4-20261109-e12ecc",
+  "draft": true,
+  "source_bundle": {
+    "path": "source-c9fb3fa6.bundle",
+    "bytes": 20309,
+    "sha256": "5618d9498631c7f67d19d8c38a4397d12f4064c3d4c3c44cf2a99eeb688bead9",
+    "prerequisite": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0"
+  },
+  "source_patch": {
+    "path": "source-c9fb3fa6.patch",
+    "bytes": 74272,
+    "sha256": "cce2452ca310692416f84429db785b84193d31b78b706b88ba29a12c203f5222"
+  },
+  "independent_execution_authentication": false,
+  "production_activation": false,
+  "inventory_correction": {
+    "source_commit": "d239bc8f683da7cdc8a4b9dc8e763d67e74680f6",
+    "source_tree": "37032e79799b9b21acc5b7f4ed1d74cc6bf97185",
+    "parent": "5840295dd0442804e80449ec7eb4b74dc3e68a3b",
+    "changed_paths": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+    ],
+    "new_inventory_entries": 1,
+    "previous_inventory_entries": 1390,
+    "corrected_inventory_entries": 1391,
+    "cryptographic_source_and_cost_example_bytes_changed": false,
+    "local_exact_commit_import_verified": true,
+    "original_frozen_campaign_executed_this_commit": false,
+    "separate_followup_source": true,
+    "ref_update_fast_forward_with_expected_sha": true
+  }
+}
