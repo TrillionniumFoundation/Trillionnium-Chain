@@ -1,0 +1,18 @@
+{
+  "commit": "0f71bd817164feef370f75ee2ab881227693573d",
+  "tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+  "parent": "c247d623704b1cce2307fa31b21cab045063e0f6",
+  "branch": "fix/chain-learning-query-exit-20261109-70ae",
+  "author": {
+    "name": "ProfHepta",
+    "email": "102159240+ProfHepta@users.noreply.github.com",
+    "date": "2026-11-09T03:11:00Z"
+  },
+  "committer": {
+    "name": "ProfHepta",
+    "email": "102159240+ProfHepta@users.noreply.github.com",
+    "date": "2026-11-09T03:11:00Z"
+  },
+  "raw_commit_base64": "dHJlZSA0ZDU2N2ZiOWE0ZmY5ZTNhZTllOTU3ZTllNzA2NDQzYWMyNDFkYmJiCnBhcmVudCBjMjQ3ZDYyMzcwNGIxY2NlMjMwN2ZhMzFiMjFjYWIwNDUwNjNlMGY2CmF1dGhvciBQcm9mSGVwdGEgPDEwMjE1OTI0MCtQcm9mSGVwdGFAdXNlcnMubm9yZXBseS5naXRodWIuY29tPiAxNzk0MTkzODYwICswMDAwCmNvbW1pdHRlciBQcm9mSGVwdGEgPDEwMjE1OTI0MCtQcm9mSGVwdGFAdXNlcnMubm9yZXBseS5naXRodWIuY29tPiAxNzk0MTkzODYwICswMDAwCgpSZXF1aXJlIGNvbmZpcm1lZCBwcm9jZXNzIGV4aXRzIGZvciBsZWFybmluZyBzZXJ2aWNlIHJlYWRiYWNrcwoKRG8gbm90IGNvdW50IHByaW50ZWQgc3VjY2Vzc2Z1bCBwcm92aWRlciBvciBuYXRpdmUgcmVzcG9uc2VzIGFzIGNvbXBsZXRlZCBkZXZlbG9wbWVudCBlZmZlY3RzIHdoZW4gdGhlaXIgcHJvY2VzcyBleGl0IGlzIHVuY29uZmlybWVkLiBQcmVzZXJ2ZSBxdWVyeS1vbmx5IHJlY292ZXJ5LCByZXRhaW5lZCByZXNlcnZhdGlvbnMsIG51bWVyaWNhbCBkaXNwb3NpdGlvbiBhbmQgb3JpZ2luYWwtb3duZXIgc2VsZWN0aW9uIGJvdW5kYXJpZXMuCgpSZXRhaW4gYWN0dWFsIHN1YnByb2Nlc3MgcmVkL2dyZWVuIGNvbnRyb2xzIGFuZCBzb3VyY2UgdmVyaWZpY2F0aW9uIHdpdGhvdXQgZ3JhbnRpbmcgcHJvZHVjdGlvbiBhY2NlcHRhbmNlLgo=",
+  "message": "Require confirmed process exits for learning service readbacks\n\nDo not count printed successful provider or native responses as completed development effects when their process exit is unconfirmed. Preserve query-only recovery, retained reservations, numerical disposition and original-owner selection boundaries.\n\nRetain actual subprocess red/green controls and source verification without granting production acceptance.\n"
+}

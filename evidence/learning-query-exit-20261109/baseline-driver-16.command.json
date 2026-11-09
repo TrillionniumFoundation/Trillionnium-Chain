@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "scripts/test_run_learning_service_development.py",
+    "-v"
+  ],
+  "cwd": "/data/chain-learning-exit-70ae-20261109",
+  "exit_code": 0,
+  "expected_exit": 0,
+  "duration_ns": 668551481,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "ed808e78765e695c4bdf9c47a17cba24421700277bf6e47c2231f172c6173a6a"
+}

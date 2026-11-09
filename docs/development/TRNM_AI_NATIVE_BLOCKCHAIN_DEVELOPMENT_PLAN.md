@@ -10137,3 +10137,31 @@ implementation review remain required. Keep production activation, FinalUse
 and whole-chain PQ qualifications false and all seven requested gates at
 HOLD / NO-GO until their own complete, same-source evidence passes. Historical
 successes and failures retain their exact original source identities.
+
+### 2026-11-09 learning service query process completion
+
+Continue the real learning service driver from PR #820 source
+`c247d623704b1cce2307fa31b21cab045063e0f6`. A provider or native query can print
+successful JSON before its process later fails, including during cleanup. Require
+an observed integer zero exit before using `SUCCESS` or paid native observations
+as completed development effects. Apply the same boundary in the initial run and
+in read-only reconciliation; a completed comparison cannot hide an unconfirmed
+candidate query. Missing, boolean and textual exit codes are not confirmed exits.
+
+Preserve every phase's original exit, stdout and stderr. Keep provider UNKNOWN
+and FAILED observations, their retained reservations and original status codes;
+query never authorizes redispatch or changes the original intent. A subsequent
+successful original-owner query can confirm an earlier uncertain effect without
+replaying it. Independent numerical Candidate/NoUpdate findings remain distinct
+from service completion, original-owner selection, installation and payment.
+
+Keep the original budgets, deadlines, model and native-owner implementations,
+signed namespaces and stored schemas unchanged. Preserve actual subprocess
+boundary failures and run the complete driver, inherited runtime, parent material,
+operation and frozen-evaluation Python suites on the full continuation source.
+Repeat source-integrity negative controls and Markdown checks on the committed
+source. These controls do not rerun model quality, native Rust, WAN, independent
+custody, FinalUse or whole-chain qualification; their existing HOLD gates remain.
+The [preserved boundary observations](../../evidence/learning-query-exit-20261109/README.md)
+retain the original failures, candidate test logs and source identities.
+This continuation is separate from PR #821, which does not contain this driver.

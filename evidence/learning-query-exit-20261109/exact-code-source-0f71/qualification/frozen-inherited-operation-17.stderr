@@ -1,0 +1,22 @@
+test_actual_competing_processes_reserve_only_once (__main__.InheritedOperationTests.test_actual_competing_processes_reserve_only_once) ... ok
+test_actual_process_crash_after_commit_never_regrants_dispatch (__main__.InheritedOperationTests.test_actual_process_crash_after_commit_never_regrants_dispatch) ... ok
+test_changed_output_or_budget_does_not_restart_pending (__main__.InheritedOperationTests.test_changed_output_or_budget_does_not_restart_pending) ... ok
+test_different_operation_parent_or_freeze_is_refused (__main__.InheritedOperationTests.test_different_operation_parent_or_freeze_is_refused) ... ok
+test_exact_once_entry_never_calls_executor_twice (__main__.InheritedOperationTests.test_exact_once_entry_never_calls_executor_twice) ... ok
+test_exit_without_original_owner_reap_remains_unknown (__main__.InheritedOperationTests.test_exit_without_original_owner_reap_remains_unknown) ... ok
+test_failed_execution_is_not_no_update_or_payment (__main__.InheritedOperationTests.test_failed_execution_is_not_no_update_or_payment) ... ok
+test_freeze_mismatch_refuses_before_reservation_or_execution (__main__.InheritedOperationTests.test_freeze_mismatch_refuses_before_reservation_or_execution) ... ok
+test_lost_ack_readback_uses_original_files_without_redispatch (__main__.InheritedOperationTests.test_lost_ack_readback_uses_original_files_without_redispatch) ... ok
+test_missing_supervisor_cannot_be_replaced_by_child_success (__main__.InheritedOperationTests.test_missing_supervisor_cannot_be_replaced_by_child_success) ... ok
+test_next_inference_binds_original_training_and_rejects_other_parent (__main__.InheritedOperationTests.test_next_inference_binds_original_training_and_rejects_other_parent) ... ok
+test_original_intent_cannot_be_aliased_to_new_operation (__main__.InheritedOperationTests.test_original_intent_cannot_be_aliased_to_new_operation) ... ok
+test_output_descriptor_types_and_contract_cannot_alias (__main__.InheritedOperationTests.test_output_descriptor_types_and_contract_cannot_alias) ... ok
+test_output_directory_is_exclusive_across_operations (__main__.InheritedOperationTests.test_output_directory_is_exclusive_across_operations) ... ok
+test_real_journal_reopen_keeps_unknown_and_original_reservation (__main__.InheritedOperationTests.test_real_journal_reopen_keeps_unknown_and_original_reservation) ... ok
+test_terminal_file_changes_are_refused (__main__.InheritedOperationTests.test_terminal_file_changes_are_refused) ... ok
+test_wrong_authority_and_symlink_journal_refused (__main__.InheritedOperationTests.test_wrong_authority_and_symlink_journal_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 2.881s
+
+OK

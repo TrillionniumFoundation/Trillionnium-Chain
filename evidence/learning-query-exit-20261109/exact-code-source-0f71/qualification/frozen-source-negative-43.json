@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "cwd": "/data/chain-learning-exit-70ae-20261109",
+  "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+  "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+  "exit_code": 0,
+  "valid": true,
+  "tool_timeout_seconds": 180,
+  "timed_out": false,
+  "duration_ns": 5027771150,
+  "stdout_sha256": "e28d8bf653d0d55e902425c60a79d0dac6618cfae5c8a1b0b12db377135c51d5",
+  "stderr_sha256": "5863e1eeb15b6b91c164095545504a893db3c63368c8b81e987ff6e9abf1f859",
+  "expected_tests": 43,
+  "observed_test_counts": [
+    43
+  ],
+  "skipped": false
+}
