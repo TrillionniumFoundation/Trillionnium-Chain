@@ -14,9 +14,13 @@ native inner-call reference excludes startup, input reads and Node admission.
 Those numbers are not an N/P receiver comparison. The later tagged-SHA3 profile
 is a different profile and is not silently substituted into this adapter.
 
-No current end-to-end improvement is asserted by this implementation. A measured
-local comparison, a transport experiment, a fresh proving experiment and original
-production-service qualification are distinct results.
+Two hosted executions of the exact candidate now provide complete receiver
+observations: proof-plus-native is substantially more expensive at 2 CPU / 2 GiB,
+and all four proof requests in each quarter-CPU / four-second campaign time out.
+The [measured results](evidence/receiver-cost-20261109/README.md) preserve the two
+different binary identities separately and retain the genuine workflow failures.
+A receiver comparison, a transport experiment, a fresh proving experiment and
+original production-service qualification remain distinct results.
 
 ## Two actual paths
 

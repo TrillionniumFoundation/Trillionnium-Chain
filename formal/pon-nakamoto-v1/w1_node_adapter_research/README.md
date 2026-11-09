@@ -228,4 +228,7 @@ not promote a worker kill into cryptographic rejection.
 [The receiver comparison contract](RECEIVER_COST_COMPARISON.md) adds a cold native
 Node comparator and complete process accounting for the retained proof-plus-native
 path. See [execution status and preserved failures](evidence/receiver-cost-20261109/README.md).
+Two hosted executions now retain the full receiver comparisons: the proof path
+is slower under the two-CPU cap and all quarter-CPU proof requests time out.
+Their different binaries and failed deadline outcomes remain separate evidence.
 The original production qualification and native verification obligations remain.

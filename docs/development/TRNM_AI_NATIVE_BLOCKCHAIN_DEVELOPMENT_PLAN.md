@@ -10734,3 +10734,14 @@ actual kernel limits and unknown observations. Missing cgroup evidence cannot
 produce comparable medians. Full transport, original service pressure, production
 proof replacement, independent cryptographic qualification and whole-chain
 benefit remain separate HOLD gates. No existing acceptance criterion is relaxed.
+
+Measured continuation at `acd3edaab4a7aad358d4d174ea23000d619f70ea`: two hosted
+head runs completed both resource profiles and retained all 32 receiver attempts.
+Each two-CPU comparison passed its evidence contract; proof-plus-native wall
+medians were 104.0660x and 86.0967x their own native comparators. At quarter CPU,
+each run retained four native completions and four proof timeouts at the
+four-second deadline; both workflows correctly failed. The builds have different
+binary hashes and are reported separately. All 27 native adapter tests passed
+in each run. [Full receiver results and raw evidence](../../formal/pon-nakamoto-v1/w1_node_adapter_research/evidence/receiver-cost-20261109/README.md)
+identify preprocessing as the main measured cost, retain zero new complete
+proofs, and leave production replacement, service and whole-chain gates HOLD.
