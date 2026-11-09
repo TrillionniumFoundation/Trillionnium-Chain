@@ -10713,3 +10713,32 @@ its own exact source, original operation and receipts. Separate branch logs
 cannot establish a same-iteration production loop. This composition does not
 automatically include #822, #823, #826, #828, #829 or #830. All seven original
 gates remain HOLD; production activation and FinalUse qualification stay false.
+
+### 2026-11-09 — Bind original learning and native paid-task observations
+
+Continue #835 at `e2a02f9271b49f146e70806c8a66e161b5973971` with the
+[same-operation business readback contract](CELL_LEARNING_BUSINESS_READBACK_V1.md).
+Replay original HEPLCP02 selection/completion/use material and bind one declared
+source pair, operation, full selected or retained version, next task and cost
+source. Outer Root schema declarations do not promote legacy inner checkpoints.
+
+Consume the existing native paid-Task V3 export without replacing the M12 or
+Node owners. Check original contract/task identities and an explicit new
+application request/result mapping; do not retrofit that mapping onto historical
+contracts. Separate development service-fee observations, improvement rewards
+and consensus credit. NoUpdate may finish the original service without adopting
+a candidate; unknown external amounts remain null and all payment authority stays
+absent.
+
+Compare up to sixteen read-only observation cuts, preserving missing cuts and
+write-once costs, historical payment and delivery. Current anchors follow the
+original generation rules. Rewind, changed same-sequence state and reassignment
+of original operations are refusals; gaps do not authorize retry or repayment.
+
+Retain the two old real-model cases as retrospective reader inputs, with exact
+original source and byte identities. New paid-schema tests remain synthetic.
+Keep required CI lanes intact and add scoped hosted readback with retained raw
+outputs. Source consistency, structural completeness and passing tests do not
+authenticate independent demand, evaluation, consumer benefit, physical cost,
+external settlement, complete recovery or Hepta FinalUse. HOLD_NO_GO, DENY_ALL
+and all production-activation refusals remain in force.

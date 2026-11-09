@@ -2608,6 +2608,10 @@ class MergedQualificationLaneTests(unittest.TestCase):
             '    python3 scripts/ci/check_completion_evidence.py --historical\n',
             '    python3 scripts/ci/test_completion_evidence.py\n',
         ), '    python3 scripts/ci/check_evaluation_bundle_evidence.py --historical\n'),
+        'learning_business': ('repository-truth', '    python3 scripts/ci/test_chain_hepta_command_binding.py\n', (
+            '    python3 scripts/test_cell_learning_business_economics.py\n',
+            '    python3 scripts/test_cell_learning_business_join.py\n',
+        ), '    python3 scripts/ci/test_pon_daa_head_binding.py\n'),
     }
 
     def setUp(self):
@@ -2670,6 +2674,9 @@ class MergedQualificationLaneTests(unittest.TestCase):
 
     def test_completion_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('completion')
+
+    def test_learning_business_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('learning_business')
 
     def test_complete_groups_cannot_reorder_duplicate_or_hide_in_shell_conditions(self):
         self.checked(self.script)

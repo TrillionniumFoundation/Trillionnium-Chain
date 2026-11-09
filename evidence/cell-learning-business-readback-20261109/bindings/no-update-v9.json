@@ -1,0 +1,106 @@
+{
+  "capture_basis": "retrospective-research-readback",
+  "consumer": {
+    "agent_id": "018f4f72-5f8f-7cc1-8f55-df9fb3aa2c12",
+    "cell_id": "learning-d9fb-native-no-update-v9-cell",
+    "principal_id": "498e549f166115ce96c172df9d92dd7b1f167c2911304f8a0bf5bcb718562215"
+  },
+  "economics": [],
+  "invocation_id": "archived-no-update-v9",
+  "learning": {
+    "baseline_bundle": "8097a0859cb95fc0674f77975086e46e547f3238021b2548c6fa85c98535fd3d",
+    "cost_source_digest": "8a3bc0bc16e2cee85db9af67154f82316d587731486256678142e1dab9bc866f",
+    "evaluation_profile": "275aca9dd69af76f834081001f8cf3cad874d994e0248ab5f32bb282b8b369f2",
+    "initial_head": "bdd3ecfe1426c5450d74e5335f2284472ed92f9c7e93fde9e6500186a4f477de",
+    "next_input_digest": "2eb42ff0593b5907c03859e26255645b2f1faea68582858bc84ef5406d616d37",
+    "next_run_id": "learning-d9fb-native-no-update-v9-next",
+    "next_task_digest": "ec2577d19a8c95a29815e053402735f46961b9293dd8efc61009e0ea77206201",
+    "selected_bundle": "8097a0859cb95fc0674f77975086e46e547f3238021b2548c6fa85c98535fd3d",
+    "source_run_id": "learning-d9fb-native-no-update-v9-source"
+  },
+  "materials": {
+    "completed": {
+      "operation_id": "learning-d9fb-native-no-update-v9",
+      "sha256": "c890ca0ba1f5b5190e33bc93a0947c98a5cbfc4f77ad4f65ac8f428274ab222f",
+      "source_pair": {
+        "chain": {
+          "commit": "9129e65b3255439593e44a0ba39578f220c27087",
+          "tree": "3362f33fc1eb16bb1aa168f237065e4d15252bcc"
+        },
+        "hepta": {
+          "commit": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+          "tree": "c7588a07d20310059d4016559fa550d397b7eb09"
+        }
+      }
+    },
+    "expected": {
+      "operation_id": "learning-d9fb-native-no-update-v9",
+      "sha256": "d670b3094b47e3807c8ab7a093359ef8e16af3edad9368e78f517897e0345f14",
+      "source_pair": {
+        "chain": {
+          "commit": "9129e65b3255439593e44a0ba39578f220c27087",
+          "tree": "3362f33fc1eb16bb1aa168f237065e4d15252bcc"
+        },
+        "hepta": {
+          "commit": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+          "tree": "c7588a07d20310059d4016559fa550d397b7eb09"
+        }
+      }
+    },
+    "freeze": {
+      "operation_id": "learning-d9fb-native-no-update-v9",
+      "sha256": "ae6fbb4ea59fcf2c9ac2fbba5976501b27a7f5bc34838737a8fa99c05eb6bf69",
+      "source_pair": {
+        "chain": {
+          "commit": "9129e65b3255439593e44a0ba39578f220c27087",
+          "tree": "3362f33fc1eb16bb1aa168f237065e4d15252bcc"
+        },
+        "hepta": {
+          "commit": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+          "tree": "c7588a07d20310059d4016559fa550d397b7eb09"
+        }
+      }
+    },
+    "readback": {
+      "operation_id": "learning-d9fb-native-no-update-v9",
+      "sha256": "fdfc6d1bd390a2d6f37ac563d7fe49886e2ac0492b4dff47af95e32f403162a9",
+      "source_pair": {
+        "chain": {
+          "commit": "9129e65b3255439593e44a0ba39578f220c27087",
+          "tree": "3362f33fc1eb16bb1aa168f237065e4d15252bcc"
+        },
+        "hepta": {
+          "commit": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+          "tree": "c7588a07d20310059d4016559fa550d397b7eb09"
+        }
+      }
+    },
+    "selection": {
+      "operation_id": "learning-d9fb-native-no-update-v9",
+      "sha256": "21ba8a9895ca7ae052dde45d7547b50e3b656e3c99eb50e004e1c60dd3967b62",
+      "source_pair": {
+        "chain": {
+          "commit": "9129e65b3255439593e44a0ba39578f220c27087",
+          "tree": "3362f33fc1eb16bb1aa168f237065e4d15252bcc"
+        },
+        "hepta": {
+          "commit": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+          "tree": "c7588a07d20310059d4016559fa550d397b7eb09"
+        }
+      }
+    }
+  },
+  "operation_id": "learning-d9fb-native-no-update-v9",
+  "root_envelope_schema": null,
+  "schema": "trnm-cell-learning-business-bindings-v1",
+  "source_pair": {
+    "chain": {
+      "commit": "9129e65b3255439593e44a0ba39578f220c27087",
+      "tree": "3362f33fc1eb16bb1aa168f237065e4d15252bcc"
+    },
+    "hepta": {
+      "commit": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+      "tree": "c7588a07d20310059d4016559fa550d397b7eb09"
+    }
+  }
+}
