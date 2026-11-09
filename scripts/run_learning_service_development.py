@@ -168,8 +168,15 @@ def native_phase(logs, name, manifest, arguments, native_override=None):
                      executable_pin=manifest['native_binary']['sha256'])
 
 
+def process_succeeded(stage):
+    """A printed success is not an observed successful process completion."""
+    receipt = stage.get('receipt') if isinstance(stage, dict) else None
+    code = receipt.get('exit_code') if isinstance(receipt, dict) else None
+    return type(code) is int and code == 0
+
+
 def successful(stage, schema, code):
-    require(stage['receipt']['exit_code'] == 0 and type(stage['data']) is dict and
+    require(process_succeeded(stage) and type(stage['data']) is dict and
             stage['data'].get('schema') == schema, code)
     return stage['data']
 
@@ -272,6 +279,25 @@ def verify_native(value, manifest, binding, *, prepared=False):
             value.get('production_activation') is False, 'NATIVE_SCOPE')
 
 
+def native_observation(stage, manifest, binding):
+    value = stage.get('data') if isinstance(stage, dict) else None
+    if not process_succeeded(stage) or not isinstance(value, dict):
+        return None
+    verify_native(value, manifest, binding)
+    return value
+
+
+def provider_observation(stage):
+    value = stage.get('data') if isinstance(stage, dict) else None
+    if isinstance(value, dict) and value.get('status') == 'SUCCESS' and not process_succeeded(stage):
+        # The original CLI prints before closing its journal. Its raw reply and
+        # exit stay in stages; cleanup failure cannot become completed evidence.
+        return None
+    # UNKNOWN/FAILED are retained as unresolved/failed observations, including
+    # the provider CLI's original nonzero status codes. No replay is authorized.
+    return value
+
+
 def provider_query(logs, name, output, binding, *, next_input=False):
     identity = document(output / 'next-intent.json') if next_input else binding
     return python_phase(logs, name, 'llm_inherited_operation.py', ['query',
@@ -310,7 +336,7 @@ def evaluation_result(stage, manifest, binding):
         return dict(schema=frozen.RESULT, status='EVALUATION_RESPONSE_BINDING_FAILED',
             operation_id=manifest['operation_id'], evaluation_profile_sha256=binding['evaluation_profile_sha256'],
             numerical_disposition=None, original_response=value)
-    if value.get('status') == 'COMPLETE' and stage['receipt']['exit_code'] != 0:
+    if value.get('status') == 'COMPLETE' and not process_succeeded(stage):
         return dict(schema=frozen.RESULT, status='COMPLETE_RESPONSE_WITH_UNCONFIRMED_EXIT',
             operation_id=manifest['operation_id'], evaluation_profile_sha256=binding['evaluation_profile_sha256'],
             numerical_disposition=None, original_response=value)
@@ -321,8 +347,7 @@ def next_dispatch_gate(stage, manifest, binding):
     """A fresh native observation is necessary; no cross-owner atomicity claim."""
     reason = None
     value = None if not isinstance(stage, dict) else stage.get('data')
-    if (not isinstance(stage, dict) or stage.get('receipt', {}).get('exit_code') != 0
-            or not isinstance(value, dict)):
+    if not process_succeeded(stage) or not isinstance(value, dict):
         reason = 'NATIVE_QUERY_UNCONFIRMED'
     else:
         try:
@@ -410,11 +435,12 @@ def next_observation(output, manifest, binding, value):
 
 def summary(manifest, binding, evaluation, candidate, settlement, next_use, stages):
     no_update = numerical_no_update(evaluation, manifest, binding)
+    candidate_ok = type(candidate) is dict and candidate.get('status') == 'SUCCESS'
     paid = type(settlement) is dict and settlement.get('status') == 'PAID_CURRENT_BRANCH'
     next_ok = type(next_use) is dict and next_use.get('status') == 'SUCCESS'
     if no_update:
         checked = next_ok and next_use.get('expected_output_match') is True
-        status = ('COMPLETED_DEVELOPMENT_NO_UPDATE' if paid and checked else
+        status = ('COMPLETED_DEVELOPMENT_NO_UPDATE' if candidate_ok and paid and checked else
                   'NO_UPDATE_WITH_INCOMPLETE_DEVELOPMENT_EFFECTS')
         if next_ok and next_use.get('expected_output_match') is False:
             status = 'NO_UPDATE_NEXT_INPUT_OUTPUT_MISMATCH'
@@ -488,7 +514,7 @@ def start(args):
         evaluation = evaluation_result(stages['evaluation'], manifest, binding)
         # Training-service payment is read independently of evaluation success.
         stages['candidate_query'] = provider_query(logs, '05-candidate-query', output, binding)
-        candidate = stages['candidate_query']['data']
+        candidate = provider_observation(stages['candidate_query'])
         settlement = None
         if isinstance(candidate, dict) and candidate.get('schema') == operation.OBSERVATION:
             require(candidate.get('intent_sha256') == binding['intent_sha256'] and
@@ -496,9 +522,7 @@ def start(args):
             frozen.publish_json(output / 'candidate-readback.json', candidate)
             stages['settle'] = native_phase(logs, '06-native-settle', manifest,
                 ['settle', str(output / 'native-service'), str(output / 'candidate-readback.json')])
-            settlement = stages['settle']['data']
-            if isinstance(settlement, dict):
-                verify_native(settlement, manifest, binding)
+            settlement = native_observation(stages['settle'], manifest, binding)
         stages['native_query'] = native_phase(logs, '07-native-query', manifest,
                                                ['query', str(output / 'native-service')])
         gate = next_dispatch_gate(stages['native_query'], manifest, binding)
@@ -511,7 +535,7 @@ def start(args):
                 stages['next_input'] = python_phase(logs, '08-retained-parent-next-input',
                     'llm_inherited_operation.py', next_arguments(output, manifest, binding, identity))
                 stages['next_query'] = provider_query(logs, '09-next-input-query', output, binding, next_input=True)
-                next_use = next_observation(output, manifest, binding, stages['next_query']['data'])
+                next_use = next_observation(output, manifest, binding, provider_observation(stages['next_query']))
                 next_use['dispatch_gate'] = gate
             else:
                 next_use = dict(status='BLOCKED', blocked_reason=gate['blocked_reason'],
@@ -540,19 +564,17 @@ def query(args):
     logs.mkdir(mode=0o700)
     stages = {}
     stages['candidate_query'] = provider_query(logs, '01-candidate-query', output, binding)
-    candidate = stages['candidate_query']['data']
+    candidate = provider_observation(stages['candidate_query'])
     stages['evaluation_query'] = python_phase(logs, '02-evaluation-query', 'llm_frozen_evaluation.py',
                                               frozen_arguments(output, manifest, binding, 'query'))
     evaluation = evaluation_result(stages['evaluation_query'], manifest, binding)
     stages['native_query'] = native_phase(logs, '03-native-query', manifest,
         ['query', str(output / 'native-service')], args.native_bin)
-    settlement = stages['native_query']['data']
-    if isinstance(settlement, dict):
-        verify_native(settlement, manifest, binding)
+    settlement = native_observation(stages['native_query'], manifest, binding)
     next_use = None
     if (output / 'logs/08-retained-parent-next-input/invocation.json').is_file():
         stages['next_query'] = provider_query(logs, '04-next-input-query', output, binding, next_input=True)
-        next_use = next_observation(output, manifest, binding, stages['next_query']['data'])
+        next_use = next_observation(output, manifest, binding, provider_observation(stages['next_query']))
     elif numerical_no_update(evaluation, manifest, binding):
         gate = next_dispatch_gate(stages['native_query'], manifest, binding)
         next_use = dict(status='NOT_STARTED', new_operation_started=False,

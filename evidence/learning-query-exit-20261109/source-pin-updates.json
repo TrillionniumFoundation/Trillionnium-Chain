@@ -1,0 +1,17 @@
+[
+  {
+    "path": "scripts/run_learning_service_development.py",
+    "before": "ba8ac8b81ccb4cfe57768cb7d29fd3fece40587a",
+    "after": "b180e5248c5fb797b2554d74cc6f54c465efe9f9"
+  },
+  {
+    "path": "scripts/test_run_learning_service_development.py",
+    "before": "d6826941a9d3c8b5311c0e7592219eb5d4805765",
+    "after": "565585b2ba916e5c2e0b49400648ee3f6b84e757"
+  },
+  {
+    "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "before": "fb666e01280e19ccca18c2ab83313a1b7b1f027a",
+    "after": "95fb7116b32a63b172b3b0c6d92cd8bedf411ffd"
+  }
+]

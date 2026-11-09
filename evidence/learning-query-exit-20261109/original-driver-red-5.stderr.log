@@ -1,0 +1,53 @@
+test_query_requires_zero_native_exit_before_completed_no_update (test_run_learning_service_development.DriverTests.test_query_requires_zero_native_exit_before_completed_no_update) ... FAIL
+test_query_requires_zero_next_provider_exit_before_completed_no_update (test_run_learning_service_development.DriverTests.test_query_requires_zero_next_provider_exit_before_completed_no_update) ... FAIL
+test_query_does_not_confirm_training_service_after_nonzero_provider_exit (test_run_learning_service_development.DriverTests.test_query_does_not_confirm_training_service_after_nonzero_provider_exit) ... FAIL
+test_complete_comparison_cannot_hide_an_unconfirmed_candidate_query (test_run_learning_service_development.DriverTests.test_complete_comparison_cannot_hide_an_unconfirmed_candidate_query) ... FAIL
+test_start_does_not_complete_after_next_query_prints_success_then_fails (test_run_learning_service_development.DriverTests.test_start_does_not_complete_after_next_query_prints_success_then_fails) ... FAIL
+
+======================================================================
+FAIL: test_query_requires_zero_native_exit_before_completed_no_update (test_run_learning_service_development.DriverTests.test_query_requires_zero_native_exit_before_completed_no_update)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/chain-learning-exit-70ae-20261109/scripts/test_run_learning_service_development.py", line 331, in test_query_requires_zero_native_exit_before_completed_no_update
+    self.assertIsNone(result['development_settlement'])
+AssertionError: {'schema': 'native-learning-service-round-v1', 'operation_id': 'train-task', 'provider_authority_id': '1111111111111111111111111111111111111111111111111111111111111111', 'plan_sha256': '2222222222222222222222222222222222222222222222222222222222222222', 'evaluation_profile_sha256': '3333333333333333333333333333333333333333333333333333333333333333', 'intent_sha256': '4444444444444444444444444444444444444444444444444444444444444444', 'dispatch_allowed': False, 'improvement_bonus': 0, 'anti_sybil_consensus_credit': 0, 'production_activation': False, 'status': 'PAID_CURRENT_BRANCH', 'locally_revoked': False, 'current_branch_base_fee': 2000, 'base_fee_contract': 2000} is not None
+
+======================================================================
+FAIL: test_query_requires_zero_next_provider_exit_before_completed_no_update (test_run_learning_service_development.DriverTests.test_query_requires_zero_next_provider_exit_before_completed_no_update)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/chain-learning-exit-70ae-20261109/scripts/test_run_learning_service_development.py", line 340, in test_query_requires_zero_next_provider_exit_before_completed_no_update
+    self.assertIsNone(result['next_input']['status'])
+AssertionError: 'SUCCESS' is not None
+
+======================================================================
+FAIL: test_query_does_not_confirm_training_service_after_nonzero_provider_exit (test_run_learning_service_development.DriverTests.test_query_does_not_confirm_training_service_after_nonzero_provider_exit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/chain-learning-exit-70ae-20261109/scripts/test_run_learning_service_development.py", line 348, in test_query_does_not_confirm_training_service_after_nonzero_provider_exit
+    self.assertIsNone(result['candidate_operation'])
+AssertionError: {'schema': 'hepta-smollm-operation-readback-v1', 'status': 'SUCCESS'} is not None
+
+======================================================================
+FAIL: test_complete_comparison_cannot_hide_an_unconfirmed_candidate_query (test_run_learning_service_development.DriverTests.test_complete_comparison_cannot_hide_an_unconfirmed_candidate_query)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/chain-learning-exit-70ae-20261109/scripts/test_run_learning_service_development.py", line 356, in test_complete_comparison_cannot_hide_an_unconfirmed_candidate_query
+    self.assertIsNone(result['candidate_operation'])
+AssertionError: {'schema': 'hepta-smollm-operation-readback-v1', 'status': 'SUCCESS'} is not None
+
+======================================================================
+FAIL: test_start_does_not_complete_after_next_query_prints_success_then_fails (test_run_learning_service_development.DriverTests.test_start_does_not_complete_after_next_query_prints_success_then_fails)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/chain-learning-exit-70ae-20261109/scripts/test_run_learning_service_development.py", line 442, in test_start_does_not_complete_after_next_query_prints_success_then_fails
+    self.assertEqual(result['status'], 'NO_UPDATE_WITH_INCOMPLETE_DEVELOPMENT_EFFECTS')
+AssertionError: 'COMPLETED_DEVELOPMENT_NO_UPDATE' != 'NO_UPDATE_WITH_INCOMPLETE_DEVELOPMENT_EFFECTS'
+- COMPLETED_DEVELOPMENT_NO_UPDATE
++ NO_UPDATE_WITH_INCOMPLETE_DEVELOPMENT_EFFECTS
+
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.965s
+
+FAILED (failures=5)

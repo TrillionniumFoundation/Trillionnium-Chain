@@ -2,6 +2,7 @@
 import copy
 import fcntl
 import hashlib
+import json
 import os
 from pathlib import Path
 import subprocess
@@ -257,6 +258,192 @@ class DriverTests(unittest.TestCase):
             result = driver.query(SimpleNamespace(output=str(self.root), native_bin=None, native_bin_sha256=None))
         self.assertEqual(result['status'], 'INCOMPLETE_SETUP_QUERY_ORIGINAL_STAGE_FILES')
         self.assertFalse((self.root / 'queries').exists())
+
+    def complete_next_readback_fixture(self):
+        """Synthetic retained bytes; only the query subprocesses below execute."""
+        value = self.next_readback_fixture()
+        (self.root / 'next-input').mkdir(mode=0o700)
+        (self.root / 'next-input/worker').mkdir(mode=0o700)
+        inputs = driver.document(Path(self.manifest['inputs']['next']['path']))
+        plan = dict(schema=inherited.SCHEMA, phase='infer', operation_id=inputs['request_id'],
+            parent=self.parent, generation=1, inputs=inputs,
+            inputs_sha256=self.manifest['inputs']['next']['sha256'])
+        frozen.publish_json(self.root / 'next-input/execution-plan.json', plan)
+        prediction = dict(artifact=self.parent['adapter'], task=runtime.identity(inputs),
+            output_sha256=hashlib.sha256(b'yes').hexdigest(), response=dict(decoded_outputs=['yes']))
+        frozen.publish_json(self.root / 'next-input/worker/prediction.json', prediction)
+        pins = {name: dict(sha256=runtime.file_sha(self.root / 'next-input' / name))
+                for name in ('execution-plan.json', 'worker/prediction.json')}
+        value.update(status='SUCCESS', plan_sha256=pins['execution-plan.json']['sha256'],
+                     observation=dict(pins=pins, artifact=self.parent['adapter']))
+        return value
+
+    def query_with_observed_process_exits(self, *, native_exit=0, next_exit=0,
+                                         candidate_exit=0, complete_evaluation=True):
+        """Use actual process exits/stdout with synthetic original-owner replies."""
+        self.manifest['next_expected_output_sha256'] = hashlib.sha256(b'yes').hexdigest()
+        next_use = self.complete_next_readback_fixture()
+        frozen.publish_json(self.root / 'manifest.json', self.manifest)
+        frozen.publish_json(self.root / 'binding.json', self.binding)
+        next_log = self.root / 'logs/08-retained-parent-next-input'
+        next_log.mkdir(mode=0o700)
+        frozen.publish_json(next_log / 'invocation.json', {'fixture': True})
+        evaluation = self.evaluation() if complete_evaluation else dict(schema=frozen.RESULT,
+            status='UNKNOWN', operation_id=self.manifest['operation_id'],
+            evaluation_profile_sha256=self.binding['evaluation_profile_sha256'])
+        commands = []
+
+        def observe(logs, name, value, code):
+            command = [sys.executable, '-c',
+                       'import sys; print(sys.argv[1], flush=True); sys.exit(int(sys.argv[2]))',
+                       json.dumps(value), str(code)]
+            return driver.phase(logs, name, command)
+
+        def python(logs, name, module, arguments):
+            commands.append((module, arguments))
+            self.assertEqual(arguments[0], 'query')
+            if module == 'llm_frozen_evaluation.py':
+                return observe(logs, name, evaluation, 0 if complete_evaluation else 2)
+            if name == '04-next-input-query':
+                return observe(logs, name, next_use, next_exit)
+            return observe(logs, name, dict(schema=operation.OBSERVATION, status='SUCCESS'), candidate_exit)
+
+        def native(logs, name, manifest, arguments, native_override=None):
+            commands.append(('native', arguments))
+            self.assertEqual(arguments, ['query', str(self.root / 'native-service')])
+            return observe(logs, name, self.native_query_fixture()['data'], native_exit)
+
+        with mock.patch.object(driver, 'python_phase', side_effect=python), \
+                mock.patch.object(driver, 'native_phase', side_effect=native):
+            result = driver.query(SimpleNamespace(output=str(self.root), native_bin=None, native_bin_sha256=None))
+        self.assertEqual(len(commands), 4)
+        self.assertTrue(result['query_only'])
+        self.assertFalse((self.root / 'provider.sqlite3').exists())
+        return result
+
+    def test_query_requires_zero_native_exit_before_completed_no_update(self):
+        result = self.query_with_observed_process_exits(native_exit=7)
+        stage = result['stages']['native_query']
+        self.assertEqual(stage['receipt']['exit_code'], 7)
+        self.assertEqual(stage['data']['status'], 'PAID_CURRENT_BRANCH')
+        self.assertEqual(json.loads((Path(stage['directory']) / 'stdout.log').read_bytes()), stage['data'])
+        self.assertEqual((Path(stage['directory']) / 'stderr.log').read_bytes(), b'')
+        self.assertIsNone(result['development_settlement'])
+        self.assertEqual(result['status'], 'NO_UPDATE_WITH_INCOMPLETE_DEVELOPMENT_EFFECTS')
+
+    def test_query_requires_zero_next_provider_exit_before_completed_no_update(self):
+        result = self.query_with_observed_process_exits(next_exit=7)
+        stage = result['stages']['next_query']
+        self.assertEqual(stage['receipt']['exit_code'], 7)
+        self.assertEqual(stage['data']['status'], 'SUCCESS')
+        self.assertEqual(runtime.file_sha(Path(stage['directory']) / 'stdout.log'), stage['receipt']['stdout_sha256'])
+        self.assertIsNone(result['next_input']['status'])
+        self.assertIsNone(result['next_input']['expected_output_match'])
+        self.assertEqual(result['status'], 'NO_UPDATE_WITH_INCOMPLETE_DEVELOPMENT_EFFECTS')
+
+    def test_query_does_not_confirm_training_service_after_nonzero_provider_exit(self):
+        result = self.query_with_observed_process_exits(candidate_exit=7, complete_evaluation=False)
+        self.assertEqual(result['stages']['candidate_query']['data']['status'], 'SUCCESS')
+        self.assertEqual(result['stages']['candidate_query']['receipt']['exit_code'], 7)
+        self.assertIsNone(result['candidate_operation'])
+        self.assertEqual(result['status'], 'INCOMPLETE_OR_UNKNOWN')
+
+    def test_complete_comparison_cannot_hide_an_unconfirmed_candidate_query(self):
+        result = self.query_with_observed_process_exits(candidate_exit=7)
+        self.assertTrue(result['numerical_no_update_completed'])
+        self.assertEqual(result['evaluation']['status'], 'COMPLETE')
+        self.assertTrue(result['next_input']['expected_output_match'])
+        self.assertIsNone(result['candidate_operation'])
+        self.assertEqual(result['status'], 'NO_UPDATE_WITH_INCOMPLETE_DEVELOPMENT_EFFECTS')
+
+    def test_query_still_accepts_confirmed_processes_without_dispatching_new_work(self):
+        result = self.query_with_observed_process_exits()
+        self.assertEqual(result['status'], 'COMPLETED_DEVELOPMENT_NO_UPDATE')
+        self.assertTrue(result['next_input']['expected_output_match'])
+        self.assertTrue(result['no_automatic_retry'])
+        self.assertFalse(result['native_iteration_completed'])
+
+    def test_unconfirmed_exit_types_cannot_authorize_next_input(self):
+        for receipt in ({}, {'exit_code': None}, {'exit_code': False}, {'exit_code': '0'}):
+            with self.subTest(receipt=receipt):
+                native = dict(self.native_query_fixture(), receipt=receipt)
+                self.assertFalse(driver.next_dispatch_gate(native, self.manifest, self.binding)['allowed'])
+                evaluation = dict(receipt=receipt, data=self.evaluation())
+                self.assertFalse(driver.numerical_no_update(
+                    driver.evaluation_result(evaluation, self.manifest, self.binding), self.manifest, self.binding))
+
+    def test_provider_unknown_and_failed_results_keep_original_exit_and_reservation(self):
+        for status, code in (('UNKNOWN', 2), ('FAILED', 3)):
+            with self.subTest(status=status):
+                value = dict(schema=operation.OBSERVATION, status=status, dispatch_allowed=False,
+                    reservation='RETAINED', no_update_decided=False, payment_authorized=False)
+                stage = driver.phase(self.root / 'logs', 'provider-' + status.lower(),
+                    [sys.executable, '-c',
+                     'import sys; print(sys.argv[1], flush=True); sys.exit(int(sys.argv[2]))',
+                     json.dumps(value), str(code)])
+                self.assertEqual(driver.provider_observation(stage), value)
+                self.assertEqual(stage['receipt']['exit_code'], code)
+                self.assertEqual(json.loads((Path(stage['directory']) / 'stdout.log').read_bytes()), value)
+
+    def test_start_does_not_complete_after_next_query_prints_success_then_fails(self):
+        # Actual subprocess receipts exercise the original start orchestration;
+        # all model, freeze and ledger replies remain controlled test fixtures.
+        from test_llm_frozen_evaluation import profile_fixture
+        profile = profile_fixture()
+        profile.update(operation_id=self.manifest['operation_id'], parent=self.parent,
+            training_input_sha256=self.manifest['inputs']['training']['sha256'],
+            evaluation_input_sha256=self.manifest['inputs']['evaluation']['sha256'])
+        profile['runtime']['tasks'] = inherited.training_rows(self.training)
+        profile['evaluation']['rows'] = 1
+        self.manifest['next_expected_output_sha256'] = hashlib.sha256(b'yes').hexdigest()
+        commands = []
+
+        def observed(logs, name, value, code=0):
+            return driver.phase(logs, name, [sys.executable, '-c',
+                'import sys; print(sys.argv[1], flush=True); sys.exit(int(sys.argv[2]))',
+                json.dumps(value), str(code)])
+
+        def python(logs, name, module, arguments):
+            commands.append((module, arguments[0]))
+            if name == '01-freeze':
+                frozen.publish_json(self.root / 'evaluation-profile.json', profile)
+                self.binding['evaluation_profile_sha256'] = runtime.file_sha(self.root / 'evaluation-profile.json')
+                return observed(logs, name, dict(schema=frozen.PROFILE,
+                    evaluation_profile_sha256=self.binding['evaluation_profile_sha256']))
+            if name == '02-provider-authority':
+                return observed(logs, name, dict(schema=operation.SCHEMA, authority_id=self.binding['authority_id']))
+            if name == '04-model-trial':
+                return observed(logs, name, self.evaluation())
+            if name == '05-candidate-query':
+                return observed(logs, name, dict(schema=operation.OBSERVATION, status='SUCCESS',
+                    intent_sha256=self.binding['intent_sha256'], plan_sha256=self.binding['plan_sha256']))
+            if name == '08-retained-parent-next-input':
+                self.assertEqual(arguments[0], 'infer')
+                return observed(logs, name, {'fixture': 'no model execution'})
+            self.assertEqual(name, '09-next-input-query')
+            self.assertEqual(arguments[0], 'query')
+            return observed(logs, name, self.complete_next_readback_fixture(), 7)
+
+        def native(logs, name, manifest, arguments, native_override=None):
+            commands.append(('native', arguments[0]))
+            self.binding['plan_sha256'] = runtime.file_sha(self.root / 'candidate-plan.json')
+            value = self.native_query_fixture()['data']
+            if arguments[0] == 'prepare':
+                value.update(status='PREPARED', dispatch_allowed=True)
+            return observed(logs, name, value)
+
+        with mock.patch.object(driver, 'setup', return_value=(self.root, self.manifest)), \
+                mock.patch.object(inherited, 'prepare_plan', return_value=dict(runtime=profile['runtime'], parent=self.parent)), \
+                mock.patch.object(driver, 'python_phase', side_effect=python), \
+                mock.patch.object(driver, 'native_phase', side_effect=native):
+            result = driver.start(SimpleNamespace())
+        self.assertEqual(result['stages']['next_query']['receipt']['exit_code'], 7)
+        self.assertEqual(result['stages']['next_query']['data']['status'], 'SUCCESS')
+        self.assertEqual(result['status'], 'NO_UPDATE_WITH_INCOMPLETE_DEVELOPMENT_EFFECTS')
+        self.assertIsNone(result['next_input']['expected_output_match'])
+        self.assertEqual(commands.count(('llm_inherited_operation.py', 'infer')), 1)
+        self.assertTrue(result['no_automatic_retry'])
+
 
 
 @unittest.skipUnless(sys.platform.startswith('linux') and hasattr(os, 'memfd_create'), 'Linux sealed ELF')

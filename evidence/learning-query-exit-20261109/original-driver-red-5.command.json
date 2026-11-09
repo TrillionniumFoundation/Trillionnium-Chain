@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_run_learning_service_development.DriverTests.test_query_requires_zero_native_exit_before_completed_no_update",
+    "test_run_learning_service_development.DriverTests.test_query_requires_zero_next_provider_exit_before_completed_no_update",
+    "test_run_learning_service_development.DriverTests.test_query_does_not_confirm_training_service_after_nonzero_provider_exit",
+    "test_run_learning_service_development.DriverTests.test_complete_comparison_cannot_hide_an_unconfirmed_candidate_query",
+    "test_run_learning_service_development.DriverTests.test_start_does_not_complete_after_next_query_prints_success_then_fails"
+  ],
+  "cwd": "/data/chain-learning-exit-70ae-20261109",
+  "exit_code": 1,
+  "expected_exit": 1,
+  "duration_ns": 1258941355,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "945c722eb3c3874c2db680780bef7dc31841abb28d953cf3684b7a6454a4300a"
+}
