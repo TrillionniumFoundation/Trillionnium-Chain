@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/bin/openssl",
+    "version",
+    "-a"
+  ],
+  "cwd": "/data/chain-learning-exit-70ae-20261109",
+  "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+  "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+  "exit_code": 0,
+  "valid": true,
+  "tool_timeout_seconds": 180,
+  "timed_out": false,
+  "duration_ns": 4300704,
+  "stdout_sha256": "a705fa2d34f811ffe4783a72b48b5aeb7b3d03d8ea0acc6a53ac7f68bcc57d7b",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "expected_tests": null,
+  "observed_test_counts": [],
+  "skipped": false
+}

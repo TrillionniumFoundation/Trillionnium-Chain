@@ -1,0 +1,16 @@
+test_actual_family_rejects_fabricated_backbone_even_with_rehashed_contract (__main__.ParentMaterialTests.test_actual_family_rejects_fabricated_backbone_even_with_rehashed_contract) ... ok
+test_all_three_independent_pins_are_required (__main__.ParentMaterialTests.test_all_three_independent_pins_are_required) ... ok
+test_complete_120_factor_file_and_explicit_cli_handoff (__main__.ParentMaterialTests.test_complete_120_factor_file_and_explicit_cli_handoff) ... ok
+test_duplicate_non_utf8_and_oversized_headers_refuse (__main__.ParentMaterialTests.test_duplicate_non_utf8_and_oversized_headers_refuse) ... ok
+test_matching_roots_cannot_substitute_model_targets_or_token_limits (__main__.ParentMaterialTests.test_matching_roots_cannot_substitute_model_targets_or_token_limits) ... ok
+test_missing_extra_dtype_shape_offsets_overlap_holes_and_trailing_refuse (__main__.ParentMaterialTests.test_missing_extra_dtype_shape_offsets_overlap_holes_and_trailing_refuse) ... ok
+test_real_cli_failure_never_echoes_input_or_creates_a_handoff (__main__.ParentMaterialTests.test_real_cli_failure_never_echoes_input_or_creates_a_handoff) ... ok
+test_rehashed_nan_and_infinite_factors_still_refuse (__main__.ParentMaterialTests.test_rehashed_nan_and_infinite_factors_still_refuse) ... ok
+test_shared_f32_parser_handles_complete_vector_matrix_material (__main__.ParentMaterialTests.test_shared_f32_parser_handles_complete_vector_matrix_material) ... ok
+test_symlink_fifo_and_oversized_regular_file_refuse (__main__.ParentMaterialTests.test_symlink_fifo_and_oversized_regular_file_refuse) ... ok
+test_unchanged_pin_rejects_corruption_and_swapped_factor_contents (__main__.ParentMaterialTests.test_unchanged_pin_rejects_corruption_and_swapped_factor_contents) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 1.238s
+
+OK

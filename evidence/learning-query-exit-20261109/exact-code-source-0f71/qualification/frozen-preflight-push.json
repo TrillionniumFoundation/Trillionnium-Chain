@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh",
+    "--push",
+    "origin",
+    "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git"
+  ],
+  "cwd": "/data/chain-learning-exit-70ae-20261109",
+  "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+  "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+  "exit_code": 0,
+  "valid": true,
+  "tool_timeout_seconds": 180,
+  "timed_out": false,
+  "duration_ns": 266643852,
+  "stdout_sha256": "f414ebb3f617e7e2e1f631feef7a72e805b4fe4c263375750da711dd3aa72733",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "expected_tests": null,
+  "observed_test_counts": [],
+  "skipped": false
+}
