@@ -446,6 +446,80 @@ fn public_growth_v1_real_listener_lost_ack_exact_query_reorg_and_cold_reopen() {
 }
 
 #[test]
+fn public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation() {
+    for already_stored in [false, true] {
+        let settings = settings("public-growth-current-activation-clock");
+        let directory = tempfile::tempdir().unwrap();
+        let mut node =
+            Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone())
+                .unwrap();
+        let mut parent = settings.genesis();
+        // The normal prefix makes a later low timestamp valid under the
+        // original median-time rule, even after one future-dated ancestor.
+        for height in 1..=4 {
+            let packet = make(&node, parent, height, vec![]);
+            parent = node.admit_growth(&packet, 100_000).unwrap();
+            node.activate_observed(parent, 100_000).unwrap();
+        }
+        let before = node.active().unwrap();
+        let clock = crate::ingress::now().unwrap();
+        let future = clock + settings.limit("future_skew_seconds").unwrap() + 3_600;
+        let future_packet = node
+            .make_growth_consensus_maintenance(
+                parent,
+                vec![],
+                crate::development_public(3).unwrap(),
+                future,
+                4096,
+            )
+            .unwrap();
+        let future_id = node.admit_growth(&future_packet, future).unwrap();
+        let packet = make(&node, future_id, 6, vec![]);
+        let id = packet.id().unwrap();
+        if already_stored {
+            assert_eq!(node.admit_growth(&packet, clock).unwrap(), id);
+        }
+        // Admission checks the new header against the original current clock
+        // and MTP. It cannot stand in for the complete activation-time walk.
+        assert_eq!(
+            node.precheck_growth_admission_with_progress(&packet, clock, &|_| Ok(()))
+                .unwrap(),
+            already_stored.then_some(id)
+        );
+        let owner = Arc::new(Mutex::new(node));
+        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let server = PublicServer::new(identity(92), policy)
+            .unwrap()
+            .with_native_growth()
+            .unwrap();
+        let mut run = Running::start(directory, owner, settings, server);
+        for _ in 0..2 {
+            let reply = run.call(&Request::GrowthSubmitV1 {
+                packet: hex::encode(packet.encode().unwrap()),
+            });
+            assert!(!reply.ok, "future ancestry activated: {}", reply.value);
+            assert!(
+                reply.value.to_string().contains("TIME_DEFERRED"),
+                "{}",
+                reply.value
+            );
+            let node = run.owner.as_ref().unwrap().lock().unwrap();
+            assert_eq!(node.active().unwrap(), before);
+            assert_eq!(
+                node.growth_packet(id).unwrap().encode().unwrap(),
+                packet.encode().unwrap()
+            );
+        }
+        let metrics = run.finish();
+        assert_eq!(metrics.work_started, u64::from(!already_stored));
+        assert!(metrics.mutation_cpu_charged_ns > 0);
+        assert_eq!(metrics.mutation_cpu_in_flight_after_shutdown, 0);
+        assert_eq!(metrics.paid_body_reserved_bytes_after_shutdown, 0);
+        assert_eq!(metrics.output_reserved_bytes_after_shutdown, 0);
+    }
+}
+
+#[test]
 fn public_growth_v1_wire_profile_namespace_and_free_lane_cannot_be_confused() {
     let settings = settings("public-growth-wire-v1");
     let mut run = Running::new(settings.clone());

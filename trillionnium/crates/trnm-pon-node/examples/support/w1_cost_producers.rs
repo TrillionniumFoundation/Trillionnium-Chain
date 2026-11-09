@@ -168,11 +168,61 @@ pub(crate) struct Search {
     pub(crate) attempts: Vec<Trial>,
     pub(crate) winner: Option<Winner>,
 }
+/// A begin observation must commit before native generation starts. Observer
+/// failures stop the search; an interrupted begin remains unfinished, not free.
+pub(crate) trait SearchObserver {
+    const MEASURE_ATTEMPTS: bool = true;
+    fn attempt_started(&mut self, _nonce: u64, _challenge: Hash) -> Result<()> {
+        Ok(())
+    }
+    fn attempt_finished(&mut self, _trial: &Trial, _timing: Timing) -> Result<()> {
+        Ok(())
+    }
+    fn attempt_failed(&mut self, _nonce: u64, _reason: &str, _timing: Timing) -> Result<()> {
+        Ok(())
+    }
+}
+// V4 uses the observed entry; V2/V3 retain this shared compatibility adapter.
+#[allow(dead_code)]
+struct NoObserver;
+impl SearchObserver for NoObserver {
+    const MEASURE_ATTEMPTS: bool = false;
+}
+
+#[allow(dead_code)] // Called by V2/V3, but not by the V4 diagnostic entry.
 pub(crate) fn search(
     producer: &Producer,
     target: Hash,
     limit: u64,
     challenge: impl Fn(u64) -> Hash,
+) -> Result<Search> {
+    search_observed(producer, target, limit, challenge, &mut NoObserver)
+}
+
+/// The retained search wrapper uses the identical loop and a no-op observer.
+/// Timing is local observation only and does not authenticate resource use.
+pub(crate) fn search_observed<O: SearchObserver>(
+    producer: &Producer,
+    target: Hash,
+    limit: u64,
+    challenge: impl Fn(u64) -> Hash,
+    observer: &mut O,
+) -> Result<Search> {
+    search_with_prover(
+        |context| producer.prove(context),
+        target,
+        limit,
+        challenge,
+        observer,
+    )
+}
+
+fn search_with_prover<O: SearchObserver>(
+    mut prove: impl FnMut(Hash) -> std::result::Result<Vec<u8>, WorkError>,
+    target: Hash,
+    limit: u64,
+    challenge: impl Fn(u64) -> Hash,
+    observer: &mut O,
 ) -> Result<Search> {
     let mut result = Search {
         attempts: Vec::new(),
@@ -180,23 +230,35 @@ pub(crate) fn search(
     };
     for nonce in 0..limit {
         let context = challenge(nonce);
-        let proof = producer
-            .prove(context)
-            .map_err(|e| format!("GENERATION:{e:?}"))?;
+        // No proof work may start unless the observer has accepted this begin.
+        observer.attempt_started(nonce, context)?;
+        // The historical no-op wrapper adds no per-attempt clock sampling.
+        let started = O::MEASURE_ATTEMPTS.then(Clock::start);
+        let proof = match prove(context) {
+            Ok(proof) => proof,
+            Err(error) => {
+                let reason = format!("GENERATION:{error:?}");
+                observer.attempt_failed(nonce, &reason, finish_attempt(started))?;
+                return Err(reason.into());
+            }
+        };
         if proof.len() != PROOF_BYTES {
+            observer.attempt_failed(nonce, "GENERATED_PROOF_LENGTH", finish_attempt(started))?;
             return Err("GENERATED_PROOF_LENGTH".into());
         }
         let trace = &proof[PROOF_BYTES - 32..];
         let ticket = pon_work::hash(b"ticket", &[&context, trace]);
         let hit = ticket <= target;
-        result.attempts.push(Trial {
+        let trial = Trial {
             nonce,
             challenge: hex::encode(context),
             trace: hex::encode(trace),
             ticket: hex::encode(ticket),
             proof_sha256: Some(sha(&proof)),
             target_hit: hit,
-        });
+        };
+        observer.attempt_finished(&trial, finish_attempt(started))?;
+        result.attempts.push(trial);
         if hit {
             result.winner = Some(Winner {
                 challenge: context,
@@ -206,4 +268,149 @@ pub(crate) fn search(
         }
     }
     Ok(result)
+}
+
+fn finish_attempt(started: Option<Clock>) -> Timing {
+    started.map_or(
+        Timing {
+            cpu_ns: None,
+            wall_ns: None,
+        },
+        Clock::finish,
+    )
+}
+
+#[cfg(test)]
+mod observed_search_tests {
+    use super::*;
+    use std::cell::Cell;
+
+    #[derive(Default)]
+    struct Observed {
+        events: Vec<String>,
+        refuse_start: bool,
+        refuse_finish: bool,
+    }
+    impl SearchObserver for Observed {
+        fn attempt_started(&mut self, nonce: u64, _: Hash) -> Result<()> {
+            self.events.push(format!("start:{nonce}"));
+            if self.refuse_start {
+                Err("OBSERVER_START_REFUSED".into())
+            } else {
+                Ok(())
+            }
+        }
+        fn attempt_finished(&mut self, trial: &Trial, _: Timing) -> Result<()> {
+            self.events.push(format!("finish:{}", trial.nonce));
+            if self.refuse_finish {
+                Err("OBSERVER_FINISH_REFUSED".into())
+            } else {
+                Ok(())
+            }
+        }
+        fn attempt_failed(&mut self, nonce: u64, reason: &str, _: Timing) -> Result<()> {
+            self.events.push(format!("error:{nonce}:{reason}"));
+            Ok(())
+        }
+    }
+
+    #[test]
+    fn observer_begin_refusal_precedes_native_generation() {
+        let calls = Cell::new(0);
+        let mut observer = Observed {
+            refuse_start: true,
+            ..Observed::default()
+        };
+        let result = search_with_prover(
+            |_| {
+                calls.set(calls.get() + 1);
+                Err(WorkError::Length)
+            },
+            [0; 32],
+            2,
+            |_| [7; 32],
+            &mut observer,
+        );
+        assert!(result.is_err());
+        assert_eq!(calls.get(), 0);
+        assert_eq!(observer.events, ["start:0"]);
+    }
+
+    #[test]
+    fn native_failure_retains_completed_attempt_and_failed_begin() {
+        let zero = vec![0; pon_work::CELLS];
+        let prepared = Producer::new(7, &zero, &zero).unwrap().unwrap();
+        let mut calls = 0;
+        let mut observer = Observed::default();
+        let result = search_with_prover(
+            |context| {
+                calls += 1;
+                if calls == 2 {
+                    Err(WorkError::NoiseBudget)
+                } else {
+                    prepared.prove(context)
+                }
+            },
+            [0; 32],
+            4,
+            |nonce| pon_work::hash(b"observer-failure-control-v4", &[&nonce.to_le_bytes()]),
+            &mut observer,
+        );
+        assert!(result.is_err());
+        assert_eq!(calls, 2);
+        assert_eq!(
+            observer.events,
+            [
+                "start:0",
+                "finish:0",
+                "start:1",
+                "error:1:GENERATION:NoiseBudget"
+            ]
+        );
+    }
+
+    #[test]
+    fn malformed_generated_proof_has_started_and_failed_record() {
+        let mut observer = Observed::default();
+        let result =
+            search_with_prover(|_| Ok(Vec::new()), [255; 32], 1, |_| [7; 32], &mut observer);
+        assert!(result.is_err());
+        assert_eq!(
+            observer.events,
+            ["start:0", "error:0:GENERATED_PROOF_LENGTH"]
+        );
+    }
+
+    #[test]
+    fn completion_observer_failure_never_starts_another_attempt() {
+        let zero = vec![0; pon_work::CELLS];
+        let prepared = Producer::new(7, &zero, &zero).unwrap().unwrap();
+        let mut observer = Observed {
+            refuse_finish: true,
+            ..Observed::default()
+        };
+        let result = search_observed(&prepared, [0; 32], 4, |_| [19; 32], &mut observer);
+        assert!(result.is_err());
+        assert_eq!(observer.events, ["start:0", "finish:0"]);
+    }
+
+    #[test]
+    fn complete_observed_stream_matches_retained_wrapper_byte_for_byte() {
+        let zero = vec![0; pon_work::CELLS];
+        let prepared = Producer::new(7, &zero, &zero).unwrap().unwrap();
+        for target in [[0; 32], [255; 32]] {
+            let challenges =
+                |nonce: u64| pon_work::hash(b"observer-stream-control-v4", &[&nonce.to_le_bytes()]);
+            let ordinary = search(&prepared, target, 3, challenges).unwrap();
+            let mut observer = Observed::default();
+            let observed =
+                search_observed(&prepared, target, 3, challenges, &mut observer).unwrap();
+            assert_eq!(ordinary.attempts, observed.attempts);
+            assert!(ordinary.winner == observed.winner);
+            assert_eq!(observer.events.len(), 2 * observed.attempts.len());
+            for (nonce, pair) in observer.events.chunks_exact(2).enumerate() {
+                assert_eq!(pair, [format!("start:{nonce}"), format!("finish:{nonce}")]);
+            }
+        }
+    }
 }
