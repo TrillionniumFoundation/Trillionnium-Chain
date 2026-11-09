@@ -13,7 +13,10 @@ use std::collections::BTreeMap;
 use std::fs;
 use std::os::unix::fs::{symlink, PermissionsExt};
 use std::rc::Rc;
-use std::sync::{atomic::AtomicBool, Arc, OnceLock};
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc, OnceLock,
+};
 use std::time::{Duration, Instant};
 use tempfile::TempDir;
 use trnm_crypto_primitives::pq_root_v3::{
@@ -233,6 +236,7 @@ struct ServiceState {
     calls: usize,
     cas_calls: usize,
     fault: Fault,
+    reset_cancellation: Option<Arc<AtomicBool>>,
 }
 #[derive(Clone)]
 struct Service {
@@ -266,6 +270,9 @@ impl RootAnchorTransportV3 for Service {
                 }
                 if state.fault == Fault::CancelAfterCas {
                     budget.cancel();
+                    if let Some(external) = &state.reset_cancellation {
+                        external.store(false, Ordering::Release);
+                    }
                 }
                 AnchorOutcomeV3::Advanced
             }
@@ -311,6 +318,7 @@ impl Harness {
                 calls: 0,
                 cas_calls: 0,
                 fault: Fault::None,
+                reset_cancellation: None,
             })),
         };
         Self {
@@ -719,12 +727,48 @@ fn native_owner_v3_same_budget_exhaustion_retains_pending_before_cas() {
 
 #[test]
 fn native_owner_v3_cancellation_after_external_commit_requires_reconciliation() {
+    let observed_signal = Arc::new(AtomicBool::new(false));
+    let until = Instant::now() + Duration::from_secs(120);
+    let observed_budget = OwnerBudgetV3::new(
+        VerificationBudgetV3::with_deadline(4096, until).unwrap(),
+        until,
+        observed_signal.clone(),
+    )
+    .unwrap();
+    observed_signal.store(true, Ordering::Release);
+    assert!(observed_budget.check().is_err());
+    observed_signal.store(false, Ordering::Release);
+    assert!(
+        observed_budget.check().is_err(),
+        "observed cancellation cannot be cleared through the retained external signal"
+    );
+
     let h = Harness::new();
     let mut owner = h.create();
-    h.service.state.borrow_mut().fault = Fault::CancelAfterCas;
+    let external = Arc::new(AtomicBool::new(false));
+    let until = Instant::now() + Duration::from_secs(120);
+    let mut original = OwnerBudgetV3::new(
+        VerificationBudgetV3::with_deadline(4096, until).unwrap(),
+        until,
+        external.clone(),
+    )
+    .unwrap();
+    {
+        let mut service = h.service.state.borrow_mut();
+        service.fault = Fault::CancelAfterCas;
+        service.reset_cancellation = Some(external.clone());
+    }
     assert!(owner
-        .apply(&normal(&state(), 13), 110, &mut owner_budget())
+        .apply(&normal(&state(), 13), 110, &mut original)
         .is_err());
+    assert!(
+        !external.load(Ordering::Acquire),
+        "fixture cleared only its retained external alias"
+    );
+    assert!(
+        original.check().is_err(),
+        "explicit cancellation remains latched after the callback clears its alias"
+    );
     assert_eq!(h.pending(), 1);
     assert_eq!(h.service.state.borrow().head.version, 1);
     drop(owner);

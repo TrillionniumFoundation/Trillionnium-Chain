@@ -133,7 +133,9 @@ discard; availability recovery for that case is unimplemented. Reopening also
 refuses an unresolved predecessor.
 
 Callbacks retain the original `OwnerBudgetV3` identity, cancellation and absolute
-deadline. Replacement during writer/transport callbacks is detected. Crypto
+deadline. Replacement during writer/transport callbacks is detected. Explicit cancellation and observed external signals latch permanently;
+clearing a retained external alias cannot restore permission. A transient signal
+that is set and cleared entirely between observations is not detectable. Crypto
 charges old approvals, six possession proofs and signed replay; nested calls do
 not obtain a new allowance. The default crypto deadline is 60 seconds; the
 explicit deadline constructor is caller-configurable. Neither establishes

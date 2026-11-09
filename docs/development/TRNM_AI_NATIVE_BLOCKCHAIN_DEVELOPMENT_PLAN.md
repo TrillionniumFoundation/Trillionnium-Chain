@@ -8517,3 +8517,13 @@ and shared primitive accounting. Exact-source records distinguish native
 component results, source integrity and original gate failures. No successful
 stub, silent algorithm fallback, claimed independent custody, full composition
 proof or production activation is authorized.
+
+The first frozen V3 campaign at `1f7ff4106f14e5b514d95a9faf2c5eea1233aea5`
+retains 29/35 successful commands and unchanged complete source bytes. Record
+the old authority export-pin refusal, explicit ENOSPC native build failures and
+unset OpenSSL-prefix V2 refusals separately from passing component observations.
+Review the one-line crypto export against all 44 old authority pins and retain
+its seven-route scope; do not label V3 owners as covered by that register. Add
+an irreversible owner cancellation latch so explicit or observed cancellation
+cannot be cleared through the external flag alias. Re-freeze exactly those two
+V3 source pins and run the corrected candidate with the declared native prefix.

@@ -63,13 +63,33 @@ fn digest(domain: &[u8], parts: &[&[u8]]) -> DigestV3 {
     hash.finalize().into()
 }
 
-/// One original verification quota, cancellation flag and absolute deadline.
+/// The caller may retain the external signal, but cannot clear cancellation
+/// after an owner check or SQLite progress callback observes it. This private
+/// shared latch also makes an explicit `OwnerBudgetV3::cancel` irreversible.
+struct CancellationV3 {
+    external: Arc<AtomicBool>,
+    latched: AtomicBool,
+}
+impl CancellationV3 {
+    fn load(&self, ordering: Ordering) -> bool {
+        if self.external.load(ordering) {
+            self.latched.store(true, Ordering::Release);
+        }
+        self.latched.load(ordering)
+    }
+    fn cancel(&self) {
+        self.latched.store(true, Ordering::Release);
+        self.external.store(true, Ordering::Release);
+    }
+}
+
+/// One original verification quota, monotone cancellation and absolute deadline.
 /// Signature verification is in-process and checked before/after each batch;
 /// this does not claim preemption inside a single cryptographic primitive.
 pub struct OwnerBudgetV3 {
     verification: VerificationBudgetV3,
     deadline: Instant,
-    cancelled: Arc<AtomicBool>,
+    cancelled: Arc<CancellationV3>,
     identity: Arc<()>,
 }
 impl OwnerBudgetV3 {
@@ -81,7 +101,10 @@ impl OwnerBudgetV3 {
         let value = Self {
             verification,
             deadline,
-            cancelled,
+            cancelled: Arc::new(CancellationV3 {
+                external: cancelled,
+                latched: AtomicBool::new(false),
+            }),
             identity: Arc::new(()),
         };
         value.check()?;
@@ -108,7 +131,7 @@ impl OwnerBudgetV3 {
     }
     /// Cancellation only tightens the original operation budget.
     pub fn cancel(&self) {
-        self.cancelled.store(true, Ordering::Release);
+        self.cancelled.cancel();
     }
     fn check_identity(&self, expected: &Arc<()>) -> RootOwnerResultV3<()> {
         require(
