@@ -10606,3 +10606,31 @@ The composed F2 source at 0101b0ce76239832e0b2d19d0fd3f07e40fabeb4 remains prese
 The [current composition entry](../../evidence/chain-six-full-20261108/CURRENT_PQ_COMPOSITION.md) retains the original 29 commands, arguments, order, 1200-second per-command limits and complete source gates. It separately fixes the reviewed 55-name roster and test-source hash. Its nine retained-log mutation controls reject missing, duplicate, skipped, stale or falsely reported execution. Historical runner, tests, refusals and raw logs remain unmodified; the F2 log is parser-control input, never a fresh execution result.
 
 The retained credit-envelope workflow now invokes its unchanged 43-test source-integrity command with Python unbuffered output. Actual original tests succeeded in both observations, while only the unbuffered stream satisfied the unchanged terminal-OK parser; no test, parser, pipefail rule or other suite was relaxed. Native Rust and configuration inputs remain byte-identical to F2. New complete campaigns must identify this new frozen source and their actual outcomes; all broader qualification and production-activation flags remain HOLD / false.
+
+### 2026-11-08 — Preserve Hepta execution, learning scope and service outcomes
+
+Continue the exact #821 source `e798d7125724d4b9f98c24d00cc80031f2eab4a9`
+under the [Hepta operating-boundary contract](specs/pon/HEPTA_OPERATING_BOUNDARIES_V1.md).
+Add native factor-preserving production to the original grouped relation, with
+checked factor validation, the unchanged independent verifier, separate actual
+preparation/execution counts and no new work credit. Preserve merged, sparse,
+shared and repeated-input legal strategies rather than requiring dense expansion.
+
+Pair this with an explicitly scoped continuation of Hepta #5393: freeze Cell or
+organ update scope before dispatch and in cold recovery, and refuse base release
+at that medium-rate entry. Existing fast runtime ownership remains local; slow
+consensus/work-profile activation is not a learning-result permission. Historical
+unscoped checkpoints keep their original meaning.
+
+Keep service fees, improvement bonuses and consensus credit separate. Harden
+the actual native V2 payment readback against a stale persisted anchor and an
+intervening SQLite journal append while preserving historical `NoGain` payment,
+original operation identity and once-only execution. Independent `NoUpdate`
+qualification remains stronger than the low-level `NoGain` outcome.
+
+The continuation requires a single fixed Chain source for its native, protocol,
+source-integrity and lint controls, plus a separately fixed Hepta source for its
+scoped-learning controls. Record the original payment counterexamples and all
+failed attempts. These engineering properties do not close cheapest legal work,
+joint consensus security, external payment, independent model benefit, WAN or
+whole-state recovery obligations. Production qualification stays **HOLD_NO_GO**.
