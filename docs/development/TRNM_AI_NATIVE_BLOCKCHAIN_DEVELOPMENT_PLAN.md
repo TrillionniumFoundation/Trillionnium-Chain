@@ -11170,3 +11170,43 @@ substitutes for deployment, actual funding or the ordinary next-task consumer.
 Run fresh source/reader controls on the final committed candidate; collect exact
 binary and environment identities for each later native run. Keep null unknowns,
 failed and interrupted observations, DENY_ALL, HOLD_NO_GO and production false.
+
+
+The first fixed execution source (M4) was
+`e4e4a8e049915ba09d9e97444b4709ce8769ce81` (tree
+`c82829c3a5710960081d91930cf425f9a768e9e4`). The complete CI contract
+passed 176 tests after retaining and correcting the preceding M3 literal-list
+failure. On the fixed M4 bytes, scope/campaign-reader/profile/corpus controls
+passed 11/23/26/59 tests; the latter kept its complete test roster. The final
+reader snapshot covers 1,380 unchanged inputs. Default and all-feature locked
+Cargo metadata, rustfmt and the 1,571-entry native inventory were also checked.
+None of these source checks is a native service, ordinary daemon or PQ theorem.
+
+The [retained closure packet](../../evidence/chain-hepta-closure-20261109-481716/README.md)
+contains the versioned source identities, the unconfigured native qualification plan,
+original campaign accounting, failed/interrupted attempts, the production daemon
+assembly gaps, and the all-strategy/DAA/network research obligations. It records
+subsequent compilation and publication separately. The old 0746 campaign remains
+0/3 passing; binary/model/loader/evaluator and all operational closure fields
+remain unobserved until their actual owner runs provide evidence.
+
+M4 also passed locked, offline all-feature workspace library check and strict
+Clippy on ROG with Rust 1.95.0. Its first retained-library run completed crypto
+(196) and data availability (714), then exhausted its engineering window during
+node tests after a 7m45s cold test build. A corrected record withdraws the
+runner's mistaken attribution of nested subprocess summaries to other libraries.
+The cached repetition failed one data-availability closure assertion (713 pass,
+one fail); neither run qualifies all five retained libraries.
+
+The follow-on source changes only the sealed-loader test probe: capture the
+original descriptor's device/inode identity while its File is live, then reject
+that identity if it remains in the original slot. An unrelated object reusing
+the integer slot is not an open original descriptor. A live-file negative control
+must panic at this exact identity assertion. Hash, cancellation, deadline,
+selection and no-partial-bundle assertions remain intact; the production loader
+is byte-identical to M4. Static review did not establish whether the observed
+failure was descriptor reuse or a leak, and this probe does not prove absence of
+all duplicated descriptors or mappings. Freeze this follow-on source before
+rerunning the full data-availability library and the other four retained owner
+libraries. Keep all M4 failures, timeouts and counting corrections separately;
+the original Host, campaign and deployment thresholds remain unchanged.

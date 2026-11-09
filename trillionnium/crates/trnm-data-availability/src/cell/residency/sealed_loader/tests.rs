@@ -1,7 +1,7 @@
 use std::{
     cell::RefCell,
     fs,
-    os::fd::AsRawFd,
+    os::{fd::AsRawFd, unix::fs::MetadataExt},
     process::{Command, Stdio},
     rc::Rc,
     sync::{atomic::Ordering, Arc},
@@ -459,13 +459,45 @@ fn complete_snapshot_limits_and_owner_pins_reject_before_copying() {
     assert_eq!(*visits.borrow(), 0);
 }
 
-fn assert_closed(fds: &[i32]) {
-    assert!(!fds.is_empty());
-    for fd in fds {
-        assert!(
-            matches!(fs::read_link(format!("/proc/self/fd/{fd}")), Err(error) if error.kind() == io::ErrorKind::NotFound)
-        );
+#[derive(Debug)]
+struct ObservedFd {
+    fd: i32,
+    device: u64,
+    inode: u64,
+}
+
+fn observe_fd(file: &File) -> ObservedFd {
+    let metadata = file.metadata().unwrap();
+    ObservedFd {
+        fd: file.as_raw_fd(),
+        device: metadata.dev(),
+        inode: metadata.ino(),
     }
+}
+
+fn assert_closed(fds: &[ObservedFd]) {
+    assert!(!fds.is_empty());
+    for observed in fds {
+        // File descriptor numbers are process-wide and can already belong to
+        // another parallel test after close. Reject the original live object,
+        // rather than requiring the integer slot to remain unused.
+        match fs::metadata(format!("/proc/self/fd/{}", observed.fd)) {
+            Ok(current) => assert_ne!(
+                (current.dev(), current.ino()),
+                (observed.device, observed.inode),
+                "original loader descriptor is still open: {}",
+                observed.fd,
+            ),
+            Err(error) => assert_eq!(error.kind(), io::ErrorKind::NotFound),
+        }
+    }
+}
+
+#[test]
+#[should_panic(expected = "original loader descriptor is still open")]
+fn closure_probe_rejects_a_live_original_descriptor() {
+    let file = tempfile::tempfile().unwrap();
+    assert_closed(&[observe_fd(&file)]);
 }
 
 #[test]
@@ -477,7 +509,7 @@ fn copied_byte_corruption_is_rejected_by_postseal_full_hash_without_partial_bund
     let outcome = with_hook(
         Box::new(move |index, stage, file| {
             if stage == Stage::BeforeSeal {
-                observed.borrow_mut().push(file.as_raw_fd());
+                observed.borrow_mut().push(observe_fd(file));
                 if index == 1 {
                     file.write_all_at(b"!", 0).unwrap();
                 }
@@ -514,7 +546,7 @@ fn cancellation_after_one_sealed_file_closes_all_unpublished_descriptors() {
     let outcome = with_hook(
         Box::new(move |_, stage, file| {
             if stage == Stage::Verified {
-                observed.borrow_mut().push(file.as_raw_fd());
+                observed.borrow_mut().push(observe_fd(file));
                 signal.store(true, Ordering::Release);
             }
         }),
@@ -545,7 +577,7 @@ fn one_original_deadline_covers_late_member_readback() {
     let outcome = with_hook(
         Box::new(move |index, stage, file| {
             if stage == Stage::BeforeSeal {
-                observed.borrow_mut().push(file.as_raw_fd());
+                observed.borrow_mut().push(observe_fd(file));
             }
             if index == 1 && stage == Stage::Verified {
                 std::thread::sleep(
