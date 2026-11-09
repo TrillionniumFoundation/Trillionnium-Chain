@@ -1,0 +1,354 @@
+name: W1 current selected-source mapping
+# This independent observation lane does not replace either historical QROM lane.
+on:
+  pull_request:
+    paths:
+      - scripts/w1_*.py
+      - scripts/ci/**
+      - scripts/project-preflight.sh
+      - formal/pon-nakamoto-v1/**
+      - config/pon/**
+      - evidence/pon-w1-*/**
+      - trillionnium/**
+      - docs/security/W1_*.md
+      - .github/workflows/pon-w1-current-source-mapping.yml
+      - PROJECT_ID
+      - PROJECT_BOUNDARY.json
+      - AGENTS.md
+permissions:
+  contents: read
+concurrency:
+  group: w1-current-source-mapping-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
+jobs:
+  current-mapping:
+    name: W1 current mapping (${{ matrix.source }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [head, prospective-merge]
+    env:
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - name: Reserve fresh observations
+        id: observations
+        shell: bash
+        run: |
+          set -euo pipefail
+          w1_map_out="$RUNNER_TEMP/w1-current-source-mapping-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$w1_map_out"
+          printf 'W1_MAP_OUT=%s\n' "$w1_map_out" >> "$GITHUB_ENV"
+          python3 --version > "$w1_map_out/python-version.txt" 2>&1
+      - name: Checkout immutable event source
+        id: checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify all tracked source before execution
+        id: source_before
+        if: always() && steps.observations.outcome == 'success' && steps.checkout.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_MAP_OUT/source-before.json" 2>&1 | tee "$W1_MAP_OUT/source-before.log"
+      - name: Audit project boundary
+        id: preflight
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$W1_MAP_OUT/preflight.log"
+      - name: Execute all 20 observer and 14 mapping controls
+        id: controls
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - "$W1_MAP_OUT" <<'PY' 2>&1 | tee "$W1_MAP_OUT/controls.log"
+          from collections import Counter
+          import hashlib
+          import importlib
+          import json
+          from pathlib import Path
+          import sys
+          import traceback
+          import unittest
+
+          out = Path(sys.argv[1])
+          required = {
+              "test_w1_current_source_observation": [
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_actual_reviewed_bytes_keep_both_actual_old_refusals_and_all_hold_flags",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_changed_current_source_is_rejected_before_old_guard_can_run",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_changed_source_during_original_observation_is_refused",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_duplicate_and_nonfinite_json_are_refused",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_missing_current_source_is_failure_not_an_expected_historical_refusal",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_original_guard_unexpected_success_is_refused",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_original_implementation_contract_cannot_be_rehashed_or_promoted",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_original_ledger_owner_cannot_be_edited_to_pass",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_qualification_flag_cannot_be_promoted_in_profile",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_real_cli_binds_selected_git_blobs_but_never_claims_whole_repository",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_real_cli_does_not_overwrite_an_existing_observation",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_real_cli_fifo_refuses_promptly_after_regular_fixture_succeeds",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_real_cli_refuses_forged_current_head_without_receipt",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_real_cli_refuses_reviewed_worktree_over_a_different_commit_blob",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_real_cli_refuses_untracked_reviewed_source_missing_from_commit",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_returned_qualification_does_not_mutate_next_observation",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_same_content_ancestor_symlink_is_refused",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_same_content_source_symlink_is_refused",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_unrelated_original_guard_failure_cannot_be_labelled_source_drift",
+                  "test_w1_current_source_observation.CurrentSourceObservationTests.test_unreviewed_revision_or_changed_path_profile_cannot_self_certify"
+              ],
+              "test_w1_current_source_mapping": [
+                  "test_w1_current_source_mapping.CurrentSourceMappingTests.test_actual_mapping_reaches_retained_artifacts_and_upstream_with_security_hold",
+                  "test_w1_current_source_mapping.CurrentSourceMappingTests.test_artifact_change_during_reconstruction_is_rejected_at_final_readback",
+                  "test_w1_current_source_mapping.CurrentSourceMappingTests.test_both_original_guard_refusals_and_unfinished_rosters_are_preserved",
+                  "test_w1_current_source_mapping.CurrentSourceMappingTests.test_current_source_mutation_refused_before_saved_artifact_read",
+                  "test_w1_current_source_mapping.CurrentSourceMappingTests.test_every_retained_artifact_and_snapshot_byte_pin_is_required",
+                  "test_w1_current_source_mapping.CurrentSourceMappingTests.test_missing_snapshot_is_failure_not_historical_source_refusal",
+                  "test_w1_current_source_mapping.CurrentSourceMappingTests.test_observer_bytes_are_pinned_before_helper_execution",
+                  "test_w1_current_source_mapping.CurrentSourceMappingTests.test_original_owner_and_contract_cannot_be_rebased_to_make_old_guards_pass",
+                  "test_w1_current_source_mapping.CurrentSourceMappingTests.test_real_cli_binds_all_48_inputs_and_executed_mapper_to_commit",
+                  "test_w1_current_source_mapping.CurrentSourceMappingTests.test_real_cli_output_is_create_only_and_cannot_change_source",
+                  "test_w1_current_source_mapping.CurrentSourceMappingTests.test_real_cli_refuses_retained_artifact_restored_over_different_commit_bytes",
+                  "test_w1_current_source_mapping.CurrentSourceMappingTests.test_real_cli_refuses_untracked_artifact_and_forged_expected_head",
+                  "test_w1_current_source_mapping.CurrentSourceMappingTests.test_retained_artifact_symlink_and_fifo_are_refused_without_blocking",
+                  "test_w1_current_source_mapping.CurrentSourceMappingTests.test_returned_qualification_cannot_mutate_next_observation"
+              ]
+          }
+          roster_sha = hashlib.sha256(json.dumps(required, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+          if roster_sha != '3d7e38bc20e41872ad7b91657fd6a43f13d5208d29e587768ddf6a3cbff1f543':
+              raise ValueError('fixed named roster identity changed')
+          sys.path.insert(0, str(Path('scripts/ci').resolve()))
+
+          def identities(suite):
+              for test in suite:
+                  if isinstance(test, unittest.TestSuite):
+                      yield from identities(test)
+                  else:
+                      yield test.id()
+
+          class RecordingResult(unittest.TextTestResult):
+              def __init__(self, *args, **kwargs):
+                  super().__init__(*args, **kwargs)
+                  self.started = []
+                  self.successful = []
+              def startTest(self, test):
+                  self.started.append(test.id())
+                  super().startTest(test)
+              def addSuccess(self, test):
+                  self.successful.append(test.id())
+                  super().addSuccess(test)
+
+          record = {'schema': 'TRNM-W1-CURRENT-MAPPING-CONTROLS1',
+                    'roster_sha256': roster_sha, 'required_tests': required,
+                    'suites': [], 'new_complete_proofs_generated': 0}
+          for module, names in required.items():
+              row = {'module': module, 'registered': [], 'started': [], 'successful': [],
+                     'tests_run': 0, 'skipped': [], 'failures': [], 'errors': [],
+                     'expected_failures': [], 'unexpected_successes': [], 'exception': None}
+              try:
+                  row['source_sha256'] = hashlib.sha256(Path('scripts/ci', module + '.py').read_bytes()).hexdigest()
+                  suite = unittest.defaultTestLoader.loadTestsFromModule(importlib.import_module(module))
+                  row['registered'] = list(identities(suite))
+                  if not names or Counter(row['registered']) != Counter(names):
+                      raise ValueError('missing, duplicate or unexpected registered test identity')
+                  result = unittest.TextTestRunner(verbosity=2, resultclass=RecordingResult).run(suite)
+                  row.update(started=result.started, successful=result.successful, tests_run=result.testsRun,
+                             skipped=[test.id() for test, reason in result.skipped],
+                             failures=[test.id() for test, detail in result.failures],
+                             errors=[test.id() for test, detail in result.errors],
+                             expected_failures=[test.id() for test, detail in result.expectedFailures],
+                             unexpected_successes=[test.id() for test in result.unexpectedSuccesses])
+              except Exception:
+                  row['exception'] = traceback.format_exc()
+              record['suites'].append(row)
+              (out / 'named-controls.json').write_text(json.dumps(record, indent=2, sort_keys=True) + '\n')
+          bad = []
+          for row in record['suites']:
+              names = required[row['module']]
+              if (row['exception'] is not None or row['tests_run'] != len(names)
+                      or any(Counter(row[key]) != Counter(names) for key in ('registered', 'started', 'successful'))
+                      or any(row[key] for key in ('skipped', 'failures', 'errors', 'expected_failures', 'unexpected_successes'))):
+                  bad.append(row['module'])
+          if bad or len(record['suites']) != 2:
+              raise SystemExit('Incomplete current mapping controls: ' + ', '.join(bad))
+          print('All 20 original observer and 14 current mapping named controls completed successfully.')
+          PY
+      - name: Reconstruct current mapping on exact event commit
+        id: mapping
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/w1_current_source_mapping.py --root "$GITHUB_WORKSPACE" --expected-head "$EXPECTED_SOURCE" --output "$W1_MAP_OUT/current-mapping.json" 2>&1 | tee "$W1_MAP_OUT/mapping.log"
+      - name: Verify all tracked source after execution
+        id: source_after
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_MAP_OUT/source-after.json" 2>&1 | tee "$W1_MAP_OUT/source-after.log"
+          cmp "$W1_MAP_OUT/source-before.json" "$W1_MAP_OUT/source-after.json"
+      - name: Require every stage and all named successes without promoting claims
+        id: complete
+        if: always()
+        env:
+          STEP_RECORDS: ${{ toJSON(steps) }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          w1_map_out="$RUNNER_TEMP/w1-current-source-mapping-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir -p "$w1_map_out"
+          python3 - "$w1_map_out" <<'PY' 2>&1 | tee "$w1_map_out/completion.log"
+          from collections import Counter
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import sys
+
+          out = Path(sys.argv[1])
+          steps = json.loads(os.environ['STEP_RECORDS'])
+          required_stages = ('observations', 'checkout', 'source_before', 'preflight',
+                             'controls', 'mapping', 'source_after')
+          incomplete = [name for name in required_stages if any(
+              steps.get(name, {}).get(field) != 'success' for field in ('outcome', 'conclusion'))]
+          qualifications = {'post_quantum_soundness_qualified': False,
+              'complete_w1_soundness_qualified': False, 'quantum_work_qualified': False,
+              'lifetime_bound_established': False, 'production_qualified': False,
+              'consensus_admission': False, 'security_bits_quantum': None}
+
+          def require(condition, message):
+              if not condition:
+                  raise ValueError(message)
+
+          def unique(pairs):
+              value = {}
+              for key, item in pairs:
+                  require(key not in value, 'duplicate JSON key')
+                  value[key] = item
+              return value
+
+          def read(name):
+              raw = (out / name).read_bytes()
+              require(len(raw) <= 2 * 1024 * 1024, 'oversized observation')
+              def constant(value):
+                  raise ValueError('nonfinite JSON value')
+              return json.loads(raw, object_pairs_hook=unique, parse_constant=constant)
+
+          error = None
+          successful = 0
+          try:
+              before, after = read('source-before.json'), read('source-after.json')
+              require(before == after and before.get('tested_commit') == os.environ['EXPECTED_SOURCE']
+                      and before.get('tracked_worktree_verified') is True, 'exact tracked source changed')
+              boundary = read('preflight.log')
+              require(boundary.get('result') == 'PASS' and boundary.get('mode') == '--audit'
+                      and boundary.get('project') == 'trillionnium-chain'
+                      and boundary.get('remote_policy_mutated') is False, 'project boundary did not complete')
+              actual = read('named-controls.json')
+              require(actual.get('schema') == 'TRNM-W1-CURRENT-MAPPING-CONTROLS1', 'control schema')
+              names = actual['required_tests']
+              require(type(names) is dict and {module: len(tests) for module, tests in names.items()} == {
+                  'test_w1_current_source_observation': 20, 'test_w1_current_source_mapping': 14},
+                  'named roster size or modules changed')
+              require(hashlib.sha256(json.dumps(names, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+                      == actual.get('roster_sha256') == '3d7e38bc20e41872ad7b91657fd6a43f13d5208d29e587768ddf6a3cbff1f543',
+                      'independent named roster identity')
+              rows = actual['suites']
+              require(type(rows) is list and len(rows) == 2
+                      and Counter(row['module'] for row in rows) == Counter(names.keys()), 'suite completion')
+              for row in rows:
+                  expected = names[row['module']]
+                  require(row['exception'] is None and type(row['tests_run']) is int
+                          and row['tests_run'] == len(expected), 'test count or exception')
+                  require(row['source_sha256'] == hashlib.sha256(
+                      Path('scripts/ci', row['module'] + '.py').read_bytes()).hexdigest(), 'test source identity')
+                  for field in ('registered', 'started', 'successful'):
+                      require(type(row[field]) is list and Counter(row[field]) == Counter(expected),
+                              'missing or duplicate named control: ' + field)
+                  for field in ('skipped', 'failures', 'errors', 'expected_failures', 'unexpected_successes'):
+                      require(row[field] == [], 'unsuccessful named control: ' + field)
+                  successful += len(expected)
+              require(successful == 34, 'empty or partial test execution')
+              mapping = read('current-mapping.json')
+              require(mapping.get('schema') == 'TRNM-W1-QROM-CURRENT-SOURCE-MAPPING1'
+                      and mapping.get('result') == 'CURRENT_SELECTED_MAPPING_RECONSTRUCTED_HOLD'
+                      and mapping.get('observed_current_commit') == os.environ['EXPECTED_SOURCE'],
+                      'current mapping identity')
+              require(mapping.get('selected_checked_bytes_match_commit') is True
+                      and mapping.get('selected_inputs_unchanged') is True
+                      and len(mapping['selected_commit_blob_ids']) == 49
+                      and len(mapping['checked_input_files']) == 48
+                      and len(mapping['upstream_selected_sources']) == 24
+                      and mapping.get('current_saved_artifact_and_upstream_mapping_reconstructed') is True,
+                      'incomplete selected source, asset or upstream mapping')
+              require(type(mapping['new_complete_proofs_generated']) is int
+                      and mapping['new_complete_proofs_generated'] == 0
+                      and type(actual['new_complete_proofs_generated']) is int
+                      and actual['new_complete_proofs_generated'] == 0, 'this lane generated no new proof')
+              for field in ('historical_named_test_rosters_completed', 'historical_workflows_passed',
+                            'fresh_cryptographic_verification', 'current_binary_executed',
+                            'whole_repository_source_verified', 'dependency_closure_complete',
+                            'provenance_authenticated'):
+                  require(mapping[field] is False, 'historical or qualification scope promoted: ' + field)
+              require(set(mapping['qualification']) == set(qualifications) and all(
+                      mapping['qualification'][key] is value for key, value in qualifications.items())
+                      and mapping['security_disposition'] == 'HOLD_NO_GO', 'qualification changed')
+              original = mapping['original_source_observation']
+              guards = original['original_guard_observations']
+              expected_refusals = {
+                  'lifetime': 'source identity mismatch: trillionnium/crates/trnm-pon-node/src/store.rs',
+                  'implementation': 'input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs'}
+              require(set(guards) == set(expected_refusals) and all(
+                  guards[key]['source_scope_passed'] is False and guards[key]['reason'] == reason
+                  for key, reason in expected_refusals.items()), 'historical guard refusal changed')
+              require(original['original_named_test_rosters_completed'] is False
+                      and original['original_workflows_passed'] is False, 'historical CI success falsely claimed')
+              require(mapping['original_unknown_lifetime_arithmetic']['sum_of_group_adversary_query_envelopes'] is None
+                      and mapping['original_unknown_lifetime_arithmetic']['conditional_union']['project_total_error_upper'] is None,
+                      'unknown lifetime bound promoted')
+          except (OSError, ValueError, TypeError, KeyError) as failure:
+              error = str(failure)
+          passed = not incomplete and error is None
+          status = {'schema': 'TRNM-W1-CURRENT-SOURCE-MAPPING-HOSTED1',
+                    'source_kind': os.environ['SOURCE_KIND'], 'expected_source': os.environ['EXPECTED_SOURCE'],
+                    'steps': steps, 'required_stages': required_stages, 'failed_or_skipped_stages': incomplete,
+                    'completion_error': error, 'actual_successful_tests': successful,
+                    'all_current_mapping_observations_passed': passed,
+                    'historical_workflows_passed': False, 'historical_named_test_rosters_completed': False,
+                    'new_complete_proofs_generated': 0, 'fresh_cryptographic_verification': False,
+                    'current_binary_executed': False, 'qualification': qualifications,
+                    'security_disposition': 'HOLD_NO_GO'}
+          with (out / 'ci-status.json').open('x') as stream:
+              json.dump(status, stream, indent=2, sort_keys=True)
+              stream.write('\n')
+          if not passed:
+              raise SystemExit('Required stages incomplete: ' + ', '.join(incomplete) + '; ' + str(error))
+          print('34 named controls and current selected mapping passed; historical workflows remain unpassed and security remains HOLD.')
+          PY
+      - name: Retain all current mapping observations and failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w1-current-source-mapping-${{ matrix.source }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/w1-current-source-mapping-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30
