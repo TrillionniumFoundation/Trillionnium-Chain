@@ -868,15 +868,20 @@ impl NativeTaskOperationStoreV2 {
         owner: &mut impl NativeTaskOperationOwnerV2,
         claim: Hash,
     ) -> Result<NativePaymentReadbackV1> {
-        let prior = self.snapshot(claim)?;
-        let historical = prior.payment.as_ref().ok_or(NativeBudgetErrorV1::Invalid(
+        let (mut state, _, _) = checked_snapshot(&self.connection, &self.configuration, None)?;
+        let prior = state.claim(claim)?;
+        let historical = prior.payment.clone().ok_or(NativeBudgetErrorV1::Invalid(
             "TASK_OPERATION_PAYMENT_REQUIRED_V2",
         ))?;
-        let observed = owner.observe_payment(&payment_query(&prior, historical.operation)?)?;
-        anchor_context(observed.anchor, &self.configuration)?;
+        let observed = owner.observe_payment(&payment_query(prior, historical.operation)?)?;
+        // Current payment readback must respect the whole retained journal's
+        // latest owner epoch, including advances recorded by other claims. At
+        // one generation the complete anchor must agree; a historical payment
+        // cannot make a rewound or conflicting owner snapshot current again.
+        // This disposable state check never rewrites payment or journal history.
+        state.observe(observed.anchor, &self.configuration)?;
         require(
-            observed.anchor.generation >= historical.anchor.generation
-                && observed.source == historical.source
+            observed.source == historical.source
                 && observed.subject == historical.subject
                 && observed.beneficiary == historical.beneficiary
                 && observed.operation == historical.operation
@@ -885,7 +890,7 @@ impl NativeTaskOperationStoreV2 {
             "TASK_OPERATION_PAYMENT_V2",
         )?;
         Ok(NativePaymentReadbackV1 {
-            historical: historical.clone(),
+            historical,
             observed,
         })
     }
