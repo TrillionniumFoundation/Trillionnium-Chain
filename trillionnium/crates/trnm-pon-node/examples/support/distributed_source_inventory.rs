@@ -4362,6 +4362,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/examples/pon_w1_lifecycle_cost_v4.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/pon_w1_lifecycle_cost_v4.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/examples/pon_w1_preparation_strategy_v4.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

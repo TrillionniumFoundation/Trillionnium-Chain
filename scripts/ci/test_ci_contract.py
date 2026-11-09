@@ -346,6 +346,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             'scripts/ci/test_read_validated_business_goodput.py',
             'scripts/ci/test_pon_w1_reused_cost_reader_v3.py',
             'scripts/ci/test_run_w1_reused_cost_v3.py',
+            'scripts/ci/test_w1_lifecycle_cost_v4.py',
             'scripts/ci/test_pon_public_v3_policy_read.py',
             'scripts/ci/test_llm_cell_handoff_deadline.py',
             'scripts/test_llm_runtime_rss_owner.py',
@@ -558,6 +559,18 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                                        '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command))]:
                 with self.subTest(command=name, change=label), self.assertRaisesRegex(ValueError, 'demand evidence'):
                     check_independent_conformance(changed, self.lanes)
+
+    def test_native_lifecycle_cost_controls_cannot_be_omitted_duplicated_moved_or_swallowed(self):
+        command = '    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_lifecycle_cost_v4\n'
+        self.assertEqual(self.script.count(command), 1)
+        for label, changed in [('omitted', self.script.replace(command, '')),
+                               ('duplicated', self.script.replace(command, command * 2)),
+                               ('swallowed', self.script.replace(command, command.rstrip() + ' || true\n')),
+                               ('commented', self.script.replace(command, '    # ' + command.lstrip())),
+                               ('moved', self.script.replace(command, '').replace(
+                                   '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command))]:
+            with self.subTest(change=label), self.assertRaisesRegex(ValueError, 'native lifecycle cost'):
+                check_independent_conformance(changed, self.lanes)
 
     def test_native_demand_controls_cannot_be_omitted_duplicated_moved_or_swallowed(self):
         from check_ci_contract import NATIVE_DEMAND_CONTRACTS

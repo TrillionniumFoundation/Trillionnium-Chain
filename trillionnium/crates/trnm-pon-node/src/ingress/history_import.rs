@@ -29,7 +29,11 @@ impl Control<'_> {
     }
     fn check(&self) -> Result<()> {
         self.alive()?;
-        (self.resource)()
+        (self.resource)()?;
+        // A fresh Host/resource observation can itself outlive the caller's
+        // original absolute deadline. Preserve resource errors, but do not
+        // grant the next native action from a successful late observation.
+        self.alive()
     }
 }
 

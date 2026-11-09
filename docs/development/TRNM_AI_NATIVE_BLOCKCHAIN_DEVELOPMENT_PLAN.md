@@ -1,3 +1,20 @@
+**Joint PoN resource-contract continuation, 2026-11-08 America/New_York — HOLD:**
+Continue the complete #821 source `e798d7125724d4b9f98c24d00cc80031f2eab4a9`,
+which already contains the #811 work-cost and #812 integration lineage.
+The [joint continuation record](../research/PON_JOINT_RESOURCE_CONTRACT_20261108.md)
+keeps cost, current-clock activation and receiver resource boundaries in one
+candidate. Recheck the original deadline after a successful Host observation
+before starting a History owner action. Public Growth activation now reobserves
+its entire target ancestry under the current clock, including exact duplicates,
+while retaining committed admission and the original fully charged,
+noncancellable tail. The separate [V4 lifecycle observer](../research/PON_W1_LIFECYCLE_COST_V4.md)
+flushes started attempts before native work and retains incomplete costs as
+unknown; complete W1 verification still grants zero consensus credit here.
+Historical source pins, public resource limits, failure observations, all
+unknown classical/quantum cost bounds and production refusal remain intact.
+These fixes require their own fixed-source execution receipts. They do not
+close the all-algorithm cost, joint chain-security or honest-service gates.
+
 **M12 witnessed generation recovery V3, 2026-11-08 America/New_York — HOLD:**
 The [guarded ordinary Node/M12 entry](specs/pon/M12_GENERATION_RECOVERY_V3.md)
 adds a separate M12 witness binding, complete-journal checkpoints and transaction
