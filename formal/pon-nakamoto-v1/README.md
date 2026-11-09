@@ -258,6 +258,22 @@ runs and the unchanged qualification table. Physical all-algorithm work
 losses, authentic joint initial state, full-world coverage, clocks, inventory
 and honest-progress laws remain the two actual scientific obligations.
 
+## Fixed-success query frontier
+
+The [fixed-success query frontier](FIXED_SUCCESS_QUERY_FRONTIER_V1.md) separates
+expected producer queries, a hard query cap, finite address availability, and
+uncharged terminal output checks. Its classical Bernoulli-game optimum has an
+all-policy proof and an independent exact arithmetic verifier. The associated
+finite controls test that implementation; they do not supply the missing
+all-W1-algorithm resource reduction. At `p=1/16` and success `1/2`, `8` expected
+queries and a minimum cap of `11` apply only when all success checks are charged
+to that producer metric. Initial-state and quantum boundaries below remain.
+
+```bash
+python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_success_query_frontier.py' -v
+python3 formal/pon-nakamoto-v1/fixed_success_query_frontier.py --check
+```
+
 ## Explicit finite joint initial states
 
 [FJS1](FINITE_JOINT_STATE_CERTIFICATE_V1.md) checks every oracle table and the
