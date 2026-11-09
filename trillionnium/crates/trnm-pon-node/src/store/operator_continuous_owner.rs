@@ -363,9 +363,19 @@ impl Node {
             self.public_service_epoch_listeners != 0,
             "OWNER_PUBLIC_SERVICE_EPOCH_CORRUPT",
         )?;
-        if self.public_service_epoch_unknown {
-            // A prior listener errored or unwound. No later clean listener
-            // can make this persisted unknown epoch clean again.
+        if self.public_service_epoch_unknown
+            || self
+                .public_service_cpu
+                .as_ref()
+                .is_some_and(|domain| !domain.public_authentication_accounting_available())
+        {
+            // A prior listener errored/unwound, or the SAME bound intake has
+            // unknown authentication CPU. Latch this before the multi-listener
+            // return: neither a later classical listener nor a final History
+            // importer may clear the original marker with scalar-only evidence.
+            // A low-level owner with no bound domain retains its old semantics;
+            // absence is not an assertion that authentication was measured.
+            self.public_service_epoch_unknown = true;
             self.public_service_epoch_listeners -= 1;
             return Ok(());
         }
@@ -509,7 +519,8 @@ impl Node {
         let known = observation
             .as_ref()
             .is_ok_and(|state| !state.accounting_unavailable)
-            && domain.observe_actual_flow().ok().flatten().is_some();
+            && domain.observe_actual_flow().ok().flatten().is_some()
+            && domain.public_authentication_accounting_available();
         if !known {
             // Preserve the original restricted-owner journal fence too.
             // Releasing the Node during W1 must not turn unknown CPU into a

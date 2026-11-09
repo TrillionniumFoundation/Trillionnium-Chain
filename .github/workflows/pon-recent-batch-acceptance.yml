@@ -73,7 +73,7 @@ jobs:
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs)" = 44acbb5d854a8e0a7c4979b4715bd9949b656cd5
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs)" = a6eb85aa2c2e3ad17244890128ef86975d71ecc9
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs)" = 5d4c26c962a390fb3b5162d60c52db6c4a53b84b
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner_tests.rs)" = 6119f98bb45fda6399d2528db9f61a69751e397f
           # The whole-file pin covers the opt-in owner census, integrated
           # admission/readback refinements, and retained legacy replay-prefix cache.

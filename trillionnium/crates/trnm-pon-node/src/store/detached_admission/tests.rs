@@ -95,6 +95,187 @@ fn bindings(node: &Node) -> u64 {
     .sum()
 }
 
+fn assert_parent_not_extendable(node: &mut Node, child: &Packet) {
+    let unknown = |result: Result<()>| {
+        let error = result.unwrap_err();
+        assert!(error.is(crate::ErrorCode::UnknownParent), "{error}");
+        assert!(!error.requires_owner_stop());
+    };
+    let parent = child.header.parent;
+    unknown(node.parent_height(parent).map(|_| ()));
+    unknown(node.state_at(parent).map(|_| ()));
+    unknown(
+        node.make(
+            parent,
+            child.transactions.clone(),
+            child.header.miner,
+            child.header.timestamp,
+            4096,
+        )
+        .map(|_| ()),
+    );
+    unknown(node.check_admission_context(child, 1000).map(|_| ()));
+    // The actual child's complete W1 is valid. This refusal must therefore be
+    // missing local parent authority, rather than a malformed child/proof.
+    unknown(
+        node.admit_work_checked(WorkCheckedPacket::verify(child.clone()).unwrap(), 1000)
+            .map(|_| ()),
+    );
+    unknown(node.activate_observed(parent, 1000).map(|_| ()));
+}
+
+#[test]
+fn parent_qualification_requires_committed_state_after_w1_and_m06() {
+    for authenticated in [false, true] {
+        let directory = tempfile::tempdir().unwrap();
+        let producer_directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut producer = open(producer_directory.path(), &settings, authenticated);
+        let parent = packet(&producer, settings.genesis(), 1, 1, 1001, 0);
+        let parent_id = producer.admit(&parent, 1000).unwrap();
+        let child = packet(&producer, parent_id, 2, 1, 1002, 0);
+        let child_id = producer.admit(&child, 1000).unwrap();
+        producer.activate_observed(child_id, 1000).unwrap();
+        let reference = producer.read_active().unwrap();
+
+        let mut node = open(directory.path(), &settings, authenticated);
+        let original = node.stats().unwrap();
+        let checked = WorkCheckedPacket::verify(parent.clone()).unwrap();
+        assert_parent_not_extendable(&mut node, &child);
+        assert_eq!(node.stats().unwrap(), original);
+
+        let lease = node.reserve_detached_execution().unwrap();
+        let preparation = match node
+            .prepare_shared_admission(
+                checked,
+                lease,
+                1000,
+                &ExecutionControl::new(&|_| Ok(()), &()),
+            )
+            .unwrap()
+        {
+            PreparedSharedAdmission::Execute(value) => value,
+            _ => panic!("new small parent must use the original detached execution"),
+        };
+        assert_parent_not_extendable(&mut node, &child);
+        assert_eq!(node.stats().unwrap(), original);
+
+        let mandatory = AtomicUsize::new(0);
+        let outcome = preparation
+            .execute(&ExecutionControl::new(
+                &|point| {
+                    if point == ExecutionProgress::AfterMandatory {
+                        mandatory.fetch_add(1, Ordering::Relaxed);
+                    }
+                    Ok(())
+                },
+                &(),
+            ))
+            .unwrap();
+        assert!(mandatory.load(Ordering::Relaxed) > 0);
+        assert_parent_not_extendable(&mut node, &child);
+        assert_eq!(node.stats().unwrap(), original);
+
+        assert_eq!(
+            node.commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()),)
+                .unwrap(),
+            parent_id
+        );
+        // A fully admitted fork parent is eligible even before activation. The
+        // boundary is complete durable validation, not a requirement to mine
+        // only the active branch or to promote a completed execution artifact.
+        assert_eq!(node.active().unwrap().0, settings.genesis());
+        assert_eq!(node.parent_height(parent_id).unwrap(), 1);
+        assert!(node
+            .check_admission_context(&child, 1000)
+            .unwrap()
+            .is_none());
+        let built = packet(&node, parent_id, 2, 1, 1002, 0);
+        assert_eq!(built.encode().unwrap(), child.encode().unwrap());
+        assert_eq!(node.admit(&child, 1000).unwrap(), child_id);
+        node.activate_observed(child_id, 1000).unwrap();
+        assert_eq!(node.read_active().unwrap(), reference);
+        let final_stats = node.stats().unwrap();
+        drop(node);
+        let reopened = open(directory.path(), &settings, authenticated);
+        assert_eq!(reopened.read_active().unwrap(), reference);
+        assert_eq!(reopened.stats().unwrap(), final_stats);
+    }
+}
+
+#[test]
+fn parent_qualification_survives_cancelled_write_and_restart() {
+    for authenticated in [false, true] {
+        let directory = tempfile::tempdir().unwrap();
+        let producer_directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut producer = open(producer_directory.path(), &settings, authenticated);
+        let parent = packet(&producer, settings.genesis(), 1, 1, 1001, 0);
+        let parent_id = producer.admit(&parent, 1000).unwrap();
+        let child = packet(&producer, parent_id, 2, 1, 1002, 0);
+        let child_id = producer.admit(&child, 1000).unwrap();
+        producer.activate_observed(child_id, 1000).unwrap();
+        let reference = producer.read_active().unwrap();
+
+        let mut node = open(directory.path(), &settings, authenticated);
+        let original = node.stats().unwrap();
+        let outcome = executed(&node, &parent);
+        let outside = Mutex::new(
+            Connection::open_with_flags(
+                directory.path().join("native.sqlite"),
+                rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
+            )
+            .unwrap(),
+        );
+        let delta_boundaries = AtomicUsize::new(0);
+        let commit_boundaries = AtomicUsize::new(0);
+        let control = |point| {
+            if matches!(point, ExecutionProgress::PersistenceDelta { .. }) {
+                delta_boundaries.fetch_add(1, Ordering::Relaxed);
+            }
+            if point == ExecutionProgress::BeforeDurableCommit {
+                // These original checkpoints follow the real block INSERT and
+                // delta traversal. A separate reader must still see no parent
+                // row while this transaction can be rolled back.
+                assert!(delta_boundaries.load(Ordering::Relaxed) > 0);
+                let visible: u64 = outside
+                    .lock()
+                    .unwrap()
+                    .query_row(
+                        "SELECT COUNT(*) FROM blocks WHERE id IN (?,?)",
+                        params![parent_id.as_slice(), child_id.as_slice()],
+                        |row| row.get(0),
+                    )
+                    .unwrap();
+                assert_eq!(visible, 0);
+                commit_boundaries.fetch_add(1, Ordering::Relaxed);
+                return Err(Error::new(crate::ErrorCode::PublicRequestCancelled));
+            }
+            Ok(())
+        };
+        let error = node
+            .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&control, &()))
+            .unwrap_err();
+        assert!(error.is(crate::ErrorCode::PublicRequestCancelled));
+        assert!(!error.requires_owner_stop());
+        assert_eq!(commit_boundaries.load(Ordering::Relaxed), 1);
+        assert_parent_not_extendable(&mut node, &child);
+        assert_eq!(node.stats().unwrap(), original);
+        drop(outside);
+        drop(node);
+
+        let mut reopened = open(directory.path(), &settings, authenticated);
+        assert_parent_not_extendable(&mut reopened, &child);
+        assert_eq!(reopened.stats().unwrap(), original);
+        // The cancelled candidate did not acquire a lasting parent capability,
+        // poison the genuine child, or prevent a later full validation.
+        assert_eq!(reopened.admit(&parent, 1000).unwrap(), parent_id);
+        assert_eq!(reopened.admit(&child, 1000).unwrap(), child_id);
+        reopened.activate_observed(child_id, 1000).unwrap();
+        assert_eq!(reopened.read_active().unwrap(), reference);
+    }
+}
+
 #[test]
 fn native_m06_runs_without_writer_and_matches_held_owner_on_both_backends() {
     for authenticated in [false, true] {
