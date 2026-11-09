@@ -1,0 +1,22 @@
+{
+  "schema": "pon-four-propositions-validation-environment-v1",
+  "observed_utc": "2026-11-09T13:52:52.860217+00:00",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "cryptography": "50.0.0",
+  "cargo_path": null,
+  "rustc_path": null,
+  "pythondontwritebytecode": "1",
+  "tmpdir": "/dev/shm",
+  "native_checks_status": "NOT_RUN",
+  "native_checks_reason": "Cargo and rustc unavailable in the local command environment; the HeptaRuntime control channel returned MCP -32603 Internal error on the original ai395 process status query. No native result is inherited.",
+  "hepta_control_observation": {
+    "operation": "h.process_status",
+    "host": "ai395",
+    "job_id": "1a1c079a7d0-5e21-a85",
+    "error_code": -32603,
+    "error": "Internal error",
+    "operation_is_read_only": true
+  },
+  "production_activation": false
+}

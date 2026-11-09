@@ -1,0 +1,183 @@
+{
+  "schema": "pon-four-propositions-hosted-observation-v1",
+  "observed_utc": "2026-11-09 14:03:55 UTC",
+  "source_commit": "10562694eab721f273d217c33d6eba12cf32a639",
+  "runs": [
+    {
+      "id": 42629037392,
+      "name": "PoN owned process cleanup",
+      "status": "queued",
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42629037392",
+      "head_sha": "10562694eab721f273d217c33d6eba12cf32a639"
+    },
+    {
+      "id": 42629037065,
+      "name": "PoN PQ network and rollback witness",
+      "status": "queued",
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42629037065",
+      "head_sha": "10562694eab721f273d217c33d6eba12cf32a639"
+    },
+    {
+      "id": 42629037024,
+      "name": "trnm-required-baseline",
+      "status": "queued",
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42629037024",
+      "head_sha": "10562694eab721f273d217c33d6eba12cf32a639"
+    },
+    {
+      "id": 42629037098,
+      "name": "PoN W1 work security observations",
+      "status": "queued",
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42629037098",
+      "head_sha": "10562694eab721f273d217c33d6eba12cf32a639"
+    },
+    {
+      "id": 42629036976,
+      "name": "PoN four-axis throughput evidence controls",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42629036976",
+      "head_sha": "10562694eab721f273d217c33d6eba12cf32a639"
+    },
+    {
+      "id": 42629037053,
+      "name": "CodeQL exact-source analysis export",
+      "status": "in_progress",
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42629037053",
+      "head_sha": "10562694eab721f273d217c33d6eba12cf32a639"
+    },
+    {
+      "id": 42629037057,
+      "name": "PoN original native campaign",
+      "status": "in_progress",
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42629037057",
+      "head_sha": "10562694eab721f273d217c33d6eba12cf32a639"
+    },
+    {
+      "id": 42629037070,
+      "name": "PoN W1 QROM implementation observations",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42629037070",
+      "head_sha": "10562694eab721f273d217c33d6eba12cf32a639"
+    },
+    {
+      "id": 42629037085,
+      "name": "PoN parent-bound model evidence",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42629037085",
+      "head_sha": "10562694eab721f273d217c33d6eba12cf32a639"
+    },
+    {
+      "id": 42629037061,
+      "name": "PoN W1 transparent candidate observations",
+      "status": "in_progress",
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42629037061",
+      "head_sha": "10562694eab721f273d217c33d6eba12cf32a639"
+    },
+    {
+      "id": 42629037048,
+      "name": "PoN classical and quantum credit contract",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42629037048",
+      "head_sha": "10562694eab721f273d217c33d6eba12cf32a639"
+    },
+    {
+      "id": 42629037287,
+      "name": "PoN original large-state CPU acceptance",
+      "status": "in_progress",
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42629037287",
+      "head_sha": "10562694eab721f273d217c33d6eba12cf32a639"
+    },
+    {
+      "id": 42629037331,
+      "name": "PoN original workspace test-profile CPU acceptance",
+      "status": "in_progress",
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42629037331",
+      "head_sha": "10562694eab721f273d217c33d6eba12cf32a639"
+    },
+    {
+      "id": 42629037205,
+      "name": "PoN W1 QROM closure observations",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42629037205",
+      "head_sha": "10562694eab721f273d217c33d6eba12cf32a639"
+    },
+    {
+      "id": 42629037076,
+      "name": "PoN next architecture exact-source observations",
+      "status": "in_progress",
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42629037076",
+      "head_sha": "10562694eab721f273d217c33d6eba12cf32a639"
+    },
+    {
+      "id": 42629037411,
+      "name": "PoN native full relation and path controls",
+      "status": "in_progress",
+      "conclusion": null,
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42629037411",
+      "head_sha": "10562694eab721f273d217c33d6eba12cf32a639"
+    },
+    {
+      "id": 42629036991,
+      "name": "PoN work and time contract V1",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42629036991",
+      "head_sha": "10562694eab721f273d217c33d6eba12cf32a639"
+    },
+    {
+      "id": 42629037121,
+      "name": "W1 QROM proof-chain observations",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42629037121",
+      "head_sha": "10562694eab721f273d217c33d6eba12cf32a639"
+    }
+  ],
+  "retained_failed_jobs": [
+    {
+      "job_id": 129200220224,
+      "source_kind": "head",
+      "log_file": "hosted-qrom-job-129200220224.log",
+      "log_blob": "c77652d66c8e977332935f4bcf204bfff15a18a4",
+      "tested_commit": "10562694eab721f273d217c33d6eba12cf32a639"
+    },
+    {
+      "job_id": 129200219654,
+      "source_kind": "prospective-merge",
+      "log_file": "hosted-qrom-job-129200219654.log",
+      "log_blob": "5c2a294f98bfd1980e98731efd9cc6e110259054",
+      "tested_commit": "37dd2b669dd4e3e00bf47776bd968975b0b72cf0"
+    }
+  ],
+  "observed_qrom_error": "input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+  "verifier_blob_unchanged_from_e2": "1b2999ec2efb51b1291e4fac19f55ee0afeb5d75",
+  "verifier_bytes": 11172,
+  "all_hosted_ci_passed": false,
+  "native_qualification": false,
+  "production_activation": false,
+  "additional_failed_jobs": [
+    {
+      "job_id": 129200219404,
+      "run_id": 42629037205,
+      "source_kind": "head",
+      "log_file": "hosted-closure-job-129200219404.log",
+      "error": "source identity mismatch: trillionnium/crates/trnm-pon-node/src/store.rs",
+      "tested_commit": "10562694eab721f273d217c33d6eba12cf32a639"
+    }
+  ]
+}
