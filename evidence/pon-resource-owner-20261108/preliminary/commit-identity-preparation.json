@@ -1,0 +1,11 @@
+{
+  "schema": "pon-owner-evidence-commit-preparation-v1",
+  "host": "ai395",
+  "job_id": "1a1be51e9a2-5e21-3e",
+  "phase": "Evidence commit before final source identity exists",
+  "exit_code": 1,
+  "git_commit_exit_code": 128,
+  "runtime_tests_started": false,
+  "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-rejection-resource-owner-20261108-956149\", \"remote_policy_mutated\": false}\ndistributed source inventory: PASS\n{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-rejection-resource-owner-20261108-956149\", \"remote_policy_mutated\": false}\n",
+  "stderr": "Author identity unknown\n\n*** Please tell me who you are.\n\nRun\n\n  git config --global user.email \"you@example.com\"\n  git config --global user.name \"Your Name\"\n\nto set your account's default identity.\nOmit --global to set the identity only in this repository.\n\nfatal: unable to auto-detect email address (got 'qq@ai395.(none)')\nTraceback (most recent call last):\n  File \"<stdin>\", line 40, in <module>\n  File \"/usr/lib/python3.14/subprocess.py\", line 578, in run\n    raise CalledProcessError(retcode, process.args,\n                             output=stdout, stderr=stderr)\nsubprocess.CalledProcessError: Command '['git', 'commit', '-m', 'test(pon): retain exact-source owner validation and failure evidence']' returned non-zero exit status 128.\n"
+}

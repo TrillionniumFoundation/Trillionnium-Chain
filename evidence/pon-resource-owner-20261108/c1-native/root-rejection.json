@@ -1,0 +1,37 @@
+{
+  "name": "root-rejection",
+  "argv": [
+    "/home/qq/.cargo/bin/cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "store::root_rejection_cache_tests",
+    "--",
+    "--nocapture"
+  ],
+  "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+  "started_utc": "2026-11-09T03:01:39.239359+00:00",
+  "finished_utc": "2026-11-09T03:01:39.406723+00:00",
+  "wall_seconds": 0.16737335408106446,
+  "exit_code": 0,
+  "child_user_cpu_seconds": 0.11724400000000124,
+  "child_system_cpu_seconds": 0.029346000000000094,
+  "children_maxrss_highwater_kib": 186084,
+  "source_before": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+    "status": ""
+  },
+  "source_after": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+    "status": ""
+  },
+  "log_bytes": 1149,
+  "log_sha256": "6b511a921aa0101028202b9539b2582b49849246ce15320f82a4b206dfeff649"
+}

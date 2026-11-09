@@ -1,0 +1,400 @@
+{
+  "schema": "resource-owner-native-gates-v1",
+  "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+  "environment": {
+    "CARGO_TARGET_DIR": "/home/qq/work/chain-rejection-resource-owner-956149-target",
+    "CARGO_BUILD_JOBS": "2",
+    "RUST_TEST_THREADS": "1",
+    "CARGO_PROFILE_TEST_OPT_LEVEL": null,
+    "RUSTFLAGS": null
+  },
+  "results": [
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "started_utc": "2026-11-09T03:01:28.005186+00:00",
+      "finished_utc": "2026-11-09T03:01:28.028880+00:00",
+      "wall_seconds": 0.023673587013036013,
+      "exit_code": 0,
+      "child_user_cpu_seconds": 0.022064999999999994,
+      "child_system_cpu_seconds": 0.001570000000000002,
+      "children_maxrss_highwater_kib": 17928,
+      "source_before": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "source_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "log_bytes": 181,
+      "log_sha256": "bfe1fd556432020e77d09ef52f28f794fc423c0af7b4223fc13ec3055cd86c51"
+    },
+    {
+      "name": "source-before",
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "--output",
+        "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/source-before.json"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "started_utc": "2026-11-09T03:01:28.082148+00:00",
+      "finished_utc": "2026-11-09T03:01:29.912676+00:00",
+      "wall_seconds": 1.8305326530244201,
+      "exit_code": 0,
+      "child_user_cpu_seconds": 1.1624409999999998,
+      "child_system_cpu_seconds": 0.34803000000000006,
+      "children_maxrss_highwater_kib": 90820,
+      "source_before": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "source_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "log_bytes": 423,
+      "log_sha256": "f242962256627d60335a46cbd838c73692ab9886d9bc70c28a6ba976c295d6d2"
+    },
+    {
+      "name": "cargo-fmt",
+      "argv": [
+        "/home/qq/.cargo/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "started_utc": "2026-11-09T03:01:29.969527+00:00",
+      "finished_utc": "2026-11-09T03:01:36.550590+00:00",
+      "wall_seconds": 6.581076217116788,
+      "exit_code": 0,
+      "child_user_cpu_seconds": 6.479358,
+      "child_system_cpu_seconds": 0.07858100000000001,
+      "children_maxrss_highwater_kib": 186084,
+      "source_before": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "source_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "log_bytes": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "scalar-cpu",
+      "argv": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::scalar_cpu",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "started_utc": "2026-11-09T03:01:36.608662+00:00",
+      "finished_utc": "2026-11-09T03:01:39.183738+00:00",
+      "wall_seconds": 2.575088083045557,
+      "exit_code": 0,
+      "child_user_cpu_seconds": 0.8565100000000001,
+      "child_system_cpu_seconds": 0.16207400000000005,
+      "children_maxrss_highwater_kib": 186084,
+      "source_before": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "source_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "log_bytes": 10417,
+      "log_sha256": "1757acb8179549282275013c7250e7ae14e637b171e9b66754a89c131efe3295"
+    },
+    {
+      "name": "root-rejection",
+      "argv": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "store::root_rejection_cache_tests",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "started_utc": "2026-11-09T03:01:39.239359+00:00",
+      "finished_utc": "2026-11-09T03:01:39.406723+00:00",
+      "wall_seconds": 0.16737335408106446,
+      "exit_code": 0,
+      "child_user_cpu_seconds": 0.11724400000000124,
+      "child_system_cpu_seconds": 0.029346000000000094,
+      "children_maxrss_highwater_kib": 186084,
+      "source_before": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "source_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "log_bytes": 1149,
+      "log_sha256": "6b511a921aa0101028202b9539b2582b49849246ce15320f82a4b206dfeff649"
+    },
+    {
+      "name": "r14-profile",
+      "argv": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::tests::resource_revision_r14_rejects_signed_old_cookies_and_preserves_control_output_reserve",
+        "--",
+        "--exact",
+        "--nocapture"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "started_utc": "2026-11-09T03:01:39.461249+00:00",
+      "finished_utc": "2026-11-09T03:01:39.526156+00:00",
+      "wall_seconds": 0.06491149496287107,
+      "exit_code": 0,
+      "child_user_cpu_seconds": 0.0428809999999995,
+      "child_system_cpu_seconds": 0.02190499999999984,
+      "children_maxrss_highwater_kib": 186084,
+      "source_before": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "source_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "log_bytes": 450,
+      "log_sha256": "2f3e89181c2cc2e0ae79fc5d4a229ae9b31fb806b20a725692cff047bbb9fb43"
+    },
+    {
+      "name": "native-observers",
+      "argv": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "native_packet_observer",
+        "--test",
+        "accepted_task_observation",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "started_utc": "2026-11-09T03:01:39.581030+00:00",
+      "finished_utc": "2026-11-09T03:03:19.445546+00:00",
+      "wall_seconds": 99.86452819313854,
+      "exit_code": 0,
+      "child_user_cpu_seconds": 179.839347,
+      "child_system_cpu_seconds": 6.339950999999999,
+      "children_maxrss_highwater_kib": 1938368,
+      "source_before": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "source_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "log_bytes": 2614,
+      "log_sha256": "9fd444c2f6a41b74a3bf52e10836b17b145e8cc0f26f94c6c9854c9604784fd2"
+    },
+    {
+      "name": "observer-process-envelope",
+      "argv": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--bin",
+        "trnm-pon-node",
+        "packet_observer_cli::tests",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "started_utc": "2026-11-09T03:03:19.500671+00:00",
+      "finished_utc": "2026-11-09T03:03:22.977348+00:00",
+      "wall_seconds": 3.476691168034449,
+      "exit_code": 0,
+      "child_user_cpu_seconds": 6.579493000000014,
+      "child_system_cpu_seconds": 0.6286369999999994,
+      "children_maxrss_highwater_kib": 1938368,
+      "source_before": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "source_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "log_bytes": 799,
+      "log_sha256": "a87219e3d2ce04b888e000d645c46b1306fe0a23a287589bda13e6cf162c712b"
+    },
+    {
+      "name": "artifact-profiles",
+      "argv": [
+        "/home/qq/.cargo/bin/cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "started_utc": "2026-11-09T03:03:23.030809+00:00",
+      "finished_utc": "2026-11-09T03:03:23.088870+00:00",
+      "wall_seconds": 0.05807400494813919,
+      "exit_code": 0,
+      "child_user_cpu_seconds": 0.041349999999994225,
+      "child_system_cpu_seconds": 0.017145000000001076,
+      "children_maxrss_highwater_kib": 1938368,
+      "source_before": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "source_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "log_bytes": 106605,
+      "log_sha256": "4663b12c0286ec1b9377ef2f041b51efc9bb91a8ca23d8d327888b6b2b9750f7"
+    },
+    {
+      "name": "strict-workspace-clippy",
+      "argv": [
+        "/home/qq/.cargo/bin/cargo",
+        "clippy",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "started_utc": "2026-11-09T03:03:23.140614+00:00",
+      "finished_utc": "2026-11-09T03:04:25.585959+00:00",
+      "wall_seconds": 62.445358108961955,
+      "exit_code": 0,
+      "child_user_cpu_seconds": 110.60179899999997,
+      "child_system_cpu_seconds": 13.304123,
+      "children_maxrss_highwater_kib": 2130756,
+      "source_before": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "source_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "log_bytes": 6163,
+      "log_sha256": "180ec8c00f171d0919d21b6aaa4aba56d62d885ea8c9b31e34f1f421d68434a2"
+    },
+    {
+      "name": "source-after",
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "--output",
+        "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/source-after.json"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "started_utc": "2026-11-09T03:04:25.641867+00:00",
+      "finished_utc": "2026-11-09T03:04:31.486338+00:00",
+      "wall_seconds": 5.844482196960598,
+      "exit_code": 0,
+      "child_user_cpu_seconds": 1.2228980000000433,
+      "child_system_cpu_seconds": 0.5630009999999999,
+      "children_maxrss_highwater_kib": 2130756,
+      "source_before": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "source_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+        "status": ""
+      },
+      "log_bytes": 423,
+      "log_sha256": "f242962256627d60335a46cbd838c73692ab9886d9bc70c28a6ba976c295d6d2"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "cargo-fmt",
+  "argv": [
+    "/home/qq/.cargo/bin/cargo",
+    "fmt",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+  "started_utc": "2026-11-09T03:01:29.969527+00:00",
+  "finished_utc": "2026-11-09T03:01:36.550590+00:00",
+  "wall_seconds": 6.581076217116788,
+  "exit_code": 0,
+  "child_user_cpu_seconds": 6.479358,
+  "child_system_cpu_seconds": 0.07858100000000001,
+  "children_maxrss_highwater_kib": 186084,
+  "source_before": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+    "status": ""
+  },
+  "source_after": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+    "status": ""
+  },
+  "log_bytes": 0,
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

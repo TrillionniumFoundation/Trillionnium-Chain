@@ -1,0 +1,9 @@
+{
+  "schema": "pon-owner-preparation-failure-v1",
+  "host": "ai395",
+  "job_id": "1a1be54343d-5e21-4a",
+  "exit_code": 1,
+  "diagnostic": "Python SyntaxError in the orchestration script before any statement executed",
+  "source_edits_executed": false,
+  "native_tests_started": false
+}

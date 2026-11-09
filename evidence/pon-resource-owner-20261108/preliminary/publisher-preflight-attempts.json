@@ -1,0 +1,26 @@
+{
+  "schema": "pon-resource-owner-publisher-preflight-observations-v1",
+  "purpose": "Publication checkout only; native test evidence is from ai395 full source.",
+  "attempts": [
+    {
+      "outcome": "failed",
+      "host": "mac",
+      "job_id": "1a1be428b4b-514c-e",
+      "state": "failed",
+      "exit_code": 1,
+      "output_complete": true,
+      "stdout": "publisher ProfHepta gh /opt/homebrew/bin/gh\n",
+      "stderr": "Cloning into '/Users/qianqi/work/chain-rejection-resource-owner-publish-956149-20261108'...\nUpdating files:   7% (1/13)\rUpdating files:  15% (2/13)\rUpdating files:  23% (3/13)\rUpdating files:  30% (4/13)\rUpdating files:  38% (5/13)\rUpdating files:  46% (6/13)\rUpdating files:  53% (7/13)\rUpdating files:  61% (8/13)\rUpdating files:  69% (9/13)\rUpdating files:  76% (10/13)\rUpdating files:  84% (11/13)\rUpdating files:  92% (12/13)\rUpdating files: 100% (13/13)\rUpdating files: 100% (13/13), done.\nTraceback (most recent call last):\n  File \"/Users/qianqi/work/chain-rejection-resource-owner-publish-956149-20261108/scripts/ci/project_boundary.py\", line 3, in <module>\n    import json, pathlib, re, subprocess, sys, tomllib\nModuleNotFoundError: No module named 'tomllib'\nTraceback (most recent call last):\n  File \"<stdin>\", line 13, in <module>\n  File \"/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py\", line 528, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['bash', 'scripts/project-preflight.sh']' returned non-zero exit status 1.\n"
+    },
+    {
+      "outcome": "passed",
+      "host": "mac",
+      "job_id": "1a1be4a3526-5e21-1f",
+      "state": "succeeded",
+      "exit_code": 0,
+      "output_complete": true,
+      "stdout": "python 3.14.3\n{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-p0-unified-qualification-20261108-99b5\", \"remote_policy_mutated\": false}\nPUBLICATION_CHECKOUT_READY /Users/qianqi/work/chain-rejection-resource-owner-publish-956149-20261108\n",
+      "stderr": ""
+    }
+  ]
+}

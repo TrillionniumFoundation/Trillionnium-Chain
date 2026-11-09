@@ -1,0 +1,33 @@
+{
+  "name": "source-after",
+  "argv": [
+    "python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "--output",
+    "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/source-after.json"
+  ],
+  "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+  "started_utc": "2026-11-09T03:04:25.641867+00:00",
+  "finished_utc": "2026-11-09T03:04:31.486338+00:00",
+  "wall_seconds": 5.844482196960598,
+  "exit_code": 0,
+  "child_user_cpu_seconds": 1.2228980000000433,
+  "child_system_cpu_seconds": 0.5630009999999999,
+  "children_maxrss_highwater_kib": 2130756,
+  "source_before": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+    "status": ""
+  },
+  "source_after": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+    "status": ""
+  },
+  "log_bytes": 423,
+  "log_sha256": "f242962256627d60335a46cbd838c73692ab9886d9bc70c28a6ba976c295d6d2"
+}

@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/test_pq_research_integration.py"
+  ],
+  "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+  "end_utc": "2026-11-09T02:56:22.698659+00:00",
+  "exit_code": 0,
+  "expected_head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+  "expected_tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+  "identity_after": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "status": "",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+  },
+  "index": 9,
+  "name": "negative-pq-integration",
+  "start_utc": "2026-11-09T02:55:52.438845+00:00",
+  "state": "completed",
+  "stderr": {
+    "bytes": 157,
+    "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/09-negative-pq-integration.stderr.log",
+    "sha256": "ff0c23d2a6910162a15d1be0d0fdb0e97ff2f3055ee4af844e878e86a3fbd59d"
+  },
+  "stdout": {
+    "bytes": 0,
+    "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/09-negative-pq-integration.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "wall_ns": 30259684867
+}
