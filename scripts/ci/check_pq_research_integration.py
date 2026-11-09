@@ -61,6 +61,14 @@ COMPLETE_OWNER_SOURCE_DIRS = frozenset((
 # transport slice remains mandatory and separately bounded from whole-chain PQ.
 NATIVE_REQUIRED_PATHS = frozenset((
     "scripts/ci/pq_source_reader.py",
+    "config/pon/w1-stark-route-registry-v1.json",
+    "config/pon/w1-stark-literature-evidence-v1.json",
+    "scripts/w1_stark_field_certificates.py",
+    "scripts/w1_stark_route_audit.py",
+    "scripts/ci/test_w1_stark_field_certificates.py",
+    "scripts/ci/test_w1_stark_route_audit.py",
+    "docs/security/W1_STARK_ROUTE_INSTANCE_AUDIT_V1.md",
+    "docs/protocol/pon-nakamoto-v1/details/STARK_THREE_ROUTE_LITERATURE_20261109.md",
     "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
     "trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs",
     "trillionnium/crates/trnm-protocol/src/pq_legacy_profile.rs",
