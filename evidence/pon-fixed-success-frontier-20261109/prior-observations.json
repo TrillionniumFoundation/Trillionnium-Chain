@@ -1,0 +1,50 @@
+{
+  "schema": "query-frontier-prior-observations-v1",
+  "code_commit": "51683089c7ec75cca3e0bcfb2201c08aa5dab654",
+  "evidence_kind": "root-agent-prior-terminal-observations-not-frozen-code-raw-receipts",
+  "retained_ci_contract_methods": {
+    "reported_count": 166,
+    "reported_result": "PASS",
+    "raw_full_output_preserved": false,
+    "elapsed_seconds": 217.754,
+    "rerun_in_frozen_packet": false
+  },
+  "cargo_metadata": {
+    "reported_result": "PASS",
+    "toolchain": "+1.95.0",
+    "locked": true,
+    "offline": true,
+    "packages": 176,
+    "workspace_members": 26,
+    "frozen_packet_result": "not-launched-cargo-unavailable"
+  },
+  "cargo_formatting": {
+    "reported_result": "PASS",
+    "toolchain": "+1.95.0",
+    "frozen_packet_result": "not-launched-cargo-unavailable"
+  },
+  "incomplete_observations": [
+    {
+      "kind": "source-acquisition",
+      "observation": "The initial default-branch cost-contract fetch returned 404; the specified #835 commit was then selected."
+    },
+    {
+      "kind": "sparse-source-check",
+      "observation": "The original repository checker refused missing historical Markdown evidence; this same failure has a complete frozen-code receipt."
+    },
+    {
+      "kind": "historical-source-acquisition",
+      "observation": "Historical link materialization was interrupted and encountered disk exhaustion. An interrupted tracked blob was restored to its original Git blob identity; no fabricated evidence or placeholder was used."
+    },
+    {
+      "kind": "executor-availability",
+      "observation": "The executor became temporarily unavailable, then recovered with original code files and logs intact. Cargo was absent after recovery."
+    },
+    {
+      "kind": "git-index",
+      "observation": "After interruption, a stale index lock was removed only after checking that the owned Git operation was no longer active. The index was reset to the exact published code commit, and subsequent source observations were clean."
+    }
+  ],
+  "qualification": "HOLD_NO_GO",
+  "actual_w1_lower_bound": false
+}
