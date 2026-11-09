@@ -1,0 +1,39 @@
+{
+  "observed_utc": "2026-11-09T13:58:52.255838+00:00",
+  "scope": "container/group metrics; not uniquely attributed to Clippy",
+  "metrics": {
+    "/proc/pressure/cpu": {
+      "error": "[Errno 2] No such file or directory: '/proc/pressure/cpu'"
+    },
+    "/proc/pressure/memory": {
+      "error": "[Errno 2] No such file or directory: '/proc/pressure/memory'"
+    },
+    "/proc/pressure/io": {
+      "error": "[Errno 2] No such file or directory: '/proc/pressure/io'"
+    },
+    "/sys/fs/cgroup/cpu.max": {
+      "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/cpu.max'"
+    },
+    "/sys/fs/cgroup/cpu.stat": {
+      "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/cpu.stat'"
+    },
+    "/sys/fs/cgroup/memory.current": {
+      "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/memory.current'"
+    },
+    "/sys/fs/cgroup/memory.max": {
+      "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/memory.max'"
+    },
+    "/sys/fs/cgroup/memory.events": {
+      "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/memory.events'"
+    },
+    "/sys/fs/cgroup/memory.pressure": {
+      "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/memory.pressure'"
+    },
+    "/sys/fs/cgroup/io.pressure": {
+      "error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/io.pressure'"
+    }
+  },
+  "filesystem_available_bytes": 2861551616,
+  "clippy_stderr_bytes": 6415,
+  "clippy_stderr_modified_utc": "2026-11-09T13:56:00.545856+00:00"
+}

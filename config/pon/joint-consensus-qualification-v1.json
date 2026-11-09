@@ -1,0 +1,198 @@
+{
+  "actual_lifetime_failure_bound": null,
+  "native_semantics": {
+    "chainwork_accumulator_bits": 512,
+    "confirmation_depth_counts": "successors-excluding-inclusion-block",
+    "confirmation_policy": "installed-depth-and-required-work",
+    "confirmation_requires_both_thresholds": true,
+    "confirmation_work_counts": "tip-chainwork-minus-inclusion-chainwork",
+    "confirmation_work_threshold_basis": "included-block-required-work",
+    "credit_formula": "floor(2^256/(T+1))",
+    "equal_work_replaces_current_tip": false,
+    "execution_authority": false,
+    "finalized": false,
+    "fork_choice": "strictly-greater-fully-validated-cumulative-required-work",
+    "header_time_certifies_elapsed_work": false,
+    "owner_profiles": [
+      "PNH1/PNP1",
+      "PGH2/PNP2"
+    ],
+    "retarget_inputs": "ancestor-endpoints-with-inclusive-integer-credit",
+    "target_history": "selected-parent-validated-ancestry",
+    "target_zero_valid": false,
+    "timestamp_rule": "strict-upper-MTP11-and-observed-clock-upper-bound"
+  },
+  "obligations": {
+    "adversarial-credit-tail": {
+      "contract": "formal/pon-nakamoto-v1/STATEFUL_RESOURCE_TAIL_V1.md",
+      "required": "Prove a complete adaptive all-branch credit upper tail in the declared resource model.",
+      "status": "open"
+    },
+    "all-legal-resource-cost": {
+      "contract": "docs/protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md",
+      "required": "Cover every legal strategy and all setup, reuse, failed, cancelled and unpublished work.",
+      "status": "open"
+    },
+    "chain-growth": {
+      "contract": "formal/pon-nakamoto-v1/WORK_SCALE_SECURITY_CONTRACT_V1.md",
+      "required": "Connect qualified progress to native eligible chain growth with explicit outage and delay deficits.",
+      "status": "open"
+    },
+    "chain-quality": {
+      "contract": "formal/pon-nakamoto-v1/WORK_SCALE_SECURITY_CONTRACT_V1.md",
+      "required": "Prove stable-segment honest credit share; count share and business inclusion need separate reductions.",
+      "status": "open"
+    },
+    "common-prefix": {
+      "contract": "formal/pon-nakamoto-v1/NATIVE_FORK_MAPPING_V1.md",
+      "required": "Connect native cross-node prefix failure, initial inventory and all chosen confirmation starts to a tail event.",
+      "status": "open"
+    },
+    "complete-delivery": {
+      "contract": "formal/pon-nakamoto-v1/NATIVE_FORK_MAPPING_V1.md",
+      "required": "Bound data availability, transport, queues, full verification, state readiness and eligible delivery.",
+      "status": "open"
+    },
+    "dynamic-participation": {
+      "contract": "docs/protocol/pon-nakamoto-v1/details/DYNAMIC_PARTICIPATION_V1.md",
+      "required": "Authenticate bootstrap and qualified participation, retain entry debt and departure obligations.",
+      "status": "open"
+    },
+    "honest-progress-tail": {
+      "contract": "formal/pon-nakamoto-v1/WORK_SCALE_SECURITY_CONTRACT_V1.md",
+      "required": "Prove a lower tail for effective qualified honest progress under the same environment.",
+      "status": "open"
+    },
+    "joint-initial-state": {
+      "contract": "formal/pon-nakamoto-v1/STATEFUL_RESOURCE_TAIL_V1.md",
+      "required": "Bound correlated classical/quantum help and residual state without epoch or restart resets.",
+      "status": "open"
+    },
+    "lifetime-composition": {
+      "contract": "formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md",
+      "required": "Cover adaptive starts, selection, reorg/restart, environment and cryptographic failures without refilling risk.",
+      "status": "open"
+    },
+    "mixed-resource-calibration": {
+      "contract": "formal/pon-nakamoto-v1/CREDIT_ENVELOPE_CONTRACT_V1.md",
+      "required": "Justify the resource envelopes used for public credit; no universal square-root substitution.",
+      "status": "open"
+    },
+    "native-to-model": {
+      "contract": "formal/pon-nakamoto-v1/NATIVE_FORK_MAPPING_V1.md",
+      "required": "Map both native owners, complete validity, target, clocks, selection and recovery to one model.",
+      "status": "open"
+    },
+    "time-target-credit": {
+      "contract": "docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_DAA_AUDIT_20261108.md",
+      "required": "Prove the joint process for parent-derived targets, native time eligibility and accumulated credit.",
+      "status": "open"
+    }
+  },
+  "parameters": {
+    "confirmation_depth": 6,
+    "confirmation_work_multiplier": 6,
+    "future_skew_seconds": 120,
+    "initial_target_hex": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "median_time_width": 11,
+    "pow_limit_hex": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "production_activation": false,
+    "retarget_factor": 4,
+    "retarget_interval": 16,
+    "target_spacing_seconds": 10,
+    "work_profile": "pon-matmul-transcript-64-v1"
+  },
+  "production_activation": false,
+  "properties": {
+    "block_count_quality": {
+      "derived_from_credit_quality": false,
+      "failure_bound": null,
+      "metric": "honest-block-count-fraction"
+    },
+    "business_liveness": {
+      "derived_from_chain_growth": false,
+      "failure_bound": null,
+      "metric": "eligible-honest-transaction-inclusion-and-service"
+    },
+    "chain_growth": {
+      "failure_bound": null,
+      "metric": "fully-validated-eligible-required-credit-per-model-time",
+      "minimum_rate": null,
+      "native_reduction_proved": false,
+      "scope": "declared-qualified-participation-windows"
+    },
+    "chain_quality": {
+      "failure_bound": null,
+      "metric": "honest-required-credit-fraction-in-stable-segments",
+      "minimum_honest_fraction": null,
+      "native_reduction_proved": false,
+      "scope": "declared-minimum-stable-segment-size"
+    },
+    "common_prefix": {
+      "failure_bound": null,
+      "metric": "prefix-retention-for-qualified-honest-views",
+      "native_reduction_proved": false,
+      "scope": "adaptive-confirmations-across-nodes-epochs-and-restarts"
+    }
+  },
+  "qualification": "HOLD_NO_GO",
+  "reviewed_native_source_commit": "e2a02f9271b49f146e70806c8a66e161b5973971",
+  "schema": "trnm-joint-consensus-qualification-v1",
+  "security_probability_calibrated": false,
+  "source_binding_scope": "listed-files-only-not-build-or-runtime-closure",
+  "source_sha256": {
+    "PROJECT_BOUNDARY.json": "3ba7894e49ab212718bcf4876affc0db931fa33a0d38d8ba0529c6b164a26ae9",
+    "config/consensus-mainline.json": "a3a703bd9fc1244f0c0190fee52b9cfae68c2a2c0008bbdf704bf0c0b03416f3",
+    "config/pon-nakamoto-v1.json": "906a85681c7da5108bdbd7f8187c53aa4ab797ac3a72bfb154d46c91e621b085",
+    "config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+    "config/pon/work-profile-v1.json": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+    "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+    "formal/pon-nakamoto-v1/fixed_probability_contract.py": "5d797bfe7b82f11613162636d2ae30778b4e17070e6570705041e86e9fbd75bc",
+    "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json": "e249dfcda10720a1fc388cef9613302253a96b125c0ab1f0eda1b584b72cebef",
+    "formal/pon-nakamoto-v1/mandatory_units_relation.py": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834",
+    "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+    "trillionnium/Cargo.lock": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+    "trillionnium/crates/trnm-pon-node/Cargo.toml": "91bc17c392f5a56cbebc92ca8d2954f5eefeb4294f50d2f5c99927543e70483a",
+    "trillionnium/crates/trnm-pon-node/src/consensus.rs": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62",
+    "trillionnium/crates/trnm-pon-node/src/lib.rs": "559f64c3f7567ee224f12e35b7f9cb434d9ab4e9bb208d819c31436f5b445c6d",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554",
+    "trillionnium/crates/trnm-pon-node/src/store/growth.rs": "52f2724d479deee2976b5b88cada98c7c49861a37a8939a4a9d24cdc132acc58",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/confirmation.rs": "c7915b50ea051178990209ffcd9236f896c5d1f99cffe703564d88a2ec94097a",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/profile.rs": "20cd8d967d0ac817d7b7c4b1f353d3c56dde642ef2175a70feeaed5b5c0fc73a",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs": "8b5b506c354664d3c7f2d96f36884f706a2653763fea6a6346c1d01079935192",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked.rs": "ffaa9eadfbbe04c6990b4cdf5bc21f79ef5930b7083df41bf0071d3dcd03a3c9",
+    "trillionnium/crates/trnm-protocol/src/pon_growth.rs": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+    "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+  },
+  "unknown_parameters": {
+    "clocks": {
+      "activation_confirmation_and_recovery_clock_coverage": null,
+      "wall_clock_skew_and_drift_bound": null,
+      "wall_to_monotonic_to_model_clock_mapping": null
+    },
+    "delivery": {
+      "availability_queue_verification_and_state_service_capacity": null,
+      "complete_validated_eligible_delivery_delay": null,
+      "stale_parent_and_retention_bounds": null
+    },
+    "lifetime": {
+      "analysis_horizon_and_adaptive_start_budget": null,
+      "initial_private_inventory_bound": null,
+      "joint_bad_environment_and_cryptographic_failure_budget": null
+    },
+    "participation": {
+      "adversarial_complete_credit_upper_tail": null,
+      "bootstrap_currentness_and_entry_debt_bound": null,
+      "qualified_honest_production_lower_tail": null,
+      "variation_window_and_churn_bound": null
+    },
+    "resources": {
+      "all_algorithm_classical_cost_lower_envelope": null,
+      "all_algorithm_quantum_cost_lower_envelope": null,
+      "cross_fork_batch_cache_and_unpublished_work_composition": null,
+      "joint_initial_help_preprocessing_and_residual_state_bound": null,
+      "physical_resource_unit_and_scalarization": null
+    }
+  }
+}

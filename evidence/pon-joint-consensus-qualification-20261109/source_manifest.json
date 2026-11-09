@@ -1,0 +1,101 @@
+{
+  "schema": "trnm-joint-consensus-source-receipt-v1",
+  "base_commit": "e2a02f9271b49f146e70806c8a66e161b5973971",
+  "local_tested_commit": "73b5a70fc3f4ffa5a1a99da366591c243d384786",
+  "published_source_commit": "ef5473ca77a43177adacf170451090a3a600cf81",
+  "source_tree": "33734d72a3d893fb8dfb438b17a42fa3a20e2114",
+  "tree_equality_verified": true,
+  "published_commit_parent": "e2a02f9271b49f146e70806c8a66e161b5973971",
+  "changed_source_files": [
+    {
+      "path": "config/pon/joint-consensus-qualification-v1.json",
+      "bytes": 10339,
+      "sha256": "c9f8c02768b8937f601dd9824f9bd7f32f810e47840d9ece4f09d1d60ef78607",
+      "git_blob_sha": "18e4b0d0e018b42a7f4684ae15176cb9fdcb1d35",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "bytes": 810375,
+      "sha256": "51508c9a721bd3d5a47a316dff65412b9e4557d792df354c018f5b649812ceff",
+      "git_blob_sha": "efc516faaef1674c50c341e5e28c7821564d6fd4",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/DYNAMIC_PARTICIPATION_V1.md",
+      "bytes": 15823,
+      "sha256": "c66a2228c3037350cda747940ba71c839d970793bdb7214ba7395d21404cd7f4",
+      "git_blob_sha": "91fc00aac800473cb8c430fefe68001732225515",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_QUALIFICATION_V1.md",
+      "bytes": 13313,
+      "sha256": "318268cf63d87948b44676a9f3d95dec7c875d0a1b30aec5283d9780a25c6256",
+      "git_blob_sha": "9c858087a4b90765a30c1f8983a9b72b2d5772af",
+      "mode": "100644"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/README.md",
+      "bytes": 21628,
+      "sha256": "b181224a11f06ad4c4fd6a1f272353c3e8d2d6a967b2f4e083ae727446e19b5e",
+      "git_blob_sha": "0641329483f3c15b93dcc273f5c3094118fb7f5f",
+      "mode": "100644"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/dynamic_participation_v1.py",
+      "bytes": 24628,
+      "sha256": "e0a9e614432963c401dbfc8364a5c0ac78ae54a179fd482ba864759a93822cc8",
+      "git_blob_sha": "fce6e7a36a626d30e98b3e7b2c043bedcf8c2493",
+      "mode": "100644"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+      "bytes": 19966,
+      "sha256": "833fc34df404a9211b543852293c5592131145d6a10b30343ad53d15d59a1894",
+      "git_blob_sha": "aaafc0d7eedf7c0db970064295089a47bcaf0312",
+      "mode": "100644"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_dynamic_participation_v1.py",
+      "bytes": 18311,
+      "sha256": "c27e30bd30d0dff16d8b859065b7378a72dc947edfa480f83925c0324b16ac34",
+      "git_blob_sha": "5d0af9b6efc93e64742dab6628ce58bf39c7c1dc",
+      "mode": "100644"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_joint_consensus_qualification.py",
+      "bytes": 15081,
+      "sha256": "f7cf2191b5af7425d8e34c20c4d09229b46c8b7675e3abc10a65529c1deedc3b",
+      "git_blob_sha": "76277e724d2fdad6061c2d3d832b505e553e2762",
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "bytes": 149986,
+      "sha256": "df108ddf6b02e3cadaec2ef0b805a67fec5bd3d86f2de6f35a005dcacedde2d3",
+      "git_blob_sha": "d29df7fac78e7f2ab14a9bc2938271a8fcfc2c8b",
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "bytes": 38986,
+      "sha256": "3da995a05212c9d961dffc2037efc95357e7afd81d443aa39fc05ca2bb5eedf1",
+      "git_blob_sha": "aa8d458e786fc98d61ab2d447582e9361241db7e",
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "bytes": 174023,
+      "sha256": "27a2f15b8cdfe703f4a0e2598e52ff154d2cd4059b7f13731d6f9ad62d83e4c4",
+      "git_blob_sha": "3ac867320a4c1a6a7c93987eb7b6d944a8cd4b7d",
+      "mode": "100644"
+    }
+  ],
+  "native_source_changes": [],
+  "python": "3.12.14",
+  "qualification": "HOLD_NO_GO",
+  "native_failure_probability": null,
+  "production_activation": false,
+  "full_build_and_runtime_closure_qualified": false
+}

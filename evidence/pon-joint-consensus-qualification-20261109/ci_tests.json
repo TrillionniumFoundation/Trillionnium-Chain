@@ -1,0 +1,17 @@
+{
+  "name": "ci_tests",
+  "command": [
+    "python3",
+    "scripts/ci/test_ci_contract.py",
+    "-v"
+  ],
+  "cwd_scope": "repository root",
+  "started_utc": "2026-11-09T13:42:50.324777+00:00",
+  "duration_seconds": 106.123,
+  "source_commit": "73b5a70fc3f4ffa5a1a99da366591c243d384786",
+  "source_tree": "33734d72a3d893fb8dfb438b17a42fa3a20e2114",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "expectation_met": true,
+  "log": "ci_tests.log"
+}

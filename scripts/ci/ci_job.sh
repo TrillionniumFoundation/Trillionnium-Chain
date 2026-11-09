@@ -41,6 +41,9 @@ case "${1:?required job}" in
     python3 formal/pon-nakamoto-v1/lifecycle_query_tests.py -v
     python3 formal/pon-nakamoto-v1/finite_joint_state_tests.py -v
     python3 formal/pon-nakamoto-v1/test_joint_consensus_boundaries.py -v
+    python3 formal/pon-nakamoto-v1/joint_consensus_qualification.py --check
+    python3 formal/pon-nakamoto-v1/test_joint_consensus_qualification.py
+    python3 formal/pon-nakamoto-v1/test_dynamic_participation_v1.py
     python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_oracle_resources.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_network_sim.py' -v
