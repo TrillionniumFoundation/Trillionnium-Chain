@@ -2,6 +2,10 @@
 //! cache and never authenticates money, grants a release, or proves independent
 //! custody. The native M12 adapter must admit the funding operation first.
 
+mod catalog_inventory;
+mod payload_read;
+pub(crate) use catalog_inventory::CellRetentionCatalogObjectV1;
+
 use std::{
     collections::BTreeSet,
     fs::{self, File, OpenOptions},

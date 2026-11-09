@@ -26,12 +26,14 @@ use super::{
 #[cfg(target_os = "linux")]
 mod sealed_loader;
 mod tensor;
+mod version;
 mod working_set;
 #[cfg(target_os = "linux")]
 pub use sealed_loader::{
     CellSealedLoaderBundleV1, CellSealedLoaderFileV1, CellSealedLoaderLimitsV1,
 };
 pub use tensor::{CellResidentTensorFileV1, CellResidentTensorModelV1, CellResidentTensorV1};
+pub use version::{CellResidentVersionV1, CellResidentVersionViewV1};
 pub use working_set::CellResidentWorkingSetV1;
 
 static RESIDENCY_OWNER_SEQUENCE: AtomicU64 = AtomicU64::new(1);

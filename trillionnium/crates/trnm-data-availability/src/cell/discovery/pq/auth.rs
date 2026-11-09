@@ -165,10 +165,21 @@ pub struct CellDiscoveryObservationV3 {
     pub ineligible_bootstraps: usize,
 }
 impl CellDiscoveryObservationV3 {
-    pub fn signature_attempts(&self) -> usize {
+    /// Reserved verification attempts, including signing calls' self-checks.
+    /// Failed attempts retain their slots; this is not measured CPU time.
+    pub fn verification_attempts(&self) -> usize {
         self.record_validation_attempts
             .saturating_add(self.bootstrap_validation_attempts)
             .saturating_add(self.announcement_signature_attempts)
+    }
+    /// Signing computations reserved in addition to the verification slots.
+    /// Each corresponding self-check is already in `verification_attempts`.
+    pub fn signing_attempts(&self) -> usize {
+        self.announcement_signature_attempts
+    }
+    /// Compatibility name for the original 64-verification-slot accounting.
+    pub fn signature_attempts(&self) -> usize {
+        self.verification_attempts()
     }
     fn reserve(&mut self, kind: SignatureKind) -> CellResultV1<()> {
         require(
@@ -198,6 +209,38 @@ pub struct CellDiscoveryFetchReportV3 {
     pub fetch: CellFetchReportV1,
 }
 
+/// A failed operation's actual, original shared Cell-session denominator.
+/// Discovery is a breakdown of the totals and must not be added to them again.
+#[derive(Debug)]
+pub struct CellDiscoveryFailureV3 {
+    pub cause: CellErrorV1,
+    pub discovery: CellDiscoveryObservationV3,
+    pub total_connection_attempts: u64,
+    /// None only when the shared response-accounting mutex is unavailable.
+    pub total_received_response_bytes: Option<u64>,
+}
+impl std::fmt::Display for CellDiscoveryFailureV3 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(&self.cause, formatter)
+    }
+}
+impl std::error::Error for CellDiscoveryFailureV3 {}
+
+fn observed_failure(
+    cause: CellErrorV1,
+    discovery: CellDiscoveryObservationV3,
+    maximum_connections: u64,
+    requests_left: &AtomicU64,
+    responses: &ResponseBudget,
+) -> Box<CellDiscoveryFailureV3> {
+    Box::new(CellDiscoveryFailureV3 {
+        cause,
+        discovery,
+        total_connection_attempts: maximum_connections - requests_left.load(Ordering::Relaxed),
+        total_received_response_bytes: responses.received().ok(),
+    })
+}
+
 /// Authenticate each queried source, then verify all actual Cell bytes using
 /// the original operation's network reservation and absolute deadline.
 pub fn fetch_authenticated_discovered_cell_to_file_pq(
@@ -208,64 +251,96 @@ pub fn fetch_authenticated_discovered_cell_to_file_pq(
     original_deadline: Instant,
     output: &Path,
 ) -> CellResultV1<(CellManifestV1, CellDiscoveryFetchReportV3)> {
-    limits.validate()?;
-    let overall = original_deadline.min(Instant::now() + limits.overall_timeout);
-    check_deadline(overall)?;
-    options.validate_at(wall_now()?.as_secs())?;
-    require(
-        options.source_pins()?.digest() == directory.source_pins().digest(),
-        "authenticated discovery source roster",
-    )?;
+    fetch_authenticated_discovered_cell_to_file_pq_observed(
+        store,
+        directory,
+        options,
+        limits,
+        original_deadline,
+        output,
+    )
+    .map_err(|failure| failure.cause)
+}
+
+/// The same wire, authority checks and original budgets as the compatible
+/// entry point, with actual discovery/manifest/chunk costs retained on failure.
+pub fn fetch_authenticated_discovered_cell_to_file_pq_observed(
+    store: &CellStoreV1,
+    directory: &CellProviderDirectoryV3,
+    options: &CellDiscoveryOptionsV3,
+    limits: CellPeerLimitsV1,
+    original_deadline: Instant,
+    output: &Path,
+) -> Result<(CellManifestV1, CellDiscoveryFetchReportV3), Box<CellDiscoveryFailureV3>> {
     let requests_left = AtomicU64::new(limits.max_connections);
     let responses = ResponseBudget::new(limits.max_response_bytes);
-    let transport = RequestContext {
-        cancelled: None,
-        timeout: limits.request_timeout,
-        overall,
-        requests_left: &requests_left,
-        responses: &responses,
-    };
     let mut observation = CellDiscoveryObservationV3::default();
-    let (peers, expires) = discover(directory, options, &transport, &mut observation)?;
-    let transport = RequestContext {
-        overall: overall.min(expires),
-        ..transport
-    };
-    check_deadline(transport.overall)?;
-    let (manifest, manifest_rejected, manifest_initial_cache_hit) =
-        network::fetch_manifest_observed(
+    let result = (|| -> CellResultV1<_> {
+        limits.validate()?;
+        let overall = original_deadline.min(Instant::now() + limits.overall_timeout);
+        check_deadline(overall)?;
+        options.validate_at(wall_now()?.as_secs())?;
+        require(
+            options.source_pins()?.digest() == directory.source_pins().digest(),
+            "authenticated discovery source roster",
+        )?;
+        let transport = RequestContext {
+            cancelled: None,
+            timeout: limits.request_timeout,
+            overall,
+            requests_left: &requests_left,
+            responses: &responses,
+        };
+        let (peers, expires) = discover(directory, options, &transport, &mut observation)?;
+        let transport = RequestContext {
+            overall: overall.min(expires),
+            ..transport
+        };
+        check_deadline(transport.overall)?;
+        let (manifest, manifest_rejected, manifest_initial_cache_hit) =
+            network::fetch_manifest_observed(
+                store,
+                options.request.base.manifest,
+                &peers,
+                limits,
+                &transport,
+            )?;
+        require(
+            cell_discovery_context_digest(manifest.context())? == options.request.base.cell_context,
+            "authenticated discovered cell context",
+        )?;
+        // Original authorization time, epoch and network deadlines remain live
+        // at materialization; no cached advertisement is a fallback source.
+        options.validate_at(wall_now()?.as_secs())?;
+        check_deadline(transport.overall)?;
+        let (manifest, mut fetch) = network::fetch_cell_in_session(
             store,
             options.request.base.manifest,
             &peers,
             limits,
             &transport,
+            Some(output),
         )?;
-    require(
-        cell_discovery_context_digest(manifest.context())? == options.request.base.cell_context,
-        "authenticated discovered cell context",
-    )?;
-    // Original authorization time, epoch and network deadlines remain live at
-    // the materializer's entry; no cached advertisement is a fallback source.
-    options.validate_at(wall_now()?.as_secs())?;
-    check_deadline(transport.overall)?;
-    let (manifest, mut fetch) = network::fetch_cell_in_session(
-        store,
-        options.request.base.manifest,
-        &peers,
-        limits,
-        &transport,
-        Some(output),
-    )?;
-    fetch.rejected_responses += manifest_rejected;
-    Ok((
-        manifest,
-        CellDiscoveryFetchReportV3 {
-            discovery: observation,
-            discovered_providers: peers,
-            manifest_initial_cache_hit,
-            fetch,
-        },
-    ))
+        fetch.rejected_responses += manifest_rejected;
+        Ok((
+            manifest,
+            CellDiscoveryFetchReportV3 {
+                discovery: observation.clone(),
+                discovered_providers: peers,
+                manifest_initial_cache_hit,
+                fetch,
+            },
+        ))
+    })();
+    result.map_err(|cause| {
+        observed_failure(
+            cause,
+            observation,
+            limits.max_connections,
+            &requests_left,
+            &responses,
+        )
+    })
 }
 
 struct ObservedAdvertisement {
@@ -533,61 +608,121 @@ pub fn announce_authenticated_cell_provider_pq(
     limits: CellPeerLimitsV1,
     original_deadline: Instant,
 ) -> CellResultV1<CellDiscoveryObservationV3> {
-    limits.validate()?;
-    let overall = original_deadline.min(Instant::now() + limits.overall_timeout);
-    check_deadline(overall)?;
-    let sampled = CellDiscoveryTimeV3::sample()?;
-    let now = sampled.unix_seconds();
-    options.validate_at(now)?;
-    require(
-        options.bootstraps.len() == 1,
-        "authenticated announcement bootstrap count",
-    )?;
-    authority_for(&options.bootstrap_keys, options.bootstraps[0])?.live_at(now)?;
-    require(
-        record.statement().owner == signing_key.public_key_id(),
-        "authenticated announcement signing owner",
-    )?;
+    announce_authenticated_cell_provider_pq_observed(
+        record,
+        signing_key,
+        provider_keys,
+        options,
+        limits,
+        original_deadline,
+    )
+    .map_err(|failure| failure.cause)
+}
+
+/// Publish with the same explicit V3 possession proof, preserving consumed
+/// verification slots and actual shared-session bytes/connections on refusal.
+pub fn announce_authenticated_cell_provider_pq_observed(
+    record: &CellProviderRecordV3,
+    signing_key: &PqNativeSigningKey,
+    provider_keys: &CellPqKeyPinsV2,
+    options: &CellDiscoveryOptionsV3,
+    limits: CellPeerLimitsV1,
+    original_deadline: Instant,
+) -> Result<CellDiscoveryObservationV3, Box<CellDiscoveryFailureV3>> {
+    announce_observed_with_time(
+        record,
+        signing_key,
+        provider_keys,
+        options,
+        limits,
+        original_deadline,
+        CellDiscoveryTimeV3::sample,
+    )
+}
+
+// The public entry point always captures its own sealed clock sample. This
+// private seam permits a deterministic stale-monotonic observation control
+// without changing the host clock, query wire or any public caller capability.
+fn announce_observed_with_time(
+    record: &CellProviderRecordV3,
+    signing_key: &PqNativeSigningKey,
+    provider_keys: &CellPqKeyPinsV2,
+    options: &CellDiscoveryOptionsV3,
+    limits: CellPeerLimitsV1,
+    original_deadline: Instant,
+    sample: impl FnOnce() -> CellResultV1<CellDiscoveryTimeV3>,
+) -> Result<CellDiscoveryObservationV3, Box<CellDiscoveryFailureV3>> {
     let requests_left = AtomicU64::new(limits.max_connections);
     let responses = ResponseBudget::new(limits.max_response_bytes);
-    let transport = RequestContext {
-        cancelled: None,
-        timeout: limits.request_timeout,
-        overall,
-        requests_left: &requests_left,
-        responses: &responses,
-    };
     let mut observation = CellDiscoveryObservationV3::default();
-    observation.reserve(SignatureKind::Record)?;
-    let receipt = record.verify_at(options.request, sampled, &options.addresses, provider_keys)?;
-    let mut query = Query::fresh(
-        options.request,
-        options.bootstraps[0],
-        &transport,
-        record.encode(),
-    )?;
-    query.expires_at = query.expires_at.min(receipt.valid_until());
-    query.validate_at(wall_now()?.as_secs())?;
-    observation.reserve(SignatureKind::Announcement)?;
-    query.signature = signing_key
-        .sign_exact_message(&query.announcement_message())
-        .map_err(|_| CellErrorV1::Invalid("authenticated announcement signing"))?;
-    check_deadline(overall)?;
-    require(
-        wall_now()?.as_secs() < receipt.valid_until(),
-        "authenticated announcement authority expired",
-    )?;
-    let reply = exchange(
-        &query,
-        &options.bootstrap_keys,
-        &transport,
-        &mut observation,
-    )?;
-    require(
-        reply.body == record.digest(),
-        "authenticated discovery durable ACK identity",
-    )?;
-    Ok(observation)
+    let result = (|| -> CellResultV1<_> {
+        limits.validate()?;
+        let overall = original_deadline.min(Instant::now() + limits.overall_timeout);
+        check_deadline(overall)?;
+        let sampled = sample()?;
+        let now = sampled.unix_seconds();
+        options.validate_at(now)?;
+        require(
+            options.bootstraps.len() == 1,
+            "authenticated announcement bootstrap count",
+        )?;
+        authority_for(&options.bootstrap_keys, options.bootstraps[0])?.live_at(now)?;
+        require(
+            record.statement().owner == signing_key.public_key_id(),
+            "authenticated announcement signing owner",
+        )?;
+        observation.reserve(SignatureKind::Record)?;
+        let receipt =
+            record.verify_at(options.request, sampled, &options.addresses, provider_keys)?;
+        let transport = RequestContext {
+            cancelled: None,
+            timeout: limits.request_timeout,
+            // Wall-clock validity cannot renew this earlier verified receipt's
+            // original lease while signing, dialing, waiting or accepting ACK.
+            overall: overall.min(receipt.monotonic_expiry()),
+            requests_left: &requests_left,
+            responses: &responses,
+        };
+        check_deadline(transport.overall)?;
+        let mut query = Query::fresh(
+            options.request,
+            options.bootstraps[0],
+            &transport,
+            record.encode(),
+        )?;
+        query.expires_at = query.expires_at.min(receipt.valid_until());
+        query.validate_at(wall_now()?.as_secs())?;
+        observation.reserve(SignatureKind::Announcement)?;
+        query.signature = signing_key
+            .sign_exact_message(&query.announcement_message())
+            .map_err(|_| CellErrorV1::Invalid("authenticated announcement signing"))?;
+        check_deadline(transport.overall)?;
+        require(
+            wall_now()?.as_secs() < receipt.valid_until(),
+            "authenticated announcement authority expired",
+        )?;
+        let reply = exchange(
+            &query,
+            &options.bootstrap_keys,
+            &transport,
+            &mut observation,
+        )?;
+        require(
+            reply.body == record.digest(),
+            "authenticated discovery durable ACK identity",
+        )?;
+        check_deadline(transport.overall)?;
+        Ok(observation.clone())
+    })();
+    result.map_err(|cause| {
+        observed_failure(
+            cause,
+            observation,
+            limits.max_connections,
+            &requests_left,
+            &responses,
+        )
+    })
 }
 
 #[derive(Clone)]
@@ -1079,10 +1214,20 @@ pub struct CellRendezvousReportV3 {
     pub reply_signature_attempts: usize,
 }
 impl CellRendezvousReportV3 {
-    pub fn signature_attempts(&self) -> usize {
+    /// Original 64-slot verification allowance, including reply self-checks.
+    pub fn verification_attempts(&self) -> usize {
         self.record_validation_attempts
             .saturating_add(self.announcement_validation_attempts)
             .saturating_add(self.reply_signature_attempts)
+    }
+    /// Additional reply-signing computations; their self-checks are already
+    /// included in `verification_attempts`. Neither count measures CPU time.
+    pub fn signing_attempts(&self) -> usize {
+        self.reply_signature_attempts
+    }
+    /// Compatibility name; preserves the existing V3 verification-slot unit.
+    pub fn signature_attempts(&self) -> usize {
+        self.verification_attempts()
     }
     fn reserve_validation(&mut self, announcement: bool) -> CellResultV1<()> {
         // Keep the last slot for the response's own verification. A full record
@@ -1307,13 +1452,29 @@ fn serve_query(
         directory.accept_verified(&receipt, authenticated_source, current, admission_deadline)?;
         Ok(record.digest().to_vec())
     } else {
-        let records = directory.records(query.request, now, deadline)?;
+        let mut records = directory.records(query.request, now, deadline)?;
+        // Preserve all durable high water. Active advertisements compete for
+        // the finite reply first; live withdrawals occupy remaining positions.
+        records.sort_by_key(|record| record.statement().withdrawn);
         let mut body = vec![0];
         for record in records {
             if body[0] as usize == MAX_DISCOVERED_PROVIDERS {
                 break;
             }
             if record.statement().request != query.request || record.live_at(now).is_err() {
+                continue;
+            }
+            // This complete retained snapshot may outlive a provider key.
+            // Its known-ineligible authority must not consume a verification
+            // slot or hide later live providers. Incoming frames still reserve
+            // their original slots before verification as before.
+            let statement = record.statement();
+            let eligible_authority = directory.keys().pins().any(|pin| {
+                pin.key_id == statement.owner
+                    && pin.generation == statement.owner_generation
+                    && pin.live_at(now).is_ok()
+            });
+            if !eligible_authority {
                 continue;
             }
             report.reserve_validation(false)?;

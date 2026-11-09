@@ -7,7 +7,7 @@ use crate::cell::{
 use sha2::{Digest, Sha256};
 use std::{
     fs,
-    io::Write,
+    io::{Read, Write},
     sync::{Arc, Mutex},
 };
 use trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki;
@@ -1614,4 +1614,721 @@ fn authenticated_v3_newest_verified_quota_rejected_withdrawal_vetoes_older_sourc
     assert!(current
         .iter()
         .all(|record| record.statement().owner != provider_key.public_key_id()));
+}
+
+fn provider_source_roster(keys: &CellPqKeyPinsV2) -> CellDiscoverySourcePinsV3 {
+    CellDiscoverySourcePinsV3::new(
+        keys.pins()
+            .map(|pin| CellDiscoverySourcePinV3 {
+                authenticated_key_id: pin.key_id,
+                generation: pin.generation,
+                ip: "127.0.0.1".parse().unwrap(),
+            })
+            .collect(),
+    )
+    .unwrap()
+}
+
+fn served_payload(path: &Path, bytes: &[u8]) -> (CellManifestV1, Cells) {
+    let input = path.join("provider-input");
+    fs::write(&input, bytes).unwrap();
+    let origin_path = path.join("provider-store");
+    let origin = CellStoreV1::open(&origin_path, cache()).unwrap();
+    let manifest = origin.pack_file(&input, cell_context(), 16_384).unwrap();
+    drop(origin);
+    (manifest, Cells::start(&origin_path))
+}
+
+#[test]
+fn authenticated_v3_real_server_active_provider_precedes_eight_withdrawals() {
+    let mut signers: Vec<_> = (1..=9).map(key_and_pin).collect();
+    signers.sort_by_key(|(_, pin)| pin.key_id);
+    let now = epoch_now();
+    let tmp = tempfile::tempdir().unwrap();
+    let bytes = b"The active ninth owner must remain discoverable after eight withdrawals.";
+    let (manifest, cells) = served_payload(tmp.path(), bytes);
+    let provider_keys =
+        CellPqKeyPinsV2::new(signers.iter().map(|(_, pin)| pin.clone()).collect()).unwrap();
+    let rendezvous = Rendezvous::start(
+        &tmp.path().join("rendezvous"),
+        provider_keys.clone(),
+        provider_source_roster(&provider_keys),
+        &[cells.address],
+        42,
+    );
+    let request = request(manifest.id(), now);
+    let options = CellDiscoveryOptionsV3 {
+        request,
+        bootstraps: vec![rendezvous.bootstrap],
+        bootstrap_keys: CellPqKeyPinsV2::new(vec![rendezvous.authority.clone()]).unwrap(),
+        addresses: policy(&[cells.address, rendezvous.bootstrap.endpoint]),
+    };
+    // Nine separately authenticated publication operations populate the real
+    // server. No direct SQL, fabricated verified receipt or source bypass.
+    for (index, (key, _)) in signers.iter().enumerate() {
+        let advert = record(request, cells.address, 1, now, key, index < 8);
+        let published = announce_authenticated_cell_provider_pq(
+            &advert,
+            key,
+            &provider_keys,
+            &options,
+            limits(),
+            deadline(),
+        )
+        .unwrap();
+        assert_eq!(published.connection_attempts, 1);
+        assert_eq!(published.signature_attempts(), 3);
+    }
+    let client = CellProviderDirectoryV3::open(
+        &tmp.path().join("client-directory"),
+        context(),
+        provider_keys,
+        options.source_pins().unwrap(),
+    )
+    .unwrap();
+    let store = CellStoreV1::open(&tmp.path().join("client-cache"), cache()).unwrap();
+    let output = tmp.path().join("complete");
+    let result = fetch_authenticated_discovered_cell_to_file_pq(
+        &store,
+        &client,
+        &options,
+        limits(),
+        deadline(),
+        &output,
+    );
+    let server = rendezvous.finish();
+    assert_eq!(server.connections, 10);
+    assert_eq!(server.record_validation_attempts, 17);
+    assert_eq!(server.announcement_validation_attempts, 9);
+    assert_eq!(server.reply_signature_attempts, 10);
+    assert_eq!(server.signature_attempts(), 36);
+    eprintln!("authenticated-v3 active-before-withdrawn: result={result:?}, server={server:?}");
+    assert!(
+        result.is_ok(),
+        "real rendezvous omitted the active provider behind eight valid withdrawals: {result:?}"
+    );
+    let (_, report) = result.unwrap();
+    assert_eq!(fs::read(&output).unwrap(), bytes);
+    assert_eq!(report.discovered_providers, vec![cells.address]);
+    assert_eq!(report.discovery.connection_attempts, 1);
+    assert_eq!(report.discovery.record_validation_attempts, 8);
+    assert_eq!(report.discovery.signature_attempts(), 9);
+    assert_eq!(
+        report.discovery.received_response_bytes,
+        (RESPONSE_HEADER_BYTES + 1 + 8 * CELL_PROVIDER_RECORD_BYTES_V3 + ML_DSA_65_SIGNATURE_BYTES)
+            as u64
+    );
+    let usage = client
+        .usage_at(wall_now().unwrap().as_secs(), deadline())
+        .unwrap();
+    assert_eq!(usage.retained_identities, 8);
+    assert_eq!(usage.active_identities, 1);
+    assert_eq!(usage.replay_only_identities, 7);
+}
+
+fn real_server_inactive_authority_case(revoked: bool) {
+    let mut signers: Vec<_> = (61..=62).map(key_and_pin).collect();
+    signers.sort_by_key(|(_, pin)| pin.key_id);
+    let tmp = tempfile::tempdir().unwrap();
+    let bytes = b"An expired provider authority must not consume a server verification slot.";
+    let (manifest, cells) = served_payload(tmp.path(), bytes);
+    let now = epoch_now();
+    let cutoff = now + 4;
+    if revoked {
+        signers[0].1.revoked_at = Some(cutoff);
+    } else {
+        signers[0].1.expires_at = cutoff;
+    }
+    let provider_keys =
+        CellPqKeyPinsV2::new(signers.iter().map(|(_, pin)| pin.clone()).collect()).unwrap();
+    let source_pins = provider_source_roster(&provider_keys);
+    let server_path = tmp.path().join("rendezvous");
+    let rendezvous = Rendezvous::start(
+        &server_path,
+        provider_keys.clone(),
+        source_pins.clone(),
+        &[cells.address],
+        42,
+    );
+    let request = request(manifest.id(), now);
+    let options = CellDiscoveryOptionsV3 {
+        request,
+        bootstraps: vec![rendezvous.bootstrap],
+        bootstrap_keys: CellPqKeyPinsV2::new(vec![rendezvous.authority.clone()]).unwrap(),
+        addresses: policy(&[cells.address, rendezvous.bootstrap.endpoint]),
+    };
+    let records: Vec<_> = signers
+        .iter()
+        .map(|(key, _)| record(request, cells.address, 1, now, key, false))
+        .collect();
+    for ((key, _), record) in signers.iter().zip(&records) {
+        announce_authenticated_cell_provider_pq(
+            record,
+            key,
+            &provider_keys,
+            &options,
+            limits(),
+            deadline(),
+        )
+        .unwrap();
+    }
+    let wait_deadline = Instant::now() + Duration::from_secs(6);
+    while wall_now().unwrap().as_secs() < cutoff {
+        assert!(
+            Instant::now() < wait_deadline,
+            "fixture authority-expiry wait exceeded bound"
+        );
+        thread::sleep(Duration::from_millis(10));
+    }
+    let query_time = wall_now().unwrap().as_secs();
+    assert!(records
+        .iter()
+        .all(|record| record.live_at(query_time).is_ok()));
+    assert!(signers[0].1.live_at(query_time).is_err());
+    assert!(signers[1].1.live_at(query_time).is_ok());
+    let client = CellProviderDirectoryV3::open(
+        &tmp.path().join("client-directory"),
+        context(),
+        provider_keys.clone(),
+        options.source_pins().unwrap(),
+    )
+    .unwrap();
+    let store = CellStoreV1::open(&tmp.path().join("client-cache"), cache()).unwrap();
+    for index in 0..2 {
+        let output = tmp.path().join(format!("complete-{index}"));
+        let (_, report) = fetch_authenticated_discovered_cell_to_file_pq(
+            &store,
+            &client,
+            &options,
+            limits(),
+            deadline(),
+            &output,
+        )
+        .unwrap();
+        assert_eq!(fs::read(output).unwrap(), bytes);
+        assert_eq!(report.discovery.record_validation_attempts, 1);
+        assert_eq!(report.discovery.signature_attempts(), 2);
+    }
+    let server = rendezvous.finish();
+    assert_eq!(server.connections, 4);
+    assert_eq!(server.announcement_validation_attempts, 2);
+    assert_eq!(server.reply_signature_attempts, 4);
+    eprintln!("authenticated-v3 inactive authority: revoked={revoked}, server={server:?}");
+    assert_eq!(
+        server.record_validation_attempts, 4,
+        "inactive authority consumed server verification slots before the live provider"
+    );
+    assert_eq!(server.rejected_records, 0);
+    assert_eq!(server.signature_attempts(), 10);
+    let directory =
+        CellProviderDirectoryV3::open(&server_path, context(), provider_keys, source_pins).unwrap();
+    let usage = directory
+        .usage_at(wall_now().unwrap().as_secs(), deadline())
+        .unwrap();
+    assert_eq!(usage.retained_identities, 2);
+    assert_eq!(usage.active_identities, 1);
+}
+
+#[test]
+fn authenticated_v3_real_server_expired_authority_preserves_verification_slots() {
+    real_server_inactive_authority_case(false);
+}
+
+#[test]
+fn authenticated_v3_real_server_revoked_authority_preserves_verification_slots() {
+    real_server_inactive_authority_case(true);
+}
+
+#[test]
+fn authenticated_v3_observed_partial_reply_retains_original_shared_denominator() {
+    let now = epoch_now();
+    let tmp = tempfile::tempdir().unwrap();
+    let source = SignedSource::start(42, vec![0], Duration::ZERO, 1);
+    let (_, provider_pin) = key_and_pin(41);
+    let options = CellDiscoveryOptionsV3 {
+        request: request([20; 32], now),
+        bootstraps: vec![source.bootstrap],
+        bootstrap_keys: CellPqKeyPinsV2::new(vec![source.authority.clone()]).unwrap(),
+        addresses: policy(&[source.bootstrap.endpoint]),
+    };
+    let directory = CellProviderDirectoryV3::open(
+        &tmp.path().join("directory"),
+        context(),
+        CellPqKeyPinsV2::new(vec![provider_pin]).unwrap(),
+        options.source_pins().unwrap(),
+    )
+    .unwrap();
+    let store = CellStoreV1::open(&tmp.path().join("cache"), cache()).unwrap();
+    let output = tmp.path().join("output");
+    let failure = fetch_authenticated_discovered_cell_to_file_pq_observed(
+        &store,
+        &directory,
+        &options,
+        CellPeerLimitsV1 {
+            max_response_bytes: 13,
+            ..limits()
+        },
+        deadline(),
+        &output,
+    )
+    .unwrap_err();
+    assert_eq!(source.finish().len(), 1);
+    assert_eq!(failure.total_connection_attempts, 1);
+    assert_eq!(failure.total_received_response_bytes, Some(13));
+    assert_eq!(failure.discovery.connection_attempts, 1);
+    assert_eq!(failure.discovery.received_response_bytes, 13);
+    assert_eq!(failure.discovery.verification_attempts(), 1);
+    assert_eq!(failure.discovery.signature_attempts(), 1);
+    assert_eq!(failure.discovery.signing_attempts(), 0);
+    assert!(!output.exists());
+    assert_eq!(
+        directory
+            .usage_at(wall_now().unwrap().as_secs(), deadline())
+            .unwrap()
+            .retained_identities,
+        0
+    );
+}
+
+#[test]
+fn authenticated_v3_observed_failed_manifest_includes_payload_session_costs_once() {
+    let now = epoch_now();
+    let tmp = tempfile::tempdir().unwrap();
+    let data_listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let data = data_listener.local_addr().unwrap();
+    let (provider_key, provider_pin) = key_and_pin(41);
+    let request = request([20; 32], now);
+    let advert = record(request, data, 1, now, &provider_key, false);
+    let mut body = vec![1];
+    body.extend(advert.encode());
+    let source = SignedSource::start(42, body, Duration::ZERO, 1);
+    let worker = thread::spawn(move || {
+        let (mut stream, _) = data_listener.accept().unwrap();
+        stream
+            .set_read_timeout(Some(Duration::from_secs(2)))
+            .unwrap();
+        let mut query = [0; 37];
+        stream.read_exact(&mut query).unwrap();
+        assert_eq!(&query[..5], b"TCQ1\x01");
+        stream.write_all(b"INVALID!!").unwrap();
+    });
+    let options = CellDiscoveryOptionsV3 {
+        request,
+        bootstraps: vec![source.bootstrap],
+        bootstrap_keys: CellPqKeyPinsV2::new(vec![source.authority.clone()]).unwrap(),
+        addresses: policy(&[source.bootstrap.endpoint, data]),
+    };
+    let directory = CellProviderDirectoryV3::open(
+        &tmp.path().join("directory"),
+        context(),
+        CellPqKeyPinsV2::new(vec![provider_pin]).unwrap(),
+        options.source_pins().unwrap(),
+    )
+    .unwrap();
+    let store = CellStoreV1::open(&tmp.path().join("cache"), cache()).unwrap();
+    let output = tmp.path().join("output");
+    let failure = fetch_authenticated_discovered_cell_to_file_pq_observed(
+        &store,
+        &directory,
+        &options,
+        CellPeerLimitsV1 {
+            max_connections: 3,
+            ..limits()
+        },
+        deadline(),
+        &output,
+    )
+    .unwrap_err();
+    assert_eq!(source.finish().len(), 1);
+    worker.join().unwrap();
+    let discovery_bytes =
+        (RESPONSE_HEADER_BYTES + 1 + CELL_PROVIDER_RECORD_BYTES_V3 + ML_DSA_65_SIGNATURE_BYTES)
+            as u64;
+    assert_eq!(failure.discovery.connection_attempts, 1);
+    assert_eq!(failure.discovery.received_response_bytes, discovery_bytes);
+    assert_eq!(failure.discovery.verification_attempts(), 2);
+    assert_eq!(failure.total_connection_attempts, 2);
+    assert_eq!(
+        failure.total_received_response_bytes,
+        Some(discovery_bytes + 9)
+    );
+    assert!(!output.exists());
+}
+
+#[test]
+fn authenticated_v3_observed_announcement_refusal_preserves_signature_units() {
+    let now = epoch_now();
+    let tmp = tempfile::tempdir().unwrap();
+    let (provider_key, provider_pin) = key_and_pin(41);
+    let (_, other_pin) = key_and_pin(43);
+    let provider_keys =
+        CellPqKeyPinsV2::new(vec![provider_pin.clone(), other_pin.clone()]).unwrap();
+    let sources = provider_sources(&other_pin);
+    let server_path = tmp.path().join("rendezvous");
+    let data = "127.0.0.1:19001".parse().unwrap();
+    let rendezvous = Rendezvous::start(
+        &server_path,
+        provider_keys.clone(),
+        sources.clone(),
+        &[data],
+        42,
+    );
+    let request = request([20; 32], now);
+    let options = CellDiscoveryOptionsV3 {
+        request,
+        bootstraps: vec![rendezvous.bootstrap],
+        bootstrap_keys: CellPqKeyPinsV2::new(vec![rendezvous.authority.clone()]).unwrap(),
+        addresses: policy(&[rendezvous.bootstrap.endpoint, data]),
+    };
+    let advert = record(request, data, 1, now, &provider_key, false);
+    let failure = announce_authenticated_cell_provider_pq_observed(
+        &advert,
+        &provider_key,
+        &provider_keys,
+        &options,
+        limits(),
+        deadline(),
+    )
+    .unwrap_err();
+    assert!(matches!(
+        failure.cause,
+        CellErrorV1::Invalid("authenticated discovery denied reply")
+    ));
+    assert_eq!(failure.total_connection_attempts, 1);
+    assert_eq!(
+        failure.total_received_response_bytes,
+        Some((RESPONSE_HEADER_BYTES + ML_DSA_65_SIGNATURE_BYTES) as u64)
+    );
+    assert_eq!(failure.discovery.record_validation_attempts, 1);
+    assert_eq!(failure.discovery.bootstrap_validation_attempts, 1);
+    assert_eq!(failure.discovery.announcement_signature_attempts, 1);
+    assert_eq!(failure.discovery.verification_attempts(), 3);
+    assert_eq!(failure.discovery.signature_attempts(), 3);
+    assert_eq!(failure.discovery.signing_attempts(), 1);
+    let server = rendezvous.finish();
+    assert_eq!(server.connections, 1);
+    assert_eq!(server.verification_attempts(), 3);
+    assert_eq!(server.signature_attempts(), 3);
+    assert_eq!(server.signing_attempts(), 1);
+    let reopened =
+        CellProviderDirectoryV3::open(&server_path, context(), provider_keys, sources).unwrap();
+    assert!(reopened
+        .records(request, wall_now().unwrap().as_secs(), deadline())
+        .unwrap()
+        .is_empty());
+}
+
+#[test]
+fn authenticated_v3_announcement_original_monotonic_lease_cannot_be_renewed_by_wall_time() {
+    let now = epoch_now();
+    let tmp = tempfile::tempdir().unwrap();
+    let (provider_key, provider_pin) = key_and_pin(41);
+    let provider_keys = CellPqKeyPinsV2::new(vec![provider_pin.clone()]).unwrap();
+    let sources = provider_sources(&provider_pin);
+    let server_path = tmp.path().join("rendezvous");
+    let data = "127.0.0.1:19001".parse().unwrap();
+    let rendezvous = Rendezvous::start(
+        &server_path,
+        provider_keys.clone(),
+        sources.clone(),
+        &[data],
+        42,
+    );
+    let request = request([20; 32], now);
+    let options = CellDiscoveryOptionsV3 {
+        request,
+        bootstraps: vec![rendezvous.bootstrap],
+        bootstrap_keys: CellPqKeyPinsV2::new(vec![rendezvous.authority.clone()]).unwrap(),
+        addresses: policy(&[rendezvous.bootstrap.endpoint, data]),
+    };
+    let positive = record(request, data, 1, now, &provider_key, false);
+    let published = announce_authenticated_cell_provider_pq_observed(
+        &positive,
+        &provider_key,
+        &provider_keys,
+        &options,
+        limits(),
+        deadline(),
+    )
+    .unwrap();
+    assert_eq!(published.connection_attempts, 1);
+    assert_eq!(published.verification_attempts(), 3);
+    assert_eq!(published.signing_attempts(), 1);
+
+    // Model a prior wall observation after a rollback: the signed absolute
+    // expiry still lies ahead on the current wall, but its original monotonic
+    // allowance has already elapsed. This private clock seam changes no host
+    // clocks, public input capability, wire value or operation timeout.
+    let wall = wall_now().unwrap();
+    let stale = CellDiscoveryTimeV3::for_test(wall, Instant::now() - Duration::from_secs(5));
+    let mut statement = positive.statement().clone();
+    statement.sequence = 2;
+    statement.issued_unix_seconds = wall.as_secs();
+    statement.expires_unix_seconds = wall.as_secs() + 3;
+    let newer = CellProviderRecordV3::sign(statement, &provider_key).unwrap();
+    assert!(newer.live_at(wall_now().unwrap().as_secs()).is_ok());
+    assert!(
+        stale.monotonic()
+            + (Duration::from_secs(newer.statement().expires_unix_seconds) - stale.unix_time())
+            < Instant::now()
+    );
+    let result = announce_observed_with_time(
+        &newer,
+        &provider_key,
+        &provider_keys,
+        &options,
+        limits(),
+        deadline(),
+        || Ok(stale),
+    );
+    eprintln!("authenticated-v3 original monotonic announcement lease: result={result:?}");
+    assert!(
+        newer.live_at(wall_now().unwrap().as_secs()).is_ok(),
+        "fixture wall lease expired before the monotonic-only refusal could be assessed"
+    );
+    assert!(
+        result.is_err(),
+        "an elapsed original monotonic lease was renewed by the current wall clock"
+    );
+    let failure = result.unwrap_err();
+    assert_eq!(failure.total_connection_attempts, 0);
+    assert_eq!(failure.total_received_response_bytes, Some(0));
+    assert_eq!(failure.discovery.record_validation_attempts, 1);
+    assert_eq!(failure.discovery.verification_attempts(), 1);
+    assert_eq!(failure.discovery.signing_attempts(), 0);
+    let server = rendezvous.finish();
+    assert_eq!(server.connections, 1);
+    assert_eq!(server.verification_attempts(), 3);
+    let reopened =
+        CellProviderDirectoryV3::open(&server_path, context(), provider_keys, sources).unwrap();
+    let rows = reopened
+        .records(request, wall_now().unwrap().as_secs(), deadline())
+        .unwrap();
+    assert_eq!(rows, vec![positive]);
+}
+
+// Independent encoding of the parallel PR #818 profile at fixed head
+// 43e10d4dded2404f2b6ae8851a68173d9d792be6. Its shared CDP3 magic and
+// length are not a compatibility contract: epoch position and domain differ.
+fn parallel_v3_provider_wire(
+    request: CellDiscoveryRequestV3,
+    endpoint: SocketAddr,
+    now: u64,
+    key: &PqNativeSigningKey,
+) -> Vec<u8> {
+    let mut wire = vec![b'C', b'D', b'P', b'3', 3, 0x65, 0, 0];
+    wire.extend(request.base.encode());
+    wire.extend(key.public_key_id());
+    wire.extend(1_u64.to_be_bytes());
+    wire.extend(endpoint_bytes(endpoint));
+    wire.extend(1_u64.to_be_bytes());
+    wire.extend(request.epoch.to_be_bytes());
+    wire.extend(now.to_be_bytes());
+    wire.extend((now + 10).to_be_bytes());
+    let mut message = b"TRNM/Cell/Provider/ML-DSA-65/v3\0".to_vec();
+    message.extend(&wire);
+    wire.extend(key.sign_exact_message(&message).unwrap());
+    assert_eq!(wire.len(), CELL_PROVIDER_RECORD_BYTES_V3);
+    wire
+}
+
+#[test]
+fn authenticated_v3_parallel_profile_magic_never_enables_wire_or_domain_fallback() {
+    let now = epoch_now();
+    let (key, pin) = key_and_pin(42);
+    let keys = CellPqKeyPinsV2::new(vec![pin.clone()]).unwrap();
+    let endpoint = "127.0.0.1:19001".parse().unwrap();
+    let request = request([20; 32], now);
+    let addresses = policy(&[endpoint]);
+    let canonical = record(request, endpoint, 1, now, &key, false);
+    canonical
+        .verify_at(
+            request,
+            CellDiscoveryTimeV3::sample().unwrap(),
+            &addresses,
+            &keys,
+        )
+        .unwrap();
+    let foreign = parallel_v3_provider_wire(request, endpoint, now, &key);
+    let unsigned_end = foreign.len() - ML_DSA_65_SIGNATURE_BYTES;
+    let mut foreign_message = b"TRNM/Cell/Provider/ML-DSA-65/v3\0".to_vec();
+    foreign_message.extend(&foreign[..unsigned_end]);
+    // This is an actually valid native signature under the parallel domain,
+    // not random bytes or a broken signer standing in for a foreign profile.
+    keys.verify(
+        pin.key_id,
+        pin.generation,
+        now,
+        &foreign_message,
+        &foreign[unsigned_end..],
+    )
+    .unwrap();
+    assert!(CellProviderRecordV3::decode(&foreign)
+        .and_then(|record| record.verify_at(
+            request,
+            CellDiscoveryTimeV3::sample().unwrap(),
+            &addresses,
+            &keys,
+        ))
+        .is_err());
+    // Keep our exact field layout, changing only the signed domain. Parsing
+    // succeeds, so this refusal specifically exercises native domain binding.
+    let mut changed_domain = canonical.encode();
+    let mut message = b"TRNM/Cell/Provider/ML-DSA-65/v3\0".to_vec();
+    message.extend(&changed_domain[..unsigned_end]);
+    changed_domain[unsigned_end..].copy_from_slice(&key.sign_exact_message(&message).unwrap());
+    assert!(CellProviderRecordV3::decode(&changed_domain)
+        .unwrap()
+        .verify_at(
+            request,
+            CellDiscoveryTimeV3::sample().unwrap(),
+            &addresses,
+            &keys
+        )
+        .is_err());
+
+    let query = query_at(request, bootstrap(endpoint, &pin), now);
+    let mut foreign_query = vec![b'C', b'D', b'Q', b'3', 3, 0x65, 1];
+    foreign_query.extend((91_u16 + 192).to_be_bytes());
+    foreign_query.extend(pin.key_id);
+    foreign_query.extend(pin.generation.to_be_bytes());
+    foreign_query.extend(endpoint_bytes(endpoint));
+    foreign_query.extend(query.nonce);
+    foreign_query.extend(request.base.encode());
+    assert_eq!(foreign_query.len(), 292);
+    assert_eq!(foreign_query[..6], query.encode()[..6]);
+    assert!(Query::decode(&foreign_query).is_err());
+
+    let mut foreign_reply = vec![b'C', b'D', b'S', b'3', 3, 0x65, 0];
+    foreign_reply.extend((88_u32 + 1 + ML_DSA_65_SIGNATURE_BYTES as u32).to_be_bytes());
+    foreign_reply.extend(query.nonce);
+    foreign_reply.extend(pin.key_id);
+    foreign_reply.extend(pin.generation.to_be_bytes());
+    foreign_reply.extend(now.to_be_bytes());
+    foreign_reply.extend((now + 10).to_be_bytes());
+    foreign_reply.push(0);
+    let mut foreign_message = b"TRNM/Cell/Bootstrap/ML-DSA-65/v3\0".to_vec();
+    foreign_message.extend((foreign_query.len() as u32).to_be_bytes());
+    foreign_message.extend(&foreign_query);
+    foreign_message.extend((foreign_reply.len() as u32).to_be_bytes());
+    foreign_message.extend(&foreign_reply);
+    let signature = key.sign_exact_message(&foreign_message).unwrap();
+    keys.verify(
+        pin.key_id,
+        pin.generation,
+        now,
+        &foreign_message,
+        &signature,
+    )
+    .unwrap();
+    foreign_reply.extend(signature);
+    assert_eq!(foreign_reply.len(), 11 + 88 + 1 + ML_DSA_65_SIGNATURE_BYTES);
+    assert!(verify_frame(&query, &keys, &foreign_reply).is_err());
+
+    let canonical_reply = signed_response(&query, 0, &[0], now, query.expires_at, &key).unwrap();
+    assert_eq!(
+        verify_frame(&query, &keys, &canonical_reply).unwrap().body,
+        vec![0]
+    );
+    let unsigned = response_unsigned(&query, 0, &[0], now, query.expires_at).unwrap();
+    let query_wire = query.encode();
+    let mut parallel_domain = b"TRNM/Cell/Bootstrap/ML-DSA-65/v3\0".to_vec();
+    parallel_domain.extend((query_wire.len() as u32).to_be_bytes());
+    parallel_domain.extend(query_wire);
+    parallel_domain.extend((unsigned.len() as u32).to_be_bytes());
+    parallel_domain.extend(&unsigned);
+    let mut changed_reply = unsigned;
+    changed_reply.extend(key.sign_exact_message(&parallel_domain).unwrap());
+    assert!(verify_frame(&query, &keys, &changed_reply).is_err());
+}
+
+#[test]
+fn authenticated_v3_parallel_database_profile_is_refused_without_reinterpretation() {
+    // The parallel profile reuses both application_id and user_version. Exact
+    // schema validation must still fail without importing or deleting its rows.
+    const META: &str = "CREATE TABLE discovery_meta_v3 (singleton INTEGER PRIMARY KEY CHECK(singleton=1),context BLOB NOT NULL CHECK(length(context)=128),authority BLOB NOT NULL CHECK(length(authority)=32),clock BLOB NOT NULL CHECK(length(clock)=8),epoch BLOB NOT NULL CHECK(length(epoch)=8),revision BLOB NOT NULL CHECK(length(revision)=8)) STRICT";
+    const RECORDS: &str = "CREATE TABLE discovery_providers_v3 (manifest BLOB NOT NULL CHECK(length(manifest)=32),owner BLOB NOT NULL CHECK(length(owner)=32),sequence BLOB NOT NULL CHECK(length(sequence)=8),wire BLOB NOT NULL CHECK(length(wire)=3600),digest BLOB NOT NULL CHECK(length(digest)=32),source BLOB NOT NULL CHECK(length(source)=17),prefix BLOB NOT NULL CHECK(length(prefix)=17),PRIMARY KEY(manifest,owner)) STRICT";
+    let now = epoch_now();
+    let tmp = tempfile::tempdir().unwrap();
+    let path = tmp.path().join("parallel-directory");
+    let (key, pin) = key_and_pin(41);
+    let keys = CellPqKeyPinsV2::new(vec![pin.clone()]).unwrap();
+    let request = request([20; 32], now);
+    let wire = parallel_v3_provider_wire(request, "127.0.0.1:19001".parse().unwrap(), now, &key);
+    let mut digest = Sha256::new();
+    digest.update(b"TRNM/Cell/Provider/Statement/v3\0");
+    digest.update(&wire[..wire.len() - ML_DSA_65_SIGNATURE_BYTES]);
+    let digest: [u8; 32] = digest.finalize().into();
+    let db = rusqlite::Connection::open(&path).unwrap();
+    db.pragma_update(None, "page_size", 4096).unwrap();
+    db.pragma_update(None, "journal_mode", "DELETE").unwrap();
+    db.pragma_update(None, "application_id", 0x4344_5033_i64)
+        .unwrap();
+    db.pragma_update(None, "user_version", 3).unwrap();
+    db.pragma_update(None, "max_page_count", 4096).unwrap();
+    db.execute_batch(META).unwrap();
+    db.execute_batch(RECORDS).unwrap();
+    db.execute(
+        "INSERT INTO discovery_meta_v3 VALUES(1,?1,?2,?3,?4,?5)",
+        rusqlite::params![
+            context().encode(),
+            keys.digest().as_slice(),
+            now.to_be_bytes().as_slice(),
+            request.epoch.to_be_bytes().as_slice(),
+            1_u64.to_be_bytes().as_slice(),
+        ],
+    )
+    .unwrap();
+    let source = super::super::super::ip_bytes("127.0.0.1".parse().unwrap());
+    let prefix = super::super::super::ip_bytes("127.0.0.0".parse().unwrap());
+    db.execute(
+        "INSERT INTO discovery_providers_v3 VALUES(?1,?2,?3,?4,?5,?6,?7)",
+        rusqlite::params![
+            request.base.manifest.as_slice(),
+            pin.key_id.as_slice(),
+            1_u64.to_be_bytes().as_slice(),
+            &wire,
+            digest.as_slice(),
+            source.as_slice(),
+            prefix.as_slice(),
+        ],
+    )
+    .unwrap();
+    drop(db);
+    assert!(matches!(
+        CellProviderDirectoryV3::open(&path, context(), keys, provider_sources(&pin)),
+        Err(CellErrorV1::Invalid("discovery live schema"))
+    ));
+    let reopened = rusqlite::Connection::open(&path).unwrap();
+    let stored_wire: Vec<u8> = reopened
+        .query_row("SELECT wire FROM discovery_providers_v3", [], |row| {
+            row.get(0)
+        })
+        .unwrap();
+    assert_eq!(stored_wire, wire);
+    let meta: (Vec<u8>, Vec<u8>) = reopened
+        .query_row("SELECT epoch,revision FROM discovery_meta_v3", [], |row| {
+            Ok((row.get(0)?, row.get(1)?))
+        })
+        .unwrap();
+    assert_eq!(
+        meta,
+        (
+            request.epoch.to_be_bytes().to_vec(),
+            1_u64.to_be_bytes().to_vec()
+        )
+    );
+    for (name, expected) in [
+        ("discovery_meta_v3", META),
+        ("discovery_providers_v3", RECORDS),
+    ] {
+        let sql: String = reopened
+            .query_row(
+                "SELECT sql FROM sqlite_schema WHERE name=?1",
+                [name],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(sql, expected);
+    }
 }

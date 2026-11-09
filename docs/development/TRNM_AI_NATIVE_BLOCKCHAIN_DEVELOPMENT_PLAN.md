@@ -1,3 +1,31 @@
+**Complete storage owner convergence — HOLD:**
+
+Continue the existing six-capability lineage with the
+[storage convergence contract](specs/pon/CELL_STORAGE_CONVERGENCE_DEV_V1.md).
+TCA3 persists the full model/environment duty and independently pinned catalog
+history over the original physical arena. CPS1 derives a finite periodic
+full-snapshot sequence from that history without a second operation ledger or
+free renewal. CSP1 physical slots and CRP1 bind the actual complete protected set
+to all original manifest/chunk placements; native version/shard operations keep
+M12 funding, New-only effects, Unknown recovery and irreversible resource usage.
+The #823 discovery wire profile remains authoritative; incompatible #818 V3
+encodings are rejected, while its separate complete-version residency component
+is retained. Actual bytes, joint memory admission and CHB1 dual-context handoff
+keep their original task and consumer authority boundaries. The initial CRP1
+profile admits at most 128 chunks and 2 MiB of metadata; complete-plan automatic
+local repair retains original funding and cumulative failed-attempt budgets.
+The fresh sealed-FD research consumer loads actual admitted bytes and requires
+two forwards under one deadline, without ordinary Hepta FinalUse authority.
+
+Preparation failures, static reviews and native observations remain separate.
+Freeze the complete implementation, then run exact-source native, locked graphs,
+strict Clippy, formatting, vector, source-negative and Markdown gates. Keep the
+original release/architecture/source matrices, four-second service requirement,
+separate thirty-second pressure, all previous failures and ordinary Hepta
+FinalUse owner. Declared provider identities, funding admission, synthetic byte
+callbacks and earlier unrelated model runs cannot qualify independent WAN
+custody, perpetual paid retention or the current next-task consumer.
+
 **M12 witnessed generation recovery V3, 2026-11-08 America/New_York — HOLD:**
 The [guarded ordinary Node/M12 entry](specs/pon/M12_GENERATION_RECOVERY_V3.md)
 adds a separate M12 witness binding, complete-journal checkpoints and transaction

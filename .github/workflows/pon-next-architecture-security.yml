@@ -22,6 +22,17 @@ on:
       - formal/pon-nakamoto-v1/vectors/cell-complete-version-v1.json
       - formal/pon-nakamoto-v1/vectors/cell-discovery-epoch-v3.json
       - scripts/cell_version_content_vector.py
+      - docs/development/specs/pon/CELL_STORAGE_CONVERGENCE_DEV_V1.md
+      - scripts/cell_version_retention_v3_vector.py
+      - scripts/cell_storage_descriptor_reference.py
+      - scripts/ci/test_cell_storage_convergence_ci.py
+      - scripts/cell_sealed_bootstrap_v1.py
+      - scripts/llm_cell_sealed_worker_v1.py
+      - scripts/prepare_cell_sealed_research_v1.py
+      - scripts/test_llm_cell_sealed_worker_v1.py
+      - tests/fixtures/llm_material_runtime_bridge_v1/**
+      - formal/pon-nakamoto-v1/vectors/cell-version-retention-v3.json
+      - formal/pon-nakamoto-v1/vectors/cell-storage-owner-vectors-v1.json
       - docs/development/specs/pon/CELL_FULL_CONTENT_V2.md
       - docs/development/specs/pon/CELL_SEALED_LOADER_V1.md
       - docs/development/specs/pon/CELL_RS46_CUSTODY_V1.md
@@ -161,6 +172,9 @@ jobs:
           bash "$OUT/run-command.sh" discovery-epoch-vector python3 -B scripts/cell_discovery_epoch_v3_vector.py --check || status=1
           bash "$OUT/run-command.sh" discovery-workflow-controls python3 -B scripts/ci/test_cell_discovery_v3_ci.py || status=1
           bash "$OUT/run-command.sh" complete-content-vector python3 -B scripts/cell_version_content_vector.py --check || status=1
+          bash "$OUT/run-command.sh" version-retention-vector python3 -B scripts/cell_version_retention_v3_vector.py --check || status=1
+          bash "$OUT/run-command.sh" storage-descriptor-vector python3 -B scripts/cell_storage_descriptor_reference.py --check || status=1
+          bash "$OUT/run-command.sh" storage-convergence-workflow-controls python3 -B scripts/ci/test_cell_storage_convergence_ci.py || status=1
           exit "$status"
       - name: Verify locked graph and unchanged all-source formatting
         id: graph_format
@@ -179,6 +193,63 @@ jobs:
         run: |
           set -euo pipefail
           bash "$OUT/run-command.sh" p2p-complete cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability -- --test-threads=1
+      - name: Run real sealed-input Python controls and verify all eighteen cases
+        id: sealed_python
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          bash "$OUT/run-command.sh" sealed-research-python-controls python3 -B -m unittest discover -s scripts -p test_llm_cell_sealed_worker_v1.py -v || status=1
+          python3 -B scripts/ci/test_cell_storage_convergence_ci.py --check-sealed-controls "$OUT/sealed-research-python-controls.log" || status=1
+          exit "$status"
+      - name: Run exact sealed-handoff and complete shard-capacity controls
+        id: storage_components
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          required=(
+            cell::host_handoff::tests::research_fds::research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline
+            cell::host_handoff::tests::research_fds::research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte
+            cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs
+            cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging
+            cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling
+          )
+          for selector in "${required[@]}"; do
+            bash "$OUT/run-command.sh" "native-storage-component-$selector" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib "$selector" -- --exact --test-threads=1 || status=1
+            python3 -B scripts/ci/check_required_native_test.py "$OUT/native-storage-component-$selector.log" --test "$selector" || status=1
+          done
+          exit "$status"
+      - name: Run complete storage-owner module and exact new funding controls
+        id: storage_owner
+        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          bash "$OUT/run-command.sh" native-storage-owner cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::storage_service:: -- --test-threads=1 || status=1
+          required=(
+            store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement
+            store::storage_service::tests::version::native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done
+            store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source
+            store::storage_service::tests::version::native_version_scope_alias_and_late_funding_errors_precede_every_reservation
+            store::storage_service::tests::version::native_version_outer_history_cannot_invent_missing_member_intents
+            store::storage_service::tests::shard::native_shard_real_funding_target_readback_and_repair_keep_original_debits
+            store::storage_service::tests::shard::native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present
+            store::storage_service::tests::shard::native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire
+            store::storage_service::tests::version::shard_plan::native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits
+            store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted
+            store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads
+            store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding
+            store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies
+          )
+          for selector in "${required[@]}"; do
+            bash "$OUT/run-command.sh" "native-storage-$selector" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --test-threads=1 || status=1
+            python3 -B scripts/ci/check_required_native_test.py "$OUT/native-storage-$selector.log" --test "$selector" || status=1
+          done
+          exit "$status"
       - name: Run the new packet observer and retained native packet-status controls
         id: native_packet
         if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}
@@ -288,8 +359,18 @@ jobs:
           from pathlib import Path
           import hashlib, json, os, sys
           root = Path(sys.argv[1])
+          stage_outcomes = json.loads(os.environ["STAGE_OUTCOMES"])
+          storage_owner_passed = stage_outcomes.get("storage_owner", {}).get("outcome") == "success"
+          storage_components_passed = stage_outcomes.get("storage_components", {}).get("outcome") == "success"
+          sealed_python_passed = stage_outcomes.get("sealed_python", {}).get("outcome") == "success"
           (root / "stage-outcomes.json").write_text(json.dumps({
-              "steps": json.loads(os.environ["STAGE_OUTCOMES"]),
+              "steps": stage_outcomes,
+              "storage_owner_required": True,
+              "storage_owner_passed": storage_owner_passed,
+              "storage_components_required": True,
+              "storage_components_passed": storage_components_passed,
+              "sealed_python_required": True,
+              "sealed_python_passed": sealed_python_passed,
               "expected_source": os.environ["EXPECTED_SOURCE"],
               "source_kind": os.environ["SOURCE_KIND"],
               "runner": os.environ["TRNM_COST_RUNNER_LABEL"],
@@ -303,6 +384,10 @@ jobs:
               if path.is_file() and not path.is_symlink() and path.name != "sha256sums.txt":
                   records.append(hashlib.sha256(path.read_bytes()).hexdigest() + "  " + path.name)
           (root / "sha256sums.txt").write_text("\n".join(records) + "\n")
+          if not storage_owner_passed:
+              raise SystemExit("required storage-owner native stage did not succeed")
+          if not storage_components_passed or not sealed_python_passed:
+              raise SystemExit("required storage convergence component stages did not succeed")
           PY
       - name: Retain logs and failed or partial observations
         if: always()

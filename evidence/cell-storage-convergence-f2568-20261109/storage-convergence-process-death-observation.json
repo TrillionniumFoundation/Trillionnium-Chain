@@ -1,0 +1,20 @@
+{
+  "bytes": 84381,
+  "excerpt_start_line": 538,
+  "line_count": 826,
+  "lines": [
+    "test cell::retention::tests::missing_repair_intent_can_only_reconcile_a_complete_target_and_seals_its_id ... ok",
+    "test cell::retention::tests::original_ids_and_limits_cannot_be_renamed_reopened_or_recycled ... ok",
+    "test cell::retention::tests::pending_ack_never_claims_bytes_and_keeps_original_reservation ... ok",
+    "test cell::retention::tests::real_process_death_after_payload_sync_recovers_ack_without_origin_or_new_capacity ... ",
+    "running 1 test",
+    "ok",
+    "test cell::retention::tests::rejected_control_is_sticky_and_absolute_deadline_precedes_any_copy_intent ... ok",
+    "test cell::retention::tests::repair_completion_reconciliation_writer_wait_keeps_original_deadline ... ok",
+    "test cell::retention::tests::repair_completion_refuses_a_schema_change_after_payload_and_keeps_full_charge ... ok",
+    "test cell::retention::tests::repair_completion_retry_writer_wait_keeps_original_deadline ... ok"
+  ],
+  "path": "/home/qq/work/chain-cell-storage-convergence-prep03/complete-da-native.stdout",
+  "sha256": "056e0952c901adef2e1b95a539b3b510f5fed5e3b2c4946dc69f9ad0573aeb88",
+  "scope": "Read-only excerpt from root-owned prep03 native output; this read does not identify a final tested commit or execute native tests."
+}

@@ -22,10 +22,12 @@ mod epoch;
 mod epoch_directory;
 mod transport;
 pub use auth::{
-    announce_authenticated_cell_provider_pq, fetch_authenticated_discovered_cell_to_file_pq,
-    serve_authenticated_cell_rendezvous_pq, CellBootstrapPinV3, CellDiscoveryFetchReportV3,
-    CellDiscoveryObservationV3, CellDiscoveryOptionsV3, CellRendezvousIdentityV3,
-    CellRendezvousReportV3, CELL_DISCOVERY_AUTH_PROFILE_V3,
+    announce_authenticated_cell_provider_pq, announce_authenticated_cell_provider_pq_observed,
+    fetch_authenticated_discovered_cell_to_file_pq,
+    fetch_authenticated_discovered_cell_to_file_pq_observed,
+    serve_authenticated_cell_rendezvous_pq, CellBootstrapPinV3, CellDiscoveryFailureV3,
+    CellDiscoveryFetchReportV3, CellDiscoveryObservationV3, CellDiscoveryOptionsV3,
+    CellRendezvousIdentityV3, CellRendezvousReportV3, CELL_DISCOVERY_AUTH_PROFILE_V3,
 };
 pub use directory::{CellProviderDirectoryUsageV2, CellProviderDirectoryV2};
 pub use epoch::{

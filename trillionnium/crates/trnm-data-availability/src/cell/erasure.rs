@@ -10,10 +10,22 @@ use super::{
 };
 
 mod custody;
+mod provider;
+mod retained_plan;
 pub use custody::{
     CellRs46CacheTargetV1, CellRs46CodewordV1, CellRs46PlacementPolicyV1, CellRs46RepairBudgetV1,
     CellRs46RepairUsageV1, CellRs46RepairV1, CellRs46ShardInputV1, CellRs46ShardPlacementV1,
     CELL_RS46_CODEWORD_WIRE_BYTES_V1,
+};
+pub use provider::{
+    CellRs46ShardContractV1, CellRs46ShardOwnerV1, CellRs46ShardProviderConfigV1,
+    CellRs46ShardProviderV1, CellRs46ShardRepairRequestV1, CellRs46StoredShardV1,
+    MAX_CELL_RS46_PROVIDER_DESCRIPTOR_BYTES_V1,
+};
+pub use retained_plan::{
+    CellRetainedShardChunkV1, CellRetainedShardPlanFileV1, CellRetainedShardPlanRequestV1,
+    CellRetainedShardPlanV1, CellRetainedShardRootV1, MAX_CELL_RETAINED_SHARD_CHUNKS_V1,
+    MAX_CELL_RETAINED_SHARD_PLAN_BYTES_V1, MAX_CELL_RETAINED_SHARD_ROOTS_V1,
 };
 
 pub const CELL_RS46_PROFILE_V1: &str = "cell-rs46-chunk-v1";

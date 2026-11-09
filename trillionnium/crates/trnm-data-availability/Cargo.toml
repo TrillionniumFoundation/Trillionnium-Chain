@@ -31,13 +31,13 @@ trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
 zeroize = "=1.9.1"
 
 [target.'cfg(unix)'.dependencies]
-rustix = { version = "=1.1.4", features = ["event", "fs"] }
+rustix = { version = "=1.1.4", features = ["event", "fs", "net", "time"] }
 
 [dev-dependencies]
 serde_json = { version = "1", features = ["arbitrary_precision"] }
 ml-dsa = { version = "=0.1.1", default-features = false, features = ["alloc", "zeroize"] }
 hex = "0.4"
-rustix = { version = "1.1.4", features = ["time", "net"] }
+rustix = { version = "1.1.4", features = ["time", "net", "process"] }
 tempfile = "3"
 
 [[bin]]

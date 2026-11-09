@@ -18,6 +18,8 @@ pub mod discovery;
 mod erasure;
 #[cfg(test)]
 mod historical_tcl3_cache_budget;
+#[cfg(target_os = "linux")]
+mod host_handoff;
 mod manifest;
 mod model_root;
 mod network;
@@ -28,11 +30,13 @@ mod release;
 mod residency;
 mod retained;
 mod retention;
+mod snapshot_schedule;
 mod store;
 mod tensor;
 mod tensor_reader;
 mod version;
 mod version_content;
+mod version_retention;
 
 pub use archive::{
     CellReleaseRetentionConfigV2, CellReleaseRetentionContractV2, CellReleaseRetentionReadbackV2,
@@ -71,11 +75,27 @@ pub use custody::{
 };
 pub use delta::{fetch_delta_to_file, CellChunkDeltaV1, CellDeltaPlanV1, MAX_CELL_DELTA_BYTES_V1};
 pub use erasure::{
+    CellRetainedShardChunkV1, CellRetainedShardPlanFileV1, CellRetainedShardPlanRequestV1,
+    CellRetainedShardPlanV1, CellRetainedShardRootV1, MAX_CELL_RETAINED_SHARD_CHUNKS_V1,
+    MAX_CELL_RETAINED_SHARD_PLAN_BYTES_V1, MAX_CELL_RETAINED_SHARD_ROOTS_V1,
+};
+pub use erasure::{
     CellRs46CacheTargetV1, CellRs46ChunkBindingV1, CellRs46CodewordV1, CellRs46ManifestBindingV1,
     CellRs46PlacementPolicyV1, CellRs46RepairBudgetV1, CellRs46RepairUsageV1, CellRs46RepairV1,
     CellRs46ShardInputV1, CellRs46ShardPlacementV1, CellRs46ShardV1,
     CELL_RS46_CODEWORD_WIRE_BYTES_V1, CELL_RS46_DATA_SHARDS_V1, CELL_RS46_PROFILE_V1,
     CELL_RS46_TOTAL_SHARDS_V1, MAX_CELL_RS46_SHARD_BYTES_V1, MAX_CELL_RS46_SHARD_WIRE_BYTES_V1,
+};
+pub use erasure::{
+    CellRs46ShardContractV1, CellRs46ShardOwnerV1, CellRs46ShardProviderConfigV1,
+    CellRs46ShardProviderV1, CellRs46ShardRepairRequestV1, CellRs46StoredShardV1,
+    MAX_CELL_RS46_PROVIDER_DESCRIPTOR_BYTES_V1,
+};
+#[cfg(target_os = "linux")]
+pub use host_handoff::{
+    CellHostHandoffDescriptorV1, CellHostHandoffV1, CellHostResearchExecutionV1,
+    CellHostResearchParentV1, CellHostResearchQueryV1, MAX_CELL_HOST_HANDOFF_DESCRIPTOR_BYTES_V1,
+    MAX_CELL_RESEARCH_FD_FILES_V1, MAX_CELL_RESEARCH_FD_HEADER_V1,
 };
 pub use manifest::{
     CellChunkV1, CellContextV1, CellManifestV1, CellReleaseManifestV1, MAX_CELL_BYTES,
@@ -120,12 +140,18 @@ pub use residency::{
     CellResidencyUsageV1, CellResidencyV1, CellResidentFileV1, CellResidentTensorFileV1,
     CellResidentTensorModelV1, CellResidentTensorV1, CellResidentViewV1, CellResidentWorkingSetV1,
 };
+pub use residency::{CellResidentVersionV1, CellResidentVersionViewV1};
 pub use retained::{
     fetch_retained_version_set, CellRetainedFetchFailureV1, CellRetainedFetchObservationV1,
     CellRetainedFetchUsageV1, CellRetainedObjectV1, CellRetainedReadBudgetV1,
     CellRetainedReadUsageV1, CellRetainedSetOwnerV1, CellRetainedSetReadbackV1,
     CellRetainedVersionEntryV1, CellRetainedVersionSetV1, MAX_CELL_RETAINED_SET_BYTES_V1,
     MAX_CELL_RETAINED_VERSIONS_V1,
+};
+pub use snapshot_schedule::{
+    CellPeriodicSnapshotDueV1, CellPeriodicSnapshotOwnerV1, CellPeriodicSnapshotPolicyV1,
+    CellPeriodicSnapshotProgressV1, CELL_PERIODIC_SNAPSHOT_POLICY_BYTES_V1,
+    MAX_CELL_PERIODIC_SNAPSHOTS_V1,
 };
 
 #[cfg(target_os = "linux")]
@@ -153,6 +179,13 @@ pub use version_content::{
 #[cfg(target_os = "linux")]
 pub use version_content::{
     CellSealedContentScopeV2, VerifiedCellSealedContentV2, VerifiedCellSealedVersionContentV2,
+};
+pub use version_retention::{
+    CellVersionCatalogAnchorV3, CellVersionLoaderPinV3, CellVersionRetentionConfigV3,
+    CellVersionRetentionContractV3, CellVersionRetentionDutyV3, CellVersionRetentionInventoryV3,
+    CellVersionRetentionReadbackV3, CellVersionRetentionStateV3, CellVersionRetentionStoreV3,
+    CellVersionRetentionUsageV3, CellVersionSnapshotLinkV3,
+    MAX_CELL_VERSION_RETENTION_CONTRACT_BYTES_V3,
 };
 
 pub type CellDigestV1 = [u8; 32];

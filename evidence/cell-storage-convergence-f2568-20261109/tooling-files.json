@@ -1,0 +1,88 @@
+{
+  "files": [
+    {
+      "bytes": 39150,
+      "path": "tools/run_exact_gates_previous.py",
+      "sha256": "806329aaa71ff9952ebefa84995ebd0a0ae576e6e89ed0774cb77f7891892d4a"
+    },
+    {
+      "bytes": 53837,
+      "path": "tools/run_discovery_convergence_differential.py",
+      "sha256": "0062ab0290065261d06a04a79ab29b89a70a3068ccb8c6bb56c9d3012106a042"
+    },
+    {
+      "bytes": 8733,
+      "path": "tools/run_discovery_convergence_differential_selftest.py",
+      "sha256": "73ad9e47d4a655af6d1966d19349fd1c300159804582fb980368154254de187d"
+    },
+    {
+      "bytes": 66477,
+      "path": "tools/run_storage_convergence_exact_gates.py",
+      "sha256": "288b26c6c6ef17aa3ed2e213b473bf80e46f82b739d810018649f0672f585e10"
+    },
+    {
+      "bytes": 12181,
+      "path": "tools/run_storage_convergence_exact_gates_selftest.py",
+      "sha256": "de59fae57d1c8773171f173bacbc231d3140b6e9211f2059c4685dc4a988d327"
+    },
+    {
+      "bytes": 5096,
+      "path": "tools/run_convergence_preparation_compile.py",
+      "sha256": "9ef29f3124c5fa29938d27cb4fa2ef285dea3cef06b6c2efe2ba0a4b7f71bdc7"
+    },
+    {
+      "bytes": 5439,
+      "path": "tools/run_convergence_preparation_native_v2.py",
+      "sha256": "50bf85c3ea3c7054e3eeed09b71f117115155cf519be9f6f336c217bd52ac459"
+    },
+    {
+      "bytes": 5220,
+      "path": "tools/run_convergence_preparation_node_v3.py",
+      "sha256": "8494fe35215efdd48db85569db7a80fea17839442664f70e06ebae12177ae5fb"
+    },
+    {
+      "bytes": 5128,
+      "path": "tools/run_convergence_preparation_clippy.py",
+      "sha256": "82e887bf730799107cfab7ee64c397e590c41652907cf4dd0b39a99c8302978d"
+    },
+    {
+      "bytes": 1055,
+      "path": "discovery-runner-synthetic-selftest.stdout.json",
+      "sha256": "8fd68a976f8921047fa9f4a7834d5900a0c7f7a563dc585c2e3d0281ea3e6ac2"
+    },
+    {
+      "bytes": 1936,
+      "path": "storage-convergence-exact-runner-synthetic-selftest.stdout.json",
+      "sha256": "5f6cc325a1002f6fecbffcc5bf053f7d42e8d681f405745a5af75f7f4297e12a"
+    },
+    {
+      "bytes": 1649,
+      "path": "storage-convergence-exact-runner-static-review.json",
+      "sha256": "214af8c3e10a8fd73fc1f1f2ab507417444b6f0b5d104241d8e5eb34db27cc36"
+    },
+    {
+      "bytes": 1342,
+      "path": "storage-convergence-process-death-observation.json",
+      "sha256": "2cb662ae41ac64242233b0595eab2886f564b1ef53f445ea0ed82c8618530102"
+    },
+    {
+      "bytes": 11839,
+      "path": "storage-convergence-exact-gates-config-template.json",
+      "sha256": "2890269d8268f6fa548414520b89a71370b42c0f091b7518ad3a6105950f78af"
+    },
+    {
+      "bytes": 159799,
+      "members": 76,
+      "path": "preparation/ci08-preparation.tar.gz",
+      "sha256": "32ccf6f11c6ce2a4dda912f8957e4113063202931f88a2f0338545ad54be1d23"
+    },
+    {
+      "bytes": 11978,
+      "members": 28,
+      "path": "preparation/prep09-static.tar.gz",
+      "sha256": "b4766bf63d75c72dffbbb443b7806088530a7c16ddf53ff3533202379d7ec03e"
+    }
+  ],
+  "schema": "cell-storage-convergence-tooling-files-v1",
+  "scope": "Current reproduction-tool identities; each historical observation retains its own original source identity and scope. CI08 contributes 51 synthetic parser checks, not native executions."
+}
