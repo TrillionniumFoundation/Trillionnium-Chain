@@ -64,6 +64,21 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Original-owner rejection-cost continuation, 2026-11-08 America/New_York — HOLD:**
+Continue the real #812 integration source `7e044b65454f4c9ea505591727332acffb33e7e5`,
+selectively carrying #802's bounded observer envelope while retaining later
+owner fixes. The [new explicit local admission profile](specs/pon/RESOURCE_OWNER_ADMISSION_V1.md)
+reserves execution and cleanup principal durably, binds the original operation,
+packet bytes, active-parent commitment and deadline, and preserves outstanding
+cost across process loss and replay. Adopted packet readers require the original
+account; no restart, identity or new listener creates credit. The native adapter
+settles conservatively only after actual child termination and cleanup. Existing
+public-v3 r14 semantics stay unchanged. The [execution record](../../evidence/pon-resource-owner-20261108/README.md)
+separates source preparation, component evidence and remaining qualification.
+All-ingress ownership, physical overshoot, independent rollback freshness,
+authenticated committed-service entitlement, a positive honest-service bound,
+full proof-backend net benefit and production activation remain open.
+
 **PQ quorum preflight and root-family continuation, 2026-11-08 UTC:**
 Continue the existing #723 PQ candidate from `12e510b211110d93d9ead07e02c07a1eecc28ae9`.
 Complete bounded signer-set checks before release signature mathematics, and

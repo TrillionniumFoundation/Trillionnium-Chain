@@ -408,3 +408,250 @@ fn a_foreign_cpu_domain_is_refused_before_m05_work_and_any_reservation() {
     assert_paid(&owner_domain, &real.cpu);
     println!("METERED_NODE_BIND rejected_foreign=true foreign_cpu_reservations=0 valid_paid=true");
 }
+
+#[test]
+fn fixed_structural_refusals_pay_one_owner_without_touching_warm_work_facts() {
+    use trnm_crypto_primitives::pon_work;
+
+    let (_dir, node, packet) = fixture(2);
+    let facts = WorkFactCache::new(2).unwrap();
+    // The existing genuine fixture supplies one mathematical fact. The fixed
+    // bad-version/noncanonical-word controls must fail before consulting it.
+    facts
+        .verify(
+            packet.header.challenge(),
+            packet.header.work_task,
+            packet.header.target,
+            &packet.proof,
+        )
+        .unwrap();
+    let cached = facts.counters();
+    let domain = ServiceMutationCpuDomain::standalone();
+    let original = i128::from(MUTATION_CPU_BURST_NS);
+    freeze(&domain, original);
+    let before = node.lock().unwrap().read_active().unwrap();
+    let before_stats = node.lock().unwrap().stats().unwrap();
+    let mut bad_version = packet.clone();
+    bad_version.proof[0] ^= 1;
+    let mut cases = vec![(bad_version, "WORK:Version")];
+    // Reuse the three fixed encoding-boundary fixtures from the ordinary
+    // ingress precheck test. This is a bounded local accounting regression.
+    for offset in [4, 4 + pon_work::CELLS * 4, 4 + pon_work::CELLS * 8] {
+        let mut bad_field = packet.clone();
+        bad_field.proof[offset..offset + 4].copy_from_slice(&(pon_work::Q as u32).to_le_bytes());
+        cases.push((bad_field, "WORK:Field"));
+    }
+    let mut paid = 0_u64;
+    for (malformed, expected) in cases {
+        let same_owner = domain.clone();
+        assert!(same_owner.shares_domain_with(&domain));
+        let outcome = ingress::dispatch_shared_with_metered_work_facts(
+            &node,
+            request(&malformed),
+            &facts,
+            &same_owner,
+            &|| Ok(()),
+        )
+        .unwrap();
+        let error = outcome.native.unwrap_err();
+        assert_eq!(error.to_string(), expected);
+        assert!(!error.requires_owner_stop());
+        assert_paid(&domain, &outcome.cpu);
+        assert_eq!(outcome.cpu.spawned_workers, 0);
+        paid = paid.checked_add(outcome.cpu.total_cpu_ns.unwrap()).unwrap();
+        let flow = domain.observe_actual_flow().unwrap().unwrap();
+        assert_eq!(flow.paid_cpu_debit_ns, paid);
+        assert_eq!(flow.stored_credit_ns, original - i128::from(paid));
+        assert_eq!(flow.booked_reservation_ns, 0);
+        assert_eq!(flow.termination_reserved_ns, 0);
+        assert_eq!(flow.unsettled_known_live_cpu_ns, 0);
+        assert_eq!(flow.credited_refill_ns, 0);
+        assert_eq!(facts.counters(), cached);
+        assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
+        assert_eq!(node.lock().unwrap().stats().unwrap(), before_stats);
+    }
+    // Returning an unused start reservation does not refund the parse/check
+    // CPU already paid, and a grammar failure does not promote completion.
+    let budget = domain.budget.lock().unwrap();
+    assert_eq!(budget.verified_completions, 0);
+    assert_eq!(budget.completion_work_len, 0);
+}
+
+#[test]
+fn fixed_refusal_releases_only_its_own_reserve_while_cleanup_remains_owned() {
+    use std::sync::mpsc;
+
+    let (_dir, node, mut packet) = fixture(1);
+    packet.proof[0] ^= 1;
+    let facts = WorkFactCache::new(1).unwrap();
+    let domain = ServiceMutationCpuDomain::standalone();
+    let original = i128::from(MUTATION_CPU_BURST_NS);
+    freeze(&domain, original);
+    let before = node.lock().unwrap().read_active().unwrap();
+    let before_stats = node.lock().unwrap().stats().unwrap();
+    let same_owner = domain.clone();
+    let (ready, ready_rx) = mpsc::channel();
+    let (release, release_rx) = mpsc::channel();
+    let (ready_result, reserved, rejected, retained, held_result) = thread::scope(|scope| {
+        // A separate actual thread avoids nested owner CPU measurements.
+        // It owns the original start and cleanup reservations until released.
+        let held = scope.spawn(move || {
+            let operation = same_owner.begin().unwrap();
+            let cleanup = operation
+                .checkpoint_handle()
+                .reserve_reorg_termination()
+                .unwrap();
+            ready.send(()).unwrap();
+            let released = release_rx.recv_timeout(Duration::from_secs(10));
+            drop(cleanup);
+            let receipt = operation.finish();
+            (released, receipt)
+        });
+        let ready_result = ready_rx.recv_timeout(Duration::from_secs(10));
+        let reserved = domain.observe_actual_flow();
+        let rejected = ingress::dispatch_shared_with_metered_work_facts(
+            &node,
+            request(&packet),
+            &facts,
+            &domain,
+            &|| Ok(()),
+        );
+        let retained = domain.observe_actual_flow();
+        // Release and join before assertions, so a failed control cannot leave
+        // the other owner waiting indefinitely or invent stopped-worker proof.
+        let _ = release.send(());
+        (ready_result, reserved, rejected, retained, held.join())
+    });
+    ready_result.unwrap();
+    let reserved = reserved.unwrap().unwrap();
+    let rejected = rejected.unwrap();
+    assert_eq!(rejected.native.unwrap_err().to_string(), "WORK:Version");
+    let retained = retained.unwrap().unwrap();
+    let (released, held_receipt) = held_result.unwrap();
+    released.unwrap();
+    assert!(retained.balance_identity_verified);
+    assert_eq!(retained.live_owners, 1);
+    assert_eq!(
+        retained.booked_reservation_ns,
+        MUTATION_CPU_START_RESERVE_NS
+    );
+    assert_eq!(
+        retained.termination_reserved_ns,
+        REORG_TERMINATION_RESERVE_NS
+    );
+    assert_eq!(
+        retained.paid_cpu_debit_ns,
+        reserved
+            .paid_cpu_debit_ns
+            .checked_add(rejected.cpu.total_cpu_ns.unwrap())
+            .unwrap()
+    );
+    assert_eq!(
+        retained.stored_credit_ns,
+        original
+            - i128::from(retained.paid_cpu_debit_ns)
+            - i128::from(MUTATION_CPU_START_RESERVE_NS)
+            - i128::from(REORG_TERMINATION_RESERVE_NS)
+    );
+    assert_paid(&domain, &rejected.cpu);
+    assert_paid(&domain, &held_receipt);
+    let paid = rejected
+        .cpu
+        .total_cpu_ns
+        .unwrap()
+        .checked_add(held_receipt.total_cpu_ns.unwrap())
+        .unwrap();
+    let flow = domain.observe_actual_flow().unwrap().unwrap();
+    assert_eq!(flow.paid_cpu_debit_ns, paid);
+    assert_eq!(flow.stored_credit_ns, original - i128::from(paid));
+    assert_eq!(flow.booked_reservation_ns, 0);
+    assert_eq!(flow.termination_reserved_ns, 0);
+    assert_eq!(flow.unsettled_known_live_cpu_ns, 0);
+    assert_eq!(flow.credited_refill_ns, 0);
+    assert_eq!(facts.counters().full_replays, 0);
+    assert_eq!(facts.counters().hits, 0);
+    assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
+    assert_eq!(node.lock().unwrap().stats().unwrap(), before_stats);
+}
+
+#[test]
+fn cancelled_fixed_product_refusal_and_retry_keep_actual_debit_and_cleanup() {
+    let (_dir, node, packet) = fixture(2);
+    let facts = WorkFactCache::new(2).unwrap();
+    facts
+        .verify(
+            packet.header.challenge(),
+            packet.header.work_task,
+            packet.header.target,
+            &packet.proof,
+        )
+        .unwrap();
+    let domain = ServiceMutationCpuDomain::standalone();
+    let original = i128::from(MUTATION_CPU_BURST_NS);
+    freeze(&domain, original);
+    let before = node.lock().unwrap().read_active().unwrap();
+    let before_stats = node.lock().unwrap().stats().unwrap();
+    // Same fixed local product fixture as the retained warm-retry test above.
+    let mut malformed = packet;
+    malformed.proof[4 + 8 * 4096] ^= 1;
+    let cancelled = ingress::dispatch_shared_with_metered_work_facts(
+        &node,
+        request(&malformed),
+        &facts,
+        &domain,
+        &|| {
+            if facts.counters().hits > 0 {
+                Err("METERED_FIXED_REFUSAL_CANCEL".into())
+            } else {
+                Ok(())
+            }
+        },
+    )
+    .unwrap();
+    assert_eq!(
+        cancelled.native.unwrap_err().to_string(),
+        "METERED_FIXED_REFUSAL_CANCEL"
+    );
+    assert_paid(&domain, &cancelled.cpu);
+    assert_eq!(cancelled.cpu.spawned_workers, 0);
+    assert_eq!(facts.counters().hits, 1);
+    let paid_cancel = cancelled.cpu.total_cpu_ns.unwrap();
+    let after_cancel = domain.observe_actual_flow().unwrap().unwrap();
+    assert_eq!(after_cancel.paid_cpu_debit_ns, paid_cancel);
+    assert_eq!(
+        after_cancel.stored_credit_ns,
+        original - i128::from(paid_cancel)
+    );
+    assert_eq!(after_cancel.booked_reservation_ns, 0);
+    assert_eq!(after_cancel.termination_reserved_ns, 0);
+    assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
+    let same_owner = domain.clone();
+    let refused = ingress::dispatch_shared_with_metered_work_facts(
+        &node,
+        request(&malformed),
+        &facts,
+        &same_owner,
+        &|| Ok(()),
+    )
+    .unwrap();
+    assert_eq!(refused.native.unwrap_err().to_string(), "WORK:Product");
+    assert_paid(&domain, &refused.cpu);
+    assert_eq!(refused.cpu.spawned_workers, 0);
+    let paid = paid_cancel
+        .checked_add(refused.cpu.total_cpu_ns.unwrap())
+        .unwrap();
+    let flow = domain.observe_actual_flow().unwrap().unwrap();
+    assert_eq!(flow.paid_cpu_debit_ns, paid);
+    assert_eq!(flow.stored_credit_ns, original - i128::from(paid));
+    assert_eq!(flow.booked_reservation_ns, 0);
+    assert_eq!(flow.termination_reserved_ns, 0);
+    assert_eq!(flow.unsettled_known_live_cpu_ns, 0);
+    assert_eq!(flow.credited_refill_ns, 0);
+    assert_eq!(facts.counters().full_replays, 1);
+    assert_eq!(facts.counters().hits, 2);
+    assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
+    assert_eq!(node.lock().unwrap().stats().unwrap(), before_stats);
+    let budget = domain.budget.lock().unwrap();
+    assert_eq!(budget.verified_completions, 0);
+    assert_eq!(budget.completion_work_len, 0);
+}
