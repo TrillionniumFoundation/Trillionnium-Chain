@@ -1,0 +1,9 @@
+{
+  "at_utc": "2026-11-09T15:18:08.557798+00:00",
+  "command": [
+    "/home/qq/work/chain-cell-capacity-dc0357-20261109-target/debug/examples/cell_sealed_research_next_use_v2",
+    "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/source-inputs.v2.json",
+    "488b838dfdf05ab9768fff18ee81c0874b7bb471cbceeefdf15ab42c5dde6d48"
+  ],
+  "pid": 3298316
+}

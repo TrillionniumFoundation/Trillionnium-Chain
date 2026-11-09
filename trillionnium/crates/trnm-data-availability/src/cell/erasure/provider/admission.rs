@@ -3,6 +3,53 @@
 use super::*;
 
 impl CellRs46ShardProviderV1 {
+    /// Read-only global descriptor/history/extent admission. Actual reserves
+    /// still check each original target under its original writer.
+    pub fn check_reservations(
+        &self,
+        contracts: &[&CellRs46ShardContractV1],
+        deadline: Instant,
+    ) -> CellResultV1<()> {
+        check(deadline)?;
+        require(
+            !contracts.is_empty() && contracts.len() <= self.config.maximum_obligations as usize,
+            "RS46 provider preflight count",
+        )?;
+        let mut count = self.descriptor_count(Some(deadline))?;
+        let mut operations = std::collections::BTreeSet::new();
+        let mut physical = Vec::with_capacity(contracts.len());
+        for contract in contracts {
+            check(deadline)?;
+            self.check_contract(contract, contract.operation())?;
+            require(
+                operations.insert(contract.operation()),
+                "RS46 provider preflight duplicate",
+            )?;
+            let path = self.descriptors_path.join(digest_hex(contract.operation()));
+            match fs::symlink_metadata(path) {
+                Ok(_) => require(
+                    self.descriptor(contract.binding(), contract.operation(), deadline)?
+                        == **contract,
+                    "RS46 provider descriptor changed",
+                )?,
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+                    count = count
+                        .checked_add(1)
+                        .ok_or(CellErrorV1::Invalid("RS46 provider descriptor capacity"))?;
+                    require(
+                        count <= self.config.maximum_obligations,
+                        "RS46 provider descriptor capacity",
+                    )?;
+                }
+                Err(error) => return Err(error.into()),
+            }
+            physical.push(contract.retention_contract());
+        }
+        self.arena.check_reservations(&physical, deadline)?;
+        self.check_descriptor_directory()?;
+        check(deadline)
+    }
+
     pub fn configuration(&self) -> &CellRs46ShardProviderConfigV1 {
         &self.config
     }

@@ -1,0 +1,44 @@
+{
+  "started_at_utc": "2026-11-09T14:47:52.975847+00:00",
+  "head": "e58b9371677bc8eb1bcb42c090437fb4a766b526",
+  "command": [
+    "/home/qq/work/chain-cell-capacity-dc0357-20261109-target/debug/deps/trnm_pon_node-003b0518496ba044",
+    "store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_counts_retired_provider_history_before_first_new_effect",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "binary_sha256": "8999386ed9f830db885b17ccdb327656747d57eef14c4bd865836b7117d42fc4",
+  "TMPDIR": "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/node-retired-history-ext4-diagnostic-e58b937-v1-tmp",
+  "filesystem_before": {
+    "/tmp": {
+      "available_bytes": 58363879424,
+      "free_inodes": 103,
+      "device": 50
+    },
+    "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/node-retired-history-ext4-diagnostic-e58b937-v1-tmp": {
+      "available_bytes": 604432678912,
+      "free_inodes": 113033098,
+      "device": 66306
+    }
+  },
+  "scope": "single existing original-profile binary; SQLite build remained UNQUALIFIED; no Cargo or source changes",
+  "completed_at_utc": "2026-11-09T14:47:53.990814+00:00",
+  "elapsed_seconds": 1.0148024950176477,
+  "exit_code": 0,
+  "filesystem_after": {
+    "/tmp": {
+      "available_bytes": 58363879424,
+      "free_inodes": 103,
+      "device": 50
+    },
+    "/home/qq/work/chain-cell-capacity-dc0357-20261109-validation/node-retired-history-ext4-diagnostic-e58b937-v1-tmp": {
+      "available_bytes": 604432666624,
+      "free_inodes": 113033096,
+      "device": 66306
+    }
+  },
+  "log_sha256": "95a490316ed9289e627311c98c091114e7e63234001e52f917c5deb3a5a960fb",
+  "head_after": "e58b9371677bc8eb1bcb42c090437fb4a766b526",
+  "working_tree_status_after": ""
+}

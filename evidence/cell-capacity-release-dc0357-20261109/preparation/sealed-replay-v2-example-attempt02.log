@@ -1,0 +1,16 @@
+{"result": "PASS", "mode": "--dev", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-cell-capacity-release-dc0357-20261109", "remote_policy_mutated": false}
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/dc0357cf2d6c/chain-capacity/trillionnium/crates/trnm-protocol)
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/dc0357cf2d6c/chain-capacity/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/dc0357cf2d6c/chain-capacity/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 47.71s
+     Running unittests examples/cell_sealed_research_next_use_v2.rs (/workspace/scratch/dc0357cf2d6c/target/debug/examples/cell_sealed_research_next_use_v2-1bad5a80098a9f42)
+
+running 5 tests
+test linux::bep52::tests::explicit_endpoint_allowances_fit_one_total ... ok
+test linux::bep52::tests::old_network_profile_unknown_fields_and_missing_grants_are_refused ... ok
+test linux::snapshot::tests::dense_roster_rejects_unknown_dtype_duplicate_fields_and_layout_gaps ... ok
+test linux::snapshot::tests::actual_worker_and_closed_composition_profile_are_required ... ok
+test linux::bep52::tests::same_operation_transfer_handles_cross_member_cache_dedup ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+

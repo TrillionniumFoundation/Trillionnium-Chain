@@ -1,0 +1,91 @@
+{
+  "schema": "trnm.cell-capacity-preparation-evidence.v1",
+  "scope": "Original preparatory observations, including failures; not relabeled as runs on a successor commit. The raw snapshot original log ended during interruption and has no completed successful test receipt. Input verification is preparation, not an actual model run.",
+  "files": [
+    {
+      "path": "snapshot-preflight.log",
+      "bytes": 178,
+      "sha256": "9fd3f0124aa0e7b3ea64e038fca295de8061d0548664a36d48df396e9b33bc55"
+    },
+    {
+      "path": "snapshot-tests-original.log",
+      "bytes": 6239,
+      "sha256": "e2c05f203b57e1d50e35794f72037371dc2290303442b598cd2d52736895a4c9"
+    },
+    {
+      "path": "snapshot-tests-retry01.log",
+      "bytes": 4004,
+      "sha256": "e33dcdaff9bcea6f2411180eb898b676e4661adf4773fd5f70e5bdacab67c46c"
+    },
+    {
+      "path": "snapshot-tests-retry01-observation.json",
+      "bytes": 957,
+      "sha256": "a776ff6a500a1ec324099d89011fb8f060e4f9cc133cb54e571b623352ac8c04"
+    },
+    {
+      "path": "node-storage-tests-original.log",
+      "bytes": 6046,
+      "sha256": "ffb02f0564a8498350cf072426659831c8135e9afab204fbd0ea8a8dc5487df4"
+    },
+    {
+      "path": "node-storage-tests-original-start.json",
+      "bytes": 76221,
+      "sha256": "38e2b14c9a3240f7d38b44aec0981225f2af4c11ae3092b7bd5ceb82fd2b06c2"
+    },
+    {
+      "path": "node-storage-tests-original-observation.json",
+      "bytes": 483,
+      "sha256": "4409c2e416a1851684ff711c72e02d293b614ac9bc2f8843a1eeed462d85ff6f"
+    },
+    {
+      "path": "sealed-replay-v2-example-attempt01.log",
+      "bytes": 364,
+      "sha256": "fe4ea10b73a86bc287b8db47092ac1edaff2c91224d3b019ee2a84344c6dc2ba"
+    },
+    {
+      "path": "sealed-replay-v2-example-attempt01-observation.json",
+      "bytes": 1964,
+      "sha256": "009bcda7686de98164845d72e612571db70d03384bf76e868c57710317bb483e"
+    },
+    {
+      "path": "sealed-replay-v2-example-attempt02.log",
+      "bytes": 1389,
+      "sha256": "92043b1affe934afcb961f46129b0896fb2cf6fcc600f10267fa47769f6e01e6"
+    },
+    {
+      "path": "sealed-replay-v2-example-attempt02-observation.json",
+      "bytes": 1991,
+      "sha256": "1ee66fa854a8fd88cde66f52edd1d0250c05eacacb602cf704b96db28b6a4cfe"
+    },
+    {
+      "path": "sealed-replay-v2-incremental-cleanup.json",
+      "bytes": 377,
+      "sha256": "c409eed390abcaf27fbd13a6eca8908f794ff05dbf66379dbbc87dcd3a206b53"
+    },
+    {
+      "path": "cloud-build-cache-retirement.json",
+      "bytes": 381,
+      "sha256": "10c5ccf0edde50936c7fa6e689245492757f7ee08cc9361a861c0ea666de9499"
+    },
+    {
+      "path": "remote-v2-preparation-observations.json",
+      "bytes": 5984,
+      "sha256": "769e11b2f33ee4c1a8c9b23753622d4b619d377b9cc235d0a6a7cb6344b3f37b"
+    },
+    {
+      "path": "remote-v2-input-verification.json",
+      "bytes": 34252,
+      "sha256": "da304270715cd5791ef1791fefeb279bee9c023f9003e2f0064c2b92480f9db6"
+    },
+    {
+      "path": "remote-v2-input-spec.sha256",
+      "bytes": 88,
+      "sha256": "0ecc07d1aa61093ddd1f9cad125b4c28400addab6d85a5a5274bece9fa76e10e"
+    },
+    {
+      "path": "parallel-source-snapshot.json",
+      "bytes": 5256,
+      "sha256": "539327babdd5452ce5a28ba2c1d2f6ca70010e560f8680439342ab14a55964f7"
+    }
+  ]
+}
