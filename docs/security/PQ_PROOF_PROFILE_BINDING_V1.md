@@ -15,11 +15,14 @@ or failure budget.
 
 The selected identity is `trnm-w1-risc0-3.0.6-poseidon2-join-v2`. Its current
 [QROM contract](../../config/pon/w1-qrom-implementation-current-v2.json) has
-SHA-256 `861201e73694970232de00c97366c156fb23035b98dd4a73422301130e08fd1b`.
+SHA-256 `e2c5377ac02c0ed47e7f69125fbcabe61072d42597b3208264abaa5be2961c78`.
 The reference inputs were read from Chain commit
-`e2a02f9271b49f146e70806c8a66e161b5973971`; the historical contract retains its own
-source revision. A later integration commit must still reproduce these selected
-bytes, or supply a separately reviewed source/profile mapping.
+`44e96b1a841a50613d0b93484c5e576caec9f81f`. The current mapping metadata was
+explicitly rebound after that source freeze; the historical V1 contract retains
+its own source revision and bytes. The selected project and proof-fixture
+inputs are unchanged by the merge, while the separate current mapping records
+137 local-closure inputs. A later integration commit must still reproduce the
+bound bytes or supply another reviewed source/profile mapping.
 
 | Selected property | Checked declaration |
 | --- | --- |
@@ -50,7 +53,7 @@ extracted identity, selected project and saved-fixture hashes, and upstream
 snapshot identity. For these reference inputs its SHA-256 is:
 
 ```text
-4ff44839101e051e5992c6a08c051071d5722df632d4a0990191edd76d3eb917
+da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c
 ```
 
 This is an audit identity, not a new protocol commitment or a security-bit
@@ -101,7 +104,7 @@ Use the candidate lock's separately reviewed descriptor value:
 
 ```sh
 python3 scripts/ci/pq_proof_profile_binding.py \
-  --expected-profile-descriptor-sha256 4ff44839101e051e5992c6a08c051071d5722df632d4a0990191edd76d3eb917
+  --expected-profile-descriptor-sha256 da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c
 python3 scripts/ci/test_pq_proof_profile_binding.py -v
 ```
 

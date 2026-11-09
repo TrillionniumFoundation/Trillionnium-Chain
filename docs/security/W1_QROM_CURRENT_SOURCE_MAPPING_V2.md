@@ -8,7 +8,7 @@ its failed workflow results or its unknown cryptographic obligations.
 ## Reviewed source change
 
 The reviewed source is Chain
-`e8e2fcb8d811638eb5fa757d28590fbe8e408e61`. The retained V1 implementation
+`44e96b1a841a50613d0b93484c5e576caec9f81f`. The retained V1 implementation
 contract is based on `cb114b13bf848a77634e40a08b31b30c7c758e7b`.
 Comparing its entire project-file roster with the current source gives two
 changed files:
@@ -24,11 +24,34 @@ under the six reachable local path crates, their manifests and existing lock
 files, workspace inputs and eight literal include materials. This includes
 `funded_service_task_v1.rs`, the state-root arithmetic module, the remaining
 protocol modules, the crypto crate and the relation/guest/verifier sources.
-It records 134 files. Relative to #827, the combined #824/#825/#827 source
+The preceding current-source mapping, at
+`e8e2fcb8d811638eb5fa757d28590fbe8e408e61`, recorded 134 files. Relative to #827,
+that combined #824/#825/#827 source
 also changes the grouped factored-producer library and its example. Their
 reviewed additions implement exact B(Ax) preparation/execution and a separate
 example selector; they do not change or call W1. The remaining 132 closure
-files are byte-identical to #827, including manifests, locks and include inputs. The current checker verifies the local Cargo path graph,
+files were byte-identical to #827, including manifests, locks and include inputs.
+
+The #835/#836/#837 integration now records **137** files, bound by exact blobs
+from commit `44e96b1a841a50613d0b93484c5e576caec9f81f`, tree
+`c297ebb14fcbeeb5f8acf13b3143a66b8b3b6db8`. Of the preceding 134 files, only
+`trillionnium/Cargo.lock` and `trnm-crypto-primitives/src/lib.rs` change: the lock
+retains both the storage `getrandom` and optional release OpenSSL dependency
+edges, while the crypto export adds the independent root module. Three files
+are newly inventoried: `trnm-crypto-primitives/src/pq_root_v3.rs`, its
+`src/pq_root_v3/tests.rs`, and `tests/pq_root_v3_native.rs`. All 16 selected
+project files, saved proof materials, helper scripts, upstream snapshot,
+proof parameters and 15 unresolved obligations remain byte-identical to the
+prior current mapping. No root native test or new proof execution is implied.
+
+The active current contract SHA-256 is
+`e2c5377ac02c0ed47e7f69125fbcabe61072d42597b3208264abaa5be2961c78`.
+Its pre-update checker refused the changed lockfile; that failure remains
+retained. Ten missing tracked evidence inputs, totaling 1,430,534 bytes, were
+materialized individually from the frozen commit and checked against both Git
+blob and index identities. No original fixture bytes were changed.
+
+The current checker verifies the local Cargo path graph,
 exact Rust-file inventory, literal include set and declared absence of build
 inputs. Newly added Rust files or previously absent build scripts require an
 explicit review and new contract; they are not silently included.

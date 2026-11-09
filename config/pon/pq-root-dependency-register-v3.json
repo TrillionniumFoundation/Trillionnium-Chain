@@ -688,7 +688,7 @@
     "wire_equivalence_proved": false
   },
   "purpose": "declared-root-dependency-and-query-obligation-inventory",
-  "review_base_revision": "57e6c17ae2fa8a9cc547e271f34d90ef09115f04",
+  "review_base_revision": "44e96b1a841a50613d0b93484c5e576caec9f81f",
   "roles": {
     "anchor-response": {
       "action_coverage": [
@@ -1047,16 +1047,16 @@
     "formal/pon-nakamoto-v1/pq_root_recovery_signatures_v2.py": "3031dc21e27dd492fa37c17ca4413dae0632f5fbf072f4c5a90c9183021a175f",
     "scripts/ci/pq_lifetime_budget.py": "eba31bee86b025a55c45cf8a86ad95bb85db1221af9c1ccd38799666e512555e",
     "scripts/ci/pq_source_reader.py": "b3eb3f23b42c012dc1a5a07daa479db5e2982b2a20006f047552c9f13e1a65cb",
-    "trillionnium/Cargo.lock": "a99debe522d64a8e30788ae1abf78e90a533be30b191619e4b06b26c2db8c5eb",
+    "trillionnium/Cargo.lock": "f9e57d73899c5d9fabd4f5b4fedf45256b8db4efb448d15680d070bbcfcb30bd",
     "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
     "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3",
-    "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "d7159f4fe718a6c59220e449d92480abc9fc5677d74329b1eb4b9d0eafaff9ee",
+    "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "74f11c99984a0c199f6b1a882206dc887440a3c69668dd3833054eb0e98fd32c",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs": "2f775934937dc0997579ca43132c3a2aee262103ec66ca4a4be08d3b8f4f93f4",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs": "9b03c4f4a22175fe183e045bc1a2e25282232a4bb156281970f542e7277ebf1b",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs": "2b638555857b20c2d1e5888757c0b96612a00c6eec62ebc056acc35ed1659ba1",
     "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs": "3ae8818e5e805985dd9298ff5ba293c62f06211d5b98e94f679d4b60bc3abb3d",
     "trillionnium/crates/trnm-pon-node/Cargo.toml": "f7cdb019ab615156b3f67ffc7ab36a9fdfa482a02625d606ee1812e2a6e83151",
-    "trillionnium/crates/trnm-pon-node/src/lib.rs": "a19c65c51577e0ab3f334f9dd50d9833360c7a485fbbf8e99165d5b257afd9ff",
+    "trillionnium/crates/trnm-pon-node/src/lib.rs": "0b7e076069645bdf502ff4521ea7c1d77b75a64e5137df3527b0cd6e7167c461",
     "trillionnium/crates/trnm-pon-node/src/release_owner.rs": "350702d2221a3f343c3968174e1ec5ae7b9179f0cf3e372db7d0614ee6784ab6",
     "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs": "34000f247b1708eaff11bf9e97914c8d805fb65c58c44a4b5d24f3acb3f1a905",
     "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/anchor.rs": "c3bee91ae17af6c5a67ee7d603e553e82dab38024cc07d230c0a6bf75865d7f2",
@@ -1070,10 +1070,10 @@
     "trillionnium/crates/trnm-pon-node/tests/support/root_recovery_v3_fixture.rs": "6d0570da659dd93df86f6239814b67178c47afe4dc05f14f38209db582c9a400",
     "trillionnium/crates/trnm-protocol/Cargo.toml": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc",
     "trillionnium/crates/trnm-protocol/src/crypto_profile.rs": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a",
-    "trillionnium/crates/trnm-protocol/src/lib.rs": "4e55287c0c05534bb6462fca60aed1590fc831868c4d8b042d0eb1393d6212a0",
-    "trillionnium/crates/trnm-release-bundle/Cargo.toml": "197f511cbadf9b3d93c3e0953138134fa9c1c5ef62abf868140ab84ff4ed1074",
-    "trillionnium/crates/trnm-release-bundle/src/lib.rs": "a18533e03bc9de9edf12441398d3d1c23998f2bb754146a7c3673e1bc56b2961",
-    "trillionnium/crates/trnm-release-bundle/src/pq_release.rs": "093a791afdc25617411d9da7ce83042a9fcc45e29316a176a326ea7363882d82",
+    "trillionnium/crates/trnm-protocol/src/lib.rs": "b965065ca4915d57e61af480ef6cfb8f775465c8ad0e4dec0b2895e110946b86",
+    "trillionnium/crates/trnm-release-bundle/Cargo.toml": "5fde65e85f21d1325b1868004e63f115ec8f48e966495dab6e3fbf9f79205e5e",
+    "trillionnium/crates/trnm-release-bundle/src/lib.rs": "e41410d1151ad6edf17cfa20cf2a592baf9fc23225b78d6596c838fa9445b5ce",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release.rs": "eb17390e1d16fe7fa82c773c0ed81004374687469f6081a2ad5ce9bd7d87ac9b",
     "trillionnium/crates/trnm-release-bundle/src/root_recovery_v3.rs": "06caa4741b9289c20d4f7cfc7377ad16b64cb10f7ca98fc10fdd0424631b6438",
     "trillionnium/crates/trnm-release-bundle/src/root_recovery_v3_tests.rs": "9b937bd40c87ef92b0c9ae03c9ec91c73d34307b0d44f6998c6369caddd2efa8"
   },

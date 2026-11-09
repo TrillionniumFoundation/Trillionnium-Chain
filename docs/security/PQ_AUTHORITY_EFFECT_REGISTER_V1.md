@@ -4,7 +4,7 @@
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
 routes to the current reviewed source
-`0f0592ace4b08a1d39e1ffad31beee76ddc4fd66`. The
+`44e96b1a841a50613d0b93484c5e576caec9f81f`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -68,21 +68,53 @@ The portable consumption settlement store is separately scoped. Substituting
 for its bilateral authorization and durable state sources is refused by this
 register. Those additional owners still require their own qualification work.
 
-## Current source mapping and original record
+## Prior composition mapping
 
 The [composition review](PQ_COMPOSITION_SOURCE_LOCK_REVIEW_20261108.md) preserves the old lock's actual refusal,
 reviews every changed curated path against exact Git blobs, and fixes the
-current table digest to:
+then-current table digest to:
 
 ```text
 4638bd340c2456dd735418f74ec27e01953432c2495b3db596f57d9fc31acb04
 ```
 
-All seven route definitions and all 44 required paths are retained. The
-checker and its positive test use the new exact source revision; that test
-keeps an independent literal expected revision. The source mapping does not
+That mapping retained all seven route definitions and all 44 required paths
+at `0f0592ace4b08a1d39e1ffad31beee76ddc4fd66`. The source mapping does not
 expand a comparator, cache, observer or portable kernel into a new authority.
 Newly exported child modules are not automatically part of this curated set.
+
+## Integration mapping, 2026-11-09
+
+The active map is bound to the exact regular-file blobs of merge commit
+`44e96b1a841a50613d0b93484c5e576caec9f81f`, tree
+`c297ebb14fcbeeb5f8acf13b3143a66b8b3b6db8`. Its parents retain the
+`d728137d082bb6def7cdaa13d27a9ba57925824d` composition of #835/#836 and
+`44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0` root continuation. Every declared
+Git blob was compared with its current regular-file bytes before rebinding.
+The prior 44 pins were separately matched against the retained #835 source
+`e2a02f9271b49f146e70806c8a66e161b5973971`.
+
+Exactly two declared files change relative to that prior map:
+
+| Source | Reviewed integration and retained boundary |
+| --- | --- |
+| `trnm-crypto-primitives/src/lib.rs` | Adds the independent `pq_root_v3` export while retaining grouped-fresh-seal and PQ content-auth exports. Existing authentication bodies in this file are unchanged. |
+| `trnm-data-availability/src/cell/discovery/pq.rs` | Adds the separately named V3 authenticated/epoch discovery module exports while retaining the V2 directory and transport exports. Their implementations are outside this curated route set; the existing cache/directory scope does not acquire payment, custody, installation or use authority. |
+
+The active canonical table digest is:
+
+```text
+7fe3e2c19f8d2c9e5371bf04b1a5543eb4c6c0417512608ec7e717d0924fa24e
+```
+
+All seven routes, all 44 paths, account/network-profile separation, portable
+settlement boundaries and false qualification fields remain unchanged. The
+positive test independently fixes the new revision. Controls refuse the
+original, prior-composition and root-branch revision labels. The pre-update
+guard's exit-2 `source lock hash mismatch` remains a failed observation; the
+explicit new review does not relabel it as successful. Native tests, compiled
+binaries, external effects and complete dependency coverage are not established
+by these checks.
 
 ## Original fixed source lock and continuing limits
 

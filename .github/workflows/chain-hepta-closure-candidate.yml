@@ -14,12 +14,9 @@ on:
       - config/pon/pq-proof-profile-binding-v1.json
       - config/pon/w1-qrom-implementation-current-v2.json
       - config/pon/pq128-lifetime-budget-v1.json
-      - evidence/hepta-real-native-adoption-20261108/chain-reader/**
-      - evidence/cell-learning-completion-20261108/**
+      - evidence/**
       - formal/pon-nakamoto-v1/**
       - trillionnium/**
-      - evidence/w1-*/**
-      - evidence/pon-w1-*/**
 permissions:
   contents: read
 jobs:
@@ -64,7 +61,7 @@ jobs:
             proof-profile)
               python3 scripts/ci/test_pq_proof_profile_binding.py -v
               python3 scripts/ci/pq_proof_profile_binding.py \
-                --expected-profile-descriptor-sha256 4ff44839101e051e5992c6a08c051071d5722df632d4a0990191edd76d3eb917
+                --expected-profile-descriptor-sha256 da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c
               ;;
             campaign-reader)
               python3 scripts/ci/test_audit_native_campaign_outcomes.py -v

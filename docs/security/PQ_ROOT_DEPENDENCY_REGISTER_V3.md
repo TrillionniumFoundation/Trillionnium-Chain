@@ -162,10 +162,35 @@ recorded review-base revision. Changing both a source file and its manifest
 digest therefore fails until the reviewed checker snapshot is deliberately
 updated. There is no auto-regeneration or accept-current-bytes mode.
 
-The review base `57e6c17ae2fa8a9cc547e271f34d90ef09115f04` is context for the
-continuation. It is not a claim that the newly added files existed in that
-revision. The inspector does not verify Git ancestry or the eventual commit,
-and always returns `source_revision_bound = false`.
+The active review base is the frozen integration commit
+`44e96b1a841a50613d0b93484c5e576caec9f81f`, tree
+`c297ebb14fcbeeb5f8acf13b3143a66b8b3b6db8`. All 37 declared source blobs were
+read from that Git object and compared with the current regular files before
+the map was frozen. The preceding continuation used review base
+`57e6c17ae2fa8a9cc547e271f34d90ef09115f04`; its 37 pinned file bytes were
+independently recovered from retained delivery `44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0`.
+The inspector itself does not verify Git ancestry or the eventual commit,
+and still always returns `source_revision_bound = false`.
+
+The integrated source map changes seven declared files:
+
+| Source | Reviewed difference from the root continuation |
+| --- | --- |
+| `trillionnium/Cargo.lock` | Retains the release OpenSSL edge and adds the storage `getrandom 0.2.17` edge. The package/version set is unchanged. |
+| `trnm-crypto-primitives/src/lib.rs` | Retains the current grouped-fresh-seal and PQ content-auth exports alongside the new root export. |
+| `trnm-pon-node/src/lib.rs` | Preserves the current generation, observation, funded-service and storage interfaces, adding only the Linux/`pq-root-v3` gated root export to the #835/#836 composition. |
+| `trnm-protocol/src/lib.rs` | Preserves funded-service and content-commitment module exports. |
+| `trnm-release-bundle/Cargo.toml` | Retains `trnm-protocol` as a normal dependency together with the optional OpenSSL/root feature. |
+| `trnm-release-bundle/src/lib.rs` | Preserves the content module beside the separately gated root module. |
+| `trnm-release-bundle/src/pq_release.rs` | Preserves complete cheap signer-set preflight before mathematical quorum verification; every supplied signature still requires verification. |
+
+The active canonical source-map digest is
+`64973799af0ff75049e27990f805dfbf8c39e4411ad5e2079884c3a684240cbf`.
+The pre-update guard's exit-2 lockfile mismatch remains retained. No source was
+reverted to satisfy an old pin. This rebinding changes no role, suite, domain
+budget, lifetime, operational limit, deadline, query obligation or false
+qualification field. In particular, new exports do not expand the 37 declared
+paths into a complete transitive closure or wire the production effect sink.
 
 The checker reuses the existing
 [descriptor-bound source reader](../../scripts/ci/pq_source_reader.py).

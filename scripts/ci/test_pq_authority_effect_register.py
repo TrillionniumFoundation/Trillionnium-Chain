@@ -70,7 +70,7 @@ class AuthorityEffectTests(unittest.TestCase):
         self.assertEqual({row['id']: row['effect_scope'] for row in result['routes']},
                          EXPECTED_SCOPES)
         self.assertEqual(result['source_revision'],
-                         '0f0592ace4b08a1d39e1ffad31beee76ddc4fd66')
+                         '44e96b1a841a50613d0b93484c5e576caec9f81f')
         self.assertEqual(result['source_files_sha256'], self.original['source_files_sha256'])
         for name in ('coverage_complete', 'whole_chain_pq_qualified', 'production_activation',
                      'provenance_authenticated', 'call_graph_proved',
@@ -150,6 +150,8 @@ class AuthorityEffectTests(unittest.TestCase):
     def test_source_revision_schema_purpose_and_route_context_drift_refuse(self):
         for field, value in (('source_revision', '0' * 40),
                              ('source_revision', '88568e2511fcf166e6824947ac97b06b72104385'),
+                             ('source_revision', '0f0592ace4b08a1d39e1ffad31beee76ddc4fd66'),
+                             ('source_revision', '1f7ff4106f14e5b514d95a9faf2c5eea1233aea5'),
                              ('schema', 'future-schema'),
                              ('purpose', 'production-qualification')):
             with self.subTest(field=field):
@@ -201,13 +203,19 @@ class AuthorityEffectTests(unittest.TestCase):
         self.data = deepcopy(self.original)
         self.data['source_files_sha256']['unreviewed/source.rs'] = '0' * 64
         self.refused('exactly the curated source paths')
-        # The old reviewed table cannot be relabelled with the continuation's
-        # revision. Its changed export still needs the new exact fixed pin.
-        self.data = deepcopy(self.original)
-        self.data['source_files_sha256'][
-            'trillionnium/crates/trnm-crypto-primitives/src/lib.rs'
-        ] = '6227e644777beec35d8676cc04c31ffdf269b187414bdd27ec99daac6c861421'
-        self.refused('fixed reviewed lock')
+        # Historical export pins cannot be relabelled with the merge revision.
+        # Both prior branches and the original map remain distinct identities.
+        for old_digest in (
+            '6227e644777beec35d8676cc04c31ffdf269b187414bdd27ec99daac6c861421',
+            'cc7d52233e88755ea58efc96987f593c9eda92a4dda854a40a771eebc09b2b2d',
+            'd7159f4fe718a6c59220e449d92480abc9fc5677d74329b1eb4b9d0eafaff9ee',
+        ):
+            with self.subTest(old_export_pin=old_digest):
+                self.data = deepcopy(self.original)
+                self.data['source_files_sha256'][
+                    'trillionnium/crates/trnm-crypto-primitives/src/lib.rs'
+                ] = old_digest
+                self.refused('fixed reviewed lock')
 
     def test_unreviewed_files_do_not_make_the_partial_register_complete(self):
         self.put('unreviewed/authority.rs', b'// An unreviewed additional entrypoint.\n')
