@@ -133,7 +133,8 @@ impl<'db> PostWriteReadback<'db> {
         // A prior writable_schema edit can leave the parsed schema and cached
         // SELECTs on an old rootpage while sqlite_master already reports a new
         // one. Comparing catalog rows alone would wrongly certify that split.
-        // In pinned SQLite 3.51.3 RESET clears parsed schemas at prepare time;
+        // In pinned SQLite 3.54.0, the reviewed 3.51.3 FLAG/RESET and OP_Expire
+        // paths are unchanged: RESET clears parsed schemas at prepare time;
         // executing its OP_Expire through DONE also expires all cached VMs.
         // Normalize BEFORE the first full graph and the new write baseline.
         // No catalog bytes change. A later prepare-only RESET can then only

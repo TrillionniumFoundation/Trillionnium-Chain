@@ -996,7 +996,7 @@ unsafe extern "C" fn shm_map(
                     true,
                 )?;
             }
-            // Exact pinned SQLite 3.51 WAL recovery also passes writeLock=2.
+            // Exact pinned SQLite 3.54.0 WAL recovery also passes writeLock=2.
             // Both admitted nonzero values extend in unixShmMap. Reserve the
             // complete rounded length before either call; unknown values were
             // refused above and no byte/object/event allowance is increased.

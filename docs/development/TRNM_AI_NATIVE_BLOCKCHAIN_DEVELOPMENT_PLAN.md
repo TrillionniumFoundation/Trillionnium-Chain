@@ -11258,3 +11258,41 @@ second plan, service budget, retry policy or ignored gate changes. This
 isolates concurrent test-harness process creation; it does not prove the cause
 of M5's failure or production behavior across concurrent spawn/exec. Preserve
 M5's failed observation and bind fresh results to the new source and actual ELF.
+
+The M7 publication retained the successful M6 five-library execution as history;
+it did not execute a complete hosted quality shard. Its hosted supply-chain
+check reported RUSTSEC-2026-0459 for the bundled SQLite dependency. The M8
+dependency checkpoint pins rusqlite 0.41.0 and libsqlite3-sys 0.39.0 in all seven
+direct-owner manifests and updates the three affected Cargo-generated locks.
+Keep the original advisory refusal, the full dependency-edge delta and the
+exact upstream crate checksums. Do not suppress an advisory or describe a
+resolved dependency graph as a successful native build.
+
+M10 `b0c52dcae9c698e38b33a82d0200c0d8294f3ba1` actually failed its new
+workspace library check with six E0596 errors: rusqlite's progress-handler and
+authorizer installation/removal now require exclusive mutable connection
+ownership. Its original four-phase SQLite requalification also refused both
+positive phases because the strict build fence still named the old 0.37.0
+bundled source. Preserve both failures. Adapt the Root transaction and reorg
+cleanup guards to the real mutable API, retaining callback cleanup, cancellation,
+deadlines, authorization and rollback behavior. Review the exact new bundled
+amalgamation, upstream build source and private Unix layout before advancing
+the fence; no unchecked mutable casts, generic registry acceptance or missing
+witness fallback may qualify the boundary.
+
+The M10 Python attempts completed 456 unique original test methods across the
+351 general controls and the full 105-name QROM roster. The first named attempt
+was blocked by eight absent fixed fixtures; restore their exact Git objects and
+retain that failure. The recovered full named run passed, but the original
+semantic-report byte comparison still failed at one recorded w1_zkvm Cargo.lock
+hash. Preserve the historical report and comparison failure; create a separately
+identified current reproduction and keep an exact comparison in the unchanged
+workflow. Test-method success does not imply that the complete workflow passed.
+
+Freeze the compatibility source, rebind only source contracts whose selected
+bytes actually changed, then execute the new committed candidate with the
+original retained libraries, additional direct SQLite owners, the original
+quality shard and the original four-phase SQLite build test. Requalify actual
+binaries and source/provider identities. Keep all original Host/campaign,
+ordinary-daemon, large-model custody, independent-domain/72-hour deployment,
+PoN/PQ theorem and comparative-cost gates open until their own evidence exists.

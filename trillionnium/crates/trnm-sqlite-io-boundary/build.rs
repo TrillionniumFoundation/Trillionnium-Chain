@@ -15,10 +15,10 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 const AMALGAMATION_SHA256: &str =
-    "9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5";
+    "2da161e310ef0aba3465f22a4d12b8a43723236f0942fa76e8aac523c3317243";
 const UPSTREAM_BUILD_SHA256: &str =
-    "239297962bfdc78cd420b44142ee6801d2fc9375bf8470207669f416446ebb9e";
-const BUILD_FENCE: &str = "sqlite-3.51.3-normal-native-linux-layout-v3";
+    "769b31370a41aa722e1d5a530012432c985bb142eab34d095481ffd1a3436e1b";
+const BUILD_FENCE: &str = "sqlite-3.54.0-normal-native-linux-layout-v4";
 const NM_OUTPUT_BYTES: usize = 16 * 1024;
 const NM_TIMEOUT: Duration = Duration::from_secs(20);
 const WITNESS_GLOBALS: [&str; 4] = [
@@ -439,12 +439,12 @@ fn qualify_build() -> Result<(), String> {
         );
     }
     let dependency = include.parent().ok_or("missing dependency root")?;
-    if dependency.file_name().and_then(|n| n.to_str()) != Some("libsqlite3-sys-0.37.0") {
-        return Err("expected the exact registry libsqlite3-sys-0.37.0 bundled source".into());
+    if dependency.file_name().and_then(|n| n.to_str()) != Some("libsqlite3-sys-0.39.0") {
+        return Err("expected the exact registry libsqlite3-sys-0.39.0 bundled source".into());
     }
     let amalgamation = include.join("sqlite3.c");
-    pin_text(&amalgamation, 9_390_466, AMALGAMATION_SHA256)?;
-    pin_text(&dependency.join("build.rs"), 33_727, UPSTREAM_BUILD_SHA256)?;
+    pin_text(&amalgamation, 9_580_800, AMALGAMATION_SHA256)?;
+    pin_text(&dependency.join("build.rs"), 35_413, UPSTREAM_BUILD_SHA256)?;
     let source = amalgamation.to_str().ok_or("non-UTF-8 source path")?;
     if source
         .bytes()
@@ -457,7 +457,8 @@ fn qualify_build() -> Result<(), String> {
     cfg.file("unix_layout_witness.c")
         .include(&include)
         .define("TRNM_SQLITE_AMALGAMATION", Some(quoted_source.as_str()))
-        // Exact normal bundled flags: upstream libsqlite3-sys-0.37.0 build.rs:125-143.
+        // Exact normal bundled flags: upstream libsqlite3-sys-0.39.0 build.rs:169-187.
+        // This version no longer enables SQLITE_ENABLE_MEMORY_MANAGEMENT by default.
         .flag("-DSQLITE_CORE")
         .flag("-DSQLITE_DEFAULT_FOREIGN_KEYS=1")
         .flag("-DSQLITE_ENABLE_API_ARMOR")
@@ -468,7 +469,6 @@ fn qualify_build() -> Result<(), String> {
         .flag("-DSQLITE_ENABLE_FTS5")
         .flag("-DSQLITE_ENABLE_JSON1")
         .flag("-DSQLITE_ENABLE_LOAD_EXTENSION=1")
-        .flag("-DSQLITE_ENABLE_MEMORY_MANAGEMENT")
         .flag("-DSQLITE_ENABLE_RTREE")
         .flag("-DSQLITE_ENABLE_STAT4")
         .flag("-DSQLITE_SOUNDEX")
@@ -477,7 +477,7 @@ fn qualify_build() -> Result<(), String> {
         .flag("-DHAVE_USLEEP=1")
         .flag("-DHAVE_ISNAN")
         .flag("-D_POSIX_THREAD_SAFE_FUNCTIONS")
-        // Upstream libsqlite3-sys-0.37.0 build.rs:249-250: every admitted target is not Windows.
+        // Upstream libsqlite3-sys-0.39.0 build.rs:295-296: every admitted target is not Windows.
         .flag("-DHAVE_LOCALTIME_R")
         // The witness API exposes compile-time layout/constants only.
         // Static SQLite functions/state have no external entry points.
@@ -494,8 +494,8 @@ fn qualify_build() -> Result<(), String> {
         "the exact C layout witness did not compile; bounded API remains unsupported"
     })?;
     loader_paths.validate()?;
-    pin_text(&amalgamation, 9_390_466, AMALGAMATION_SHA256)?;
-    pin_text(&dependency.join("build.rs"), 33_727, UPSTREAM_BUILD_SHA256)?;
+    pin_text(&amalgamation, 9_580_800, AMALGAMATION_SHA256)?;
+    pin_text(&dependency.join("build.rs"), 35_413, UPSTREAM_BUILD_SHA256)?;
     loader_paths.validate()?;
     verify_witness_symbols(&PathBuf::from(required("OUT_DIR")?))?;
     // Retain and revalidate the capability through C compile and nm; publish no

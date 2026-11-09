@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 import struct
 import tempfile
@@ -273,6 +274,30 @@ class W1SemanticsAuditTests(unittest.TestCase):
         self.assertIs(qualification['valid_code_zero_control_digest_excluded'], False)
         self.assertIs(qualification['fresh_receipt_cryptographically_verified'], False)
         self.assertIs(self.report['kernel_release_match']['kernel_source_to_binary_rebuilt'], False)
+        # A current lock observation has a separate fixture. Retain the old
+        # report as an exact historical observation, not a passing current cmp.
+        current_path = 'evidence/pon-w1-qrom-semantics-current-20261109/report.json'
+        historical_path = 'evidence/pon-w1-qrom-semantics-20261107/report.json'
+        current_raw = (ROOT / current_path).read_bytes()
+        historical_raw = (ROOT / historical_path).read_bytes()
+        encoded = (json.dumps(self.report, indent=2, sort_keys=True) + '\n').encode()
+        self.assertEqual(AUDIT.sha256(current_raw),
+                         '129e7b8bc1b6d34ef55acc25bd12cae273bdc65bdeee9649b1b43e214a4e9ebe')
+        self.assertEqual(AUDIT.sha256(historical_raw),
+                         '66e017dfb3d58206c6372e6ba059ea7991ed7606dcd91e52dd63c73007d0f221')
+        self.assertEqual(encoded, current_raw)
+        self.assertNotEqual(encoded, historical_raw)
+        historical = json.loads(historical_raw)
+        self.assertEqual(historical['provenance']['lock_checks'][2]['sha256'],
+                         'af7ee60b8f9f95c200d3dddac41b70c037e2bb3395122fe67ab20885140f247f')
+        historical['provenance']['lock_checks'][2]['sha256'] = (
+            'ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a')
+        # Compare JSON values; the audit's in-memory structures include tuples.
+        self.assertEqual(historical, json.loads(encoded))
+        workflow = (ROOT / '.github/workflows/pon-w1-qrom-closure.yml').read_text()
+        command = 'cmp ' + current_path + ' "$W1_CLOSURE_OUT/semantics.json"'
+        self.assertEqual(workflow.count(command), 1)
+        self.assertNotIn('cmp ' + historical_path, workflow)
 
 
 if __name__ == '__main__':

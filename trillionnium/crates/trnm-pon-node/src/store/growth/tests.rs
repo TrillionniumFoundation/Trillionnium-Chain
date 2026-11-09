@@ -453,7 +453,7 @@ fn native_growth_v2_nonce_batch_uses_one_snapshot_without_complete_state_reads()
 
     let dir = tempfile::tempdir().unwrap();
     let settings = settings();
-    let node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
+    let mut node = Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
     let before = rows(&node.db);
     let trace = Arc::new(Mutex::new(Vec::new()));
     let calls = trace.clone();

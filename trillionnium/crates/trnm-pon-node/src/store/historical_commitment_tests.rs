@@ -561,7 +561,7 @@ fn legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes()
     use rusqlite::hooks::{AuthAction, AuthContext, Authorization};
 
     let directory = tempfile::tempdir().unwrap();
-    let (node, ids) = chain(directory.path());
+    let (mut node, ids) = chain(directory.path());
     let foreign = Connection::open(directory.path().join("native.sqlite")).unwrap();
     let target = ids[4];
     let expected = node.state_at(target).unwrap();

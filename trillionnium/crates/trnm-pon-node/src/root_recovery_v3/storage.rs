@@ -10,10 +10,9 @@ use super::{
     MAX_STATE_BYTES,
 };
 use fs2::FileExt;
-use rusqlite::{
-    params, Connection, OpenFlags, OptionalExtension, Transaction, TransactionBehavior,
-};
+use rusqlite::{params, Connection, OpenFlags, OptionalExtension, TransactionBehavior};
 use rustix::fs::{openat, Mode, OFlags};
+use std::cell::{RefCell, RefMut};
 use std::fs::{self, File, OpenOptions};
 use std::io::Read;
 use std::os::unix::fs::{MetadataExt, OpenOptionsExt};
@@ -50,7 +49,7 @@ pub(super) struct RetainedRowsV3 {
 
 pub(super) struct StoreV3 {
     // Close SQLite before releasing the exclusive lock and held directory.
-    db: Connection,
+    db: RefCell<Connection>,
     file: File,
     directory: File,
     path: PathBuf,
@@ -82,7 +81,9 @@ fn private_directory(file: &File) -> RootOwnerResultV3<()> {
     )
 }
 
-struct ProgressReset<'a>(&'a Connection);
+// Keep exclusive ownership of the connection through the transaction and
+// handler removal while preserving the store's shared operation interface.
+struct ProgressReset<'a>(RefMut<'a, Connection>);
 impl Drop for ProgressReset<'_> {
     fn drop(&mut self) {
         // A failed reset leaves the original cancellation/deadline handler in
@@ -163,7 +164,7 @@ impl StoreV3 {
         db.pragma_update(None, "max_page_count", MAX_DATABASE_BYTES / page_size)
             .map_err(map_error)?;
         let value = Self {
-            db,
+            db: RefCell::new(db),
             file,
             directory,
             path: path.to_path_buf(),
@@ -251,13 +252,17 @@ impl StoreV3 {
     fn progress<'a>(&'a self, budget: &OwnerBudgetV3) -> RootOwnerResultV3<ProgressReset<'a>> {
         let deadline = budget.deadline;
         let cancelled = budget.cancelled.clone();
-        self.db
+        // Refuse reentry before installing a handler. Construct the guard first
+        // so a failed installation also attempts to remove the callback.
+        let mut reset = ProgressReset(self.db.try_borrow_mut().map_err(map_error)?);
+        reset
+            .0
             .progress_handler(
                 100,
                 Some(move || cancelled.load(Ordering::Acquire) || Instant::now() >= deadline),
             )
             .map_err(map_error)?;
-        Ok(ProgressReset(&self.db))
+        Ok(reset)
     }
     pub fn with_read<T>(
         &self,
@@ -281,8 +286,13 @@ impl StoreV3 {
     ) -> RootOwnerResultV3<T> {
         budget.check()?;
         self.check_identity()?;
-        let _reset = self.progress(budget)?;
-        let tx = Transaction::new_unchecked(&self.db, behavior).map_err(map_error)?;
+        let mut reset = self.progress(budget)?;
+        // The transaction must finish or roll back before the guard removes
+        // its handler and releases the exclusive connection borrow.
+        let tx = reset
+            .0
+            .transaction_with_behavior(behavior)
+            .map_err(map_error)?;
         let result = operation(&tx, budget)?;
         self.check_identity()?;
         budget.check()?;

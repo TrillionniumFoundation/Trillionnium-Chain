@@ -721,7 +721,7 @@ fn witness_commit_crossing_original_deadline_still_aligns_local_commit() {
     f.service
         .lock()
         .unwrap()
-        .as_ref()
+        .as_mut()
         .unwrap()
         .fixture_commit_hook(Some(move || {
             // Delay the real witness COMMIT after its original deadline check.
@@ -742,7 +742,7 @@ fn witness_commit_crossing_original_deadline_still_aligns_local_commit() {
     f.service
         .lock()
         .unwrap()
-        .as_ref()
+        .as_mut()
         .unwrap()
         .fixture_commit_hook(None::<fn() -> bool>);
     assert_eq!(input_bytes(&node), 61);

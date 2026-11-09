@@ -140,7 +140,8 @@ pub(crate) fn install(connection: &Connection) -> Result<()> {
         statements: AtomicU64::new(0),
         failed: AtomicBool::new(false),
     }));
-    // SQLite3.51.3 destroys this Box exactly once on OOM, replacement, or close.
+    // SQLite 3.54.0 retains the reviewed 3.51.3 client-data ownership paths:
+    // it destroys this Box exactly once on OOM, replacement, or close.
     // Do not free it again on a failed set_clientdata. No SQL function exposes
     // the key or pointer. The stable Box survives Connection/OwnedConnection moves.
     let rc = unsafe {
@@ -186,7 +187,8 @@ fn probe(connection: &Connection, pointer: *mut Observer) -> Result<()> {
 }
 
 unsafe extern "C" fn destroy(pointer: *mut c_void) {
-    // SQLite3.51.3 sqlite3Close invokes client destructors while the handle is
+    // SQLite 3.54.0 sqlite3Close is unchanged from the reviewed 3.51.3 body:
+    // it invokes client destructors while the handle is
     // live, before setting ZOMBIE. Clear the callback before freeing its context,
     // including close_v2 with outstanding statements. No Rust Drop can panic.
     let state = unsafe { Box::from_raw(pointer.cast::<Observer>()) };
@@ -245,7 +247,8 @@ unsafe extern "C" fn trace(
 }
 
 fn transaction_control(mut sql: &[u8]) -> bool {
-    // SQLite3.51.3 ASCII tokenizer: whitespace/comments/BOM are TK_SPACE;
+    // SQLite 3.54.0 retains the reviewed ASCII token classification:
+    // whitespace/comments/BOM are TK_SPACE;
     // empty leading commands are allowed. Read sqlite3_sql(P), not the trace X
     // string, which can be a synthetic trigger/reentrant comment.
     loop {
