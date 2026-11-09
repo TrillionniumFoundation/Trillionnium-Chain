@@ -84,7 +84,7 @@
   "initial_failed_observations_preserved": [
     "scope-full-test-ci-contract-attempt1: missing exact tests/fuzz/Cargo.lock; 104 pass and 4 errors, later exact source materialization and 108/108 pass.",
     "scope-actual-pq-source-gate-attempt1: missing exact pinned historical source; exact-byte retrieval and affected gate rerun, 775/HOLD_NO_GO.",
-    "cargo-fmt.stderr.log: initial missing fuzz support/work_certificate.rs; exact tracked bytes retrieved before frozen fmt pass.",
+    "An early interactive formatting invocation reported missing fuzz support/work_certificate.rs. The retained early cargo-fmt stdout/stderr files are empty and do not contain its exit status or error text. The later frozen formatting check passed after exact tracked source materialization.",
     "scope-full-repository-frozen-attempt1: exit 2; not superseded by a claimed full repository pass.",
     "frozen-strict-clippy: exit 101 after SIGKILL; original two-job result retained separately from the single-job retry with a canonical real rustc path."
   ],
@@ -257,5 +257,9 @@
       "source_tree": null,
       "index_diff_sha256": "63b13f3bcc64e81084ff393be2d04f179860773eb55129f5bdde51791bb60f5d"
     }
-  ]
+  ],
+  "reporting_correction": {
+    "recorded_utc": "2026-11-09T14:18:41.849913+00:00",
+    "note": "Clarify that the empty early cargo-fmt files do not retain the interactive failure text or exit status; the separate frozen fmt PASS has complete retained metadata."
+  }
 }

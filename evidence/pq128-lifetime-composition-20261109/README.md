@@ -117,8 +117,10 @@ The first CI contract run retained four missing-file errors; the exact tracked f
 lockfile was subsequently materialized and the complete 108-test suite passed. The
 first actual PQ corpus check likewise retained its missing-source failure before
 exact blob retrieval and successful structural recheck. The initial formatting log
-records missing fuzz support; the frozen formatting rerun passed after exact-byte
-materialization. The full repository failure remains a failure. Nothing is erased or
+does not retain the early interactive failure: both early cargo-fmt log files are
+empty, so they supply no error text or exit status. The interactive invocation had
+reported missing fuzz support; the separate frozen formatting rerun passed after
+exact-byte materialization. The full repository failure remains a failure. Nothing is erased or
 reported as a full qualification pass.
 
 The Mac HeptaRuntime publication route failed during its sparse checkout; later
