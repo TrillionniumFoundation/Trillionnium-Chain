@@ -8664,3 +8664,24 @@ files, five roles and 16 hash-use groups; the corpus has 771 exact source pins.
 The eight actual domain bounds remain null, shared primitive query budgets and
 complete lifetime populations remain unknown, and no production activation or
 algorithm replacement is authorized by these observations.
+
+### 2026-11-09 V2 SQLite initialization cleanup continuation
+
+Continue from PR #837 delivery `44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0`
+with the [SQLite lifetime correction](../security/PQ_ROOT_SQLITE_LIFETIME_20261109.md).
+Move the three V2 journal initialization PRAGMAs into the existing connection
+cleanup scope, preserving transaction, persistence and authority semantics.
+Four real-SQLite component tests check initialization errors, commit, body
+rollback and deferred commit failure; their local working-tree invocation
+passes 4/4. Make the direct-file suite mandatory in the repository-truth root
+structure prefix, with parser controls for missing, duplicate, skipped,
+swallowed or relocated execution. Keep every original native selector and Host
+gate unchanged. Deliberately re-freeze current source/dependency pins after
+review; never regenerate them during acceptance.
+
+This continuation has not rerun native suites or the full mandatory lanes.
+The prior 42/42 local commands, original hosted 0/3 campaign and retained
+ResourceWarnings remain tied to their recorded sources. The cleanup does not
+uniquely attribute those warnings, close any whole-chain P0, certify independent
+operators or enable production. Results on this PR #837 continuation are not
+source integration or acceptance on the separate PR #835 candidate.
