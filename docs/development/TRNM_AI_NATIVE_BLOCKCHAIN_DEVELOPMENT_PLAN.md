@@ -38,6 +38,12 @@ Its separate differential remains failed after epoch setup outlived an already
 started payload service. Preserve both runs, add only exact output-form parsing
 and identical test-fixture preparation ordering, and verify the complete successor
 on its own committed source before reporting final acceptance.
+Commit `66b7064be597039ce871b5b12ad5568850a2dd46` then passed all 25 exact-source
+gates and its separate discovery differential. Preserve those original receipts
+while maintaining current-source CI identities and the exact compile-fail case
+name. Numerical budgets, historical proof identities and service targets remain
+unchanged. The frozen QROM input inconsistency and the actual four-second/six-depth
+fresh-service failure remain explicit qualification blocks.
 
 Preparation failures, static reviews and native observations remain separate.
 Freeze the complete implementation, then run exact-source native, locked graphs,

@@ -341,6 +341,70 @@ These corrections require fresh full gates and differential execution on their
 new committed source. Final successor verification is reported with its exact
 HEAD and receipt hashes in [the stacked draft PR](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/836).
 
+## Exact commit66 acceptance and current-source CI maintenance
+
+Commit `66b7064be597039ce871b5b12ad5568850a2dd46`, tree
+`75ac72605e3647de5a09557bfd7012dc99b0dec6`, passed the
+[complete 25-gate run](preparation/exact66-summary.json) and the
+[separate discovery differential](preparation/differential66-summary.json).
+The native run observed 714 DA library, 34 integration and 16 documentation
+passes across all 13 harnesses. The complete selected Node storage-service
+module passed 35 cases; its other 1,275 Node cases were filtered.
+All 24 worker controls, 70 newly named DA cases and 13 new Node cases passed.
+Strict workspace/all-target/all-feature Clippy, all three locked graphs,
+source/CI/PQ negative controls and complete final source checks passed.
+
+The differential reached the three intended original-server assertion failures,
+passed the same three candidate cases, reached the intended single-clamp
+mutation assertion and passed the restored candidate. It restored all source
+bytes, with identical source receipts and unchanged provider inputs.
+Both runs exited 0 without timeout and ended with complete clean source status.
+[The original outputs](verification66.tar.xz) and
+[member inventory](verification66.members.json) preserve these exact-commit
+results; they do not certify a successor. The
+[independent readback](preparation/commit66-independent-audit.json) verifies
+88 referenced files, including all 64 command stdout/stderr files.
+The [original differential stdin](preparation/differential66-stdin-readback.json)
+is explicitly a post-run copy of the saved original launch string, whose SHA
+matches the original receipt.
+
+Repository CI on commit66 exposed current-source maintenance issues.
+The [readback preparation](ci-readback19.tar.xz) and
+[member inventory](ci-readback19.members.json) preserve all four actual
+compile-fail observations at line 364 and the failed readback naming line 359.
+The exact case remains `cell::pq::VerifiedCellPqReleaseV2`; its E0308,
+expectation-reference type, integer refusal and single-test requirements remain.
+Current CI updates the exact line, with seven new test methods and 21 refusal
+variants exercising the actual workflow predicate. The original workflow
+fails the new positive observation. Existing test definitions remain unchanged;
+the complete CI suite is reserved for successor acceptance.
+
+The [source-maintenance preparation](ci-source-maintenance19.tar.xz) and
+[member inventory](ci-source-maintenance19.members.json) retain the old three
+inputs, all reviewed source mappings and original CI failures. The lifetime
+ledger's current SOURCE_PINS refresh only two identities: changed Cargo.lock
+and an already stale store.rs pin. The current PQ budget and declared-path
+lock both name reviewed revision `66b7064be597039ce871b5b12ad5568850a2dd46`.
+All 20 ledger and 15 PQ paths were checked; only one PQ file hash changed.
+These are reviewed candidate declarations, not signatures or immutable
+historical snapshots. Numerical budgets, domains, input bounds, refusal rules
+and false qualification flags remain unchanged. The original 19 ledger and
+58 PQ Python controls passed in isolated preparation. Historical proofs and
+failed observations keep their original identities.
+
+Two other facts remain explicit. The frozen QROM implementation contract
+still binds a 9,233-byte verifier source, while both the stack base and commit66
+contain the same 11,172-byte source. Its original contract and bound are
+retained; the pre-existing inconsistency is not a successful proof.
+The original fresh-challenge CI on commit66 failed its four-second/six-depth
+business target with the original 16-worker setting. The actual failed run,
+source and binary identities remain recorded. The separate 300-second Model03
+research operation cannot satisfy that target.
+
+Successor native receipts and repository CI status are reported separately
+in [PR #836](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/836).
+Current-source maintenance cannot borrow commit66's native acceptance.
+
 ## Reproduction tools and required observations
 
 [Tooling identities](tooling-files.json) bind the original preparation scripts,
