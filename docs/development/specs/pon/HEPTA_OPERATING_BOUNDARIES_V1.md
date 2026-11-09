@@ -11,6 +11,13 @@ The paired learning work starts from Hepta #5393 at
 The publication receipt must identify the tested successor in each repository.
 Two source identities do not, by themselves, establish a joint execution.
 
+The separately published scoped-learning successor is
+[`d81cb97c5b01aea0df03d84d40336b25576337de`](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/d81cb97c5b01aea0df03d84d40336b25576337de/codex-rs/hepta-agentd/SCOPED_LEARNING_V2.md).
+Chain's [source-specific observation packet](../../../../evidence/pon-hepta-preservation-20261108/README.md)
+records native execution at `91dd3082633ea0b3a5ec9b0ed91f28603229be01`,
+including original failures and the separately recorded temporary-directory
+follow-up. The evidence descendant is not relabeled as native-tested.
+
 ## Preserve lawful shared and factored execution
 
 The [Hepta neural-biomimicry specification](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/1eb72a1131285f5de98beeb7c95a27eab72d647e/docs/learning/NEURAL_BIOMIMICRY_SPEC.md)
@@ -59,9 +66,13 @@ producer does not serialize private working memory into a public work claim.
 | Slow: base release, work relation, credit or consensus parameters | An explicitly versioned release or consensus owner | Cost qualification, activation, migration and recovery need their own admitted procedure. A learning result cannot supply that authority. |
 
 The paired Hepta continuation adds an explicit scoped learning entry and
-checkpoint identity to the real learning runner. Cell updates preserve shared
-base/organ and representation components; organ updates preserve the Cell
-adapter and shared representation components. The existing evaluator and
+checkpoint identity to the real learning runner. Cell-scoped candidate identities
+retain shared base/organ and representation identities; organ-scoped candidates
+retain the Cell adapter and shared representation identities. This comparison
+does not inspect all tensor bytes. The actual artifact loader and adoption owner
+must still bind every permitted component to its selected material; the concrete
+external-artifact research profile retains its separate complete material checks.
+The existing evaluator and
 adoption owners still decide whether the permitted candidate may be used.
 Base-release requests are refused by this medium-rate entry and require the
 separate slow owner. An unchecked declaration of a base release is not an

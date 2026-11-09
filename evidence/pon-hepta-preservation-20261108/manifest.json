@@ -1,0 +1,62 @@
+{
+  "schema": "trnm-hepta-preservation-delivery-v1",
+  "native_tested_commit": "91dd3082633ea0b3a5ec9b0ed91f28603229be01",
+  "expected_publication_parent": "91dd3082633ea0b3a5ec9b0ed91f28603229be01",
+  "native_tests_rerun_on_publication_child": false,
+  "source_runtime_config_workflow_or_lock_changes": false,
+  "allowed_explanatory_document": "docs/development/specs/pon/HEPTA_OPERATING_BOUNDARIES_V1.md",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 11857,
+      "sha256": "7a0f4428af70bd53570845903db78b6cce0fc288290bb1d3cc7a13bb1dde0420"
+    },
+    {
+      "path": "archive-index.json",
+      "bytes": 21558,
+      "sha256": "4d3f90b108b7b094593a7444d4bfae5e65e9561fafcfea1ebedca2cdc09879a5"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 4547,
+      "sha256": "aeea15076ce73127c6db3167480c1867e1e30e0628440621663a844f55528802"
+    },
+    {
+      "path": "native-receipts.json",
+      "bytes": 54070,
+      "sha256": "d59281249f6a59ceb1856ced7cf6d3b61e68371d427be144d7317e46c72b05ab"
+    },
+    {
+      "path": "observations.tar.gz",
+      "bytes": 9810126,
+      "sha256": "37baa58d0b88d13f3df9f1549bf8df1b0fea32c59129cbf7bedf3bd9b1f6d6a9"
+    },
+    {
+      "path": "sources.json",
+      "bytes": 839,
+      "sha256": "acf8612311ed6fe0648b238eb7956ed1bfe04104f3bc65345a64d92543856ac9"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 4912,
+      "sha256": "30d4d8c98a6b3723cea51a9e53c37473a410e41ed38395144ed081811f5a419b"
+    },
+    {
+      "path": "test-summary-lines.json",
+      "bytes": 1584,
+      "sha256": "bf2c27f498f72e5034a5592dea11ee4838bb4fb4df71714db6f8361032fb1f05"
+    },
+    {
+      "path": "toolchain.json",
+      "bytes": 1122,
+      "sha256": "a5e28b07780f3dd27170edefa8386534622eca90f358c87419b52b7adfc5fb5f"
+    },
+    {
+      "path": "validation-resolution.json",
+      "bytes": 4424,
+      "sha256": "0bb440aa04027c123f5c28d2a13a649673a51e1d97f42785eb08708dbac79b9e"
+    }
+  ],
+  "all_hosted_ci_passed": false,
+  "production_activation": false
+}
