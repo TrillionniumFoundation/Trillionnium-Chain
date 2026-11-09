@@ -1,3 +1,18 @@
+**Complete model capacity continuation — HOLD:**
+
+The [explicit V2 capacity profiles](specs/pon/CELL_STORAGE_CAPACITY_V2.md)
+separate 16 KiB BEP52 transport blocks from larger original TCM1 storage
+pieces, coordinate CRR2/CRG2 pages over one complete protected catalog and
+retain original native funding/recovery ownership across those pages.
+The [CTS1 typed release snapshot](specs/pon/CELL_RELEASE_SNAPSHOT_V1.md)
+pins complete model/environment bytes, dense tensor schema and the actual
+composition rules together. Full-release transfer uses one cumulative
+reservation, original deadline and current version pin. The old V1/CRP1
+profiles retain their original limits and interpretation. Structural capacity,
+local byte/control tests and the historical actual-model run are distinct
+evidence scopes; fresh same-operation V2 model, WAN and production qualification
+are required before those claims can advance.
+
 **Complete storage owner convergence — HOLD:**
 
 Continue the existing six-capability lineage with the

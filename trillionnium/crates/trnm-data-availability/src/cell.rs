@@ -8,6 +8,7 @@ use std::{fmt, io};
 mod archive;
 mod bep52;
 mod bep52_peer;
+mod bep52_storage;
 mod cache_budget;
 mod cache_wal;
 mod closure;
@@ -27,6 +28,7 @@ mod placement;
 pub mod pq;
 mod recoverability;
 mod release;
+mod release_snapshot;
 mod residency;
 mod retained;
 mod retention;
@@ -53,6 +55,20 @@ pub use bep52_peer::{
     CellBep52PeerSessionV1, CellBep52PeerUsageV1, CellBep52SeedV1, CELL_BEP52_PEER_PROFILE_V1,
     MAX_CELL_BEP52_DHT_RESPONSE_BYTES_V1, MAX_CELL_BEP52_PEER_FRAME_BYTES_V1,
 };
+pub use bep52_peer::{
+    CellBep52ReleaseLimitsV2, CellBep52ReleasePlanV2, CellBep52ReleaseReadUsageV2,
+    CellBep52ReleaseSessionV2, CELL_BEP52_RELEASE_PROFILE_V2, MAX_CELL_BEP52_RELEASE_CHUNKS_V2,
+    MAX_CELL_BEP52_RELEASE_PAYLOAD_V2,
+};
+pub use bep52_storage::{
+    fetch_cell_bep52_storage_v2, CellBep52LeafLocationV2, CellBep52LeafProofV2,
+    CellBep52StorageAssemblerV2, CellBep52StorageBindingV2, CellBep52StorageFetchReportV2,
+    CellBep52StorageSeedV2, CellBep52VerifiedStorageChunkV2, CELL_BEP52_LEAF_BYTES_V2,
+    CELL_BEP52_STORAGE_PEER_PROFILE_V2, CELL_BEP52_STORAGE_PROFILE_V2,
+    MAX_CELL_BEP52_LEAF_PROOF_BYTES_V2, MAX_CELL_BEP52_STORAGE_INFO_BYTES_V2,
+    MAX_CELL_BEP52_STORAGE_MAPPING_BYTES_V2, MAX_CELL_BEP52_STORAGE_METAINFO_BYTES_V2,
+    MAX_CELL_BEP52_STORAGE_PIECES_V2,
+};
 pub use cache_budget::{CellCacheConfigV4, CellCacheUsageV2};
 pub use closure::{
     CellClosureFileV1, CellFileRoleV1, CellLoaderContextV1, CellReleaseClosureV1,
@@ -75,9 +91,13 @@ pub use custody::{
 };
 pub use delta::{fetch_delta_to_file, CellChunkDeltaV1, CellDeltaPlanV1, MAX_CELL_DELTA_BYTES_V1};
 pub use erasure::{
-    CellRetainedShardChunkV1, CellRetainedShardPlanFileV1, CellRetainedShardPlanRequestV1,
-    CellRetainedShardPlanV1, CellRetainedShardRootV1, MAX_CELL_RETAINED_SHARD_CHUNKS_V1,
+    CellPagedRetainedShardPlanFileV2, CellPagedRetainedShardPlanRequestV2,
+    CellPagedRetainedShardPlanV2, CellRetainedShardChunkV1, CellRetainedShardPagePinV2,
+    CellRetainedShardPageV2, CellRetainedShardPlanFileV1, CellRetainedShardPlanRequestV1,
+    CellRetainedShardPlanV1, CellRetainedShardRootV1, MAX_CELL_PAGED_RETAINED_CHUNKS_V2,
+    MAX_CELL_RETAINED_SHARD_CHUNKS_V1, MAX_CELL_RETAINED_SHARD_PAGES_V2,
     MAX_CELL_RETAINED_SHARD_PLAN_BYTES_V1, MAX_CELL_RETAINED_SHARD_ROOTS_V1,
+    MAX_CELL_RETAINED_SHARD_ROOT_BYTES_V2,
 };
 pub use erasure::{
     CellRs46CacheTargetV1, CellRs46ChunkBindingV1, CellRs46CodewordV1, CellRs46ManifestBindingV1,
@@ -134,6 +154,11 @@ pub use release::{
     CellFetchTransportV2, CellModelReleaseFetchReportV1, CellReleaseFetchLimitsV1,
     CellReleaseFetchOptionsV2, CellReleaseFetchReportV1, CellTensorModelFetchReportV1,
     CellTransportFetchReportV2,
+};
+pub use release_snapshot::{
+    CellReleaseSnapshotCommitmentV1, CellReleaseSnapshotLoaderContextV1, CellReleaseSnapshotV1,
+    CellResidentReleaseSnapshotV1, CellResidentReleaseSnapshotViewV1,
+    MAX_CELL_RELEASE_SNAPSHOT_BYTES_V1,
 };
 pub use residency::{
     CellLocalSelectionV1, CellResidencyConfigV1, CellResidencyPrepareReportV1,

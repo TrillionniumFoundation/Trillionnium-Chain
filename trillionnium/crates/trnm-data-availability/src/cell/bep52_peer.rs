@@ -24,9 +24,15 @@ use super::{
 
 mod bencode;
 mod dht;
+mod release;
 pub use dht::{
     query_cell_bep52_dht_peers, CellBep52DhtHintsV1, CellBep52DhtNodeHintV1,
     MAX_CELL_BEP52_DHT_RESPONSE_BYTES_V1,
+};
+pub use release::{
+    CellBep52ReleaseLimitsV2, CellBep52ReleasePlanV2, CellBep52ReleaseReadUsageV2,
+    CellBep52ReleaseSessionV2, CELL_BEP52_RELEASE_PROFILE_V2, MAX_CELL_BEP52_RELEASE_CHUNKS_V2,
+    MAX_CELL_BEP52_RELEASE_PAYLOAD_V2,
 };
 #[cfg(test)]
 mod tests;
@@ -144,7 +150,37 @@ impl CellBep52PeerSessionV1 {
         &self.refusals
     }
 
-    fn check(&mut self, deadline: Instant) -> CellResultV1<()> {
+    pub(super) fn refused_peer(&self, peer: SocketAddr) -> bool {
+        self.refused.contains(&peer)
+    }
+
+    pub(super) fn record_peer_refusal(&mut self, peer: SocketAddr, error: &CellErrorV1) {
+        self.record_connection_refusal(Some(peer), error);
+    }
+
+    pub(super) fn record_connection_refusal(
+        &mut self,
+        peer: Option<SocketAddr>,
+        error: &CellErrorV1,
+    ) {
+        self.usage.refused_connections += 1;
+        if let Some(peer) = peer {
+            self.refused.insert(peer);
+            self.refusals
+                .push((peer, error.to_string().chars().take(256).collect()));
+        }
+    }
+
+    pub(super) fn record_completed_fetch(&mut self) -> CellResultV1<()> {
+        self.usage.completed_fetches = self
+            .usage
+            .completed_fetches
+            .checked_add(1)
+            .ok_or(CellErrorV1::Invalid("BEP52 completed fetch counter"))?;
+        Ok(())
+    }
+
+    pub(super) fn check(&mut self, deadline: Instant) -> CellResultV1<()> {
         self.cancellation_latched |= self.cancelled.load(Ordering::Acquire);
         require(!self.cancellation_latched, "BEP52 operation cancelled")?;
         require(
@@ -153,12 +189,12 @@ impl CellBep52PeerSessionV1 {
         )
     }
 
-    fn request_deadline(&mut self) -> CellResultV1<Instant> {
+    pub(super) fn request_deadline(&mut self) -> CellResultV1<Instant> {
         self.check(self.limits.deadline)?;
         Ok((Instant::now() + self.limits.request_timeout).min(self.limits.deadline))
     }
 
-    fn connection(&mut self) -> CellResultV1<()> {
+    pub(super) fn connection(&mut self) -> CellResultV1<()> {
         self.check(self.limits.deadline)?;
         require(
             self.usage.received_bytes < self.limits.max_received_bytes
@@ -187,7 +223,7 @@ impl CellBep52PeerSessionV1 {
         Ok(())
     }
 
-    fn read_exact(
+    pub(super) fn read_exact(
         &mut self,
         stream: &mut TcpStream,
         bytes: &mut [u8],
@@ -233,7 +269,7 @@ impl CellBep52PeerSessionV1 {
         Ok(true)
     }
 
-    fn write_all(
+    pub(super) fn write_all(
         &mut self,
         stream: &mut TcpStream,
         bytes: &[u8],
@@ -276,7 +312,7 @@ impl CellBep52PeerSessionV1 {
         self.check(deadline)
     }
 
-    fn read_frame(
+    pub(super) fn read_frame(
         &mut self,
         stream: &mut TcpStream,
         deadline: Instant,
@@ -301,7 +337,7 @@ impl CellBep52PeerSessionV1 {
         Ok(Some(body))
     }
 
-    fn send_frame(
+    pub(super) fn send_frame(
         &mut self,
         stream: &mut TcpStream,
         body: &[u8],
@@ -897,7 +933,7 @@ fn receive_handshake(
     )
 }
 
-fn extension_handshake(size: Option<usize>) -> Vec<u8> {
+pub(super) fn extension_handshake(size: Option<usize>) -> Vec<u8> {
     let mut bytes = vec![20, 0];
     bytes.extend_from_slice(b"d1:md11:ut_metadatai1ee");
     if let Some(size) = size {
@@ -907,7 +943,7 @@ fn extension_handshake(size: Option<usize>) -> Vec<u8> {
     bytes
 }
 
-fn parse_extension_handshake(bytes: &[u8]) -> CellResultV1<(Option<u8>, Option<u64>)> {
+pub(super) fn parse_extension_handshake(bytes: &[u8]) -> CellResultV1<(Option<u8>, Option<u64>)> {
     require(bytes.len() <= 4096, "BEP52 extension handshake bound")?;
     let (value, used) = decode(bytes)?;
     require(
@@ -935,7 +971,30 @@ fn parse_extension_handshake(bytes: &[u8]) -> CellResultV1<(Option<u8>, Option<u
     Ok((metadata, size))
 }
 
-fn metadata_message(id: u8, kind: u64, piece: u64, size: Option<usize>, data: &[u8]) -> Vec<u8> {
+/// Bounded parser shared by the explicit storage-piece profile. The original
+/// V1 entry points retain their existing parsing and admission behavior.
+pub(super) fn parse_metadata_body(bytes: &[u8]) -> CellResultV1<(u64, u64, Option<u64>, &[u8])> {
+    let (value, used) = decode(bytes)?;
+    let kind = value.number(b"msg_type")?;
+    let piece = if kind <= 2 {
+        value.number(b"piece")?
+    } else {
+        0
+    };
+    let size = value
+        .optional(b"total_size")?
+        .map(Value::integer)
+        .transpose()?;
+    Ok((kind, piece, size, &bytes[used..]))
+}
+
+pub(super) fn metadata_message(
+    id: u8,
+    kind: u64,
+    piece: u64,
+    size: Option<usize>,
+    data: &[u8],
+) -> Vec<u8> {
     let mut bytes = vec![20, id];
     bytes.extend_from_slice(format!("d8:msg_typei{kind}e5:piecei{piece}e").as_bytes());
     if let Some(size) = size {
@@ -946,7 +1005,7 @@ fn metadata_message(id: u8, kind: u64, piece: u64, size: Option<usize>, data: &[
     bytes
 }
 
-fn block_request(kind: u8, index: u32, begin: u32, length: u32) -> Vec<u8> {
+pub(super) fn block_request(kind: u8, index: u32, begin: u32, length: u32) -> Vec<u8> {
     let mut bytes = vec![kind];
     bytes.extend_from_slice(&index.to_be_bytes());
     bytes.extend_from_slice(&begin.to_be_bytes());
@@ -954,7 +1013,7 @@ fn block_request(kind: u8, index: u32, begin: u32, length: u32) -> Vec<u8> {
     bytes
 }
 
-fn parse_block_request(bytes: &[u8]) -> CellResultV1<(u32, u32, u32)> {
+pub(super) fn parse_block_request(bytes: &[u8]) -> CellResultV1<(u32, u32, u32)> {
     require(bytes.len() == 13, "BEP52 block request length")?;
     Ok((
         read_u32(&bytes[1..5]),
@@ -963,19 +1022,19 @@ fn parse_block_request(bytes: &[u8]) -> CellResultV1<(u32, u32, u32)> {
     ))
 }
 
-fn read_u32(bytes: &[u8]) -> u32 {
+pub(super) fn read_u32(bytes: &[u8]) -> u32 {
     u32::from_be_bytes(bytes.try_into().unwrap())
 }
 
-struct PeerState {
-    choked: bool,
+pub(super) struct PeerState {
+    pub(super) choked: bool,
     pieces: usize,
     bitfield: Option<Vec<u8>>,
     have: BTreeSet<usize>,
 }
 
 impl PeerState {
-    fn new(pieces: usize) -> Self {
+    pub(super) fn new(pieces: usize) -> Self {
         Self {
             choked: true,
             pieces,
@@ -983,14 +1042,14 @@ impl PeerState {
             have: BTreeSet::new(),
         }
     }
-    fn known_absent(&self, index: usize) -> bool {
+    pub(super) fn known_absent(&self, index: usize) -> bool {
         !self.have.contains(&index)
             && self
                 .bitfield
                 .as_ref()
                 .is_some_and(|bits| bits[index / 8] & (0x80 >> (index % 8)) == 0)
     }
-    fn control(&mut self, body: &[u8]) -> CellResultV1<()> {
+    pub(super) fn control(&mut self, body: &[u8]) -> CellResultV1<()> {
         match body.first().copied() {
             None => Ok(()),
             Some(0 | 1) => {
