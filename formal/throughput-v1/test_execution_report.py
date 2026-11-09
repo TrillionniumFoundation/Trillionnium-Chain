@@ -74,6 +74,18 @@ def timed_error_record():
     return row
 
 
+def cancellation_record():
+    """Synthetic timing fixture; it establishes no native stop latency."""
+    row = native_record()
+    row["cancellation"] = dict(schema=reader.phases.REQUEST_CANCELLATION_SCHEMA,
+        observed_signal_calls=2, first_flag_transition=dict(before_ns=30, after_ns=35,
+            source="peer_write_closed", phase="work"),
+        worker_entered=True, worker_entered_ns=15, worker_returned=True, worker_returned_ns=90,
+        observation_failed=False, clock_is_observer_local=True,
+        signals_are_request_flag_writes=True, has_control_authority=False)
+    return row
+
+
 def reactor_record():
     row = native_record()
     frames = [dict(phase=phase, calls_returned=0, progressed_calls=0, no_progress_calls=0,
@@ -146,6 +158,69 @@ def campaign_result():
 
 
 class ReportTests(unittest.TestCase):
+    def test_cancellation_report_exposes_bounds_without_replacing_original_unknown_stop(self):
+        value = reader.request_metrics(native_observer([cancellation_record()]))["cancellation"]
+        self.assertIsNone(value["signal_to_stop_latency_ns"])
+        self.assertIsNone(value["effects_reconciled"])
+        profile = value["request_flag_observation"]
+        group = profile["by_first_signal_source"][0]
+        self.assertEqual(group["first_signal_source"], "peer_write_closed")
+        self.assertEqual(group["worker_return"]["signal_to_terminal_lower_bound_ns"]["min_known"], 55)
+        self.assertEqual(group["worker_return"]["signal_to_terminal_upper_bound_ns"]["max_known"], 60)
+        self.assertEqual(group["all_request_owners_closed"]["signal_to_terminal_lower_bound_ns"]["min_known"], 65)
+        self.assertIsNone(group["worker_return"]["exact_signal_to_terminal_latency_ns"])
+        self.assertIsNone(group["worker_return"]["signal_to_terminal_upper_bound_ns"]["known_only_percentiles"]["p95"])
+
+    def test_cancellation_report_keeps_cleanup_and_unknown_sources_separate(self):
+        peer = cancellation_record()
+        cleanup = cancellation_record()
+        cleanup["cancellation"]["first_flag_transition"].update(source="connection_cleanup", phase="cleanup")
+        cleanup["cancellation"]["worker_returned_ns"] = 20
+        missing = cancellation_record()
+        missing["cancellation"]["first_flag_transition"] = None
+        value = reader.request_metrics(native_observer([peer, cleanup, missing, native_record()]))
+        groups = {group["first_signal_source"]: group for group in
+                  value["cancellation"]["request_flag_observation"]["by_first_signal_source"]}
+        self.assertEqual(groups[None]["retained_records"], 2)
+        self.assertEqual(groups[None]["worker_return"]["signal_to_terminal_upper_bound_ns"]["unknown_count"], 2)
+        self.assertEqual(groups["connection_cleanup"]["worker_return"]["status_counts"],
+                         {"already_returned_before_signal_bracket": 1})
+        self.assertIsNone(groups["connection_cleanup"]["worker_return"]["signal_to_terminal_upper_bound_ns"]["min_known"])
+        self.assertFalse(groups["peer_write_closed"]["worker_return"]["signal_to_terminal_upper_bound_ns"]["cohort_complete"])
+
+    def test_cancellation_report_withholds_complete_tail_for_unfinished_or_lost_workers(self):
+        unfinished = cancellation_record()
+        unfinished["cancellation"].update(worker_returned=False, worker_returned_ns=None)
+        values = [cancellation_record(), unfinished]
+        value = reader.request_metrics(native_observer(values))["cancellation"]["request_flag_observation"]
+        group = value["by_first_signal_source"][0]
+        self.assertEqual(group["worker_return"]["signal_to_terminal_upper_bound_ns"]["unknown_count"], 1)
+        self.assertEqual(group["all_request_owners_closed"]["signal_to_terminal_upper_bound_ns"]["unknown_count"], 1)
+        self.assertFalse(group["worker_return"]["signal_to_terminal_upper_bound_ns"]["cohort_complete"])
+        observation = native_observer([cancellation_record(), cancellation_record()])
+        observation.update(accepted_connections_seen=3, records_not_retained=1)
+        value = reader.request_metrics(observation)["cancellation"]["request_flag_observation"]
+        self.assertFalse(value["by_first_signal_source"][0]["worker_return"]["signal_to_terminal_upper_bound_ns"]["cohort_complete"])
+
+    def test_cancellation_report_minimum_samples_apply_to_bound_percentiles(self):
+        values = [cancellation_record() for _ in range(20)]
+        value = reader.request_metrics(native_observer(values))["cancellation"]["request_flag_observation"]
+        group = value["by_first_signal_source"][0]["worker_return"]
+        self.assertEqual(group["signal_to_terminal_upper_bound_ns"]["complete_cohort_percentiles"]["p95"], 60)
+        self.assertIsNone(group["signal_to_terminal_upper_bound_ns"]["complete_cohort_percentiles"]["p99"])
+        values[-1]["cancellation"]["first_flag_transition"] = None
+        value = reader.request_metrics(native_observer(values))["cancellation"]["request_flag_observation"]
+        group = next(row for row in value["by_first_signal_source"] if row["first_signal_source"] == "peer_write_closed")
+        self.assertFalse(group["worker_return"]["signal_to_terminal_upper_bound_ns"]["cohort_complete"])
+
+    def test_cancellation_report_does_not_change_any_historical_projection_field(self):
+        old = reader.request_metrics(native_observer([native_record()]))
+        current = reader.request_metrics(native_observer([cancellation_record()]))
+        current["cancellation"].pop("request_flag_observation")
+        current["original_execution_readback"].pop("request_cancellation")
+        self.assertEqual(current, old)
+        self.assertNotIn("request_flag_observation", old["cancellation"])
+
     def setUp(self):
         temp = tempfile.TemporaryDirectory(prefix="trnm-execution-report-control-")
         self.addCleanup(temp.cleanup)

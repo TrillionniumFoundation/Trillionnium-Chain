@@ -1,0 +1,2058 @@
+{
+  "cell_distribution": {
+    "cohort": {
+      "cells": 11,
+      "chunks": 269,
+      "payload_bytes": 272190131,
+      "release": "d5f78d0a121aafb3bacc3b3714f27260fa653fda345a48a5ae490ab38ce10b56"
+    },
+    "cold_model_load_seconds": null,
+    "complete_consumer_member_readbacks": 11,
+    "complete_global_attempt_denominator": false,
+    "complete_pipeline_MB_per_second": null,
+    "controlled_refusals": 1,
+    "independent_version_recovery_rate": null,
+    "materialization_commands": [
+      {
+        "member": "base/README.md",
+        "reported_command_seconds": {
+          "denominator": 50000000000000000,
+          "numerator": 7104014400010783
+        }
+      },
+      {
+        "member": "base/config.json",
+        "reported_command_seconds": {
+          "denominator": 50000000000000000,
+          "numerator": 7414998900003411
+        }
+      },
+      {
+        "member": "base/generation_config.json",
+        "reported_command_seconds": {
+          "denominator": 50000000000000000,
+          "numerator": 7102291250021153
+        }
+      },
+      {
+        "member": "base/model.safetensors",
+        "reported_command_seconds": {
+          "denominator": 500000000000000,
+          "numerator": 14718315020999853
+        }
+      },
+      {
+        "member": "base/special_tokens_map.json",
+        "reported_command_seconds": {
+          "denominator": 100000000000000000,
+          "numerator": 14613052899949253
+        }
+      },
+      {
+        "member": "base/tokenizer.json",
+        "reported_command_seconds": {
+          "denominator": 10000000000000000,
+          "numerator": 3226680589996249
+        }
+      },
+      {
+        "member": "base/tokenizer_config.json",
+        "reported_command_seconds": {
+          "denominator": 80000000000000,
+          "numerator": 11178365520027
+        }
+      },
+      {
+        "member": "base/material-manifest.json",
+        "reported_command_seconds": {
+          "denominator": 50000000000000000,
+          "numerator": 6928656299987779
+        }
+      },
+      {
+        "member": "adapter/target-contract.json",
+        "reported_command_seconds": {
+          "denominator": 100000000000000000,
+          "numerator": 12355120899974281
+        }
+      },
+      {
+        "member": "adapter/wrapped-adapter.json",
+        "reported_command_seconds": {
+          "denominator": 25000000000000000,
+          "numerator": 2923860325017813
+        }
+      },
+      {
+        "member": "adapter/artifact.safetensors",
+        "reported_command_seconds": {
+          "denominator": 12500000000000000,
+          "numerator": 3023371874996883
+        }
+      }
+    ],
+    "native_bytes_rehashed_by_this_reader": false,
+    "observations": [
+      {
+        "command": "publisher-to-replica",
+        "decimal_MB_per_command_second": {
+          "denominator": 8697498562400051,
+          "numerator": 27219013100000000
+        },
+        "original_overall_budget_ms": 180000,
+        "outcome": "reported-complete-release",
+        "reported_command_seconds": {
+          "denominator": 100000000000000,
+          "numerator": 8697498562400051
+        },
+        "reported_response_bytes": 272204931,
+        "reported_useful_bytes": 272190131
+      },
+      {
+        "command": "offline-publisher-negative",
+        "decimal_MB_per_command_second": null,
+        "original_overall_budget_ms": 2000,
+        "outcome": "controlled-refusal",
+        "reported_command_seconds": {
+          "denominator": 1000000000000000000,
+          "numerator": 11567491999812773
+        },
+        "reported_response_bytes": null,
+        "reported_useful_bytes": 0
+      },
+      {
+        "command": "replica-to-consumer",
+        "decimal_MB_per_command_second": {
+          "denominator": 257194726583999,
+          "numerator": 1088760524000000
+        },
+        "original_overall_budget_ms": 180000,
+        "outcome": "reported-complete-release",
+        "reported_command_seconds": {
+          "denominator": 4000000000000,
+          "numerator": 257194726583999
+        },
+        "reported_response_bytes": 272204931,
+        "reported_useful_bytes": 272190131
+      }
+    ],
+    "original_35_second_cohort_retested": false,
+    "recorded_transfer_commands": 3,
+    "reported_complete_release_acquisitions": 2,
+    "topology": "one-host-loopback"
+  },
+  "clock_or_meter_authenticated": false,
+  "commands": {
+    "combined_command_wall_seconds": null,
+    "combined_wall_unknown_reason": "NO_COMMON_CLOCK_OR_COMPLETE_NONOVERLAPPING_LIFETIME_COVERAGE",
+    "global_planned_attempts": null,
+    "retained_command_slots": 18,
+    "return_code_counts": {
+      "returned-nonzero": 2,
+      "returned-zero": 16
+    },
+    "rows": [
+      {
+        "clock": "historical elapsed_seconds; original start/end and common clock are not retained",
+        "full_process_family_cpu_ns": null,
+        "kind": "training-command",
+        "origin": {
+          "git_blob_sha1": "3515fde40d06cce0fee2b22fe6e0bd84c1f0f94a",
+          "json_pointer": "",
+          "sha256": "857db72a9ef4de87df3f1caeb3c02badfd8492c65b2f5aaf577e430f2b903b1a",
+          "source_path": "evidence/smollm-cell-replica-research-v1/training/gen1/command.json"
+        },
+        "physical_network_bytes": null,
+        "reported_elapsed_seconds": {
+          "denominator": 20000000000000,
+          "numerator": 917960186879991
+        },
+        "reported_outcome": "returned-zero",
+        "returncode": 0,
+        "slot": "training/gen1/command.json",
+        "unknown_reason": "HISTORICAL_COMMAND_HAS_NO_PROCESS_FAMILY_CPU_OR_PHYSICAL_NETWORK_METER"
+      },
+      {
+        "clock": "historical elapsed_seconds; original start/end and common clock are not retained",
+        "full_process_family_cpu_ns": null,
+        "kind": "training-command",
+        "origin": {
+          "git_blob_sha1": "7c3498cae9acee557bbd383f9465b5e0185caff0",
+          "json_pointer": "",
+          "sha256": "e28121d2c7d9caf91fd399527bd83503782df8840a6e7c37e2c0bcd4457655bb",
+          "source_path": "evidence/smollm-cell-replica-research-v1/training/gen2/command.json"
+        },
+        "physical_network_bytes": null,
+        "reported_elapsed_seconds": {
+          "denominator": 50000000000000,
+          "numerator": 2152072419699971
+        },
+        "reported_outcome": "returned-zero",
+        "returncode": 0,
+        "slot": "training/gen2/command.json",
+        "unknown_reason": "HISTORICAL_COMMAND_HAS_NO_PROCESS_FAMILY_CPU_OR_PHYSICAL_NETWORK_METER"
+      },
+      {
+        "clock": "historical elapsed_seconds; original start/end and common clock are not retained",
+        "full_process_family_cpu_ns": null,
+        "kind": "training-command",
+        "origin": {
+          "git_blob_sha1": "a9c0c09a35a8b26b69efb74a9e3761dd696c69d7",
+          "json_pointer": "",
+          "sha256": "02432fe5e929658e2437615b318e5357536fe684dd5d781b41d06b3c5df53644",
+          "source_path": "evidence/smollm-cell-replica-research-v1/training/gen3/command.json"
+        },
+        "physical_network_bytes": null,
+        "reported_elapsed_seconds": {
+          "denominator": 25000000000000,
+          "numerator": 1147877640050001
+        },
+        "reported_outcome": "returned-zero",
+        "returncode": 0,
+        "slot": "training/gen3/command.json",
+        "unknown_reason": "HISTORICAL_COMMAND_HAS_NO_PROCESS_FAMILY_CPU_OR_PHYSICAL_NETWORK_METER"
+      },
+      {
+        "clock": "historical elapsed_seconds; original start/end and common clock are not retained",
+        "full_process_family_cpu_ns": null,
+        "kind": "release-acquisition",
+        "origin": {
+          "git_blob_sha1": "1e8b6fbe54bde4fe1e5df7bd9c9c091f4d70803c",
+          "json_pointer": "",
+          "sha256": "99eacfaf5cbc057265a65f01d3cbcc0dc300f81b08e99fa8513697a5d1abbe3a",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/publisher-to-replica-command.json"
+        },
+        "physical_network_bytes": null,
+        "reported_elapsed_seconds": {
+          "denominator": 100000000000000,
+          "numerator": 8697498562400051
+        },
+        "reported_outcome": "returned-zero",
+        "returncode": 0,
+        "slot": "actual/transport/publisher-to-replica-command.json",
+        "unknown_reason": "HISTORICAL_COMMAND_HAS_NO_PROCESS_FAMILY_CPU_OR_PHYSICAL_NETWORK_METER"
+      },
+      {
+        "clock": "historical elapsed_seconds; original start/end and common clock are not retained",
+        "full_process_family_cpu_ns": null,
+        "kind": "controlled-refusal",
+        "origin": {
+          "git_blob_sha1": "c43b0c9a84153fd5dc33b65a378cd7e5a85ab689",
+          "json_pointer": "",
+          "sha256": "6e715004fd086739816318846ae7c5d3328f1f3df891957d80486a55675e8493",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/offline-publisher-negative-command.json"
+        },
+        "physical_network_bytes": null,
+        "reported_elapsed_seconds": {
+          "denominator": 1000000000000000000,
+          "numerator": 11567491999812773
+        },
+        "reported_outcome": "returned-nonzero",
+        "returncode": 1,
+        "slot": "actual/transport/offline-publisher-negative-command.json",
+        "unknown_reason": "HISTORICAL_COMMAND_HAS_NO_PROCESS_FAMILY_CPU_OR_PHYSICAL_NETWORK_METER"
+      },
+      {
+        "clock": "historical elapsed_seconds; original start/end and common clock are not retained",
+        "full_process_family_cpu_ns": null,
+        "kind": "release-acquisition",
+        "origin": {
+          "git_blob_sha1": "9e0bd11f7b8afb4d32b687ef2d68b00735db4f3d",
+          "json_pointer": "",
+          "sha256": "d23ff3debbeacdd6db30066aa5bda54004ac0e2b0577437c6008043f14265ad1",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/replica-to-consumer-command.json"
+        },
+        "physical_network_bytes": null,
+        "reported_elapsed_seconds": {
+          "denominator": 4000000000000,
+          "numerator": 257194726583999
+        },
+        "reported_outcome": "returned-zero",
+        "returncode": 0,
+        "slot": "actual/transport/replica-to-consumer-command.json",
+        "unknown_reason": "HISTORICAL_COMMAND_HAS_NO_PROCESS_FAMILY_CPU_OR_PHYSICAL_NETWORK_METER"
+      },
+      {
+        "clock": "historical elapsed_seconds; original start/end and common clock are not retained",
+        "full_process_family_cpu_ns": null,
+        "kind": "cache-materialization",
+        "origin": {
+          "git_blob_sha1": "d4778e947ec19c401e07e2db9be21b6f8f91ce59",
+          "json_pointer": "",
+          "sha256": "e1bc3a0a02d9c08dad95f6fb58e474defe2b7623f003893a29c8f8be8fcce3d6",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-0-command.json"
+        },
+        "physical_network_bytes": null,
+        "reported_elapsed_seconds": {
+          "denominator": 50000000000000000,
+          "numerator": 7104014400010783
+        },
+        "reported_outcome": "returned-zero",
+        "returncode": 0,
+        "slot": "actual/transport/materialize-0-command.json",
+        "unknown_reason": "HISTORICAL_COMMAND_HAS_NO_PROCESS_FAMILY_CPU_OR_PHYSICAL_NETWORK_METER"
+      },
+      {
+        "clock": "historical elapsed_seconds; original start/end and common clock are not retained",
+        "full_process_family_cpu_ns": null,
+        "kind": "cache-materialization",
+        "origin": {
+          "git_blob_sha1": "b449a020ebea1bdd80955b178690117d70969cb9",
+          "json_pointer": "",
+          "sha256": "ab51056c73123423769a6be318683cfc13fd19060f5d484da0175e3e51cc4315",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-1-command.json"
+        },
+        "physical_network_bytes": null,
+        "reported_elapsed_seconds": {
+          "denominator": 50000000000000000,
+          "numerator": 7414998900003411
+        },
+        "reported_outcome": "returned-zero",
+        "returncode": 0,
+        "slot": "actual/transport/materialize-1-command.json",
+        "unknown_reason": "HISTORICAL_COMMAND_HAS_NO_PROCESS_FAMILY_CPU_OR_PHYSICAL_NETWORK_METER"
+      },
+      {
+        "clock": "historical elapsed_seconds; original start/end and common clock are not retained",
+        "full_process_family_cpu_ns": null,
+        "kind": "cache-materialization",
+        "origin": {
+          "git_blob_sha1": "b121bf8704a9e9bebef036c47b06f29873d0d2e0",
+          "json_pointer": "",
+          "sha256": "ae6c4e8494d10bdddebab7222852614f61dc43d4bb47589c6ec3a7e412673ec0",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-2-command.json"
+        },
+        "physical_network_bytes": null,
+        "reported_elapsed_seconds": {
+          "denominator": 50000000000000000,
+          "numerator": 7102291250021153
+        },
+        "reported_outcome": "returned-zero",
+        "returncode": 0,
+        "slot": "actual/transport/materialize-2-command.json",
+        "unknown_reason": "HISTORICAL_COMMAND_HAS_NO_PROCESS_FAMILY_CPU_OR_PHYSICAL_NETWORK_METER"
+      },
+      {
+        "clock": "historical elapsed_seconds; original start/end and common clock are not retained",
+        "full_process_family_cpu_ns": null,
+        "kind": "cache-materialization",
+        "origin": {
+          "git_blob_sha1": "b2d78a2a73694a42b14392aeea4a2a7ce7c1e14c",
+          "json_pointer": "",
+          "sha256": "d1e3772b9e17021ed6e5b80dc9bad97cc7111a57e804e59268b1c43d9330c8cc",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-3-command.json"
+        },
+        "physical_network_bytes": null,
+        "reported_elapsed_seconds": {
+          "denominator": 500000000000000,
+          "numerator": 14718315020999853
+        },
+        "reported_outcome": "returned-zero",
+        "returncode": 0,
+        "slot": "actual/transport/materialize-3-command.json",
+        "unknown_reason": "HISTORICAL_COMMAND_HAS_NO_PROCESS_FAMILY_CPU_OR_PHYSICAL_NETWORK_METER"
+      },
+      {
+        "clock": "historical elapsed_seconds; original start/end and common clock are not retained",
+        "full_process_family_cpu_ns": null,
+        "kind": "cache-materialization",
+        "origin": {
+          "git_blob_sha1": "0aa8a376b115d8745a4c1f4853ec66862854951b",
+          "json_pointer": "",
+          "sha256": "b60e103caa5ada51673866c66049de4f73464646853775b086338ea12e18bd67",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-4-command.json"
+        },
+        "physical_network_bytes": null,
+        "reported_elapsed_seconds": {
+          "denominator": 100000000000000000,
+          "numerator": 14613052899949253
+        },
+        "reported_outcome": "returned-zero",
+        "returncode": 0,
+        "slot": "actual/transport/materialize-4-command.json",
+        "unknown_reason": "HISTORICAL_COMMAND_HAS_NO_PROCESS_FAMILY_CPU_OR_PHYSICAL_NETWORK_METER"
+      },
+      {
+        "clock": "historical elapsed_seconds; original start/end and common clock are not retained",
+        "full_process_family_cpu_ns": null,
+        "kind": "cache-materialization",
+        "origin": {
+          "git_blob_sha1": "fa27e4f68e1e6c1428696342638d3256ae8cabc1",
+          "json_pointer": "",
+          "sha256": "27cfc779d984403c11f1e7caaec0f9d6def4da001ce542db7db104a7e4fa8218",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-5-command.json"
+        },
+        "physical_network_bytes": null,
+        "reported_elapsed_seconds": {
+          "denominator": 10000000000000000,
+          "numerator": 3226680589996249
+        },
+        "reported_outcome": "returned-zero",
+        "returncode": 0,
+        "slot": "actual/transport/materialize-5-command.json",
+        "unknown_reason": "HISTORICAL_COMMAND_HAS_NO_PROCESS_FAMILY_CPU_OR_PHYSICAL_NETWORK_METER"
+      },
+      {
+        "clock": "historical elapsed_seconds; original start/end and common clock are not retained",
+        "full_process_family_cpu_ns": null,
+        "kind": "cache-materialization",
+        "origin": {
+          "git_blob_sha1": "7c8489724829462782e35071250cf5475a95a69c",
+          "json_pointer": "",
+          "sha256": "e4264d7e8b5065de5ce8743c127c2e79577849bd30f24483ffea6083780fa031",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-6-command.json"
+        },
+        "physical_network_bytes": null,
+        "reported_elapsed_seconds": {
+          "denominator": 80000000000000,
+          "numerator": 11178365520027
+        },
+        "reported_outcome": "returned-zero",
+        "returncode": 0,
+        "slot": "actual/transport/materialize-6-command.json",
+        "unknown_reason": "HISTORICAL_COMMAND_HAS_NO_PROCESS_FAMILY_CPU_OR_PHYSICAL_NETWORK_METER"
+      },
+      {
+        "clock": "historical elapsed_seconds; original start/end and common clock are not retained",
+        "full_process_family_cpu_ns": null,
+        "kind": "cache-materialization",
+        "origin": {
+          "git_blob_sha1": "c9d8b1d0e78de2a2814dd80d910624a92e590bd8",
+          "json_pointer": "",
+          "sha256": "cea06fb540eb735511d74dacc386e2c85c4ab19a84432ba2991af6c6d779bf3c",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-7-command.json"
+        },
+        "physical_network_bytes": null,
+        "reported_elapsed_seconds": {
+          "denominator": 50000000000000000,
+          "numerator": 6928656299987779
+        },
+        "reported_outcome": "returned-zero",
+        "returncode": 0,
+        "slot": "actual/transport/materialize-7-command.json",
+        "unknown_reason": "HISTORICAL_COMMAND_HAS_NO_PROCESS_FAMILY_CPU_OR_PHYSICAL_NETWORK_METER"
+      },
+      {
+        "clock": "historical elapsed_seconds; original start/end and common clock are not retained",
+        "full_process_family_cpu_ns": null,
+        "kind": "cache-materialization",
+        "origin": {
+          "git_blob_sha1": "975fc2eae259ff2db7ea5d8e10e18780fb997813",
+          "json_pointer": "",
+          "sha256": "b6dd2487b243e41167312c876dab32f4564488429ec86eaaa896ae50549a2b5b",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-8-command.json"
+        },
+        "physical_network_bytes": null,
+        "reported_elapsed_seconds": {
+          "denominator": 100000000000000000,
+          "numerator": 12355120899974281
+        },
+        "reported_outcome": "returned-zero",
+        "returncode": 0,
+        "slot": "actual/transport/materialize-8-command.json",
+        "unknown_reason": "HISTORICAL_COMMAND_HAS_NO_PROCESS_FAMILY_CPU_OR_PHYSICAL_NETWORK_METER"
+      },
+      {
+        "clock": "historical elapsed_seconds; original start/end and common clock are not retained",
+        "full_process_family_cpu_ns": null,
+        "kind": "cache-materialization",
+        "origin": {
+          "git_blob_sha1": "1a99aea939d92efb50b0716d23239889c30690b0",
+          "json_pointer": "",
+          "sha256": "af31d53621e7aca80e141474dec86d754e2d92e502d9d5dec0610a623b6c97c8",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-9-command.json"
+        },
+        "physical_network_bytes": null,
+        "reported_elapsed_seconds": {
+          "denominator": 25000000000000000,
+          "numerator": 2923860325017813
+        },
+        "reported_outcome": "returned-zero",
+        "returncode": 0,
+        "slot": "actual/transport/materialize-9-command.json",
+        "unknown_reason": "HISTORICAL_COMMAND_HAS_NO_PROCESS_FAMILY_CPU_OR_PHYSICAL_NETWORK_METER"
+      },
+      {
+        "clock": "historical elapsed_seconds; original start/end and common clock are not retained",
+        "full_process_family_cpu_ns": null,
+        "kind": "cache-materialization",
+        "origin": {
+          "git_blob_sha1": "bd1cf761a7729615665eb363dcd0b8c3439c923b",
+          "json_pointer": "",
+          "sha256": "37e7ed7aeaa73f0f31006a9e8f189cea0e0006e8bd9aa5d5ded03b52bb8cbec2",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/transport/materialize-10-command.json"
+        },
+        "physical_network_bytes": null,
+        "reported_elapsed_seconds": {
+          "denominator": 12500000000000000,
+          "numerator": 3023371874996883
+        },
+        "reported_outcome": "returned-zero",
+        "returncode": 0,
+        "slot": "actual/transport/materialize-10-command.json",
+        "unknown_reason": "HISTORICAL_COMMAND_HAS_NO_PROCESS_FAMILY_CPU_OR_PHYSICAL_NETWORK_METER"
+      },
+      {
+        "clock": "historical elapsed_seconds; original start/end and common clock are not retained",
+        "full_process_family_cpu_ns": null,
+        "kind": "failed-release-acquisition",
+        "origin": {
+          "git_blob_sha1": "df92fa0f382e7e7bab5da5139711c540dc20c6eb",
+          "json_pointer": "",
+          "sha256": "0ecdff32dc7611c4f7efc35797d7230c88ec905ed91ed6bd0afa81c24cfc1141",
+          "source_path": "evidence/smollm-cell-replica-research-v1/failures/optimized-original/publisher-to-replica-command.json"
+        },
+        "physical_network_bytes": null,
+        "reported_elapsed_seconds": {
+          "denominator": 3906250000000,
+          "numerator": 8006644402343
+        },
+        "reported_outcome": "returned-nonzero",
+        "returncode": 1,
+        "slot": "failures/optimized-original/publisher-to-replica-command.json",
+        "unknown_reason": "HISTORICAL_COMMAND_HAS_NO_PROCESS_FAMILY_CPU_OR_PHYSICAL_NETWORK_METER"
+      }
+    ],
+    "unknown_reason": "FIXED_RETAINED_ROSTER_IS_NOT_A_GLOBAL_ATTEMPT_CENSUS"
+  },
+  "complete_task_cost": {
+    "cpu_ns": null,
+    "energy_joules": null,
+    "gpu_ns": null,
+    "money_minor": null,
+    "physical_network_bytes": null,
+    "unknown_reason": "PREPARATION_PROOF_PROPAGATION_RECOVERY_AND_ALL_PROCESS_COSTS_NOT_COMPLETELY_OBSERVED",
+    "wall_ns": null
+  },
+  "cost_coverage": {
+    "evaluation": {
+      "observed": "64 operator-controlled action-scoring forward records",
+      "status": "partial",
+      "unknown_reason": "INDEPENDENT_FUTURE_TASK_ACCEPTANCE_NOT_SUPPLIED"
+    },
+    "failed_cancelled_unpublished": {
+      "observed": "one failed transfer and one controlled refusal",
+      "status": "partial",
+      "unknown_reason": "FAILED_CANCELLED_UNPUBLISHED_AND_OTHER_OWNER_ATTEMPTS_NOT_EXHAUSTIVELY_OBSERVED"
+    },
+    "preparation": {
+      "observed": "worker material/import/load/adapter stages",
+      "status": "partial",
+      "unknown_reason": "PACKING_RELEASE_PREPARATION_PREPROCESSING_AND_CACHE_HORIZON_NOT_IN_SUPPLIED_CORPUS"
+    },
+    "proof": {
+      "observed": null,
+      "status": "not_observed_in_supplied_corpus",
+      "unknown_reason": "NO_PROOF_OPERATION_OR_COST_RECEIPT_IN_THIS_CORPUS"
+    },
+    "propagation": {
+      "observed": "two complete loopback acquisitions and 11 cache materializations",
+      "status": "partial",
+      "unknown_reason": "PHYSICAL_WIRE_ALL_PROVIDER_CPU_AND_FULL_ATTEMPT_CENSUS_MISSING"
+    },
+    "recovery": {
+      "observed": null,
+      "status": "not_observed_in_supplied_corpus",
+      "unknown_reason": "COMPLETE_RESTART_REORG_RECONCILIATION_COST_NOT_SUPPLIED"
+    },
+    "training": {
+      "observed": "three retained worker-stage rosters",
+      "status": "partial",
+      "unknown_reason": "PROCESS_FAMILY_AND_UNOBSERVED_ATTEMPTS_NOT_COVERED"
+    }
+  },
+  "earlier_failed_attempt": {
+    "outcome": "failed-optimized-transfer",
+    "profile": "release",
+    "recorded_native_binary_sha256": "63e8f3cb97ce5a0d14bc03c501d2f191ef7c717d2671606f4fb8d08198f9938f",
+    "reported_command_seconds": {
+      "denominator": 3906250000000,
+      "numerator": 8006644402343
+    },
+    "reported_completed_release": false,
+    "root_cause_qualified": false
+  },
+  "fresh_executions_by_reader": 0,
+  "independent_evaluation_certified": false,
+  "input_manifest_sha256": "9e3c64afcd03bb17ac8746d1146a98c78d214000ccaf71ed2aed0ea96a6a3d25",
+  "model_adoption_qualified": false,
+  "model_scoring": {
+    "clock": "reported forward execution_ns only; not cold-load-to-response or common business window",
+    "component_metrics": {
+      "accuracy_difference": {
+        "denominator": 1,
+        "numerator": 0
+      },
+      "actual_adoption_rate": null,
+      "end_to_end_tokens_per_second": null,
+      "independent_quality_gain_qualified": false,
+      "models": {
+        "baseline": {
+          "accuracy": {
+            "denominator": 2,
+            "numerator": 1
+          },
+          "correct": 16,
+          "cpu_ns": null,
+          "execution_latency_p50_nearest_rank_ns": 285575856,
+          "execution_latency_p95_nearest_rank_ns": 582412954,
+          "execution_latency_p99_nearest_rank_ns": null,
+          "first_response_from_cold_start_ns": null,
+          "forwards_per_reported_execution_second": {
+            "denominator": 515847939,
+            "numerator": 1600000000
+          },
+          "generated_tokens": null,
+          "generated_tokens_per_second": null,
+          "maximum_reported_process_rss_bytes": 1137000448,
+          "observed_forwards": 32,
+          "planned_requests": 32,
+          "population_tail_latency_qualified": false,
+          "reported_execution_ns_sum": 10316958780
+        },
+        "candidate": {
+          "accuracy": {
+            "denominator": 2,
+            "numerator": 1
+          },
+          "correct": 16,
+          "cpu_ns": null,
+          "execution_latency_p50_nearest_rank_ns": 713956898,
+          "execution_latency_p95_nearest_rank_ns": 1468500860,
+          "execution_latency_p99_nearest_rank_ns": null,
+          "first_response_from_cold_start_ns": null,
+          "forwards_per_reported_execution_second": {
+            "denominator": 13394473617,
+            "numerator": 16000000000
+          },
+          "generated_tokens": null,
+          "generated_tokens_per_second": null,
+          "maximum_reported_process_rss_bytes": 1137758208,
+          "observed_forwards": 32,
+          "planned_requests": 32,
+          "population_tail_latency_qualified": false,
+          "reported_execution_ns_sum": 26788947234
+        }
+      },
+      "profile": "hepta-smollm-single-token-action-score-v1",
+      "scope": "reported-request-execution-only-excludes-load-network-queue-and-training",
+      "selection_outcome": "no-update"
+    },
+    "distinct_fixture_request_labels": 32,
+    "independent_future_task_acceptance": null,
+    "independent_future_task_acceptance_unknown_reason": "INDEPENDENT_FUTURE_TASK_ACCEPTANCE_NOT_SUPPLIED",
+    "old_capability_retention": null,
+    "origin": {
+      "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+      "json_pointer": "/raw_forward_observations",
+      "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+      "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+    },
+    "request_label_scope": "same operator-controlled fixture roster scored by two model arms",
+    "retained_forward_records": 64,
+    "retention_unknown_reason": "INDEPENDENT_OLD_CAPABILITY_RETENTION_NOT_SUPPLIED",
+    "rows": [
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": false,
+        "input_sha256": "16a3b7fab750193b3e6d0191e58b401542b587f2103e9b001deab4b2ac4cf0ba",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/0",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 354567868,
+        "request_id": "public-next-task-0"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": true,
+        "input_sha256": "4cb7cefbeb4e998ca81b03d0271a6e495b3c52005b53985b4b45674da10c5aa7",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/1",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 194368794,
+        "request_id": "public-next-task-1"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": false,
+        "input_sha256": "87dc125d5bf7589af86b0f7f496485c1b87ca99953de3bb80d87b9e4204d9e54",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/2",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 189844875,
+        "request_id": "public-next-task-2"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": true,
+        "input_sha256": "d3262fa3699aac9c9118adb17966c0699daf9ac22379dd03ec819384cde75b98",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/3",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 269852793,
+        "request_id": "public-next-task-3"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": false,
+        "input_sha256": "73c3f1c48e777ec286aa5b5f5c3780e3b55dc931b0e727a41e02c68cd1c9186a",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/4",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 270450055,
+        "request_id": "public-next-task-4"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": true,
+        "input_sha256": "043561613b4d8ad914cd1ae47ee54cc0b8e69740b1c34086ed4e5d3786f10c18",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/5",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 318922066,
+        "request_id": "public-next-task-5"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": false,
+        "input_sha256": "786e6d3ed608095b67d87318c7b0fdaf67744d0ada4ce0f1d0f794f372f889ce",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/6",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 266654879,
+        "request_id": "public-next-task-6"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": true,
+        "input_sha256": "840e2e121ea6d69a43e7563c2960414e67df03cc8ad9047d7dec61867c1ae63e",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/7",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 263984139,
+        "request_id": "public-next-task-7"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": false,
+        "input_sha256": "2400128a6f36991fd52e07494634df11e0ea2446a99e792f35159e6e0d465170",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/8",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 339421399,
+        "request_id": "public-next-task-8"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": true,
+        "input_sha256": "bd1e6ab1945551d01d326ff61fcb6cb0693b5b5049c62c85cefd609153c1cf84",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/9",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 451175312,
+        "request_id": "public-next-task-9"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": false,
+        "input_sha256": "dc15a1663915ecf5a9eac4a17e704ae1d3acb0864607d07490991914288ea31d",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/10",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 582412954,
+        "request_id": "public-next-task-10"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": true,
+        "input_sha256": "a4eabdf96b079bb413b2ef9d2ff0351ca67ccc467e033256333120f94564f5e6",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/11",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 293979402,
+        "request_id": "public-next-task-11"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": false,
+        "input_sha256": "2863bf8c96e7e6589f303f821e34f4b1303ba75887538bbbb5d1a68b02ccb856",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/12",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 191485276,
+        "request_id": "public-next-task-12"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": true,
+        "input_sha256": "ea48a6abee0e7add8966123205978e8a858989cad54bd15a98f3646c95953141",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/13",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 181242932,
+        "request_id": "public-next-task-13"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": false,
+        "input_sha256": "d197491ba182e17615b2ef823e461d62e7e9ba38b5ea0dc68beb8666706cceda",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/14",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 232508894,
+        "request_id": "public-next-task-14"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": true,
+        "input_sha256": "6a36405a6852ab39c7cec9c12f9333a0ab7bcf47b872bd3befbe675e43e98707",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/15",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 237103248,
+        "request_id": "public-next-task-15"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": false,
+        "input_sha256": "11501d5b50a449a618796af78be15e18b4ffdb9e2c6e92ed8f12c82b8bfeb171",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/16",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 221736048,
+        "request_id": "public-next-task-16"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": true,
+        "input_sha256": "06a70ef7e3c96a47720f97137c13802acfdba492bf20e5277c14e2558b901490",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/17",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 224840820,
+        "request_id": "public-next-task-17"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": false,
+        "input_sha256": "8cd85e226de514537de6454733e5c07aecd06ebe5a1088bfc91b3f076c280365",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/18",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 261565157,
+        "request_id": "public-next-task-18"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": true,
+        "input_sha256": "ccd62c1e88d95fab0eea6730c124191bb08b101c1ab0f0fe72dfed9dd32eb280",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/19",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 293596074,
+        "request_id": "public-next-task-19"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": false,
+        "input_sha256": "a76de331167f7b00d007bc8d0315fc2d5d4679fae298650f34e320db224417d1",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/20",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 313502938,
+        "request_id": "public-next-task-20"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": true,
+        "input_sha256": "07caff15b372bb4c3d617cfb7bb2bceeae00847b21d5205834821d858a93fa2f",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/21",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 582906931,
+        "request_id": "public-next-task-21"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": false,
+        "input_sha256": "36e47f749c838f5cd37a1754bbeabf846f4a9095a395bc92554dbd1402d76fe6",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/22",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 260053622,
+        "request_id": "public-next-task-22"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": true,
+        "input_sha256": "d8e33c41c00894a95fbf4665d62a4972844f6354f4263509f928620a4d67c735",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/23",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 285575856,
+        "request_id": "public-next-task-23"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": false,
+        "input_sha256": "ae8291b490cd8a59eed9bcfb76a7bd7eb8c8d2e2820a0ebf41d906a277b711bf",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/24",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 534074918,
+        "request_id": "public-next-task-24"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": true,
+        "input_sha256": "3a155764922d0cf17304a07461b92a40ac43e6a0c4d0f04b73f2b19b09c6716f",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/25",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 569521231,
+        "request_id": "public-next-task-25"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": false,
+        "input_sha256": "fa4d2b68f1d25e7ad3295ce70b539a4f34d46a6a9fef81d7733d6330af136c17",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/26",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 314970181,
+        "request_id": "public-next-task-26"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": true,
+        "input_sha256": "76875f3c809ce01e9a53610ac269e5c3714d2974e96f3f713fd97e3cd49f7fbc",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/27",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 459607080,
+        "request_id": "public-next-task-27"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": false,
+        "input_sha256": "2a954adc3697b654e51336cf9412e4a89d06b38d2727577ebe2e701f91924cb1",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/28",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 275174607,
+        "request_id": "public-next-task-28"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": true,
+        "input_sha256": "7bc0bba72fba4fe6a1a49041504184f7cb57598b2ed49c9a733bc742f35e8396",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/29",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 425283790,
+        "request_id": "public-next-task-29"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": false,
+        "input_sha256": "acf03fefd2d437b4e50a4b122159f4f454b032f397360155518d961e61b1187b",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/30",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 309810764,
+        "request_id": "public-next-task-30"
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "correct": true,
+        "input_sha256": "f3dda0a565be79822c871c6305496ba68d6f39b6466cd06df71d2dc7d4912109",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/31",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 346763877,
+        "request_id": "public-next-task-31"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": false,
+        "input_sha256": "16a3b7fab750193b3e6d0191e58b401542b587f2103e9b001deab4b2ac4cf0ba",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/32",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 788366819,
+        "request_id": "public-next-task-0"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": true,
+        "input_sha256": "4cb7cefbeb4e998ca81b03d0271a6e495b3c52005b53985b4b45674da10c5aa7",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/33",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 676231489,
+        "request_id": "public-next-task-1"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": false,
+        "input_sha256": "87dc125d5bf7589af86b0f7f496485c1b87ca99953de3bb80d87b9e4204d9e54",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/34",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 530279170,
+        "request_id": "public-next-task-2"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": true,
+        "input_sha256": "d3262fa3699aac9c9118adb17966c0699daf9ac22379dd03ec819384cde75b98",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/35",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 727604908,
+        "request_id": "public-next-task-3"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": false,
+        "input_sha256": "73c3f1c48e777ec286aa5b5f5c3780e3b55dc931b0e727a41e02c68cd1c9186a",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/36",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 1023930469,
+        "request_id": "public-next-task-4"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": true,
+        "input_sha256": "043561613b4d8ad914cd1ae47ee54cc0b8e69740b1c34086ed4e5d3786f10c18",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/37",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 586868437,
+        "request_id": "public-next-task-5"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": false,
+        "input_sha256": "786e6d3ed608095b67d87318c7b0fdaf67744d0ada4ce0f1d0f794f372f889ce",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/38",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 599441184,
+        "request_id": "public-next-task-6"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": true,
+        "input_sha256": "840e2e121ea6d69a43e7563c2960414e67df03cc8ad9047d7dec61867c1ae63e",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/39",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 1424185010,
+        "request_id": "public-next-task-7"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": false,
+        "input_sha256": "2400128a6f36991fd52e07494634df11e0ea2446a99e792f35159e6e0d465170",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/40",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 769599167,
+        "request_id": "public-next-task-8"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": true,
+        "input_sha256": "bd1e6ab1945551d01d326ff61fcb6cb0693b5b5049c62c85cefd609153c1cf84",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/41",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 2035763850,
+        "request_id": "public-next-task-9"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": false,
+        "input_sha256": "dc15a1663915ecf5a9eac4a17e704ae1d3acb0864607d07490991914288ea31d",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/42",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 1082055432,
+        "request_id": "public-next-task-10"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": true,
+        "input_sha256": "a4eabdf96b079bb413b2ef9d2ff0351ca67ccc467e033256333120f94564f5e6",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/43",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 713956898,
+        "request_id": "public-next-task-11"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": false,
+        "input_sha256": "2863bf8c96e7e6589f303f821e34f4b1303ba75887538bbbb5d1a68b02ccb856",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/44",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 591531277,
+        "request_id": "public-next-task-12"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": true,
+        "input_sha256": "ea48a6abee0e7add8966123205978e8a858989cad54bd15a98f3646c95953141",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/45",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 1194968127,
+        "request_id": "public-next-task-13"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": false,
+        "input_sha256": "d197491ba182e17615b2ef823e461d62e7e9ba38b5ea0dc68beb8666706cceda",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/46",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 724147022,
+        "request_id": "public-next-task-14"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": true,
+        "input_sha256": "6a36405a6852ab39c7cec9c12f9333a0ab7bcf47b872bd3befbe675e43e98707",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/47",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 1468500860,
+        "request_id": "public-next-task-15"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": false,
+        "input_sha256": "11501d5b50a449a618796af78be15e18b4ffdb9e2c6e92ed8f12c82b8bfeb171",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/48",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 567270175,
+        "request_id": "public-next-task-16"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": true,
+        "input_sha256": "06a70ef7e3c96a47720f97137c13802acfdba492bf20e5277c14e2558b901490",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/49",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 980359966,
+        "request_id": "public-next-task-17"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": false,
+        "input_sha256": "8cd85e226de514537de6454733e5c07aecd06ebe5a1088bfc91b3f076c280365",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/50",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 677784501,
+        "request_id": "public-next-task-18"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": true,
+        "input_sha256": "ccd62c1e88d95fab0eea6730c124191bb08b101c1ab0f0fe72dfed9dd32eb280",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/51",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 1222282079,
+        "request_id": "public-next-task-19"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": false,
+        "input_sha256": "a76de331167f7b00d007bc8d0315fc2d5d4679fae298650f34e320db224417d1",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/52",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 847547204,
+        "request_id": "public-next-task-20"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": true,
+        "input_sha256": "07caff15b372bb4c3d617cfb7bb2bceeae00847b21d5205834821d858a93fa2f",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/53",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 579459907,
+        "request_id": "public-next-task-21"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": false,
+        "input_sha256": "36e47f749c838f5cd37a1754bbeabf846f4a9095a395bc92554dbd1402d76fe6",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/54",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 576255568,
+        "request_id": "public-next-task-22"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": true,
+        "input_sha256": "d8e33c41c00894a95fbf4665d62a4972844f6354f4263509f928620a4d67c735",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/55",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 677032559,
+        "request_id": "public-next-task-23"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": false,
+        "input_sha256": "ae8291b490cd8a59eed9bcfb76a7bd7eb8c8d2e2820a0ebf41d906a277b711bf",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/56",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 924015314,
+        "request_id": "public-next-task-24"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": true,
+        "input_sha256": "3a155764922d0cf17304a07461b92a40ac43e6a0c4d0f04b73f2b19b09c6716f",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/57",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 527909677,
+        "request_id": "public-next-task-25"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": false,
+        "input_sha256": "fa4d2b68f1d25e7ad3295ce70b539a4f34d46a6a9fef81d7733d6330af136c17",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/58",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 574870014,
+        "request_id": "public-next-task-26"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": true,
+        "input_sha256": "76875f3c809ce01e9a53610ac269e5c3714d2974e96f3f713fd97e3cd49f7fbc",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/59",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 707881082,
+        "request_id": "public-next-task-27"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": false,
+        "input_sha256": "2a954adc3697b654e51336cf9412e4a89d06b38d2727577ebe2e701f91924cb1",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/60",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 643230190,
+        "request_id": "public-next-task-28"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": true,
+        "input_sha256": "7bc0bba72fba4fe6a1a49041504184f7cb57598b2ed49c9a733bc742f35e8396",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/61",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 568596453,
+        "request_id": "public-next-task-29"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": false,
+        "input_sha256": "acf03fefd2d437b4e50a4b122159f4f454b032f397360155518d961e61b1187b",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/62",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 902363064,
+        "request_id": "public-next-task-30"
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "correct": true,
+        "input_sha256": "f3dda0a565be79822c871c6305496ba68d6f39b6466cd06df71d2dc7d4912109",
+        "origin": {
+          "git_blob_sha1": "992c143e8801ee047c0a9a4e602fdb0b835f8945",
+          "json_pointer": "/raw_forward_observations/63",
+          "sha256": "21fd6c9a22cb8ae075fed1ffbf6af8bca388d3aa6c2731721ab676b8c59c1592",
+          "source_path": "evidence/smollm-cell-replica-research-v1/actual/research-result.json"
+        },
+        "reported_execution_ns": 874659362,
+        "request_id": "public-next-task-31"
+      }
+    ]
+  },
+  "native_origin_authenticated": false,
+  "net_value": {
+    "unit": null,
+    "unknown_reason": "INDEPENDENT_BENEFIT_AND_COMPLETE_COST_DENOMINATION_NOT_SUPPLIED",
+    "value": null
+  },
+  "original_reader_schema": "trnm-cell-model-projection-report-v1",
+  "original_reader_sha256": "01a7ff175172b0f155cf6b0c72288a79b03550a95aa3d25d4f0fce2a05f373c3",
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "raw_file_count": 44,
+  "reader_sha256": "18301b67d57a121a5cb468a3f490e61880a559e88f9cd69bcaf922895d66466b",
+  "recorded_native_binary_sha256": "c5338d6779e5d5b28ea585e0b4f12880219aa8f8d26a2d09fab2e504e6d0117b",
+  "recorded_native_source_commit": "4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251",
+  "recorded_worker_source_pins": {
+    "llm_adapter_contract.py": "e46311a08584ad7becfc56cd0b699d9bc6921adcfe39319e50aa14faa984ced5",
+    "llm_inherited_runtime.py": "1c356c4e8e9a114ac7b6348cac4bed9a6fc72d53ce71ce00139c3deed8733596",
+    "llm_parent_material.py": "5396d72c4730aea2d271b55a8404f6eaba64dc57f91343537710c28f7686b43c",
+    "llm_runtime_pilot.py": "65ccc6454befd96fa5ce1f5bdde2c56cb6cbb741cf495b8d24a758039f99f755",
+    "model-family-smollm2-135m-v1.json": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52"
+  },
+  "records_retained_at_commit": "e02126dabef04f13792dec45d96ac5d6916d0651",
+  "schema": "trnm-useful-task-observation-report-v1",
+  "scope": "readback-of-pinned-historical-smollm-cell-corpus",
+  "training": {
+    "clock": "reported CPU/wall deltas; original endpoints and a common clock are not in this corpus",
+    "complete_process_family_cpu_ns": null,
+    "distinct_declared_operation_ids": 3,
+    "enclosing_process_and_command_values_added_to_stage_sums": false,
+    "interval_overlap_independently_verified": false,
+    "io_scope": "reported worker-stage I/O deltas; not wire bytes, unique bytes or device durability",
+    "operation_identity_scope": "receipt labels; neither independent business demand nor authenticated invocations",
+    "retained_stage_slots": 25,
+    "retained_training_receipt_slots": 3,
+    "reused_operation_labels": [],
+    "rows": [
+      {
+        "artifact": "98193ca115e8c5844f2ff0048c2ce24a5f00975788a386ba1a04f033fd6e2714",
+        "declared_operation_id": "cell-research-public-smoke-gen1",
+        "generation": 1,
+        "input_sha256": "1d4a4469a44bc142bc093b9de70eaca6e4cfa5a2f7a0329be1014bacb4818964",
+        "origin": {
+          "git_blob_sha1": "d0c0f3080dabba7ed453ea7fda341b6ecced59a6",
+          "json_pointer": "",
+          "sha256": "8dc89c733c69b04edbc5897772d7f6971ccead6a15d08c3d8fab22ed51820953",
+          "source_path": "evidence/smollm-cell-replica-research-v1/training/gen1/actual-receipt.json"
+        },
+        "outcome": "success",
+        "reported_process_peak_rss_bytes": 3064528896,
+        "reported_process_wall_ns": 40170046886,
+        "stages": [
+          {
+            "bytes_read": 0,
+            "bytes_written": 0,
+            "cpu_ns": 177109527,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 19419136,
+            "origin": {
+              "git_blob_sha1": "d0c0f3080dabba7ed453ea7fda341b6ecced59a6",
+              "json_pointer": "/cost_events/0",
+              "sha256": "8dc89c733c69b04edbc5897772d7f6971ccead6a15d08c3d8fab22ed51820953",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen1/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "material-verification",
+            "wall_ns": 177128829
+          },
+          {
+            "bytes_read": 302374912,
+            "bytes_written": 49152,
+            "cpu_ns": 3539688050,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 306974720,
+            "origin": {
+              "git_blob_sha1": "d0c0f3080dabba7ed453ea7fda341b6ecced59a6",
+              "json_pointer": "/cost_events/1",
+              "sha256": "8dc89c733c69b04edbc5897772d7f6971ccead6a15d08c3d8fab22ed51820953",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen1/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "runtime-import",
+            "wall_ns": 3469721309
+          },
+          {
+            "bytes_read": 13111296,
+            "bytes_written": 0,
+            "cpu_ns": 642527091,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 1140592640,
+            "origin": {
+              "git_blob_sha1": "d0c0f3080dabba7ed453ea7fda341b6ecced59a6",
+              "json_pointer": "/cost_events/2",
+              "sha256": "8dc89c733c69b04edbc5897772d7f6971ccead6a15d08c3d8fab22ed51820953",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen1/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "model-load",
+            "wall_ns": 408970763
+          },
+          {
+            "bytes_read": 0,
+            "bytes_written": 0,
+            "cpu_ns": 428071295,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 1140592640,
+            "origin": {
+              "git_blob_sha1": "d0c0f3080dabba7ed453ea7fda341b6ecced59a6",
+              "json_pointer": "/cost_events/3",
+              "sha256": "8dc89c733c69b04edbc5897772d7f6971ccead6a15d08c3d8fab22ed51820953",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen1/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "complete-backbone-tokenizer-verification",
+            "wall_ns": 428366864
+          },
+          {
+            "bytes_read": 24576,
+            "bytes_written": 0,
+            "cpu_ns": 306342612,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 1140592640,
+            "origin": {
+              "git_blob_sha1": "d0c0f3080dabba7ed453ea7fda341b6ecced59a6",
+              "json_pointer": "/cost_events/4",
+              "sha256": "8dc89c733c69b04edbc5897772d7f6971ccead6a15d08c3d8fab22ed51820953",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen1/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "adapter-insertion",
+            "wall_ns": 307039656
+          },
+          {
+            "bytes_read": 7172096,
+            "bytes_written": 0,
+            "cpu_ns": 39279917852,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 2979553280,
+            "origin": {
+              "git_blob_sha1": "d0c0f3080dabba7ed453ea7fda341b6ecced59a6",
+              "json_pointer": "/cost_events/5",
+              "sha256": "8dc89c733c69b04edbc5897772d7f6971ccead6a15d08c3d8fab22ed51820953",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen1/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "training",
+            "wall_ns": 34570407706
+          },
+          {
+            "bytes_read": 655360,
+            "bytes_written": 937984,
+            "cpu_ns": 5019254,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 3064528896,
+            "origin": {
+              "git_blob_sha1": "d0c0f3080dabba7ed453ea7fda341b6ecced59a6",
+              "json_pointer": "/cost_events/6",
+              "sha256": "8dc89c733c69b04edbc5897772d7f6971ccead6a15d08c3d8fab22ed51820953",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen1/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "artifact-save",
+            "wall_ns": 5733973
+          }
+        ]
+      },
+      {
+        "artifact": "27c0aa0e82719dcb0b6f32640fb36c0166dd9f3d60eada28dacb634797eeb1cf",
+        "declared_operation_id": "cell-research-public-smoke-gen2",
+        "generation": 2,
+        "input_sha256": "1d4a4469a44bc142bc093b9de70eaca6e4cfa5a2f7a0329be1014bacb4818964",
+        "origin": {
+          "git_blob_sha1": "a031f3472354847e7625aa17614858a4a01c7790",
+          "json_pointer": "",
+          "sha256": "732850df8b222305e58b712a3d9e39ceeb1f0a6ad886e3ed13bafe68b6ac3f86",
+          "source_path": "evidence/smollm-cell-replica-research-v1/training/gen2/actual-receipt.json"
+        },
+        "outcome": "success",
+        "reported_process_peak_rss_bytes": 3069181952,
+        "reported_process_wall_ns": 37638732512,
+        "stages": [
+          {
+            "bytes_read": 0,
+            "bytes_written": 0,
+            "cpu_ns": 229216336,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 20451328,
+            "origin": {
+              "git_blob_sha1": "a031f3472354847e7625aa17614858a4a01c7790",
+              "json_pointer": "/cost_events/0",
+              "sha256": "732850df8b222305e58b712a3d9e39ceeb1f0a6ad886e3ed13bafe68b6ac3f86",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen2/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "material-verification",
+            "wall_ns": 231784572
+          },
+          {
+            "bytes_read": 98373632,
+            "bytes_written": 45056,
+            "cpu_ns": 4001763707,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 306937856,
+            "origin": {
+              "git_blob_sha1": "a031f3472354847e7625aa17614858a4a01c7790",
+              "json_pointer": "/cost_events/1",
+              "sha256": "732850df8b222305e58b712a3d9e39ceeb1f0a6ad886e3ed13bafe68b6ac3f86",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen2/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "runtime-import",
+            "wall_ns": 4674101261
+          },
+          {
+            "bytes_read": 0,
+            "bytes_written": 0,
+            "cpu_ns": 701680801,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 1140760576,
+            "origin": {
+              "git_blob_sha1": "a031f3472354847e7625aa17614858a4a01c7790",
+              "json_pointer": "/cost_events/2",
+              "sha256": "732850df8b222305e58b712a3d9e39ceeb1f0a6ad886e3ed13bafe68b6ac3f86",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen2/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "model-load",
+            "wall_ns": 453976646
+          },
+          {
+            "bytes_read": 0,
+            "bytes_written": 0,
+            "cpu_ns": 423331415,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 1140760576,
+            "origin": {
+              "git_blob_sha1": "a031f3472354847e7625aa17614858a4a01c7790",
+              "json_pointer": "/cost_events/3",
+              "sha256": "732850df8b222305e58b712a3d9e39ceeb1f0a6ad886e3ed13bafe68b6ac3f86",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen2/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "complete-backbone-tokenizer-verification",
+            "wall_ns": 423404538
+          },
+          {
+            "bytes_read": 0,
+            "bytes_written": 0,
+            "cpu_ns": 86904797,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 1140760576,
+            "origin": {
+              "git_blob_sha1": "a031f3472354847e7625aa17614858a4a01c7790",
+              "json_pointer": "/cost_events/4",
+              "sha256": "732850df8b222305e58b712a3d9e39ceeb1f0a6ad886e3ed13bafe68b6ac3f86",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen2/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "parent-material-verification",
+            "wall_ns": 87152963
+          },
+          {
+            "bytes_read": 385024,
+            "bytes_written": 0,
+            "cpu_ns": 300071083,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 1140760576,
+            "origin": {
+              "git_blob_sha1": "a031f3472354847e7625aa17614858a4a01c7790",
+              "json_pointer": "/cost_events/5",
+              "sha256": "732850df8b222305e58b712a3d9e39ceeb1f0a6ad886e3ed13bafe68b6ac3f86",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen2/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "adapter-insertion",
+            "wall_ns": 302217774
+          },
+          {
+            "bytes_read": 0,
+            "bytes_written": 0,
+            "cpu_ns": 72865435,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 1140760576,
+            "origin": {
+              "git_blob_sha1": "a031f3472354847e7625aa17614858a4a01c7790",
+              "json_pointer": "/cost_events/6",
+              "sha256": "732850df8b222305e58b712a3d9e39ceeb1f0a6ad886e3ed13bafe68b6ac3f86",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen2/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "actual-parent-reload",
+            "wall_ns": 72870757
+          },
+          {
+            "bytes_read": 8192,
+            "bytes_written": 0,
+            "cpu_ns": 36207236862,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 2984079360,
+            "origin": {
+              "git_blob_sha1": "a031f3472354847e7625aa17614858a4a01c7790",
+              "json_pointer": "/cost_events/7",
+              "sha256": "732850df8b222305e58b712a3d9e39ceeb1f0a6ad886e3ed13bafe68b6ac3f86",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen2/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "training",
+            "wall_ns": 30858015871
+          },
+          {
+            "bytes_read": 0,
+            "bytes_written": 937984,
+            "cpu_ns": 3704337,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 3069181952,
+            "origin": {
+              "git_blob_sha1": "a031f3472354847e7625aa17614858a4a01c7790",
+              "json_pointer": "/cost_events/8",
+              "sha256": "732850df8b222305e58b712a3d9e39ceeb1f0a6ad886e3ed13bafe68b6ac3f86",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen2/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "artifact-save",
+            "wall_ns": 3709954
+          }
+        ]
+      },
+      {
+        "artifact": "0d871c3bc4b772e5835b804073300489bd2607c87205f7ab8c99a925fae45450",
+        "declared_operation_id": "cell-research-public-smoke-gen3",
+        "generation": 3,
+        "input_sha256": "1d4a4469a44bc142bc093b9de70eaca6e4cfa5a2f7a0329be1014bacb4818964",
+        "origin": {
+          "git_blob_sha1": "4cd8588aa2d0c07845f63514fd8f132ed018a22c",
+          "json_pointer": "",
+          "sha256": "3d70c36bd864f8df939a666b91372327965dc916d0b78f2cfec4137ac3b9c6a2",
+          "source_path": "evidence/smollm-cell-replica-research-v1/training/gen3/actual-receipt.json"
+        },
+        "outcome": "success",
+        "reported_process_peak_rss_bytes": 3069059072,
+        "reported_process_wall_ns": 39967182706,
+        "stages": [
+          {
+            "bytes_read": 0,
+            "bytes_written": 0,
+            "cpu_ns": 181628790,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 20447232,
+            "origin": {
+              "git_blob_sha1": "4cd8588aa2d0c07845f63514fd8f132ed018a22c",
+              "json_pointer": "/cost_events/0",
+              "sha256": "3d70c36bd864f8df939a666b91372327965dc916d0b78f2cfec4137ac3b9c6a2",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen3/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "material-verification",
+            "wall_ns": 181642865
+          },
+          {
+            "bytes_read": 0,
+            "bytes_written": 45056,
+            "cpu_ns": 3346841615,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 306937856,
+            "origin": {
+              "git_blob_sha1": "4cd8588aa2d0c07845f63514fd8f132ed018a22c",
+              "json_pointer": "/cost_events/1",
+              "sha256": "3d70c36bd864f8df939a666b91372327965dc916d0b78f2cfec4137ac3b9c6a2",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen3/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "runtime-import",
+            "wall_ns": 3060522163
+          },
+          {
+            "bytes_read": 0,
+            "bytes_written": 0,
+            "cpu_ns": 640340676,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 1140781056,
+            "origin": {
+              "git_blob_sha1": "4cd8588aa2d0c07845f63514fd8f132ed018a22c",
+              "json_pointer": "/cost_events/2",
+              "sha256": "3d70c36bd864f8df939a666b91372327965dc916d0b78f2cfec4137ac3b9c6a2",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen3/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "model-load",
+            "wall_ns": 407692441
+          },
+          {
+            "bytes_read": 0,
+            "bytes_written": 0,
+            "cpu_ns": 406743229,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 1140781056,
+            "origin": {
+              "git_blob_sha1": "4cd8588aa2d0c07845f63514fd8f132ed018a22c",
+              "json_pointer": "/cost_events/3",
+              "sha256": "3d70c36bd864f8df939a666b91372327965dc916d0b78f2cfec4137ac3b9c6a2",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen3/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "complete-backbone-tokenizer-verification",
+            "wall_ns": 407000445
+          },
+          {
+            "bytes_read": 0,
+            "bytes_written": 0,
+            "cpu_ns": 61294106,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 1140781056,
+            "origin": {
+              "git_blob_sha1": "4cd8588aa2d0c07845f63514fd8f132ed018a22c",
+              "json_pointer": "/cost_events/4",
+              "sha256": "3d70c36bd864f8df939a666b91372327965dc916d0b78f2cfec4137ac3b9c6a2",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen3/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "parent-material-verification",
+            "wall_ns": 61299418
+          },
+          {
+            "bytes_read": 0,
+            "bytes_written": 0,
+            "cpu_ns": 301098494,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 1140781056,
+            "origin": {
+              "git_blob_sha1": "4cd8588aa2d0c07845f63514fd8f132ed018a22c",
+              "json_pointer": "/cost_events/5",
+              "sha256": "3d70c36bd864f8df939a666b91372327965dc916d0b78f2cfec4137ac3b9c6a2",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen3/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "adapter-insertion",
+            "wall_ns": 301159640
+          },
+          {
+            "bytes_read": 0,
+            "bytes_written": 0,
+            "cpu_ns": 65541988,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 1140781056,
+            "origin": {
+              "git_blob_sha1": "4cd8588aa2d0c07845f63514fd8f132ed018a22c",
+              "json_pointer": "/cost_events/6",
+              "sha256": "3d70c36bd864f8df939a666b91372327965dc916d0b78f2cfec4137ac3b9c6a2",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen3/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "actual-parent-reload",
+            "wall_ns": 65557316
+          },
+          {
+            "bytes_read": 4096,
+            "bytes_written": 4096,
+            "cpu_ns": 38597265221,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 2984022016,
+            "origin": {
+              "git_blob_sha1": "4cd8588aa2d0c07845f63514fd8f132ed018a22c",
+              "json_pointer": "/cost_events/7",
+              "sha256": "3d70c36bd864f8df939a666b91372327965dc916d0b78f2cfec4137ac3b9c6a2",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen3/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "training",
+            "wall_ns": 34780741962
+          },
+          {
+            "bytes_read": 131072,
+            "bytes_written": 937984,
+            "cpu_ns": 5280201,
+            "error_type": null,
+            "gpu_ns": 0,
+            "memory_peak_bytes": 3069059072,
+            "origin": {
+              "git_blob_sha1": "4cd8588aa2d0c07845f63514fd8f132ed018a22c",
+              "json_pointer": "/cost_events/8",
+              "sha256": "3d70c36bd864f8df939a666b91372327965dc916d0b78f2cfec4137ac3b9c6a2",
+              "source_path": "evidence/smollm-cell-replica-research-v1/training/gen3/actual-receipt.json"
+            },
+            "outcome": "success",
+            "stage": "artifact-save",
+            "wall_ns": 5696684
+          }
+        ]
+      }
+    ],
+    "stage_cpu_ns": {
+      "complete_arithmetic_sum": 130011484774,
+      "known_slots": 25,
+      "retained_slots": 25,
+      "scope": "arithmetic sum of reported worker-stage values only; not whole-process or whole-task cost",
+      "sum_known": 130011484774,
+      "unit": "ns",
+      "unknown_reason": null,
+      "unknown_slots": 0
+    },
+    "stage_read_bytes": {
+      "complete_arithmetic_sum": 422240256,
+      "known_slots": 25,
+      "retained_slots": 25,
+      "scope": "arithmetic sum of reported worker-stage values only; not whole-process or whole-task cost",
+      "sum_known": 422240256,
+      "unit": "bytes",
+      "unknown_reason": null,
+      "unknown_slots": 0
+    },
+    "stage_wall_ns": {
+      "complete_arithmetic_sum": 115745916370,
+      "known_slots": 25,
+      "retained_slots": 25,
+      "scope": "arithmetic sum of reported worker-stage values only; not whole-process or whole-task cost",
+      "sum_known": 115745916370,
+      "unit": "ns",
+      "unknown_reason": null,
+      "unknown_slots": 0
+    },
+    "stage_written_bytes": {
+      "complete_arithmetic_sum": 2957312,
+      "known_slots": 25,
+      "retained_slots": 25,
+      "scope": "arithmetic sum of reported worker-stage values only; not whole-process or whole-task cost",
+      "sum_known": 2957312,
+      "unit": "bytes",
+      "unknown_reason": null,
+      "unknown_slots": 0
+    },
+    "unknown_reason": "WORKER_STAGES_EXCLUDE_UNMETERED_WORK_AND_OTHER_PROCESS_OWNERS"
+  },
+  "useful_task_throughput": {
+    "common_window_ns": null,
+    "global_planned_attempts": null,
+    "qualified": false,
+    "tasks_per_second": null,
+    "unique_independently_accepted_tasks": null,
+    "unknown_reasons": {
+      "common_observation_window": "ORIGINAL_COMMON_MONOTONIC_WINDOW_NOT_SUPPLIED",
+      "complete_attempt_census": "FAILED_CANCELLED_UNPUBLISHED_AND_OTHER_OWNER_ATTEMPTS_NOT_EXHAUSTIVELY_OBSERVED",
+      "independent_acceptance": "INDEPENDENT_FUTURE_TASK_ACCEPTANCE_NOT_SUPPLIED",
+      "independent_demand": "INDEPENDENT_CUSTOMER_DEMAND_AND_ORIGINAL_AUTHORIZATION_NOT_SUPPLIED",
+      "unique_business_task_identity": "OPERATION_AND_FIXTURE_LABELS_DO_NOT_ESTABLISH_BUSINESS_TASK_IDENTITY"
+    }
+  }
+}

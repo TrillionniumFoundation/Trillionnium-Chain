@@ -1,0 +1,103 @@
+{
+  "build_receipt_present": false,
+  "build_stderr_sha256": "33fce6b1e0e970c1b3e952e0d774863ea7b35ae48bf85336b64f44da36ba6d12",
+  "build_stdout_sha256": "51e29b1830c0d6b610fd994219575e5d7492f282bce90e673459fa787cfea455",
+  "disk_available_bytes": 953409536,
+  "no_unique_transport_failure_cause_attributed": true,
+  "node_binary_metadata_present": false,
+  "observed_at_utc": "2026-11-09T14:03:09.433748+00:00",
+  "process_pid_unknown_reason": "per-exec /proc namespace shows only own command processes",
+  "recent_mvcc_artifacts": [
+    {
+      "modified_utc": "2026-11-09T13:59:40.595197+00:00",
+      "name": "trnm_mvcc_fee-cb64485023e00319.trnm_mvcc_fee.b2706b0cd014cccc-cgu.05.rcgu.o",
+      "size_bytes": 339448
+    },
+    {
+      "modified_utc": "2026-11-09T14:02:43.809181+00:00",
+      "name": "trnm_mvcc_fee-cb64485023e00319.trnm_mvcc_fee.b2706b0cd014cccc-cgu.04.rcgu.o",
+      "size_bytes": 331288
+    },
+    {
+      "modified_utc": "2026-11-09T14:02:11.645524+00:00",
+      "name": "trnm_mvcc_fee-cb64485023e00319.trnm_mvcc_fee.b2706b0cd014cccc-cgu.13.rcgu.o",
+      "size_bytes": 358608
+    },
+    {
+      "modified_utc": "2026-11-09T14:02:00.237644+00:00",
+      "name": "trnm_mvcc_fee-cb64485023e00319.trnm_mvcc_fee.b2706b0cd014cccc-cgu.15.rcgu.o",
+      "size_bytes": 367816
+    },
+    {
+      "modified_utc": "2026-11-09T13:54:27.026533+00:00",
+      "name": "libtrnm_mvcc_fee-cb64485023e00319.rmeta",
+      "size_bytes": 4823437
+    },
+    {
+      "modified_utc": "2026-11-09T14:02:33.241294+00:00",
+      "name": "trnm_mvcc_fee-cb64485023e00319.trnm_mvcc_fee.b2706b0cd014cccc-cgu.02.rcgu.o",
+      "size_bytes": 329800
+    },
+    {
+      "modified_utc": "2026-11-09T14:02:24.849383+00:00",
+      "name": "trnm_mvcc_fee-cb64485023e00319.trnm_mvcc_fee.b2706b0cd014cccc-cgu.12.rcgu.o",
+      "size_bytes": 335264
+    },
+    {
+      "modified_utc": "2026-11-09T14:02:51.442004+00:00",
+      "name": "trnm_mvcc_fee-cb64485023e00319.trnm_mvcc_fee.b2706b0cd014cccc-cgu.10.rcgu.o",
+      "size_bytes": 323128
+    },
+    {
+      "modified_utc": "2026-11-09T14:02:56.187938+00:00",
+      "name": "trnm_mvcc_fee-cb64485023e00319.trnm_mvcc_fee.b2706b0cd014cccc-cgu.09.rcgu.o",
+      "size_bytes": 0
+    },
+    {
+      "modified_utc": "2026-11-09T14:02:38.937233+00:00",
+      "name": "trnm_mvcc_fee-cb64485023e00319.trnm_mvcc_fee.b2706b0cd014cccc-cgu.11.rcgu.o",
+      "size_bytes": 323392
+    },
+    {
+      "modified_utc": "2026-11-09T13:53:20.210883+00:00",
+      "name": "trnm_mvcc_fee-cb64485023e00319.d",
+      "size_bytes": 14186
+    },
+    {
+      "modified_utc": "2026-11-09T14:02:06.349578+00:00",
+      "name": "trnm_mvcc_fee-cb64485023e00319.trnm_mvcc_fee.b2706b0cd014cccc-cgu.14.rcgu.o",
+      "size_bytes": 285264
+    },
+    {
+      "modified_utc": "2026-11-09T14:01:46.361787+00:00",
+      "name": "trnm_mvcc_fee-cb64485023e00319.trnm_mvcc_fee.b2706b0cd014cccc-cgu.03.rcgu.o",
+      "size_bytes": 383232
+    },
+    {
+      "modified_utc": "2026-11-09T13:58:50.907818+00:00",
+      "name": "trnm_mvcc_fee-cb64485023e00319.trnm_mvcc_fee.b2706b0cd014cccc-cgu.00.rcgu.o",
+      "size_bytes": 398384
+    },
+    {
+      "modified_utc": "2026-11-09T14:01:52.516893+00:00",
+      "name": "trnm_mvcc_fee-cb64485023e00319.trnm_mvcc_fee.b2706b0cd014cccc-cgu.06.rcgu.o",
+      "size_bytes": 510368
+    },
+    {
+      "modified_utc": "2026-11-09T13:59:15.819513+00:00",
+      "name": "trnm_mvcc_fee-cb64485023e00319.trnm_mvcc_fee.b2706b0cd014cccc-cgu.01.rcgu.o",
+      "size_bytes": 626208
+    },
+    {
+      "modified_utc": "2026-11-09T14:02:18.105043+00:00",
+      "name": "trnm_mvcc_fee-cb64485023e00319.trnm_mvcc_fee.b2706b0cd014cccc-cgu.08.rcgu.o",
+      "size_bytes": 189136
+    }
+  ],
+  "run_session_id": 87981,
+  "schema": "trnm-build-observation-v1",
+  "source_file_count": 900,
+  "summary_present": false,
+  "test_result": null,
+  "transport_disconnected_observed": true
+}

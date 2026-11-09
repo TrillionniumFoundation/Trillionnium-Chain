@@ -1,0 +1,36 @@
+[
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/a0d4983b1065/chain-throughput/formal/throughput-v1/proof_cpu_metrics.py",
+      "--evidence-dir",
+      "/workspace/scratch/a0d4983b1065/chain-throughput/evidence/pon-throughput-20261108/proof-cpu"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "name": "proof-cpu",
+    "reference": "evidence/pon-throughput-20261108/proof-cpu/report.json",
+    "reproduced_exact_bytes": true,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "c5acf7e338900b75d983a04a7907a9fd464adcc0e8361b36ceef01c85a7d51f3"
+  },
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/a0d4983b1065/chain-throughput/formal/throughput-v1/cell_model_metrics.py",
+      "--manifest",
+      "/workspace/scratch/a0d4983b1065/chain-throughput/evidence/pon-throughput-20261108/cell-model/input-manifest.json",
+      "--manifest-sha256",
+      "9e3c64afcd03bb17ac8746d1146a98c78d214000ccaf71ed2aed0ea96a6a3d25"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "name": "cell-model",
+    "reference": "evidence/pon-throughput-20261108/cell-model/projection.json",
+    "reproduced_exact_bytes": true,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "48dc8c4387b77113c9b875f18acc44734c31942d5a8227b6fa4b1e57cb1d9599"
+  }
+]

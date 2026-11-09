@@ -491,6 +491,49 @@ pub struct PublicRequestLifecycleObservation {
     pub has_control_authority: bool,
 }
 
+/// Bracket the actual first false-to-true write of this request's cancel flag.
+/// Other owners may set the same flag without this observer; a later observed
+/// write must not invent the missing original signal clock or cause.
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
+pub struct RequestCancellationSignal {
+    pub before_ns: Option<u64>,
+    pub after_ns: Option<u64>,
+    pub source: &'static str,
+    pub phase: &'static str,
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub struct RequestCancellationObservation {
+    pub schema: &'static str,
+    pub observed_signal_calls: u64,
+    pub first_flag_transition: Option<RequestCancellationSignal>,
+    pub worker_entered: bool,
+    pub worker_entered_ns: Option<u64>,
+    pub worker_returned: bool,
+    pub worker_returned_ns: Option<u64>,
+    pub observation_failed: bool,
+    pub clock_is_observer_local: bool,
+    pub signals_are_request_flag_writes: bool,
+    pub has_control_authority: bool,
+}
+impl Default for RequestCancellationObservation {
+    fn default() -> Self {
+        Self {
+            schema: "public-v3-request-cancellation-observation-v1",
+            observed_signal_calls: 0,
+            first_flag_transition: None,
+            worker_entered: false,
+            worker_entered_ns: None,
+            worker_returned: false,
+            worker_returned_ns: None,
+            observation_failed: false,
+            clock_is_observer_local: true,
+            signals_are_request_flag_writes: true,
+            has_control_authority: false,
+        }
+    }
+}
+
 #[derive(Clone, Debug, Serialize)]
 pub struct PublicRequestObservation {
     pub connection_id: Option<u64>,
@@ -499,6 +542,9 @@ pub struct PublicRequestObservation {
     /// Successful socket accept through the actual connection/task owners.
     /// This is a local diagnostic clock, not a remote confirmation or authority.
     pub lifecycle: PublicRequestLifecycleObservation,
+    /// Signal, actual per-request worker return and resource-owner closure are
+    /// separate observations. None certifies cancellation of durable effects.
+    pub cancellation: RequestCancellationObservation,
     pub frames: [ApplicationFrameBytes; 6],
     pub reactor_io: ReactorIoObservation,
     pub application_bytes_read: Option<u64>,
@@ -554,6 +600,7 @@ impl PublicRequestObservation {
                 clock_is_observer_local: true,
                 has_control_authority: false,
             },
+            cancellation: RequestCancellationObservation::default(),
             frames: [
                 ApplicationFramePhase::Hello,
                 ApplicationFramePhase::Challenge,
@@ -630,6 +677,12 @@ struct Cell {
     task_created: AtomicBool,
     task_closed: AtomicBool,
     task_closed_ns: OnceLock<Option<u64>>,
+    cancellation_signal_calls: AtomicU64,
+    first_cancellation_signal: OnceLock<RequestCancellationSignal>,
+    worker_entered: AtomicBool,
+    worker_entered_ns: OnceLock<Option<u64>>,
+    worker_returned: AtomicBool,
+    worker_returned_ns: OnceLock<Option<u64>>,
 }
 
 struct Inner {
@@ -776,8 +829,36 @@ impl PublicRequestObserver {
                     .task_closed
                     .then(|| cell.task_closed_ns.get().copied().flatten())
                     .flatten();
+                value.cancellation.first_flag_transition =
+                    cell.first_cancellation_signal.get().copied();
+                // The first event is published only after its call is counted.
+                // Acquire it first so a concurrent snapshot cannot expose a
+                // transition with an older zero-call census.
+                value.cancellation.observed_signal_calls =
+                    cell.cancellation_signal_calls.load(Ordering::Acquire);
+                // Read return before entry, just as task close precedes the
+                // creation read above. A live snapshot cannot expose a clock
+                // for an event whose release flag it has not acquired.
+                value.cancellation.worker_returned = cell.worker_returned.load(Ordering::Acquire);
+                value.cancellation.worker_entered = cell.worker_entered.load(Ordering::Acquire);
+                if value.cancellation.worker_entered {
+                    // This worker may have entered after the earlier creation
+                    // read. Its acquire makes the original creation visible.
+                    value.task_created = cell.task_created.load(Ordering::Acquire);
+                }
+                value.cancellation.worker_entered_ns = value
+                    .cancellation
+                    .worker_entered
+                    .then(|| cell.worker_entered_ns.get().copied().flatten())
+                    .flatten();
+                value.cancellation.worker_returned_ns = value
+                    .cancellation
+                    .worker_returned
+                    .then(|| cell.worker_returned_ns.get().copied().flatten())
+                    .flatten();
                 value.observation_failed =
                     cell.failed.load(Ordering::Acquire) || phase_failures != 0;
+                value.cancellation.observation_failed = value.observation_failed;
                 value.error_timing.observation_failed = value.observation_failed;
                 value.reactor_io.observation_failed = value.observation_failed;
                 value.complete = value.connection_closed
@@ -864,6 +945,12 @@ impl PublicRequestObserver {
                 task_created: AtomicBool::new(false),
                 task_closed: AtomicBool::new(false),
                 task_closed_ns: OnceLock::new(),
+                cancellation_signal_calls: AtomicU64::new(0),
+                first_cancellation_signal: OnceLock::new(),
+                worker_entered: AtomicBool::new(false),
+                worker_entered_ns: OnceLock::new(),
+                worker_returned: AtomicBool::new(false),
+                worker_returned_ns: OnceLock::new(),
             });
             if slot.set(cell.clone()).is_ok() {
                 return Some(ConnectionObservation {
@@ -879,6 +966,7 @@ impl PublicRequestObserver {
     }
 }
 
+#[derive(Clone)]
 struct Handle {
     cell: Arc<Cell>,
     inner: Arc<Inner>,
@@ -917,6 +1005,35 @@ impl ConnectionObservation {
         Handle {
             cell: self.cell.clone(),
             inner: self.inner.clone(),
+        }
+    }
+    pub(super) fn cancel_request(
+        &self,
+        cancelled: &AtomicBool,
+        source: &'static str,
+        phase: &'static str,
+    ) {
+        let before_ns = self.inner.timestamp_ns(Instant::now());
+        // Preserve the original release write. Reading its atomic predecessor
+        // only decides whether this diagnostic owns the first transition;
+        // it never changes cancellation, admission, deadlines or CPU credit.
+        let was_set = cancelled.swap(true, Ordering::Release);
+        let after_ns = self.inner.timestamp_ns(Instant::now());
+        self.inner.count(&self.cell.cancellation_signal_calls);
+        if !was_set
+            && self
+                .cell
+                .first_cancellation_signal
+                .set(RequestCancellationSignal {
+                    before_ns,
+                    after_ns,
+                    source,
+                    phase,
+                })
+                .is_err()
+        {
+            self.cell.failed.store(true, Ordering::Release);
+            self.inner.count(&self.inner.failures);
         }
     }
     pub(super) fn identity(&self, id: u64) {
@@ -1096,6 +1213,21 @@ impl TaskObservation {
     }
     pub(in crate::ingress) fn phase(&self, phase: SubmitPhase) -> SubmitPhaseGuard<'_> {
         self.phases.phase(phase)
+    }
+    pub(super) fn worker_scope(&self) -> Option<RequestWorkerObservation> {
+        let network = self.network.as_ref()?;
+        let entered = network.inner.timestamp_ns(Instant::now());
+        let recordable = network.cell.worker_entered_ns.set(entered).is_ok();
+        if !recordable || entered.is_none() {
+            network.cell.failed.store(true, Ordering::Release);
+            network.inner.count(&network.inner.failures);
+        }
+        network.cell.worker_entered.store(true, Ordering::Release);
+        Some(RequestWorkerObservation {
+            network: network.clone(),
+            thread: thread::current().id(),
+            recordable,
+        })
     }
     fn update_task(&self, change: impl FnOnce(&mut TaskProgress)) {
         if let Some(network) = &self.network {
@@ -1319,6 +1451,34 @@ impl Drop for TaskObservation {
     }
 }
 
+/// Declared before the real dequeued Task so unwind, early-return and normal
+/// completion record worker return only after its task locals and accounting
+/// have ended. A completed output may still be owned by the response queue.
+pub(super) struct RequestWorkerObservation {
+    network: Handle,
+    thread: ThreadId,
+    recordable: bool,
+}
+impl Drop for RequestWorkerObservation {
+    fn drop(&mut self) {
+        if !self.recordable {
+            return;
+        }
+        let network = &self.network;
+        if self.thread != thread::current().id() {
+            network.cell.failed.store(true, Ordering::Release);
+            network.inner.count(&network.inner.failures);
+            return;
+        }
+        let returned = network.inner.timestamp_ns(Instant::now());
+        if network.cell.worker_returned_ns.set(returned).is_err() || returned.is_none() {
+            network.cell.failed.store(true, Ordering::Release);
+            network.inner.count(&network.inner.failures);
+        }
+        network.cell.worker_returned.store(true, Ordering::Release);
+    }
+}
+
 #[derive(Clone)]
 pub(in crate::ingress) struct ThreadCpuStamp {
     thread: ThreadId,
@@ -1370,6 +1530,145 @@ fn thread_cpu_ns() -> Option<u64> {
 mod tests {
     use super::*;
     use std::sync::Barrier;
+
+    #[test]
+    fn cancellation_keeps_first_flag_transition_and_separates_worker_from_resource_close() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let task = connection.task();
+        let worker = task.worker_scope().unwrap();
+        let cancelled = AtomicBool::new(false);
+        connection.cancel_request(&cancelled, "peer_write_closed", "work");
+        assert!(cancelled.load(Ordering::Acquire));
+        let first = observer.snapshot().records[0]
+            .cancellation
+            .first_flag_transition
+            .unwrap();
+        connection.cancel_request(&cancelled, "connection_cleanup", "cleanup");
+        drop(connection);
+        drop(task);
+        let live = observer.snapshot();
+        let row = &live.records[0];
+        assert!(row.connection_closed && row.task_closed);
+        assert_eq!(row.cancellation.first_flag_transition, Some(first));
+        assert_eq!(row.cancellation.observed_signal_calls, 2);
+        assert!(row.cancellation.worker_entered && !row.cancellation.worker_returned);
+        assert!(row.cancellation.worker_returned_ns.is_none());
+        drop(worker);
+        let finished = observer.snapshot();
+        let row = &finished.records[0];
+        assert!(finished.coverage_complete());
+        assert!(row.cancellation.worker_returned);
+        assert!(first.before_ns.unwrap() <= first.after_ns.unwrap());
+        assert!(first.after_ns <= row.lifecycle.connection_closed_ns);
+        assert!(row.cancellation.worker_returned_ns >= row.lifecycle.task_closed_ns);
+    }
+
+    #[test]
+    fn cancellation_does_not_reconstruct_an_earlier_unobserved_signal() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let cancelled = AtomicBool::new(true);
+        connection.cancel_request(&cancelled, "connection_cleanup", "cleanup");
+        drop(connection);
+        let snapshot = observer.snapshot();
+        let value = &snapshot.records[0].cancellation;
+        assert!(snapshot.coverage_complete());
+        assert_eq!(value.observed_signal_calls, 1);
+        assert!(value.first_flag_transition.is_none());
+        assert!(!value.worker_entered && !value.worker_returned);
+        assert!(value.worker_entered_ns.is_none() && value.worker_returned_ns.is_none());
+    }
+
+    #[test]
+    fn cancellation_and_worker_clocks_do_not_wait_for_diagnostic_row_locks() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let task = connection.task();
+        let row_lock = connection.cell.row.lock().unwrap();
+        let task_lock = connection.cell.task.lock().unwrap();
+        let worker = task.worker_scope().unwrap();
+        connection.cancel_request(&AtomicBool::new(false), "peer_write_closed", "work");
+        drop(worker);
+        drop(task_lock);
+        drop(row_lock);
+        drop(task);
+        drop(connection);
+        let snapshot = observer.snapshot();
+        assert!(snapshot.coverage_complete());
+        assert!(snapshot.records[0].cancellation.worker_returned);
+        assert!(snapshot.records[0]
+            .cancellation
+            .first_flag_transition
+            .is_some());
+    }
+
+    #[test]
+    fn cancellation_duplicate_worker_entry_preserves_first_owner_and_marks_capture_failed() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let task = connection.task();
+        let first = task.worker_scope().unwrap();
+        let stamp = observer.snapshot().records[0]
+            .cancellation
+            .worker_entered_ns;
+        let duplicate = task.worker_scope().unwrap();
+        drop(duplicate);
+        let live = observer.snapshot();
+        assert!(live.records[0].cancellation.observation_failed);
+        assert!(!live.records[0].cancellation.worker_returned);
+        assert_eq!(live.records[0].cancellation.worker_entered_ns, stamp);
+        drop(task);
+        drop(first);
+        drop(connection);
+        let finished = observer.snapshot();
+        assert!(finished.records[0].cancellation.worker_returned);
+        assert!(!finished.coverage_complete());
+    }
+
+    #[test]
+    fn cancellation_live_snapshots_keep_signal_census_and_worker_creation_consistent() {
+        let observer = PublicRequestObserver::new(32).unwrap();
+        let start = Barrier::new(2);
+        thread::scope(|scope| {
+            let writer = scope.spawn(|| {
+                start.wait();
+                for _ in 0..32 {
+                    let connection = observer.connection().unwrap();
+                    let task = connection.task();
+                    let worker = task.worker_scope().unwrap();
+                    connection.cancel_request(&AtomicBool::new(false), "peer_write_closed", "work");
+                    thread::yield_now();
+                    drop(task);
+                    drop(worker);
+                    drop(connection);
+                }
+            });
+            start.wait();
+            for _ in 0..128 {
+                for row in observer.snapshot().records {
+                    let value = row.cancellation;
+                    assert!(
+                        value.first_flag_transition.is_none() || value.observed_signal_calls > 0
+                    );
+                    assert!(!value.worker_entered || row.task_created);
+                    assert!(!value.worker_returned || value.worker_entered);
+                    assert!(value.worker_entered || value.worker_entered_ns.is_none());
+                    assert!(value.worker_returned || value.worker_returned_ns.is_none());
+                }
+                thread::yield_now();
+            }
+            writer.join().unwrap();
+        });
+        let snapshot = observer.snapshot();
+        assert_eq!(snapshot.records.len(), 32);
+        assert!(snapshot
+            .records
+            .iter()
+            .all(|row| row.cancellation.worker_returned));
+        // Concurrent snapshots may deliberately make the original optional
+        // try-lock capture incomplete. They may never manufacture valid zeros.
+    }
 
     #[test]
     fn lifecycle_retains_disconnect_until_actual_task_owner_exits() {

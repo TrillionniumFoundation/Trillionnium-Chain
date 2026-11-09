@@ -307,6 +307,44 @@ def first_error_latency(rows, *, complete):
     return result
 
 
+def cancellation_latency(rows, *, complete):
+    """Keep signal brackets, worker return and final resource closure distinct."""
+    original = phases.request_cancellation_summary(rows)
+    if original is None:
+        return None
+    groups = defaultdict(list)
+    for record in original["records"]:
+        groups[record["source"]].append(record)
+    result = []
+    for source in sorted(groups, key=lambda value: value or ""):
+        records = groups[source]
+        group = {"first_signal_source": source, "retained_records": len(records)}
+        for name in ("worker_return", "all_request_owners_closed"):
+            values = [record[name] for record in records]
+            complete_group = (complete and source is not None
+                and original["historical_records_without_extension"] == 0
+                and original["measurement_failed_records"] == 0
+                and original["first_flag_transition_records"] == len(rows)
+                and all(value["status"] == "bracketed" for value in values))
+            group[name] = {
+                "status_counts": dict(Counter(value["status"] for value in values)),
+                "signal_to_terminal_lower_bound_ns": statistics(
+                    [value["lower_ns"] for value in values], complete=complete_group),
+                "signal_to_terminal_upper_bound_ns": statistics(
+                    [value["upper_ns"] for value in values], complete=complete_group),
+                "exact_signal_to_terminal_latency_ns": None,
+            }
+        result.append(group)
+    return {
+        "schema": "trnm-request-cancellation-latency-bounds-v1",
+        "by_first_signal_source": result,
+        "original_readback": original,
+        "scope": "actual request-flag write bracket to per-request worker return and all request "
+                 "owners closed; ordinary connection cleanup remains separate; no external-caller "
+                 "signal, process exit, future stopping bound, effect rollback or service qualification",
+    }
+
+
 def request_metrics(observer, *, role_calls=None):
     """Project original native counters; no stage totals become whole-request costs."""
     if observer is None:
@@ -338,6 +376,7 @@ def request_metrics(observer, *, role_calls=None):
                 and all(row.get("complete") is True and row.get("observation_failed") is False for row in rows))
     lifecycle = phases.request_owner_lifecycle_summary(rows)
     error_timing = first_error_latency(rows, complete=complete)
+    cancellation = cancellation_latency(rows, complete=complete)
     reactor_io = phases.reactor_io_summary(rows)
     stage_slots = {name: [next((slot for slot in row.get("submit_phases") or []
                                if slot.get("phase") == name), None) for row in rows]
@@ -433,7 +472,8 @@ def request_metrics(observer, *, role_calls=None):
             "records_with_typed_cancel": sum(any(row.get(key) == "PUBLIC_REQUEST_CANCELLED" for key in
                 ("terminal_error_code", "dispatch_error_code")) for row in rows) if v4 else None,
             "signal_to_stop_latency_ns": None, "effects_reconciled": None,
-            "scope": "typed errors may follow an accepted dispatch; socket close is not proof of cancellation"},
+            "scope": "typed errors may follow an accepted dispatch; socket close is not proof of cancellation",
+            **({"request_flag_observation": cancellation} if cancellation is not None else {})},
         "recovery": {"status": "not_observed", "planned_recovery_attempts": None,
                      "completed_recoveries": None, "latency_ns": None,
                      "scope": "journal-persisted flags and task closure do not establish restart/reorg recovery"},

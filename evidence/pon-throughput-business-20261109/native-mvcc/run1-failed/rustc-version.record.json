@@ -1,0 +1,44 @@
+{
+  "argv": [
+    "/workspace/scratch/a6fe7c2e72c7/pq-validation/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "--version",
+    "--verbose"
+  ],
+  "cwd": "/workspace/scratch/a0d4983b1065/chain-throughput",
+  "disk_after": {
+    "free_bytes": 8558678016,
+    "total_bytes": 67586535424,
+    "used_bytes": 55575109632
+  },
+  "disk_before": {
+    "free_bytes": 8561876992,
+    "total_bytes": 67586535424,
+    "used_bytes": 55571910656
+  },
+  "exit_code": 0,
+  "extra_env": {},
+  "name": "rustc-version",
+  "rusage": {
+    "ru_idrss": 0,
+    "ru_inblock": 23952,
+    "ru_isrss": 0,
+    "ru_ixrss": 0,
+    "ru_majflt": 2,
+    "ru_maxrss": 29904,
+    "ru_minflt": 2161,
+    "ru_msgrcv": 0,
+    "ru_msgsnd": 0,
+    "ru_nivcsw": 26,
+    "ru_nsignals": 0,
+    "ru_nswap": 0,
+    "ru_nvcsw": 4,
+    "ru_oublock": 8,
+    "ru_stime": 0.029869,
+    "ru_utime": 0.002031
+  },
+  "rusage_maxrss_unit": "KiB (Linux)",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+  "waited_pid": 13,
+  "wall_ns": 61220980
+}
