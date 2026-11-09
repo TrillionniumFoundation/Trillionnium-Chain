@@ -50,6 +50,7 @@ struct Owner {
     starts: u64,
     fail_after_start: bool,
     payment: Option<NativePaymentObservationV1>,
+    payment_read_hook: Option<Box<dyn FnOnce() -> Result<()>>>,
 }
 impl Owner {
     fn new() -> Self {
@@ -87,6 +88,7 @@ impl Owner {
             starts: 0,
             fail_after_start: false,
             payment: None,
+            payment_read_hook: None,
         }
     }
     fn deliver(&mut self, output: Hash) {
@@ -127,6 +129,9 @@ impl NativeFundingOwnerV1 for Owner {
         &mut self,
         query: &NativePaymentQueryV1,
     ) -> Result<NativePaymentObservationV1> {
+        if let Some(hook) = self.payment_read_hook.take() {
+            hook()?;
+        }
         let observed = self
             .payment
             .as_ref()
@@ -529,4 +534,171 @@ fn stale_native_anchor_capacity_and_resource_overrun_fail_closed() {
         store.report().unwrap()["claims"][0]["resource_charge"],
         json!([10, 100, 0, 0])
     );
+}
+
+fn paid_no_gain_operation(
+    path: &Path,
+) -> (
+    NativeTaskOperationStoreV2,
+    Owner,
+    NativeTaskOperationBindingV2,
+) {
+    let mut store = NativeTaskOperationStoreV2::open(path, config()).unwrap();
+    let mut owner = Owner::new();
+    let binding = binding();
+    store.reserve(&mut owner, binding.clone()).unwrap();
+    store.begin(&mut owner, binding.claim).unwrap();
+    complete(&mut store, &binding, [41; 32]);
+    owner.deliver([41; 32]);
+    store.bind_delivery(&mut owner, binding.claim).unwrap();
+    owner.pay([51; 32]);
+    store
+        .record_native_payment(&mut owner, binding.claim, [51; 32])
+        .unwrap();
+    (store, owner, binding)
+}
+
+fn later_task(anchor: NativeBudgetAnchorV1) -> (Owner, NativeTaskOperationBindingV2) {
+    let mut other = Owner::new();
+    let mut binding = binding();
+    binding.claim = [71; 32];
+    binding.task = [72; 32];
+    binding.operation = [73; 32];
+    other.observed.task = binding.task;
+    other.observed.anchor = anchor;
+    (other, binding)
+}
+
+#[test]
+fn payment_readback_rejects_same_generation_anchor_changes_without_rewriting_no_gain_fee() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("operations.sqlite");
+    let (mut store, mut owner, binding) = paid_no_gain_operation(&path);
+    let original = owner.payment.as_ref().unwrap().clone();
+    let checkpoint = store.checkpoint().unwrap();
+    let report = store.report().unwrap();
+    assert_eq!(report["claims"][0]["declared_costs"]["outcome"], "NoGain");
+    assert_eq!(
+        report["claims"][0]["historically_observed_native_payment"],
+        2_000
+    );
+    assert_eq!(report["claims"][0]["learning_improvement_bonus"], false);
+
+    let mut changed_block = original.anchor;
+    changed_block.block = [81; 32];
+    let mut changed_root = original.anchor;
+    changed_root.state_root = [82; 32];
+    let mut changed_height = original.anchor;
+    changed_height.height += 1;
+    for changed in [changed_block, changed_root, changed_height] {
+        owner.payment.as_mut().unwrap().anchor = changed;
+        assert_eq!(
+            store
+                .reobserve_native_payment(&mut owner, binding.claim)
+                .unwrap_err()
+                .to_string(),
+            "TASK_OPERATION_ANCHOR_ROLLBACK_V2"
+        );
+        assert_eq!(store.checkpoint().unwrap(), checkpoint);
+        assert_eq!(store.report().unwrap(), report);
+    }
+
+    // A genuinely newer owner generation may observe the same payment on a
+    // different branch. Its height need not increase; no history is rewritten.
+    let mut newer = original.anchor;
+    newer.generation += 1;
+    newer.height -= 1;
+    newer.block = [83; 32];
+    newer.state_root = [84; 32];
+    owner.payment.as_mut().unwrap().anchor = newer;
+    let readback = store
+        .reobserve_native_payment(&mut owner, binding.claim)
+        .unwrap();
+    assert_eq!(readback.historical, original);
+    assert_eq!(readback.observed.anchor, newer);
+    assert_eq!(readback.observed.beneficiary_credit, 2_000);
+    assert_eq!(store.checkpoint().unwrap(), checkpoint);
+    assert_eq!(store.report().unwrap(), report);
+    assert_eq!(
+        store.begin(&mut owner, binding.claim).unwrap(),
+        NativeBudgetReplayV1::Done
+    );
+    assert_eq!(owner.starts, 1);
+}
+
+#[test]
+fn payment_readback_enforces_the_latest_persisted_anchor_across_tasks() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("operations.sqlite");
+    let (mut store, mut owner, binding) = paid_no_gain_operation(&path);
+    let original = owner.payment.as_ref().unwrap().clone();
+    let mut latest = original.anchor;
+    latest.generation = 5;
+    latest.height = 5;
+    latest.block = [85; 32];
+    latest.state_root = [86; 32];
+    let (mut other, other_binding) = later_task(latest);
+    store.reserve(&mut other, other_binding).unwrap();
+    let checkpoint = store.checkpoint().unwrap();
+
+    // This is newer than the original payment (generation 3), but older than
+    // a native fact already retained by the same journal (generation 5).
+    owner.payment.as_mut().unwrap().anchor.generation = 4;
+    assert_eq!(
+        store
+            .reobserve_native_payment(&mut owner, binding.claim)
+            .unwrap_err()
+            .to_string(),
+        "TASK_OPERATION_ANCHOR_ROLLBACK_V2"
+    );
+    assert_eq!(store.checkpoint().unwrap(), checkpoint);
+    owner.payment.as_mut().unwrap().anchor = latest;
+    let readback = store
+        .reobserve_native_payment(&mut owner, binding.claim)
+        .unwrap();
+    assert_eq!(readback.historical, original);
+    assert_eq!(readback.observed.anchor, latest);
+    assert_eq!(store.checkpoint().unwrap(), checkpoint);
+}
+
+#[test]
+fn payment_readback_refuses_a_concurrent_journal_append_during_owner_observation() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("operations.sqlite");
+    let (store, mut owner, binding) = paid_no_gain_operation(&path);
+    let original = owner.payment.as_ref().unwrap().clone();
+    let before = store.checkpoint().unwrap();
+    let mut later = original.anchor;
+    later.generation += 1;
+    later.height += 1;
+    later.block = [87; 32];
+    later.state_root = [88; 32];
+    let (mut other, other_binding) = later_task(later);
+    // Exercise a real WAL commit through a second connection between the
+    // journal snapshot and payment callback return, without timing or sleeps.
+    let mut writer = NativeTaskOperationStoreV2::open(&path, config()).unwrap();
+    owner.payment_read_hook = Some(Box::new(move || {
+        writer.reserve(&mut other, other_binding)?;
+        Ok(())
+    }));
+    assert_eq!(
+        store
+            .reobserve_native_payment(&mut owner, binding.claim)
+            .unwrap_err()
+            .to_string(),
+        "TASK_OPERATION_PAYMENT_JOURNAL_CHANGED_V2"
+    );
+    let after = store.checkpoint().unwrap();
+    assert_eq!(after.sequence, before.sequence + 1);
+    assert_eq!(store.verify_checkpoint(&before).unwrap(), after);
+    assert_eq!(
+        store.snapshot(binding.claim).unwrap().payment,
+        Some(original)
+    );
+    owner.payment.as_mut().unwrap().anchor = later;
+    assert!(store
+        .reobserve_native_payment(&mut owner, binding.claim)
+        .is_ok());
+    assert_eq!(store.checkpoint().unwrap(), after);
+    assert_eq!(owner.starts, 1);
 }

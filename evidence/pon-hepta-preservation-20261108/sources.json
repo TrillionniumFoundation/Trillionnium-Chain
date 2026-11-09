@@ -1,0 +1,18 @@
+{
+  "schema": "trnm-hepta-preservation-sources-v1",
+  "native_tested_commit": "91dd3082633ea0b3a5ec9b0ed91f28603229be01",
+  "native_tested_tree": "8a14e5aa053af94d1f19cfb8b907a09c6ac4399b",
+  "base_commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "native_source_entries": 26120,
+  "native_source_bytes": 2485347114,
+  "publication_kind": "evidence-and-unpinned-documentation-only-descendant",
+  "native_tests_rerun_on_evidence_descendant": false,
+  "paired_hepta_source": "d81cb97c5b01aea0df03d84d40336b25576337de",
+  "paired_hepta_tree": "49829b9efd25251907743d36fd9c87625ae2bdce",
+  "hepta_execution_qualified_by_this_packet": false,
+  "joint_cross_repository_execution": false,
+  "all_hosted_ci_passed": false,
+  "production_activation": false,
+  "whole_chain_quantum_security_qualified": false,
+  "qualification": "HOLD_NO_GO"
+}
