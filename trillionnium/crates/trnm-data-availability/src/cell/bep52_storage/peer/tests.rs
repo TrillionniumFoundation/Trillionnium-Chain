@@ -58,12 +58,16 @@ fn read_limits(binding: &CellBep52StorageBindingV2, deadline: Instant) -> CellRe
 }
 
 fn fixture(length: usize, chunk_bytes: u32) -> Fixture {
-    let directory = tempfile::tempdir().unwrap();
-    let cache = directory.path().join("source.sqlite");
-    let input = directory.path().join("source.bin");
     let bytes: Vec<_> = (0..length)
         .map(|i| ((i * 17 + i / 16384) % 251) as u8)
         .collect();
+    fixture_bytes(bytes, chunk_bytes)
+}
+
+fn fixture_bytes(bytes: Vec<u8>, chunk_bytes: u32) -> Fixture {
+    let directory = tempfile::tempdir().unwrap();
+    let cache = directory.path().join("source.sqlite");
+    let input = directory.path().join("source.bin");
     fs::write(&input, &bytes).unwrap();
     let store = CellStoreV1::open(&cache, config()).unwrap();
     let manifest = store.pack_file(&input, context(), chunk_bytes).unwrap();
@@ -163,6 +167,67 @@ fn native_tcp_4mib_pieces_use_16k_requests_and_preserve_two_original_cache_rows(
     .unwrap();
     assert_eq!(resumed.cached_chunks, 2);
     assert_eq!(resumed.downloaded_bytes, 0);
+    assert_eq!(
+        session.usage().connection_attempts,
+        before.connection_attempts
+    );
+    assert_eq!(session.usage().received_bytes, before.received_bytes);
+    assert_eq!(session.usage().sent_bytes, before.sent_bytes);
+    assert_eq!(
+        session.usage().completed_fetches,
+        before.completed_fetches + 1
+    );
+}
+
+#[test]
+fn native_tcp_duplicate_chunk_references_download_once_and_verify_the_whole_ordered_payload() {
+    let chunk: Vec<u8> = (0..32_768).map(|i| ((i * 17) % 251) as u8).collect();
+    let bytes = [chunk.as_slice(), chunk.as_slice()].concat();
+    let f = fixture_bytes(bytes, 32_768);
+    let manifest = f.binding.manifest();
+    assert_eq!(manifest.chunks().len(), 2);
+    assert_eq!(manifest.chunks()[0], manifest.chunks()[1]);
+    let reservation = limits();
+    let (address, worker) = start_seed(&f.cache, &f.binding, reservation);
+    let destination =
+        CellStoreV1::open(&f.directory.path().join("receiver.sqlite"), config()).unwrap();
+    let mut session = CellBep52PeerSessionV1::new([98; 32], reservation).unwrap();
+    let fetched = fetch_cell_bep52_storage_v2(
+        &destination,
+        &f.binding,
+        &[address],
+        *b"-CV2001-read-peer001",
+        &mut session,
+    );
+    worker.join().unwrap().unwrap();
+    let report = fetched.unwrap();
+    assert_eq!(report.cached_chunks, 0);
+    assert_eq!(report.downloaded_chunks, 1);
+    assert_eq!(report.downloaded_bytes, chunk.len() as u64);
+    assert_eq!(report.payload_bytes, 2 * chunk.len() as u64);
+    assert_eq!(destination.cache_usage().unwrap().chunk_rows, 1);
+    assert_eq!(session.usage().connection_attempts, 1);
+    assert!(session.usage().received_bytes > report.downloaded_bytes);
+    assert!(session.usage().received_bytes < report.payload_bytes);
+    destination.verify_complete(manifest).unwrap();
+    let mut ordered = Vec::new();
+    for reference in manifest.chunks() {
+        ordered.extend(destination.chunk(reference.sha256).unwrap().unwrap());
+    }
+    assert_eq!(ordered, f.bytes);
+
+    let before = session.usage().clone();
+    let cached = fetch_cell_bep52_storage_v2(
+        &destination,
+        &f.binding,
+        &[],
+        *b"-CV2001-read-peer001",
+        &mut session,
+    )
+    .unwrap();
+    assert_eq!(cached.cached_chunks, 2);
+    assert_eq!(cached.downloaded_chunks, 0);
+    assert_eq!(cached.downloaded_bytes, 0);
     assert_eq!(
         session.usage().connection_attempts,
         before.connection_attempts

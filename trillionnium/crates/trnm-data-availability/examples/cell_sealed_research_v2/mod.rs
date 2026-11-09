@@ -464,7 +464,7 @@ fn observe(spec: &Spec, report: &mut Value) -> Result<()> {
         "tma1": hex::encode(release_snapshot.tensors().id()),
         "composition_file": spec.snapshot.composition_file,
         "composition_profile": spec.snapshot.composition_profile,
-        "typed_snapshot_executed": false,
+        "typed_snapshot_admitted": false,
         "composition_worker_executed": false,
         "compatibility_from_hashes_alone": false,
     });
@@ -630,8 +630,8 @@ fn observe(spec: &Spec, report: &mut Value) -> Result<()> {
     )?;
     admitted.with_local(operation, &snapshot_context, |_| ())?;
     drop(admitted);
-    report["snapshot"]["typed_snapshot_executed"] = json!(true);
-    report["typed_snapshot_executed"] = json!(true);
+    report["snapshot"]["typed_snapshot_admitted"] = json!(true);
+    report["typed_snapshot_admitted"] = json!(true);
     let seal_limits = CellSealedLoaderLimitsV1 {
         max_snapshot_bytes: spec.max_snapshot_bytes,
         max_files: 64,
@@ -823,7 +823,7 @@ fn observe(spec: &Spec, report: &mut Value) -> Result<()> {
     report["actual_next_use"] = final_result;
     report["snapshot"]["composition_worker_executed"] = json!(true);
     report["actual_model_run"] = json!("observed_two_forwards");
-    report["typed_snapshot_executed"] = json!(true);
+    report["composition_worker_executed"] = json!(true);
     check(
         Instant::now() < deadline,
         "original final observation deadline",
@@ -856,7 +856,8 @@ pub fn run() -> Result<()> {
         "source_input_sha256": arguments[2], "original_hepta_owner_used": false,
         "hepta_final_use": false, "installation_authorized": false, "m12_funding_admitted": false,
         "independent_operators": false, "production_activation": false,
-        "loopback_only": true, "typed_snapshot_executed": false,
+        "loopback_only": true, "typed_snapshot_admitted": false,
+        "composition_worker_executed": false,
         "actual_model_run": "not_started"});
     let result = observe(&spec, &mut report);
     report["passed"] = json!(result.is_ok());

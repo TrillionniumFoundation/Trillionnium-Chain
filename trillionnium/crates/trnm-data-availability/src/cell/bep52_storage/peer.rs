@@ -34,7 +34,11 @@ pub struct CellBep52StorageFetchReportV2 {
     pub info_hash: CellDigestV1,
     pub payload_sha256: CellDigestV1,
     pub payload_bytes: u64,
+    /// Original manifest references already cached and verified at entry.
+    /// Repeated references to the same cached object each count once here.
     pub cached_chunks: usize,
+    /// Distinct original objects actually received, verified and written by
+    /// this fetch. Repeated manifest references do not create extra downloads.
     pub downloaded_chunks: usize,
     /// Newly published original storage bytes; failed/partial wire bytes remain
     /// charged in the same session's usage even when this function returns Err.
@@ -118,7 +122,6 @@ pub fn fetch_cell_bep52_storage_v2(
         "BEP52 storage pinned chunks unavailable",
     )?;
     verify_complete(store, binding, session)?;
-    report.downloaded_chunks = manifest.chunks().len() - report.cached_chunks;
     session.record_completed_fetch()?;
     Ok(report)
 }
@@ -265,6 +268,7 @@ fn fetch_peer(
         session.check(session.deadline())?;
         store.put_chunk_with_deadline(chunk, &bytes, Some(session.deadline()))?;
         missing.remove(&chunk.sha256);
+        report.downloaded_chunks += 1;
         report.downloaded_bytes += bytes.len() as u64;
         report.supplying_peers.insert(peer);
     }

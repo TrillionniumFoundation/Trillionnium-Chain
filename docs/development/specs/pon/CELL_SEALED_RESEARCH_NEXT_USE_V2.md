@@ -183,7 +183,7 @@ cargo run --locked --offline --jobs 2 -p trnm-data-availability \
 | `next-use-result.json`, supervisor stdout/stderr | Original worker and supervisor observations |
 
 `bep52.complete_readback` requires full received-byte verification.
-`snapshot.typed_snapshot_executed` requires actual resident CTS1 admission.
+`snapshot.typed_snapshot_admitted` requires actual resident CTS1 admission.
 `snapshot.composition_worker_executed` and `actual_model_run` equal to
 `observed_two_forwards` require two fresh forward receipts and the original
 reaped-child observation. `passed` additionally requires completion before the
