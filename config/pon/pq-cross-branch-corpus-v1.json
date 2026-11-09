@@ -486,7 +486,7 @@
     "scripts/ci/test_cell_storage_convergence_ci.py": "da4ffd67bfeffe39f529c32af1ab086f700ba6f5",
     "scripts/ci/test_chain_hepta_command_binding.py": "2297f6afe201f503eb9e0de8dcb7fa1a4f840cfd",
     "scripts/ci/test_chain_hepta_qualification.py": "7c97f68d9243a3a317fde7dbe14e9a1a3d747555",
-    "scripts/ci/test_ci_contract.py": "fedaf6d21a47e09f52b765052149059e14c52b1f",
+    "scripts/ci/test_ci_contract.py": "56f68e96146d8a9a223a45928da1f0f33cf97be4",
     "scripts/ci/test_codeql_retention.py": "ef5479e859528e19d843343bc0ab658e9b4d3df6",
     "scripts/ci/test_cpq1_parameter_observation.py": "7d7007600f8576318b3869b154ad7edeb311833f",
     "scripts/ci/test_growth_scale_observation.py": "417df6a1f7e3c2d3570885b03a28e7f1518d89c3",
