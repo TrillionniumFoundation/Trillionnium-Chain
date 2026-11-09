@@ -27,6 +27,17 @@ namespace origin handling. The correction binds only the two authentic virtual
 namespaces to exact pinned owners, loaders, classes and singleton identities;
 ordinary file and native-mapping checks remain. The sealed-input roster now
 contains 24 cases; the actual-model failures remain separately retained.
+The third distinct research operation on committed `097f59f505f8ec42f72e3b8255e6cb7822a70646`
+completed actual cold recovery, both-cache deletion, 30 sealed descriptors and
+two model forwards in 17.552772522 seconds. Both action scores favor yes; the
+second numeric probe is incorrect. This establishes research execution only,
+with original 300-second/8-GiB bounds and no ordinary Hepta FinalUse or M12 grant.
+The first exact097 25-gate run remains 24/25 because its strict parser rejected
+an observed child-output prefix, although Cargo passed all 764 DA/doc cases.
+Its separate differential remains failed after epoch setup outlived an already
+started payload service. Preserve both runs, add only exact output-form parsing
+and identical test-fixture preparation ordering, and verify the complete successor
+on its own committed source before reporting final acceptance.
 
 Preparation failures, static reviews and native observations remain separate.
 Freeze the complete implementation, then run exact-source native, locked graphs,

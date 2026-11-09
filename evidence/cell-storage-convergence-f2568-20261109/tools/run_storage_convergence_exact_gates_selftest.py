@@ -147,6 +147,62 @@ check("actual retained process-death form counts parent once and child zero", ac
 check("standalone ok outside the exact retained form rejects", lambda: bad_output(lambda t: t + "ok\n"))
 
 
+def actual_prefixed_child_form():
+    original = json.loads((ROOT / "storage-convergence-process-death-prefixed-observation.json").read_bytes())
+    assert original["sha256"] == "1ce59bde5c6802777295b4404ebb0e8ec3af3e403e264aa0c9ae31dbcd06acb2"
+    assert original["bytes"] == 85158 and original["line_count"] == 831
+    assert original["excerpt_start_line"] == 543 and original["excerpt_end_line"] == 545
+    assert original["original_gate_state"] == "failed"
+    assert tuple(original["lines"]) == m.PROCESS_DEATH_CHILD_PREFIX_LINES
+    assert m.PROCESS_DEATH_FORMS == (m.PROCESS_DEATH_LINES, m.PROCESS_DEATH_CHILD_PREFIX_LINES)
+    e = fixture()["complete-da-native"]
+    e["harnesses"][0]["test_names"].append(m.PROCESS_DEATH_CHILD)
+    e["harnesses"][0]["passed"] += 1
+    e["total_passed"] += 1
+    normal_parent = "test " + m.PROCESS_DEATH_PARENT + " ... ok\n"
+    normal_child = "test " + m.PROCESS_DEATH_CHILD + " ... ok\n"
+    observed = "\n".join(original["lines"]) + "\n"
+    normal_text = render(e["harnesses"])
+    text = normal_text.replace(normal_parent, observed)
+    result = m.exact_native_execution(text, e, "complete-da-native")
+    assert result["total_passed"] == e["total_passed"]
+    assert result["harnesses"] == e["harnesses"]
+    assert result["harnesses"][0]["test_names"].count(m.PROCESS_DEATH_PARENT) == 1
+    assert result["harnesses"][0]["test_names"].count(m.PROCESS_DEATH_CHILD) == 1
+    assert len(result["nested_child_observations"]) == 1
+    assert result["nested_child_observations"][0]["observed_lines"] == original["lines"]
+    assert result["nested_child_observations"][0]["child_independent_results_counted"] == 0
+    assert result["nested_child_observations"][0]["parent_results_counted"] == 1
+    extra_summary = "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 713 filtered out; finished in 0.01s\n"
+    for name, bad in (
+        ("prefixed nested child under wrong parent rejects", observed.replace(m.PROCESS_DEATH_PARENT, "cell::retention::tests::wrong_parent")),
+        ("prefixed nested form with different child rejects", observed.replace(m.PROCESS_DEATH_CHILD, "cell::retention::tests::different_child")),
+        ("prefixed nested form missing parent completion ok rejects", observed.replace(" ... ok\n", " ... \n")),
+        ("prefixed nested form with failed status rejects", observed.replace(" ... ok\n", " ... FAILED\n")),
+        ("prefixed nested form with ignored status rejects", observed.replace(" ... ok\n", " ... ignored\n")),
+        ("prefixed nested form with extra child summary rejects", observed + extra_summary),
+        ("prefixed nested form with duplicated child line rejects", observed + normal_child),
+        ("duplicate prefixed nested observation rejects", observed + observed),
+        ("prefixed nested form with blank line rejects", observed.replace("\nrunning 1 test", "\n\nrunning 1 test")),
+        ("prefixed nested form with leading child whitespace rejects", observed.replace("\ntest " + m.PROCESS_DEATH_CHILD, "\n test " + m.PROCESS_DEATH_CHILD)),
+        ("prefixed nested form with trailing child whitespace rejects", observed.replace(" ... ok\n", " ... ok \n")),
+        ("prefixed nested form with extra standalone ok rejects", observed + "ok\n"),
+        ("prefixed nested form with different child count rejects", observed.replace("running 1 test", "running 2 tests")),
+    ):
+        refused(lambda bad=bad: m.exact_native_execution(text.replace(observed, bad), e, "complete-da-native"))
+        checks.append(name)
+    missing_normal_child = normal_text.replace(normal_child, "").replace(normal_parent, observed)
+    check("nested child prefix cannot substitute for its normal roster case",
+          lambda: refused(lambda: m.exact_native_execution(missing_normal_child, e, "complete-da-native")))
+    check("prefixed nested form outside a running harness rejects",
+          lambda: refused(lambda: m.exact_native_execution(observed + normal_text, e, "complete-da-native")))
+    check("prefixed nested form is unavailable to the Node gate",
+          lambda: refused(lambda: m.exact_native_execution(text, e, "node-storage-owner-native")))
+
+
+check("actual child-prefix form counts parent once and separate ordinary child once", actual_prefixed_child_form)
+
+
 def sealed_fixture():
     return "\n".join(
         name + " (test_llm_cell_sealed_worker_v1.SealedHandoffControls." + name + ") ... ok"
@@ -252,5 +308,6 @@ print(json.dumps({"schema": "storage-convergence-exact-runner-synthetic-selftest
                   "fabricated_harness_text_is_native_evidence": False,
                   "runner_sha256": hashlib.sha256(RUNNER.read_bytes()).hexdigest(),
                   "observed_process_death_excerpt_sha256": hashlib.sha256((ROOT / "storage-convergence-process-death-observation.json").read_bytes()).hexdigest(),
+                  "observed_prefixed_process_death_excerpt_sha256": hashlib.sha256((ROOT / "storage-convergence-process-death-prefixed-observation.json").read_bytes()).hexdigest(),
                   "previous_runner_sha256_unchanged": hashlib.sha256((ROOT / "run_exact_gates_previous.py").read_bytes()).hexdigest(),
                   "checks": checks}, indent=2))

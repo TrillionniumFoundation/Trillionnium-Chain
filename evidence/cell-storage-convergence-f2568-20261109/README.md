@@ -258,6 +258,89 @@ Every member was reopened and verified before import. Subsequent observations
 keep their own operation/source identities; this archive does not reclassify
 a failed model or establish final-commit acceptance.
 
+## Actual model attempt03: completed research next use
+
+The third operation ran on clean committed source
+`097f59f505f8ec42f72e3b8255e6cb7822a70646`, tree
+`4b1eb80fa88b0b8f98d216247f7b8bce2df73f20`. Its
+[outer observation](preparation/model-attempt03-observation.json) records
+exit 0 after 17.552772522 seconds. The source, binary, input manifest and
+provider remained unchanged. The original 300-second research deadline,
+8 GiB worker RSS allowance, 512 MiB payload allowance, four threads, model
+materials and both prompts remained unchanged.
+
+The [native result](preparation/model-attempt03-native-result.json) binds
+30 complete members, 280,269,602 actual payload bytes and 95 restored chunks.
+The publisher and consumer caches were removed before use; 30 real
+kernel-sealed descriptors carried 272,189,990 model bytes and 8,079,612
+environment bytes into the same admitted consumer. Original host interpreter
+and native dependencies still use the independently pinned runtime snapshot,
+not sealed transport. Research retention and signer identities do not grant
+M12 funding or independent-operator authority.
+
+The [two actual observations](preparation/model-attempt03-next-use-observations.json)
+bind the same content, descriptor, adapter and contract. The first and second
+forwards took 121,459,353 ns and 111,169,258 ns. Their action scores both favor
+"yes": the first numeric probe expects "yes", while the second expects "no".
+Successful execution is therefore not a model-efficacy or training-gain claim.
+The [next-use result](preparation/model-attempt03-next-use-result.json)
+has two observations, no failures and a completed connector.
+
+The [original supervisor](preparation/model-attempt03-worker-supervisor.json)
+records owned-child exit 0, resolved wait4 reaping and a 7.894867610-second
+worker observation. Its 1,468,784,640-byte wait4 high-water is not simultaneous
+process-tree RSS. The original exit-cleanup reconciliation is retained, as are
+the [actual loading cost events](preparation/model-attempt03-worker-cost-events.jsonl).
+The separate four-second service and thirty-second pressure conditions have
+not been established by this 300-second research operation.
+
+The [fifth archive](preparations05.tar.xz) and
+[member inventory](preparations05.members.json) retain 68 original files
+covering failed attempt02, its committed Release build and all fix17 controls.
+The [sixth archive](preparations06.tar.xz) and
+[member inventory](preparations06.members.json) retain 138 original files
+covering successful attempt03, its committed Release build, roster17 controls
+and the failed/successful checkout preparations. The retired sparse checkout
+and its preserved stash were left unchanged while a separate complete clone
+was verified and advanced to the published commit. Both earlier model failures
+keep their original outcomes.
+
+## First exact097 acceptance attempts: retained failures
+
+The [original 25-gate summary](preparation/exact097-original-summary.json)
+remains **FAIL: 24/25**. Cargo itself exited 0 with 714 library, 34 integration
+and 16 documentation passes; the complete Node storage module passed 35 cases,
+and strict workspace/all-target/all-feature Clippy and the other gates passed.
+The new exact parser rejected the retained process-exit test's observed child
+test-name prefix. The original raw output and summary were not rewritten.
+The child exits with code 91 before its own libtest result; the original parent
+asserts that exit and verifies recovery. The parser correction accepts only
+the two observed exact three-line forms, counts the nested parent once and
+still requires the ordinary child case separately in the full roster.
+All 59 earlier parser controls remain; 17 additional controls bring the total
+to 76. The original 19 CI controls and all 24 worker controls remain.
+
+The [original differential02 summary](preparation/differential02-original-summary.json)
+also remains **FAIL**. All three original-server controls reached their
+intended assertion failures. The candidate passed two server cases but the
+revoked-authority case encountered ConnectionRefused after a 16-second epoch
+preparation wait outlived the already-started payload service. The monotonic
+mutation reached its intended assertion failure and the restored candidate
+passed. Source and provider were restored and remained bound to exact097.
+The minimal fixture correction moves epoch preparation before starting the
+payload service in both candidate and original-server test fixtures. It changes
+no production logic, original deadline, authority cutoff, budget or assertion.
+
+[Both original runs](verification097.tar.xz) and their
+[complete member inventory](verification097.members.json) preserve all raw
+outputs, source identities, provider inputs, native rosters and failures.
+The [validation18 preparation](validation18-preparation.tar.xz) and
+[member inventory](validation18-preparation.members.json) retain the limited
+parser/fixture corrections and their original local controls and readback.
+These corrections require fresh full gates and differential execution on their
+new committed source. Final successor verification is reported with its exact
+HEAD and receipt hashes in [the stacked draft PR](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/836).
+
 ## Reproduction tools and required observations
 
 [Tooling identities](tooling-files.json) bind the original preparation scripts,
@@ -268,8 +351,11 @@ storage-service module and actual sealed-input Python controls. Its immutable co
 complete native harness names/counts and new named-test rosters. Empty or omitted
 test runs cannot satisfy those checks.
 
-The [original server fixture](controls/original-auth-server-tests.rs) has SHA-256
-`cf247a21ddd167f23aff7a662eb7aa397d70c7aa58e6a0d272bf1af5cb034253`.
+The current [original-server control fixture](controls/original-auth-server-tests.rs)
+has SHA-256 `288a2403fdcc8182f392fcc9e8f76b2b9de684fe69235e401199f22e34f564ce`.
+Its earlier `cf247a21ddd167f23aff7a662eb7aa397d70c7aa58e6a0d272bf1af5cb034253`
+bytes remain in the original failed differential archive. Both current fixtures
+perform epoch preparation before creating a timed payload service.
 The differential runner separately checks three original #823 server assertion
 failures, the identical candidate passes, one candidate-minus-monotonic-clamp
 assertion failure and the restored candidate pass. A setup failure, compilation
@@ -291,10 +377,11 @@ FinalUse, an installed runtime or actual next-task execution. Any new real-model
 consumer run must bind its own source and same actual sealed inputs; earlier
 unrelated #821 model executions cannot be borrowed as its result.
 
-The separate actual-model attempt01 remains FAIL / HOLD. This bundle does not
-claim a completed two-forward next-use observation under the original
-four-second service condition. Preparation component results do not change
-that model outcome.
+Actual model attempts01 and02 remain failed observations. Attempt03 completed
+two research forwards under its original 300-second limit; it does not establish
+the four-second service condition, the separate pressure condition or ordinary
+Hepta FinalUse. The second numeric probe is incorrect. Later component or
+parser results do not reclassify any earlier operation.
 
 The original four-second service condition and separate thirty-second pressure
 observation are unchanged. Public WAN, independent physical custody, perpetual

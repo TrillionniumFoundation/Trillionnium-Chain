@@ -57,10 +57,15 @@ SYNTHETIC = {"source-negative-controls", "pq-negative-controls", "ci-contract-co
 BLOCKED_TOOLS = ("cargo", "rustc", "rustdoc", "rustup", "cargo-clippy", "cargo-fmt")
 LOCAL_FILESYSTEMS = {"ext4", "xfs", "btrfs", "f2fs"}
 PROCESS_DEATH_PARENT = "cell::retention::tests::real_process_death_after_payload_sync_recovers_ack_without_origin_or_new_capacity"
-# Exact Linux stdout observed in the retained process-death test. Its child
-# emits a banner and is deliberately killed; only the parent's final `ok`
-# completes a test. There is no independent child result to count.
+PROCESS_DEATH_CHILD = "cell::retention::tests::retention_process_child"
+# The two exact Linux stdout forms observed in this retained test. Its child
+# exits with 91 before its own libtest result. The parent's final `ok` can
+# follow the child's printed test prefix; it completes only the parent here.
+# The child's separate ordinary harness case still counts in the full roster.
 PROCESS_DEATH_LINES = ("test " + PROCESS_DEATH_PARENT + " ... ", "running 1 test", "ok")
+PROCESS_DEATH_CHILD_PREFIX_LINES = (
+    PROCESS_DEATH_LINES[0], PROCESS_DEATH_LINES[1], "test " + PROCESS_DEATH_CHILD + " ... ok")
+PROCESS_DEATH_FORMS = (PROCESS_DEATH_LINES, PROCESS_DEATH_CHILD_PREFIX_LINES)
 
 # Minimum new controls. Counts for the complete runtime are supplied by the
 # final immutable configuration; no old whole-crate count is embedded here.
@@ -416,11 +421,12 @@ def exact_native_execution(stdout: str, expected: dict, label: str) -> dict:
                     and len(harnesses) < len(expected["harnesses"])
                     and PROCESS_DEATH_PARENT in expected["harnesses"][len(harnesses)]["test_names"],
                     "unexpected or repeated retained process-death parent")
-            require(tuple(lines[index:index + 3]) == PROCESS_DEATH_LINES,
-                    "retained process-death observation differs from its exact three-line form")
+            observed_lines = tuple(lines[index:index + 3])
+            require(observed_lines in PROCESS_DEATH_FORMS,
+                    "retained process-death observation differs from its two exact three-line forms")
             active["tests"].append({"name": PROCESS_DEATH_PARENT, "status": "ok"})
             nested.append({"parent_test": PROCESS_DEATH_PARENT, "start_line": index + 1,
-                           "observed_lines": list(PROCESS_DEATH_LINES),
+                           "observed_lines": list(observed_lines),
                            "child_independent_results_counted": 0, "parent_results_counted": 1})
             skip_until = index + 3
             continue

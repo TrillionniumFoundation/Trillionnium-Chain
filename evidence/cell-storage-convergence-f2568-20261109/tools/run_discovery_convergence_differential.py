@@ -200,7 +200,7 @@ BASELINE_HASHES = {
     AUTH_PATH: "1fac53a2a16ef8f6c5b2a8ed480ec5be8bebdec3a5c764585639e5a085659690",
     PQ_PATH: "9d7dbb4cd360a4e7100e1f385aac17620822786567f4ddc3766ca90fee39a5bb",
 }
-RED_TESTS_SHA256 = "cf247a21ddd167f23aff7a662eb7aa397d70c7aa58e6a0d272bf1af5cb034253"
+RED_TESTS_SHA256 = "288a2403fdcc8182f392fcc9e8f76b2b9de684fe69235e401199f22e34f564ce"
 TEST_PREFIX = "cell::discovery::pq::auth::tests::"
 SERVER_CASES = (
     TEST_PREFIX + "authenticated_v3_real_server_active_provider_precedes_eight_withdrawals",

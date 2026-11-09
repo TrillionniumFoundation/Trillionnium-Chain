@@ -1729,10 +1729,10 @@ fn authenticated_v3_real_server_active_provider_precedes_eight_withdrawals() {
 fn real_server_inactive_authority_case(revoked: bool) {
     let mut signers: Vec<_> = (61..=62).map(key_and_pin).collect();
     signers.sort_by_key(|(_, pin)| pin.key_id);
+    let now = epoch_now();
     let tmp = tempfile::tempdir().unwrap();
     let bytes = b"An expired provider authority must not consume a server verification slot.";
     let (manifest, cells) = served_payload(tmp.path(), bytes);
-    let now = epoch_now();
     let cutoff = now + 4;
     if revoked {
         signers[0].1.revoked_at = Some(cutoff);

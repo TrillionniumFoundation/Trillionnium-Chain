@@ -242,6 +242,15 @@ are not successful model forwards, ordinary installed Hepta execution or
 next-task acknowledgements. Actual consumer observations must identify these
 same byte owners and keep research next-use separate from ordinary FinalUse.
 
+The [recorded third research operation](../../../../evidence/cell-storage-convergence-f2568-20261109/README.md)
+on commit `097f59f505f8ec42f72e3b8255e6cb7822a70646` recovered 30 members,
+280,269,602 payload bytes and 95 chunks, removed both caches, and completed
+30 sealed-FD handoffs and two real forwards in 17.552772522 seconds. The
+original 300-second research limit and 8 GiB worker RSS allowance remained.
+Both action scores favor yes and the second fixed probe is incorrect. This
+is execution evidence, not effectiveness, four-second service qualification,
+independent custody, provider payment or ordinary Hepta authority.
+
 Deduplication is measured over exact stored representations. Fine-tuning does
 not guarantee unchanged serialized chunks: tensor order, container metadata,
 encoding, quantization and update scheme can alter many bytes. Report actual

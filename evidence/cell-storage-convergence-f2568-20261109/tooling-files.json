@@ -8,7 +8,7 @@
     {
       "bytes": 53837,
       "path": "tools/run_discovery_convergence_differential.py",
-      "sha256": "0062ab0290065261d06a04a79ab29b89a70a3068ccb8c6bb56c9d3012106a042"
+      "sha256": "755aaee9547882c1bdf2dd8bb2a06bb940c634e6982c1e82289834e3ca513e53"
     },
     {
       "bytes": 8733,
@@ -16,14 +16,14 @@
       "sha256": "73ad9e47d4a655af6d1966d19349fd1c300159804582fb980368154254de187d"
     },
     {
-      "bytes": 66890,
+      "bytes": 67306,
       "path": "tools/run_storage_convergence_exact_gates.py",
-      "sha256": "a1405aa977ad592cf8b1f09c52f7d0617ce78a5583f9f925655088ce3710be62"
+      "sha256": "cd9f3b98d03beaca6bbccf56e8a8e359dadbe3549b41a1cb6c5faa0ee9cb488b"
     },
     {
-      "bytes": 14905,
+      "bytes": 19357,
       "path": "tools/run_storage_convergence_exact_gates_selftest.py",
-      "sha256": "519a679ee51e72c70b0d7bb7d986d4c1f7d4bc7b9cbe602f583fc59456668c6e"
+      "sha256": "0ca5ad1abad6338cea24c26c360ae44368a3ad81797c2e9ca321273576a5282c"
     },
     {
       "bytes": 5096,
@@ -81,6 +81,11 @@
       "members": 28,
       "path": "preparation/prep09-static.tar.gz",
       "sha256": "b4766bf63d75c72dffbbb443b7806088530a7c16ddf53ff3533202379d7ec03e"
+    },
+    {
+      "path": "tools/storage-convergence-process-death-prefixed-observation.json",
+      "bytes": 1078,
+      "sha256": "8a82150e6dca5cd2c8635cd62a9f45f15c56542b774d74932d2ec7eef11892c7"
     }
   ],
   "schema": "cell-storage-convergence-tooling-files-v1",
