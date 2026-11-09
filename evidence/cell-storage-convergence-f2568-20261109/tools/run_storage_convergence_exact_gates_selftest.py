@@ -151,12 +151,12 @@ def sealed_fixture():
     return "\n".join(
         name + " (test_llm_cell_sealed_worker_v1.SealedHandoffControls." + name + ") ... ok"
         for name in m.SEALED_PYTHON_REQUIRED_NAMES
-    ) + "\n\n" + "-" * 70 + "\nRan 21 tests in 0.172s\n\nOK\n"
+    ) + "\n\n" + "-" * 70 + "\nRan 24 tests in 0.172s\n\nOK\n"
 
 
 def valid_sealed():
     actual = m.exact_sealed_python_execution(sealed_fixture())
-    assert actual["passed"] == 21 and actual["ignored_or_skipped"] == 0
+    assert actual["passed"] == 24 and actual["ignored_or_skipped"] == 0
     assert set(actual["test_names"]) == set(m.SEALED_PYTHON_REQUIRED_NAMES)
 
 
@@ -172,8 +172,8 @@ for name, bad in (
     ("skipped Python case rejects", good_sealed.replace(" ... ok", " ... skipped 'unsupported'", 1)),
     ("failed Python case rejects", good_sealed.replace(" ... ok", " ... FAIL", 1)),
     ("failed Python summary rejects", good_sealed.replace("\nOK\n", "\nFAILED (failures=1)\n", 1)),
-    ("smaller Python summary count rejects", good_sealed.replace("Ran 21 tests", "Ran 20 tests", 1)),
-    ("larger Python summary count rejects", good_sealed.replace("Ran 21 tests", "Ran 22 tests", 1)),
+    ("smaller Python summary count rejects", good_sealed.replace("Ran 24 tests", "Ran 23 tests", 1)),
+    ("larger Python summary count rejects", good_sealed.replace("Ran 24 tests", "Ran 25 tests", 1)),
     ("wrong Python class rejects", good_sealed.replace("SealedHandoffControls.", "AnotherClass.", 1)),
     ("unequal Python method identities reject", good_sealed.replace(m.SEALED_PYTHON_REQUIRED_NAMES[0] + ")", m.SEALED_PYTHON_REQUIRED_NAMES[1] + ")", 1)),
     ("duplicate Python harness rejects", good_sealed + good_sealed),
@@ -186,17 +186,36 @@ for name, bad in (
 
 added_sealed_names = ['test_project_source_compiler_preserves_original_annotation_semantics', 'test_failed_supervisor_cancels_connector_before_handshake', 'test_failed_supervisor_cancels_ready_wait_after_sealed_handoff']
 retained_only_sealed = good_sealed
-for added_name in added_sealed_names:
+for added_name in added_sealed_names + ["test_runtime_virtual_namespace_requires_exact_pinned_singleton","test_runtime_virtual_namespace_refuses_source_or_loader_drift","test_runtime_module_origin_refuses_other_relative_paths"]:
     added_line = added_name + " (test_llm_cell_sealed_worker_v1.SealedHandoffControls." + added_name + ") ... ok\n"
     assert retained_only_sealed.count(added_line) == 1
     retained_only_sealed = retained_only_sealed.replace(added_line, "", 1)
-retained_only_sealed = retained_only_sealed.replace("Ran 21 tests", "Ran 18 tests", 1)
+retained_only_sealed = retained_only_sealed.replace("Ran 24 tests", "Ran 18 tests", 1)
+assert retained_only_sealed.count(" ... ok\n") == 18
 check("original eighteen alone cannot satisfy the expanded Python roster",
       lambda: refused(lambda: m.exact_sealed_python_execution(retained_only_sealed)))
 for added_name in added_sealed_names:
     added_line = added_name + " (test_llm_cell_sealed_worker_v1.SealedHandoffControls." + added_name + ") ... ok\n"
-    missing_added = good_sealed.replace(added_line, "", 1).replace("Ran 21 tests", "Ran 20 tests", 1)
+    missing_added = good_sealed.replace(added_line, "", 1).replace("Ran 24 tests", "Ran 23 tests", 1)
     check("required added Python control cannot be omitted: " + added_name,
+          lambda bad=missing_added: refused(lambda: m.exact_sealed_python_execution(bad)))
+
+
+
+runtime_origin_names = ["test_runtime_virtual_namespace_requires_exact_pinned_singleton","test_runtime_virtual_namespace_refuses_source_or_loader_drift","test_runtime_module_origin_refuses_other_relative_paths"]
+previous_only_sealed = good_sealed
+for added_name in runtime_origin_names:
+    added_line = added_name + " (test_llm_cell_sealed_worker_v1.SealedHandoffControls." + added_name + ") ... ok\n"
+    assert previous_only_sealed.count(added_line) == 1
+    previous_only_sealed = previous_only_sealed.replace(added_line, "", 1)
+previous_only_sealed = previous_only_sealed.replace("Ran 24 tests", "Ran 21 tests", 1)
+assert previous_only_sealed.count(" ... ok\n") == 21
+check("previous twenty-one alone cannot satisfy the expanded Python roster",
+      lambda: refused(lambda: m.exact_sealed_python_execution(previous_only_sealed)))
+for added_name in runtime_origin_names:
+    added_line = added_name + " (test_llm_cell_sealed_worker_v1.SealedHandoffControls." + added_name + ") ... ok\n"
+    missing_added = good_sealed.replace(added_line, "", 1).replace("Ran 24 tests", "Ran 23 tests", 1)
+    check("required runtime-origin Python control cannot be omitted: " + added_name,
           lambda bad=missing_added: refused(lambda: m.exact_sealed_python_execution(bad)))
 
 

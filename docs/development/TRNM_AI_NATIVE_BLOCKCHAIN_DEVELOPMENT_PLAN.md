@@ -22,6 +22,11 @@ observe original supervisor completion without resetting their deadline. Exact
 21-name controls cover original annotation semantics and real failed-child
 reaping before and after descriptor handoff. Actual model and final committed
 source observations remain separately accountable.
+A second real run loaded model and adapter bytes, then exposed Torch virtual
+namespace origin handling. The correction binds only the two authentic virtual
+namespaces to exact pinned owners, loaders, classes and singleton identities;
+ordinary file and native-mapping checks remain. The sealed-input roster now
+contains 24 cases; the actual-model failures remain separately retained.
 
 Preparation failures, static reviews and native observations remain separate.
 Freeze the complete implementation, then run exact-source native, locked graphs,

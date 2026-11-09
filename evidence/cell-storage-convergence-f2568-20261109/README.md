@@ -212,6 +212,52 @@ test source SHA-256 is
 A later real-model operation must bind these exact sources to its new manifest,
 operation and outputs, while retaining the first operation's state and failure.
 
+## Actual model attempt02 and virtual runtime origins
+
+The second operation ran on clean committed source
+`46ab510c21088d8b4bccee34fe142d327294dc28` using the original default Release
+build. Its [outer observation](preparation/model-attempt02-observation.json)
+records exit 1 after 14.601523399 seconds, with unchanged source, binary,
+input manifest and provider. The new operation retained all attempt01 state.
+The original 300-second research limit, 8 GiB RSS, 512 MiB payload allowance,
+four threads and both task prompts remained unchanged.
+
+The [native result](preparation/model-attempt02-native-result.json) records
+30 actual members, 280,266,727 payload bytes, 95 cold-restored chunks and the
+same real sealed-FD handoff after both task caches were removed. Original
+runtime import, tokenizer/base loading, backbone verification and sealed
+adapter loading all completed, as the [cost events](preparation/model-attempt02-worker-cost-events.jsonl)
+show. No next-task forward completed. The [original error](preparation/model-attempt02-worker-process.log)
+was a strict path resolution of the authentic virtual `torch.ops` marker
+`_ops.py`. The [wait4 supervisor](preparation/model-attempt02-worker-supervisor.json)
+returned failed after 7.660240080 seconds with its owned child reaped; the
+[next-use result](preparation/model-attempt02-next-use-result.json) records a
+completed connector, zero observations and immediate failure after that return.
+Its wait4 peak 1,467,617,280 bytes is a process high-water, not simultaneous
+process-tree memory. This attempt remains FAIL.
+
+The correction handles only `torch.ops` and `torch.classes`. It binds each
+virtual marker to the exact original pinned source loader/spec, owner class,
+initializer globals, and identical registry/root/owner singleton. It verifies
+both the package and owner bytes against the independently retained runtime
+snapshot. Other relative paths and all identity or byte mismatches refuse;
+physical origins and executable mappings retain their original checks.
+The original helper, Torch sources and runtime snapshot remain unchanged.
+The [actual 24-control receipt](preparation/loader17-controls.json) and
+[unaltered output](preparation/loader17-controls.stderr) record a complete
+24/24 pass, plus a separate successful check using the actual pinned Torch
+imports. Small unit fixtures are not represented as a model execution.
+
+The [fourth preparation archive](preparations04.tar.xz), 184,684 bytes,
+SHA-256 `6497cedccd7e5783842a014c5d7d870824ffdc62db0c500196fc5775aa7ed5c8`,
+and [member inventory](preparations04.members.json) retain all 184 original
+members and 2,045,854 uncompressed bytes. They keep the earlier correction
+failures, original controller false verdict and its independent readback,
+roster controls, failed/successful source imports and runtime revalidation.
+Every member was reopened and verified before import. Subsequent observations
+keep their own operation/source identities; this archive does not reclassify
+a failed model or establish final-commit acceptance.
+
 ## Reproduction tools and required observations
 
 [Tooling identities](tooling-files.json) bind the original preparation scripts,

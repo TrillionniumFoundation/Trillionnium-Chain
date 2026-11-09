@@ -197,6 +197,9 @@ SEALED_PYTHON_REQUIRED_NAMES = [
     "test_observation_publish_is_complete_before_visibility_and_cannot_replace",
     "test_original_modules_and_configurations_execute_only_same_admitted_fd_bytes",
     "test_project_source_compiler_preserves_original_annotation_semantics",
+    "test_runtime_module_origin_refuses_other_relative_paths",
+    "test_runtime_virtual_namespace_refuses_source_or_loader_drift",
+    "test_runtime_virtual_namespace_requires_exact_pinned_singleton",
     "test_same_length_substituted_fd_fails_actual_content_digest",
     "test_unfinished_publication_remains_pending_without_successful_ready",
     "test_unknown_file_and_metadata_role_never_open_ambient_payload"
@@ -511,13 +514,13 @@ def exact_sealed_python_execution(output: str) -> dict:
     require(
         state == "complete"
         and successes == 1
-        and reported == [21]
-        and len(names) == len(set(names)) == 21
+        and reported == [24]
+        and len(names) == len(set(names)) == 24
         and set(names) == set(SEALED_PYTHON_REQUIRED_NAMES),
         "sealed Python controls were omitted, replaced, duplicated, or not run",
     )
     return {
-        "passed": 21,
+        "passed": 24,
         "failed": 0,
         "ignored_or_skipped": 0,
         "test_names": names,

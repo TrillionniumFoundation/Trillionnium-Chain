@@ -368,6 +368,112 @@ class SealedHandoffControls(unittest.TestCase):
     def test_failed_supervisor_cancels_ready_wait_after_sealed_handoff(self):
         self._failed_original_supervisor(True)
 
+    def _virtual_runtime_fixture(self):
+        # Small namespace fixtures exercise identity rejection, not Torch or a
+        # model. Their source uses the actual original pinned Python loader.
+        project = Path(os.environ.get('CELL_SEALED_TEST_PROJECT_ROOT',
+                       str(Path(__file__).resolve().parents[1]))).resolve(strict=True)
+        spec = importlib.util.spec_from_file_location('_cell_virtual_origin_helper',
+            project / 'scripts/llm_python_runtime_contract.py')
+        helper = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(helper)
+        root = Path(self.root.name) / 'virtual-runtime-fixture/torch'
+        root.mkdir(parents=True)
+        sources = {'torch': ('__init__.py', b'# independent pinned namespace fixture\n')}
+        for child, cls, export in (('_ops', '_Ops', 'ops'), ('_classes', '_Classes', 'classes')):
+            raw = ('import types\nclass ' + cls + '(types.ModuleType):\n'
+                '    __file__ = "' + child + '.py"\n'
+                '    def __init__(self):\n'
+                '        super().__init__("torch.' + export + '")\n'
+                + export + ' = ' + cls + '()\n').encode()
+            sources['torch.' + child] = (child + '.py', raw)
+        modules, pins = {}, {}
+        for name, (filename, raw) in sources.items():
+            path = root / filename
+            path.write_bytes(raw)
+            pins[str(path)] = worker.sha(raw)
+            loader = helper.PinnedPythonSource(name, str(path), worker.sha(raw))
+            spec = importlib.util.spec_from_loader(name, loader)
+            module = importlib.util.module_from_spec(spec)
+            loader.exec_module(module)
+            modules[name] = module
+        for child, export in (('_ops', 'ops'), ('_classes', 'classes')):
+            owner = modules['torch.' + child]
+            namespace = vars(owner)[export]
+            vars(modules['torch'])[child] = owner
+            vars(modules['torch'])[export] = namespace
+            modules['torch.' + export] = namespace
+        state = types.SimpleNamespace(helper=helper, snapshot={'files':pins},
+                                      guard=types.SimpleNamespace(files=dict(pins)))
+        return state, modules
+
+    def test_runtime_virtual_namespace_requires_exact_pinned_singleton(self):
+        state, modules = self._virtual_runtime_fixture()
+        with mock.patch.dict(sys.modules, modules):
+            for alias, owner in (('torch.ops', 'torch._ops'), ('torch.classes', 'torch._classes')):
+                with self.subTest(alias=alias):
+                    namespace = modules[alias]
+                    self.assertEqual(worker.runtime_module_origin(state, alias, namespace),
+                                     modules[owner].__file__)
+                    clone = type(namespace)()
+                    with mock.patch.dict(sys.modules, {alias:clone}):
+                        with self.assertRaisesRegex(ValueError, 'VIRTUAL_MODULE_SINGLETON'):
+                            worker.runtime_module_origin(state, alias, clone)
+                    spoof = types.ModuleType(alias)
+                    spoof.__file__ = type(namespace).__file__
+                    subclass = type('SubstituteNamespace', (type(namespace),), {})
+                    for changed in (spoof, subclass()):
+                        with self.assertRaisesRegex(ValueError, 'VIRTUAL_MODULE_CLASS'):
+                            worker.runtime_module_origin(state, alias, changed)
+                    with mock.patch.object(namespace, '__file__', '/unrelated/physical.py'):
+                        with self.assertRaisesRegex(ValueError, 'VIRTUAL_MODULE_SINGLETON'):
+                            worker.runtime_module_origin(state, alias, namespace)
+                    with mock.patch.dict(vars(modules['torch']), {alias.split('.')[1]:clone}):
+                        with self.assertRaisesRegex(ValueError, 'VIRTUAL_MODULE_SINGLETON'):
+                            worker.runtime_module_origin(state, alias, namespace)
+
+    def test_runtime_virtual_namespace_refuses_source_or_loader_drift(self):
+        state, modules = self._virtual_runtime_fixture()
+        namespace, owner = modules['torch.ops'], modules['torch._ops']
+        with mock.patch.dict(sys.modules, modules):
+            path = Path(owner.__file__)
+            raw = path.read_bytes()
+            path.write_bytes(b'#' + raw[1:])
+            try:
+                with self.assertRaisesRegex(ValueError, 'VIRTUAL_MODULE_SOURCE_BYTES'):
+                    worker.runtime_module_origin(state, 'torch.ops', namespace)
+            finally:
+                path.write_bytes(raw)
+            for obj, field, value in ((owner.__loader__, 'expected', '00' * 32),
+                    (owner.__loader__, 'name', 'torch.other'),
+                    (owner.__spec__, 'name', 'torch.other'),
+                    (owner.__spec__, 'origin', '/unrelated/source.py'),
+                    (owner, '__loader__', object())):
+                with self.subTest(field=field), mock.patch.object(obj, field, value):
+                    with self.assertRaisesRegex(ValueError, 'VIRTUAL_MODULE_PINNED_LOADER'):
+                        worker.runtime_module_origin(state, 'torch.ops', namespace)
+            with mock.patch.dict(state.guard.files, {str(path):'00' * 32}):
+                with self.assertRaisesRegex(ValueError, 'VIRTUAL_MODULE_PINNED_LOADER'):
+                    worker.runtime_module_origin(state, 'torch.ops', namespace)
+            cls = type(namespace)
+            transplanted = types.FunctionType(cls.__init__.__code__, dict(vars(owner)),
+                                             closure=cls.__init__.__closure__)
+            with mock.patch.object(cls, '__init__', transplanted):
+                with self.assertRaisesRegex(ValueError, 'VIRTUAL_MODULE_CLASS'):
+                    worker.runtime_module_origin(state, 'torch.ops', namespace)
+
+    def test_runtime_module_origin_refuses_other_relative_paths(self):
+        state, modules = self._virtual_runtime_fixture()
+        ordinary = types.ModuleType('ordinary')
+        ordinary.__file__ = 'unknown.py'
+        with self.assertRaisesRegex(ValueError, 'MODULE_ORIGIN'):
+            worker.runtime_module_origin(state, 'ordinary', ordinary)
+        with mock.patch.dict(sys.modules, modules):
+            with self.assertRaisesRegex(ValueError, 'MODULE_ORIGIN'):
+                worker.runtime_module_origin(state, 'torch.unapproved_alias', modules['torch.ops'])
+            self.assertEqual(worker.runtime_module_origin(state, 'torch._ops', modules['torch._ops']),
+                             modules['torch._ops'].__file__)
+
     def test_observation_publish_is_complete_before_visibility_and_cannot_replace(self):
         path = Path(self.root.name) / 'ready.json'
         payload = {'schema':worker.SCHEMA, 'actual':list(range(40))}

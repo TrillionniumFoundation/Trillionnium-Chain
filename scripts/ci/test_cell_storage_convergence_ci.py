@@ -140,6 +140,9 @@ SEALED_PYTHON_REQUIRED_NAMES = [
     "test_observation_publish_is_complete_before_visibility_and_cannot_replace",
     "test_original_modules_and_configurations_execute_only_same_admitted_fd_bytes",
     "test_project_source_compiler_preserves_original_annotation_semantics",
+    "test_runtime_module_origin_refuses_other_relative_paths",
+    "test_runtime_virtual_namespace_refuses_source_or_loader_drift",
+    "test_runtime_virtual_namespace_requires_exact_pinned_singleton",
     "test_same_length_substituted_fd_fails_actual_content_digest",
     "test_unfinished_publication_remains_pending_without_successful_ready",
     "test_unknown_file_and_metadata_role_never_open_ambient_payload"
@@ -225,7 +228,7 @@ def validate(text: str) -> None:
         exact_line(node, "            " + name)
     require(len(COMPONENT_REQUIRED_NAMES) == len(set(COMPONENT_REQUIRED_NAMES)) == 5,
             "new DA component roster changed")
-    require(len(SEALED_PYTHON_REQUIRED_NAMES) == len(set(SEALED_PYTHON_REQUIRED_NAMES)) == 21,
+    require(len(SEALED_PYTHON_REQUIRED_NAMES) == len(set(SEALED_PYTHON_REQUIRED_NAMES)) == 24,
             "sealed Python controls roster changed")
     for name in COMPONENT_REQUIRED_NAMES:
         exact_line(components, "            " + name)
@@ -313,13 +316,13 @@ def exact_sealed_python_execution(output: str) -> dict:
     require(
         state == "complete"
         and successes == 1
-        and reported == [21]
-        and len(names) == len(set(names)) == 21
+        and reported == [24]
+        and len(names) == len(set(names)) == 24
         and set(names) == set(SEALED_PYTHON_REQUIRED_NAMES),
         "sealed Python controls were omitted, replaced, duplicated, or not run",
     )
     return {
-        "passed": 21,
+        "passed": 24,
         "failed": 0,
         "ignored_or_skipped": 0,
         "test_names": names,
@@ -512,11 +515,11 @@ class CellStorageConvergenceCiControls(unittest.TestCase):
         return "\n".join(
             name + " (test_llm_cell_sealed_worker_v1.SealedHandoffControls." + name + ") ... ok"
             for name in SEALED_PYTHON_REQUIRED_NAMES
-        ) + "\n\n" + "-" * 70 + "\nRan 21 tests in 0.172s\n\nOK\n"
+        ) + "\n\n" + "-" * 70 + "\nRan 24 tests in 0.172s\n\nOK\n"
 
     def test_exact_sealed_python_execution_accepts_complete_frozen_roster(self) -> None:
         observation = exact_sealed_python_execution(self.sealed_python_fixture())
-        self.assertEqual(observation["passed"], 21)
+        self.assertEqual(observation["passed"], 24)
         self.assertEqual(set(observation["test_names"]), set(SEALED_PYTHON_REQUIRED_NAMES))
         self.assertEqual(observation["ignored_or_skipped"], 0)
 
@@ -540,8 +543,8 @@ class CellStorageConvergenceCiControls(unittest.TestCase):
     def test_sealed_python_counts_class_and_single_harness_are_required(self) -> None:
         good = self.sealed_python_fixture()
         for changed in (
-            good.replace("Ran 21 tests", "Ran 20 tests", 1),
-            good.replace("Ran 21 tests", "Ran 22 tests", 1),
+            good.replace("Ran 24 tests", "Ran 23 tests", 1),
+            good.replace("Ran 24 tests", "Ran 25 tests", 1),
             good.replace("SealedHandoffControls.", "AnotherClass.", 1),
             good.replace(SEALED_PYTHON_REQUIRED_NAMES[0] + ")", SEALED_PYTHON_REQUIRED_NAMES[1] + ")", 1),
             good + good,
@@ -558,17 +561,38 @@ class CellStorageConvergenceCiControls(unittest.TestCase):
         good = self.sealed_python_fixture()
         added_names = ['test_project_source_compiler_preserves_original_annotation_semantics', 'test_failed_supervisor_cancels_connector_before_handshake', 'test_failed_supervisor_cancels_ready_wait_after_sealed_handoff']
         retained_only = good
-        for name in added_names:
+        for name in added_names + ["test_runtime_virtual_namespace_requires_exact_pinned_singleton","test_runtime_virtual_namespace_refuses_source_or_loader_drift","test_runtime_module_origin_refuses_other_relative_paths"]:
             line = name + " (test_llm_cell_sealed_worker_v1.SealedHandoffControls." + name + ") ... ok\n"
             self.assertEqual(retained_only.count(line), 1)
             retained_only = retained_only.replace(line, "", 1)
-        retained_only = retained_only.replace("Ran 21 tests", "Ran 18 tests", 1)
+        retained_only = retained_only.replace("Ran 24 tests", "Ran 18 tests", 1)
+        self.assertEqual(retained_only.count(" ... ok\n"), 18)
         with self.assertRaises(ValueError):
             exact_sealed_python_execution(retained_only)
         for name in added_names:
             with self.subTest(added=name):
                 line = name + " (test_llm_cell_sealed_worker_v1.SealedHandoffControls." + name + ") ... ok\n"
-                missing = good.replace(line, "", 1).replace("Ran 21 tests", "Ran 20 tests", 1)
+                missing = good.replace(line, "", 1).replace("Ran 24 tests", "Ran 23 tests", 1)
+                with self.assertRaises(ValueError):
+                    exact_sealed_python_execution(missing)
+
+
+    def test_previous_twenty_one_and_each_runtime_origin_control_omission_reject(self) -> None:
+        good = self.sealed_python_fixture()
+        added_names = ["test_runtime_virtual_namespace_requires_exact_pinned_singleton","test_runtime_virtual_namespace_refuses_source_or_loader_drift","test_runtime_module_origin_refuses_other_relative_paths"]
+        previous_only = good
+        for name in added_names:
+            line = name + " (test_llm_cell_sealed_worker_v1.SealedHandoffControls." + name + ") ... ok\n"
+            self.assertEqual(previous_only.count(line), 1)
+            previous_only = previous_only.replace(line, "", 1)
+        previous_only = previous_only.replace("Ran 24 tests", "Ran 21 tests", 1)
+        self.assertEqual(previous_only.count(" ... ok\n"), 21)
+        with self.assertRaises(ValueError):
+            exact_sealed_python_execution(previous_only)
+        for name in added_names:
+            with self.subTest(added=name):
+                line = name + " (test_llm_cell_sealed_worker_v1.SealedHandoffControls." + name + ") ... ok\n"
+                missing = good.replace(line, "", 1).replace("Ran 24 tests", "Ran 23 tests", 1)
                 with self.assertRaises(ValueError):
                     exact_sealed_python_execution(missing)
 

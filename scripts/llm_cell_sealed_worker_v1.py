@@ -390,6 +390,60 @@ def prepare_runtime(inputs):
         base=base, original_worker=original_worker)
 
 
+def runtime_module_origin(state, name, module):
+    # These two objects are virtual namespaces created by the pinned Torch
+    # source. Their __file__ markers are not filesystem paths. Bind them to
+    # their exact loaded owner, class and singleton; never exempt a pathname.
+    virtual = {
+        'torch.ops': ('_ops', '_Ops', 'ops', '_ops.py'),
+        'torch.classes': ('_classes', '_Classes', 'classes', '_classes.py'),
+    }
+    if name not in virtual:
+        path = getattr(module, '__file__', None)
+        if path is None:
+            return None
+        require(type(path) is str and Path(path).is_absolute(), 'MODULE_ORIGIN')
+        return str(Path(path).resolve(strict=True))
+    child, class_name, export, marker = virtual[name]
+    owner_name = 'torch.' + child
+    root, owner = sys.modules.get('torch'), sys.modules.get(owner_name)
+    origins = {}
+    for expected_name, source in (('torch', root), (owner_name, owner)):
+        require(type(source) is types.ModuleType, 'VIRTUAL_MODULE_SOURCE')
+        values = vars(source)
+        path, loader, spec = (values.get('__file__'), values.get('__loader__'),
+                              values.get('__spec__'))
+        require(type(path) is str and Path(path).is_absolute()
+            and str(Path(path).resolve(strict=True)) == path, 'VIRTUAL_MODULE_ORIGIN')
+        expected = state.snapshot['files'].get(path)
+        require(digest(expected) and state.guard.files.get(path) == expected
+            and type(loader) is state.helper.PinnedPythonSource
+            and loader.path == path and loader.name == expected_name
+            and loader.expected == expected and spec is not None
+            and spec.name == expected_name and spec.origin == path
+            and spec.loader is loader and values.get('__name__') == expected_name,
+            'VIRTUAL_MODULE_PINNED_LOADER')
+        require(state.helper.file_digest(path)[0] == expected, 'VIRTUAL_MODULE_SOURCE_BYTES')
+        origins[expected_name] = path
+    require(Path(origins['torch']).name == '__init__.py'
+        and Path(origins[owner_name]) == Path(origins['torch']).parent / marker
+        and vars(root).get(child) is owner, 'VIRTUAL_MODULE_PACKAGE')
+    cls = vars(owner).get(class_name)
+    require(type(cls) is type and type(module) is cls
+        and cls.__module__ == owner_name and cls.__name__ == class_name
+        and issubclass(cls, types.ModuleType)
+        and type(cls.__init__) is types.FunctionType
+        and cls.__init__.__code__.co_filename == origins[owner_name]
+        and cls.__init__.__globals__ is vars(owner), 'VIRTUAL_MODULE_CLASS')
+    require(vars(cls).get('__file__') == marker
+        and vars(module).get('__file__', marker) == marker
+        and vars(module).get('__name__') == name
+        and sys.modules.get(name) is module
+        and vars(owner).get(export) is module and vars(root).get(export) is module,
+        'VIRTUAL_MODULE_SINGLETON')
+    return origins[owner_name]
+
+
 def verify_runtime_ready(state):
     state.inputs.check()
     require(state.sources in sys.meta_path and state.guard in sys.meta_path
@@ -401,10 +455,9 @@ def verify_runtime_ready(state):
             require(module is state.sources.loaded[name] and module.__loader__ is state.sources
                 and module.__file__ == str(state.sources.root / MODULES[name]), 'SEALED_MODULE_CHANGED')
             continue
-        path = getattr(module, '__file__', None)
+        path = runtime_module_origin(state, name, module)
         if path is not None:
-            require(type(path) is str, 'MODULE_ORIGIN')
-            origins.add(str(Path(path).resolve(strict=True)))
+            origins.add(path)
     with Path('/proc/self/maps').open() as stream:
         raw = stream.read(8 * 1024**2 + 1)
     require(len(raw) <= 8 * 1024**2, 'NATIVE_MAPS_BOUND')

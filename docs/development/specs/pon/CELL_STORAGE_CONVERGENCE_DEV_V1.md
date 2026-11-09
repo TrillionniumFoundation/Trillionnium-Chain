@@ -228,6 +228,13 @@ a completion event cancels the pre-handshake accept and post-handshake Ready
 waits within their bounded polls. The original absolute deadline, actual child
 exit and wait4 reaping remain authoritative; cancellation cannot mint success.
 
+Only the actual `torch.ops` and `torch.classes` virtual namespaces may map their
+non-path markers to their exact pinned owner source. Loader/spec identity,
+source bytes, package relation, exact class and initializer globals, and the
+same registry/root/owner singleton are all required. Failed checks cannot fall
+back to ordinary paths. Other relative origins refuse; executable mappings
+and ordinary file digests keep the original runtime boundary.
+
 Joint payload admission is one obligation. Tensor expansion, activation
 workspace, device allocation and child-process peak memory still require their
 original admission and enforcement. Hashes, byte callbacks and descriptors alone
