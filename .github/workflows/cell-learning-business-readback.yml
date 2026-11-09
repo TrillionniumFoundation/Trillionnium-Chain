@@ -1,0 +1,63 @@
+name: Cell learning business readback controls
+on:
+  push:
+    branches: [fix/chain-learning-business-closure-20261109-1a404f66]
+  pull_request:
+    paths:
+      - .github/workflows/cell-learning-business-readback.yml
+      - scripts/ci/run_cell_learning_business_readback.py
+      - scripts/ci/verify_ci_source.py
+      - scripts/ci/ci_job.sh
+      - scripts/ci/check_ci_contract.py
+      - scripts/ci/test_ci_contract.py
+      - scripts/cell_adoption_readback.py
+      - scripts/cell_learning_iteration_join.py
+      - scripts/cell_learning_completion_join.py
+      - scripts/cell_learning_business_economics.py
+      - scripts/cell_learning_business_join.py
+      - scripts/test_cell_adoption_readback.py
+      - scripts/test_cell_learning_iteration_join.py
+      - scripts/test_cell_learning_completion_join.py
+      - scripts/test_cell_learning_business_economics.py
+      - scripts/test_cell_learning_business_join.py
+      - evidence/cell-adoption-20261108/native-readbacks/**
+      - evidence/cell-learning-iteration-20261108/native-readbacks/**
+      - evidence/cell-learning-completion-20261108/native-readbacks/**
+      - evidence/smollm-cell-replica-research-v1/actual/research-result.json
+      - evidence/hepta-real-native-adoption-20261108/chain-reader/**
+      - evidence/cell-learning-business-readback-20261109/**
+permissions:
+  contents: read
+concurrency:
+  group: cell-learning-business-readback-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+jobs:
+  readback-controls:
+    name: Cell learning business readback (head, unqualified)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify full tracked source before execution
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/cell-learning-business-readback/source-before.json"
+      - name: Execute six control suites and two original-material readbacks
+        run: python3 scripts/ci/run_cell_learning_business_readback.py --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/cell-learning-business-readback/commands"
+      - name: Verify full tracked source after execution
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/cell-learning-business-readback/source-after.json"
+      - name: Retain all outputs and failures without granting qualification
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cell-learning-business-readback-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/cell-learning-business-readback/
+          if-no-files-found: error
+          retention-days: 30
