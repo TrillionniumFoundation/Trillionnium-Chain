@@ -1,0 +1,24 @@
+{
+  "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "created_utc": "2026-11-09T04:40:59.191630+00:00",
+  "disk_before": {
+    "free": 1889382400,
+    "total": 67586535424,
+    "used": 62244405248
+  },
+  "existing_python_134_native_263_cli_14_rerun": false,
+  "old_log_exists": false,
+  "old_receipt_exit_code": null,
+  "old_receipt_path": "/workspace/scratch/d9bbb5ad0229/accounting-convergence-setup/gates-c1/source-negatives.json",
+  "old_receipt_sha256": "c072e83316726537f6f26f746a655534149ef04938891cb1e1f3c24b18186e60",
+  "old_receipt_status": "running",
+  "old_receipts_modified": false,
+  "old_session_id": 58416,
+  "old_session_reconciliation": "write_stdin returned Unknown process id 58416; no terminal result is inferred.",
+  "output_root": "/workspace/scratch/d9bbb5ad0229/chain-c1-gates-resume-20261109-cadence-01",
+  "qualification": "HOLD_NO_GO",
+  "schema": "chain-c1-interrupted-gates-resume-v1",
+  "source_root": "/workspace/scratch/d9bbb5ad0229/chain-accounting-convergence",
+  "strict_clippy": "Separately owned new remote attempt on the same exact candidate.",
+  "tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978"
+}

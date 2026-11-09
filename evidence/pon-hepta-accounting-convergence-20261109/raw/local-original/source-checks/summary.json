@@ -1,0 +1,97 @@
+{
+  "source": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "results": [
+    {
+      "label": "graph-default",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.697941819999869,
+      "stdout_sha256": "e323a6a72a8417b2f842a20b746e691de6e915dc1130c56252fe1cd81b727ff7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workspace_members": 26,
+      "packages": 176
+    },
+    {
+      "label": "graph-all-features",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.1689819940002053,
+      "stdout_sha256": "0422f8cdb092300eb89c1bf1671304ca73e5ee63b6a36bc325a5d732f2e42dec",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workspace_members": 26,
+      "packages": 181
+    },
+    {
+      "label": "format",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 13.256157048000205,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "terminal": []
+    },
+    {
+      "label": "ci-contract",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.12342649400034134,
+      "stdout_sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "terminal": [
+        "{\"artifact_comparison_jobs\": 1, \"head_jobs\": 5, \"inline_source_pins\": 26, \"merge_lanes\": 5, \"native_cost_architectures\": 2, \"pq_release_authority_controls\": {\"complete_release\": 55, \"groups\": {\"cch1_content_binding\": 3, \"initial_root_material\": 6, \"original_release\": 37, \"quorum_preflight\": 9}, \"platform_scope\": \"unix\", \"python_test_doubles\": 18, \"tests_executed\": false}, \"tests_executed\": false, \"w1_actual_reuse_v3_cells\": 4}"
+      ]
+    },
+    {
+      "label": "source-inventory",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.06676761100061412,
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "terminal": [
+        "distributed source inventory: PASS"
+      ]
+    }
+  ],
+  "sparse_evidence_omitted": true,
+  "qualification": "HOLD_NO_GO"
+}

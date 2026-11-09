@@ -1,0 +1,69 @@
+## Why this change is needed
+
+The native factored Hepta work in #824 and the work-accounting/service changes in #828 existed on separate branches. This candidate combines the already reviewed changes on the #824 source line, so a single source revision contains native low-rank execution, stable shared-work identity and the reference settlement behavior.
+
+## Resulting behavior
+
+- Preserve the native `B(Ax)` execution, exact factor comparison, original verifier, actual-versus-dense counters and payment-readback fences from #824.
+- Keep each fixed packet work identifier anchored to its original producer slot across carrier and receiver layouts. Shared work retains one identity when the same packet is presented through those layouts.
+- Retain paired reference outcome/result/cost/fee pins across monetary branch rewind. `Unknown` remains nonterminal; the pins do not authorize redispatch, payment or new chainwork.
+- Preserve the qualified base service fee for an evaluated `NoUpdate`. Improvement bonuses and consensus credit remain separate.
+- Preserve owner fences, zero-credit policy and `HOLD_NO_GO`.
+
+The additional settlement metadata is in-memory reference state. Durable native effect ownership remains a separate qualification requirement.
+
+## Exact source and scope
+
+| Item | Identity |
+| --- | --- |
+| Candidate C1 | `e8f81ca15634d0393e7bc6257193b4dbe88d9b2e` |
+| Candidate tree | `563992ef5bd3db98d95b7e249ea67cbbec2e2978` |
+| Parent / #824 source | `fd1cf356fcc557dbd2aee2318ffc524d17aa02f0` |
+| Selective source / #828 | `3388a6810b5ae8f41f238f878d56bcc5669bc8b9` |
+| Branch | `fix/chain-hepta-accounting-convergence-20261109-d9bb` |
+
+The diff changes 12 files: four Python implementation/analysis files, three Python test files, two specifications, the sole development plan, the current plan blob entry in the cross-branch corpus configuration, and a new source-provenance manifest. Nine source files are byte-identical selections from #828. The source manifest records their commits, blobs, byte counts and SHA256 values, including `source_is_ancestor: false`.
+
+Provenance: [source-inputs.json](evidence/pon-hepta-accounting-convergence-20261109/source-inputs.json).
+
+Native Rust, lockfiles, toolchain, signed domains and historical evidence remain unchanged. Only the current development-plan blob pin is updated; historical validation pins are preserved.
+
+## Observed validation
+
+| Validation | Observed result and scope |
+| --- | --- |
+| C1 Python: fixed packet cost identity | 50 passed |
+| C1 Python: offline fanout reanalysis | 21 passed |
+| C1 Python: service settlement / NoUpdate | 38 passed |
+| C1 Python: legal strategies | 19 passed |
+| C1 Python: low rank | 6 passed |
+| C1 Python total | 134 passed |
+| C1 Python calling retained native grouped CLI | 14 passed, 0 skipped |
+| Retained crypto binary rerun | 186 passed |
+| Retained service settlement binary rerun | 71 passed |
+| Retained Node task-operation binary rerun | 4 passed |
+| Retained Node NoGain fee/reopen/reorg binary rerun | 2 passed |
+| Locked offline dependency graphs | 26 workspace / 176 default; 26 / 181 all features |
+| Rust 1.95 formatting | Passed |
+| CI contract and distributed source inventory checks | Passed |
+| Development/staged preflight and diff check | Passed |
+| Nine selective-source SHA256 comparisons | Passed |
+| Original full raw-source verifier on C1 | 26,132 tracked entries / 2,495,315,152 bytes verified |
+
+**Native provenance:** the 263 native tests above actually reran retained binaries originally built from `91dd3082633ea0b3a5ec9b0ed91f28603229be01`. Their native source tree is `1305c43ca8891f6a07fcec493c32f007679e2416`. The diff from that revision to C1 is empty for `trillionnium` and `rust-toolchain.toml`; individual binary hashes are retained in the observed-validation summary. This work did not freshly compile those binaries from C1.
+
+The full raw-source check used the existing verifier unchanged and reported candidate C1, the tree above and `tracked_worktree_verified: true`. This source-identity check does not execute tests.
+
+## Evidence availability and incomplete checks
+
+The local workspace became unavailable during the final sequential gate runner. Terminal outcomes for source-integrity negatives, CI-contract negatives, corpus negatives, corpus identity, repository links and strict all-targets/all-features clippy were not observed. These gates remain **unconfirmed**.
+
+The detailed local validation logs were not transferred before the outage. The accompanying observed-validation summary reconstructs observations from tool output and labels that limitation explicitly. It is separate from the original raw receipts. Complete raw remote setup process reads/status records are available; they establish checkout and preflight preparation only.
+
+The C1 source and small prerequisite bundle are preserved on `ai395`. Bundle SHA256: `147a9587ea34c2622875892690a048cdf6efade5053c3a796a9b732f194328ef` (26,924 bytes; prerequisite #824 head). No evidence-only child commit was created.
+
+## Remaining gates
+
+This PR remains **draft / HOLD_NO_GO**. The inherited public-readiness reader mismatch, QROM lifetime source pin, QROM implementation fixture bound and resource campaign gaps remain open; this candidate does not repin them to claim success.
+
+Qualification still requires the cheapest legal classical/quantum lifecycle-cost analysis, joint time/difficulty/credit checks, independent learning/cost/retention, real funding/effects, WAN/public-service validation and independent recovery evidence. The retained native rank-1 fixture is not a speedup or minimum-cost proof. Main merge, production activation and deployment are outside this candidate.

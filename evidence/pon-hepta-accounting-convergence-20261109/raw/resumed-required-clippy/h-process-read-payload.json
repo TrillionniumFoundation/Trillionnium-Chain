@@ -1,0 +1,20 @@
+{
+  "audit_recorded": true,
+  "job_id": "1a1be9e96a7-5e21-1b7",
+  "stderr": {
+    "bytes_hex": "",
+    "eof": true,
+    "next_offset": 0,
+    "offset": 0,
+    "size": 0,
+    "text": ""
+  },
+  "stdout": {
+    "bytes_hex": "7b226c6162656c223a2022707265666c69676874222c2022657869745f636f6465223a20307d0a7b226c6162656c223a202272757374632d6964656e74697479222c2022657869745f636f6465223a20307d0a7b226c6162656c223a2022636172676f2d6964656e74697479222c2022657869745f636f6465223a20307d0a7b226c6162656c223a202270726f76696465722d76657273696f6e222c2022657869745f636f6465223a20307d0a7b226c6162656c223a20227374726963742d636c697070792d7265636f72646572222c2022657869745f636f6465223a20307d0a7b22737461747573223a20227374726963745f636c697070795f737563636565646564222c2022657869745f636f6465223a20302c20226f7574707574223a20222f686f6d652f71712f776f726b2f636861696e2d63312d67617465732d726573756d652d32303236313130392d636164656e63652d3031227d0a",
+    "eof": true,
+    "next_offset": 348,
+    "offset": 0,
+    "size": 348,
+    "text": "{\"label\": \"preflight\", \"exit_code\": 0}\n{\"label\": \"rustc-identity\", \"exit_code\": 0}\n{\"label\": \"cargo-identity\", \"exit_code\": 0}\n{\"label\": \"provider-version\", \"exit_code\": 0}\n{\"label\": \"strict-clippy-recorder\", \"exit_code\": 0}\n{\"status\": \"strict_clippy_succeeded\", \"exit_code\": 0, \"output\": \"/home/qq/work/chain-c1-gates-resume-20261109-cadence-01\"}\n"
+  }
+}
