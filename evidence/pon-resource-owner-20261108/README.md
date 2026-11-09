@@ -42,9 +42,15 @@ that every other Node entry shares the account.
 The [validation summary](validation-summary.json), [C1 native record](c1-native/)
 and [C1 static record](c1-static/) retain commands, source observations and
 original outcomes. The separately retained [core run record](core/run.json) and
-[core test log](core/resource-owner-tests.log) keep their own execution identity;
+[core test log](core/resource-owner-tests.log.gz) keep their own execution identity;
 that observation is not added again to the C1 count. These counts do not claim
 that all workspace native tests were executed.
+
+Raw text logs are stored as deterministic gzip files to preserve the exact
+original bytes, including native diagnostic whitespace. The
+[log encoding map](log-encoding.json) binds each original execution path and
+decoded SHA-256 to its committed compressed file. No text is normalized;
+decoding reproduces the hashes in the original run receipts.
 
 ## Native and static outcomes
 
@@ -98,9 +104,9 @@ retain the original failures:
 
 | Attempt | Actual outcome | Treatment |
 | --- | --- | --- |
-| [Initial local test build](preliminary/local-resource-owner-preliminary.log) | Cargo 101: missing original consensus-arithmetic compile-time fixture. | Later recovered exact #812 bytes; no synthetic replacement. |
-| [Local test build after fixture recovery](preliminary/local-resource-owner-preliminary-02.log) | Cargo 101: `rustc` reached Node test code generation and was terminated by SIGKILL under unchanged optimisation level 3. | Cause remains unconfirmed; not a proved out-of-memory event, a particular test failure or a successful run. |
-| [Local metadata check already started before diagnostics stopped](preliminary/local-resource-owner-preliminary-check.log) | Cargo 101: missing original `tests/fuzz/fuzz_targets/support/work_certificate.rs`. | No overall Cargo-check PASS or local native test result. |
+| [Initial local test build](preliminary/local-resource-owner-preliminary.log.gz) | Cargo 101: missing original consensus-arithmetic compile-time fixture. | Later recovered exact #812 bytes; no synthetic replacement. |
+| [Local test build after fixture recovery](preliminary/local-resource-owner-preliminary-02.log.gz) | Cargo 101: `rustc` reached Node test code generation and was terminated by SIGKILL under unchanged optimisation level 3. | Cause remains unconfirmed; not a proved out-of-memory event, a particular test failure or a successful run. |
+| [Local metadata check already started before diagnostics stopped](preliminary/local-resource-owner-preliminary-check.log.gz) | Cargo 101: missing original `tests/fuzz/fuzz_targets/support/work_certificate.rs`. | No overall Cargo-check PASS or local native test result. |
 
 The restored consensus fixture is 31,741 bytes, Git blob
 `c3a86442e0b2d0b57fbdd5d0954288b5e92e6dc2`, SHA-256
