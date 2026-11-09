@@ -1,3 +1,29 @@
+**Chain/Hepta fixed-candidate continuation, 2026-11-09 — HOLD:**
+
+Continue the actual #835/#836/#837 merge lineage in
+[PR #847](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/847).
+The [fixed-source record](../../evidence/chain-hepta-closure-20261109-481716/README.md)
+separates M6 execution from its M7 evidence-only child. M6's five library
+executables passed 2,450 top-level tests with 41 top-level ignored entries;
+nested helper executions do not increase that total. These engineering results
+do not qualify the ordinary Hepta daemon, original Host/campaign service,
+large-model custody, independent WAN operation, or joint PoN/PQ security.
+
+The M7 hosted checks exposed two empty failed-reader outputs incorrectly named
+as JSON, an obsolete lifetime-ledger lock binding, and a SQLite dependency
+advisory. Preserve those failures and the exact original output bytes, correct
+their archive filenames, bind the ledger to the reviewed current source, and
+upgrade the affected dependency graphs without suppressing the advisory.
+Any dependency successor requires its own locked graphs, actual native
+executables, retained test roster, strict Clippy, formatting, source-negative
+checks and evidence readers; M6 results cannot be relabelled as successor runs.
+Unstarted or abandoned hosted lanes remain missing observations. Keep the
+original four-second Host and separate thirty-second campaign, independent
+History/capacity/churn gates, complete model download/recovery/load sequence,
+three independent operational failure domains and the original sustained-run
+requirements. No model efficacy, current ordinary-daemon FinalUse, lifetime
+failure bound, production activation or independent acceptance is granted.
+
 **Joint PoN resource-contract continuation, 2026-11-08 America/New_York — HOLD:**
 Continue the complete #821 source `e798d7125724d4b9f98c24d00cc80031f2eab4a9`,
 which already contains the #811 work-cost and #812 integration lineage.

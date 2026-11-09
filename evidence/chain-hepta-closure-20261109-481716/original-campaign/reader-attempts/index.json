@@ -7,8 +7,9 @@
       "receipt": "reader-attempt01.json",
       "returncode": 137,
       "stderr": "campaign0746-outcomes-reader.log",
-      "stdout": "campaign0746-outcomes-attempt01.json",
-      "version": "historical-v1"
+      "stdout": "campaign0746-outcomes-attempt01.stdout.log",
+      "version": "historical-v1",
+      "original_stdout_filename": "campaign0746-outcomes-attempt01.json"
     },
     {
       "attempt": 2,
@@ -18,8 +19,9 @@
       "recorded_shell_returncode": 127,
       "returncode_source": "retained session command observation; no original JSON receipt exists",
       "stderr": "campaign0746-outcomes-reader-attempt02.log",
-      "stdout": "campaign0746-outcomes-attempt02.json",
-      "version": "historical-v1"
+      "stdout": "campaign0746-outcomes-attempt02.stdout.log",
+      "version": "historical-v1",
+      "original_stdout_filename": "campaign0746-outcomes-attempt02.json"
     },
     {
       "attempt": 3,
@@ -75,15 +77,17 @@
     },
     {
       "bytes": 0,
-      "path": "campaign0746-outcomes-attempt01.json",
+      "path": "campaign0746-outcomes-attempt01.stdout.log",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "source_path": "/workspace/scratch/481716a90d06/chain_acceptance/campaign0746-outcomes-attempt01.json"
+      "source_path": "/workspace/scratch/481716a90d06/chain_acceptance/campaign0746-outcomes-attempt01.json",
+      "original_filename": "campaign0746-outcomes-attempt01.json"
     },
     {
       "bytes": 0,
-      "path": "campaign0746-outcomes-attempt02.json",
+      "path": "campaign0746-outcomes-attempt02.stdout.log",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "source_path": "/workspace/scratch/481716a90d06/chain_acceptance/campaign0746-outcomes-attempt02.json"
+      "source_path": "/workspace/scratch/481716a90d06/chain_acceptance/campaign0746-outcomes-attempt02.json",
+      "original_filename": "campaign0746-outcomes-attempt02.json"
     },
     {
       "bytes": 0,
@@ -104,5 +108,11 @@
       "source_path": "/workspace/scratch/481716a90d06/chain_acceptance/campaign0746-outcomes-v2.log"
     }
   ],
-  "schema": "retained-campaign-reader-attempt-index-v1"
+  "schema": "retained-campaign-reader-attempt-index-v1",
+  "stdout_filename_correction": {
+    "original_commit": "7ddfe2bfa480d1ebd91c07d03d56a963fff038c5",
+    "details": "stdout-filename-correction.json",
+    "original_index_sha256": "7bb4a46aa8c1cddac037bf2349f612e57df4a1fefcf8950e3ced08c1a197bf1d",
+    "bytes_of_original_outputs_changed": false
+  }
 }

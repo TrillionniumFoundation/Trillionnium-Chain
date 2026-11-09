@@ -286,8 +286,8 @@
     },
     {
       "path": "original-campaign/FILES.json",
-      "bytes": 7871,
-      "sha256": "9baf110683859138a18c8492ad821f7221932333f987a0cacccab1e3fbc0b0b3"
+      "bytes": 8065,
+      "sha256": "dac6eeb03053088a2076fc99de1d7aa7a82dd64d9e78102f26df509e6937784f"
     },
     {
       "path": "original-campaign/README.md",
@@ -296,8 +296,8 @@
     },
     {
       "path": "original-campaign/SHA256SUMS",
-      "bytes": 4683,
-      "sha256": "990bf3d8985aafb8cee65c791e6ba241f25f5c901371b6234ba503317a6a2526"
+      "bytes": 4732,
+      "sha256": "b1c7f41fc7ff2d2149c762549c7c993b7c1eab1eb2cd087a1f5470bed743800e"
     },
     {
       "path": "original-campaign/artifact-files.json.gz",
@@ -465,12 +465,12 @@
       "sha256": "417122c7f5cfd676cff06cfd11423379efdeff99716d9d82bdac8aaa6d3e22c4"
     },
     {
-      "path": "original-campaign/reader-attempts/campaign0746-outcomes-attempt01.json",
+      "path": "original-campaign/reader-attempts/campaign0746-outcomes-attempt01.stdout.log",
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "path": "original-campaign/reader-attempts/campaign0746-outcomes-attempt02.json",
+      "path": "original-campaign/reader-attempts/campaign0746-outcomes-attempt02.stdout.log",
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -496,8 +496,8 @@
     },
     {
       "path": "original-campaign/reader-attempts/index.json",
-      "bytes": 4630,
-      "sha256": "7bb4a46aa8c1cddac037bf2349f612e57df4a1fefcf8950e3ced08c1a197bf1d"
+      "bytes": 5236,
+      "sha256": "a8ab674f4658c42e47cb39b83c2363468d264548d4433defda540a641aeb7e42"
     },
     {
       "path": "original-campaign/reader-attempts/reader-attempt01.json",
@@ -513,6 +513,11 @@
       "path": "original-campaign/reader-attempts/reader-v2-attempt01.json",
       "bytes": 1113,
       "sha256": "17f8354c74de41455c6eb2172af59e94a6589e27d87124492fb91d21a56fb5e2"
+    },
+    {
+      "path": "original-campaign/reader-attempts/stdout-filename-correction.json",
+      "bytes": 1997,
+      "sha256": "c7365fe0e73e0daebcbfe3375ada9c157cf9f7565292deafe2c951f6a970b428"
     },
     {
       "path": "original-campaign/remote-artifact.json",
