@@ -129,6 +129,30 @@ path. It does not rerun the workload or reauthenticate historical packet files.
 The [retained evidence](../../../../evidence/pon-security-work-metering-20261107/README.md)
 distinguishes this reanalysis from the separate recorded-query reinspection.
 
+The fixed two-packet fanout also binds each successful reception to its original
+packet slot. The valid and whitespace-only carrier replay use nonce 1; the
+discarded-response control uses nonce 2. A receiver cannot assign another work
+identity to one carrier, exchange the two slots, or reuse nonce 1's identity for
+nonce 2. The same identities must hold across receivers and topologies.
+
+These stronger report semantics use fresh output namespaces:
+`pon-grouped-fresh-deployment-cost-v1` for accounting and
+`pon-grouped-fanout-reanalysis-v2` for offline readback. The existing Python
+entrypoint filenames are retained. The historical campaign input remains
+`pon-grouped-fresh-fanout-campaign-v0`; stored old reports, signed protocol
+domains and the native work profile are unchanged.
+
+The actual runner passes the existing native producer table into the reader
+before receivers start. Offline reanalysis uses that table from the unchanged,
+externally pinned historical report. Missing or malformed producer entries stay
+a refusal; they are not reconstructed from receiver claims. An inconsistent
+complete identity count becomes unknown while reported partial identities,
+CPU, byte counts, rejected/canceled work and the original denominators remain
+visible. The direct accounting helper still supports unanchored structural
+observations, explicitly reporting that producer binding was not established.
+Neither a consistent label mapping nor the historical report pin reauthenticates
+the original native packet, proves useful demand, or grants chainwork.
+
 These were report-integrity defects. Their rejection does not imply a native
 consensus exploit or certify the public-network economic qualifications.
 

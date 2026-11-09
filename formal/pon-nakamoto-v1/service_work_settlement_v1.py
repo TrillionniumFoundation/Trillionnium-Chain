@@ -209,7 +209,7 @@ def _book_binding(book, contract):
     return _claims(contract)
 
 
-def _bound_reservations(book, contract):
+def _bound_reservations(book, contract, *, require_reserved=True):
     claims = _book_binding(book, contract)
     for lane, prefix, payee in (
             ('evaluation', 'base', 'service_provider'),
@@ -221,7 +221,12 @@ def _bound_reservations(book, contract):
                 claim.reserved == contract[prefix + '_reservation'] and
                 claim.contribution_root == (contract['contribution_root']
                     if lane == 'contribution' else None), 'SERVICE_RESERVATION_BINDING')
-        require(claim.status == 'reserved', 'SERVICE_ALREADY_RESOLVED')
+        require(claim.status in {'reserved', 'positive', 'no-gain', 'invalid',
+                                 'unknown', 'cancelled'}, 'SERVICE_CLAIM_STATUS')
+        units(claim.paid)
+        require(claim.paid <= claim.amount, 'SERVICE_CLAIM_PAYMENT')
+        if require_reserved:
+            require(claim.status == 'reserved', 'SERVICE_ALREADY_RESOLVED')
     return claims
 
 
@@ -231,6 +236,74 @@ def _contract_pins(book, claims, expected):
     # retry, even when the caller mistakenly passes that replacement as expected.
     require(all(book._resource_jobs.get(claim, {}).get('service_work_contract_v1')
                 == expected for claim in claims.values()), 'SERVICE_ORIGINAL_CONTRACT')
+
+
+def _resolution_record(contract, expected, outcome, decision, result_digest,
+                       base_consumed, bonus_consumed, base_paid, bonus_paid):
+    """A private record on the original jobs, not a new persisted task owner."""
+    require(type(outcome) is str and outcome in {'complete', 'invalid', 'cancelled', 'unknown'},
+            'SERVICE_RESOLUTION_OUTCOME')
+    units(base_paid); units(bonus_paid)
+    if outcome == 'unknown':
+        require(decision is None and result_digest is None and base_consumed is None
+                and bonus_consumed is None and base_paid == bonus_paid == 0,
+                'SERVICE_RESOLUTION_UNKNOWN')
+    else:
+        base_consumed = resources('evaluation', base_consumed)
+        bonus_consumed = resources('contribution', bonus_consumed)
+        if outcome == 'complete':
+            identity(result_digest)
+            require(type(decision) is str and decision in {'NoUpdate', 'MeasuredImprovement'},
+                    'SERVICE_RESOLUTION_DECISION')
+            require(base_paid == contract['base_fee'] and bonus_paid == (
+                contract['bonus_fee'] if decision == 'MeasuredImprovement' else 0),
+                'SERVICE_RESOLUTION_FEES')
+        else:
+            require(decision is None and result_digest is None and base_paid == bonus_paid == 0,
+                    'SERVICE_RESOLUTION_FAILED')
+    # Height and branch membership intentionally stay outside this immutable
+    # outcome: the same monetary transition may need reapplication after reorg.
+    return dict(schema='pon-service-work-local-resolution-v1', contract=expected,
+        outcome=outcome, decision=decision, result_digest=result_digest,
+        base_consumed=base_consumed, bonus_consumed=bonus_consumed,
+        base_paid=base_paid, bonus_paid=bonus_paid)
+
+
+def _local_resolution(book, contract, claims, expected):
+    """Read paired original-job facts without inferring physical execution.
+
+    Generic budget closing can set consumed=reserved for unresolved work. That
+    is conservative accounting, not evidence of service completion or dispatch.
+    Both absent pins are allowed for an unobserved job; a single pin is not.
+    """
+    jobs = [book._resource_jobs.get(claim) for claim in claims.values()]
+    if all(job is None for job in jobs):
+        return None, 0, False
+    require(all(type(job) is dict and 'consumed' in job for job in jobs),
+            'SERVICE_RESOURCE_JOB_PAIR')
+    _contract_pins(book, claims, expected)
+    accounted = sum(job['consumed'] is not None for job in jobs)
+    for lane, job in zip(('evaluation', 'contribution'), jobs):
+        if job['consumed'] is not None:
+            resources(lane, job['consumed'])
+    pins = [_bounded_copy(job.get('service_work_resolution_v1'), 'SERVICE_RESOLUTION')
+            for job in jobs]
+    require(canonical(pins[0]) == canonical(pins[1]), 'SERVICE_RESOLUTION_PAIR')
+    record = pins[0]
+    if record is None:
+        return None, accounted, True
+    fields = {'schema', 'contract', 'outcome', 'decision', 'result_digest',
+              'base_consumed', 'bonus_consumed', 'base_paid', 'bonus_paid'}
+    require(type(record) is dict and set(record) == fields, 'SERVICE_RESOLUTION_FIELDS')
+    checked = _resolution_record(contract, expected, record['outcome'], record['decision'],
+        record['result_digest'], record['base_consumed'], record['bonus_consumed'],
+        record['base_paid'], record['bonus_paid'])
+    require(canonical(record) == canonical(checked), 'SERVICE_RESOLUTION_BINDING')
+    if record['outcome'] != 'unknown':
+        require(accounted == 2 and all(canonical(job['consumed']) == canonical(record[field])
+            for job, field in zip(jobs, ('base_consumed', 'bonus_consumed'))),
+            'SERVICE_RESOLUTION_RESOURCE_BINDING')
+    return record, accounted, True
 
 
 def _check_height(book, claims, height):
@@ -271,6 +344,9 @@ def reserve_contract(book, raw, expected, *, height):
             resource_reservation=contract[prefix + '_reservation'], height=height,
             contribution_root=contract['contribution_root'] if lane == 'contribution' else None)
         updated._resource_jobs[claims[lane]]['service_work_contract_v1'] = expected
+    # A replay may restore branch money while the original physical job remains
+    # pending or accounted. Preserve and validate its outcome; never reset it.
+    _local_resolution(updated, contract, claims, expected)
     _observe_height(updated, claims, height)
     updated.summary()
     return updated
@@ -292,10 +368,16 @@ def settle_contract(book, raw, expected, *, height, outcome, material=None,
     require(height >= contract['issued_height'], 'SERVICE_WINDOW')
     require(type(outcome) is str and outcome in {'complete', 'invalid', 'cancelled', 'unknown'},
             'SERVICE_OUTCOME')
+    prior, accounted, _ = _local_resolution(book, contract, claims, expected)
+    require(prior is not None or accounted == 0, 'SERVICE_UNBOUND_PRIOR_RESOLUTION')
+    terminal_replay = prior is not None and prior['outcome'] != 'unknown'
+    if terminal_replay:
+        require(prior['outcome'] == outcome, 'SERVICE_ORIGINAL_RESOLUTION')
     updated = copy.deepcopy(book)
     _observe_height(updated, claims, height)
     base_paid = bonus_paid = 0
     decision = None
+    base_cost = bonus_cost = result_digest = None
     if outcome == 'unknown':
         require(all(v is None for v in (material, result, base_consumed, bonus_consumed)),
                 'SERVICE_UNKNOWN_NOT_TERMINAL')
@@ -308,6 +390,7 @@ def settle_contract(book, raw, expected, *, height, outcome, material=None,
             observed = _object(result, 'SERVICE_RESULT')
             replay = execute_service(raw, expected, material)
             require(result == replay, 'SERVICE_COMPLETE_REPLAY')
+            result_digest = H('service-work-resolution-result-v1', result).hex()
             decision = observed['decision']
             base_paid = contract['base_fee']
             bonus_paid = contract['bonus_fee'] if decision == 'MeasuredImprovement' else 0
@@ -322,8 +405,16 @@ def settle_contract(book, raw, expected, *, height, outcome, material=None,
                         consumed=base_cost, outcome=base_outcome)
         updated.resolve(claim=claims['contribution'], height=height, paid=bonus_paid,
                         consumed=bonus_cost, outcome=bonus_outcome)
+    resolution = _resolution_record(contract, expected, outcome, decision, result_digest,
+                                    base_cost, bonus_cost, base_paid, bonus_paid)
+    if terminal_replay:
+        require(canonical(prior) == canonical(resolution), 'SERVICE_ORIGINAL_RESOLUTION')
+    # Publish both pins only with the successful private-copy transition. A
+    # failed bonus settlement cannot leave a base resolution or outcome behind.
+    for claim in claims.values():
+        updated._resource_jobs[claim]['service_work_resolution_v1'] = copy.deepcopy(resolution)
     totals = updated.summary()
-    report = dict(schema='pon-service-work-settlement-reference-v1',
+    report = dict(schema='pon-service-work-settlement-reference-v2',
         contract=expected, task=contract['task'], status=status, decision=decision,
         conditional_base_fee_units=base_paid, conditional_improvement_bonus_units=bonus_paid,
         additional_consensus_credit=0, work_profile_qualified=False,
@@ -331,6 +422,8 @@ def settle_contract(book, raw, expected, *, height, outcome, material=None,
         independent_evaluation_certified=False, public_reward_eligible=False,
         external_payment_executed=False, model_adoption_authorized=False,
         production_activation=False, qualification='HOLD',
+        local_resolution_replayed=terminal_replay, execution_dispatch_authorized=False,
+        local_resolution_digest=H('service-work-local-resolution-v1', canonical(resolution)).hex(),
         original_reservations_retained=outcome == 'unknown',
         evaluation_lane=totals['lanes']['evaluation'],
         contribution_lane=totals['lanes']['contribution'])
@@ -338,27 +431,75 @@ def settle_contract(book, raw, expected, *, height, outcome, material=None,
 
 
 def supply_observation(book, contracts, *, height):
-    """Finite supplied contracts do not establish real demand or long-run supply."""
+    """Separate branch reservations from original local outcome/resource facts.
+
+    This observer owns no dispatch path. An unobserved reserved job is never a
+    NotDispatched certificate, and a restored reservation is not fresh work.
+    """
     units(height)
     require(type(contracts) is list and len(contracts) <= 64, 'SERVICE_SUPPLY_LIMIT')
     seen = set()
     pending = funded = 0
+    observations = []
     for raw, expected in contracts:
         contract = read_contract(raw, expected)
         require(contract['task'] not in seen, 'SERVICE_SUPPLY_REPLAY')
         seen.add(contract['task'])
         claims = _book_binding(book, contract)
-        base = book.branch.claims.get(claims['evaluation'])
-        if (base is not None and base.status == 'reserved' and
-                contract['issued_height'] <= height < contract['deadline_height']):
-            _bound_reservations(book, contract)
-            _contract_pins(book, claims, expected)
+        branch_claims = [book.branch.claims.get(claim) for claim in claims.values()]
+        if all(claim is None for claim in branch_claims):
+            branch_status = 'absent'
+        else:
+            _bound_reservations(book, contract, require_reserved=False)
+            statuses = [claim.status == 'reserved' for claim in branch_claims]
+            branch_status = 'reserved' if all(statuses) else 'resolved' if not any(statuses) else 'partial'
+        resolution, accounted, jobs_present = _local_resolution(book, contract, claims, expected)
+        require(branch_status == 'absent' or jobs_present, 'SERVICE_RESOURCE_JOB_PAIR')
+        if jobs_present:
             _check_height(book, claims, height)
+        window = ('not-started' if height < contract['issued_height'] else
+                  'active' if height < contract['deadline_height'] else 'expired')
+        if branch_status == 'reserved' and window == 'active':
             pending += 1
-            funded += base.amount
-    return dict(schema='pon-service-work-supply-observation-v1',
+            funded += branch_claims[0].amount
+        outcome = resolution['outcome'] if resolution is not None else None
+        local_state = ('unknown' if outcome == 'unknown' else
+                       'recorded-terminal' if outcome is not None else
+                       'resource-accounted-outcome-unobserved' if accounted else
+                       'unobserved' if jobs_present else 'unreserved')
+        orphaned = jobs_present and branch_status == 'absent'
+        branch_matches = None
+        if local_state == 'recorded-terminal' and branch_status == 'resolved':
+            expected_statuses = (('positive', 'positive' if resolution['bonus_paid'] else 'no-gain')
+                                 if outcome == 'complete' else (outcome, outcome))
+            expected_paid = (resolution['base_paid'], resolution['bonus_paid'])
+            branch_matches = all(claim.status == status and claim.paid == paid
+                for claim, status, paid in zip(branch_claims, expected_statuses, expected_paid))
+        reconcile = (local_state in {'unknown', 'resource-accounted-outcome-unobserved'}
+                     or orphaned or branch_status == 'partial'
+                     or (local_state == 'recorded-terminal' and branch_status != 'resolved')
+                     or branch_matches is False
+                     or (window == 'expired' and branch_status == 'reserved'))
+        observations.append(dict(task=contract['task'], contract=expected,
+            branch_status=branch_status, window=window, local_state=local_state,
+            recorded_outcome=outcome, resource_lanes_accounted=accounted,
+            orphaned_resource_job=orphaned, reconciliation_required=reconcile,
+            branch_resolution_matches_local=branch_matches,
+            execution_dispatch_authorized=False))
+    return dict(schema='pon-service-work-supply-observation-v2',
         supplied_contracts=len(contracts), pending_contracts=pending,
         conditional_base_reservations=funded, no_pending_contracts=pending == 0,
+        pending_scope='active-branch-monetary-reservations-not-fresh-execution',
+        reserved_unobserved_contracts=sum(r['branch_status'] == 'reserved' and
+            r['window'] == 'active' and r['local_state'] == 'unobserved' for r in observations),
+        recorded_unknown_contracts=sum(r['local_state'] == 'unknown' for r in observations),
+        recorded_terminal_contracts=sum(r['local_state'] == 'recorded-terminal' for r in observations),
+        resource_accounted_contracts=sum(r['resource_lanes_accounted'] > 0 for r in observations),
+        orphaned_resource_contracts=sum(r['orphaned_resource_job'] for r in observations),
+        expired_contracts=sum(r['window'] == 'expired' for r in observations),
+        reconciliation_required_contracts=sum(r['reconciliation_required'] for r in observations),
+        observations=observations, execution_dispatch_authorized=False,
+        fresh_work_supply_verified=False,
         actual_demand_verified=False, native_funding_verified=False,
         synthetic_fill_authorized=False, liveness_qualified=False,
         additional_consensus_credit=0, qualification='HOLD')

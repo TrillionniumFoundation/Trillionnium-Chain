@@ -10713,3 +10713,72 @@ its own exact source, original operation and receipts. Separate branch logs
 cannot establish a same-iteration production loop. This composition does not
 automatically include #822, #823, #826, #828, #829 or #830. All seven original
 gates remain HOLD; production activation and FinalUse qualification stay false.
+
+
+### 2026-11-08 America/New_York — Converge preserved Hepta arithmetic and accounting
+
+Continue #824 at `fd1cf356fcc557dbd2aee2318ffc524d17aa02f0`. Selectively
+reuse the reviewed fixed-packet identity and monotonic service-outcome changes
+from #828 at `3388a6810b5ae8f41f238f878d56bcc5669bc8b9`; the latter is a
+source input, not an ancestor of this continuation. The
+[exact selective-source record](../../evidence/pon-hepta-accounting-convergence-20261109/source-inputs.json)
+binds every reused file and its unchanged #821 input. Keep the #824 native
+factored producer, actual counters, payment-readback fences and operating
+boundaries intact. Native Rust, signed protocol domains, retained evidence,
+Cargo locks and all production activation flags are unchanged.
+
+Bind each fanout packet slot to the original producer identity across receivers.
+Retain local service outcomes and cost observations across monetary-branch
+reorganization, preserve evaluated NoUpdate base fees, and expose reconciliation
+without authorizing dispatch or new payment. All additional consensus credit
+stays zero. Report the converged Python controls and unchanged native source
+separately; earlier PR results do not count as execution of this new commit.
+
+The inherited public-readiness source-contract mismatch and both QROM source
+contract mismatches remain explicit unresolved gates. Do not refresh historical
+evidence pins or loosen a resource contract to hide them. Cheapest legal work,
+independent useful learning, external payment, public-service acceptance and
+whole-chain security remain **HOLD_NO_GO**.
+
+### 2026-11-09 — Separate four propositions and compose accounting sources
+
+Continue #835 at `e2a02f9271b49f146e70806c8a66e161b5973971` and merge
+#832 at `e8f81ca15634d0393e7bc6257193b4dbe88d9b2e` with both parents
+retained. Keep #835's native tree, later source checks and current mapping, and
+preserve #832's nine exact accounting inputs and historical selective-source
+manifest. Historical executions remain tied to their original source identities.
+
+Use the [four-proposition acceptance boundary](../research/PON_FOUR_PROPOSITIONS_ACCEPTANCE_20261109.md)
+to distinguish specified-relation correctness, genuine commissioned demand,
+complete-cost downstream utility and an all-legal-strategy Sybil cost claim.
+Neither one computation proof nor one combined green engineering status proves
+the other propositions. W1 finite-field semantics and cached AB remain explicit;
+legal low-rank, sparse, shared-base, cached and batched implementations remain
+allowed. Reference operation counts and measured implementations do not establish
+an unavoidable consensus cost. Coalition-wide success probability, original
+absolute deadline and complete lifecycle resource ownership are separate duties.
+
+Add the [read-only evidence view](specs/pon/FOUR_PROPOSITIONS_EVIDENCE_VIEW_V1.md)
+under a fresh namespace. It pins the reviewed reader bytes, replays supplied
+signed demand bundles, utility events and upgrade actions through the original
+owners, preserves unknown costs and NoUpdate reasons, and rejects mismatched
+bindings or invented qualification. Four independent MISSING/OBSERVED fields
+remain `proven=false`; there is no aggregate PASS. Matching labels do not attest
+cross-proposition semantic binding, and source-byte checks do not authenticate
+execution provenance. The view never authorizes payment, adoption, consensus
+credit or production activation. It does not replace native proof verification,
+funding readback, original service settlement or any existing gate.
+
+Register the new synthetic-reader regression suite exactly once in the original
+protocol-contract lane and retain the source/lane mutation controls. Validate the
+actual combined committed source with the original readers and source verifier;
+retain failed, interrupted and unavailable checks separately. HeptaRuntime's
+control failure is an environment observation, not a passed native build. A local
+Python fixture pass is not a real-customer or prospective net-benefit result.
+Only changed current-source corpus entries may be updated; historical QROM,
+resource contracts, retained observations and production false flags stay fixed.
+
+The original engineering gates remain HOLD. Genuine external demand and data
+rights, independently measured full-cost usefulness, the universal legal-strategy
+resource bound and current-source native/release qualification remain distinct
+open obligations. This continuation grants no production or FinalUse authority.
