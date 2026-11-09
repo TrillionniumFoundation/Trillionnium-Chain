@@ -221,6 +221,13 @@ pinned host-runtime snapshot boundary; they are not represented as sealed-FD
 transport. Historical material bridging remains an explicit exact contract.
 Research observations grant no ordinary Hepta CURRENT/FinalUse or M12 authority.
 
+The project-source compiler explicitly disables inherited future flags so that
+sealed original modules retain the semantics of ordinary source loading. Their
+own explicit future imports still apply. Once the original supervisor returns,
+a completion event cancels the pre-handshake accept and post-handshake Ready
+waits within their bounded polls. The original absolute deadline, actual child
+exit and wait4 reaping remain authoritative; cancellation cannot mint success.
+
 Joint payload admission is one obligation. Tensor expansion, activation
 workspace, device allocation and child-process peak memory still require their
 original admission and enforcement. Hashes, byte callbacks and descriptors alone

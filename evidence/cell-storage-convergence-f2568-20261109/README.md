@@ -142,6 +142,76 @@ storage execution and actual eighteen-name sealed-input Python controls added.
 Its required new native rosters contain 70 DA and 13 Node names; these minimum
 rosters do not replace full actual harness-name/count validation.
 
+## Actual model attempt01: retained failure
+
+The separate Debug experiment remains a failed uncommitted-source preparation,
+not a later-commit acceptance. The [original outer observation](preparation/model-attempt01-observation.json)
+records 300.117321 seconds and exit 1 under the unchanged 300-second research
+deadline, 8 GiB worker RSS allowance, 512 MiB payload allowance and four threads.
+The binary, source, input manifest and provider remained unchanged.
+
+The [native observation](preparation/model-attempt01-native-result.json) records
+30 members, 280,265,400 actual payload bytes, 95 restored chunks, deletion of both
+task caches and the actual 30 sealed descriptor handoff. These completed stages
+did not complete two model forwards. The [original worker supervisor](preparation/model-attempt01-worker-supervisor.json)
+records exit 1 after 3.664354283 seconds with its owned child reaped by wait4.
+Its 604,442,624-byte wait4 peak is a direct-child high-water observation, not a
+simultaneous process-tree RSS measurement.
+
+The [unaltered error trace](preparation/model-attempt01-worker-process.log) and
+[cost events](preparation/model-attempt01-worker-cost-events.jsonl) locate failure
+at runtime import: the new project-source compiler inherited postponed-annotation
+flags into the original Python runtime helper, then Torch rejected the resulting
+string annotation. The connector subsequently waited for Ready until the outer
+deadline. The required correction is isolated compiler flags and prompt connector
+failure after the original supervisor returns; original helper, Torch and all
+independent source/digest checks remain the boundaries. This failure is not
+reclassified by a successful build or by any later new operation.
+
+The [third original archive](preparations03.tar.xz), 119,848 bytes, SHA-256
+75b5c118e11a065c95d1afc5ba57af98aa4e75fe5d6e16ca476de9991fa2f976,
+and its [complete member inventory](preparations03.members.json) retain all
+42 original members and 2,444,242 uncompressed bytes. They include prep13 strict
+Clippy, the standalone Debug build, and original failed model observations.
+No completed next-use result exists for attempt01; its unfinished pending
+observation is preserved. Private producer code, full runtime snapshots, weights,
+keys, catalog/arena state and databases stay outside this public archive.
+The original four-second service and separate thirty-second pressure conditions
+remain unchanged.
+
+## Sealed loader correction and retained controls
+
+The project-source compiler now sets `dont_inherit=True`, preserving each
+original module's own annotation semantics without changing its bytes. The
+connector observes the original supervisor's completion event during bounded
+accept and Ready waits; it never starts a new deadline or changes child/reap
+ownership. Both changes address the actual failed attempt01.
+
+The first local control run passed the original 18 tests and the new annotation
+control; two Unix-socket controls failed with the local environment's EPERM.
+The first remote correction passed 20/21 but still waited until the original
+six-second unit-fixture deadline when the child exited before handshake.
+The bounded-accept correction then passed all 21 actual controls on Linux in
+0.369 seconds. The three new controls against the unchanged original worker
+produced their three intended assertion failures. These unit observations use
+the actual original supervision and wait4 owner; they are not model forwards.
+
+The combined control wrapper still returned failure because its diagnostic-text
+predicate expected an older Python spelling of Optional and counted traceback
+source lines as additional failure messages. Its original receipt and logs remain
+unchanged. An independent readback validates the actual named results instead of
+rewriting that wrapper outcome. The frozen CI roster now requires all 21 names;
+its 55 parser controls preserve all original 51 cases, and 18 CI guard controls
+preserve the original 17. Native rosters, all 25 gate arguments, and original
+service, pressure and research resource limits remain unchanged.
+
+Corrected worker SHA-256 is
+`cd9218492db7cb272772cf4dd4379e535fd7e865b42e9f7d670b3cdb40a8acf2`;
+test source SHA-256 is
+`7da9c70cf7837af07574fcbdc5c22742de0223fbdc4785931566892b25ac570a`.
+A later real-model operation must bind these exact sources to its new manifest,
+operation and outputs, while retaining the first operation's state and failure.
+
 ## Reproduction tools and required observations
 
 [Tooling identities](tooling-files.json) bind the original preparation scripts,

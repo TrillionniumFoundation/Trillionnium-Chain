@@ -15,6 +15,7 @@ import tempfile
 import threading
 import time
 import types
+import typing
 import unittest
 from unittest import mock
 
@@ -277,6 +278,95 @@ class SealedHandoffControls(unittest.TestCase):
             sys.path[:] = prior_path
             for name in worker.MODULES:
                 sys.modules.pop(name, None)
+
+    def test_project_source_compiler_preserves_original_annotation_semantics(self):
+        project = Path(os.environ.get('CELL_SEALED_TEST_PROJECT_ROOT',
+                       str(Path(__file__).resolve().parents[1]))).resolve(strict=True)
+        relative = worker.MODULES['llm_python_runtime_contract']
+        original = (project / relative).read_bytes()
+        self.replace_blob('environment', relative, original)
+        inputs = self.inputs()
+        sources = worker.ProjectSources(inputs, Path(self.root.name) / 'original-sources')
+        helper = types.ModuleType('llm_python_runtime_contract')
+        sources.exec_module(helper)
+        self.assertEqual(sources.file_sha(helper.__file__), worker.sha(original))
+        # Use the actual original helper's second compilation boundary. No
+        # Torch substitute is imported or represented as a model execution.
+        for explicit_future in (False, True):
+            with self.subTest(explicit_future=explicit_future):
+                raw = b'from typing import Optional\nvalue: Optional[str] = None\n'
+                if explicit_future:
+                    raw = b'from __future__ import annotations\n' + raw
+                path = Path(self.root.name) / ('dependency-' + str(explicit_future) + '.py')
+                path.write_bytes(raw)
+                dependency = types.ModuleType('_cell_original_annotations_' + str(explicit_future))
+                loader = helper.PinnedPythonSource(dependency.__name__, str(path), worker.sha(raw))
+                loader.exec_module(dependency)
+                expected = 'Optional[str]' if explicit_future else typing.Optional[str]
+                self.assertEqual(dependency.__annotations__['value'], expected)
+
+    def _failed_original_supervisor(self, after_handoff):
+        project = Path(os.environ.get('CELL_SEALED_TEST_PROJECT_ROOT',
+                       str(Path(__file__).resolve().parents[1]))).resolve(strict=True)
+        if after_handoff:
+            bootstrap = Path(__file__).with_name('cell_sealed_bootstrap_v1.py').read_bytes()
+            failing_entry = b'def entry(header, fds, mode, bootstrap_sha256):\n    raise SystemExit(7)\n'
+            self.replace_blob('environment', worker.WORKER_PATH, failing_entry)
+        else:
+            bootstrap = b'raise SystemExit(7)\n'
+        self.replace_blob('environment', worker.BOOTSTRAP_PATH, bootstrap)
+        self.header['execution']['python'] = str(Path(sys.executable).resolve(strict=True))
+        self.header['execution']['python_sha256'] = worker.sha(Path(sys.executable).read_bytes())
+        self.header['deadline_monotonic_ns'] = time.monotonic_ns() + 6 * 10**9
+        inputs = self.inputs()
+        deadline = inputs.deadline
+        prior_path = list(sys.path)
+        prior_modules = {name: sys.modules.get(name) for name in worker.MODULES}
+        directory_fd = os.open('.', os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC)
+        spec = importlib.util.spec_from_file_location('_cell_original_supervisor_control',
+            project / 'scripts/llm_runtime_pilot.py')
+        original_runtime = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = original_runtime
+        sys.path.insert(0, str(project / 'scripts'))
+        try:
+            spec.loader.exec_module(original_runtime)
+            state = types.SimpleNamespace(runtime=original_runtime,
+                original_worker=types.SimpleNamespace(SCHEMA='hepta-smollm-neural-read-worker-v2'))
+            started = time.monotonic()
+            with self.assertRaisesRegex(ValueError, 'ORIGINAL_WAIT4_AND_NEXT_USE'):
+                worker.supervisor(inputs, state)
+            elapsed = time.monotonic() - started
+            result = worker.read_observation(Path(self.root.name) / 'next-use-result.json')
+            self.assertTrue(result['connector_complete'])
+            self.assertEqual(result['observations'], 0)
+            self.assertTrue(result['failures'])
+            self.assertEqual(result['supervisor']['outcome'], 'failed')
+            self.assertEqual(result['supervisor']['exit_code'], 7)
+            self.assertTrue(result['supervisor']['waited_child_reaped'])
+            self.assertTrue(result['supervisor']['owned_child_reap_resolved'])
+            self.assertEqual(worker.read_observation(Path(self.root.name) / 'next-use-observations.json'), [])
+            self.assertFalse((Path(self.root.name) / 'fd.sock').exists())
+            self.assertFalse(any(t.name == 'sealed-research-original-requests' and t.is_alive()
+                                 for t in threading.enumerate()))
+            self.assertEqual(inputs.deadline, deadline)
+            self.assertLess(elapsed, 3.0, 'connector kept waiting after the original failed child was reaped')
+            self.assertLess(time.monotonic_ns(), deadline)
+        finally:
+            os.fchdir(directory_fd)
+            os.close(directory_fd)
+            sys.path[:] = prior_path
+            sys.modules.pop(spec.name, None)
+            for name, original in prior_modules.items():
+                if original is None:
+                    sys.modules.pop(name, None)
+                else:
+                    sys.modules[name] = original
+
+    def test_failed_supervisor_cancels_connector_before_handshake(self):
+        self._failed_original_supervisor(False)
+
+    def test_failed_supervisor_cancels_ready_wait_after_sealed_handoff(self):
+        self._failed_original_supervisor(True)
 
     def test_observation_publish_is_complete_before_visibility_and_cannot_replace(self):
         path = Path(self.root.name) / 'ready.json'

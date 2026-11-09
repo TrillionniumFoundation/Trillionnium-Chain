@@ -193,7 +193,7 @@ jobs:
         run: |
           set -euo pipefail
           bash "$OUT/run-command.sh" p2p-complete cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability -- --test-threads=1
-      - name: Run real sealed-input Python controls and verify all eighteen cases
+      - name: Run real sealed-input Python controls and verify every frozen case
         id: sealed_python
         if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' }}
         shell: bash

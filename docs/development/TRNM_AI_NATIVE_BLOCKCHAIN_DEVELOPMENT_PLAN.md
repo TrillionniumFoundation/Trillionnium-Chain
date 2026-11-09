@@ -16,6 +16,12 @@ profile admits at most 128 chunks and 2 MiB of metadata; complete-plan automatic
 local repair retains original funding and cumulative failed-attempt budgets.
 The fresh sealed-FD research consumer loads actual admitted bytes and requires
 two forwards under one deadline, without ordinary Hepta FinalUse authority.
+The first real sealed-byte model attempt retained an actual runtime-import
+failure. The compiler now isolates inherited future flags, and connector waits
+observe original supervisor completion without resetting their deadline. Exact
+21-name controls cover original annotation semantics and real failed-child
+reaping before and after descriptor handoff. Actual model and final committed
+source observations remain separately accountable.
 
 Preparation failures, static reviews and native observations remain separate.
 Freeze the complete implementation, then run exact-source native, locked graphs,

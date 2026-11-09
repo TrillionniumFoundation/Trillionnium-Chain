@@ -90,7 +90,7 @@ TRIGGERS = [
 ]
 
 COMPONENT_STEP = "Run exact sealed-handoff and complete shard-capacity controls"
-SEALED_STEP = "Run real sealed-input Python controls and verify all eighteen cases"
+SEALED_STEP = "Run real sealed-input Python controls and verify every frozen case"
 COMPONENT_RUN_BODY = """\
           set -euo pipefail
           status=0
@@ -129,6 +129,8 @@ SEALED_PYTHON_REQUIRED_NAMES = [
     "test_descriptor_bootstrap_and_owner_pin_cannot_be_replaced",
     "test_expiry_is_checked_before_input_use_and_is_not_reset",
     "test_explicit_material_bridge_uses_sealed_original_pair_and_complete_loaded_contract",
+    "test_failed_supervisor_cancels_connector_before_handshake",
+    "test_failed_supervisor_cancels_ready_wait_after_sealed_handoff",
     "test_fixed_bootstrap_executes_actual_independently_pinned_sealed_worker_bytes",
     "test_fixed_bootstrap_refuses_substituted_worker_before_any_entry",
     "test_fixed_bootstrap_refuses_unsealed_worker_before_any_entry",
@@ -137,6 +139,7 @@ SEALED_PYTHON_REQUIRED_NAMES = [
     "test_missing_scope_or_swapped_role_refuses_the_complete_admission",
     "test_observation_publish_is_complete_before_visibility_and_cannot_replace",
     "test_original_modules_and_configurations_execute_only_same_admitted_fd_bytes",
+    "test_project_source_compiler_preserves_original_annotation_semantics",
     "test_same_length_substituted_fd_fails_actual_content_digest",
     "test_unfinished_publication_remains_pending_without_successful_ready",
     "test_unknown_file_and_metadata_role_never_open_ambient_payload"
@@ -222,7 +225,7 @@ def validate(text: str) -> None:
         exact_line(node, "            " + name)
     require(len(COMPONENT_REQUIRED_NAMES) == len(set(COMPONENT_REQUIRED_NAMES)) == 5,
             "new DA component roster changed")
-    require(len(SEALED_PYTHON_REQUIRED_NAMES) == len(set(SEALED_PYTHON_REQUIRED_NAMES)) == 18,
+    require(len(SEALED_PYTHON_REQUIRED_NAMES) == len(set(SEALED_PYTHON_REQUIRED_NAMES)) == 21,
             "sealed Python controls roster changed")
     for name in COMPONENT_REQUIRED_NAMES:
         exact_line(components, "            " + name)
@@ -310,13 +313,13 @@ def exact_sealed_python_execution(output: str) -> dict:
     require(
         state == "complete"
         and successes == 1
-        and reported == [18]
-        and len(names) == len(set(names)) == 18
+        and reported == [21]
+        and len(names) == len(set(names)) == 21
         and set(names) == set(SEALED_PYTHON_REQUIRED_NAMES),
         "sealed Python controls were omitted, replaced, duplicated, or not run",
     )
     return {
-        "passed": 18,
+        "passed": 21,
         "failed": 0,
         "ignored_or_skipped": 0,
         "test_names": names,
@@ -509,11 +512,11 @@ class CellStorageConvergenceCiControls(unittest.TestCase):
         return "\n".join(
             name + " (test_llm_cell_sealed_worker_v1.SealedHandoffControls." + name + ") ... ok"
             for name in SEALED_PYTHON_REQUIRED_NAMES
-        ) + "\n\n" + "-" * 70 + "\nRan 18 tests in 0.172s\n\nOK\n"
+        ) + "\n\n" + "-" * 70 + "\nRan 21 tests in 0.172s\n\nOK\n"
 
-    def test_exact_sealed_python_execution_accepts_all_eighteen_names(self) -> None:
+    def test_exact_sealed_python_execution_accepts_complete_frozen_roster(self) -> None:
         observation = exact_sealed_python_execution(self.sealed_python_fixture())
-        self.assertEqual(observation["passed"], 18)
+        self.assertEqual(observation["passed"], 21)
         self.assertEqual(set(observation["test_names"]), set(SEALED_PYTHON_REQUIRED_NAMES))
         self.assertEqual(observation["ignored_or_skipped"], 0)
 
@@ -537,8 +540,8 @@ class CellStorageConvergenceCiControls(unittest.TestCase):
     def test_sealed_python_counts_class_and_single_harness_are_required(self) -> None:
         good = self.sealed_python_fixture()
         for changed in (
-            good.replace("Ran 18 tests", "Ran 17 tests", 1),
-            good.replace("Ran 18 tests", "Ran 19 tests", 1),
+            good.replace("Ran 21 tests", "Ran 20 tests", 1),
+            good.replace("Ran 21 tests", "Ran 22 tests", 1),
             good.replace("SealedHandoffControls.", "AnotherClass.", 1),
             good.replace(SEALED_PYTHON_REQUIRED_NAMES[0] + ")", SEALED_PYTHON_REQUIRED_NAMES[1] + ")", 1),
             good + good,
@@ -549,6 +552,25 @@ class CellStorageConvergenceCiControls(unittest.TestCase):
             with self.subTest(output=changed):
                 with self.assertRaises(ValueError):
                     exact_sealed_python_execution(changed)
+
+
+    def test_original_eighteen_alone_and_each_added_control_omission_reject(self) -> None:
+        good = self.sealed_python_fixture()
+        added_names = ['test_project_source_compiler_preserves_original_annotation_semantics', 'test_failed_supervisor_cancels_connector_before_handshake', 'test_failed_supervisor_cancels_ready_wait_after_sealed_handoff']
+        retained_only = good
+        for name in added_names:
+            line = name + " (test_llm_cell_sealed_worker_v1.SealedHandoffControls." + name + ") ... ok\n"
+            self.assertEqual(retained_only.count(line), 1)
+            retained_only = retained_only.replace(line, "", 1)
+        retained_only = retained_only.replace("Ran 21 tests", "Ran 18 tests", 1)
+        with self.assertRaises(ValueError):
+            exact_sealed_python_execution(retained_only)
+        for name in added_names:
+            with self.subTest(added=name):
+                line = name + " (test_llm_cell_sealed_worker_v1.SealedHandoffControls." + name + ") ... ok\n"
+                missing = good.replace(line, "", 1).replace("Ran 21 tests", "Ran 20 tests", 1)
+                with self.assertRaises(ValueError):
+                    exact_sealed_python_execution(missing)
 
 
 if __name__ == "__main__":

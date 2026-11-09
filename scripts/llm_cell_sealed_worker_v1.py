@@ -314,7 +314,10 @@ class ProjectSources(importlib.abc.MetaPathFinder, importlib.abc.Loader):
                     return shim
                 return original_import(fullname, globals, locals, fromlist, level)
             module.__dict__['__builtins__'] = dict(builtins.__dict__, __import__=admitted_import)
-        exec(compile(raw, path, 'exec'), module.__dict__)
+        # Preserve each original module's own compiler flags. Inheriting this
+        # loader's future annotations would also contaminate the original
+        # runtime helper's later compilation of independently pinned imports.
+        exec(compile(raw, path, 'exec', dont_inherit=True), module.__dict__)
         if name == 'llm_runtime_pilot':
             module.file_sha = self.file_sha
             module.read_json = self.read_json
@@ -666,6 +669,7 @@ def query_worker(inputs, directory, value, stop=False):
 
 def supervisor(inputs, state):
     root, observations, failures = Path(inputs.grant['output']), [], []
+    supervisor_finished = threading.Event()
     # Original supervision creates worker/ itself. The connector socket carries
     # only sealed descriptors; no FD inheritance or CLOEXEC change is needed.
     channel = root / 'fd.sock'
@@ -678,14 +682,24 @@ def supervisor(inputs, state):
         listener.listen(1)
         def client():
             try:
-                listener.settimeout(inputs.remaining())
-                connection, _ = listener.accept()
+                while True:
+                    inputs.check()
+                    require(not supervisor_finished.is_set(), 'ORIGINAL_SUPERVISOR_FINISHED')
+                    listener.settimeout(min(0.05, inputs.remaining()))
+                    try:
+                        connection, _ = listener.accept()
+                        break
+                    except socket.timeout:
+                        continue
                 with connection:
+                    require(not supervisor_finished.is_set(), 'ORIGINAL_SUPERVISOR_FINISHED')
                     send_descriptors(connection, inputs)
                 ready_path = root / 'worker/ready.json'
                 while not ready_path.exists():
                     inputs.check()
-                    time.sleep(min(0.05, inputs.remaining()))
+                    require(not supervisor_finished.wait(min(0.05, inputs.remaining())),
+                            'ORIGINAL_SUPERVISOR_FINISHED_BEFORE_READY')
+                require(not supervisor_finished.is_set(), 'ORIGINAL_SUPERVISOR_FINISHED')
                 # Observation is not authority. Exact request/content/parent
                 # binding is checked against the independently retained grant.
                 ready = read_observation(ready_path)
@@ -697,6 +711,7 @@ def supervisor(inputs, state):
                          (inputs.grant['material_profile'] == CURRENT_MATERIAL))
                     and ready.get('authority') == NO_AUTHORITY, 'READY_BINDING')
                 for original in inputs.grant['requests']:
+                    require(not supervisor_finished.is_set(), 'ORIGINAL_SUPERVISOR_FINISHED')
                     request = dict(schema='hepta-smollm-inference-input-v1', **original)
                     observed = query_worker(inputs, root / 'worker', request)
                     require(observed.get('schema') == SCHEMA and
@@ -735,6 +750,11 @@ def supervisor(inputs, state):
                     dict(wall_seconds=remaining_seconds, rss_bytes=inputs.grant['runtime_rss_bytes']),
                     stop_request=stop_request)
         finally:
+            # The original supervisor has returned or raised. Its result still
+            # owns child/reap truth; this event only cancels connector work.
+            # Both the pre-handshake accept and post-handshake Ready wait
+            # observe this event within a bounded poll of the same deadline.
+            supervisor_finished.set()
             # Socket timeouts and the same original absolute deadline bound the
             # connector. A still-live thread is recorded as unresolved failure.
             thread.join(timeout=max(0, (inputs.deadline - time.monotonic_ns()) / 1e9) + 1)

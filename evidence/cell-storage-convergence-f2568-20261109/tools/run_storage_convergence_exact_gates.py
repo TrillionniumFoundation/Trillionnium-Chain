@@ -186,6 +186,8 @@ SEALED_PYTHON_REQUIRED_NAMES = [
     "test_descriptor_bootstrap_and_owner_pin_cannot_be_replaced",
     "test_expiry_is_checked_before_input_use_and_is_not_reset",
     "test_explicit_material_bridge_uses_sealed_original_pair_and_complete_loaded_contract",
+    "test_failed_supervisor_cancels_connector_before_handshake",
+    "test_failed_supervisor_cancels_ready_wait_after_sealed_handoff",
     "test_fixed_bootstrap_executes_actual_independently_pinned_sealed_worker_bytes",
     "test_fixed_bootstrap_refuses_substituted_worker_before_any_entry",
     "test_fixed_bootstrap_refuses_unsealed_worker_before_any_entry",
@@ -194,6 +196,7 @@ SEALED_PYTHON_REQUIRED_NAMES = [
     "test_missing_scope_or_swapped_role_refuses_the_complete_admission",
     "test_observation_publish_is_complete_before_visibility_and_cannot_replace",
     "test_original_modules_and_configurations_execute_only_same_admitted_fd_bytes",
+    "test_project_source_compiler_preserves_original_annotation_semantics",
     "test_same_length_substituted_fd_fails_actual_content_digest",
     "test_unfinished_publication_remains_pending_without_successful_ready",
     "test_unknown_file_and_metadata_role_never_open_ambient_payload"
@@ -508,13 +511,13 @@ def exact_sealed_python_execution(output: str) -> dict:
     require(
         state == "complete"
         and successes == 1
-        and reported == [18]
-        and len(names) == len(set(names)) == 18
+        and reported == [21]
+        and len(names) == len(set(names)) == 21
         and set(names) == set(SEALED_PYTHON_REQUIRED_NAMES),
         "sealed Python controls were omitted, replaced, duplicated, or not run",
     )
     return {
-        "passed": 18,
+        "passed": 21,
         "failed": 0,
         "ignored_or_skipped": 0,
         "test_names": names,
