@@ -14,7 +14,10 @@ on:
       - scripts/cell_learning_completion_join.py
       - scripts/capture_cell_learning_completion.py
       - scripts/test_cell_learning_completion_join.py
+      - scripts/cell_learning_scope_join.py
+      - scripts/test_cell_learning_scope_join.py
       - evidence/cell-learning-completion-20261108/**
+      - evidence/hepta-real-native-adoption-20261108/chain-reader/**
       - evidence/cell-learning-iteration-20261108/native-readbacks/**
       - evidence/cell-adoption-20261108/native-readbacks/**
       - evidence/smollm-cell-replica-research-v1/actual/research-result.json
@@ -76,6 +79,7 @@ jobs:
           "$py" scripts/test_cell_adoption_readback.py -v
           "$py" scripts/test_cell_learning_iteration_join.py -v
           "$py" scripts/test_cell_learning_completion_join.py -v
+          "$py" scripts/test_cell_learning_scope_join.py -v
       - name: Preserve original signed learning suites and execute actual V3 join
         run: |
           set -euo pipefail

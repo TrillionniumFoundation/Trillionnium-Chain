@@ -20,6 +20,8 @@ from pq_source_reader import SourceReadError, read_regular
 SCHEMA = 'trnm-pq-authority-effects-v1'
 RESULT_SCHEMA = 'trnm-pq-authority-effects-result-v1'
 DEFAULT_MANIFEST = 'config/pon/pq-authority-effects-v1.json'
+# The seven route definitions and 44 source paths retain their reviewed scope.
+# Both prior review lineages are documented in PQ_AUTHORITY_EFFECT_REGISTER_V1.md.
 SOURCE_REVISION = '0f0592ace4b08a1d39e1ffad31beee76ddc4fd66'
 PURPOSE = 'curated-source-consistency-only'
 MAX_BYTES = 1024 * 1024

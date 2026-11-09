@@ -293,6 +293,8 @@ class CorpusGateTests(unittest.TestCase):
             "trillionnium/crates/trnm-checkpoint-store/tests/replay.rs",
             "trillionnium/crates/trnm-release-bundle/src/storage.rs",
             "trillionnium/crates/trnm-release-bundle/tests/rotation.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/unlisted.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/nested/recovery.rs",
         ):
             with self.subTest(path=name):
                 path = self.root / name

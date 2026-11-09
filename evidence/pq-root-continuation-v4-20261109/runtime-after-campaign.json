@@ -1,0 +1,11 @@
+{
+  "schema": "trnm-v4-post-campaign-runtime-observation",
+  "source": "0d99924005b70b1308bf3e62c53e9300fbb4aac4",
+  "observed_utc": "2026-11-09T09:05:48.901398+00:00",
+  "observed_after_campaign": true,
+  "not_an_additional_campaign_command": true,
+  "python_version": "3.14.4 (main, Aug 20 2026, 10:41:58) [GCC 15.2.0]",
+  "python_executable": "/usr/bin/python3",
+  "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+  "scope": "Current packaging-process runtime observation, not authenticated or continuously monitored execution provenance."
+}

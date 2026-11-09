@@ -1,0 +1,51 @@
+[
+  {
+    "name": "default",
+    "argv": [
+      "cargo",
+      "metadata",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "exit_code": 0,
+    "seconds": 0.6930856100000256,
+    "bytes": 850845,
+    "sha256": "636f8fe7b362317a9ed7af4197ae072e678777b1b01ea83cdc5b995d4e5b3edd"
+  },
+  {
+    "name": "all-features",
+    "argv": [
+      "cargo",
+      "metadata",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--format-version",
+      "1",
+      "--all-features"
+    ],
+    "exit_code": 0,
+    "seconds": 0.21372095599986096,
+    "bytes": 866232,
+    "sha256": "e1d5450c35e76bb0c6adb0dce19d3a7b3aa456c280a56edb0a063ece17d7f8d5"
+  },
+  {
+    "name": "fuzz",
+    "argv": [
+      "cargo",
+      "metadata",
+      "--locked",
+      "--manifest-path",
+      "tests/fuzz/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "exit_code": 0,
+    "seconds": 0.18146473100000549,
+    "bytes": 735700,
+    "sha256": "809a9ec15efcbdc4390efd82dc4446290df6831df851dddbbd5190244f610dd2"
+  }
+]

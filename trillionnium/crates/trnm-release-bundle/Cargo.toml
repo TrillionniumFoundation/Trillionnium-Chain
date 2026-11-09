@@ -6,10 +6,15 @@ license.workspace = true
 authors.workspace = true
 publish = false
 
+[features]
+default = []
+pq-root-v3 = ["trnm-crypto-primitives/pq-native-openssl", "dep:openssl"]
+
 [dependencies]
 trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
 sha2 = "0.10"
 trnm-crypto-primitives = { version = "=0.1.0", path = "../trnm-crypto-primitives" }
+openssl = { version = "=0.10.81", optional = true }
 
 [dev-dependencies]
 zeroize = "=1.9.1"

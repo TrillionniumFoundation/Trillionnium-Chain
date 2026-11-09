@@ -41,6 +41,8 @@ pub mod release_finality;
 pub mod release_owner;
 /// Opt-in bounded work-schedule checks; never selected by native admission.
 pub mod research_work_schedule;
+#[cfg(all(target_os = "linux", feature = "pq-root-v3"))]
+pub mod root_recovery_v3;
 mod store;
 pub use error::{Error, ErrorCode, ErrorKind};
 use serde_json::{json, Value};

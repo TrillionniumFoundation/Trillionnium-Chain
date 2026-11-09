@@ -13,6 +13,17 @@ case "${1:?required job}" in
     python3 scripts/ci/test_pq_authority_effect_register.py
     python3 scripts/ci/pq_authority_effect_register.py
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v
+    python3 formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py -v
+    python3 formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py -v
+    python3 scripts/ci/test_pq_root_dependency_register.py
+    python3 scripts/ci/pq_root_dependency_register.py
+    python3 scripts/ci/test_run_pq_root_native_v3.py
+    python3 scripts/ci/test_pq_root_custody_review_v1.py
+    python3 scripts/ci/pq_root_custody_review_v1.py
+    python3 scripts/ci/test_pq_root_migration_review_v1.py
+    python3 scripts/ci/pq_root_migration_review_v1.py
+    python3 scripts/ci/test_run_pq_root_continuation_v4.py
+    python3 scripts/ci/test_authenticated_suite_count.py
     python3 scripts/ci/test_pq_chain_claim_guard.py
     # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.
     python3 scripts/ci/test_w1_qrom_current_implementation_audit.py
@@ -155,6 +166,14 @@ PY
     PYTHONWARNINGS=error::ResourceWarning python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_account_migration.py' -v
     PYTHONWARNINGS=error::ResourceWarning python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_migration_journal_owner.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_seed_relation_vectors_v1.py' -v
+    # Execute root components before the retained Host/control gate.
+    # Its failure still vetoes this lane; original commands keep their order.
+    # Missing pinned providers fail these mandatory native suites.
+    python3 formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_native_v2.py -v
+    python3 formal/pon-nakamoto-v1/test_pq_root_effect_readback_native_v2.py -v
+    python3 formal/pon-nakamoto-v1/test_pq_root_recovery_journal_native_v2.py -v
+    python3 scripts/ci/run_pq_root_native_v3.py
+    python3 scripts/ci/run_pq_root_continuation_v4.py
     python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_lifecycle_cost_v4
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-checkpoint-types -p trnm-verification-profiles --all-targets --all-features

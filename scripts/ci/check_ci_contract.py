@@ -347,6 +347,63 @@ NATIVE_RELEASE_BLOCK = '''    (
     )
 '''
 
+# Root structure controls run before the remaining repository readers. Freeze the
+# prefix so a surrounding shell condition cannot silently skip even the models.
+ROOT_RECOVERY_STRUCTURE_BLOCK = """    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v
+    python3 formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py -v
+    python3 formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py -v
+    python3 scripts/ci/test_pq_root_dependency_register.py
+    python3 scripts/ci/pq_root_dependency_register.py
+    python3 scripts/ci/test_run_pq_root_native_v3.py
+    python3 scripts/ci/test_pq_root_custody_review_v1.py
+    python3 scripts/ci/pq_root_custody_review_v1.py
+    python3 scripts/ci/test_pq_root_migration_review_v1.py
+    python3 scripts/ci/pq_root_migration_review_v1.py
+    python3 scripts/ci/test_run_pq_root_continuation_v4.py
+    python3 scripts/ci/test_authenticated_suite_count.py
+"""
+ROOT_RECOVERY_TRUTH_PREFIX = CREDIT_MODEL_PREFIX + '''    python3 scripts/ci/test_project_boundary.py
+    python3 scripts/ci/test_pq_lifetime_budget.py
+    python3 scripts/ci/pq_lifetime_budget.py
+    python3 scripts/ci/test_pq_authority_effect_register.py
+    python3 scripts/ci/pq_authority_effect_register.py
+''' + ROOT_RECOVERY_STRUCTURE_BLOCK
+# Direct file execution makes a missing suite a hard failure.
+# These entries have no skip or backend fallback.
+ROOT_RECOVERY_NATIVE_BLOCK = '''    # Execute root components before the retained Host/control gate.
+    # Its failure still vetoes this lane; original commands keep their order.
+    # Missing pinned providers fail these mandatory native suites.
+    python3 formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_native_v2.py -v
+    python3 formal/pon-nakamoto-v1/test_pq_root_effect_readback_native_v2.py -v
+    python3 formal/pon-nakamoto-v1/test_pq_root_recovery_journal_native_v2.py -v
+    python3 scripts/ci/run_pq_root_native_v3.py
+    python3 scripts/ci/run_pq_root_continuation_v4.py
+'''
+ROOT_RECOVERY_TEST_FILES = (
+    'formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py',
+    'formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py',
+    'formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_native_v2.py',
+    'formal/pon-nakamoto-v1/test_pq_root_effect_readback_native_v2.py',
+    'formal/pon-nakamoto-v1/test_pq_root_recovery_journal_native_v2.py',
+    'scripts/ci/run_pq_root_native_v3.py',
+    'scripts/ci/test_run_pq_root_native_v3.py',
+    'scripts/ci/test_pq_root_dependency_register.py',
+    'scripts/ci/run_pq_root_continuation_v4.py',
+    'scripts/ci/test_run_pq_root_continuation_v4.py',
+    'scripts/ci/test_authenticated_suite_count.py',
+    'scripts/ci/test_pq_root_custody_review_v1.py',
+    'scripts/ci/pq_root_custody_review_v1.py',
+    'scripts/ci/test_pq_root_migration_review_v1.py',
+    'scripts/ci/pq_root_migration_review_v1.py',
+    'trillionnium/crates/trnm-pon-node/tests/recovery_floor_v4_native.rs',
+    'trillionnium/crates/trnm-pon-node/tests/root_effect_readback_v4_native.rs',
+    'trillionnium/crates/trnm-pon-node/tests/root_budget_v4_native.rs',
+    'trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs',
+    'trillionnium/crates/trnm-release-bundle/src/root_recovery_v3_tests.rs',
+    'trillionnium/crates/trnm-pon-node/tests/root_recovery_v3_native.rs',
+)
+
 # Freeze the complete straight-line lane independently of the file being checked.
 # Presence/count checks alone also match commands skipped or swallowed by shell
 # control flow. Keep their specific diagnostics before the full-lane comparison.
@@ -356,7 +413,7 @@ PQ_MIGRATION_CONFORMANCE_PREFIX = '''    # Actual offline signatures/SQLite and 
     PYTHONWARNINGS=error::ResourceWarning python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_migration_journal_owner.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_seed_relation_vectors_v1.py' -v
 '''
-PROTOCOL_CONTRACT_BLOCK = PQ_MIGRATION_CONFORMANCE_PREFIX + '''    python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"
+PROTOCOL_CONTRACT_BLOCK = PQ_MIGRATION_CONFORMANCE_PREFIX + ROOT_RECOVERY_NATIVE_BLOCK + '''    python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_lifecycle_cost_v4
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-checkpoint-types -p trnm-verification-profiles --all-targets --all-features
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --all-targets --all-features
@@ -628,6 +685,17 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_pq_authority_effect_register.py
     python3 scripts/ci/pq_authority_effect_register.py
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v
+    python3 formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py -v
+    python3 formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py -v
+    python3 scripts/ci/test_pq_root_dependency_register.py
+    python3 scripts/ci/pq_root_dependency_register.py
+    python3 scripts/ci/test_run_pq_root_native_v3.py
+    python3 scripts/ci/test_pq_root_custody_review_v1.py
+    python3 scripts/ci/pq_root_custody_review_v1.py
+    python3 scripts/ci/test_pq_root_migration_review_v1.py
+    python3 scripts/ci/pq_root_migration_review_v1.py
+    python3 scripts/ci/test_run_pq_root_continuation_v4.py
+    python3 scripts/ci/test_authenticated_suite_count.py
     python3 scripts/ci/test_pq_chain_claim_guard.py
     # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.
     python3 scripts/ci/test_w1_qrom_current_implementation_audit.py
@@ -1402,6 +1470,17 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         re.sub(r'\\\n[ \t]*', ' ', REPOSITORY_TRUTH_BLOCK))
     require(repository_commands == expected_repository_commands,
             'repository-truth controls must retain a straight-line command sequence')
+    root_prefix = code_lines(ROOT_RECOVERY_TRUTH_PREFIX)
+    require(code_lines(lanes['repository-truth'])[:len(root_prefix)] == root_prefix,
+            'root recovery structure controls must execute in the straight-line repository-truth prefix')
+    for block, lane in ((ROOT_RECOVERY_STRUCTURE_BLOCK, 'repository-truth'),
+                        (ROOT_RECOVERY_NATIVE_BLOCK, 'protocol-contract')):
+        require(block in lanes[lane] and
+                all(code_lines(script).count(command) == 1 for command in code_lines(block)),
+                'root recovery suites must execute exactly once in their assigned lane without fallback')
+    native_prefix = code_lines(ROOT_RECOVERY_NATIVE_BLOCK)
+    require(code_lines(lanes['protocol-contract'])[len(pq_commands):len(pq_commands) + len(native_prefix)] == native_prefix,
+            'root native suites must execute before the unchanged mandatory Host/control gate')
     require(code_lines(lanes['protocol-contract']) == code_lines(PROTOCOL_CONTRACT_BLOCK),
             'protocol-contract must retain its complete straight-line command sequence without shell control flow that skips tests or swallows failures')
     require(code_lines(lanes['repository-truth']) == code_lines(REPOSITORY_TRUTH_BLOCK),
@@ -1543,9 +1622,14 @@ def check_from_zero_host_callsites(root: Path) -> None:
     command = ('python3 scripts/ci/run_from_zero_host.py -- '
                'python3 scripts/ci/run_from_zero_native.py --out ')
     workflow_command = '        run: ' + command + '"$TRNM_CI_RECEIPT_DIR/from-zero-native"\n'
-    check_from_zero_host_call((root / 'scripts/ci/ci_job.sh').read_text(),
-        '  protocol-contract)\n' + PQ_MIGRATION_CONFORMANCE_PREFIX + '    ' + command
+    script = (root / 'scripts/ci/ci_job.sh').read_text()
+    check_from_zero_host_call(script,
+        '  protocol-contract)\n' + PQ_MIGRATION_CONFORMANCE_PREFIX + ROOT_RECOVERY_NATIVE_BLOCK + '    ' + command
         + '"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"\n')
+    protocol = re.search(r'(?ms)^  protocol-contract\)\n(.*?)(?=^    ;;$)', script)
+    native_prefix = code_lines(PQ_MIGRATION_CONFORMANCE_PREFIX + ROOT_RECOVERY_NATIVE_BLOCK)
+    require(protocol is not None and code_lines(protocol[1])[:len(native_prefix)] == native_prefix,
+            'root native suites precede the retained original Host call in protocol-contract')
     check_from_zero_host_call((root / '.github/workflows/trnm-required-baseline.yml').read_text(),
         '      - name: Execute exact native from-zero service controls\n'
         '        if: always()\n' + workflow_command)
@@ -1863,6 +1947,10 @@ def validate(root: Path = ROOT) -> dict:
                 '          pattern: ' + artifact + '-*\n' in gate and
                 'uses: ' + DOWNLOAD in gate and '          path: ${{ runner.temp }}/rust-shards/\n' in gate and
                 '          merge-multiple: false\n' in gate, 'distinct current-source current-attempt shard artifacts')
+    for suite in ROOT_RECOVERY_TEST_FILES:
+        path = root / suite
+        require(path.is_file() and not path.is_symlink(),
+                'root recovery CI suite must remain a regular source file: ' + suite)
     script = (root / 'scripts/ci/ci_job.sh').read_text()
     check_independent_conformance(script, set(required))
     require('    python3 scripts/ci/run_fuzz_smoke.py\n' in script,

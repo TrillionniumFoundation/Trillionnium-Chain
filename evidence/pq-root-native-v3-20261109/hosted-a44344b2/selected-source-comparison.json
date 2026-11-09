@@ -1,0 +1,43 @@
+{
+  "base": "080c33cca445fca1735bc51ac4cf63f37a273263",
+  "head": "a44344b25d12328fedd883a335585f03d059060b",
+  "scope": "selected retained original campaign inputs only; not a causal no-regression proof",
+  "files": [
+    {
+      "path": ".github/workflows/pon-native-campaign-qualification.yml",
+      "unchanged": true,
+      "base_sha256": "1b1b2ab8331b8bb53874a6e9a4845facfa9d9717473a7c3732fb068a8d96b14a",
+      "head_sha256": "1b1b2ab8331b8bb53874a6e9a4845facfa9d9717473a7c3732fb068a8d96b14a"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "unchanged": true,
+      "base_sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf",
+      "head_sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs",
+      "unchanged": true,
+      "base_sha256": "d7657fc6c5bd85b630cb4402846ef7e408cb30b7cf4466b4e9e16a67d018a5fd",
+      "head_sha256": "d7657fc6c5bd85b630cb4402846ef7e408cb30b7cf4466b4e9e16a67d018a5fd"
+    },
+    {
+      "path": "scripts/run_pon_w1_native_campaign.py",
+      "unchanged": true,
+      "base_sha256": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431",
+      "head_sha256": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431"
+    },
+    {
+      "path": "scripts/pon_public_v3_phase_read.py",
+      "unchanged": true,
+      "base_sha256": "deeadace0e557298728aa10f7636b340a86fe2bd705b2d0ebd0c9b17773f3482",
+      "head_sha256": "deeadace0e557298728aa10f7636b340a86fe2bd705b2d0ebd0c9b17773f3482"
+    },
+    {
+      "path": "scripts/ci/verify_ci_source.py",
+      "unchanged": true,
+      "base_sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+      "head_sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    }
+  ]
+}

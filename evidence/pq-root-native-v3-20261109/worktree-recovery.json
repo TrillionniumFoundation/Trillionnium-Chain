@@ -1,0 +1,16 @@
+{
+  "removed_duplicate_temporary_worktree": "/workspace/scratch/5faaca703596/authority-v3-fix",
+  "preserved_patch_sha256": "9d8892d4de96edfb7ff8851b6c9a07805d147a49f652311460aba65f2fb71cd3",
+  "verified_changed_files_in_published_commit": "a44344b25d12328fedd883a335585f03d059060b",
+  "changed_files": [
+    "config/pon/pq-authority-effects-v1.json",
+    "config/pon/pq-root-dependency-register-v3.json",
+    "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+    "scripts/ci/pq_authority_effect_register.py",
+    "scripts/ci/pq_root_dependency_register.py",
+    "scripts/ci/test_pq_authority_effect_register.py",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs",
+    "trillionnium/crates/trnm-pon-node/tests/root_recovery_v3_native.rs"
+  ],
+  "primary_checkout_or_evidence_removed": false
+}

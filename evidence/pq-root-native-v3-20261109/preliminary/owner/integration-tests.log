@@ -1,0 +1,142 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.42s
+     Running tests/root_recovery_v3_native.rs (/workspace/scratch/5faaca703596/cargo-target/debug/deps/root_recovery_v3_native-e4ed7b6e40bb6e05)
+
+running 20 tests
+test native_owner_v3_authenticated_response_still_must_bind_fresh_challenge ... FAILED
+test native_owner_v3_callback_cannot_replace_original_owner_budget ... FAILED
+test native_owner_v3_cancellation_after_external_commit_requires_reconciliation ... FAILED
+test native_owner_v3_changed_current_bytes_and_replaced_database_are_not_authority ... FAILED
+test native_owner_v3_co_restored_owner_and_anchor_counterexample_remains_accepted ... FAILED
+test native_owner_v3_corrupt_pending_state_cannot_promote_even_after_real_cas ... FAILED
+test native_owner_v3_domain_binds_each_independent_identity_without_zero_fallback ... ok
+test native_owner_v3_last_observation_rechecks_persisted_revocation_and_rotation ... FAILED
+test native_owner_v3_foreign_sqlite_namespace_is_refused_without_mutating_it ... FAILED
+test native_owner_v3_lost_successful_cas_reply_requires_explicit_exact_completion ... FAILED
+test native_owner_v3_reopen_reverifies_retained_signature_bytes ... FAILED
+test native_owner_v3_real_signed_append_reopen_and_exact_intent_observation ... FAILED
+test native_owner_v3_retained_external_anchor_refuses_whole_local_rollback ... FAILED
+test native_owner_v3_same_budget_exhaustion_retains_pending_before_cas ... FAILED
+test native_owner_v3_storage_tamper_schema_alias_and_concurrent_open_fail_closed ... FAILED
+test native_owner_v3_successor_cannot_reuse_an_anchor_or_writer_key ... FAILED
+test native_owner_v3_unadvanced_anchor_cannot_clear_pending_or_retry ... FAILED
+test native_owner_v3_writer_signature_is_verified_before_transport ... ok
+test native_owner_v3_wrong_enrollment_scope_and_service_aliases_are_refused ... FAILED
+test native_owner_v3_replay_preserves_nonce_and_refuses_second_exact_operation ... FAILED
+
+failures:
+
+---- native_owner_v3_authenticated_response_still_must_bind_fresh_challenge stdout ----
+
+thread 'native_owner_v3_authenticated_response_still_must_bind_fresh_challenge' (15) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:331:10:
+called `Result::unwrap()` on an `Err` value: Custom { kind: InvalidData, error: "ROOT_OWNER_PRIVATE_DIRECTORY_IDENTITY" }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- native_owner_v3_callback_cannot_replace_original_owner_budget stdout ----
+
+thread 'native_owner_v3_callback_cannot_replace_original_owner_budget' (16) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:658:5:
+assertion failed: error.to_string().contains("CALLBACK_REPLACED_BUDGET")
+
+---- native_owner_v3_cancellation_after_external_commit_requires_reconciliation stdout ----
+
+thread 'native_owner_v3_cancellation_after_external_commit_requires_reconciliation' (17) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:331:10:
+called `Result::unwrap()` on an `Err` value: Custom { kind: InvalidData, error: "ROOT_OWNER_PRIVATE_DIRECTORY_IDENTITY" }
+
+---- native_owner_v3_changed_current_bytes_and_replaced_database_are_not_authority stdout ----
+
+thread 'native_owner_v3_changed_current_bytes_and_replaced_database_are_not_authority' (18) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:331:10:
+called `Result::unwrap()` on an `Err` value: Custom { kind: InvalidData, error: "ROOT_OWNER_PRIVATE_DIRECTORY_IDENTITY" }
+
+---- native_owner_v3_co_restored_owner_and_anchor_counterexample_remains_accepted stdout ----
+
+thread 'native_owner_v3_co_restored_owner_and_anchor_counterexample_remains_accepted' (19) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:331:10:
+called `Result::unwrap()` on an `Err` value: Custom { kind: InvalidData, error: "ROOT_OWNER_PRIVATE_DIRECTORY_IDENTITY" }
+
+---- native_owner_v3_corrupt_pending_state_cannot_promote_even_after_real_cas stdout ----
+
+thread 'native_owner_v3_corrupt_pending_state_cannot_promote_even_after_real_cas' (20) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:331:10:
+called `Result::unwrap()` on an `Err` value: Custom { kind: InvalidData, error: "ROOT_OWNER_PRIVATE_DIRECTORY_IDENTITY" }
+
+---- native_owner_v3_last_observation_rechecks_persisted_revocation_and_rotation stdout ----
+
+thread 'native_owner_v3_last_observation_rechecks_persisted_revocation_and_rotation' (23) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:331:10:
+called `Result::unwrap()` on an `Err` value: Custom { kind: InvalidData, error: "ROOT_OWNER_PRIVATE_DIRECTORY_IDENTITY" }
+
+---- native_owner_v3_foreign_sqlite_namespace_is_refused_without_mutating_it stdout ----
+
+thread 'native_owner_v3_foreign_sqlite_namespace_is_refused_without_mutating_it' (22) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:772:5:
+assertion failed: error.to_string().contains("DATABASE_NAMESPACE")
+
+---- native_owner_v3_lost_successful_cas_reply_requires_explicit_exact_completion stdout ----
+
+thread 'native_owner_v3_lost_successful_cas_reply_requires_explicit_exact_completion' (24) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:331:10:
+called `Result::unwrap()` on an `Err` value: Custom { kind: InvalidData, error: "ROOT_OWNER_PRIVATE_DIRECTORY_IDENTITY" }
+
+---- native_owner_v3_reopen_reverifies_retained_signature_bytes stdout ----
+
+thread 'native_owner_v3_reopen_reverifies_retained_signature_bytes' (26) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:331:10:
+called `Result::unwrap()` on an `Err` value: Custom { kind: InvalidData, error: "ROOT_OWNER_PRIVATE_DIRECTORY_IDENTITY" }
+
+---- native_owner_v3_real_signed_append_reopen_and_exact_intent_observation stdout ----
+
+thread 'native_owner_v3_real_signed_append_reopen_and_exact_intent_observation' (25) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:331:10:
+called `Result::unwrap()` on an `Err` value: Custom { kind: InvalidData, error: "ROOT_OWNER_PRIVATE_DIRECTORY_IDENTITY" }
+
+---- native_owner_v3_retained_external_anchor_refuses_whole_local_rollback stdout ----
+
+thread 'native_owner_v3_retained_external_anchor_refuses_whole_local_rollback' (28) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:331:10:
+called `Result::unwrap()` on an `Err` value: Custom { kind: InvalidData, error: "ROOT_OWNER_PRIVATE_DIRECTORY_IDENTITY" }
+
+---- native_owner_v3_same_budget_exhaustion_retains_pending_before_cas stdout ----
+
+thread 'native_owner_v3_same_budget_exhaustion_retains_pending_before_cas' (29) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:331:10:
+called `Result::unwrap()` on an `Err` value: Custom { kind: InvalidData, error: "ROOT_OWNER_PRIVATE_DIRECTORY_IDENTITY" }
+
+---- native_owner_v3_storage_tamper_schema_alias_and_concurrent_open_fail_closed stdout ----
+
+thread 'native_owner_v3_storage_tamper_schema_alias_and_concurrent_open_fail_closed' (30) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:331:10:
+called `Result::unwrap()` on an `Err` value: Custom { kind: InvalidData, error: "ROOT_OWNER_PRIVATE_DIRECTORY_IDENTITY" }
+
+---- native_owner_v3_successor_cannot_reuse_an_anchor_or_writer_key stdout ----
+
+thread 'native_owner_v3_successor_cannot_reuse_an_anchor_or_writer_key' (31) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:331:10:
+called `Result::unwrap()` on an `Err` value: Custom { kind: InvalidData, error: "ROOT_OWNER_PRIVATE_DIRECTORY_IDENTITY" }
+
+---- native_owner_v3_unadvanced_anchor_cannot_clear_pending_or_retry stdout ----
+
+thread 'native_owner_v3_unadvanced_anchor_cannot_clear_pending_or_retry' (32) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:331:10:
+called `Result::unwrap()` on an `Err` value: Custom { kind: InvalidData, error: "ROOT_OWNER_PRIVATE_DIRECTORY_IDENTITY" }
+
+---- native_owner_v3_wrong_enrollment_scope_and_service_aliases_are_refused stdout ----
+
+thread 'native_owner_v3_wrong_enrollment_scope_and_service_aliases_are_refused' (34) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:331:10:
+called `Result::unwrap()` on an `Err` value: Custom { kind: InvalidData, error: "ROOT_OWNER_PRIVATE_DIRECTORY_IDENTITY" }
+
+---- native_owner_v3_replay_preserves_nonce_and_refuses_second_exact_operation stdout ----
+
+thread 'native_owner_v3_replay_preserves_nonce_and_refuses_second_exact_operation' (27) panicked at crates/trnm-pon-node/tests/root_recovery_v3_native.rs:331:10:
+called `Result::unwrap()` on an `Err` value: Custom { kind: InvalidData, error: "ROOT_OWNER_PRIVATE_DIRECTORY_IDENTITY" }
+
+
+failures:
+    native_owner_v3_authenticated_response_still_must_bind_fresh_challenge
+    native_owner_v3_callback_cannot_replace_original_owner_budget
+    native_owner_v3_cancellation_after_external_commit_requires_reconciliation
+    native_owner_v3_changed_current_bytes_and_replaced_database_are_not_authority
+    native_owner_v3_co_restored_owner_and_anchor_counterexample_remains_accepted
+    native_owner_v3_corrupt_pending_state_cannot_promote_even_after_real_cas
+    native_owner_v3_foreign_sqlite_namespace_is_refused_without_mutating_it
+    native_owner_v3_last_observation_rechecks_persisted_revocation_and_rotation
+    native_owner_v3_lost_successful_cas_reply_requires_explicit_exact_completion
+    native_owner_v3_real_signed_append_reopen_and_exact_intent_observation
+    native_owner_v3_reopen_reverifies_retained_signature_bytes
+    native_owner_v3_replay_preserves_nonce_and_refuses_second_exact_operation
+    native_owner_v3_retained_external_anchor_refuses_whole_local_rollback
+    native_owner_v3_same_budget_exhaustion_retains_pending_before_cas
+    native_owner_v3_storage_tamper_schema_alias_and_concurrent_open_fail_closed
+    native_owner_v3_successor_cannot_reuse_an_anchor_or_writer_key
+    native_owner_v3_unadvanced_anchor_cannot_clear_pending_or_retry
+    native_owner_v3_wrong_enrollment_scope_and_service_aliases_are_refused
+
+test result: FAILED. 2 passed; 18 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.71s
+
+error: test failed, to rerun pass `-p trnm-pon-node --test root_recovery_v3_native`

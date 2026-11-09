@@ -1,0 +1,20 @@
+{
+  "schema": "trnm-root-v4-evidence-byte-check-v1",
+  "source": "0d99924005b70b1308bf3e62c53e9300fbb4aac4",
+  "recorded_command_log_hashes_verified": true,
+  "native_rosters_reparsed_from_raw_logs": true,
+  "gzip_roundtrips_verified": true,
+  "archive_file_counts": {
+    "attempt-0d999240": 62,
+    "attempt-db48af79": 59,
+    "development": 15,
+    "hosted-source-details": 13,
+    "hosted-corrected-details": 43,
+    "preparation": 17
+  },
+  "initial_unrecorded_log_hash_scope": "post-recovery bytes; no fabricated command-end receipt",
+  "execution_provenance_authenticated": false,
+  "security_properties_proved_by_packaging": false,
+  "recovered_harness_sha256": "6d91d83e773f553f23a47ba07d1170958780fa3e2c163d4fac3278619c258b9f",
+  "packager_sha256": "fccd1176b21939514a9fe68c98f3391a8d01bb71f71314321527f14f7bee3f23"
+}

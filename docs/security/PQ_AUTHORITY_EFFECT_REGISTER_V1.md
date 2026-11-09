@@ -11,7 +11,7 @@ reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
 while `status: HOLD`, `coverage_complete: false`,
 `whole_chain_pq_qualified: false`, and `production_activation: false` remain fixed.
 
-This closes a source-recording gap in the earlier
+The original register closed a source-recording gap in the earlier
 [cryptographic surface inventory](PQ_AUTHORITY_SURFACE_AUDIT_20261031.md): a
 classic transfer type is not interchangeable with the native account owner, and
 a signature, context comparison, downloaded artifact or certificate observation
@@ -27,7 +27,7 @@ reviewed source observation; the checker does not reconstruct the call graph.
 
 | Route | Source connection and observed effect | Fixed effect scope |
 | --- | --- | --- |
-| `compat_transfer_type_v1` | `trnm-types::TransferTx::validate_basic` checks a classic Ed25519 address/signature and returns validation. At the named baseline, repository references were confined to the type module, its export and tests; no native Node consumer was found. | `validation-result-only` |
+| `compat_transfer_type_v1` | `trnm-types::TransferTx::validate_basic` checks a classic Ed25519 address/signature and returns validation. At the original review baseline, repository references were confined to the type module, its export and tests; no native Node consumer was found. | `validation-result-only` |
 | `native_pnx1_account_transfer` | `pon_wire::Envelope` enters `pon_executor::prepare`; the classical branch verifies the signing digest. `apply_authenticated_application` checks nonce and fees, then tag 1 debits and credits accounts. The Node execution/admission path persists the result, and the selected activation path updates the active state. | `native-account-state-and-node-persistence` |
 | `portable_consumption_settlement_v1` | `ConsumptionSettlementStoreV1::execute_committed_execution` reaches bilateral receipt/rollup checks in `engine.rs`, then the portable settlement state and SQLite journal. Provider/consumer signatures are Ed25519. No native Node consumer of this store was found in the reviewed repository. | `portable-settlement-store-only` |
 | `research_command_state_v1` | `SignedResearchCommandV1::validate` checks Ed25519. `ResearchProtocolState::apply` checks the chain, role/key authority and command replay before changing research objects. No Node execution or installation consumer was found. | `research-protocol-state-only` |
@@ -94,6 +94,57 @@ that revision label and the digest of the entire path/hash table:
 ```text
 aa8d0fd93a6917b6a4685673c1a286575df026b3cc144750aaef4a95bf77e773
 ```
+
+These identifiers retain the original review provenance. They are not accepted
+alternatives to the current fixed revision and lock.
+
+### Retained export-continuation review, 2026-11-09
+
+This subsection preserves the separate root-recovery branch's review. Its
+revision and table digest are historical records, not alternatives accepted by
+the active checker. Integration must preserve the later account, funding,
+discovery and owner boundaries in the current source mapping above.
+
+The unmodified guard at `1f7ff4106f14e5b514d95a9faf2c5eea1233aea5` refused
+the changed `trnm-crypto-primitives/src/lib.rs` file with exit 2 and
+`source lock hash mismatch`. The continuation explicitly reviews that mismatch;
+it does not suppress it or make the guard accept a self-reported new hash.
+
+All 44 reviewed source blobs were extracted from
+`git show 1f7ff4106f14e5b514d95a9faf2c5eea1233aea5:<path>` and matched against
+the isolated worktree before updating the fixed table. Forty-three retain their
+original digests. The only changed file is
+[`trnm-crypto-primitives/src/lib.rs`](../../trillionnium/crates/trnm-crypto-primitives/src/lib.rs),
+which adds exactly `pub mod pq_root_v3;`. Its old and new SHA-256 values are:
+
+```text
+prior:    6227e644777beec35d8676cc04c31ffdf269b187414bdd27ec99daac6c861421
+reviewed: d7159f4fe718a6c59220e449d92480abc9fc5677d74329b1eb4b9d0eafaff9ee
+```
+
+The original `88568e2` commit object was unavailable in the continuation's local
+checkout. The retained old blobs were recovered from
+`080c33cca445fca1735bc51ac4cf63f37a273263` and all 44 matched the original
+individual SHA-256 pins. This recovers the pinned review bytes; it does not
+authenticate the old commit or claim a fresh read of its unavailable object.
+
+That branch's checker fixed the continuation revision and this table digest:
+
+```text
+9e85ab502748491c4aa6ecbe36801a098392cb65ba7f93b526deb4b887127392
+```
+
+The seven route IDs, their source categories, 44-path set, profile boundaries,
+effect scopes and false qualification flags are unchanged. The route
+observations above remain the original curated observations; this one-line
+export review does not repeat a whole-repository reachability audit. Binding
+the export's bytes does not include the exported V3 module, native root owner,
+M15 sink or external provider in these seven routes. The distinct
+[root dependency register](PQ_ROOT_DEPENDENCY_REGISTER_V3.md) retains its own
+source map and unresolved obligations. There is no fallback to the old review,
+accept-current-tree mode, route expansion or new runtime-coverage claim.
+
+### Fixed table encoding and inspection boundary
 
 The table digest is SHA-256 of UTF-8 JSON containing exactly
 `{"source_revision": SOURCE_REVISION, "files": source_files_sha256}`, serialized

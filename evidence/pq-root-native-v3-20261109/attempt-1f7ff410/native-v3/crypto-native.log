@@ -1,0 +1,4 @@
+error: failed to create directory `/workspace/scratch/5faaca703596/cargo-target/debug/.fingerprint/trnm-crypto-primitives-496d968982a6399b`
+
+Caused by:
+  No space left on device (os error 28)

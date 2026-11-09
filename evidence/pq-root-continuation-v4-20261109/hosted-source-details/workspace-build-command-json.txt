@@ -1,0 +1,63 @@
+{
+  "argv": [
+    "cargo",
+    "+1.95.0",
+    "test",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "environment": {
+    "CI": "true",
+    "CARGO_HOME": "/home/runner/work/_temp/cargo-original-workspace-test-cpu",
+    "CARGO_TARGET_DIR": "/home/runner/work/_temp/target-original-workspace-test-cpu",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0",
+    "RUST_TEST_THREADS": "1",
+    "RUSTFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC": null,
+    "RUSTC_BOOTSTRAP": null,
+    "RUSTDOC": null,
+    "RUSTDOCFLAGS": null,
+    "CARGO_ENCODED_RUSTDOCFLAGS": null,
+    "CARGO_BUILD_RUSTC": null,
+    "CARGO_BUILD_RUSTDOC": null,
+    "CARGO_BUILD_RUSTFLAGS": null,
+    "CARGO_BUILD_TARGET": null,
+    "CARGO_BUILD_RUSTC_WRAPPER": null,
+    "CARGO_BUILD_RUSTC_WORKSPACE_WRAPPER": null,
+    "OPENSSL_DIR": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.7UVhCmH5/install",
+    "OPENSSL_STATIC": "1",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_MODULES": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.7UVhCmH5/install/lib/ossl-modules",
+    "TRNM_PQ_OPENSSL": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.7UVhCmH5/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "f54b04f140e9f6ed934bb795a8291b5bf299d21e66ba28c6ab2b2585e9496443",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "process_measurement_wrapper": [
+    "/usr/bin/time",
+    "-v"
+  ],
+  "rustc_selected_by_rustup": "/home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+  "test_profile_packages": {
+    "trnm-pon-node": {
+      "opt-level": 3,
+      "debug-assertions": true,
+      "overflow-checks": true
+    },
+    "trnm-mvcc-fee": {
+      "opt-level": 1,
+      "debug-assertions": true,
+      "overflow-checks": true
+    }
+  },
+  "scope": "complete workspace test-profile build; only the named selectors run below"
+}

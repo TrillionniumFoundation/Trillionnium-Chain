@@ -319,6 +319,70 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'credit model prefix'):
                     check_independent_conformance(
                         self.script.replace(CREDIT_MODEL_PREFIX, replacement), self.lanes)
+    def test_native_v3_and_dependency_commands_cannot_disappear_or_skip(self):
+        for file in ('run_pq_root_native_v3.py', 'test_run_pq_root_native_v3.py',
+                     'test_pq_root_dependency_register.py', 'pq_root_dependency_register.py',
+                     'run_pq_root_continuation_v4.py', 'test_run_pq_root_continuation_v4.py',
+                     'test_authenticated_suite_count.py',
+                     'test_pq_root_custody_review_v1.py', 'pq_root_custody_review_v1.py',
+                     'test_pq_root_migration_review_v1.py', 'pq_root_migration_review_v1.py'):
+            command = '    python3 scripts/ci/' + file + '\n'
+            self.assertEqual(self.script.count(command), 1)
+            changes = ('', command * 2, '    true # ' + command.lstrip(),
+                       command.rstrip() + ' || true\n',
+                       '    if false; then\n' + command + '    fi\n')
+            for changed in changes:
+                with self.subTest(file=file, changed=changed), self.assertRaises(ValueError):
+                    check_independent_conformance(self.script.replace(command, changed), self.lanes)
+
+    def test_root_recovery_suites_cannot_disappear_move_or_swallow_failures(self):
+        # Independent filenames: deleting an entry from the checker must not
+        # delete the negative coverage for that required suite.
+        suites = (
+            'test_pq_root_recovery_signatures_v2.py',
+            'test_pq_root_effect_readback_v2.py',
+            'test_pq_root_recovery_signatures_native_v2.py',
+            'test_pq_root_effect_readback_native_v2.py',
+            'test_pq_root_recovery_journal_native_v2.py',
+        )
+        for suite in suites:
+            command = '    python3 formal/pon-nakamoto-v1/' + suite + ' -v\n'
+            self.assertEqual(self.script.count(command), 1)
+            changes = {
+                'missing': self.script.replace(command, ''),
+                'duplicate': self.script.replace(command, command * 2),
+                'comment': self.script.replace(command, '    # ' + command.lstrip()),
+                'stub': self.script.replace(command, '    true # ' + command.lstrip()),
+                'conditional skip': self.script.replace(command, '    if false; then\n' + command + '    fi\n'),
+                'early success': self.script.replace(command, '    exit 0\n' + command),
+                'swallowed failure': self.script.replace(command, command.rstrip() + ' || true\n'),
+                'wrong lane': self.script.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+                'zero-match discovery': self.script.replace(command,
+                    "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'missing_" + suite + "' -v\n"),
+            }
+            for change, candidate in changes.items():
+                with self.subTest(suite=suite, change=change), self.assertRaises(ValueError):
+                    check_independent_conformance(candidate, self.lanes)
+
+        native_block = ''.join('    python3 formal/pon-nakamoto-v1/' + suite + ' -v\n'
+                               for suite in suites[2:])
+        native_block += '    python3 scripts/ci/run_pq_root_native_v3.py\n'
+        native_block += '    python3 scripts/ci/run_pq_root_continuation_v4.py\n'
+        host = ('    python3 scripts/ci/run_from_zero_host.py -- '
+                'python3 scripts/ci/run_from_zero_native.py --out '
+                '"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"\n')
+        self.assertIn(native_block + host, self.script)
+        changes = {
+            'native after Host': self.script.replace(native_block + host, host + native_block),
+            'Host missing': self.script.replace(host, ''),
+            'Host wrapper removed': self.script.replace(host, host.replace('scripts/ci/run_from_zero_host.py -- python3 ', '')),
+            'Host failure swallowed': self.script.replace(host, host.rstrip() + ' || true\n'),
+            'Host skipped': self.script.replace(host, '    if false; then\n' + host + '    fi\n'),
+            'success before Host': self.script.replace(host, '    exit 0\n' + host),
+        }
+        for change, candidate in changes.items():
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                check_independent_conformance(candidate, self.lanes)
 
     def test_cell_host_native_handoff_cannot_skip_build_or_use_an_unbound_binary(self):
         commands = (
@@ -1535,6 +1599,31 @@ class CiContractTests(unittest.TestCase):
         original = (self.root / path).read_text()
         changed = original.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
         self.rejected(path, original, changed)
+
+    def test_root_recovery_suite_files_cannot_be_deleted_or_replaced_by_symlinks(self):
+        paths = (
+            'formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py',
+            'formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py',
+            'formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_native_v2.py',
+            'formal/pon-nakamoto-v1/test_pq_root_effect_readback_native_v2.py',
+            'formal/pon-nakamoto-v1/test_pq_root_recovery_journal_native_v2.py',
+        )
+        for relative in paths:
+            path = self.root / relative
+            original = path.read_bytes()
+            try:
+                path.unlink()
+                with self.subTest(path=relative, change='deleted'), self.assertRaisesRegex(
+                        ValueError, 'root recovery CI suite must remain a regular source file'):
+                    validate(self.root)
+                path.symlink_to('test_pq_root_recovery_policy_v1.py')
+                with self.subTest(path=relative, change='symlink'), self.assertRaisesRegex(
+                        ValueError, 'root recovery CI suite must remain a regular source file'):
+                    validate(self.root)
+            finally:
+                if path.is_symlink():
+                    path.unlink()
+                path.write_bytes(original)
 
     def test_pq_lifetime_budget_commands_cannot_disappear_or_move(self):
         path = 'scripts/ci/ci_job.sh'

@@ -1,0 +1,35 @@
+{
+  "schema": "trnm-pq-root-custody-review-v1",
+  "rosters": {
+    "root": {
+      "keys": []
+    },
+    "writer": {
+      "keys": []
+    },
+    "anchor": {
+      "keys": []
+    },
+    "provider": {
+      "keys": []
+    }
+  },
+  "evidence": [],
+  "recovery_floor": {
+    "source": "unprovided",
+    "enrollment_commitment": null,
+    "head": null,
+    "authenticated_source_ref": null,
+    "independent_survival_ref": null,
+    "age_policy_ref": null,
+    "recovery_drill_ref": null
+  },
+  "claims": {
+    "independent_custody_verified": false,
+    "anchor_independence_verified": false,
+    "freshness_source_authenticated": false,
+    "whole_chain_pq_qualified": false,
+    "production_activation": false,
+    "actual_lifetime_failure_bound": null
+  }
+}

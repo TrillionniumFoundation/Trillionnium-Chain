@@ -10918,3 +10918,255 @@ operation, independent placement, future availability, prepaid repair, WAN SLA,
 actual NVMe/VRAM, arbitrary-loader dependency confinement, ordinary Hepta next-task
 execution, current FinalUse or a whole-chain PQ lifetime bound. All six original
 operational qualifications remain HOLD until their own evidence is present.
+
+### 2026-11-08 real root-signature and durable recovery continuation
+
+Continue #806 at `0788c44f4139c74772a8a9d7d475821f56e5b727` with the
+[real signature/journal V2 contract](../security/PQ_ROOT_RECOVERY_NATIVE_V2.md)
+and [explicit lifetime/independence gaps](../security/PQ_ROOT_LIFETIME_GAPS_V2.md).
+Keep the original V1 model, #796 source failures, existing Rust owners and all
+production/HOLD boundaries. This is a bounded Python research owner executing
+native OpenSSL signatures, not a native M15 production migration.
+
+Require real ML-DSA-87 2/3 AND SLH-DSA-SHA2-256s 2/3 for every root action, exact
+DER/OID suite binding, complete statement signatures and separate all-six-key
+successor possession. Persist semantic nonces, revoked signer IDs, complete
+root/effect state and original signed evidence. Replay bounded canonical state
+from enrollment; pin the expected owner scope separately. Commit pending state
+before the independently authenticated exact-head CAS and fence uncertainty.
+Authenticate both anchor writer requests and fresh responses with separately
+pinned dual-family keys. Never promote caller JSON or a stale provider receipt
+into external-effect reconciliation.
+
+Bind effect entry to current root authority and signed expiry; retain entered
+and Unknown outcomes through restart/reorganization. Require authenticated
+provider readback and explicit current-orphan liability/compensation declaration.
+Keep the full owner-plus-anchor rollback counterexample: restoring every source
+of retained currentness remains indistinguishable from a valid old history.
+Same-host files, keys and processes are not independent custody or deployment.
+
+Add mandatory structural and native CI tests without removing any original gate.
+Exact-source receipts will distinguish component execution, original gate
+failures, source integrity and external qualification. Preserve hard research
+capacity refusal without pruning/reinitializing lifetime history. The original
+15-path lifetime register remains explicitly limited to its old declared sources;
+its pass cannot cover the new bridge or instantiate missing probability bounds.
+
+### 2026-11-09 native root/recovery V3 and dependency continuation
+
+Continue #813 delivery `080c33cca445fca1735bc51ac4cf63f37a273263` with
+[native root V3 components](../security/PQ_ROOT_RECOVERY_NATIVE_V3.md) and the
+[reviewed dependency register](../security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md).
+Preserve #806/#813 source identities, earlier failed observations, the existing
+M15 path and original CI commands. This is an opt-in Rust research candidate,
+not a production root change or whole-chain qualification.
+
+Require exact real ML-DSA-87 2/3 AND SLH-DSA-SHA2-256s 2/3 for all five actions
+and all-six separate successor possession. Fresh V3 encodings bind complete
+statements, intents, nonces, generation and predecessor. Retain revocations and
+nonces across generations; expired recovery retains both current quorums.
+Implementation resource caps do not instantiate adversary budgets. Check the
+original crypto budget at kernel entry and immediately before state commit,
+and reject budget replacement by owner callbacks.
+
+Add an explicitly enrolled native SQLite journal with network/genesis/owner
+scope, separately pinned writer/anchor rosters, complete signed replay, durable
+pending-before-CAS ordering and exact-target reconciliation after uncertainty.
+Retain the all-state rollback counterexample. Trusted private-directory
+administration, independently surviving anchor state, trusted time and real
+custody remain external assumptions. Current intent observations do not grant
+M15 installation, launch or FinalUse authority. External provider/reorg handling
+remains the Python V2 research scope until actual native sinks exist.
+
+Add mandatory exact-name native selectors and refusal controls without removing
+old gates. Freeze a finite source/role/hash inventory with null concrete bounds
+and shared primitive accounting. Exact-source records distinguish native
+component results, source integrity and original gate failures. No successful
+stub, silent algorithm fallback, claimed independent custody, full composition
+proof or production activation is authorized.
+
+The first frozen V3 campaign at `1f7ff4106f14e5b514d95a9faf2c5eea1233aea5`
+retains 29/35 successful commands and unchanged complete source bytes. Record
+the old authority export-pin refusal, explicit ENOSPC native build failures and
+unset OpenSSL-prefix V2 refusals separately from passing component observations.
+Review the one-line crypto export against all 44 old authority pins and retain
+its seven-route scope; do not label V3 owners as covered by that register. Add
+an irreversible owner cancellation latch so explicit or observed cancellation
+cannot be cleared through the external flag alias. Re-freeze exactly those two
+V3 source pins and run the corrected candidate with the declared native prefix.
+The corrected frozen candidate `a44344b25d12328fedd883a335585f03d059060b`
+completed 35/35 local commands with unchanged complete source: 50 V3 component
+tests, 34 V2 native tests, retained 175 crypto and 43 release tests, the declared
+source/control checks, and strict workspace/all-target/all-feature Clippy. The
+175 crypto count already includes the 10 V3 structural tests. The
+[retained V3 evidence](../../evidence/pq-root-native-v3-20261109/README.md) keeps
+both frozen attempts, development failures, exact commands and raw-log hashes.
+Full protocol and full workspace test execution are not claimed. Actual native
+M15/provider integration, independent surviving freshness/custody and complete
+lifetime/query/composition bounds remain open; HOLD and all nonactivation flags
+remain unchanged.
+
+Hosted original native campaign run `42554940456` subsequently reported three
+failed original campaign runs at the same tested source, after a successful
+release build. Retain its failed finite-experiment predicates, exact source and
+selected raw logs separately; no underlying causal diagnosis, weakened workload
+or all-hosted-gates PASS is claimed. The bounded readback is included in the
+same evidence directory.
+
+### 2026-11-09 root recovery-floor and native provider-readback continuation
+
+Continue #826 delivery `57e6c17ae2fa8a9cc547e271f34d90ef09115f04` on its
+complete ancestry. Preserve the original V3 APIs, persistent namespace, all
+twenty native owner tests and the original protocol/Host gates. Introduce an
+explicit [V4 recovery floor](../security/PQ_ROOT_RECOVERY_FLOOR_V4.md) and
+[native provider evidence](../security/PQ_ROOT_EFFECT_READBACK_NATIVE_V4.md),
+with separate signed/file namespaces. Neither is production M15/FinalUse
+admission or a proof of independent custody.
+
+Require full enrollment and exact signed ancestor matching for the supplied
+recovery floor. Pending-target recovery still needs complete signature replay,
+fresh exact-target anchor observation and explicit completion. A floor obtained
+from the same restored history provides no independent freshness. Check original
+writer/transport budget identity, cancellation and deadline before propagating
+callback errors as well as after success.
+
+For native provider readback, bind the original semantic operation, complete
+material, use kind, attempt, provider roster and exact orphan epoch. Synchronize
+the fresh request before the lookup, retain pending/Unknown outcomes, verify
+both signature families and revalidate complete root history before and after
+the callback. Provider keys must remain disjoint from all retained root/writer/
+anchor keys. Keep prior known declarations and all retained orphan-epoch
+declarations visible; never erase an unresolved epoch with a newer notification.
+The caller must retain a refused later notification until the prior epoch is
+explicitly reconciled. No execute, redispatch, payment, compensation or FinalUse
+method is added. Fixed provider-key lifecycle, provider-side request
+authentication/transport and actual external-effect integration remain open.
+
+Make the [custody declaration review](../security/PQ_ROOT_RECOVERY_FLOOR_V4.md)
+and [migration material review](../security/PQ_ROOT_MIGRATION_REVIEW_V1.md)
+mandatory source/CI inputs. The checked-in defaults contain no invented custody
+data and no proposed migration. Distinct labels and matching artifact bytes do
+not authenticate people, devices, backups, proofs or complete key populations.
+Migration review must retain lifetime identity, key/epoch, nonce, revocation,
+shared primitive and external liability history, without granting migration.
+
+Add three exact-name native selectors (recovery floor, provider readback and
+callback budget) alongside the unchanged V3 selectors. Re-freeze the declared
+source and hash-use register after review: all eight domain error bounds and
+all four shared primitive query bounds remain unknown. Exact-source validation
+must retain every attempted command, source-before/source-after receipts and
+raw failure logs. Do not substitute these component results for the original
+hosted acceptance or entire-workspace execution. All five requested whole-chain
+blockers remain HOLD until their external evidence and security obligations are
+actually discharged; the local code additions alone close none of those gates.
+
+
+The first frozen continuation source `db48af79b9686f2c7bb50ff7dde9b2233fe32fb8`
+retains 39 completed successful command records and successful complete V3/V4
+native runner summaries. Its parent campaign was interrupted during strict
+Clippy after the compiler frontend reported SIGKILL; the environment became
+unavailable and no parent summary or source-after was produced. The cause of
+that SIGKILL is not established. Recovered raw command logs must remain separate
+from a completed campaign. Hosted strict Clippy separately identified an unused
+`RootStateV3` import left by fixture extraction; remove that import and update
+its reviewed source pins without changing any test body or protocol.
+
+The hosted complete-workspace build at that source returned zero, but its
+artifact validator still required the old shared two-feature list. Preserve
+`--workspace --all-targets --all-features`, the original test optimizations and
+all workload/budget checks. Require exact per-crate lists instead: Node has
+`default`, `pq-native-openssl`, `pq-root-v3`; M06 retains its original two. Apply
+the same Node list to the retained ancestry target and report both lists. Replay
+the actual workflow AST assertions with missing/extra/cross-crate/duplicate and
+conditional-skip controls, and make these controls mandatory in repository truth.
+The original native campaign failure and CodeQL export status remain separate.
+Re-freeze and re-execute the corrected candidate in an isolated checkout using
+the repository-pinned provider and toolchain; retain HOLD and every unknown bound.
+
+
+### 2026-11-09 V4 corrected-source execution and retained delivery
+
+Frozen corrected source `0d99924005b70b1308bf3e62c53e9300fbb4aac4`, tree
+`9358521d635df532d71b807fab8cc3029ff83912`, completed 42/42 recorded commands.
+The exact V4 selectors passed 8 recovery-floor, 12 provider-readback and 6
+callback-budget tests; retained V3 selectors passed 10 structure, 8 crypto,
+12 kernel and 20 owner tests, including the common-restore counterexample.
+The 34 retained V2 native tests, 175 default crypto tests, 43 default release
+tests, exact-feature controls, source/CI/register controls, locked dependency
+graphs and strict workspace/all-target/all-feature Clippy also passed. Suite
+counts overlap: the default crypto library includes the ten V3 structural tests.
+No full protocol lane or all-workspace test execution is claimed.
+
+The V2 durable-journal suite also retained SQLite connection ResourceWarning
+messages while reporting 14 tests and exit zero. Those resource-lifetime warnings
+remain visible; allocation tracebacks and unique attribution were not obtained,
+and the result is not described as zero-warning execution.
+
+The [V4 retained evidence](../../evidence/pq-root-continuation-v4-20261109/README.md)
+contains the complete corrected campaign, exact commands, native selector
+inventories, raw-log hashes and before/after tracked-byte checks. Those two
+observations agree; continuous enforced immutability and independent executor
+authentication are not proved. This plan/evidence delivery is a later commit,
+not the source relabeled as executed. The recovery execution used the existing
+repository-pinned OpenSSL 3.5.9 preparation and Rust 1.95.0 in isolated paths.
+The interrupted first campaign used OpenSSL 3.5.7; it is a separate environment
+and source observation, not a same-environment repetition.
+
+The initial `db48af79` parent campaign remains incomplete: 39 completed exit-zero
+command records, complete V3/V4 selector evidence, a Clippy frontend SIGKILL,
+and no recorded outer Clippy exit, parent summary or parent source-after. Its
+underlying SIGKILL cause is unestablished. Separate hosted logs establish the
+unused-import and old shared-feature-validator failures corrected in this
+source. Original native campaign failures and other hosted outcomes remain
+separate; no workload, optimization profile, budget or original gate was relaxed.
+
+The dated corrected-source hosted snapshot at `2026-11-09 09:04:24 UTC` records 3 failure, 4 in_progress, 6 success. Workflow association alone does not identify every prospective-merge job as head. The evidence retains each source, run and observation time; unfinished runs are not predictions. There is no all-hosted-gates PASS claim.
+
+All five whole-chain blockers remain HOLD. A supplied external floor does not
+authenticate its origin, age or independent survival; signed provider declarations
+do not execute or verify actual payments, API/resource effects or compensation,
+and grant no M15/FinalUse authority. Custody defaults still lack deployment
+evidence and migration remains unproposed. The finite source register has 37
+files, five roles and 16 hash-use groups; the corpus has 771 exact source pins.
+The eight actual domain bounds remain null, shared primitive query budgets and
+complete lifetime populations remain unknown, and no production activation or
+algorithm replacement is authorized by these observations.
+
+
+### 2026-11-09 — One Chain/Hepta closure source candidate
+
+Compose the exact Chain heads #835 `e2a02f9271b49f146e70806c8a66e161b5973971`,
+#836 `0746a462e80067b78317597f2fa4bacf5e3db958` and #837
+`44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0` with real merge parents. Retain
+the newer owner APIs, both independent lockfile dependency edges, all original
+CI lanes and the union of source paths. Intermediate source merges are not
+executed native qualifications. Historical receipts keep their own commits.
+
+Pair the candidate with Hepta #5509 at
+`71738345326b98d88b738250d2b84ecbcb466eb8`, tree
+`bfd8384241bf09fcf79daa94f2ef9c9438f92ee4`. This single Hepta source includes
+HEPLCP02, frozen evaluation identity and the scoped Root input. Its ordinary
+daemon build/load, model, loader and independent evaluator identities remain
+unobserved for this candidate; the historical f070 test ELF and research model
+receipts cannot fill them. Keep the original phase-owner assembly refusal.
+
+The [scope join](specs/pon/CELL_LEARNING_SCOPE_JOIN_V1.md) reads only the selected
+Root schema and binds original operation, owners, initial checkpoint, update
+rule and every recorded Training component across Adopt and NoUpdate. Matching
+profile bytes do not authenticate original custody, tensor updates or FinalUse.
+The [selected proof binding](../security/PQ_PROOF_PROFILE_BINDING_V1.md) separates
+RISC Zero, native PNW1, P3/Goldilocks and tagged SHA3 scopes. Reviewed source
+rebinding never supplies the missing QROM, composition or all-strategy bounds.
+
+The independent original-campaign reader validates the complete retained ZIP,
+source, commands and binary observations, preserves all scheduled rounds and
+reports CPU totals only when lifecycle and measurement completeness hold. Its
+exit zero is a completed audit, not a successful service campaign. Retain the
+original four-second Host contract, independent thirty-second campaign, separate
+History/capacity/churn criteria and the storage contract's three independent
+administrative failure domains and seventy-two-hour duration. No local fixture
+substitutes for deployment, actual funding or the ordinary next-task consumer.
+
+Run fresh source/reader controls on the final committed candidate; collect exact
+binary and environment identities for each later native run. Keep null unknowns,
+failed and interrupted observations, DENY_ALL, HOLD_NO_GO and production false.

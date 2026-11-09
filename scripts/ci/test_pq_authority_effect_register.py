@@ -148,7 +148,9 @@ class AuthorityEffectTests(unittest.TestCase):
         self.refused('curated source set mismatch')
 
     def test_source_revision_schema_purpose_and_route_context_drift_refuse(self):
-        for field, value in (('source_revision', '0' * 40), ('schema', 'future-schema'),
+        for field, value in (('source_revision', '0' * 40),
+                             ('source_revision', '88568e2511fcf166e6824947ac97b06b72104385'),
+                             ('schema', 'future-schema'),
                              ('purpose', 'production-qualification')):
             with self.subTest(field=field):
                 self.data = deepcopy(self.original)
@@ -199,6 +201,13 @@ class AuthorityEffectTests(unittest.TestCase):
         self.data = deepcopy(self.original)
         self.data['source_files_sha256']['unreviewed/source.rs'] = '0' * 64
         self.refused('exactly the curated source paths')
+        # The old reviewed table cannot be relabelled with the continuation's
+        # revision. Its changed export still needs the new exact fixed pin.
+        self.data = deepcopy(self.original)
+        self.data['source_files_sha256'][
+            'trillionnium/crates/trnm-crypto-primitives/src/lib.rs'
+        ] = '6227e644777beec35d8676cc04c31ffdf269b187414bdd27ec99daac6c861421'
+        self.refused('fixed reviewed lock')
 
     def test_unreviewed_files_do_not_make_the_partial_register_complete(self):
         self.put('unreviewed/authority.rs', b'// An unreviewed additional entrypoint.\n')

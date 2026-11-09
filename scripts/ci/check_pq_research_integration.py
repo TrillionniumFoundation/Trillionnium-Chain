@@ -47,6 +47,7 @@ PQ_SOURCE_DIRS = (
     # small crate so nested role/rotation controls cannot escape source pins.
     "trillionnium/crates/trnm-release-bundle",
     "trillionnium/crates/trnm-checkpoint-store",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3",
 )
 
 # Every implementation file in these dedicated security owners participates in
@@ -54,6 +55,7 @@ PQ_SOURCE_DIRS = (
 COMPLETE_OWNER_SOURCE_DIRS = frozenset((
     "trillionnium/crates/trnm-release-bundle",
     "trillionnium/crates/trnm-checkpoint-store",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3",
 ))
 
 # This is a newly reconstructed source contract. The old, lost checker bytes
@@ -815,10 +817,52 @@ CELL_STORAGE_CONVERGENCE_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= CELL_STORAGE_CONVERGENCE_REQUIRED_PATHS
 
+# Native root components remain explicit research/HOLD dependencies.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "scripts/ci/run_pq_root_native_v3.py",
+    "scripts/ci/test_run_pq_root_native_v3.py",
+    "scripts/ci/pq_root_dependency_register.py",
+    "scripts/ci/test_pq_root_dependency_register.py",
+    "config/pon/pq-root-dependency-register-v3.json",
+    "docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md",
+    "docs/security/PQ_ROOT_RECOVERY_NATIVE_V3.md",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs",
+    "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs",
+    "trillionnium/crates/trnm-release-bundle/src/root_recovery_v3.rs",
+    "trillionnium/crates/trnm-release-bundle/src/root_recovery_v3_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/anchor.rs",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/storage.rs",
+    "trillionnium/crates/trnm-pon-node/tests/root_recovery_v3_native.rs",
+))
 NATIVE_FALSE = frozenset((
     "whole_native_authorization_migrated", "default_profile_migrated",
     "allow_legacy_fallback", "production_activation", "public_wan_accepted",
     "physical_rollback_resistant",
+))
+
+# V4 continuation inputs are mandatory source dependencies, not proof of
+# independently deployed custody, external effects or algorithm migration.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "scripts/ci/run_pq_root_continuation_v4.py",
+    "scripts/ci/test_run_pq_root_continuation_v4.py",
+    "scripts/ci/test_authenticated_suite_count.py",
+    "scripts/ci/pq_root_custody_review_v1.py",
+    "scripts/ci/test_pq_root_custody_review_v1.py",
+    "scripts/ci/pq_root_migration_review_v1.py",
+    "scripts/ci/test_pq_root_migration_review_v1.py",
+    "config/pon/pq-root-custody-review-v1.json",
+    "config/pon/pq-root-migration-review-v1.json",
+    "docs/security/PQ_ROOT_RECOVERY_FLOOR_V4.md",
+    "docs/security/PQ_ROOT_EFFECT_READBACK_NATIVE_V4.md",
+    "docs/security/PQ_ROOT_MIGRATION_REVIEW_V1.md",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/recovery_floor.rs",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/effect_readback_v4.rs",
+    "trillionnium/crates/trnm-pon-node/tests/recovery_floor_v4_native.rs",
+    "trillionnium/crates/trnm-pon-node/tests/root_effect_readback_v4_native.rs",
+    "trillionnium/crates/trnm-pon-node/tests/root_budget_v4_native.rs",
+    "trillionnium/crates/trnm-pon-node/tests/support/root_recovery_v3_fixture.rs",
 ))
 
 # These are bounded source contracts, not results of a cryptographic audit.

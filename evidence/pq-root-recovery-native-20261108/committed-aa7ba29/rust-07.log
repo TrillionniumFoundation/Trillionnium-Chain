@@ -1,0 +1,52 @@
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/5faaca703596/chain-root/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-release-bundle v0.1.0 (/workspace/scratch/5faaca703596/chain-root/trillionnium/crates/trnm-release-bundle)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.74s
+     Running unittests src/lib.rs (/workspace/scratch/5faaca703596/cargo-target/debug/deps/trnm_release_bundle-be3b5b60ea77bdde)
+
+running 43 tests
+test pq_release::tests::activation_after_root_rotation_requires_current_manifest_quorum ... ok
+test pq_release::tests::activation_has_distinct_quorum_and_requires_current_published_manifest ... ok
+test pq_release::tests::activation_requires_live_current_generation_manifest ... ok
+test pq_release::tests::actual_mldsa_quorum_advances_only_verified_role ... ok
+test pq_release::tests::bootstrap_requires_out_of_band_pin_threshold_and_separate_keys ... ok
+test pq_release::tests::bundle_quorum_tests::bundle_quorum_failed_or_missing_callback_never_retains_an_observation ... ok
+test pq_release::tests::bundle_quorum_tests::bundle_quorum_keeps_public_accept_verification_and_one_checkpoint_advance ... ok
+test pq_release::tests::bundle_quorum_tests::bundle_quorum_keeps_signature_failure_before_owner_time_failure ... ok
+test pq_release::tests::bundle_quorum_tests::bundle_quorum_keeps_v0_content_and_exact_signed_message_binding ... ok
+test pq_release::tests::bundle_quorum_tests::bundle_quorum_observation_is_bound_to_root_role_message_and_signature_bytes ... ok
+test pq_release::tests::bundle_quorum_tests::bundle_quorum_still_checks_current_owner_state_after_valid_signature ... ok
+test pq_release::tests::current_tests::current_activation_rechecks_publication_expiry_and_replacement ... ok
+test pq_release::tests::current_tests::current_bundle_check_requires_exact_role_content_and_independent_checkpoint ... ok
+test pq_release::tests::current_tests::current_check_after_rotation_and_recovery_requires_current_publisher_quorum ... ok
+test pq_release::tests::current_tests::current_check_rejects_replaced_content_and_rolled_back_owner_against_future_frontier ... ok
+test pq_release::tests::current_tests::current_check_uses_live_expiry_and_committed_clock_floor_without_mutating_it ... ok
+test pq_release::tests::duplicates_corruption_and_cross_role_signatures_never_count_as_quorum ... ok
+test pq_release::tests::existing_release_bundle_path_uses_real_pq_quorum_and_provenance_checks ... ok
+test pq_release::tests::initial_root_material_tests::initial_root_material_binds_every_root_field_and_independent_pin ... ok
+test pq_release::tests::initial_root_material_tests::initial_root_material_creates_independent_empty_state_and_fresh_time ... ok
+test pq_release::tests::initial_root_material_tests::initial_root_material_keeps_historical_expiry_separate_from_current_use ... ok
+test pq_release::tests::initial_root_material_tests::initial_root_material_never_reuses_a_quorum_or_signature_result ... ok
+test pq_release::tests::initial_root_material_tests::initial_root_material_preserves_full_preparation_limits_and_error_order ... ok
+test pq_release::tests::initial_root_material_tests::initial_root_material_rotation_still_requires_both_quorums_and_retirement ... ok
+test pq_release::tests::live_event_quota_bounds_recovery_and_failed_updates_do_not_spend_it ... ok
+test pq_release::tests::old_content_requires_new_signed_rollback_and_versions_never_decrease ... ok
+test pq_release::tests::old_software_bundle_can_be_reapproved_after_root_rotation_only_by_current_quorum ... ok
+test pq_release::tests::recovery_requires_complete_ordered_history_and_bound_observation_times ... ok
+test pq_release::tests::recovery_retains_key_retirement_and_expired_root_cannot_authorize_content ... ok
+test pq_release::tests::retained_verifier_tests::retained_verifiers_recheck_each_actual_message_and_signature ... ok
+test pq_release::tests::retained_verifier_tests::retained_verifiers_recovery_rechecks_signatures_and_current_generation ... ok
+test pq_release::tests::retained_verifier_tests::retained_verifiers_require_current_role_membership_and_exact_spki ... ok
+test pq_release::tests::retained_verifier_tests::retained_verifiers_rotation_replaces_keys_only_after_both_quorums ... ok
+test pq_release::tests::retired_keys_cannot_be_reintroduced_even_with_valid_root_signatures ... ok
+test pq_release::tests::root_rotation_preserves_content_versions_and_refuses_skipped_generation ... ok
+test pq_release::tests::root_rotation_requires_old_and_new_quorums_not_candidate_self_authority ... ok
+test pq_release::tests::signed_message_binds_role_network_expiry_content_and_full_checkpoint ... ok
+test pq_release::tests::validated_root_tests::validated_root_keeps_public_encoding_and_owner_time_distinct ... ok
+test pq_release::tests::validated_root_tests::validated_root_rotation_keeps_clock_key_and_sequence_rejection_order ... ok
+test pq_release::tests::validated_root_tests::validated_root_rotation_retains_both_quorums_and_exact_checkpoint_message ... ok
+test pq_release::tests::validated_root_tests::validated_root_still_checks_all_keys_roles_and_original_error_precedence ... ok
+test tests::exact_bundle_and_sbom_are_verified ... ok
+test tests::independent_build_comparison_uses_outputs_not_builder_identity ... ok
+
+test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 44.94s
+

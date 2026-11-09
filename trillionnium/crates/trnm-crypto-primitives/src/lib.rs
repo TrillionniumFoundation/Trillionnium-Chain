@@ -229,3 +229,4 @@ pub mod pq_auth;
 pub mod pq_candidate;
 pub mod pq_content_auth;
 pub mod pq_profile_auth;
+pub mod pq_root_v3;
