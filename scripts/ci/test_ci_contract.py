@@ -137,6 +137,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
     def test_native_v3_and_dependency_commands_cannot_disappear_or_skip(self):
         for file in ('run_pq_root_native_v3.py', 'test_run_pq_root_native_v3.py',
                      'test_pq_root_dependency_register.py', 'pq_root_dependency_register.py',
+                     'test_pq_lifetime_composition.py', 'pq_lifetime_composition.py',
                      'run_pq_root_continuation_v4.py', 'test_run_pq_root_continuation_v4.py',
                      'test_authenticated_suite_count.py',
                      'test_pq_root_custody_review_v1.py', 'pq_root_custody_review_v1.py',
@@ -868,6 +869,8 @@ class CiContractTests(unittest.TestCase):
 
     def test_root_recovery_suite_files_cannot_be_deleted_or_replaced_by_symlinks(self):
         paths = (
+            'scripts/ci/test_pq_lifetime_composition.py',
+            'scripts/ci/pq_lifetime_composition.py',
             'formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py',
             'formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py',
             'formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_native_v2.py',
@@ -895,6 +898,8 @@ class CiContractTests(unittest.TestCase):
         path = 'scripts/ci/ci_job.sh'
         for command in ('    python3 scripts/ci/test_pq_lifetime_budget.py\n',
                         '    python3 scripts/ci/pq_lifetime_budget.py\n',
+                         '    python3 scripts/ci/test_pq_lifetime_composition.py\n',
+                         '    python3 scripts/ci/pq_lifetime_composition.py\n',
                         '    python3 scripts/ci/test_pq_authority_effect_register.py\n',
                         '    python3 scripts/ci/pq_authority_effect_register.py\n',
                         "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v\n"):

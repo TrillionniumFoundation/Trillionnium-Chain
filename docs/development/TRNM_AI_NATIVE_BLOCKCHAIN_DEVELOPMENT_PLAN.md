@@ -8664,3 +8664,36 @@ files, five roles and 16 hash-use groups; the corpus has 771 exact source pins.
 The eight actual domain bounds remain null, shared primitive query budgets and
 complete lifetime populations remain unknown, and no production activation or
 algorithm replacement is authorized by these observations.
+
+
+### 2026-11-09 joint lifetime source and conditional composition review
+
+Continue #837 at `44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0` with the
+[joint lifetime composition contract](../security/PQ128_LIFETIME_COMPOSITION_V2.md).
+Preserve the original V1 budget, source lock, root dependency register, every
+original native gate and all earlier failed observations. Bind both reviewed
+manifests, invoke both source inspectors, reject conflicting shared digests, and
+report the 51-path declared union without claiming complete dependencies or an
+atomic execution snapshot. Merge the four fixed public primitive identities,
+never their unknown budgets. Add an explicit uninstantiated SHAKE-to-shared-
+KECCAK resource/model mapping.
+
+Keep each family-specific reduction loss inside that family before taking the
+AND intersection minimum. Retain common failure and shared game replacement as
+separate required inputs. Do not multiply family errors, erase an unknown loss,
+substitute the root term for a legacy domain, or combine two unproved experiments
+into a whole-chain bound. The five authority roles, including all-six successor
+possession, require full multi-user/key/epoch/corruption reductions. Explicit
+resource variables keep offline, preprocessing, failed/unpublished, helper,
+recursive, initial-advice and retired-authority work visible; local caps and
+node telemetry still cannot bound external adversary queries.
+
+Require the new exact arithmetic/source tests and inspector in repository-truth
+alongside the unchanged V1 commands, with CI omission/skip/lane controls and
+new exact corpus pins. Keep the eight actual domain errors, root/common/model
+errors and four shared query maxima unknown. The allocation headroom is zero
+but the additional-loss placement remains unproved. Qualification remains HOLD,
+`actual_lifetime_failure_bound=null`, all composition/hash-scope/PQ/activation
+flags false, and `joint_bound_derived=false`. This is defensive research
+accounting and scope review; it does not change Rust, signatures, wire formats,
+deployed keys, services or production authorization.
