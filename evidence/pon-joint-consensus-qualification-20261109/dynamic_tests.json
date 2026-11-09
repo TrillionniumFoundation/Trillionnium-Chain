@@ -1,0 +1,17 @@
+{
+  "name": "dynamic_tests",
+  "command": [
+    "python3",
+    "formal/pon-nakamoto-v1/test_dynamic_participation_v1.py",
+    "-v"
+  ],
+  "cwd_scope": "repository root",
+  "started_utc": "2026-11-09T13:42:50.352433+00:00",
+  "duration_seconds": 1.763,
+  "source_commit": "73b5a70fc3f4ffa5a1a99da366591c243d384786",
+  "source_tree": "33734d72a3d893fb8dfb438b17a42fa3a20e2114",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "expectation_met": true,
+  "log": "dynamic_tests.log"
+}
