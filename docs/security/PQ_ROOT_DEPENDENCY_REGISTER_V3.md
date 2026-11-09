@@ -162,7 +162,7 @@ recorded review-base revision. Changing both a source file and its manifest
 digest therefore fails until the reviewed checker snapshot is deliberately
 updated. There is no auto-regeneration or accept-current-bytes mode.
 
-The active review base is the frozen integration commit
+The preceding review base was the frozen integration commit
 `44e96b1a841a50613d0b93484c5e576caec9f81f`, tree
 `c297ebb14fcbeeb5f8acf13b3143a66b8b3b6db8`. All 37 declared source blobs were
 read from that Git object and compared with the current regular files before
@@ -172,7 +172,7 @@ independently recovered from retained delivery `44330b91eb552fd20ef6f2e69bf5e6f1
 The inspector itself does not verify Git ancestry or the eventual commit,
 and still always returns `source_revision_bound = false`.
 
-The integrated source map changes seven declared files:
+That integration changed seven declared files:
 
 | Source | Reviewed difference from the root continuation |
 | --- | --- |
@@ -184,13 +184,28 @@ The integrated source map changes seven declared files:
 | `trnm-release-bundle/src/lib.rs` | Preserves the content module beside the separately gated root module. |
 | `trnm-release-bundle/src/pq_release.rs` | Preserves complete cheap signer-set preflight before mathematical quorum verification; every supplied signature still requires verification. |
 
-The active canonical source-map digest is
+That integration's canonical source-map digest was
 `64973799af0ff75049e27990f805dfbf8c39e4411ad5e2079884c3a684240cbf`.
 The pre-update guard's exit-2 lockfile mismatch remains retained. No source was
 reverted to satisfy an old pin. This rebinding changes no role, suite, domain
 budget, lifetime, operational limit, deadline, query obligation or false
 qualification field. In particular, new exports do not expand the 37 declared
 paths into a complete transitive closure or wire the production effect sink.
+
+The current dependency-security review uses commit
+`189b9b5959d836ef6ae96e14fb285948e4920aa9`, tree
+`35c9394cc41d4c8c5e555ba421311f0d5c1b1126`. All 37 source bytes were
+independently read from that Git object and matched against the working files.
+Relative to the preceding map, only `trillionnium/Cargo.lock` and
+`trillionnium/crates/trnm-pon-node/Cargo.toml` change. They select the patched
+bundled SQLite dependency pair `rusqlite 0.41.0` / `libsqlite3-sys 0.39.0` with
+its required transitive graph, while preserving all node feature selections.
+The active canonical source-map digest is
+`ce51663cec6b33474ce58f26897c0361e25567f8dba6e5cfeb7479d76d9149da`. The 37-path roster,
+roles, suites, query obligations, null budgets and false qualification fields
+are unchanged. This review does not relabel any M6 native observation as a run
+of the new dependency graph, and the inspector still returns
+`source_revision_bound = false`.
 
 The checker reuses the existing
 [descriptor-bound source reader](../../scripts/ci/pq_source_reader.py).

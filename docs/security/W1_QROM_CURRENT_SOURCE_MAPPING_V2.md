@@ -8,7 +8,7 @@ its failed workflow results or its unknown cryptographic obligations.
 ## Reviewed source change
 
 The reviewed source is Chain
-`44e96b1a841a50613d0b93484c5e576caec9f81f`. The retained V1 implementation
+`189b9b5959d836ef6ae96e14fb285948e4920aa9`. The retained V1 implementation
 contract is based on `cb114b13bf848a77634e40a08b31b30c7c758e7b`.
 Comparing its entire project-file roster with the current source gives two
 changed files:
@@ -32,7 +32,7 @@ reviewed additions implement exact B(Ax) preparation/execution and a separate
 example selector; they do not change or call W1. The remaining 132 closure
 files were byte-identical to #827, including manifests, locks and include inputs.
 
-The #835/#836/#837 integration now records **137** files, bound by exact blobs
+The earlier #835/#836/#837 integration recorded **137** files, bound by exact blobs
 from commit `44e96b1a841a50613d0b93484c5e576caec9f81f`, tree
 `c297ebb14fcbeeb5f8acf13b3143a66b8b3b6db8`. Of the preceding 134 files, only
 `trillionnium/Cargo.lock` and `trnm-crypto-primitives/src/lib.rs` change: the lock
@@ -44,12 +44,28 @@ project files, saved proof materials, helper scripts, upstream snapshot,
 proof parameters and 15 unresolved obligations remain byte-identical to the
 prior current mapping. No root native test or new proof execution is implied.
 
-The active current contract SHA-256 is
+The preceding integration contract SHA-256 was
 `e2c5377ac02c0ed47e7f69125fbcabe61072d42597b3208264abaa5be2961c78`.
 Its pre-update checker refused the changed lockfile; that failure remains
 retained. Ten missing tracked evidence inputs, totaling 1,430,534 bytes, were
 materialized individually from the frozen commit and checked against both Git
 blob and index identities. No original fixture bytes were changed.
+
+The dependency-security continuation binds the same 137-file roster to
+commit `189b9b5959d836ef6ae96e14fb285948e4920aa9`, tree
+`35c9394cc41d4c8c5e555ba421311f0d5c1b1126`. Only `trillionnium/Cargo.lock`
+changes within that local closure: the reviewed graph selects bundled
+`rusqlite 0.41.0` / `libsqlite3-sys 0.39.0` and their required
+hashlink/hashbrown resolution. The 16 selected project inputs, saved proof
+materials, historical V1 reader/contract, helpers, proof parameters and all 15
+unresolved obligations retain their exact bytes. The other upgraded application
+manifests and locks are outside this selected mapping and require their own
+complete dependency and native checks.
+
+The active current contract SHA-256 is
+`846efa5cedfb811ae8255a5b3d5c0223e6e89180a89c9670e7bcb9204cbbed30`. This source rebinding
+supplies no native execution or new security conclusion. Earlier native records
+remain bound to their original dependency graphs.
 
 The current checker verifies the local Cargo path graph,
 exact Rust-file inventory, literal include set and declared absence of build

@@ -4,8 +4,10 @@ from __future__ import annotations
 
 from copy import deepcopy
 from fractions import Fraction
+import hashlib
 import importlib.util
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -21,6 +23,13 @@ SPEC.loader.exec_module(ledger)
 
 def fraction(numerator, denominator=1):
     return {"numerator": numerator, "denominator": denominator}
+
+
+def git_blob(commit, path):
+    """Read an existing exact Git object; never fetch or trust replacement refs."""
+    return subprocess.check_output(
+        ["git", "--no-replace-objects", "show", commit + ":" + path],
+        cwd=ROOT, env=dict(os.environ, GIT_NO_LAZY_FETCH="1"), timeout=15)
 
 
 def hypothetical():
@@ -50,6 +59,9 @@ class LifetimeLedgerTests(unittest.TestCase):
 
     def test_project_unknowns_do_not_produce_a_target_or_qualification(self):
         result = ledger.make_report(ledger.template(), ROOT)
+        fixture = ROOT / "evidence/pon-w1-lifetime-current-20261109/project-report.json"
+        self.assertEqual((json.dumps(result, indent=2, sort_keys=True, allow_nan=False)
+                          + "\n").encode(), fixture.read_bytes())
         budget = result["lifetime_ledger"]
         self.assertIsNone(budget["sum_of_group_adversary_query_envelopes"])
         self.assertIsNone(budget["conditional_union"]["hypothetical_expression_meets_target"])
@@ -236,13 +248,26 @@ class LifetimeLedgerTests(unittest.TestCase):
 
     def test_source_mutation_missing_source_and_symlink_are_refused(self):
         key = "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs"
+        lock = "trillionnium/Cargo.lock"
+        for changed in (key, lock):
+            sources = dict(self.sources)
+            sources[changed] += b"\n"
+            with self.subTest(changed=changed), self.assertRaisesRegex(
+                    ledger.LedgerError, "source identity"):
+                ledger.source_survey(sources)
+            del sources[changed]
+            with self.subTest(missing=changed), self.assertRaises(ledger.LedgerError):
+                ledger.source_survey(sources)
+        # This is the actual earlier lock from M7, not a fabricated invalid TOML.
+        # It remains a rejected source even though it was a real prior candidate.
+        historical_lock = git_blob("7ddfe2bfa480d1ebd91c07d03d56a963fff038c5", lock)
+        self.assertEqual(hashlib.sha256(historical_lock).hexdigest(),
+                         "f9e57d73899c5d9fabd4f5b4fedf45256b8db4efb448d15680d070bbcfcb30bd")
         sources = dict(self.sources)
-        sources[key] += b"\n"
-        with self.assertRaisesRegex(ledger.LedgerError, "source identity"):
+        sources[lock] = historical_lock
+        with self.assertRaises(ledger.LedgerError) as refused:
             ledger.source_survey(sources)
-        del sources[key]
-        with self.assertRaises(ledger.LedgerError):
-            ledger.source_survey(sources)
+        self.assertEqual(str(refused.exception), "source identity mismatch: " + lock)
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "trillionnium").symlink_to(ROOT / "trillionnium", target_is_directory=True)
@@ -251,6 +276,12 @@ class LifetimeLedgerTests(unittest.TestCase):
 
     def test_source_lines_remain_independent_of_existing_qualification_labels(self):
         survey = self.survey
+        self.assertEqual(survey["base_commit"], ledger.SOURCE_BASE)
+        for path, expected in ledger.SOURCE_PINS.items():
+            with self.subTest(source_path=path):
+                original = git_blob(ledger.SOURCE_BASE, path)
+                self.assertEqual(hashlib.sha256(original).hexdigest(), expected)
+                self.assertEqual(original, self.sources[path])
         self.assertEqual(survey["canonical_signature"]["algorithm"], "ML-DSA-65")
         self.assertEqual(survey["canonical_signature"]["crate_version"], "0.1.1")
         self.assertIn("constructive_quantum_oracle", survey["observations"])

@@ -617,6 +617,21 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "scripts/read_validated_business_goodput.py",
     "scripts/ci/test_read_validated_business_goodput.py",
 ))
+# The current lifetime successor and its unchanged named completion gate are
+# required review inputs. These pins cannot turn conditional arithmetic or a
+# completed source-control roster into a cryptographic or service qualification.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "scripts/w1_lifetime_ledger.py",
+    "scripts/ci/test_w1_lifetime_ledger.py",
+    "scripts/ci/w1_qrom_closure_controls.py",
+    "scripts/ci/test_w1_qrom_closure_controls.py",
+    "config/pon/w1-qrom-closure-required-tests-v1.json",
+    ".github/workflows/pon-w1-qrom-closure.yml",
+    "evidence/pon-w1-lifetime-current-20261109/project-input.json",
+    "evidence/pon-w1-lifetime-current-20261109/project-report.json",
+    "evidence/pon-w1-lifetime-current-20261109/README.md",
+    "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-checkpoint-store/Cargo.toml",

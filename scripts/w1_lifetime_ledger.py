@@ -36,7 +36,11 @@ import tomllib
 ROOT = Path(__file__).resolve().parents[1]
 INPUT_SCHEMA = "TRNM-W1-LIFETIME-LEDGER-INPUT1"
 OUTPUT_SCHEMA = "TRNM-W1-LIFETIME-LEDGER-REPORT1"
-SOURCE_BASE = "7150d96a2112875b4afcf3023361a5cef4a0e4b1"
+# Exact Git source for the twenty selected SOURCE_PINS, reviewed independently
+# of the child commit containing this ledger and its successor report. This is
+# selected source identity only; it does not identify an executed binary or
+# establish any proof, lifetime, consensus, or production qualification.
+SOURCE_BASE = "189b9b5959d836ef6ae96e14fb285948e4920aa9"
 MAX_INPUT_BYTES = 262144
 MAX_INTEGER_BITS = 512
 PHASES = (
@@ -111,7 +115,7 @@ GROUPS = {
 }
 SOURCE_PINS = {
     "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3",
-    "trillionnium/Cargo.lock": "3db3a086971106994f9e824df0bc64e8fa99cae22dc7bb8bd800643ee573b1ef",
+    "trillionnium/Cargo.lock": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b",
     "trillionnium/crates/trnm-protocol/src/pq_frame.rs": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429",
     "trillionnium/crates/trnm-protocol/src/crypto_profile.rs": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a",

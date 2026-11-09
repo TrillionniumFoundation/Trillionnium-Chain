@@ -7,7 +7,15 @@ and the [fixed W1 implementation map](W1_QROM_IMPLEMENTATION_MAP_20261107.md).
 It does not change a consensus rule, deployed limit, signed domain, verifier,
 proof parameter, or existing acceptance contract.
 
-The new [ledger](../../scripts/w1_lifetime_ledger.py) and
+The original 2026-11-07 report below remains historical evidence with its
+original bytes. The [2026-11-09 successor](../../evidence/pon-w1-lifetime-current-20261109/README.md)
+binds the current ledger's 20 selected inputs to exact source
+`189b9b5959d836ef6ae96e14fb285948e4920aa9`; the child containing that ledger is
+separate from this selected-source base. The successor retains the same 19
+named controls, unknown lifetime input and security HOLD. It does not replace
+the original report or the fixed historical source-observation profile.
+
+The original [ledger](../../scripts/w1_lifetime_ledger.py) and
 [19 controls](../../scripts/ci/test_w1_lifetime_ledger.py) make several obligations
 executable. They reproduce exact integer/rational accounting, refuse omitted
 budget classes and invalid extrapolation, and bind observations to 20 selected

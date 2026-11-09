@@ -15,13 +15,13 @@ or failure budget.
 
 The selected identity is `trnm-w1-risc0-3.0.6-poseidon2-join-v2`. Its current
 [QROM contract](../../config/pon/w1-qrom-implementation-current-v2.json) has
-SHA-256 `e2c5377ac02c0ed47e7f69125fbcabe61072d42597b3208264abaa5be2961c78`.
+SHA-256 `846efa5cedfb811ae8255a5b3d5c0223e6e89180a89c9670e7bcb9204cbbed30`.
 The reference inputs were read from Chain commit
-`44e96b1a841a50613d0b93484c5e576caec9f81f`. The current mapping metadata was
+`189b9b5959d836ef6ae96e14fb285948e4920aa9`. The current mapping metadata was
 explicitly rebound after that source freeze; the historical V1 contract retains
 its own source revision and bytes. The selected project and proof-fixture
-inputs are unchanged by the merge, while the separate current mapping records
-137 local-closure inputs. A later integration commit must still reproduce the
+inputs are unchanged by the dependency continuation, while the separate current
+mapping records 137 local-closure inputs with the reviewed workspace lock update. A later integration commit must still reproduce the
 bound bytes or supply another reviewed source/profile mapping.
 
 | Selected property | Checked declaration |
@@ -53,8 +53,14 @@ extracted identity, selected project and saved-fixture hashes, and upstream
 snapshot identity. For these reference inputs its SHA-256 is:
 
 ```text
-da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c
+5cb35b39dda38d096620e70909bea0cc380464ac2166eddfed83469537deb031
 ```
+
+The preceding M2–M7 mapping produced descriptor
+`da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c`.
+The descriptor changes because it includes the mapping contract bytes; the
+selected image, SDK, field, FRI, control and verifier-parameter identities do
+not change. Prior candidate evidence keeps its original descriptor.
 
 This is an audit identity, not a new protocol commitment or a security-bit
 estimate. It does not replace a candidate's full repository, dependency,
@@ -104,7 +110,7 @@ Use the candidate lock's separately reviewed descriptor value:
 
 ```sh
 python3 scripts/ci/pq_proof_profile_binding.py \
-  --expected-profile-descriptor-sha256 da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c
+  --expected-profile-descriptor-sha256 5cb35b39dda38d096620e70909bea0cc380464ac2166eddfed83469537deb031
 python3 scripts/ci/test_pq_proof_profile_binding.py -v
 ```
 
