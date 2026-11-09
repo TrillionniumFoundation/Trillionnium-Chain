@@ -21,7 +21,7 @@
       "pinned_version_subobligations_closed": 1
     },
     "manifest_path": "config/pon/w1-stark-literature-evidence-v1.json",
-    "manifest_sha256": "1faba40aaa667a570d2e70763c4cca096bc7b0c864a99584d353724ef790a76a",
+    "manifest_sha256": "6f056ea71cc00f41d8e4ea665888ca9372f0a50ee57b4cadd6cc45d21b0753b1",
     "observation_date": "2026-11-09",
     "provenance": "new review record; cryptographic and historical source_base_commit remains separate",
     "qualification": {
@@ -386,9 +386,9 @@
       "sha256": "861201e73694970232de00c97366c156fb23035b98dd4a73422301130e08fd1b"
     },
     {
-      "bytes": 9152,
+      "bytes": 9445,
       "path": "config/pon/w1-stark-literature-evidence-v1.json",
-      "sha256": "1faba40aaa667a570d2e70763c4cca096bc7b0c864a99584d353724ef790a76a"
+      "sha256": "6f056ea71cc00f41d8e4ea665888ca9372f0a50ee57b4cadd6cc45d21b0753b1"
     },
     {
       "bytes": 69332,

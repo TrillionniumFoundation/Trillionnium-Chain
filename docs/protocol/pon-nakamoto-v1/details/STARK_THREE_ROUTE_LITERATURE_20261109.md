@@ -53,17 +53,22 @@ Theorems 4.1, 4.5, 4.7, 5.1 and 6.10 and Section 6.4. The revision retains the
 results and theorem numbering. Full independent proof verification is not
 claimed, and a separate normal byte download failed with a connection reset.
 
-These results concern characteristic two and binary additive domains, with
-further theorem-specific conditions on rate, domain size, containing field,
-challenge extension and agreement. The Gold counting result additionally has
-a density condition. Matching only a challenge width or a headline rate does
-not match these hypotheses.
+These selected binary-domain theorems concern characteristic two and binary
+additive domains, with further theorem-specific conditions on rate, domain
+size, containing field, challenge extension and agreement. The Gold counting
+result additionally has a density condition. Matching only a challenge width
+or a headline rate does not match these hypotheses.
 
 **Application rule:** once the actual field is established as odd
 characteristic, these characteristic-two hypotheses do not apply. Extending
 BabyBear or Goldilocks does not change its characteristic. This exclusion
 provides no affirmative soundness result, and does not discharge other
 Reed–Solomon or Fiat–Shamir obligations.
+
+DKTZ also includes constructions over other field characteristics in Theorem
+5.22. That theorem requires a separate parameter and domain mapping to the
+fixed routes; the characteristic-two exclusion above does not determine its
+applicability.
 
 ## 3. Small-base-field limitations remain relevant
 

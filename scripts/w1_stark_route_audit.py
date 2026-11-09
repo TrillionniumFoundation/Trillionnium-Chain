@@ -36,7 +36,7 @@ MAX_REGISTRY_BYTES = 128 * 1024
 MAX_SOURCE_BYTES = 2 * 1024 * 1024
 # A source plus its JSON pin cannot be silently updated together. A different
 # source roster requires a separately reviewed mapping update in this reader.
-FROZEN_SOURCE_SET_SHA256 = "0b575c01c8a3db2bc73ed57ae83c1bbe5b853022bc83222796f99b550951bd0b"
+FROZEN_SOURCE_SET_SHA256 = "6b3a1654c722ecf1ce858feb2b5428b9736180138ee5bb4f5e3a01e96f47e583"
 SOURCE_SCOPE = "selected_route_inputs_not_full_repository_or_dependency_closure"
 ROUTE_IDS = ("risc0_poseidon2_fixed_v2", "plonky3_poseidon2_w1_r1",
              "plonky3_tagged_sha3_512_w1_r1")

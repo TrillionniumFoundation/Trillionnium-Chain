@@ -66,11 +66,12 @@
       "pdf_sha256_computed_this_review": null,
       "ordinary_https_observation": {"result": "ConnectionResetError"},
       "required_scope": {
+        "scope": "Only the selected binary-domain theorems in sections_checked; not every result in DKTZ revision 1.",
         "characteristic": 2,
         "evaluation_domain": "Binary additive domain, or the affine translates explicitly covered by the selected theorem.",
         "additional_parameters": ["rate", "domain size", "containing subfield", "challenge extension", "agreement threshold", "density requirement for the Gold counting bound"]
       },
-      "profile_triage_rule": "An independently established odd characteristic excludes these binary-domain theorem hypotheses. It does not prove FRI soundness or discharge other literature obligations. Extension degree does not change characteristic.",
+      "profile_triage_rule": "An independently established odd characteristic excludes only these selected binary-domain theorem hypotheses. Theorem 5.22 also includes constructions over other characteristics and requires a separate mapping to the fixed profiles; it is not excluded by this triage. This does not prove FRI soundness or discharge other literature obligations. Extension degree does not change characteristic.",
       "fixed_profile_break_demonstrated": false
     },
     {
