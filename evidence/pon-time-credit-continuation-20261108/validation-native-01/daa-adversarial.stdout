@@ -1,0 +1,7 @@
+
+running 2 tests
+test native_admissible_endpoint_schedule_changes_daa_without_changing_required_work_rules ... ok
+test native_daa_clamps_mtp_future_chainwork_and_authenticated_reopen ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 17.07s
+

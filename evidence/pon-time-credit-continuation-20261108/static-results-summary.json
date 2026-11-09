@@ -1,0 +1,347 @@
+{
+  "schema": "pon-time-credit-static-results-summary-v1",
+  "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+  "repository_truth_exit_code": 0,
+  "unittest_result_summaries": 67,
+  "unittest_selected_case_invocations": 1836,
+  "unittest_results": [
+    {
+      "selected": 16,
+      "seconds": 5.814,
+      "status": "OK"
+    },
+    {
+      "selected": 22,
+      "seconds": 0.348,
+      "status": "OK"
+    },
+    {
+      "selected": 15,
+      "seconds": 0.404,
+      "status": "OK"
+    },
+    {
+      "selected": 12,
+      "seconds": 0.002,
+      "status": "OK"
+    },
+    {
+      "selected": 6,
+      "seconds": 0.009,
+      "status": "OK"
+    },
+    {
+      "selected": 19,
+      "seconds": 0.128,
+      "status": "OK"
+    },
+    {
+      "selected": 24,
+      "seconds": 0.746,
+      "status": "OK"
+    },
+    {
+      "selected": 16,
+      "seconds": 0.031,
+      "status": "OK"
+    },
+    {
+      "selected": 31,
+      "seconds": 1.459,
+      "status": "OK"
+    },
+    {
+      "selected": 34,
+      "seconds": 1.207,
+      "status": "OK"
+    },
+    {
+      "selected": 6,
+      "seconds": 4.677,
+      "status": "OK"
+    },
+    {
+      "selected": 17,
+      "seconds": 5.087,
+      "status": "OK"
+    },
+    {
+      "selected": 35,
+      "seconds": 0.384,
+      "status": "OK"
+    },
+    {
+      "selected": 16,
+      "seconds": 0.02,
+      "status": "OK"
+    },
+    {
+      "selected": 13,
+      "seconds": 0.154,
+      "status": "OK"
+    },
+    {
+      "selected": 19,
+      "seconds": 0.032,
+      "status": "OK"
+    },
+    {
+      "selected": 26,
+      "seconds": 0.058,
+      "status": "OK"
+    },
+    {
+      "selected": 34,
+      "seconds": 1.816,
+      "status": "OK"
+    },
+    {
+      "selected": 12,
+      "seconds": 0.333,
+      "status": "OK"
+    },
+    {
+      "selected": 21,
+      "seconds": 1.007,
+      "status": "OK"
+    },
+    {
+      "selected": 25,
+      "seconds": 0.135,
+      "status": "OK"
+    },
+    {
+      "selected": 39,
+      "seconds": 5.144,
+      "status": "OK"
+    },
+    {
+      "selected": 6,
+      "seconds": 0.011,
+      "status": "OK"
+    },
+    {
+      "selected": 12,
+      "seconds": 1.207,
+      "status": "OK"
+    },
+    {
+      "selected": 18,
+      "seconds": 4.011,
+      "status": "OK"
+    },
+    {
+      "selected": 17,
+      "seconds": 63.91,
+      "status": "OK"
+    },
+    {
+      "selected": 34,
+      "seconds": 4.442,
+      "status": "OK"
+    },
+    {
+      "selected": 12,
+      "seconds": 21.782,
+      "status": "OK"
+    },
+    {
+      "selected": 11,
+      "seconds": 0.004,
+      "status": "OK"
+    },
+    {
+      "selected": 36,
+      "seconds": 70.673,
+      "status": "OK"
+    },
+    {
+      "selected": 29,
+      "seconds": 2.648,
+      "status": "OK"
+    },
+    {
+      "selected": 22,
+      "seconds": 3.092,
+      "status": "OK"
+    },
+    {
+      "selected": 50,
+      "seconds": 341.414,
+      "status": "OK"
+    },
+    {
+      "selected": 19,
+      "seconds": 67.323,
+      "status": "OK"
+    },
+    {
+      "selected": 46,
+      "seconds": 44.066,
+      "status": "OK"
+    },
+    {
+      "selected": 37,
+      "seconds": 1226.781,
+      "status": "OK"
+    },
+    {
+      "selected": 112,
+      "seconds": 31.394,
+      "status": "OK"
+    },
+    {
+      "selected": 77,
+      "seconds": 26.622,
+      "status": "OK"
+    },
+    {
+      "selected": 33,
+      "seconds": 14.937,
+      "status": "OK"
+    },
+    {
+      "selected": 22,
+      "seconds": 6.503,
+      "status": "OK"
+    },
+    {
+      "selected": 109,
+      "seconds": 17.606,
+      "status": "OK"
+    },
+    {
+      "selected": 47,
+      "seconds": 1.917,
+      "status": "OK"
+    },
+    {
+      "selected": 73,
+      "seconds": 4.259,
+      "status": "OK"
+    },
+    {
+      "selected": 27,
+      "seconds": 0.083,
+      "status": "OK"
+    },
+    {
+      "selected": 41,
+      "seconds": 1.378,
+      "status": "OK"
+    },
+    {
+      "selected": 29,
+      "seconds": 1.862,
+      "status": "OK"
+    },
+    {
+      "selected": 92,
+      "seconds": 23.787,
+      "status": "OK"
+    },
+    {
+      "selected": 6,
+      "seconds": 1.879,
+      "status": "OK"
+    },
+    {
+      "selected": 11,
+      "seconds": 0.276,
+      "status": "OK"
+    },
+    {
+      "selected": 24,
+      "seconds": 8.646,
+      "status": "OK"
+    },
+    {
+      "selected": 12,
+      "seconds": 2.414,
+      "status": "OK"
+    },
+    {
+      "selected": 6,
+      "seconds": 0.591,
+      "status": "OK"
+    },
+    {
+      "selected": 3,
+      "seconds": 0.005,
+      "status": "OK"
+    },
+    {
+      "selected": 22,
+      "seconds": 4.348,
+      "status": "OK"
+    },
+    {
+      "selected": 56,
+      "seconds": 0.803,
+      "status": "OK"
+    },
+    {
+      "selected": 7,
+      "seconds": 0.056,
+      "status": "OK"
+    },
+    {
+      "selected": 3,
+      "seconds": 0.001,
+      "status": "OK"
+    },
+    {
+      "selected": 5,
+      "seconds": 0.041,
+      "status": "OK"
+    },
+    {
+      "selected": 32,
+      "seconds": 29.049,
+      "status": "OK"
+    },
+    {
+      "selected": 19,
+      "seconds": 13.538,
+      "status": "OK"
+    },
+    {
+      "selected": 24,
+      "seconds": 0.156,
+      "status": "OK"
+    },
+    {
+      "selected": 5,
+      "seconds": 0.236,
+      "status": "OK"
+    },
+    {
+      "selected": 19,
+      "seconds": 34.193,
+      "status": "OK"
+    },
+    {
+      "selected": 8,
+      "seconds": 0.003,
+      "status": "OK"
+    },
+    {
+      "selected": 16,
+      "seconds": 0.539,
+      "status": "OK"
+    },
+    {
+      "selected": 57,
+      "seconds": 0.18,
+      "status": "OK"
+    },
+    {
+      "selected": 32,
+      "seconds": 3.896,
+      "status": "OK"
+    }
+  ],
+  "scope": "Selected unittest cases include skips and repeat executions; not a unique-test or all-program count.",
+  "source_negative_controls": 43,
+  "production_activation": false
+}

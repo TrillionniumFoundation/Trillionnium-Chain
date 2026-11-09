@@ -1,0 +1,7 @@
+{
+  "manifest": "tests/fuzz/Cargo.toml",
+  "packages": 147,
+  "workspace_members": 1,
+  "resolve_nodes": 147,
+  "sha256": "308f99bcef7808e4409da3e8684d8cc9571f367ce74231433cceb6b185860e31"
+}

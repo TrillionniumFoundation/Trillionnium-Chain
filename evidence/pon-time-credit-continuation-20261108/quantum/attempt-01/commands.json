@@ -1,0 +1,54 @@
+[
+  {
+    "label": "preflight-before-edits",
+    "args": [
+      "/bin/bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0,
+    "started_unix": 1794190538.5212748,
+    "elapsed_seconds": 0.09431886672973633
+  },
+  {
+    "label": "preflight-before-tests",
+    "args": [
+      "/bin/bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0,
+    "started_unix": 1794190538.6165926,
+    "elapsed_seconds": 0.0859980583190918
+  },
+  {
+    "label": "unittest",
+    "args": [
+      "/usr/bin/python3",
+      "formal/pon-nakamoto-v1/test_quantum_bernoulli_source_audit.py",
+      "-v"
+    ],
+    "returncode": 0,
+    "started_unix": 1794190538.7029448,
+    "elapsed_seconds": 0.28172850608825684
+  },
+  {
+    "label": "audit",
+    "args": [
+      "/usr/bin/python3",
+      "formal/pon-nakamoto-v1/quantum_bernoulli_source_audit.py"
+    ],
+    "returncode": 0,
+    "started_unix": 1794190538.9852607,
+    "elapsed_seconds": 0.05630230903625488
+  },
+  {
+    "label": "diff-check",
+    "args": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "returncode": 0,
+    "started_unix": 1794190539.042013,
+    "elapsed_seconds": 0.2211451530456543
+  }
+]

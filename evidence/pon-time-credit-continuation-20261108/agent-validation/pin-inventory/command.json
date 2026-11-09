@@ -1,0 +1,10 @@
+{
+  "job_id": "1a1be2a29ba-138b0-8e8",
+  "execution_program": "/usr/bin/python3",
+  "arguments": [
+    "-c",
+    "import hashlib,json,re,subprocess\nfrom pathlib import Path\nroot=Path.cwd()\npattern=re.compile(r'test \"\\$\\(git hash-object ([A-Za-z0-9_./-]+)\\)\" = ([0-9a-f]{40})')\nchanged=set(subprocess.check_output([\"git\",\"diff\",\"HEAD\",\"--name-only\"],text=True).splitlines())\nrows=[];unsupported=[]\nfor wf in sorted((root/\".github/workflows\").iterdir()):\n if wf.suffix not in (\".yml\",\".yaml\"):continue\n for n,line in enumerate(wf.read_text().splitlines(),1):\n  if line.strip().startswith(\"#\") or \"git hash-object\" not in line:continue\n  m=pattern.fullmatch(line.strip())\n  if not m:unsupported.append({\"workflow\":str(wf.relative_to(root)),\"line\":n,\"text\":line});continue\n  path,expected=m.groups();source=root/path\n  if not source.is_file() or source.is_symlink():raise RuntimeError(\"nonregular source \"+path)\n  raw=source.read_bytes()\n  actual=hashlib.sha1(b\"blob \"+str(len(raw)).encode()+b\"\\0\"+raw,usedforsecurity=False).hexdigest()\n  rows.append({\"workflow\":str(wf.relative_to(root)),\"line\":n,\"path\":path,\"expected\":expected,\"actual\":actual,\"changed\":path in changed,\"base\":subprocess.check_output([\"git\",\"rev-parse\",\"081da763ed8647fc3bf54f44a7b9706116390cda:\"+path],text=True).strip()})\nmismatches=[r for r in rows if r[\"expected\"]!=r[\"actual\"]]\nprint(json.dumps({\"guards\":len(rows),\"workflow_counts\":{p:sum(r[\"workflow\"]==p for r in rows) for p in sorted({r[\"workflow\"] for r in rows})},\"unsupported\":unsupported,\"mismatches\":mismatches},indent=2))\n"
+  ],
+  "cwd": "/home/qian-qi/work/chain-time-credit-20261108-qf01",
+  "idempotency_key": null
+}

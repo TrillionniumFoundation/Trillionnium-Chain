@@ -1,0 +1,54 @@
+[
+  {
+    "name": "preflight",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "inventory",
+    "command": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "repository",
+    "command": [
+      "python3",
+      "scripts/ci/check_repository.py"
+    ],
+    "exit_code": 2
+  },
+  {
+    "name": "ci-contract",
+    "command": [
+      "python3",
+      "scripts/ci/test_ci_contract.py"
+    ],
+    "exit_code": 1
+  },
+  {
+    "name": "test-targets",
+    "command": [
+      "rg",
+      "--files",
+      "trillionnium/crates/trnm-pon-node/tests",
+      "formal/pon-nakamoto-v1"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "status",
+    "command": [
+      "git",
+      "status",
+      "--short"
+    ],
+    "exit_code": 0
+  }
+]
