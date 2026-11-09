@@ -1,0 +1,21 @@
+setUpClass (__main__.ScopedCompletedLearningTests) ... ERROR
+
+======================================================================
+ERROR: setUpClass (__main__.ScopedCompletedLearningTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/481716a90d06/chain/scripts/test_cell_learning_scope_join.py", line 66, in setUpClass
+    raw = [(FIXTURES / case / name).read_bytes() for name in FILES]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/481716a90d06/chain/evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/initial.bin'
+
+----------------------------------------------------------------------
+Ran 0 tests in 0.006s
+
+FAILED (errors=1)

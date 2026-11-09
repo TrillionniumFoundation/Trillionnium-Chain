@@ -1,0 +1,586 @@
+{
+  "archive_path": "/home/qian-qi/chain-hepta-481716-native-check/m6-native-validation-logs-01.tar.gz",
+  "bytes": 1022076,
+  "manifest_sha256": "332cc4aa8a579bb1daf20282af4e6fb6f7f9b09d16a227828cc328a87f0a8486",
+  "original_file_count": 180,
+  "schema": "m6-native-archive-delivery-v1",
+  "sha256": "c59397c89f1ed4e50605dfe337b77d2b63d82309f339ea7fa29f8884c99c16f9",
+  "summary": {
+    "M5_failure_archive_preserved": {
+      "M6_success_cannot_retro_prove_M5_failure_cause": true,
+      "bytes": 577631,
+      "original_EAGAIN_cause": "unestablished",
+      "original_canonical_counts": {
+        "failed": 1,
+        "filtered_out": 0,
+        "ignored": 41,
+        "passed": 2449
+      },
+      "path": "/home/qian-qi/chain-hepta-481716-native-check/m5-native-validation-logs-01.tar.gz",
+      "sha256": "2ad7f1189e1286301beac719dc98bb92b1c73410cecb1d0da4ad096fdcec3e16"
+    },
+    "all_direct_unified_library_summaries": {
+      "trnm-crypto-primitives": {
+        "all_retained_release_service_gates_closed": false,
+        "completed_utc": "2026-11-09T17:31:11.337560+00:00",
+        "elapsed_seconds": 0.5477900640107691,
+        "expected_roster_count": 196,
+        "expected_roster_matches": true,
+        "host_four_second_service_executed": false,
+        "ignored_tests_explicitly_enabled": false,
+        "ignored_tests_remain_unexecuted": false,
+        "main_harness_complete": true,
+        "main_roster_count": 196,
+        "native_daemon_executed": false,
+        "nested_or_filtered_results": [],
+        "observed_ignored_line_count": 0,
+        "outer_job_timeout_seconds": 900,
+        "package": "trnm-crypto-primitives",
+        "provider_cohort": "canonical-static-openssl-3.5.9",
+        "provider_inputs_before_after_equal": true,
+        "result": "PASS",
+        "schema": "m6-unfiltered-unified-artifact-library-test-v1",
+        "source_before_after_equal": true,
+        "source_edited": false,
+        "source_head": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "source_tree": "1943c3e69e3a717ce99d91aabc00eba4d37516f1",
+        "started_utc": "2026-11-09T17:31:10.832431+00:00",
+        "test_elf_before_after_equal": true,
+        "test_process_timeout_seconds": 850,
+        "test_returncode": 0,
+        "thirty_second_campaign_executed": false,
+        "timed_out": false,
+        "top_level_results": [
+          {
+            "elapsed": "0.35s",
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 196,
+            "raw_line": "test result: ok. 196 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.35s",
+            "status": "ok"
+          }
+        ]
+      },
+      "trnm-data-availability": {
+        "all_retained_release_service_gates_closed": false,
+        "completed_utc": "2026-11-09T17:30:38.700124+00:00",
+        "elapsed_seconds": 20.457211349043064,
+        "expected_715_roster": true,
+        "expected_roster_count": 715,
+        "expected_roster_matches": true,
+        "host_four_second_service_executed": false,
+        "ignored_tests_explicitly_enabled": false,
+        "ignored_tests_remain_unexecuted": false,
+        "live_original_negative_control_passed": true,
+        "main_harness_complete": true,
+        "main_roster_count": 715,
+        "native_daemon_executed": false,
+        "nested_or_filtered_results": [],
+        "observed_ignored_line_count": 0,
+        "original_corruption_test_passed": true,
+        "outer_job_timeout_seconds": 900,
+        "package": "trnm-data-availability",
+        "provider_cohort": "canonical-static-openssl-3.5.9",
+        "provider_inputs_before_after_equal": true,
+        "result": "PASS",
+        "schema": "m6-unfiltered-unified-artifact-library-test-v1",
+        "source_before_after_equal": true,
+        "source_edited": false,
+        "source_head": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "source_tree": "1943c3e69e3a717ce99d91aabc00eba4d37516f1",
+        "started_utc": "2026-11-09T17:30:18.283662+00:00",
+        "test_elf_before_after_equal": true,
+        "test_process_timeout_seconds": 850,
+        "test_returncode": 0,
+        "thirty_second_campaign_executed": false,
+        "timed_out": false,
+        "top_level_results": [
+          {
+            "elapsed": "20.15s",
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 715,
+            "raw_line": "test result: ok. 715 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 20.15s",
+            "status": "ok"
+          }
+        ]
+      },
+      "trnm-pon-node": {
+        "all_retained_release_service_gates_closed": false,
+        "completed_utc": "2026-11-09T17:29:51.292794+00:00",
+        "elapsed_seconds": 362.5354508450255,
+        "expected_roster_count": 1398,
+        "expected_roster_matches": true,
+        "host_four_second_service_executed": false,
+        "ignored_tests_explicitly_enabled": false,
+        "ignored_tests_remain_unexecuted": true,
+        "journal_exact_child_validation": {
+          "body_complete_marker_observed": true,
+          "captured_section_heading_observed": true,
+          "child_counts_added_to_top_level": false,
+          "exact_child_success_summary": [
+            {
+              "elapsed": "0.07s",
+              "failed": 0,
+              "filtered_out": 1397,
+              "ignored": 0,
+              "measured": 0,
+              "passed": 1,
+              "raw_line": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1397 filtered out; finished in 0.07s",
+              "status": "ok"
+            }
+          ],
+          "exact_child_success_summary_count": 1,
+          "original_M5_EAGAIN_cause": "unestablished",
+          "parent_success_status_observed": true,
+          "running_one_test_observed": true,
+          "source_controls_enforce_full_body_then_marker_and_success": true,
+          "test": "public_submit::pq::journal::tests::journal_unknown_publication_is_sticky_and_cold_replay_does_not_refund_attempt"
+        },
+        "main_harness_complete": true,
+        "main_roster_count": 1398,
+        "native_daemon_executed": false,
+        "nested_or_filtered_results": [
+          {
+            "elapsed": "0.00s",
+            "failed": 0,
+            "filtered_out": 1397,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 1,
+            "raw_line": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1397 filtered out; finished in 0.00s",
+            "status": "ok"
+          },
+          {
+            "elapsed": "0.00s",
+            "failed": 0,
+            "filtered_out": 1397,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 1,
+            "raw_line": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1397 filtered out; finished in 0.00s",
+            "status": "ok"
+          },
+          {
+            "elapsed": "0.00s",
+            "failed": 0,
+            "filtered_out": 1397,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 1,
+            "raw_line": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1397 filtered out; finished in 0.00s",
+            "status": "ok"
+          },
+          {
+            "elapsed": "0.07s",
+            "failed": 0,
+            "filtered_out": 1397,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 1,
+            "raw_line": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1397 filtered out; finished in 0.07s",
+            "status": "ok"
+          }
+        ],
+        "observed_ignored_line_count": 39,
+        "outer_job_timeout_seconds": 900,
+        "package": "trnm-pon-node",
+        "provider_cohort": "canonical-static-openssl-3.5.9",
+        "provider_inputs_before_after_equal": true,
+        "result": "PASS_WITH_IGNORED",
+        "schema": "m6-unfiltered-unified-artifact-library-test-v1",
+        "source_before_after_equal": true,
+        "source_edited": false,
+        "source_head": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "source_tree": "1943c3e69e3a717ce99d91aabc00eba4d37516f1",
+        "started_utc": "2026-11-09T17:23:48.798900+00:00",
+        "test_elf_before_after_equal": true,
+        "test_process_timeout_seconds": 850,
+        "test_returncode": 0,
+        "thirty_second_campaign_executed": false,
+        "timed_out": false,
+        "top_level_results": [
+          {
+            "elapsed": "361.75s",
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 39,
+            "measured": 0,
+            "passed": 1359,
+            "raw_line": "test result: ok. 1359 passed; 0 failed; 39 ignored; 0 measured; 0 filtered out; finished in 361.75s",
+            "status": "ok"
+          }
+        ]
+      },
+      "trnm-protocol": {
+        "all_retained_release_service_gates_closed": false,
+        "completed_utc": "2026-11-09T17:31:45.596216+00:00",
+        "elapsed_seconds": 6.4682032889686525,
+        "expected_roster_count": 115,
+        "expected_roster_matches": true,
+        "host_four_second_service_executed": false,
+        "ignored_tests_explicitly_enabled": false,
+        "ignored_tests_remain_unexecuted": true,
+        "main_harness_complete": true,
+        "main_roster_count": 115,
+        "native_daemon_executed": false,
+        "nested_or_filtered_results": [],
+        "observed_ignored_line_count": 2,
+        "outer_job_timeout_seconds": 900,
+        "package": "trnm-protocol",
+        "provider_cohort": "canonical-static-openssl-3.5.9",
+        "provider_inputs_before_after_equal": true,
+        "result": "PASS_WITH_IGNORED",
+        "schema": "m6-unfiltered-unified-artifact-library-test-v1",
+        "source_before_after_equal": true,
+        "source_edited": false,
+        "source_head": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "source_tree": "1943c3e69e3a717ce99d91aabc00eba4d37516f1",
+        "started_utc": "2026-11-09T17:31:39.173495+00:00",
+        "test_elf_before_after_equal": true,
+        "test_process_timeout_seconds": 850,
+        "test_returncode": 0,
+        "thirty_second_campaign_executed": false,
+        "timed_out": false,
+        "top_level_results": [
+          {
+            "elapsed": "6.29s",
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 2,
+            "measured": 0,
+            "passed": 113,
+            "raw_line": "test result: ok. 113 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 6.29s",
+            "status": "ok"
+          }
+        ]
+      },
+      "trnm-release-bundle": {
+        "all_retained_release_service_gates_closed": false,
+        "completed_utc": "2026-11-09T17:32:31.310056+00:00",
+        "elapsed_seconds": 8.938424163032323,
+        "expected_67_roster": true,
+        "expected_roster_count": 67,
+        "expected_roster_matches": true,
+        "host_four_second_service_executed": false,
+        "ignored_tests_explicitly_enabled": false,
+        "ignored_tests_remain_unexecuted": false,
+        "main_harness_complete": true,
+        "main_roster_count": 67,
+        "native_daemon_executed": false,
+        "nested_or_filtered_results": [],
+        "observed_ignored_line_count": 0,
+        "outer_job_timeout_seconds": 900,
+        "package": "trnm-release-bundle",
+        "provider_cohort": "canonical-static-openssl-3.5.9",
+        "provider_inputs_before_after_equal": true,
+        "result": "PASS",
+        "schema": "m6-unfiltered-unified-artifact-library-test-v1",
+        "source_before_after_equal": true,
+        "source_edited": false,
+        "source_head": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+        "source_tree": "1943c3e69e3a717ce99d91aabc00eba4d37516f1",
+        "started_utc": "2026-11-09T17:32:22.413637+00:00",
+        "test_elf_before_after_equal": true,
+        "test_process_timeout_seconds": 850,
+        "test_returncode": 0,
+        "thirty_second_campaign_executed": false,
+        "timed_out": false,
+        "top_level_results": [
+          {
+            "elapsed": "8.74s",
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 67,
+            "raw_line": "test result: ok. 67 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.74s",
+            "status": "ok"
+          }
+        ]
+      }
+    },
+    "all_five_unified_standard_library_commands_passed": true,
+    "all_five_unified_standard_library_harnesses_completed": true,
+    "all_retained_release_service_gates_closed": false,
+    "build_targets_or_ELFs_in_archive": false,
+    "canonical_provider_exports": {
+      "OPENSSL_CONF": "/dev/null",
+      "OPENSSL_DIR": "/home/qian-qi/chain-hepta-481716-native-check/m5-provider-build-01/trnm-pq-provider-3.5.9.GuZCCvnm/install",
+      "OPENSSL_MODULES": "/home/qian-qi/chain-hepta-481716-native-check/m5-provider-build-01/trnm-pq-provider-3.5.9.GuZCCvnm/install/lib/ossl-modules",
+      "OPENSSL_STATIC": "1",
+      "TRNM_PQ_OPENSSL": "/home/qian-qi/chain-hepta-481716-native-check/m5-provider-build-01/trnm-pq-provider-3.5.9.GuZCCvnm/install/bin/openssl",
+      "TRNM_PQ_OPENSSL_SHA256": "742a393279b769f7b2bbcaabdcdd152d5565d5108b4b920c69c55a1d42c4e6d7",
+      "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+    },
+    "canonical_provider_inputs": [
+      {
+        "bytes": 8985944,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/m5-provider-build-01/trnm-pq-provider-3.5.9.GuZCCvnm/install/bin/openssl",
+        "sha256": "742a393279b769f7b2bbcaabdcdd152d5565d5108b4b920c69c55a1d42c4e6d7"
+      },
+      {
+        "bytes": 3449,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/m5-provider-build-01/trnm-pq-provider-3.5.9.GuZCCvnm/install/include/openssl/opensslv.h",
+        "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+      },
+      {
+        "bytes": 4729,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/m5-provider-build-01/trnm-pq-provider-3.5.9.GuZCCvnm/install/include/openssl/configuration.h",
+        "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+      },
+      {
+        "bytes": 12442368,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/m5-provider-build-01/trnm-pq-provider-3.5.9.GuZCCvnm/install/lib/libcrypto.a",
+        "sha256": "c82db203024d8d53f97a2f81161385f04444365232f5e2e6deaef77a2aff0468"
+      },
+      {
+        "bytes": 2149026,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/m5-provider-build-01/trnm-pq-provider-3.5.9.GuZCCvnm/install/lib/libssl.a",
+        "sha256": "d7cddef12614789118f792fb4b07748c9a413d241895c1501fe12e3998658d90"
+      }
+    ],
+    "canonical_provider_inputs_and_script_match_preserved_M5_receipt": true,
+    "canonical_provider_reused_without_rebuild": true,
+    "check_and_clippy": {
+      "capacity_stop_free_bytes": 268435456,
+      "check_start_free_bytes": 73568542720,
+      "check_status": "PASS",
+      "clippy_start_free_bytes": 73568530432,
+      "clippy_status": "PASS",
+      "commands": [
+        {
+          "elapsed_ns": 1000941061,
+          "name": "preflight",
+          "returncode": 0,
+          "stderr": "preflight.stderr.log",
+          "stdout": "preflight.stdout.log"
+        },
+        {
+          "elapsed_ns": 1001593717,
+          "name": "cargo-version",
+          "returncode": 0,
+          "stderr": "cargo-version.stderr.log",
+          "stdout": "cargo-version.stdout.log"
+        },
+        {
+          "elapsed_ns": 1001773458,
+          "name": "rustc-version",
+          "returncode": 0,
+          "stderr": "rustc-version.stderr.log",
+          "stdout": "rustc-version.stdout.log"
+        },
+        {
+          "elapsed_ns": 1001096908,
+          "name": "cargo-check",
+          "returncode": 0,
+          "stderr": "cargo-check.stderr.log",
+          "stdout": "cargo-check.stdout.log"
+        },
+        {
+          "elapsed_ns": 1001317395,
+          "name": "cargo-clippy",
+          "returncode": 0,
+          "stderr": "cargo-clippy.stderr.log",
+          "stdout": "cargo-clippy.stdout.log"
+        }
+      ],
+      "completed_utc": "2026-11-09T17:33:10.614763+00:00",
+      "expected_head": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+      "host_four_second_service_executed": false,
+      "minimum_start_free_bytes": 2000000000,
+      "native_daemon_executed": false,
+      "native_library_check_and_clippy_passed": true,
+      "proof_generation_or_verification_executed": false,
+      "provider_cohort": "canonical-static-openssl-3.5.9",
+      "provider_exports": {
+        "OPENSSL_CONF": "/dev/null",
+        "OPENSSL_DIR": "/home/qian-qi/chain-hepta-481716-native-check/m5-provider-build-01/trnm-pq-provider-3.5.9.GuZCCvnm/install",
+        "OPENSSL_MODULES": "/home/qian-qi/chain-hepta-481716-native-check/m5-provider-build-01/trnm-pq-provider-3.5.9.GuZCCvnm/install/lib/ossl-modules",
+        "OPENSSL_STATIC": "1",
+        "TRNM_PQ_OPENSSL": "/home/qian-qi/chain-hepta-481716-native-check/m5-provider-build-01/trnm-pq-provider-3.5.9.GuZCCvnm/install/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "742a393279b769f7b2bbcaabdcdd152d5565d5108b4b920c69c55a1d42c4e6d7",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+      },
+      "provider_inputs_before_after_equal": true,
+      "schema": "fixed-m6-native-library-validation-v1",
+      "scope": "cargo check/clippy only; workspace all-features libraries; offline locked; two jobs",
+      "source_before_after_equal": true,
+      "source_edited": false,
+      "started_utc": "2026-11-09T17:33:05.506138+00:00",
+      "target_directory": "/home/qian-qi/chain-hepta-481716-native-check/target",
+      "thirty_second_campaign_executed": false,
+      "workspace_tests_executed": false
+    },
+    "check_and_clippy_source_and_provider_bound": true,
+    "collected_at_utc": "2026-11-09T17:34:06.926059+00:00",
+    "compiler_artifact_to_actual_direct_ELF_join_passed": true,
+    "counts_not_summed_with_M5_or_other_attempts": true,
+    "expected_head": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+    "expected_tree": "1943c3e69e3a717ce99d91aabc00eba4d37516f1",
+    "five_package_build_bound": true,
+    "five_package_no_run_build": {
+      "actual_test_artifact_count": 5,
+      "all_five_test_artifacts_reported": true,
+      "build_returncode": 0,
+      "build_success_does_not_mean_tests_passed": true,
+      "completed_utc": "2026-11-09T17:22:13.815309+00:00",
+      "disk_free_after": 73578209280,
+      "elapsed_seconds": 134.990757237887,
+      "examples_or_integration_tests_requested": false,
+      "expected_head": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+      "expected_tree": "1943c3e69e3a717ce99d91aabc00eba4d37516f1",
+      "host_or_campaign_thresholds_changed": false,
+      "native_daemon_executed": false,
+      "outer_harness_timeout_seconds": 900,
+      "packages": [
+        "trnm-crypto-primitives",
+        "trnm-release-bundle",
+        "trnm-protocol",
+        "trnm-pon-node",
+        "trnm-data-availability"
+      ],
+      "pressure_or_external_target_executed": false,
+      "prior_execution_comparison": [
+        {
+          "package": "trnm-data-availability",
+          "prior_actually_run_artifact_available": true,
+          "prior_path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_data_availability-68d57059a66fd7c3",
+          "prior_sha256": "e99f7030260577c8063e27006baf361eacb6d24f3e7a3f9b2b14ad48865d00a1",
+          "same_bytes": true,
+          "unified_path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_data_availability-68d57059a66fd7c3",
+          "unified_sha256": "e99f7030260577c8063e27006baf361eacb6d24f3e7a3f9b2b14ad48865d00a1"
+        },
+        {
+          "package": "trnm-crypto-primitives",
+          "prior_actually_run_artifact_available": true,
+          "prior_path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_crypto_primitives-a8181f6305c7ebfe",
+          "prior_sha256": "011e6ed77e28710b873ee0a0309aee7cdfa7c1af008941ff69c41581804709c5",
+          "same_bytes": true,
+          "unified_path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_crypto_primitives-a8181f6305c7ebfe",
+          "unified_sha256": "011e6ed77e28710b873ee0a0309aee7cdfa7c1af008941ff69c41581804709c5"
+        },
+        {
+          "package": "trnm-release-bundle",
+          "prior_actually_run_artifact_available": true,
+          "prior_path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_release_bundle-a057cb68931339ff",
+          "prior_sha256": "c83235f198923321f530f662ffbf4251f87eac22ea24ef2e466daa0ee9946395",
+          "same_bytes": true,
+          "unified_path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_release_bundle-a057cb68931339ff",
+          "unified_sha256": "c83235f198923321f530f662ffbf4251f87eac22ea24ef2e466daa0ee9946395"
+        },
+        {
+          "package": "trnm-protocol",
+          "prior_actually_run_artifact_available": true,
+          "prior_path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_protocol-d8b25a80c1197ac9",
+          "prior_sha256": "bb1f1f5530c29fce07616debe545460c58bbd4df021843a39eb287297ff8e413",
+          "same_bytes": true,
+          "unified_path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_protocol-d8b25a80c1197ac9",
+          "unified_sha256": "bb1f1f5530c29fce07616debe545460c58bbd4df021843a39eb287297ff8e413"
+        },
+        {
+          "package": "trnm-pon-node",
+          "prior_actually_run_artifact_available": true,
+          "prior_path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_pon_node-1b9e88419cc32a23",
+          "prior_sha256": "00d50474c4409a5b89d14e5a75abbc7ca83cd41f6bdf0ae8a9605e49cb10deaf",
+          "same_bytes": false,
+          "unified_path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_pon_node-1b9e88419cc32a23",
+          "unified_sha256": "905779facac297c3ce3387d4142ea11dd20db397a73969043dc72cb520909ee3"
+        }
+      ],
+      "provider_cohort": "canonical-static-openssl-3.5.9",
+      "provider_exports": {
+        "OPENSSL_CONF": "/dev/null",
+        "OPENSSL_DIR": "/home/qian-qi/chain-hepta-481716-native-check/m5-provider-build-01/trnm-pq-provider-3.5.9.GuZCCvnm/install",
+        "OPENSSL_MODULES": "/home/qian-qi/chain-hepta-481716-native-check/m5-provider-build-01/trnm-pq-provider-3.5.9.GuZCCvnm/install/lib/ossl-modules",
+        "OPENSSL_STATIC": "1",
+        "TRNM_PQ_OPENSSL": "/home/qian-qi/chain-hepta-481716-native-check/m5-provider-build-01/trnm-pq-provider-3.5.9.GuZCCvnm/install/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "742a393279b769f7b2bbcaabdcdd152d5565d5108b4b920c69c55a1d42c4e6d7",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+      },
+      "provider_inputs_before_after_equal": true,
+      "result": "PASS",
+      "schema": "m6-five-package-build-only-v1",
+      "source_before_after_equal": true,
+      "started_utc": "2026-11-09T17:19:58.865705+00:00",
+      "target": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01",
+      "test_execution_performed_by_this_job": false,
+      "timed_out": false
+    },
+    "host_four_second_service_executed": false,
+    "ignored_tests_explicitly_enabled": false,
+    "independent_operator_WAN_or_long_run_acceptance_claimed": false,
+    "journal_exact_child_original_output_observed": true,
+    "journal_exact_child_validation": {
+      "body_complete_marker_observed": true,
+      "captured_section_heading_observed": true,
+      "child_counts_added_to_top_level": false,
+      "exact_child_success_summary": [
+        {
+          "elapsed": "0.07s",
+          "failed": 0,
+          "filtered_out": 1397,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "raw_line": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1397 filtered out; finished in 0.07s",
+          "status": "ok"
+        }
+      ],
+      "exact_child_success_summary_count": 1,
+      "original_M5_EAGAIN_cause": "unestablished",
+      "parent_success_status_observed": true,
+      "running_one_test_observed": true,
+      "source_controls_enforce_full_body_then_marker_and_success": true,
+      "test": "public_submit::pq::journal::tests::journal_unknown_publication_is_sticky_and_cold_replay_does_not_refund_attempt"
+    },
+    "native_runner_modified_repo_source": false,
+    "nested_helper_summaries_not_added_to_top_level": true,
+    "ordinary_daemon_learning_loop_completed": false,
+    "schema": "fixed-m6-native-validation-delivery-v1",
+    "source_at_collection": {
+      "cargo_lock_sha256": "f9e57d73899c5d9fabd4f5b4fedf45256b8db4efb448d15680d070bbcfcb30bd",
+      "head": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+      "status": [],
+      "tree": "1943c3e69e3a717ce99d91aabc00eba4d37516f1"
+    },
+    "source_at_collection_matches_fixed_candidate_and_clean": true,
+    "source_preparation_and_fmt": {
+      "changed_paths": [
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs"
+      ],
+      "completed_utc": "2026-11-09T17:18:22.045196+00:00",
+      "elapsed_seconds": 7.214655600953847,
+      "expected_head": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+      "expected_parent": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+      "expected_tree": "1943c3e69e3a717ce99d91aabc00eba4d37516f1",
+      "journal_tests_sha256": "4aeac967ab618226d2ea5d20e8c7fd7d681dd00962573b2425cec712609e4215",
+      "original_M5_EAGAIN_cause": "unestablished",
+      "production_source_edited_by_runner": false,
+      "provider_inputs_before_after_equal": true,
+      "provider_preparation_script_matches_M5": true,
+      "provider_rebuilt": false,
+      "result": "PASS",
+      "schema": "m6-fixed-source-preparation-v1",
+      "source_after_matches_fixed_candidate": true,
+      "started_utc": "2026-11-09T17:18:14.872868+00:00",
+      "test_execution_performed": false
+    },
+    "standard_native_validation_status": "PASS_WITH_RETAINED_IGNORED_GATES_OPEN",
+    "test_ELFs_are_cfg_test_not_ordinary_daemon": true,
+    "thirty_second_campaign_executed": false,
+    "unified_standard_top_level_totals": {
+      "failed": 0,
+      "filtered_out": 0,
+      "ignored": 41,
+      "measured": 0,
+      "passed": 2450
+    }
+  }
+}

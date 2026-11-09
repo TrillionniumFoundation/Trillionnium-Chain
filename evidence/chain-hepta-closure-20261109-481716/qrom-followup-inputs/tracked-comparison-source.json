@@ -1,0 +1,188 @@
+{
+  "source_revision": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+  "source_path": "evidence/pon-w1-qrom-proof-chain-20261108/manuscript-comparison.json",
+  "git_blob": "4019abb76cf7805854fcac477650022a1eacba9a",
+  "bytes": 74335,
+  "sha256": "5c0d265707758448d263aa3c02788a9f13025e0644143024596e07a03940279f",
+  "top_level_fields": [
+    "schema_version",
+    "observation_date",
+    "source",
+    "render",
+    "page_count",
+    "text_different_pages",
+    "render_different_pages",
+    "pages",
+    "theorem_start_pages",
+    "text_extractor",
+    "whole_document_poppler_diffs",
+    "claims"
+  ],
+  "summary": {
+    "schema_version": 1,
+    "observation_date": "2026-11-08",
+    "source": {
+      "title": "How to Prove Post-Quantum Security for Succinct Non-Interactive Reductions",
+      "authors": [
+        "Alessandro Chiesa",
+        "Zijing Di",
+        "Zihan Hu",
+        "Yuxi Zheng"
+      ],
+      "history_url": "https://eprint.iacr.org/archive/versions/2025/2166",
+      "pdfs": {
+        "january": {
+          "revision_id": "20260101:061307",
+          "url": "https://eprint.iacr.org/archive/2025/2166/1767247987.pdf",
+          "sha256": "215a62b9a1b5144c89ae103aaabaf6049eab23f7ccb23130bc7d65d597c1eac9",
+          "bytes": 927381
+        },
+        "march": {
+          "revision_id": "20260302:160701",
+          "url": "https://eprint.iacr.org/archive/2025/2166/1772467621.pdf",
+          "sha256": "2cfb88c76732d9f39f4b1943b4aabc0390dd3d17830d91d910c38e16e4bb5a30",
+          "bytes": 927435
+        }
+      }
+    },
+    "render": {
+      "library": "PyMuPDF",
+      "version": "1.26.6",
+      "scale": 1.5,
+      "dpi": 108,
+      "colorspace": "RGB",
+      "alpha": false
+    },
+    "page_count": 102,
+    "text_different_pages": [
+      1,
+      4,
+      100,
+      101,
+      102
+    ],
+    "render_different_pages": [
+      1,
+      4,
+      100,
+      101,
+      102
+    ],
+    "theorem_start_pages": [
+      {
+        "identifier": "1 (informal)",
+        "start_page": 5,
+        "start_page_text_equal": true,
+        "start_page_render_equal": true
+      },
+      {
+        "identifier": "2 (informal)",
+        "start_page": 5,
+        "start_page_text_equal": true,
+        "start_page_render_equal": true
+      },
+      {
+        "identifier": "3 (informal)",
+        "start_page": 6,
+        "start_page_text_equal": true,
+        "start_page_render_equal": true
+      },
+      {
+        "identifier": "5.4",
+        "start_page": 31,
+        "start_page_text_equal": true,
+        "start_page_render_equal": true
+      },
+      {
+        "identifier": "6.9",
+        "start_page": 44,
+        "start_page_text_equal": true,
+        "start_page_render_equal": true
+      },
+      {
+        "identifier": "6.10",
+        "start_page": 46,
+        "start_page_text_equal": true,
+        "start_page_render_equal": true
+      },
+      {
+        "identifier": "8.3",
+        "start_page": 53,
+        "start_page_text_equal": true,
+        "start_page_render_equal": true
+      },
+      {
+        "identifier": "8.4",
+        "start_page": 53,
+        "start_page_text_equal": true,
+        "start_page_render_equal": true
+      },
+      {
+        "identifier": "10.6",
+        "start_page": 72,
+        "start_page_text_equal": true,
+        "start_page_render_equal": true
+      },
+      {
+        "identifier": "11.3",
+        "start_page": 78,
+        "start_page_text_equal": true,
+        "start_page_render_equal": true
+      },
+      {
+        "identifier": "A.1",
+        "start_page": 98,
+        "start_page_text_equal": true,
+        "start_page_render_equal": true
+      }
+    ],
+    "text_extractor": {
+      "program": "pdftotext",
+      "version": "pdftotext version 25.03.0"
+    },
+    "claims": {
+      "version_consistency_review": true,
+      "independent_proof_correctness_certification": false,
+      "implementation_security_certification": false
+    }
+  },
+  "pages_count": 102,
+  "page_first": {
+    "pdf_page": 1,
+    "text_equal": false,
+    "rgb_pixels_equal": false,
+    "january_dimensions": [
+      918,
+      1188
+    ],
+    "march_dimensions": [
+      918,
+      1188
+    ],
+    "january_text_sha256": "c4b614c5f5acc060ceaafcc8552da3a42d9c24040813f728dfc41c9b7f609cbd",
+    "march_text_sha256": "a9bd5325b05aa3d5cdfb07caf441c7dc57ecec18ba1f2f17714729a1230b5956",
+    "january_rgb_sha256": "941aa5b4f96ca15a866782e6ae1694cd42e5a69187f7f5f8840279c682e6c36c",
+    "march_rgb_sha256": "deb69c89a2ad51d0cdd7585dc423d28b6d2836212211414ea9ceb3d98b92bc2e"
+  },
+  "page_last": {
+    "pdf_page": 102,
+    "text_equal": false,
+    "rgb_pixels_equal": false,
+    "january_dimensions": [
+      918,
+      1188
+    ],
+    "march_dimensions": [
+      918,
+      1188
+    ],
+    "january_text_sha256": "40e84f790196030844559d1f695d262bea258230b1c6e63601a252c7898f3bbb",
+    "march_text_sha256": "6205e10526e235defd7c14d66d273507d07e8a254041a4d1508d2cb15ffd2e44",
+    "january_rgb_sha256": "cc824c142fda6b73b46c1a1a9a6e2ea23153cfd1225008e8c3a8227f92b970cd",
+    "march_rgb_sha256": "78d22b1891c353ef426e6f223ce8d3af2b1fed5d62a000af3c9b9c65f7221524"
+  },
+  "diff_sizes": {
+    "layout": 4920,
+    "raw": 3975
+  }
+}

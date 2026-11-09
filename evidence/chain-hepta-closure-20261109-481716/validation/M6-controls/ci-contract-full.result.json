@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "scripts/ci/test_ci_contract.py",
+    "-v"
+  ],
+  "completed_at_utc": "2026-11-09T17:19:43.717105+00:00",
+  "elapsed_seconds": 105.6636738979978,
+  "engineering_timeout_seconds": 900,
+  "exit_code": 0,
+  "expected_count_matched": true,
+  "expected_test_count": 176,
+  "label": "ci-contract-full",
+  "observed_test_counts": [
+    176
+  ],
+  "process_exit_after_timeout": null,
+  "raw_unittest_summary": [
+    "Ran 176 tests in 105.315s",
+    "OK"
+  ],
+  "started_at_utc": "2026-11-09T17:17:58.053442+00:00",
+  "status": "PASS",
+  "stderr": {
+    "bytes": 30139,
+    "path": "ci-contract-full.stderr.log",
+    "sha256": "0acf9d426a668cd3c03905e3640b4b64c02659c38e76237679f1ff43f24b2b0e"
+  },
+  "stdout": {
+    "bytes": 0,
+    "path": "ci-contract-full.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timed_out": false
+}

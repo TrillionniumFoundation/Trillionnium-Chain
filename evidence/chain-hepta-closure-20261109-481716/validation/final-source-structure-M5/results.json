@@ -1,0 +1,96 @@
+{
+  "schema": "fixed-source-structure-validation-v1",
+  "observed_at_utc": "2026-11-09T15:56:32.579427+00:00",
+  "source_before": {
+    "head": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+    "tree": "fbbb4dca143775bae75ea825ff502f368e122ebb",
+    "tracked_status": "",
+    "lock_sha256": "f9e57d73899c5d9fabd4f5b4fedf45256b8db4efb448d15680d070bbcfcb30bd"
+  },
+  "source_after": {
+    "head": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+    "tree": "fbbb4dca143775bae75ea825ff502f368e122ebb",
+    "tracked_status": "",
+    "lock_sha256": "f9e57d73899c5d9fabd4f5b4fedf45256b8db4efb448d15680d070bbcfcb30bd"
+  },
+  "source_unchanged": true,
+  "commands": [
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.10722390899900347,
+      "stdout": "preflight.stdout.log",
+      "stdout_raw_bytes": 182,
+      "stdout_raw_sha256": "c704f3271e8c9f42fffa7893acdf03681af608da59692a15e311919d7c897065",
+      "stderr": "preflight.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "metadata-default",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.6040680859987333,
+      "stdout": "metadata-default.stdout.json.gz",
+      "stdout_raw_bytes": 833382,
+      "stdout_raw_sha256": "a3045f590a5d8bfe20369057d242673c731e86ee07f41339f1a78d6a2aa8db4c",
+      "stderr": "metadata-default.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "metadata-all-features",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--all-features",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.29867287000161014,
+      "stdout": "metadata-all-features.stdout.json.gz",
+      "stdout_raw_bytes": 848392,
+      "stdout_raw_sha256": "1c60b87b5b663b5984a8b113f3ffe17bd511b220e3ad692f69ffa1a91f80c725",
+      "stderr": "metadata-all-features.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "source-inventory",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.10316004100241116,
+      "stdout": "source-inventory.stdout.log",
+      "stdout_raw_bytes": 35,
+      "stdout_raw_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stderr": "source-inventory.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "all_commands_passed": true,
+  "ordinary_daemon_executed": false,
+  "original_service_executed": false
+}

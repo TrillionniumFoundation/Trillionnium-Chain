@@ -1,0 +1,28 @@
+{
+  "schema": "trnm.history-recovery-controller-reconciliation.v1",
+  "initial_request": {
+    "content": [
+      {
+        "type": "text",
+        "text": "tool call error: tool call failed for `codex_apps/h.process_start`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+      }
+    ],
+    "isError": true
+  },
+  "inventory_attempt": {
+    "content": [
+      {
+        "type": "text",
+        "text": "durable inventory total source byte bound exceeded"
+      }
+    ],
+    "structuredContent": {
+      "error_code": "INVALID_ARGUMENT"
+    },
+    "isError": true
+  },
+  "same_key_job_id": "1a1c11102f6-336d-58",
+  "same_key_reused": true,
+  "new_attempt_started_after_timeout": false,
+  "job_terminal_result_not_yet_observed": true
+}

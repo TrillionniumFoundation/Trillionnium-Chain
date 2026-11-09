@@ -1,0 +1,44 @@
+diff --git a/trillionnium/crates/trnm-crypto-primitives/src/lib.rs b/trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+index 9ab79d21c0..7d7c8623a2 100644
+--- a/trillionnium/crates/trnm-crypto-primitives/src/lib.rs
++++ b/trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+@@ -229,3 +229,4 @@ pub mod pq_auth;
+ pub mod pq_candidate;
+ pub mod pq_content_auth;
+ pub mod pq_profile_auth;
++pub mod pq_root_v3;
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs b/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs
+index 309ae852e7..a8654d6c34 100644
+--- a/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs
++++ b/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs
+@@ -16,9 +16,30 @@ use std::net::SocketAddr;
+ use trnm_crypto_primitives::pq_auth::PqNativeSigningKey;
+ use trnm_protocol::pq_frame::ML_DSA_65_SIGNATURE_BYTES;
+ 
++mod auth;
+ mod directory;
++mod epoch;
++mod epoch_directory;
+ mod transport;
++pub use auth::{
++    announce_authenticated_cell_provider_pq, announce_authenticated_cell_provider_pq_observed,
++    fetch_authenticated_discovered_cell_to_file_pq,
++    fetch_authenticated_discovered_cell_to_file_pq_observed,
++    serve_authenticated_cell_rendezvous_pq, CellBootstrapPinV3, CellDiscoveryFailureV3,
++    CellDiscoveryFetchReportV3, CellDiscoveryObservationV3, CellDiscoveryOptionsV3,
++    CellRendezvousIdentityV3, CellRendezvousReportV3, CELL_DISCOVERY_AUTH_PROFILE_V3,
++};
+ pub use directory::{CellProviderDirectoryUsageV2, CellProviderDirectoryV2};
++pub use epoch::{
++    CellDiscoveryRequestV3, CellDiscoveryTimeV3, CellProviderRecordV3, CellProviderStatementV3,
++    CellVerifiedProviderRecordV3, CELL_DISCOVERY_EPOCH_SECONDS_V3, CELL_DISCOVERY_PROFILE_V3,
++    CELL_DISCOVERY_REQUEST_BYTES_V3, CELL_PROVIDER_RECORD_BYTES_V3,
++};
++pub use epoch_directory::{
++    CellDiscoverySourcePinV3, CellDiscoverySourcePinsV3, CellDiscoverySourceV3,
++    CellProviderDirectoryUsageV3, CellProviderDirectoryV3, CellProviderQuotaLimitsV3,
++    CELL_DISCOVERY_ACTIVE_LIMITS_V3, CELL_DISCOVERY_REPLAY_LIMITS_V3,
++};
+ pub use transport::{
+     announce_cell_provider_pq, fetch_discovered_cell_to_file_pq, serve_cell_rendezvous_pq,
+     CellDiscoveryFetchReportV2, CellDiscoveryObservationV2, CellDiscoveryOptionsV2,

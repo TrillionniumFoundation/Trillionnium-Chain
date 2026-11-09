@@ -1,0 +1,20 @@
+{
+  "observed_at_utc": "2026-11-09T15:48:22.619534+00:00",
+  "changed_paths": [
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "old_blob": "8c447a6816fbf620763fb82ce62d309b3083a7dd",
+      "new_blob": "2cd40e2b43bfc8f7e1b3028aa57e2dae27ea7731",
+      "sha256": "a099effc7b163f81959c0f5e55ebf1a2a92041c2eb59e2e87aef67fbc8b17892"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/residency/sealed_loader/tests.rs",
+      "old_blob": "35c1cc5f5ab54e2e6c80287beef04c42357a9119",
+      "new_blob": "a3d07422e7894ee0203f050ca6d09b602e1d6d5e",
+      "sha256": "4e100a4b194d253231d722491061dc869f0d64d00d1a990cc27c02492ec2b127"
+    }
+  ],
+  "required_paths": 967,
+  "pinned_blobs": 1059,
+  "scope": "only reviewed plan and test file; no acceptance change"
+}

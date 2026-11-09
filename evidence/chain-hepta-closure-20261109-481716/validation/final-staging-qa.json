@@ -1,0 +1,318 @@
+{
+  "schema": "final-evidence-staging-qa-v1",
+  "observed_at_utc": "2026-11-09T17:49:39.854149+00:00",
+  "execution_source": "4dbeae12fa756fd662cc074390fcb628abe970ad",
+  "reviewed_display_texts_unchanged": true,
+  "display_markdown_files": [
+    "README.md",
+    "final-pon-research.md",
+    "history-import-review/AUTHORIZATION_NOTE.md",
+    "history-import-review/README.md",
+    "history-import-review/snapshot-followup.md",
+    "native/M4/README.md",
+    "ordinary-daemon-717-engineering-gap.md",
+    "original-campaign/README.md",
+    "original-history-snapshots/README.md",
+    "qrom-latest-followup.md",
+    "qualification-history/README.md",
+    "validation/fd-probe-static-review/README.md",
+    "validation/final-terminal-review-M6/README.md",
+    "validation/journal-isolation-static-review/README.md",
+    "validation/native-M5/README.md",
+    "validation/native-M6/README.md",
+    "validation/provider-fixture-static-review/README.md",
+    "validation/publication-static-review-M6/README.md"
+  ],
+  "relative_links": [
+    {
+      "from": "README.md",
+      "target": "source/source-lineage.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "qualification-history/M4/qualification-identities.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "qualification-history/M5/qualification-identities.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "candidate-profile.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "qualification-plan.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "qualification-packet.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "qualification-review.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "validation/M6-controls/summary.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "validation/final-source-structure-M6/results.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "source/hepta-717-lock-object-verification.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "validation/native-M6/README.md",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "validation/native-M6/artifact-direct-crossjoin.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "validation/root-M6-native-delivery-review.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "validation/native-M6/journal-exact-child.log",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "validation/native-M6/ignored-scope-correction.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "validation/M5-controls/summary.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "validation/ci-M4-passed/summary.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "validation/readers-M4/summary.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "validation/final-source-structure-M5/results.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "binding-review/m2-python-controls.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "validation/ci-M3-failed/summary.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "native/M4/README.md",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "validation/fd-probe-static-review/README.md",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "source/M5-freeze.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "validation/provider-fixture-static-review/README.md",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "validation/native-M5/README.md",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "validation/native-M6/ignored-scope-correction.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "source/M6-freeze.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "validation/journal-isolation-static-review/README.md",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "execution-status.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "original-campaign/README.md",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "history-import-review/README.md",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "history-import-review/snapshot-followup.md",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "original-history-snapshots/README.md",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "ordinary-daemon-717-engineering-gap.md",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "final-pon-research.md",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "final-pon-research-sources.json",
+      "exists": true
+    },
+    {
+      "from": "README.md",
+      "target": "qrom-latest-followup.md",
+      "exists": true
+    },
+    {
+      "from": "history-import-review/AUTHORIZATION_NOTE.md",
+      "target": "README.md",
+      "exists": true
+    },
+    {
+      "from": "history-import-review/README.md",
+      "target": "review.json",
+      "exists": true
+    },
+    {
+      "from": "history-import-review/snapshot-followup.md",
+      "target": "README.md",
+      "exists": true
+    },
+    {
+      "from": "history-import-review/snapshot-followup.md",
+      "target": "review.json",
+      "exists": true
+    },
+    {
+      "from": "history-import-review/snapshot-followup.md",
+      "target": "snapshot-followup.json",
+      "exists": true
+    },
+    {
+      "from": "history-import-review/snapshot-followup.md",
+      "target": "AUTHORIZATION_NOTE.md",
+      "exists": true
+    },
+    {
+      "from": "qrom-latest-followup.md",
+      "target": "qrom-followup-inputs/official-fetch-attempt01.json",
+      "exists": true
+    },
+    {
+      "from": "qrom-latest-followup.md",
+      "target": "qrom-latest-followup-sources.json",
+      "exists": true
+    },
+    {
+      "from": "qrom-latest-followup.md",
+      "target": "qrom-followup-inputs/tracked-manuscript-comparison.json",
+      "exists": true
+    },
+    {
+      "from": "qrom-latest-followup.md",
+      "target": "qrom-followup-inputs/tracked-comparison-review.json",
+      "exists": true
+    },
+    {
+      "from": "qrom-latest-followup.md",
+      "target": "qrom-latest-followup-sources.json",
+      "exists": true
+    },
+    {
+      "from": "validation/fd-probe-static-review/README.md",
+      "target": "review.json",
+      "exists": true
+    },
+    {
+      "from": "validation/final-terminal-review-M6/README.md",
+      "target": "controls-lineage-reviewed.json",
+      "exists": true
+    },
+    {
+      "from": "validation/final-terminal-review-M6/README.md",
+      "target": "native-byte-review.json",
+      "exists": true
+    },
+    {
+      "from": "validation/final-terminal-review-M6/README.md",
+      "target": "review.json",
+      "exists": true
+    },
+    {
+      "from": "validation/journal-isolation-static-review/README.md",
+      "target": "review.json",
+      "exists": true
+    },
+    {
+      "from": "validation/journal-isolation-static-review/README.md",
+      "target": "reviewed.patch",
+      "exists": true
+    },
+    {
+      "from": "validation/provider-fixture-static-review/README.md",
+      "target": "review.json",
+      "exists": true
+    },
+    {
+      "from": "validation/publication-static-review-M6/README.md",
+      "target": "review.json",
+      "exists": true
+    }
+  ],
+  "all_relative_targets_exist": true,
+  "late_review_and_readiness_selected_secret_patterns_absent": true,
+  "full_compressed_payload_scan": "publication-payload-scan-final-native-M6.json",
+  "native_qualification": "HOLD_NO_GO",
+  "production_activation": false
+}

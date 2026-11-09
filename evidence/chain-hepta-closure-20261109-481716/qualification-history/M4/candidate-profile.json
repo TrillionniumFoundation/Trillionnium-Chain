@@ -1,0 +1,73 @@
+{
+  "authority": "DENY_ALL",
+  "expected_learning_source_contract": {
+    "daemon_binary_sha256": null,
+    "evaluator_sha256": null,
+    "loader_sha256": null,
+    "model_closure_sha256": null,
+    "nested_scope_fields": [
+      "update_scope",
+      "update_rule",
+      "binding"
+    ],
+    "root_profile_schema_version": 2,
+    "same_operation_native_execution_observed": false,
+    "scope": "FrozenLearningScopeV2",
+    "wire": "HEPLCP02"
+  },
+  "final_use_qualified": false,
+  "original_contract": {
+    "host_service_seconds": 4,
+    "separate_campaign_seconds": 30,
+    "thresholds_changed": false,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/097f59f505f8ec42f72e3b8255e6cb7822a70646/docs/development/specs/pon/CELL_STORAGE_NETWORK_ACCEPTANCE_V1.md",
+    "wan_minimum_hours": 72,
+    "wan_minimum_independently_administered_failure_domains": 3
+  },
+  "production_activation": false,
+  "proof_profile": {
+    "cryptographic_qualification": false,
+    "descriptor_sha256": "da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c",
+    "id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+    "manifest_path": "config/pon/pq-proof-profile-binding-v1.json",
+    "manifest_sha256": "9154595097a2abe460f23e53ab96b3de5712702b156ada71fc5d2d65c337e424"
+  },
+  "schema": "trnm-chain-hepta-closure-candidate-profile-v1",
+  "scope": "frozen-source-candidate-not-native-qualification",
+  "source_pair": {
+    "chain": {
+      "locks": {
+        "formal/pon-nakamoto-v1/selected_nonce_bank_research/native_selected/Cargo.lock": "c8d66fe14008ffeb39a78f6d802ecac2255fe1eb1de58a423aa5d5824a31717c",
+        "formal/pon-nakamoto-v1/w1_batch/Cargo.lock": "e56accd1c0259adba715ea17e252aee6214eb5ff06a449b5cee4d4c72b18ac8a",
+        "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.lock": "018423c898d09d0be7a7fbe207e4a1672c5b6f36202dda765a81da852c044d18",
+        "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865",
+        "formal/pon-nakamoto-v1/w1_native_cost/Cargo.lock": "b88ad1d11b966101d46f1797a3b7ab9f5e4806d8a0fdd9f90b6091163d5c30a0",
+        "formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.lock": "3a94af4cfcad63eef08f1cc5921797112fd5191bf5e93b2b133c840524c629a7",
+        "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock": "24f146fc5d5ba89f6070725a4453fbfe160fae0a81fb2449932f420fd2b7f281",
+        "formal/pon-nakamoto-v1/w1_public_stark_research/security_model_audit/source_inputs/w1_Cargo.lock": "35e29723f30ca10dd6712403456755ac41cb8d73d963ab73f8cbd7a8d69d3ae1",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock": "9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock": "ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a",
+        "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock": "03a3b7f6cc81a6e1678f2fd23b2b448f8f90931c258f4e66a7bcdc422447d2bf",
+        "formal/pon-nakamoto-v1/w1_zkvm/methods/guest/Cargo.lock": "b9f3e243c5b78300329827d1837244dd3244ca1eba569cac967fe8d5e012314c",
+        "tests/fuzz/Cargo.lock": "290799f8243743e2619d8bd2cb99e1cae9295c4fbfea3d952f01b2d7f873caae",
+        "trillionnium/Cargo.lock": "f9e57d73899c5d9fabd4f5b4fedf45256b8db4efb448d15680d070bbcfcb30bd"
+      },
+      "sha": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "tree": "c82829c3a5710960081d91930cf425f9a768e9e4"
+    },
+    "hepta": {
+      "locks": {
+        "MODULE.bazel.lock": "2be801e80e41fc993798e133a168c8202c73ed8c8e4e06f419779e317f7c0679",
+        "codex-rs/Cargo.lock": "48b55c7ff5c23516fd0aeedca7c10a6e7902aeb5dc49fa4cef80971e1ae57d3f"
+      },
+      "sha": "71738345326b98d88b738250d2b84ecbcb466eb8",
+      "tree": "bfd8384241bf09fcf79daa94f2ef9c9438f92ee4"
+    }
+  },
+  "source_parents": {
+    "chain_835": "e2a02f9271b49f146e70806c8a66e161b5973971",
+    "chain_836": "0746a462e80067b78317597f2fa4bacf5e3db958",
+    "chain_837": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0"
+  },
+  "status": "HOLD_NO_GO"
+}

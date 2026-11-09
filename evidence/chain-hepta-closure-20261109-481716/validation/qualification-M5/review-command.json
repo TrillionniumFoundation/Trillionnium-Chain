@@ -1,0 +1,22 @@
+{
+  "actual_daemon_identity_supplied": false,
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/chain_hepta_qualification.py",
+    "--plan",
+    "/workspace/scratch/481716a90d06/closure-evidence/qualification-plan.json",
+    "--plan-sha256",
+    "9cd7c3cbd2c785458a3764f3d6dba6bca148b5f88a140f322a00510236e7ea92",
+    "--packet",
+    "/workspace/scratch/481716a90d06/closure-evidence/qualification-packet.json",
+    "--evidence-root",
+    "/workspace/scratch/481716a90d06/closure-evidence"
+  ],
+  "full_native_source_collector_executed": false,
+  "observed_at_utc": "2026-11-09T15:50:22.829915+00:00",
+  "qualification": "HOLD_NO_GO",
+  "returncode": 2,
+  "source_commit": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+  "source_tree": "fbbb4dca143775bae75ea825ff502f368e122ebb"
+}

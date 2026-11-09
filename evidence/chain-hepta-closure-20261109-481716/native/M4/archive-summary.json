@@ -1,0 +1,395 @@
+{
+  "archive_path": "/home/qian-qi/chain-hepta-481716-native-check/validation-logs-01.tar.gz",
+  "bytes": 159519,
+  "manifest_sha256": "05eb5a3dc8627346541ca8ce00dd10f195a5c93ffd17233bf13a975ed8ef09fd",
+  "retained_original_files": 93,
+  "schema": "rog-native-validation-archive-delivery-v1",
+  "sha256": "856524b9bb284a83fe12ed098da9858a687d08e25ddad0ed5c7121f1e38f15c6",
+  "summary": {
+    "actual_test_command_is_library_only": true,
+    "additional_retries_started": false,
+    "build_target_included_in_archive": false,
+    "check_and_clippy": {
+      "check_status": "PASS",
+      "clippy_status": "PASS",
+      "commands": [
+        {
+          "elapsed_ns": 1000631236,
+          "name": "preflight",
+          "returncode": 0,
+          "stderr": "preflight.stderr.log",
+          "stdout": "preflight.stdout.log"
+        },
+        {
+          "elapsed_ns": 1000974999,
+          "name": "cargo-version",
+          "returncode": 0,
+          "stderr": "cargo-version.stderr.log",
+          "stdout": "cargo-version.stdout.log"
+        },
+        {
+          "elapsed_ns": 1001271525,
+          "name": "rustc-version",
+          "returncode": 0,
+          "stderr": "rustc-version.stderr.log",
+          "stdout": "rustc-version.stdout.log"
+        },
+        {
+          "elapsed_ns": 39009401555,
+          "name": "cargo-check",
+          "returncode": 0,
+          "stderr": "cargo-check.stderr.log",
+          "stdout": "cargo-check.stdout.log"
+        },
+        {
+          "elapsed_ns": 30007221033,
+          "name": "cargo-clippy",
+          "returncode": 0,
+          "stderr": "cargo-clippy.stderr.log",
+          "stdout": "cargo-clippy.stdout.log"
+        }
+      ],
+      "native_library_check_and_clippy_passed": true,
+      "source_before_after_equal": true
+    },
+    "collected_at_utc": "2026-11-09T15:31:00.390721+00:00",
+    "counts_are_per_attempt_and_not_added_across_retries": true,
+    "expected_cargo_lock_sha256": "f9e57d73899c5d9fabd4f5b4fedf45256b8db4efb448d15680d070bbcfcb30bd",
+    "expected_head": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+    "expected_tree": "c82829c3a5710960081d91930cf425f9a768e9e4",
+    "external_target_executed": false,
+    "final_owner_library_validation_status": "FAILED_ASSERTION_AND_INCOMPLETE_SCOPE",
+    "first_retained_request": {
+      "error": {
+        "message": "requested owner package absent",
+        "type": "AssertionError"
+      },
+      "missing_requested_packages": [
+        "trnm-release-runtime"
+      ],
+      "result": "NOT_STARTED",
+      "source_before_after_equal": true
+    },
+    "host_four_second_service_executed": false,
+    "native_daemon_executed": false,
+    "nested_child_harness_summaries_are_not_owner_library_totals": true,
+    "new_tests_written": false,
+    "raw_summary_selected_targets_are_complete_cargo_metadata_not_execution_claims": true,
+    "repository_source_edited": false,
+    "schema": "fixed-m4-rog-native-validation-delivery-v2",
+    "second_retained_request": {
+      "cold_compilation_note": "Original test02 stderr records Finished test profile in 7m 45s; this build cost remains part of the preserved 850 s engineering attempt.",
+      "corrected_counts_and_actual_execution": {
+        "actual_cargo_running_libraries": [
+          {
+            "cargo_running_line": "     Running unittests src/lib.rs (/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_crypto_primitives-a8181f6305c7ebfe)",
+            "package": "trnm-crypto-primitives",
+            "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_crypto_primitives-a8181f6305c7ebfe"
+          },
+          {
+            "cargo_running_line": "     Running unittests src/lib.rs (/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_data_availability-68d57059a66fd7c3)",
+            "package": "trnm-data-availability",
+            "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_data_availability-68d57059a66fd7c3"
+          },
+          {
+            "cargo_running_line": "     Running unittests src/lib.rs (/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_pon_node-1b9e88419cc32a23)",
+            "package": "trnm-pon-node",
+            "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_pon_node-1b9e88419cc32a23"
+          }
+        ],
+        "all_five_completed": false,
+        "complete_top_level_summaries": [
+          {
+            "elapsed": "0.44s",
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "package": "trnm-crypto-primitives",
+            "passed": 196,
+            "raw_line": "test result: ok. 196 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.44s",
+            "status": "ok"
+          },
+          {
+            "elapsed": "24.78s",
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "package": "trnm-data-availability",
+            "passed": 714,
+            "raw_line": "test result: ok. 714 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 24.78s",
+            "status": "ok"
+          }
+        ],
+        "invalid_original_fields": [
+          "all_five_library_targets_reported",
+          "library_targets_reported",
+          "aggregate_counts"
+        ],
+        "nested_or_filtered_summaries": [
+          {
+            "elapsed": "0.00s",
+            "failed": 0,
+            "filtered_out": 1397,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 1,
+            "raw_line": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1397 filtered out; finished in 0.00s",
+            "status": "ok"
+          },
+          {
+            "elapsed": "0.00s",
+            "failed": 0,
+            "filtered_out": 1397,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 1,
+            "raw_line": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1397 filtered out; finished in 0.00s",
+            "status": "ok"
+          },
+          {
+            "elapsed": "0.00s",
+            "failed": 0,
+            "filtered_out": 1397,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 1,
+            "raw_line": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1397 filtered out; finished in 0.00s",
+            "status": "ok"
+          }
+        ],
+        "not_yet_reported_by_cargo": [
+          "trnm-release-bundle",
+          "trnm-protocol"
+        ],
+        "original_summary_unchanged": true,
+        "partial_top_level_failed": 0,
+        "partial_top_level_filtered": 0,
+        "partial_top_level_ignored": 0,
+        "partial_top_level_passed": 910,
+        "reason": "The original wrapper counted three nested child harness summaries (each one passed,1397 filtered) as top-level owner libraries. They are retained separately, never summed into top-level counts.",
+        "schema": "retained-test02-top-level-count-correction-v1",
+        "status": "INCOMPLETE_ENGINEERING_TIMEOUT",
+        "test_returncode": -15,
+        "timed_out": true,
+        "top_level_completed_count": 2
+      },
+      "original_summary_count_fields_invalid": [
+        "all_five_library_targets_reported",
+        "library_targets_reported",
+        "aggregate_counts"
+      ],
+      "original_summary_preserved_unchanged": true,
+      "owned_execution_stop_review": {
+        "actual_failed_test_lines": [],
+        "cgroup_read_errors": [],
+        "compiler_error_lines": [],
+        "correction_summary": {
+          "all_five_completed": false,
+          "not_yet_reported_by_cargo": [
+            "trnm-release-bundle",
+            "trnm-protocol"
+          ],
+          "partial_top_level_failed": 0,
+          "partial_top_level_filtered": 0,
+          "partial_top_level_ignored": 0,
+          "partial_top_level_passed": 910,
+          "top_level_completed_count": 2
+        },
+        "inspection_job_own_cgroup_excluded": true,
+        "no_additional_external_workflow_dispatched_by_this_task": true,
+        "no_unknown_hepta_launch_effects": true,
+        "observed_at_utc": "2026-11-09T15:21:43.661676+00:00",
+        "original_cgroup_pids": [],
+        "original_owned_execution_stopped": true,
+        "remaining_processes_with_owned_cwd_or_executable": [],
+        "safe_to_start_one_authorized_warm_attempt": true,
+        "schema": "retained-test02-owned-process-stop-review-v1",
+        "source_head": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+        "source_status": [],
+        "systemctl_argv": [
+          "systemctl",
+          "--user",
+          "show",
+          "hepta-runtime-job-1a1c0d2c5a4-336d-3",
+          "-p",
+          "LoadState",
+          "-p",
+          "ActiveState",
+          "-p",
+          "SubState",
+          "-p",
+          "ControlGroup",
+          "-p",
+          "MainPID",
+          "-p",
+          "ControlPID",
+          "-p",
+          "KillMode"
+        ],
+        "systemctl_returncode": 0,
+        "unit": "hepta-runtime-job-1a1c0d2c5a4-336d-3",
+        "unit_properties": {
+          "ActiveState": "inactive",
+          "ControlGroup": "",
+          "ControlPID": "0",
+          "KillMode": "control-group",
+          "LoadState": "not-found",
+          "MainPID": "0",
+          "SubState": "dead"
+        }
+      },
+      "raw_status": {
+        "result": "FAIL_OR_INCOMPLETE",
+        "source_before_after_equal": true,
+        "test_returncode": -15,
+        "timed_out": true
+      }
+    },
+    "source_at_collection": {
+      "cargo_lock_sha256": "f9e57d73899c5d9fabd4f5b4fedf45256b8db4efb448d15680d070bbcfcb30bd",
+      "head": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "status": [],
+      "tree": "c82829c3a5710960081d91930cf425f9a768e9e4"
+    },
+    "source_at_collection_matches_exact_candidate_and_clean": true,
+    "source_preparation": {
+      "actual_head": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "actual_tree": "c82829c3a5710960081d91930cf425f9a768e9e4",
+      "cargo_lock_sha256": "f9e57d73899c5d9fabd4f5b4fedf45256b8db4efb448d15680d070bbcfcb30bd",
+      "commands_completed": 10,
+      "disk_free_bytes": 90884505600,
+      "exact_source_ready": true,
+      "expected_head": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+      "expected_tree": "c82829c3a5710960081d91930cf425f9a768e9e4",
+      "failure_stage": null,
+      "missing_required_paths": [],
+      "native_build_started": false,
+      "native_service_started": false,
+      "required_source_paths": 4133,
+      "schema": "fixed-m4-rog-source-preparation-v1",
+      "sparse_patterns": "/*\n!/evidence/\n",
+      "status_porcelain": []
+    },
+    "standalone_proving_or_pressure_campaign_executed": false,
+    "test02_test03_overlap_elf_comparison": [
+      {
+        "bytes_equal": true,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_crypto_primitives-a8181f6305c7ebfe",
+        "sha256_equal": true,
+        "test02_sha256": "ca0f7f7c7a8a0d2bee57333237bb84af69676e957f6f40ff00004d07da1b69c3",
+        "test03_sha256": "ca0f7f7c7a8a0d2bee57333237bb84af69676e957f6f40ff00004d07da1b69c3"
+      },
+      {
+        "bytes_equal": true,
+        "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_data_availability-68d57059a66fd7c3",
+        "sha256_equal": true,
+        "test02_sha256": "62d97d12f375842d92372542810ae95bfaf5fda6af1109b53680d09a2221607a",
+        "test03_sha256": "62d97d12f375842d92372542810ae95bfaf5fda6af1109b53680d09a2221607a"
+      }
+    ],
+    "third_attempt_actual_failed_test_lines": [
+      "test cell::residency::sealed_loader::tests::copied_byte_corruption_is_rejected_by_postseal_full_hash_without_partial_bundle ... FAILED"
+    ],
+    "third_attempt_failure_detail_path": "post-test-identities/test-03-failure-excerpt.log",
+    "third_attempt_test_elf_count": 2,
+    "third_attempt_test_elf_identity_capture_complete": true,
+    "third_retained_request": {
+      "all_five_libraries_completed": false,
+      "all_five_library_targets_reported": false,
+      "cargo_running_library_targets": [
+        {
+          "cargo_running_line": "     Running unittests src/lib.rs (/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_crypto_primitives-a8181f6305c7ebfe)",
+          "inside_owned_target": true,
+          "package": "trnm-crypto-primitives",
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_crypto_primitives-a8181f6305c7ebfe"
+        },
+        {
+          "cargo_running_line": "     Running unittests src/lib.rs (/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_data_availability-68d57059a66fd7c3)",
+          "inside_owned_target": true,
+          "package": "trnm-data-availability",
+          "path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_data_availability-68d57059a66fd7c3"
+        }
+      ],
+      "completed_top_level_counts": {
+        "failed": 1,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 909
+      },
+      "completed_top_level_library_count": 2,
+      "completed_utc": "2026-11-09T15:24:39.267938+00:00",
+      "elapsed_seconds": 24.077228231006302,
+      "library_targets_reported": 2,
+      "library_test_results": [
+        {
+          "elapsed": "0.44s",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "package": "trnm-crypto-primitives",
+          "passed": 196,
+          "raw_line": "test result: ok. 196 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.44s",
+          "status": "ok"
+        },
+        {
+          "elapsed": "23.29s",
+          "failed": 1,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "package": "trnm-data-availability",
+          "passed": 713,
+          "raw_line": "test result: FAILED. 713 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 23.29s",
+          "status": "FAILED"
+        }
+      ],
+      "nested_or_filtered_harness_results": [],
+      "packages": [
+        "trnm-crypto-primitives",
+        "trnm-release-bundle",
+        "trnm-protocol",
+        "trnm-pon-node",
+        "trnm-data-availability"
+      ],
+      "result": "FAIL_OR_INCOMPLETE",
+      "source_before_after_equal": true,
+      "started_utc": "2026-11-09T15:24:15.207282+00:00",
+      "test_returncode": 101,
+      "timed_out": false,
+      "top_level_alignment_rule": "Actual unique Cargo Running unittests library paths in execution order, paired with zero-filter top-level result lines; filtered child harness summaries are separately retained and never summed."
+    },
+    "thirty_second_campaign_executed": false
+  },
+  "test_elfs": [
+    {
+      "bytes": 59820968,
+      "cargo_profile": "test (no --release)",
+      "cargo_running_line": "     Running unittests src/lib.rs (/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_crypto_primitives-a8181f6305c7ebfe)",
+      "cfg_test": true,
+      "identity_read_complete": true,
+      "is_elf": true,
+      "ordinary_daemon_build_identity": null,
+      "ordinary_daemon_load_identity": null,
+      "reported_path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_crypto_primitives-a8181f6305c7ebfe",
+      "resolved_path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_crypto_primitives-a8181f6305c7ebfe",
+      "sha256": "ca0f7f7c7a8a0d2bee57333237bb84af69676e957f6f40ff00004d07da1b69c3"
+    },
+    {
+      "bytes": 128517000,
+      "cargo_profile": "test (no --release)",
+      "cargo_running_line": "     Running unittests src/lib.rs (/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_data_availability-68d57059a66fd7c3)",
+      "cfg_test": true,
+      "identity_read_complete": true,
+      "is_elf": true,
+      "ordinary_daemon_build_identity": null,
+      "ordinary_daemon_load_identity": null,
+      "reported_path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_data_availability-68d57059a66fd7c3",
+      "resolved_path": "/home/qian-qi/chain-hepta-481716-native-check/retained-test-target-01/debug/deps/trnm_data_availability-68d57059a66fd7c3",
+      "sha256": "62d97d12f375842d92372542810ae95bfaf5fda6af1109b53680d09a2221607a"
+    }
+  ]
+}

@@ -1,0 +1,424 @@
+{
+  "archive_after": {
+    "bytes": 76441344,
+    "path": "/workspace/scratch/481716a90d06/verification/history-snapshot-download/campaign0746-original.zip",
+    "sha256": "4e8a243caf2aadf4a195b4cb96dbb0229a0e001a830f0e9de2c4f853ee7dff5c"
+  },
+  "archive_and_manifest_unchanged": true,
+  "archive_before": {
+    "bytes": 76441344,
+    "path": "/workspace/scratch/481716a90d06/verification/history-snapshot-download/campaign0746-original.zip",
+    "sha256": "4e8a243caf2aadf4a195b4cb96dbb0229a0e001a830f0e9de2c4f853ee7dff5c"
+  },
+  "artifact_id": 13662172930,
+  "completed_at_utc": "2026-11-09T16:19:42.798050+00:00",
+  "connector_receipt_private_reference_removed": true,
+  "contexts": [
+    {
+      "artifact": {
+        "bytes": 320148,
+        "path": "run-1-baseline-complete.json.gz",
+        "sha256": "cfc5bba97e45ef870248c636598c00cec035cec2c371c009ba3409d90cecba29"
+      },
+      "baseline_field_count": 50,
+      "baseline_field_names": [
+        "actor_reports_successful_without_cap_or_kill",
+        "address",
+        "all_signed_rounds_confirmed_in_window",
+        "attack_calls_overlapping_each_signed_round",
+        "attacker_processes_ready",
+        "attacker_processes_requested",
+        "budget_samples",
+        "business_started_ns",
+        "children",
+        "children_os_usage_after",
+        "children_os_usage_before",
+        "client_native_history_arithmetic_after",
+        "client_native_history_arithmetic_before",
+        "client_observation_scope",
+        "completion_work_observation",
+        "confirmations",
+        "depletion_at_ns",
+        "depletion_meter",
+        "duration_seconds",
+        "external_controller_observation",
+        "final_actual_flow",
+        "final_client_tip",
+        "final_meter",
+        "final_receiver_tip",
+        "finite_phase_criteria_met",
+        "full_work_accepted",
+        "full_work_failed",
+        "genuine_budget_depletion_observed",
+        "history",
+        "initial_meter",
+        "initial_tip",
+        "mode",
+        "native_history_arithmetic_after",
+        "native_history_arithmetic_before",
+        "observer_complete",
+        "phase_process_context",
+        "public_phase_children_os_usage_after",
+        "public_phase_children_os_usage_before",
+        "public_resource_policy",
+        "receiver_and_verifier_setup_cpu_ns",
+        "receiver_and_verifier_setup_wall_ns",
+        "receiver_client_state_equal",
+        "receiver_observation",
+        "rss",
+        "service_outcome",
+        "state_backend",
+        "submissions",
+        "verifier_errors",
+        "whole_parent_phase_cpu_ns",
+        "whole_parent_phase_wall_ns"
+      ],
+      "baseline_json_pointer": "/phases/0",
+      "complete_baseline_roundtrip_equal": true,
+      "omitted_baseline_fields": [],
+      "report_context_field_names": [
+        "best_observed_cold_legal_method",
+        "cryptographic_hardness_qualified",
+        "economics",
+        "economics_complete",
+        "finite_experiment_criteria_met",
+        "independent_operators",
+        "preparation",
+        "production_candidate",
+        "public_resource_policy",
+        "release_ready",
+        "schema",
+        "scope",
+        "selection_candidates_cpu_ns",
+        "settings_profile",
+        "state_backend",
+        "wan_qualified",
+        "work_profile_qualified"
+      ],
+      "run_index": 1,
+      "uncompressed_bytes": 3064283,
+      "uncompressed_sha256": "4fa78b53b16fa11ecaecb9c63a89038e6a2b3d54753942afa75a6fda4aca4a37"
+    },
+    {
+      "artifact": {
+        "bytes": 325102,
+        "path": "run-2-baseline-complete.json.gz",
+        "sha256": "31538574d036829698d0d2495e9e6f901e313cb03fc3ddb7f21d3034b2d1d845"
+      },
+      "baseline_field_count": 50,
+      "baseline_field_names": [
+        "actor_reports_successful_without_cap_or_kill",
+        "address",
+        "all_signed_rounds_confirmed_in_window",
+        "attack_calls_overlapping_each_signed_round",
+        "attacker_processes_ready",
+        "attacker_processes_requested",
+        "budget_samples",
+        "business_started_ns",
+        "children",
+        "children_os_usage_after",
+        "children_os_usage_before",
+        "client_native_history_arithmetic_after",
+        "client_native_history_arithmetic_before",
+        "client_observation_scope",
+        "completion_work_observation",
+        "confirmations",
+        "depletion_at_ns",
+        "depletion_meter",
+        "duration_seconds",
+        "external_controller_observation",
+        "final_actual_flow",
+        "final_client_tip",
+        "final_meter",
+        "final_receiver_tip",
+        "finite_phase_criteria_met",
+        "full_work_accepted",
+        "full_work_failed",
+        "genuine_budget_depletion_observed",
+        "history",
+        "initial_meter",
+        "initial_tip",
+        "mode",
+        "native_history_arithmetic_after",
+        "native_history_arithmetic_before",
+        "observer_complete",
+        "phase_process_context",
+        "public_phase_children_os_usage_after",
+        "public_phase_children_os_usage_before",
+        "public_resource_policy",
+        "receiver_and_verifier_setup_cpu_ns",
+        "receiver_and_verifier_setup_wall_ns",
+        "receiver_client_state_equal",
+        "receiver_observation",
+        "rss",
+        "service_outcome",
+        "state_backend",
+        "submissions",
+        "verifier_errors",
+        "whole_parent_phase_cpu_ns",
+        "whole_parent_phase_wall_ns"
+      ],
+      "baseline_json_pointer": "/phases/0",
+      "complete_baseline_roundtrip_equal": true,
+      "omitted_baseline_fields": [],
+      "report_context_field_names": [
+        "best_observed_cold_legal_method",
+        "cryptographic_hardness_qualified",
+        "economics",
+        "economics_complete",
+        "finite_experiment_criteria_met",
+        "independent_operators",
+        "preparation",
+        "production_candidate",
+        "public_resource_policy",
+        "release_ready",
+        "schema",
+        "scope",
+        "selection_candidates_cpu_ns",
+        "settings_profile",
+        "state_backend",
+        "wan_qualified",
+        "work_profile_qualified"
+      ],
+      "run_index": 2,
+      "uncompressed_bytes": 3270613,
+      "uncompressed_sha256": "d9eac1e735a3b4ef517f41dae4f51f0f49c0028481e05a61744428e6b5687676"
+    },
+    {
+      "artifact": {
+        "bytes": 324504,
+        "path": "run-3-baseline-complete.json.gz",
+        "sha256": "eba391661dd1fe372e1df203ac05ffc45635b9c4c725493d6c3631f4844fcdab"
+      },
+      "baseline_field_count": 50,
+      "baseline_field_names": [
+        "actor_reports_successful_without_cap_or_kill",
+        "address",
+        "all_signed_rounds_confirmed_in_window",
+        "attack_calls_overlapping_each_signed_round",
+        "attacker_processes_ready",
+        "attacker_processes_requested",
+        "budget_samples",
+        "business_started_ns",
+        "children",
+        "children_os_usage_after",
+        "children_os_usage_before",
+        "client_native_history_arithmetic_after",
+        "client_native_history_arithmetic_before",
+        "client_observation_scope",
+        "completion_work_observation",
+        "confirmations",
+        "depletion_at_ns",
+        "depletion_meter",
+        "duration_seconds",
+        "external_controller_observation",
+        "final_actual_flow",
+        "final_client_tip",
+        "final_meter",
+        "final_receiver_tip",
+        "finite_phase_criteria_met",
+        "full_work_accepted",
+        "full_work_failed",
+        "genuine_budget_depletion_observed",
+        "history",
+        "initial_meter",
+        "initial_tip",
+        "mode",
+        "native_history_arithmetic_after",
+        "native_history_arithmetic_before",
+        "observer_complete",
+        "phase_process_context",
+        "public_phase_children_os_usage_after",
+        "public_phase_children_os_usage_before",
+        "public_resource_policy",
+        "receiver_and_verifier_setup_cpu_ns",
+        "receiver_and_verifier_setup_wall_ns",
+        "receiver_client_state_equal",
+        "receiver_observation",
+        "rss",
+        "service_outcome",
+        "state_backend",
+        "submissions",
+        "verifier_errors",
+        "whole_parent_phase_cpu_ns",
+        "whole_parent_phase_wall_ns"
+      ],
+      "baseline_json_pointer": "/phases/0",
+      "complete_baseline_roundtrip_equal": true,
+      "omitted_baseline_fields": [],
+      "report_context_field_names": [
+        "best_observed_cold_legal_method",
+        "cryptographic_hardness_qualified",
+        "economics",
+        "economics_complete",
+        "finite_experiment_criteria_met",
+        "independent_operators",
+        "preparation",
+        "production_candidate",
+        "public_resource_policy",
+        "release_ready",
+        "schema",
+        "scope",
+        "selection_candidates_cpu_ns",
+        "settings_profile",
+        "state_backend",
+        "wan_qualified",
+        "work_profile_qualified"
+      ],
+      "run_index": 3,
+      "uncompressed_bytes": 3245006,
+      "uncompressed_sha256": "bab55a6748ee41105f623746c0b3ee99b7446b34d435890a01ca33b04b961389"
+    }
+  ],
+  "mac_failed_attempts_preserved_separately": "mac-attempts/attempts-summary.json",
+  "native_unknown_failure_and_inflight_fields_preserved": true,
+  "new_campaign_executed": false,
+  "original_run_id": 42591962205,
+  "original_source_commit": "0746a462e80067b78317597f2fa4bacf5e3db958",
+  "outputs": [
+    {
+      "bytes": 628,
+      "path": "connector-download-receipt-public.json",
+      "sha256": "8687c42873ee8a4d925a68dcfb6515273768d6f3c986a0e894dd0f3a73833511"
+    },
+    {
+      "bytes": 777,
+      "path": "connector-receipt-transformation.json",
+      "sha256": "2a1dc676d3de7a1032b2c2bad35cce71f23ae62b8ed56407e79049c45115447a"
+    },
+    {
+      "bytes": 85002,
+      "path": "baseline-history-snapshots.json",
+      "sha256": "453c1d085a4a689110e931235464cd471f68e9b59311bbbdd1172ae70d4c78ec"
+    },
+    {
+      "bytes": 320148,
+      "path": "run-1-baseline-complete.json.gz",
+      "sha256": "cfc5bba97e45ef870248c636598c00cec035cec2c371c009ba3409d90cecba29"
+    },
+    {
+      "bytes": 325102,
+      "path": "run-2-baseline-complete.json.gz",
+      "sha256": "31538574d036829698d0d2495e9e6f901e313cb03fc3ddb7f21d3034b2d1d845"
+    },
+    {
+      "bytes": 324504,
+      "path": "run-3-baseline-complete.json.gz",
+      "sha256": "eba391661dd1fe372e1df203ac05ffc45635b9c4c725493d6c3631f4844fcdab"
+    },
+    {
+      "bytes": 24906,
+      "path": "original-report-layout.json",
+      "sha256": "c85f4c9920e62ef392e27840f28105b175edb6a0d86c8f2e2f90d303d0bf2df8"
+    },
+    {
+      "bytes": 724,
+      "path": "original-report-manifest-selection.json",
+      "sha256": "e75989c99b4955a573d4282c4931709530fe47b53c2fb767017dbafe51ecba84"
+    },
+    {
+      "bytes": 2192,
+      "path": "mac-attempts/metadata-preflight.json",
+      "sha256": "3abd9980529d35b047e3446d786be3823e260508206004bccdf7838109565f47"
+    },
+    {
+      "bytes": 730,
+      "path": "mac-attempts/metadata-controller-terminal.json",
+      "sha256": "5b36419effa205c88d3bb652923011b3de6edbd41cc07db8e46de855e326e7a8"
+    },
+    {
+      "bytes": 747,
+      "path": "mac-attempts/download-controller-reconciliation.json",
+      "sha256": "05f1e7356ec944a8968880d9ba80a74745be665799a37c75a81cb01a0893f82d"
+    },
+    {
+      "bytes": 4348,
+      "path": "mac-attempts/download-request-script.py",
+      "sha256": "718bef9c6a8f7103bff7dec3c7bdb5dbdfcb6225a40584dfe2bf1d8ea81c3a2e"
+    },
+    {
+      "bytes": 727,
+      "path": "mac-attempts/download-01.terminal.json",
+      "sha256": "8d6cdc62cd6a533aa75e31bd356cfe883090896f7353a7a8e2d8d883ef694b53"
+    },
+    {
+      "bytes": 1098,
+      "path": "mac-attempts/download-01.stderr.log",
+      "sha256": "f963f4e6a521fbef9215de8a54a3f3fc7e9c00dc2989ea927c9be81c49c3c84c"
+    },
+    {
+      "bytes": 723,
+      "path": "mac-attempts/range-01.terminal.json",
+      "sha256": "2ba90f39f12ef492c62478e782c1b87fcd90fe1424fe31d171daf97744564d7a"
+    },
+    {
+      "bytes": 89,
+      "path": "mac-attempts/range-01.stderr.log",
+      "sha256": "50e76f596f645535e3cc13736cd4f15e5acd7ea094dc0f7bc59a3e4de0e00c65"
+    },
+    {
+      "bytes": 2654,
+      "path": "mac-attempts/range-01-request-script.py",
+      "sha256": "25971c7201e30b3a7e051330b55c3d09ae0ad90ec04bbf3bd2acfb53d57e7edd"
+    },
+    {
+      "bytes": 577,
+      "path": "mac-attempts/partial-final-identity.json",
+      "sha256": "657a2828ab449de5b57494338513e1a1e830362bc697ef90809277a700a130aa"
+    },
+    {
+      "bytes": 1575,
+      "path": "mac-attempts/attempts-summary.json",
+      "sha256": "6ae269cf126828a2d6ac1774a368f35888589d2af33f74823628f60d69d45885"
+    },
+    {
+      "bytes": 2694,
+      "path": "README.md",
+      "sha256": "e5efb47cb90200a331c33bc99ef23b4191adf3c3e1adf12e85d212cad05a54a7"
+    }
+  ],
+  "pre_projection_extraction_manifest_sha256": "26e5b33ab1c862947886cb745c6ddc7b3b00832d9c025d3c71ea7909bd80b6e5",
+  "private_identifier_values_included": false,
+  "public_copy_prepared_at_utc": "2026-11-09T16:22:26.846480+00:00",
+  "qualification_inferred": false,
+  "raw_snapshot_fields_removed": [],
+  "receipt_projection_description": "connector-receipt-transformation.json",
+  "schema": "trnm.original-history-snapshot-extraction.v1",
+  "signed_urls_retained": false,
+  "source_manifest_after": {
+    "bytes": 77115,
+    "path": "/workspace/scratch/481716a90d06/closure-evidence/original-campaign/artifact-files.json.gz",
+    "sha256": "e60672ed9000139c0a8adba8da489f5577d57f3bd6c2d7bd13a1b1fd3e69f6f7"
+  },
+  "source_manifest_before": {
+    "bytes": 77115,
+    "path": "/workspace/scratch/481716a90d06/closure-evidence/original-campaign/artifact-files.json.gz",
+    "sha256": "e60672ed9000139c0a8adba8da489f5577d57f3bd6c2d7bd13a1b1fd3e69f6f7"
+  },
+  "source_reports": [
+    {
+      "archive_member": "run-1-raw/report.json",
+      "bytes": 48614177,
+      "manifest_byte_identity_matched": true,
+      "sha256": "39c4098846dbbb802f962989a0774d09c95a80c0db3b04a69923adfce8b5c307",
+      "zip_crc32": "19642c9d"
+    },
+    {
+      "archive_member": "run-2-raw/report.json",
+      "bytes": 48774711,
+      "manifest_byte_identity_matched": true,
+      "sha256": "43c8fb8fa28c560522be595b58e98e483c62631a76766f42efa24f088e366822",
+      "zip_crc32": "385d8667"
+    },
+    {
+      "archive_member": "run-3-raw/report.json",
+      "bytes": 48449148,
+      "manifest_byte_identity_matched": true,
+      "sha256": "5699de385790f39f3e5684140b97fb81ebba892036442295a3628591de9e0156",
+      "zip_crc32": "1adaa33a"
+    }
+  ],
+  "started_at_utc": "2026-11-09T16:19:36.053245+00:00",
+  "whole_archive_extracted": false,
+  "whole_raw_report_copies_persisted": false
+}

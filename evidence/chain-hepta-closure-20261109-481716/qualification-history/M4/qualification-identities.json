@@ -1,0 +1,9 @@
+{
+  "full_raw_source_identity_collector_executed": false,
+  "native_case_roster_configured": false,
+  "packet_sha256": "9f31a6f24ab48a6dd59d5987322628e8fe5e0eeaeb661ba9ebff973ca130a031",
+  "plan_sha256": "d22f583a8463141b167d32fb19b78d5c41067c9fe03ab521a402e333e2d33f0d",
+  "profile_sha256": "376877d093f53e68ddc1995531aacd54895b00cbc231307a717e99c1100ed7c1",
+  "review_sha256": "3803ad05bdaf8065b8b780cf3562abb77538f3a4991ff1aefd0f70b70c367875",
+  "source_capture_scope": "observed Git trees, tracked lock bytes, selected input manifests and test snapshots; no full two-worktree collector"
+}

@@ -1,0 +1,36 @@
+{
+  "label": "corpus-controls-full-900s",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "scripts/ci/test_pq_research_integration.py",
+    "-v"
+  ],
+  "started_at_utc": "2026-11-09T15:51:17.172207+00:00",
+  "completed_at_utc": "2026-11-09T15:54:09.206726+00:00",
+  "elapsed_seconds": 172.03453031800018,
+  "engineering_timeout_seconds": 900,
+  "timed_out": false,
+  "exit_code": 0,
+  "process_exit_after_timeout": null,
+  "status": "PASS",
+  "expected_test_count": 59,
+  "observed_test_counts": [
+    59
+  ],
+  "expected_count_matched": true,
+  "raw_unittest_summary": [
+    "Ran 59 tests in 171.667s",
+    "OK"
+  ],
+  "stdout": {
+    "path": "corpus-controls-full-900s.stdout.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "corpus-controls-full-900s.stderr.log",
+    "bytes": 8425,
+    "sha256": "52eebc8e45ed9c29f14b71dc90be7b21a708fdf392ce3ad07dcb0d9e69870963"
+  }
+}

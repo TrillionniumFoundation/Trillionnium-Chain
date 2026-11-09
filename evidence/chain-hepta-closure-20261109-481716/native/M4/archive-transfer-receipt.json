@@ -1,0 +1,80 @@
+{
+  "archive_info": {
+    "metadata": {
+      "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gid": 1000,
+      "link_count": 1,
+      "metadata_platform": "linux",
+      "mode": 384,
+      "uid": 1000,
+      "xattr_names": [],
+      "xattr_sha256": {}
+    },
+    "mode": 384,
+    "path": "/home/qian-qi/chain-hepta-481716-native-check/validation-logs-01.tar.gz",
+    "sha256": "856524b9bb284a83fe12ed098da9858a687d08e25ddad0ed5c7121f1e38f15c6",
+    "size": 159519,
+    "version": "66306:36355249:159519:1794238260428050892:1794238260428050892"
+  },
+  "chunks": [
+    {
+      "offset": 0,
+      "next_offset": 65536,
+      "chunk_sha256": "6a9fd99a482c40b4e2ed99ce5baf9121291a37067922f5137e69b9677ed3e9e2",
+      "version": "66306:36355249:159519:1794238260428050892:1794238260428050892",
+      "eof": false
+    },
+    {
+      "offset": 65536,
+      "next_offset": 131072,
+      "chunk_sha256": "5c737be2b905a821cf9f9a6877097acd08f82b888e6aca8442675815a1acb4e7",
+      "version": "66306:36355249:159519:1794238260428050892:1794238260428050892",
+      "eof": false
+    },
+    {
+      "offset": 131072,
+      "next_offset": 159519,
+      "chunk_sha256": "97402d4367aaf6a5655d1a1f4403f3c2a563f1e0ff73fafc844c0f4daba4a9f9",
+      "version": "66306:36355249:159519:1794238260428050892:1794238260428050892",
+      "eof": true
+    }
+  ],
+  "collector_job_id": "1a1c0ef211a-336d-39",
+  "collection_status": {
+    "at_unix_ms": 1794238260462,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1c0ef211a-336d-39",
+    "launch_nonce": "902f9309277f5c3538e0fc432d3d8234",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 16717,
+        "stored": 16717
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  }
+}

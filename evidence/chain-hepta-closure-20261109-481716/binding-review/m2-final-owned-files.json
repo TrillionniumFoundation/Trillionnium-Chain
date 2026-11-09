@@ -1,0 +1,151 @@
+{
+  "recorded_at_utc": "2026-11-09T14:03:48.498865+00:00",
+  "source_commit": "44e96b1a841a50613d0b93484c5e576caec9f81f",
+  "source_tree": "c297ebb14fcbeeb5f8acf13b3143a66b8b3b6db8",
+  "native_tests_executed": false,
+  "files": [
+    {
+      "path": "config/pon/pq-authority-effects-v1.json",
+      "bytes": 14196,
+      "sha256": "f3f0cdc69b353f47fc6bc36b305d8819685d9ecbf247cc6694c5b37453d4d5bd",
+      "changed_since_source_freeze": true
+    },
+    {
+      "path": "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "bytes": 15087,
+      "sha256": "b048d246a6eb654a6b41edbdab844d2a04fec30626062daf9f774c5b62e9609b",
+      "changed_since_source_freeze": true
+    },
+    {
+      "path": "scripts/ci/pq_authority_effect_register.py",
+      "bytes": 11132,
+      "sha256": "99c7ae4ddcdce1bac481d96923f04dcb16f344c24c093f09e07bc410bbd65976",
+      "changed_since_source_freeze": true
+    },
+    {
+      "path": "scripts/ci/test_pq_authority_effect_register.py",
+      "bytes": 14494,
+      "sha256": "82374857a97e491b275cc9bb9359be3fb2ae4e224dd7ab1bace098072f69309e",
+      "changed_since_source_freeze": true
+    },
+    {
+      "path": "config/pon/pq-root-dependency-register-v3.json",
+      "bytes": 38842,
+      "sha256": "a53c902e4af3e3faba1c058915ae963b9fb171b0199d317d2daff2cf99748f21",
+      "changed_since_source_freeze": true
+    },
+    {
+      "path": "scripts/ci/pq_root_dependency_register.py",
+      "bytes": 20574,
+      "sha256": "653971fc7fed059e3fc1b53978ac8697773600be0719d8475be93dc4612a3a17",
+      "changed_since_source_freeze": true
+    },
+    {
+      "path": "docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md",
+      "bytes": 17154,
+      "sha256": "9e1242ab93280e0715cac5d0aa8852ffb98bd1728ed390c86cb06e30bfe440d9",
+      "changed_since_source_freeze": true
+    },
+    {
+      "path": "config/pon/w1-qrom-implementation-current-v2.json",
+      "bytes": 40257,
+      "sha256": "e2c5377ac02c0ed47e7f69125fbcabe61072d42597b3208264abaa5be2961c78",
+      "changed_since_source_freeze": true
+    },
+    {
+      "path": "scripts/w1_qrom_current_implementation_audit.py",
+      "bytes": 17028,
+      "sha256": "27b9cadfc931763b94348a0489600d759bd068d786964a4a093f65d8aa45d242",
+      "changed_since_source_freeze": true
+    },
+    {
+      "path": "scripts/ci/test_w1_qrom_current_implementation_audit.py",
+      "bytes": 8720,
+      "sha256": "9e87e202e839e498008f4b8178379de2553bfc7bb8da0ca91df853e6a8886909",
+      "changed_since_source_freeze": true
+    },
+    {
+      "path": "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+      "bytes": 6874,
+      "sha256": "6e54c97c910a87c9f4b0cf6f30b568f1a8611c8eb8d7d276a053a161a1f64cae",
+      "changed_since_source_freeze": true
+    },
+    {
+      "path": "scripts/ci/pq_proof_profile_binding.py",
+      "bytes": 19474,
+      "sha256": "9d2adebbf3043d7e8cfe664444e19b767142300bf8718899fe486c33e329d041",
+      "changed_since_source_freeze": false
+    },
+    {
+      "path": "scripts/ci/test_pq_proof_profile_binding.py",
+      "bytes": 13874,
+      "sha256": "c9189a5c5e56f3b6a6684190554579e4dfa23256a64a371cb7ada9261557e867",
+      "changed_since_source_freeze": false
+    },
+    {
+      "path": "config/pon/pq-proof-profile-binding-v1.json",
+      "bytes": 2378,
+      "sha256": "9154595097a2abe460f23e53ab96b3de5712702b156ada71fc5d2d65c337e424",
+      "changed_since_source_freeze": true
+    },
+    {
+      "path": "docs/security/PQ_PROOF_PROFILE_BINDING_V1.md",
+      "bytes": 7528,
+      "sha256": "ac4ffc16669db3eec5111bd438ce5159ace481bfc5b53bd6f32699cbd954706b",
+      "changed_since_source_freeze": true
+    }
+  ],
+  "json_field_changes": {
+    "config/pon/pq-authority-effects-v1.json": [
+      "/source_files_sha256/trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+      "/source_files_sha256/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+      "/source_revision"
+    ],
+    "config/pon/pq-root-dependency-register-v3.json": [
+      "/review_base_revision",
+      "/source_files_sha256/trillionnium/Cargo.lock",
+      "/source_files_sha256/trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+      "/source_files_sha256/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "/source_files_sha256/trillionnium/crates/trnm-protocol/src/lib.rs",
+      "/source_files_sha256/trillionnium/crates/trnm-release-bundle/Cargo.toml",
+      "/source_files_sha256/trillionnium/crates/trnm-release-bundle/src/lib.rs",
+      "/source_files_sha256/trillionnium/crates/trnm-release-bundle/src/pq_release.rs"
+    ],
+    "config/pon/w1-qrom-implementation-current-v2.json": [
+      "/local_path_closure/files",
+      "/reviewed_changes/root_storage_integration_20261109",
+      "/source_base_commit"
+    ],
+    "config/pon/pq-proof-profile-binding-v1.json": [
+      "/mapping_contract/bytes",
+      "/mapping_contract/sha256"
+    ]
+  },
+  "historical_v1_unchanged": [
+    {
+      "path": "config/pon/w1-qrom-implementation-v1.json",
+      "bytes": 6875,
+      "sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22"
+    },
+    {
+      "path": "scripts/w1_qrom_implementation_audit.py",
+      "bytes": 21678,
+      "sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354"
+    }
+  ],
+  "status": "READY_FOR_PARENT_REVIEW_SECURITY_HOLD",
+  "diff_check": {
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "control_counts": {
+    "authority-controls": 18,
+    "root-controls": 42,
+    "w1-controls": 14,
+    "profile-controls": 26
+  },
+  "selected_profile_descriptor_sha256": "da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c",
+  "candidate_profile_identity_matched": true,
+  "all_15_qrom_obligations_unresolved": true
+}

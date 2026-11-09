@@ -1,0 +1,17 @@
+{
+  "label": "metadata-default",
+  "argv": [
+    "cargo",
+    "+1.95.0",
+    "metadata",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--format-version",
+    "1"
+  ],
+  "exit": 0,
+  "elapsed_seconds": 1.6485252380371094,
+  "source_commit": "44e96b1a841a50613d0b93484c5e576caec9f81f"
+}

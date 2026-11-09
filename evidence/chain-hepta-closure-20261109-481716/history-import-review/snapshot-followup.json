@@ -1,0 +1,1708 @@
+{
+  "schema": "pon-original-baseline-native-snapshot-followup-v1",
+  "created_utc": "2026-11-09T16:28:49.433888+00:00",
+  "scope": "Read-only analysis of recovered original 0746 baseline whole-phase cumulative snapshots; no new native execution, code edit, policy change or production qualification.",
+  "authorization_note": "Normal baseline profiling and repair/acceptance are already authorized by the current task. The earlier conditional permission wording was inaccurate; no renewed user confirmation is required. Remaining work concerns evidence, implementation and available resources.",
+  "original_archive": {
+    "bytes": 76441344,
+    "sha256": "4e8a243caf2aadf4a195b4cb96dbb0229a0e001a830f0e9de2c4f853ee7dff5c",
+    "artifact_id": 13662172930,
+    "run_id": 42591962205,
+    "recovered_at_utc": "2026-11-09T16:16:13.451438+00:00",
+    "all_three_full_report_hashes_independently_rechecked": true,
+    "complete_baseline_extracts_independently_value_equal_to_reports": true
+  },
+  "measurement_identity": {
+    "source_revision": "0746a462e80067b78317597f2fa4bacf5e3db958",
+    "source_tree": "03c69f3120a84f49fd7a76d9564bba4ef0c4b24e",
+    "binary_sha256": "3afe1ecc5953bb4e5b3066fe07fb11b68a74faac787f4f81c5c15209a97a86f1",
+    "M5_compared_source_revision": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+    "M5_performance_measured_here": false
+  },
+  "input_files": [
+    {
+      "file": "baseline-history-snapshots.json",
+      "bytes": 85002,
+      "sha256": "453c1d085a4a689110e931235464cd471f68e9b59311bbbdd1172ae70d4c78ec"
+    },
+    {
+      "file": "extraction-manifest.json",
+      "bytes": 14711,
+      "sha256": "93d025ac399fe868856cbd21f34b11157c362cb212f9ca70c5eeaa76b11eb5be"
+    },
+    {
+      "file": "campaign0746-outcomes-v2.json.gz",
+      "bytes": 67972,
+      "sha256": "b61a17fa5ba42866deef4c01ede7f758271a1d93abf03a953ae67333897e0563"
+    },
+    {
+      "file": "review.json",
+      "bytes": 38881,
+      "sha256": "78d963419a3d8c84b9f426f0d8e5dcaeb1ec58011e57f5eb696a9f4656ba72ef"
+    },
+    {
+      "file": "run-1-baseline-complete.json.gz",
+      "bytes": 320148,
+      "sha256": "cfc5bba97e45ef870248c636598c00cec035cec2c371c009ba3409d90cecba29",
+      "decoded_bytes": 3064283,
+      "decoded_sha256": "4fa78b53b16fa11ecaecb9c63a89038e6a2b3d54753942afa75a6fda4aca4a37"
+    },
+    {
+      "file": "run-2-baseline-complete.json.gz",
+      "bytes": 325102,
+      "sha256": "31538574d036829698d0d2495e9e6f901e313cb03fc3ddb7f21d3034b2d1d845",
+      "decoded_bytes": 3270613,
+      "decoded_sha256": "d9eac1e735a3b4ef517f41dae4f51f0f49c0028481e05a61744428e6b5687676"
+    },
+    {
+      "file": "run-3-baseline-complete.json.gz",
+      "bytes": 324504,
+      "sha256": "eba391661dd1fe372e1df203ac05ffc45635b9c4c725493d6c3631f4844fcdab",
+      "decoded_bytes": 3245006,
+      "decoded_sha256": "bab55a6748ee41105f623746c0b3ee99b7446b34d435890a01ca33b04b961389"
+    }
+  ],
+  "original_reports": [
+    {
+      "archive_member": "run-1-raw/report.json",
+      "bytes": 48614177,
+      "manifest_byte_identity_matched": true,
+      "sha256": "39c4098846dbbb802f962989a0774d09c95a80c0db3b04a69923adfce8b5c307",
+      "zip_crc32": "19642c9d"
+    },
+    {
+      "archive_member": "run-2-raw/report.json",
+      "bytes": 48774711,
+      "manifest_byte_identity_matched": true,
+      "sha256": "43c8fb8fa28c560522be595b58e98e483c62631a76766f42efa24f088e366822",
+      "zip_crc32": "385d8667"
+    },
+    {
+      "archive_member": "run-3-raw/report.json",
+      "bytes": 48449148,
+      "manifest_byte_identity_matched": true,
+      "sha256": "5699de385790f39f3e5684140b97fb81ebba892036442295a3628591de9e0156",
+      "zip_crc32": "1adaa33a"
+    }
+  ],
+  "previous_frozen_files": {
+    "review.json": "78d963419a3d8c84b9f426f0d8e5dcaeb1ec58011e57f5eb696a9f4656ba72ef",
+    "README.md": "d4b8d401fa16d9f645d1d56ff678173417ff8600b111fd9b5f2060d06ee817e1",
+    "AUTHORIZATION_NOTE.md": "7b29f02ce64f894947588eb652c3d2ac50d6ce48a8ade320ec98267a177bbe1d"
+  },
+  "source_pins": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "M5_source_revision": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+      "original_0746_source_revision": "0746a462e80067b78317597f2fa4bacf5e3db958",
+      "bytes": 94925,
+      "sha256": "92bfaca74ad0b7e5f9c7559d05a13a5535420b7df536a474de4035191e7a838f",
+      "byte_identical_0746_M5": true,
+      "M5_anchors": [
+        674,
+        684,
+        705
+      ],
+      "fixed_source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "M5_source_revision": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+      "original_0746_source_revision": "0746a462e80067b78317597f2fa4bacf5e3db958",
+      "bytes": 63361,
+      "sha256": "74812ed3a1197a1f2a0907890858481b7d4bc2d8fc8f5cab8eca6b17d5665ec2",
+      "byte_identical_0746_M5": true,
+      "M5_anchors": [
+        493,
+        510,
+        538,
+        585
+      ],
+      "fixed_source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs",
+      "M5_source_revision": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+      "original_0746_source_revision": "0746a462e80067b78317597f2fa4bacf5e3db958",
+      "bytes": 12380,
+      "sha256": "29fc9dfa3adfeff27c2daa134fdcf237255331d1cef1e6b6f025620dacd975ea",
+      "byte_identical_0746_M5": true,
+      "M5_anchors": [
+        185,
+        235,
+        238
+      ],
+      "fixed_source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+      "M5_source_revision": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+      "original_0746_source_revision": "0746a462e80067b78317597f2fa4bacf5e3db958",
+      "bytes": 27602,
+      "sha256": "8de3fc5f217f38c87d37f0b41bda580b593b00b601af254e2e75b6326b8e1e18",
+      "byte_identical_0746_M5": true,
+      "M5_anchors": [
+        342,
+        473,
+        597,
+        643,
+        740
+      ],
+      "fixed_source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs"
+    }
+  ],
+  "scope_and_difference_rules": [
+    "Both snapshots belong to the original independent verifier Node: before is post-seed/pre-service, after is after original service cleanup and before final read_active. Whole-phase deltas include ten imports and the separate confirmation; they are not seven-packet prefix-only deltas.",
+    "Each of sixteen stage fields is subtracted after exact roster, unsigned/non-saturated, monotonic, known-plus-unknown and unwinding checks. Stage totals are nested and must not be added as exclusive costs.",
+    "StageObservation counts on Drop and has no independent started/inflight roster or per-return-error counts. These snapshots prove consistency and known CPU for recorded calls, not an independently enumerated all-started lifecycle.",
+    "For every SQL site, both endpoints satisfy started = returned + abandoned + inflight; returned = succeeded + failed; closed = CPU-known + CPU-unknown. All observed errors/unknown/inflight/abandoned/unwinding flags here are zero.",
+    "If SQL calls were never entered before, null time is treated as the additive starting identity only to derive later actually-entered calls. A site with no new calls has measured delta time null, even when subtraction of two unchanged cumulative values is numerically zero. Raw endpoint times and arithmetic differences are retained.",
+    "SQL intervals cover the actual Transaction::commit API, not all SQL statements, total storage IO or physical fsync. Whole-phase API sum is a conservative upper bound for any subset of those calls in the prefix.",
+    "AccountGraph is nested within VerifyState and can run within publish/state_at/read_active/admission/activation. Its wall includes real graph SQL reads, parsing/hash/arithmetic and progress callbacks with Host/CPU/refill checks; their separate costs are not measured here.",
+    "Thread CPU excludes full scoped-worker CPU; nested Host, stage and importer CPU are not additive. No wall-minus-CPU residual is labelled as measured sleep."
+  ],
+  "checks": {
+    "three_reports_match_original_manifest": true,
+    "three_complete_baseline_contexts_value_equal": true,
+    "snapshot_fields_value_equal_to_original": true,
+    "stage_endpoint_rows_checked": 96,
+    "sql_endpoint_rows_checked": 24,
+    "all_stage_observation_failed_flags_false": true,
+    "all_sql_observation_failed_flags_false": true,
+    "all_recorded_stage_cpu_known": true,
+    "all_counters_non_saturated_and_monotonic": true,
+    "all_sql_endpoint_lifecycles_closed": true,
+    "all_sql_unknown_failure_abandoned_unwinding_inflight_zero": true,
+    "whole_phase_imports": 30,
+    "whole_phase_import_successes": 27,
+    "whole_phase_import_failures": 3,
+    "separate_client_confirmations": 3,
+    "native_entered_spans_checked": 498,
+    "original_v2_client_raw_fields_matched": true
+  },
+  "runs": [
+    {
+      "run": 1,
+      "source_report": {
+        "archive_member": "run-1-raw/report.json",
+        "bytes": 48614177,
+        "manifest_byte_identity_matched": true,
+        "sha256": "39c4098846dbbb802f962989a0774d09c95a80c0db3b04a69923adfce8b5c307",
+        "zip_crc32": "19642c9d"
+      },
+      "baseline_json_pointer": "/phases/0",
+      "raw_snapshot_json_pointers": {
+        "client_native_history_arithmetic_after": "/phases/0/client_native_history_arithmetic_after",
+        "client_native_history_arithmetic_before": "/phases/0/client_native_history_arithmetic_before"
+      },
+      "whole_phase_context": {
+        "state_backend": "authenticated-v1",
+        "duration_seconds": 30,
+        "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+        "import_calls": 10,
+        "import_successes": 9,
+        "import_failures": 1,
+        "separate_client_confirmation_calls": 1,
+        "finite_phase_criteria_met": false,
+        "verifier_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "whole_parent_phase_wall_ns": 33888192672,
+        "whole_parent_phase_cpu_ns": 8193815246
+      },
+      "stage_deltas": [
+        {
+          "stage": "record",
+          "before_calls": 143,
+          "after_calls": 700,
+          "delta": {
+            "calls": 557,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 4236084,
+            "cpu_known_calls": 557,
+            "wall_ns": 4784230
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "packet",
+          "before_calls": 90,
+          "after_calls": 400,
+          "delta": {
+            "calls": 310,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 9432138,
+            "cpu_known_calls": 310,
+            "wall_ns": 9736083
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "delta",
+          "before_calls": 86,
+          "after_calls": 387,
+          "delta": {
+            "calls": 301,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 97615606,
+            "cpu_known_calls": 301,
+            "wall_ns": 485327911
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "verify_state",
+          "before_calls": 47,
+          "after_calls": 147,
+          "delta": {
+            "calls": 100,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 4330777610,
+            "cpu_known_calls": 100,
+            "wall_ns": 18943572992
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "verify_history",
+          "before_calls": 13,
+          "after_calls": 40,
+          "delta": {
+            "calls": 27,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 116119838,
+            "cpu_known_calls": 27,
+            "wall_ns": 503637598
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "publish",
+          "before_calls": 4,
+          "after_calls": 13,
+          "delta": {
+            "calls": 9,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 2045793858,
+            "cpu_known_calls": 9,
+            "wall_ns": 8663643144
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "read_active",
+          "before_calls": 14,
+          "after_calls": 19,
+          "delta": {
+            "calls": 5,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 308089293,
+            "cpu_known_calls": 5,
+            "wall_ns": 1311469495
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "state_at",
+          "before_calls": 16,
+          "after_calls": 43,
+          "delta": {
+            "calls": 27,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 1108630788,
+            "cpu_known_calls": 27,
+            "wall_ns": 5029199033
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "execute",
+          "before_calls": 4,
+          "after_calls": 13,
+          "delta": {
+            "calls": 9,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 15136718,
+            "cpu_known_calls": 9,
+            "wall_ns": 15144132
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "admission",
+          "before_calls": 4,
+          "after_calls": 13,
+          "delta": {
+            "calls": 9,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 3888337984,
+            "cpu_known_calls": 9,
+            "wall_ns": 17059694423
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "activation",
+          "before_calls": 4,
+          "after_calls": 5,
+          "delta": {
+            "calls": 1,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 1250075150,
+            "cpu_known_calls": 1,
+            "wall_ns": 5435239676
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "complete_commitment",
+          "before_calls": 51,
+          "after_calls": 160,
+          "delta": {
+            "calls": 109,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 72800584,
+            "cpu_known_calls": 109,
+            "wall_ns": 530498028
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "complete_state_root",
+          "before_calls": 6,
+          "after_calls": 46,
+          "delta": {
+            "calls": 40,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 10530988,
+            "cpu_known_calls": 40,
+            "wall_ns": 86478302
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "account_graph",
+          "before_calls": 34,
+          "after_calls": 107,
+          "delta": {
+            "calls": 73,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 4214790939,
+            "cpu_known_calls": 73,
+            "wall_ns": 18138434746
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "persisted_state_root",
+          "before_calls": 41,
+          "after_calls": 122,
+          "delta": {
+            "calls": 81,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 15960788,
+            "cpu_known_calls": 81,
+            "wall_ns": 169768225
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "execution_parent_binding",
+          "before_calls": 4,
+          "after_calls": 13,
+          "delta": {
+            "calls": 9,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 2923110,
+            "cpu_known_calls": 9,
+            "wall_ns": 2933012
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        }
+      ],
+      "sql_site_deltas": [
+        {
+          "site": "admission_persistence",
+          "before_calls_started": 4,
+          "after_calls_started": 13,
+          "before_calls_in_flight": 0,
+          "after_calls_in_flight": 0,
+          "delta": {
+            "cpu_unknown_calls": 0,
+            "calls_started": 9,
+            "calls_unwinding": 0,
+            "wall_unknown_calls": 0,
+            "calls_abandoned": 0,
+            "calls_returned": 9,
+            "cpu_ns_known_sum": 8022035,
+            "calls_succeeded": 9,
+            "calls_failed": 0,
+            "cpu_known_calls": 9,
+            "wall_ns": 20885039,
+            "cpu_ns": 8022035
+          },
+          "arithmetic_cumulative_time_difference": {
+            "wall_ns": 20885039,
+            "cpu_ns": 8022035
+          },
+          "measurement_state": "OBSERVED_COMPLETE_NEW_CALLS",
+          "lifecycle_counts_closed": true,
+          "before_wall_ns": 6035297,
+          "after_wall_ns": 26920336,
+          "before_cpu_ns": 3598462,
+          "after_cpu_ns": 11620497
+        },
+        {
+          "site": "atomic",
+          "before_calls_started": 4,
+          "after_calls_started": 4,
+          "before_calls_in_flight": 0,
+          "after_calls_in_flight": 0,
+          "delta": {
+            "cpu_unknown_calls": 0,
+            "calls_started": 0,
+            "calls_unwinding": 0,
+            "wall_unknown_calls": 0,
+            "calls_abandoned": 0,
+            "calls_returned": 0,
+            "cpu_ns_known_sum": 0,
+            "calls_succeeded": 0,
+            "calls_failed": 0,
+            "cpu_known_calls": 0,
+            "wall_ns": null,
+            "cpu_ns": null
+          },
+          "arithmetic_cumulative_time_difference": {
+            "wall_ns": 0,
+            "cpu_ns": 0
+          },
+          "measurement_state": "NO_CALL_ENTERED_IN_THIS_INTERVAL",
+          "lifecycle_counts_closed": true,
+          "before_wall_ns": 2722910,
+          "after_wall_ns": 2722910,
+          "before_cpu_ns": 1152649,
+          "after_cpu_ns": 1152649
+        },
+        {
+          "site": "reorg_step",
+          "before_calls_started": 0,
+          "after_calls_started": 9,
+          "before_calls_in_flight": 0,
+          "after_calls_in_flight": 0,
+          "delta": {
+            "cpu_unknown_calls": 0,
+            "calls_started": 9,
+            "calls_unwinding": 0,
+            "wall_unknown_calls": 0,
+            "calls_abandoned": 0,
+            "calls_returned": 9,
+            "cpu_ns_known_sum": 1518977,
+            "calls_succeeded": 9,
+            "calls_failed": 0,
+            "cpu_known_calls": 9,
+            "wall_ns": 39602092,
+            "cpu_ns": 1518977
+          },
+          "arithmetic_cumulative_time_difference": {
+            "wall_ns": 39602092,
+            "cpu_ns": 1518977
+          },
+          "measurement_state": "OBSERVED_COMPLETE_NEW_CALLS",
+          "lifecycle_counts_closed": true,
+          "before_wall_ns": null,
+          "after_wall_ns": 39602092,
+          "before_cpu_ns": null,
+          "after_cpu_ns": 1518977
+        },
+        {
+          "site": "reorg_termination",
+          "before_calls_started": 0,
+          "after_calls_started": 0,
+          "before_calls_in_flight": 0,
+          "after_calls_in_flight": 0,
+          "delta": {
+            "cpu_unknown_calls": 0,
+            "calls_started": 0,
+            "calls_unwinding": 0,
+            "wall_unknown_calls": 0,
+            "calls_abandoned": 0,
+            "calls_returned": 0,
+            "cpu_ns_known_sum": 0,
+            "calls_succeeded": 0,
+            "calls_failed": 0,
+            "cpu_known_calls": 0,
+            "wall_ns": null,
+            "cpu_ns": null
+          },
+          "arithmetic_cumulative_time_difference": {
+            "wall_ns": null,
+            "cpu_ns": null
+          },
+          "measurement_state": "NO_CALL_ENTERED_IN_THIS_INTERVAL",
+          "lifecycle_counts_closed": true,
+          "before_wall_ns": null,
+          "after_wall_ns": null,
+          "before_cpu_ns": null,
+          "after_cpu_ns": null
+        }
+      ],
+      "sql_api_new_calls_total": 18,
+      "sql_api_complete_wall_ns": 60487131,
+      "sql_api_complete_calling_thread_cpu_ns": 9541012,
+      "whole_phase_v2_alignment": {
+        "client_import_wall_ns": 25056737379,
+        "client_import_calling_thread_cpu_ns": 5710933792,
+        "packet_phase_totals": {
+          "context": {
+            "calls": 10,
+            "accepted": 10,
+            "rejected": 0,
+            "wall_ns": 11472397,
+            "calling_thread_cpu_ns": 11474019
+          },
+          "work": {
+            "calls": 10,
+            "accepted": 9,
+            "rejected": 1,
+            "wall_ns": 2087939764,
+            "calling_thread_cpu_ns": 536875056
+          },
+          "admission": {
+            "calls": 9,
+            "accepted": 9,
+            "rejected": 0,
+            "wall_ns": 17060198246,
+            "calling_thread_cpu_ns": 3888851946
+          },
+          "admission_prepare": {
+            "calls": 9,
+            "accepted": 9,
+            "rejected": 0,
+            "wall_ns": 4588711256,
+            "calling_thread_cpu_ns": 1049319684
+          },
+          "execution": {
+            "calls": 9,
+            "accepted": 9,
+            "rejected": 0,
+            "wall_ns": 12016935,
+            "calling_thread_cpu_ns": 12016174
+          },
+          "commit": {
+            "calls": 9,
+            "accepted": 9,
+            "rejected": 0,
+            "wall_ns": 12458971662,
+            "calling_thread_cpu_ns": 2827020281
+          },
+          "cpu_wait": {
+            "calls": 10,
+            "accepted": 10,
+            "rejected": 0,
+            "wall_ns": 503851,
+            "calling_thread_cpu_ns": 503828
+          },
+          "history_import": {
+            "calls": 10,
+            "accepted": 9,
+            "rejected": 1,
+            "wall_ns": 24597126059,
+            "calling_thread_cpu_ns": 5689549892
+          },
+          "cpu_settle": {
+            "calls": 10,
+            "accepted": 10,
+            "rejected": 0,
+            "wall_ns": 45896,
+            "calling_thread_cpu_ns": 43483
+          },
+          "root_commitment": {
+            "calls": 9,
+            "accepted": 9,
+            "rejected": 0,
+            "wall_ns": 4109704,
+            "calling_thread_cpu_ns": 4109030
+          },
+          "submit_result": {
+            "calls": 1,
+            "accepted": 1,
+            "rejected": 0,
+            "wall_ns": 5435483224,
+            "calling_thread_cpu_ns": 1250319633
+          }
+        },
+        "native_entered_spans": 166,
+        "native_entered_spans_completed_known_cpu_wall": true,
+        "native_measurement_failures": 0,
+        "failed_imports": [
+          {
+            "history_index": 9,
+            "error": "PUBLIC_REQUEST_DEADLINE"
+          }
+        ]
+      },
+      "first_round_relationship": {
+        "prior_selected_imports": 7,
+        "whole_phase_imports": 10,
+        "first_round_commit_plus_activation_wall_ns": 15179832457,
+        "covered_SQL_API_prefix_time_upper_bound_ns": 60487131,
+        "upper_bound_fraction_of_prefix_commit_activation": 0.003984703465689904,
+        "bound_scope": "Four measured Transaction::commit API sites only; whole phase includes prefix and later calls. This does not assign native stage time to the prefix and does not bound all SQL work, other IO, or physical fsync."
+      }
+    },
+    {
+      "run": 2,
+      "source_report": {
+        "archive_member": "run-2-raw/report.json",
+        "bytes": 48774711,
+        "manifest_byte_identity_matched": true,
+        "sha256": "43c8fb8fa28c560522be595b58e98e483c62631a76766f42efa24f088e366822",
+        "zip_crc32": "385d8667"
+      },
+      "baseline_json_pointer": "/phases/0",
+      "raw_snapshot_json_pointers": {
+        "client_native_history_arithmetic_after": "/phases/0/client_native_history_arithmetic_after",
+        "client_native_history_arithmetic_before": "/phases/0/client_native_history_arithmetic_before"
+      },
+      "whole_phase_context": {
+        "state_backend": "authenticated-v1",
+        "duration_seconds": 30,
+        "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+        "import_calls": 10,
+        "import_successes": 9,
+        "import_failures": 1,
+        "separate_client_confirmation_calls": 1,
+        "finite_phase_criteria_met": false,
+        "verifier_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "whole_parent_phase_wall_ns": 33889349733,
+        "whole_parent_phase_cpu_ns": 8160305730
+      },
+      "stage_deltas": [
+        {
+          "stage": "record",
+          "before_calls": 143,
+          "after_calls": 700,
+          "delta": {
+            "calls": 557,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 3725507,
+            "cpu_known_calls": 557,
+            "wall_ns": 4202300
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "packet",
+          "before_calls": 90,
+          "after_calls": 400,
+          "delta": {
+            "calls": 310,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 8795924,
+            "cpu_known_calls": 310,
+            "wall_ns": 86162679
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "delta",
+          "before_calls": 86,
+          "after_calls": 387,
+          "delta": {
+            "calls": 301,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 94731075,
+            "cpu_known_calls": 301,
+            "wall_ns": 248532053
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "verify_state",
+          "before_calls": 47,
+          "after_calls": 147,
+          "delta": {
+            "calls": 100,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 4311427814,
+            "cpu_known_calls": 100,
+            "wall_ns": 18930399557
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "verify_history",
+          "before_calls": 13,
+          "after_calls": 40,
+          "delta": {
+            "calls": 27,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 112197599,
+            "cpu_known_calls": 27,
+            "wall_ns": 495997756
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "publish",
+          "before_calls": 4,
+          "after_calls": 13,
+          "delta": {
+            "calls": 9,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 2033862151,
+            "cpu_known_calls": 9,
+            "wall_ns": 8957816942
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "read_active",
+          "before_calls": 14,
+          "after_calls": 19,
+          "delta": {
+            "calls": 5,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 309421753,
+            "cpu_known_calls": 5,
+            "wall_ns": 1385430501
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "state_at",
+          "before_calls": 16,
+          "after_calls": 43,
+          "delta": {
+            "calls": 27,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 1108861974,
+            "cpu_known_calls": 27,
+            "wall_ns": 4569158521
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "execute",
+          "before_calls": 4,
+          "after_calls": 13,
+          "delta": {
+            "calls": 9,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 15706022,
+            "cpu_known_calls": 9,
+            "wall_ns": 169888677
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "admission",
+          "before_calls": 4,
+          "after_calls": 13,
+          "delta": {
+            "calls": 9,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 3875390754,
+            "cpu_known_calls": 9,
+            "wall_ns": 16579660945
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "activation",
+          "before_calls": 4,
+          "after_calls": 5,
+          "delta": {
+            "calls": 1,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 1239036557,
+            "cpu_known_calls": 1,
+            "wall_ns": 5397226227
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "complete_commitment",
+          "before_calls": 51,
+          "after_calls": 160,
+          "delta": {
+            "calls": 109,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 70154067,
+            "cpu_known_calls": 109,
+            "wall_ns": 146305395
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "complete_state_root",
+          "before_calls": 6,
+          "after_calls": 46,
+          "delta": {
+            "calls": 40,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 9981653,
+            "cpu_known_calls": 40,
+            "wall_ns": 10037852
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "account_graph",
+          "before_calls": 34,
+          "after_calls": 107,
+          "delta": {
+            "calls": 73,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 4201382987,
+            "cpu_known_calls": 73,
+            "wall_ns": 18667193743
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "persisted_state_root",
+          "before_calls": 41,
+          "after_calls": 122,
+          "delta": {
+            "calls": 81,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 15897433,
+            "cpu_known_calls": 81,
+            "wall_ns": 15985930
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "execution_parent_binding",
+          "before_calls": 4,
+          "after_calls": 13,
+          "delta": {
+            "calls": 9,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 2901211,
+            "cpu_known_calls": 9,
+            "wall_ns": 78948688
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        }
+      ],
+      "sql_site_deltas": [
+        {
+          "site": "admission_persistence",
+          "before_calls_started": 4,
+          "after_calls_started": 13,
+          "before_calls_in_flight": 0,
+          "after_calls_in_flight": 0,
+          "delta": {
+            "cpu_unknown_calls": 0,
+            "calls_started": 9,
+            "calls_unwinding": 0,
+            "wall_unknown_calls": 0,
+            "calls_abandoned": 0,
+            "calls_returned": 9,
+            "cpu_ns_known_sum": 7838256,
+            "calls_succeeded": 9,
+            "calls_failed": 0,
+            "cpu_known_calls": 9,
+            "wall_ns": 18852357,
+            "cpu_ns": 7838256
+          },
+          "arithmetic_cumulative_time_difference": {
+            "wall_ns": 18852357,
+            "cpu_ns": 7838256
+          },
+          "measurement_state": "OBSERVED_COMPLETE_NEW_CALLS",
+          "lifecycle_counts_closed": true,
+          "before_wall_ns": 81173597,
+          "after_wall_ns": 100025954,
+          "before_cpu_ns": 3477493,
+          "after_cpu_ns": 11315749
+        },
+        {
+          "site": "atomic",
+          "before_calls_started": 4,
+          "after_calls_started": 4,
+          "before_calls_in_flight": 0,
+          "after_calls_in_flight": 0,
+          "delta": {
+            "cpu_unknown_calls": 0,
+            "calls_started": 0,
+            "calls_unwinding": 0,
+            "wall_unknown_calls": 0,
+            "calls_abandoned": 0,
+            "calls_returned": 0,
+            "cpu_ns_known_sum": 0,
+            "calls_succeeded": 0,
+            "calls_failed": 0,
+            "cpu_known_calls": 0,
+            "wall_ns": null,
+            "cpu_ns": null
+          },
+          "arithmetic_cumulative_time_difference": {
+            "wall_ns": 0,
+            "cpu_ns": 0
+          },
+          "measurement_state": "NO_CALL_ENTERED_IN_THIS_INTERVAL",
+          "lifecycle_counts_closed": true,
+          "before_wall_ns": 78184154,
+          "after_wall_ns": 78184154,
+          "before_cpu_ns": 1239198,
+          "after_cpu_ns": 1239198
+        },
+        {
+          "site": "reorg_step",
+          "before_calls_started": 0,
+          "after_calls_started": 9,
+          "before_calls_in_flight": 0,
+          "after_calls_in_flight": 0,
+          "delta": {
+            "cpu_unknown_calls": 0,
+            "calls_started": 9,
+            "calls_unwinding": 0,
+            "wall_unknown_calls": 0,
+            "calls_abandoned": 0,
+            "calls_returned": 9,
+            "cpu_ns_known_sum": 1531062,
+            "calls_succeeded": 9,
+            "calls_failed": 0,
+            "cpu_known_calls": 9,
+            "wall_ns": 3862942,
+            "cpu_ns": 1531062
+          },
+          "arithmetic_cumulative_time_difference": {
+            "wall_ns": 3862942,
+            "cpu_ns": 1531062
+          },
+          "measurement_state": "OBSERVED_COMPLETE_NEW_CALLS",
+          "lifecycle_counts_closed": true,
+          "before_wall_ns": null,
+          "after_wall_ns": 3862942,
+          "before_cpu_ns": null,
+          "after_cpu_ns": 1531062
+        },
+        {
+          "site": "reorg_termination",
+          "before_calls_started": 0,
+          "after_calls_started": 0,
+          "before_calls_in_flight": 0,
+          "after_calls_in_flight": 0,
+          "delta": {
+            "cpu_unknown_calls": 0,
+            "calls_started": 0,
+            "calls_unwinding": 0,
+            "wall_unknown_calls": 0,
+            "calls_abandoned": 0,
+            "calls_returned": 0,
+            "cpu_ns_known_sum": 0,
+            "calls_succeeded": 0,
+            "calls_failed": 0,
+            "cpu_known_calls": 0,
+            "wall_ns": null,
+            "cpu_ns": null
+          },
+          "arithmetic_cumulative_time_difference": {
+            "wall_ns": null,
+            "cpu_ns": null
+          },
+          "measurement_state": "NO_CALL_ENTERED_IN_THIS_INTERVAL",
+          "lifecycle_counts_closed": true,
+          "before_wall_ns": null,
+          "after_wall_ns": null,
+          "before_cpu_ns": null,
+          "after_cpu_ns": null
+        }
+      ],
+      "sql_api_new_calls_total": 18,
+      "sql_api_complete_wall_ns": 22715299,
+      "sql_api_complete_calling_thread_cpu_ns": 9369318,
+      "whole_phase_v2_alignment": {
+        "client_import_wall_ns": 24842031317,
+        "client_import_calling_thread_cpu_ns": 5676283186,
+        "packet_phase_totals": {
+          "context": {
+            "calls": 10,
+            "accepted": 10,
+            "rejected": 0,
+            "wall_ns": 67515533,
+            "calling_thread_cpu_ns": 11555101
+          },
+          "work": {
+            "calls": 10,
+            "accepted": 9,
+            "rejected": 1,
+            "wall_ns": 2221161171,
+            "calling_thread_cpu_ns": 525952227
+          },
+          "admission": {
+            "calls": 9,
+            "accepted": 9,
+            "rejected": 0,
+            "wall_ns": 16580210262,
+            "calling_thread_cpu_ns": 3875949918
+          },
+          "admission_prepare": {
+            "calls": 9,
+            "accepted": 9,
+            "rejected": 0,
+            "wall_ns": 4513990565,
+            "calling_thread_cpu_ns": 1054670949
+          },
+          "execution": {
+            "calls": 9,
+            "accepted": 9,
+            "rejected": 0,
+            "wall_ns": 90598307,
+            "calling_thread_cpu_ns": 12441175
+          },
+          "commit": {
+            "calls": 9,
+            "accepted": 9,
+            "rejected": 0,
+            "wall_ns": 11975075456,
+            "calling_thread_cpu_ns": 2808294546
+          },
+          "cpu_wait": {
+            "calls": 10,
+            "accepted": 10,
+            "rejected": 0,
+            "wall_ns": 501648,
+            "calling_thread_cpu_ns": 501354
+          },
+          "history_import": {
+            "calls": 10,
+            "accepted": 9,
+            "rejected": 1,
+            "wall_ns": 24346532791,
+            "calling_thread_cpu_ns": 5654881506
+          },
+          "cpu_settle": {
+            "calls": 10,
+            "accepted": 10,
+            "rejected": 0,
+            "wall_ns": 44695,
+            "calling_thread_cpu_ns": 42232
+          },
+          "root_commitment": {
+            "calls": 9,
+            "accepted": 9,
+            "rejected": 0,
+            "wall_ns": 4284651,
+            "calling_thread_cpu_ns": 4283733
+          },
+          "submit_result": {
+            "calls": 1,
+            "accepted": 1,
+            "rejected": 0,
+            "wall_ns": 5397491527,
+            "calling_thread_cpu_ns": 1239302492
+          }
+        },
+        "native_entered_spans": 166,
+        "native_entered_spans_completed_known_cpu_wall": true,
+        "native_measurement_failures": 0,
+        "failed_imports": [
+          {
+            "history_index": 9,
+            "error": "PUBLIC_REQUEST_DEADLINE"
+          }
+        ]
+      },
+      "first_round_relationship": {
+        "prior_selected_imports": 7,
+        "whole_phase_imports": 10,
+        "first_round_commit_plus_activation_wall_ns": 14659820018,
+        "covered_SQL_API_prefix_time_upper_bound_ns": 22715299,
+        "upper_bound_fraction_of_prefix_commit_activation": 0.0015494937163013675,
+        "bound_scope": "Four measured Transaction::commit API sites only; whole phase includes prefix and later calls. This does not assign native stage time to the prefix and does not bound all SQL work, other IO, or physical fsync."
+      }
+    },
+    {
+      "run": 3,
+      "source_report": {
+        "archive_member": "run-3-raw/report.json",
+        "bytes": 48449148,
+        "manifest_byte_identity_matched": true,
+        "sha256": "5699de385790f39f3e5684140b97fb81ebba892036442295a3628591de9e0156",
+        "zip_crc32": "1adaa33a"
+      },
+      "baseline_json_pointer": "/phases/0",
+      "raw_snapshot_json_pointers": {
+        "client_native_history_arithmetic_after": "/phases/0/client_native_history_arithmetic_after",
+        "client_native_history_arithmetic_before": "/phases/0/client_native_history_arithmetic_before"
+      },
+      "whole_phase_context": {
+        "state_backend": "authenticated-v1",
+        "duration_seconds": 30,
+        "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+        "import_calls": 10,
+        "import_successes": 9,
+        "import_failures": 1,
+        "separate_client_confirmation_calls": 1,
+        "finite_phase_criteria_met": false,
+        "verifier_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "whole_parent_phase_wall_ns": 33906978756,
+        "whole_parent_phase_cpu_ns": 8168967403
+      },
+      "stage_deltas": [
+        {
+          "stage": "record",
+          "before_calls": 143,
+          "after_calls": 700,
+          "delta": {
+            "calls": 557,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 3828480,
+            "cpu_known_calls": 557,
+            "wall_ns": 81397240
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "packet",
+          "before_calls": 90,
+          "after_calls": 400,
+          "delta": {
+            "calls": 310,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 9128448,
+            "cpu_known_calls": 310,
+            "wall_ns": 86576360
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "delta",
+          "before_calls": 86,
+          "after_calls": 387,
+          "delta": {
+            "calls": 301,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 94783010,
+            "cpu_known_calls": 301,
+            "wall_ns": 327052879
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "verify_state",
+          "before_calls": 47,
+          "after_calls": 147,
+          "delta": {
+            "calls": 100,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 4314244273,
+            "cpu_known_calls": 100,
+            "wall_ns": 18609824814
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "verify_history",
+          "before_calls": 13,
+          "after_calls": 40,
+          "delta": {
+            "calls": 27,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 112511440,
+            "cpu_known_calls": 27,
+            "wall_ns": 653001882
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "publish",
+          "before_calls": 4,
+          "after_calls": 13,
+          "delta": {
+            "calls": 9,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 2039235483,
+            "cpu_known_calls": 9,
+            "wall_ns": 8962064734
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "read_active",
+          "before_calls": 14,
+          "after_calls": 19,
+          "delta": {
+            "calls": 5,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 308228702,
+            "cpu_known_calls": 5,
+            "wall_ns": 1342044076
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "state_at",
+          "before_calls": 16,
+          "after_calls": 43,
+          "delta": {
+            "calls": 27,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 1106731473,
+            "cpu_known_calls": 27,
+            "wall_ns": 4653746789
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "execute",
+          "before_calls": 4,
+          "after_calls": 13,
+          "delta": {
+            "calls": 9,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 15626825,
+            "cpu_known_calls": 9,
+            "wall_ns": 92625492
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "admission",
+          "before_calls": 4,
+          "after_calls": 13,
+          "delta": {
+            "calls": 9,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 3877109544,
+            "cpu_known_calls": 9,
+            "wall_ns": 16919757050
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "activation",
+          "before_calls": 4,
+          "after_calls": 5,
+          "delta": {
+            "calls": 1,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 1241523175,
+            "cpu_known_calls": 1,
+            "wall_ns": 5299475775
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "complete_commitment",
+          "before_calls": 51,
+          "after_calls": 160,
+          "delta": {
+            "calls": 109,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 71405481,
+            "cpu_known_calls": 109,
+            "wall_ns": 71523571
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "complete_state_root",
+          "before_calls": 6,
+          "after_calls": 46,
+          "delta": {
+            "calls": 40,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 10461161,
+            "cpu_known_calls": 40,
+            "wall_ns": 10517860
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "account_graph",
+          "before_calls": 34,
+          "after_calls": 107,
+          "delta": {
+            "calls": 73,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 4202289631,
+            "cpu_known_calls": 73,
+            "wall_ns": 18420761597
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "persisted_state_root",
+          "before_calls": 41,
+          "after_calls": 122,
+          "delta": {
+            "calls": 81,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 16036858,
+            "cpu_known_calls": 81,
+            "wall_ns": 92524726
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        },
+        {
+          "stage": "execution_parent_binding",
+          "before_calls": 4,
+          "after_calls": 13,
+          "delta": {
+            "calls": 9,
+            "cpu_unknown_calls": 0,
+            "unwinding_calls": 0,
+            "cpu_ns": 2925426,
+            "cpu_known_calls": 9,
+            "wall_ns": 79935408
+          },
+          "known_cpu_for_all_observed_calls": true,
+          "independent_started_or_inflight_roster_available": false
+        }
+      ],
+      "sql_site_deltas": [
+        {
+          "site": "admission_persistence",
+          "before_calls_started": 4,
+          "after_calls_started": 13,
+          "before_calls_in_flight": 0,
+          "after_calls_in_flight": 0,
+          "delta": {
+            "cpu_unknown_calls": 0,
+            "calls_started": 9,
+            "calls_unwinding": 0,
+            "wall_unknown_calls": 0,
+            "calls_abandoned": 0,
+            "calls_returned": 9,
+            "cpu_ns_known_sum": 7496264,
+            "calls_succeeded": 9,
+            "calls_failed": 0,
+            "cpu_known_calls": 9,
+            "wall_ns": 120043387,
+            "cpu_ns": 7496264
+          },
+          "arithmetic_cumulative_time_difference": {
+            "wall_ns": 120043387,
+            "cpu_ns": 7496264
+          },
+          "measurement_state": "OBSERVED_COMPLETE_NEW_CALLS",
+          "lifecycle_counts_closed": true,
+          "before_wall_ns": 97892729,
+          "after_wall_ns": 217936116,
+          "before_cpu_ns": 3396870,
+          "after_cpu_ns": 10893134
+        },
+        {
+          "site": "atomic",
+          "before_calls_started": 4,
+          "after_calls_started": 4,
+          "before_calls_in_flight": 0,
+          "after_calls_in_flight": 0,
+          "delta": {
+            "cpu_unknown_calls": 0,
+            "calls_started": 0,
+            "calls_unwinding": 0,
+            "wall_unknown_calls": 0,
+            "calls_abandoned": 0,
+            "calls_returned": 0,
+            "cpu_ns_known_sum": 0,
+            "calls_succeeded": 0,
+            "calls_failed": 0,
+            "cpu_known_calls": 0,
+            "wall_ns": null,
+            "cpu_ns": null
+          },
+          "arithmetic_cumulative_time_difference": {
+            "wall_ns": 0,
+            "cpu_ns": 0
+          },
+          "measurement_state": "NO_CALL_ENTERED_IN_THIS_INTERVAL",
+          "lifecycle_counts_closed": true,
+          "before_wall_ns": 2941706,
+          "after_wall_ns": 2941706,
+          "before_cpu_ns": 1172830,
+          "after_cpu_ns": 1172830
+        },
+        {
+          "site": "reorg_step",
+          "before_calls_started": 0,
+          "after_calls_started": 9,
+          "before_calls_in_flight": 0,
+          "after_calls_in_flight": 0,
+          "delta": {
+            "cpu_unknown_calls": 0,
+            "calls_started": 9,
+            "calls_unwinding": 0,
+            "wall_unknown_calls": 0,
+            "calls_abandoned": 0,
+            "calls_returned": 9,
+            "cpu_ns_known_sum": 1475031,
+            "calls_succeeded": 9,
+            "calls_failed": 0,
+            "cpu_known_calls": 9,
+            "wall_ns": 4151277,
+            "cpu_ns": 1475031
+          },
+          "arithmetic_cumulative_time_difference": {
+            "wall_ns": 4151277,
+            "cpu_ns": 1475031
+          },
+          "measurement_state": "OBSERVED_COMPLETE_NEW_CALLS",
+          "lifecycle_counts_closed": true,
+          "before_wall_ns": null,
+          "after_wall_ns": 4151277,
+          "before_cpu_ns": null,
+          "after_cpu_ns": 1475031
+        },
+        {
+          "site": "reorg_termination",
+          "before_calls_started": 0,
+          "after_calls_started": 0,
+          "before_calls_in_flight": 0,
+          "after_calls_in_flight": 0,
+          "delta": {
+            "cpu_unknown_calls": 0,
+            "calls_started": 0,
+            "calls_unwinding": 0,
+            "wall_unknown_calls": 0,
+            "calls_abandoned": 0,
+            "calls_returned": 0,
+            "cpu_ns_known_sum": 0,
+            "calls_succeeded": 0,
+            "calls_failed": 0,
+            "cpu_known_calls": 0,
+            "wall_ns": null,
+            "cpu_ns": null
+          },
+          "arithmetic_cumulative_time_difference": {
+            "wall_ns": null,
+            "cpu_ns": null
+          },
+          "measurement_state": "NO_CALL_ENTERED_IN_THIS_INTERVAL",
+          "lifecycle_counts_closed": true,
+          "before_wall_ns": null,
+          "after_wall_ns": null,
+          "before_cpu_ns": null,
+          "after_cpu_ns": null
+        }
+      ],
+      "sql_api_new_calls_total": 18,
+      "sql_api_complete_wall_ns": 124194664,
+      "sql_api_complete_calling_thread_cpu_ns": 8971295,
+      "whole_phase_v2_alignment": {
+        "client_import_wall_ns": 24832897944,
+        "client_import_calling_thread_cpu_ns": 5655094399,
+        "packet_phase_totals": {
+          "context": {
+            "calls": 10,
+            "accepted": 10,
+            "rejected": 0,
+            "wall_ns": 11338737,
+            "calling_thread_cpu_ns": 11340171
+          },
+          "work": {
+            "calls": 10,
+            "accepted": 9,
+            "rejected": 1,
+            "wall_ns": 2138012350,
+            "calling_thread_cpu_ns": 500912368
+          },
+          "admission": {
+            "calls": 9,
+            "accepted": 9,
+            "rejected": 0,
+            "wall_ns": 16920239239,
+            "calling_thread_cpu_ns": 3877602348
+          },
+          "admission_prepare": {
+            "calls": 9,
+            "accepted": 9,
+            "rejected": 0,
+            "wall_ns": 4751090680,
+            "calling_thread_cpu_ns": 1052046072
+          },
+          "execution": {
+            "calls": 9,
+            "accepted": 9,
+            "rejected": 0,
+            "wall_ns": 12302844,
+            "calling_thread_cpu_ns": 12301709
+          },
+          "commit": {
+            "calls": 9,
+            "accepted": 9,
+            "rejected": 0,
+            "wall_ns": 12156368432,
+            "calling_thread_cpu_ns": 2812780691
+          },
+          "cpu_wait": {
+            "calls": 10,
+            "accepted": 10,
+            "rejected": 0,
+            "wall_ns": 486195,
+            "calling_thread_cpu_ns": 486121
+          },
+          "history_import": {
+            "calls": 10,
+            "accepted": 9,
+            "rejected": 1,
+            "wall_ns": 24371336749,
+            "calling_thread_cpu_ns": 5633647599
+          },
+          "cpu_settle": {
+            "calls": 10,
+            "accepted": 10,
+            "rejected": 0,
+            "wall_ns": 44016,
+            "calling_thread_cpu_ns": 41841
+          },
+          "root_commitment": {
+            "calls": 9,
+            "accepted": 9,
+            "rejected": 0,
+            "wall_ns": 4181383,
+            "calling_thread_cpu_ns": 4180340
+          },
+          "submit_result": {
+            "calls": 1,
+            "accepted": 1,
+            "rejected": 0,
+            "wall_ns": 5299739995,
+            "calling_thread_cpu_ns": 1241788209
+          }
+        },
+        "native_entered_spans": 166,
+        "native_entered_spans_completed_known_cpu_wall": true,
+        "native_measurement_failures": 0,
+        "failed_imports": [
+          {
+            "history_index": 9,
+            "error": "PUBLIC_REQUEST_DEADLINE"
+          }
+        ]
+      },
+      "first_round_relationship": {
+        "prior_selected_imports": 7,
+        "whole_phase_imports": 10,
+        "first_round_commit_plus_activation_wall_ns": 14658729867,
+        "covered_SQL_API_prefix_time_upper_bound_ns": 124194664,
+        "upper_bound_fraction_of_prefix_commit_activation": 0.008472402802072865,
+        "bound_scope": "Four measured Transaction::commit API sites only; whole phase includes prefix and later calls. This does not assign native stage time to the prefix and does not bound all SQL work, other IO, or physical fsync."
+      }
+    }
+  ],
+  "bounded_findings": [
+    "Across the original three complete baselines, the four observed Transaction::commit API sites add 18 calls per run and only 60.487131 ms, 22.715299 ms, and 124.194664 ms. In those sites they cannot account for the several-second persistence/activation spans.",
+    "All runs add 73 AccountGraph calls: 18.138434746 s, 18.667193743 s, 18.420761597 s wall; 4.214790939 s, 4.201382987 s, 4.202289631 s caller CPU. This identifies a concrete measured scope for further profiling, not a decomposition or proof of an algorithmic bottleneck.",
+    "The unchanged AccountGraph boundary invokes existing complete SQL graph verifiers; ordinary and scoped paths retain an original progress callback per traversed node. Their callbacks can include Host and allowed refill handling. Existing snapshots do not separate these components."
+  ],
+  "next_action": "Profile bounded counts and actual wait/callback/SQL-node-read/decode intervals inside the existing AccountGraph scope and the real refill-wait branch under existing authorization, preserving every original callback, full comparison, snapshot/writer fence, error, deadline and CPU policy. Reuse existing caches/measurements only as their original source contracts allow; this report establishes no safe cache expansion or check removal.",
+  "qualification": {
+    "new_campaign_executed": false,
+    "code_modified": false,
+    "budget_or_deadline_modified": false,
+    "production_qualification_changed": false,
+    "original_successful_campaigns": 0,
+    "original_campaigns": 3,
+    "original_successful_phases": 0,
+    "original_phases": 9,
+    "Host_seconds": 4,
+    "independent_campaign_seconds": 30,
+    "dominant_low_level_cause_established": false,
+    "safe_code_optimization_established": false
+  }
+}

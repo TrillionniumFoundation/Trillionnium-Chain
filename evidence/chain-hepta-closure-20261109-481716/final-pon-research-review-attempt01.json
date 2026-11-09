@@ -1,0 +1,9 @@
+{
+  "recorded_at_utc": "2026-11-09T14:21:55.652004+00:00",
+  "operation": "report source/citation review",
+  "returncode": 1,
+  "observed_stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 11, in <module>\nAssertionError: set()\n",
+  "cause": "Initial report reference table had S27, but no inline S27 citation. Validation stopped before source identity checks, manifest output or report reference definitions.",
+  "resolution": "Added S27 as an inline source for its fixed-probability contract statement; validation predicates unchanged.",
+  "native_tests_executed": false
+}

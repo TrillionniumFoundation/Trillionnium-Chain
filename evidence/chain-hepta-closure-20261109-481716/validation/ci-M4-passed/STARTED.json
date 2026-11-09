@@ -1,0 +1,17 @@
+{
+  "schema": "trnm.ci-contract-full-review.v1",
+  "started_at_utc": "2026-11-09T14:15:04.121035+00:00",
+  "head": "e4e4a8e049915ba09d9e97444b4709ce8769ce81",
+  "head_tree": "c82829c3a5710960081d91930cf425f9a768e9e4",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "scripts/ci/test_ci_contract.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/481716a90d06/chain",
+  "pid": 32,
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "test_method_count": 176
+}

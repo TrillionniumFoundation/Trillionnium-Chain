@@ -1,0 +1,981 @@
+{
+  "schema": "pon-history-import-readonly-path-review-v1",
+  "created_utc": "2026-11-09T16:05:35.616389+00:00",
+  "scope": "Retained 0746 measurements plus static comparison of nine relevant files to M5. No repo edits, native execution, new campaign, performance experiment, root-cause proof or qualification change.",
+  "qualification": {
+    "repo_code_changed": false,
+    "campaign_rerun_performed": false,
+    "M5_performance_measured_here": false,
+    "safe_optimization_established": false,
+    "measured_root_cause_established": false,
+    "acceptance_changed": false,
+    "recorded_successful_campaigns": 0,
+    "recorded_campaigns": 3,
+    "recorded_successful_phases": 0,
+    "recorded_phases": 9,
+    "original_Host_seconds": 4,
+    "independent_campaign_seconds": 30
+  },
+  "identity": {
+    "measurement_source_revision": "0746a462e80067b78317597f2fa4bacf5e3db958",
+    "measurement_source_tree": "03c69f3120a84f49fd7a76d9564bba4ef0c4b24e",
+    "measurement_binary_sha256": "3afe1ecc5953bb4e5b3066fe07fb11b68a74faac787f4f81c5c15209a97a86f1",
+    "M5_compared_source_revision": "3ad605ecdac4b3b123dff83c1cb7458430acd776",
+    "state_backend": "authenticated-v1",
+    "raw_report_hashes_are_references_not_locally_available_reports": true
+  },
+  "input": {
+    "path": "closure-evidence/original-campaign/campaign0746-outcomes-v2.json.gz",
+    "compressed_bytes": 67972,
+    "compressed_sha256": "b61a17fa5ba42866deef4c01ede7f758271a1d93abf03a953ae67333897e0563",
+    "decoded_bytes": 2033029,
+    "decoded_sha256": "1b95b9e8bee728922480a8e40eb9730e750fc64a4c50c0e5cefe2ced1b38585a",
+    "runner_summary_path": "closure-evidence/original-campaign/raw-small/results.json",
+    "runner_summary_sha256": "29c2c1945ee58936e4b9454b03be5b6ba41e1a37bc79f92856746bda10a27ce5"
+  },
+  "selection": {
+    "all_original_import_rows": 66,
+    "selected_import_rows": 21,
+    "selection_rule": "For each run choose the unique baseline and confirmed round 0, then include all imports whose global client interval lies within that round; require exactly seven indices 0..6 and one packet each. No positional truncation. Failed later rounds remain in original denominators.",
+    "selected_native_entered_spans": 360,
+    "entered_spans_complete_cpu_wall_known": true,
+    "selected_imports_host_complete": true,
+    "native_measurement_failures": 0,
+    "parent_child_containment_verified": true,
+    "disjoint_leaf_nonoverlap_verified": true
+  },
+  "clock_and_sum_rules": [
+    "Round and client endpoint stamps share the phase epoch. Native timestamps use a separate epoch for each observer and are not aligned across imports or to round stamps.",
+    "Client wall_ns uses separate Instant::elapsed and is not replaced by ended_ns-started_ns; raw endpoint difference minus reported wall is retained for each row. Native span endpoints and wall exactly agree on these rows.",
+    "Packet admission contains prepare/execution/commit; execution contains root_commitment. Page/packet history_import are parents. Do not add parents and children.",
+    "Disjoint leaf sum uses page phases except history_import, and packet context/work/admission_prepare/execution/commit/submit_result/cpu_wait/cpu_settle; every interval was checked for containment and non-overlap within one observer.",
+    "Phase CPU is importer-thread CPU and excludes scoped workers. Host intervals are nested and may measure several invoking threads; do not add them to importer CPU as a full-work total.",
+    "Associated History RPC wall covers the protected RPC call and some caller-side result/request serialization before elapsed sampling. It is not pure network RTT, and excludes Submit requests, separate confirmation and other round overhead; the round residual remains unclassified."
+  ],
+  "derivation_attempts": [
+    {
+      "attempt": 1,
+      "status": "REFUSED_BEFORE_OUTPUT",
+      "reason": "An analysis assertion incorrectly required caller endpoint duration to equal its separately sampled Instant wall. Source ClientOperationStamp has two distinct reads; actual offsets are -10 to +30 ns. No input was changed."
+    },
+    {
+      "attempt": 2,
+      "status": "COMPLETED",
+      "correction": "Retain both raw measurements and their difference; use phase-epoch endpoints only for selection/ordering. Keep all native completeness, exact native wall, containment and disjointness checks."
+    }
+  ],
+  "runs": [
+    {
+      "run": 1,
+      "raw_report_sha256": "39c4098846dbbb802f962989a0774d09c95a80c0db3b04a69923adfce8b5c307",
+      "baseline_total_import_rows": 10,
+      "selected_round": {
+        "confirmed_inside_pressure_window": true,
+        "ended_ns": 23588896450,
+        "round": 0,
+        "started_ns": 1001662209
+      },
+      "round_wall_ns": 22587234241,
+      "selected_imports": 7,
+      "client_import_wall_ns": 20586157016,
+      "client_import_calling_thread_cpu_ns": 4667153385,
+      "associated_history_request_wall_ns": 81459041,
+      "round_remainder_not_attributed_ns": 1919618184,
+      "native_page_phase_totals": {
+        "decode": {
+          "entered_calls": 7,
+          "wall_ns": 1703294,
+          "calling_thread_cpu_ns": 1703278
+        },
+        "context": {
+          "entered_calls": 7,
+          "wall_ns": 462249,
+          "calling_thread_cpu_ns": 462877
+        },
+        "cpu_wait": {
+          "entered_calls": 7,
+          "wall_ns": 401842237,
+          "calling_thread_cpu_ns": 11604300
+        },
+        "history_epoch_open": {
+          "entered_calls": 7,
+          "wall_ns": 3241184,
+          "calling_thread_cpu_ns": 1225759
+        },
+        "history_epoch_close": {
+          "entered_calls": 7,
+          "wall_ns": 45233060,
+          "calling_thread_cpu_ns": 713079
+        },
+        "history_import": {
+          "entered_calls": 7,
+          "wall_ns": 20583848119,
+          "calling_thread_cpu_ns": 4664853118
+        },
+        "cpu_settle": {
+          "entered_calls": 7,
+          "wall_ns": 22093,
+          "calling_thread_cpu_ns": 21942
+        }
+      },
+      "native_packet_phase_totals": {
+        "context": {
+          "entered_calls": 7,
+          "wall_ns": 7169833,
+          "calling_thread_cpu_ns": 7170669
+        },
+        "work": {
+          "entered_calls": 7,
+          "wall_ns": 1346330088,
+          "calling_thread_cpu_ns": 379180863
+        },
+        "admission": {
+          "entered_calls": 7,
+          "wall_ns": 13340505203,
+          "calling_thread_cpu_ns": 3010602560
+        },
+        "admission_prepare": {
+          "entered_calls": 7,
+          "wall_ns": 3586564135,
+          "calling_thread_cpu_ns": 815050303
+        },
+        "execution": {
+          "entered_calls": 7,
+          "wall_ns": 9199187,
+          "calling_thread_cpu_ns": 9198450
+        },
+        "commit": {
+          "entered_calls": 7,
+          "wall_ns": 9744349233,
+          "calling_thread_cpu_ns": 2185963187
+        },
+        "cpu_wait": {
+          "entered_calls": 7,
+          "wall_ns": 351137,
+          "calling_thread_cpu_ns": 350951
+        },
+        "history_import": {
+          "entered_calls": 7,
+          "wall_ns": 20130960702,
+          "calling_thread_cpu_ns": 4648743901
+        },
+        "cpu_settle": {
+          "entered_calls": 7,
+          "wall_ns": 32206,
+          "calling_thread_cpu_ns": 30553
+        },
+        "root_commitment": {
+          "entered_calls": 7,
+          "wall_ns": 3101370,
+          "calling_thread_cpu_ns": 3100873
+        },
+        "submit_result": {
+          "entered_calls": 1,
+          "wall_ns": 5435483224,
+          "calling_thread_cpu_ns": 1250319633
+        }
+      },
+      "disjoint_native_leaf_wall_ns": 20581983160,
+      "unallocated_native_page_wall_ns": 1864959,
+      "selected_native_entered_spans": 120,
+      "selected_import_records": [
+        {
+          "history_index": 0,
+          "packet_index": 0,
+          "client_started_ns": 2809581754,
+          "client_ended_ns": 5289470240,
+          "client_wall_ns": 2479888476,
+          "client_epoch_interval_minus_instant_wall_ns": 10,
+          "client_calling_thread_cpu_ns": 506989064,
+          "associated_history_request_wall_ns": 11841699,
+          "native_page_wall_ns": 2479535087,
+          "disjoint_native_leaf_wall_ns": 2479301143,
+          "unallocated_native_page_wall_ns": 233944,
+          "activation_entered": false
+        },
+        {
+          "history_index": 1,
+          "packet_index": 0,
+          "client_started_ns": 5301144603,
+          "client_ended_ns": 7386463238,
+          "client_wall_ns": 2085318645,
+          "client_epoch_interval_minus_instant_wall_ns": -10,
+          "client_calling_thread_cpu_ns": 478898975,
+          "associated_history_request_wall_ns": 11570090,
+          "native_page_wall_ns": 2085051611,
+          "disjoint_native_leaf_wall_ns": 2084823254,
+          "unallocated_native_page_wall_ns": 228357,
+          "activation_entered": false
+        },
+        {
+          "history_index": 2,
+          "packet_index": 0,
+          "client_started_ns": 7398098979,
+          "client_ended_ns": 9482449885,
+          "client_wall_ns": 2084350916,
+          "client_epoch_interval_minus_instant_wall_ns": -10,
+          "client_calling_thread_cpu_ns": 478262720,
+          "associated_history_request_wall_ns": 11541753,
+          "native_page_wall_ns": 2084090493,
+          "disjoint_native_leaf_wall_ns": 2083860745,
+          "unallocated_native_page_wall_ns": 229748,
+          "activation_entered": false
+        },
+        {
+          "history_index": 3,
+          "packet_index": 0,
+          "client_started_ns": 9493385991,
+          "client_ended_ns": 11583531955,
+          "client_wall_ns": 2090145964,
+          "client_epoch_interval_minus_instant_wall_ns": 0,
+          "client_calling_thread_cpu_ns": 483127022,
+          "associated_history_request_wall_ns": 10843149,
+          "native_page_wall_ns": 2089785342,
+          "disjoint_native_leaf_wall_ns": 2089554574,
+          "unallocated_native_page_wall_ns": 230768,
+          "activation_entered": false
+        },
+        {
+          "history_index": 4,
+          "packet_index": 0,
+          "client_started_ns": 11595849375,
+          "client_ended_ns": 13682922784,
+          "client_wall_ns": 2087073379,
+          "client_epoch_interval_minus_instant_wall_ns": 30,
+          "client_calling_thread_cpu_ns": 482066579,
+          "associated_history_request_wall_ns": 12214379,
+          "native_page_wall_ns": 2086721702,
+          "disjoint_native_leaf_wall_ns": 2086494958,
+          "unallocated_native_page_wall_ns": 226744,
+          "activation_entered": false
+        },
+        {
+          "history_index": 5,
+          "packet_index": 0,
+          "client_started_ns": 13694601843,
+          "client_ended_ns": 15894483115,
+          "client_wall_ns": 2199881263,
+          "client_epoch_interval_minus_instant_wall_ns": 9,
+          "client_calling_thread_cpu_ns": 502482235,
+          "associated_history_request_wall_ns": 11578541,
+          "native_page_wall_ns": 2199474986,
+          "disjoint_native_leaf_wall_ns": 2199227763,
+          "unallocated_native_page_wall_ns": 247223,
+          "activation_entered": false
+        },
+        {
+          "history_index": 6,
+          "packet_index": 0,
+          "client_started_ns": 15906471069,
+          "client_ended_ns": 23465969452,
+          "client_wall_ns": 7559498373,
+          "client_epoch_interval_minus_instant_wall_ns": 10,
+          "client_calling_thread_cpu_ns": 1735326790,
+          "associated_history_request_wall_ns": 11869430,
+          "native_page_wall_ns": 7559188898,
+          "disjoint_native_leaf_wall_ns": 7558720723,
+          "unallocated_native_page_wall_ns": 468175,
+          "activation_entered": true
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "raw_report_sha256": "43c8fb8fa28c560522be595b58e98e483c62631a76766f42efa24f088e366822",
+      "baseline_total_import_rows": 10,
+      "selected_round": {
+        "confirmed_inside_pressure_window": true,
+        "ended_ns": 23601849088,
+        "round": 0,
+        "started_ns": 1000171792
+      },
+      "round_wall_ns": 22601677296,
+      "selected_imports": 7,
+      "client_import_wall_ns": 20455300312,
+      "client_import_calling_thread_cpu_ns": 4649521632,
+      "associated_history_request_wall_ns": 142777959,
+      "round_remainder_not_attributed_ns": 2003599025,
+      "native_page_phase_totals": {
+        "decode": {
+          "entered_calls": 7,
+          "wall_ns": 1689327,
+          "calling_thread_cpu_ns": 1689198
+        },
+        "context": {
+          "entered_calls": 7,
+          "wall_ns": 476872,
+          "calling_thread_cpu_ns": 477398
+        },
+        "cpu_wait": {
+          "entered_calls": 7,
+          "wall_ns": 401804848,
+          "calling_thread_cpu_ns": 11621529
+        },
+        "history_epoch_open": {
+          "entered_calls": 7,
+          "wall_ns": 5858044,
+          "calling_thread_cpu_ns": 1366901
+        },
+        "history_epoch_close": {
+          "entered_calls": 7,
+          "wall_ns": 2426164,
+          "calling_thread_cpu_ns": 686467
+        },
+        "history_import": {
+          "entered_calls": 7,
+          "wall_ns": 20386816222,
+          "calling_thread_cpu_ns": 4647082340
+        },
+        "cpu_settle": {
+          "entered_calls": 7,
+          "wall_ns": 22163,
+          "calling_thread_cpu_ns": 22052
+        }
+      },
+      "native_packet_phase_totals": {
+        "context": {
+          "entered_calls": 7,
+          "wall_ns": 7187372,
+          "calling_thread_cpu_ns": 7188227
+        },
+        "work": {
+          "entered_calls": 7,
+          "wall_ns": 1629238034,
+          "calling_thread_cpu_ns": 381000885
+        },
+        "admission": {
+          "entered_calls": 7,
+          "wall_ns": 12860878439,
+          "calling_thread_cpu_ns": 3002018973
+        },
+        "admission_prepare": {
+          "entered_calls": 7,
+          "wall_ns": 3510313029,
+          "calling_thread_cpu_ns": 819860696
+        },
+        "execution": {
+          "entered_calls": 7,
+          "wall_ns": 87796119,
+          "calling_thread_cpu_ns": 9639185
+        },
+        "commit": {
+          "entered_calls": 7,
+          "wall_ns": 9262328491,
+          "calling_thread_cpu_ns": 2172080340
+        },
+        "cpu_wait": {
+          "entered_calls": 7,
+          "wall_ns": 355893,
+          "calling_thread_cpu_ns": 355739
+        },
+        "history_import": {
+          "entered_calls": 7,
+          "wall_ns": 19974384976,
+          "calling_thread_cpu_ns": 4631068617
+        },
+        "cpu_settle": {
+          "entered_calls": 7,
+          "wall_ns": 31406,
+          "calling_thread_cpu_ns": 29563
+        },
+        "root_commitment": {
+          "entered_calls": 7,
+          "wall_ns": 3305756,
+          "calling_thread_cpu_ns": 3304910
+        },
+        "submit_result": {
+          "entered_calls": 1,
+          "wall_ns": 5397491527,
+          "calling_thread_cpu_ns": 1239302492
+        }
+      },
+      "disjoint_native_leaf_wall_ns": 20307019289,
+      "unallocated_native_page_wall_ns": 79796933,
+      "selected_native_entered_spans": 120,
+      "selected_import_records": [
+        {
+          "history_index": 0,
+          "packet_index": 0,
+          "client_started_ns": 2820909978,
+          "client_ended_ns": 5405223567,
+          "client_wall_ns": 2584313580,
+          "client_epoch_interval_minus_instant_wall_ns": 9,
+          "client_calling_thread_cpu_ns": 512965085,
+          "associated_history_request_wall_ns": 11955113,
+          "native_page_wall_ns": 2517855643,
+          "disjoint_native_leaf_wall_ns": 2517576773,
+          "unallocated_native_page_wall_ns": 278870,
+          "activation_entered": false
+        },
+        {
+          "history_index": 1,
+          "packet_index": 0,
+          "client_started_ns": 5417454739,
+          "client_ended_ns": 7499353137,
+          "client_wall_ns": 2081898398,
+          "client_epoch_interval_minus_instant_wall_ns": 0,
+          "client_calling_thread_cpu_ns": 475988283,
+          "associated_history_request_wall_ns": 12124334,
+          "native_page_wall_ns": 2081639427,
+          "disjoint_native_leaf_wall_ns": 2081412553,
+          "unallocated_native_page_wall_ns": 226874,
+          "activation_entered": false
+        },
+        {
+          "history_index": 2,
+          "packet_index": 0,
+          "client_started_ns": 7511108558,
+          "client_ended_ns": 9597468990,
+          "client_wall_ns": 2086360432,
+          "client_epoch_interval_minus_instant_wall_ns": 0,
+          "client_calling_thread_cpu_ns": 482876207,
+          "associated_history_request_wall_ns": 11664468,
+          "native_page_wall_ns": 2086025638,
+          "disjoint_native_leaf_wall_ns": 2085779385,
+          "unallocated_native_page_wall_ns": 246253,
+          "activation_entered": false
+        },
+        {
+          "history_index": 3,
+          "packet_index": 0,
+          "client_started_ns": 9608901706,
+          "client_ended_ns": 11698649751,
+          "client_wall_ns": 2089748055,
+          "client_epoch_interval_minus_instant_wall_ns": -10,
+          "client_calling_thread_cpu_ns": 482650911,
+          "associated_history_request_wall_ns": 11340029,
+          "native_page_wall_ns": 2089418961,
+          "disjoint_native_leaf_wall_ns": 2011098072,
+          "unallocated_native_page_wall_ns": 78320889,
+          "activation_entered": false
+        },
+        {
+          "history_index": 4,
+          "packet_index": 0,
+          "client_started_ns": 11710159785,
+          "client_ended_ns": 13802027511,
+          "client_wall_ns": 2091867726,
+          "client_epoch_interval_minus_instant_wall_ns": 0,
+          "client_calling_thread_cpu_ns": 485949531,
+          "associated_history_request_wall_ns": 11421554,
+          "native_page_wall_ns": 2091508307,
+          "disjoint_native_leaf_wall_ns": 2091263216,
+          "unallocated_native_page_wall_ns": 245091,
+          "activation_entered": false
+        },
+        {
+          "history_index": 5,
+          "packet_index": 0,
+          "client_started_ns": 13814320218,
+          "client_ended_ns": 15914980005,
+          "client_wall_ns": 2100659787,
+          "client_epoch_interval_minus_instant_wall_ns": 0,
+          "client_calling_thread_cpu_ns": 486275285,
+          "associated_history_request_wall_ns": 12183867,
+          "native_page_wall_ns": 2100296292,
+          "disjoint_native_leaf_wall_ns": 2100052262,
+          "unallocated_native_page_wall_ns": 244030,
+          "activation_entered": false
+        },
+        {
+          "history_index": 6,
+          "packet_index": 0,
+          "client_started_ns": 15987177881,
+          "client_ended_ns": 23407630225,
+          "client_wall_ns": 7420452334,
+          "client_epoch_interval_minus_instant_wall_ns": 10,
+          "client_calling_thread_cpu_ns": 1722816330,
+          "associated_history_request_wall_ns": 72088594,
+          "native_page_wall_ns": 7420071954,
+          "disjoint_native_leaf_wall_ns": 7419837028,
+          "unallocated_native_page_wall_ns": 234926,
+          "activation_entered": true
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "raw_report_sha256": "5699de385790f39f3e5684140b97fb81ebba892036442295a3628591de9e0156",
+      "baseline_total_import_rows": 10,
+      "selected_round": {
+        "confirmed_inside_pressure_window": true,
+        "ended_ns": 23606087135,
+        "round": 0,
+        "started_ns": 1000702138
+      },
+      "round_wall_ns": 22605384997,
+      "selected_imports": 7,
+      "client_import_wall_ns": 20469824653,
+      "client_import_calling_thread_cpu_ns": 4649265379,
+      "associated_history_request_wall_ns": 82585348,
+      "round_remainder_not_attributed_ns": 2052974996,
+      "native_page_phase_totals": {
+        "decode": {
+          "entered_calls": 7,
+          "wall_ns": 1689851,
+          "calling_thread_cpu_ns": 1689748
+        },
+        "context": {
+          "entered_calls": 7,
+          "wall_ns": 492998,
+          "calling_thread_cpu_ns": 493653
+        },
+        "cpu_wait": {
+          "entered_calls": 7,
+          "wall_ns": 401779909,
+          "calling_thread_cpu_ns": 11899943
+        },
+        "history_epoch_open": {
+          "entered_calls": 7,
+          "wall_ns": 3227808,
+          "calling_thread_cpu_ns": 1223710
+        },
+        "history_epoch_close": {
+          "entered_calls": 7,
+          "wall_ns": 47586600,
+          "calling_thread_cpu_ns": 680818
+        },
+        "history_import": {
+          "entered_calls": 7,
+          "wall_ns": 20467679721,
+          "calling_thread_cpu_ns": 4647128957
+        },
+        "cpu_settle": {
+          "entered_calls": 7,
+          "wall_ns": 22143,
+          "calling_thread_cpu_ns": 21981
+        }
+      },
+      "native_packet_phase_totals": {
+        "context": {
+          "entered_calls": 7,
+          "wall_ns": 7146426,
+          "calling_thread_cpu_ns": 7147375
+        },
+        "work": {
+          "entered_calls": 7,
+          "wall_ns": 1666239260,
+          "calling_thread_cpu_ns": 380258026
+        },
+        "admission": {
+          "entered_calls": 7,
+          "wall_ns": 13037931246,
+          "calling_thread_cpu_ns": 3000107462
+        },
+        "admission_prepare": {
+          "entered_calls": 7,
+          "wall_ns": 3669357607,
+          "calling_thread_cpu_ns": 817113570
+        },
+        "execution": {
+          "entered_calls": 7,
+          "wall_ns": 9212660,
+          "calling_thread_cpu_ns": 9211660
+        },
+        "commit": {
+          "entered_calls": 7,
+          "wall_ns": 9358989872,
+          "calling_thread_cpu_ns": 2173413194
+        },
+        "cpu_wait": {
+          "entered_calls": 7,
+          "wall_ns": 339519,
+          "calling_thread_cpu_ns": 339424
+        },
+        "history_import": {
+          "entered_calls": 7,
+          "wall_ns": 20012514506,
+          "calling_thread_cpu_ns": 4630757482
+        },
+        "cpu_settle": {
+          "entered_calls": 7,
+          "wall_ns": 30686,
+          "calling_thread_cpu_ns": 29273
+        },
+        "root_commitment": {
+          "entered_calls": 7,
+          "wall_ns": 3137174,
+          "calling_thread_cpu_ns": 3136449
+        },
+        "submit_result": {
+          "entered_calls": 1,
+          "wall_ns": 5299739995,
+          "calling_thread_cpu_ns": 1241788209
+        }
+      },
+      "disjoint_native_leaf_wall_ns": 20465855334,
+      "unallocated_native_page_wall_ns": 1824387,
+      "selected_native_entered_spans": 120,
+      "selected_import_records": [
+        {
+          "history_index": 0,
+          "packet_index": 0,
+          "client_started_ns": 2916119121,
+          "client_ended_ns": 5410336846,
+          "client_wall_ns": 2494217726,
+          "client_epoch_interval_minus_instant_wall_ns": -1,
+          "client_calling_thread_cpu_ns": 511299933,
+          "associated_history_request_wall_ns": 12965893,
+          "native_page_wall_ns": 2493866418,
+          "disjoint_native_leaf_wall_ns": 2493630852,
+          "unallocated_native_page_wall_ns": 235566,
+          "activation_entered": false
+        },
+        {
+          "history_index": 1,
+          "packet_index": 0,
+          "client_started_ns": 5422607946,
+          "client_ended_ns": 7508669457,
+          "client_wall_ns": 2086061492,
+          "client_epoch_interval_minus_instant_wall_ns": 19,
+          "client_calling_thread_cpu_ns": 482142169,
+          "associated_history_request_wall_ns": 12161608,
+          "native_page_wall_ns": 2085791394,
+          "disjoint_native_leaf_wall_ns": 2085560613,
+          "unallocated_native_page_wall_ns": 230781,
+          "activation_entered": false
+        },
+        {
+          "history_index": 2,
+          "packet_index": 0,
+          "client_started_ns": 7520289763,
+          "client_ended_ns": 9606428259,
+          "client_wall_ns": 2086138506,
+          "client_epoch_interval_minus_instant_wall_ns": -10,
+          "client_calling_thread_cpu_ns": 479473251,
+          "associated_history_request_wall_ns": 11509502,
+          "native_page_wall_ns": 2085799887,
+          "disjoint_native_leaf_wall_ns": 2085571257,
+          "unallocated_native_page_wall_ns": 228630,
+          "activation_entered": false
+        },
+        {
+          "history_index": 3,
+          "packet_index": 0,
+          "client_started_ns": 9618175060,
+          "client_ended_ns": 11704063232,
+          "client_wall_ns": 2085888171,
+          "client_epoch_interval_minus_instant_wall_ns": 1,
+          "client_calling_thread_cpu_ns": 481736033,
+          "associated_history_request_wall_ns": 11653535,
+          "native_page_wall_ns": 2085628659,
+          "disjoint_native_leaf_wall_ns": 2085400746,
+          "unallocated_native_page_wall_ns": 227913,
+          "activation_entered": false
+        },
+        {
+          "history_index": 4,
+          "packet_index": 0,
+          "client_started_ns": 11715945814,
+          "client_ended_ns": 13807107100,
+          "client_wall_ns": 2091161276,
+          "client_epoch_interval_minus_instant_wall_ns": 10,
+          "client_calling_thread_cpu_ns": 485086417,
+          "associated_history_request_wall_ns": 11786690,
+          "native_page_wall_ns": 2090782367,
+          "disjoint_native_leaf_wall_ns": 2090555552,
+          "unallocated_native_page_wall_ns": 226815,
+          "activation_entered": false
+        },
+        {
+          "history_index": 5,
+          "packet_index": 0,
+          "client_started_ns": 13819294771,
+          "client_ended_ns": 15920466848,
+          "client_wall_ns": 2101172077,
+          "client_epoch_interval_minus_instant_wall_ns": 0,
+          "client_calling_thread_cpu_ns": 485164422,
+          "associated_history_request_wall_ns": 12084800,
+          "native_page_wall_ns": 2100899044,
+          "disjoint_native_leaf_wall_ns": 2100669608,
+          "unallocated_native_page_wall_ns": 229436,
+          "activation_entered": false
+        },
+        {
+          "history_index": 6,
+          "packet_index": 0,
+          "client_started_ns": 15930996555,
+          "client_ended_ns": 23456181959,
+          "client_wall_ns": 7525185405,
+          "client_epoch_interval_minus_instant_wall_ns": -1,
+          "client_calling_thread_cpu_ns": 1724363154,
+          "associated_history_request_wall_ns": 10423320,
+          "native_page_wall_ns": 7524911952,
+          "disjoint_native_leaf_wall_ns": 7524466706,
+          "unallocated_native_page_wall_ns": 445246,
+          "activation_entered": true
+        }
+      ]
+    }
+  ],
+  "source_pins": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "anchors": [
+        "ClientOperationStamp:106",
+        "absolute import deadline:944",
+        "round and Submit loop:998",
+        "History request/import:1031",
+        "confirmation:1079",
+        "native snapshots:1274",
+        "campaign entry:1513"
+      ],
+      "original_0746": {
+        "bytes": 111313,
+        "sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf"
+      },
+      "M5": {
+        "bytes": 111313,
+        "sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf"
+      },
+      "byte_identical": true,
+      "git_diff_sha256": null,
+      "M5_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "anchors": [
+        "exclusive receive wrapper:2576"
+      ],
+      "original_0746": {
+        "bytes": 217196,
+        "sha256": "7a0ea0cc4a000a693d94faa43b6acf8541cf1f8965f9fe837d01e7d757a0bee7"
+      },
+      "M5": {
+        "bytes": 217196,
+        "sha256": "7a0ea0cc4a000a693d94faa43b6acf8541cf1f8965f9fe837d01e7d757a0bee7"
+      },
+      "byte_identical": true,
+      "git_diff_sha256": null,
+      "M5_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/src/ingress.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "anchors": [
+        "Owner::with:60",
+        "begin_cpu:168",
+        "metered_observed:203",
+        "admit_packet:292",
+        "activate_packet:405",
+        "receive_observed:442"
+      ],
+      "original_0746": {
+        "bytes": 22763,
+        "sha256": "df389b242de3f75f8ee2448b755726c23b3196f0bef0dc79573c183791118882"
+      },
+      "M5": {
+        "bytes": 23015,
+        "sha256": "1139f0d80792c1dca3b30c6dc55b98c79a2e27d0120ec0c3bedd9fab4540858d"
+      },
+      "byte_identical": false,
+      "git_diff_sha256": "3a966d4ba0cbcfe58b3bbdd47ce2a1143f179fddad894955aced246a4ea6dc18",
+      "M5_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs",
+      "anchors": [
+        "HistoryImportObserver: one observer-local monotonic epoch"
+      ],
+      "original_0746": {
+        "bytes": 16523,
+        "sha256": "7b222125f809b371afb830fe3cfe727dbbaafb725bb6eabedd50539df55a5b6c"
+      },
+      "M5": {
+        "bytes": 16523,
+        "sha256": "7b222125f809b371afb830fe3cfe727dbbaafb725bb6eabedd50539df55a5b6c"
+      },
+      "byte_identical": true,
+      "git_diff_sha256": null,
+      "M5_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/execution_observation.rs",
+      "anchors": [
+        "run:46"
+      ],
+      "original_0746": {
+        "bytes": 9441,
+        "sha256": "e3edef6995b92d890c46bb8d983070eb473ed022293c40bd94fd3278102feb74"
+      },
+      "M5": {
+        "bytes": 9441,
+        "sha256": "e3edef6995b92d890c46bb8d983070eb473ed022293c40bd94fd3278102feb74"
+      },
+      "byte_identical": true,
+      "git_diff_sha256": null,
+      "M5_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/src/ingress/execution_observation.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "anchors": [
+        "constants:17",
+        "observe_with_control:686",
+        "observe_sample:718",
+        "cold epoch:968",
+        "history_checkpoint:1061"
+      ],
+      "original_0746": {
+        "bytes": 76907,
+        "sha256": "41b7be4de0ed9083afe69d37396bd78289c64efd3fda2834e70821208a2b6d69"
+      },
+      "M5": {
+        "bytes": 77586,
+        "sha256": "4e4f5f9f6ca98c1134861f526e57b792cea6ba2bfa279aa5580b111f9b2f7a3d"
+      },
+      "byte_identical": false,
+      "git_diff_sha256": "abcb90a122f4052a0f9c467280c4c79c17f71d3558b6f3790876d1d797e3a108",
+      "M5_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "anchors": [
+        "persist_admission_execution:5103",
+        "BeforePersistence:5144",
+        "readback:5283",
+        "tx.commit observer:5349",
+        "activate_observed_with_termination:6667"
+      ],
+      "original_0746": {
+        "bytes": 382866,
+        "sha256": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554"
+      },
+      "M5": {
+        "bytes": 382866,
+        "sha256": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554"
+      },
+      "byte_identical": true,
+      "git_diff_sha256": null,
+      "M5_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+      "anchors": [
+        "observation:342",
+        "SqlCommitTotals:473",
+        "SQL schema:542",
+        "stage names:643"
+      ],
+      "original_0746": {
+        "bytes": 27602,
+        "sha256": "8de3fc5f217f38c87d37f0b41bda580b593b00b601af254e2e75b6326b8e1e18"
+      },
+      "M5": {
+        "bytes": 27602,
+        "sha256": "8de3fc5f217f38c87d37f0b41bda580b593b00b601af254e2e75b6326b8e1e18"
+      },
+      "byte_identical": true,
+      "git_diff_sha256": null,
+      "M5_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_support.rs",
+      "anchors": [
+        "call_with_work_profile:243",
+        "elapsed_wall_ns:295"
+      ],
+      "original_0746": {
+        "bytes": 12378,
+        "sha256": "cbe45e3260db576700f84277683c293099968fae6b63031c9ba4e4dd197d71d9"
+      },
+      "M5": {
+        "bytes": 12378,
+        "sha256": "cbe45e3260db576700f84277683c293099968fae6b63031c9ba4e4dd197d71d9"
+      },
+      "byte_identical": true,
+      "git_diff_sha256": null,
+      "M5_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/3ad605ecdac4b3b123dff83c1cb7458430acd776/trillionnium/crates/trnm-pon-node/tests/support/multiprocess_support.rs"
+    }
+  ],
+  "source_differences": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "change": "Control::check rechecks the original absolute deadline after the existing resource/Host callback. Original checks and measured spans remain; this is not an optimization."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "change": "Adds public_authentication_accounting_available for PQ intake accounting; existing History refill/checkpoint code is unchanged."
+    }
+  ],
+  "new_findings": [
+    {
+      "id": "commit-is-full-persistence",
+      "fact": "Packet commit begins after the successful BeforePersistence hook and runs through persistence, complete stored-byte/state readback, final owner/active-state fences and the transaction API. Its 9.26–9.74 s sum is not SQLite COMMIT time."
+    },
+    {
+      "id": "unique-last-page-activation",
+      "fact": "One submit_result per seven selected packets, only at history_index 6, calls activate_packet after admission using the same operation and original deadline; it spans 5.30–5.44 s."
+    },
+    {
+      "id": "cpu-wait-is-not-all-wait",
+      "fact": "Explicit CpuWait observes begin_cpu only. After full W1 verified completion, exclusive History checkpoints can sleep in observe_with_control for up to 5 ms per iteration under the original 0.25 CPU-second/second refill and deadline. These waits remain inside the surrounding admission/activation spans; current retained data does not quantify them."
+    },
+    {
+      "id": "exclusive-owner",
+      "fact": "The campaign wrapper passes Owner::Exclusive, so the shared Node mutex try_lock wait branch is not executed here. Other locks, IO waits and scheduler delays are not ruled out."
+    },
+    {
+      "id": "existing-observability",
+      "fact": "Unchanged native code already records 16 nested History stage totals and four actual Transaction::commit API sites in phase before/after snapshots. V2 omits those snapshots; their values cannot be reconstructed from V2."
+    },
+    {
+      "id": "network-denominator",
+      "fact": "0.081–0.143 s sums the seven associated Request::History protected RPC wrapper intervals (elapsed_wall_ns), including some caller-side result/request serialization, not pure network RTT. The round also runs Submit requests for seven business packets (retries allowed), then separate confirmation; this is not total round network time."
+    }
+  ],
+  "raw_snapshot_status_at_this_review": {
+    "fields": [
+      "client_native_history_arithmetic_before",
+      "client_native_history_arithmetic_after"
+    ],
+    "nested_stages": [
+      "record",
+      "packet",
+      "delta",
+      "verify_state",
+      "verify_history",
+      "publish",
+      "read_active",
+      "state_at",
+      "execute",
+      "admission",
+      "activation",
+      "complete_commitment",
+      "complete_state_root",
+      "account_graph",
+      "persisted_state_root",
+      "execution_parent_binding"
+    ],
+    "sql_sites": [
+      "admission_persistence",
+      "atomic",
+      "reorg_step",
+      "reorg_termination"
+    ],
+    "local_complete_report_available": false,
+    "whole_phase_delta_includes_failed_later_round": true,
+    "existing_zip_hash_verified_before_prior_deletion": true,
+    "new_download_by_this_review": false,
+    "root_authorized_separate_raw_recovery_pending": true,
+    "original_run_id": "42591962205",
+    "original_artifact_id": "13662172930",
+    "raw_SQL_metrics_known": false
+  },
+  "minimal_next_evidence": [
+    {
+      "priority": 1,
+      "action": "Recover the original phase before/after stage and SQL snapshots and preserve missing/unknown/failure/in-flight counters before differencing; use existing observation first.",
+      "limit": "Whole-phase deltas include failed later rounds and cannot be assigned to the confirmed seven-packet prefix. SQL API wall is not isolated physical fsync."
+    },
+    {
+      "priority": 2,
+      "action": "If a future normal baseline is instrumented, add bounded per-original-operation counts and measured sleep intervals only at the actual observe_with_control wait branch, tied to existing semantic phase; preserve original callbacks, deadlines, errors, charging and refill constants.",
+      "limit": "Do not infer sleep by subtracting CPU from wall; retain incomplete/unknown values and observer overhead."
+    },
+    {
+      "priority": 3,
+      "action": "Use existing native stage totals to locate readback and activation after measured waits are separated. Only if still necessary, add observations around the original state_at_with_readback, final active/owner fences and activation check/reorg paths, joined to existing transaction API metrics.",
+      "limit": "No skipped full-byte/state equality, writer/snapshot fences, Host/checkpoint/signature coverage or changed durable-fact semantics; no new cache justified by durations alone."
+    }
+  ],
+  "conclusion": "The retained data narrows measured boundaries and rejects specific misattributions. It does not establish the dominant low-level cause or a safe code optimization. Actual checkpoint wait accounting and existing native/SQL snapshots are the next evidence."
+}

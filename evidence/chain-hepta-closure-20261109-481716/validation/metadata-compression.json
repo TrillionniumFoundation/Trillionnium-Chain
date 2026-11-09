@@ -1,0 +1,18 @@
+[
+  {
+    "original_path": "/workspace/scratch/481716a90d06/verification/metadata-default.stdout",
+    "gzip_path": "/workspace/scratch/481716a90d06/verification/metadata-default.stdout.gz",
+    "original_bytes": 833382,
+    "original_sha256": "a3045f590a5d8bfe20369057d242673c731e86ee07f41339f1a78d6a2aa8db4c",
+    "gzip_bytes": 67878,
+    "gzip_sha256": "c06d6488877d23c53787085a94bde0acb9616c91fd907bb616b40a48bade60fc"
+  },
+  {
+    "original_path": "/workspace/scratch/481716a90d06/verification/frozen-source/metadata-all-features.stdout.log",
+    "gzip_path": "/workspace/scratch/481716a90d06/verification/frozen-source/metadata-all-features.stdout.log.gz",
+    "original_bytes": 848392,
+    "original_sha256": "1c60b87b5b663b5984a8b113f3ffe17bd511b220e3ad692f69ffa1a91f80c725",
+    "gzip_bytes": 68994,
+    "gzip_sha256": "5f877dbf42e93bc48dacbf82d5d7578302a2f505179fc7f14147d0c51b21c224"
+  }
+]

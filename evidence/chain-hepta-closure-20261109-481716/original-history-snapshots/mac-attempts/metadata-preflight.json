@@ -1,0 +1,55 @@
+{
+  "actor": "ProfHepta",
+  "artifact": {
+    "created_at": "2026-11-09T09:26:05Z",
+    "digest": "sha256:4e8a243caf2aadf4a195b4cb96dbb0229a0e001a830f0e9de2c4f853ee7dff5c",
+    "expired": false,
+    "expires_at": "2026-12-09T09:25:57Z",
+    "id": 13662172930,
+    "name": "pon-native-campaign-x64-head-release-0746a462e80067b78317597f2fa4bacf5e3db958-1",
+    "size_in_bytes": 76441344,
+    "updated_at": "2026-11-09T09:26:05Z",
+    "workflow_run": {
+      "head_branch": "fix/chain-cell-storage-convergence-f2568-20261109",
+      "head_repository_id": 1323087357,
+      "head_sha": "0746a462e80067b78317597f2fa4bacf5e3db958",
+      "id": 42591962205,
+      "repository_id": 1323087357
+    }
+  },
+  "campaign_executed": false,
+  "download_performed": false,
+  "expected_archive_bytes": 76441344,
+  "expected_archive_sha256": "4e8a243caf2aadf4a195b4cb96dbb0229a0e001a830f0e9de2c4f853ee7dff5c",
+  "github_writes_performed": false,
+  "metadata_files": [
+    {
+      "bytes": 836,
+      "path": "/Users/qianqi/chain-hepta-closure-481716/history-snapshot-recovery/artifact-metadata-original.json",
+      "sha256": "acfeabf2d1bed7d96312f06bfe279b2d6286b3408f7da37bbc41258ce9ccd699"
+    },
+    {
+      "bytes": 15177,
+      "path": "/Users/qianqi/chain-hepta-closure-481716/history-snapshot-recovery/run-metadata-original.json",
+      "sha256": "f45cca017a914a2c9c4efea260c71ae256f905d869c34f3c3b0915f8d9f8a972"
+    }
+  ],
+  "observed_at_utc": "2026-11-09T16:05:00.457053+00:00",
+  "run": {
+    "conclusion": "failure",
+    "created_at": "2026-11-09T09:15:13Z",
+    "event": "pull_request",
+    "head_branch": "fix/chain-cell-storage-convergence-f2568-20261109",
+    "head_sha": "0746a462e80067b78317597f2fa4bacf5e3db958",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42591962205",
+    "id": 42591962205,
+    "name": "PoN original native campaign",
+    "path": ".github/workflows/pon-native-campaign-qualification.yml",
+    "run_attempt": 1,
+    "run_number": 1074,
+    "run_started_at": "2026-11-09T09:15:13Z",
+    "status": "completed",
+    "updated_at": "2026-11-09T09:26:09Z"
+  },
+  "schema": "trnm.original-campaign-history-recovery-preflight.v1"
+}

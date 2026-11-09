@@ -1,0 +1,9 @@
+{
+  "M4_originals_verified_retained": true,
+  "error": "KeyError: 'status'",
+  "first_attempt_updated_profile_plan_packet_only": true,
+  "reader_source_modified": false,
+  "reason": "packager checked wrong report key; qualification is the existing field",
+  "second_attempt_verified_actual_qualification_field": true,
+  "stage": "local evidence writer after successful reader exit 2"
+}

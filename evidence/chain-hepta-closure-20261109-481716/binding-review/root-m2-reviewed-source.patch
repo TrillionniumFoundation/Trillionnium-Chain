@@ -1,0 +1,317 @@
+diff --git a/trillionnium/Cargo.lock b/trillionnium/Cargo.lock
+index 0d1855651f..2ff1e1c42d 100644
+--- a/trillionnium/Cargo.lock
++++ b/trillionnium/Cargo.lock
+@@ -1175,6 +1175,7 @@ dependencies = [
+  "borsh",
+  "ed25519-dalek",
+  "fs2",
++ "getrandom 0.2.17",
+  "hex",
+  "libc",
+  "ml-dsa",
+diff --git a/trillionnium/crates/trnm-crypto-primitives/src/lib.rs b/trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+index 78e6935ba3..7d7c8623a2 100644
+--- a/trillionnium/crates/trnm-crypto-primitives/src/lib.rs
++++ b/trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+@@ -6,6 +6,7 @@ use sha2::{Digest, Sha256};
+ 
+ pub type Hash32 = [u8; 32];
+ pub mod owned_ed25519;
++pub mod pon_grouped_fresh_seal_v0;
+ pub mod pon_routed_int257_grouped;
+ 
+ pub fn hash_domain(domain: &str, parts: &[&[u8]]) -> Hash32 {
+@@ -226,5 +227,6 @@ pub mod qualified_work_task;
+ 
+ pub mod pq_auth;
+ pub mod pq_candidate;
++pub mod pq_content_auth;
+ pub mod pq_profile_auth;
+ pub mod pq_root_v3;
+diff --git a/trillionnium/crates/trnm-pon-node/src/lib.rs b/trillionnium/crates/trnm-pon-node/src/lib.rs
+index 52dc7eb7ec..0758122202 100644
+--- a/trillionnium/crates/trnm-pon-node/src/lib.rs
++++ b/trillionnium/crates/trnm-pon-node/src/lib.rs
+@@ -1,12 +1,22 @@
+ //! Experimental native composition; never imports Python or activates production.
+ #![forbid(unsafe_code)]
+ mod ancestry_index;
++/// Explicit bounded native Cell replay; never installs a consensus work rule.
++pub mod cell_native_v1;
+ pub mod consensus;
+ mod error;
++/// Fresh independent research capsule; never W1 admission or consensus credit.
++pub mod grouped_fresh_admission_v0;
++/// One trusted research verification owner; no decentralized admission or credit.
++pub mod grouped_verification_authority_v0;
+ /// One fixed Linux cgroup-v2 parent checker, shared by CLI and public V3 library.
+ pub mod host_kernel_parent;
+ pub mod ingress;
+ pub mod mining;
++/// Opt-in durable local owner observations; grants no global execution authority.
++pub mod native_owner_journal;
++/// Persistent declared risk expenditure; grants no probability-law authority.
++pub mod native_risk_ledger;
+ pub mod operator_checkpoint_tile;
+ pub mod operator_continuous_controller;
+ mod operator_continuous_cpu;
+@@ -29,11 +39,18 @@ pub mod public_submit;
+ /// Isolated V2 certificate reader; never votes, installs models or activates consensus.
+ pub mod release_finality;
+ pub mod release_owner;
++/// Opt-in bounded work-schedule checks; never selected by native admission.
++pub mod research_work_schedule;
+ #[cfg(all(target_os = "linux", feature = "pq-root-v3"))]
+ pub mod root_recovery_v3;
+ mod store;
+ pub use error::{Error, ErrorCode, ErrorKind};
+ use serde_json::{json, Value};
++pub use store::async_w1_generation_v2::{
++    NodeGenerationOwnerV2, NodeGenerationOwnerV3, OwnedFullGenerationV2, OwnedGenerationRuntimeV2,
++    OwnedTerminalExecutionV3, OwnedTerminalGenerationRuntimeV3, OwnedVerifierRunV2,
++    TerminalReasonV3, RECOVERY_PROFILE_V3,
++};
+ pub use store::authenticated_migration::{
+     verify_growth_rehearsal_v2, verify_growth_rehearsal_v2_with_snapshot_byte_limit,
+     AuthenticatedMigrationProgress, AuthenticatedMigrationReceipt, GrowthMigrationPlanV2,
+@@ -41,6 +58,7 @@ pub use store::authenticated_migration::{
+     PreservedTable, DEFAULT_GROWTH_REHEARSAL_SNAPSHOT_BYTE_LIMIT_V2,
+ };
+ pub use store::capacity_observation::CapacityObservation;
++pub use store::demand_evidence::{NativeTaskEvidenceRequestV1, NativeTaskEvidenceV1};
+ pub use store::evaluation_observation::{EvaluationAnchor, EvaluationObservation, EvaluationPhase};
+ pub use store::evaluation_round_observation::{
+     EvaluationRoundAnchor, EvaluationRoundBaseAnchor, EvaluationRoundObservation,
+@@ -55,6 +73,14 @@ pub use store::native_budget::{
+     NativeBudgetInventoryV1, NativeBudgetLaneV1, NativeBudgetLocalRecordV1,
+     NativeBudgetObservationV1, NativeBudgetRequestV1, NativeContributionClaimV1,
+ };
++pub use store::native_owner_observation::{
++    OwnerCensus, OwnerCensusBlock, OwnerCensusLimits, OwnerCensusProgress, MAX_CENSUS_BLOCKS,
++    MAX_CENSUS_PACKET_BYTES,
++};
++pub use store::packet_observation::{
++    observe_existing_packet, PacketObservationBackend,
++    DEFAULT_PACKET_OBSERVATION_SNAPSHOT_BYTE_LIMIT,
++};
+ pub use store::pinned_account_query::PinnedNativeAccountQuery;
+ pub use store::storage_service::{
+     native_cell_release_repair_subject_v2, native_cell_repair_subject_v1,
+@@ -63,6 +89,22 @@ pub use store::storage_service::{
+     NativeCellReleaseRetirementReadbackV2, NativeCellRepairCpuObservationV1,
+     NativeCellRepairRequestV1, NativeCellRetentionRequestV1,
+ };
++pub use store::storage_service::{
++    native_cell_shard_repair_subject_v1, NativeCellRetainedShardPlanReadbackV1,
++    NativeCellRetainedShardPlanRequestV1, NativeCellRetainedShardPlanTargetsV1,
++    NativeCellRetainedShardSlotReadbackV1, NativeCellRetainedShardVerificationBudgetV1,
++    NativeCellShardDamageV1, NativeCellShardEffectReadbackV1, NativeCellShardRecoveryActionV1,
++    NativeCellShardRecoveryBudgetV1, NativeCellShardRecoveryCpuV1,
++    NativeCellShardRecoveryFailureV1, NativeCellShardRecoveryLimitsV1,
++    NativeCellShardRecoveryReadbackV1, NativeCellShardRecoveryRequestV1,
++    NativeCellShardRecoveryUsageV1, NativeCellShardRepairRequestV1,
++    NativeCellShardRetentionRequestV1,
++};
++pub use store::storage_service::{
++    native_cell_version_repair_subject_v3, NativeCellVersionEffectReadbackV3,
++    NativeCellVersionRepairRequestV3, NativeCellVersionRetentionRequestV3,
++    NativeCellVersionRetirementReadbackV3,
++};
+ pub use store::{
+     ConfirmationBatch, ContinuousSearchRequest, DerivedCommitmentStatus, MiningEpochCancellation,
+     NativeAccountProofProgress, Node, Observation, OwnedContinuousLeaseResult,
+@@ -331,6 +373,39 @@ impl Settings {
+         task_profile: &str,
+         model_profile: &str,
+         windows: Option<trnm_mvcc_fee::model_task_windows_v1::PinnedTaskWindows<'_>>,
++    ) -> Result<Self> {
++        Self::development_with_contract_selection(
++            genesis_timestamp,
++            policy,
++            task_profile,
++            model_profile,
++            windows,
++            false,
++        )
++    }
++    /// Fresh classical development context with complete funded Task terms.
++    /// This selects a new genesis; it does not migrate a running chain.
++    pub fn development_with_funded_service_contract_v1(
++        genesis_timestamp: Option<u64>,
++        policy: &str,
++        task_profile: &str,
++    ) -> Result<Self> {
++        Self::development_with_contract_selection(
++            genesis_timestamp,
++            policy,
++            task_profile,
++            "linear-expert-dev-v1",
++            None,
++            true,
++        )
++    }
++    fn development_with_contract_selection(
++        genesis_timestamp: Option<u64>,
++        policy: &str,
++        task_profile: &str,
++        model_profile: &str,
++        windows: Option<trnm_mvcc_fee::model_task_windows_v1::PinnedTaskWindows<'_>>,
++        funded_service_contract: bool,
+     ) -> Result<Self> {
+         let mut app = Config::installed_with_model_profiles_and_task_windows(
+             policy,
+@@ -412,6 +487,9 @@ impl Settings {
+                 ],
+             );
+         }
++        if funded_service_contract {
++            pon_executor::funded_service_v1::install(&mut app)?;
++        }
+         let (a, b) = maintenance();
+         let task = pon_work::task_id(&a, &b).map_err(|_| Error::from("WORK_TASK"))?;
+         let mut initial = State::new();
+diff --git a/trillionnium/crates/trnm-protocol/src/lib.rs b/trillionnium/crates/trnm-protocol/src/lib.rs
+index daae244780..dab61b4530 100644
+--- a/trillionnium/crates/trnm-protocol/src/lib.rs
++++ b/trillionnium/crates/trnm-protocol/src/lib.rs
+@@ -1,4 +1,5 @@
+ pub mod crypto_profile;
++pub mod funded_service_task_v1;
+ pub mod pq_frame;
+ pub mod pq_legacy_profile;
+ pub mod pq_native_accounts_v2;
+@@ -505,4 +506,5 @@ pub mod pon_wire;
+ 
+ pub mod pon_state;
+ 
++pub mod content_commitment;
+ pub mod qualified_work_task;
+diff --git a/trillionnium/crates/trnm-release-bundle/Cargo.toml b/trillionnium/crates/trnm-release-bundle/Cargo.toml
+index 53d6dcf7be..3bb6a07198 100644
+--- a/trillionnium/crates/trnm-release-bundle/Cargo.toml
++++ b/trillionnium/crates/trnm-release-bundle/Cargo.toml
+@@ -11,12 +11,12 @@ default = []
+ pq-root-v3 = ["trnm-crypto-primitives/pq-native-openssl", "dep:openssl"]
+ 
+ [dependencies]
++trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
+ sha2 = "0.10"
+ trnm-crypto-primitives = { version = "=0.1.0", path = "../trnm-crypto-primitives" }
+ openssl = { version = "=0.10.81", optional = true }
+ 
+ [dev-dependencies]
+-trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
+ zeroize = "=1.9.1"
+ 
+ [package.metadata.trnm]
+diff --git a/trillionnium/crates/trnm-release-bundle/src/lib.rs b/trillionnium/crates/trnm-release-bundle/src/lib.rs
+index d16cd19e41..5df486bfa1 100644
+--- a/trillionnium/crates/trnm-release-bundle/src/lib.rs
++++ b/trillionnium/crates/trnm-release-bundle/src/lib.rs
+@@ -6,6 +6,7 @@
+ //! signing, or release readiness until corresponding evidence is supplied by
+ //! external builders and reviewers.
+ 
++pub mod content_v1;
+ pub mod pq_release;
+ #[cfg(feature = "pq-root-v3")]
+ pub mod root_recovery_v3;
+diff --git a/trillionnium/crates/trnm-release-bundle/src/pq_release.rs b/trillionnium/crates/trnm-release-bundle/src/pq_release.rs
+index c64e3cf405..04fc5e9a58 100644
+--- a/trillionnium/crates/trnm-release-bundle/src/pq_release.rs
++++ b/trillionnium/crates/trnm-release-bundle/src/pq_release.rs
+@@ -26,6 +26,7 @@ use std::{
+     sync::Arc,
+ };
+ use trnm_crypto_primitives::pq_auth::PqNativeVerifier;
++use trnm_protocol::pq_frame::ML_DSA_65_SIGNATURE_BYTES;
+ 
+ mod bundle_quorum;
+ use bundle_quorum::VerifiedBundleQuorumV1;
+@@ -474,18 +475,14 @@ impl PqReleaseAuthorityV1 {
+             return Err(PqReleaseErrorV1::HistoryFull);
+         }
+         let message = validated.signing_message();
+-        verify_quorum(
+-            &self.root.offline_root,
+-            &self.verifiers,
+-            &message,
+-            old_signatures,
+-        )?;
+-        verify_quorum(
+-            &next.offline_root,
+-            &validated.verifiers,
+-            &message,
+-            new_signatures,
+-        )?;
++        // Reject both complete signer sets before spending signature-verification
++        // work on either quorum. These borrows retain no authorization result.
++        let old_quorum =
++            preflight_quorum(&self.root.offline_root, &self.verifiers, old_signatures)?;
++        let new_quorum =
++            preflight_quorum(&next.offline_root, &validated.verifiers, new_signatures)?;
++        verify_preflighted_quorum(&message, old_quorum)?;
++        verify_preflighted_quorum(&message, new_quorum)?;
+         let verifiers = Arc::new(validated.into_verifiers());
+         let digest: ReleaseDigestV1 = Sha256::digest(&message).into();
+         let checkpoint = next_checkpoint(self.checkpoint, &message, now);
+@@ -660,7 +657,7 @@ pub fn pq_release_signature_digest_v1(
+         if previous == Some(signature.key_id) {
+             return Err(PqReleaseErrorV1::DuplicateSigner);
+         }
+-        if signature.signature.len() != 3309 {
++        if signature.signature.len() != ML_DSA_65_SIGNATURE_BYTES {
+             return Err(PqReleaseErrorV1::SignatureRejected);
+         }
+         hash.update(signature.key_id);
+@@ -735,10 +732,24 @@ fn verify_quorum(
+     message: &[u8],
+     signatures: &[PqReleaseSignatureV1],
+ ) -> Result<(), PqReleaseErrorV1> {
++    verify_preflighted_quorum(message, preflight_quorum(role, verifiers, signatures)?)
++}
++
++type PreflightQuorumV1<'keys, 'signatures> = Vec<(&'keys PqNativeVerifier, &'signatures [u8])>;
++
++/// Complete bounded, cheap checks before any mathematical signature verification.
++/// The returned pairs borrow these exact immutable pins and signature bytes;
++/// neither a successful preflight nor a retained verifier is authorization.
++fn preflight_quorum<'keys, 'signatures>(
++    role: &PqReleaseRoleKeysV1,
++    verifiers: &'keys ReleaseVerifiersV1,
++    signatures: &'signatures [PqReleaseSignatureV1],
++) -> Result<PreflightQuorumV1<'keys, 'signatures>, PqReleaseErrorV1> {
+     if signatures.len() < usize::from(role.threshold) || signatures.len() > MAX_RELEASE_KEYS_V1 {
+         return Err(PqReleaseErrorV1::InsufficientSignatures);
+     }
+     let mut seen = BTreeSet::new();
++    let mut quorum = Vec::with_capacity(signatures.len());
+     for signature in signatures {
+         if !seen.insert(signature.key_id) {
+             return Err(PqReleaseErrorV1::DuplicateSigner);
+@@ -755,8 +766,23 @@ fn verify_quorum(
+         {
+             return Err(PqReleaseErrorV1::InvalidKey);
+         }
++        if signature.signature.len() != ML_DSA_65_SIGNATURE_BYTES {
++            return Err(PqReleaseErrorV1::SignatureRejected);
++        }
++        quorum.push((verifier, signature.signature.as_slice()));
++    }
++    Ok(quorum)
++}
++
++fn verify_preflighted_quorum(
++    message: &[u8],
++    quorum: PreflightQuorumV1<'_, '_>,
++) -> Result<(), PqReleaseErrorV1> {
++    // Every supplied signature must verify, including all entries beyond the
++    // threshold. No successful mathematical observation is cached or reused.
++    for (verifier, signature) in quorum {
+         verifier
+-            .verify_exact_message(message, &signature.signature)
++            .verify_exact_message(message, signature)
+             .map_err(|_| PqReleaseErrorV1::SignatureRejected)?;
+     }
+     Ok(())
