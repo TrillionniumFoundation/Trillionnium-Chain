@@ -2,7 +2,7 @@
 
 **总体状态：HOLD。** 本组证据细化了三份已经失败的原始 campaign，并修正 QROM 工作流把历史固定输入与当前源码混在一起的诊断边界。三份 artifact 共九次原始 campaign，整体通过次数仍为 **0 / 9**；没有新增原始 campaign 通过、吞吐资格、密码学 soundness、量子工作、生产或发布资格。
 
-本目录保存原始字节、离线派生报告及明确的省略清单。完整原始 ZIP 的离线重读、Python reader 控制、QROM 分项本地验证与本轮最终源码的全仓／托管 CI 验证各自记录；最终 commit、push、托管结果尚待主代理补入本页第 8 节。未完成或缺少记录的项目不能据此成为成功。
+本目录保存原始字节、离线派生报告及明确的省略清单。完整原始 ZIP 的离线重读、Python reader 控制、QROM 分项本地验证与本轮最终源码的全仓／托管 CI 验证各自记录；固定代码与完整本地验证身份见本页第 8 节，远端发布与托管结果另按实际状态记录。未完成或缺少记录的项目不能据此成为成功。
 
 ## 1. 原始运行与源码身份
 
@@ -22,7 +22,7 @@
 
 直接来源为各运行的 [#835 metadata](raw/run-42575267109/original-artifact-metadata.json)、[原 #836 metadata](raw/run-42579873262/original-artifact-metadata.json) 和 [最新 #836 metadata](raw/run-42591962205/original-artifact-metadata.json)。最新 #836 的记录补充原先两条运行，不能替换或改写原先失败记录。
 
-三组原始输入保持一致：每轮含 baseline、from-zero、late-product 三个 30 秒 phase，进程数为 0 / 24 / 24；准备 1,024 个实际签名 seed transfers、4 个 seed blocks 和 21 个 business blocks。每个 phase 计划三个确认轮次。构建成功，`phase_startup_errors=[]`，源码与二进制身份均有记录。资源记录及其 ancestor 链通过已有严格 resource reader，不能统一套用早期缺少 cgroup 前提的解释。资源上限记录为 `cpu.max=400000 100000`、`memory.max=17179869184`、nice 10；物理硬件观察不等同于保留给该任务的资源承诺。
+三组原始输入保持一致：每轮含 baseline、from-zero、late-product 三个 30 秒 phase，进程数为 0 / 24 / 24；准备 1,024 个实际签名 seed transfers、4 个 seed blocks 和 21 个 business blocks。每个 phase 计划三个确认轮次。构建成功，`phase_startup_errors=[]`，源码与二进制身份均有记录。资源记录及其 ancestor 链通过已有严格 resource reader，不能统一套用早期缺少 cgroup 前提的解释。外层 campaign 控制域的资源记录为 `cpu.max=400000 100000`、`memory.max=17179869184`、nice 10。receiver/verifier 的独立 public phase 仍记录 `cpu.max=25000 100000`（0.25 CPU）和 `memory.max=2147483648`（2 GiB），24 个压力进程留在原控制域；不能把外层 4 CPU／16 GiB 写成 verifier 的额度。物理硬件观察不等同于保留给该任务的资源承诺。
 
 ## 2. 全部 27 个 phase 的真实确认与观察数
 
@@ -176,7 +176,7 @@ input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs
 
 ## 8. 最终整合验证与发布记录
 
-本节由主代理在最终固定源码上补齐；引用不存在或没有 completion 的项保持 PENDING。组件成功不自动成为整合成功，HOLD 不因提交或托管工作流绿色而自行解除。
+固定代码提交为 `8f4d69a594dfe78541ce8afaba55c1fe2f623322`，tree `a7d820d364f926784c28732107de1f7bb28306bd`。其直接子提交 `48441d091f1f9dd6f183f0ef3fac476c83ea6791`，tree `63f089cab7c1bd18eb85902d709187de90ce5ee6`，仅加入本目录 33 个证据文件；已核对非证据代码 diff 为空。以下运行各自绑定实际执行的提交，不把证据子提交改称原测试身份。HOLD 不因提交、控制通过或托管工作流绿色而自行解除。
 
 | 项目 | 本页冻结时状态 | 最终证据引用／待补信息 |
 |---|---|---|
@@ -184,13 +184,25 @@ input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs
 | 三份完整原始 ZIP 的最终 reader 回读 | PASS，仅证据读取；原 campaign 全部 false | 第 1、2、5 节及三个 diagnostic readback |
 | 三份保留归档／SubsetBundle | PASS，53 原始成员／52 manifest 成员，各 1,713 省略成员 | 三个 retention receipt |
 | QROM 历史 81 与当前组件 75 | 分项本地观察已保存，范围见第 7 节 | [QROM 分项说明](qrom/README.md) |
-| 最终固定源码的 QROM 全仓／hosted CI | **PENDING** | 待补完整 source identity、最终日志、run/artifact URL |
-| Rust observer 最终编译及 focused tests | **PENDING** | 待补实际完成日志、源码身份、选择器和结果；不将未完成记为通过 |
-| 全局 CI contract／corpus／source inventory／policy gates | **PENDING** | 待补最终固定源码的完整验证结果 |
-| 最终 commit | **PENDING** | 待补 commit SHA、tree SHA 与 clean source 身份 |
-| Push／远端分支／PR | **PENDING** | 待补远端观察；尚未以本页声称完成 |
+| 当前 QROM 完整提交级本地 head gate | **PASS：75 required / started / successful；真实 V1 exit 2；最终 gate exit 0** | `48441d09`；26,201 tracked entries / 2,534,971,793 bytes，全源码 before/after 相同；[完整本地控制](validation/committed-48441d09-completed-validation.tar.gz) |
+| QROM hosted head／prospective-merge | **NOT_OBSERVED** | 本地 gate 不替代 Actions completion；发布后单独读取 |
+| Rust observer 原 profile 控制 | **PASS：11 / 11，7 + 2 + 2，零失败／忽略** | ai395 的完整 `8f4d69a5`；26,168 tracked entries / 2,501,260,625 bytes，源码 before/after 相同；[native 原始记录](validation/native-validation-records.tar.gz) |
+| Rust graph／format／strict Clippy | **PASS** | 原 profile、单 Cargo job、incremental off；26 workspace members，default 176 / all-features 181 resolved nodes；workspace / all-targets / all-features / `-D warnings` |
+| CI／source integrity／PQ corpus／failed campaign reader | **PASS：166 + 43 + 57 + 27 = 293** | `48441d09`；四个原始 suite 及最终源码前后记录分别保留，不加入 preparation 或 QROM 次数 |
+| Repository／source inventory／Markdown links | **PASS** | `48441d09`；26 crates、1,390 Rust files、27 normal dependency edges、6,063 local links；原 inventory generator 的 `--check` 通过 |
+| 代码与证据身份 | **固定提交已记录** | code `8f4d69a5`；首次证据子提交 `48441d09`；本页后续验证归档属于 evidence-only publication，不产生新的 native 执行声称 |
+| Push／远端分支／PR | **外部发布记录单独确认** | 本验证快照不自证 GitHub 写入；通过 ProfHepta／HeptaRuntime 发布后，以远端 ref SHA 与 PR 的实时 readback 为准 |
 | 本轮新的原始 native campaign | **未由本回读执行** | 旧三组失败不能被 reader、observer 或 QROM 修复覆盖 |
 | 生产、发布、量子工作、密码学和共识资格 | **HOLD／未授予** | 必须由各自规定的完整证据独立建立 |
 
 主开发计划仍以 [TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md](../../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md) 为准。本页是可追溯证据报告，不替代计划、原验收条件、required checks 或独立复核。
 
+### 实际失败、构建输入与覆盖边界
+
+首次本地 Rust 尝试绑定 `48441d09`，在 `trnm-crypto-primitives` 编译时因共享磁盘 ENOSPC（os error 28）退出 101，11 个控制均未执行；该次完整 source-before/source-after 仍相同。原始失败与随后 ai395 上的成功分开保留，没有通过改变 profile、断言、超时或资源规则把失败改写为成功。本地 fmt 与两套 locked/offline graph 检查另有真实 PASS 收据。
+
+ai395 使用标准 rustup 入口选择 Rust 1.95.0，原仓库 profile，`CARGO_BUILD_JOBS=1`、`CARGO_INCREMENTAL=0`。五个实际 OpenSSL 3.5.9 输入（CLI、两个配置头、libcrypto.a、libssl.a）在执行前后逐项核对固定 SHA-256 及文件身份并保持一致。11 项运行是 default-feature observer 控制；all-features 范围为 Cargo 图与严格 Clippy，并非全 feature runtime suite 或整仓测试全集。
+
+实际编译的 unit-test artifact 为 512,675,440 字节，SHA-256 `3afef64d4074a1c464777e19b099ed45185860a244da53d26c2238749ef3f6e5`。归档保留其身份与日志，不包含该大型二进制；此处没有声称建立了运行全生命周期、加载内存或所有动态依赖的独立身份证明。远端最终 validation.json 的 SHA-256 为 `1614de20a6405323e1f214d474f5adf7e07591ed46586e09d2b1920962984de8`。
+
+先前 preparation 的 CI suite 166 项中 1 项 fixture failure，以及修改后 focused 9 项 PASS，均原样保留并排除在最终 293 计数之外。QROM 的中断 attempt 仍为 UNKNOWN；历史 81、当前 75 与上述 293 各有不同验证范围，不合并成独立测试总数。静态交叉审查无阻塞项，但保留了一个低风险诊断格式差异：新增 bucket error code 的 reader 目前未采用原 aggregate 的同一大写 atom 正则。该审查不是测试执行记录。
