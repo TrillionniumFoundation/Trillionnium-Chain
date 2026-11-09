@@ -1,0 +1,45 @@
+{
+  "schema": "trnm-w1-local-receiver-comparison-v1",
+  "local_receiver_comparison": "INCOMPLETE_OR_INCOMPARABLE",
+  "errors": [
+    "receiver 1: process did not complete successfully",
+    "receiver 2: process did not complete successfully",
+    "receiver 5: process did not complete successfully",
+    "receiver 6: process did not complete successfully"
+  ],
+  "planned_receiver_processes": 8,
+  "recorded_receiver_processes": 8,
+  "new_complete_proofs": 0,
+  "distinct_input_tasks": 1,
+  "existing_proof_replays_planned": 4,
+  "owner_provisioning_and_status_separately_measured": true,
+  "owner_costs": {
+    "provisioning": {
+      "wall_seconds": 0.006286924,
+      "user_seconds": 0.002657,
+      "system_seconds": 0.001771,
+      "cpu_seconds": 0.004428,
+      "peak_rss_kib": 14516
+    },
+    "final_status": {
+      "wall_seconds": 0.00480817,
+      "user_seconds": 0.0007999999999999999,
+      "system_seconds": 0.0032029999999999997,
+      "cpu_seconds": 0.004003,
+      "peak_rss_kib": 14816
+    }
+  },
+  "medians": null,
+  "proof_vs_native_observed_changes": null,
+  "median_scope": "whole receiver processes; never sums of phase medians",
+  "os_caches_flushed": false,
+  "host_exclusive": false,
+  "network_transport_measured": false,
+  "fresh_prover_cost_measured": false,
+  "end_to_end_benefit": "NOT_MEASURED",
+  "receiver_count_break_even": null,
+  "production_service_qualification": "NOT_ESTABLISHED",
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "manifest_sha256": "1416816d073aea139df0672dc36919c5b5144916cc505c8a76de25a5c846a14b"
+}

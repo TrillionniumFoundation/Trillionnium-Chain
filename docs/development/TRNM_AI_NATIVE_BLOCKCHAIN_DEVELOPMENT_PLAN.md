@@ -10713,3 +10713,35 @@ its own exact source, original operation and receipts. Separate branch logs
 cannot establish a same-iteration production loop. This composition does not
 automatically include #822, #823, #826, #828, #829 or #830. All seven original
 gates remain HOLD; production activation and FinalUse qualification stay false.
+
+
+### 2026-11-09 — Matched development-Node receiver cost (HOLD)
+
+Continue the exact #835 source `e2a02f9271b49f146e70806c8a66e161b5973971`
+with the [matched receiver comparison](../../formal/pon-nakamoto-v1/w1_node_adapter_research/RECEIVER_COST_COMPARISON.md).
+Add a real cold native Node comparator and disjoint stage observations to the
+existing scheduled-SHA proof-plus-native adapter. Both arms bind the same
+independent packet/header/artifact/context inputs and invoke original native
+admission, activation and current exact readback. Durable proof-start reservations,
+both complete proofs and the original native replay remain in the proof arm.
+
+The fixed benign NPPNNPPN campaign uses fresh receiver processes and Node stores
+for one retained packet: four proof replays, zero new proofs. Charge startup,
+I/O, preprocessing, proof checks, persistence, native Node work, reporting and
+teardown through the external process total; report owner provisioning separately.
+Preserve all failed/unfinished attempts, exact source/input/binary identities,
+actual kernel limits and unknown observations. Missing cgroup evidence cannot
+produce comparable medians. Full transport, original service pressure, production
+proof replacement, independent cryptographic qualification and whole-chain
+benefit remain separate HOLD gates. No existing acceptance criterion is relaxed.
+
+Measured continuation at `acd3edaab4a7aad358d4d174ea23000d619f70ea`: two hosted
+head runs completed both resource profiles and retained all 32 receiver attempts.
+Each two-CPU comparison passed its evidence contract; proof-plus-native wall
+medians were 104.0660x and 86.0967x their own native comparators. At quarter CPU,
+each run retained four native completions and four proof timeouts at the
+four-second deadline; both workflows correctly failed. The builds have different
+binary hashes and are reported separately. All 27 native adapter tests passed
+in each run. [Full receiver results and raw evidence](../../formal/pon-nakamoto-v1/w1_node_adapter_research/evidence/receiver-cost-20261109/README.md)
+identify preprocessing as the main measured cost, retain zero new complete
+proofs, and leave production replacement, service and whole-chain gates HOLD.

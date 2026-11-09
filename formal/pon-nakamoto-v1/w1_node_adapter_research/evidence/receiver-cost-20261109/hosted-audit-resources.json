@@ -1,0 +1,705 @@
+{
+  "schema": "trnm-w1-hosted-resource-readback-audit-v1",
+  "scope": "Read-only audit of two retained GitHub artifact ZIPs; no benchmark rerun and no production qualification.",
+  "qualification": "HOLD_NO_GO",
+  "runs": {
+    "push": {
+      "artifact": {
+        "path": "/workspace/scratch/fe81f46237d0/hosted-receiver-push/artifact.zip",
+        "bytes": 31088684,
+        "sha256": "bac70ab5b6884025a8e943fa342c2b1cf081cf7e76b691243faabd8281650bde",
+        "zip_entries": 217
+      },
+      "run_id": "42629992145",
+      "attempt": 1,
+      "source": {
+        "evidence": [
+          "source-before.json",
+          "source-after.json"
+        ],
+        "byte_identical": true,
+        "sha256_before": "0160537e756cc6f671885e4efcca4f93b521847b35a818a0db7ea82217fd746d",
+        "sha256_after": "0160537e756cc6f671885e4efcca4f93b521847b35a818a0db7ea82217fd746d",
+        "head": "acd3edaab4a7aad358d4d174ea23000d619f70ea",
+        "tree": "4a184e053ac73fdc456472b00cb78f2a7acafce8",
+        "tracked_entries": 26169,
+        "tracked_bytes": 2501223504,
+        "tracked_worktree_verified": true,
+        "kind": "head"
+      },
+      "binary": {
+        "evidence": [
+          "binary.sha256",
+          "two-cpu/manifest.json",
+          "quarter-cpu/manifest.json",
+          "two-cpu-scope.log",
+          "quarter-cpu-scope.log"
+        ],
+        "sha256": "733eedf0f3c1922a232fc373f3a0c014748225f7b11b24bae0cdc5e537bbb58c",
+        "path_recorded": "/home/runner/work/_temp/w1-target/release/w1-node-adapter-research",
+        "bytes_retained": false,
+        "four_harness_hashes_match": true
+      },
+      "retained_driver_sha256": "6daf5a09cc0b5f1ab8f2ade2df80f9b56fd2413ba3ca01b9c9e3b9df80ebe357",
+      "profiles": {
+        "two-cpu": {
+          "resource_readbacks_consistent": true,
+          "scope_unit": "w1-receiver-42629992145-1-two-cpu.scope",
+          "scope_invocation_id": "44a60fa0affb4809a3de016bcce531eb",
+          "source_before_after_equal": true,
+          "actual_leaf_limits": {
+            "cpu.max": "200000 100000",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "actual_cpu_affinity": [
+            0,
+            1
+          ],
+          "actual_cpuset_cpus_effective": "0-3",
+          "actual_cpu_max_burst": "0",
+          "receiver_snapshots_checked": 24,
+          "owner_snapshots_checked": 6,
+          "all_snapshots_checked": 30,
+          "unique_resource_signatures": 1,
+          "raw_child_files_matched": 10,
+          "raw_child_files_expected": 10,
+          "nonroot_ancestor_limits": {
+            "cpu.max": "max 100000",
+            "memory.max": "max",
+            "memory.swap.max": "max",
+            "pids.max": "max"
+          },
+          "root_limit_fields": {
+            "cpu.max": null,
+            "memory.max": null,
+            "memory.swap.max": null,
+            "pids.max": null
+          },
+          "observed_swap_current_bytes_unique": [
+            "0"
+          ],
+          "observed_oom_kill_max": 0,
+          "observed_memory_peak_max_bytes": 153583616,
+          "cpu_counter_deltas_between_first_and_last_snapshots": {
+            "usage_usec": 15295279,
+            "nr_periods": 81,
+            "nr_throttled": 18,
+            "throttled_usec": 10148
+          },
+          "requested_runner_uid_gid": [
+            "1001",
+            "1001"
+          ],
+          "child_uid_gid_readback_present": false,
+          "per_process_timeout_seconds": 120.0,
+          "comparison_result": "PASS",
+          "comparison_errors": [],
+          "receivers": [
+            {
+              "index": 0,
+              "variant": "N",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 120.0
+            },
+            {
+              "index": 1,
+              "variant": "P",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 120.0
+            },
+            {
+              "index": 2,
+              "variant": "P",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 120.0
+            },
+            {
+              "index": 3,
+              "variant": "N",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 120.0
+            },
+            {
+              "index": 4,
+              "variant": "N",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 120.0
+            },
+            {
+              "index": 5,
+              "variant": "P",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 120.0
+            },
+            {
+              "index": 6,
+              "variant": "P",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 120.0
+            },
+            {
+              "index": 7,
+              "variant": "N",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 120.0
+            }
+          ],
+          "production_scope": false,
+          "new_complete_proofs": 0,
+          "network_transport_measured": false,
+          "fresh_prover_cost_measured": false,
+          "end_to_end_benefit": "NOT_MEASURED",
+          "production_service_qualification": "NOT_ESTABLISHED",
+          "evidence": [
+            "two-cpu/manifest.json",
+            "two-cpu/plan.json",
+            "two-cpu/summary.json",
+            "two-cpu-request.txt",
+            "two-cpu-scope.log",
+            "two-cpu/process-*/child-before-exec.json",
+            "two-cpu/owner-*/child-before-exec.json"
+          ],
+          "audit_errors": []
+        },
+        "quarter-cpu": {
+          "resource_readbacks_consistent": true,
+          "scope_unit": "w1-receiver-42629992145-1-quarter-cpu.scope",
+          "scope_invocation_id": "a071f8f368ec4d979b2fea307913909f",
+          "source_before_after_equal": true,
+          "actual_leaf_limits": {
+            "cpu.max": "25000 100000",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "actual_cpu_affinity": [
+            0,
+            1
+          ],
+          "actual_cpuset_cpus_effective": "0-3",
+          "actual_cpu_max_burst": "0",
+          "receiver_snapshots_checked": 24,
+          "owner_snapshots_checked": 6,
+          "all_snapshots_checked": 30,
+          "unique_resource_signatures": 1,
+          "raw_child_files_matched": 10,
+          "raw_child_files_expected": 10,
+          "nonroot_ancestor_limits": {
+            "cpu.max": "max 100000",
+            "memory.max": "max",
+            "memory.swap.max": "max",
+            "pids.max": "max"
+          },
+          "root_limit_fields": {
+            "cpu.max": null,
+            "memory.max": null,
+            "memory.swap.max": null,
+            "pids.max": null
+          },
+          "observed_swap_current_bytes_unique": [
+            "0"
+          ],
+          "observed_oom_kill_max": 0,
+          "observed_memory_peak_max_bytes": 90550272,
+          "cpu_counter_deltas_between_first_and_last_snapshots": {
+            "usage_usec": 4215249,
+            "nr_periods": 168,
+            "nr_throttled": 168,
+            "throttled_usec": 27590252
+          },
+          "requested_runner_uid_gid": [
+            "1001",
+            "1001"
+          ],
+          "child_uid_gid_readback_present": false,
+          "per_process_timeout_seconds": 4.0,
+          "comparison_result": "INCOMPLETE_OR_INCOMPARABLE",
+          "comparison_errors": [
+            "receiver 1: process did not complete successfully",
+            "receiver 2: process did not complete successfully",
+            "receiver 5: process did not complete successfully",
+            "receiver 6: process did not complete successfully"
+          ],
+          "receivers": [
+            {
+              "index": 0,
+              "variant": "N",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 4.0
+            },
+            {
+              "index": 1,
+              "variant": "P",
+              "exit_code": -9,
+              "timed_out": true,
+              "timeout_seconds": 4.0
+            },
+            {
+              "index": 2,
+              "variant": "P",
+              "exit_code": -9,
+              "timed_out": true,
+              "timeout_seconds": 4.0
+            },
+            {
+              "index": 3,
+              "variant": "N",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 4.0
+            },
+            {
+              "index": 4,
+              "variant": "N",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 4.0
+            },
+            {
+              "index": 5,
+              "variant": "P",
+              "exit_code": -9,
+              "timed_out": true,
+              "timeout_seconds": 4.0
+            },
+            {
+              "index": 6,
+              "variant": "P",
+              "exit_code": -9,
+              "timed_out": true,
+              "timeout_seconds": 4.0
+            },
+            {
+              "index": 7,
+              "variant": "N",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 4.0
+            }
+          ],
+          "production_scope": false,
+          "new_complete_proofs": 0,
+          "network_transport_measured": false,
+          "fresh_prover_cost_measured": false,
+          "end_to_end_benefit": "NOT_MEASURED",
+          "production_service_qualification": "NOT_ESTABLISHED",
+          "evidence": [
+            "quarter-cpu/manifest.json",
+            "quarter-cpu/plan.json",
+            "quarter-cpu/summary.json",
+            "quarter-cpu-request.txt",
+            "quarter-cpu-scope.log",
+            "quarter-cpu/process-*/child-before-exec.json",
+            "quarter-cpu/owner-*/child-before-exec.json"
+          ],
+          "audit_errors": []
+        }
+      },
+      "sqlite_unqualified": [
+        {
+          "evidence": "build.log",
+          "warnings": [
+            "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: external native build override CARGO_ENCODED_RUSTFLAGS"
+          ]
+        },
+        {
+          "evidence": "native-tests.log",
+          "warnings": [
+            "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: external native build override CARGO_ENCODED_RUSTFLAGS"
+          ]
+        },
+        {
+          "evidence": "clippy.log",
+          "warnings": [
+            "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: external native build override CARGO_ENCODED_RUSTFLAGS"
+          ]
+        }
+      ],
+      "hosted_step_outcomes": {
+        "W1_SOURCE_BEFORE_OUTCOME": "success",
+        "W1_SOURCE_AFTER_OUTCOME": "success",
+        "W1_LIMITS_OUTCOME": "success",
+        "W1_PYTHON_OUTCOME": "success",
+        "W1_GRAPH_OUTCOME": "success",
+        "W1_NATIVE_OUTCOME": "success",
+        "W1_TWO_CPU_OUTCOME": "success",
+        "W1_QUARTER_CPU_OUTCOME": "failure"
+      },
+      "errors": [],
+      "resource_audit_checks_passed": true
+    },
+    "pr": {
+      "artifact": {
+        "path": "/workspace/scratch/fe81f46237d0/hosted-receiver-pr/artifact.zip",
+        "bytes": 31087633,
+        "sha256": "009f8865c085784695fbcb8c98c566c9cecd2f3a1a5c1ed4bf638c1fbb0e1d09",
+        "zip_entries": 217
+      },
+      "run_id": "42630053802",
+      "attempt": 1,
+      "source": {
+        "evidence": [
+          "source-before.json",
+          "source-after.json"
+        ],
+        "byte_identical": true,
+        "sha256_before": "0160537e756cc6f671885e4efcca4f93b521847b35a818a0db7ea82217fd746d",
+        "sha256_after": "0160537e756cc6f671885e4efcca4f93b521847b35a818a0db7ea82217fd746d",
+        "head": "acd3edaab4a7aad358d4d174ea23000d619f70ea",
+        "tree": "4a184e053ac73fdc456472b00cb78f2a7acafce8",
+        "tracked_entries": 26169,
+        "tracked_bytes": 2501223504,
+        "tracked_worktree_verified": true,
+        "kind": "head"
+      },
+      "binary": {
+        "evidence": [
+          "binary.sha256",
+          "two-cpu/manifest.json",
+          "quarter-cpu/manifest.json",
+          "two-cpu-scope.log",
+          "quarter-cpu-scope.log"
+        ],
+        "sha256": "e6c84401d443e8de17a767e9d4e1ed5b1ab7777049eb423b821af41cc934c3c4",
+        "path_recorded": "/home/runner/work/_temp/w1-target/release/w1-node-adapter-research",
+        "bytes_retained": false,
+        "four_harness_hashes_match": true
+      },
+      "retained_driver_sha256": "6daf5a09cc0b5f1ab8f2ade2df80f9b56fd2413ba3ca01b9c9e3b9df80ebe357",
+      "profiles": {
+        "two-cpu": {
+          "resource_readbacks_consistent": true,
+          "scope_unit": "w1-receiver-42630053802-1-two-cpu.scope",
+          "scope_invocation_id": "1f95b82df874489ba2cbb73789fb83a6",
+          "source_before_after_equal": true,
+          "actual_leaf_limits": {
+            "cpu.max": "200000 100000",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "actual_cpu_affinity": [
+            0,
+            1
+          ],
+          "actual_cpuset_cpus_effective": "0-3",
+          "actual_cpu_max_burst": "0",
+          "receiver_snapshots_checked": 24,
+          "owner_snapshots_checked": 6,
+          "all_snapshots_checked": 30,
+          "unique_resource_signatures": 1,
+          "raw_child_files_matched": 10,
+          "raw_child_files_expected": 10,
+          "nonroot_ancestor_limits": {
+            "cpu.max": "max 100000",
+            "memory.max": "max",
+            "memory.swap.max": "max",
+            "pids.max": "max"
+          },
+          "root_limit_fields": {
+            "cpu.max": null,
+            "memory.max": null,
+            "memory.swap.max": null,
+            "pids.max": null
+          },
+          "observed_swap_current_bytes_unique": [
+            "0"
+          ],
+          "observed_oom_kill_max": 0,
+          "observed_memory_peak_max_bytes": 153591808,
+          "cpu_counter_deltas_between_first_and_last_snapshots": {
+            "usage_usec": 10401281,
+            "nr_periods": 57,
+            "nr_throttled": 8,
+            "throttled_usec": 9839
+          },
+          "requested_runner_uid_gid": [
+            "1001",
+            "1001"
+          ],
+          "child_uid_gid_readback_present": false,
+          "per_process_timeout_seconds": 120.0,
+          "comparison_result": "PASS",
+          "comparison_errors": [],
+          "receivers": [
+            {
+              "index": 0,
+              "variant": "N",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 120.0
+            },
+            {
+              "index": 1,
+              "variant": "P",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 120.0
+            },
+            {
+              "index": 2,
+              "variant": "P",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 120.0
+            },
+            {
+              "index": 3,
+              "variant": "N",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 120.0
+            },
+            {
+              "index": 4,
+              "variant": "N",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 120.0
+            },
+            {
+              "index": 5,
+              "variant": "P",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 120.0
+            },
+            {
+              "index": 6,
+              "variant": "P",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 120.0
+            },
+            {
+              "index": 7,
+              "variant": "N",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 120.0
+            }
+          ],
+          "production_scope": false,
+          "new_complete_proofs": 0,
+          "network_transport_measured": false,
+          "fresh_prover_cost_measured": false,
+          "end_to_end_benefit": "NOT_MEASURED",
+          "production_service_qualification": "NOT_ESTABLISHED",
+          "evidence": [
+            "two-cpu/manifest.json",
+            "two-cpu/plan.json",
+            "two-cpu/summary.json",
+            "two-cpu-request.txt",
+            "two-cpu-scope.log",
+            "two-cpu/process-*/child-before-exec.json",
+            "two-cpu/owner-*/child-before-exec.json"
+          ],
+          "audit_errors": []
+        },
+        "quarter-cpu": {
+          "resource_readbacks_consistent": true,
+          "scope_unit": "w1-receiver-42630053802-1-quarter-cpu.scope",
+          "scope_invocation_id": "8a43fca5fd0045aab0952ad17e3b5831",
+          "source_before_after_equal": true,
+          "actual_leaf_limits": {
+            "cpu.max": "25000 100000",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "actual_cpu_affinity": [
+            0,
+            1
+          ],
+          "actual_cpuset_cpus_effective": "0-3",
+          "actual_cpu_max_burst": "0",
+          "receiver_snapshots_checked": 24,
+          "owner_snapshots_checked": 6,
+          "all_snapshots_checked": 30,
+          "unique_resource_signatures": 1,
+          "raw_child_files_matched": 10,
+          "raw_child_files_expected": 10,
+          "nonroot_ancestor_limits": {
+            "cpu.max": "max 100000",
+            "memory.max": "max",
+            "memory.swap.max": "max",
+            "pids.max": "max"
+          },
+          "root_limit_fields": {
+            "cpu.max": null,
+            "memory.max": null,
+            "memory.swap.max": null,
+            "pids.max": null
+          },
+          "observed_swap_current_bytes_unique": [
+            "0"
+          ],
+          "observed_oom_kill_max": 0,
+          "observed_memory_peak_max_bytes": 150085632,
+          "cpu_counter_deltas_between_first_and_last_snapshots": {
+            "usage_usec": 4168490,
+            "nr_periods": 168,
+            "nr_throttled": 165,
+            "throttled_usec": 25542719
+          },
+          "requested_runner_uid_gid": [
+            "1001",
+            "1001"
+          ],
+          "child_uid_gid_readback_present": false,
+          "per_process_timeout_seconds": 4.0,
+          "comparison_result": "INCOMPLETE_OR_INCOMPARABLE",
+          "comparison_errors": [
+            "receiver 1: process did not complete successfully",
+            "receiver 2: process did not complete successfully",
+            "receiver 5: process did not complete successfully",
+            "receiver 6: process did not complete successfully"
+          ],
+          "receivers": [
+            {
+              "index": 0,
+              "variant": "N",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 4.0
+            },
+            {
+              "index": 1,
+              "variant": "P",
+              "exit_code": -9,
+              "timed_out": true,
+              "timeout_seconds": 4.0
+            },
+            {
+              "index": 2,
+              "variant": "P",
+              "exit_code": -9,
+              "timed_out": true,
+              "timeout_seconds": 4.0
+            },
+            {
+              "index": 3,
+              "variant": "N",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 4.0
+            },
+            {
+              "index": 4,
+              "variant": "N",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 4.0
+            },
+            {
+              "index": 5,
+              "variant": "P",
+              "exit_code": -9,
+              "timed_out": true,
+              "timeout_seconds": 4.0
+            },
+            {
+              "index": 6,
+              "variant": "P",
+              "exit_code": -9,
+              "timed_out": true,
+              "timeout_seconds": 4.0
+            },
+            {
+              "index": 7,
+              "variant": "N",
+              "exit_code": 0,
+              "timed_out": false,
+              "timeout_seconds": 4.0
+            }
+          ],
+          "production_scope": false,
+          "new_complete_proofs": 0,
+          "network_transport_measured": false,
+          "fresh_prover_cost_measured": false,
+          "end_to_end_benefit": "NOT_MEASURED",
+          "production_service_qualification": "NOT_ESTABLISHED",
+          "evidence": [
+            "quarter-cpu/manifest.json",
+            "quarter-cpu/plan.json",
+            "quarter-cpu/summary.json",
+            "quarter-cpu-request.txt",
+            "quarter-cpu-scope.log",
+            "quarter-cpu/process-*/child-before-exec.json",
+            "quarter-cpu/owner-*/child-before-exec.json"
+          ],
+          "audit_errors": []
+        }
+      },
+      "sqlite_unqualified": [
+        {
+          "evidence": "build.log",
+          "warnings": [
+            "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: external native build override CARGO_ENCODED_RUSTFLAGS"
+          ]
+        },
+        {
+          "evidence": "native-tests.log",
+          "warnings": [
+            "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: external native build override CARGO_ENCODED_RUSTFLAGS"
+          ]
+        },
+        {
+          "evidence": "clippy.log",
+          "warnings": [
+            "warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: external native build override CARGO_ENCODED_RUSTFLAGS"
+          ]
+        }
+      ],
+      "hosted_step_outcomes": {
+        "W1_SOURCE_BEFORE_OUTCOME": "success",
+        "W1_SOURCE_AFTER_OUTCOME": "success",
+        "W1_LIMITS_OUTCOME": "success",
+        "W1_PYTHON_OUTCOME": "success",
+        "W1_GRAPH_OUTCOME": "success",
+        "W1_NATIVE_OUTCOME": "success",
+        "W1_TWO_CPU_OUTCOME": "success",
+        "W1_QUARTER_CPU_OUTCOME": "failure"
+      },
+      "errors": [],
+      "resource_audit_checks_passed": true
+    }
+  },
+  "limitations": [
+    "Artifact receipts record complete source verification; this audit does not independently reconstruct all 2,501,223,504 source bytes from the ZIPs.",
+    "Executable bytes are not retained in either ZIP. Binary identity is checked across the checksum receipt and four before/after harness records per run, not recomputed from a retained executable.",
+    "Both GitHub executions verify kind=head; the PR-triggered execution is not a prospective-merge qualification.",
+    "Resource readbacks are sampled before each fork, in the child before exec, and after wait4. They are not continuous attestation of every instant.",
+    "The root cgroup has null cpu/memory/swap/pid limit fields in the records. The non-root system.slice ancestor has max caps; no tighter non-root visible cap is recorded.",
+    "No child UID/GID readback is retained. Runner UID/GID 1001 is declared in the request and setpriv is in the retained driver; this is not independent observation of the executed child UID.",
+    "RuntimeMaxSec and TimeoutStopSec are requested by the retained driver, but systemctl property readbacks are not retained. Per-process deadlines are separately recorded by the harness.",
+    "Host exclusivity, production trnmponpublic ownership, network transport, fresh proving, all-strategy work costs and end-to-end deployment benefit are not established."
+  ],
+  "cross_run": {
+    "same_source_receipt_bytes": true,
+    "same_source_head": "acd3edaab4a7aad358d4d174ea23000d619f70ea",
+    "same_source_tree": "4a184e053ac73fdc456472b00cb78f2a7acafce8",
+    "same_binary_sha256": false,
+    "binary_sha256": {
+      "push": "733eedf0f3c1922a232fc373f3a0c014748225f7b11b24bae0cdc5e537bbb58c",
+      "pr": "e6c84401d443e8de17a767e9d4e1ed5b1ab7777049eb423b821af41cc934c3c4"
+    },
+    "binary_difference_cause": "NOT_DETERMINED_FROM_RETAINED_ARTIFACTS",
+    "same_retained_profile_driver": true,
+    "same_research_source_file_hash_maps": true,
+    "pooling_timings_as_one_binary_supported": false
+  },
+  "all_resource_audit_checks_passed": true,
+  "total_snapshots_checked": 120
+}

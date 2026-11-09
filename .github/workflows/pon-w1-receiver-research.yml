@@ -1,0 +1,391 @@
+name: W1 receiver research
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/pon-w1-receiver-research.yml"
+      - "formal/pon-nakamoto-v1/w1_node_adapter_research/**"
+      - "formal/pon-nakamoto-v1/w1_public_stark_research/**"
+      - "scripts/ci/verify_ci_source.py"
+  push:
+    branches:
+      - "fix/chain-w1-receiver-*"
+    paths:
+      - ".github/workflows/pon-w1-receiver-research.yml"
+      - "formal/pon-nakamoto-v1/w1_node_adapter_research/**"
+      - "formal/pon-nakamoto-v1/w1_public_stark_research/**"
+      - "scripts/ci/verify_ci_source.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: w1-receiver-research-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CI: "true"
+  CARGO_INCREMENTAL: "0"
+  CARGO_BUILD_JOBS: "2"
+  CARGO_TERM_COLOR: never
+  RUST_TEST_THREADS: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+  RUSTFLAGS: "-C target-cpu=native"
+  W1_ADAPTER: formal/pon-nakamoto-v1/w1_node_adapter_research
+  W1_EXPECTED_HEAD: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+jobs:
+  receiver-research:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+
+    steps:
+      - name: Prepare isolated paths
+        id: paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/w1-receiver-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir -m 700 "$out"
+          printf 'W1_OUT=%s\n' "$out" >> "$GITHUB_ENV"
+          printf 'CARGO_HOME=%s/cargo-home\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/w1-target\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+
+      - name: Check disk capacity before the complete checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          df -B1 "$GITHUB_WORKSPACE" "$RUNNER_TEMP" | tee "$W1_OUT/disk-before-checkout.txt"
+          python3 - <<'PY'
+          import os, shutil
+          for path in (os.environ["GITHUB_WORKSPACE"], os.environ["RUNNER_TEMP"]):
+              free = shutil.disk_usage(path).free
+              if free < 12 * 1024**3:
+                  raise SystemExit(f"Insufficient initial disk capacity: {path}: {free}")
+          PY
+
+      - name: Checkout exact complete candidate
+        id: checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.W1_EXPECTED_HEAD }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify complete source before execution
+        id: source_before
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$W1_OUT/preflight.log"
+          python3 scripts/ci/verify_ci_source.py \
+            --kind head \
+            --expected-head "$W1_EXPECTED_HEAD" \
+            --output "$W1_OUT/source-before.json" \
+            2>&1 | tee "$W1_OUT/source-before.log"
+          df -B1 "$RUNNER_TEMP" | tee "$W1_OUT/disk-after-checkout.txt"
+          python3 - <<'PY'
+          import os, shutil
+          free = shutil.disk_usage(os.environ["RUNNER_TEMP"]).free
+          if free < 8 * 1024**3:
+              raise SystemExit(f"Insufficient remaining build space: {free}")
+          PY
+
+      - name: Check hosted cgroup prerequisites
+        id: limits_ready
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            id
+            uname -a
+            systemd-run --version
+            command -v setpriv
+            command -v python3
+            sudo -n true
+            test "$(stat -fc %T /sys/fs/cgroup)" = cgroup2fs
+            systemctl show --property=Version --value
+            cat /sys/fs/cgroup/cgroup.controllers
+            python3 - <<'PY'
+          import os
+          from pathlib import Path
+          controllers = set(Path("/sys/fs/cgroup/cgroup.controllers").read_text().split())
+          if not {"cpu", "memory", "pids"} <= controllers:
+              raise SystemExit("Required cgroup-v2 controllers are unavailable")
+          if len(os.sched_getaffinity(0)) < 2:
+              raise SystemExit("Two allowed CPUs are required for the fixed affinity")
+          if os.getuid() == 0:
+              raise SystemExit("Research commands must originate from a non-root runner")
+          PY
+          } 2>&1 | tee "$W1_OUT/host-prerequisites.log"
+
+      - name: Install pinned Rust tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 \
+            --profile minimal --component rustfmt --component clippy \
+            2>&1 | tee "$W1_OUT/rust-install.log"
+          rustc +1.95.0 -Vv | tee "$W1_OUT/rustc-version.txt"
+          cargo +1.95.0 -V | tee "$W1_OUT/cargo-version.txt"
+
+      - name: Run Python receiver controls
+        id: python_tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$W1_ADAPTER/tests/test_receiver_comparison.py" \
+            2>&1 | tee "$W1_OUT/python-controls.log"
+          python3 - "$W1_OUT/python-controls.log" <<'PY'
+          import re, sys
+          from pathlib import Path
+          text = Path(sys.argv[1]).read_text()
+          counts = re.findall(r"^Ran ([0-9]+) tests in ", text, re.M)
+          if (len(counts) != 1 or int(counts[0]) == 0
+                  or not re.search(r"^OK$", text, re.M) or "skipped=" in text):
+              raise SystemExit("Receiver controls did not complete a nonzero, unskipped suite")
+          PY
+
+      - name: Fetch locked graph and verify offline resolution
+        id: graph
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 fetch \
+            --manifest-path "$W1_ADAPTER/Cargo.toml" --locked \
+            2>&1 | tee "$W1_OUT/cargo-fetch.log"
+          cargo +1.95.0 metadata \
+            --manifest-path "$W1_ADAPTER/Cargo.toml" \
+            --locked --offline --format-version 1 \
+            > "$W1_OUT/metadata-default.json" \
+            2> "$W1_OUT/metadata-default.stderr"
+          cargo +1.95.0 metadata \
+            --manifest-path "$W1_ADAPTER/Cargo.toml" \
+            --locked --offline --all-features --format-version 1 \
+            > "$W1_OUT/metadata-all-features.json" \
+            2> "$W1_OUT/metadata-all-features.stderr"
+          df -B1 "$RUNNER_TEMP" | tee "$W1_OUT/disk-after-fetch.txt"
+          python3 - <<'PY'
+          import os, shutil
+          free = shutil.disk_usage(os.environ["RUNNER_TEMP"]).free
+          if free < 6 * 1024**3:
+              raise SystemExit(f"Insufficient remaining release-build space: {free}")
+          PY
+
+      - name: Check format, build, test and lint the adapter
+        id: native_checks
+        timeout-minutes: 45
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 fmt \
+            --manifest-path "$W1_ADAPTER/Cargo.toml" --all -- --check \
+            2>&1 | tee "$W1_OUT/fmt.log"
+          cargo +1.95.0 build \
+            --manifest-path "$W1_ADAPTER/Cargo.toml" \
+            --release --locked --offline --bin w1-node-adapter-research \
+            2>&1 | tee "$W1_OUT/build.log"
+          RAYON_NUM_THREADS=2 cargo +1.95.0 test \
+            --manifest-path "$W1_ADAPTER/Cargo.toml" \
+            --release --locked --offline --all-targets --all-features \
+            -- --test-threads=1 \
+            2>&1 | tee "$W1_OUT/native-tests.log"
+          cargo +1.95.0 clippy \
+            --manifest-path "$W1_ADAPTER/Cargo.toml" \
+            --release --locked --offline --all-targets --all-features \
+            -- -D warnings \
+            2>&1 | tee "$W1_OUT/clippy.log"
+          sha256sum "$CARGO_TARGET_DIR/release/w1-node-adapter-research" \
+            > "$W1_OUT/binary.sha256"
+          df -B1 "$RUNNER_TEMP" | tee "$W1_OUT/disk-after-build.txt"
+          du -sk "$CARGO_HOME" "$CARGO_TARGET_DIR" \
+            > "$W1_OUT/cargo-disk-usage.txt"
+
+      - name: Prepare the two sequential research observations
+        id: profile_driver
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$W1_OUT/run-profile.sh" <<'SH'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          profile="${1:?profile required}"
+          case "$profile" in
+            two-cpu)
+              quota=200%
+              cpu_max="200000 100000"
+              deadline=120
+              campaign_limit=1500
+              ;;
+            quarter-cpu)
+              quota=25%
+              cpu_max="25000 100000"
+              deadline=4
+              campaign_limit=120
+              ;;
+            *)
+              exit 64
+              ;;
+          esac
+
+          binary="$CARGO_TARGET_DIR/release/w1-node-adapter-research"
+          fixture="$GITHUB_WORKSPACE/$W1_ADAPTER/fixtures/node-input-v1"
+          runner_uid="$(id -u)"
+          runner_gid="$(id -g)"
+          expected_binary="$(cut -d ' ' -f 1 "$W1_OUT/binary.sha256")"
+          unit="w1-receiver-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${profile}.scope"
+
+          sha256sum --check "$W1_OUT/binary.sha256"
+          test ! -e "$W1_OUT/$profile"
+          printf '%s\n' \
+            "research_only=true" \
+            "production_owner=false" \
+            "unit=$unit" \
+            "runner_uid=$runner_uid" \
+            "runner_gid=$runner_gid" \
+            "cpu_max=$cpu_max" \
+            "memory_max=2147483648" \
+            "memory_swap_max=0" \
+            "pids_max=256" \
+            "per_process_deadline_seconds=$deadline" \
+            "whole_campaign_safety_seconds=$campaign_limit" \
+            > "$W1_OUT/$profile-request.txt"
+
+          # setpriv avoids PAM session creation and keeps the child in this scope.
+          # This is an ephemeral hosted research scope, never trnmponpublic.slice.
+          sudo -n systemd-run \
+            --scope \
+            --unit="$unit" \
+            --description="W1 retained-proof receiver research; no production owner" \
+            --property="CPUQuota=$quota" \
+            --property=CPUQuotaPeriodSec=100ms \
+            --property=MemoryMax=2147483648 \
+            --property=MemorySwapMax=0 \
+            --property=TasksMax=256 \
+            --property="RuntimeMaxSec=${campaign_limit}s" \
+            --property=TimeoutStopSec=5s \
+            /usr/bin/setpriv \
+              --reuid="$runner_uid" \
+              --regid="$runner_gid" \
+              --init-groups \
+              --no-new-privs \
+              /usr/bin/env -i \
+                PATH=/usr/bin:/bin \
+                PYTHONDONTWRITEBYTECODE=1 \
+                RAYON_NUM_THREADS=2 \
+                /usr/bin/python3 \
+                "$GITHUB_WORKSPACE/$W1_ADAPTER/run_receiver_comparison.py" \
+                --repo "$GITHUB_WORKSPACE" \
+                --binary "$binary" \
+                --expected-binary-sha256 "$expected_binary" \
+                --fixture "$fixture" \
+                --proof "$fixture" \
+                --output "$W1_OUT/$profile" \
+                --source-receipt "$W1_OUT/source-before.json" \
+                --cpu-count 2 \
+                --rayon-threads 2 \
+                --timeout-seconds "$deadline" \
+                --expected-cpu-max "$cpu_max" \
+                --expected-memory-max 2147483648 \
+                --expected-memory-swap-max 0 \
+                --expected-pids-max 256
+          SH
+
+      - name: Observe 2 CPU / 2 GiB / 120-second receiver profile
+        id: two_cpu
+        timeout-minutes: 30
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$W1_OUT/run-profile.sh" two-cpu \
+            2>&1 | tee "$W1_OUT/two-cpu-scope.log"
+
+      - name: Observe quarter CPU / 2 GiB / four-second receiver profile
+        id: quarter_cpu
+        if: >-
+          ${{
+            always() && !cancelled() &&
+            steps.source_before.outcome == 'success' &&
+            steps.limits_ready.outcome == 'success' &&
+            steps.python_tests.outcome == 'success' &&
+            steps.graph.outcome == 'success' &&
+            steps.native_checks.outcome == 'success' &&
+            steps.profile_driver.outcome == 'success'
+          }}
+        timeout-minutes: 5
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$W1_OUT/run-profile.sh" quarter-cpu \
+            2>&1 | tee "$W1_OUT/quarter-cpu-scope.log"
+
+      - name: Verify complete source after all attempted work
+        id: source_after
+        if: ${{ always() && steps.checkout.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py \
+            --kind head \
+            --expected-head "$W1_EXPECTED_HEAD" \
+            --output "$W1_OUT/source-after.json" \
+            2>&1 | tee "$W1_OUT/source-after.log"
+
+      - name: Retain actual step outcomes and final disk observation
+        if: ${{ always() && steps.paths.outcome == 'success' }}
+        env:
+          W1_SOURCE_BEFORE_OUTCOME: ${{ steps.source_before.outcome }}
+          W1_SOURCE_AFTER_OUTCOME: ${{ steps.source_after.outcome }}
+          W1_LIMITS_OUTCOME: ${{ steps.limits_ready.outcome }}
+          W1_PYTHON_OUTCOME: ${{ steps.python_tests.outcome }}
+          W1_GRAPH_OUTCOME: ${{ steps.graph.outcome }}
+          W1_NATIVE_OUTCOME: ${{ steps.native_checks.outcome }}
+          W1_TWO_CPU_OUTCOME: ${{ steps.two_cpu.outcome }}
+          W1_QUARTER_CPU_OUTCOME: ${{ steps.quarter_cpu.outcome }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          out = Path(os.environ["W1_OUT"])
+          report = {
+              "schema": "trnm-w1-hosted-receiver-observation-v1",
+              "candidate": os.environ["W1_EXPECTED_HEAD"],
+              "github_run_id": os.environ["GITHUB_RUN_ID"],
+              "github_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "qualification": "HOLD_NO_GO",
+              "production_owner": False,
+              "new_complete_proofs": 0,
+              "network_transport_measured": False,
+              "end_to_end_benefit": "NOT_MEASURED",
+              "steps": {
+                  key: os.environ[key]
+                  for key in (
+                      "W1_SOURCE_BEFORE_OUTCOME",
+                      "W1_SOURCE_AFTER_OUTCOME",
+                      "W1_LIMITS_OUTCOME",
+                      "W1_PYTHON_OUTCOME",
+                      "W1_GRAPH_OUTCOME",
+                      "W1_NATIVE_OUTCOME",
+                      "W1_TWO_CPU_OUTCOME",
+                      "W1_QUARTER_CPU_OUTCOME",
+                  )
+              },
+          }
+          (out / "hosted-observation.json").write_text(
+              json.dumps(report, indent=2) + "\n"
+          )
+          PY
+          df -B1 "$RUNNER_TEMP" > "$W1_OUT/disk-final.txt"
+          du -sk "$W1_OUT" > "$W1_OUT/artifact-size.txt"
+
+      - name: Upload observations including failed and incomplete attempts
+        if: ${{ always() && steps.paths.outcome == 'success' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w1-receiver-${{ env.W1_EXPECTED_HEAD }}-${{ github.run_attempt }}
+          path: ${{ env.W1_OUT }}/
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 1

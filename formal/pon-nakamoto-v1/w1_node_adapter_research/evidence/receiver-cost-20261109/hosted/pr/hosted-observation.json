@@ -1,0 +1,21 @@
+{
+  "schema": "trnm-w1-hosted-receiver-observation-v1",
+  "candidate": "acd3edaab4a7aad358d4d174ea23000d619f70ea",
+  "github_run_id": "42630053802",
+  "github_run_attempt": "1",
+  "qualification": "HOLD_NO_GO",
+  "production_owner": false,
+  "new_complete_proofs": 0,
+  "network_transport_measured": false,
+  "end_to_end_benefit": "NOT_MEASURED",
+  "steps": {
+    "W1_SOURCE_BEFORE_OUTCOME": "success",
+    "W1_SOURCE_AFTER_OUTCOME": "success",
+    "W1_LIMITS_OUTCOME": "success",
+    "W1_PYTHON_OUTCOME": "success",
+    "W1_GRAPH_OUTCOME": "success",
+    "W1_NATIVE_OUTCOME": "success",
+    "W1_TWO_CPU_OUTCOME": "success",
+    "W1_QUARTER_CPU_OUTCOME": "failure"
+  }
+}

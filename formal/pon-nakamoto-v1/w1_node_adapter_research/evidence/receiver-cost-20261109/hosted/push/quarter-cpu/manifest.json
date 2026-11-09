@@ -1,0 +1,3430 @@
+{
+  "plan": {
+    "schema": "trnm-w1-local-receiver-comparison-v1",
+    "planned_order": [
+      {
+        "index": 0,
+        "variant": "N"
+      },
+      {
+        "index": 1,
+        "variant": "P"
+      },
+      {
+        "index": 2,
+        "variant": "P"
+      },
+      {
+        "index": 3,
+        "variant": "N"
+      },
+      {
+        "index": 4,
+        "variant": "N"
+      },
+      {
+        "index": 5,
+        "variant": "P"
+      },
+      {
+        "index": 6,
+        "variant": "P"
+      },
+      {
+        "index": 7,
+        "variant": "N"
+      }
+    ],
+    "binary": "/home/runner/work/_temp/w1-target/release/w1-node-adapter-research",
+    "expected_binary_sha256": "733eedf0f3c1922a232fc373f3a0c014748225f7b11b24bae0cdc5e537bbb58c",
+    "input_identity": {
+      "packet_sha256": "332e27b1b01c745cc25dd1f0d923217a81967da477d074417033b795c35c431a",
+      "operator_plan_sha256": "042cec561b64b4423a7d60898ad87d65dabf37d77cd08bc7aa5724faad474ed7",
+      "packet_bytes": 49508
+    },
+    "application_payload_bytes": {
+      "N": 49508,
+      "P": 4023864
+    },
+    "payload_scope": "actual application input files; proof arm retains the native packet; independent operator plan/policy are provisioned separately; no measured network framing",
+    "shared_operator_plan_bytes": 1126,
+    "genesis": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+    "proof_start_policy": {
+      "schema": "trnm-w1-proof-start-owner-policy-v1",
+      "owner_id": "83d756b6b6d9fd1ffa16c0b2f6c6f38da0af6d7d56fbdcc5e9fa107c4c44392b",
+      "profile": "w1-pnh1-native-node-scheduled-p3-research-v1",
+      "network": "fea4299db5ff104bb64366f7594c7e7594c487771f10e928dc1e92e3527dec3f",
+      "parameters": "421ce068252e628ebe5ecbf8af07f3e5178bd494bb45020eedc6303e423f5aba",
+      "genesis": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+      "maximum_starts": 4
+    },
+    "cpu_affinity": [
+      0,
+      1
+    ],
+    "rayon_num_threads": 2,
+    "expected_kernel_limits": {
+      "cpu.max": "25000 100000",
+      "memory.max": "2147483648",
+      "memory.swap.max": "0",
+      "pids.max": "256"
+    },
+    "per_process_timeout_seconds": 4.0,
+    "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+    "python_version": "3.12.3",
+    "fresh_node_directories": true,
+    "new_complete_proofs": 0,
+    "distinct_input_tasks": 1,
+    "network_transport_measured": false,
+    "fresh_prover_cost_measured": false,
+    "production_activation": false,
+    "qualification": "HOLD_NO_GO"
+  },
+  "source_before": {
+    "git_head": "acd3edaab4a7aad358d4d174ea23000d619f70ea",
+    "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tracked_diff_is_empty": true,
+    "source_scope": "adapter and proof-backend Rust/Cargo plus comparison harness/tests; complete source/dependency qualification is separate",
+    "source_files": {
+      "formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.lock": "3a94af4cfcad63eef08f1cc5921797112fd5191bf5e93b2b133c840524c629a7",
+      "formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml": "c64b9a09215a74df5dcebe8e0a153d1b4b633b80b4e5fb61a78af3fb3037e7e2",
+      "formal/pon-nakamoto-v1/w1_node_adapter_research/run_receiver_comparison.py": "7f662ab8664fbd1a42c9374e82fcdcf321de0aeef3889a677c29e31f42bcebea",
+      "formal/pon-nakamoto-v1/w1_node_adapter_research/src/lib.rs": "bac1d71f0eb6637c62326f54fc9385d05c0cfc2fd69bdd2e0d9a768b8b1b2bb8",
+      "formal/pon-nakamoto-v1/w1_node_adapter_research/src/main.rs": "6a564e6205e98748b7effe23f0f5e005288c137f4c0588d40ef9663dcc6b2ae7",
+      "formal/pon-nakamoto-v1/w1_node_adapter_research/src/proof_start_owner.rs": "86e69b19d17f78354b15e0feffe4840e68d93630178037873109e0636e3e38cc",
+      "formal/pon-nakamoto-v1/w1_node_adapter_research/tests/test_receiver_comparison.py": "0148ee0607d6744f973a7e1efa977a6f22c07f6a526853394839da39670f585e",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock": "24f146fc5d5ba89f6070725a4453fbfe160fae0a81fb2449932f420fd2b7f281",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml": "f4b3ac509ba9ff16fef73f16f096e89436ebd7d6b11eb0158113dc6a2d5c39f5",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs": "c320c54560b8e7cf645b37721f23622b69685d83c4ed965afece009cb71cb363",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_carry_air.rs": "6524719eaa69e1c24e67ff4e82f26676612dcfc9b45da8d4a8ce08885dc56ec1",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/lib.rs": "f5b78f17de48d51276cc1fcaf62cd10e51f3c41d88d1c97b150f747c0448f1a4",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs": "5b7e6c2124f3a00e1a0eeafa586ab40e42d80b67dda4075cd5b48cedcbee7f76",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_wire.rs": "e8660e3b91849f538713b32835035f0eb39425326268dd9302b3c7b01b090921",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs": "593d1f25a53959dd2b7155f0bd6b7199c3e77bb1796ff291badc4996444f4a29",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_air.rs": "a5e4d045eede07e01474225d5568326f2d6abdf0aae8246311bd9084a9b137fa",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_plan.rs": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_schedule_air.rs": "88557607225e402b6f16ec7edffb7c8b90ddfe14cc7e87a2640042a205011a64",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3.rs": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3_wire.rs": "96f59192dc280908c3f4ac8268f798026259c1fad7d5d8d10891232b6855d6b1"
+    },
+    "binary": {
+      "path": "/home/runner/work/_temp/w1-target/release/w1-node-adapter-research",
+      "sha256": "733eedf0f3c1922a232fc373f3a0c014748225f7b11b24bae0cdc5e537bbb58c"
+    },
+    "inputs": {
+      "arithmetic_proof": {
+        "path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1/arith.proof.bin",
+        "bytes": 454085,
+        "sha256": "b5ae0d59d060d6fd5c965e31f1ee3c082d3e2cad72a1002f191082c27395cb04"
+      },
+      "external_source_receipt": {
+        "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/source-before.json",
+        "bytes": 423,
+        "sha256": "0160537e756cc6f671885e4efcca4f93b521847b35a818a0db7ea82217fd746d"
+      },
+      "operator_plan": {
+        "path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1/operator-plan.json",
+        "bytes": 1126,
+        "sha256": "042cec561b64b4423a7d60898ad87d65dabf37d77cd08bc7aa5724faad474ed7"
+      },
+      "owner_policy": {
+        "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/independent-owner-policy.json",
+        "bytes": 466,
+        "sha256": "45e32ef19a0a30e6f420f52825353e00f1a24f8e84d59a77fcb20a8e458e1e0c"
+      },
+      "packet": {
+        "path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1/packet.bin",
+        "bytes": 49508,
+        "sha256": "332e27b1b01c745cc25dd1f0d923217a81967da477d074417033b795c35c431a"
+      },
+      "sha_proof": {
+        "path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1/sha.proof.bin",
+        "bytes": 3142981,
+        "sha256": "af66da05a9ebab9f0f9224b7b7df19aa6fa8949152fcf714a95797a000728218"
+      },
+      "statement": {
+        "path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1/statement.bin",
+        "bytes": 377290,
+        "sha256": "76e4ad11cad96678ba847e088c0b824d48827b77b442196b3a97963db7469858"
+      }
+    }
+  },
+  "source_after": {
+    "git_head": "acd3edaab4a7aad358d4d174ea23000d619f70ea",
+    "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tracked_diff_is_empty": true,
+    "source_scope": "adapter and proof-backend Rust/Cargo plus comparison harness/tests; complete source/dependency qualification is separate",
+    "source_files": {
+      "formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.lock": "3a94af4cfcad63eef08f1cc5921797112fd5191bf5e93b2b133c840524c629a7",
+      "formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml": "c64b9a09215a74df5dcebe8e0a153d1b4b633b80b4e5fb61a78af3fb3037e7e2",
+      "formal/pon-nakamoto-v1/w1_node_adapter_research/run_receiver_comparison.py": "7f662ab8664fbd1a42c9374e82fcdcf321de0aeef3889a677c29e31f42bcebea",
+      "formal/pon-nakamoto-v1/w1_node_adapter_research/src/lib.rs": "bac1d71f0eb6637c62326f54fc9385d05c0cfc2fd69bdd2e0d9a768b8b1b2bb8",
+      "formal/pon-nakamoto-v1/w1_node_adapter_research/src/main.rs": "6a564e6205e98748b7effe23f0f5e005288c137f4c0588d40ef9663dcc6b2ae7",
+      "formal/pon-nakamoto-v1/w1_node_adapter_research/src/proof_start_owner.rs": "86e69b19d17f78354b15e0feffe4840e68d93630178037873109e0636e3e38cc",
+      "formal/pon-nakamoto-v1/w1_node_adapter_research/tests/test_receiver_comparison.py": "0148ee0607d6744f973a7e1efa977a6f22c07f6a526853394839da39670f585e",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock": "24f146fc5d5ba89f6070725a4453fbfe160fae0a81fb2449932f420fd2b7f281",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml": "f4b3ac509ba9ff16fef73f16f096e89436ebd7d6b11eb0158113dc6a2d5c39f5",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_air.rs": "c320c54560b8e7cf645b37721f23622b69685d83c4ed965afece009cb71cb363",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/arith_carry_air.rs": "6524719eaa69e1c24e67ff4e82f26676612dcfc9b45da8d4a8ce08885dc56ec1",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/lib.rs": "f5b78f17de48d51276cc1fcaf62cd10e51f3c41d88d1c97b150f747c0448f1a4",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/main.rs": "5b7e6c2124f3a00e1a0eeafa586ab40e42d80b67dda4075cd5b48cedcbee7f76",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_wire.rs": "e8660e3b91849f538713b32835035f0eb39425326268dd9302b3c7b01b090921",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/public.rs": "593d1f25a53959dd2b7155f0bd6b7199c3e77bb1796ff291badc4996444f4a29",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_air.rs": "a5e4d045eede07e01474225d5568326f2d6abdf0aae8246311bd9084a9b137fa",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_plan.rs": "d1db8a58108702548ce801d6c8b558d49f975f72b6461d2d59be7d92c6b3c0d3",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/sha_schedule_air.rs": "88557607225e402b6f16ec7edffb7c8b90ddfe14cc7e87a2640042a205011a64",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3.rs": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847",
+      "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3_wire.rs": "96f59192dc280908c3f4ac8268f798026259c1fad7d5d8d10891232b6855d6b1"
+    },
+    "binary": {
+      "path": "/home/runner/work/_temp/w1-target/release/w1-node-adapter-research",
+      "sha256": "733eedf0f3c1922a232fc373f3a0c014748225f7b11b24bae0cdc5e537bbb58c"
+    },
+    "inputs": {
+      "arithmetic_proof": {
+        "path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1/arith.proof.bin",
+        "bytes": 454085,
+        "sha256": "b5ae0d59d060d6fd5c965e31f1ee3c082d3e2cad72a1002f191082c27395cb04"
+      },
+      "external_source_receipt": {
+        "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/source-before.json",
+        "bytes": 423,
+        "sha256": "0160537e756cc6f671885e4efcca4f93b521847b35a818a0db7ea82217fd746d"
+      },
+      "operator_plan": {
+        "path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1/operator-plan.json",
+        "bytes": 1126,
+        "sha256": "042cec561b64b4423a7d60898ad87d65dabf37d77cd08bc7aa5724faad474ed7"
+      },
+      "owner_policy": {
+        "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/independent-owner-policy.json",
+        "bytes": 466,
+        "sha256": "45e32ef19a0a30e6f420f52825353e00f1a24f8e84d59a77fcb20a8e458e1e0c"
+      },
+      "packet": {
+        "path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1/packet.bin",
+        "bytes": 49508,
+        "sha256": "332e27b1b01c745cc25dd1f0d923217a81967da477d074417033b795c35c431a"
+      },
+      "sha_proof": {
+        "path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1/sha.proof.bin",
+        "bytes": 3142981,
+        "sha256": "af66da05a9ebab9f0f9224b7b7df19aa6fa8949152fcf714a95797a000728218"
+      },
+      "statement": {
+        "path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1/statement.bin",
+        "bytes": 377290,
+        "sha256": "76e4ad11cad96678ba847e088c0b824d48827b77b442196b3a97963db7469858"
+      }
+    }
+  },
+  "owner_init": {
+    "argv": [
+      "/home/runner/work/_temp/w1-target/release/w1-node-adapter-research",
+      "owner-init",
+      "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/independent-owner-policy.json",
+      "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/proof-start-owner"
+    ],
+    "pid": 6630,
+    "started_unix_ns": 1794233666904422012,
+    "started_monotonic_ns": 513960892919,
+    "ended_monotonic_ns": 513968142449,
+    "wall_seconds": 0.00724953,
+    "user_seconds": 0.003155,
+    "system_seconds": 0.002103,
+    "cpu_seconds": 0.005258,
+    "peak_rss_kib": 14432,
+    "input_blocks": 0,
+    "output_blocks": 32,
+    "exit_code": 0,
+    "timed_out": false,
+    "timeout_seconds": 4.0,
+    "timeout_request_monotonic_ns": null,
+    "timeout_cleanup_seconds": null,
+    "measurement_boundary": "fork through wait4, including same pre-exec kernel readback, exec, receiver, and process teardown",
+    "kernel_before": {
+      "monotonic_ns": 513959384910,
+      "unix_ns": 1794233666902914944,
+      "pid": 6606,
+      "affinity": [
+        0,
+        1
+      ],
+      "loadavg": "1.89 1.39 0.69 1/260 6629",
+      "cpu_pressure": "some avg10=0.09 avg60=0.25 avg300=0.69 total=6066388\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+      "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+      "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+      "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+      "lineage": [
+        {
+          "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256",
+            "cpuset.cpus.effective": "0-3"
+          },
+          "observations": {
+            "cpu.stat": "usage_usec 151870\nuser_usec 72937\nsystem_usec 78932\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 6\nnr_throttled 6\nthrottled_usec 614257\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "10207232",
+            "memory.peak": "17481728",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "memory.swap.current": "0",
+            "pids.current": "1",
+            "pids.peak": "22"
+          }
+        },
+        {
+          "path": "/sys/fs/cgroup/system.slice",
+          "limits": {
+            "cpu.max": "max 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "max",
+            "memory.swap.max": "max",
+            "pids.max": "max",
+            "cpuset.cpus.effective": "0-3"
+          },
+          "observations": {
+            "cpu.stat": "usage_usec 663692139\nuser_usec 616061782\nsystem_usec 47630357\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "6948376576",
+            "memory.peak": "8690737152",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "memory.swap.current": "0",
+            "pids.current": "122",
+            "pids.peak": "147"
+          }
+        },
+        {
+          "path": "/sys/fs/cgroup",
+          "limits": {
+            "cpu.max": null,
+            "cpu.max.burst": null,
+            "memory.max": null,
+            "memory.swap.max": null,
+            "pids.max": null,
+            "cpuset.cpus.effective": "0-3"
+          },
+          "observations": {
+            "cpu.stat": "usage_usec 671527000\nuser_usec 617432000\nsystem_usec 54095000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+            "memory.current": null,
+            "memory.peak": null,
+            "memory.events": null,
+            "memory.swap.current": null,
+            "pids.current": null,
+            "pids.peak": null
+          }
+        }
+      ],
+      "errors": []
+    },
+    "kernel_after": {
+      "monotonic_ns": 513968145845,
+      "unix_ns": 1794233666911674948,
+      "pid": 6606,
+      "affinity": [
+        0,
+        1
+      ],
+      "loadavg": "1.89 1.39 0.69 1/260 6630",
+      "cpu_pressure": "some avg10=0.09 avg60=0.25 avg300=0.69 total=6066608\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+      "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+      "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+      "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+      "lineage": [
+        {
+          "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256",
+            "cpuset.cpus.effective": "0-3"
+          },
+          "observations": {
+            "cpu.stat": "usage_usec 160224\nuser_usec 75634\nsystem_usec 84590\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 6\nnr_throttled 6\nthrottled_usec 614257\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "10604544",
+            "memory.peak": "17481728",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "memory.swap.current": "0",
+            "pids.current": "1",
+            "pids.peak": "22"
+          }
+        },
+        {
+          "path": "/sys/fs/cgroup/system.slice",
+          "limits": {
+            "cpu.max": "max 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "max",
+            "memory.swap.max": "max",
+            "pids.max": "max",
+            "cpuset.cpus.effective": "0-3"
+          },
+          "observations": {
+            "cpu.stat": "usage_usec 663701452\nuser_usec 616066127\nsystem_usec 47635324\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "6948773888",
+            "memory.peak": "8690737152",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "memory.swap.current": "0",
+            "pids.current": "122",
+            "pids.peak": "147"
+          }
+        },
+        {
+          "path": "/sys/fs/cgroup",
+          "limits": {
+            "cpu.max": null,
+            "cpu.max.burst": null,
+            "memory.max": null,
+            "memory.swap.max": null,
+            "pids.max": null,
+            "cpuset.cpus.effective": "0-3"
+          },
+          "observations": {
+            "cpu.stat": "usage_usec 671537000\nuser_usec 617437000\nsystem_usec 54100000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+            "memory.current": null,
+            "memory.peak": null,
+            "memory.events": null,
+            "memory.swap.current": null,
+            "pids.current": null,
+            "pids.peak": null
+          }
+        }
+      ],
+      "errors": []
+    },
+    "kernel_child_before_exec": {
+      "monotonic_ns": 513962313759,
+      "unix_ns": 1794233666905845748,
+      "pid": 6630,
+      "affinity": [
+        0,
+        1
+      ],
+      "loadavg": "1.89 1.39 0.69 1/261 6630",
+      "cpu_pressure": "some avg10=0.09 avg60=0.25 avg300=0.69 total=6066597\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+      "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+      "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+      "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+      "lineage": [
+        {
+          "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256",
+            "cpuset.cpus.effective": "0-3"
+          },
+          "observations": {
+            "cpu.stat": "usage_usec 156158\nuser_usec 73603\nsystem_usec 82555\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 6\nnr_throttled 6\nthrottled_usec 614257\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "11780096",
+            "memory.peak": "17481728",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "memory.swap.current": "0",
+            "pids.current": "2",
+            "pids.peak": "22"
+          }
+        },
+        {
+          "path": "/sys/fs/cgroup/system.slice",
+          "limits": {
+            "cpu.max": "max 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "max",
+            "memory.swap.max": "max",
+            "pids.max": "max",
+            "cpuset.cpus.effective": "0-3"
+          },
+          "observations": {
+            "cpu.stat": "usage_usec 663696387\nuser_usec 616063073\nsystem_usec 47633313\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "6949949440",
+            "memory.peak": "8690737152",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "memory.swap.current": "0",
+            "pids.current": "123",
+            "pids.peak": "147"
+          }
+        },
+        {
+          "path": "/sys/fs/cgroup",
+          "limits": {
+            "cpu.max": null,
+            "cpu.max.burst": null,
+            "memory.max": null,
+            "memory.swap.max": null,
+            "pids.max": null,
+            "cpuset.cpus.effective": "0-3"
+          },
+          "observations": {
+            "cpu.stat": "usage_usec 671533000\nuser_usec 617435000\nsystem_usec 54098000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+            "memory.current": null,
+            "memory.peak": null,
+            "memory.events": null,
+            "memory.swap.current": null,
+            "pids.current": null,
+            "pids.peak": null
+          }
+        }
+      ],
+      "errors": [],
+      "before_exec_monotonic_ns": 513964179506
+    },
+    "child_readback_error": null,
+    "stdout": {
+      "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/owner-init/stdout.jsonl",
+      "bytes": 472,
+      "sha256": "7f7903fac9f5b262c8b3c485f7f39470f1789009eb01717fa905ca3e95da4d95"
+    },
+    "stderr": {
+      "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/owner-init/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "receipt": {
+      "outer_seconds": 0.001085072,
+      "result": {
+        "owner": {
+          "backup_rollback_protection_established": false,
+          "exhausted": false,
+          "lifetime_quantum_query_bound_established": false,
+          "maximum_starts": 4,
+          "occupied_slots": 0,
+          "owner_id": "83d756b6b6d9fd1ffa16c0b2f6c6f38da0af6d7d56fbdcc5e9fa107c4c44392b",
+          "policy_sha256": "3eac9bbd2c23631023c2e2e996bacf308d0ad0c57863c929297970a9b58e3f7a",
+          "schema": "trnm-w1-proof-start-owner-snapshot-v1"
+        },
+        "production_activation": false,
+        "qualification": "HOLD_NO_GO"
+      }
+    },
+    "receipt_error": null
+  },
+  "owner_status": {
+    "argv": [
+      "/home/runner/work/_temp/w1-target/release/w1-node-adapter-research",
+      "owner-status",
+      "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/independent-owner-policy.json",
+      "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/proof-start-owner"
+    ],
+    "pid": 6648,
+    "started_unix_ns": 1794233683721451719,
+    "started_monotonic_ns": 530777922807,
+    "ended_monotonic_ns": 530783667961,
+    "wall_seconds": 0.005745154,
+    "user_seconds": 0.0029349999999999997,
+    "system_seconds": 0.001956,
+    "cpu_seconds": 0.0048909999999999995,
+    "peak_rss_kib": 14672,
+    "input_blocks": 0,
+    "output_blocks": 16,
+    "exit_code": 0,
+    "timed_out": false,
+    "timeout_seconds": 4.0,
+    "timeout_request_monotonic_ns": null,
+    "timeout_cleanup_seconds": null,
+    "measurement_boundary": "fork through wait4, including same pre-exec kernel readback, exec, receiver, and process teardown",
+    "kernel_before": {
+      "monotonic_ns": 530776468718,
+      "unix_ns": 1794233683719997881,
+      "pid": 6606,
+      "affinity": [
+        0,
+        1
+      ],
+      "loadavg": "1.35 1.30 0.67 3/259 6647",
+      "cpu_pressure": "some avg10=67.97 avg60=20.46 avg300=5.30 total=20135320\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+      "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+      "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+      "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+      "lineage": [
+        {
+          "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256",
+            "cpuset.cpus.effective": "0-3"
+          },
+          "observations": {
+            "cpu.stat": "usage_usec 4359929\nuser_usec 4033226\nsystem_usec 326703\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 174\nnr_throttled 174\nthrottled_usec 28204509\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "28594176",
+            "memory.peak": "90550272",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "memory.swap.current": "0",
+            "pids.current": "1",
+            "pids.peak": "22"
+          }
+        },
+        {
+          "path": "/sys/fs/cgroup/system.slice",
+          "limits": {
+            "cpu.max": "max 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "max",
+            "memory.swap.max": "max",
+            "pids.max": "max",
+            "cpuset.cpus.effective": "0-3"
+          },
+          "observations": {
+            "cpu.stat": "usage_usec 668024601\nuser_usec 620097861\nsystem_usec 47926739\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "6952284160",
+            "memory.peak": "8690737152",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "memory.swap.current": "0",
+            "pids.current": "121",
+            "pids.peak": "147"
+          }
+        },
+        {
+          "path": "/sys/fs/cgroup",
+          "limits": {
+            "cpu.max": null,
+            "cpu.max.burst": null,
+            "memory.max": null,
+            "memory.swap.max": null,
+            "pids.max": null,
+            "cpuset.cpus.effective": "0-3"
+          },
+          "observations": {
+            "cpu.stat": "usage_usec 676009000\nuser_usec 621542000\nsystem_usec 54467000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+            "memory.current": null,
+            "memory.peak": null,
+            "memory.events": null,
+            "memory.swap.current": null,
+            "pids.current": null,
+            "pids.peak": null
+          }
+        }
+      ],
+      "errors": []
+    },
+    "kernel_after": {
+      "monotonic_ns": 530783669945,
+      "unix_ns": 1794233683727198957,
+      "pid": 6606,
+      "affinity": [
+        0,
+        1
+      ],
+      "loadavg": "1.35 1.30 0.67 1/259 6648",
+      "cpu_pressure": "some avg10=67.97 avg60=20.46 avg300=5.30 total=20135332\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+      "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+      "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+      "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+      "lineage": [
+        {
+          "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256",
+            "cpuset.cpus.effective": "0-3"
+          },
+          "observations": {
+            "cpu.stat": "usage_usec 4367119\nuser_usec 4037470\nsystem_usec 329648\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 174\nnr_throttled 174\nthrottled_usec 28204509\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "28958720",
+            "memory.peak": "90550272",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "memory.swap.current": "0",
+            "pids.current": "1",
+            "pids.peak": "22"
+          }
+        },
+        {
+          "path": "/sys/fs/cgroup/system.slice",
+          "limits": {
+            "cpu.max": "max 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "max",
+            "memory.swap.max": "max",
+            "pids.max": "max",
+            "cpuset.cpus.effective": "0-3"
+          },
+          "observations": {
+            "cpu.stat": "usage_usec 668031791\nuser_usec 620102028\nsystem_usec 47929762\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "6952648704",
+            "memory.peak": "8690737152",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "memory.swap.current": "0",
+            "pids.current": "121",
+            "pids.peak": "147"
+          }
+        },
+        {
+          "path": "/sys/fs/cgroup",
+          "limits": {
+            "cpu.max": null,
+            "cpu.max.burst": null,
+            "memory.max": null,
+            "memory.swap.max": null,
+            "pids.max": null,
+            "cpuset.cpus.effective": "0-3"
+          },
+          "observations": {
+            "cpu.stat": "usage_usec 676017000\nuser_usec 621547000\nsystem_usec 54470000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+            "memory.current": null,
+            "memory.peak": null,
+            "memory.events": null,
+            "memory.swap.current": null,
+            "pids.current": null,
+            "pids.peak": null
+          }
+        }
+      ],
+      "errors": []
+    },
+    "kernel_child_before_exec": {
+      "monotonic_ns": 530779258963,
+      "unix_ns": 1794233683722790531,
+      "pid": 6648,
+      "affinity": [
+        0,
+        1
+      ],
+      "loadavg": "1.35 1.30 0.67 1/260 6648",
+      "cpu_pressure": "some avg10=67.97 avg60=20.46 avg300=5.30 total=20135327\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+      "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+      "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+      "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+      "lineage": [
+        {
+          "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256",
+            "cpuset.cpus.effective": "0-3"
+          },
+          "observations": {
+            "cpu.stat": "usage_usec 4363412\nuser_usec 4035694\nsystem_usec 327717\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 174\nnr_throttled 174\nthrottled_usec 28204509\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "30167040",
+            "memory.peak": "90550272",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "memory.swap.current": "0",
+            "pids.current": "2",
+            "pids.peak": "22"
+          }
+        },
+        {
+          "path": "/sys/fs/cgroup/system.slice",
+          "limits": {
+            "cpu.max": "max 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "max",
+            "memory.swap.max": "max",
+            "pids.max": "max",
+            "cpuset.cpus.effective": "0-3"
+          },
+          "observations": {
+            "cpu.stat": "usage_usec 668028084\nuser_usec 620100306\nsystem_usec 47927777\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "6953857024",
+            "memory.peak": "8690737152",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "memory.swap.current": "0",
+            "pids.current": "122",
+            "pids.peak": "147"
+          }
+        },
+        {
+          "path": "/sys/fs/cgroup",
+          "limits": {
+            "cpu.max": null,
+            "cpu.max.burst": null,
+            "memory.max": null,
+            "memory.swap.max": null,
+            "pids.max": null,
+            "cpuset.cpus.effective": "0-3"
+          },
+          "observations": {
+            "cpu.stat": "usage_usec 676012000\nuser_usec 621544000\nsystem_usec 54468000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+            "memory.current": null,
+            "memory.peak": null,
+            "memory.events": null,
+            "memory.swap.current": null,
+            "pids.current": null,
+            "pids.peak": null
+          }
+        }
+      ],
+      "errors": [],
+      "before_exec_monotonic_ns": 530781047486
+    },
+    "child_readback_error": null,
+    "stdout": {
+      "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/owner-status/stdout.jsonl",
+      "bytes": 471,
+      "sha256": "ac3ce7d9a2fa0f253062f43cef62bd8648dc148e042bee5d0a995f1041de4659"
+    },
+    "stderr": {
+      "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/owner-status/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "receipt": {
+      "outer_seconds": 0.000266186,
+      "result": {
+        "owner": {
+          "backup_rollback_protection_established": false,
+          "exhausted": true,
+          "lifetime_quantum_query_bound_established": false,
+          "maximum_starts": 4,
+          "occupied_slots": 4,
+          "owner_id": "83d756b6b6d9fd1ffa16c0b2f6c6f38da0af6d7d56fbdcc5e9fa107c4c44392b",
+          "policy_sha256": "3eac9bbd2c23631023c2e2e996bacf308d0ad0c57863c929297970a9b58e3f7a",
+          "schema": "trnm-w1-proof-start-owner-snapshot-v1"
+        },
+        "production_activation": false,
+        "qualification": "HOLD_NO_GO"
+      }
+    },
+    "receipt_error": null
+  },
+  "receivers": [
+    {
+      "index": 0,
+      "variant": "N",
+      "fresh_output_directory": true,
+      "output_directory": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/receiver-00-N",
+      "expected_proof_slot": null,
+      "measurement": {
+        "argv": [
+          "/home/runner/work/_temp/w1-target/release/w1-node-adapter-research",
+          "native-admit",
+          "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1",
+          "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/receiver-00-N"
+        ],
+        "pid": 6631,
+        "started_unix_ns": 1794233666916868360,
+        "started_monotonic_ns": 513973339358,
+        "ended_monotonic_ns": 514068979749,
+        "wall_seconds": 0.095640391,
+        "user_seconds": 0.005581,
+        "system_seconds": 0.009302999999999999,
+        "cpu_seconds": 0.014883999999999998,
+        "peak_rss_kib": 14552,
+        "input_blocks": 0,
+        "output_blocks": 1024,
+        "exit_code": 0,
+        "timed_out": false,
+        "timeout_seconds": 4.0,
+        "timeout_request_monotonic_ns": null,
+        "timeout_cleanup_seconds": null,
+        "measurement_boundary": "fork through wait4, including same pre-exec kernel readback, exec, receiver, and process teardown",
+        "kernel_before": {
+          "monotonic_ns": 513971915986,
+          "unix_ns": 1794233666915445209,
+          "pid": 6606,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.89 1.39 0.69 1/260 6630",
+          "cpu_pressure": "some avg10=0.09 avg60=0.25 avg300=0.69 total=6066618\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 163623\nuser_usec 78340\nsystem_usec 85282\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 6\nnr_throttled 6\nthrottled_usec 614257\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "10575872",
+                "memory.peak": "17481728",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "1",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 663703851\nuser_usec 616067567\nsystem_usec 47636284\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6948745216",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "122",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 671541000\nuser_usec 617440000\nsystem_usec 54101000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": []
+        },
+        "kernel_after": {
+          "monotonic_ns": 514068982184,
+          "unix_ns": 1794233667012511567,
+          "pid": 6606,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.89 1.39 0.69 2/260 6631",
+          "cpu_pressure": "some avg10=0.09 avg60=0.25 avg300=0.69 total=6134336\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 180770\nuser_usec 85473\nsystem_usec 95297\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 7\nnr_throttled 7\nthrottled_usec 687817\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "10792960",
+                "memory.peak": "17481728",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "1",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 663729440\nuser_usec 616080215\nsystem_usec 47649224\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6948962304",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "122",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 671568000\nuser_usec 617453000\nsystem_usec 54115000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": []
+        },
+        "kernel_child_before_exec": {
+          "monotonic_ns": 513974463836,
+          "unix_ns": 1794233666917995193,
+          "pid": 6631,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.89 1.39 0.69 1/261 6631",
+          "cpu_pressure": "some avg10=0.09 avg60=0.25 avg300=0.69 total=6066618\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 167064\nuser_usec 81060\nsystem_usec 86003\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 6\nnr_throttled 6\nthrottled_usec 614257\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "12410880",
+                "memory.peak": "17481728",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "2",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 663708291\nuser_usec 616070041\nsystem_usec 47638250\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6950580224",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "123",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 671545000\nuser_usec 617442000\nsystem_usec 54103000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": [],
+          "before_exec_monotonic_ns": 513976571082
+        },
+        "child_readback_error": null,
+        "stdout": {
+          "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/process-00-N/stdout.jsonl",
+          "bytes": 5134,
+          "sha256": "d14307a7daae296582eecb5d0978d22481d518c60ca8328bfc4428caa7b45ffe"
+        },
+        "stderr": {
+          "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/process-00-N/stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "receipt": {
+          "outer_seconds": 0.090090779,
+          "result": {
+            "activation_error": null,
+            "activation_requested": true,
+            "active_before": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+            "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+            "both_real_proofs_verified": false,
+            "generation_before": 0,
+            "input_identity": {
+              "operator_plan_sha256": "042cec561b64b4423a7d60898ad87d65dabf37d77cd08bc7aa5724faad474ed7",
+              "packet_bytes": 49508,
+              "packet_sha256": "332e27b1b01c745cc25dd1f0d923217a81967da477d074417033b795c35c431a"
+            },
+            "metrics": {
+              "mode": "native",
+              "network_transport_measured": false,
+              "new_complete_proofs_generated": 0,
+              "payload_bytes": 49508,
+              "payload_scope": "native packet, plus public statement and both proofs only in proof-plus-native mode; independent operator plan is local input, not counted as transmitted payload",
+              "phases": [
+                {
+                  "outcome": "ok",
+                  "stage": "output_directory_create",
+                  "wall_seconds": 3.6868e-05
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "native_input_read_binding",
+                  "wall_seconds": 0.000173363
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "node_open_recovery",
+                  "wall_seconds": 0.084632839
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "node_current_context_and_before_observation",
+                  "wall_seconds": 1.4817e-05
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "native_admission",
+                  "wall_seconds": 0.002411452
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "native_activation",
+                  "wall_seconds": 0.001010042
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "native_readback",
+                  "wall_seconds": 0.000214309
+                }
+              ],
+              "phases_are_disjoint": true,
+              "production_activation": false,
+              "proof_preprocessing_reused": false,
+              "schema": "trnm-w1-receiver-metrics-v1",
+              "scope": "disjoint CLI workload phases; proof/native subphases are nested and must not be added again; the external process clock also pays event reporting, final record serialization and teardown"
+            },
+            "native_admission_path_invoked": true,
+            "native_admission_seconds": 0.002411102,
+            "native_admitted": true,
+            "native_observation": {
+              "accepted_task": null,
+              "active_chain_member": true,
+              "active_depth": 0,
+              "active_membership_sql_budget": 1024,
+              "active_membership_sql_lookups": 4,
+              "active_tip": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+              "active_tip_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+              "active_tip_height": 1,
+              "active_work_depth_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+              "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+              "block_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+              "block_height": 1,
+              "confirmation_authority": false,
+              "execution_authority": false,
+              "finality_authority": false,
+              "generation": 1,
+              "global_absence_authority": false,
+              "local_target_only": true,
+              "production_activation": false,
+              "schema": "pon-native-exact-packet-observation-v3",
+              "stored_exact": true
+            },
+            "native_observation_error": null,
+            "node_opened": true,
+            "production_activation": false,
+            "profile": "w1-pnh1-native-node-scheduled-p3-research-v1",
+            "qualification": "HOLD_NO_GO",
+            "schema": "trnm-w1-node-native-admit-v1"
+          }
+        },
+        "receipt_error": null
+      },
+      "validation_errors": []
+    },
+    {
+      "index": 1,
+      "variant": "P",
+      "fresh_output_directory": true,
+      "output_directory": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/receiver-01-P",
+      "expected_proof_slot": 1,
+      "measurement": {
+        "argv": [
+          "/home/runner/work/_temp/w1-target/release/w1-node-adapter-research",
+          "exercise",
+          "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1",
+          "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1",
+          "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/receiver-01-P",
+          "none",
+          "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/proof-start-owner",
+          "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/independent-owner-policy.json"
+        ],
+        "pid": 6632,
+        "started_unix_ns": 1794233667018736855,
+        "started_monotonic_ns": 514075207833,
+        "ended_monotonic_ns": 518162143566,
+        "wall_seconds": 4.086935733,
+        "user_seconds": 0.970939,
+        "system_seconds": 0.047528,
+        "cpu_seconds": 1.018467,
+        "peak_rss_kib": 65156,
+        "input_blocks": 0,
+        "output_blocks": 7920,
+        "exit_code": -9,
+        "timed_out": true,
+        "timeout_seconds": 4.0,
+        "timeout_request_monotonic_ns": 518155484091,
+        "timeout_cleanup_seconds": 0.006659475,
+        "measurement_boundary": "fork through wait4, including same pre-exec kernel readback, exec, receiver, and process teardown",
+        "kernel_before": {
+          "monotonic_ns": 514073755968,
+          "unix_ns": 1794233667017285541,
+          "pid": 6606,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.89 1.39 0.69 3/260 6631",
+          "cpu_pressure": "some avg10=0.09 avg60=0.25 avg300=0.69 total=6134348\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 185103\nuser_usec 88613\nsystem_usec 96490\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 7\nnr_throttled 7\nthrottled_usec 687817\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "11034624",
+                "memory.peak": "17481728",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "1",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 663734901\nuser_usec 616085572\nsystem_usec 47649328\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6949203968",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "122",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 671573000\nuser_usec 617458000\nsystem_usec 54115000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": []
+        },
+        "kernel_after": {
+          "monotonic_ns": 518162146461,
+          "unix_ns": 1794233671105675885,
+          "pid": 6606,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.73 1.36 0.69 1/259 6634",
+          "cpu_pressure": "some avg10=19.17 avg60=3.81 avg300=1.43 total=9589214\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 1205849\nuser_usec 1062898\nsystem_usec 142951\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 48\nnr_throttled 48\nthrottled_usec 7553830\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "15409152",
+                "memory.peak": "77598720",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "1",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 664778382\nuser_usec 617076538\nsystem_usec 47701843\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6953799680",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "121",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 672645000\nuser_usec 618466000\nsystem_usec 54179000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": []
+        },
+        "kernel_child_before_exec": {
+          "monotonic_ns": 514076493795,
+          "unix_ns": 1794233667020025483,
+          "pid": 6632,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.89 1.39 0.69 1/261 6632",
+          "cpu_pressure": "some avg10=0.09 avg60=0.25 avg300=0.69 total=6134353\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 188563\nuser_usec 90353\nsystem_usec 98210\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 7\nnr_throttled 7\nthrottled_usec 687817\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "12079104",
+                "memory.peak": "17481728",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "2",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 663738361\nuser_usec 616087065\nsystem_usec 47651296\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6950248448",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "123",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 671577000\nuser_usec 617460000\nsystem_usec 54117000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": [],
+          "before_exec_monotonic_ns": 514078323604
+        },
+        "child_readback_error": null,
+        "stdout": {
+          "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/process-01-P/stdout.jsonl",
+          "bytes": 1639,
+          "sha256": "d38ff4846301f69b87bb2295dda45469372a1d8941216b61bb9295476de1180b"
+        },
+        "stderr": {
+          "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/process-01-P/stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "receipt": null,
+        "receipt_error": "final stdout receipt has no result object"
+      },
+      "validation_errors": [
+        "process did not complete successfully"
+      ]
+    },
+    {
+      "index": 2,
+      "variant": "P",
+      "fresh_output_directory": true,
+      "output_directory": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/receiver-02-P",
+      "expected_proof_slot": 2,
+      "measurement": {
+        "argv": [
+          "/home/runner/work/_temp/w1-target/release/w1-node-adapter-research",
+          "exercise",
+          "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1",
+          "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1",
+          "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/receiver-02-P",
+          "none",
+          "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/proof-start-owner",
+          "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/independent-owner-policy.json"
+        ],
+        "pid": 6635,
+        "started_unix_ns": 1794233671112252408,
+        "started_monotonic_ns": 518168723436,
+        "ended_monotonic_ns": 522262073340,
+        "wall_seconds": 4.093349904,
+        "user_seconds": 0.971031,
+        "system_seconds": 0.044667,
+        "cpu_seconds": 1.015698,
+        "peak_rss_kib": 65304,
+        "input_blocks": 0,
+        "output_blocks": 7920,
+        "exit_code": -9,
+        "timed_out": true,
+        "timeout_seconds": 4.0,
+        "timeout_request_monotonic_ns": 522255437456,
+        "timeout_cleanup_seconds": 0.006635884,
+        "measurement_boundary": "fork through wait4, including same pre-exec kernel readback, exec, receiver, and process teardown",
+        "kernel_before": {
+          "monotonic_ns": 518167369223,
+          "unix_ns": 1794233671110898355,
+          "pid": 6606,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.73 1.36 0.69 3/259 6634",
+          "cpu_pressure": "some avg10=19.17 avg60=3.81 avg300=1.43 total=9589237\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 1209931\nuser_usec 1066842\nsystem_usec 143089\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 48\nnr_throttled 48\nthrottled_usec 7553830\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "15011840",
+                "memory.peak": "77598720",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "1",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 664782843\nuser_usec 617079892\nsystem_usec 47702951\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6953402368",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "121",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 672649000\nuser_usec 618468000\nsystem_usec 54181000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": []
+        },
+        "kernel_after": {
+          "monotonic_ns": 522262075855,
+          "unix_ns": 1794233675205605548,
+          "pid": 6606,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.59 1.34 0.68 1/260 6638",
+          "cpu_pressure": "some avg10=40.83 avg60=9.03 avg300=2.57 total=13007041\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 2228366\nuser_usec 2038779\nsystem_usec 189586\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 89\nnr_throttled 89\nthrottled_usec 14255949\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "19595264",
+                "memory.peak": "82063360",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "1",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 665834721\nuser_usec 618070050\nsystem_usec 47764671\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6958510080",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "122",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 673738000\nuser_usec 619474000\nsystem_usec 54264000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": []
+        },
+        "kernel_child_before_exec": {
+          "monotonic_ns": 518170129519,
+          "unix_ns": 1794233671113661066,
+          "pid": 6635,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.73 1.36 0.69 1/260 6635",
+          "cpu_pressure": "some avg10=19.17 avg60=3.81 avg300=1.43 total=9589241\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 1213318\nuser_usec 1067253\nsystem_usec 146065\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 48\nnr_throttled 48\nthrottled_usec 7553830\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "16551936",
+                "memory.peak": "77598720",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "2",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 664786324\nuser_usec 617081332\nsystem_usec 47704992\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6954942464",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "122",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 672652000\nuser_usec 618469000\nsystem_usec 54183000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": [],
+          "before_exec_monotonic_ns": 518171907912
+        },
+        "child_readback_error": null,
+        "stdout": {
+          "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/process-02-P/stdout.jsonl",
+          "bytes": 1639,
+          "sha256": "587e650f4a6217a706a2c56eed3bacb8f56ab4c7cf796daae07b7f9d88d3bd70"
+        },
+        "stderr": {
+          "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/process-02-P/stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "receipt": null,
+        "receipt_error": "final stdout receipt has no result object"
+      },
+      "validation_errors": [
+        "process did not complete successfully"
+      ]
+    },
+    {
+      "index": 3,
+      "variant": "N",
+      "fresh_output_directory": true,
+      "output_directory": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/receiver-03-N",
+      "expected_proof_slot": null,
+      "measurement": {
+        "argv": [
+          "/home/runner/work/_temp/w1-target/release/w1-node-adapter-research",
+          "native-admit",
+          "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1",
+          "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/receiver-03-N"
+        ],
+        "pid": 6639,
+        "started_unix_ns": 1794233675212414458,
+        "started_monotonic_ns": 522268885476,
+        "ended_monotonic_ns": 522362883029,
+        "wall_seconds": 0.093997553,
+        "user_seconds": 0.006045,
+        "system_seconds": 0.009067,
+        "cpu_seconds": 0.015112,
+        "peak_rss_kib": 14516,
+        "input_blocks": 0,
+        "output_blocks": 1024,
+        "exit_code": 0,
+        "timed_out": false,
+        "timeout_seconds": 4.0,
+        "timeout_request_monotonic_ns": null,
+        "timeout_cleanup_seconds": null,
+        "measurement_boundary": "fork through wait4, including same pre-exec kernel readback, exec, receiver, and process teardown",
+        "kernel_before": {
+          "monotonic_ns": 522267490306,
+          "unix_ns": 1794233675211019599,
+          "pid": 6606,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.59 1.34 0.68 3/260 6638",
+          "cpu_pressure": "some avg10=40.83 avg60=9.03 avg300=2.57 total=13007060\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 2233403\nuser_usec 2042747\nsystem_usec 190656\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 89\nnr_throttled 89\nthrottled_usec 14255949\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "19189760",
+                "memory.peak": "82063360",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "1",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 665839318\nuser_usec 618073529\nsystem_usec 47765788\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6958104576",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "122",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 673742000\nuser_usec 619476000\nsystem_usec 54266000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": []
+        },
+        "kernel_after": {
+          "monotonic_ns": 522362885664,
+          "unix_ns": 1794233675306415037,
+          "pid": 6606,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.59 1.34 0.68 1/260 6639",
+          "cpu_pressure": "some avg10=48.28 avg60=11.42 avg300=3.11 total=13077994\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 2250644\nuser_usec 2049225\nsystem_usec 201419\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 90\nnr_throttled 90\nthrottled_usec 14328309\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "19603456",
+                "memory.peak": "82063360",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "1",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 665858246\nuser_usec 618081355\nsystem_usec 47776891\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6958518272",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "122",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 673762000\nuser_usec 619483000\nsystem_usec 54279000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": []
+        },
+        "kernel_child_before_exec": {
+          "monotonic_ns": 522270295770,
+          "unix_ns": 1794233675213827708,
+          "pid": 6639,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.59 1.34 0.68 1/261 6639",
+          "cpu_pressure": "some avg10=40.83 avg60=9.03 avg300=2.57 total=13007064\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 2236860\nuser_usec 2044212\nsystem_usec 192648\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 89\nnr_throttled 89\nthrottled_usec 14255949\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "20754432",
+                "memory.peak": "82063360",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "2",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 665842786\nuser_usec 618074957\nsystem_usec 47767829\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6959669248",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "123",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 673745000\nuser_usec 619477000\nsystem_usec 54268000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": [],
+          "before_exec_monotonic_ns": 522272116873
+        },
+        "child_readback_error": null,
+        "stdout": {
+          "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/process-03-N/stdout.jsonl",
+          "bytes": 5129,
+          "sha256": "acc3f293e430ec2a9e915b119d53ea7af48b6f0bd6e11b566bb86c94f8f01aae"
+        },
+        "stderr": {
+          "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/process-03-N/stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "receipt": {
+          "outer_seconds": 0.088027901,
+          "result": {
+            "activation_error": null,
+            "activation_requested": true,
+            "active_before": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+            "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+            "both_real_proofs_verified": false,
+            "generation_before": 0,
+            "input_identity": {
+              "operator_plan_sha256": "042cec561b64b4423a7d60898ad87d65dabf37d77cd08bc7aa5724faad474ed7",
+              "packet_bytes": 49508,
+              "packet_sha256": "332e27b1b01c745cc25dd1f0d923217a81967da477d074417033b795c35c431a"
+            },
+            "metrics": {
+              "mode": "native",
+              "network_transport_measured": false,
+              "new_complete_proofs_generated": 0,
+              "payload_bytes": 49508,
+              "payload_scope": "native packet, plus public statement and both proofs only in proof-plus-native mode; independent operator plan is local input, not counted as transmitted payload",
+              "phases": [
+                {
+                  "outcome": "ok",
+                  "stage": "output_directory_create",
+                  "wall_seconds": 3.9944e-05
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "native_input_read_binding",
+                  "wall_seconds": 0.000185666
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "node_open_recovery",
+                  "wall_seconds": 0.007431416
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "node_current_context_and_before_observation",
+                  "wall_seconds": 1.4928e-05
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "native_admission",
+                  "wall_seconds": 0.075210841
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "native_activation",
+                  "wall_seconds": 0.001059764
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "native_readback",
+                  "wall_seconds": 0.0001878
+                }
+              ],
+              "phases_are_disjoint": true,
+              "production_activation": false,
+              "proof_preprocessing_reused": false,
+              "schema": "trnm-w1-receiver-metrics-v1",
+              "scope": "disjoint CLI workload phases; proof/native subphases are nested and must not be added again; the external process clock also pays event reporting, final record serialization and teardown"
+            },
+            "native_admission_path_invoked": true,
+            "native_admission_seconds": 0.07521026,
+            "native_admitted": true,
+            "native_observation": {
+              "accepted_task": null,
+              "active_chain_member": true,
+              "active_depth": 0,
+              "active_membership_sql_budget": 1024,
+              "active_membership_sql_lookups": 4,
+              "active_tip": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+              "active_tip_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+              "active_tip_height": 1,
+              "active_work_depth_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+              "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+              "block_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+              "block_height": 1,
+              "confirmation_authority": false,
+              "execution_authority": false,
+              "finality_authority": false,
+              "generation": 1,
+              "global_absence_authority": false,
+              "local_target_only": true,
+              "production_activation": false,
+              "schema": "pon-native-exact-packet-observation-v3",
+              "stored_exact": true
+            },
+            "native_observation_error": null,
+            "node_opened": true,
+            "production_activation": false,
+            "profile": "w1-pnh1-native-node-scheduled-p3-research-v1",
+            "qualification": "HOLD_NO_GO",
+            "schema": "trnm-w1-node-native-admit-v1"
+          }
+        },
+        "receipt_error": null
+      },
+      "validation_errors": []
+    },
+    {
+      "index": 4,
+      "variant": "N",
+      "fresh_output_directory": true,
+      "output_directory": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/receiver-04-N",
+      "expected_proof_slot": null,
+      "measurement": {
+        "argv": [
+          "/home/runner/work/_temp/w1-target/release/w1-node-adapter-research",
+          "native-admit",
+          "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1",
+          "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/receiver-04-N"
+        ],
+        "pid": 6640,
+        "started_unix_ns": 1794233675313493175,
+        "started_monotonic_ns": 522369964263,
+        "ended_monotonic_ns": 522458538842,
+        "wall_seconds": 0.088574579,
+        "user_seconds": 0.00988,
+        "system_seconds": 0.00494,
+        "cpu_seconds": 0.01482,
+        "peak_rss_kib": 14568,
+        "input_blocks": 0,
+        "output_blocks": 1024,
+        "exit_code": 0,
+        "timed_out": false,
+        "timeout_seconds": 4.0,
+        "timeout_request_monotonic_ns": null,
+        "timeout_cleanup_seconds": null,
+        "measurement_boundary": "fork through wait4, including same pre-exec kernel readback, exec, receiver, and process teardown",
+        "kernel_before": {
+          "monotonic_ns": 522368565487,
+          "unix_ns": 1794233675312094779,
+          "pid": 6606,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.59 1.34 0.68 3/260 6639",
+          "cpu_pressure": "some avg10=48.28 avg60=11.42 avg300=3.11 total=13078009\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 2255937\nuser_usec 2052533\nsystem_usec 203404\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 90\nnr_throttled 90\nthrottled_usec 14328309\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "19537920",
+                "memory.peak": "82063360",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "1",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 665862989\nuser_usec 618084038\nsystem_usec 47778951\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6958452736",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "122",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 673766000\nuser_usec 619485000\nsystem_usec 54281000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": []
+        },
+        "kernel_after": {
+          "monotonic_ns": 522458541427,
+          "unix_ns": 1794233675402070900,
+          "pid": 6606,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.59 1.34 0.68 1/260 6640",
+          "cpu_pressure": "some avg10=48.28 avg60=11.42 avg300=3.11 total=13147386\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 2273392\nuser_usec 2064155\nsystem_usec 209237\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 91\nnr_throttled 91\nthrottled_usec 14397675\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "19939328",
+                "memory.peak": "82063360",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "1",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 665880472\nuser_usec 618095540\nsystem_usec 47784931\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6958854144",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "122",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 673786000\nuser_usec 619498000\nsystem_usec 54288000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": []
+        },
+        "kernel_child_before_exec": {
+          "monotonic_ns": 522371417367,
+          "unix_ns": 1794233675314949205,
+          "pid": 6640,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.59 1.34 0.68 1/261 6640",
+          "cpu_pressure": "some avg10=48.28 avg60=11.42 avg300=3.11 total=13078016\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 2259436\nuser_usec 2054121\nsystem_usec 205314\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 90\nnr_throttled 90\nthrottled_usec 14328309\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "21106688",
+                "memory.peak": "82063360",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "2",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 665866488\nuser_usec 618085566\nsystem_usec 47780921\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6960021504",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "123",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 673771000\nuser_usec 619488000\nsystem_usec 54283000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": [],
+          "before_exec_monotonic_ns": 522373208844
+        },
+        "child_readback_error": null,
+        "stdout": {
+          "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/process-04-N/stdout.jsonl",
+          "bytes": 5130,
+          "sha256": "1531e8f3e7fa320a3d3a287ed16e9145ffd14dafd611018dc0345f6a8a2f3c87"
+        },
+        "stderr": {
+          "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/process-04-N/stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "receipt": {
+          "outer_seconds": 0.0825529,
+          "result": {
+            "activation_error": null,
+            "activation_requested": true,
+            "active_before": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+            "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+            "both_real_proofs_verified": false,
+            "generation_before": 0,
+            "input_identity": {
+              "operator_plan_sha256": "042cec561b64b4423a7d60898ad87d65dabf37d77cd08bc7aa5724faad474ed7",
+              "packet_bytes": 49508,
+              "packet_sha256": "332e27b1b01c745cc25dd1f0d923217a81967da477d074417033b795c35c431a"
+            },
+            "metrics": {
+              "mode": "native",
+              "network_transport_measured": false,
+              "new_complete_proofs_generated": 0,
+              "payload_bytes": 49508,
+              "payload_scope": "native packet, plus public statement and both proofs only in proof-plus-native mode; independent operator plan is local input, not counted as transmitted payload",
+              "phases": [
+                {
+                  "outcome": "ok",
+                  "stage": "output_directory_create",
+                  "wall_seconds": 3.5676e-05
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "native_input_read_binding",
+                  "wall_seconds": 0.000179735
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "node_open_recovery",
+                  "wall_seconds": 0.00718104
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "node_current_context_and_before_observation",
+                  "wall_seconds": 1.5319e-05
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "native_admission",
+                  "wall_seconds": 0.002406254
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "native_activation",
+                  "wall_seconds": 0.070664951
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "native_readback",
+                  "wall_seconds": 0.000206064
+                }
+              ],
+              "phases_are_disjoint": true,
+              "production_activation": false,
+              "proof_preprocessing_reused": false,
+              "schema": "trnm-w1-receiver-metrics-v1",
+              "scope": "disjoint CLI workload phases; proof/native subphases are nested and must not be added again; the external process clock also pays event reporting, final record serialization and teardown"
+            },
+            "native_admission_path_invoked": true,
+            "native_admission_seconds": 0.002405902,
+            "native_admitted": true,
+            "native_observation": {
+              "accepted_task": null,
+              "active_chain_member": true,
+              "active_depth": 0,
+              "active_membership_sql_budget": 1024,
+              "active_membership_sql_lookups": 4,
+              "active_tip": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+              "active_tip_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+              "active_tip_height": 1,
+              "active_work_depth_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+              "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+              "block_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+              "block_height": 1,
+              "confirmation_authority": false,
+              "execution_authority": false,
+              "finality_authority": false,
+              "generation": 1,
+              "global_absence_authority": false,
+              "local_target_only": true,
+              "production_activation": false,
+              "schema": "pon-native-exact-packet-observation-v3",
+              "stored_exact": true
+            },
+            "native_observation_error": null,
+            "node_opened": true,
+            "production_activation": false,
+            "profile": "w1-pnh1-native-node-scheduled-p3-research-v1",
+            "qualification": "HOLD_NO_GO",
+            "schema": "trnm-w1-node-native-admit-v1"
+          }
+        },
+        "receipt_error": null
+      },
+      "validation_errors": []
+    },
+    {
+      "index": 5,
+      "variant": "P",
+      "fresh_output_directory": true,
+      "output_directory": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/receiver-05-P",
+      "expected_proof_slot": 3,
+      "measurement": {
+        "argv": [
+          "/home/runner/work/_temp/w1-target/release/w1-node-adapter-research",
+          "exercise",
+          "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1",
+          "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1",
+          "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/receiver-05-P",
+          "none",
+          "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/proof-start-owner",
+          "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/independent-owner-policy.json"
+        ],
+        "pid": 6641,
+        "started_unix_ns": 1794233675409634923,
+        "started_monotonic_ns": 522466105981,
+        "ended_monotonic_ns": 526473404995,
+        "wall_seconds": 4.007299014,
+        "user_seconds": 0.9660449999999999,
+        "system_seconds": 0.053292,
+        "cpu_seconds": 1.019337,
+        "peak_rss_kib": 64368,
+        "input_blocks": 0,
+        "output_blocks": 7920,
+        "exit_code": -9,
+        "timed_out": true,
+        "timeout_seconds": 4.0,
+        "timeout_request_monotonic_ns": 526467156373,
+        "timeout_cleanup_seconds": 0.006248622,
+        "measurement_boundary": "fork through wait4, including same pre-exec kernel readback, exec, receiver, and process teardown",
+        "kernel_before": {
+          "monotonic_ns": 522464676247,
+          "unix_ns": 1794233675408205440,
+          "pid": 6606,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.59 1.34 0.68 3/260 6640",
+          "cpu_pressure": "some avg10=48.28 avg60=11.42 avg300=3.11 total=13147403\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 2278615\nuser_usec 2069345\nsystem_usec 209270\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 91\nnr_throttled 91\nthrottled_usec 14397675\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "20119552",
+                "memory.peak": "82063360",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "1",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 665886142\nuser_usec 618101164\nsystem_usec 47784978\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6959034368",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "122",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 673790000\nuser_usec 619502000\nsystem_usec 54288000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": []
+        },
+        "kernel_after": {
+          "monotonic_ns": 526473407880,
+          "unix_ns": 1794233679416937504,
+          "pid": 6606,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.47 1.32 0.68 1/259 6643",
+          "cpu_pressure": "some avg10=60.45 avg60=16.16 avg300=4.23 total=16579081\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 3300847\nuser_usec 3036468\nsystem_usec 264378\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 131\nnr_throttled 131\nthrottled_usec 21261667\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "24461312",
+                "memory.peak": "86409216",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "1",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 666926026\nuser_usec 619077964\nsystem_usec 47848062\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6963634176",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "121",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 674880000\nuser_usec 620505000\nsystem_usec 54375000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": []
+        },
+        "kernel_child_before_exec": {
+          "monotonic_ns": 522467475289,
+          "unix_ns": 1794233675411007347,
+          "pid": 6641,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.59 1.34 0.68 1/261 6641",
+          "cpu_pressure": "some avg10=48.28 avg60=11.42 avg300=3.11 total=13147407\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 2282076\nuser_usec 2069926\nsystem_usec 212150\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 91\nnr_throttled 91\nthrottled_usec 14397675\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "21422080",
+                "memory.peak": "82063360",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "2",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 665889603\nuser_usec 618101653\nsystem_usec 47787950\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6960336896",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "123",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 673795000\nuser_usec 619504000\nsystem_usec 54291000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": [],
+          "before_exec_monotonic_ns": 522469328181
+        },
+        "child_readback_error": null,
+        "stdout": {
+          "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/process-05-P/stdout.jsonl",
+          "bytes": 1638,
+          "sha256": "5ae6b2515e2de0e48c48c712cfa122f6f9599b1f10fe342fb708b9c891176d31"
+        },
+        "stderr": {
+          "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/process-05-P/stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "receipt": null,
+        "receipt_error": "final stdout receipt has no result object"
+      },
+      "validation_errors": [
+        "process did not complete successfully"
+      ]
+    },
+    {
+      "index": 6,
+      "variant": "P",
+      "fresh_output_directory": true,
+      "output_directory": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/receiver-06-P",
+      "expected_proof_slot": 4,
+      "measurement": {
+        "argv": [
+          "/home/runner/work/_temp/w1-target/release/w1-node-adapter-research",
+          "exercise",
+          "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1",
+          "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1",
+          "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/receiver-06-P",
+          "none",
+          "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/proof-start-owner",
+          "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/independent-owner-policy.json"
+        ],
+        "pid": 6644,
+        "started_unix_ns": 1794233679510314070,
+        "started_monotonic_ns": 526566785028,
+        "ended_monotonic_ns": 530655519758,
+        "wall_seconds": 4.08873473,
+        "user_seconds": 0.976702,
+        "system_seconds": 0.043775999999999995,
+        "cpu_seconds": 1.020478,
+        "peak_rss_kib": 64480,
+        "input_blocks": 0,
+        "output_blocks": 7920,
+        "exit_code": -9,
+        "timed_out": true,
+        "timeout_seconds": 4.0,
+        "timeout_request_monotonic_ns": 530567856444,
+        "timeout_cleanup_seconds": 0.087663314,
+        "measurement_boundary": "fork through wait4, including same pre-exec kernel readback, exec, receiver, and process teardown",
+        "kernel_before": {
+          "monotonic_ns": 526565270005,
+          "unix_ns": 1794233679508799729,
+          "pid": 6606,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.47 1.32 0.68 3/259 6643",
+          "cpu_pressure": "some avg10=60.45 avg60=16.16 avg300=4.23 total=16659479\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 3305753\nuser_usec 3037562\nsystem_usec 268191\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 132\nnr_throttled 132\nthrottled_usec 21342034\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "24346624",
+                "memory.peak": "86409216",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "1",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 666932702\nuser_usec 619080650\nsystem_usec 47852051\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6963519488",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "121",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 674887000\nuser_usec 620508000\nsystem_usec 54379000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": []
+        },
+        "kernel_after": {
+          "monotonic_ns": 530655522834,
+          "unix_ns": 1794233683599052317,
+          "pid": 6606,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.35 1.30 0.67 1/259 6646",
+          "cpu_pressure": "some avg10=67.97 avg60=20.46 avg300=5.30 total=20059587\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 4329753\nuser_usec 4015763\nsystem_usec 313989\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 173\nnr_throttled 173\nthrottled_usec 28128141\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "28614656",
+                "memory.peak": "90550272",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "1",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 667993049\nuser_usec 620080320\nsystem_usec 47912729\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6952304640",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "121",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 675977000\nuser_usec 621524000\nsystem_usec 54453000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": []
+        },
+        "kernel_child_before_exec": {
+          "monotonic_ns": 526568221671,
+          "unix_ns": 1794233679511753469,
+          "pid": 6644,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.47 1.32 0.68 1/260 6644",
+          "cpu_pressure": "some avg10=60.45 avg60=16.16 avg300=4.23 total=16659486\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 3310200\nuser_usec 3040019\nsystem_usec 270180\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 132\nnr_throttled 132\nthrottled_usec 21342034\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "25313280",
+                "memory.peak": "86409216",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "2",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 666936146\nuser_usec 619082056\nsystem_usec 47854090\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6964744192",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "122",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 674890000\nuser_usec 620509000\nsystem_usec 54381000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": [],
+          "before_exec_monotonic_ns": 526570051711
+        },
+        "child_readback_error": null,
+        "stdout": {
+          "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/process-06-P/stdout.jsonl",
+          "bytes": 1639,
+          "sha256": "482866b1c241ce4d9b1922bcd7d016420b8168434f7035f2678d33a209b6b053"
+        },
+        "stderr": {
+          "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/process-06-P/stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "receipt": null,
+        "receipt_error": "final stdout receipt has no result object"
+      },
+      "validation_errors": [
+        "process did not complete successfully"
+      ]
+    },
+    {
+      "index": 7,
+      "variant": "N",
+      "fresh_output_directory": true,
+      "output_directory": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/receiver-07-N",
+      "expected_proof_slot": null,
+      "measurement": {
+        "argv": [
+          "/home/runner/work/_temp/w1-target/release/w1-node-adapter-research",
+          "native-admit",
+          "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1",
+          "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/receiver-07-N"
+        ],
+        "pid": 6647,
+        "started_unix_ns": 1794233683611953375,
+        "started_monotonic_ns": 530668424222,
+        "ended_monotonic_ns": 530764180743,
+        "wall_seconds": 0.095756521,
+        "user_seconds": 0.007052,
+        "system_seconds": 0.008059,
+        "cpu_seconds": 0.015111,
+        "peak_rss_kib": 14648,
+        "input_blocks": 0,
+        "output_blocks": 1024,
+        "exit_code": 0,
+        "timed_out": false,
+        "timeout_seconds": 4.0,
+        "timeout_request_monotonic_ns": null,
+        "timeout_cleanup_seconds": null,
+        "measurement_boundary": "fork through wait4, including same pre-exec kernel readback, exec, receiver, and process teardown",
+        "kernel_before": {
+          "monotonic_ns": 530666923636,
+          "unix_ns": 1794233683610453059,
+          "pid": 6606,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.35 1.30 0.67 3/259 6646",
+          "cpu_pressure": "some avg10=67.97 avg60=20.46 avg300=5.30 total=20059615\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 4335544\nuser_usec 4020585\nsystem_usec 314958\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 173\nnr_throttled 173\nthrottled_usec 28128141\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "28422144",
+                "memory.peak": "90550272",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "1",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 667999494\nuser_usec 620084871\nsystem_usec 47914622\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6952112128",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "121",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 675985000\nuser_usec 621530000\nsystem_usec 54455000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": []
+        },
+        "kernel_after": {
+          "monotonic_ns": 530764182987,
+          "unix_ns": 1794233683707712351,
+          "pid": 6606,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.35 1.30 0.67 1/259 6647",
+          "cpu_pressure": "some avg10=67.97 avg60=20.46 avg300=5.30 total=20135300\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 4353104\nuser_usec 4028347\nsystem_usec 324756\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 174\nnr_throttled 174\nthrottled_usec 28204509\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "28721152",
+                "memory.peak": "90550272",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "1",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 668018210\nuser_usec 620092501\nsystem_usec 47925709\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6952411136",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "121",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 676003000\nuser_usec 621537000\nsystem_usec 54466000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": []
+        },
+        "kernel_child_before_exec": {
+          "monotonic_ns": 530669862959,
+          "unix_ns": 1794233683613394677,
+          "pid": 6647,
+          "affinity": [
+            0,
+            1
+          ],
+          "loadavg": "1.35 1.30 0.67 1/260 6647",
+          "cpu_pressure": "some avg10=67.97 avg60=20.46 avg300=5.30 total=20059623\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "memory_pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=0\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "cgroup_text": "0::/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "cgroup_relative": "/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+          "lineage": [
+            {
+              "path": "/sys/fs/cgroup/system.slice/w1-receiver-42629992145-1-quarter-cpu.scope",
+              "limits": {
+                "cpu.max": "25000 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "2147483648",
+                "memory.swap.max": "0",
+                "pids.max": "256",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 4339018\nuser_usec 4021102\nsystem_usec 317915\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 173\nnr_throttled 173\nthrottled_usec 28128141\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "29962240",
+                "memory.peak": "90550272",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "2",
+                "pids.peak": "22"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup/system.slice",
+              "limits": {
+                "cpu.max": "max 100000",
+                "cpu.max.burst": "0",
+                "memory.max": "max",
+                "memory.swap.max": "max",
+                "pids.max": "max",
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 668003968\nuser_usec 620086301\nsystem_usec 47917666\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": "6953652224",
+                "memory.peak": "8690737152",
+                "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+                "memory.swap.current": "0",
+                "pids.current": "122",
+                "pids.peak": "147"
+              }
+            },
+            {
+              "path": "/sys/fs/cgroup",
+              "limits": {
+                "cpu.max": null,
+                "cpu.max.burst": null,
+                "memory.max": null,
+                "memory.swap.max": null,
+                "pids.max": null,
+                "cpuset.cpus.effective": "0-3"
+              },
+              "observations": {
+                "cpu.stat": "usage_usec 675988000\nuser_usec 621531000\nsystem_usec 54457000\nnice_usec 20000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+                "memory.current": null,
+                "memory.peak": null,
+                "memory.events": null,
+                "memory.swap.current": null,
+                "pids.current": null,
+                "pids.peak": null
+              }
+            }
+          ],
+          "errors": [],
+          "before_exec_monotonic_ns": 530671712465
+        },
+        "child_readback_error": null,
+        "stdout": {
+          "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/process-07-N/stdout.jsonl",
+          "bytes": 5130,
+          "sha256": "f47ac8a833fa69057bc838ccbd3888beaf444ad4f1c07d8011911649aa768756"
+        },
+        "stderr": {
+          "path": "/home/runner/work/_temp/w1-receiver-42629992145-1/quarter-cpu/process-07-N/stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "receipt": {
+          "outer_seconds": 0.089729742,
+          "result": {
+            "activation_error": null,
+            "activation_requested": true,
+            "active_before": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+            "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+            "both_real_proofs_verified": false,
+            "generation_before": 0,
+            "input_identity": {
+              "operator_plan_sha256": "042cec561b64b4423a7d60898ad87d65dabf37d77cd08bc7aa5724faad474ed7",
+              "packet_bytes": 49508,
+              "packet_sha256": "332e27b1b01c745cc25dd1f0d923217a81967da477d074417033b795c35c431a"
+            },
+            "metrics": {
+              "mode": "native",
+              "network_transport_measured": false,
+              "new_complete_proofs_generated": 0,
+              "payload_bytes": 49508,
+              "payload_scope": "native packet, plus public statement and both proofs only in proof-plus-native mode; independent operator plan is local input, not counted as transmitted payload",
+              "phases": [
+                {
+                  "outcome": "ok",
+                  "stage": "output_directory_create",
+                  "wall_seconds": 3.6929e-05
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "native_input_read_binding",
+                  "wall_seconds": 0.00018806
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "node_open_recovery",
+                  "wall_seconds": 0.084208014
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "node_current_context_and_before_observation",
+                  "wall_seconds": 1.4567e-05
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "native_admission",
+                  "wall_seconds": 0.002471906
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "native_activation",
+                  "wall_seconds": 0.001028436
+                },
+                {
+                  "outcome": "ok",
+                  "stage": "native_readback",
+                  "wall_seconds": 0.00017714
+                }
+              ],
+              "phases_are_disjoint": true,
+              "production_activation": false,
+              "proof_preprocessing_reused": false,
+              "schema": "trnm-w1-receiver-metrics-v1",
+              "scope": "disjoint CLI workload phases; proof/native subphases are nested and must not be added again; the external process clock also pays event reporting, final record serialization and teardown"
+            },
+            "native_admission_path_invoked": true,
+            "native_admission_seconds": 0.002471515,
+            "native_admitted": true,
+            "native_observation": {
+              "accepted_task": null,
+              "active_chain_member": true,
+              "active_depth": 0,
+              "active_membership_sql_budget": 1024,
+              "active_membership_sql_lookups": 4,
+              "active_tip": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+              "active_tip_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+              "active_tip_height": 1,
+              "active_work_depth_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+              "block": "8c624eed5af1d6eead94ab70a723e8f679da49a4f7f934da4093fbb9cf8044cb",
+              "block_chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+              "block_height": 1,
+              "confirmation_authority": false,
+              "execution_authority": false,
+              "finality_authority": false,
+              "generation": 1,
+              "global_absence_authority": false,
+              "local_target_only": true,
+              "production_activation": false,
+              "schema": "pon-native-exact-packet-observation-v3",
+              "stored_exact": true
+            },
+            "native_observation_error": null,
+            "node_opened": true,
+            "production_activation": false,
+            "profile": "w1-pnh1-native-node-scheduled-p3-research-v1",
+            "qualification": "HOLD_NO_GO",
+            "schema": "trnm-w1-node-native-admit-v1"
+          }
+        },
+        "receipt_error": null
+      },
+      "validation_errors": []
+    }
+  ],
+  "fatal_errors": []
+}
