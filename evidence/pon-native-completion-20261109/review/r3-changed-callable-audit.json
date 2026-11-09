@@ -1,0 +1,165 @@
+{
+  "head": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+  "tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+  "compared_base": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "changed_files": [
+    ".github/workflows/pon-recent-batch-acceptance.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "evidence/pon-native-completion-20261109/README.md",
+    "evidence/pon-native-completion-20261109/review/ag-closure-matrix-review.md",
+    "evidence/pon-native-completion-20261109/review/b-peer-review.json",
+    "evidence/pon-native-completion-20261109/review/def-call-sites.txt",
+    "evidence/pon-native-completion-20261109/review/def-python-commands.json",
+    "evidence/pon-native-completion-20261109/review/def-review.json",
+    "evidence/pon-native-completion-20261109/review/unbound-helper-guard-manifest.json",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs",
+    "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/detached_admission/prepared_held_native_completion_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked.rs"
+  ],
+  "changed_rust_functions": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "removed": [],
+      "added": []
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "removed": [],
+      "added": []
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "removed": [],
+      "added": []
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+      "removed": [],
+      "added": []
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "removed": [
+        "resource_revision_r14_rejects_signed_old_cookies_and_preserves_control_output_reserve"
+      ],
+      "added": [
+        "resource_revision_r18_rejects_signed_old_cookies_and_preserves_control_output_reserve"
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs",
+      "removed": [],
+      "added": []
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "removed": [
+        "growth_work_verified",
+        "history_work_verified",
+        "history_work_verified_for_context",
+        "work_verified"
+      ],
+      "added": [
+        "native_admission_complete",
+        "test_legacy_history_w1_only_priority",
+        "test_legacy_w1_only_priority"
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs",
+      "removed": [],
+      "added": []
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs",
+      "removed": [],
+      "added": [
+        "history_sequence",
+        "native_completion_priority_cold_history_honest_original_deadline_control",
+        "native_completion_priority_requires_full_relation_on_detached_owner",
+        "native_completion_priority_requires_full_relation_on_exclusive_history",
+        "native_completion_priority_requires_full_relation_on_growth_owner",
+        "native_completion_priority_requires_full_relation_on_held_owner",
+        "native_completion_priority_requires_full_relation_on_shared_history",
+        "ordinary_candidates",
+        "ordinary_fixture",
+        "ordinary_public_sequence",
+        "page",
+        "prepared",
+        "public_sequence"
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs",
+      "removed": [],
+      "added": []
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "removed": [],
+      "added": [
+        "admit_work_checked_with_completion",
+        "identity"
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+      "removed": [],
+      "added": []
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission/prepared_held_native_completion_tests.rs",
+      "removed": [],
+      "added": [
+        "native_completion_priority_prepared_held_requires_complete_output"
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+      "removed": [],
+      "added": []
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+      "removed": [],
+      "added": [
+        "admit_growth_work_checked_with_completion"
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked.rs",
+      "removed": [],
+      "added": []
+    }
+  ],
+  "removed_rust_names": [
+    "growth_work_verified",
+    "history_work_verified",
+    "history_work_verified_for_context",
+    "resource_revision_r14_rejects_signed_old_cookies_and_preserves_control_output_reserve",
+    "work_verified"
+  ],
+  "active_reference_searches": {
+    "growth_work_verified": "",
+    "history_work_verified": "",
+    "history_work_verified_for_context": "",
+    "missing Rust callable": "scripts/ci/report_module_evidence.py-82-        if len(parts) == 2:\nscripts/ci/report_module_evidence.py-83-            bodies = list(rust_impl_bodies(text, parts[0]))\nscripts/ci/report_module_evidence.py-84-            require(bodies, 'missing Rust implementation owner ' + symbol)\nscripts/ci/report_module_evidence.py-85-            require(any(rust_direct_method(body, parts[1]) for body in bodies),\nscripts/ci/report_module_evidence.py:86:                    'missing Rust callable ' + symbol)\nscripts/ci/report_module_evidence.py-87-        else:\nscripts/ci/report_module_evidence.py-88-            require(re.search(r'\\bfn\\s+' + re.escape(parts[-1]) + r'\\s*[(<]', text),\nscripts/ci/report_module_evidence.py:89:                    'missing Rust callable ' + symbol)\nscripts/ci/report_module_evidence.py-90-    else:\nscripts/ci/report_module_evidence.py-91-        raise ValueError('unsupported callable source ' + ref['path'])\nscripts/ci/report_module_evidence.py-92-\nscripts/ci/report_module_evidence.py-93-\n--\nscripts/ci/test_applicability.py-42-        path.write_text(original)\nscripts/ci/test_applicability.py-43-        for _ in range(2):\nscripts/ci/test_applicability.py-44-            check_test_selector(self.root, 'bound.rs::test_bound')\nscripts/ci/test_applicability.py-45-        self.replace_same_metadata(path, '#[test]\\nfn test_other() {}\\n')\nscripts/ci/test_applicability.py:46:        with self.assertRaisesRegex(ValueError, 'missing Rust callable'):\nscripts/ci/test_applicability.py-47-            check_test_selector(self.root, 'bound.rs::test_bound')\nscripts/ci/test_applicability.py-48-        check_test_selector(self.root, 'bound.rs::test_other')\nscripts/ci/test_applicability.py-49-        self.replace_same_metadata(path, original)\nscripts/ci/test_applicability.py-50-        check_test_selector(self.root, 'bound.rs::test_bound')\n",
+    "resource_revision_r14_rejects_signed_old_cookies_and_preserves_control_output_reserve": "config/pon/applicability-v1.json-215-        \"symbol\": \"serve_public_protected_v3_with_metrics\"\nconfig/pon/applicability-v1.json-216-      },\nconfig/pon/applicability-v1.json-217-      \"tests\": [\nconfig/pon/applicability-v1.json-218-        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline\",\nconfig/pon/applicability-v1.json:219:        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::resource_revision_r14_rejects_signed_old_cookies_and_preserves_control_output_reserve\",\nconfig/pon/applicability-v1.json-220-        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::r4_real_paid_fifo_read_service_and_native_admission_after_holder_release\",\nconfig/pon/applicability-v1.json-221-        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::r4_pending_heads_use_validated_readiness_and_original_expiry_boundaries\",\nconfig/pon/applicability-v1.json-222-        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::cpu_budget_signed_native_success_survives_clock_failure_and_reads_survive_debt\",\nconfig/pon/applicability-v1.json-223-        \"trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs::cpu_budget_missing_start_clock_refuses_before_full_verification\",\n",
+    "resource_revision_r18_rejects_signed_old_cookies_and_preserves_control_output_reserve": "",
+    "work_verified": "scripts/ci/check_client_confirmation_evidence.py-360-        require(case in {'independent','hot-sender'}, 'pipeline scenario')\nscripts/ci/check_client_confirmation_evidence.py-361-        packets = load(folder / 'pipeline' / (case + '-packets.json'))\nscripts/ci/check_client_confirmation_evidence.py-362-        pages = load(folder / 'pipeline' / (case + '-pages.json'))\nscripts/ci/check_client_confirmation_evidence.py-363-        require(len(packets) == len(pages) == len(branch['blocks']) == 1 + samples*(1+PARAMS['confirmation_depth'])\nscripts/ci/check_client_confirmation_evidence.py:364:                and branch['actual_work_verified_blocks'] == len(packets), 'pipeline block count')\nscripts/ci/check_client_confirmation_evidence.py-365-        observed = [row for row in pipeline['samples'] if row['scenario'] == case]\nscripts/ci/check_client_confirmation_evidence.py-366-        require(len(observed) == samples and [row['sample'] for row in observed] == list(range(samples)), 'pipeline sample sequence')\nscripts/ci/check_client_confirmation_evidence.py-367-        with tempfile.TemporaryDirectory(prefix='pon-evidence-replay-') as directory, patch.dict(os.environ,\nscripts/ci/check_client_confirmation_evidence.py-368-                {'TRNM_NATIVE_SESSION':'','TRNM_NATIVE_EXECUTOR':'','TRNM_NATIVE_WORK':''}):\n"
+  }
+}

@@ -1,0 +1,2069 @@
+{
+  "actual_modules": 9,
+  "actual_tests": 255,
+  "all_finite_suites_pass": true,
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.004569035954773426,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:42.418133+00:00",
+      "label": "source-before-commit",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/source-before-commit",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:42.413406+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "d5feae650eba77dd37c1ac7353701be9b3420fc7e6e841d0771108ba5612b992"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.008523858850821853,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:42.427174+00:00",
+      "label": "source-before-tree",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/source-before-tree",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:42.418496+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "48b999851ca84a9fc79616fe6c71012fd776743a8a9423d57d3143bc728578a1"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.11492293886840343,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:42.542635+00:00",
+      "label": "source-before-status",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/source-before-status",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:42.427570+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.115468077827245,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:42.659370+00:00",
+      "label": "preflight",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/preflight",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:42.543655+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 172,
+        "sha256": "4c58882a4134d8adc21e7bcf4a095a3d15d31c83a068667459aa26e612434295"
+      },
+      "timed_out": false,
+      "timeout_seconds": 120
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.004950176924467087,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:42.672136+00:00",
+      "label": "suite-01-source-commit",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-01-source-commit",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:42.666889+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "d5feae650eba77dd37c1ac7353701be9b3420fc7e6e841d0771108ba5612b992"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.009043783182278275,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:42.682128+00:00",
+      "label": "suite-01-source-tree",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-01-source-tree",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:42.672805+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "48b999851ca84a9fc79616fe6c71012fd776743a8a9423d57d3143bc728578a1"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.11520425090566278,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:42.798528+00:00",
+      "label": "suite-01-source-status",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-01-source-status",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:42.682802+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_cost_envelope_contract_v1.py",
+        "-v"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.8677628729492426,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:43.667652+00:00",
+      "label": "test_cost_envelope_contract_v1",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/test_cost_envelope_contract_v1",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:42.799592+00:00",
+      "stderr": {
+        "bytes": 5366,
+        "sha256": "68570e780e21ab2504459ebf71fc2b14637c343b19e1638f25b1b69d19b33928"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.005001271143555641,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:43.675131+00:00",
+      "label": "suite-02-source-commit",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-02-source-commit",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:43.669852+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "d5feae650eba77dd37c1ac7353701be9b3420fc7e6e841d0771108ba5612b992"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.008951873984187841,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:43.685017+00:00",
+      "label": "suite-02-source-tree",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-02-source-tree",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:43.675793+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "48b999851ca84a9fc79616fe6c71012fd776743a8a9423d57d3143bc728578a1"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.11546326102688909,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:43.801447+00:00",
+      "label": "suite-02-source-status",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-02-source-status",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:43.685668+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_branch_time_daa_v1.py",
+        "-v"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.6172858921345323,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:44.420071+00:00",
+      "label": "test_branch_time_daa_v1",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/test_branch_time_daa_v1",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:43.802492+00:00",
+      "stderr": {
+        "bytes": 5638,
+        "sha256": "06fde7043d7b098d6af818d272f2f1c8bbfd8ebb8d1aac658709e08ce93ae307"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.004860969027504325,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:44.426900+00:00",
+      "label": "suite-03-source-commit",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-03-source-commit",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:44.421721+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "d5feae650eba77dd37c1ac7353701be9b3420fc7e6e841d0771108ba5612b992"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.008442476158961654,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:44.435965+00:00",
+      "label": "suite-03-source-tree",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-03-source-tree",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:44.427356+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "48b999851ca84a9fc79616fe6c71012fd776743a8a9423d57d3143bc728578a1"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.11531071993522346,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:44.552189+00:00",
+      "label": "suite-03-source-status",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-03-source-status",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:44.436596+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_lifecycle_cost_v1.py",
+        "-v"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 2.1217882041819394,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:46.675626+00:00",
+      "label": "test_lifecycle_cost_v1",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/test_lifecycle_cost_v1",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:44.553537+00:00",
+      "stderr": {
+        "bytes": 5203,
+        "sha256": "743fd3f43e59b14075e5632e468512fa0677f451d19d4624226721f2548cd639"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.005167053081095219,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:46.682756+00:00",
+      "label": "suite-04-source-commit",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-04-source-commit",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:46.677316+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "d5feae650eba77dd37c1ac7353701be9b3420fc7e6e841d0771108ba5612b992"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.008997570956125855,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:46.692667+00:00",
+      "label": "suite-04-source-tree",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-04-source-tree",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:46.683397+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "48b999851ca84a9fc79616fe6c71012fd776743a8a9423d57d3143bc728578a1"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.11529867490753531,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:46.808895+00:00",
+      "label": "suite-04-source-status",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-04-source-status",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:46.693340+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_credit_envelope_contract.py",
+        "-v"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.8177486141212285,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:47.627954+00:00",
+      "label": "test_credit_envelope_contract",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/test_credit_envelope_contract",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:46.809939+00:00",
+      "stderr": {
+        "bytes": 6874,
+        "sha256": "c464cca6d7a0ad5b6c6d3d8fb5360c94a036b2a618125999727f8556559089ef"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.005120954010635614,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:47.634997+00:00",
+      "label": "suite-05-source-commit",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-05-source-commit",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:47.629586+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "d5feae650eba77dd37c1ac7353701be9b3420fc7e6e841d0771108ba5612b992"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.009101558942347765,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:47.645040+00:00",
+      "label": "suite-05-source-tree",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-05-source-tree",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:47.635641+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "48b999851ca84a9fc79616fe6c71012fd776743a8a9423d57d3143bc728578a1"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.11547064105980098,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:47.761499+00:00",
+      "label": "suite-05-source-status",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-05-source-status",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:47.645760+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_normalized_search_cost.py",
+        "-v"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.2662252781447023,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:48.029105+00:00",
+      "label": "test_normalized_search_cost",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/test_normalized_search_cost",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:47.762534+00:00",
+      "stderr": {
+        "bytes": 6549,
+        "sha256": "c196564557507a18f8bc99740e22e2ac3ea5297f0b596e1605b3d4755784dbc2"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.004813970997929573,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:48.036150+00:00",
+      "label": "suite-06-source-commit",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-06-source-commit",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:48.031065+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "d5feae650eba77dd37c1ac7353701be9b3420fc7e6e841d0771108ba5612b992"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.00893832603469491,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:48.046034+00:00",
+      "label": "suite-06-source-tree",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-06-source-tree",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:48.036818+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "48b999851ca84a9fc79616fe6c71012fd776743a8a9423d57d3143bc728578a1"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.11528259585611522,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:48.162264+00:00",
+      "label": "suite-06-source-status",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-06-source-status",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:48.046676+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_fixed_probability_contract.py",
+        "-v"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.21581287309527397,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:48.378965+00:00",
+      "label": "test_fixed_probability_contract",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/test_fixed_probability_contract",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:48.162985+00:00",
+      "stderr": {
+        "bytes": 2881,
+        "sha256": "131bc5b69a0cea32ca1130375d4bca479097b69fc062b66e0b230f030ea081d2"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.004895383026450872,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:48.385508+00:00",
+      "label": "suite-07-source-commit",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-07-source-commit",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:48.380350+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "d5feae650eba77dd37c1ac7353701be9b3420fc7e6e841d0771108ba5612b992"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.00888714287430048,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:48.395330+00:00",
+      "label": "suite-07-source-tree",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-07-source-tree",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:48.386181+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "48b999851ca84a9fc79616fe6c71012fd776743a8a9423d57d3143bc728578a1"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.11552602704614401,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:48.511826+00:00",
+      "label": "suite-07-source-status",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-07-source-status",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:48.396037+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_credit_feasibility.py",
+        "-v"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 1.6694811410270631,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:50.182108+00:00",
+      "label": "test_credit_feasibility",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/test_credit_feasibility",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:48.512471+00:00",
+      "stderr": {
+        "bytes": 5159,
+        "sha256": "636e60e005cb995680249503fa21d2ea8049d0716f5852f0b9c10352dfeacb7f"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.005066382000222802,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:50.188971+00:00",
+      "label": "suite-08-source-commit",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-08-source-commit",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:50.183619+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "d5feae650eba77dd37c1ac7353701be9b3420fc7e6e841d0771108ba5612b992"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.008923255139961839,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:50.199133+00:00",
+      "label": "suite-08-source-tree",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-08-source-tree",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:50.189940+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "48b999851ca84a9fc79616fe6c71012fd776743a8a9423d57d3143bc728578a1"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.11532171093858778,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:50.315389+00:00",
+      "label": "suite-08-source-status",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-08-source-status",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:50.199808+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_amortized_cost_potential.py",
+        "-v"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 1.369473033118993,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:51.686187+00:00",
+      "label": "test_amortized_cost_potential",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/test_amortized_cost_potential",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:50.316428+00:00",
+      "stderr": {
+        "bytes": 5505,
+        "sha256": "963ca5ac57cf9c1991bb3209bb5799bc3e495c30b6bbf956089936821aae8801"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.004944948945194483,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:51.692991+00:00",
+      "label": "suite-09-source-commit",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-09-source-commit",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:51.687775+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "d5feae650eba77dd37c1ac7353701be9b3420fc7e6e841d0771108ba5612b992"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.00897399801760912,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:51.702910+00:00",
+      "label": "suite-09-source-tree",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-09-source-tree",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:51.693631+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "48b999851ca84a9fc79616fe6c71012fd776743a8a9423d57d3143bc728578a1"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.11534923990257084,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:51.819194+00:00",
+      "label": "suite-09-source-status",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-09-source-status",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:51.703552+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_amortized_cost_potential_independent.py",
+        "-v"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 4.779099213890731,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:56.599362+00:00",
+      "label": "test_amortized_cost_potential_independent",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/test_amortized_cost_potential_independent",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:51.819996+00:00",
+      "stderr": {
+        "bytes": 1404,
+        "sha256": "a77e97c33f958b986be4268c3d19e63831af66993edee71320c8aa1c32ec1486"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.005000525852665305,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:56.606036+00:00",
+      "label": "source-after-commit",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/source-after-commit",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:56.600753+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "d5feae650eba77dd37c1ac7353701be9b3420fc7e6e841d0771108ba5612b992"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--verify",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.009036136092618108,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:56.616006+00:00",
+      "label": "source-after-tree",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/source-after-tree",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:56.606674+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "48b999851ca84a9fc79616fe6c71012fd776743a8a9423d57d3143bc728578a1"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "cwd": "/data/chain-abg-70ae-20261108/source",
+      "elapsed_seconds": 0.11550565715879202,
+      "env_overrides": {
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+      "finished_utc": "2026-11-09T03:42:56.734473+00:00",
+      "label": "source-after-status",
+      "launch_error": null,
+      "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/source-after-status",
+      "outer_process_exit": 0,
+      "started_utc": "2026-11-09T03:42:56.616642+00:00",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 60
+    }
+  ],
+  "concurrent_load": "Same-host B static gates and root native/strict-Clippy development checks run concurrently. The original fixed-host pressure contract is not exercised.",
+  "expected_modules": 9,
+  "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+  "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+  "expected_tests": 255,
+  "failures": [],
+  "finished_utc": "2026-11-09T03:42:56.741855+00:00",
+  "preflight": {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "elapsed_seconds": 0.115468077827245,
+    "env_overrides": {
+      "GIT_NO_LAZY_FETCH": "1",
+      "GIT_TERMINAL_PROMPT": "0",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONHASHSEED": "0"
+    },
+    "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+    "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+    "finished_utc": "2026-11-09T03:42:42.659370+00:00",
+    "label": "preflight",
+    "launch_error": null,
+    "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/preflight",
+    "outer_process_exit": 0,
+    "started_utc": "2026-11-09T03:42:42.543655+00:00",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 172,
+      "sha256": "4c58882a4134d8adc21e7bcf4a095a3d15d31c83a068667459aa26e612434295"
+    },
+    "timed_out": false,
+    "timeout_seconds": 120
+  },
+  "production_qualification": "HOLD_NO_GO",
+  "qualification_scope": "Finite models and declared contract controls only. No all-legal-strategy lower bound, empirical upper bound, hidden-state premise, physical/quantum resource bound, original business deadline or mixed-consensus qualification.",
+  "schema": "r2-def-finite-evidence-v1",
+  "source_after": {
+    "clean": true,
+    "commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+    "expected_identity": true,
+    "status_bytes": 0,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e"
+  },
+  "source_before": {
+    "clean": true,
+    "commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+    "expected_identity": true,
+    "status_bytes": 0,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e"
+  },
+  "suite_results": [
+    {
+      "actual_tests": 29,
+      "child_exit_scope": "This result is the unittest parent process. Existing child CLI negative/HOLD exits are asserted inside unchanged tests; no child exit is substituted for the parent result. Per-child output is not independently instrumented beyond the suite's raw logs.",
+      "command_result": {
+        "argv": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "formal/pon-nakamoto-v1",
+          "-p",
+          "test_cost_envelope_contract_v1.py",
+          "-v"
+        ],
+        "cwd": "/data/chain-abg-70ae-20261108/source",
+        "elapsed_seconds": 0.8677628729492426,
+        "env_overrides": {
+          "GIT_NO_LAZY_FETCH": "1",
+          "GIT_TERMINAL_PROMPT": "0",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+        "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+        "finished_utc": "2026-11-09T03:42:43.667652+00:00",
+        "label": "test_cost_envelope_contract_v1",
+        "launch_error": null,
+        "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/test_cost_envelope_contract_v1",
+        "outer_process_exit": 0,
+        "started_utc": "2026-11-09T03:42:42.799592+00:00",
+        "stderr": {
+          "bytes": 5366,
+          "sha256": "68570e780e21ab2504459ebf71fc2b14637c343b19e1638f25b1b69d19b33928"
+        },
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "timed_out": false,
+        "timeout_seconds": 180
+      },
+      "declared_child_semantics": "One child CLI returning 3 is an EXPECTED tested HOLD_NO_GO contract; the unittest parent still expects exit 0. Do not flatten child exit 3 into a suite failure.",
+      "expected_tests": 29,
+      "id": "test_cost_envelope_contract_v1",
+      "no_skips_or_expected_failures": true,
+      "pass": true,
+      "terminal_status_lines": [
+        "OK"
+      ],
+      "unittest_parent_exit": 0
+    },
+    {
+      "actual_tests": 31,
+      "child_exit_scope": "This result is the unittest parent process. Existing child CLI negative/HOLD exits are asserted inside unchanged tests; no child exit is substituted for the parent result. Per-child output is not independently instrumented beyond the suite's raw logs.",
+      "command_result": {
+        "argv": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "formal/pon-nakamoto-v1",
+          "-p",
+          "test_branch_time_daa_v1.py",
+          "-v"
+        ],
+        "cwd": "/data/chain-abg-70ae-20261108/source",
+        "elapsed_seconds": 0.6172858921345323,
+        "env_overrides": {
+          "GIT_NO_LAZY_FETCH": "1",
+          "GIT_TERMINAL_PROMPT": "0",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+        "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+        "finished_utc": "2026-11-09T03:42:44.420071+00:00",
+        "label": "test_branch_time_daa_v1",
+        "launch_error": null,
+        "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/test_branch_time_daa_v1",
+        "outer_process_exit": 0,
+        "started_utc": "2026-11-09T03:42:43.802492+00:00",
+        "stderr": {
+          "bytes": 5638,
+          "sha256": "06fde7043d7b098d6af818d272f2f1c8bbfd8ebb8d1aac658709e08ce93ae307"
+        },
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "timed_out": false,
+        "timeout_seconds": 180
+      },
+      "declared_child_semantics": null,
+      "expected_tests": 31,
+      "id": "test_branch_time_daa_v1",
+      "no_skips_or_expected_failures": true,
+      "pass": true,
+      "terminal_status_lines": [
+        "OK"
+      ],
+      "unittest_parent_exit": 0
+    },
+    {
+      "actual_tests": 31,
+      "child_exit_scope": "This result is the unittest parent process. Existing child CLI negative/HOLD exits are asserted inside unchanged tests; no child exit is substituted for the parent result. Per-child output is not independently instrumented beyond the suite's raw logs.",
+      "command_result": {
+        "argv": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "formal/pon-nakamoto-v1",
+          "-p",
+          "test_lifecycle_cost_v1.py",
+          "-v"
+        ],
+        "cwd": "/data/chain-abg-70ae-20261108/source",
+        "elapsed_seconds": 2.1217882041819394,
+        "env_overrides": {
+          "GIT_NO_LAZY_FETCH": "1",
+          "GIT_TERMINAL_PROMPT": "0",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+        "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+        "finished_utc": "2026-11-09T03:42:46.675626+00:00",
+        "label": "test_lifecycle_cost_v1",
+        "launch_error": null,
+        "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/test_lifecycle_cost_v1",
+        "outer_process_exit": 0,
+        "started_utc": "2026-11-09T03:42:44.553537+00:00",
+        "stderr": {
+          "bytes": 5203,
+          "sha256": "743fd3f43e59b14075e5632e468512fa0677f451d19d4624226721f2548cd639"
+        },
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "timed_out": false,
+        "timeout_seconds": 180
+      },
+      "declared_child_semantics": null,
+      "expected_tests": 31,
+      "id": "test_lifecycle_cost_v1",
+      "no_skips_or_expected_failures": true,
+      "pass": true,
+      "terminal_status_lines": [
+        "OK"
+      ],
+      "unittest_parent_exit": 0
+    },
+    {
+      "actual_tests": 40,
+      "child_exit_scope": "This result is the unittest parent process. Existing child CLI negative/HOLD exits are asserted inside unchanged tests; no child exit is substituted for the parent result. Per-child output is not independently instrumented beyond the suite's raw logs.",
+      "command_result": {
+        "argv": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "formal/pon-nakamoto-v1",
+          "-p",
+          "test_credit_envelope_contract.py",
+          "-v"
+        ],
+        "cwd": "/data/chain-abg-70ae-20261108/source",
+        "elapsed_seconds": 0.8177486141212285,
+        "env_overrides": {
+          "GIT_NO_LAZY_FETCH": "1",
+          "GIT_TERMINAL_PROMPT": "0",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+        "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+        "finished_utc": "2026-11-09T03:42:47.627954+00:00",
+        "label": "test_credit_envelope_contract",
+        "launch_error": null,
+        "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/test_credit_envelope_contract",
+        "outer_process_exit": 0,
+        "started_utc": "2026-11-09T03:42:46.809939+00:00",
+        "stderr": {
+          "bytes": 6874,
+          "sha256": "c464cca6d7a0ad5b6c6d3d8fb5360c94a036b2a618125999727f8556559089ef"
+        },
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "timed_out": false,
+        "timeout_seconds": 180
+      },
+      "declared_child_semantics": null,
+      "expected_tests": 40,
+      "id": "test_credit_envelope_contract",
+      "no_skips_or_expected_failures": true,
+      "pass": true,
+      "terminal_status_lines": [
+        "OK"
+      ],
+      "unittest_parent_exit": 0
+    },
+    {
+      "actual_tests": 37,
+      "child_exit_scope": "This result is the unittest parent process. Existing child CLI negative/HOLD exits are asserted inside unchanged tests; no child exit is substituted for the parent result. Per-child output is not independently instrumented beyond the suite's raw logs.",
+      "command_result": {
+        "argv": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "formal/pon-nakamoto-v1",
+          "-p",
+          "test_normalized_search_cost.py",
+          "-v"
+        ],
+        "cwd": "/data/chain-abg-70ae-20261108/source",
+        "elapsed_seconds": 0.2662252781447023,
+        "env_overrides": {
+          "GIT_NO_LAZY_FETCH": "1",
+          "GIT_TERMINAL_PROMPT": "0",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+        "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+        "finished_utc": "2026-11-09T03:42:48.029105+00:00",
+        "label": "test_normalized_search_cost",
+        "launch_error": null,
+        "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/test_normalized_search_cost",
+        "outer_process_exit": 0,
+        "started_utc": "2026-11-09T03:42:47.762534+00:00",
+        "stderr": {
+          "bytes": 6549,
+          "sha256": "c196564557507a18f8bc99740e22e2ac3ea5297f0b596e1605b3d4755784dbc2"
+        },
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "timed_out": false,
+        "timeout_seconds": 180
+      },
+      "declared_child_semantics": null,
+      "expected_tests": 37,
+      "id": "test_normalized_search_cost",
+      "no_skips_or_expected_failures": true,
+      "pass": true,
+      "terminal_status_lines": [
+        "OK"
+      ],
+      "unittest_parent_exit": 0
+    },
+    {
+      "actual_tests": 16,
+      "child_exit_scope": "This result is the unittest parent process. Existing child CLI negative/HOLD exits are asserted inside unchanged tests; no child exit is substituted for the parent result. Per-child output is not independently instrumented beyond the suite's raw logs.",
+      "command_result": {
+        "argv": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "formal/pon-nakamoto-v1",
+          "-p",
+          "test_fixed_probability_contract.py",
+          "-v"
+        ],
+        "cwd": "/data/chain-abg-70ae-20261108/source",
+        "elapsed_seconds": 0.21581287309527397,
+        "env_overrides": {
+          "GIT_NO_LAZY_FETCH": "1",
+          "GIT_TERMINAL_PROMPT": "0",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+        "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+        "finished_utc": "2026-11-09T03:42:48.378965+00:00",
+        "label": "test_fixed_probability_contract",
+        "launch_error": null,
+        "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/test_fixed_probability_contract",
+        "outer_process_exit": 0,
+        "started_utc": "2026-11-09T03:42:48.162985+00:00",
+        "stderr": {
+          "bytes": 2881,
+          "sha256": "131bc5b69a0cea32ca1130375d4bca479097b69fc062b66e0b230f030ea081d2"
+        },
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "timed_out": false,
+        "timeout_seconds": 180
+      },
+      "declared_child_semantics": null,
+      "expected_tests": 16,
+      "id": "test_fixed_probability_contract",
+      "no_skips_or_expected_failures": true,
+      "pass": true,
+      "terminal_status_lines": [
+        "OK"
+      ],
+      "unittest_parent_exit": 0
+    },
+    {
+      "actual_tests": 31,
+      "child_exit_scope": "This result is the unittest parent process. Existing child CLI negative/HOLD exits are asserted inside unchanged tests; no child exit is substituted for the parent result. Per-child output is not independently instrumented beyond the suite's raw logs.",
+      "command_result": {
+        "argv": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "formal/pon-nakamoto-v1",
+          "-p",
+          "test_credit_feasibility.py",
+          "-v"
+        ],
+        "cwd": "/data/chain-abg-70ae-20261108/source",
+        "elapsed_seconds": 1.6694811410270631,
+        "env_overrides": {
+          "GIT_NO_LAZY_FETCH": "1",
+          "GIT_TERMINAL_PROMPT": "0",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+        "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+        "finished_utc": "2026-11-09T03:42:50.182108+00:00",
+        "label": "test_credit_feasibility",
+        "launch_error": null,
+        "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/test_credit_feasibility",
+        "outer_process_exit": 0,
+        "started_utc": "2026-11-09T03:42:48.512471+00:00",
+        "stderr": {
+          "bytes": 5159,
+          "sha256": "636e60e005cb995680249503fa21d2ea8049d0716f5852f0b9c10352dfeacb7f"
+        },
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "timed_out": false,
+        "timeout_seconds": 180
+      },
+      "declared_child_semantics": null,
+      "expected_tests": 31,
+      "id": "test_credit_feasibility",
+      "no_skips_or_expected_failures": true,
+      "pass": true,
+      "terminal_status_lines": [
+        "OK"
+      ],
+      "unittest_parent_exit": 0
+    },
+    {
+      "actual_tests": 34,
+      "child_exit_scope": "This result is the unittest parent process. Existing child CLI negative/HOLD exits are asserted inside unchanged tests; no child exit is substituted for the parent result. Per-child output is not independently instrumented beyond the suite's raw logs.",
+      "command_result": {
+        "argv": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "formal/pon-nakamoto-v1",
+          "-p",
+          "test_amortized_cost_potential.py",
+          "-v"
+        ],
+        "cwd": "/data/chain-abg-70ae-20261108/source",
+        "elapsed_seconds": 1.369473033118993,
+        "env_overrides": {
+          "GIT_NO_LAZY_FETCH": "1",
+          "GIT_TERMINAL_PROMPT": "0",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+        "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+        "finished_utc": "2026-11-09T03:42:51.686187+00:00",
+        "label": "test_amortized_cost_potential",
+        "launch_error": null,
+        "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/test_amortized_cost_potential",
+        "outer_process_exit": 0,
+        "started_utc": "2026-11-09T03:42:50.316428+00:00",
+        "stderr": {
+          "bytes": 5505,
+          "sha256": "963ca5ac57cf9c1991bb3209bb5799bc3e495c30b6bbf956089936821aae8801"
+        },
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "timed_out": false,
+        "timeout_seconds": 180
+      },
+      "declared_child_semantics": null,
+      "expected_tests": 34,
+      "id": "test_amortized_cost_potential",
+      "no_skips_or_expected_failures": true,
+      "pass": true,
+      "terminal_status_lines": [
+        "OK"
+      ],
+      "unittest_parent_exit": 0
+    },
+    {
+      "actual_tests": 6,
+      "child_exit_scope": "This result is the unittest parent process. Existing child CLI negative/HOLD exits are asserted inside unchanged tests; no child exit is substituted for the parent result. Per-child output is not independently instrumented beyond the suite's raw logs.",
+      "command_result": {
+        "argv": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "formal/pon-nakamoto-v1",
+          "-p",
+          "test_amortized_cost_potential_independent.py",
+          "-v"
+        ],
+        "cwd": "/data/chain-abg-70ae-20261108/source",
+        "elapsed_seconds": 4.779099213890731,
+        "env_overrides": {
+          "GIT_NO_LAZY_FETCH": "1",
+          "GIT_TERMINAL_PROMPT": "0",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+        "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+        "finished_utc": "2026-11-09T03:42:56.599362+00:00",
+        "label": "test_amortized_cost_potential_independent",
+        "launch_error": null,
+        "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/test_amortized_cost_potential_independent",
+        "outer_process_exit": 0,
+        "started_utc": "2026-11-09T03:42:51.819996+00:00",
+        "stderr": {
+          "bytes": 1404,
+          "sha256": "a77e97c33f958b986be4268c3d19e63831af66993edee71320c8aa1c32ec1486"
+        },
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "timed_out": false,
+        "timeout_seconds": 180
+      },
+      "declared_child_semantics": null,
+      "expected_tests": 6,
+      "id": "test_amortized_cost_potential_independent",
+      "no_skips_or_expected_failures": true,
+      "pass": true,
+      "terminal_status_lines": [
+        "OK"
+      ],
+      "unittest_parent_exit": 0
+    }
+  ]
+}

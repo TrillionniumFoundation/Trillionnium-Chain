@@ -1,0 +1,63 @@
+{
+  "label": "source-after",
+  "argv": [
+    "python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "--output",
+    "/data/chain-abg-70ae-20261108/evidence/r3-contract-gates/source-after.json"
+  ],
+  "command": "python3 scripts/ci/verify_ci_source.py --kind head --expected-head ef025cbea963e3dee54ec4a17e3db7336c11409b --output /data/chain-abg-70ae-20261108/evidence/r3-contract-gates/source-after.json",
+  "cwd": "/data/chain-abg-70ae-20261108/source",
+  "expected_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+  "expected_tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+  "before": {
+    "head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "started_utc": "2026-11-09T04:04:47.899390+00:00",
+  "timeout_seconds": 300,
+  "timeout_scope": "source/graph command wall-time supervisor only; no product deadline changed",
+  "stdout": "/data/chain-abg-70ae-20261108/evidence/r3-contract-gates/12-source-after.stdout",
+  "stderr": "/data/chain-abg-70ae-20261108/evidence/r3-contract-gates/12-source-after.stderr",
+  "expected_tests": null,
+  "tests_run": null,
+  "skipped": null,
+  "failures": null,
+  "errors": null,
+  "timed_out": false,
+  "exit_code": 0,
+  "passed": true,
+  "elapsed_seconds": 6.182741,
+  "after": {
+    "head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "source_identity_report": {
+    "base": null,
+    "candidate": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "tested_tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2485434728,
+    "tracked_entries": 26128,
+    "tracked_worktree_verified": true
+  },
+  "finished_utc": "2026-11-09T04:04:54.178324+00:00",
+  "stdout_bytes": 423,
+  "stderr_bytes": 0,
+  "stdout_sha256": "982120301643534abec9b8fb3f051e8871ec5eb28e44a1dc293f47cccb538c35",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

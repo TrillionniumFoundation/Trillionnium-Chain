@@ -1058,7 +1058,7 @@ fn shared_admission_owner_wait_observes_control_deadline_and_original_two_second
                 &mut |_| Ok(()),
                 &trnm_mvcc_fee::pon_executor::ExecutionControl::new(&check, &()),
                 || Ok(clock),
-                None,
+                crate::ingress::AdmissionDispatchContext::default(),
             )
             .err()
             .unwrap()
@@ -1593,7 +1593,7 @@ fn shared_history_paid_deficit_refuses_without_waiting_under_original_writer() {
         let checked = WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |_| {
             operation.history_checkpoint(false, &|| control.check())
         })?;
-        operation.history_work_verified(&checked)?;
+        operation.test_legacy_history_w1_only_priority(&checked)?;
         let held = writer.lock().unwrap();
         let mut boundaries = 0;
         // Real W1 CPU depletes the original cold account; no synthetic meter

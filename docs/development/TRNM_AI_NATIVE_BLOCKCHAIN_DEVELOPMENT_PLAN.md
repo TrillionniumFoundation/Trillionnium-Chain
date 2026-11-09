@@ -10606,3 +10606,29 @@ The composed F2 source at 0101b0ce76239832e0b2d19d0fd3f07e40fabeb4 remains prese
 The [current composition entry](../../evidence/chain-six-full-20261108/CURRENT_PQ_COMPOSITION.md) retains the original 29 commands, arguments, order, 1200-second per-command limits and complete source gates. It separately fixes the reviewed 55-name roster and test-source hash. Its nine retained-log mutation controls reject missing, duplicate, skipped, stale or falsely reported execution. Historical runner, tests, refusals and raw logs remain unmodified; the F2 log is parser-control input, never a fresh execution result.
 
 The retained credit-envelope workflow now invokes its unchanged 43-test source-integrity command with Python unbuffered output. Actual original tests succeeded in both observations, while only the unbuffered stream satisfied the unchanged terminal-OK parser; no test, parser, pipefail rule or other suite was relaxed. Native Rust and configuration inputs remain byte-identical to F2. New complete campaigns must identify this new frozen source and their actual outcomes; all broader qualification and production-activation flags remain HOLD / false.
+
+### 2026-11-09 — Complete native relation before completion priority
+
+Continue the #821 composition in an isolated development branch. The
+[source-bound continuation](../../evidence/pon-native-completion-20261109/README.md)
+moves public/History completion eligibility from W1-only evidence to a private
+token constructed by the original storage owner after complete parent/task,
+M06, State/output and transaction readback checks. Held, prepared-held,
+detached, Growth and both History owners retain their original live CPU
+interval, reservation, deadline and commit fences. Unbound trusted local
+helpers retain their original metering. The signed resource namespace advances
+to r18 native-completion without changing numeric limits.
+
+Retain same-byte red/green controls, cold honest progress, original tests and
+failed observations. The new cold control's two-second test deadline does not
+redefine History page/sync budgets or the original four-second host contract.
+Later qualification can expose pre-token CPU starvation; larger credit,
+warmup or deadlines do not qualify that gap. The existing crash fence is not
+a complete cumulative CPU ledger; trusted-library clean reopen remains open.
+
+The clean original composition passed nine explicitly selected D/E/F finite
+model suites (255 tests). Actual cost endpoints, complete competitive histories,
+initial/hidden potential, lifetime tails and native branch/credit migration
+remain unqualified. The #820 process-exit correction has a separate source.
+Same-version Host/WAN/long-run/FinalUse acceptance and production activation
+remain HOLD_NO_GO.

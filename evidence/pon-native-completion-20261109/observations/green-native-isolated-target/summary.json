@@ -1,0 +1,9 @@
+{
+  "source_head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+  "source_tree": "46164cd85fff00e3a080acc29fef25a27751082b",
+  "six_pass": true,
+  "prepared_pass": true,
+  "shared_test_sha256": "c5f0b9025f5f5b7e69bc766dd5c79403d8b8e4321157c3403d2c68144a92867f",
+  "fixed_host_contract": false,
+  "production_qualification": "HOLD_NO_GO"
+}

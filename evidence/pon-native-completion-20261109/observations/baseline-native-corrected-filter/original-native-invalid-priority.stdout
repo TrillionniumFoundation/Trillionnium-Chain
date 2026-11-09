@@ -1,0 +1,7 @@
+
+running 1 test
+test ingress::public_v3::scalar_cpu::completion_tests::same_valid_w1_native_invalid_packet_cannot_reacquire_completion_priority ... same genuine W1 acquisition_attempts=3 requests=2 promotions=[1, 0] paid_cpu_ns=15957597
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1296 filtered out; finished in 0.31s
+

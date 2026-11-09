@@ -306,7 +306,7 @@ fn admit_packet(
         // control.check() performed no ledger work and duplicated Host reads.
         let check = || progress.history_checkpoint(owns_node_mutex, &|| control.check());
         check()?;
-        let (existing, permit, codec) =
+        let (existing, permit) =
             super::observe_submit_phase(observation, SubmitPhase::Context, || {
                 owner.with(control, |node| {
                     let existing = node.precheck_public_admission_context_with_progress(
@@ -319,7 +319,7 @@ fn admit_packet(
                     } else {
                         None
                     };
-                    Ok((existing, permit, node.settings().packet_codec_context()))
+                    Ok((existing, permit))
                 })
             })?;
         if let Some(id) = existing {
@@ -335,10 +335,9 @@ fn admit_packet(
         let checked = super::observe_submit_phase(observation, SubmitPhase::Work, || {
             verify_history_work(packet, &progress, owns_node_mutex, control)
         })?;
-        operation.history_work_verified_for_context(&checked, &codec)?;
-        // Promotion changes only scheduling for this complete, unique W1.
-        // Shared owners retain nonwaiting checkpoints while holding Node;
-        // exclusive embedding has no Node mutex and keeps its exact stack.
+        // Complete W1 alone cannot claim priority. The same original native
+        // owner will signal full parent/task/M06/output validation through
+        // this checkpoint; its packet codec and all commit fences stay local.
         check()?;
         let execution_progress = |point| {
             check()?;
@@ -360,7 +359,10 @@ fn admit_packet(
                     &mut |_| check(),
                     &execution,
                     || Ok(clock),
-                    observation,
+                    super::AdmissionDispatchContext {
+                        observation,
+                        completion_cpu: Some(&progress),
+                    },
                 )?;
                 drop(guard);
                 id
@@ -374,7 +376,12 @@ fn admit_packet(
                             &execution,
                             super::execution_observation::Scope::Held,
                             |execution| {
-                                node.admit_work_checked_with_control(checked, clock, execution)
+                                node.admit_work_checked_with_completion(
+                                    checked,
+                                    clock,
+                                    execution,
+                                    Some(&progress),
+                                )
                             },
                         )
                     })

@@ -289,6 +289,25 @@ impl Node {
         progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
         accounting: &dyn pon_executor::ExecutionWorkerAccounting,
     ) -> Result<Hash> {
+        self.admit_growth_work_checked_with_completion(
+            checked,
+            observed_now,
+            progress,
+            accounting,
+            None,
+        )
+    }
+
+    /// The original paid operation may receive priority only after this full
+    /// native relation, including parent/account witnesses and output roots.
+    pub(crate) fn admit_growth_work_checked_with_completion(
+        &mut self,
+        checked: GrowthWorkCheckedPacket,
+        observed_now: u64,
+        progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
+        accounting: &dyn pon_executor::ExecutionWorkerAccounting,
+        completion_cpu: Option<&crate::ingress::public_v3::ServiceMutationCpuCheckpoint>,
+    ) -> Result<Hash> {
         let (packet, _verified_work) = checked.into_parts();
         if let Some(id) =
             self.precheck_growth_admission_with_progress(&packet, observed_now, progress)?
@@ -383,6 +402,16 @@ impl Node {
         )?;
         progress(GrowthProgress::BeforeCommit)?;
         self.growth_guard()?;
+        if let Some(cpu) = completion_cpu {
+            // All native relation and readback checks have succeeded under
+            // this same BEGIN IMMEDIATE transaction. Keep its original guard;
+            // the completion evidence grants scheduling, never commit authority.
+            let complete = crate::store::NativeAdmissionCompletion {
+                domain: b"public-growth-complete-work-identity-v1",
+                packet: &bytes,
+            };
+            cpu.native_admission_complete(&complete)?;
+        }
         tx.commit()?;
         Ok(id)
     }

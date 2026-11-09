@@ -139,7 +139,12 @@ fn native_m06_runs_without_writer_and_matches_held_owner_on_both_backends() {
             assert_eq!(bindings(&node), before_bindings + 1);
         }
         let id = node
-            .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()))
+            .commit_shared_admission(
+                outcome,
+                1000,
+                &ExecutionControl::new(&|_| Ok(()), &()),
+                None,
+            )
             .unwrap();
         node.activate_observed(id, 1000).unwrap();
         let mut reference = open(reference_directory.path(), &settings, authenticated);
@@ -205,20 +210,35 @@ fn completed_artifact_refuses_wrong_owner_reopen_and_late_owner_stop() {
     let candidate = packet(&node, settings.genesis(), 1, 1, 1001, 0);
     let outcome = executed(&node, &candidate);
     assert!(other
-        .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()))
+        .commit_shared_admission(
+            outcome,
+            1000,
+            &ExecutionControl::new(&|_| Ok(()), &()),
+            None
+        )
         .unwrap_err()
         .is(crate::ErrorCode::OwnerDetachedExecutionContext));
     let outcome = executed(&node, &candidate);
     drop(node);
     node = open(a.path(), &settings, true);
     assert!(node
-        .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()))
+        .commit_shared_admission(
+            outcome,
+            1000,
+            &ExecutionControl::new(&|_| Ok(()), &()),
+            None
+        )
         .unwrap_err()
         .is(crate::ErrorCode::OwnerDetachedExecutionContext));
     let outcome = executed(&node, &candidate);
     node.mark_ordinary_public_service_epoch_unknown();
     assert!(node
-        .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()))
+        .commit_shared_admission(
+            outcome,
+            1000,
+            &ExecutionControl::new(&|_| Ok(()), &()),
+            None
+        )
         .unwrap_err()
         .is(crate::ErrorCode::OwnerPublicServiceUncleanEpoch));
     assert!(node.packet(candidate.id().unwrap()).is_err());
@@ -233,7 +253,7 @@ fn current_clock_target_and_unsupported_owner_are_rechecked_after_m06() {
     let candidate = packet(&node, settings.genesis(), 1, 1, 1001, 0);
     let outcome = executed(&node, &candidate);
     assert_eq!(
-        node.commit_shared_admission(outcome, 0, &ExecutionControl::new(&|_| Ok(()), &()))
+        node.commit_shared_admission(outcome, 0, &ExecutionControl::new(&|_| Ok(()), &()), None)
             .unwrap_err()
             .to_string(),
         "TIME_DEFERRED"
@@ -242,15 +262,25 @@ fn current_clock_target_and_unsupported_owner_are_rechecked_after_m06() {
     let mut outcome = executed(&node, &candidate);
     outcome.admission.packet.header.target[0] ^= 1;
     assert_eq!(
-        node.commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()))
-            .unwrap_err()
-            .to_string(),
+        node.commit_shared_admission(
+            outcome,
+            1000,
+            &ExecutionControl::new(&|_| Ok(()), &()),
+            None
+        )
+        .unwrap_err()
+        .to_string(),
         "TARGET"
     );
     let outcome = executed(&node, &candidate);
     node.enable_local_root_rejection_cache().unwrap();
     assert!(node
-        .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()))
+        .commit_shared_admission(
+            outcome,
+            1000,
+            &ExecutionControl::new(&|_| Ok(()), &()),
+            None
+        )
         .unwrap_err()
         .is(crate::ErrorCode::OwnerDetachedExecutionUnsupported));
     assert!(node
@@ -277,7 +307,12 @@ fn foreign_write_and_restore_cannot_reuse_original_database_epoch() {
             .execute("DELETE FROM metadata WHERE key='detached-fault'", [])
             .unwrap();
         let error = node
-            .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()))
+            .commit_shared_admission(
+                outcome,
+                1000,
+                &ExecutionControl::new(&|_| Ok(()), &()),
+                None,
+            )
             .unwrap_err();
         assert!(error.is(crate::ErrorCode::StorageContext) && error.requires_owner_stop());
         assert!(node.packet(candidate.id().unwrap()).is_err());
@@ -312,7 +347,7 @@ fn final_sqlite_writer_fence_rejects_write_and_restore_after_last_context_check(
             Ok(())
         };
         let error = node
-            .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&control, &()))
+            .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&control, &()), None)
             .unwrap_err();
         assert_eq!(seen.load(Ordering::Relaxed), 2);
         assert!(error.is(crate::ErrorCode::StorageContext) && error.requires_owner_stop());
@@ -333,7 +368,12 @@ fn legal_concurrent_append_revalidates_parent_and_preserves_competing_branch() {
         let competing_id = node.admit(&competing, 1000).unwrap();
         node.activate_observed(competing_id, 1000).unwrap();
         let id = node
-            .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()))
+            .commit_shared_admission(
+                outcome,
+                1000,
+                &ExecutionControl::new(&|_| Ok(()), &()),
+                None,
+            )
             .unwrap();
         assert_eq!(id, candidate.id().unwrap());
         assert_eq!(node.read_active().unwrap().0, competing_id);
@@ -369,7 +409,12 @@ fn detached_result_cannot_bypass_real_pending_reorganization() {
             .unwrap_err()
             .is(crate::ErrorCode::StoragePacket));
         let error = node
-            .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()))
+            .commit_shared_admission(
+                outcome,
+                1000,
+                &ExecutionControl::new(&|_| Ok(()), &()),
+                None,
+            )
             .unwrap_err();
         assert_eq!(error.to_string(), "REORG_IN_PROGRESS");
         assert!(node.packet(candidate.id().unwrap()).is_err());
@@ -429,7 +474,12 @@ fn original_transaction_readback_rejects_trigger_corruption_and_rolls_back() {
         let outcome = executed(&node, &candidate);
         node.db.execute_batch("CREATE TRIGGER detached_skip BEFORE INSERT ON deltas BEGIN SELECT RAISE(IGNORE); END;").unwrap();
         let error = node
-            .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()))
+            .commit_shared_admission(
+                outcome,
+                1000,
+                &ExecutionControl::new(&|_| Ok(()), &()),
+                None,
+            )
             .unwrap_err();
         assert!(error.requires_owner_stop());
         assert!(node.packet(candidate.id().unwrap()).is_err());
@@ -969,7 +1019,12 @@ fn detached_full_state_cost_uses_real_signed_history_and_reports_scope() {
     let started = Instant::now();
     let cpu = process_cpu_ns();
     let id = node
-        .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()))
+        .commit_shared_admission(
+            outcome,
+            1000,
+            &ExecutionControl::new(&|_| Ok(()), &()),
+            None,
+        )
         .unwrap();
     let commit_cpu = process_cpu_ns() - cpu;
     let commit_wall = started.elapsed().as_nanos();
@@ -1021,12 +1076,12 @@ fn held_parent_continuation_checks_original_owner_epoch_and_current_clock() {
         let control = ExecutionControl::new(&|_| Ok(()), &());
         let prepared = held_parent_fixture(&node, &candidate);
         assert!(other
-            .admit_held_prepared(prepared, 1000, &control)
+            .admit_held_prepared(prepared, 1000, &control, None)
             .unwrap_err()
             .is(crate::ErrorCode::OwnerDetachedExecutionContext));
         let prepared = held_parent_fixture(&node, &candidate);
         assert_eq!(
-            node.admit_held_prepared(prepared, 0, &control)
+            node.admit_held_prepared(prepared, 0, &control, None)
                 .unwrap_err()
                 .to_string(),
             "TIME_DEFERRED"
@@ -1044,7 +1099,9 @@ fn held_parent_continuation_checks_original_owner_epoch_and_current_clock() {
             .execute("DELETE FROM metadata WHERE key='held-epoch-control'", [])
             .unwrap();
         assert!(prepared.parent.epoch != Some(node.admission_state_epoch().unwrap()));
-        let id = node.admit_held_prepared(prepared, 1000, &control).unwrap();
+        let id = node
+            .admit_held_prepared(prepared, 1000, &control, None)
+            .unwrap();
         assert_eq!(id, candidate.id().unwrap());
         if authenticated {
             let after = node.native_history_arithmetic_observation();
@@ -1068,3 +1125,7 @@ fn held_parent_continuation_checks_original_owner_epoch_and_current_clock() {
         assert_eq!(node.read_active().unwrap().0, id);
     }
 }
+
+#[cfg(target_os = "linux")]
+#[path = "prepared_held_native_completion_tests.rs"]
+mod native_completion_controls;

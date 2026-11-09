@@ -1294,6 +1294,12 @@ struct SubmitDispatchContext<'a> {
     termination_cpu: Option<&'a public_v3::ServiceMutationCpuCheckpoint>,
 }
 
+#[derive(Default)]
+struct AdmissionDispatchContext<'a> {
+    observation: Option<&'a public_v3::request_observation::TaskObservation>,
+    completion_cpu: Option<&'a public_v3::ServiceMutationCpuCheckpoint>,
+}
+
 #[path = "ingress/execution_observation.rs"]
 mod execution_observation;
 
@@ -1320,8 +1326,12 @@ fn admit_shared_checked<'a>(
     progress: &mut dyn FnMut(u64) -> Result<()>,
     control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, Error>,
     clock: impl Fn() -> Result<u64>,
-    observation: Option<&public_v3::request_observation::TaskObservation>,
+    context: AdmissionDispatchContext<'_>,
 ) -> Result<(MutexGuard<'a, Node>, Hash, u64)> {
+    let AdmissionDispatchContext {
+        observation,
+        completion_cpu,
+    } = context;
     use crate::store::{DetachedExecutionLease, PreparedSharedAdmission};
     use public_v3::SubmitPhase;
     use trnm_mvcc_fee::pon_executor::ExecutionProgress;
@@ -1363,7 +1373,14 @@ fn admit_shared_checked<'a>(
                 observation,
                 control,
                 execution_observation::Scope::Held,
-                |control| owner.admit_work_checked_with_control(checked, observed_now, control),
+                |control| {
+                    owner.admit_work_checked_with_completion(
+                        checked,
+                        observed_now,
+                        control,
+                        completion_cpu,
+                    )
+                },
             )?;
             return Ok((owner, id, observed_now));
         };
@@ -1386,7 +1403,9 @@ fn admit_shared_checked<'a>(
                     observation,
                     control,
                     execution_observation::Scope::PreparedHeld,
-                    |control| owner.admit_held_prepared(*checked, observed_now, control),
+                    |control| {
+                        owner.admit_held_prepared(*checked, observed_now, control, completion_cpu)
+                    },
                 )?;
                 Ok((owner, id, observed_now))
             }
@@ -1413,7 +1432,7 @@ fn admit_shared_checked<'a>(
                     })?;
                 let observed_now = clock()?;
                 let id = observe_submit_phase(observation, SubmitPhase::Commit, || {
-                    owner.commit_shared_admission(executed, observed_now, control)
+                    owner.commit_shared_admission(executed, observed_now, control, completion_cpu)
                 })?;
                 Ok((owner, id, observed_now))
             }
@@ -1530,7 +1549,10 @@ fn dispatch_shared_submit_with_execution_observation(
         progress,
         control,
         now,
-        observation,
+        AdmissionDispatchContext {
+            observation,
+            completion_cpu: termination_cpu,
+        },
     )?;
     observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
         submit_result_with_progress(

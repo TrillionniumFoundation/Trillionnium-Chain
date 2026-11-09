@@ -1,0 +1,61 @@
+{
+  "label": "cargo-metadata-fuzz",
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "metadata",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "tests/fuzz/Cargo.toml",
+    "--format-version",
+    "1"
+  ],
+  "command": "/home/qian-qi/.cargo/bin/cargo +1.95.0 metadata --offline --locked --manifest-path tests/fuzz/Cargo.toml --format-version 1",
+  "cwd": "/data/chain-abg-70ae-20261108/source",
+  "expected_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+  "expected_tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+  "before": {
+    "head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "started_utc": "2026-11-09T04:04:47.307070+00:00",
+  "timeout_seconds": 180,
+  "timeout_scope": "source/graph command wall-time supervisor only; no product deadline changed",
+  "stdout": "/data/chain-abg-70ae-20261108/evidence/r3-contract-gates/11-cargo-metadata-fuzz.stdout",
+  "stderr": "/data/chain-abg-70ae-20261108/evidence/r3-contract-gates/11-cargo-metadata-fuzz.stderr",
+  "expected_tests": null,
+  "tests_run": null,
+  "skipped": null,
+  "failures": null,
+  "errors": null,
+  "timed_out": false,
+  "exit_code": 0,
+  "passed": true,
+  "elapsed_seconds": 0.366086,
+  "after": {
+    "head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "graph": {
+    "packages": 149,
+    "workspace_members": 1,
+    "resolve_nodes": 149,
+    "workspace_test_targets": 0,
+    "workspace_targets_with_test_enabled": 0,
+    "workspace_dev_dependency_edges": 0,
+    "target_directory": "/data/chain-abg-70ae-20261108/evidence/r3-contract-gates/cargo-metadata-target",
+    "workspace_root": "/data/chain-abg-70ae-20261108/source/tests/fuzz"
+  },
+  "finished_utc": "2026-11-09T04:04:47.793235+00:00",
+  "stdout_bytes": 720024,
+  "stderr_bytes": 0,
+  "stdout_sha256": "5e5a4dd8667439ddc8ca0c8693bb13032d3f1a7a51947210762d63b632c34334",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,3 @@
+[fix/chain-native-completion-red-20261108-70ae b01c08ee0b] test(pon): freeze failing full-relation priority controls
+ 2 files changed, 403 insertions(+)
+ create mode 100644 trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs

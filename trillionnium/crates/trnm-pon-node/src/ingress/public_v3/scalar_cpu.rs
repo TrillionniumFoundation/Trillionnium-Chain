@@ -543,27 +543,20 @@ impl LiveRequestCpu {
         state.public_request = Some(request);
         Ok(())
     }
-    /// Only the private packet owning an actually verified complete W1 relation
-    /// may enter this stage. It remains the very same charged request. Existing
-    /// ledger packets, claimed tickets and failed/partial W1 do not call this.
-    pub(super) fn work_verified(&self, checked: &crate::store::WorkCheckedPacket) -> Result<()> {
+    /// Historical W1-only scheduling fixture, compiled only for meter controls.
+    /// Production callers must supply the native owner's complete relation.
+    #[cfg(test)]
+    pub(super) fn test_legacy_w1_only_priority(
+        &self,
+        checked: &crate::store::WorkCheckedPacket,
+    ) -> Result<()> {
         self.checkpoint()?;
         // Hashing the canonical complete packet is paid by this same original
         // thread interval; no caller-supplied identity can claim priority.
         let identity = checked.completion_identity()?;
         self.promote_verified_identity(identity)
     }
-    /// The growth token owns the complete PGH2/PNP2 W1 relation. It shares this
-    /// original request, deadline and fixed completion-identity set.
-    pub(super) fn growth_work_verified(
-        &self,
-        checked: &crate::store::growth::GrowthWorkCheckedPacket,
-    ) -> Result<()> {
-        self.checkpoint()?;
-        let identity = checked.completion_identity()?;
-        self.promote_verified_identity(identity)
-    }
-    // Only typed full-work entrypoints may produce this identity.
+    // Production reaches this only through the private full native relation.
     fn promote_verified_identity(&self, identity: [u8; 32]) -> Result<()> {
         self.checkpoint()?;
         let mut state = self
@@ -1043,7 +1036,7 @@ impl ServiceMutationCpuOperation {
     /// Bind the History scope's original absolute deadline once. Shared
     /// callers may never wait from a checkpoint under their Node mutex. The
     /// exclusive native embedding owns no mutex; it may continue its exact
-    /// stack under this same operation and deadline after a complete W1.
+    /// stack under this same operation and deadline after native completion.
     pub(crate) fn bind_history_request(&self, deadline: Instant) -> Result<()> {
         self.live.bind_public_request(
             deadline,
@@ -1067,26 +1060,12 @@ impl ServiceMutationCpuOperation {
             .observe_with_control(false, true, !owns_node_mutex, resource)
     }
 
-    pub(crate) fn history_work_verified(
+    #[cfg(test)]
+    pub(crate) fn test_legacy_history_w1_only_priority(
         &self,
         checked: &crate::store::WorkCheckedPacket,
     ) -> Result<()> {
-        self.live.work_verified(checked)
-    }
-
-    /// Profile selection comes from the same Node that prechecked this packet.
-    /// Its larger canonical PQ wire remains charged to this original interval.
-    pub(crate) fn history_work_verified_for_context(
-        &self,
-        checked: &crate::store::WorkCheckedPacket,
-        context: &crate::pq_application_v6::PacketCodecContext,
-    ) -> Result<()> {
-        if !context.is_pq() {
-            return self.history_work_verified(checked);
-        }
-        self.live.checkpoint()?;
-        let identity = checked.completion_identity_for_context(context)?;
-        self.live.promote_verified_identity(identity)
+        self.live.test_legacy_w1_only_priority(checked)
     }
 
     pub fn worker_accounting(&self) -> &dyn ExecutionWorkerAccounting {
@@ -1146,6 +1125,9 @@ impl Drop for ServiceMutationCpuOperation {
 #[path = "scalar_cpu_completion_tests.rs"]
 mod completion_tests;
 #[cfg(all(test, target_os = "linux"))]
+#[path = "scalar_cpu_native_completion_tests.rs"]
+mod native_completion_tests;
+#[cfg(all(test, target_os = "linux"))]
 #[path = "scalar_cpu_tests.rs"]
 mod tests;
 
@@ -1158,6 +1140,34 @@ pub struct ServiceMutationCpuCheckpoint {
 impl ServiceMutationCpuCheckpoint {
     pub fn checkpoint(&self) -> Result<()> {
         self.live.checkpoint()
+    }
+
+    /// The native owner alone constructs this evidence after all mathematical
+    /// and State/output checks. Keep the same live interval, absolute deadline,
+    /// cancellation, identity set and principal; no new reservation is created.
+    pub(crate) fn native_admission_complete(
+        &self,
+        complete: &crate::store::NativeAdmissionCompletion<'_>,
+    ) -> Result<()> {
+        // Trusted local metered helpers share this checkpoint for termination
+        // accounting but never bind a public request. Preserve their original
+        // policy: no scheduling hash or additional precommit CPU checkpoint.
+        let bound_request = match self.live.state.lock() {
+            Ok(state) => state.public_request.is_some(),
+            Err(error) => {
+                // PoisonError owns the failed guard. Release it before the
+                // original Unknown handler reacquires request/global locks.
+                drop(error);
+                self.live.unknown();
+                return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+            }
+        };
+        if !bound_request {
+            return Ok(());
+        }
+        self.live.checkpoint()?;
+        let identity = complete.identity();
+        self.live.promote_verified_identity(identity)
     }
 
     pub(crate) fn history_checkpoint(

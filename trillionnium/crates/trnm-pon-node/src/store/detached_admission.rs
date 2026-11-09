@@ -335,6 +335,7 @@ impl Node {
         prepared: HeldPreparedAdmission,
         observed_now: u64,
         control: &ExecutionControl<'_, Error>,
+        completion_cpu: Option<&crate::ingress::public_v3::ServiceMutationCpuCheckpoint>,
     ) -> Result<Hash> {
         ensure(
             self.detached_execution_supported()
@@ -352,6 +353,7 @@ impl Node {
             observed_now,
             control,
             Some(prepared.parent),
+            completion_cpu,
         )
     }
 
@@ -360,6 +362,7 @@ impl Node {
         executed: ExecutedSharedAdmission,
         observed_now: u64,
         control: &ExecutionControl<'_, Error>,
+        completion_cpu: Option<&crate::ingress::public_v3::ServiceMutationCpuCheckpoint>,
     ) -> Result<Hash> {
         let ExecutedSharedAdmission {
             pin,
@@ -439,6 +442,7 @@ impl Node {
                 epoch: current,
                 observed_now,
             }),
+            completion_cpu,
         );
         drop(pin); // release capacity only after all execution/publication work
         result

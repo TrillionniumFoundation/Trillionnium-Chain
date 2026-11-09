@@ -1,0 +1,26 @@
+
+running 6 tests
+test ingress::public_v3::scalar_cpu::native_completion_tests::native_completion_priority_cold_history_honest_original_deadline_control ... native_completion_priority cold_honest result=Ok([151, 22, 252, 252, 161, 229, 26, 178, 1, 171, 71, 3, 76, 189, 243, 178, 236, 157, 81, 191, 146, 205, 179, 182, 156, 153, 125, 35, 110, 80, 147, 162]) elapsed_ms=439 flow={"schema":"public-v3-local-actual-cpu-flow-v1","initial_credit_ns":0,"credited_refill_ns":109472308,"discarded_refill_ns":0,"booked_reservation_ns":0,"live_debited_cpu_ns":32270866,"settlement_residual_cpu_ns":15079,"settled_full_cpu_ns":32285945,"unsettled_known_live_cpu_ns":0,"paid_cpu_debit_ns":32285945,"settlement_discard_ns":0,"remaining_paid_credit_ns":77186363,"balance_identity_verified":true,"stored_credit_ns":77186363,"live_owners":0} original_multi_process_pressure_qualified=false
+ok
+test ingress::public_v3::scalar_cpu::native_completion_tests::native_completion_priority_requires_full_relation_on_detached_owner ... native_completion_priority local_control promotions=[1, 1, 1, 0] retained=3 paid_cpu_ns=29018585 original_pressure_qualified=false
+FAILED
+test ingress::public_v3::scalar_cpu::native_completion_tests::native_completion_priority_requires_full_relation_on_exclusive_history ... native_completion_priority History shared=false retained=[1, 2, 3, 3] paid_cpu_ns=45299303 initial_credit_ns=0 original_pressure_qualified=false
+FAILED
+test ingress::public_v3::scalar_cpu::native_completion_tests::native_completion_priority_requires_full_relation_on_growth_owner ... native_completion_priority local_control promotions=[1, 1, 1, 0] retained=3 paid_cpu_ns=77158589 original_pressure_qualified=false
+FAILED
+test ingress::public_v3::scalar_cpu::native_completion_tests::native_completion_priority_requires_full_relation_on_held_owner ... native_completion_priority local_control promotions=[1, 1, 1, 0] retained=3 paid_cpu_ns=28562853 original_pressure_qualified=false
+FAILED
+test ingress::public_v3::scalar_cpu::native_completion_tests::native_completion_priority_requires_full_relation_on_shared_history ... native_completion_priority History shared=true retained=[1, 2, 3, 3] paid_cpu_ns=55565556 initial_credit_ns=0 original_pressure_qualified=false
+FAILED
+
+failures:
+
+failures:
+    ingress::public_v3::scalar_cpu::native_completion_tests::native_completion_priority_requires_full_relation_on_detached_owner
+    ingress::public_v3::scalar_cpu::native_completion_tests::native_completion_priority_requires_full_relation_on_exclusive_history
+    ingress::public_v3::scalar_cpu::native_completion_tests::native_completion_priority_requires_full_relation_on_growth_owner
+    ingress::public_v3::scalar_cpu::native_completion_tests::native_completion_priority_requires_full_relation_on_held_owner
+    ingress::public_v3::scalar_cpu::native_completion_tests::native_completion_priority_requires_full_relation_on_shared_history
+
+test result: FAILED. 1 passed; 5 failed; 0 ignored; 0 measured; 1297 filtered out; finished in 9.64s
+

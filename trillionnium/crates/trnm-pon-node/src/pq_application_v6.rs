@@ -17,15 +17,18 @@ pub(crate) struct PacketCodecContext {
 }
 
 impl PacketCodecContext {
+    #[cfg(test)]
     pub(crate) fn network(&self) -> crate::Hash {
         self.app.network
     }
+    #[cfg(test)]
     pub(crate) fn parameters(&self) -> crate::Hash {
         self.app.parameters
     }
     pub(crate) fn is_pq(&self) -> bool {
         pq::enabled(&self.app)
     }
+    #[cfg(test)]
     pub(crate) fn encode(&self, packet: &Packet) -> Result<Vec<u8>> {
         encode_packet_for_config(packet, &self.app)
     }

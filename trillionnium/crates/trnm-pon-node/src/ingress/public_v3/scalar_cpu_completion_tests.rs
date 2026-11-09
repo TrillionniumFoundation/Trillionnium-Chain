@@ -37,7 +37,10 @@ fn qualify(operation: &ServiceMutationCpuOperation, packet: &Packet) {
     let checked =
         WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |_| operation.checkpoint())
             .unwrap();
-    operation.live.work_verified(&checked).unwrap();
+    operation
+        .live
+        .test_legacy_w1_only_priority(&checked)
+        .unwrap();
 }
 
 #[test]
@@ -408,8 +411,8 @@ fn same_valid_w1_native_invalid_packet_cannot_reacquire_completion_priority() {
         observed.mutation_cpu_charged_ns);
     assert_eq!(
         promotions,
-        vec![1, 0],
-        "one acquired W1 granted repeated completion priority"
+        vec![0, 0],
+        "W1 with a false native output received completion priority"
     );
 }
 
@@ -434,7 +437,10 @@ fn completion_work_claim_is_atomic_across_real_verifiers_and_domain_clones() {
                     })
                     .unwrap();
                     barrier.wait();
-                    operation.live.work_verified(&checked).unwrap();
+                    operation
+                        .live
+                        .test_legacy_w1_only_priority(&checked)
+                        .unwrap();
                     let promoted = operation.live.state.lock().unwrap().verified_completion;
                     barrier.wait();
                     assert_eq!(domain.budget.lock().unwrap().verified_completions, 1);
@@ -717,7 +723,9 @@ fn exclusive_history_refill_observes_original_resource_cancellation_without_new_
         operation.history_checkpoint(false, &|| Ok(()))
     })
     .unwrap();
-    operation.history_work_verified(&checked).unwrap();
+    operation
+        .test_legacy_history_w1_only_priority(&checked)
+        .unwrap();
     let saw_real_deficit = AtomicBool::new(false);
     let resource = || {
         ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
