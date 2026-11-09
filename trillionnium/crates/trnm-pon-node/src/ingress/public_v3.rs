@@ -3195,11 +3195,18 @@ fn serve_public_protected_v3_inner(
     let domain = server.mutation_cpu_domain();
     let cpu = domain.observe()?;
     let balanced = domain.observe_actual_flow()?.is_some();
+    // Read the original shared authentication account BEFORE publishing a
+    // clean close. It may contain work from another listener profile; unknown
+    // authentication CPU cannot be forgiven by a scalar-only clean receipt.
+    let auth = server.listener_intake()?.pq_authentication.usage()?;
     epoch_fence.complete(
-        cpu.in_flight == 0 && !cpu.accounting_unavailable && cpu.stored_credit_ns >= 0 && balanced,
+        cpu.in_flight == 0
+            && !cpu.accounting_unavailable
+            && cpu.stored_credit_ns >= 0
+            && balanced
+            && !auth.unavailable,
     )?;
     if server.identity.is_pq() {
-        let auth = server.listener_intake()?.pq_authentication.usage()?;
         let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
         m.pq_authentication_attempts = auth.attempts;
         m.pq_authentication_bytes = auth.bytes;

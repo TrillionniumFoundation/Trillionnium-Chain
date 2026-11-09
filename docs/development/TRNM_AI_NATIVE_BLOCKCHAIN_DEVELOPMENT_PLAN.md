@@ -10606,3 +10606,38 @@ The composed F2 source at 0101b0ce76239832e0b2d19d0fd3f07e40fabeb4 remains prese
 The [current composition entry](../../evidence/chain-six-full-20261108/CURRENT_PQ_COMPOSITION.md) retains the original 29 commands, arguments, order, 1200-second per-command limits and complete source gates. It separately fixes the reviewed 55-name roster and test-source hash. Its nine retained-log mutation controls reject missing, duplicate, skipped, stale or falsely reported execution. Historical runner, tests, refusals and raw logs remain unmodified; the F2 log is parser-control input, never a fresh execution result.
 
 The retained credit-envelope workflow now invokes its unchanged 43-test source-integrity command with Python unbuffered output. Actual original tests succeeded in both observations, while only the unbuffered stream satisfied the unchanged terminal-OK parser; no test, parser, pipefail rule or other suite was relaxed. Native Rust and configuration inputs remain byte-identical to F2. New complete campaigns must identify this new frozen source and their actual outcomes; all broader qualification and production-activation flags remain HOLD / false.
+
+### 2026-11-09 — Explicit architecture and validation boundaries
+
+Continue #821 on its exact composed source with the [architecture boundary
+contract](../protocol/pon-nakamoto-v1/details/ARCHITECTURE_BOUNDARIES_20261109.md).
+Preserve Hepta's shared base, low-rank adapters, sparse routing and private local
+state, original task/funding/evaluation/FinalUse owners, complete neural W1 and
+the original cost/resource contracts. Existing common-credit and fixed-probability
+research remains conditional on actual minimum legal cost hypotheses. Hidden
+progress, preparation, failures and restarts require a complete lifecycle;
+neither nominal operation count nor a finite solver closes that qualification.
+
+Correct the shared ordinary-service/History close paths so unavailable PQ
+authentication accounting cannot be cleared by a later scalar-only closer.
+Retain known-refusal clean-close behavior. Add real cross-stage parent controls
+for W1/M06/precommit, durable commit, cancellation, cold reopen and retry in both
+backends. The existing parent rule is retained; no bypass was established.
+
+Add an independently pinned validated-business observation reader and its CI
+omission/mutation controls. Count unique signed transactions with complete native
+Work observations preceding the same installed confirmation receipt, retain
+actual parent elapsed time and all scheduled slots, and keep missing evidence
+unknown. Separate application savings, model improvement, lifecycle cost and
+stale work. No Cell family gains work eligibility from being a valid application
+or from another family's cost argument. Closed readiness parsing admits only
+two explicitly reviewed source layouts without a failure fallback or expanded
+schema claim.
+
+The [execution record](../../evidence/chain-architecture-boundaries-20261109/README.md)
+must preserve original failed campaigns, compiler failures and diagnostic versus
+original-profile results on their exact sources. Full persistent accounting,
+all-entrypoint composition, general work-cost/hidden-progress security, family
+eligibility, honest-task tails, original Host/WAN acceptance and whole-chain PQ
+composition remain separate HOLD gates. Measure any DAG, parallel-chain,
+recursive-proof or grouped-GEMM gain only within those explicit boundaries.

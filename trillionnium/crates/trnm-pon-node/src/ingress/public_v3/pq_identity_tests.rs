@@ -230,6 +230,171 @@ fn pq_history_failure_budget_and_listener_reconstruction_share_the_original_epoc
     assert!(interrupted.perform(1, || Ok(())).is_err());
 }
 
+fn authentication_scope_outcome(intake: &super::super::intake::ListenerIntake, unknown: bool) {
+    let message = b"original shared authentication accounting close control";
+    let signer = identity(74);
+    if unknown {
+        let failure = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let _ = intake.pq_authentication.perform::<()>(message.len(), || {
+                // Actual PQ work ran, but the enclosing accounting interval
+                // cannot publish its final sample after this injected unwind.
+                assert!(!signer.sign(message).unwrap().is_empty());
+                panic!("incomplete original authentication interval");
+            });
+        }));
+        assert!(failure.is_err());
+    } else {
+        // A known authentication refusal is still paid and does not create
+        // unknown CPU. Keep it distinct from the incomplete interval above.
+        let refused = intake.pq_authentication.perform::<()>(message.len(), || {
+            assert!(!signer.sign(message).unwrap().is_empty());
+            Err("PUBLIC_CALLER_SIGNATURE".into())
+        });
+        assert_eq!(refused.unwrap_err().to_string(), "PUBLIC_CALLER_SIGNATURE");
+    }
+    let usage = intake.pq_authentication.usage().unwrap();
+    assert_eq!(usage.unavailable, unknown);
+    assert!(usage.attempts > 0);
+}
+
+fn authentication_listener_close_control(pq_listener: bool, unknown: bool) {
+    let directory = tempfile::tempdir().unwrap();
+    let settings = Settings::development(Some(1)).unwrap();
+    let node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+    let owner = super::super::tests::shared(node);
+    let before = owner.lock().unwrap().read_active().unwrap();
+    let original = server();
+    let domain = original.mutation_cpu_domain();
+    let intake = original.listener_intake().unwrap();
+    let policy = original.policy;
+    let classical_server = DevelopmentIdentity::from_secret_hex(&"71".repeat(32)).unwrap();
+    let service = if pq_listener {
+        original
+    } else {
+        PublicServer::with_continuous_domain(classical_server, policy, &domain).unwrap()
+    };
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let stop = Arc::new(AtomicBool::new(false));
+    let receiver = owner.clone();
+    let stopping = stop.clone();
+    let worker = thread::spawn(move || {
+        serve_public_protected_v3(
+            listener,
+            receiver,
+            Duration::from_secs(10),
+            stopping,
+            service,
+        )
+    });
+    // The actual signed native Head completes before the accounting fault.
+    let reply = if pq_listener {
+        let pin = identity(71);
+        call_public_history_pq_v4(
+            address,
+            &Request::Head,
+            &settings,
+            pin.public_spki(),
+            digest(pin.public_key()).unwrap(),
+            &identity(72),
+            policy,
+            None,
+        )
+        .0
+        .unwrap()
+    } else {
+        let pin = DevelopmentIdentity::from_secret_hex(&"71".repeat(32)).unwrap();
+        let caller = DevelopmentIdentity::from_secret_hex(&"72".repeat(32)).unwrap();
+        call_public_protected_v3(
+            address,
+            &Request::Head,
+            &settings,
+            pin.public_key(),
+            &caller,
+            policy,
+        )
+        .unwrap()
+    };
+    assert!(reply.ok);
+    authentication_scope_outcome(&intake, unknown);
+    let scalar = domain.observe().unwrap();
+    assert!(!scalar.accounting_unavailable);
+    assert_eq!(scalar.in_flight, 0);
+    assert!(scalar.stored_credit_ns >= 0);
+    assert!(domain.observe_actual_flow().unwrap().is_some());
+    stop.store(true, Ordering::Release);
+    let metrics = worker.join().unwrap().unwrap();
+    assert_eq!(metrics.completed_read, 1);
+    if pq_listener {
+        assert_eq!(metrics.pq_authentication_unavailable, unknown);
+    }
+    assert_eq!(owner.lock().unwrap().read_active().unwrap(), before);
+    drop(owner);
+    let mut reopened = Node::open(directory.path(), settings, 1).unwrap();
+    assert_eq!(reopened.read_active().unwrap(), before);
+    if unknown {
+        assert_eq!(
+            reopened
+                .begin_ordinary_public_service_epoch()
+                .unwrap_err()
+                .to_string(),
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
+        );
+    } else {
+        assert!(reopened.begin_ordinary_public_service_epoch().unwrap());
+        reopened.finish_ordinary_public_service_epoch(true).unwrap();
+    }
+}
+
+#[test]
+fn pq_authentication_unknown_survives_original_listener_close_and_cold_reopen() {
+    authentication_listener_close_control(true, true);
+}
+
+#[test]
+fn pq_authentication_unknown_survives_shared_classical_listener_close() {
+    authentication_listener_close_control(false, true);
+}
+
+#[test]
+fn pq_authentication_known_refusal_preserves_clean_listener_close() {
+    authentication_listener_close_control(true, false);
+    authentication_listener_close_control(false, false);
+}
+
+#[test]
+fn pq_authentication_unknown_survives_last_history_epoch_close() {
+    let directory = tempfile::tempdir().unwrap();
+    let settings = Settings::development(Some(1)).unwrap();
+    let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+    let before = node.read_active().unwrap();
+    let service = server();
+    let domain = service.mutation_cpu_domain();
+    let intake = service.listener_intake().unwrap();
+    node.bind_public_service_cpu_domain(&domain).unwrap();
+    assert!(node.begin_ordinary_public_service_epoch().unwrap());
+    assert!(node.begin_remote_history_cpu_epoch().unwrap());
+    authentication_scope_outcome(&intake, true);
+    // The earlier listener owns one reference only. The final History owner
+    // must inspect the SAME intake even though its scalar CPU is still known.
+    node.finish_ordinary_public_service_epoch(false).unwrap();
+    let closed = node.finish_remote_history_cpu_epoch(&domain);
+    assert_eq!(
+        closed.unwrap_err().to_string(),
+        "PUBLIC_MUTATION_CPU_UNAVAILABLE"
+    );
+    drop(node);
+    let mut reopened = Node::open(directory.path(), settings, 1).unwrap();
+    assert_eq!(reopened.read_active().unwrap(), before);
+    assert_eq!(
+        reopened
+            .begin_ordinary_public_service_epoch()
+            .unwrap_err()
+            .to_string(),
+        "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
+    );
+}
+
 #[test]
 fn pq_history_original_listener_reads_real_owner_and_classical_clients_cannot_downgrade() {
     let directory = tempfile::tempdir().unwrap();

@@ -603,6 +603,13 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "config/pon/w1-qrom-current-source-observation-v1.json",
     "docs/security/W1_QROM_CURRENT_SOURCE_OBSERVATION_DESIGN_20261108.md",
 ))
+# The business observer is source-bound independently of historical campaign
+# readers. Missing native Work receipts remain unknown; these pins confer no
+# W1, cost, lifecycle, Host or consensus qualification.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "scripts/read_validated_business_goodput.py",
+    "scripts/ci/test_read_validated_business_goodput.py",
+))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-checkpoint-store/Cargo.toml",

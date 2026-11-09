@@ -1250,7 +1250,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
                                ('AuthenticatedV1', '/// Explicit local operator policy')):
             tail = '\n        )\n    }\n    '+after
             current = 'StateBackend::'+backend+',\n            false,'+tail
-            for replacement in ('true', 'growth_observation_only', 'false || true',
+            for replacement in ('true', 'observation_only', 'false || true',
                                 '{ false }', 'false, true'):
                 changed = 'StateBackend::'+backend+',\n            '+replacement+','+tail
                 with self.subTest(backend=backend, replacement=replacement), \
@@ -1258,12 +1258,10 @@ class NativeDurableSchemaTests(unittest.TestCase):
                     self.extract(self.replace_once(self.current,current,changed))
 
     def test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope(self):
-        mode = ('SelectedOpen::InitializeOrRecover {\n'
-                '                growth_observation_only,\n'
-                '            },')
+        mode = 'SelectedOpen::InitializeOrRecover { observation_only },'
         for replacement in ('SelectedOpen::ExistingPqOwner,',
-                            mode.replace('growth_observation_only,', 'growth_observation_only: true,'),
-                            mode.replace('growth_observation_only,', 'growth_observation_only: false,')):
+                            mode.replace('observation_only }', 'observation_only: true }'),
+                            mode.replace('observation_only }', 'observation_only: false }')):
             with self.subTest(mode=replacement), self.assertRaisesRegex(ValueError,'durable backend selected delegation'):
                 self.extract(self.replace_once(self.current,mode,replacement))
         call = ('Self::open_selected_mode(\n            path,\n            settings,\n'
@@ -1284,15 +1282,15 @@ class NativeDurableSchemaTests(unittest.TestCase):
             ('    ExistingPqOwner,',''),
             ('    ExistingPqOwner,','    ExistingPqOwner, OtherMode,'),
             ('fn open_selected_mode(', 'fn unrecognized_mode('),
-            ('let (growth_observation_only, existing_owner_only) = match selection {',
-             'let (growth_observation_only, existing_owner_only) = match other_selection {'),
+            ('let (observation_only, existing_owner_only) = match selection {',
+             'let (observation_only, existing_owner_only) = match other_selection {'),
         ]:
             with self.subTest(mutation=before), self.assertRaisesRegex(ValueError,'durable (?:backend|source)'):
                 self.extract(self.replace_once(self.current,before,after))
         pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
         for statement in ('let existing_owner_only = false;',
                           'existing_owner_only = false;',
-                          'let growth_observation_only = true;',
+                          'let observation_only = true;',
                           'let alias = &mut existing_owner_only;',
                           'let selection = SelectedOpen::ExistingPqOwner;'):
             with self.subTest(statement=statement), self.assertRaisesRegex(ValueError,'durable backend selected mode rebound'):
@@ -1306,7 +1304,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
         redirect = ('\n        if matches!(state_backend, StateBackend::Legacy) {\n'
                     '            return Self::open_with_authenticated_state(path, settings, workers);\n'
                     '        }')
-        mode = 'let (growth_observation_only, existing_owner_only) = match selection {'
+        mode = 'let (observation_only, existing_owner_only) = match selection {'
         pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
         mutations = [
             ('redirect-before-lock', boundary, boundary.replace('};', '};'+redirect, 1)),
