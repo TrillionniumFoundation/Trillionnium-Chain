@@ -1,0 +1,13 @@
+{
+  "RUSTUP_HOME": "/workspace/scratch/5faaca703596/toolchain/rustup",
+  "CARGO_HOME": "/workspace/scratch/5faaca703596/toolchain/cargo",
+  "CARGO_TARGET_DIR": "/workspace/scratch/5faaca703596/cargo-target",
+  "CARGO_BUILD_JOBS": "2",
+  "RUST_TEST_THREADS": "1",
+  "OPENSSL_DIR": "/usr",
+  "OPENSSL_LIB_DIR": "/usr/lib/x86_64-linux-gnu",
+  "OPENSSL_INCLUDE_DIR": "/usr/include",
+  "TRNM_PQ_OPENSSL": "/usr/bin/openssl",
+  "TRNM_PQ_OPENSSL_VERSION": "3.5.7",
+  "TRNM_PQ_OPENSSL_SHA256": "acc10176d038aeb7b2a77d9ec972ac2985857a7191f7aecb7c54ef0e2c7e9549"
+}

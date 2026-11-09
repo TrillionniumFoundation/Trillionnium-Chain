@@ -8527,3 +8527,21 @@ its seven-route scope; do not label V3 owners as covered by that register. Add
 an irreversible owner cancellation latch so explicit or observed cancellation
 cannot be cleared through the external flag alias. Re-freeze exactly those two
 V3 source pins and run the corrected candidate with the declared native prefix.
+The corrected frozen candidate `a44344b25d12328fedd883a335585f03d059060b`
+completed 35/35 local commands with unchanged complete source: 50 V3 component
+tests, 34 V2 native tests, retained 175 crypto and 43 release tests, the declared
+source/control checks, and strict workspace/all-target/all-feature Clippy. The
+175 crypto count already includes the 10 V3 structural tests. The
+[retained V3 evidence](../../evidence/pq-root-native-v3-20261109/README.md) keeps
+both frozen attempts, development failures, exact commands and raw-log hashes.
+Full protocol and full workspace test execution are not claimed. Actual native
+M15/provider integration, independent surviving freshness/custody and complete
+lifetime/query/composition bounds remain open; HOLD and all nonactivation flags
+remain unchanged.
+
+Hosted original native campaign run `42554940456` subsequently reported three
+failed original campaign runs at the same tested source, after a successful
+release build. Retain its failed finite-experiment predicates, exact source and
+selected raw logs separately; no underlying causal diagnosis, weakened workload
+or all-hosted-gates PASS is claimed. The bounded readback is included in the
+same evidence directory.

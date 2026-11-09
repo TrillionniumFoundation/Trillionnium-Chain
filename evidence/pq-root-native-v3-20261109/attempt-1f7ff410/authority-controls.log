@@ -1,0 +1,588 @@
+.F.FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF...F.FE.E....E
+======================================================================
+ERROR: test_real_locked_files_have_exact_scopes_and_never_qualify (__main__.AuthorityEffectTests.test_real_locked_files_have_exact_scopes_and_never_qualify)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 66, in test_real_locked_files_have_exact_scopes_and_never_qualify
+    result = register.inspect(self.root)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/pq_authority_effect_register.py", line 185, in inspect
+    require(observed[path] == data['source_files_sha256'][path],
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/pq_authority_effect_register.py", line 118, in require
+    raise RegisterError(message)
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+======================================================================
+ERROR: test_reordered_rows_paths_and_hash_map_do_not_change_the_contract (__main__.AuthorityEffectTests.test_reordered_rows_paths_and_hash_map_do_not_change_the_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 87, in test_reordered_rows_paths_and_hash_map_do_not_change_the_contract
+    self.assertEqual(register.inspect(self.root)['source_consistency'], 'PASS')
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/pq_authority_effect_register.py", line 185, in inspect
+    require(observed[path] == data['source_files_sha256'][path],
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/pq_authority_effect_register.py", line 118, in require
+    raise RegisterError(message)
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+======================================================================
+ERROR: test_unreviewed_files_do_not_make_the_partial_register_complete (__main__.AuthorityEffectTests.test_unreviewed_files_do_not_make_the_partial_register_complete)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 205, in test_unreviewed_files_do_not_make_the_partial_register_complete
+    result = register.inspect(self.root)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/pq_authority_effect_register.py", line 185, in inspect
+    require(observed[path] == data['source_files_sha256'][path],
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/pq_authority_effect_register.py", line 118, in require
+    raise RegisterError(message)
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+======================================================================
+FAIL: test_cli_hold_and_fifo_refusal_have_machine_readable_exit_status (__main__.AuthorityEffectTests.test_cli_hold_and_fifo_refusal_have_machine_readable_exit_status)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 263, in test_cli_hold_and_fifo_refusal_have_machine_readable_exit_status
+    self.assertEqual(positive.returncode, 0, positive.stderr)
+AssertionError: 2 != 0 : {"reason": "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs", "schema": "trnm-pq-authority-effects-result-v1", "status": "REFUSE"}
+
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-discovery.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-data-availability/src/bin/unix/pq.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-data-availability/src/cell/discovery.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-data-availability/src/cell/discovery/directory.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/tests.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/transport.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-data-availability/src/cell/network.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-data-availability/src/cell/store.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-data-availability/src/types.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-mvcc-fee/tests/pq_account_owner.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-pon-node/src/ingress.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-pon-node/src/public_submit.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-pon-node/src/release_finality.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-pon-node/src/store.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-pon-node/tests/pq_account_native.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-pon-node/tests/release_finality_v2.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-protocol/src/pon_wire.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-research-protocol/src/command.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-research-protocol/src/state.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-research-protocol/tests/hepta_handoff_pq.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-research-protocol/tests/protocol_v1.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-research-protocol/tests/protocol_v1/security_cases.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-service-settlement/src/engine.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-service-settlement/src/store.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-service-settlement/src/tests.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-service-settlement/src/types.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-types/src/lib.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) (path='trillionnium/crates/trnm-types/src/transfer.rs')
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 95, in test_every_actual_source_file_is_required_even_when_its_pin_remains
+    with self.assertRaisesRegex(register.RegisterError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_manifest_source_and_directory_symlinks_refuse (__main__.AuthorityEffectTests.test_manifest_source_and_directory_symlinks_refuse)
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 241, in test_manifest_source_and_directory_symlinks_refuse
+    with self.assertRaisesRegex(register.RegisterError, 'symlink'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "symlink" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+======================================================================
+FAIL: test_oversize_source_and_unsafe_manifest_path_refuse (__main__.AuthorityEffectTests.test_oversize_source_and_unsafe_manifest_path_refuse)
+----------------------------------------------------------------------
+pq_authority_effect_register.RegisterError: source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 254, in test_oversize_source_and_unsafe_manifest_path_refuse
+    self.refused('nonregular/oversize source')
+  File "/workspace/scratch/5faaca703596/chain-root/scripts/ci/test_pq_authority_effect_register.py", line 62, in refused
+    with self.assertRaisesRegex(register.RegisterError, reason or '.'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "nonregular/oversize source" does not match "source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.264s
+
+FAILED (failures=42, errors=3)
