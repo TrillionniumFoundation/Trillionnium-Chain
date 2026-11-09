@@ -1,0 +1,261 @@
+{
+  "schema": "trnm-pq128-lifetime-composition-evidence-v2",
+  "recorded_utc": "2026-11-09T14:12:30.199402+00:00",
+  "status": "HOLD_NO_GO",
+  "actual_lifetime_failure_bound": null,
+  "composition_coverage_proved": false,
+  "whole_chain_hash_query_scope_closed": false,
+  "whole_chain_pq_qualified": false,
+  "production_activation": false,
+  "joint_bound_derived": false,
+  "source_identities": {
+    "schema": "trnm-source-publication-identity-v1",
+    "recorded_utc": "2026-11-09T14:04:29.019615+00:00",
+    "base_commit": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+    "tested_local_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+    "publication_source_commit": "1ab303e38b9cf7292bba8ab5026aa4bc46e5db0f",
+    "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+    "same_source_tree": true,
+    "source_change_patch_sha256": "63b13f3bcc64e81084ff393be2d04f179860773eb55129f5bdde51791bb60f5d",
+    "source_change_patch_bytes": 90548,
+    "commit_identity_note": "GitHub connector uses its connection author metadata and timezone; the source trees are byte-identical. Runs state their original execution identity; no run is relabeled as the other commit."
+  },
+  "scope": "Research inventory and conditional arithmetic contract; not a cryptographic proof, complete dependency closure, atomic source snapshot, deployment identity, or production qualification.",
+  "declared_source_union": {
+    "legacy_paths": 15,
+    "root_paths": 37,
+    "shared_paths": 1,
+    "distinct_paths": 51,
+    "closure_proved": false
+  },
+  "primitive_identity_union": {
+    "identities": [
+      "FIPS180-4/SHA-256",
+      "FIPS180-4/SHA-512",
+      "FIPS202/SHAKE128",
+      "FIPS202/SHAKE256"
+    ],
+    "numeric_lifetime_budgets_proved": false,
+    "shared_keccak_substrate_mapping_proved": false
+  },
+  "tests": {
+    "frozen_local_source": {
+      "commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+      "tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+      "composition": 36,
+      "legacy_budget": 58,
+      "root_register": 42,
+      "claim_guard": 49,
+      "total_test_methods": 185,
+      "passed": true
+    },
+    "staged_same_source": {
+      "parent": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+      "index_diff_sha256": "63b13f3bcc64e81084ff393be2d04f179860773eb55129f5bdde51791bb60f5d",
+      "ci_contract": 108,
+      "pq_research_integration": 55,
+      "passed": true,
+      "note": "These runs retain the staged execution identity; the exact patch is retained and its resulting committed tree matches the source publication."
+    },
+    "finite_probability_cases_inside_composition_suite": 4096,
+    "finite_cases_prove_project_event_mapping": false
+  },
+  "validation": {
+    "strict_clippy_exit_code": 101,
+    "strict_clippy_first_attempt_exit_code": 101,
+    "strict_clippy_first_attempt_result": "SIGKILL while checking trnm-pon-node; rustup shim build-identity warning retained.",
+    "strict_clippy_retry_metadata": "frozen-strict-clippy-single-job.json",
+    "strict_clippy_retry_result": "SIGKILL while checking trnm-pon-node; a SQLite boundary UNQUALIFIED warning about the OpenSSL loader directory remains in stderr.",
+    "strict_clippy_passed": false,
+    "strict_clippy_source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+    "strict_clippy_source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+    "full_repository_gate_exit_code": 2,
+    "full_repository_gate_passed": false,
+    "first_full_repository_failure": "Historical target evidence/pon-v1/README.md is tracked but not materialized in this sparse checkout.",
+    "changed_document_tracked_target_check_exit_code": 0,
+    "changed_document_local_links": 329,
+    "changed_document_missing_tracked_targets": 0,
+    "external_url_and_fragment_validation_performed": false,
+    "pq_corpus_exact_blobs": 775,
+    "pq_corpus_status": "HOLD_NO_GO",
+    "native_recovery_campaigns_rerun": false,
+    "upstream_native_campaign_failures_closed": false
+  },
+  "initial_failed_observations_preserved": [
+    "scope-full-test-ci-contract-attempt1: missing exact tests/fuzz/Cargo.lock; 104 pass and 4 errors, later exact source materialization and 108/108 pass.",
+    "scope-actual-pq-source-gate-attempt1: missing exact pinned historical source; exact-byte retrieval and affected gate rerun, 775/HOLD_NO_GO.",
+    "cargo-fmt.stderr.log: initial missing fuzz support/work_certificate.rs; exact tracked bytes retrieved before frozen fmt pass.",
+    "scope-full-repository-frozen-attempt1: exit 2; not superseded by a claimed full repository pass.",
+    "frozen-strict-clippy: exit 101 after SIGKILL; original two-job result retained separately from the single-job retry with a canonical real rustc path."
+  ],
+  "execution_environment_notes": [
+    "The checkout uses read-only alternates to existing exact-base Git objects and an isolated worktree/index/branch. Missing required source bytes were obtained from GitHub and checked against their tracked blob SHA; no placeholder files were used.",
+    "The Mac HeptaRuntime channel failed during sparse checkout and subsequent status calls returned MCP internal errors; its recovery job terminal state was not observed. It did not perform publication. The connected GitHub API is the publication channel.",
+    "Transient exec-server disconnections occurred; completed observations are distinguished from unknown read-only session terminal states.",
+    "The API publication commit has different author/committer metadata from the local execution commit. The complete source tree matches exactly; run records are not relabeled.",
+    "Evidence staging encountered No space left on device after validation. Only this task reproducible cargo-target directory was removed after both Clippy attempts had completed; source and validation logs were retained."
+  ],
+  "run_records": [
+    {
+      "metadata": "frozen-cargo-fmt.json",
+      "exit_code": 0,
+      "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+      "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+      "index_diff_sha256": null
+    },
+    {
+      "metadata": "frozen-cargo-metadata-all-features.json",
+      "exit_code": 0,
+      "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+      "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+      "index_diff_sha256": null
+    },
+    {
+      "metadata": "frozen-cargo-metadata.json",
+      "exit_code": 0,
+      "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+      "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+      "index_diff_sha256": null
+    },
+    {
+      "metadata": "frozen-ci-contract-current.json",
+      "exit_code": 0,
+      "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+      "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+      "index_diff_sha256": null
+    },
+    {
+      "metadata": "frozen-claim-guard-tests.json",
+      "exit_code": 0,
+      "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+      "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+      "index_diff_sha256": null
+    },
+    {
+      "metadata": "frozen-composition-current.json",
+      "exit_code": 0,
+      "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+      "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+      "index_diff_sha256": null
+    },
+    {
+      "metadata": "frozen-composition-tests.json",
+      "exit_code": 0,
+      "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+      "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+      "index_diff_sha256": null
+    },
+    {
+      "metadata": "frozen-diff-check.json",
+      "exit_code": 0,
+      "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+      "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+      "index_diff_sha256": null
+    },
+    {
+      "metadata": "frozen-legacy-budget-tests.json",
+      "exit_code": 0,
+      "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+      "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+      "index_diff_sha256": null
+    },
+    {
+      "metadata": "frozen-pq-source-gate.json",
+      "exit_code": 0,
+      "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+      "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+      "index_diff_sha256": null
+    },
+    {
+      "metadata": "frozen-preflight.json",
+      "exit_code": 0,
+      "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+      "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+      "index_diff_sha256": null
+    },
+    {
+      "metadata": "frozen-root-register-tests.json",
+      "exit_code": 0,
+      "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+      "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+      "index_diff_sha256": null
+    },
+    {
+      "metadata": "frozen-strict-clippy-single-job.json",
+      "exit_code": 101,
+      "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+      "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+      "index_diff_sha256": null
+    },
+    {
+      "metadata": "frozen-strict-clippy.json",
+      "exit_code": 101,
+      "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+      "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+      "index_diff_sha256": null
+    },
+    {
+      "metadata": "openssl-version.json",
+      "exit_code": 0,
+      "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+      "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+      "index_diff_sha256": null
+    },
+    {
+      "metadata": "publication-diff-check-attempt1.json",
+      "exit_code": 2,
+      "source_commit": "1ab303e38b9cf7292bba8ab5026aa4bc46e5db0f",
+      "source_tree": null,
+      "index_diff_sha256": null
+    },
+    {
+      "metadata": "scope-actual-pq-source-gate-attempt1.json",
+      "exit_code": 1,
+      "source_commit": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+      "source_tree": null,
+      "index_diff_sha256": "63b13f3bcc64e81084ff393be2d04f179860773eb55129f5bdde51791bb60f5d"
+    },
+    {
+      "metadata": "scope-actual-pq-source-gate-attempt2.json",
+      "exit_code": 0,
+      "source_commit": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+      "source_tree": null,
+      "index_diff_sha256": "63b13f3bcc64e81084ff393be2d04f179860773eb55129f5bdde51791bb60f5d"
+    },
+    {
+      "metadata": "scope-changed-doc-index-frozen-attempt1.json",
+      "exit_code": 0,
+      "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+      "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+      "index_diff_sha256": null
+    },
+    {
+      "metadata": "scope-full-repository-frozen-attempt1.json",
+      "exit_code": 2,
+      "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+      "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+      "index_diff_sha256": null
+    },
+    {
+      "metadata": "scope-full-test-ci-contract-attempt1.json",
+      "exit_code": 1,
+      "source_commit": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+      "source_tree": null,
+      "index_diff_sha256": "63b13f3bcc64e81084ff393be2d04f179860773eb55129f5bdde51791bb60f5d"
+    },
+    {
+      "metadata": "scope-full-test-ci-contract-attempt2.json",
+      "exit_code": 0,
+      "source_commit": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+      "source_tree": null,
+      "index_diff_sha256": "63b13f3bcc64e81084ff393be2d04f179860773eb55129f5bdde51791bb60f5d"
+    },
+    {
+      "metadata": "scope-full-test-pq-research-integration-attempt1.json",
+      "exit_code": 0,
+      "source_commit": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+      "source_tree": null,
+      "index_diff_sha256": "63b13f3bcc64e81084ff393be2d04f179860773eb55129f5bdde51791bb60f5d"
+    }
+  ]
+}

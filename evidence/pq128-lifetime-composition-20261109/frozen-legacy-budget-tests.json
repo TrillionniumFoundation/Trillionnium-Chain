@@ -1,0 +1,18 @@
+{
+  "name": "frozen-legacy-budget-tests",
+  "argv": [
+    "python3",
+    "scripts/ci/test_pq_lifetime_budget.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/678905e225be/chain-lifetime",
+  "source_commit": "cb56a6c37fe29235c1cc2376cd8d7978b028212d",
+  "source_tree": "25b45e6a3b6c58923e699b6e5dfaddb31b9d6aff",
+  "started_utc": "2026-11-09T14:02:57.692849+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 12.878637511001216,
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_bytes": 9494,
+  "stderr_sha256": "5cf43d93a78bb2e6c202503fe41a21ebe89aff112d144851b8ecc8184495371a"
+}
