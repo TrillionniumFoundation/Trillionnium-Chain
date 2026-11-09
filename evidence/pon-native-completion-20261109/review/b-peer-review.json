@@ -1,0 +1,147 @@
+{
+  "schema": "b-native-completion-independent-static-review-v1",
+  "reviewer": "cost_credit_audit",
+  "source_commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "source_pr": 821,
+  "reviewed_main_patch_sha256": "99fae1e27590c0e23c715850a815239b8e958f7dc264136082016bc4228006a8",
+  "reviewed_prepared_held_addon_sha256": "35780992872deba17a5f144816dea44294690652aaea16edd47adcf5bb135c4c",
+  "main_manifest_overlay_hashes_verified": true,
+  "scope": "Read-only comparison of exact base/overlay source and prepared-held add-on. No agent-owned file edited; no native build, test, pressure or liveness execution performed by this reviewer.",
+  "verdict": {
+    "authorization_or_budget_reset_defect_found_in_reviewed_diff": false,
+    "static_control_flow_review": "No remaining confirmed token-construction, original-account forwarding or current-parent/commit-fence weakening was found in the inspected changes.",
+    "production_or_full_B_qualification": "HOLD",
+    "native_compile_and_execution": "Pending root execution; static Rust review is not compilation evidence.",
+    "remaining_material_risk": "An honest request can exhaust its original allowance before reaching the now-later full-relation promotion point."
+  },
+  "checks": [
+    {
+      "id": "private_full_relation_token",
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs"
+      ],
+      "finding": "NativeAdmissionCompletion is crate-visible but has store-private fields and no public constructor or deserialization interface. Production promotion takes this token; W1-only scheduling helpers are cfg(test) legacy controls. No public packet field supplies the scheduling digest directly.",
+      "limit": "This is a Rust module trust boundary, not a cryptographic proof against arbitrary malicious in-process owner code."
+    },
+    {
+      "id": "native_completion_timing",
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs"
+      ],
+      "finding": "Held/detached common persistence constructs the token only after transaction_result and original same_write_snapshot checks succeed, before the original commit. Growth constructs after exact readback, BeforeCommit and growth_guard, before tx.commit. Full W1, parent/task binding, M06 and State/receipts checks precede these points.",
+      "preserved": "Original commit remains the authority. Promotion supplies scheduling priority only; a subsequent commit failure is not success and retains the prior paid identity."
+    },
+    {
+      "id": "same_operation_all_entrypaths",
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs"
+      ],
+      "finding": "Ordinary held, detached, capacity-prepared-held, Growth and shared/exclusive History forward the existing ServiceMutationCpuCheckpoint. from_actual_live and checkpoint_handle preserve the same Arc<LiveRequestCpu>; no fresh domain, reservation, worker counter or deadline is created. Existing exact-packet returns do not promote."
+    },
+    {
+      "id": "accounting",
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs"
+      ],
+      "finding": "The exact canonical bytes are hashed between the original live checkpoints. Original elapsed owner/worker sampling and residual settlement are retained. No W1/State/M06 replay was added to obtain priority.",
+      "unchanged_constants": {
+        "MUTATION_CPU_BURST_NS": 2000000000,
+        "MUTATION_CPU_REFILL_NS_PER_SECOND": 250000000,
+        "MUTATION_CPU_START_RESERVE_NS": 100000000,
+        "MUTATION_CPU_WORKERS": 2
+      },
+      "scope_limit": "The review establishes these diff-level invariants, not whole-system persistent budget or multi-process qualification."
+    },
+    {
+      "id": "current_parent_and_commit_fence",
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+        "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs"
+      ],
+      "finding": "Detached owner identity, data_version, fresh header/time/context, immutable-parent continuity, changed-epoch full-parent recheck and BEGIN IMMEDIATE CommitFence remain. Common persistence retains delta/packet/parent/successor readback, ancestry, active-state and write-snapshot checks. Growth retains current owner header/parent binding and exact write-set readback."
+    },
+    {
+      "id": "signed_resource_profile",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "finding": "Independently reconstructed pon_wire length framing and SHA-256 for bits 8/16/12, lifetime 2000ms. Original r14 and new r18 vectors matched the candidate manifest; the four budget constants are unchanged.",
+      "verified_r18_vectors": {
+        "8": "85ec5559c48860c02834a89f84a6dc779482c8c8ae09045e8cd161348e91290d",
+        "12": "986444aaad4ce993ecbf565af7e599bf32ddeac4b195eb2502da3d3135ba276b",
+        "16": "272ea19faf73fd12ca83f43b1854fe6bfdf293848bf593a5f7f69797e88219c7"
+      }
+    }
+  ],
+  "material_risks": [
+    {
+      "id": "cold_unverified_completion_reachability",
+      "status": "OPEN_HOLD",
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs"
+      ],
+      "functions": [
+        "PaidMutationCpuBudget::cold_start",
+        "begin_cpu",
+        "LiveRequestCpu::observe_sample",
+        "LiveRequestCpu::promote_verified_identity"
+      ],
+      "finding": "Unpromoted requests still become permanently refused on their first budget failure. History begins once the cold zero-credit domain earns only the 100ms start reserve. Moving promotion past all native execution/readback means some otherwise valid requests may fail before the point that permits waiting for future refill.",
+      "exact_conditional_calculation": {
+        "initial_earned_reserve_cpu_seconds": "1/10",
+        "refill_cpu_seconds_per_wall_second": "1/4",
+        "single_thread_busy_limit_seconds": "2/15",
+        "equation": "c <= 1/10 + c/4"
+      },
+      "premises": "One request starts immediately at the threshold; a single thread consumes approximately one CPU-second per wall-second; no extra idle credit has accumulated. This is a conditional source-derived bound, not a measured native workload.",
+      "implication": "A complete legal relation needing more CPU than this prepromotion envelope may repeatedly fail under immediate retry, even with no malformed traffic. Additional concurrency can reduce available slack further.",
+      "required_evidence": "Run the original cold/depleted honest workload and deadline. Retain failures and HOLD. Do not raise initial credit, extend deadline, bypass accounting or remove full-State qualification just to make a local control pass.",
+      "agent_response": "budget_adversarial acknowledged the limitation and added a separate zero-credit, no-warmup, original 2s cold History honest control. Its small fixture cannot qualify all real inputs."
+    },
+    {
+      "id": "prepared_held_dynamic_capacity",
+      "status": "PARTIAL_COVERAGE",
+      "finding": "Initial six controls covered plain held, detached, Growth and shared/exclusive History but not the new completion_cpu=Some path in admit_held_prepared. The reviewed add-on now covers that direct original-owner continuation on both backends with invalid/valid/duplicate observations.",
+      "remaining": "The add-on is green-only and explicitly does not exercise dynamic selection above the real snapshot capacity or qualify its latency. Do not describe it as a large-State capacity or original-pressure pass."
+    }
+  ],
+  "test_review": {
+    "main_file": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs",
+    "main_test_sha256": "5e7b1ba317a1c7315f55f7cf282ddee5856fd905f65d9382c759aadb5c870b46",
+    "main_tests": 6,
+    "addon_file": "trillionnium/crates/trnm-pon-node/src/store/detached_admission/prepared_held_native_completion_tests.rs",
+    "addon_test_sha256": "79144a09b78cd838a5e06b16a4833660bd8b1104c016e8bd2ae3fe986609e1a7",
+    "addon_tests": 1,
+    "findings": [
+      "Growth Request routes through the real public_dispatch -> growth::dispatch entry.",
+      "History semantic controls explicitly accrue real idle refill separately from the no-warmup cold control; they must not replace the frozen business-pressure contract.",
+      "Prepared-held control uses the existing held_parent_fixture, original owner and one measured operation for W1/parent/M06/readback; its path attribute matches the containing source directory.",
+      "Source visibility and temporary MutexGuard/NLL use showed no definite error on static inspection; only compilation can establish Rust validity.",
+      "Previously unused cfg(test) Growth completion_identity now has an actual distinct-candidate assertion call in the new tests, resolving the identified static dead-code concern."
+    ],
+    "not_claimed": [
+      "native compilation",
+      "test execution",
+      "fmt",
+      "Clippy",
+      "all allowed inputs",
+      "original pressure deadline",
+      "WAN",
+      "long-run or churn"
+    ]
+  },
+  "remote_supplement": {
+    "requested_root": "ssh://desktop/data/chain-abg-70ae-20261108/source",
+    "read_only_tool": "h_view",
+    "result": "direct SSH admitted capacity exhausted; no child submitted; no automatic retry",
+    "automatic_retry_performed": false,
+    "effect": "D/E/F whole-repository callsite supplement remains unperformed; earlier scoped report is not broadened by this review."
+  }
+}

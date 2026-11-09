@@ -1027,6 +1027,23 @@ pub(crate) struct WorkCheckedPacket {
     work: pon_work::VerifiedWork,
     owner_permit: Option<OwnerPacketPermit>,
 }
+
+/// Scheduling evidence constructed only by the original native admission
+/// owner after complete W1, parent/task binding, execution, output and original
+/// transactional readback checks, before the original durable commit.
+/// Its exact bytes remain privately borrowed by that admission. This is not
+/// commit authority: current-owner, epoch, time and transactional fences still
+/// run, and a later failure retains the original paid scheduling identity.
+pub(crate) struct NativeAdmissionCompletion<'a> {
+    domain: &'static [u8],
+    packet: &'a [u8],
+}
+impl NativeAdmissionCompletion<'_> {
+    pub(crate) fn identity(&self) -> Hash {
+        hash(self.domain, &[self.packet])
+    }
+}
+
 impl WorkCheckedPacket {
     pub(crate) fn verify_with_facts(
         packet: Packet,
@@ -1092,6 +1109,7 @@ impl WorkCheckedPacket {
     /// Exact, domain-separated identity of the private fully verified packet.
     /// This is only a local scheduling key; it confers no admission, task or
     /// payment authority. Canonical transaction/proof bytes are all committed.
+    #[cfg(test)]
     pub(crate) fn completion_identity(&self) -> Result<Hash> {
         Ok(hash(
             b"public-v3-complete-work-identity-v1",
@@ -1100,6 +1118,7 @@ impl WorkCheckedPacket {
     }
     /// The original History owner supplies its immutable ledger settings after
     /// checking the actual parent. Input bytes cannot select a weaker codec.
+    #[cfg(test)]
     pub(crate) fn completion_identity_for_context(
         &self,
         context: &crate::pq_application_v6::PacketCodecContext,
@@ -4932,7 +4951,19 @@ impl Node {
         observed_now: u64,
         control: &ExecutionControl<'_, Error>,
     ) -> Result<Hash> {
-        self.admit_work_checked_with_parent(checked, observed_now, control, None)
+        self.admit_work_checked_with_completion(checked, observed_now, control, None)
+    }
+
+    /// Reuse the caller's original paid operation. Only complete native output
+    /// may acquire completion priority; this does not add a permit or replay.
+    pub(crate) fn admit_work_checked_with_completion(
+        &mut self,
+        checked: WorkCheckedPacket,
+        observed_now: u64,
+        control: &ExecutionControl<'_, Error>,
+        completion_cpu: Option<&crate::ingress::public_v3::ServiceMutationCpuCheckpoint>,
+    ) -> Result<Hash> {
+        self.admit_work_checked_with_parent(checked, observed_now, control, None, completion_cpu)
     }
 
     fn admit_work_checked_with_parent(
@@ -4941,6 +4972,7 @@ impl Node {
         observed_now: u64,
         control: &ExecutionControl<'_, Error>,
         prepared_parent: Option<CheckedAdmissionParent>,
+        completion_cpu: Option<&crate::ingress::public_v3::ServiceMutationCpuCheckpoint>,
     ) -> Result<Hash> {
         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
@@ -5094,6 +5126,7 @@ impl Node {
             },
             control,
             None,
+            completion_cpu,
         )
     }
 
@@ -5105,6 +5138,7 @@ impl Node {
         admission: AdmissionPersistence,
         control: &ExecutionControl<'_, Error>,
         detached_fence: Option<detached_admission::CommitFence>,
+        completion_cpu: Option<&crate::ingress::public_v3::ServiceMutationCpuCheckpoint>,
     ) -> Result<Hash> {
         let AdmissionPersistence {
             packet,
@@ -5346,6 +5380,21 @@ impl Node {
             }),
         };
         transaction_result?;
+        if let Some(cpu) = completion_cpu {
+            // The original BEGIN IMMEDIATE transaction still protects every
+            // successful parent/successor, output, readback and owner-scope
+            // check. Hash these already encoded exact bytes; never reconstruct
+            // State or replay W1/M06 to acquire this scheduling-only benefit.
+            let complete = NativeAdmissionCompletion {
+                domain: if self.settings.packet_codec_context().is_pq() {
+                    b"public-pq-history-complete-work-identity-v1"
+                } else {
+                    b"public-v3-complete-work-identity-v1"
+                },
+                packet: &bytes,
+            };
+            cpu.native_admission_complete(&complete)?;
+        }
         let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
                 .history

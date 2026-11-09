@@ -1,0 +1,1221 @@
+{
+  "schema": "local-def-review-v1",
+  "written_for": "root integration into the sole development plan and evidence; not a new production admission certificate",
+  "review_date_utc": "2026-11-09",
+  "language": "zh-CN",
+  "source": {
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "pr": 821,
+    "head_commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+    "tree": "f77b6240b845425e0fc75e88abb09e6cfa3a71c0",
+    "selection_authority": "parent agent froze #821 as B baseline; A/C #820 is a separate continuation and is excluded from this report",
+    "retrieval": "read-only GitHub connector GET pinned to exact commit; selected content from prior PRs verified by equal Git blob IDs",
+    "directory_inventory_count": 10,
+    "local_full_checkout_available": false,
+    "local_older_checkouts_read_only": [
+      {
+        "path": "/workspace/scratch/8f0d1a7a75bb/chain_certificates",
+        "head": "b66e66d2465258d808c0f56ff851123306d4bdb4"
+      },
+      {
+        "path": "/workspace/scratch/b9454e263603/chain_obligations",
+        "head": "88bce414d7ba7f7f6a60dba03943ee20dc501ed7",
+        "dirty_work_preserved": true
+      }
+    ],
+    "instructions": "AGENTS.md was read. No existing checkout edited, built, committed or published. Internal pure arithmetic was executed in memory from hash-verified Git blobs.",
+    "execution_provenance_caution": "Present and byte-identical modules do not mean #821 has freshly passed their full CI or native gates. Historical #805/#808/#810/#811 evidence is not relabeled as a same-head run.",
+    "historical_execution": {
+      "native_f3_source": "1a446a79700cc093a2b1a7f10367ef4a5ddbd680",
+      "f5_source": "ab610cf95a6ec39b38e20e64e6367f5b529b3633",
+      "note": "#821 PR body retains prior failures and HOLD; its final head is an evidence-only publication. This review does not re-run or upgrade that execution evidence."
+    }
+  },
+  "summary": {
+    "overall": "HOLD",
+    "source_modules_missing_from_explicit_inventory": 0,
+    "production_lower_bounds_proved": false,
+    "production_upper_bounds_qualified": false,
+    "confirmed_unsafe_mean_to_hard_budget_join": false,
+    "production_join_patch_applied": false,
+    "reason_no_patch": "The reviewed runners keep the expected-cost and fixed-budget contracts separate; the shared credit solver already rejects SuccessStandard mismatches. No verified reachable wrong join was found. Do not add an uncalled gate merely to manufacture a passing control.",
+    "main_findings": [
+      "#821 already contains the D/E/F cost, lifecycle, common-credit, tail and research-schedule modules. Source integration is present; actual scientific and native integration qualification remains open.",
+      "Equal expected cost does not determine the hard total resource cap required to reach a fixed success probability by a deadline. The strict finite examples below have the same mean 5/2 and half-success caps 3 and 1.",
+      "A compatible always-success expected-cost algorithm can still be an upper-bound candidate for an expected-cost at-least-alpha problem without a deadline. The counterexample does not refute this set-inclusion fact.",
+      "Current declared cost documents remain fail-closed: #805 current contract has 12 unknown endpoints; #811 actual MU1 contract has 32 unknown endpoints and 10 unclosed obligations.",
+      "Finite-model certificates, strategy catalog measurements and ideal-oracle calculations do not prove cost lower bounds over every legal classical/quantum strategy.",
+      "The native research schedule documents its lack of State replay and admission authority. Owner-mediated coherent native migration is a future obligation, not a current proven bypass."
+    ]
+  },
+  "source_inventory": {
+    "scope": "Explicit cost/credit/lifecycle/branch-schedule module manifest below. All listed directories were retrieved at the frozen head. This is not a whole-repository semantic proof or a complete production call graph.",
+    "missing_paths": [],
+    "groups": [
+      {
+        "id": "D_work_time_cost_contract",
+        "related_pr": 805,
+        "paths": [
+          {
+            "path": "formal/pon-nakamoto-v1/work_profile_contract_v1.py",
+            "present": true,
+            "git_blob_sha": "f9f5784cb92399aaffd0463eec847c2800707d81",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/work_profile_contract_v1.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/test_work_profile_contract_v1.py",
+            "present": true,
+            "git_blob_sha": "55fee0596ed34e305293267810200954ee3e715c",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/test_work_profile_contract_v1.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/cost_envelope_contract_v1.py",
+            "present": true,
+            "git_blob_sha": "e977a45f0fe9d58cd1aa411bd75ced1fbdd49e5c",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/cost_envelope_contract_v1.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/test_cost_envelope_contract_v1.py",
+            "present": true,
+            "git_blob_sha": "c2c4b4b77c11ae0e0ffcee2b140a0b90a1951a4f",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/test_cost_envelope_contract_v1.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/legal_optimization_catalog_v1.py",
+            "present": true,
+            "git_blob_sha": "0fc1537a78b75b82ee5bb889216c846a8c82b25f",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/legal_optimization_catalog_v1.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/test_legal_optimization_catalog_v1.py",
+            "present": true,
+            "git_blob_sha": "c285d2d6e5163cc84a2eb78536885f84164bf3bb",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/test_legal_optimization_catalog_v1.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/branch_time_daa_v1.py",
+            "present": true,
+            "git_blob_sha": "386e165d20c8e2fa6df1e4050884f935fddec643",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/branch_time_daa_v1.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/test_branch_time_daa_v1.py",
+            "present": true,
+            "git_blob_sha": "4c4854ed54bdedb57f20699fceebed653cec857b",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/test_branch_time_daa_v1.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/contracts/cost-envelope-current-hold-v1.json",
+            "present": true,
+            "git_blob_sha": "c149b1d2adb84c14788d21104f9af29f888491cd",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/contracts/cost-envelope-current-hold-v1.json",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/contracts/cost-envelope-counterexample-v1.json",
+            "present": true,
+            "git_blob_sha": "b94a33c042737d397cebf7ea6a827050ea32bb09",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/contracts/cost-envelope-counterexample-v1.json",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/contracts/legal-optimization-catalog-v1.json",
+            "present": true,
+            "git_blob_sha": "f74ff040b9cc47da31f360de0d2b68f25f526c98",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/contracts/legal-optimization-catalog-v1.json",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/contracts/work-cost-contract-v1.json",
+            "present": true,
+            "git_blob_sha": "fe4ba9a88508e5a748ecd0333bbef50cfe1d6a91",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/contracts/work-cost-contract-v1.json",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/contracts/work-time-required-tests-v1.json",
+            "present": true,
+            "git_blob_sha": "ee6b77290385bf9cfa48d7901da94a6ee501e009",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/contracts/work-time-required-tests-v1.json",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "scripts/ci/run_work_time_contract_v1.py",
+            "present": true,
+            "git_blob_sha": "dc850d6aec128868d855079c26c24b89d50a682f",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/scripts/ci/run_work_time_contract_v1.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": ".github/workflows/pon-work-time-contract-v1.yml",
+            "present": true,
+            "git_blob_sha": "edf52aa66d2b46cd8795420ef7c508ea0a3357e9",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/.github/workflows/pon-work-time-contract-v1.yml",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "docs/protocol/pon-nakamoto-v1/details/COST_ENVELOPE_CONTRACT_V1.md",
+            "present": true,
+            "git_blob_sha": "ba536f328edb1e18bbfa078e5521fd856b685f9f",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/docs/protocol/pon-nakamoto-v1/details/COST_ENVELOPE_CONTRACT_V1.md",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "docs/protocol/pon-nakamoto-v1/details/WORK_COST_CONTRACT_V1.md",
+            "present": true,
+            "git_blob_sha": "6318eec3dda6cb06c036b50183663b55e307130b",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/docs/protocol/pon-nakamoto-v1/details/WORK_COST_CONTRACT_V1.md",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "docs/protocol/pon-nakamoto-v1/details/LEGAL_OPTIMIZATION_CATALOG_V1.md",
+            "present": true,
+            "git_blob_sha": "e7aa8e5211cde7810b6f97c43b54d92d7b367e1d",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/docs/protocol/pon-nakamoto-v1/details/LEGAL_OPTIMIZATION_CATALOG_V1.md",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "docs/protocol/pon-nakamoto-v1/details/BRANCH_TIME_DAA_V1.md",
+            "present": true,
+            "git_blob_sha": "377932be5b9305f1c22ee08b714fb4ff97bc3e96",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/docs/protocol/pon-nakamoto-v1/details/BRANCH_TIME_DAA_V1.md",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "docs/protocol/pon-nakamoto-v1/details/WORK_TIME_COST_INTEGRATION_20261108.md",
+            "present": true,
+            "git_blob_sha": "208c68187986237a4e916cec938aeef4c44cf39e",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/docs/protocol/pon-nakamoto-v1/details/WORK_TIME_COST_INTEGRATION_20261108.md",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          }
+        ]
+      },
+      {
+        "id": "D_E_finite_lifecycle_cost_game",
+        "related_pr": 808,
+        "paths": [
+          {
+            "path": "formal/pon-nakamoto-v1/lifecycle_cost_v1.py",
+            "present": true,
+            "git_blob_sha": "064c8b016adfe6eddf6b48f5c9912c5058d06e49",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/lifecycle_cost_v1.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/test_lifecycle_cost_v1.py",
+            "present": true,
+            "git_blob_sha": "2ad61c854c62cb94e4dc63dae7f591f2e222fa97",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/test_lifecycle_cost_v1.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/service_work_settlement_v1.py",
+            "present": true,
+            "git_blob_sha": "3aa9d0c986721d1bf3f877b460bf96912792342e",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/service_work_settlement_v1.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/test_service_work_settlement_v1.py",
+            "present": true,
+            "git_blob_sha": "9f3868e8a6b2dc82954be70ce683761486e82dc5",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/test_service_work_settlement_v1.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/cell_lottery_cost_audit_v1.py",
+            "present": true,
+            "git_blob_sha": "058908982fe982a6bc1e54803ef4b82692bf77d2",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/cell_lottery_cost_audit_v1.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/test_cell_lottery_cost_audit_v1.py",
+            "present": true,
+            "git_blob_sha": "2bc67f16a5f5839c380fd8e30b55a8b89ea051f2",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/test_cell_lottery_cost_audit_v1.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/LIFECYCLE_COST_GAME_V1.md",
+            "present": true,
+            "git_blob_sha": "4525d205ed9761338d8af1e71513a5a5fd158e18",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/LIFECYCLE_COST_GAME_V1.md",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/experiments/lifecycle_cost_game_v1.py",
+            "present": true,
+            "git_blob_sha": "b53dbcbc99daf549f45f6eaf902f3008351d860a",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/experiments/lifecycle_cost_game_v1.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "docs/development/specs/pon/CELL_LOTTERY_COST_AUDIT_V1.md",
+            "present": true,
+            "git_blob_sha": "ca96296468a4bdcbe863a00ce0e076cc446e2811",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/docs/development/specs/pon/CELL_LOTTERY_COST_AUDIT_V1.md",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "docs/development/specs/pon/SERVICE_WORK_SETTLEMENT_V1.md",
+            "present": true,
+            "git_blob_sha": "c14adde0d34296b613f7aca1c44fe45a8be7a936",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/docs/development/specs/pon/SERVICE_WORK_SETTLEMENT_V1.md",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          }
+        ]
+      },
+      {
+        "id": "D_E_expected_search_credit_envelope",
+        "related_pr": 810,
+        "paths": [
+          {
+            "path": "formal/pon-nakamoto-v1/credit_envelope_contract.py",
+            "present": true,
+            "git_blob_sha": "f71b9854686edeed385b478f091d586192a82899",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/credit_envelope_contract.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/test_credit_envelope_contract.py",
+            "present": true,
+            "git_blob_sha": "ed0f2219b010b8a35d2db62e6cc46bd882a3974e",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/test_credit_envelope_contract.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/normalized_search_cost.py",
+            "present": true,
+            "git_blob_sha": "475fd84baf39903b8230b2114a7212404baa7d88",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/normalized_search_cost.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/test_normalized_search_cost.py",
+            "present": true,
+            "git_blob_sha": "c39d4490249dacb9ea68599d3e349b4a64bc9e87",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/test_normalized_search_cost.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/credit_envelope_test_roster_v1.json",
+            "present": true,
+            "git_blob_sha": "67b1cb3984968ee0ecb6b7495fd0d77b742e0e2d",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/credit_envelope_test_roster_v1.json",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/CREDIT_ENVELOPE_CONTRACT_V1.md",
+            "present": true,
+            "git_blob_sha": "307ad6d7195e1206d5eba9bf7fd2ef08dfecf45e",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/CREDIT_ENVELOPE_CONTRACT_V1.md",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "scripts/ci/run_credit_envelope_checks.py",
+            "present": true,
+            "git_blob_sha": "d6391ee7f040179cd823f94d30c162275f225d85",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/scripts/ci/run_credit_envelope_checks.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": ".github/workflows/pon-credit-envelope.yml",
+            "present": true,
+            "git_blob_sha": "a54e2492abbef92685af3ea9c654bb6720511e95",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/.github/workflows/pon-credit-envelope.yml",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "docs/protocol/pon-nakamoto-v1/details/CLASSICAL_QUANTUM_COST_AUDIT_20261108.md",
+            "present": true,
+            "git_blob_sha": "5052340ca856093ba579f392bd3cb16c9a472cd8",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/docs/protocol/pon-nakamoto-v1/details/CLASSICAL_QUANTUM_COST_AUDIT_20261108.md",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          }
+        ]
+      },
+      {
+        "id": "D_E_F_fixed_probability_and_branch_schedule",
+        "related_pr": 811,
+        "paths": [
+          {
+            "path": "formal/pon-nakamoto-v1/fixed_probability_contract.py",
+            "present": true,
+            "git_blob_sha": "3aa27da56fca0290b4cd580232a5c900472d00c9",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/fixed_probability_contract.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json",
+            "present": true,
+            "git_blob_sha": "c56f2ee0f6a47bc04c0abc0de6142959f855c8ef",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/fixed_probability_contract_v1.json",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py",
+            "present": true,
+            "git_blob_sha": "94004c848c518559cc6a94c57973d13b5fcf896f",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/test_fixed_probability_contract.py",
+            "present": true,
+            "git_blob_sha": "ad5d5f08d3ddeef30be74609b55aca26713a61c8",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/test_fixed_probability_contract.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/credit_feasibility.py",
+            "present": true,
+            "git_blob_sha": "4c165e0d2f9fd7c2dd9ed69470f8f63b927ead39",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/credit_feasibility.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/test_credit_feasibility.py",
+            "present": true,
+            "git_blob_sha": "224d867c02ae8855a304e26c31597ae7af38f4df",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/test_credit_feasibility.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/CREDIT_FEASIBILITY_V1.md",
+            "present": true,
+            "git_blob_sha": "ce8ff506e0c546843f9dabd7bf83fe404f4d9b10",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/CREDIT_FEASIBILITY_V1.md",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/amortized_cost_potential.py",
+            "present": true,
+            "git_blob_sha": "958df75d1aef29bbe5ef291d08cc273d7bb81f19",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/amortized_cost_potential.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/test_amortized_cost_potential.py",
+            "present": true,
+            "git_blob_sha": "2c74cfced4c08f826db233869c7e7963b2cba420",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/test_amortized_cost_potential.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/test_amortized_cost_potential_independent.py",
+            "present": true,
+            "git_blob_sha": "d1cef305cd7329a3b9d786055c96ad7892cfcd40",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/test_amortized_cost_potential_independent.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/AMORTIZED_COST_POTENTIAL_V1.md",
+            "present": true,
+            "git_blob_sha": "3c0a50c9f2316f88f7808e3e5d110cf346260935",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/AMORTIZED_COST_POTENTIAL_V1.md",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "trillionnium/crates/trnm-pon-node/src/research_work_schedule.rs",
+            "present": true,
+            "git_blob_sha": "e5ae0fdd9bd18693106f2acc7413c95f63d0968f",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/trillionnium/crates/trnm-pon-node/src/research_work_schedule.rs",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "trillionnium/crates/trnm-pon-node/tests/research_work_schedule.rs",
+            "present": true,
+            "git_blob_sha": "fd23b1651f993c0453e8f9c8bdf5156b80272d48",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/trillionnium/crates/trnm-pon-node/tests/research_work_schedule.rs",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "scripts/pon_branch_work_schedule_reader.py",
+            "present": true,
+            "git_blob_sha": "48de242a9d4eb4f28da43a8c239cef6f42004fab",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/scripts/pon_branch_work_schedule_reader.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "scripts/ci/test_pon_branch_work_schedule_reader.py",
+            "present": true,
+            "git_blob_sha": "0ba4a8c4ace7081059ecfc119915fe534630b694",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/scripts/ci/test_pon_branch_work_schedule_reader.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "docs/protocol/pon-nakamoto-v1/details/BRANCH_WORK_SCHEDULE_RESEARCH_V1.md",
+            "present": true,
+            "git_blob_sha": "cf3d72668279bfbd51226f1517ff86e017894970",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/docs/protocol/pon-nakamoto-v1/details/BRANCH_WORK_SCHEDULE_RESEARCH_V1.md",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "docs/protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md",
+            "present": true,
+            "git_blob_sha": "47af53d47eee17ed709968470302ab8e15463a72",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/docs/protocol/pon-nakamoto-v1/details/FIXED_PROBABILITY_COST_CONTRACT_V1.md",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          }
+        ]
+      },
+      {
+        "id": "E_existing_tail_identity_and_native_accounting",
+        "related_pr": null,
+        "paths": [
+          {
+            "path": "formal/pon-nakamoto-v1/stateful_tail.py",
+            "present": true,
+            "git_blob_sha": "8ea748757dc78a335f81539a0baad2cdd00fab23",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/stateful_tail.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/work_scale_contract.py",
+            "present": true,
+            "git_blob_sha": "670c1e50b2c1167c933d045937efa73349628b47",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/work_scale_contract.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/test_work_scale_contract.py",
+            "present": true,
+            "git_blob_sha": "15c98f4bfb25224f4e0a5a7014a7f575eec7b4d3",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/test_work_scale_contract.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/lifecycle_query_bound.py",
+            "present": true,
+            "git_blob_sha": "85ea72cd6c4ac6c2b1f5e0151c81594ed5f45a1b",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/lifecycle_query_bound.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/lifecycle_query_runtime.py",
+            "present": true,
+            "git_blob_sha": "905e91fdd135658946d1cd1e3667cfb6c125a3a0",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/lifecycle_query_runtime.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/lifecycle_query_evidence.py",
+            "present": true,
+            "git_blob_sha": "2623ed4e6c67f8f25e0cd6143cd973a5c68af29f",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/lifecycle_query_evidence.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/lifecycle_query_tests.py",
+            "present": true,
+            "git_blob_sha": "4cf292a979ab40b1ec836d3dee3e5396b49b0f9a",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/lifecycle_query_tests.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/lifecycle_query_charging_v1.md",
+            "present": true,
+            "git_blob_sha": "d6311ab83af6353784a67f015c757ac948374836",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/lifecycle_query_charging_v1.md",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/mandatory_units_relation.py",
+            "present": true,
+            "git_blob_sha": "baaaa19305bcc39e7fdd6d2c691e721bbce1e94c",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/mandatory_units_relation.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/mandatory_units_query.py",
+            "present": true,
+            "git_blob_sha": "f237a02ec0f6a915d38a40c57d0c87209ab27ce5",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/mandatory_units_query.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/finite_joint_state_certificate.py",
+            "present": true,
+            "git_blob_sha": "488d4da377ec9d24d7f4a3e21ca0588518365e33",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/finite_joint_state_certificate.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/finite_joint_state_tests.py",
+            "present": true,
+            "git_blob_sha": "44d8e0551b95bb86084f62d79b4153268698e355",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/finite_joint_state_tests.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/certificate_composition.py",
+            "present": true,
+            "git_blob_sha": "6311a312400f9c613812e33e0ff479b914d86545",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/certificate_composition.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/certificate_composition_evidence.py",
+            "present": true,
+            "git_blob_sha": "d39d2a9e0019587f72dee5a73d79f216b8370787",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/certificate_composition_evidence.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/certificate_composition_tests.py",
+            "present": true,
+            "git_blob_sha": "ce78622fcd0e477535adaaaa339593329a058835",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/certificate_composition_tests.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/certificate_event_coverage.py",
+            "present": true,
+            "git_blob_sha": "673a189230fb1a368393645684a8cdb622a30705",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/certificate_event_coverage.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/certificate_event_coverage_tests.py",
+            "present": true,
+            "git_blob_sha": "bbfcc6e1d882f50b64b522ee020154d3a234e428",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/certificate_event_coverage_tests.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/native_execution_certificate.py",
+            "present": true,
+            "git_blob_sha": "e8f1717e967ad1686673883ce97cce4fc276850e",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/native_execution_certificate.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/test_native_execution_certificate.py",
+            "present": true,
+            "git_blob_sha": "bc12cf2fdd370191bf886201ef18b961f5f3c3ce",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/test_native_execution_certificate.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/native_risk_ledger.py",
+            "present": true,
+            "git_blob_sha": "7441e4c85925eef204435a75ea325fb511c282b2",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/native_risk_ledger.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/test_native_risk_ledger.py",
+            "present": true,
+            "git_blob_sha": "bcef9b809548e0e60fea9dc5d589931479b2fb90",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/test_native_risk_ledger.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/grouped_work_profile_v1.py",
+            "present": true,
+            "git_blob_sha": "dfd8fa05823a103e8d38813145c157cd621eeddd",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/grouped_work_profile_v1.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/grouped_work_composition_v1.py",
+            "present": true,
+            "git_blob_sha": "5c266dddcf465dbefa8165320c54ef1e837c350b",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/grouped_work_composition_v1.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "formal/pon-nakamoto-v1/fresh_work_resource_transfer_v0.py",
+            "present": true,
+            "git_blob_sha": "af1d836c42c4ed911765fb39484a487aedd4f5a0",
+            "content_reviewed": true,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/formal/pon-nakamoto-v1/fresh_work_resource_transfer_v0.py",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs",
+            "present": true,
+            "git_blob_sha": "dc705687c563cc997b71f65dae23aa2100343362",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          },
+          {
+            "path": "trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs",
+            "present": true,
+            "git_blob_sha": "2d4fdafb30677dd3c4f039640b7367f5fe8be6f9",
+            "content_reviewed": false,
+            "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e798d7125724d4b9f98c24d00cc80031f2eab4a9/trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs",
+            "related_pr_is_historical_context_not_execution_provenance": true
+          }
+        ]
+      }
+    ]
+  },
+  "qualification_gaps": [
+    {
+      "id": "D-actual-cost-envelopes",
+      "kind": "mathematical_and_empirical_qualification_missing_not_source_missing",
+      "current_source": "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json",
+      "facts": {
+        "points": 16,
+        "classes": [
+          "classical",
+          "quantum"
+        ],
+        "units": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "unknown_lower_endpoints": 16,
+        "unknown_upper_endpoints": 16
+      },
+      "required": "Freeze the real relation, all allowed inputs and accounting semantics. Independently implement legal strategies with full resource/deadline accounting for upper-bound candidates; establish lower bounds under an explicitly stated model and reduction, or retain unproved status. Timing one implementation cannot establish L."
+    },
+    {
+      "id": "D-work-time-provisional-contract",
+      "kind": "declared_research_grid",
+      "current_source": "formal/pon-nakamoto-v1/contracts/cost-envelope-current-hold-v1.json",
+      "facts": {
+        "work_levels": [
+          1,
+          4,
+          16
+        ],
+        "classes": 2,
+        "missing_endpoints": 12,
+        "alpha": "1/2",
+        "deadline_ms": 120000,
+        "horizon_rounds": 1
+      },
+      "required": "Do not identify its u=16 research grid or 120000 ms hypothesis with #811 MU1 u=1..8 or the original business deadline. Complete a source-bound explicit semantic mapping or keep separate."
+    },
+    {
+      "id": "D-admissible-strategy-coverage",
+      "kind": "reduction_missing",
+      "sources": [
+        "formal/pon-nakamoto-v1/legal_optimization_catalog_v1.py",
+        "formal/pon-nakamoto-v1/normalized_search_cost.py",
+        "formal/pon-nakamoto-v1/cell_lottery_cost_audit_v1.py"
+      ],
+      "required": "Cover low-rank/sparse/structured inputs, caches, preprocessing, batching, adaptive scale/task choices, public help, abandoned work, duplicate output identities and quantum state preparation/search in the defined legal strategy class. A finite catalog minimum is only a finite model minimum."
+    },
+    {
+      "id": "E-lifecycle-simulation",
+      "kind": "theorem_premise_missing",
+      "sources": [
+        "formal/pon-nakamoto-v1/lifecycle_cost_v1.py",
+        "formal/pon-nakamoto-v1/amortized_cost_potential.py",
+        "formal/pon-nakamoto-v1/finite_joint_state_certificate.py"
+      ],
+      "required": "Provide a sound embedding of complete competitive histories into the certificate state space, including hidden classical/quantum progress, initial state/potential, all competing forks, profile transitions, retained work and shared setup. The finite exact arithmetic already exists."
+    },
+    {
+      "id": "E-tail-and-resource-transfer",
+      "kind": "theorem_premise_missing",
+      "sources": [
+        "formal/pon-nakamoto-v1/stateful_tail.py",
+        "formal/pon-nakamoto-v1/lifecycle_query_bound.py",
+        "formal/pon-nakamoto-v1/grouped_work_composition_v1.py",
+        "formal/pon-nakamoto-v1/fresh_work_resource_transfer_v0.py"
+      ],
+      "required": "Establish the conditional one-step/whole-history premises and total query/resource mapping for the actual relation. Do not derive a high-confidence tail from an expected reward inequality alone. Charge shared primitives under a joint lifetime bound, and avoid counting shared owner observations as independent physical work."
+    },
+    {
+      "id": "E-shared-credit-semantics",
+      "kind": "join_contract_to_bind_when_a_real_consumer_exists",
+      "sources": [
+        "formal/pon-nakamoto-v1/credit_envelope_contract.py",
+        "formal/pon-nakamoto-v1/credit_feasibility.py",
+        "formal/pon-nakamoto-v1/cost_envelope_contract_v1.py"
+      ],
+      "required": "Bind the cost objective, success event, alpha, deadline, resource model, state/history scope and calibration inequality. These three checkers solve different declared problems. An arithmetic FEASIBLE result leaves production qualification conditional."
+    },
+    {
+      "id": "F-native-difficulty-migration",
+      "kind": "native_integration_missing",
+      "sources": [
+        "trillionnium/crates/trnm-pon-node/src/research_work_schedule.rs",
+        "scripts/pon_branch_work_schedule_reader.py",
+        "formal/pon-nakamoto-v1/branch_time_daa_v1.py"
+      ],
+      "required": "Use the original owner and fresh coherent native transaction for full State, receipts, task authorization, W1, credit identity, branch context and durable accounting. Cover sync/header/cold-start/recovery/activation-reorg paths at the same source and resources. Research C0/C1 arithmetic does not grant native consensus authority."
+    },
+    {
+      "id": "G-same-source-full-qualification",
+      "kind": "execution_and_business_gate_open",
+      "sources": [
+        "scripts/ci/run_work_time_contract_v1.py",
+        "scripts/ci/run_credit_envelope_checks.py"
+      ],
+      "required": "Keep historical run provenance and retained failures. Re-run required honest load, WAN, cold start, long duration, churn and native proof/admission gates at one exact source/build under the original resource and deadline contract before any full-close claim."
+    }
+  ],
+  "existing_declared_open_obligations": [
+    "complete-legal-strategy-simulation",
+    "classical-amortized-cost-lower-bound",
+    "quantum-amortized-cost-lower-bound",
+    "bounded-initial-classical-and-quantum-potential",
+    "cross-scale-and-cross-fork-composition",
+    "actual-hash-to-search-model-reduction",
+    "resource-to-physical-time-and-network-model",
+    "mixed-miner-common-prefix-chain-quality-chain-growth",
+    "native-work-identity-and-weight-bridge",
+    "real-cell-quality-and-owner-adoption"
+  ],
+  "join_audit": {
+    "reviewed_callers": [
+      "scripts/ci/run_credit_envelope_checks.py",
+      "scripts/ci/run_work_time_contract_v1.py"
+    ],
+    "reviewed_interfaces": [
+      "formal/pon-nakamoto-v1/normalized_search_cost.py",
+      "formal/pon-nakamoto-v1/credit_envelope_contract.py",
+      "formal/pon-nakamoto-v1/credit_feasibility.py",
+      "formal/pon-nakamoto-v1/cost_envelope_contract_v1.py",
+      "formal/pon-nakamoto-v1/fixed_probability_contract.py"
+    ],
+    "observations": [
+      {
+        "path": "scripts/ci/run_credit_envelope_checks.py",
+        "finding": "Imports the mean-cost and finite-envelope modules, executes their controls and records reports separately; no mean copied into a fixed hard-budget endpoint in the reviewed runner. Its result explicitly keeps actual_w1_minimum_cost, stateful_portfolio_bound and mixed_consensus_bound UNPROVED / overall HOLD."
+      },
+      {
+        "path": "scripts/ci/run_work_time_contract_v1.py",
+        "finding": "Checks two explicit fixed-budget input contracts and profile/source identity. It does not import normalized_search_cost or automatically convert its mean into these endpoints."
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/credit_feasibility.py",
+        "finding": "SuccessStandard is part of Scope; CreditProblem compares success standards before accepting points. A finite replay of an almost_sure_first_success point under fixed_success_probability=1/2 was rejected with SUCCESS_STANDARD_MISMATCH."
+      },
+      {
+        "paths": [
+          "formal/pon-nakamoto-v1/credit_envelope_contract.py",
+          "formal/pon-nakamoto-v1/credit_feasibility.py"
+        ],
+        "finding": "The former compares distinct scale ratios; the latter checks conservative U/L inequalities including self-pairs. A one-scale wide interval can therefore have different results. This is an explicitly different certificate criterion, not by itself a demonstrated bug."
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/research_work_schedule.rs",
+        "finding": "from_parent_first and retained-branch inspection feed CheckedBranchSchedule, with no State replay provenance in FullWorkCheck. Current module/reader documentation restricts it to research arithmetic. No production admission bypass established in the inspected scope; require explicit owner binding if this becomes a native decision."
+      }
+    ],
+    "limits": "No full frozen-head local checkout was available for whole-repository callsite search. These findings are scoped to inspected modules and runners; absence of an unsafe join is not asserted for uninspected consumers.",
+    "decision": "No code mutation; integrate semantics and qualifications into the sole plan. Patch only a demonstrated reachable existing consumer."
+  },
+  "strict_mean_counterexample": {
+    "definition": "B_alpha = inf{ b >= 0 : P(valid distinct completion by deadline D using total cost <= b) >= alpha }. This is a pathwise total-budget objective, distinct from mu = E[C].",
+    "declared_experiment": {
+      "legal_algorithm_count": 1,
+      "maximum_invocations": 1,
+      "success_event": "one valid distinct result revealed only on completion",
+      "all_outcomes_eventually_succeed": true,
+      "alpha": "1/2",
+      "deadline": 7,
+      "cost_and_time_unit": "one declared abstract resource unit; completion time equals cost",
+      "initial_setup": 0,
+      "success_proof_cost": 0,
+      "distribution": "exact declared finite probability law; not a fitted or statistical confidence statement",
+      "premises": "No restart, alternative algorithm or early side-channel is part of this deliberately minimal finite experiment."
+    },
+    "execution": {
+      "law_a": {
+        "exact_module_mean": "5/2",
+        "least_budget_for_half_success": "3",
+        "success_probability_at_mean_budget": "1/4",
+        "support": [
+          {
+            "probability": "1/4",
+            "total_cost": "1"
+          },
+          {
+            "probability": "3/4",
+            "total_cost": "3"
+          }
+        ]
+      },
+      "law_b": {
+        "exact_module_mean": "5/2",
+        "least_budget_for_half_success": "1",
+        "success_probability_at_mean_budget": "3/4",
+        "support": [
+          {
+            "probability": "3/4",
+            "total_cost": "1"
+          },
+          {
+            "probability": "1/4",
+            "total_cost": "7"
+          }
+        ]
+      },
+      "module_git_blob_sha": "475fd84baf39903b8230b2114a7212404baa7d88",
+      "scope": "finite declared probability laws; no native/miner experiment",
+      "metric_substitution_rejected": "unconditional expected cost -> pathwise capped total cost at fixed success probability and deadline"
+    },
+    "conclusion": "At b=mu=5/2, Law A succeeds with probability only 1/4, below 1/2. Law B has the identical mu but half-success budget 1. Therefore substituting an expected-cost number for a fixed-confidence hard-cap endpoint is unsound without a conversion theorem.",
+    "scope_limits": [
+      "These are finite declared laws, not an attack, native miner measurement, W1 cost bound or physical/quantum resource claim.",
+      "The lower-bound/optimum interpretation is relative only to the specified single-algorithm finite experiment.",
+      "If the target objective minimizes unconditional expected cost over all algorithms whose success probability is at least alpha, and has no incompatible deadline or scope restriction, a legal almost-sure algorithm is in that class and its mean can be an upper bound. It is still not a lower bound.",
+      "For a nonnegative almost-sure-completing cost with known mean mu, Markov can give a sufficient resource cap mu/(1-alpha) after an explicit truncation construction; this does not automatically establish the time deadline, legality of interruption, or all-strategy lower bound."
+    ]
+  },
+  "required_semantic_bindings_before_join": [
+    {
+      "id": "source_and_relation",
+      "fields": [
+        "repository",
+        "commit",
+        "tree",
+        "dirty/source inventory digest",
+        "build/backend configuration",
+        "relation/profile/encoding version",
+        "numeric arithmetic semantics",
+        "parameter digest"
+      ],
+      "purpose": "The same task name does not make different relations or builds equivalent."
+    },
+    {
+      "id": "complete_context_and_identity",
+      "fields": [
+        "network",
+        "chain parameters",
+        "window anchor and interval",
+        "parent",
+        "height",
+        "timestamp",
+        "miner",
+        "tx_root",
+        "state_root",
+        "receipts_root",
+        "nonce",
+        "tasks",
+        "target",
+        "relation parameters",
+        "canonical output/credit identity"
+      ],
+      "purpose": "Match the full admissibility context and one unique credited success; count all allowed task/input choices."
+    },
+    {
+      "id": "success_and_objective",
+      "fields": [
+        "success event",
+        "validity and availability conditions",
+        "distinctness and duplicate rules",
+        "at-least-alpha versus exact-alpha versus almost-sure stopping",
+        "alpha",
+        "objective: pathwise cap / unconditional expected cost / conditional success-only cost",
+        "aborted/failing/unpublished attempt accounting"
+      ],
+      "purpose": "Never equate a mean with a capped fixed-confidence endpoint; failure-only exclusions change the objective."
+    },
+    {
+      "id": "window_and_time",
+      "fields": [
+        "deadline",
+        "deadline origin",
+        "monotonic versus branch timestamp",
+        "round horizon",
+        "network delay model",
+        "resource-to-time conversion",
+        "stopping and truncation semantics"
+      ],
+      "purpose": "A mathematical completion quantile does not imply an honest business deadline or branch-time security."
+    },
+    {
+      "id": "resource_model",
+      "fields": [
+        "classical or quantum model",
+        "primitive operation/query",
+        "memory and bandwidth",
+        "parallel width",
+        "depth",
+        "state preparation",
+        "uncomputation",
+        "post-selection/extraction/proof and verification cost",
+        "fault tolerance assumption",
+        "unit conversion"
+      ],
+      "purpose": "Keep ideal query counts, physical time and implementation costs separate; post-win proof cost is not necessarily paid per coherent query."
+    },
+    {
+      "id": "history_and_initial_state",
+      "fields": [
+        "legal strategy class",
+        "initial classical/quantum state",
+        "initial potential bound",
+        "preprocessing horizon",
+        "shared setup",
+        "cross-task/scale/fork reuse",
+        "restart/profile transition",
+        "hidden progress",
+        "lifetime scope"
+      ],
+      "purpose": "The relevant adversarial history includes earlier paid and retained progress; restarts cannot reset it for free."
+    },
+    {
+      "id": "evidence_basis",
+      "fields": [
+        "L or U",
+        "proved theorem / explicit assumption / finite catalog / candidate algorithm measurement",
+        "source and input hash",
+        "measurement uncertainty",
+        "probability interpretation",
+        "reduction scope"
+      ],
+      "purpose": "Empirical implementation timing yields a scoped candidate U, not an all-legal-strategy L. Algebraic certificate checking does not authenticate its declared premises."
+    },
+    {
+      "id": "credit_criterion",
+      "fields": [
+        "absolute or relative normalization",
+        "class scale factors",
+        "gamma/distortion definition",
+        "self-pair inclusion",
+        "integer/lattice rounding",
+        "monotonicity",
+        "joint batch yield constraints"
+      ],
+      "purpose": "Different declared feasibility problems can differ without either checker being wrong."
+    },
+    {
+      "id": "joint_tail_and_lifetime_risk",
+      "fields": [
+        "conditional premises",
+        "initial law domination",
+        "per-call versus joint lifetime bound",
+        "occurrence caps",
+        "shared primitive/query budget",
+        "all competing histories",
+        "risk ledger identity"
+      ],
+      "purpose": "Do not infer independence or high-confidence security from expectation or disjoint namespace labels."
+    },
+    {
+      "id": "native_authority",
+      "fields": [
+        "original owner operation",
+        "coherent transaction/snapshot",
+        "fresh parent/State replay",
+        "task authorization",
+        "full work validation",
+        "durable budget state",
+        "header/sync/recovery/activation/reorg coverage"
+      ],
+      "purpose": "Research readers and metadata cannot supply native acceptance authority."
+    }
+  ],
+  "fresh_validation": {
+    "mean_laws": {
+      "law_a": {
+        "exact_module_mean": "5/2",
+        "least_budget_for_half_success": "3",
+        "success_probability_at_mean_budget": "1/4",
+        "support": [
+          {
+            "probability": "1/4",
+            "total_cost": "1"
+          },
+          {
+            "probability": "3/4",
+            "total_cost": "3"
+          }
+        ]
+      },
+      "law_b": {
+        "exact_module_mean": "5/2",
+        "least_budget_for_half_success": "1",
+        "success_probability_at_mean_budget": "3/4",
+        "support": [
+          {
+            "probability": "3/4",
+            "total_cost": "1"
+          },
+          {
+            "probability": "1/4",
+            "total_cost": "7"
+          }
+        ]
+      },
+      "mean_substitution_for_fixed_probability_cost_is_valid": false,
+      "module_git_blob_sha": "475fd84baf39903b8230b2114a7212404baa7d88",
+      "scope": "finite declared probability laws; no native/miner experiment"
+    },
+    "finite_contract_and_type_controls": {
+      "current_hold": {
+        "arithmetic_status": "HOLD_MISSING_BOUNDS",
+        "production_gate": "HOLD_NO_GO",
+        "unknown_endpoint_count": 12
+      },
+      "finite_batch_counterexample": {
+        "arithmetic_status": "INFEASIBLE",
+        "production_gate": "HOLD_NO_GO",
+        "violations": [
+          {
+            "batch_id": "paid-preparation-shared-two-work-levels",
+            "kind": "JOINT_BATCH_CAP",
+            "minimum_expected_credit": {
+              "d": 2,
+              "n": 7
+            },
+            "permitted_credit": {
+              "d": 1,
+              "n": 3
+            }
+          }
+        ]
+      },
+      "scope": "exact finite arithmetic only; no native build, workload, miner, or production qualification",
+      "source_blob_shas": {
+        "cost_envelope": "e977a45f0fe9d58cd1aa411bd75ced1fbdd49e5c",
+        "credit_feasibility": "4c165e0d2f9fd7c2dd9ed69470f8f63b927ead39"
+      },
+      "typed_success_mismatch": "SUCCESS_STANDARD_MISMATCH"
+    },
+    "retained_harness_failure": {
+      "initial_exit_code": 1,
+      "cause": "The local harness expected the wrong fixture batch identifier; actual repository output was paid-preparation-shared-two-work-levels. No repository assertion or algorithm failed.",
+      "corrected_exit_code": 0
+    },
+    "not_run": [
+      "native build",
+      "full CI roster",
+      "honest business load",
+      "WAN",
+      "cold start",
+      "long duration",
+      "quantum device/circuit experiment",
+      "complete frozen-head call graph"
+    ],
+    "test_scope": "Exact finite arithmetic and pre-existing typed rejection only; these tests do not replace L, lifecycle reduction or production qualification."
+  },
+  "primary_sources": [
+    {
+      "id": "Bailey-Sattath",
+      "url": "https://arxiv.org/abs/2403.08023",
+      "version": "v2, 2024-09-30",
+      "use": "Theoretical mismatch between conventional work/difficulty weighting and ideal quantum search scaling; not evidence of current physically feasible quantum mining and not a W1 security theorem.",
+      "root_citation_note": "Root should open the primary source itself before citing it in final prose."
+    },
+    {
+      "id": "Komargodski-Weinstein-PoUW",
+      "url": "https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ESA.2026.2",
+      "version": "ESA 2026 official proceedings, published 2026-08-25",
+      "companion_url": "https://arxiv.org/html/2504.09971v4",
+      "use": "The matrix-useful-work construction has a stated hardness conjecture/reduction model. Its arbitrary-matrix construction and low overhead do not provide a universal proven physical/quantum lower bound for this repository's W1 relation.",
+      "root_citation_note": "Root should open the primary source itself before citing it in final prose."
+    }
+  ],
+  "implementation_recommendations": [
+    {
+      "priority": 1,
+      "action": "Update the existing sole development plan/source table to record these modules already present at #821 and preserve all unresolved actual-L/U, lifecycle and native qualifiers.",
+      "new_gate": false
+    },
+    {
+      "priority": 2,
+      "action": "At the first real U/L-to-credit consumer, bind the full semantic tuple and add a focused rejection control for mean-versus-hard-cap mismatch. Reuse existing SuccessStandard and contracts; do not add a no-caller module.",
+      "new_gate": false
+    },
+    {
+      "priority": 3,
+      "action": "If/when F research schedule is connected to native admission, establish coherent owner-mediated full-State provenance and cover all accepted entry paths under B's durable accounting before granting authority.",
+      "new_gate": false
+    }
+  ]
+}

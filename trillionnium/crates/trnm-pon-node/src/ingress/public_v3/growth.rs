@@ -139,7 +139,7 @@ pub(super) fn dispatch(
                     super::super::now()?,
                     &checkpoint,
                 )? {
-                    // This existing exact packet gets no new W1 priority.
+                    // This existing exact packet gets no new completion priority.
                     return submit_result(&mut owner, id);
                 }
             }
@@ -175,20 +175,23 @@ pub(super) fn dispatch(
             }
             let checked = result?;
             checkpoint(GrowthProgress::BeforeContext)?;
-            charge
-                .workers
-                .live
-                .as_ref()
-                .ok_or("PUBLIC_GROWTH_ORIGINAL_CPU_REQUIRED")?
-                .growth_work_verified(&checked)?;
+            let completion_cpu = ServiceMutationCpuCheckpoint::from_actual_live(
+                charge
+                    .workers
+                    .live
+                    .as_ref()
+                    .ok_or("PUBLIC_GROWTH_ORIGINAL_CPU_REQUIRED")?
+                    .clone(),
+            );
             let mut owner = lock_owner(node, &mut wait)?;
             // Reacquired ORIGINAL owner. No cached State, clock or parent is
             // supplied; the typed entry rebinds all current inputs before commit.
-            let id = owner.admit_growth_work_checked_with_worker_accounting(
+            let id = owner.admit_growth_work_checked_with_completion(
                 checked,
                 super::super::now()?,
                 &checkpoint,
                 &charge.workers,
+                Some(&completion_cpu),
             )?;
             submit_result(&mut owner, id)
         }
