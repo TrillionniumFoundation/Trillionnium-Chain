@@ -282,3 +282,106 @@ python formal/pon-nakamoto-v1/credit_feasibility.py verify INPUT.json CERTIFICAT
 The subset-success normalization `f=q/g`, work-scale arithmetic, and native
 relation provenance belong to their existing or outer contract modules and
 are deliberately not reimplemented here.
+
+## 6. Required outer scope for actual Hepta work
+
+The finite solver's matching scope labels are declarations. They do not
+authenticate task provenance, the admissible input set, an execution owner or
+the meaning of success. Connecting this certificate to the existing Hepta
+owners requires those facts outside the solver; a second string-only verifier
+would not establish them.
+
+### Input selection belongs inside the strategy
+
+Let K fix the complete admitted work family, input access and selection rules,
+initial-state distribution, legal preprocessing/advice/cache state, sharing and
+invalidation rules, and the lifecycle horizon. Let S fix the success event and
+threshold eta. For a fixed-success experiment the intended object is
+
+```text
+c_chi(u; K, S) = inf { E[C_pi] :
+    pi is an admitted policy in resource model chi under K,
+    Pr_pi[S] >= eta }.
+```
+
+Cost is still unconditional. Policies include acquiring tasks, rejecting sampled
+tasks, selecting inputs/batches/permutations, abandoning attempts and publishing
+results. Task selection is not an external honest preprocessing step unless K
+actually enforces that restriction. The original task and budget owners retain
+their authority; this notation creates no new admission or dispatch path.
+
+A lower bound for one fixed input x does not automatically lower-bound this
+experiment. With free choice among two equal-size tasks of deterministic costs
+1 and 99, an equal-mixture average is 50 while an admitted selector can always
+pay 1. This arithmetic counterexample concerns declared costs, not measured W1
+or Hepta costs. A scale-only lower bound needs a uniform bound over every
+selectable input and permitted initial state, or a distributional reduction
+that includes the actual selection policy and all costs of rejected samples.
+Expanding the input domain or advice/cache allowance requires reconsidering
+the bound even when the matrix shape and solver labels stay unchanged.
+
+### The same probability is not the same success event
+
+Finding a marked terminal hash, proving the complete work relation, delivering
+before the original deadline, obtaining original-owner acceptance, acquiring
+unique native credit, and actual authorized consumer use are different events.
+An eta attached to one event cannot be relabelled as eta for another. The outer
+contract must pin the relevant verifier/program, complete inputs and state,
+original operation identity, expiry convention, replay/currentness rule and
+the event whose probability is being lower-bounded. A retained expected-context
+digest binds bytes; it does not authenticate the owner's live state or prove
+that an external effect occurred.
+
+The existing [useful-Cell relation](../../docs/development/specs/pon/USEFUL_CELL_RELATION_V1.md)
+and [owner map](../../docs/development/specs/pon/NEXT_HEPTA_OWNER_BINDINGS_V1.md)
+separate these responsibilities. Their public-source feature extractor is not
+the ordinary trained Hepta encoder. A correct local relation remains distinct
+from native owner admission, final use, payment and consensus qualification.
+
+### Cached application outputs and fresh seals
+
+When an admitted application output is independent of the challenge and legal
+cache reuse remains valid, preparing that output once can leave zero fresh
+application contractions for a later seal. A new nonce or parent context may
+require fresh security work without requiring another useful inference or
+learning improvement. The constructive scope and retained costs are recorded in
+the [grouped metering contract](../../docs/development/specs/pon/GROUPED_SECURITY_WORK_METERING_V1.md).
+This refutes a positive *per-ticket fresh-application-contraction* floor in
+that scope. It does not set preparation, sealing, proof, transport, verification
+or lifecycle resource cost to zero, and does not assume an unlimited cache
+lifetime where the admitted profile imposes a limit.
+
+An application comparison must use the ordinary optimized Hepta implementation
+for the same distinct authorized uses, including its low-rank, routing, shared
+base and cache behavior. A joint comparison additionally needs the same security
+success event and success standard. If C_H, C_S and C_J are complete matched
+costs for application alone, security alone and joint execution in the same
+resource convention, the joint saving is `1 - C_J / (C_H + C_S)` for a positive
+denominator. Missing costs leave the saving unestablished. Attribution of joint
+costs to the application requires a separately stated allocation rule; counting
+all seals as useful invocations cannot supply that rule. An offline accounting
+readback is not a newly executed matched-baseline experiment.
+
+### Quantum model boundaries and primary sources
+
+[Variable-time search](https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.TQC.2023.7)
+and [computation-tree search](https://arxiv.org/abs/2505.22405v2) analyze query
+models with nonuniform checking costs. Their results do not justify replacing
+every admitted strategy by equal-cost independent trials followed by Grover.
+[Hybrid query bounds](https://arxiv.org/abs/2610.06803v1) specifically require
+all qubits to be measured and discarded between bounded-query subroutines.
+That theorem cannot lower-bound an admitted miner that retains coherent state
+across those boundaries merely because it declares a bounded hardware class.
+
+[Arbitrary-matrix PoUW](https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ESA.2026.2)
+uses an explicit conjecture for its security conclusion and compares overhead
+to naive matrix multiplication. Applying it to Hepta requires a reduction that
+covers Hepta's actual legal input selection, low-rank/cache optimizations and
+chosen resource model. It does not supply the sixteen missing actual MU1 cost
+bounds in [the frozen contract](fixed_probability_contract_v1.json).
+
+The cancellation `(s/c_Q)/(s/c_C) = c_C/c_Q` holds algebraically. A physical
+hardware-efficiency interpretation additionally requires common calibrated
+resource units or an explicit conversion model. The within-model feasibility
+check above permits different classical and quantum resource units; it makes
+no query-to-energy conversion and cannot equalize a real same-scale advantage.
