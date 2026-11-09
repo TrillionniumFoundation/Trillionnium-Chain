@@ -655,7 +655,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                      'test_useful_cell_multimodal_execution_v3.py',
                      'test_useful_cell_multimodal_relation_v3.py',
                      'test_lifecycle_cost_v1.py', 'test_cell_lottery_cost_audit_v1.py',
-                     'test_service_work_settlement_v1.py'):
+                     'test_service_work_settlement_v1.py', 'test_four_propositions_v1.py'):
             command = '    python3 formal/pon-nakamoto-v1/' + name + ' -v\n'
             self.assertEqual(self.script.count(command), 1)
             variants = {
@@ -1341,7 +1341,7 @@ class CiContractTests(unittest.TestCase):
                      'test_useful_cell_multimodal_execution_v3.py',
                      'test_useful_cell_multimodal_relation_v3.py',
                      'test_lifecycle_cost_v1.py', 'test_cell_lottery_cost_audit_v1.py',
-                     'test_service_work_settlement_v1.py'):
+                     'test_service_work_settlement_v1.py', 'test_four_propositions_v1.py'):
             path = self.root / 'formal/pon-nakamoto-v1' / name
             command = next(line.strip() for line in script.splitlines()
                            if line.strip() == 'python3 formal/pon-nakamoto-v1/' + name + ' -v')
