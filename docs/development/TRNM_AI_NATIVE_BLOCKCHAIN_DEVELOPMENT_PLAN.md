@@ -274,6 +274,29 @@ work gate; owner-authorized task payment and a future independently verified
 canonical proof settlement are distinct interfaces. Original four-second/16,
 PQ, funding/reorg, WAN, proof-benefit and model-adoption gates remain open.
 
+**Exact retained Cell closures and declared fault-domain recovery, 2026-11-08
+America/New_York:** Continue the #807 Cell candidate from exact source
+`0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a` under the
+[retained recovery contract](specs/pon/CELL_RETAINED_RECOVERY_V1.md).
+Bind the nonempty current retention set, original service windows, owner epoch
+and both loader contexts for every complete TCV1. Preserve each composition,
+router and runtime while deduplicating exact shared objects. Fetch the whole
+set through one original network session and verify every complete payload;
+retain failed-attempt counters, cancellation and the original deadline.
+Stream all retained chunks through original CRS1 reconstruction and full-file
+hashes, checking every replica copy. Enumerate all allowed mixed operator,
+administrator and physical-domain losses under an independently pinned policy;
+retain per-chunk counterexamples rather than treating duplicate indices or
+identity labels as independent availability. The byte observer and conditional
+placement analysis do not authenticate remote custody or prove real operator
+independence. Keep the existing durable catalog/GC/payment owners, all
+qualification flags, original host limits and TCV1/CPV3/TCA2/CRS1 encodings.
+The separate frozen #812 candidate still requires explicit source integration
+and its own exact-source validation; no component observation is imported as
+its pass. Current durable promise enumeration, actual restricted-loader
+inventory, complete funded TCV1 duties, independent WAN fault campaigns,
+renewal/repair and ordinary Hepta use remain required.
+
 **Next Architecture & Security Qualification, 2026-11-07 America/New_York:**
 Start the owner's named six-stream program through the existing integration
 lineage and this sole plan. The [qualification contract](specs/pon/NEXT_ARCHITECTURE_SECURITY_QUALIFICATION_V1.md)
