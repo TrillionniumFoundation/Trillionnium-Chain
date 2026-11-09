@@ -1,0 +1,6 @@
+{
+  "schema": "pon-hosted-review-correction-v1",
+  "original_sha256": "72369b93a5d02b5de375a64276a314be0a2ee1b8900f8aa02e34cec6183b1bc4",
+  "corrected_sha256": "38efccf6866828d2f4fbb071814a15140f200f39bb58af3cd1199252e102f617",
+  "correction": "Precisely distinguish old checker/test fixture field from actual store field. No source, original CI outcome or retained artifact was modified."
+}

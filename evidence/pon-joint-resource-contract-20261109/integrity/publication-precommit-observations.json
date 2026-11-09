@@ -1,0 +1,23 @@
+{
+  "schema": "pon-evidence-precommit-observations-v1",
+  "interruption": "Cloud executor temporarily unavailable after commit-preparation stopped at whitespace gate; recovered without rerunning native work.",
+  "recovered_package_files_checked_against_prior_sha256sums": 73,
+  "recovered_package_hash_mismatches": 0,
+  "whitespace_gate": {
+    "exit_code": 2,
+    "stdout": "evidence/pon-joint-resource-contract-20261109/integrity/verify_archives.py:188: new blank line at EOF.\n",
+    "stderr": "",
+    "source_commit_created": false
+  },
+  "original_verifier_source": {
+    "sha256": "9ecb268bc0af6a6b313dcf81739a64b211bf4f220eca977533d4cc2d7a559f21",
+    "bytes": 12492,
+    "published_as": "integrity/verify_archives.py.gz",
+    "gzip_bytes": 4017,
+    "gzip_sha256": "df3536f5b5b17a5291ff3c462b57d972b221c17c7f70cf08247b44912eec1709",
+    "decompression_byte_equal": true
+  },
+  "whitespace_guard_changed": false,
+  "historical_verification_report_changed": false,
+  "production_source_changed": false
+}

@@ -1,0 +1,185 @@
+{
+  "credential_values_output": false,
+  "findings": [],
+  "members": [
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 12601856,
+      "matches_complete_member_inventory": true,
+      "member": "public_v3_multiprocess.bin",
+      "sha256": "f9cd85c7b053746cea0610aa184bd4993def306bd6bb8aeb875583c803dfa619"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 3506176,
+      "matches_complete_member_inventory": true,
+      "member": "run-1-raw/baseline/independent-client/native.sqlite",
+      "sha256": "dcdcbd6b7711ed9f8eed5d81b2827bb1cd99d12a862c2ab733b8a5a9a871bf63"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 4317184,
+      "matches_complete_member_inventory": true,
+      "member": "run-1-raw/baseline/receiver/native.sqlite",
+      "sha256": "001f1cf2e787e020c1841ba182e3d9223ed9d8ed56b345334d9341f554635e89"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 2834432,
+      "matches_complete_member_inventory": true,
+      "member": "run-1-raw/from-zero/independent-client/native.sqlite",
+      "sha256": "08ed7cbb964b68623b14954681860cbb60635557b68480a88a5e8c7c17ee9b65"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 3153920,
+      "matches_complete_member_inventory": true,
+      "member": "run-1-raw/from-zero/receiver/native.sqlite",
+      "sha256": "6ae8ce5b60e9d4662333786813c4a8c2a98fdae5d839ddc9c31a91b8dbd34910"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 5505024,
+      "matches_complete_member_inventory": true,
+      "member": "run-1-raw/honest-miner/native.sqlite",
+      "sha256": "e1ab6b2ef79151bec8ecf295a68ebac4023933713f5351bb66996626fc477566"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 2834432,
+      "matches_complete_member_inventory": true,
+      "member": "run-1-raw/late-product/independent-client/native.sqlite",
+      "sha256": "08ed7cbb964b68623b14954681860cbb60635557b68480a88a5e8c7c17ee9b65"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 3153920,
+      "matches_complete_member_inventory": true,
+      "member": "run-1-raw/late-product/receiver/native.sqlite",
+      "sha256": "6ae8ce5b60e9d4662333786813c4a8c2a98fdae5d839ddc9c31a91b8dbd34910"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 3506176,
+      "matches_complete_member_inventory": true,
+      "member": "run-2-raw/baseline/independent-client/native.sqlite",
+      "sha256": "dcdcbd6b7711ed9f8eed5d81b2827bb1cd99d12a862c2ab733b8a5a9a871bf63"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 4317184,
+      "matches_complete_member_inventory": true,
+      "member": "run-2-raw/baseline/receiver/native.sqlite",
+      "sha256": "001f1cf2e787e020c1841ba182e3d9223ed9d8ed56b345334d9341f554635e89"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 2834432,
+      "matches_complete_member_inventory": true,
+      "member": "run-2-raw/from-zero/independent-client/native.sqlite",
+      "sha256": "08ed7cbb964b68623b14954681860cbb60635557b68480a88a5e8c7c17ee9b65"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 3153920,
+      "matches_complete_member_inventory": true,
+      "member": "run-2-raw/from-zero/receiver/native.sqlite",
+      "sha256": "6ae8ce5b60e9d4662333786813c4a8c2a98fdae5d839ddc9c31a91b8dbd34910"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 5505024,
+      "matches_complete_member_inventory": true,
+      "member": "run-2-raw/honest-miner/native.sqlite",
+      "sha256": "e1ab6b2ef79151bec8ecf295a68ebac4023933713f5351bb66996626fc477566"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 2834432,
+      "matches_complete_member_inventory": true,
+      "member": "run-2-raw/late-product/independent-client/native.sqlite",
+      "sha256": "08ed7cbb964b68623b14954681860cbb60635557b68480a88a5e8c7c17ee9b65"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 3153920,
+      "matches_complete_member_inventory": true,
+      "member": "run-2-raw/late-product/receiver/native.sqlite",
+      "sha256": "6ae8ce5b60e9d4662333786813c4a8c2a98fdae5d839ddc9c31a91b8dbd34910"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 3366912,
+      "matches_complete_member_inventory": true,
+      "member": "run-3-raw/baseline/independent-client/native.sqlite",
+      "sha256": "cb2899eda4aeb0e8ff5d4202b7e6329e3019aa3a576661e92eb1b674a6b72350"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 4317184,
+      "matches_complete_member_inventory": true,
+      "member": "run-3-raw/baseline/receiver/native.sqlite",
+      "sha256": "001f1cf2e787e020c1841ba182e3d9223ed9d8ed56b345334d9341f554635e89"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 2834432,
+      "matches_complete_member_inventory": true,
+      "member": "run-3-raw/from-zero/independent-client/native.sqlite",
+      "sha256": "08ed7cbb964b68623b14954681860cbb60635557b68480a88a5e8c7c17ee9b65"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 3153920,
+      "matches_complete_member_inventory": true,
+      "member": "run-3-raw/from-zero/receiver/native.sqlite",
+      "sha256": "6ae8ce5b60e9d4662333786813c4a8c2a98fdae5d839ddc9c31a91b8dbd34910"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 5505024,
+      "matches_complete_member_inventory": true,
+      "member": "run-3-raw/honest-miner/native.sqlite",
+      "sha256": "e1ab6b2ef79151bec8ecf295a68ebac4023933713f5351bb66996626fc477566"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 2834432,
+      "matches_complete_member_inventory": true,
+      "member": "run-3-raw/late-product/independent-client/native.sqlite",
+      "sha256": "08ed7cbb964b68623b14954681860cbb60635557b68480a88a5e8c7c17ee9b65"
+    },
+    {
+      "archive": "original-campaign-42553751914.zip",
+      "ascii_credential_pattern_findings": 0,
+      "bytes": 3153920,
+      "matches_complete_member_inventory": true,
+      "member": "run-3-raw/late-product/receiver/native.sqlite",
+      "sha256": "6ae8ce5b60e9d4662333786813c4a8c2a98fdae5d839ddc9c31a91b8dbd34910"
+    }
+  ],
+  "scanner_sha256": "46d806988fec2c1a18b73c4819c16985acc3d963e5b43424ca73a3fee32cd0a1",
+  "schema": "main-zip-binary-ascii-pattern-review-v1",
+  "scope": "Only the 22 binary members of the same three complete ZIPs; obvious ASCII credential patterns only, no generic hexadecimal or W1-byte secret inference."
+}

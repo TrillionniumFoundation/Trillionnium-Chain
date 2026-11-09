@@ -1,0 +1,10 @@
+{
+  "file": "runtime-observations-13648102770.zip",
+  "bytes": 9188196,
+  "sha256": "283d652af921cffd9ff5ae17325db1cc607b9282cffac183fa6ca41ef7e1fd0a",
+  "file_count": 697,
+  "uncompressed_bytes": 90427037,
+  "original_provider_zip_preserved": true,
+  "tested_commit": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+  "job_id": 128954796921
+}

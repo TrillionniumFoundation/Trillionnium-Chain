@@ -1,0 +1,83 @@
+{
+  "schema": "pon-joint-evidence-archive-v1",
+  "name": "history-original-control",
+  "files": [
+    {
+      "path": "history-deadline-evidence/initial-branch-preflight-observation.json",
+      "bytes": 690,
+      "sha256": "9dac75c34878079196c2e00098e014fcc433186d5e2b841772826ed27cb64dfb"
+    },
+    {
+      "path": "history-deadline-evidence/red-case-analysis.json",
+      "bytes": 904,
+      "sha256": "21de78c04899072aaa0ba76f52fddf57cb17720dbec53d48541eceb5343391e4"
+    },
+    {
+      "path": "history-deadline-evidence/red-command.json",
+      "bytes": 1332,
+      "sha256": "a225d5f3394a7db1440b59eaec052a58e71e368b9d3e46dca03f56f3e81b657a"
+    },
+    {
+      "path": "history-deadline-evidence/red-exact-deadline-tests.rs",
+      "bytes": 17164,
+      "sha256": "452dcd5b3fe49a0233039483efcd6e43dfc805bcaa6ed5f610eeb7e11a52ad8d"
+    },
+    {
+      "path": "history-deadline-evidence/red-native-executable-identity.json",
+      "bytes": 411,
+      "sha256": "d30ca7c4552fabf3fe06ba209deeeb15578a539a6a97f2ef541a5e80889d40f5"
+    },
+    {
+      "path": "history-deadline-evidence/red-preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "history-deadline-evidence/red-preflight.stdout",
+      "bytes": 172,
+      "sha256": "dd631153876a839ea21670016e08d6db3a31d736b96e4e65fcde0ab60fe00825"
+    },
+    {
+      "path": "history-deadline-evidence/red-source-after.json",
+      "bytes": 10127995,
+      "sha256": "dddd66f6baee9bd3e0ce131a6e41f8997d8edfcd2fb7c525a2d47b5954d6c6cb"
+    },
+    {
+      "path": "history-deadline-evidence/red-source-before.json",
+      "bytes": 10127995,
+      "sha256": "dddd66f6baee9bd3e0ce131a6e41f8997d8edfcd2fb7c525a2d47b5954d6c6cb"
+    },
+    {
+      "path": "history-deadline-evidence/red-summary.json",
+      "bytes": 339,
+      "sha256": "b7a87ff7e27d9e3c08cb827dc2e2ae52ecbc78022894553a0a90e1ad2965ebb3"
+    },
+    {
+      "path": "history-deadline-evidence/red-tests-only.patch",
+      "bytes": 5331,
+      "sha256": "96d6a53f9e3998b555ede045cf4e2ddf7ba7638a66bad86acde6276e1d498740"
+    },
+    {
+      "path": "history-deadline-evidence/red.stderr",
+      "bytes": 6736,
+      "sha256": "18b7dcf603eb7c2b09e0c070a49d34bdcce7cd0b0bcaa3ada25480d076603ab7"
+    },
+    {
+      "path": "history-deadline-evidence/red.stdout",
+      "bytes": 1651,
+      "sha256": "0fca4a57a64dabcb42372bf76a1c952a9b58ca17fe922cccca1b225bfb4b60e1"
+    },
+    {
+      "path": "history-deadline-evidence/run-red-qualified.py",
+      "bytes": 4860,
+      "sha256": "cdc52883cdac7cd4dfa547b63e9b71b136cbcc23e29204a38a5d914213c6028e"
+    },
+    {
+      "path": "history-deadline-evidence/run-red.py",
+      "bytes": 3939,
+      "sha256": "1e3dd22ed476f88891f6d53b409d24b396aa190eebb1582e2f8ebb1f2301992d"
+    }
+  ],
+  "raw_bytes_preserved": true,
+  "archive_header_time_and_owner_normalized": true
+}

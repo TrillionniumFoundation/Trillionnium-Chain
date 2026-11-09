@@ -1,0 +1,13 @@
+{
+  "provider": "GitHub read-only connector reusable file reference",
+  "expected_bytes": 1812700,
+  "expected_sha256": "738c55807bd4e26b9b7f635d7fffbfbcb9240440856c992127c0e9ca2df51f81",
+  "path": "/workspace/scratch/pon-joint-58fd59-build/preparation/ci-readback-117/main-hosted-42553751914-42553751985/worktime-head-42553751985.zip",
+  "source_head": "11791e2da79b69322271be2cffe03725165151d1",
+  "started_unix_ns": 1794195345603725713,
+  "complete": true,
+  "reused": false,
+  "bytes": 1812700,
+  "sha256": "738c55807bd4e26b9b7f635d7fffbfbcb9240440856c992127c0e9ca2df51f81",
+  "finished_unix_ns": 1794195345973168146
+}
