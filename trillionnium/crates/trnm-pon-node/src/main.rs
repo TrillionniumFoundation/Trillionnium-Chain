@@ -2,6 +2,7 @@
 mod cell_native_cli;
 mod growth_cli;
 mod host_public_guard;
+mod packet_observer_cli;
 #[cfg(all(unix, feature = "pq-native-openssl"))]
 mod pq_tls_cli;
 use serde_json::{json, Value};
@@ -1432,6 +1433,9 @@ fn run() -> Result<Value> {
             "EXPLICIT_DEVELOPMENT_REQUIRED: public test identities; no monetary value".into(),
         );
     }
+    if command == "resource-owner-init" {
+        return packet_observer_cli::initialize(&args);
+    }
     if args.contains_key("--pq-application-config")
         || args.contains_key("--pq-application-config-sha256")
     {
@@ -1476,7 +1480,7 @@ fn run() -> Result<Value> {
         "mine" | "make" => "--transactions --timestamp --output --parent --miner --task-bootstrap --task-manifest --task-model --task-input --consensus-maintenance",
         "task-fixture" => "--task-model --task-input --demand-index --purpose --not-before --expires --demand-nonce --output",
         "submit" => "--packet --packet-stdin --peer",
-        "packet-status" => "--packet --packet-stdin --peer",
+        "packet-status" => "--packet --packet-stdin --peer --observation-cpu-seconds --observation-wall-seconds --observation-snapshot-bytes --observation-resource-profile-sha256 --observation-operation-id --observation-parent-state --observation-deadline-unix-ms --observation-packet-sha256 --packet-observer-worker",
         "push" => "--packet --packet-stdin --peer --reliable-submit --submit-deadline-ms --submit-attempts --submit-call-cap --submit-parent-depth",
         "export" => "--block --output",
         "confirm" => "--transaction --block",
@@ -1512,6 +1516,16 @@ fn run() -> Result<Value> {
         if !allowed.split_whitespace().any(|k| k == key) {
             return Err(format!("UNKNOWN_OPTION:{key}").into());
         }
+    }
+    if command == "packet-status" && !args.contains_key("--peer") {
+        if let Some(value) = packet_observer_cli::supervise(&args)? {
+            return Ok(value);
+        }
+    } else if args
+        .keys()
+        .any(|key| key.starts_with("--observation-") || key == "--packet-observer-worker")
+    {
+        return Err("PACKET_OBSERVATION_LOCAL_ONLY".into());
     }
     let growth_network = growth_network_options(&command, &args)?;
     validate_host_kernel_profile(&command, &args)?;
@@ -2029,7 +2043,11 @@ fn run() -> Result<Value> {
                 trnm_pon_node::PacketObservationBackend::LegacyV2
             },
             number(&args, "--workers", 1)? as usize,
-            trnm_pon_node::DEFAULT_PACKET_OBSERVATION_SNAPSHOT_BYTE_LIMIT,
+            number(
+                &args,
+                "--observation-snapshot-bytes",
+                trnm_pon_node::DEFAULT_PACKET_OBSERVATION_SNAPSHOT_BYTE_LIMIT,
+            )?,
         )?;
         return Ok(json!({"result":value,
             "clock_scope":if args.contains_key("--logical-now"){"logical-test"}else{"local-wall"},

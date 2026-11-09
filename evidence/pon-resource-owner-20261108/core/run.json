@@ -1,0 +1,34 @@
+{
+  "schema": "resource-owner-core-execution-v1",
+  "host": "ai395",
+  "job_id": "1a1be345e68-138b0-929",
+  "source_commit": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+  "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+  "argv": [
+    "/home/qq/.cargo/bin/cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "resource_owner_v1::tests",
+    "--",
+    "--nocapture"
+  ],
+  "environment": {
+    "CARGO_TARGET_DIR": "/home/qq/work/chain-rejection-resource-owner-956149-target",
+    "CARGO_BUILD_JOBS": "2",
+    "RUST_TEST_THREADS": "1"
+  },
+  "exit_code": 0,
+  "runtime_status": "succeeded",
+  "output_complete": true,
+  "observed_passed": 23,
+  "observed_failed": 0,
+  "observed_ignored": 0,
+  "per_command_timing_receipt_available": false,
+  "log_sha256": "4df356f5a147c002144c8d1edd8ca14f3ffdee50c54a42daf6e99a023f8c0d85"
+}

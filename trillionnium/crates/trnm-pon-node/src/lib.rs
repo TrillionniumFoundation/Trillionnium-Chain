@@ -39,6 +39,8 @@ pub mod public_submit;
 /// Isolated V2 certificate reader; never votes, installs models or activates consensus.
 pub mod release_finality;
 pub mod release_owner;
+/// Explicit finite cross-process resource reservations for a fixed local Node.
+pub mod resource_owner_v1;
 mod store;
 pub use error::{Error, ErrorCode, ErrorKind};
 use serde_json::{json, Value};
@@ -74,8 +76,8 @@ pub use store::native_owner_observation::{
     MAX_CENSUS_PACKET_BYTES,
 };
 pub use store::packet_observation::{
-    observe_existing_packet, PacketObservationBackend,
-    DEFAULT_PACKET_OBSERVATION_SNAPSHOT_BYTE_LIMIT,
+    observe_existing_packet, observe_existing_packet_owned, PacketObservationBackend,
+    PacketObservationResourceContractV1, DEFAULT_PACKET_OBSERVATION_SNAPSHOT_BYTE_LIMIT,
 };
 pub use store::pinned_account_query::PinnedNativeAccountQuery;
 pub use store::storage_service::{

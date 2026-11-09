@@ -1,0 +1,38 @@
+{
+  "name": "r14-profile",
+  "argv": [
+    "/home/qq/.cargo/bin/cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "ingress::public_v3::tests::resource_revision_r14_rejects_signed_old_cookies_and_preserves_control_output_reserve",
+    "--",
+    "--exact",
+    "--nocapture"
+  ],
+  "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+  "started_utc": "2026-11-09T03:01:39.461249+00:00",
+  "finished_utc": "2026-11-09T03:01:39.526156+00:00",
+  "wall_seconds": 0.06491149496287107,
+  "exit_code": 0,
+  "child_user_cpu_seconds": 0.0428809999999995,
+  "child_system_cpu_seconds": 0.02190499999999984,
+  "children_maxrss_highwater_kib": 186084,
+  "source_before": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+    "status": ""
+  },
+  "source_after": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+    "status": ""
+  },
+  "log_bytes": 450,
+  "log_sha256": "2f3e89181c2cc2e0ae79fc5d4a229ae9b31fb806b20a725692cff047bbb9fb43"
+}

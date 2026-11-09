@@ -64,6 +64,49 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Original-owner rejection-cost continuation, 2026-11-08 America/New_York — HOLD:**
+Continue the real #812 integration source `7e044b65454f4c9ea505591727332acffb33e7e5`,
+selectively carrying #802's bounded observer envelope while retaining later
+owner fixes. The [new explicit local admission profile](specs/pon/RESOURCE_OWNER_ADMISSION_V1.md)
+reserves execution and cleanup principal durably, binds the original operation,
+packet bytes, active-parent commitment and deadline, and preserves outstanding
+cost across process loss and replay. Adopted packet readers require the original
+account; no restart, identity or new listener creates credit. The native adapter
+settles conservatively only after actual child termination and cleanup. Existing
+public-v3 r14 semantics stay unchanged. The [execution record](../../evidence/pon-resource-owner-20261108/README.md)
+separates source preparation, component evidence and remaining qualification.
+
+Frozen C1 `8fed7514193e06058f4eaf18f362a8fb968ce96f`, tree
+`1ebc5d4c252eacb727da67945892a9ae0b8d76c4`, passed seven selected native suites:
+core 23, scalar CPU 60, root rejection 7, r14 compatibility 1, packet observation
+15, accepted-task controls 4 and process-envelope controls 4. These are 114
+reported selected passes with zero failures/ignores, not a complete workspace
+native run. Four static suites passed 43 + 50 + 57 + 151 = 301 controls; all
+11 static gates passed. The separate native runner also passed strict
+all-workspace/all-target/all-feature Clippy with `-D warnings` and formatting.
+Rust 1.95.0 and the executed Node library test artifact's original optimisation
+level 3 were retained. The complete ai395 source receipt covered
+23,333 tracked entries / 2,380,365,122 bytes and matched before/after; the locked
+offline Cargo graph resolved 181 packages and 26 workspace members.
+
+Retain the original partial-snapshot missing-fixture failures and local test
+codegen SIGKILL with its unconfirmed cause. No preparatory local test pass is
+invented. The mac publisher's Python 3.9/tomllib preflight failure and successful
+retry with its existing Python 3.14.3 remain separate observations. An
+evidence and plan publication child, with its matching documentation source
+pin, must retain C1 runtime/test/profile/dependency bytes and pass its own
+source/link gates. Keep C1 native results
+attached to C1; record the publication child's exact identity, actual checks
+and GitHub readback independently in the resulting pull request.
+
+All-ingress ownership, physical overshoot, independent rollback freshness,
+authenticated committed-service entitlement, a positive honest-service bound,
+full proof-backend net benefit and production activation remain open.
+Direct owned-worker invocation retains claim/CPU checks but does not itself
+supply the supervisor wall/reaping/cleanup contract. The original host resource
+profile, inverse-cost qualification and complete cryptographic/PQ128 obligations
+remain unchanged and unclosed. Overall status remains **HOLD_NO_GO**.
+
 **PQ quorum preflight and root-family continuation, 2026-11-08 UTC:**
 Continue the existing #723 PQ candidate from `12e510b211110d93d9ead07e02c07a1eecc28ae9`.
 Complete bounded signer-set checks before release signature mathematics, and

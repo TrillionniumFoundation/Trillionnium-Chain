@@ -1,0 +1,44 @@
+{
+  "schema": "pon-resource-owner-local-preparation-v1",
+  "source_scope": "partial exact-blob staging, not an authoritative full checkout",
+  "baseline_ref": "7e044b65454f4c9ea505591727332acffb33e7e5",
+  "toolchain": "Rust 1.95.0 cached local Linux toolchain",
+  "offline": true,
+  "locked": true,
+  "profile_unchanged": true,
+  "native_tests_executed": 0,
+  "acceptance_qualified": false,
+  "sqlite_loader_warning": "UNQUALIFIED normal Cargo loader directory set incomplete; preserved in original logs",
+  "attempts": [
+    {
+      "file": "local-resource-owner-preliminary.log",
+      "kind": "cargo-test",
+      "exit_code": 101,
+      "bytes": 5601,
+      "sha256": "b835535bd2d3d0dedb8d79f87cb78712c19b722cc6739e230ead7cbbfb3f6e06",
+      "observation": "missing original consensus arithmetic compile-time fixture"
+    },
+    {
+      "file": "local-resource-owner-preliminary-02.log",
+      "kind": "cargo-test",
+      "exit_code": 101,
+      "bytes": 5071,
+      "sha256": "0b6be1b1ec4811e28f3e909b4525d64d8ac843f4d451d14bb814de1dd7a0f464",
+      "observation": "rustc SIGKILL during node test code generation; cause unconfirmed"
+    },
+    {
+      "file": "local-resource-owner-preliminary-check.log",
+      "kind": "cargo-check",
+      "exit_code": 101,
+      "bytes": 4461,
+      "sha256": "45f201cb1f054f2f99e7debd10e10a47c629ed1e748bcacffa395942ee9700a3",
+      "observation": "missing original work_certificate fuzz compile-time fixture"
+    }
+  ],
+  "restored_baseline_fixture": {
+    "path": "formal/pon-nakamoto-v1/vectors/consensus-arithmetic-v1.json",
+    "bytes": 31741,
+    "git_blob_sha": "c3a86442e0b2d0b57fbdd5d0954288b5e92e6dc2",
+    "sha256": "e1146d6a055790c89a8b66f96bc5a9c36bc1b0bf1102d6bf3b4063cc308ab737"
+  }
+}

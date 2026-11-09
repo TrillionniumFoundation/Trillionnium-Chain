@@ -1,0 +1,27 @@
+{
+  "name": "preflight",
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+  "started_utc": "2026-11-09T03:01:28.005186+00:00",
+  "finished_utc": "2026-11-09T03:01:28.028880+00:00",
+  "wall_seconds": 0.023673587013036013,
+  "exit_code": 0,
+  "child_user_cpu_seconds": 0.022064999999999994,
+  "child_system_cpu_seconds": 0.001570000000000002,
+  "children_maxrss_highwater_kib": 17928,
+  "source_before": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+    "status": ""
+  },
+  "source_after": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+    "status": ""
+  },
+  "log_bytes": 181,
+  "log_sha256": "bfe1fd556432020e77d09ef52f28f794fc423c0af7b4223fc13ec3055cd86c51"
+}

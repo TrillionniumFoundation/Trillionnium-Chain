@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+  "end_utc": "2026-11-09T02:54:39.408384+00:00",
+  "exit_code": 0,
+  "expected_head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+  "expected_tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+  "identity_after": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "status": "",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+  },
+  "index": 7,
+  "name": "negative-source-integrity",
+  "start_utc": "2026-11-09T02:54:37.523214+00:00",
+  "state": "completed",
+  "stderr": {
+    "bytes": 6414,
+    "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/07-negative-source-integrity.stderr.log",
+    "sha256": "e698eb908ac3e472156aafa5ebc143327dfe56c727d4d126766eda462f09d4e9"
+  },
+  "stdout": {
+    "bytes": 484,
+    "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/07-negative-source-integrity.stdout.log",
+    "sha256": "1e7fc6176ecc290b5998584dcf1f2880f46e54ac0c96ddb44a6397b53b11af5a"
+  },
+  "wall_ns": 1885041230
+}
