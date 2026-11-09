@@ -29,6 +29,8 @@ pub mod public_submit;
 /// Isolated V2 certificate reader; never votes, installs models or activates consensus.
 pub mod release_finality;
 pub mod release_owner;
+#[cfg(all(target_os = "linux", feature = "pq-root-v3"))]
+pub mod root_recovery_v3;
 mod store;
 pub use error::{Error, ErrorCode, ErrorKind};
 use serde_json::{json, Value};

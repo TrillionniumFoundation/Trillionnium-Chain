@@ -7,6 +7,8 @@
 //! external builders and reviewers.
 
 pub mod pq_release;
+#[cfg(feature = "pq-root-v3")]
+pub mod root_recovery_v3;
 
 use sha2::{Digest, Sha256};
 use std::{collections::BTreeSet, error::Error, fmt};

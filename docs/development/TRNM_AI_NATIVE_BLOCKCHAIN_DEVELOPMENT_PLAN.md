@@ -8484,3 +8484,36 @@ failures, source integrity and external qualification. Preserve hard research
 capacity refusal without pruning/reinitializing lifetime history. The original
 15-path lifetime register remains explicitly limited to its old declared sources;
 its pass cannot cover the new bridge or instantiate missing probability bounds.
+
+### 2026-11-09 native root/recovery V3 and dependency continuation
+
+Continue #813 delivery `080c33cca445fca1735bc51ac4cf63f37a273263` with
+[native root V3 components](../security/PQ_ROOT_RECOVERY_NATIVE_V3.md) and the
+[reviewed dependency register](../security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md).
+Preserve #806/#813 source identities, earlier failed observations, the existing
+M15 path and original CI commands. This is an opt-in Rust research candidate,
+not a production root change or whole-chain qualification.
+
+Require exact real ML-DSA-87 2/3 AND SLH-DSA-SHA2-256s 2/3 for all five actions
+and all-six separate successor possession. Fresh V3 encodings bind complete
+statements, intents, nonces, generation and predecessor. Retain revocations and
+nonces across generations; expired recovery retains both current quorums.
+Implementation resource caps do not instantiate adversary budgets. Check the
+original crypto budget at kernel entry and immediately before state commit,
+and reject budget replacement by owner callbacks.
+
+Add an explicitly enrolled native SQLite journal with network/genesis/owner
+scope, separately pinned writer/anchor rosters, complete signed replay, durable
+pending-before-CAS ordering and exact-target reconciliation after uncertainty.
+Retain the all-state rollback counterexample. Trusted private-directory
+administration, independently surviving anchor state, trusted time and real
+custody remain external assumptions. Current intent observations do not grant
+M15 installation, launch or FinalUse authority. External provider/reorg handling
+remains the Python V2 research scope until actual native sinks exist.
+
+Add mandatory exact-name native selectors and refusal controls without removing
+old gates. Freeze a finite source/role/hash inventory with null concrete bounds
+and shared primitive accounting. Exact-source records distinguish native
+component results, source integrity and original gate failures. No successful
+stub, silent algorithm fallback, claimed independent custody, full composition
+proof or production activation is authorized.

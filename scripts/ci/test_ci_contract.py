@@ -134,6 +134,18 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
 
+    def test_native_v3_and_dependency_commands_cannot_disappear_or_skip(self):
+        for file in ('run_pq_root_native_v3.py', 'test_run_pq_root_native_v3.py',
+                     'test_pq_root_dependency_register.py', 'pq_root_dependency_register.py'):
+            command = '    python3 scripts/ci/' + file + '\n'
+            self.assertEqual(self.script.count(command), 1)
+            changes = ('', command * 2, '    true # ' + command.lstrip(),
+                       command.rstrip() + ' || true\n',
+                       '    if false; then\n' + command + '    fi\n')
+            for changed in changes:
+                with self.subTest(file=file, changed=changed), self.assertRaises(ValueError):
+                    check_independent_conformance(self.script.replace(command, changed), self.lanes)
+
     def test_root_recovery_suites_cannot_disappear_move_or_swallow_failures(self):
         # Independent filenames: deleting an entry from the checker must not
         # delete the negative coverage for that required suite.
@@ -165,6 +177,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
 
         native_block = ''.join('    python3 formal/pon-nakamoto-v1/' + suite + ' -v\n'
                                for suite in suites[2:])
+        native_block += '    python3 scripts/ci/run_pq_root_native_v3.py\n'
         host = ('    python3 scripts/ci/run_from_zero_host.py -- '
                 'python3 scripts/ci/run_from_zero_native.py --out '
                 '"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"\n')

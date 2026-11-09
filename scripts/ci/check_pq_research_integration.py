@@ -47,6 +47,7 @@ PQ_SOURCE_DIRS = (
     # small crate so nested role/rotation controls cannot escape source pins.
     "trillionnium/crates/trnm-release-bundle",
     "trillionnium/crates/trnm-checkpoint-store",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3",
 )
 
 # Every implementation file in these dedicated security owners participates in
@@ -54,6 +55,7 @@ PQ_SOURCE_DIRS = (
 COMPLETE_OWNER_SOURCE_DIRS = frozenset((
     "trillionnium/crates/trnm-release-bundle",
     "trillionnium/crates/trnm-checkpoint-store",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3",
 ))
 
 # This is a newly reconstructed source contract. The old, lost checker bytes
@@ -612,6 +614,25 @@ NATIVE_REQUIRED_PATHS |= frozenset((
     "trillionnium/crates/trnm-pon-node/tests/pq_application_local_cli/fixture.rs",
     "trillionnium/crates/trnm-pon-node/tests/pq_application_local_cli/fixture/tasks.rs",
     "trillionnium/crates/trnm-pon-node/tests/pq_application_local_feature_off.rs",
+))
+# Native root components remain explicit research/HOLD dependencies.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "scripts/ci/run_pq_root_native_v3.py",
+    "scripts/ci/test_run_pq_root_native_v3.py",
+    "scripts/ci/pq_root_dependency_register.py",
+    "scripts/ci/test_pq_root_dependency_register.py",
+    "config/pon/pq-root-dependency-register-v3.json",
+    "docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md",
+    "docs/security/PQ_ROOT_RECOVERY_NATIVE_V3.md",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs",
+    "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs",
+    "trillionnium/crates/trnm-release-bundle/src/root_recovery_v3.rs",
+    "trillionnium/crates/trnm-release-bundle/src/root_recovery_v3_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/anchor.rs",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/storage.rs",
+    "trillionnium/crates/trnm-pon-node/tests/root_recovery_v3_native.rs",
 ))
 NATIVE_FALSE = frozenset((
     "whole_native_authorization_migrated", "default_profile_migrated",
