@@ -1,0 +1,26 @@
+{
+  "schema": "trnm-v4-delivery-packaging-review",
+  "source": "0d99924005b70b1308bf3e62c53e9300fbb4aac4",
+  "scope": "Evidence representation and staging after the source campaign; not additional source tests.",
+  "initial_index_observation": {
+    "staged_files": 111,
+    "staged_tree": "2f5200cc249a87f6f8dc392270728c35b0cf7343",
+    "complete_log_coverage": false,
+    "published": false,
+    "reason": "Repository ignore rules omitted small raw .log files from the index."
+  },
+  "complete_index_raw_log_check": {
+    "git_diff_check_exit": 2,
+    "outer_preparation_exit": 1,
+    "diagnostic": "Raw captured Rust logs contain retained blank lines at EOF.",
+    "published": false
+  },
+  "representation_correction": {
+    "all_log_files_deterministic_gzip": true,
+    "raw_bytes_edited": false,
+    "raw_hashes_and_decompression_checked": true,
+    "git_whitespace_policy_changed": false,
+    "source_tests_changed": false
+  },
+  "final_publication_requirement": "Exporter must compare every retained-byte manifest path with filesystem and Git index, verify raw/index blob bytes, and match the complete staged Git tree before publishing."
+}

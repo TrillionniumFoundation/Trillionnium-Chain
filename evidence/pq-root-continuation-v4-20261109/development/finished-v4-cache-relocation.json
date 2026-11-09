@@ -1,0 +1,26 @@
+{
+  "scope": "Completed V4 test executable cache only; source, logs and evidence unchanged.",
+  "operation": "temporary relocation after successful V4 runner completion",
+  "tested_source": "db48af79b9686f2c7bb50ff7dde9b2233fe32fb8",
+  "rows": [
+    {
+      "source": "/workspace/scratch/5faaca703596/cargo-target/debug/deps/recovery_floor_v4_native-2ecacc7911f339d4",
+      "temporary": "/tmp/trnm-v4-finished-cache-e12ecc/recovery_floor_v4_native-2ecacc7911f339d4",
+      "bytes": 206484360,
+      "sha256": "d7c7000f54aeddd51ab363d4a048918a65aa3e4469d65adf09f2062b81e3fd1b"
+    },
+    {
+      "source": "/workspace/scratch/5faaca703596/cargo-target/debug/deps/root_effect_readback_v4_native-6ded01e96b82e219",
+      "temporary": "/tmp/trnm-v4-finished-cache-e12ecc/root_effect_readback_v4_native-6ded01e96b82e219",
+      "bytes": 206965648,
+      "sha256": "03e1196a5a9c674b0d35239fb8c5886a89df20598c589258e8a4ca6e93c00496"
+    },
+    {
+      "source": "/workspace/scratch/5faaca703596/cargo-target/debug/deps/root_budget_v4_native-7008086649e9735e",
+      "temporary": "/tmp/trnm-v4-finished-cache-e12ecc/root_budget_v4_native-7008086649e9735e",
+      "bytes": 205631312,
+      "sha256": "9304531bfd47927bf4da61482bb5c7405edfcbf8a5ce76dc733ddc6f0d5ef968"
+    }
+  ],
+  "restore_required_before_next_V4_run": true
+}

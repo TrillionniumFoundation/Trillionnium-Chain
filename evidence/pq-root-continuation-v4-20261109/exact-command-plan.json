@@ -1,0 +1,358 @@
+[
+  {
+    "name": "preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ]
+  },
+  {
+    "name": "versions-rust",
+    "argv": [
+      "rustc",
+      "--version",
+      "--verbose"
+    ]
+  },
+  {
+    "name": "versions-openssl",
+    "argv": [
+      "/home/qq/trnm-v4-e12ecc-recovery/tmp/trnm-pq-provider-3.5.9.EuFYF5vc/install/bin/openssl",
+      "version",
+      "-a"
+    ]
+  },
+  {
+    "name": "custody-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_root_custody_review_v1.py"
+    ]
+  },
+  {
+    "name": "custody-review",
+    "argv": [
+      "python3",
+      "scripts/ci/pq_root_custody_review_v1.py"
+    ]
+  },
+  {
+    "name": "migration-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_root_migration_review_v1.py"
+    ]
+  },
+  {
+    "name": "migration-review",
+    "argv": [
+      "python3",
+      "scripts/ci/pq_root_migration_review_v1.py"
+    ]
+  },
+  {
+    "name": "continuation-runner-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_run_pq_root_continuation_v4.py"
+    ]
+  },
+  {
+    "name": "feature-and-registry-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_authenticated_suite_count.py"
+    ]
+  },
+  {
+    "name": "dependency-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_root_dependency_register.py"
+    ]
+  },
+  {
+    "name": "dependency-register",
+    "argv": [
+      "python3",
+      "scripts/ci/pq_root_dependency_register.py"
+    ]
+  },
+  {
+    "name": "native-runner-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_run_pq_root_native_v3.py"
+    ]
+  },
+  {
+    "name": "ci-contract-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_ci_contract.py"
+    ]
+  },
+  {
+    "name": "ci-contract",
+    "argv": [
+      "python3",
+      "scripts/ci/check_ci_contract.py"
+    ]
+  },
+  {
+    "name": "source-integrity-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_ci_source_integrity.py"
+    ]
+  },
+  {
+    "name": "pq-source-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_research_integration.py"
+    ]
+  },
+  {
+    "name": "pq-source-corpus",
+    "argv": [
+      "python3",
+      "scripts/ci/check_pq_research_integration.py"
+    ]
+  },
+  {
+    "name": "lifetime-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_lifetime_budget.py"
+    ]
+  },
+  {
+    "name": "lifetime-register",
+    "argv": [
+      "python3",
+      "scripts/ci/pq_lifetime_budget.py"
+    ]
+  },
+  {
+    "name": "claim-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_chain_claim_guard.py"
+    ]
+  },
+  {
+    "name": "claim-guard",
+    "argv": [
+      "python3",
+      "scripts/ci/pq_chain_claim_guard.py"
+    ]
+  },
+  {
+    "name": "authority-controls",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_authority_effect_register.py"
+    ]
+  },
+  {
+    "name": "authority-register",
+    "argv": [
+      "python3",
+      "scripts/ci/pq_authority_effect_register.py"
+    ]
+  },
+  {
+    "name": "repository-links",
+    "argv": [
+      "python3",
+      "scripts/ci/check_repository.py"
+    ]
+  },
+  {
+    "name": "inventory",
+    "argv": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ]
+  },
+  {
+    "name": "implementation-summary",
+    "argv": [
+      "python3",
+      "scripts/ci/report_current_implementation.py",
+      "--check"
+    ]
+  },
+  {
+    "name": "format",
+    "argv": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ]
+  },
+  {
+    "name": "graph-default",
+    "argv": [
+      "cargo",
+      "metadata",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--format-version",
+      "1"
+    ]
+  },
+  {
+    "name": "graph-all-features",
+    "argv": [
+      "cargo",
+      "metadata",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--format-version",
+      "1",
+      "--all-features"
+    ]
+  },
+  {
+    "name": "graph-fuzz",
+    "argv": [
+      "cargo",
+      "metadata",
+      "--locked",
+      "--manifest-path",
+      "tests/fuzz/Cargo.toml",
+      "--format-version",
+      "1"
+    ]
+  },
+  {
+    "name": "workspace-clippy",
+    "argv": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ]
+  },
+  {
+    "name": "v4-native",
+    "argv": [
+      "python3",
+      "scripts/ci/run_pq_root_continuation_v4.py",
+      "--out",
+      "/home/qq/trnm-v4-e12ecc-recovery/exact-0d999240/native-v4"
+    ]
+  },
+  {
+    "name": "v3-native",
+    "argv": [
+      "python3",
+      "scripts/ci/run_pq_root_native_v3.py",
+      "--out",
+      "/home/qq/trnm-v4-e12ecc-recovery/exact-0d999240/native-v3"
+    ]
+  },
+  {
+    "name": "v2-policy",
+    "argv": [
+      "python3",
+      "formal/pon-nakamoto-v1/test_pq_root_recovery_policy_v1.py",
+      "-v"
+    ]
+  },
+  {
+    "name": "v2-signature-structure",
+    "argv": [
+      "python3",
+      "formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py",
+      "-v"
+    ]
+  },
+  {
+    "name": "v2-provider-structure",
+    "argv": [
+      "python3",
+      "formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py",
+      "-v"
+    ]
+  },
+  {
+    "name": "v2-signature-native",
+    "argv": [
+      "python3",
+      "formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_native_v2.py",
+      "-v"
+    ]
+  },
+  {
+    "name": "v2-provider-native",
+    "argv": [
+      "python3",
+      "formal/pon-nakamoto-v1/test_pq_root_effect_readback_native_v2.py",
+      "-v"
+    ]
+  },
+  {
+    "name": "v2-journal-native",
+    "argv": [
+      "python3",
+      "formal/pon-nakamoto-v1/test_pq_root_recovery_journal_native_v2.py",
+      "-v"
+    ]
+  },
+  {
+    "name": "retained-crypto-default",
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-crypto-primitives",
+      "--lib",
+      "--",
+      "--test-threads=1"
+    ]
+  },
+  {
+    "name": "retained-release-default",
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-release-bundle",
+      "--lib",
+      "--",
+      "--test-threads=1"
+    ]
+  },
+  {
+    "name": "diff-check",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ]
+  }
+]
