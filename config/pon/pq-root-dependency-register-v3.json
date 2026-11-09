@@ -688,7 +688,7 @@
     "wire_equivalence_proved": false
   },
   "purpose": "declared-root-dependency-and-query-obligation-inventory",
-  "review_base_revision": "189b9b5959d836ef6ae96e14fb285948e4920aa9",
+  "review_base_revision": "be5f047771e4d714726fec41abfa68231a06260b",
   "roles": {
     "anchor-response": {
       "action_coverage": [
@@ -1062,7 +1062,7 @@
     "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/anchor.rs": "c3bee91ae17af6c5a67ee7d603e553e82dab38024cc07d230c0a6bf75865d7f2",
     "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/effect_readback_v4.rs": "23b779c13241d2c6e28b60d94d697017d6e304e68309f8610f062452e43e1a5d",
     "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/recovery_floor.rs": "af6199f2c6d2392e3292d341aa5a16b7d55be7fb830d85a196c692c809b4600c",
-    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/storage.rs": "fc9b40bb794009722f7839b48f7149a21b1933c1c6976c9e58e80196dde74a9c",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/storage.rs": "2449be51c9a74b1e3f4eda3bd2c8adb44e80ee3646ff0d02cf9faae59a83a356",
     "trillionnium/crates/trnm-pon-node/tests/recovery_floor_v4_native.rs": "3d7508ed5f6a38cdb36fcb3bd3662640d4af91b271592fb636507ab51a8ade5c",
     "trillionnium/crates/trnm-pon-node/tests/root_budget_v4_native.rs": "adff3dee63a81b67256bf8d97ca92d8a470a0a741bb82a8b110206f2cdf0305a",
     "trillionnium/crates/trnm-pon-node/tests/root_effect_readback_v4_native.rs": "008e58e14d4e9cbdcf26d1ea22e3d6cfaa7ee0d5b039367df913a335f52b763b",

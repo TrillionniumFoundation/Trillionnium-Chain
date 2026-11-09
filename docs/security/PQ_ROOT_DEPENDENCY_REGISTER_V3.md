@@ -192,7 +192,7 @@ budget, lifetime, operational limit, deadline, query obligation or false
 qualification field. In particular, new exports do not expand the 37 declared
 paths into a complete transitive closure or wire the production effect sink.
 
-The current dependency-security review uses commit
+The M8 dependency-security review used commit
 `189b9b5959d836ef6ae96e14fb285948e4920aa9`, tree
 `35c9394cc41d4c8c5e555ba421311f0d5c1b1126`. All 37 source bytes were
 independently read from that Git object and matched against the working files.
@@ -200,12 +200,27 @@ Relative to the preceding map, only `trillionnium/Cargo.lock` and
 `trillionnium/crates/trnm-pon-node/Cargo.toml` change. They select the patched
 bundled SQLite dependency pair `rusqlite 0.41.0` / `libsqlite3-sys 0.39.0` with
 its required transitive graph, while preserving all node feature selections.
-The active canonical source-map digest is
+That canonical source-map digest was
 `ce51663cec6b33474ce58f26897c0361e25567f8dba6e5cfeb7479d76d9149da`. The 37-path roster,
 roles, suites, query obligations, null budgets and false qualification fields
 are unchanged. This review does not relabel any M6 native observation as a run
 of the new dependency graph, and the inspector still returns
 `source_revision_bound = false`.
+
+The current compatibility review uses M11 commit
+`be5f047771e4d714726fec41abfa68231a06260b`, tree
+`1ed07f1e5fa04febddd4e33487062a04d22ce3cd`. All 37 declared files were read
+from that exact Git snapshot and matched against the working bytes. Relative
+to M8, only the selected `root_recovery_v3/storage.rs` source changes: the
+private connection now has an exclusive `RefMut` owner while a progress guard
+and transaction are live. The original callback interval, cancellation and
+deadline, transaction checks and durable synchronization order remain.
+The current canonical source-map digest is
+`54106449c9d83a4b2926429160c8fd340d8004a67502ddf7b1e932df655859f6`. The other 36 selected files, all declarations,
+null budgets and false qualification values remain. M10
+`b0c52dcae9c698e38b33a82d0200c0d8294f3ba1` failed its new native compilation;
+that failure remains historical evidence. This source review does not qualify
+the repaired candidate or expand the declared transitive dependency scope.
 
 The checker reuses the existing
 [descriptor-bound source reader](../../scripts/ci/pq_source_reader.py).

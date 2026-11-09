@@ -617,7 +617,7 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "scripts/read_validated_business_goodput.py",
     "scripts/ci/test_read_validated_business_goodput.py",
 ))
-# The current lifetime successor and its unchanged named completion gate are
+# The current lifetime/semantics successors and their named completion gate are
 # required review inputs. These pins cannot turn conditional arithmetic or a
 # completed source-control roster into a cryptographic or service qualification.
 CONVERGENCE_REQUIRED_PATHS |= frozenset((
@@ -631,6 +631,11 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "evidence/pon-w1-lifetime-current-20261109/project-report.json",
     "evidence/pon-w1-lifetime-current-20261109/README.md",
     "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
+    "scripts/w1_qrom_semantics_audit.py",
+    "scripts/ci/test_w1_qrom_semantics_audit.py",
+    "evidence/pon-w1-qrom-semantics-20261107/report.json",
+    "evidence/pon-w1-qrom-semantics-current-20261109/report.json",
+    "evidence/pon-w1-qrom-semantics-current-20261109/README.md",
 ))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
