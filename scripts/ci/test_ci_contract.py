@@ -2593,6 +2593,25 @@ class W1PostwinLaneTests(unittest.TestCase):
                     self.workflow_check(self.workflow.replace(block, replacement, 1))
             self.assertIn(command, block)
 
+    def test_current_stage_gate_cannot_execute_twice_in_an_unidentified_step(self):
+        duplicate = ('      - name: Duplicate current stage controls\n'
+                     '        run: python3 -m unittest discover -s scripts/ci '
+                     '-p test_w1_v2_current_stage_gate.py -v\n')
+        with self.assertRaisesRegex(ValueError, 'controls execute once'):
+            self.workflow_check(self.workflow + duplicate)
+
+    def test_current_stage_gate_cannot_be_omitted_or_weakened(self):
+        block = self.step('v2_gate_tests')
+        mutations = (
+            ('test_w1_v2_current_stage_gate.py -v', 'test_w1_v2_controls_gate.py -v'),
+            ("!= ['10']", "!= ['0']"),
+            ('test_current_contract_refuses_snapshot_cancellation', 'test_unreviewed_control'),
+            ('test_current_contract_refuses_deadline_exhaustion', 'test_unreviewed_deadline'),
+        )
+        for before, after in mutations:
+            with self.subTest(before=before), self.assertRaises(ValueError):
+                self.workflow_check(self.workflow.replace(block, block.replace(before, after, 1), 1))
+
     def test_verifier_keeps_all_three_exact_tests_and_independent_build(self):
         block = self.step('verifier_v2')
         mutations = (

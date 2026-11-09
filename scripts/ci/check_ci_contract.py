@@ -918,6 +918,31 @@ W1_POSTWIN_CRITICAL_STEPS = {
                   or re.findall(r'^OK(?: \(.*\))?$', text, re.M) != ['OK']):
               raise SystemExit('all 23 named v2 report controls must execute exactly once without skips')
           PY
+          python3 -m unittest discover -s scripts/ci -p test_w1_v2_current_stage_gate.py -v 2>&1 | tee "$W1_PROFILE_OUT/v3-gate-tests.log"
+          python3 - "$W1_PROFILE_OUT/v3-gate-tests.log" <<'PY'
+          from pathlib import Path
+          import re, sys
+          text = Path(sys.argv[1]).read_text()
+          expected = {
+              'test_current_cli_selects_current_schema_without_a_downgrade_option',
+              'test_current_contract_accepts_actual_clean_expected_rejection',
+              'test_current_contract_accepts_actual_clean_process_observation',
+              'test_current_contract_refuses_deadline_exhaustion',
+              'test_current_contract_refuses_legacy_and_unknown_observations',
+              'test_current_contract_refuses_snapshot_cancellation',
+              'test_current_contract_requires_every_new_snapshot_field',
+              'test_current_contract_retains_unqualified_resource_and_proof_scope',
+              'test_current_snapshot_fields_cannot_coerce_types',
+              'test_version_selector_is_explicit_and_unknown_versions_are_refused',
+          }
+          rows = re.findall(r'^(test_\S+) \(([^)]+)\) \.\.\. (.*)$', text, re.M)
+          required = sorted((name, f'test_w1_v2_current_stage_gate.CurrentStageV3ControlsGateTests.{name}', 'ok')
+                            for name in expected)
+          if (sorted(rows) != required
+                  or re.findall(r'^Ran ([0-9]+) tests in ', text, re.M) != ['10']
+                  or re.findall(r'^OK(?: \(.*\))?$', text, re.M) != ['OK']):
+              raise SystemExit('all 10 current stage-v3 controls must execute exactly once without skips')
+          PY
 ''',
     "staged_tests": r'''      - name: Execute staged lifecycle and complete-observation rejection controls
         if: always() && steps.source.outcome == 'success'
@@ -1136,6 +1161,7 @@ def check_w1_postwin_workflow(text: str) -> None:
                     'python3 -m unittest discover -s scripts/ci -p test_w1_staged_observer.py -v',
                     'python3 -m unittest discover -s scripts/ci -p test_w1_profile_source_map.py -v',
                     'python3 -m unittest discover -s scripts/ci -p test_w1_v2_controls_gate.py -v',
+                    'python3 -m unittest discover -s scripts/ci -p test_w1_v2_current_stage_gate.py -v',
                     'python3 scripts/w1_v2_receipt_controls.py',
                     'python3 scripts/ci/w1_v2_controls_gate.py'):
         require(text.count(command) == 1,
