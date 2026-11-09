@@ -851,10 +851,16 @@ impl CellReleaseCustodyReportV1 {
     /// Finite work items only. No funds are authenticated/claimed, no tariff is
     /// assumed and no external operation runs. Sponsor loss cannot erase duties,
     /// lower the replica requirement, grant an extension or produce a refund.
+    /// A late observation requires a new admitted probe, even for release-only
+    /// callers that do not pass through the complete-version planner.
     pub fn plan_continuation(
         &self,
         sponsors: &[CellCustodySponsorObservationV1],
     ) -> CellResultV1<Vec<CellCustodyContinuationV1>> {
+        require(
+            self.finished_before_deadline,
+            "custody complete release observation required",
+        )?;
         require(
             sponsors.len() <= MAX_CELL_CUSTODY_REPLICAS_V1,
             "custody sponsor budget",

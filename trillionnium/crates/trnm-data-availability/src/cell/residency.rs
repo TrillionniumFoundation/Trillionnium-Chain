@@ -23,8 +23,14 @@ use super::{
     CellReleaseFetchLimitsV1, CellResultV1, CellStoreV1, MAX_CELL_BYTES,
 };
 
+#[cfg(target_os = "linux")]
+mod sealed_loader;
 mod tensor;
 mod working_set;
+#[cfg(target_os = "linux")]
+pub use sealed_loader::{
+    CellSealedLoaderBundleV1, CellSealedLoaderFileV1, CellSealedLoaderLimitsV1,
+};
 pub use tensor::{CellResidentTensorFileV1, CellResidentTensorModelV1, CellResidentTensorV1};
 pub use working_set::CellResidentWorkingSetV1;
 

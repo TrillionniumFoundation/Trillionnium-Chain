@@ -1,0 +1,165 @@
+{
+  "authority": "explicit fixture owner pins established before peer listening",
+  "component_source_sha256": {
+    "cpv4": "3ce2e558c6a7987482c210151a8fd78eb85570037a2e13527584b56fcf65716e",
+    "sealed_loader": "5aa3eb47e0f1e380a89e785b6e4f42745a4f3e55d0f7618c52735d47d410889d",
+    "strict_tensor_reader": "73499faf43769355947c598040ddedf9139341bb1a1745924425cd5f11f6c5e8",
+    "tcp_peer": "98c4006ca9ad6515659426f5d894b8dc408fae94e4e22a5752b459ae120a9706",
+    "tcv2": "ccdef45238de25e772114c457240fe152ac8cc32a1e32cac8d550c124b49958c"
+  },
+  "consumer_readback": {
+    "actual_verified_chunk_references": 4,
+    "actual_verified_payload_bytes": 32930,
+    "attempted_scans": 1
+  },
+  "elapsed_wall_ns": 8326189,
+  "example_source_sha256": "9c26d9b2f686c50c9e41b9c1cd78691ebc366bf421eccceddcce703b3385dfb4",
+  "final_use_granted": false,
+  "gpu_operations": 0,
+  "hepta_ready": false,
+  "hepta_started": false,
+  "native_readers": {
+    "environment_json": {
+      "fixture": "native-component-pipeline",
+      "tensor_dtype": "F32",
+      "tensor_elements": 8193
+    },
+    "input": "same strongly verified sealed descriptors; no payload path reopen",
+    "tensor_contract_id": "3780653e5287d36a85ca1d492399089cd61e2e0c22b655d6e8a9897f8ead6011",
+    "tensor_count": 1,
+    "tensor_dtype": "F32",
+    "tensor_file_payload_bytes": 32847,
+    "tensor_file_payload_sha256": "7e6cd5ad2fbe225cd2469e88630d92ee18ee226b1e23c98bfc2c2a868232abfd",
+    "tensor_shape": [
+      8193
+    ]
+  },
+  "negative_controls": {
+    "corrupt_signature_error": "cell: PQ content signature",
+    "duplicate_model_bundle_error": "cell: content complete sealed version scopes"
+  },
+  "network": {
+    "cumulative_usage": {
+      "completed_fetches": 2,
+      "connection_attempts": 2,
+      "received_bytes": 33639,
+      "received_messages": 12,
+      "refused_connections": 0,
+      "sent_bytes": 346,
+      "sent_messages": 12
+    },
+    "fetches": [
+      {
+        "cached_chunks": 0,
+        "client_cumulative_usage": {
+          "completed_fetches": 1,
+          "connection_attempts": 1,
+          "received_bytes": 33216,
+          "received_messages": 7,
+          "refused_connections": 0,
+          "sent_bytes": 190,
+          "sent_messages": 7
+        },
+        "client_error": null,
+        "downloaded_bytes": 32847,
+        "downloaded_chunks": 3,
+        "endpoint": "127.0.0.1:41001",
+        "full_infohash": "591157518f2e0ce816289c3b704c24e62dc56bd532314457d00ce048d5cba765",
+        "manifest_id": "0f3d96227f5f04609497fadb9a93aecd9ca2b8350d718f0b5707ab0bfe426e5b",
+        "metadata_info_bytes": 151,
+        "payload_bytes": 32847,
+        "seed_usage": {
+          "completed_fetches": 0,
+          "connection_attempts": 1,
+          "received_bytes": 190,
+          "received_messages": 8,
+          "refused_connections": 0,
+          "sent_bytes": 33216,
+          "sent_messages": 7
+        },
+        "server_error": null,
+        "supplying_peers": [
+          "127.0.0.1:41001"
+        ]
+      },
+      {
+        "cached_chunks": 0,
+        "client_cumulative_usage": {
+          "completed_fetches": 2,
+          "connection_attempts": 2,
+          "received_bytes": 33639,
+          "received_messages": 12,
+          "refused_connections": 0,
+          "sent_bytes": 346,
+          "sent_messages": 12
+        },
+        "client_error": null,
+        "downloaded_bytes": 83,
+        "downloaded_chunks": 1,
+        "endpoint": "127.0.0.1:43527",
+        "full_infohash": "43cb31361ad779ceefa716b4220b719634b903d33dfaf62f8e19614274919071",
+        "manifest_id": "e9f3f7b2fb1d7d35f9d58f1713da312b7e32065f5843f6fa7510f74fc766e99e",
+        "metadata_info_bytes": 148,
+        "payload_bytes": 83,
+        "seed_usage": {
+          "completed_fetches": 0,
+          "connection_attempts": 1,
+          "received_bytes": 156,
+          "received_messages": 6,
+          "refused_connections": 0,
+          "sent_bytes": 423,
+          "sent_messages": 5
+        },
+        "server_error": null,
+        "supplying_peers": [
+          "127.0.0.1:43527"
+        ]
+      }
+    ],
+    "profile": "cell-bep52-pinned-tcp-v1",
+    "topology": "explicit loopback TCP native seed and native consumer"
+  },
+  "publisher": {
+    "cpv4_wire_bytes": 3573,
+    "declared_chunks": 4,
+    "declared_payload_bytes": 32930,
+    "manifest_count": 2,
+    "signer_key_id": "ec1493ca64ce78b5e801db3da108cd24cbdbfd038ddfff8d6dd7f4e6f98173de",
+    "tcv2_commitment": "8d39dc02019d161fdf39d590fe4f032c30b621da007c20331df2437eeca602be24ee46ad0f9d29f5785da9acd2480602f2d29ebfd2fb9e7da764ac0d70de73b6",
+    "tcv2_wire_bytes": 1944
+  },
+  "schema": "trnm.cell-signed-sealed-component-pipeline.v1",
+  "scope": "native component wiring with synthetic F32 tensor and environment JSON",
+  "sealed": {
+    "environment": {
+      "closure_id": "67f98e6ee65ce9e6eba00547030992a9f4b486f00c2452116bb255172f9726ea",
+      "files": [
+        {
+          "actual_post_seal_payload_sha512": "97183bcad3a03afbad876a7f62b34b839579b0a7d0d27da6fb406c9ddbfebe10c0602e59f57982326efc99a3789b0a25695e19bead4b38ebfebc67817670b5e2",
+          "kernel_seal_bits": 47,
+          "manifest_id": "e9f3f7b2fb1d7d35f9d58f1713da312b7e32065f5843f6fa7510f74fc766e99e",
+          "path": "runtime/config.json",
+          "payload_bytes": 83
+        }
+      ],
+      "snapshot_bytes": 83
+    },
+    "model": {
+      "closure_id": "26b3ec8658aafc1da4a42eb2453d22bf511eeb6c57f76f80390c75d97d3ab11b",
+      "files": [
+        {
+          "actual_post_seal_payload_sha512": "a0077c2a7fed4ca9dfe2964ac27a4f4ecace94a7e33baacb976bb4362741f06e903a25355d7ffed77b2dc6f5f7d2de77d0ded023ae2b351a8f1937bb2f82b163",
+          "kernel_seal_bits": 47,
+          "manifest_id": "0f3d96227f5f04609497fadb9a93aecd9ca2b8350d718f0b5707ab0bfe426e5b",
+          "path": "base/model.safetensors",
+          "payload_bytes": 32847
+        }
+      ],
+      "snapshot_bytes": 32847
+    }
+  },
+  "stage": "complete",
+  "started_at_unix_seconds": 1794160181,
+  "status": "PASS_COMPONENT_PIPELINE",
+  "wan_sla_observed": false
+}

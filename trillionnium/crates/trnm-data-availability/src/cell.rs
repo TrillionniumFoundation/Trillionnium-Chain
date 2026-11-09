@@ -7,6 +7,7 @@ use std::{fmt, io};
 
 mod archive;
 mod bep52;
+mod bep52_peer;
 mod cache_budget;
 mod cache_wal;
 mod closure;
@@ -31,6 +32,7 @@ mod store;
 mod tensor;
 mod tensor_reader;
 mod version;
+mod version_content;
 
 pub use archive::{
     CellReleaseRetentionConfigV2, CellReleaseRetentionContractV2, CellReleaseRetentionReadbackV2,
@@ -40,6 +42,12 @@ pub use bep52::{
     CellBep52BindingV1, CellBep52ChunkProofV1, CellBep52MagnetV1, CELL_BEP52_PIECE_BYTES_V1,
     CELL_BEP52_PROFILE_V1, MAX_CELL_BEP52_INFO_BYTES_V1, MAX_CELL_BEP52_LEAVES_V1,
     MAX_CELL_BEP52_METAINFO_BYTES_V1, MAX_CELL_BEP52_PROOF_BYTES_V1,
+};
+pub use bep52_peer::{
+    fetch_cell_bep52, fetch_cell_bep52_with_content, query_cell_bep52_dht_peers,
+    CellBep52DhtHintsV1, CellBep52DhtNodeHintV1, CellBep52FetchReportV1, CellBep52PeerLimitsV1,
+    CellBep52PeerSessionV1, CellBep52PeerUsageV1, CellBep52SeedV1, CELL_BEP52_PEER_PROFILE_V1,
+    MAX_CELL_BEP52_DHT_RESPONSE_BYTES_V1, MAX_CELL_BEP52_PEER_FRAME_BYTES_V1,
 };
 pub use cache_budget::{CellCacheConfigV4, CellCacheUsageV2};
 pub use closure::{
@@ -63,9 +71,11 @@ pub use custody::{
 };
 pub use delta::{fetch_delta_to_file, CellChunkDeltaV1, CellDeltaPlanV1, MAX_CELL_DELTA_BYTES_V1};
 pub use erasure::{
-    CellRs46ChunkBindingV1, CellRs46ManifestBindingV1, CellRs46ShardV1, CELL_RS46_DATA_SHARDS_V1,
-    CELL_RS46_PROFILE_V1, CELL_RS46_TOTAL_SHARDS_V1, MAX_CELL_RS46_SHARD_BYTES_V1,
-    MAX_CELL_RS46_SHARD_WIRE_BYTES_V1,
+    CellRs46CacheTargetV1, CellRs46ChunkBindingV1, CellRs46CodewordV1, CellRs46ManifestBindingV1,
+    CellRs46PlacementPolicyV1, CellRs46RepairBudgetV1, CellRs46RepairUsageV1, CellRs46RepairV1,
+    CellRs46ShardInputV1, CellRs46ShardPlacementV1, CellRs46ShardV1,
+    CELL_RS46_CODEWORD_WIRE_BYTES_V1, CELL_RS46_DATA_SHARDS_V1, CELL_RS46_PROFILE_V1,
+    CELL_RS46_TOTAL_SHARDS_V1, MAX_CELL_RS46_SHARD_BYTES_V1, MAX_CELL_RS46_SHARD_WIRE_BYTES_V1,
 };
 pub use manifest::{
     CellChunkV1, CellContextV1, CellManifestV1, CellReleaseManifestV1, MAX_CELL_BYTES,
@@ -117,6 +127,9 @@ pub use retained::{
     CellRetainedVersionEntryV1, CellRetainedVersionSetV1, MAX_CELL_RETAINED_SET_BYTES_V1,
     MAX_CELL_RETAINED_VERSIONS_V1,
 };
+
+#[cfg(target_os = "linux")]
+pub use residency::{CellSealedLoaderBundleV1, CellSealedLoaderFileV1, CellSealedLoaderLimitsV1};
 pub use retention::{
     CellRetentionConfigV1, CellRetentionContractV1, CellRetentionReadbackV1, CellRetentionStoreV1,
 };
@@ -131,6 +144,15 @@ pub use version::{
     CellVersionFetchObservationV1, CellVersionFetchTransportReportV1, CellVersionLoaderContextV1,
     CellVersionManifestV1, CellVersionReadbackV1, MAX_CELL_VERSION_BYTES_V1,
     MAX_CELL_VERSION_MANIFESTS_V1,
+};
+pub use version_content::{
+    CellContentDigestV2, CellContentReadSessionV2, CellContentReadUsageV2, CellFileContentV2,
+    CellVersionContentV2, PinnedCellVersionContentV2, VerifiedCellVersionContentV2,
+    MAX_CELL_VERSION_CONTENT_BYTES_V2,
+};
+#[cfg(target_os = "linux")]
+pub use version_content::{
+    CellSealedContentScopeV2, VerifiedCellSealedContentV2, VerifiedCellSealedVersionContentV2,
 };
 
 pub type CellDigestV1 = [u8; 32];
