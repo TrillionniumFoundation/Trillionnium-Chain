@@ -76,6 +76,7 @@ NATIVE_REQUIRED_PATHS = frozenset((
     ".github/workflows/pon-pq-system-continuation.yml",
     "config/pon/pq-system-required-tests-v1.json",
     "scripts/ci/record_pq_native_command.py",
+    "scripts/ci/pinned_native_process.py",
     "scripts/ci/test_record_pq_native_command.py",
     "docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md",
     "docs/security/PQ_SYSTEM_CONTINUATION_20261101.md",
@@ -602,6 +603,10 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "scripts/ci/test_w1_current_source_observation.py",
     "config/pon/w1-qrom-current-source-observation-v1.json",
     "docs/security/W1_QROM_CURRENT_SOURCE_OBSERVATION_DESIGN_20261108.md",
+    "scripts/w1_qrom_current_implementation_audit.py",
+    "scripts/ci/test_w1_qrom_current_implementation_audit.py",
+    "config/pon/w1-qrom-implementation-current-v2.json",
+    "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
 ))
 # The business observer is source-bound independently of historical campaign
 # readers. Missing native Work receipts remain unknown; these pins confer no

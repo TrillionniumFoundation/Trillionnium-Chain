@@ -14,6 +14,9 @@ case "${1:?required job}" in
     python3 scripts/ci/pq_authority_effect_register.py
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v
     python3 scripts/ci/test_pq_chain_claim_guard.py
+    # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.
+    python3 scripts/ci/test_w1_qrom_current_implementation_audit.py
+    python3 scripts/w1_qrom_current_implementation_audit.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
     python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
@@ -63,6 +66,7 @@ case "${1:?required job}" in
     python3 scripts/ci/test_ci_execution.py
     python3 scripts/ci/test_capture_chain_hepta_identity.py
     python3 scripts/ci/test_chain_hepta_qualification.py
+    python3 scripts/ci/test_chain_hepta_command_binding.py
     python3 scripts/ci/test_pon_daa_head_binding.py
     python3 -B scripts/ci/test_llm_hosted_once.py
     "${TRNM_RUNTIME_RELEASE_PYTHON:-python3}" scripts/test_llm_runtime_release.py

@@ -629,6 +629,9 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 scripts/ci/pq_authority_effect_register.py
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v
     python3 scripts/ci/test_pq_chain_claim_guard.py
+    # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.
+    python3 scripts/ci/test_w1_qrom_current_implementation_audit.py
+    python3 scripts/w1_qrom_current_implementation_audit.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
     python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
@@ -678,6 +681,7 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_ci_execution.py
     python3 scripts/ci/test_capture_chain_hepta_identity.py
     python3 scripts/ci/test_chain_hepta_qualification.py
+    python3 scripts/ci/test_chain_hepta_command_binding.py
     python3 scripts/ci/test_pon_daa_head_binding.py
     python3 -B scripts/ci/test_llm_hosted_once.py
     "${TRNM_RUNTIME_RELEASE_PYTHON:-python3}" scripts/test_llm_runtime_release.py
@@ -1384,6 +1388,11 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'credit model controls must execute exactly once in repository-truth')
+    for command in ('python3 scripts/ci/test_w1_qrom_current_implementation_audit.py',
+                    'python3 scripts/w1_qrom_current_implementation_audit.py'):
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'current W1 source mapping controls must execute exactly once in repository-truth')
     # Preserve the preceding specific refusal diagnostics when an unrelated
     # required command is moved into this prefix.
     require(code_lines(lanes['repository-truth'])[:3] == code_lines(CREDIT_MODEL_PREFIX),
@@ -1649,7 +1658,8 @@ def check_pq_release_authority_controls(root: Path) -> dict:
     paths = re.findall(r'^      - ([A-Za-z0-9_./*-]+)$', header, re.M)
     for relative in ('trillionnium/**', PQ_RELEASE_MANIFEST, PQ_RELEASE_WORKFLOW,
                      *PQ_ROOT_HARNESS_FILES, 'scripts/ci/check_ci_contract.py',
-                     'scripts/ci/test_ci_contract.py', 'scripts/ci/check_required_native_test.py'):
+                     'scripts/ci/test_ci_contract.py', 'scripts/ci/check_required_native_test.py',
+                     'scripts/ci/pinned_native_process.py'):
         require(paths.count(relative) == 1,
                 'PQ workflow must trigger for each release/harness control source: ' + relative)
     pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*):\n(.*?)(?=^  [a-z][a-z0-9-]*:\n|\Z)', body)

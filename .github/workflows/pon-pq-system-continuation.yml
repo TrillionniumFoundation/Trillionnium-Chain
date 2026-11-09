@@ -14,6 +14,7 @@ on:
       - scripts/ci/check_ci_contract.py
       - scripts/ci/test_ci_contract.py
       - scripts/ci/record_pq_native_command.py
+      - scripts/ci/pinned_native_process.py
       - scripts/ci/test_record_pq_native_command.py
       - scripts/ci/verify_ci_source.py
       - scripts/ci/check_required_native_test.py

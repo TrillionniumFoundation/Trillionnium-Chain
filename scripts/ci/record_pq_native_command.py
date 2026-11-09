@@ -18,6 +18,7 @@ import subprocess
 import time
 
 from verify_ci_source import ROOT, verify
+from pinned_native_process import SCHEMA as NATIVE_PROCESS_SCHEMA, run_pinned
 
 
 def run(args, root=ROOT):
@@ -45,6 +46,11 @@ def run(args, root=ROOT):
             "TRNM_PQ_OPENSSL_SHA256", "TRNM_PQ_OPENSSL_VERSION",
             "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT", "RUNNER_ARCH")},
     }
+    executable_pin = getattr(args, "native_executable_sha256", None)
+    if executable_pin is not None:
+        record["native_execution"] = {"schema": NATIVE_PROCESS_SCHEMA,
+                                      "status": "NOT_STARTED",
+                                      "expected_sha256": executable_pin}
     with receipt.open("x", encoding="utf-8") as stream:
         json.dump(record, stream)
     code = 1
@@ -57,8 +63,12 @@ def run(args, root=ROOT):
         if record["before"]["tested_commit"] != args.tested:
             raise ValueError("tested commit differs from requested source")
         with log.open("xb") as stream:
-            code = subprocess.run(args.command, cwd=root, stdout=stream,
-                                  stderr=subprocess.STDOUT, check=False).returncode
+            if executable_pin is None:
+                code = subprocess.run(args.command, cwd=root, stdout=stream,
+                                      stderr=subprocess.STDOUT, check=False).returncode
+            else:
+                code, record["native_execution"] = run_pinned(
+                    args.command, root, stream, executable_pin)
         record["exit_code"] = code
         with log.open("rb") as stream:
             record["log_sha256"] = hashlib.file_digest(stream, "sha256").hexdigest()
@@ -69,6 +79,9 @@ def run(args, root=ROOT):
                                  root)
         if record["before"] != record["after"]:
             raise ValueError("source identity changed during command")
+        if (executable_pin is not None
+                and record["native_execution"]["status"] != "PINNED_AND_OBSERVED"):
+            raise ValueError("native executable identity was not completely observed")
         record["status"] = "command_succeeded" if code == 0 else "command_failed"
     except (OSError, ValueError, subprocess.SubprocessError) as error:
         record.update(status="record_failed", error=str(error))
@@ -90,6 +103,8 @@ def main():
     parser.add_argument("--base")
     parser.add_argument("--label", required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--native-executable-sha256",
+                        help="opt-in direct Linux ELF pin and live executable observation; not a performance profile")
     parser.add_argument("command", nargs=argparse.REMAINDER)
     args = parser.parse_args()
     if args.command[:1] == ["--"]:

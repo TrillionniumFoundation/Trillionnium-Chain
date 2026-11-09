@@ -10686,3 +10686,30 @@ all-entrypoint composition, general work-cost/hidden-progress security, family
 eligibility, honest-task tails, original Host/WAN acceptance and whole-chain PQ
 composition remain separate HOLD gates. Measure any DAG, parallel-chain,
 recursive-proof or grouped-GEMM gain only within those explicit boundaries.
+
+
+### 2026-11-09 — Compose sources and observe native executable identity
+
+Compose #824, #825 and #827 with real merge ancestry over #821. The composed
+base is `e8e2fcb8d811638eb5fa757d28590fbe8e408e61`. Retain both plan
+additions, the union of required source paths and actual combined source pins.
+Earlier branch results remain scoped to their original sources.
+
+The native recorder gains an explicit Linux ELF digest, dispatches the checked
+file descriptor and observes the owned child executable. Missing observations
+remain record_failed even with exit zero. This is a source observation, not a
+performance profile, memory image, library/model closure or build attestation.
+Preserve #817's original command/source reader and its original refusal controls.
+
+Use the separate [current W1 mapping](../security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md)
+for its reviewed local dependency closure. Preserve the historical contract,
+refusal, fixed proof assets, helpers and all unknown cryptographic terms. The
+current mapping commands must each execute once in the intended CI lane.
+
+Run fresh source, dependency, recorder, reader, mapping, formatting and selected
+native checks on the new committed source, then bind Cargo artifacts to actual
+executed objects. Retain unsuccessful attempts. Private Hepta owner work keeps
+its own exact source, original operation and receipts. Separate branch logs
+cannot establish a same-iteration production loop. This composition does not
+automatically include #822, #823, #826, #828, #829 or #830. All seven original
+gates remain HOLD; production activation and FinalUse qualification stay false.
