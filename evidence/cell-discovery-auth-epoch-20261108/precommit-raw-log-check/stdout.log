@@ -1,0 +1,10 @@
+{"result": "PASS", "mode": "--dev", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-cell-storage-discovery-f2568-20261108", "remote_policy_mutated": false}
+distributed source inventory: PASS
+{"canonical_default_provider_contract_checked": true, "canonical_pnq2_contract_checked": true, "continuous_npq6_combination_accepted": false, "cryptographic_acceptance": false, "exact_source_blobs": 599, "legacy_qtx1_optional_adapter_contract_checked": true, "native_transfer_account_contract_checked": true, "native_transport_contract_checked": true, "node_activated": false, "production_confidentiality_accepted": false, "schema": "trnm-pq-cross-branch-check-v1", "status": "HOLD_NO_GO", "upstream_heads": 6, "whole_native_authorization_migrated": false}
+Cell discovery epoch V3 canonical encoding vectors: PASS (encoding only)
+{"result": "PASS", "mode": "--staged", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-cell-storage-discovery-f2568-20261108", "remote_policy_mutated": false}
+evidence/cell-discovery-auth-epoch-20261108/baseline/native.stdout.log:57: new blank line at EOF.
+evidence/cell-discovery-auth-epoch-20261108/red-controls/native.stdout.log:25: new blank line at EOF.
+evidence/cell-discovery-auth-epoch-20261108/sequence-red-attempt01/native.stdout.log:34: new blank line at EOF.
+evidence/cell-discovery-auth-epoch-20261108/sequence-red-attempt02/native.stdout.log:19: new blank line at EOF.
+evidence/cell-discovery-auth-epoch-20261108/staged-attempt01/discovery-native.stdout.log:58: new blank line at EOF.

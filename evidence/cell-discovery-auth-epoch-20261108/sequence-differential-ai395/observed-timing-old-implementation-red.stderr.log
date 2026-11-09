@@ -1,0 +1,17 @@
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-storage-discovery-f2568-20261108/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.83s
+     Running unittests src/lib.rs (/home/qq/work/chain-cell-storage-discovery-f2568-target/debug/deps/trnm_data_availability-2640c265b42f8e43)
+authenticated-v3 sequence fixture: newer_first=true, newer_expiry=1794165172, third_query=Some((1794165171.030924849s, 1794165172)), observation=CellDiscoveryObservationV3 { connection_attempts: 3, received_response_bytes: 17214, record_validation_attempts: 2, bootstrap_validation_attempts: 3, announcement_signature_attempts: 0, rejected_records: 1, capacity_rejections: 0, rejected_bootstraps: 0, ineligible_bootstraps: 0 }, result=Ok([127.0.0.2:19001])
+
+thread 'cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_first_vetoes_later_low_sequence' (183067) panicked at crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs:1466:5:
+expired newer signed sequence resurrected an older provider: Ok([127.0.0.2:19001])
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+authenticated-v3 sequence fixture: newer_first=false, newer_expiry=1794165174, third_query=Some((1794165173.032473673s, 1794165174)), observation=CellDiscoveryObservationV3 { connection_attempts: 3, received_response_bytes: 17214, record_validation_attempts: 2, bootstrap_validation_attempts: 3, announcement_signature_attempts: 0, rejected_records: 1, capacity_rejections: 0, rejected_bootstraps: 0, ineligible_bootstraps: 0 }, result=Ok([127.0.0.2:19001])
+
+thread 'cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_later_removes_observed_low_sequence' (183078) panicked at crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs:1466:5:
+expired newer signed sequence resurrected an older provider: Ok([127.0.0.2:19001])
+authenticated-v3 quota preparation: result=Err(Invalid("authenticated discovery has no admissible provider")), observation=CellDiscoveryObservationV3 { connection_attempts: 2, received_response_bytes: 35476, record_validation_attempts: 8, bootstrap_validation_attempts: 2, announcement_signature_attempts: 0, rejected_records: 0, capacity_rejections: 0, rejected_bootstraps: 0, ineligible_bootstraps: 0 }, elapsed=76.739765ms, requests_left=0, actual_response_bytes=Ok(35476)
+
+thread 'cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_quota_rejected_withdrawal_vetoes_older_source' (183082) panicked at crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs:1605:5:
+a quota-refused newer withdrawal allowed an older source: Ok([127.0.0.1:19001])
+error: test failed, to rerun pass `-p trnm-data-availability --lib`

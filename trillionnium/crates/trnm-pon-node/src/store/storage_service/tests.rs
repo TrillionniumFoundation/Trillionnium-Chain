@@ -1,5 +1,11 @@
 use super::*;
 
+#[path = "version_tests.rs"]
+mod version;
+
+#[path = "shard_tests.rs"]
+mod shard;
+
 #[path = "cache_quota_tests.rs"]
 mod cache_quota;
 #[path = "height_window_tests.rs"]

@@ -1,0 +1,131 @@
+{
+  "native_expectations": {
+    "complete-da-native": {
+      "harnesses": [],
+      "new_test_roster": {
+        "discovery": [
+          "cell::discovery::pq::auth::tests::authenticated_v3_real_server_active_provider_precedes_eight_withdrawals",
+          "cell::discovery::pq::auth::tests::authenticated_v3_real_server_expired_authority_preserves_verification_slots",
+          "cell::discovery::pq::auth::tests::authenticated_v3_real_server_revoked_authority_preserves_verification_slots",
+          "cell::discovery::pq::auth::tests::authenticated_v3_observed_partial_reply_retains_original_shared_denominator",
+          "cell::discovery::pq::auth::tests::authenticated_v3_observed_failed_manifest_includes_payload_session_costs_once",
+          "cell::discovery::pq::auth::tests::authenticated_v3_observed_announcement_refusal_preserves_signature_units",
+          "cell::discovery::pq::auth::tests::authenticated_v3_announcement_original_monotonic_lease_cannot_be_renewed_by_wall_time",
+          "cell::discovery::pq::auth::tests::authenticated_v3_parallel_profile_magic_never_enables_wire_or_domain_fallback",
+          "cell::discovery::pq::auth::tests::authenticated_v3_parallel_database_profile_is_refused_without_reinterpretation"
+        ],
+        "host_handoff": [
+          "cell::host_handoff::tests::host_handoff_chb1_keeps_both_contexts_and_rejects_old_wire_aliases",
+          "cell::host_handoff::tests::host_handoff_cpv4_and_both_real_sealed_scopes_are_required_for_exact_fd_data"
+        ],
+        "retained_shard_plan": [
+          "cell::version_retention::tests::shard_plan::retained_shard_plan_reopens_all_versions_six_actual_slots_and_four_slot_full_recovery",
+          "cell::version_retention::tests::shard_plan::retained_shard_plan_pending_expired_or_added_catalog_roots_cannot_be_omitted",
+          "cell::version_retention::tests::shard_plan::retained_shard_plan_requires_full_distinct_funding_roster_before_file_creation",
+          "cell::version_retention::tests::shard_plan::retained_shard_plan_self_consistent_subset_still_fails_actual_owner_coverage",
+          "cell::version_retention::tests::shard_plan::retained_shard_plan_namespace_pins_and_actual_immutable_file_are_checked"
+        ],
+        "shard_provider": [
+          "cell::erasure::provider::tests::csp1_roundtrip_keeps_independent_source_operation_context_and_slot_pins",
+          "cell::erasure::provider::tests::provider_reopens_full_descriptor_and_reads_actual_bytes_without_cache",
+          "cell::erasure::provider::tests::provider_lost_publish_result_reconciles_without_source_or_second_charge",
+          "cell::erasure::provider::tests::provider_initial_unknown_never_redispatches_after_source_returns",
+          "cell::erasure::provider::tests::provider_unknown_repair_keeps_debit_across_reopen_and_budget_exhaustion",
+          "cell::erasure::provider::tests::provider_reconstructs_from_actual_four_arenas_and_repairs_actual_fifth_slot",
+          "cell::erasure::provider::tests::provider_metadata_limit_rejects_before_creating_new_file_and_keeps_terminal_history",
+          "cell::erasure::provider::tests::provider_descriptor_fault_or_wrong_owner_never_returns_existing_arena_success",
+          "cell::erasure::provider::tests::provider_expired_deadline_and_immediate_cancel_create_no_slot",
+          "cell::retention::payload_read::tests::bounded_arena_read_returns_exact_multichunk_bytes_without_cache_or_debit_changes",
+          "cell::retention::payload_read::tests::bounded_arena_read_refuses_pending_retired_and_missing_obligations",
+          "cell::retention::payload_read::tests::bounded_arena_read_enforces_allocation_and_original_deadline_without_recharging",
+          "cell::retention::payload_read::tests::bounded_arena_read_checks_actual_late_chunk_and_cannot_substitute_cache_bytes",
+          "cell::retention::payload_read::tests::bounded_arena_read_cancellation_is_not_swallowed_as_corruption_or_repair_permission",
+          "cell::retention::payload_read::tests::bounded_arena_read_refuses_replaced_path_even_when_old_fd_has_valid_bytes"
+        ],
+        "snapshot": [
+          "cell::snapshot_schedule::tests::periodic_policy_matches_independent_python_wire_commitment_and_due_heights",
+          "cell::snapshot_schedule::tests::periodic_snapshot_policy_codec_has_exact_namespace_and_finite_cadence",
+          "cell::snapshot_schedule::tests::periodic_snapshot_actual_dual_closure_copy_reopens_target_only_and_keeps_retired_cursor",
+          "cell::snapshot_schedule::tests::periodic_snapshot_partial_environment_and_missing_cache_keep_same_pending_identity",
+          "cell::snapshot_schedule::tests::periodic_snapshot_disk_policy_tampering_and_wrong_pin_prevent_catalog_mutation",
+          "cell::snapshot_schedule::tests::periodic_snapshot_policy_symlink_directory_link_and_hardlink_are_refused",
+          "cell::snapshot_schedule::tests::periodic_snapshot_changed_ordinal_due_predecessor_schedule_and_scope_are_refused",
+          "cell::snapshot_schedule::tests::periodic_snapshot_direct_history_short_lease_cannot_become_recovery_cursor",
+          "cell::snapshot_schedule::tests::periodic_snapshot_direct_history_changed_due_is_not_trusted_as_a_cursor",
+          "cell::snapshot_schedule::tests::periodic_snapshot_late_tick_preserves_original_due_and_expiry",
+          "cell::snapshot_schedule::tests::periodic_snapshot_initial_anchor_store_owner_and_coverage_are_independent_pins",
+          "cell::snapshot_schedule::tests::periodic_snapshot_original_deadline_prevents_creation_or_catalog_work"
+        ],
+        "version_retention": [
+          "cell::version_retention::tests::complete_owner_codec_binds_both_independent_generations_and_all_original_terms",
+          "cell::version_retention::tests::complete_owner_matches_independent_python_wire_and_real_three_transition_anchors",
+          "cell::version_retention::tests::complete_owner_model_only_copy_restarts_pending_and_keeps_environment_protected",
+          "cell::version_retention::tests::complete_owner_lost_catalog_ack_reconciles_actual_targets_after_cache_deletion",
+          "cell::version_retention::tests::complete_owner_prior_pending_unallocated_union_cannot_double_promise_capacity",
+          "cell::version_retention::tests::complete_owner_anchor_accepts_committed_unknown_prefix_and_rejects_old_catalog_restore",
+          "cell::version_retention::tests::complete_owner_stale_generation_and_changed_original_contract_do_not_mutate_catalog",
+          "cell::version_retention::tests::complete_owner_shared_objects_survive_first_retirement_and_expired_unretired_reference",
+          "cell::version_retention::tests::complete_owner_retired_root_live_slots_stay_charged_until_physical_gc",
+          "cell::version_retention::tests::complete_owner_retired_identity_history_never_reclaims_record_capacity",
+          "cell::version_retention::tests::complete_owner_unknown_repair_with_fsynced_healthy_target_blocks_gc_until_reconcile",
+          "cell::version_retention::tests::complete_owner_failed_original_copy_is_not_redispatched_with_a_good_cache",
+          "cell::version_retention::tests::complete_owner_service_view_cannot_hide_pending_or_expired_members_of_r",
+          "cell::version_retention::tests::complete_owner_expired_corrupt_acknowledged_payload_can_retire_without_refund",
+          "cell::version_retention::tests::complete_owner_snapshot_link_requires_real_completed_predecessor_and_unique_cursor",
+          "cell::version_retention::tests::complete_owner_namespace_or_event_corruption_never_opens_as_empty_history",
+          "cell::version_retention::tests::complete_owner_metadata_cap_refuses_before_new_pending_identity",
+          "cell::version_retention::tests::complete_owner_all_pending_versions_count_toward_protected_cap_even_after_expiry",
+          "cell::version_retention::tests::complete_owner_deadline_and_cancellation_never_create_an_admitted_empty_subset",
+          "cell::version_retention::tests::residency::retained_complete_targets_cold_rehydrate_both_components_then_feed_two_real_resident_callbacks",
+          "cell::version_retention::tests::residency::retained_environment_damage_cannot_be_recovered_from_complete_metadata_or_a_good_model",
+          "cell::version_retention::tests::residency::retained_joint_task_enforces_full_ram_both_current_contexts_and_latched_cancel_before_callback"
+        ],
+        "research_fds": [
+          "cell::host_handoff::tests::research_fds::research_fd_sender_transfers_actual_complete_sealed_pair_with_original_deadline",
+          "cell::host_handoff::tests::research_fds::research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte"
+        ],
+        "retained_shard_capacity": [
+          "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs",
+          "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_refuses_129_complete_chunks_before_staging",
+          "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling"
+        ]
+      },
+      "total_passed": null
+    },
+    "node-storage-owner-native": {
+      "harnesses": [],
+      "new_test_roster": {
+        "retained_shard_plan": [
+          "store::storage_service::tests::version::shard_plan::native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits"
+        ],
+        "shard": [
+          "store::storage_service::tests::shard::native_shard_real_funding_target_readback_and_repair_keep_original_debits",
+          "store::storage_service::tests::shard::native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present",
+          "store::storage_service::tests::shard::native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire"
+        ],
+        "version": [
+          "store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement",
+          "store::storage_service::tests::version::native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done",
+          "store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source",
+          "store::storage_service::tests::version::native_version_scope_alias_and_late_funding_errors_precede_every_reservation",
+          "store::storage_service::tests::version::native_version_outer_history_cannot_invent_missing_member_intents"
+        ],
+        "recovery": [
+          "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted",
+          "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads",
+          "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding",
+          "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies"
+        ]
+      },
+      "total_passed": null
+    }
+  },
+  "native_tmp": "/home/qq/work/FINAL_NEW_NATIVE_TMP_DIRECTORY_REQUIRED",
+  "out": "/home/qq/work/FINAL_NEW_EXACT_EVIDENCE_DIRECTORY_REQUIRED",
+  "provider_path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/validated-provider.json",
+  "root": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109",
+  "rustup": "/home/qq/.cargo/bin/rustup",
+  "sha": null,
+  "target": "/home/qq/work/chain-cell-storage-convergence-f2568-target",
+  "tree": null
+}

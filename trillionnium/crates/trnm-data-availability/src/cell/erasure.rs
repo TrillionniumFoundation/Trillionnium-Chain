@@ -9,6 +9,25 @@ use super::{
     CellManifestV1, CellResultV1, MAX_CHUNK_BYTES,
 };
 
+mod custody;
+mod provider;
+mod retained_plan;
+pub use custody::{
+    CellRs46CacheTargetV1, CellRs46CodewordV1, CellRs46PlacementPolicyV1, CellRs46RepairBudgetV1,
+    CellRs46RepairUsageV1, CellRs46RepairV1, CellRs46ShardInputV1, CellRs46ShardPlacementV1,
+    CELL_RS46_CODEWORD_WIRE_BYTES_V1,
+};
+pub use provider::{
+    CellRs46ShardContractV1, CellRs46ShardOwnerV1, CellRs46ShardProviderConfigV1,
+    CellRs46ShardProviderV1, CellRs46ShardRepairRequestV1, CellRs46StoredShardV1,
+    MAX_CELL_RS46_PROVIDER_DESCRIPTOR_BYTES_V1,
+};
+pub use retained_plan::{
+    CellRetainedShardChunkV1, CellRetainedShardPlanFileV1, CellRetainedShardPlanRequestV1,
+    CellRetainedShardPlanV1, CellRetainedShardRootV1, MAX_CELL_RETAINED_SHARD_CHUNKS_V1,
+    MAX_CELL_RETAINED_SHARD_PLAN_BYTES_V1, MAX_CELL_RETAINED_SHARD_ROOTS_V1,
+};
+
 pub const CELL_RS46_PROFILE_V1: &str = "cell-rs46-chunk-v1";
 pub const CELL_RS46_DATA_SHARDS_V1: usize = 4;
 pub const CELL_RS46_TOTAL_SHARDS_V1: usize = 6;
@@ -40,6 +59,52 @@ pub struct CellRs46ChunkBindingV1 {
     chunk: CellChunkV1,
 }
 
+/// Borrow one immutable owner-pinned TCM1 after validating it exactly once.
+/// Selecting a chunk is then constant-size work, avoiding repeated whole-
+/// manifest validation/hash scans during a complete multi-chunk recovery.
+#[derive(Clone, Copy, Debug)]
+pub struct CellRs46ManifestBindingV1<'a> {
+    manifest: &'a CellManifestV1,
+    id: CellDigestV1,
+}
+
+impl<'a> CellRs46ManifestBindingV1<'a> {
+    pub fn new(
+        manifest: &'a CellManifestV1,
+        expected_manifest: CellDigestV1,
+        expected_context: &CellContextV1,
+    ) -> CellResultV1<Self> {
+        manifest.validate()?;
+        require(manifest.context() == expected_context, "RS46 context pin")?;
+        require(manifest.id() == expected_manifest, "RS46 manifest pin")?;
+        Ok(Self {
+            manifest,
+            id: expected_manifest,
+        })
+    }
+
+    pub fn manifest(&self) -> &'a CellManifestV1 {
+        self.manifest
+    }
+
+    pub fn manifest_id(&self) -> CellDigestV1 {
+        self.id
+    }
+
+    pub fn chunk(&self, index: u32) -> CellResultV1<CellRs46ChunkBindingV1> {
+        let chunk = self
+            .manifest
+            .chunks()
+            .get(index as usize)
+            .ok_or(CellErrorV1::Invalid("RS46 chunk index"))?;
+        Ok(CellRs46ChunkBindingV1 {
+            manifest: self.id,
+            index,
+            chunk: chunk.clone(),
+        })
+    }
+}
+
 impl CellRs46ChunkBindingV1 {
     pub fn from_pinned_manifest(
         manifest: &CellManifestV1,
@@ -47,15 +112,7 @@ impl CellRs46ChunkBindingV1 {
         expected_context: &CellContextV1,
         index: u32,
     ) -> CellResultV1<Self> {
-        manifest.validate()?;
-        require(manifest.context() == expected_context, "RS46 context pin")?;
-        require(manifest.id() == expected_manifest, "RS46 manifest pin")?;
-        require(index < manifest.chunks().len() as u32, "RS46 chunk index")?;
-        Ok(Self {
-            manifest: expected_manifest,
-            index,
-            chunk: manifest.chunks()[index as usize].clone(),
-        })
+        CellRs46ManifestBindingV1::new(manifest, expected_manifest, expected_context)?.chunk(index)
     }
 
     pub fn manifest_id(&self) -> CellDigestV1 {

@@ -2679,5 +2679,128 @@ class MergedQualificationLaneTests(unittest.TestCase):
                         self.checked(self.script.replace(marker + block, marker + replacement, 1))
 
 
+
+class CellCurrentApiReadbackTests(unittest.TestCase):
+    """Exercise the actual workflow predicate using an unchanged CI observation."""
+
+    WORKFLOW = Path(".github/workflows/pon-pq-system-continuation.yml")
+    FIXTURE = Path("tests/fixtures/ci/cell-current-api-readback-v2-66b7064.log")
+    OBSERVATION = Path("tests/fixtures/ci/cell-current-api-readback-v2-66b7064.json")
+    ORIGINAL_SHA256 = "43059fa21c3542eff4f0c4aeb3552207847a8b483d214ce1e1514f79a4c09553"
+    EXACT_CASE = ("test crates/trnm-data-availability/src/cell/pq.rs - "
+                  "cell::pq::VerifiedCellPqReleaseV2 (line 364) - compile fail ... ok")
+    SUMMARY = ("test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; "
+               "15 filtered out; finished in 0.04s")
+
+    @classmethod
+    def setUpClass(cls):
+        cls.root = Path(__file__).resolve().parents[2]
+        raw = (cls.root / cls.FIXTURE).read_bytes()
+        if hashlib.sha256(raw).hexdigest() != cls.ORIGINAL_SHA256:
+            raise AssertionError("original compile-fail observation changed")
+        cls.observed = raw.decode("utf-8")
+        cls.observation = json.loads((cls.root / cls.OBSERVATION).read_bytes())
+        prefix = "python3 -c '"
+        suffix = "' \"$out/cell-current-api.log\""
+        commands = [line.strip() for line in (cls.root / cls.WORKFLOW).read_text().splitlines()
+                    if line.strip().startswith(prefix) and line.strip().endswith(suffix)]
+        if len(commands) != 1:
+            raise AssertionError("exactly one actual workflow readback command is required")
+        cls.program = commands[0][len(prefix):-len(suffix)]
+
+    def observe(self, text):
+        with tempfile.TemporaryDirectory(prefix="trnm-cell-api-readback-") as directory:
+            path = Path(directory) / "observation.log"
+            path.write_text(text)
+            result = subprocess.run(
+                [sys.executable, "-I", "-S", "-B", "-c", self.program, str(path)],
+                capture_output=True, text=True, check=False, timeout=5)
+        self.assertEqual(result.stderr, "")
+        return result.returncode, json.loads(result.stdout)
+
+    def assert_refused(self, text):
+        status, report = self.observe(text)
+        self.assertEqual(status, 1, report)
+        self.assertEqual(report["result"], "FAIL", report)
+        self.assertEqual(report["contract"], "cell-current-view-required")
+
+    def test_actual_current_view_doc_observation_is_accepted(self):
+        status, report = self.observe(self.observed)
+        self.assertEqual(status, 0, report)
+        self.assertEqual(report, {
+            "contract": "cell-current-view-required",
+            "diagnostic_codes": ["E0308"],
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "compile-fail-type-boundary-observation",
+        })
+
+    def test_old_or_wrong_exact_case_identity_is_refused(self):
+        for replacement in (
+            self.EXACT_CASE.replace("(line 364)", "(line 359)"),
+            self.EXACT_CASE.replace("(line 364)", "(line 365)"),
+            self.EXACT_CASE.replace("VerifiedCellPqReleaseV2", "VerifiedCellPqReleaseV1"),
+            self.EXACT_CASE.replace("src/cell/pq.rs", "src/cell/other.rs"),
+            self.EXACT_CASE.replace(" ... ok", " ... ignored"),
+        ):
+            with self.subTest(replacement=replacement):
+                self.assert_refused(self.observed.replace(self.EXACT_CASE, replacement, 1))
+
+    def test_zero_or_multiple_case_results_are_refused(self):
+        for changed in (
+            self.observed.replace(self.EXACT_CASE + "\n", "", 1),
+            self.observed.replace(self.EXACT_CASE + "\n", (self.EXACT_CASE + "\n") * 2, 1),
+        ):
+            with self.subTest(text=changed):
+                self.assert_refused(changed)
+
+    def test_wrong_or_multiple_diagnostics_are_refused(self):
+        for changed in (
+            self.observed.replace("error[E0308]:", "error[E0309]:"),
+            self.observed.replace("error[E0308]:", "error:"),
+            self.observed + "error[E0000]: additional diagnostic\n",
+        ):
+            with self.subTest(text=changed):
+                self.assert_refused(changed)
+
+    def test_wrong_type_boundary_context_is_refused(self):
+        for old, new in (
+            ("CellPqReleaseExpectationV2", "DifferentExpectation"),
+            ("integer", "different value"),
+            ("release_at(300)", "release_at(301)"),
+        ):
+            with self.subTest(missing=old):
+                self.assert_refused(self.observed.replace(old, new))
+
+    def test_summary_count_status_and_uniqueness_are_required(self):
+        for changed in (
+            self.observed.replace(self.SUMMARY, ""),
+            self.observed + self.SUMMARY + "\n",
+            self.observed.replace("test result: ok.", "test result: FAILED."),
+            self.observed.replace("1 passed;", "0 passed;"),
+            self.observed.replace("1 passed;", "2 passed;"),
+            self.observed.replace("0 failed;", "1 failed;"),
+            self.observed.replace("0 ignored;", "1 ignored;"),
+            self.observed.replace("0 measured;", "1 measured;"),
+        ):
+            with self.subTest(text=changed):
+                self.assert_refused(changed)
+
+    def test_fixture_keeps_original_source_and_failed_job_provenance(self):
+        self.assertEqual(self.observation["source_commit"],
+                         "66b7064be597039ce871b5b12ad5568850a2dd46")
+        self.assertEqual(self.observation["source_tree"],
+                         "75ac72605e3647de5a09557bfd7012dc99b0dec6")
+        self.assertEqual(self.observation["original_doctest_exit_code"], 0)
+        self.assertEqual(self.observation["original_readback_exit_code"], 1)
+        self.assertEqual(self.observation["original_job_conclusion"], "failure")
+        self.assertEqual(self.observation["log_sha256"], self.ORIGINAL_SHA256)
+        self.assertEqual(self.observation["log_bytes"], 1159)
+        self.assertEqual(self.observation["source_file_sha256"],
+                         "7326da0ad2c31fe599300d928fde84129ce83de0b072ef3bb46799d424aca3eb")
+        self.assertIn("(line 364)", self.EXACT_CASE)
+        self.assertEqual(self.observed.count(self.EXACT_CASE), 1)
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)

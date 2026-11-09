@@ -1,0 +1,50 @@
+{
+  "cold_restore": {
+    "actual_target_readback": true,
+    "anchored_reopen": true,
+    "consumer_chunks": 95,
+    "m12_funding_admitted": false,
+    "retention_heights_are_research_terms": true,
+    "source_cache_absent": true
+  },
+  "error": "actual research worker or original deadline failed; retain raw observations",
+  "handoff": {
+    "descriptor": "68c985f05d5198cf28c8fc396663df58ca56b967f6c867b9437f778c27dbec73c39cb56531cebb995dde5d63b18906d74686e55241b48eb1fc6dfd3b33cd6f7c",
+    "environment_bytes": 8076737,
+    "kernel_descriptors": 30,
+    "model_bytes": 272189990,
+    "signer_key_id": "0a0ac99d049b23e33bf74e57fc1d3263613ff9139f4ec5ffe88698a47a81428b",
+    "single_operator_research_key": true,
+    "worker_sha256": "cd9218492db7cb272772cf4dd4379e535fd7e865b42e9f7d670b3cdb40a8acf2"
+  },
+  "hepta_final_use": false,
+  "independent_operators": false,
+  "input": {
+    "independent_input_pins": true,
+    "manifest_count": 30,
+    "payload_bytes": 280266727,
+    "tcv1": "d33075d47938aec83186a75e935ea3b2dcb2cf1a912ec9b9f345c574d1c8e41cf0e73314c93010a1d14d595daf51fab29a5dfa7be59be7164daa1b80dd1aaf94",
+    "tcv2": "7d4ac0da57e8afb5bbb8eac55f6ee06357f3ae1ab5fc200cf5ff507f961d6a69a4ed4d9d6e2ed1c864017428592626b8511cee1db178632102b0f135604527f4"
+  },
+  "installation_authorized": false,
+  "m12_funding_admitted": false,
+  "original_hepta_owner_used": false,
+  "passed": false,
+  "process": {
+    "elapsed_ms": 14579,
+    "exit_code": 1,
+    "original_seconds": 300,
+    "sealed_bundles_held_until_supervisor_exit": true,
+    "termination_error": null,
+    "termination_requested": false
+  },
+  "production_activation": false,
+  "schema": "trnm.cell-sealed-research-native.v1",
+  "sealed_cache_independence": {
+    "consumer_cache_absent": true,
+    "original_source_materials_preserved": true,
+    "publisher_cache_absent": true
+  },
+  "source_input_sha256": "6880af9a86ce9abf9a19c5abb03eba6706cbec80a29ae45f431ec960e6e40f82",
+  "stage": "original wait4 owner and two actual sealed-byte forwards"
+}

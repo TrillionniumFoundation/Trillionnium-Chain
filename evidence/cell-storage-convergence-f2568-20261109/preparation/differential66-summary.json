@@ -1,0 +1,2405 @@
+{
+  "block_devices": [
+    {
+      "device": {
+        "blockdevices": [
+          {
+            "children": [
+              {
+                "name": "nvme0n1",
+                "rota": false,
+                "size": "1.8T",
+                "tran": "nvme",
+                "type": "disk"
+              }
+            ],
+            "name": "nvme0n1p2",
+            "rota": false,
+            "size": "1.8T",
+            "tran": "nvme",
+            "type": "part"
+          }
+        ]
+      },
+      "source": "/dev/nvme0n1p2"
+    }
+  ],
+  "candidate_source_restored": true,
+  "cargo_config_after": [],
+  "cargo_config_before": [],
+  "command_environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_HOME": "/home/qq/.cargo",
+    "CARGO_TARGET_DIR": "/home/qq/work/chain-cell-storage-convergence-f2568-target",
+    "CARGO_TERM_COLOR": "never",
+    "GIT_NO_REPLACE_OBJECTS": "1",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "GIT_TERMINAL_PROMPT": "0",
+    "LC_ALL": "C",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_DIR": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install",
+    "OPENSSL_MODULES": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/ossl-modules",
+    "OPENSSL_STATIC": "1",
+    "PATH": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/home/qq/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "RUSTUP_AUTO_INSTALL": "0",
+    "RUSTUP_TOOLCHAIN": "1.95.0",
+    "RUST_TEST_THREADS": "1",
+    "TEMP": "/home/qq/work/chain-cell-storage-convergence-differential-final01-tmp",
+    "TMP": "/home/qq/work/chain-cell-storage-convergence-differential-final01-tmp",
+    "TMPDIR": "/home/qq/work/chain-cell-storage-convergence-differential-final01-tmp",
+    "TRNM_PQ_OPENSSL": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "commands": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "elapsed_seconds": 0.024118972942233086,
+      "errors": [],
+      "exit_code": 0,
+      "host_after": {
+        "hostname": "ai395",
+        "machine": "x86_64",
+        "nice": 0,
+        "pressure": {
+          "cpu": "some avg10=0.00 avg60=0.01 avg300=0.15 total=3847822552\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "io": "some avg10=0.00 avg60=0.03 avg300=0.45 total=17011914769\nfull avg10=0.00 avg60=0.03 avg300=0.44 total=16834901453",
+          "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=651777917\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=647785817"
+        },
+        "release": "7.0.0-38-generic",
+        "sample_unix": 1794213195.8968077,
+        "system": "Linux",
+        "task_cgroup": {
+          "cpu.max": "200000 100000",
+          "cpu.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=436\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=436",
+          "cpu.stat": "usage_usec 360615\nuser_usec 170454\nsystem_usec 190160\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 3\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+          "io.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=465\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=465",
+          "memory.current": "29331456",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.max": "12884901888",
+          "memory.peak": "44535808",
+          "path": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bf70abad-5e21-520.service",
+          "pids.current": "4",
+          "pids.peak": "25"
+        },
+        "uid": 1000
+      },
+      "host_before": {
+        "hostname": "ai395",
+        "machine": "x86_64",
+        "nice": 0,
+        "pressure": {
+          "cpu": "some avg10=0.00 avg60=0.01 avg300=0.15 total=3847821510\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "io": "some avg10=0.00 avg60=0.03 avg300=0.45 total=17011914769\nfull avg10=0.00 avg60=0.03 avg300=0.44 total=16834901453",
+          "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=651777917\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=647785817"
+        },
+        "release": "7.0.0-38-generic",
+        "sample_unix": 1794213195.8728669,
+        "system": "Linux",
+        "task_cgroup": {
+          "cpu.max": "200000 100000",
+          "cpu.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=79\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=79",
+          "cpu.stat": "usage_usec 336992\nuser_usec 150759\nsystem_usec 186232\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 2\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+          "io.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=465\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=465",
+          "memory.current": "36851712",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.max": "12884901888",
+          "memory.peak": "44535808",
+          "path": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bf70abad-5e21-520.service",
+          "pids.current": "4",
+          "pids.peak": "25"
+        },
+        "uid": 1000
+      },
+      "label": "preflight",
+      "native": false,
+      "started_unix": 1794213195.8719614,
+      "state": "passed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01/preflight.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 182,
+        "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01/preflight.stdout.log",
+        "sha256": "b47768e49448992440ff194cb210f19365c6d23f5aef97e4589703fcafdde70b"
+      },
+      "temporary_filesystem": "verified persistent local block filesystem"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "66b7064be597039ce871b5b12ad5568850a2dd46",
+        "--output",
+        "/home/qq/work/chain-cell-storage-convergence-differential-final01/source-before.json"
+      ],
+      "elapsed_seconds": 1.5230488940142095,
+      "errors": [],
+      "exit_code": 0,
+      "host_after": {
+        "hostname": "ai395",
+        "machine": "x86_64",
+        "nice": 0,
+        "pressure": {
+          "cpu": "some avg10=0.00 avg60=0.01 avg300=0.15 total=3847823279\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "io": "some avg10=0.00 avg60=0.03 avg300=0.45 total=17011915598\nfull avg10=0.00 avg60=0.03 avg300=0.44 total=16834902273",
+          "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=651777917\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=647785817"
+        },
+        "release": "7.0.0-38-generic",
+        "sample_unix": 1794213197.4223647,
+        "system": "Linux",
+        "task_cgroup": {
+          "cpu.max": "200000 100000",
+          "cpu.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=533\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=533",
+          "cpu.stat": "usage_usec 1958274\nuser_usec 1403196\nsystem_usec 555077\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 18\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+          "io.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1138\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1138",
+          "memory.current": "37859328",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.max": "12884901888",
+          "memory.peak": "62046208",
+          "path": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bf70abad-5e21-520.service",
+          "pids.current": "4",
+          "pids.peak": "26"
+        },
+        "uid": 1000
+      },
+      "host_before": {
+        "hostname": "ai395",
+        "machine": "x86_64",
+        "nice": 0,
+        "pressure": {
+          "cpu": "some avg10=0.00 avg60=0.01 avg300=0.15 total=3847822559\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "io": "some avg10=0.00 avg60=0.03 avg300=0.45 total=17011915598\nfull avg10=0.00 avg60=0.03 avg300=0.44 total=16834902273",
+          "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=651777917\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=647785817"
+        },
+        "release": "7.0.0-38-generic",
+        "sample_unix": 1794213195.8996484,
+        "system": "Linux",
+        "task_cgroup": {
+          "cpu.max": "200000 100000",
+          "cpu.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=440\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=440",
+          "cpu.stat": "usage_usec 361809\nuser_usec 171538\nsystem_usec 190270\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 3\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+          "io.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1138\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1138",
+          "memory.current": "29417472",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.max": "12884901888",
+          "memory.peak": "44535808",
+          "path": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bf70abad-5e21-520.service",
+          "pids.current": "4",
+          "pids.peak": "25"
+        },
+        "uid": 1000
+      },
+      "label": "source-before",
+      "native": false,
+      "started_unix": 1794213195.8986878,
+      "state": "passed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01/source-before.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 423,
+        "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01/source-before.stdout.log",
+        "sha256": "a3e1b14b47ab355a69c48ee4717f1154c367d8799b876009d250ae65b3427a14"
+      },
+      "temporary_filesystem": "verified persistent local block filesystem"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "authenticated_v3_real_server_",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "elapsed_seconds": 17.60840402310714,
+      "errors": [],
+      "exit_code": 101,
+      "host_after": {
+        "hostname": "ai395",
+        "machine": "x86_64",
+        "nice": 0,
+        "pressure": {
+          "cpu": "some avg10=0.49 avg60=0.15 avg300=0.17 total=3847945536\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "io": "some avg10=0.00 avg60=0.02 avg300=0.42 total=17011952766\nfull avg10=0.00 avg60=0.02 avg300=0.41 total=16834938136",
+          "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=651777917\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=647785817"
+        },
+        "release": "7.0.0-38-generic",
+        "sample_unix": 1794213215.0940905,
+        "system": "Linux",
+        "task_cgroup": {
+          "cpu.max": "200000 100000",
+          "cpu.pressure": "some avg10=0.49 avg60=0.14 avg300=0.03 total=114574\nfull avg10=0.49 avg60=0.14 avg300=0.03 total=114164",
+          "cpu.stat": "usage_usec 15592222\nuser_usec 13906440\nsystem_usec 1685781\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 189\nnr_throttled 8\nthrottled_usec 2202171\nnr_bursts 0\nburst_usec 0",
+          "io.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=6735\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=6735",
+          "memory.current": "445014016",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.max": "12884901888",
+          "memory.peak": "1429377024",
+          "path": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bf70abad-5e21-520.service",
+          "pids.current": "4",
+          "pids.peak": "31"
+        },
+        "uid": 1000
+      },
+      "host_before": {
+        "hostname": "ai395",
+        "machine": "x86_64",
+        "nice": 0,
+        "pressure": {
+          "cpu": "some avg10=0.00 avg60=0.01 avg300=0.15 total=3847823816\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "io": "some avg10=0.00 avg60=0.03 avg300=0.45 total=17011917344\nfull avg10=0.00 avg60=0.03 avg300=0.44 total=16834904005",
+          "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=651777917\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=647785817"
+        },
+        "release": "7.0.0-38-generic",
+        "sample_unix": 1794213197.4859827,
+        "system": "Linux",
+        "task_cgroup": {
+          "cpu.max": "200000 100000",
+          "cpu.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=780\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=562",
+          "cpu.stat": "usage_usec 2075499\nuser_usec 1441736\nsystem_usec 633763\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 18\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+          "io.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1833\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1833",
+          "memory.current": "43622400",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.max": "12884901888",
+          "memory.peak": "62046208",
+          "path": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bf70abad-5e21-520.service",
+          "pids.current": "4",
+          "pids.peak": "26"
+        },
+        "uid": 1000
+      },
+      "label": "server-original-red",
+      "native": true,
+      "native_execution": {
+        "failed": 3,
+        "filtered_out": 705,
+        "ignored": 0,
+        "measured": 0,
+        "mode": "server-red",
+        "passed": 0,
+        "selected_tests": [
+          "cell::discovery::pq::auth::tests::authenticated_v3_real_server_active_provider_precedes_eight_withdrawals",
+          "cell::discovery::pq::auth::tests::authenticated_v3_real_server_expired_authority_preserves_verification_slots",
+          "cell::discovery::pq::auth::tests::authenticated_v3_real_server_revoked_authority_preserves_verification_slots"
+        ],
+        "target_assertions": [
+          {
+            "marker": "real rendezvous omitted the active provider behind eight valid withdrawals: Err(Invalid(\"authenticated discovery has no admissible provider\"))",
+            "test": "cell::discovery::pq::auth::tests::authenticated_v3_real_server_active_provider_precedes_eight_withdrawals"
+          },
+          {
+            "actual_verifications": 6,
+            "expected_verifications": 4,
+            "marker": "inactive authority consumed server verification slots before the live provider",
+            "test": "cell::discovery::pq::auth::tests::authenticated_v3_real_server_expired_authority_preserves_verification_slots"
+          },
+          {
+            "actual_verifications": 6,
+            "expected_verifications": 4,
+            "marker": "inactive authority consumed server verification slots before the live provider",
+            "test": "cell::discovery::pq::auth::tests::authenticated_v3_real_server_revoked_authority_preserves_verification_slots"
+          }
+        ]
+      },
+      "started_unix": 1794213197.4850266,
+      "state": "passed",
+      "stderr": {
+        "bytes": 2364,
+        "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01/server-original-red.stderr.log",
+        "sha256": "728434874a4a56a6399ef7ca22af2f7a32d719bd49e446d625ec43b5280afe7d"
+      },
+      "stdout": {
+        "bytes": 853,
+        "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01/server-original-red.stdout.log",
+        "sha256": "244a4d57b021ce8c99bc9e6da2362db9e7bee792f2b6a96a184a549319b752bc"
+      },
+      "temporary_filesystem": "verified persistent local block filesystem"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "authenticated_v3_real_server_",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "elapsed_seconds": 17.850537916179746,
+      "errors": [],
+      "exit_code": 0,
+      "host_after": {
+        "hostname": "ai395",
+        "machine": "x86_64",
+        "nice": 0,
+        "pressure": {
+          "cpu": "some avg10=0.47 avg60=0.23 avg300=0.19 total=3848060339\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "io": "some avg10=0.14 avg60=0.04 avg300=0.40 total=17012001165\nfull avg10=0.14 avg60=0.04 avg300=0.39 total=16834985982",
+          "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=651777917\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=647785817"
+        },
+        "release": "7.0.0-38-generic",
+        "sample_unix": 1794213233.088318,
+        "system": "Linux",
+        "task_cgroup": {
+          "cpu.max": "200000 100000",
+          "cpu.pressure": "some avg10=0.47 avg60=0.22 avg300=0.05 total=216971\nfull avg10=0.47 avg60=0.22 avg300=0.05 total=215779",
+          "cpu.stat": "usage_usec 29620393\nuser_usec 26657548\nsystem_usec 2962844\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 363\nnr_throttled 16\nthrottled_usec 3654657\nnr_bursts 0\nburst_usec 0",
+          "io.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=27281\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=27276",
+          "memory.current": "739971072",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.max": "12884901888",
+          "memory.peak": "1866342400",
+          "path": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bf70abad-5e21-520.service",
+          "pids.current": "4",
+          "pids.peak": "31"
+        },
+        "uid": 1000
+      },
+      "host_before": {
+        "hostname": "ai395",
+        "machine": "x86_64",
+        "nice": 0,
+        "pressure": {
+          "cpu": "some avg10=0.49 avg60=0.15 avg300=0.17 total=3847947905\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "io": "some avg10=0.00 avg60=0.02 avg300=0.42 total=17011953832\nfull avg10=0.00 avg60=0.02 avg300=0.41 total=16834939188",
+          "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=651777917\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=647785817"
+        },
+        "release": "7.0.0-38-generic",
+        "sample_unix": 1794213215.2380645,
+        "system": "Linux",
+        "task_cgroup": {
+          "cpu.max": "200000 100000",
+          "cpu.pressure": "some avg10=0.49 avg60=0.14 avg300=0.03 total=116442\nfull avg10=0.49 avg60=0.14 avg300=0.03 total=116030",
+          "cpu.stat": "usage_usec 15866571\nuser_usec 14000152\nsystem_usec 1866418\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 190\nnr_throttled 9\nthrottled_usec 2230856\nnr_bursts 0\nburst_usec 0",
+          "io.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=6827\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=6827",
+          "memory.current": "458469376",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.max": "12884901888",
+          "memory.peak": "1429377024",
+          "path": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bf70abad-5e21-520.service",
+          "pids.current": "4",
+          "pids.peak": "31"
+        },
+        "uid": 1000
+      },
+      "label": "server-candidate-green",
+      "native": true,
+      "native_execution": {
+        "failed": 0,
+        "filtered_out": 711,
+        "ignored": 0,
+        "measured": 0,
+        "mode": "green",
+        "passed": 3,
+        "selected_tests": [
+          "cell::discovery::pq::auth::tests::authenticated_v3_real_server_active_provider_precedes_eight_withdrawals",
+          "cell::discovery::pq::auth::tests::authenticated_v3_real_server_expired_authority_preserves_verification_slots",
+          "cell::discovery::pq::auth::tests::authenticated_v3_real_server_revoked_authority_preserves_verification_slots"
+        ],
+        "target_assertions": []
+      },
+      "started_unix": 1794213215.2370281,
+      "state": "passed",
+      "stderr": {
+        "bytes": 3046,
+        "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01/server-candidate-green.stderr.log",
+        "sha256": "788cb938c15cb5a9da654e2f2379261bb38f2d71f9eed455bb1ba94cd17a1d8d"
+      },
+      "stdout": {
+        "bytes": 477,
+        "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01/server-candidate-green.stdout.log",
+        "sha256": "beffa09d1ed8ccbce32e402820f16026e19423a8039efdc5827d052f420d73e3"
+      },
+      "temporary_filesystem": "verified persistent local block filesystem"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "cell::discovery::pq::auth::tests::authenticated_v3_announcement_original_monotonic_lease_cannot_be_renewed_by_wall_time",
+        "--",
+        "--exact",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "elapsed_seconds": 2.1555776291061193,
+      "errors": [],
+      "exit_code": 101,
+      "host_after": {
+        "hostname": "ai395",
+        "machine": "x86_64",
+        "nice": 0,
+        "pressure": {
+          "cpu": "some avg10=0.39 avg60=0.22 avg300=0.19 total=3848133676\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "io": "some avg10=0.12 avg60=0.04 avg300=0.40 total=17012004547\nfull avg10=0.12 avg60=0.04 avg300=0.39 total=16834989331",
+          "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=651777917\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=647785817"
+        },
+        "release": "7.0.0-38-generic",
+        "sample_unix": 1794213235.3602595,
+        "system": "Linux",
+        "task_cgroup": {
+          "cpu.max": "200000 100000",
+          "cpu.pressure": "some avg10=0.39 avg60=0.21 avg300=0.05 total=286222\nfull avg10=0.39 avg60=0.21 avg300=0.05 total=284282",
+          "cpu.stat": "usage_usec 32312134\nuser_usec 28628432\nsystem_usec 3683702\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 386\nnr_throttled 19\nthrottled_usec 4903606\nnr_bursts 0\nburst_usec 0",
+          "io.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=28526\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=28521",
+          "memory.current": "621719552",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.max": "12884901888",
+          "memory.peak": "1866342400",
+          "path": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bf70abad-5e21-520.service",
+          "pids.current": "4",
+          "pids.peak": "31"
+        },
+        "uid": 1000
+      },
+      "host_before": {
+        "hostname": "ai395",
+        "machine": "x86_64",
+        "nice": 0,
+        "pressure": {
+          "cpu": "some avg10=0.47 avg60=0.23 avg300=0.19 total=3848066834\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "io": "some avg10=0.14 avg60=0.04 avg300=0.40 total=17012003278\nfull avg10=0.14 avg60=0.04 avg300=0.39 total=16834988072",
+          "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=651777917\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=647785817"
+        },
+        "release": "7.0.0-38-generic",
+        "sample_unix": 1794213233.20497,
+        "system": "Linux",
+        "task_cgroup": {
+          "cpu.max": "200000 100000",
+          "cpu.pressure": "some avg10=0.47 avg60=0.22 avg300=0.05 total=222452\nfull avg10=0.47 avg60=0.22 avg300=0.05 total=220567",
+          "cpu.stat": "usage_usec 29828925\nuser_usec 26717488\nsystem_usec 3111436\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 365\nnr_throttled 17\nthrottled_usec 3674452\nnr_bursts 0\nburst_usec 0",
+          "io.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=27414\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=27409",
+          "memory.current": "748392448",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.max": "12884901888",
+          "memory.peak": "1866342400",
+          "path": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bf70abad-5e21-520.service",
+          "pids.current": "4",
+          "pids.peak": "31"
+        },
+        "uid": 1000
+      },
+      "label": "announcement-clamp-mutation-red",
+      "native": true,
+      "native_execution": {
+        "failed": 1,
+        "filtered_out": 713,
+        "ignored": 0,
+        "measured": 0,
+        "mode": "mutation-red",
+        "passed": 0,
+        "selected_tests": [
+          "cell::discovery::pq::auth::tests::authenticated_v3_announcement_original_monotonic_lease_cannot_be_renewed_by_wall_time"
+        ],
+        "target_assertions": [
+          {
+            "actual_ack_observation": "authenticated-v3 original monotonic announcement lease: result=Ok(CellDiscoveryObservationV3 { connection_attempts: 1, received_response_bytes: 3369, record_validation_attempts: 1, bootstrap_validation_attempts: 1, announcement_signature_attempts: 1, rejected_records: 0, capacity_rejections: 0, rejected_bootstraps: 0, ineligible_bootstraps: 0 })",
+            "clock_model": "private paired-time seam; host clock unchanged",
+            "marker": "an elapsed original monotonic lease was renewed by the current wall clock",
+            "test": "cell::discovery::pq::auth::tests::authenticated_v3_announcement_original_monotonic_lease_cannot_be_renewed_by_wall_time"
+          }
+        ]
+      },
+      "started_unix": 1794213233.2038116,
+      "state": "passed",
+      "stderr": {
+        "bytes": 1169,
+        "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01/announcement-clamp-mutation-red.stderr.log",
+        "sha256": "028e862622320883f6d7d0671e5e73eff3e24aeaa05e010ca48b9e17ac984780"
+      },
+      "stdout": {
+        "bytes": 400,
+        "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01/announcement-clamp-mutation-red.stdout.log",
+        "sha256": "e86e0fa0c9162b400b461c3de2e4a6d6acff591f7d4507d4684625f64813ef7a"
+      },
+      "temporary_filesystem": "verified persistent local block filesystem"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "cell::discovery::pq::auth::tests::authenticated_v3_announcement_original_monotonic_lease_cannot_be_renewed_by_wall_time",
+        "--",
+        "--exact",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "elapsed_seconds": 2.1638145649340004,
+      "errors": [],
+      "exit_code": 0,
+      "host_after": {
+        "hostname": "ai395",
+        "machine": "x86_64",
+        "nice": 0,
+        "pressure": {
+          "cpu": "some avg10=1.79 avg60=0.50 avg300=0.25 total=3848262561\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "io": "some avg10=0.08 avg60=0.04 avg300=0.39 total=17012009579\nfull avg10=0.08 avg60=0.04 avg300=0.38 total=16834994302",
+          "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=651777917\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=647785817"
+        },
+        "release": "7.0.0-38-generic",
+        "sample_unix": 1794213237.6465318,
+        "system": "Linux",
+        "task_cgroup": {
+          "cpu.max": "200000 100000",
+          "cpu.pressure": "some avg10=1.79 avg60=0.49 avg300=0.11 total=413382\nfull avg10=1.79 avg60=0.49 avg300=0.11 total=411108",
+          "cpu.stat": "usage_usec 35059728\nuser_usec 30584489\nsystem_usec 4475239\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 409\nnr_throttled 23\nthrottled_usec 7221567\nnr_bursts 0\nburst_usec 0",
+          "io.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=32667\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=32662",
+          "memory.current": "616861696",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.max": "12884901888",
+          "memory.peak": "1866342400",
+          "path": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bf70abad-5e21-520.service",
+          "pids.current": "4",
+          "pids.peak": "31"
+        },
+        "uid": 1000
+      },
+      "host_before": {
+        "hostname": "ai395",
+        "machine": "x86_64",
+        "nice": 0,
+        "pressure": {
+          "cpu": "some avg10=0.39 avg60=0.22 avg300=0.19 total=3848135097\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "io": "some avg10=0.12 avg60=0.04 avg300=0.40 total=17012005136\nfull avg10=0.12 avg60=0.04 avg300=0.39 total=16834989912",
+          "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=651777917\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=647785817"
+        },
+        "release": "7.0.0-38-generic",
+        "sample_unix": 1794213235.4830287,
+        "system": "Linux",
+        "task_cgroup": {
+          "cpu.max": "200000 100000",
+          "cpu.pressure": "some avg10=0.39 avg60=0.21 avg300=0.05 total=287091\nfull avg10=0.39 avg60=0.21 avg300=0.05 total=284860",
+          "cpu.stat": "usage_usec 32573161\nuser_usec 28694398\nsystem_usec 3878763\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 387\nnr_throttled 20\nthrottled_usec 4914998\nnr_bursts 0\nburst_usec 0",
+          "io.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=28562\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=28557",
+          "memory.current": "629829632",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.max": "12884901888",
+          "memory.peak": "1866342400",
+          "path": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bf70abad-5e21-520.service",
+          "pids.current": "4",
+          "pids.peak": "31"
+        },
+        "uid": 1000
+      },
+      "label": "announcement-candidate-green",
+      "native": true,
+      "native_execution": {
+        "failed": 0,
+        "filtered_out": 713,
+        "ignored": 0,
+        "measured": 0,
+        "mode": "green",
+        "passed": 1,
+        "selected_tests": [
+          "cell::discovery::pq::auth::tests::authenticated_v3_announcement_original_monotonic_lease_cannot_be_renewed_by_wall_time"
+        ],
+        "target_assertions": []
+      },
+      "started_unix": 1794213235.481683,
+      "state": "passed",
+      "stderr": {
+        "bytes": 876,
+        "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01/announcement-candidate-green.stderr.log",
+        "sha256": "05eb147d7e6b715b115160c5aa206a11e8e67eb120fdd826318ef02f001199a8"
+      },
+      "stdout": {
+        "bytes": 246,
+        "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01/announcement-candidate-green.stdout.log",
+        "sha256": "160e1653d18d68d95a30e072ca030597450c512ffd1390eec1d04b6f723b7fe1"
+      },
+      "temporary_filesystem": "verified persistent local block filesystem"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "66b7064be597039ce871b5b12ad5568850a2dd46",
+        "--output",
+        "/home/qq/work/chain-cell-storage-convergence-differential-final01/source-after.json"
+      ],
+      "elapsed_seconds": 1.514383289963007,
+      "errors": [],
+      "exit_code": 0,
+      "host_after": {
+        "hostname": "ai395",
+        "machine": "x86_64",
+        "nice": 0,
+        "pressure": {
+          "cpu": "some avg10=1.79 avg60=0.50 avg300=0.25 total=3848264363\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "io": "some avg10=0.08 avg60=0.04 avg300=0.39 total=17012010042\nfull avg10=0.08 avg60=0.04 avg300=0.38 total=16834994753",
+          "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=651777917\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=647785817"
+        },
+        "release": "7.0.0-38-generic",
+        "sample_unix": 1794213239.2618043,
+        "system": "Linux",
+        "task_cgroup": {
+          "cpu.max": "200000 100000",
+          "cpu.pressure": "some avg10=1.79 avg60=0.49 avg300=0.11 total=413826\nfull avg10=1.79 avg60=0.49 avg300=0.11 total=411553",
+          "cpu.stat": "usage_usec 36855675\nuser_usec 31844936\nsystem_usec 5010739\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 425\nnr_throttled 24\nthrottled_usec 7252058\nnr_bursts 0\nburst_usec 0",
+          "io.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=32708\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=32702",
+          "memory.current": "619401216",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.max": "12884901888",
+          "memory.peak": "1866342400",
+          "path": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bf70abad-5e21-520.service",
+          "pids.current": "4",
+          "pids.peak": "31"
+        },
+        "uid": 1000
+      },
+      "host_before": {
+        "hostname": "ai395",
+        "machine": "x86_64",
+        "nice": 0,
+        "pressure": {
+          "cpu": "some avg10=1.79 avg60=0.50 avg300=0.25 total=3848262793\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+          "io": "some avg10=0.08 avg60=0.04 avg300=0.39 total=17012010042\nfull avg10=0.08 avg60=0.04 avg300=0.38 total=16834994753",
+          "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=651777917\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=647785817"
+        },
+        "release": "7.0.0-38-generic",
+        "sample_unix": 1794213237.7477927,
+        "system": "Linux",
+        "task_cgroup": {
+          "cpu.max": "200000 100000",
+          "cpu.pressure": "some avg10=1.79 avg60=0.49 avg300=0.11 total=413437\nfull avg10=1.79 avg60=0.49 avg300=0.11 total=411164",
+          "cpu.stat": "usage_usec 35267545\nuser_usec 30648230\nsystem_usec 4619315\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 410\nnr_throttled 23\nthrottled_usec 7221567\nnr_bursts 0\nburst_usec 0",
+          "io.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=32708\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=32702",
+          "memory.current": "632397824",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.max": "12884901888",
+          "memory.peak": "1866342400",
+          "path": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bf70abad-5e21-520.service",
+          "pids.current": "4",
+          "pids.peak": "31"
+        },
+        "uid": 1000
+      },
+      "label": "source-after",
+      "native": false,
+      "started_unix": 1794213237.746529,
+      "state": "passed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01/source-after.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 423,
+        "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01/source-after.stdout.log",
+        "sha256": "a3e1b14b47ab355a69c48ee4717f1154c367d8799b876009d250ae65b3427a14"
+      },
+      "temporary_filesystem": "verified persistent local block filesystem"
+    }
+  ],
+  "commit": "66b7064be597039ce871b5b12ad5568850a2dd46",
+  "configuration_sha256": "b4eb001a815ec417fa8f9a194fd0f0ce9d8cfb3426d1a892dbeb9c4a868d34ad",
+  "errors": [],
+  "final_status_porcelain": "",
+  "finished_unix": 1794213239.3770883,
+  "host_after": {
+    "hostname": "ai395",
+    "machine": "x86_64",
+    "nice": 0,
+    "pressure": {
+      "cpu": "some avg10=1.79 avg60=0.50 avg300=0.25 total=3848265280\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+      "io": "some avg10=0.08 avg60=0.04 avg300=0.39 total=17012011686\nfull avg10=0.08 avg60=0.04 avg300=0.38 total=16834996378",
+      "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=651777917\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=647785817"
+    },
+    "release": "7.0.0-38-generic",
+    "sample_unix": 1794213239.3768346,
+    "system": "Linux",
+    "task_cgroup": {
+      "cpu.max": "200000 100000",
+      "cpu.pressure": "some avg10=1.79 avg60=0.49 avg300=0.11 total=414626\nfull avg10=1.79 avg60=0.49 avg300=0.11 total=412352",
+      "cpu.stat": "usage_usec 36986185\nuser_usec 31905964\nsystem_usec 5080221\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 426\nnr_throttled 24\nthrottled_usec 7267611\nnr_bursts 0\nburst_usec 0",
+      "io.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=32918\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=32913",
+      "memory.current": "619012096",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+      "memory.max": "12884901888",
+      "memory.peak": "1866342400",
+      "path": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bf70abad-5e21-520.service",
+      "pids.current": "4",
+      "pids.peak": "31"
+    },
+    "uid": 1000
+  },
+  "host_before": {
+    "hostname": "ai395",
+    "machine": "x86_64",
+    "nice": 0,
+    "pressure": {
+      "cpu": "some avg10=0.00 avg60=0.01 avg300=0.15 total=3847821386\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0",
+      "io": "some avg10=0.00 avg60=0.03 avg300=0.45 total=17011912814\nfull avg10=0.00 avg60=0.03 avg300=0.44 total=16834899522",
+      "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=651777917\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=647785817"
+    },
+    "release": "7.0.0-38-generic",
+    "sample_unix": 1794213195.6858091,
+    "system": "Linux",
+    "task_cgroup": {
+      "cpu.max": "200000 100000",
+      "cpu.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=23\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=23",
+      "cpu.stat": "usage_usec 59897\nuser_usec 43924\nsystem_usec 15972\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "io.pressure": "some avg10=0.00 avg60=0.00 avg300=0.00 total=181\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=181",
+      "memory.current": "25214976",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+      "memory.max": "12884901888",
+      "memory.peak": "25411584",
+      "path": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bf70abad-5e21-520.service",
+      "pids.current": "4",
+      "pids.peak": "5"
+    },
+    "uid": 1000
+  },
+  "mounts_after": {
+    "native_tmp": {
+      "capacity_bytes": 1966736678912,
+      "device_id": 66306,
+      "free_bytes": 620591022080,
+      "mount": {
+        "fstype": "ext4",
+        "options": "rw,relatime",
+        "source": "/dev/nvme0n1p2",
+        "target": "/"
+      },
+      "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01-tmp",
+      "used_bytes": 1246165405696
+    },
+    "out": {
+      "capacity_bytes": 1966736678912,
+      "device_id": 66306,
+      "free_bytes": 620591022080,
+      "mount": {
+        "fstype": "ext4",
+        "options": "rw,relatime",
+        "source": "/dev/nvme0n1p2",
+        "target": "/"
+      },
+      "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01",
+      "used_bytes": 1246165405696
+    },
+    "root": {
+      "capacity_bytes": 1966736678912,
+      "device_id": 66306,
+      "free_bytes": 620591022080,
+      "mount": {
+        "fstype": "ext4",
+        "options": "rw,relatime",
+        "source": "/dev/nvme0n1p2",
+        "target": "/"
+      },
+      "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03",
+      "used_bytes": 1246165405696
+    },
+    "target": {
+      "capacity_bytes": 1966736678912,
+      "device_id": 66306,
+      "free_bytes": 620591022080,
+      "mount": {
+        "fstype": "ext4",
+        "options": "rw,relatime",
+        "source": "/dev/nvme0n1p2",
+        "target": "/"
+      },
+      "path": "/home/qq/work/chain-cell-storage-convergence-f2568-target",
+      "used_bytes": 1246165405696
+    }
+  },
+  "mounts_before": {
+    "native_tmp": {
+      "capacity_bytes": 1966736678912,
+      "device_id": 66306,
+      "free_bytes": 620749570048,
+      "mount": {
+        "fstype": "ext4",
+        "options": "rw,relatime",
+        "source": "/dev/nvme0n1p2",
+        "target": "/"
+      },
+      "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01-tmp",
+      "used_bytes": 1246006857728
+    },
+    "out": {
+      "capacity_bytes": 1966736678912,
+      "device_id": 66306,
+      "free_bytes": 620749570048,
+      "mount": {
+        "fstype": "ext4",
+        "options": "rw,relatime",
+        "source": "/dev/nvme0n1p2",
+        "target": "/"
+      },
+      "path": "/home/qq/work/chain-cell-storage-convergence-differential-final01",
+      "used_bytes": 1246006857728
+    },
+    "root": {
+      "capacity_bytes": 1966736678912,
+      "device_id": 66306,
+      "free_bytes": 620749570048,
+      "mount": {
+        "fstype": "ext4",
+        "options": "rw,relatime",
+        "source": "/dev/nvme0n1p2",
+        "target": "/"
+      },
+      "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03",
+      "used_bytes": 1246006857728
+    },
+    "target": {
+      "capacity_bytes": 1966736678912,
+      "device_id": 66306,
+      "free_bytes": 620749570048,
+      "mount": {
+        "fstype": "ext4",
+        "options": "rw,relatime",
+        "source": "/dev/nvme0n1p2",
+        "target": "/"
+      },
+      "path": "/home/qq/work/chain-cell-storage-convergence-f2568-target",
+      "used_bytes": 1246006857728
+    }
+  },
+  "passed": true,
+  "paths": {
+    "native_tmp": "/home/qq/work/chain-cell-storage-convergence-differential-final01-tmp",
+    "out": "/home/qq/work/chain-cell-storage-convergence-differential-final01",
+    "provider_path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/validated-provider.json",
+    "provider_receipt_path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/observations/pq-provider/provider.json",
+    "root": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03",
+    "target": "/home/qq/work/chain-cell-storage-convergence-f2568-target"
+  },
+  "provider_after": {
+    "actual_version": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+    "exports": {
+      "OPENSSL_CONF": "/dev/null",
+      "OPENSSL_DIR": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install",
+      "OPENSSL_MODULES": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/ossl-modules",
+      "OPENSSL_STATIC": "1",
+      "TRNM_PQ_OPENSSL": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+      "TRNM_PQ_OPENSSL_SHA256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62",
+      "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+    },
+    "native_backend_inputs": [
+      {
+        "bytes": 8985944,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+        "sha256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62"
+      },
+      {
+        "bytes": 3449,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/include/openssl/opensslv.h",
+        "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+      },
+      {
+        "bytes": 4729,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/include/openssl/configuration.h",
+        "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+      },
+      {
+        "bytes": 12442360,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/libcrypto.a",
+        "sha256": "17042eb9e4235d2b7051c7253add6f3fda619a324c6d6e3e3b35c46157196b0e"
+      },
+      {
+        "bytes": 2149026,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/libssl.a",
+        "sha256": "d7cddef12614789118f792fb4b07748c9a413d241895c1501fe12e3998658d90"
+      }
+    ],
+    "preparation_script": {
+      "bytes": 8110,
+      "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/scripts/ci/prepare_pq_provider.sh",
+      "sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa"
+    },
+    "receipt": {
+      "backend_exported": true,
+      "build_directory": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV",
+      "cli_executable": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+      "cli_sha256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62",
+      "cli_version_output": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+      "elapsed_wall_seconds": 60,
+      "exit_code": 0,
+      "github_actions_reported": false,
+      "independent_cryptographic_implementation_claim": false,
+      "install_prefix": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install",
+      "last_stage": "complete",
+      "ml_dsa_65_sign_verify_and_wrong_message_rejection": true,
+      "native_backend_inputs": [
+        {
+          "bytes": 8985944,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+          "sha256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62"
+        },
+        {
+          "bytes": 3449,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/include/openssl/opensslv.h",
+          "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+        },
+        {
+          "bytes": 4729,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/include/openssl/configuration.h",
+          "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+        },
+        {
+          "bytes": 12442360,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/libcrypto.a",
+          "sha256": "17042eb9e4235d2b7051c7253add6f3fda619a324c6d6e3e3b35c46157196b0e"
+        },
+        {
+          "bytes": 2149026,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/libssl.a",
+          "sha256": "d7cddef12614789118f792fb4b07748c9a413d241895c1501fe12e3998658d90"
+        }
+      ],
+      "native_rust_pq_tests_run_by_preparation": false,
+      "openssl_conf": "/dev/null",
+      "openssl_modules": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/ossl-modules",
+      "preparation_script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+      "production_activation": false,
+      "result": "PREPARED_AND_SMOKE_VERIFIED",
+      "runner_environment_reported": null,
+      "schema": "trnm-ci-pq-provider-v3",
+      "source_archive_sha256_expected": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+      "source_digest_verified": true,
+      "source_transport": "download",
+      "source_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+      "static_build": true,
+      "upstream_full_tests_run": false,
+      "version": "3.5.9",
+      "whole_chain_quantum_security_qualified": false
+    },
+    "receipt_file": {
+      "bytes": 3067,
+      "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/observations/pq-provider/provider.json",
+      "sha256": "f8caa27f65326ca7891999adeba8b282a54f7f5fbb82f33220e525ae98ea6e2e"
+    },
+    "validation_file": {
+      "bytes": 1155,
+      "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/validated-provider.json",
+      "sha256": "c000e5f1b3b987e485a1440820c131b6df4b591e0c5d9631623ee3f0dda18468"
+    }
+  },
+  "provider_before": {
+    "actual_version": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+    "exports": {
+      "OPENSSL_CONF": "/dev/null",
+      "OPENSSL_DIR": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install",
+      "OPENSSL_MODULES": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/ossl-modules",
+      "OPENSSL_STATIC": "1",
+      "TRNM_PQ_OPENSSL": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+      "TRNM_PQ_OPENSSL_SHA256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62",
+      "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+    },
+    "native_backend_inputs": [
+      {
+        "bytes": 8985944,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+        "sha256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62"
+      },
+      {
+        "bytes": 3449,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/include/openssl/opensslv.h",
+        "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+      },
+      {
+        "bytes": 4729,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/include/openssl/configuration.h",
+        "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+      },
+      {
+        "bytes": 12442360,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/libcrypto.a",
+        "sha256": "17042eb9e4235d2b7051c7253add6f3fda619a324c6d6e3e3b35c46157196b0e"
+      },
+      {
+        "bytes": 2149026,
+        "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/libssl.a",
+        "sha256": "d7cddef12614789118f792fb4b07748c9a413d241895c1501fe12e3998658d90"
+      }
+    ],
+    "preparation_script": {
+      "bytes": 8110,
+      "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/scripts/ci/prepare_pq_provider.sh",
+      "sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa"
+    },
+    "receipt": {
+      "backend_exported": true,
+      "build_directory": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV",
+      "cli_executable": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+      "cli_sha256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62",
+      "cli_version_output": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+      "elapsed_wall_seconds": 60,
+      "exit_code": 0,
+      "github_actions_reported": false,
+      "independent_cryptographic_implementation_claim": false,
+      "install_prefix": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install",
+      "last_stage": "complete",
+      "ml_dsa_65_sign_verify_and_wrong_message_rejection": true,
+      "native_backend_inputs": [
+        {
+          "bytes": 8985944,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+          "sha256": "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62"
+        },
+        {
+          "bytes": 3449,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/include/openssl/opensslv.h",
+          "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+        },
+        {
+          "bytes": 4729,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/include/openssl/configuration.h",
+          "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+        },
+        {
+          "bytes": 12442360,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/libcrypto.a",
+          "sha256": "17042eb9e4235d2b7051c7253add6f3fda619a324c6d6e3e3b35c46157196b0e"
+        },
+        {
+          "bytes": 2149026,
+          "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/libssl.a",
+          "sha256": "d7cddef12614789118f792fb4b07748c9a413d241895c1501fe12e3998658d90"
+        }
+      ],
+      "native_rust_pq_tests_run_by_preparation": false,
+      "openssl_conf": "/dev/null",
+      "openssl_modules": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib/ossl-modules",
+      "preparation_script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+      "production_activation": false,
+      "result": "PREPARED_AND_SMOKE_VERIFIED",
+      "runner_environment_reported": null,
+      "schema": "trnm-ci-pq-provider-v3",
+      "source_archive_sha256_expected": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+      "source_digest_verified": true,
+      "source_transport": "download",
+      "source_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+      "static_build": true,
+      "upstream_full_tests_run": false,
+      "version": "3.5.9",
+      "whole_chain_quantum_security_qualified": false
+    },
+    "receipt_file": {
+      "bytes": 3067,
+      "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/observations/pq-provider/provider.json",
+      "sha256": "f8caa27f65326ca7891999adeba8b282a54f7f5fbb82f33220e525ae98ea6e2e"
+    },
+    "validation_file": {
+      "bytes": 1155,
+      "path": "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/validated-provider.json",
+      "sha256": "c000e5f1b3b987e485a1440820c131b6df4b591e0c5d9631623ee3f0dda18468"
+    }
+  },
+  "provider_inputs_unchanged": true,
+  "removed_inherited_environment_names": [],
+  "runner_after": {
+    "bytes": 53837,
+    "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/evidence/cell-storage-convergence-f2568-20261109/tools/run_discovery_convergence_differential.py",
+    "sha256": "755aaee9547882c1bdf2dd8bb2a06bb940c634e6982c1e82289834e3ca513e53"
+  },
+  "runner_before": {
+    "bytes": 53837,
+    "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/evidence/cell-storage-convergence-f2568-20261109/tools/run_discovery_convergence_differential.py",
+    "sha256": "755aaee9547882c1bdf2dd8bb2a06bb940c634e6982c1e82289834e3ca513e53"
+  },
+  "schema": "cell-auth-convergence-differential-v1",
+  "scope": "Linux x86_64; four filtered native commands only; original verification/socket/deadline limits; no production qualification",
+  "setup_checks": [
+    {
+      "command": [
+        "findmnt",
+        "--json",
+        "-T",
+        "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03",
+        "-o",
+        "TARGET,SOURCE,FSTYPE,OPTIONS"
+      ],
+      "exit_code": 0,
+      "label": "mount-root",
+      "stderr": "",
+      "stdout": "{\n   \"filesystems\": [\n      {\n         \"target\": \"/\",\n         \"source\": \"/dev/nvme0n1p2\",\n         \"fstype\": \"ext4\",\n         \"options\": \"rw,relatime\"\n      }\n   ]\n}\n"
+    },
+    {
+      "command": [
+        "findmnt",
+        "--json",
+        "-T",
+        "/home/qq/work/chain-cell-storage-convergence-differential-final01",
+        "-o",
+        "TARGET,SOURCE,FSTYPE,OPTIONS"
+      ],
+      "exit_code": 0,
+      "label": "mount-out",
+      "stderr": "",
+      "stdout": "{\n   \"filesystems\": [\n      {\n         \"target\": \"/\",\n         \"source\": \"/dev/nvme0n1p2\",\n         \"fstype\": \"ext4\",\n         \"options\": \"rw,relatime\"\n      }\n   ]\n}\n"
+    },
+    {
+      "command": [
+        "findmnt",
+        "--json",
+        "-T",
+        "/home/qq/work/chain-cell-storage-convergence-f2568-target",
+        "-o",
+        "TARGET,SOURCE,FSTYPE,OPTIONS"
+      ],
+      "exit_code": 0,
+      "label": "mount-target",
+      "stderr": "",
+      "stdout": "{\n   \"filesystems\": [\n      {\n         \"target\": \"/\",\n         \"source\": \"/dev/nvme0n1p2\",\n         \"fstype\": \"ext4\",\n         \"options\": \"rw,relatime\"\n      }\n   ]\n}\n"
+    },
+    {
+      "command": [
+        "findmnt",
+        "--json",
+        "-T",
+        "/home/qq/work/chain-cell-storage-convergence-differential-final01-tmp",
+        "-o",
+        "TARGET,SOURCE,FSTYPE,OPTIONS"
+      ],
+      "exit_code": 0,
+      "label": "mount-native_tmp",
+      "stderr": "",
+      "stdout": "{\n   \"filesystems\": [\n      {\n         \"target\": \"/\",\n         \"source\": \"/dev/nvme0n1p2\",\n         \"fstype\": \"ext4\",\n         \"options\": \"rw,relatime\"\n      }\n   ]\n}\n"
+    },
+    {
+      "command": [
+        "lsblk",
+        "--json",
+        "--inverse",
+        "--output",
+        "NAME,TYPE,ROTA,TRAN,SIZE",
+        "/dev/nvme0n1p2"
+      ],
+      "exit_code": 0,
+      "label": "block-device",
+      "stderr": "",
+      "stdout": "{\n   \"blockdevices\": [\n      {\n         \"name\": \"nvme0n1p2\",\n         \"type\": \"part\",\n         \"rota\": false,\n         \"tran\": \"nvme\",\n         \"size\": \"1.8T\",\n         \"children\": [\n            {\n               \"name\": \"nvme0n1\",\n               \"type\": \"disk\",\n               \"rota\": false,\n               \"tran\": \"nvme\",\n               \"size\": \"1.8T\"\n            }\n         ]\n      }\n   ]\n}\n"
+    },
+    {
+      "command": [
+        "/home/qq/.cargo/bin/rustup",
+        "which",
+        "--toolchain",
+        "1.95.0",
+        "rustc"
+      ],
+      "exit_code": 0,
+      "label": "rustc-path",
+      "stderr": "",
+      "stdout": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc\n"
+    },
+    {
+      "command": [
+        "/home/qq/.cargo/bin/rustup",
+        "which",
+        "--toolchain",
+        "1.95.0",
+        "cargo"
+      ],
+      "exit_code": 0,
+      "label": "cargo-path",
+      "stderr": "",
+      "stdout": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo\n"
+    },
+    {
+      "command": [
+        "rustc",
+        "-vV"
+      ],
+      "exit_code": 0,
+      "label": "rustc-actual-version",
+      "stderr": "",
+      "stdout": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n"
+    },
+    {
+      "command": [
+        "cargo",
+        "-Vv"
+      ],
+      "exit_code": 0,
+      "label": "cargo-actual-version",
+      "stderr": "",
+      "stdout": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\nrelease: 1.95.0\ncommit-hash: f2d3ce0bd7f24a49f8f72d9000448f8838c4e850\ncommit-date: 2026-03-21\nhost: x86_64-unknown-linux-gnu\nlibgit2: 1.9.2 (sys:0.20.4 vendored)\nlibcurl: 8.15.0-DEV (sys:0.4.83+curl-8.15.0 vendored ssl:OpenSSL/3.5.4)\nssl: OpenSSL 3.5.4 30 Sep 2025\nos: Ubuntu 26.4.0 (resolute) [64-bit]\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit_code": 0,
+      "label": "initial-tree",
+      "stderr": "",
+      "stdout": "75ac72605e3647de5a09557bfd7012dc99b0dec6\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "--show-toplevel"
+      ],
+      "exit_code": 0,
+      "label": "initial-root",
+      "stderr": "",
+      "stdout": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "label": "initial-head",
+      "stderr": "",
+      "stdout": "66b7064be597039ce871b5b12ad5568850a2dd46\n"
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignore-submodules=none"
+      ],
+      "exit_code": 0,
+      "label": "initial-clean-source",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+        "version"
+      ],
+      "exit_code": 0,
+      "label": "provider-version-before",
+      "stderr": "",
+      "stdout": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)\n"
+    },
+    {
+      "command": [
+        "git",
+        "show",
+        "66b7064be597039ce871b5b12ad5568850a2dd46:trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs"
+      ],
+      "exit_code": 0,
+      "label": "candidate-source-auth.rs",
+      "stderr": "",
+      "stdout_bytes": 57292,
+      "stdout_sha256": "14fee1a9ca78f97f39cea6a4fb68a1bfa04cec7b43e1c8e2368d7dfa55921a63"
+    },
+    {
+      "command": [
+        "git",
+        "show",
+        "66b7064be597039ce871b5b12ad5568850a2dd46:trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs"
+      ],
+      "exit_code": 0,
+      "label": "candidate-source-auth_tests.rs",
+      "stderr": "",
+      "stdout_bytes": 88583,
+      "stdout_sha256": "eb454e4660531fca30ddeb5c17318ef4b74689ac6a6845c97e1c56b8e61d92cc"
+    },
+    {
+      "command": [
+        "git",
+        "show",
+        "66b7064be597039ce871b5b12ad5568850a2dd46:trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs"
+      ],
+      "exit_code": 0,
+      "label": "candidate-source-pq.rs",
+      "stderr": "",
+      "stdout_bytes": 8420,
+      "stdout_sha256": "e51a5e9777578dfa378dbd17db3d79850822c5a5da31dbc99b11936f0cbd48c1"
+    },
+    {
+      "command": [
+        "git",
+        "show",
+        "66b7064be597039ce871b5b12ad5568850a2dd46:evidence/cell-storage-convergence-f2568-20261109/controls/original-auth-server-tests.rs"
+      ],
+      "exit_code": 0,
+      "label": "committed-red-fixtures",
+      "stderr": "",
+      "stdout_bytes": 68436,
+      "stdout_sha256": "288a2403fdcc8182f392fcc9e8f76b2b9de684fe69235e401199f22e34f564ce"
+    },
+    {
+      "command": [
+        "git",
+        "show",
+        "82750af38c9b900dff323522c53db86472005081:trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs"
+      ],
+      "exit_code": 0,
+      "label": "original-823-auth.rs",
+      "stderr": "",
+      "stdout_bytes": 50682,
+      "stdout_sha256": "1fac53a2a16ef8f6c5b2a8ed480ec5be8bebdec3a5c764585639e5a085659690"
+    },
+    {
+      "command": [
+        "git",
+        "show",
+        "82750af38c9b900dff323522c53db86472005081:trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs"
+      ],
+      "exit_code": 0,
+      "label": "original-823-pq.rs",
+      "stderr": "",
+      "stdout_bytes": 8281,
+      "stdout_sha256": "9d7dbb4cd360a4e7100e1f385aac17620822786567f4ddc3766ca90fee39a5bb"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "label": "initial-candidate-head",
+      "stderr": "",
+      "stdout": "66b7064be597039ce871b5b12ad5568850a2dd46\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit_code": 0,
+      "label": "initial-candidate-tree",
+      "stderr": "",
+      "stdout": "75ac72605e3647de5a09557bfd7012dc99b0dec6\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--cached",
+        "--exit-code",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "initial-candidate-index",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--name-only",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "initial-candidate-changed-paths",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignore-submodules=none"
+      ],
+      "exit_code": 0,
+      "label": "initial-candidate-status",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "label": "server-original-red-before-head",
+      "stderr": "",
+      "stdout": "66b7064be597039ce871b5b12ad5568850a2dd46\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit_code": 0,
+      "label": "server-original-red-before-tree",
+      "stderr": "",
+      "stdout": "75ac72605e3647de5a09557bfd7012dc99b0dec6\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--cached",
+        "--exit-code",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "server-original-red-before-index",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--name-only",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "server-original-red-before-changed-paths",
+      "stderr": "",
+      "stdout": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs\ntrillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs\ntrillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs\n"
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignore-submodules=none"
+      ],
+      "exit_code": 0,
+      "label": "server-original-red-before-status",
+      "stderr": "",
+      "stdout": " M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "label": "server-original-red-after-head",
+      "stderr": "",
+      "stdout": "66b7064be597039ce871b5b12ad5568850a2dd46\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit_code": 0,
+      "label": "server-original-red-after-tree",
+      "stderr": "",
+      "stdout": "75ac72605e3647de5a09557bfd7012dc99b0dec6\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--cached",
+        "--exit-code",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "server-original-red-after-index",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--name-only",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "server-original-red-after-changed-paths",
+      "stderr": "",
+      "stdout": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs\ntrillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs\ntrillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs\n"
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignore-submodules=none"
+      ],
+      "exit_code": 0,
+      "label": "server-original-red-after-status",
+      "stderr": "",
+      "stdout": " M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs\n M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "label": "server-candidate-green-before-head",
+      "stderr": "",
+      "stdout": "66b7064be597039ce871b5b12ad5568850a2dd46\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit_code": 0,
+      "label": "server-candidate-green-before-tree",
+      "stderr": "",
+      "stdout": "75ac72605e3647de5a09557bfd7012dc99b0dec6\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--cached",
+        "--exit-code",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "server-candidate-green-before-index",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--name-only",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "server-candidate-green-before-changed-paths",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignore-submodules=none"
+      ],
+      "exit_code": 0,
+      "label": "server-candidate-green-before-status",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "label": "server-candidate-green-after-head",
+      "stderr": "",
+      "stdout": "66b7064be597039ce871b5b12ad5568850a2dd46\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit_code": 0,
+      "label": "server-candidate-green-after-tree",
+      "stderr": "",
+      "stdout": "75ac72605e3647de5a09557bfd7012dc99b0dec6\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--cached",
+        "--exit-code",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "server-candidate-green-after-index",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--name-only",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "server-candidate-green-after-changed-paths",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignore-submodules=none"
+      ],
+      "exit_code": 0,
+      "label": "server-candidate-green-after-status",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "label": "announcement-clamp-mutation-red-before-head",
+      "stderr": "",
+      "stdout": "66b7064be597039ce871b5b12ad5568850a2dd46\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit_code": 0,
+      "label": "announcement-clamp-mutation-red-before-tree",
+      "stderr": "",
+      "stdout": "75ac72605e3647de5a09557bfd7012dc99b0dec6\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--cached",
+        "--exit-code",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "announcement-clamp-mutation-red-before-index",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--name-only",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "announcement-clamp-mutation-red-before-changed-paths",
+      "stderr": "",
+      "stdout": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs\n"
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignore-submodules=none"
+      ],
+      "exit_code": 0,
+      "label": "announcement-clamp-mutation-red-before-status",
+      "stderr": "",
+      "stdout": " M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "label": "announcement-clamp-mutation-red-after-head",
+      "stderr": "",
+      "stdout": "66b7064be597039ce871b5b12ad5568850a2dd46\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit_code": 0,
+      "label": "announcement-clamp-mutation-red-after-tree",
+      "stderr": "",
+      "stdout": "75ac72605e3647de5a09557bfd7012dc99b0dec6\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--cached",
+        "--exit-code",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "announcement-clamp-mutation-red-after-index",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--name-only",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "announcement-clamp-mutation-red-after-changed-paths",
+      "stderr": "",
+      "stdout": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs\n"
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignore-submodules=none"
+      ],
+      "exit_code": 0,
+      "label": "announcement-clamp-mutation-red-after-status",
+      "stderr": "",
+      "stdout": " M trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "label": "announcement-candidate-green-before-head",
+      "stderr": "",
+      "stdout": "66b7064be597039ce871b5b12ad5568850a2dd46\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit_code": 0,
+      "label": "announcement-candidate-green-before-tree",
+      "stderr": "",
+      "stdout": "75ac72605e3647de5a09557bfd7012dc99b0dec6\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--cached",
+        "--exit-code",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "announcement-candidate-green-before-index",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--name-only",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "announcement-candidate-green-before-changed-paths",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignore-submodules=none"
+      ],
+      "exit_code": 0,
+      "label": "announcement-candidate-green-before-status",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "label": "announcement-candidate-green-after-head",
+      "stderr": "",
+      "stdout": "66b7064be597039ce871b5b12ad5568850a2dd46\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit_code": 0,
+      "label": "announcement-candidate-green-after-tree",
+      "stderr": "",
+      "stdout": "75ac72605e3647de5a09557bfd7012dc99b0dec6\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--cached",
+        "--exit-code",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "announcement-candidate-green-after-index",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--name-only",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "announcement-candidate-green-after-changed-paths",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignore-submodules=none"
+      ],
+      "exit_code": 0,
+      "label": "announcement-candidate-green-after-status",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "label": "restored-candidate-head",
+      "stderr": "",
+      "stdout": "66b7064be597039ce871b5b12ad5568850a2dd46\n"
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "exit_code": 0,
+      "label": "restored-candidate-tree",
+      "stderr": "",
+      "stdout": "75ac72605e3647de5a09557bfd7012dc99b0dec6\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--cached",
+        "--exit-code",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "restored-candidate-index",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--name-only",
+        "--"
+      ],
+      "exit_code": 0,
+      "label": "restored-candidate-changed-paths",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignore-submodules=none"
+      ],
+      "exit_code": 0,
+      "label": "restored-candidate-status",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignore-submodules=none"
+      ],
+      "exit_code": 0,
+      "label": "final-clean-source",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/bin/openssl",
+        "version"
+      ],
+      "exit_code": 0,
+      "label": "provider-version-after",
+      "stderr": "",
+      "stdout": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)\n"
+    },
+    {
+      "command": [
+        "findmnt",
+        "--json",
+        "-T",
+        "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03",
+        "-o",
+        "TARGET,SOURCE,FSTYPE,OPTIONS"
+      ],
+      "exit_code": 0,
+      "label": "mount-root-after",
+      "stderr": "",
+      "stdout": "{\n   \"filesystems\": [\n      {\n         \"target\": \"/\",\n         \"source\": \"/dev/nvme0n1p2\",\n         \"fstype\": \"ext4\",\n         \"options\": \"rw,relatime\"\n      }\n   ]\n}\n"
+    },
+    {
+      "command": [
+        "findmnt",
+        "--json",
+        "-T",
+        "/home/qq/work/chain-cell-storage-convergence-differential-final01",
+        "-o",
+        "TARGET,SOURCE,FSTYPE,OPTIONS"
+      ],
+      "exit_code": 0,
+      "label": "mount-out-after",
+      "stderr": "",
+      "stdout": "{\n   \"filesystems\": [\n      {\n         \"target\": \"/\",\n         \"source\": \"/dev/nvme0n1p2\",\n         \"fstype\": \"ext4\",\n         \"options\": \"rw,relatime\"\n      }\n   ]\n}\n"
+    },
+    {
+      "command": [
+        "findmnt",
+        "--json",
+        "-T",
+        "/home/qq/work/chain-cell-storage-convergence-f2568-target",
+        "-o",
+        "TARGET,SOURCE,FSTYPE,OPTIONS"
+      ],
+      "exit_code": 0,
+      "label": "mount-target-after",
+      "stderr": "",
+      "stdout": "{\n   \"filesystems\": [\n      {\n         \"target\": \"/\",\n         \"source\": \"/dev/nvme0n1p2\",\n         \"fstype\": \"ext4\",\n         \"options\": \"rw,relatime\"\n      }\n   ]\n}\n"
+    },
+    {
+      "command": [
+        "findmnt",
+        "--json",
+        "-T",
+        "/home/qq/work/chain-cell-storage-convergence-differential-final01-tmp",
+        "-o",
+        "TARGET,SOURCE,FSTYPE,OPTIONS"
+      ],
+      "exit_code": 0,
+      "label": "mount-native_tmp-after",
+      "stderr": "",
+      "stdout": "{\n   \"filesystems\": [\n      {\n         \"target\": \"/\",\n         \"source\": \"/dev/nvme0n1p2\",\n         \"fstype\": \"ext4\",\n         \"options\": \"rw,relatime\"\n      }\n   ]\n}\n"
+    }
+  ],
+  "source_inputs": {
+    "candidate_commit": "66b7064be597039ce871b5b12ad5568850a2dd46",
+    "candidate_files": {
+      "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs": "e51a5e9777578dfa378dbd17db3d79850822c5a5da31dbc99b11936f0cbd48c1",
+      "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs": "14fee1a9ca78f97f39cea6a4fb68a1bfa04cec7b43e1c8e2368d7dfa55921a63",
+      "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs": "eb454e4660531fca30ddeb5c17318ef4b74689ac6a6845c97e1c56b8e61d92cc"
+    },
+    "committed_red_fixtures": {
+      "bytes": 68436,
+      "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/evidence/cell-storage-convergence-f2568-20261109/controls/original-auth-server-tests.rs",
+      "sha256": "288a2403fdcc8182f392fcc9e8f76b2b9de684fe69235e401199f22e34f564ce"
+    },
+    "mutation": {
+      "auth_sha256": "663e0c92afe2792a709f695838ba2ee539f0987cb3d842d0278d03c8f92b4c9d",
+      "basis": "candidate, not original #823",
+      "removed": "overall: overall.min(receipt.monotonic_expiry()),",
+      "replacement": "overall,",
+      "replacements": 1
+    },
+    "original_commit": "82750af38c9b900dff323522c53db86472005081",
+    "original_files": {
+      "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs": "9d7dbb4cd360a4e7100e1f385aac17620822786567f4ddc3766ca90fee39a5bb",
+      "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs": "1fac53a2a16ef8f6c5b2a8ed480ec5be8bebdec3a5c764585639e5a085659690"
+    },
+    "red_green_server_fixtures_identical": true,
+    "stages": {
+      "candidate": {
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs": "e51a5e9777578dfa378dbd17db3d79850822c5a5da31dbc99b11936f0cbd48c1",
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs": "14fee1a9ca78f97f39cea6a4fb68a1bfa04cec7b43e1c8e2368d7dfa55921a63",
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs": "eb454e4660531fca30ddeb5c17318ef4b74689ac6a6845c97e1c56b8e61d92cc"
+      },
+      "mutation": {
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs": "e51a5e9777578dfa378dbd17db3d79850822c5a5da31dbc99b11936f0cbd48c1",
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs": "663e0c92afe2792a709f695838ba2ee539f0987cb3d842d0278d03c8f92b4c9d",
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs": "eb454e4660531fca30ddeb5c17318ef4b74689ac6a6845c97e1c56b8e61d92cc"
+      },
+      "server-red": {
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs": "9d7dbb4cd360a4e7100e1f385aac17620822786567f4ddc3766ca90fee39a5bb",
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs": "1fac53a2a16ef8f6c5b2a8ed480ec5be8bebdec3a5c764585639e5a085659690",
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs": "288a2403fdcc8182f392fcc9e8f76b2b9de684fe69235e401199f22e34f564ce"
+      }
+    }
+  },
+  "source_receipt_sha256": "a3e1b14b47ab355a69c48ee4717f1154c367d8799b876009d250ae65b3427a14",
+  "source_receipts_equal": true,
+  "source_stages": [
+    {
+      "changed_paths": [],
+      "files": {
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs": {
+          "bytes": 8420,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+          "sha256": "e51a5e9777578dfa378dbd17db3d79850822c5a5da31dbc99b11936f0cbd48c1"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs": {
+          "bytes": 57292,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs",
+          "sha256": "14fee1a9ca78f97f39cea6a4fb68a1bfa04cec7b43e1c8e2368d7dfa55921a63"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs": {
+          "bytes": 88583,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+          "sha256": "eb454e4660531fca30ddeb5c17318ef4b74689ac6a6845c97e1c56b8e61d92cc"
+        }
+      },
+      "label": "initial-candidate"
+    },
+    {
+      "changed_paths": [
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs"
+      ],
+      "files": {
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs": {
+          "bytes": 8281,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+          "sha256": "9d7dbb4cd360a4e7100e1f385aac17620822786567f4ddc3766ca90fee39a5bb"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs": {
+          "bytes": 50682,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs",
+          "sha256": "1fac53a2a16ef8f6c5b2a8ed480ec5be8bebdec3a5c764585639e5a085659690"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs": {
+          "bytes": 68436,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+          "sha256": "288a2403fdcc8182f392fcc9e8f76b2b9de684fe69235e401199f22e34f564ce"
+        }
+      },
+      "label": "server-original-red-before"
+    },
+    {
+      "changed_paths": [
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs"
+      ],
+      "files": {
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs": {
+          "bytes": 8281,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+          "sha256": "9d7dbb4cd360a4e7100e1f385aac17620822786567f4ddc3766ca90fee39a5bb"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs": {
+          "bytes": 50682,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs",
+          "sha256": "1fac53a2a16ef8f6c5b2a8ed480ec5be8bebdec3a5c764585639e5a085659690"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs": {
+          "bytes": 68436,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+          "sha256": "288a2403fdcc8182f392fcc9e8f76b2b9de684fe69235e401199f22e34f564ce"
+        }
+      },
+      "label": "server-original-red-after"
+    },
+    {
+      "changed_paths": [],
+      "files": {
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs": {
+          "bytes": 8420,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+          "sha256": "e51a5e9777578dfa378dbd17db3d79850822c5a5da31dbc99b11936f0cbd48c1"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs": {
+          "bytes": 57292,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs",
+          "sha256": "14fee1a9ca78f97f39cea6a4fb68a1bfa04cec7b43e1c8e2368d7dfa55921a63"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs": {
+          "bytes": 88583,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+          "sha256": "eb454e4660531fca30ddeb5c17318ef4b74689ac6a6845c97e1c56b8e61d92cc"
+        }
+      },
+      "label": "server-candidate-green-before"
+    },
+    {
+      "changed_paths": [],
+      "files": {
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs": {
+          "bytes": 8420,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+          "sha256": "e51a5e9777578dfa378dbd17db3d79850822c5a5da31dbc99b11936f0cbd48c1"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs": {
+          "bytes": 57292,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs",
+          "sha256": "14fee1a9ca78f97f39cea6a4fb68a1bfa04cec7b43e1c8e2368d7dfa55921a63"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs": {
+          "bytes": 88583,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+          "sha256": "eb454e4660531fca30ddeb5c17318ef4b74689ac6a6845c97e1c56b8e61d92cc"
+        }
+      },
+      "label": "server-candidate-green-after"
+    },
+    {
+      "changed_paths": [
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs"
+      ],
+      "files": {
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs": {
+          "bytes": 8420,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+          "sha256": "e51a5e9777578dfa378dbd17db3d79850822c5a5da31dbc99b11936f0cbd48c1"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs": {
+          "bytes": 57251,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs",
+          "sha256": "663e0c92afe2792a709f695838ba2ee539f0987cb3d842d0278d03c8f92b4c9d"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs": {
+          "bytes": 88583,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+          "sha256": "eb454e4660531fca30ddeb5c17318ef4b74689ac6a6845c97e1c56b8e61d92cc"
+        }
+      },
+      "label": "announcement-clamp-mutation-red-before"
+    },
+    {
+      "changed_paths": [
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs"
+      ],
+      "files": {
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs": {
+          "bytes": 8420,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+          "sha256": "e51a5e9777578dfa378dbd17db3d79850822c5a5da31dbc99b11936f0cbd48c1"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs": {
+          "bytes": 57251,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs",
+          "sha256": "663e0c92afe2792a709f695838ba2ee539f0987cb3d842d0278d03c8f92b4c9d"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs": {
+          "bytes": 88583,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+          "sha256": "eb454e4660531fca30ddeb5c17318ef4b74689ac6a6845c97e1c56b8e61d92cc"
+        }
+      },
+      "label": "announcement-clamp-mutation-red-after"
+    },
+    {
+      "changed_paths": [],
+      "files": {
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs": {
+          "bytes": 8420,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+          "sha256": "e51a5e9777578dfa378dbd17db3d79850822c5a5da31dbc99b11936f0cbd48c1"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs": {
+          "bytes": 57292,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs",
+          "sha256": "14fee1a9ca78f97f39cea6a4fb68a1bfa04cec7b43e1c8e2368d7dfa55921a63"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs": {
+          "bytes": 88583,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+          "sha256": "eb454e4660531fca30ddeb5c17318ef4b74689ac6a6845c97e1c56b8e61d92cc"
+        }
+      },
+      "label": "announcement-candidate-green-before"
+    },
+    {
+      "changed_paths": [],
+      "files": {
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs": {
+          "bytes": 8420,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+          "sha256": "e51a5e9777578dfa378dbd17db3d79850822c5a5da31dbc99b11936f0cbd48c1"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs": {
+          "bytes": 57292,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs",
+          "sha256": "14fee1a9ca78f97f39cea6a4fb68a1bfa04cec7b43e1c8e2368d7dfa55921a63"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs": {
+          "bytes": 88583,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+          "sha256": "eb454e4660531fca30ddeb5c17318ef4b74689ac6a6845c97e1c56b8e61d92cc"
+        }
+      },
+      "label": "announcement-candidate-green-after"
+    },
+    {
+      "changed_paths": [],
+      "files": {
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs": {
+          "bytes": 8420,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+          "sha256": "e51a5e9777578dfa378dbd17db3d79850822c5a5da31dbc99b11936f0cbd48c1"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs": {
+          "bytes": 57292,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs",
+          "sha256": "14fee1a9ca78f97f39cea6a4fb68a1bfa04cec7b43e1c8e2368d7dfa55921a63"
+        },
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs": {
+          "bytes": 88583,
+          "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-native03/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+          "sha256": "eb454e4660531fca30ddeb5c17318ef4b74689ac6a6845c97e1c56b8e61d92cc"
+        }
+      },
+      "label": "restored-candidate"
+    }
+  ],
+  "started_unix": 1794213195.675603,
+  "state": "passed",
+  "toolchain": {
+    "cargo": {
+      "bytes": 42185192,
+      "path": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66",
+      "version_output": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\nrelease: 1.95.0\ncommit-hash: f2d3ce0bd7f24a49f8f72d9000448f8838c4e850\ncommit-date: 2026-03-21\nhost: x86_64-unknown-linux-gnu\nlibgit2: 1.9.2 (sys:0.20.4 vendored)\nlibcurl: 8.15.0-DEV (sys:0.4.83+curl-8.15.0 vendored ssl:OpenSSL/3.5.4)\nssl: OpenSSL 3.5.4 30 Sep 2025\nos: Ubuntu 26.4.0 (resolute) [64-bit]"
+    },
+    "rustc": {
+      "bytes": 644784,
+      "path": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+      "version_output": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2"
+    },
+    "rustup": {
+      "bytes": 21347088,
+      "path": "/home/qq/.cargo/bin/rustup",
+      "sha256": "b1c8cb14e30889e7e2999e6b69e62d9e9b9ffc0f4df8180564d306d9680e6c55"
+    }
+  },
+  "toolchain_after": {
+    "cargo": {
+      "bytes": 42185192,
+      "path": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+    },
+    "rustc": {
+      "bytes": 644784,
+      "path": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6"
+    },
+    "rustup": {
+      "bytes": 21347088,
+      "path": "/home/qq/.cargo/bin/rustup",
+      "sha256": "b1c8cb14e30889e7e2999e6b69e62d9e9b9ffc0f4df8180564d306d9680e6c55"
+    }
+  },
+  "tree": "75ac72605e3647de5a09557bfd7012dc99b0dec6"
+}

@@ -87,6 +87,22 @@ pub use store::storage_service::{
     NativeCellReleaseRetirementReadbackV2, NativeCellRepairCpuObservationV1,
     NativeCellRepairRequestV1, NativeCellRetentionRequestV1,
 };
+pub use store::storage_service::{
+    native_cell_shard_repair_subject_v1, NativeCellRetainedShardPlanReadbackV1,
+    NativeCellRetainedShardPlanRequestV1, NativeCellRetainedShardPlanTargetsV1,
+    NativeCellRetainedShardSlotReadbackV1, NativeCellRetainedShardVerificationBudgetV1,
+    NativeCellShardDamageV1, NativeCellShardEffectReadbackV1, NativeCellShardRecoveryActionV1,
+    NativeCellShardRecoveryBudgetV1, NativeCellShardRecoveryCpuV1,
+    NativeCellShardRecoveryFailureV1, NativeCellShardRecoveryLimitsV1,
+    NativeCellShardRecoveryReadbackV1, NativeCellShardRecoveryRequestV1,
+    NativeCellShardRecoveryUsageV1, NativeCellShardRepairRequestV1,
+    NativeCellShardRetentionRequestV1,
+};
+pub use store::storage_service::{
+    native_cell_version_repair_subject_v3, NativeCellVersionEffectReadbackV3,
+    NativeCellVersionRepairRequestV3, NativeCellVersionRetentionRequestV3,
+    NativeCellVersionRetirementReadbackV3,
+};
 pub use store::{
     ConfirmationBatch, ContinuousSearchRequest, DerivedCommitmentStatus, MiningEpochCancellation,
     NativeAccountProofProgress, Node, Observation, OwnedContinuousLeaseResult,

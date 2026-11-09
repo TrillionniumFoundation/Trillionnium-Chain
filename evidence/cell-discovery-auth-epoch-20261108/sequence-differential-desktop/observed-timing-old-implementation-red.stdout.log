@@ -1,0 +1,36 @@
+
+running 3 tests
+test cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_first_vetoes_later_low_sequence ... FAILED
+test cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_later_removes_observed_low_sequence ... FAILED
+test cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_quota_rejected_withdrawal_vetoes_older_source ... FAILED
+
+failures:
+
+---- cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_first_vetoes_later_low_sequence stdout ----
+authenticated-v3 fixture preparation: epoch remaining=18s, wait=18s before creating the original operation
+authenticated-v3 sequence fixture: newer_first=true, newer_expiry=1794163503, third_query=Some((1794163503.66641812s, 1794163503)), observation=CellDiscoveryObservationV3 { connection_attempts: 3, received_response_bytes: 17214, record_validation_attempts: 2, bootstrap_validation_attempts: 3, announcement_signature_attempts: 0, rejected_records: 1, capacity_rejections: 0, rejected_bootstraps: 0, ineligible_bootstraps: 0 }, result=Ok([127.0.0.2:19001])
+
+thread 'cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_first_vetoes_later_low_sequence' (1518824) panicked at crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs:1451:5:
+fixture did not receive both earlier authenticated replies before the newer lease expired: expiry=1794163503, third_query=Some((1794163503.66641812s, 1794163503))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_later_removes_observed_low_sequence stdout ----
+authenticated-v3 sequence fixture: newer_first=false, newer_expiry=1794163508, third_query=Some((1794163507.493616276s, 1794163508)), observation=CellDiscoveryObservationV3 { connection_attempts: 3, received_response_bytes: 17214, record_validation_attempts: 2, bootstrap_validation_attempts: 3, announcement_signature_attempts: 0, rejected_records: 1, capacity_rejections: 0, rejected_bootstraps: 0, ineligible_bootstraps: 0 }, result=Ok([127.0.0.2:19001])
+
+thread 'cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_later_removes_observed_low_sequence' (1519955) panicked at crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs:1466:5:
+expired newer signed sequence resurrected an older provider: Ok([127.0.0.2:19001])
+
+---- cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_quota_rejected_withdrawal_vetoes_older_source stdout ----
+authenticated-v3 quota preparation: result=Err(Invalid("authenticated discovery has no admissible provider")), observation=CellDiscoveryObservationV3 { connection_attempts: 2, received_response_bytes: 35476, record_validation_attempts: 8, bootstrap_validation_attempts: 2, announcement_signature_attempts: 0, rejected_records: 0, capacity_rejections: 0, rejected_bootstraps: 0, ineligible_bootstraps: 0 }, elapsed=5.207865028s, requests_left=0, actual_response_bytes=Ok(35476)
+
+thread 'cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_quota_rejected_withdrawal_vetoes_older_source' (1520592) panicked at crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs:1605:5:
+a quota-refused newer withdrawal allowed an older source: Ok([127.0.0.1:19001])
+
+
+failures:
+    cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_first_vetoes_later_low_sequence
+    cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_expired_high_later_removes_observed_low_sequence
+    cell::discovery::pq::auth::tests::authenticated_v3_newest_verified_quota_rejected_withdrawal_vetoes_older_source
+
+test result: FAILED. 0 passed; 3 failed; 0 ignored; 0 measured; 465 filtered out; finished in 37.47s
+

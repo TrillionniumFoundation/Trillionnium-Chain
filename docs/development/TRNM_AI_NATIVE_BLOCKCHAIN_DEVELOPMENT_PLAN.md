@@ -1,3 +1,59 @@
+**Complete storage owner convergence — HOLD:**
+
+Continue the existing six-capability lineage with the
+[storage convergence contract](specs/pon/CELL_STORAGE_CONVERGENCE_DEV_V1.md).
+TCA3 persists the full model/environment duty and independently pinned catalog
+history over the original physical arena. CPS1 derives a finite periodic
+full-snapshot sequence from that history without a second operation ledger or
+free renewal. CSP1 physical slots and CRP1 bind the actual complete protected set
+to all original manifest/chunk placements; native version/shard operations keep
+M12 funding, New-only effects, Unknown recovery and irreversible resource usage.
+The #823 discovery wire profile remains authoritative; incompatible #818 V3
+encodings are rejected, while its separate complete-version residency component
+is retained. Actual bytes, joint memory admission and CHB1 dual-context handoff
+keep their original task and consumer authority boundaries. The initial CRP1
+profile admits at most 128 chunks and 2 MiB of metadata; complete-plan automatic
+local repair retains original funding and cumulative failed-attempt budgets.
+The fresh sealed-FD research consumer loads actual admitted bytes and requires
+two forwards under one deadline, without ordinary Hepta FinalUse authority.
+The first real sealed-byte model attempt retained an actual runtime-import
+failure. The compiler now isolates inherited future flags, and connector waits
+observe original supervisor completion without resetting their deadline. Exact
+21-name controls cover original annotation semantics and real failed-child
+reaping before and after descriptor handoff. Actual model and final committed
+source observations remain separately accountable.
+A second real run loaded model and adapter bytes, then exposed Torch virtual
+namespace origin handling. The correction binds only the two authentic virtual
+namespaces to exact pinned owners, loaders, classes and singleton identities;
+ordinary file and native-mapping checks remain. The sealed-input roster now
+contains 24 cases; the actual-model failures remain separately retained.
+The third distinct research operation on committed `097f59f505f8ec42f72e3b8255e6cb7822a70646`
+completed actual cold recovery, both-cache deletion, 30 sealed descriptors and
+two model forwards in 17.552772522 seconds. Both action scores favor yes; the
+second numeric probe is incorrect. This establishes research execution only,
+with original 300-second/8-GiB bounds and no ordinary Hepta FinalUse or M12 grant.
+The first exact097 25-gate run remains 24/25 because its strict parser rejected
+an observed child-output prefix, although Cargo passed all 764 DA/doc cases.
+Its separate differential remains failed after epoch setup outlived an already
+started payload service. Preserve both runs, add only exact output-form parsing
+and identical test-fixture preparation ordering, and verify the complete successor
+on its own committed source before reporting final acceptance.
+Commit `66b7064be597039ce871b5b12ad5568850a2dd46` then passed all 25 exact-source
+gates and its separate discovery differential. Preserve those original receipts
+while maintaining current-source CI identities and the exact compile-fail case
+name. Numerical budgets, historical proof identities and service targets remain
+unchanged. The frozen QROM input inconsistency and the actual four-second/six-depth
+fresh-service failure remain explicit qualification blocks.
+
+Preparation failures, static reviews and native observations remain separate.
+Freeze the complete implementation, then run exact-source native, locked graphs,
+strict Clippy, formatting, vector, source-negative and Markdown gates. Keep the
+original release/architecture/source matrices, four-second service requirement,
+separate thirty-second pressure, all previous failures and ordinary Hepta
+FinalUse owner. Declared provider identities, funding admission, synthetic byte
+callbacks and earlier unrelated model runs cannot qualify independent WAN
+custody, perpetual paid retention or the current next-task consumer.
+
 **M12 witnessed generation recovery V3, 2026-11-08 America/New_York — HOLD:**
 The [guarded ordinary Node/M12 entry](specs/pon/M12_GENERATION_RECOVERY_V3.md)
 adds a separate M12 witness binding, complete-journal checkpoints and transaction
@@ -273,6 +329,29 @@ no new proof or performance improvement. Full native W1 remains the current
 work gate; owner-authorized task payment and a future independently verified
 canonical proof settlement are distinct interfaces. Original four-second/16,
 PQ, funding/reorg, WAN, proof-benefit and model-adoption gates remain open.
+
+**Exact retained Cell closures and declared fault-domain recovery, 2026-11-08
+America/New_York:** Continue the #807 Cell candidate from exact source
+`0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a` under the
+[retained recovery contract](specs/pon/CELL_RETAINED_RECOVERY_V1.md).
+Bind the nonempty current retention set, original service windows, owner epoch
+and both loader contexts for every complete TCV1. Preserve each composition,
+router and runtime while deduplicating exact shared objects. Fetch the whole
+set through one original network session and verify every complete payload;
+retain failed-attempt counters, cancellation and the original deadline.
+Stream all retained chunks through original CRS1 reconstruction and full-file
+hashes, checking every replica copy. Enumerate all allowed mixed operator,
+administrator and physical-domain losses under an independently pinned policy;
+retain per-chunk counterexamples rather than treating duplicate indices or
+identity labels as independent availability. The byte observer and conditional
+placement analysis do not authenticate remote custody or prove real operator
+independence. Keep the existing durable catalog/GC/payment owners, all
+qualification flags, original host limits and TCV1/CPV3/TCA2/CRS1 encodings.
+The separate frozen #812 candidate still requires explicit source integration
+and its own exact-source validation; no component observation is imported as
+its pass. Current durable promise enumeration, actual restricted-loader
+inventory, complete funded TCV1 duties, independent WAN fault campaigns,
+renewal/repair and ordinary Hepta use remain required.
 
 **Next Architecture & Security Qualification, 2026-11-07 America/New_York:**
 Start the owner's named six-stream program through the existing integration
@@ -10606,3 +10685,129 @@ The composed F2 source at 0101b0ce76239832e0b2d19d0fd3f07e40fabeb4 remains prese
 The [current composition entry](../../evidence/chain-six-full-20261108/CURRENT_PQ_COMPOSITION.md) retains the original 29 commands, arguments, order, 1200-second per-command limits and complete source gates. It separately fixes the reviewed 55-name roster and test-source hash. Its nine retained-log mutation controls reject missing, duplicate, skipped, stale or falsely reported execution. Historical runner, tests, refusals and raw logs remain unmodified; the F2 log is parser-control input, never a fresh execution result.
 
 The retained credit-envelope workflow now invokes its unchanged 43-test source-integrity command with Python unbuffered output. Actual original tests succeeded in both observations, while only the unbuffered stream satisfied the unchanged terminal-OK parser; no test, parser, pipefail rule or other suite was relaxed. Native Rust and configuration inputs remain byte-identical to F2. New complete campaigns must identify this new frozen source and their actual outcomes; all broader qualification and production-activation flags remain HOLD / false.
+
+
+### 2026-11-08 authenticated epoch discovery and storage-network obligations
+
+Continue Cell PR #807 from exact
+`0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a` in an isolated stacked branch.
+The [authenticated PQ V3 contract](specs/pon/CELL_PROVIDER_DISCOVERY_AUTH_PQ_V3.md)
+adds explicitly signed 300-second sequence epochs, separate active/replay
+allocations, bounded authenticated-source shares, query nonces and exact
+bootstrap reply binding. Closed epochs can be reclaimed without reopening
+old signed sequence namespaces; existing V1/V2 namespaces retain their original
+meaning. Current provider authority expiry releases active capacity while
+history remains until epoch closure. Current-source authentication, original
+receipt-time conflict evidence, exact lease boundaries and the original shared
+connection/byte/validation/deadline reservation are independent obligations.
+
+The [source-bound evidence](../../evidence/cell-discovery-auth-epoch-20261108/README.md)
+retains an actual unchanged-source 52-pass discovery baseline and two actual
+desired-recovery red controls (0 passed / 2 failed, Cargo exit 101). Sixteen
+previous signed admissions remain allocated after expiry, a 601-second clock
+advance and reopen, and exclude a fresh signed identity. The tests augment
+only the old test modules; those failures are not new-source validation.
+New V3 source needs its own frozen-source complete crate and required gates.
+
+Independent review also identified operation-local sequence downgrade after a
+higher observed lease expires or its withdrawal is capacity-refused. Actual
+native red controls reproduce both expiry orderings and the quota-refused
+withdrawal path. Preserve the first quota fixture's setup failure separately;
+the diagnostic successor reaches the intended semantic failure. The candidate
+retains a bounded highest-verified sequence across both query rounds before
+current-expiry and quota filtering. This veto is distinct from, and cannot
+manufacture, the directory's committed cross-operation high water.
+
+The [five-part acceptance register](specs/pon/CELL_STORAGE_NETWORK_ACCEPTANCE_V1.md)
+keeps existing complete-target TCX1 delta, TCV1 closure, complete-replica
+intersection, protected shared-object GC and bounded RAM working sets. It
+records the missing persistent complete-version retained-set owner, shard
+lifecycle, independently administered placement, executed prepaid renewal/repair
+and ordinary restricted-loader/device/Hepta CURRENT/resource/FinalUse/next-task
+trace. A discovery location lease is not a funded storage lease. Exact-byte
+deduplication must be measured on the actual encoding and updates. Permanent
+historical retention needs an explicit funded capacity horizon.
+
+The existing PN5 independent 72-hour WAN gate, original four-second service
+contract and separate thirty-second pressure campaign remain unchanged.
+All five operational storage qualifications remain **HOLD_NO_GO**.
+
+The first frozen authenticated-epoch attempt, `d4a0643a29ed1a35576a36d88189cadd28929c65`,
+completed all 19 commands with 17 passes and two failures: library runtime
+463 passed / 5 failed, and strict all-feature lint lacked the required optional
+OpenSSL 3.5 API. Source-before/source-after matched and the worktree stayed clean.
+Preserve its complete logs. A test-only successor makes the short-lease receipt
+premise observable without extending its 1s/2s/10s bounds; production guard
+bytes stay unchanged. Desktop normal-priority diagnostics still failed all four
+original early-announcement controls and one timing premise, while the other two
+new sequence controls passed. Those observations remain failures. Use a new
+source-bound Linux development run with persistent native-test storage, compiler
+1.95.0 and the verified pinned optional backend before claiming a complete pass.
+
+Authenticated-epoch C2 verification and minimal lint successor (2026-11-08):
+the isolated ai395 development run on `939aa069af41d31d41082272d7ae7367ef08f812`
+passed the valid three-case old/fixed sequence differential and all four retained
+classical controls. Its full 19-gate run passed 18 gates, including unfiltered
+468 library + 34 integration tests and 13 compile-fail doctests. Strict all-feature
+Clippy found one redundant unit expression in the new epoch directory test;
+remove only that expression and refresh that test's source pin. Preserve the
+entire failed run, host/provider/toolchain inputs and all earlier failures.
+The successor still requires a new complete source-bound run. Production
+authentication bytes and original deadlines/budgets remain unchanged; all five
+storage-network operational qualifications stay HOLD_NO_GO.
+
+Authenticated-epoch frozen software acceptance (2026-11-08): exact candidate
+`d27619a725a6e2969a5bd25d45d5c8514631c320` passed all 19 unchanged gates on
+ai395 with persistent native-test storage, Rust/Cargo 1.95.0 and the verified
+isolated OpenSSL 3.5.9 backend. Unfiltered DA execution passed 468 library and
+34 integration tests plus 13 compile-fail doctests; strict all-feature Clippy,
+locked graphs, vectors, negative controls, links, 599 pins and source inventory
+passed. Source-before/source-after matched and source stayed clean. Archive
+the complete C3 run and retain both prior frozen failures. Record separately
+the early cloud preparation ENOSPC raw-log/argv gap and the desktop evidence
+transfer ENOSPC with bounded own-cache recovery; neither changes the C3 result.
+The final evidence commit still receives a complete exact-source rerun before
+PR publication. All five operational gates and missing implementation-owner
+boundaries remain HOLD_NO_GO under the storage acceptance contract.
+
+### 2026-11-08 Cell peer transport, strong content and sealed repair continuation
+
+Continue #807 at exact source `0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a`
+in one isolated stacked candidate. Preserve its complete native test roster,
+original resource/service contracts and all historical failures. This increment
+does not merge the separate PQ/Hepta candidates or activate a production service.
+
+- Implement a bounded real TCP [BEP52 peer path](specs/pon/CELL_BEP52_PEER_V1.md):
+  complete infohash and original owner metadata, per-peer BEP10 extension IDs,
+  BEP9 metadata, actual pieces, retained partial reads, cancellation and original
+  cumulative connection/frame/byte limits. Add one-hop explicit-bootstrap BEP5
+  UDP queries under the same budget. Discovery hints convey no authority.
+- Add [TCV2/CPV4 full content](specs/pon/CELL_FULL_CONTENT_V2.md): actual full
+  payload and chunk SHA-512, complete metadata, full signer SPKI commitment,
+  original current-owner checks, failed-scan reservations and independent Python
+  wire vectors. Legacy SHA-256 CAS IDs remain locators.
+- Add [Linux sealed data handoff](specs/pon/CELL_SEALED_LOADER_V1.md): declared
+  path/role only, real memfd seals, complete post-seal readback and original
+  cancellation/deadline/extra-copy admission. Join the same actual kernel bytes
+  to TCV2, distinguishing one closure from a complete model/environment pair.
+- Pin all six original [RS46 shard commitments](specs/pon/CELL_RS46_CUSTODY_V1.md)
+  before admitting remote readbacks.
+  Reject bad/missing shards by their original slot/identity, require four verified
+  shards, then verify reconstructed payload and all six deterministic outputs.
+  Original budgets retain failed attempts. Six distinct declared placement
+  domains do not prove independent administration. Apply the same observation
+  deadline refusal to standalone release and complete-version continuation.
+  Optional repair-to-CAS requires an independently pinned TCV2, verifies the
+  recovered original chunk before write and after actual readback, and retains
+  a separate cumulative write/read allowance under the original deadline.
+- Exercise the native signed/sealed pipeline using two real TCP transfers into
+  an empty consumer CAS, CPV4 and complete byte readback, both sealed closures,
+  and the original strict tensor reader on those same descriptors. This small
+  synthetic fixture does not run an ordinary Hepta expert or grant FinalUse.
+
+Evidence must report real TCP/UDP and native loader/repair component tests on the
+same final source. Signature/parser/unit results alone do not qualify public DHT
+operation, independent placement, future availability, prepaid repair, WAN SLA,
+actual NVMe/VRAM, arbitrary-loader dependency confinement, ordinary Hepta next-task
+execution, current FinalUse or a whole-chain PQ lifetime bound. All six original
+operational qualifications remain HOLD until their own evidence is present.

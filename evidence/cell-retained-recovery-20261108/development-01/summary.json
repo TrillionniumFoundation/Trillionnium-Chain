@@ -1,0 +1,85 @@
+{
+  "phase": "development",
+  "head": "0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a",
+  "tree": "80170d240fbaba258a98f1b90d81a58724002b77",
+  "initial_git_status": " M config/pon/pq-cross-branch-corpus-v1.json\n M docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\n M docs/development/specs/pon/CELL_COMPLETE_VERSION_V1.md\n M docs/development/specs/pon/CELL_RS46_CHUNK_V1.md\n M trillionnium/crates/trnm-data-availability/src/cell.rs\n M trillionnium/crates/trnm-data-availability/src/cell/erasure.rs\n M trillionnium/crates/trnm-data-availability/src/cell/version.rs\n M trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\n?? docs/development/specs/pon/CELL_RETAINED_RECOVERY_V1.md\n?? trillionnium/crates/trnm-data-availability/src/cell/placement.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/placement/\n?? trillionnium/crates/trnm-data-availability/src/cell/recoverability.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/recoverability/\n?? trillionnium/crates/trnm-data-availability/src/cell/retained.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/retained/\n?? trillionnium/crates/trnm-data-availability/src/cell/version/network.rs\n?? trillionnium/crates/trnm-data-availability/src/cell/version/network/\n",
+  "started_unix": 1794158864.1914454,
+  "platform": "Linux",
+  "machine": "x86_64",
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "build_jobs": 2,
+  "test_threads": 1,
+  "incremental": false,
+  "debug_info": 0,
+  "production_qualified": false,
+  "independent_wan_qualified": false,
+  "gates": [
+    {
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.07473296399984974,
+      "log": "preflight.log",
+      "log_sha256": "9d7d491625803521ee8da8cc6a8752f5a5aed2ba84fd714fc6bfea00102fe6b9",
+      "log_bytes": 178
+    },
+    {
+      "name": "format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 14.199024192000024,
+      "log": "format.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0
+    },
+    {
+      "name": "independent-version-vector",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/cell_complete_version_vector.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.04374969700006659,
+      "log": "independent-version-vector.log",
+      "log_sha256": "a52fe4645753dc3f3f7bbb47038dee80d69e9c30465a2596fa1d1130d7be4f9d",
+      "log_bytes": 43
+    },
+    {
+      "name": "complete-cell-tests",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--",
+        "--test-threads=1"
+      ],
+      "returncode": 101,
+      "elapsed_seconds": 113.7515509750001,
+      "log": "complete-cell-tests.log",
+      "log_sha256": "f74dfa5f82faf667105795517846256b1a130e4570329f601bf5cbd3e70b6182",
+      "log_bytes": 56918
+    }
+  ],
+  "finished_unix": 1794158992.3349338,
+  "complete": false,
+  "all_passed": false
+}

@@ -1,0 +1,68 @@
+
+running 4 tests
+test cell::discovery::sequence_tests::fixture_setup_wait_preserves_original_tcp_announcement_budget ... FAILED
+test cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial ... FAILED
+test cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication ... FAILED
+test cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint ... FAILED
+
+failures:
+
+---- cell::discovery::sequence_tests::fixture_setup_wait_preserves_original_tcp_announcement_budget stdout ----
+cell_sequence phase=startup role=silent_trap setup_elapsed_ns=846567699 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=3058648453 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=3059808789 outcome=Ok(())
+cell_sequence phase=setup_complete elapsed_ns=3110760006
+cell_sequence phase=announce ordinal=0 started_wall=Some(1794163380.590122644s) completed_wall=Some(1794163381.012344359s) elapsed_ns=422223108 expiry_seconds=1794163680 failure=Some(Failure { class: "io", kind: Some(WouldBlock), errno: Some(11) })
+
+thread 'cell::discovery::sequence_tests::fixture_setup_wait_preserves_original_tcp_announcement_budget' (1508335) panicked at crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs:102:9:
+cell_sequence phase=announce class=io kind=Some(WouldBlock) errno=Some(11)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial stdout ----
+cell_sequence phase=startup role=silent_trap setup_elapsed_ns=2201551089 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=peer setup_elapsed_ns=2746966268 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=3228654554 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=3228743267 outcome=Ok(())
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=3741217851 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=3741237358 outcome=Ok(())
+cell_sequence phase=setup_complete elapsed_ns=5481092301
+cell_sequence phase=announce ordinal=0 started_wall=Some(1794163386.839307996s) completed_wall=Some(1794163387.044821811s) elapsed_ns=205514605 expiry_seconds=1794163686 failure=Some(Failure { class: "io", kind: Some(WouldBlock), errno: Some(11) })
+
+thread 'cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial' (1508731) panicked at crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs:102:9:
+cell_sequence phase=announce class=io kind=Some(WouldBlock) errno=Some(11)
+
+---- cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication stdout ----
+cell_sequence phase=startup role=peer setup_elapsed_ns=2382155477 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=expiry_proxy setup_elapsed_ns=2387050628 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=2934789950 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=2934860894 outcome=Ok(())
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=3935959912 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=3936010527 outcome=Ok(())
+cell_sequence phase=setup_complete elapsed_ns=5695165503
+cell_sequence phase=announce ordinal=0 started_wall=Some(1794163393.244767855s) completed_wall=Some(1794163394.21150869s) elapsed_ns=966741951 expiry_seconds=1794163693 failure=Some(Failure { class: "io", kind: Some(UnexpectedEof), errno: None })
+
+thread 'cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication' (1509123) panicked at crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs:102:9:
+cell_sequence phase=announce class=io kind=Some(UnexpectedEof) errno=None
+
+---- cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint stdout ----
+cell_sequence phase=startup role=peer setup_elapsed_ns=3389491862 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=silent_trap setup_elapsed_ns=3389777396 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=4382548230 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=4382567030 outcome=Ok(())
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=5037038387 outcome=Ok(Ok(()))
+cell_sequence phase=accept_loop_ready role=rendezvous_accept_loop setup_elapsed_ns=5037065154 outcome=Ok(())
+cell_sequence phase=setup_complete elapsed_ns=6982239594
+cell_sequence phase=announce ordinal=0 started_wall=Some(1794163401.206949882s) completed_wall=Some(1794163401.413790172s) elapsed_ns=206841172 expiry_seconds=1794163701 failure=Some(Failure { class: "io", kind: Some(WouldBlock), errno: Some(11) })
+
+thread 'cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint' (1509855) panicked at crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs:102:9:
+cell_sequence phase=announce class=io kind=Some(WouldBlock) errno=Some(11)
+
+
+failures:
+    cell::discovery::sequence_tests::fixture_setup_wait_preserves_original_tcp_announcement_budget
+    cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial
+    cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication
+    cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint
+
+test result: FAILED. 0 passed; 4 failed; 0 ignored; 0 measured; 464 filtered out; finished in 24.31s
+

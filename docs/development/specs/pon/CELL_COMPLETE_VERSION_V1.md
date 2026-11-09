@@ -127,6 +127,12 @@ gates. No fixture boolean stands in for those effects.
 
 ## External protocol context
 
+The [retained-version recovery extension](CELL_RETAINED_RECOVERY_V1.md) checks
+an exact owner-pinned set of current TCV1 promises, acquires their complete
+model/environment union under one original network reservation, and keeps
+conditional fault-domain analysis separate from actual byte reconstruction.
+It does not change this TCV1 encoding or the meaning of a loader observation.
+
 [IPFS persistence documentation](https://docs.ipfs.tech/concepts/persistence/)
 distinguishes caching, pinning and the party that continues paying for storage.
 [BEP52](https://www.bittorrent.org/beps/bep_0052.html) specifies file piece roots
