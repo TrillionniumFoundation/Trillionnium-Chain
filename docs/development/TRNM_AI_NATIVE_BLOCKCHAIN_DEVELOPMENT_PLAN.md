@@ -8,10 +8,18 @@ The [CTS1 typed release snapshot](specs/pon/CELL_RELEASE_SNAPSHOT_V1.md)
 pins complete model/environment bytes, dense tensor schema and the actual
 composition rules together. Full-release transfer uses one cumulative
 reservation, original deadline and current version pin. The old V1/CRP1
-profiles retain their original limits and interpretation. Structural capacity,
-local byte/control tests and the historical actual-model run are distinct
-evidence scopes; fresh same-operation V2 model, WAN and production qualification
-are required before those claims can advance.
+profiles retain their original limits and interpretation. The committed C2
+candidate `6ea3bf3fe13d66333bba3a8c7b97e14b4319b39f` passed 812 complete DA
+cases, 44 native storage-module cases and five V2 example controls. Its fresh
+same-operation V2 research run transferred and cold-restored all 280,269,602
+model/environment bytes, admitted the pinned CTS1 and completed two actual
+forwards in 270.246 seconds under the original 300-second deadline. The real
+operation uses TCA3 complete-copy recovery; native paged four-of-six recovery
+has separate bounded test evidence. The second model probe is incorrect.
+[Original observations and limitations](../../evidence/cell-capacity-release-dc0357-20261109/README.md)
+keep structural capacity, real execution and native shard tests distinct.
+WAN, independent paid custody, ordinary Hepta FinalUse, efficacy and production
+qualification remain HOLD.
 
 **Complete storage owner convergence — HOLD:**
 
