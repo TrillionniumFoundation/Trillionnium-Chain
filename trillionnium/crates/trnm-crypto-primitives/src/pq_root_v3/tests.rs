@@ -1,4 +1,5 @@
-//! Public structural fixtures only; these tests do not claim native signatures.
+//! Public structural fixtures and feature-gated RustCrypto key-cache controls.
+//! Complete real dual-family signatures are tested by pq_root_v3_native.
 use super::*;
 
 fn public(suite: RootSuiteV3, fill: u8) -> RootPublicKeyV3 {
@@ -288,4 +289,177 @@ fn shared_budget_has_one_absolute_deadline_and_irreversible_cancellation() {
     cancelled.cancel();
     assert_eq!(cancelled.reserve(4, 10), Err(RootCryptoErrorV3::Budget));
     assert_eq!(cancelled.attempts(), 4);
+}
+
+// These cache unit tests exercise real RustCrypto ML-DSA-87 signatures. Their
+// unused SLH keys are structural public fixtures; full real dual-family quorum
+// behavior is covered separately by tests/pq_root_v3_native.rs.
+#[cfg(feature = "pq-native-openssl")]
+fn ml_dsa_cache_fixture() -> (
+    DualFamilyRosterV3,
+    Vec<(KeyIdV3, crate::pq_candidate::CandidateSigningKey)>,
+) {
+    use crate::pq_candidate::CandidateSigningKey;
+    use zeroize::Zeroizing;
+
+    let mut keys = Vec::new();
+    let mut private = Vec::new();
+    for fill in 1..=3 {
+        let signer = CandidateSigningKey::from_owned_seed(
+            CandidateAlgorithm::MlDsa87,
+            Zeroizing::new([fill; 32]),
+        )
+        .unwrap();
+        let mut spki = ML_DSA_87_SPKI_PREFIX.to_vec();
+        spki.extend_from_slice(signer.public_key());
+        let key = RootPublicKeyV3 {
+            suite: RootSuiteV3::MlDsa87,
+            spki,
+        };
+        private.push((key.id().unwrap(), signer));
+        keys.push(key);
+        keys.push(public(RootSuiteV3::SlhDsaSha2_256s, fill));
+    }
+    (DualFamilyRosterV3::from_keys(keys).unwrap(), private)
+}
+
+#[cfg(feature = "pq-native-openssl")]
+#[test]
+fn native_cache_v3_lazy_shared_and_identity_neutral() {
+    fn assert_send_sync<T: Send + Sync>() {}
+    assert_send_sync::<DualFamilyRosterV3>();
+    assert_send_sync::<CandidateVerifier>();
+    let (root, private) = ml_dsa_cache_fixture();
+    let encoded = root.encode();
+    let commitment = root.commitment();
+    let clone = root.clone();
+    let decoded = DualFamilyRosterV3::decode(&encoded).unwrap();
+    assert!(root
+        .ml_dsa_verifiers
+        .iter()
+        .all(|slot| slot.get().is_none()));
+    assert!(Arc::ptr_eq(&root.ml_dsa_verifiers, &clone.ml_dsa_verifiers));
+    assert!(!Arc::ptr_eq(
+        &root.ml_dsa_verifiers,
+        &decoded.ml_dsa_verifiers
+    ));
+    let signer = &private
+        .iter()
+        .find(|(id, _)| *id == root.key_ids()[0])
+        .unwrap()
+        .1;
+    let message = approval_message_v3(b"cache-unit|complete-current-statement").unwrap();
+    let signature = signer.sign(&message).unwrap();
+    root.verify_signature(0, &message, &signature).unwrap();
+    let expanded = root.ml_dsa_verifier(0).unwrap();
+    clone.verify_signature(0, &message, &signature).unwrap();
+    assert!(std::ptr::eq(expanded, clone.ml_dsa_verifier(0).unwrap()));
+    assert!(root.ml_dsa_verifiers[1..]
+        .iter()
+        .all(|slot| slot.get().is_none()));
+    assert!(decoded
+        .ml_dsa_verifiers
+        .iter()
+        .all(|slot| slot.get().is_none()));
+    assert_eq!(root, clone);
+    assert_eq!(root, decoded);
+    assert_eq!(root.encode(), encoded);
+    assert_eq!(root.commitment(), commitment);
+
+    // A different roster gets empty slots; editing an exported key copy cannot
+    // alter the original bytes or borrow its successfully expanded verifier.
+    let mut detached = root.keys().to_vec();
+    detached[0] = public(RootSuiteV3::MlDsa87, 17);
+    let changed = DualFamilyRosterV3::from_keys(detached).unwrap();
+    assert_ne!(changed, root);
+    assert_ne!(changed.commitment(), commitment);
+    assert!(changed
+        .ml_dsa_verifiers
+        .iter()
+        .all(|slot| slot.get().is_none()));
+    assert!(!Arc::ptr_eq(
+        &root.ml_dsa_verifiers,
+        &changed.ml_dsa_verifiers
+    ));
+    assert_eq!(root.encode(), encoded);
+}
+
+#[cfg(feature = "pq-native-openssl")]
+#[test]
+fn native_cache_v3_rechecks_exact_message_and_signature() {
+    let (root, private) = ml_dsa_cache_fixture();
+    let ids = root.key_ids();
+    let signer = &private.iter().find(|(id, _)| *id == ids[0]).unwrap().1;
+    let message = approval_message_v3(b"cache-unit|exact-signed-message").unwrap();
+    let signature = signer.sign(&message).unwrap();
+    root.verify_signature(0, &message, &signature).unwrap();
+    let expanded = root.ml_dsa_verifier(0).unwrap();
+    let mut different_message = message.clone();
+    different_message[0] ^= 1;
+    assert_eq!(
+        root.verify_signature(0, &different_message, &signature),
+        Err(RootCryptoErrorV3::SignatureRejected)
+    );
+    let mut different_signature = signature.clone();
+    different_signature[0] ^= 1;
+    assert_eq!(
+        root.verify_signature(0, &message, &different_signature),
+        Err(RootCryptoErrorV3::SignatureRejected)
+    );
+    let other = &private.iter().find(|(id, _)| *id == ids[1]).unwrap().1;
+    assert_eq!(
+        root.verify_signature(0, &message, &other.sign(&message).unwrap()),
+        Err(RootCryptoErrorV3::SignatureRejected)
+    );
+    assert!(std::ptr::eq(expanded, root.ml_dsa_verifier(0).unwrap()));
+    root.verify_signature(0, &message, &signature).unwrap();
+}
+
+#[cfg(feature = "pq-native-openssl")]
+#[test]
+fn native_cache_v3_waits_for_shape_and_original_budget() {
+    let root = roster();
+    let ids = root.key_ids();
+    let signatures = [0, 1, 3, 4]
+        .into_iter()
+        .map(|index| RootSignatureV3 {
+            signer: ids[index],
+            signature: vec![0; root.keys[index].suite.signature_bytes()],
+        })
+        .collect::<Vec<_>>();
+    let message = approval_message_v3(b"shape-only|no-native-expansion").unwrap();
+    let input_bytes = verification_input_bytes(message.len(), &signatures, 1);
+    let mut short = signatures.clone();
+    short[0].signature.pop();
+    let short_bytes = verification_input_bytes(message.len(), &short, 1);
+    let mut shared = VerificationBudgetV3::new(64).unwrap();
+    assert_eq!(
+        root.verify_quorum(&message, &short, &mut shared),
+        Err(RootCryptoErrorV3::SignatureLength)
+    );
+    assert_eq!(shared.attempts(), 4);
+    assert_eq!(shared.charged_bytes(), short_bytes);
+    shared.cancel();
+    assert_eq!(
+        root.verify_quorum(&message, &signatures, &mut shared),
+        Err(RootCryptoErrorV3::Budget)
+    );
+    assert_eq!(shared.attempts(), 8);
+    assert_eq!(shared.charged_bytes(), short_bytes + input_bytes);
+
+    let mut insufficient = VerificationBudgetV3::new(3).unwrap();
+    let mut expired = VerificationBudgetV3::new(64).unwrap();
+    expired.deadline = Instant::now();
+    for refused in [&mut insufficient, &mut expired] {
+        assert_eq!(
+            root.verify_quorum(&message, &signatures, refused),
+            Err(RootCryptoErrorV3::Budget)
+        );
+        assert_eq!(refused.attempts(), 4);
+        assert_eq!(refused.charged_bytes(), input_bytes);
+    }
+    assert!(root
+        .ml_dsa_verifiers
+        .iter()
+        .all(|slot| slot.get().is_none()));
 }

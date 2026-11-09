@@ -8664,3 +8664,31 @@ files, five roles and 16 hash-use groups; the corpus has 771 exact source pins.
 The eight actual domain bounds remain null, shared primitive query budgets and
 complete lifetime populations remain unknown, and no production activation or
 algorithm replacement is authorized by these observations.
+
+
+### 2026-11-09 root signature-cost continuation
+
+The [root signature-cost contract](../security/PQ_ROOT_SIGNATURE_COST_V1.md)
+keeps low-frequency dual-family authority distinct from existing ML-DSA-65
+Cell release and chunk verification. Retain at most three successful
+ML-DSA-87 mathematical public-key expansions inside each immutable V3 roster;
+clones share that retained state, while fresh wire decoding remains cold.
+Preserve every signature, complete statement, current-authority and original
+budget check. Keep signed bytes, semantic identity, AND thresholds and provider
+requirements unchanged. No signature success or release authority is cached.
+
+Add a native component observation comparing fresh roster decoding plus full
+quorum verification against full verification under a retained roster, with
+explicit warmups, A-B-B-A samples, raw timings and equal reservation counters.
+Report four current signatures, six successor possessions and their ten-signature
+composition separately from complete frames and actual owner transitions.
+Measure the same committed source with the fixed toolchain and provider before
+reporting any timings; retain attempted commands and failures. These observations
+do not establish Cell, Node, history-replay, complete-transition or throughput gains.
+
+Production activation, whole-chain PQ qualification and composition coverage
+remain false. All eight actual domain failure bounds remain unknown. Independent
+custody, common-restore survival, real external effects, explicit migration and
+complete lifetime/QROM obligations remain open. This component continuation
+does not relabel the observed Ed25519 main revision as migrated or turn a local
+performance observation into a security qualification.

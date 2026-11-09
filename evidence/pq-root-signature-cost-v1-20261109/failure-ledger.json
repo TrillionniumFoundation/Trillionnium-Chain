@@ -1,0 +1,174 @@
+{
+  "schema": "trnm-pq-signature-cost-retained-failures-v1",
+  "evidence_kind": "Session tool observations and existing setup receipt; not reconstructed raw stdout/stderr.",
+  "raw_local_logs_available_for_development_enospc": false,
+  "events": [
+    {
+      "name": "initial-rustup-install",
+      "exit_code": 1,
+      "error": "rustup is not installed at '/workspace/scratch/a6fe7c2e72c7/pq-validation/cargo'",
+      "resolution": "Use installed version-pinned toolchain binaries directly. Four version probes exited 0. This setup failure is not a source test.",
+      "observation_receipt": "setup.json",
+      "raw_installer_stream_available": false
+    },
+    {
+      "name": "development-default-root-tests",
+      "session_id": 47497,
+      "exit_code": 101,
+      "source_freeze_enforced": false,
+      "raw_local_log_available": false,
+      "test_execution_began": false,
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--lib",
+        "pq_root_v3::tests",
+        "--",
+        "--nocapture"
+      ],
+      "error": "couldn't create a temp dir: No space left on device (os error 28)",
+      "path": "/workspace/scratch/a6fe7c2e72c7/pq-validation/target/debug/deps/rustcfZR86E",
+      "classification": "Development build resource failure; not a passing test or a demonstrated Rust semantic defect."
+    },
+    {
+      "name": "development-example-clippy",
+      "session_id": 96309,
+      "chunk_id": "e57b77",
+      "exit_code": 101,
+      "source_freeze_enforced": false,
+      "raw_local_log_available": false,
+      "example_execution_began": false,
+      "error": "failed to create directory: No space left on device (os error 28)",
+      "path": "/workspace/scratch/a6fe7c2e72c7/pq-validation/target/debug/.fingerprint/trnm-crypto-primitives-bc6d14243784f8ce",
+      "classification": "Development build resource failure; later execution does not overwrite this observation."
+    },
+    {
+      "name": "managed-executor-unavailable",
+      "raw_local_log_available": false,
+      "terminal_process_exit_observed": false,
+      "observation": "Tool calls temporarily rejected execution with No usable execution environment. After recovery the original source commit and clean worktree were read back and the original frozen campaign was observed.",
+      "cause_established": false,
+      "source_discarded": false
+    },
+    {
+      "name": "heptaruntime-mac-publication-clone",
+      "host": "mac",
+      "job_id": "1a1c0763f5e-5e21-a77",
+      "last_reported_pid": 65165,
+      "idempotency_key": "pq-signature-20261109-publication-clone-v1",
+      "clone_path": "/Users/qianqi/work/chain-pq-signature-20261109-a6fe/repo",
+      "initial_call_timed_out": true,
+      "same_key_readback": {
+        "reused": true,
+        "retried_launch": false
+      },
+      "last_trusted_status": "running",
+      "last_trusted_stderr": "Cloning into '/Users/qianqi/work/chain-pq-signature-20261109-a6fe/repo'...",
+      "subsequent_observation_error": "MCP -32603 Internal error",
+      "terminal_state_observed": true,
+      "terminal_state": "succeeded",
+      "additional_clone_launched": false,
+      "push_observed": false,
+      "initial_terminal_state_observed": false,
+      "initial_terminal_state": null,
+      "terminal_exit_code": 0,
+      "later_readback_receipt": "mac-clone-1a1c0763f5e-5e21-a77-terminal.json",
+      "later_readback_observed_utc": "2026-11-09T14:24:02.020Z",
+      "reported_terminal_utc": "2026-11-09T13:31:51.254Z",
+      "scope": "The original isolated clone of baseline 44330b91 completed; no Mac push is established by this receipt. Earlier channel observation errors remain retained."
+    },
+    {
+      "name": "local-cli-push-dry-run",
+      "exit_code": 128,
+      "argv": [
+        "git",
+        "push",
+        "--dry-run",
+        "origin",
+        "HEAD:refs/heads/fix/chain-pq-signature-20261109"
+      ],
+      "error": "fatal: could not read Username for 'https://github.com': No such device or address",
+      "remote_ref_mutation": false,
+      "resolution": "Used the connected GitHub API and checked every source blob and the complete tree against the frozen local source."
+    },
+    {
+      "name": "frozen-campaign-native-v3-owner-build",
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "command_exit_code": 101,
+      "native_runner_exit_code": 1,
+      "signal": 9,
+      "signal_name": "SIGKILL",
+      "kill_cause_established": false,
+      "owner_tests_executed": false,
+      "raw_local_log_available": true,
+      "raw_log": "frozen-campaign-c9fb3fa6/native-v3/root-owner.log",
+      "classification": "Observed compiler process termination. OOM or another kill source has not been established."
+    },
+    {
+      "name": "frozen-campaign-v2-native-journal",
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "exit_code": 1,
+      "tests_run": 14,
+      "errors": 1,
+      "case": "test_reserved_effect_refuses_expiry_rotation_and_signer_revocation_at_last_use / revocation",
+      "raw_local_log_available": true,
+      "raw_log": "frozen-campaign-c9fb3fa6/v2-native-journal.stderr",
+      "observed_error": "OpenSSL pkeyutl SLH-DSA-SHA2-256s signing subprocess exceeded the existing 15-second cap; BackendError propagated.",
+      "environment_cause_established": false,
+      "timeouts_relaxed": false,
+      "classification": "Original bounded execution failed; not a cryptographic invalid-signature verdict or a passing suite."
+    },
+    {
+      "name": "frozen-campaign-native-v4-builds",
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "runner_exit_code": 1,
+      "child_exit_codes": {
+        "recovery-floor": 101,
+        "provider-readback": 101,
+        "callback-budget": 101
+      },
+      "signal_name": "SIGKILL",
+      "kill_cause_established": false,
+      "native_tests_executed": false,
+      "raw_logs_directory": "frozen-campaign-c9fb3fa6/native-v4"
+    },
+    {
+      "name": "frozen-campaign-strict-workspace-clippy",
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "exit_code": 101,
+      "signal_name": "SIGKILL",
+      "affected_target": "trnm-pon-node (lib test)",
+      "kill_cause_established": false,
+      "raw_log": "frozen-campaign-c9fb3fa6/strict-workspace-clippy.stderr",
+      "classification": "Compiler process termination; not a successful Clippy run and not an observed lint diagnostic."
+    },
+    {
+      "name": "hosted-pq-source-inventory-gate",
+      "source": "5840295dd0442804e80449ec7eb4b74dc3e68a3b",
+      "run_id": 42628160487,
+      "failed_job_ids": [
+        129197226986,
+        129197227100,
+        129197226841,
+        129197226836
+      ],
+      "exit_code": 1,
+      "diagnostic": "distributed native source inventory differs; refresh before freezing source",
+      "cause_established": true,
+      "cause": "New cost example was absent from generated native source inventory.",
+      "native_stages_executed": false,
+      "raw_logs_directory": "hosted-source-ci/run-42628160487",
+      "correction_source": "d239bc8f683da7cdc8a4b9dc8e763d67e74680f6",
+      "correction": "Add exactly one generated source entry and update its single corpus pin. Original failures remain retained."
+    }
+  ],
+  "resource_resolution": "Removed only this task's reproducible OpenSSL build source tree while retaining the installed provider, downloaded source archive, receipt and logs. Moved this task's Cargo target to /tmp/trnm-pq-target-a6fe. No unrelated task files were deleted.",
+  "inherited_host_native_acceptance": "The prior candidate's 0/3 native host acceptance observations remain unresolved in the parent evidence; this local component campaign does not replace them.",
+  "qualification": "HOLD"
+}
