@@ -4,7 +4,7 @@
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
 routes to the current reviewed source
-`44e96b1a841a50613d0b93484c5e576caec9f81f`. The
+`893738947a50dc42819b56e632192de4f9f24fa0`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -68,6 +68,51 @@ The portable consumption settlement store is separately scoped. Substituting
 for its bilateral authorization and durable state sources is refused by this
 register. Those additional owners still require their own qualification work.
 
+## Current cache close-policy mapping, 2026-11-09
+
+The active source map uses the exact 44 regular-file blobs from checkpoint
+`893738947a50dc42819b56e632192de4f9f24fa0`, tree
+`78945356aa750db9a85e96ffa5ee64249d38a1c2`. The checkpoint contains the two-file
+cache close-policy repair and the sole plan update. This binding follow-up
+does not claim that its revised manifest, reader, tests or documentation were
+already present in that checkpoint, or that the checkpoint was the final
+execution candidate.
+
+All 44 source blobs were read with `git show` at that exact checkpoint and
+compared with their current regular-file bytes. Forty-three individual pins
+retain the prior integration values. The only changed curated source is
+[`cell/store.rs`](../../trillionnium/crates/trnm-data-availability/src/cell/store.rs):
+
+```text
+prior:    9deb3a1a3377e027690b04d1e23ede55a9badd9586eec4b4678f50d3cba90baa
+reviewed: b3f1f62fcc984ffdbdbb8118dc6df8094bc62fba57fcde109a32133a62b54330
+```
+
+Read-write opening now establishes the existing no-close-checkpoint policy
+immediately after opening the connection, before schema-sensitive SQL. The
+read-only opener reuses the same helper. The separately reviewed
+[`cell/cache_wal.rs`](../../trillionnium/crates/trnm-data-availability/src/cell/cache_wal.rs)
+extracts `prevent_close_checkpoint` from the existing configuration sequence;
+`configure` continues to reassert that policy. This helper file remains outside
+the curated 44-path set. Its use does not make that set a complete dependency
+closure or change the discovery route's cache-only effect scope.
+
+The active canonical table digest, including the new checkpoint revision, is:
+
+```text
+a3c5483479d5217c13946e173e4103316069eb42b43c335c6f7b44e783b73f1c
+```
+
+Before rebinding, the unchanged prior reader refused the changed source at
+this checkpoint with exit 2 and `source lock hash mismatch`; that observation
+is retained as a refusal. The existing 18-method suite keeps its original
+assertions and controls, updates the independent positive revision assertion,
+and rejects the prior `44e96b1` revision in its existing stale-context control.
+The seven routes, 44-path roster, profile boundaries, effect scopes and all
+false qualification fields remain unchanged. This source review neither
+relabels the M12 native cache failure nor establishes a repaired native run,
+binary identity, service acceptance, complete coverage or activation.
+
 ## Prior composition mapping
 
 The [composition review](PQ_COMPOSITION_SOURCE_LOCK_REVIEW_20261108.md) preserves the old lock's actual refusal,
@@ -83,9 +128,9 @@ at `0f0592ace4b08a1d39e1ffad31beee76ddc4fd66`. The source mapping does not
 expand a comparator, cache, observer or portable kernel into a new authority.
 Newly exported child modules are not automatically part of this curated set.
 
-## Integration mapping, 2026-11-09
+## Retained integration mapping, 2026-11-09
 
-The active map is bound to the exact regular-file blobs of merge commit
+That integration map was bound to the exact regular-file blobs of merge commit
 `44e96b1a841a50613d0b93484c5e576caec9f81f`, tree
 `c297ebb14fcbeeb5f8acf13b3143a66b8b3b6db8`. Its parents retain the
 `d728137d082bb6def7cdaa13d27a9ba57925824d` composition of #835/#836 and
@@ -101,7 +146,7 @@ Exactly two declared files change relative to that prior map:
 | `trnm-crypto-primitives/src/lib.rs` | Adds the independent `pq_root_v3` export while retaining grouped-fresh-seal and PQ content-auth exports. Existing authentication bodies in this file are unchanged. |
 | `trnm-data-availability/src/cell/discovery/pq.rs` | Adds the separately named V3 authenticated/epoch discovery module exports while retaining the V2 directory and transport exports. Their implementations are outside this curated route set; the existing cache/directory scope does not acquire payment, custody, installation or use authority. |
 
-The active canonical table digest is:
+The canonical table digest for that integration review was:
 
 ```text
 7fe3e2c19f8d2c9e5371bf04b1a5543eb4c6c0417512608ec7e717d0924fa24e
