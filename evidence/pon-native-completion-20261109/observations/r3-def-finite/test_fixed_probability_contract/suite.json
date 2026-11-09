@@ -1,0 +1,53 @@
+{
+  "actual_tests": 16,
+  "child_exit_scope": "This result is the unittest parent process. Existing child CLI negative/HOLD exits are asserted inside unchanged tests; no child exit is substituted for the parent result. Per-child output is not independently instrumented beyond the suite's raw logs.",
+  "command_result": {
+    "argv": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "formal/pon-nakamoto-v1",
+      "-p",
+      "test_fixed_probability_contract.py",
+      "-v"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "elapsed_seconds": 0.21580904489383101,
+    "env_overrides": {
+      "GIT_NO_LAZY_FETCH": "1",
+      "GIT_TERMINAL_PROMPT": "0",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONHASHSEED": "0"
+    },
+    "expected_source_commit": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "expected_source_tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+    "finished_utc": "2026-11-09T04:03:10.575051+00:00",
+    "label": "test_fixed_probability_contract",
+    "launch_error": null,
+    "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r3-def-finite/test_fixed_probability_contract",
+    "outer_process_exit": 0,
+    "started_utc": "2026-11-09T04:03:10.358980+00:00",
+    "stderr": {
+      "bytes": 2881,
+      "sha256": "092d9d2572b082fef807591c6da8b1bd27b90b2c75872f98587a54d3cd14b8c5"
+    },
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 180
+  },
+  "declared_child_semantics": null,
+  "expected_tests": 16,
+  "id": "test_fixed_probability_contract",
+  "no_skips_or_expected_failures": true,
+  "pass": true,
+  "terminal_status_lines": [
+    "OK"
+  ],
+  "unittest_parent_exit": 0
+}

@@ -1,0 +1,40 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "formal/pon-nakamoto-v1",
+    "-p",
+    "test_normalized_search_cost.py",
+    "-v"
+  ],
+  "cwd": "/data/chain-abg-70ae-20261108/source",
+  "elapsed_seconds": 0.26591863413341343,
+  "env_overrides": {
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_TERMINAL_PROMPT": "0",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONHASHSEED": "0"
+  },
+  "expected_source_commit": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+  "expected_source_tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+  "finished_utc": "2026-11-09T04:03:10.224746+00:00",
+  "label": "test_normalized_search_cost",
+  "launch_error": null,
+  "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r3-def-finite/test_normalized_search_cost",
+  "outer_process_exit": 0,
+  "started_utc": "2026-11-09T04:03:09.958524+00:00",
+  "stderr": {
+    "bytes": 6549,
+    "sha256": "2628c55f0c75452001cd17125b781bff7e5beea54e2a0b601dde4068394d4edc"
+  },
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timed_out": false,
+  "timeout_seconds": 180
+}

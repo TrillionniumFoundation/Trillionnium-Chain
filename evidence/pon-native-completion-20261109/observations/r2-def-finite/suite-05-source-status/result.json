@@ -1,0 +1,35 @@
+{
+  "argv": [
+    "git",
+    "status",
+    "--porcelain=v1",
+    "-z",
+    "--untracked-files=all"
+  ],
+  "cwd": "/data/chain-abg-70ae-20261108/source",
+  "elapsed_seconds": 0.11547064105980098,
+  "env_overrides": {
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_TERMINAL_PROMPT": "0",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONHASHSEED": "0"
+  },
+  "expected_source_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+  "expected_source_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+  "finished_utc": "2026-11-09T03:42:47.761499+00:00",
+  "label": "suite-05-source-status",
+  "launch_error": null,
+  "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r2-def-finite/suite-05-source-status",
+  "outer_process_exit": 0,
+  "started_utc": "2026-11-09T03:42:47.645760+00:00",
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timed_out": false,
+  "timeout_seconds": 60
+}

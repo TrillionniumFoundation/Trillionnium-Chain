@@ -1,0 +1,48 @@
+{
+  "schema": "final-publisher-static-review-v1",
+  "reviewed_at_utc": "2026-11-09T04:16:13.045612+00:00",
+  "result": "NO_BLOCKER_FOUND_IN_REVIEWED_SCRIPTS",
+  "scope": "Read-only source and AST review only; neither publisher nor exporter was imported or executed.",
+  "files": [
+    {
+      "path": "/workspace/scratch/70ae3f2c90d7/b-work/publish_native_completion.py",
+      "sha256": "3dab7bc5b735afbf6e2db0d6875936afc61f586341fb3791c9e44fcbc9e34ebb",
+      "bytes": 8136,
+      "syntax": "AST parse only"
+    },
+    {
+      "path": "/workspace/scratch/70ae3f2c90d7/b-work/export_publication.py",
+      "sha256": "08bda8cf246c490186c13a1ac61b399a18291f1ebeb9270e52069d263ab22332",
+      "bytes": 6311,
+      "syntax": "AST parse only"
+    }
+  ],
+  "code_source": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+  "code_tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+  "checks": {
+    "four_commit_chain": "R1 29ac -> R2 843d -> R3 ef025 -> one evidence-only child; base e798. Publisher binds every parent/base_tree and raw commit SHA1.",
+    "raw_metadata": "Exactly tree/parent/author/committer headers; full message bytes, UTC timestamp, ProfHepta name/email and API metadata match. GitHub tree and commit returned SHAs must equal each frozen expected object before creating the branch.",
+    "files_and_delivery": "UTF-8 regular blobs, Git blob SHA1, length, mode and A/M status checked. Evidence child paths restricted; export preserves code component trees.",
+    "publisher_and_ref": "Authenticated login ProfHepta and numeric id 102159240 required. Exact base and new branch checked. Only immutable objects and a new ref are POSTed; no ref-update/PATCH, force, reset or merge command exists.",
+    "draft_readback": "Draft creation uses explicit repo/base/head and body file. Ref and PR readback must match delivery head, base name, OPEN and draft state.",
+    "uncertain_write": "Nonzero or timeout aborts without retry. Durable request/stdout/stderr/command files and non-reusable publication directory support subsequent manual read-only reconciliation; success is not inferred on uncertainty.",
+    "normal_python": "Both scripts reject optimized Python before relying on asserts. Reviewed syntax parses with ordinary Python; target script code was not executed."
+  },
+  "qualification_guard_sources": {
+    "native_89_pass_2_ignored_and_clippy": "Final r3-native-and-clippy summary identity and counts/flags are asserted before payload construction.",
+    "static_13_repository_and_source": "Final r3-contract-gates summary identity, 13 passed zero-exit records, 43/57 actual counts and zero skips are asserted. This review previously independently verified the actual final summary and all log hashes.",
+    "static_summary_sha256": "2b3f32ce5eb9a338ebbc6f82b44c25f5d90326f71a56ba27284094e26a640d46",
+    "finite_255": "Final r3-def-finite summary source identity, all_finite_suites_pass and actual_tests==255 are asserted.",
+    "push_and_delivery": "delivery.json must bind R3 code identity and exact evidence head/tree, with push_preflight_passed is True. This file remains an upstream delivery-producer prerequisite."
+  },
+  "upstream_dependency": {
+    "producer": "/workspace/scratch/70ae3f2c90d7/b-work/prepare_delivery_evidence.py",
+    "status": "Producer was still being prepared by AC; its terminal-receipt guard was not executed or independently approved by this narrow two-script review. Do not treat this report as a receipt for that producer."
+  },
+  "blockers": [],
+  "publisher_executed": false,
+  "exporter_executed": false,
+  "published": false,
+  "production_acceptance": false,
+  "ag_joint_acceptance": "HOLD_NO_GO"
+}

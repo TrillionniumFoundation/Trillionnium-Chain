@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/data/chain-abg-70ae-20261108/source",
+  "elapsed_seconds": 0.11516857403330505,
+  "env_overrides": {
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_TERMINAL_PROMPT": "0",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONHASHSEED": "0"
+  },
+  "expected_source_commit": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+  "expected_source_tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+  "finished_utc": "2026-11-09T04:03:04.808535+00:00",
+  "label": "preflight",
+  "launch_error": null,
+  "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r3-def-finite/preflight",
+  "outer_process_exit": 0,
+  "started_utc": "2026-11-09T04:03:04.693174+00:00",
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 172,
+    "sha256": "4c58882a4134d8adc21e7bcf4a095a3d15d31c83a068667459aa26e612434295"
+  },
+  "timed_out": false,
+  "timeout_seconds": 120
+}

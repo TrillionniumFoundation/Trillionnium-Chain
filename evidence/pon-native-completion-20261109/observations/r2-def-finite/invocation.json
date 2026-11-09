@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/data/chain-abg-70ae-20261108/review/r2-def-finite-inputs-843d7c3c/r2-def-finite-runner.py",
+    "--expected-commit",
+    "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+    "--expected-tree",
+    "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+    "--command-manifest",
+    "/data/chain-abg-70ae-20261108/review/r2-def-finite-inputs-843d7c3c/def-python-commands.json"
+  ],
+  "command_manifest_sha256": "91dba3636dbdcdbcfb6adbd1e32250e705ceecdb8ecddcc255752b7200c86d9b",
+  "concurrent_load": "Same-host B static gates and root native/strict-Clippy development checks run concurrently. The original fixed-host pressure contract is not exercised.",
+  "expected_commit": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+  "expected_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+  "python_executable": "/usr/bin/python3",
+  "python_version": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "runner_sha256": "bc4344b25395106e9b04d13321eb153211e782f6a934c2e0fbeed6c8d3c63bec",
+  "scope": "Existing nine-suite finite-model roster only; no production qualification",
+  "source_root": "/data/chain-abg-70ae-20261108/source",
+  "started_utc": "2026-11-09T03:42:42.413129+00:00"
+}

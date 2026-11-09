@@ -1,0 +1,18 @@
+
+running 13 tests
+test ingress::public_v3::scalar_cpu::tests::actual_owner_thread_mismatch_preserves_unknown_without_zero_refund ... ok
+test ingress::public_v3::scalar_cpu::tests::cloned_shared_domain_preserves_two_actual_owner_start_ceiling ... ok
+test ingress::public_v3::scalar_cpu::tests::extra_settlement_cannot_return_an_unowned_reservation ... ok
+test ingress::public_v3::scalar_cpu::tests::finish_reports_shared_settlement_uncertainty_without_erasing_known_cpu ... ok
+test ingress::public_v3::scalar_cpu::tests::missing_or_impossible_reservation_preserves_credit_and_marks_unknown ... ok
+test ingress::public_v3::scalar_cpu::tests::observing_budget_never_refills_or_returns_an_outstanding_reserve ... ok
+test ingress::public_v3::scalar_cpu::tests::repeated_real_scopes_and_worker_panic_join_before_single_settlement ... ok
+test ingress::public_v3::scalar_cpu::tests::settlement_result_distinguishes_known_debt_unknown_sample_and_unowned_return ... ok
+test ingress::public_v3::scalar_cpu::tests::shared_operation_real_partial_owner_debit_settles_only_residual ... ok
+test ingress::public_v3::scalar_cpu::tests::stale_refill_keeps_watermark_and_cannot_credit_the_same_interval_twice ... ok
+test ingress::public_v3::scalar_cpu::tests::stale_reserve_and_settle_match_the_non_decreasing_clock_trace ... ok
+test ingress::public_v3::scalar_cpu::tests::two_legitimate_reservations_return_once_and_keep_live_cpu_nested ... ok
+test ingress::public_v3::scalar_cpu::tests::unknown_live_clock_and_unclosed_operation_disable_all_shared_starts ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 1291 filtered out; finished in 0.01s
+

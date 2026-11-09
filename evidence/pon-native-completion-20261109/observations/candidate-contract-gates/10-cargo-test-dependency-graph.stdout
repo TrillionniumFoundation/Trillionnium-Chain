@@ -1,0 +1,381 @@
+trnm-audit-events v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-audit-events)
+
+trnm-bench v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-bench)
+├── clap v4.6.0
+│   ├── clap_builder v4.6.0
+│   │   ├── anstream v1.0.0
+│   │   │   ├── anstyle v1.0.14
+│   │   │   ├── anstyle-parse v1.0.0
+│   │   │   │   └── utf8parse v0.2.2
+│   │   │   ├── anstyle-query v1.1.5
+│   │   │   ├── colorchoice v1.0.5
+│   │   │   ├── is_terminal_polyfill v1.70.2
+│   │   │   └── utf8parse v0.2.2
+│   │   ├── anstyle v1.0.14
+│   │   ├── clap_lex v1.1.0
+│   │   └── strsim v0.11.1
+│   └── clap_derive v4.6.0 (proc-macro)
+│       ├── heck v0.5.0
+│       ├── proc-macro2 v1.0.106
+│       │   └── unicode-ident v1.0.24
+│       ├── quote v1.0.45
+│       │   └── proc-macro2 v1.0.106 (*)
+│       └── syn v2.0.117
+│           ├── proc-macro2 v1.0.106 (*)
+│           ├── quote v1.0.45 (*)
+│           └── unicode-ident v1.0.24
+├── sha2 v0.10.9
+│   ├── cfg-if v1.0.4
+│   ├── cpufeatures v0.2.17
+│   ├── digest v0.10.7
+│   │   ├── block-buffer v0.10.4
+│   │   │   └── generic-array v0.14.7
+│   │   │       └── typenum v1.20.1
+│   │   │       [build-dependencies]
+│   │   │       └── version_check v0.9.5
+│   │   └── crypto-common v0.1.7
+│   │       ├── generic-array v0.14.7 (*)
+│   │       └── typenum v1.20.1
+│   └── sha2-asm v0.6.4
+│       [build-dependencies]
+│       └── cc v1.2.59
+│           ├── find-msvc-tools v0.1.9
+│           └── shlex v1.3.0
+├── trnm-executor v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-executor)
+│   └── trnm-types v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-types)
+│       ├── ed25519-dalek v2.2.0
+│       │   ├── curve25519-dalek v4.1.3
+│       │   │   ├── cfg-if v1.0.4
+│       │   │   ├── cpufeatures v0.2.17
+│       │   │   ├── curve25519-dalek-derive v0.1.1 (proc-macro)
+│       │   │   │   ├── proc-macro2 v1.0.106 (*)
+│       │   │   │   ├── quote v1.0.45 (*)
+│       │   │   │   └── syn v2.0.117 (*)
+│       │   │   ├── digest v0.10.7 (*)
+│       │   │   ├── subtle v2.6.1
+│       │   │   └── zeroize v1.9.1
+│       │   │   [build-dependencies]
+│       │   │   └── rustc_version v0.4.1
+│       │   │       └── semver v1.0.27
+│       │   ├── ed25519 v2.2.3
+│       │   │   └── signature v2.2.0
+│       │   ├── sha2 v0.10.9 (*)
+│       │   ├── subtle v2.6.1
+│       │   └── zeroize v1.9.1
+│       ├── hex v0.4.3
+│       ├── serde v1.0.228
+│       │   ├── serde_core v1.0.228
+│       │   └── serde_derive v1.0.228 (proc-macro)
+│       │       ├── proc-macro2 v1.0.106 (*)
+│       │       ├── quote v1.0.45 (*)
+│       │       └── syn v2.0.117 (*)
+│       └── sha2 v0.10.9 (*)
+│       [dev-dependencies]
+│       └── serde_json v1.0.149
+│           ├── itoa v1.0.18
+│           ├── memchr v2.8.0
+│           ├── serde_core v1.0.228
+│           └── zmij v1.0.21
+└── trnm-types v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-types) (*)
+
+trnm-checkpoint-store v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-checkpoint-store)
+├── fs2 v0.4.3
+│   └── libc v0.2.184
+├── libc v0.2.184
+├── sha2 v0.10.9 (*)
+└── trnm-checkpoint-types v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-checkpoint-types)
+    └── sha2 v0.10.9 (*)
+[dev-dependencies]
+├── tempfile v3.27.0
+│   ├── fastrand v2.3.0
+│   ├── getrandom v0.4.2
+│   │   ├── cfg-if v1.0.4
+│   │   ├── libc v0.2.184
+│   │   └── rand_core v0.10.1
+│   ├── once_cell v1.21.4
+│   └── rustix v1.1.4
+│       ├── bitflags v2.11.0
+│       └── linux-raw-sys v0.12.1
+└── trnm-checkpoint-types v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-checkpoint-types) (*)
+
+trnm-checkpoint-types v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-checkpoint-types) (*)
+
+trnm-control-plane v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-control-plane)
+└── sha2 v0.10.9 (*)
+
+trnm-crypto-primitives v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-crypto-primitives)
+├── anyhow v1.0.103
+├── ed25519-dalek v2.2.0 (*)
+├── hex v0.4.3
+├── ml-dsa v0.1.1
+│   ├── const-oid v0.10.2
+│   ├── crypto-common v0.2.2
+│   │   ├── getrandom v0.4.2 (*)
+│   │   ├── hybrid-array v0.4.15
+│   │   │   ├── ctutils v0.4.6
+│   │   │   │   └── cmov v0.5.4
+│   │   │   ├── typenum v1.20.1
+│   │   │   └── zeroize v1.9.1
+│   │   └── rand_core v0.10.1
+│   ├── ctutils v0.4.6 (*)
+│   ├── hybrid-array v0.4.15 (*)
+│   ├── module-lattice v0.2.3
+│   │   ├── ctutils v0.4.6 (*)
+│   │   ├── hybrid-array v0.4.15 (*)
+│   │   ├── num-traits v0.2.19
+│   │   │   [build-dependencies]
+│   │   │   └── autocfg v1.5.1
+│   │   └── zeroize v1.9.1
+│   ├── pkcs8 v0.11.0
+│   │   ├── der v0.8.3
+│   │   │   ├── const-oid v0.10.2
+│   │   │   └── zeroize v1.9.1
+│   │   └── spki v0.8.1
+│   │       └── der v0.8.3 (*)
+│   ├── shake v0.1.0
+│   │   ├── digest v0.11.3
+│   │   │   └── crypto-common v0.2.2 (*)
+│   │   ├── keccak v0.2.2
+│   │   │   └── cfg-if v1.0.4
+│   │   └── sponge-cursor v0.1.0
+│   ├── signature v3.0.0
+│   │   ├── digest v0.11.3 (*)
+│   │   └── rand_core v0.10.1
+│   └── zeroize v1.9.1
+├── openssl v0.10.81
+│   ├── bitflags v2.11.0
+│   ├── cfg-if v1.0.4
+│   ├── foreign-types v0.3.2
+│   │   └── foreign-types-shared v0.1.1
+│   ├── libc v0.2.184
+│   ├── openssl-macros v0.1.1 (proc-macro)
+│   │   ├── proc-macro2 v1.0.106 (*)
+│   │   ├── quote v1.0.45 (*)
+│   │   └── syn v2.0.117 (*)
+│   └── openssl-sys v0.9.117
+│       └── libc v0.2.184
+│       [build-dependencies]
+│       ├── cc v1.2.59 (*)
+│       ├── pkg-config v0.3.32
+│       └── vcpkg v0.2.15
+├── serde_json v1.0.149 (*)
+├── sha2 v0.10.9 (*)
+├── trnm-protocol v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-protocol)
+│   ├── hex v0.4.3
+│   ├── serde v1.0.228 (*)
+│   ├── sha2 v0.10.9 (*)
+│   └── thiserror v1.0.69
+│       └── thiserror-impl v1.0.69 (proc-macro)
+│           ├── proc-macro2 v1.0.106 (*)
+│           ├── quote v1.0.45 (*)
+│           └── syn v2.0.117 (*)
+│   [dev-dependencies]
+│   ├── ml-dsa v0.1.1 (*)
+│   └── serde_json v1.0.149 (*)
+└── zeroize v1.9.1
+[dev-dependencies]
+└── rustix v1.1.4 (*)
+
+trnm-data-availability v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-data-availability)
+├── borsh v1.8.0
+│   └── borsh-derive v1.8.0 (proc-macro)
+│       ├── once_cell v1.21.4
+│       ├── proc-macro-crate v3.5.0
+│       │   └── toml_edit v0.25.13+spec-1.1.0
+│       │       ├── indexmap v2.13.1
+│       │       │   ├── equivalent v1.0.2
+│       │       │   └── hashbrown v0.16.1
+│       │       ├── toml_datetime v1.1.1+spec-1.1.0
+│       │       ├── toml_parser v1.1.3+spec-1.1.0
+│       │       │   └── winnow v1.0.4
+│       │       └── winnow v1.0.4
+│       ├── proc-macro2 v1.0.106 (*)
+│       ├── quote v1.0.45 (*)
+│       └── syn v2.0.117 (*)
+│   [build-dependencies]
+│   └── cfg_aliases v0.2.2
+├── ed25519-dalek v2.2.0 (*)
+├── fs2 v0.4.3 (*)
+├── libc v0.2.184
+├── rusqlite v0.39.0
+│   ├── bitflags v2.11.0
+│   ├── fallible-iterator v0.3.0
+│   ├── fallible-streaming-iterator v0.1.9
+│   ├── hashlink v0.11.1
+│   │   └── hashbrown v0.16.1
+│   │       └── foldhash v0.2.0
+│   ├── libsqlite3-sys v0.37.0
+│   │   [build-dependencies]
+│   │   ├── cc v1.2.59 (*)
+│   │   ├── pkg-config v0.3.32
+│   │   └── vcpkg v0.2.15
+│   └── smallvec v1.15.1
+├── rustix v1.1.4 (*)
+├── serde v1.0.228 (*)
+├── serde_json v1.0.149 (*)
+├── sha2 v0.10.9 (*)
+├── trnm-crypto-primitives v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-crypto-primitives) (*)
+├── trnm-protocol v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-protocol) (*)
+└── zeroize v1.9.1
+[dev-dependencies]
+├── hex v0.4.3
+├── ml-dsa v0.1.1 (*)
+├── rustix v1.1.4 (*)
+├── serde_json v1.0.149 (*)
+└── tempfile v3.27.0 (*)
+
+trnm-escrow-vault v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-escrow-vault)
+└── trnm-audit-events v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-audit-events)
+
+trnm-executor v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-executor) (*)
+
+trnm-governance-guard v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-governance-guard)
+└── trnm-audit-events v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-audit-events)
+
+trnm-mempool v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-mempool)
+
+trnm-mvcc-fee v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-mvcc-fee)
+├── borsh v1.8.0 (*)
+├── hex v0.4.3
+├── openssl v0.10.81 (*)
+├── rusqlite v0.39.0 (*)
+├── serde v1.0.228 (*)
+├── serde_json v1.0.149 (*)
+├── sha2 v0.10.9 (*)
+├── trnm-crypto-primitives v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-crypto-primitives) (*)
+├── trnm-protocol v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-protocol) (*)
+└── trnm-verification-profiles v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-verification-profiles)
+    └── sha2 v0.10.9 (*)
+[dev-dependencies]
+├── ml-dsa v0.1.1 (*)
+├── serde_json v1.0.149 (*)
+└── tempfile v3.27.0 (*)
+
+trnm-oracle v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-oracle)
+├── hex v0.4.3
+├── serde v1.0.228 (*)
+├── sha2 v0.10.9 (*)
+└── thiserror v1.0.69 (*)
+[dev-dependencies]
+└── serde_json v1.0.149 (*)
+
+trnm-peer-lease v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-peer-lease)
+├── fs2 v0.4.3 (*)
+├── libc v0.2.184
+├── rustix v1.1.4 (*)
+└── sha2 v0.10.9 (*)
+[dev-dependencies]
+└── tempfile v3.27.0 (*)
+
+trnm-pon-node v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node)
+├── fs2 v0.4.3 (*)
+├── hex v0.4.3
+├── libc v0.2.184
+├── nix v0.30.1
+│   ├── bitflags v2.11.0
+│   ├── cfg-if v1.0.4
+│   └── libc v0.2.184
+│   [build-dependencies]
+│   └── cfg_aliases v0.2.2
+├── openssl v0.10.81 (*)
+├── rusqlite v0.39.0 (*)
+├── rustix v1.1.4 (*)
+├── serde v1.0.228 (*)
+├── serde_json v1.0.149 (*)
+├── sha2 v0.10.9 (*)
+├── tempfile v3.27.0 (*)
+├── trnm-crypto-primitives v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-crypto-primitives) (*)
+├── trnm-data-availability v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-data-availability) (*)
+├── trnm-mempool v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-mempool)
+├── trnm-mvcc-fee v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-mvcc-fee) (*)
+├── trnm-protocol v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-protocol) (*)
+├── trnm-release-bundle v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-release-bundle)
+│   ├── sha2 v0.10.9 (*)
+│   ├── trnm-crypto-primitives v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-crypto-primitives) (*)
+│   └── trnm-protocol v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-protocol) (*)
+│   [dev-dependencies]
+│   └── zeroize v1.9.1
+├── trnm-service-settlement v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-service-settlement)
+│   ├── borsh v1.8.0 (*)
+│   ├── ed25519-dalek v2.2.0 (*)
+│   ├── rusqlite v0.39.0 (*)
+│   ├── serde_json v1.0.149 (*)
+│   ├── sha2 v0.10.9 (*)
+│   └── trnm-task-kernel v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-task-kernel)
+│       ├── borsh v1.8.0 (*)
+│       ├── ed25519-dalek v2.2.0 (*)
+│       ├── rusqlite v0.39.0 (*)
+│       └── sha2 v0.10.9 (*)
+│       [dev-dependencies]
+│       ├── hex v0.4.3
+│       ├── serde_json v1.0.149 (*)
+│       └── tempfile v3.27.0 (*)
+│   [dev-dependencies]
+│   └── tempfile v3.27.0 (*)
+├── trnm-sqlite-io-boundary v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-sqlite-io-boundary)
+│   ├── libc v0.2.184
+│   ├── libsqlite3-sys v0.37.0 (*)
+│   ├── rusqlite v0.39.0 (*)
+│   ├── serde v1.0.228 (*)
+│   └── serde_json v1.0.149 (*)
+│   [build-dependencies]
+│   ├── cc v1.2.59 (*)
+│   └── sha2 v0.10.9
+│       ├── cfg-if v1.0.4
+│       ├── cpufeatures v0.2.17
+│       └── digest v0.10.7 (*)
+├── trnm-transport v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-transport)
+│   [dev-dependencies]
+│   └── trnm-crypto-primitives v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-crypto-primitives) (*)
+└── zeroize v1.9.1
+[dev-dependencies]
+└── rusqlite v0.39.0 (*)
+
+trnm-protocol v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-protocol) (*)
+
+trnm-release-bundle v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-release-bundle) (*)
+
+trnm-research-protocol v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-research-protocol)
+├── ed25519-dalek v2.2.0 (*)
+├── hex v0.4.3
+├── serde v1.0.228 (*)
+├── sha2 v0.10.9 (*)
+├── thiserror v1.0.69 (*)
+├── trnm-crypto-primitives v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-crypto-primitives) (*)
+└── trnm-protocol v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-protocol) (*)
+[dev-dependencies]
+├── serde_json v1.0.149 (*)
+└── zeroize v1.9.1
+
+trnm-service-settlement v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-service-settlement) (*)
+
+trnm-sqlite-io-boundary v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-sqlite-io-boundary) (*)
+
+trnm-state-import v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-state-import)
+├── rusqlite v0.39.0 (*)
+└── sha2 v0.10.9 (*)
+
+trnm-task-kernel v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-task-kernel) (*)
+
+trnm-transport v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-transport) (*)
+
+trnm-types v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-types) (*)
+
+trnm-verification-profiles v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-verification-profiles) (*)
+
+trnm-worker-agent v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-worker-agent)
+├── anyhow v1.0.103
+├── clap v4.6.0 (*)
+├── getrandom v0.4.2 (*)
+├── hex v0.4.3
+├── rustix v1.1.4 (*)
+├── serde v1.0.228 (*)
+├── serde_json v1.0.149 (*)
+├── sha2 v0.10.9 (*)
+├── shell-escape v0.1.5
+├── shlex v1.3.0
+├── trnm-types v0.1.0 (/data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-types) (*)
+└── wait-timeout v0.2.1
+    └── libc v0.2.184
+[dev-dependencies]
+└── tempfile v3.27.0 (*)

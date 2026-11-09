@@ -1,0 +1,46 @@
+{
+  "label": "cargo-version",
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "--version",
+    "--verbose"
+  ],
+  "command": "/home/qian-qi/.cargo/bin/cargo +1.95.0 --version --verbose",
+  "cwd": "/data/chain-abg-70ae-20261108/source",
+  "expected_head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+  "expected_tree": "46164cd85fff00e3a080acc29fef25a27751082b",
+  "before": {
+    "head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+    "tree": "46164cd85fff00e3a080acc29fef25a27751082b",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "started_utc": "2026-11-09T03:21:48.676861+00:00",
+  "timeout_seconds": 60,
+  "timeout_scope": "source/graph command wall-time supervisor only; no product deadline changed",
+  "stdout": "/data/chain-abg-70ae-20261108/evidence/candidate-contract-gates/07-cargo-version.stdout",
+  "stderr": "/data/chain-abg-70ae-20261108/evidence/candidate-contract-gates/07-cargo-version.stderr",
+  "expected_tests": null,
+  "tests_run": null,
+  "skipped": null,
+  "failures": null,
+  "errors": null,
+  "timed_out": false,
+  "exit_code": 0,
+  "passed": true,
+  "elapsed_seconds": 0.064888,
+  "after": {
+    "head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+    "tree": "46164cd85fff00e3a080acc29fef25a27751082b",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "finished_utc": "2026-11-09T03:21:48.874588+00:00",
+  "stdout_bytes": 336,
+  "stderr_bytes": 0,
+  "stdout_sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

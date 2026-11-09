@@ -1,0 +1,9 @@
+{
+  "source_head": "b01c08ee0b06984d59a8f50758a3ae718611c7c9",
+  "source_tree": "c0269785b26ce3c20d8006f4cb247d0bbc35afb1",
+  "original_parent": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "porcelain": "",
+  "identical_red_green_test_sha256": "c5f0b9025f5f5b7e69bc766dd5c79403d8b8e4321157c3403d2c68144a92867f",
+  "fixed_host_contract": false,
+  "production_qualification": "HOLD_NO_GO"
+}

@@ -1,0 +1,41 @@
+evidence/pon-native-completion-20261109/observations/baseline-native-corrected-filter/original-native-invalid-priority.stdout:7: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/baseline-native/original-native-invalid-priority.stdout:5: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/candidate-retained-native/detached.stdout:33: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/candidate-retained-native/history.stdout:52: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/candidate-retained-native/metered-facts.stdout:18: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/candidate-retained-native/metered-network.stdout:7: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/candidate-retained-native/old-signed-profiles.stdout:6: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/candidate-retained-native/scalar-budget.stdout:18: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/candidate-retained-native/scalar-completion.stdout:19: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/candidate-retained-native/signed-profile.stdout:6: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/green-native-first/green-six.stdout:26: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/green-native-isolated-target/green-six.stdout:17: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/green-native-isolated-target/prepared-held.stdout:6: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/green-preparation/fmt-check.stdout:11: trailing whitespace.
++ 
+evidence/pon-native-completion-20261109/observations/r2-native-and-clippy/detached.stdout:33: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/r2-native-and-clippy/history.stdout:52: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/r2-native-and-clippy/metered-facts.stdout:18: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/r2-native-and-clippy/metered-network.stdout:7: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/r2-native-and-clippy/native-completion-six.stdout:17: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/r2-native-and-clippy/old-signed-profiles.stdout:6: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/r2-native-and-clippy/scalar-budget.stdout:18: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/r2-native-and-clippy/scalar-completion.stdout:19: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/r2-native-and-clippy/signed-profile.stdout:6: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/r3-native-and-clippy/detached.stdout:33: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/r3-native-and-clippy/history.stdout:52: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/r3-native-and-clippy/metered-facts.stdout:18: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/r3-native-and-clippy/metered-network.stdout:7: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/r3-native-and-clippy/native-completion-six.stdout:17: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/r3-native-and-clippy/old-signed-profiles.stdout:6: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/r3-native-and-clippy/scalar-budget.stdout:18: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/r3-native-and-clippy/scalar-completion.stdout:19: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/r3-native-and-clippy/signed-profile.stdout:6: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/red-native-first/red-six-native-controls.stdout:26: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/red-native-first/source-diff.patch:14: trailing whitespace.
++ 
+evidence/pon-native-completion-20261109/observations/red-native-first/source-diff.patch:14: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/red-native-formatted/red-six-native-controls.stdout:26: new blank line at EOF.
+evidence/pon-native-completion-20261109/observations/red-native-formatted/source-diff.patch:14: trailing whitespace.
++ 
+evidence/pon-native-completion-20261109/review/r2-inline-pin-audit.json:247: new blank line at EOF.

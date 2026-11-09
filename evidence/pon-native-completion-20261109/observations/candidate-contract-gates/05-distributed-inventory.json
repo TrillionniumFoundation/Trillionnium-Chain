@@ -1,0 +1,45 @@
+{
+  "label": "distributed-inventory",
+  "argv": [
+    "python3",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "command": "python3 scripts/refresh_distributed_source_inventory.py --check",
+  "cwd": "/data/chain-abg-70ae-20261108/source",
+  "expected_head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+  "expected_tree": "46164cd85fff00e3a080acc29fef25a27751082b",
+  "before": {
+    "head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+    "tree": "46164cd85fff00e3a080acc29fef25a27751082b",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "started_utc": "2026-11-09T03:21:47.122779+00:00",
+  "timeout_seconds": 180,
+  "timeout_scope": "source/graph command wall-time supervisor only; no product deadline changed",
+  "stdout": "/data/chain-abg-70ae-20261108/evidence/candidate-contract-gates/05-distributed-inventory.stdout",
+  "stderr": "/data/chain-abg-70ae-20261108/evidence/candidate-contract-gates/05-distributed-inventory.stderr",
+  "expected_tests": null,
+  "tests_run": null,
+  "skipped": null,
+  "failures": null,
+  "errors": null,
+  "timed_out": false,
+  "exit_code": 0,
+  "passed": true,
+  "elapsed_seconds": 0.115328,
+  "after": {
+    "head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+    "tree": "46164cd85fff00e3a080acc29fef25a27751082b",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "finished_utc": "2026-11-09T03:21:47.367801+00:00",
+  "stdout_bytes": 35,
+  "stderr_bytes": 0,
+  "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
