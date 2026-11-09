@@ -55,6 +55,9 @@ impl CellStoreV1 {
                 | OpenFlags::SQLITE_OPEN_CREATE
                 | OpenFlags::SQLITE_OPEN_NOFOLLOW,
         )?;
+        // A PRAGMA setter may query and reject the cold schema. Prevent its
+        // error-path connection drop from checkpointing unvalidated WAL pages.
+        super::cache_wal::prevent_close_checkpoint(&connection)?;
         connection.busy_timeout(super::cache_wal::remaining(deadline)?)?;
         connection.pragma_update(None, "trusted_schema", false)?;
         super::cache_wal::configure(&connection)?;
@@ -94,13 +97,7 @@ impl CellStoreV1 {
             path,
             OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NOFOLLOW,
         )?;
-        require(
-            connection.set_db_config(
-                rusqlite::config::DbConfig::SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE,
-                true,
-            )?,
-            "cache close checkpoint policy",
-        )?;
+        super::cache_wal::prevent_close_checkpoint(&connection)?;
         connection.busy_timeout(std::time::Duration::ZERO)?;
         connection.pragma_update(None, "trusted_schema", false)?;
         super::cache_budget::open(&connection, None, false)?;

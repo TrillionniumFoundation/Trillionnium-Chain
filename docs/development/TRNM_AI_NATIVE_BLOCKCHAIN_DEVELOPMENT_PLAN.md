@@ -11296,3 +11296,37 @@ quality shard and the original four-phase SQLite build test. Requalify actual
 binaries and source/provider identities. Keep all original Host/campaign,
 ordinary-daemon, large-model custody, independent-domain/72-hour deployment,
 PoN/PQ theorem and comparative-cost gates open until their own evidence exists.
+
+M12 `c8d17c23ab95f3f7cf553c895e0535f964a4eecd` passed all 456 unique
+Python controls and all seven original report-generation/byte-comparison pairs.
+Its 1,487-input before/after inventory explicitly adds two current-report paths
+and 81 previously unlisted current-mapping dependencies to M10's 1,404-path
+recovery inventory; this does not expand the earlier observation retroactively.
+The workspace all-feature library check, original four-phase SQLite build test
+and ten-library no-run build passed. The full node harness passed 1,359 tests,
+with zero failures and its original 39 top-level ignored entries. Keep the
+executed journal child separate from those 1,398 top-level entries.
+
+The same M12 data-availability harness then failed one of its 715 tests:
+`automatic_index_metadata_and_oversized_non_null_sql_are_not_accepted_as_null`
+passed its read-only refusal and byte-preservation checks but failed the
+read-write refusal's unchanged-database assertion for the altered index name.
+Retain the complete 714-pass/one-fail output. The original assertion arrays
+have equal 28,672-byte lengths and unchanged headers; 58 differing bytes in
+page seven show the already altered WAL catalog reaching the main image.
+This is not a passing service observation or a reason to weaken the assertion.
+The other eight libraries, original Root integrations and full quality shard
+were not started after this failure.
+
+Static review identifies the newly added rusqlite 0.41 PRAGMA-name query before
+the requested PRAGMA: it can initialize the cold schema before the old writer
+path establishes its no-checkpoint-on-close policy. The read-only path already
+establishes that policy before SQL. The next source makes the existing safe
+database-config operation a shared helper, invokes it immediately after opening
+a writer connection, and retains both the read-only ordering and each writer's
+policy reassertion. Preserve the original SQL, writer deadline, quotas, complete
+test source and strict source fence. The observed bytes and source ordering
+support this cause; they are not a captured dynamic statement/close trace.
+Freeze the repaired source and exact affected bindings before rerunning the
+complete DA harness, retained/direct-owner libraries and original remaining
+gates. M12's successful node run does not qualify that successor source.

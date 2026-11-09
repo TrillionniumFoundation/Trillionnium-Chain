@@ -100,6 +100,15 @@ pub(super) fn remaining(deadline: Instant) -> CellResultV1<Duration> {
         .ok_or(CellErrorV1::CacheWriterBusy)
 }
 
+/// Establish the close policy before any SQL can initialize or reject a schema.
+/// Writers reassert this same policy when configuring each admitted operation.
+pub(super) fn prevent_close_checkpoint(connection: &Connection) -> CellResultV1<()> {
+    require(
+        connection.set_db_config(DbConfig::SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE, true)?,
+        "cache close checkpoint policy",
+    )
+}
+
 pub(super) fn configure(connection: &Connection) -> CellResultV1<()> {
     // Pin the reviewed SQLite 3.54.0 backend. walFrames, WAL restart and the
     // sector-size clamp match 3.51.3; unixShmMap widens length arithmetic to
@@ -109,10 +118,7 @@ pub(super) fn configure(connection: &Connection) -> CellResultV1<()> {
         rusqlite::version_number() == 3_054_000,
         "cache WAL backend version",
     )?;
-    require(
-        connection.set_db_config(DbConfig::SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE, true)?,
-        "cache close checkpoint policy",
-    )?;
+    prevent_close_checkpoint(connection)?;
     connection.pragma_update(None, "cache_spill", false)?;
     connection.pragma_update(None, "wal_autocheckpoint", 0)?;
     connection.pragma_update(None, "synchronous", "FULL")?;
