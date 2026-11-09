@@ -29,7 +29,7 @@ import grouped_work_lottery_v0 as old
 from grouped_fresh_admission_wire_v0 import inspect_freeze
 from grouped_fresh_deployment_cost_v0 import (
     CASES, DEMAND_COMPONENTS, LOCAL_CAP, demand_bridge_audit, material_identity,
-    topology_accounting,
+    topology_accounting, produced_work_ids,
 )
 from grouped_legal_strategy_v0 import prepare, execute, REPRESENTATION
 from experiments.grouped_cell_operator_v0 import make_commands, model_commitment
@@ -567,7 +567,8 @@ def run_topology(size, cfg, packets, out, timeout):
         if path.is_file() and not path.is_symlink():
             st = path.stat()
             inodes.append((st.st_dev, st.st_ino))
-    accounting = topology_accounting(size, observations)
+    accounting = topology_accounting(size, observations,
+                                     expected_work_ids=cfg['expected_work_ids'])
     if len(inodes) != size or len(set(inodes)) != size:
         accounting['issues'].append('RECEIVERS_DID_NOT_HAVE_DISTINCT_JOURNAL_FILES')
     if not all(row['raw_readback_passed'] for row in observations):
@@ -661,7 +662,8 @@ def run(args):
                'timeout': args.timeout, 'source_pins': before['relevant_sources_sha256'],
                'init': init, 'requests': requests, 'freeze_request': freeze_request,
                'native_pins': native_pins, 'original_packet_hex': packets[1].hex(),
-               'material_content_id': identity['material_content_id']}
+               'material_content_id': identity['material_content_id'],
+               'expected_work_ids': produced_work_ids(produced)}
         for size in TOPOLOGIES:
             topology = run_topology(size, cfg, packets, out, args.timeout)
             topologies.append(topology)

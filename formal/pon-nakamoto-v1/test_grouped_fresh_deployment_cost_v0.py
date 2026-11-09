@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 from grouped_fresh_deployment_cost_v0 import (
-    CASES, LOCAL_CAP, demand_bridge_audit, topology_accounting,
+    CASES, LOCAL_CAP, demand_bridge_audit, topology_accounting, produced_work_ids,
 )
 from contract_wire import canonical
 from experiments.grouped_fresh_fanout_v0 import (
@@ -233,10 +233,10 @@ class FanoutEvidenceIntegrityTests(unittest.TestCase):
             value = value[key]
         value[path[-1]] = replacement
 
-    def test_legacy_valid_fixture_preserves_schema_and_totals(self):
+    def test_legacy_valid_fixture_emits_fresh_schema_with_preserved_totals(self):
         observed = topology_accounting(1, [synthetic_worker()])
         self.assertEqual(observed['status'], 'PASS')
-        self.assertEqual(observed['schema'], 'pon-grouped-fresh-deployment-cost-v0')
+        self.assertEqual(observed['schema'], 'pon-grouped-fresh-deployment-cost-v1')
         self.assertEqual(observed['distinct_verified_work_ids'], 2)
         self.assertEqual(observed['independent_full_cell_calls'], 4)
         self.assertEqual(observed['independent_full_cell_macs'], 4 * 37008)
@@ -503,6 +503,117 @@ class FanoutEvidenceIntegrityTests(unittest.TestCase):
         first = self.refused([value])
         self.assertEqual(value, before)
         self.assertEqual(self.refused([value]), first)
+
+
+class FixedPacketIdentityTests(unittest.TestCase):
+    """Counterexamples to turning relabelled carriers into new work identities."""
+
+    def refused(self, workers, planned=1, **kwargs):
+        before = copy.deepcopy(workers)
+        report = topology_accounting(planned, workers, **kwargs)
+        self.assertEqual(report['status'], 'FAIL')
+        self.assertIsNone(report['distinct_verified_work_ids'])
+        self.assertEqual(report['planned_transport_attempts'], planned * len(CASES))
+        self.assertEqual(report['completed_transport_attempts'], planned * len(CASES))
+        self.assertEqual(report['receiver_wait4_cpu_seconds'], planned * 3.0)
+        self.assertEqual(report['independent_full_cell_macs'], planned * 4 * 37008)
+        self.assertEqual(report['chainwork_awarded'], 0)
+        self.assertEqual(report['actual_consumer_uses_observed'], 0)
+        self.assertFalse(report['external_demand_authenticated'])
+        self.assertFalse(report['production_activation'])
+        self.assertEqual(workers, before)
+        return report
+
+    def test_carrier_replay_cannot_invent_a_third_work_identity(self):
+        worker = synthetic_worker()
+        worker['worker_report']['transport_records'][1]['verification']['work_id'] = 'third'
+        report = self.refused([worker])
+        self.assertIn('FIXED_PACKET_WORK_ID_REBINDING:1', report['issues'])
+        self.assertEqual(report['observed_distinct_verified_work_ids_partial'], 3)
+
+    def test_swapping_one_receiver_ids_is_detected_even_with_two_global_ids(self):
+        workers = [synthetic_worker(index) for index in range(2)]
+        for row in workers[1]['worker_report']['transport_records']:
+            if row['case'] in ('valid', 'carrier_replay', 'discarded_response'):
+                current = row['verification']['work_id']
+                row['verification']['work_id'] = 'second' if current == 'first' else 'first'
+        report = self.refused(workers, 2)
+        self.assertEqual(report['observed_distinct_verified_work_ids_partial'], 2)
+        self.assertIn('FIXED_PACKET_WORK_ID_REBINDING:1', report['issues'])
+        self.assertIn('FIXED_PACKET_WORK_ID_REBINDING:2', report['issues'])
+
+    def test_two_fixed_nonce_packets_cannot_share_one_work_identity(self):
+        worker = synthetic_worker()
+        worker['worker_report']['transport_records'][4]['verification']['work_id'] = 'first'
+        report = self.refused([worker])
+        self.assertIn('DISTINCT_FIXED_PACKETS_ALIAS_WORK_ID', report['issues'])
+        self.assertEqual(report['observed_distinct_verified_work_ids_partial'], 1)
+
+    def test_original_producer_pin_catches_coherent_receiver_renaming(self):
+        worker = synthetic_worker()
+        for row in worker['worker_report']['transport_records']:
+            if row['case'] in ('valid', 'carrier_replay', 'discarded_response'):
+                row['verification']['work_id'] += '-renamed'
+        report = self.refused([worker], expected_work_ids={'1': 'first', '2': 'second'})
+        self.assertTrue(any('WORK_ID_NOT_FIXED_PACKET' in issue for issue in report['issues']))
+        self.assertFalse(report['producer_work_ids_bound'])
+
+    def test_original_producer_pin_catches_global_slot_swap(self):
+        workers = [synthetic_worker(index) for index in range(4)]
+        report = self.refused(workers, 4, expected_work_ids={'1': 'second', '2': 'first'})
+        self.assertEqual(report['observed_distinct_verified_work_ids_partial'], 2)
+        self.assertTrue(any('WORK_ID_NOT_FIXED_PACKET' in issue for issue in report['issues']))
+
+    def test_valid_anchored_counts_preserve_costs_and_legacy_scope_is_explicit(self):
+        workers = [synthetic_worker(index) for index in range(4)]
+        before = copy.deepcopy(workers)
+        anchored = topology_accounting(4, workers, expected_work_ids={'1': 'first', '2': 'second'})
+        legacy = topology_accounting(4, workers)
+        for report in (anchored, legacy):
+            self.assertEqual(report['status'], 'PASS')
+            self.assertEqual(report['distinct_verified_work_ids'], 2)
+            self.assertEqual(report['verified_receptions'], 12)
+            self.assertEqual(report['receiver_wait4_cpu_seconds'], 12.0)
+            self.assertEqual(report['observed_work_ids_by_fixed_packet'],
+                             {'1': ['first'], '2': ['second']})
+        self.assertTrue(anchored['producer_work_id_expectations_supplied'])
+        self.assertTrue(anchored['producer_work_ids_bound'])
+        self.assertFalse(legacy['producer_work_id_expectations_supplied'])
+        self.assertFalse(legacy['producer_work_ids_bound'])
+        self.assertEqual(workers, before)
+
+    def test_explicit_bad_producer_expectation_never_falls_back(self):
+        for expected in (None, {}, [], {'1': 'first'}, {1: 'first', 2: 'second'},
+                         {'1': 'first', '2': 'first'}, {'1': False, '2': 'second'},
+                         {'1': 'first', '2': 'second', '3': 'third'}):
+            with self.subTest(expected=expected):
+                report = self.refused([synthetic_worker()], expected_work_ids=expected)
+                self.assertIn('FIXED_PACKET_EXPECTATIONS_MALFORMED', report['issues'])
+                self.assertTrue(report['producer_work_id_expectations_supplied'])
+                self.assertFalse(report['producer_work_ids_bound'])
+
+    def test_unknown_attempt_cannot_complete_producer_binding(self):
+        worker = synthetic_worker()
+        worker['worker_report']['transport_records'][0]['status'] = 'unknown'
+        report = topology_accounting(1, [worker], expected_work_ids={'1': 'first', '2': 'second'})
+        self.assertEqual(report['status'], 'FAIL')
+        self.assertIsNone(report['distinct_verified_work_ids'])
+        self.assertFalse(report['producer_work_ids_bound'])
+        self.assertEqual(report['completed_transport_attempts'], 5)
+        self.assertEqual(report['observed_distinct_verified_work_ids_partial'], 2)
+        self.assertEqual(report['receiver_wait4_cpu_seconds'], 3.0)
+        self.assertEqual(report['observed_transport_bytes_partial']['receiver'], 521)
+
+    def test_producer_roster_keeps_exact_slots_and_types(self):
+        valid = [{'nonce': 1, 'work_id': 'first'}, {'nonce': 2, 'work_id': 'second'}]
+        self.assertEqual(produced_work_ids(valid), {'1': 'first', '2': 'second'})
+        for rows in (None, [], valid[:1], valid + valid[:1], valid[::-1],
+                     [{'nonce': True, 'work_id': 'first'}, valid[1]],
+                     [{'nonce': 1.0, 'work_id': 'first'}, valid[1]],
+                     [valid[0], {'nonce': 2, 'work_id': 'first'}],
+                     [valid[0], {'nonce': 2, 'work_id': None}]):
+            with self.subTest(rows=rows), self.assertRaisesRegex(ValueError, 'FIXED_PACKET_PRODUCER'):
+                produced_work_ids(rows)
 
 
 if __name__ == '__main__':

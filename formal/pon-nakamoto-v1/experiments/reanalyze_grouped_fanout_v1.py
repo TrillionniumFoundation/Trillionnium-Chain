@@ -4,6 +4,8 @@
 Only accounting over the report's supplied worker observations is recomputed.
 Source, binary, host, transport-readback and qualification observations remain
 historical claims in the unchanged pinned input; this is not a new experiment.
+The output uses v2 for producer-bound fixed-packet accounting; the historical
+campaign input remains v0, and its stored reports are retained without edits.
 """
 from __future__ import annotations
 
@@ -21,7 +23,7 @@ if str(FORMAL_ROOT) not in sys.path:
 import grouped_fresh_deployment_cost_v0 as accounting
 
 
-SCHEMA = 'pon-grouped-fanout-reanalysis-v1'
+SCHEMA = 'pon-grouped-fanout-reanalysis-v2'
 INPUT_SCHEMA = 'pon-grouped-fresh-fanout-campaign-v0'
 MAX_INPUT_BYTES = 16 * 1024 * 1024
 TOPOLOGIES = (1, 2, 4)
@@ -136,6 +138,13 @@ def reanalyze(raw, *, expected_sha256):
             issues.append('ORIGINAL_QUALIFICATION_BOUNDARY_' + field.upper())
     if original.get('all_receptions_are_not_independent_tickets') is not True:
         issues.append('ORIGINAL_TICKET_REUSE_BOUNDARY_UNAVAILABLE')
+    try:
+        expected_work_ids = accounting.produced_work_ids(original.get('produced'))
+    except ValueError as error:
+        issues.append('ORIGINAL_' + str(error))
+        # An explicit invalid map makes each accounting result incomplete while
+        # retaining its costs. Never infer expected IDs from receiver claims.
+        expected_work_ids = {}
     topologies = []
     new_failures = []
     for size, row in zip(TOPOLOGIES, original['topologies']):
@@ -143,7 +152,8 @@ def reanalyze(raw, *, expected_sha256):
         old_topology_status = old_accounting.get('status') if type(old_accounting) is dict else None
         # The denominator comes from this reader's fixed plan and the raw row,
         # never from the old accounting's counters, status or issue list.
-        checked = accounting.topology_accounting(size, row['workers'])
+        checked = accounting.topology_accounting(size, row['workers'],
+                                                expected_work_ids=expected_work_ids)
         retained = _retained_inventory_issues(row, ('orchestration_failures', 'unstarted_clients'))
         if old_topology_status != 'PASS':
             retained.append('ORIGINAL_TOPOLOGY_NOT_PASS')
