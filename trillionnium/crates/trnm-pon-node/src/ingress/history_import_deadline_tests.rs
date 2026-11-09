@@ -319,3 +319,138 @@ fn late_admission_keeps_committed_identity_paid_cpu_and_exact_retry() {
     );
     assert_eq!(reopened.read_active().unwrap().0, id);
 }
+
+#[test]
+fn history_control_keeps_original_timely_single_resource_observation() {
+    let calls = AtomicUsize::new(0);
+    let control = Control {
+        deadline: Instant::now() + Duration::from_secs(10),
+        resource: &|| {
+            calls.fetch_add(1, Ordering::SeqCst);
+            Ok(())
+        },
+    };
+    control.check().unwrap();
+    assert_eq!(calls.load(Ordering::SeqCst), 1);
+}
+
+#[test]
+fn history_control_preexpired_does_not_invoke_resource() {
+    let calls = AtomicUsize::new(0);
+    let control = Control {
+        deadline: Instant::now(),
+        resource: &|| {
+            calls.fetch_add(1, Ordering::SeqCst);
+            Err("PUBLIC_HOST_KERNEL_CONTEXT".into())
+        },
+    };
+    assert!(control
+        .check()
+        .unwrap_err()
+        .is(crate::ErrorCode::PublicRequestDeadline));
+    assert_eq!(calls.load(Ordering::SeqCst), 0);
+}
+
+#[test]
+fn history_control_resource_expiry_refuses_late_success() {
+    let calls = AtomicUsize::new(0);
+    let deadline = Instant::now() + Duration::from_millis(100);
+    let control = Control {
+        deadline,
+        resource: &|| {
+            calls.fetch_add(1, Ordering::SeqCst);
+            wait_until_expired(deadline);
+            Ok(())
+        },
+    };
+    let result = control.check();
+    assert_eq!(
+        calls.load(Ordering::SeqCst),
+        1,
+        "the resource check must actually cross the original deadline"
+    );
+    assert!(result
+        .unwrap_err()
+        .is(crate::ErrorCode::PublicRequestDeadline));
+}
+
+#[test]
+fn history_control_resource_expiry_keeps_original_resource_error() {
+    let calls = AtomicUsize::new(0);
+    let deadline = Instant::now() + Duration::from_millis(100);
+    let control = Control {
+        deadline,
+        resource: &|| {
+            calls.fetch_add(1, Ordering::SeqCst);
+            wait_until_expired(deadline);
+            Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into())
+        },
+    };
+    let result = control.check();
+    assert_eq!(
+        calls.load(Ordering::SeqCst),
+        1,
+        "the resource error must be observed after its original deadline"
+    );
+    assert_eq!(
+        result.unwrap_err().to_string(),
+        "PUBLIC_HOST_KERNEL_LIMITS_CHANGED"
+    );
+}
+
+#[test]
+fn history_owner_resource_expiry_never_invokes_exclusive_or_shared_action() {
+    for shared in [false, true] {
+        // Use an actual native Node, but no prepared packet, waived Host
+        // boundary or replacement deadline. The only injected delay is inside
+        // the resource callback that Owner::with must complete before action.
+        let clock = now().unwrap();
+        let settings = Settings::development(Some(clock - 100)).unwrap();
+        let directory = tempfile::tempdir().unwrap();
+        let mut node = Node::open(directory.path(), settings, 2).unwrap();
+        let active = node.read_active().unwrap();
+        let resource_calls = AtomicUsize::new(0);
+        let action_calls = AtomicUsize::new(0);
+        let expected_resource_calls = if shared { 2 } else { 1 };
+        let deadline = Instant::now() + Duration::from_millis(100);
+        let control = Control {
+            deadline,
+            resource: &|| {
+                let call = resource_calls.fetch_add(1, Ordering::SeqCst) + 1;
+                // Shared owners retain their existing initial check and the
+                // lock-loop check. Delay the last original check in each path.
+                if call == expected_resource_calls {
+                    wait_until_expired(deadline);
+                }
+                Ok(())
+            },
+        };
+        let action = |owner: &mut Node| {
+            action_calls.fetch_add(1, Ordering::SeqCst);
+            owner.read_active()
+        };
+        let (result, after) = if shared {
+            let owner = Mutex::new(node);
+            let result = Owner::Shared(&owner).with(&control, action);
+            let after = owner.lock().unwrap().read_active().unwrap();
+            (result, after)
+        } else {
+            let result = Owner::Exclusive(&mut node).with(&control, action);
+            (result, node.read_active().unwrap())
+        };
+        assert_eq!(
+            resource_calls.load(Ordering::SeqCst),
+            expected_resource_calls,
+            "the original resource boundary must actually run, shared={shared}"
+        );
+        assert!(result
+            .unwrap_err()
+            .is(crate::ErrorCode::PublicRequestDeadline));
+        assert_eq!(
+            action_calls.load(Ordering::SeqCst),
+            0,
+            "an expired resource check cannot grant a native owner action"
+        );
+        assert_eq!(after, active);
+    }
+}

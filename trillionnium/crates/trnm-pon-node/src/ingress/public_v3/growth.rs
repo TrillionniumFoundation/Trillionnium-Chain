@@ -97,7 +97,11 @@ fn submit_result(owner: &mut Node, id: Hash) -> Result<Value> {
     // Admission has already committed. Match the existing public Native submit
     // boundary: finish activation and charge the entire outer interval; do not
     // rewrite this durable result as an earlier request cancellation.
-    let active = owner.activate(id)?;
+    // The target's admission-time check does not establish that every stored
+    // ancestor is eligible under the current clock. Reobserve the complete
+    // history even for an exact duplicate, without undoing its prior admission
+    // or changing the original noncancellable, fully charged activation tail.
+    let active = owner.activate_observed(id, super::super::now()?)?;
     let generation = owner.active()?.1;
     Ok(json!({
         "schema":"pon-native-growth-submit-v1",

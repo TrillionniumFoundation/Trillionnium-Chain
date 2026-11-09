@@ -514,9 +514,20 @@ reserved output capacity do not guarantee latency during owner contention.
 W1 runs outside the original owner's mutex. The immutable completed-work token
 cannot authorize admission itself: its consumer reacquires that same owner and
 rechecks current context, clock, parent and epoch. Once admission commits, the
-existing activation tail finishes and is charged within the original outer CPU
-interval. This O(reorganization-depth) tail is not cooperatively preemptible;
+activation tail observes the complete target ancestry using a fresh current
+clock before invoking the existing activation owner. This check also applies
+to an already stored exact packet: its own currently eligible timestamp does
+not establish that all ancestors are currently eligible. A `TIME_DEFERRED`
+result retains the admitted packet and leaves the active tip and generation
+unchanged. It does not undo admission or grant confirmation.
+
+The entire tail remains charged within the original outer CPU interval. The
+complete clock walk costs O(history depth), in addition to the original
+O(reorganization depth) activation. This tail remains noncancellable;
 cancellation cannot be reported as proof that the packet was never retained.
+The current-clock gate is a correctness boundary, not a new bound on latency,
+rejection cost or honest service under contention. It does not change stored
+schemas, signed domains, the unobserved recovery API or original service limits.
 Exact status inside the running owner avoids a new O(H) cold open per request,
 but still pays for its actual W1/M06/proof/delta verification and bounded ancestry
 walk. The separate cold CLI retains its exclusive-lock and cold-audit limits.
