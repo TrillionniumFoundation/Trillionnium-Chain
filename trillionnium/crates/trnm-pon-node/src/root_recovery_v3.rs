@@ -22,6 +22,9 @@ use trnm_release_bundle::root_recovery_v3::{
 };
 
 mod anchor;
+mod recovery_floor;
+pub use recovery_floor::RecoveryFloorV4;
+pub mod effect_readback_v4;
 mod storage;
 use anchor::AnchorClientV3;
 pub use anchor::{
@@ -387,6 +390,7 @@ pub struct RootOwnerV3 {
     store: StoreV3,
     enrollment: JournalEnrollmentV3,
     anchor: AnchorClientV3,
+    recovery_floor: Option<RecoveryFloorV4>,
     fenced: bool,
 }
 
@@ -413,6 +417,7 @@ impl RootOwnerV3 {
             store,
             anchor: AnchorClientV3::new(&enrollment, writer, transport),
             enrollment,
+            recovery_floor: None,
             fenced: false,
         };
         // Enrollment at the independent service is explicit and precedes this
@@ -428,13 +433,56 @@ impl RootOwnerV3 {
         transport: impl RootAnchorTransportV3 + 'static,
         budget: &mut OwnerBudgetV3,
     ) -> RootOwnerResultV3<Self> {
+        Self::open_existing_inner(path, enrollment, writer, transport, None, budget)
+    }
+
+    /// Open with an immutable recovery lower bound obtained and authenticated
+    /// outside the owner's recoverable state. This verifies the supplied pin's
+    /// complete enrollment and signed ancestry; it cannot verify independent
+    /// custody, the pin's age, or whether its source survived a common restore.
+    pub fn open_existing_with_recovery_floor(
+        path: &Path,
+        enrollment: JournalEnrollmentV3,
+        writer: impl RootWriterSignerV3 + 'static,
+        transport: impl RootAnchorTransportV3 + 'static,
+        recovery_floor: RecoveryFloorV4,
+        budget: &mut OwnerBudgetV3,
+    ) -> RootOwnerResultV3<Self> {
+        Self::open_existing_inner(
+            path,
+            enrollment,
+            writer,
+            transport,
+            Some(recovery_floor),
+            budget,
+        )
+    }
+
+    /// Return the configured caller pin. Presence is not an independence or
+    /// freshness attestation. The pin cannot be changed on an opened owner.
+    pub fn recovery_floor(&self) -> Option<&RecoveryFloorV4> {
+        self.recovery_floor.as_ref()
+    }
+
+    fn open_existing_inner(
+        path: &Path,
+        enrollment: JournalEnrollmentV3,
+        writer: impl RootWriterSignerV3 + 'static,
+        transport: impl RootAnchorTransportV3 + 'static,
+        recovery_floor: Option<RecoveryFloorV4>,
+        budget: &mut OwnerBudgetV3,
+    ) -> RootOwnerResultV3<Self> {
         budget.check()?;
         enrollment.validate()?;
+        if let Some(floor) = &recovery_floor {
+            floor.check_enrollment(&enrollment)?;
+        }
         let store = StoreV3::open(path, budget)?;
         let mut owner = Self {
             store,
             anchor: AnchorClientV3::new(&enrollment, writer, transport),
             enrollment,
+            recovery_floor,
             fenced: false,
         };
         let loaded = owner.load(budget)?;
@@ -454,16 +502,20 @@ impl RootOwnerV3 {
     fn load(&self, budget: &mut OwnerBudgetV3) -> RootOwnerResultV3<LoadedV3> {
         self.healthy(budget)?;
         self.store.with_read(budget, |db, budget| {
-            Self::replay(db, &self.enrollment, budget)
+            Self::replay(db, &self.enrollment, self.recovery_floor.as_ref(), budget)
         })
     }
 
     fn replay(
         db: &rusqlite::Connection,
         enrollment: &JournalEnrollmentV3,
+        recovery_floor: Option<&RecoveryFloorV4>,
         budget: &mut OwnerBudgetV3,
     ) -> RootOwnerResultV3<LoadedV3> {
         budget.check()?;
+        if let Some(floor) = recovery_floor {
+            floor.check_enrollment(enrollment)?;
+        }
         let rows = StoreV3::read_bounded(db)?;
         let initial = enrollment.initial_state()?;
         require(
@@ -474,8 +526,10 @@ impl RootOwnerV3 {
         )?;
         let mut state = initial;
         let mut head = rows.initial_head;
+        let mut floor_seen = recovery_floor.is_none_or(|floor| floor.matches_head(head));
         for event in &rows.events {
             Self::replay_event(enrollment, &mut state, &mut head, event, budget)?;
+            floor_seen |= recovery_floor.is_some_and(|floor| floor.matches_head(head));
         }
         require(
             rows.current_head == head && rows.current_state == state.encode().map_err(map_error)?,
@@ -483,7 +537,26 @@ impl RootOwnerV3 {
         )?;
         if let Some(pending) = &rows.pending {
             require(pending.previous == head, "ROOT_OWNER_PENDING_PREDECESSOR")?;
+            // A pin at an uncertain target is usable only after its complete
+            // signed transition is replayed. This does not commit it: opening
+            // and resume still require a fresh authenticated exact-target anchor.
+            if !floor_seen {
+                let mut pending_state = state.clone();
+                let mut pending_head = head;
+                Self::replay_event(
+                    enrollment,
+                    &mut pending_state,
+                    &mut pending_head,
+                    pending,
+                    budget,
+                )?;
+                floor_seen = recovery_floor.is_some_and(|floor| floor.matches_head(pending_head));
+            }
         }
+        require(
+            floor_seen,
+            "ROOT_OWNER_RECOVERY_FLOOR_NOT_IN_SIGNED_HISTORY",
+        )?;
         budget.check()?;
         Ok(LoadedV3 {
             head,
@@ -548,8 +621,9 @@ impl RootOwnerV3 {
             let store = &self.store;
             let enrollment = &self.enrollment;
             let anchor = &mut self.anchor;
+            let recovery_floor = self.recovery_floor.as_ref();
             store.with_write(budget, |db, budget| {
-                let loaded = Self::replay(db, enrollment, budget)?;
+                let loaded = Self::replay(db, enrollment, recovery_floor, budget)?;
                 require(loaded.pending.is_none(), "ROOT_OWNER_PENDING_FENCED")?;
                 let observed = anchor.current(budget)?;
                 store.check_identity()?;
@@ -603,8 +677,9 @@ impl RootOwnerV3 {
             let store = &self.store;
             let enrollment = &self.enrollment;
             let anchor = &mut self.anchor;
+            let recovery_floor = self.recovery_floor.as_ref();
             store.with_write(budget, |db, budget| {
-                let mut loaded = Self::replay(db, enrollment, budget)?;
+                let mut loaded = Self::replay(db, enrollment, recovery_floor, budget)?;
                 require(loaded.pending.is_none(), "ROOT_OWNER_PENDING_FENCED")?;
                 require(
                     loaded.head.version < MAX_JOURNAL_EVENTS_V3 as u64,
@@ -654,7 +729,8 @@ impl RootOwnerV3 {
         budget: &mut OwnerBudgetV3,
     ) -> RootOwnerResultV3<()> {
         self.store.with_write(budget, |db, budget| {
-            let mut loaded = Self::replay(db, &self.enrollment, budget)?;
+            let mut loaded =
+                Self::replay(db, &self.enrollment, self.recovery_floor.as_ref(), budget)?;
             require(
                 loaded.pending.as_ref() == Some(expected),
                 "ROOT_OWNER_PENDING_CHANGED",
@@ -706,8 +782,9 @@ impl RootOwnerV3 {
             let store = &self.store;
             let enrollment = &self.enrollment;
             let anchor = &mut self.anchor;
+            let recovery_floor = self.recovery_floor.as_ref();
             store.with_write(budget, |db, budget| {
-                let loaded = Self::replay(db, enrollment, budget)?;
+                let loaded = Self::replay(db, enrollment, recovery_floor, budget)?;
                 require(loaded.pending.is_none(), "ROOT_OWNER_PENDING_FENCED")?;
                 let observed = anchor.current(budget)?;
                 store.check_identity()?;

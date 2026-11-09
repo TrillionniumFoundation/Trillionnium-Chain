@@ -283,6 +283,11 @@ ROOT_RECOVERY_STRUCTURE_BLOCK = """    python3 -m unittest discover -s formal/po
     python3 scripts/ci/test_pq_root_dependency_register.py
     python3 scripts/ci/pq_root_dependency_register.py
     python3 scripts/ci/test_run_pq_root_native_v3.py
+    python3 scripts/ci/test_pq_root_custody_review_v1.py
+    python3 scripts/ci/pq_root_custody_review_v1.py
+    python3 scripts/ci/test_pq_root_migration_review_v1.py
+    python3 scripts/ci/pq_root_migration_review_v1.py
+    python3 scripts/ci/test_run_pq_root_continuation_v4.py
 """
 ROOT_RECOVERY_TRUTH_PREFIX = '''    bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_project_boundary.py
@@ -297,6 +302,7 @@ ROOT_RECOVERY_NATIVE_BLOCK = '''    python3 formal/pon-nakamoto-v1/test_pq_root_
     python3 formal/pon-nakamoto-v1/test_pq_root_effect_readback_native_v2.py -v
     python3 formal/pon-nakamoto-v1/test_pq_root_recovery_journal_native_v2.py -v
     python3 scripts/ci/run_pq_root_native_v3.py
+    python3 scripts/ci/run_pq_root_continuation_v4.py
 '''
 ROOT_RECOVERY_TEST_FILES = (
     'formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py',
@@ -307,6 +313,15 @@ ROOT_RECOVERY_TEST_FILES = (
     'scripts/ci/run_pq_root_native_v3.py',
     'scripts/ci/test_run_pq_root_native_v3.py',
     'scripts/ci/test_pq_root_dependency_register.py',
+    'scripts/ci/run_pq_root_continuation_v4.py',
+    'scripts/ci/test_run_pq_root_continuation_v4.py',
+    'scripts/ci/test_pq_root_custody_review_v1.py',
+    'scripts/ci/pq_root_custody_review_v1.py',
+    'scripts/ci/test_pq_root_migration_review_v1.py',
+    'scripts/ci/pq_root_migration_review_v1.py',
+    'trillionnium/crates/trnm-pon-node/tests/recovery_floor_v4_native.rs',
+    'trillionnium/crates/trnm-pon-node/tests/root_effect_readback_v4_native.rs',
+    'trillionnium/crates/trnm-pon-node/tests/root_budget_v4_native.rs',
     'trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs',
     'trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs',
     'trillionnium/crates/trnm-release-bundle/src/root_recovery_v3_tests.rs',
@@ -320,6 +335,7 @@ PROTOCOL_CONTRACT_BLOCK = '''    python3 formal/pon-nakamoto-v1/test_pq_root_rec
     python3 formal/pon-nakamoto-v1/test_pq_root_effect_readback_native_v2.py -v
     python3 formal/pon-nakamoto-v1/test_pq_root_recovery_journal_native_v2.py -v
     python3 scripts/ci/run_pq_root_native_v3.py
+    python3 scripts/ci/run_pq_root_continuation_v4.py
     python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-checkpoint-types -p trnm-verification-profiles --all-targets --all-features
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --all-targets --all-features

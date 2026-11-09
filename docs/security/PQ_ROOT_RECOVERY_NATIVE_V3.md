@@ -177,6 +177,22 @@ proof that an external effect was undone.
 
 ## Mandatory tests and qualification
 
+The explicit [recovery-floor continuation](PQ_ROOT_RECOVERY_FLOOR_V4.md)
+adds an externally supplied, full-enrollment-bound minimum signed history to a
+new open API; the original V3 open API retains its original behavior. The
+[native V4 provider journal](PQ_ROOT_EFFECT_READBACK_NATIVE_V4.md) now supplies
+authenticated historical readback and durable uncertainty without dispatching
+effects. These are new V4 interfaces and signed domains, not an implicit change
+to existing V3 persistent data or M15 authority.
+
+The anchor writer and transport callbacks also check the original budget after
+an error return, before propagating that error. This observes and latches
+cancellation even when a callback reports failure. A signal set and cleared
+entirely between checks remains outside that observation guarantee. The
+[migration material review](PQ_ROOT_MIGRATION_REVIEW_V1.md) requires explicit
+transition material and historical continuity; it supplies no algorithm switch
+or migration authorization.
+
 The [native runner](../../scripts/ci/run_pq_root_native_v3.py) executes four
 explicit Cargo selectors for crypto structure, actual crypto integration, native
 kernel and native owner integration tests. Every exact name and matching nonempty

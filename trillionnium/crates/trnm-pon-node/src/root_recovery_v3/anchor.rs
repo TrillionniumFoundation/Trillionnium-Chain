@@ -200,8 +200,11 @@ impl AnchorClientV3 {
         budget.check()?;
         let original_budget = budget.identity.clone();
         let message = request.message()?;
-        let approvals = self.writer.sign(&message, budget)?;
+        // Even an error return must observe the original operation's identity,
+        // cancellation latch and deadline before propagating the callback error.
+        let approvals = self.writer.sign(&message, budget);
         budget.check_identity(&original_budget)?;
+        let approvals = approvals?;
         self.writer_roster
             .verify_quorum(&message, &approvals, budget.verification())
             .map_err(map_error)?;
@@ -212,8 +215,9 @@ impl AnchorClientV3 {
                 writer_approvals: approvals,
             },
             budget,
-        )?;
+        );
         budget.check_identity(&original_budget)?;
+        let response = response?;
         let receipt = response.receipt;
         require(
             receipt.scope == self.scope

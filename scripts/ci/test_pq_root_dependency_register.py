@@ -62,6 +62,9 @@ class FrozenRoleTests(ContractCase):
         report = register.validate_manifest(data)
         self.assertEqual(set(report["declared_roles"]), EXPECTED_ROLES)
         self.assertEqual(report["native_unwired_roles"], ["effect-provider"])
+        self.assertEqual(report["native_readback_candidate_roles"], ["effect-provider"])
+        self.assertEqual(report["native_unwired_role_scope"],
+                         "effect-entry-and-production-owner-not-readback-code")
         self.assertEqual(set(report["unknown_lifetime_query_budgets"]), EXPECTED_PRIMITIVES)
         self.assertEqual(set(report["unknown_role_lifetime_populations"]), EXPECTED_ROLES)
         self.assertIs(report["source_files_checked"], False)
@@ -143,6 +146,20 @@ class FrozenRoleTests(ContractCase):
         data["roles"]["effect-provider"]["implementations"]["rust-v3"] = deepcopy(
             data["roles"]["anchor-response"]["implementations"]["rust-v3"])
         self.refused(data)
+
+    def test_native_v4_readback_remains_separate_from_effect_entry(self):
+        data = manifest()
+        implementation = data["roles"]["effect-provider"]["implementations"]["rust-v4-readback"]
+        self.assertIn("trillionnium/crates/trnm-pon-node/src/root_recovery_v3/effect_readback_v4.rs",
+                      implementation["source_paths"])
+        self.assertEqual(implementation["validity_contract"],
+                         "historical-operation-fresh-readback-only-no-effect-entry")
+        self.assertFalse(implementation["production_qualified"])
+        for field, value in (("production_qualified", True),
+                             ("validity_contract", "current-final-use-authority")):
+            changed = deepcopy(data)
+            changed["roles"]["effect-provider"]["implementations"]["rust-v4-readback"][field] = value
+            self.refused(changed)
 
     def test_height_and_unix_expiry_profiles_cannot_be_silently_equated(self):
         data = manifest()

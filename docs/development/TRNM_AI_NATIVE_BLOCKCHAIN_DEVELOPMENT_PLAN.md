@@ -8545,3 +8545,50 @@ release build. Retain its failed finite-experiment predicates, exact source and
 selected raw logs separately; no underlying causal diagnosis, weakened workload
 or all-hosted-gates PASS is claimed. The bounded readback is included in the
 same evidence directory.
+
+### 2026-11-09 root recovery-floor and native provider-readback continuation
+
+Continue #826 delivery `57e6c17ae2fa8a9cc547e271f34d90ef09115f04` on its
+complete ancestry. Preserve the original V3 APIs, persistent namespace, all
+twenty native owner tests and the original protocol/Host gates. Introduce an
+explicit [V4 recovery floor](../security/PQ_ROOT_RECOVERY_FLOOR_V4.md) and
+[native provider evidence](../security/PQ_ROOT_EFFECT_READBACK_NATIVE_V4.md),
+with separate signed/file namespaces. Neither is production M15/FinalUse
+admission or a proof of independent custody.
+
+Require full enrollment and exact signed ancestor matching for the supplied
+recovery floor. Pending-target recovery still needs complete signature replay,
+fresh exact-target anchor observation and explicit completion. A floor obtained
+from the same restored history provides no independent freshness. Check original
+writer/transport budget identity, cancellation and deadline before propagating
+callback errors as well as after success.
+
+For native provider readback, bind the original semantic operation, complete
+material, use kind, attempt, provider roster and exact orphan epoch. Synchronize
+the fresh request before the lookup, retain pending/Unknown outcomes, verify
+both signature families and revalidate complete root history before and after
+the callback. Provider keys must remain disjoint from all retained root/writer/
+anchor keys. Keep prior known declarations and all retained orphan-epoch
+declarations visible; never erase an unresolved epoch with a newer notification.
+The caller must retain a refused later notification until the prior epoch is
+explicitly reconciled. No execute, redispatch, payment, compensation or FinalUse
+method is added. Fixed provider-key lifecycle, provider-side request
+authentication/transport and actual external-effect integration remain open.
+
+Make the [custody declaration review](../security/PQ_ROOT_RECOVERY_FLOOR_V4.md)
+and [migration material review](../security/PQ_ROOT_MIGRATION_REVIEW_V1.md)
+mandatory source/CI inputs. The checked-in defaults contain no invented custody
+data and no proposed migration. Distinct labels and matching artifact bytes do
+not authenticate people, devices, backups, proofs or complete key populations.
+Migration review must retain lifetime identity, key/epoch, nonce, revocation,
+shared primitive and external liability history, without granting migration.
+
+Add three exact-name native selectors (recovery floor, provider readback and
+callback budget) alongside the unchanged V3 selectors. Re-freeze the declared
+source and hash-use register after review: all eight domain error bounds and
+all four shared primitive query bounds remain unknown. Exact-source validation
+must retain every attempted command, source-before/source-after receipts and
+raw failure logs. Do not substitute these component results for the original
+hosted acceptance or entire-workspace execution. All five requested whole-chain
+blockers remain HOLD until their external evidence and security obligations are
+actually discharged; the local code additions alone close none of those gates.
