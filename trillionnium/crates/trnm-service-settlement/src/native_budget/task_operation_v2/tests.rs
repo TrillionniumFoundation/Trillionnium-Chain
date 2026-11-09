@@ -211,6 +211,126 @@ fn complete(
         .unwrap();
 }
 
+fn paid_operation(store: &mut NativeTaskOperationStoreV2) -> Owner {
+    let binding = binding();
+    let mut owner = Owner::new();
+    store.reserve(&mut owner, binding.clone()).unwrap();
+    store.begin(&mut owner, binding.claim).unwrap();
+    complete(store, &binding, [41; 32]);
+    owner.deliver([41; 32]);
+    store.bind_delivery(&mut owner, binding.claim).unwrap();
+    owner.pay([51; 32]);
+    store
+        .record_native_payment(&mut owner, binding.claim, [51; 32])
+        .unwrap();
+    owner
+}
+
+#[test]
+fn payment_readback_rejects_conflicting_same_generation_anchors() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("operations.sqlite");
+    let mut store = NativeTaskOperationStoreV2::open(&path, config()).unwrap();
+    let mut owner = paid_operation(&mut store);
+    let historical = owner.payment.clone().unwrap();
+    let checkpoint = store.checkpoint().unwrap();
+    let report = store.report().unwrap();
+    for field in 0..3 {
+        let mut conflicting = historical.clone();
+        match field {
+            0 => conflicting.anchor.block = [71; 32],
+            1 => conflicting.anchor.state_root = [72; 32],
+            _ => conflicting.anchor.height += 1,
+        }
+        owner.payment = Some(conflicting);
+        assert_eq!(
+            store
+                .reobserve_native_payment(&mut owner, binding().claim)
+                .unwrap_err()
+                .to_string(),
+            "TASK_OPERATION_ANCHOR_ROLLBACK_V2"
+        );
+        assert_eq!(store.checkpoint().unwrap(), checkpoint);
+        assert_eq!(store.report().unwrap(), report);
+    }
+    owner.payment = Some(historical.clone());
+    let readback = store
+        .reobserve_native_payment(&mut owner, binding().claim)
+        .unwrap();
+    assert_eq!(readback.historical, historical);
+    assert_eq!(readback.observed, historical);
+    assert_eq!(owner.starts, 1);
+    assert_eq!(store.checkpoint().unwrap(), checkpoint);
+}
+
+#[test]
+fn payment_readback_obeys_other_claim_anchor_after_reopen() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("operations.sqlite");
+    let mut store = NativeTaskOperationStoreV2::open(&path, config()).unwrap();
+    let mut owner = paid_operation(&mut store);
+    let historical = owner.payment.clone().unwrap();
+
+    // A different durable journal claim advances the retained native owner epoch.
+    // The first payment remains historical at generation 3.
+    let mut other = Owner::new();
+    let mut second = binding();
+    second.claim = [81; 32];
+    second.task = [82; 32];
+    second.operation = [83; 32];
+    other.observed.task = second.task;
+    other.observed.anchor.generation = 5;
+    other.observed.anchor.height = 5;
+    other.observed.anchor.block = [84; 32];
+    other.observed.anchor.state_root = [85; 32];
+    store.reserve(&mut other, second).unwrap();
+    let checkpoint = store.checkpoint().unwrap();
+    let report = store.report().unwrap();
+    drop(store);
+    let store = NativeTaskOperationStoreV2::open(&path, config()).unwrap();
+
+    for generation in [3, 4, 5] {
+        let mut stale = historical.clone();
+        stale.anchor.generation = generation;
+        owner.payment = Some(stale);
+        assert_eq!(
+            store
+                .reobserve_native_payment(&mut owner, binding().claim)
+                .unwrap_err()
+                .to_string(),
+            "TASK_OPERATION_ANCHOR_ROLLBACK_V2"
+        );
+        assert_eq!(store.checkpoint().unwrap(), checkpoint);
+        assert_eq!(store.report().unwrap(), report);
+    }
+
+    // Equal current anchors and later reorganization generations still work.
+    // The current branch can have lower height; it cannot reuse an old epoch.
+    for current in [
+        other.observed.anchor,
+        NativeBudgetAnchorV1 {
+            generation: 6,
+            height: 3,
+            block: [86; 32],
+            state_root: [87; 32],
+            ..other.observed.anchor
+        },
+    ] {
+        let mut observed = historical.clone();
+        observed.anchor = current;
+        owner.payment = Some(observed.clone());
+        let readback = store
+            .reobserve_native_payment(&mut owner, binding().claim)
+            .unwrap();
+        assert_eq!(readback.historical, historical);
+        assert_eq!(readback.observed, observed);
+        assert_eq!(store.checkpoint().unwrap(), checkpoint);
+        assert_eq!(store.report().unwrap(), report);
+    }
+    assert_eq!(owner.starts, 1);
+    assert_eq!(other.starts, 0);
+}
+
 #[test]
 fn exact_binding_and_fresh_namespace_reject_old_journals() {
     let binding = binding();

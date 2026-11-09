@@ -1,0 +1,14 @@
+{
+  "schema": "chain-six-retained-launch-source-v1",
+  "method": "Exact Python -c launch strings retained from controller session after execution; no reexecution or timestamp backdating.",
+  "files": {
+    "validation-f0": {
+      "sha256": "0f1a073c461dae7ff020471d97866b24b9c315c2c1d744542d47b0410ff25474",
+      "bytes": 7571
+    },
+    "validation-f0-supplement-v2": {
+      "sha256": "153fcff0f5866b8faaa83f9c91c54e8cd84b29fabc94a242572dc13d3c48d1b4",
+      "bytes": 4579
+    }
+  }
+}

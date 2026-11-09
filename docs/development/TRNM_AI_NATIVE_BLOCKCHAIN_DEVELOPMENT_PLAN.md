@@ -1,3 +1,9 @@
+**Six-capability continuation 5176, 2026-11-08 America/New_York — HOLD:**
+
+Continue #821 at `e798d7125724d4b9f98c24d00cc80031f2eab4a9`. M12 V2 payment readback now checks the complete journal's latest owner epoch, including other claims, without rewriting historical payments. Two original-red regressions become green within the 70-test package. The legacy evidence reader preserves its historical body hash and adds a separate reviewed current observation opener; 73 controls pass. NPQ6 keeps every configuration/database refusal while correcting the null-enum diagnostic (four pass, one original export experiment ignored).
+
+A separate current W1 mapping reconstructs retained artifact/control/FRI bindings through unchanged historical helpers while requiring their original source refusals. Its 20 existing and 14 new controls do not turn historical QROM workflows green. A newly compiled scheduled-SHA P3 research backend regenerated and independently verified one complete proof set (two STARK components) for the retained statement. Deterministic matching bytes are not another independent statement; the eight-core/8-GiB run is not the original public resource profile. [Continuation evidence](../../evidence/chain-six-continuation-5176-20261108/README.md) keeps failures and measured source identities separate. Independent payment/custody, model quality, lifetime/PQ and production qualifications remain false/null.
+
 **M12 witnessed generation recovery V3, 2026-11-08 America/New_York — HOLD:**
 The [guarded ordinary Node/M12 entry](specs/pon/M12_GENERATION_RECOVERY_V3.md)
 adds a separate M12 witness binding, complete-journal checkpoints and transaction

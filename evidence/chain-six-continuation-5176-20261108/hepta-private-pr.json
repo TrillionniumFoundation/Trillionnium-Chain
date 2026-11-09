@@ -1,0 +1,14 @@
+{
+  "repository": "TrillionniumFoundation/hepta-private-ci",
+  "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/pull/5410",
+  "number": 5410,
+  "head": "9a72c6587536d12283f482ba04e3a24ec9910647",
+  "base_branch": "codex/learning-completion-d9fb-20261108",
+  "draft": true,
+  "actor": "ProfHepta",
+  "tested_source": "968430a3180baa3e64b7c275831595ae38c013c9",
+  "native_tests_attributed_to_final_head": false,
+  "production_activation": false,
+  "snapshot_stage": "initial-private-draft-publication",
+  "head_field_is_snapshot_not_live_branch_tip": true
+}

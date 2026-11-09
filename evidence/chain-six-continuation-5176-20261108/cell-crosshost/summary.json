@@ -1,0 +1,274 @@
+{
+  "actual_git_input_count": 96,
+  "all_fetches_overlap_original_twelve_second_provider": true,
+  "compared_frozen_source": "4505a598d6ec2644a175e47398d4a5f3f054bc5e",
+  "executed_source": "58851cf923f6a8b7190b50228b30f3e82a682f9c",
+  "experiment_relabelled": false,
+  "fetch_processes": [
+    {
+      "ended_unix_ns": 1794192943579614655,
+      "label": "fetch-0",
+      "pid": 1363222,
+      "seconds": 0.10883555095642805,
+      "started_unix_ns": 1794192943470781304
+    },
+    {
+      "ended_unix_ns": 1794192943631073608,
+      "label": "fetch-1",
+      "pid": 1363225,
+      "seconds": 0.016931575955823064,
+      "started_unix_ns": 1794192943614143392
+    },
+    {
+      "ended_unix_ns": 1794192943648087190,
+      "label": "fetch-2",
+      "pid": 1363228,
+      "seconds": 0.011485132854431868,
+      "started_unix_ns": 1794192943636602727
+    }
+  ],
+  "files": [
+    {
+      "chunks": 15,
+      "fetch_process_seconds": 0.10883555095642805,
+      "manifest": "137c56938b1a0548da76745be448106b7b533c0296d1ffa006cfd0d9221cfb63",
+      "name": "artifact.safetensors",
+      "native_response_bytes": 934465,
+      "payload_bytes": 933544,
+      "sha256": "a946c2cd7073092e607fb5ee3fd9b2dc78053ba5dc3d357a0a27c273ebbf95e2"
+    },
+    {
+      "chunks": 1,
+      "fetch_process_seconds": 0.016931575955823064,
+      "manifest": "89aa59445caad14cccd80e2a7d3f6eda187d818a32dcae091b87750a0c1c9951",
+      "name": "target-contract.json",
+      "native_response_bytes": 57100,
+      "payload_bytes": 56809,
+      "sha256": "69832b9f6230b6a08ee03b8f829b76ec539956f6214ef693f3b35b01c8ba8d76"
+    },
+    {
+      "chunks": 1,
+      "fetch_process_seconds": 0.011485132854431868,
+      "manifest": "abc7ffa67a5895566699850e9cb561e2ebe03626051beaf59655381444f8a83a",
+      "name": "wrapped-adapter.json",
+      "native_response_bytes": 21253,
+      "payload_bytes": 20962,
+      "sha256": "a3cbf4360be57dd3b2fd8a6e0ac9127bdb38828741f849b7034d18d3a99245c4"
+    }
+  ],
+  "frozen_candidate_configuration_blobs_identical": 29,
+  "full_base_weights_transferred": false,
+  "independent_operators": false,
+  "initial_preparation_text_receipts": [
+    "initial-bundle-preparation.log",
+    "initial-preflight-preparation.log"
+  ],
+  "long_term_custody": false,
+  "model_material_payload_included": false,
+  "model_public_summary": {
+    "actual_new_forward_calls": 1,
+    "actual_output": {
+      "encoded_input_id": "976a54f1e2ff5bddc51de81720796fad916a45687d00168c8eb9fa18ff63fa9d",
+      "evidence_bytes": 3401,
+      "evidence_sha256": "a79d7a272ce244db942e00590d672d16456579d2ca4d3bc951d3410faff588b9",
+      "logits_sha256": "431a0edbe2d5e4389b82b5da31a7729e6480284a38797fb46b377a2fc8fcab2d",
+      "model_forward_calls": 1,
+      "model_input_id": "2239f4a7fbeee6e942ef1ddfd3a21fc83462f225613f75c01962d83a74a2535c",
+      "output_bytes": 197579,
+      "output_sha256": "5b803dad6abdaaf5e732496b85f3c1d90440bf06975375513b0350a16d11ff22",
+      "prompt_sha256": "8e45b60cde72527944abcedacc9c1d2a99b75833a05e7e2af80dbc7df0e6fc26",
+      "request_id": "cell-usb4-5176-model-load-v1-actual-next-task",
+      "total_forward_examples": 1
+    },
+    "actual_retained_model_loaded": true,
+    "all_originals_and_received_files_unchanged": true,
+    "calls": [
+      {
+        "ended_unix_ns": 1794193084009645192,
+        "ok": true,
+        "op": "open",
+        "pid": 1366693,
+        "started_unix_ns": 1794193080623490925
+      },
+      {
+        "ended_unix_ns": 1794193084098521555,
+        "ok": true,
+        "op": "probe",
+        "pid": 1366693,
+        "started_unix_ns": 1794193084009777518
+      },
+      {
+        "ended_unix_ns": 1794193087114356583,
+        "ok": true,
+        "op": "open",
+        "pid": 1366791,
+        "started_unix_ns": 1794193084667500715
+      },
+      {
+        "ended_unix_ns": 1794193087114886848,
+        "ok": true,
+        "op": "probe",
+        "pid": 1366791,
+        "started_unix_ns": 1794193087114377272
+      },
+      {
+        "ended_unix_ns": 1794193087132747879,
+        "ok": true,
+        "op": "close",
+        "pid": 1366791,
+        "started_unix_ns": 1794193087114897627
+      }
+    ],
+    "cell_source": "58851cf923f6a8b7190b50228b30f3e82a682f9c",
+    "cold_response_exact": true,
+    "cold_worker": {
+      "exit_code": 0,
+      "pid": 1366791,
+      "terminated_by": "controlled-stdio-EOF"
+    },
+    "cpu_threads": 4,
+    "ended_unix_ns": 1794193087698815435,
+    "export_kind": "explicit-public-projection",
+    "first_worker": {
+      "exit_code": 0,
+      "pid": 1366693,
+      "terminated_by": "controlled-stdio-EOF"
+    },
+    "frozen_decision_plan_sha256": "ac14dfc1052513cf232294e1100cc07b1ac07a27e12ea4e61e4b7272baa886d5",
+    "frozen_decision_sha256": "9318e668fb6497804f4ae8d5cf98e9127235e977871814cb9562d2d1c02f4862",
+    "frozen_model_config_sha256": "29fdd6a342dec8bb880e3ebffc43f0e37ad6c16a652f46c206e43975ddfa4fc9",
+    "full_base_weights_transferred": false,
+    "full_hepta_daemon_restart_qualified": false,
+    "gradient_steps": 0,
+    "helper_sha256": "185e747bb90e4c793ea9c2bc0ce8606f88780d7154873e153a902f4da4e2ee4e",
+    "independent_operators": false,
+    "independent_quality_evaluation": false,
+    "long_term_custody": false,
+    "max_forward_examples": 1,
+    "max_patch_candidates": 1,
+    "native_current_binding": false,
+    "native_receive_receipt_sha256": "4927e5c87eafa419b6ef5d078eb07d23d9c90ae15c64bad706cbd12bf5dd98f3",
+    "operation": "cell-usb4-5176-model-load-v1",
+    "optimizer_calls": 0,
+    "original_frozen_record_sha256": "8498508cb2b4479652455cd5b5fb0b74f6eeb02cfae483d1a95261ed9e1d7840",
+    "original_result_sha256": "6c2d8eb45ba27d366a7129b17fa2527a45980011a367b8da842ba7354b694595",
+    "private_hepta_source_included": false,
+    "private_keys_included": false,
+    "private_owner_state_included": false,
+    "production_activation": false,
+    "production_final_use": false,
+    "public_discovery": false,
+    "qualification": "HOLD_NO_GO",
+    "reexecuted_after_recovery": false,
+    "result": "PASS_RECEIVED_BYTES_MODEL_LOAD_AND_COLD_READBACK",
+    "schema": "cell-crosshost-received-retained-model-load-v1",
+    "started_unix_ns": 1794193080620439913,
+    "worker_controller_response_seconds": 150,
+    "worker_package_sha256": "1cfcb4997e86e1e9dee51f4a1b80b19439232344abce8d60d2e52cd624bd25d7",
+    "worker_request_ms": 120000,
+    "worker_sha256": "10c09efcb24d65ce850ccbee61f3034262fa026ee5d19adab90bc9eda67049c0"
+  },
+  "native_cached_chunks": 0,
+  "native_protocol": "persistent-v2",
+  "native_rejected_responses": 0,
+  "native_request_ms": 2000,
+  "native_response_bytes": 1012818,
+  "operator_scope": "same-operator-two-physical-hosts-private-USB4",
+  "outside_compared_closure_changes": [
+    ".github/workflows/codeql-real-exact-source.yml",
+    ".github/workflows/pon-w1-current-source-mapping.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "evidence/chain-six-continuation-5176-20261108/README.md",
+    "evidence/chain-six-continuation-5176-20261108/development-records.json",
+    "evidence/chain-six-continuation-5176-20261108/development-records.tar.gz",
+    "evidence/chain-six-continuation-5176-20261108/hosted-campaign-retention.json",
+    "evidence/chain-six-continuation-5176-20261108/hosted-campaign-selected-text.tar.gz",
+    "evidence/chain-six-continuation-5176-20261108/parent-821-workflows.json",
+    "evidence/chain-six-continuation-5176-20261108/source-pin-update.json",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/check_public_readiness_evidence.py",
+    "scripts/ci/test_public_readiness_evidence.py",
+    "scripts/ci/test_w1_current_source_mapping.py",
+    "scripts/w1_current_source_mapping.py",
+    "trillionnium/crates/trnm-pon-node/tests/pq_application_local_cli.rs"
+  ],
+  "per_file_native_overall_ms": 3000,
+  "private_hepta_source_included": false,
+  "private_keys_included": false,
+  "private_owner_directories_included": false,
+  "production_activation": false,
+  "production_final_use": false,
+  "provider_native_seconds": 12,
+  "provider_process": {
+    "provider_ended_unix_ns": 1794192953210309686,
+    "provider_pid": 1243488,
+    "provider_ready_unix_ns": 1794192941210219728,
+    "provider_spawn_after_unix_ns": 1794192941208211093,
+    "provider_spawn_before_unix_ns": 1794192941207852342
+  },
+  "provider_stats": {
+    "completed": 20,
+    "connections": 3,
+    "overloaded": 0,
+    "peak_active_workers": 1,
+    "request_attempts": 23,
+    "schema": "trnm.cell.serve.persistent.v2",
+    "sent_response_bytes": 1012818
+  },
+  "public_discovery": false,
+  "qualification": "HOLD_NO_GO",
+  "result": "PASS_RETAINED_OBSERVATIONS_AND_SOURCE_CORRESPONDENCE",
+  "retained_native_failures": [
+    {
+      "consumer_process_seconds": 2.031966174952686,
+      "consumer_receipt_sha256": "5aa5059f2d3193ff9868a1a3161f255365bba9c805d6aee395375310987a4948",
+      "label": "desktop-to-ai395-wifi",
+      "native_error": "cell I/O: cell persistent request peer=192.168.0.5:39261 kind=1 phase=connect elapsed_ms=2001 os=None: connection timed out\n",
+      "native_payload_bytes": 0,
+      "provider_receipt_sha256": "d73261f3a87a2e11a5ab4821d60c369940de1ddac9afd94308e4946f7ac33fd2",
+      "provider_response_bytes": 0
+    },
+    {
+      "consumer_process_seconds": 2.025067498907447,
+      "consumer_receipt_sha256": "12c00b08a99e9acb4cb8ee59ef0a12231e7a1468f1e72bd78e1e542e0768a753",
+      "label": "desktop-to-ai395-bridge",
+      "native_error": "cell I/O: cell persistent request peer=192.168.0.11:39262 kind=1 phase=connect elapsed_ms=2001 os=None: connection timed out\n",
+      "native_payload_bytes": 0,
+      "provider_receipt_sha256": "d240c75167cdfe0bad64bfd8274a9cf9b3e79372c8d6e4a1b49918266fdf757e",
+      "provider_response_bytes": 0
+    },
+    {
+      "consumer_process_seconds": 2.0137330970028415,
+      "consumer_receipt_sha256": "679f48b3e7a63cd7b9e47b13edb091de6d221c4529c1115463431ff287e0d82e",
+      "label": "rog-to-ai395-usb4",
+      "native_error": "cell I/O: cell persistent request peer=10.77.0.2:39263 kind=1 phase=connect elapsed_ms=2001 os=None: connection timed out\n",
+      "native_payload_bytes": 0,
+      "provider_receipt_sha256": "e871eb8e525c427fa581fe8921cb451267f625378af28743739a13eb4df241d9",
+      "provider_response_bytes": 0
+    }
+  ],
+  "retained_preparation_failures": [
+    {
+      "error": "TimeoutExpired(['git', 'worktree', 'add', '-b', 'fix/chain-cell-usb4-5176', '/home/qian-qi/work/chain-cell-usb4-5176/source', '58851cf923f6a8b7190b50228b30f3e82a682f9c'], 120)",
+      "label": "evidence/build.json",
+      "original_sha256": "b9de626b272e813970349ab80a9675477724aada08f421134a87eca11fe4a512"
+    },
+    {
+      "error": "AssertionError(('preflight-new', 'bash: scripts/project-preflight.sh: No such file or directory\\n'))",
+      "label": "evidence/sparse-build/build.json",
+      "original_sha256": "c38d31ccc0c564f566c09fafe87d6ec8e81e9d29605ab9c8f9e896f16b7175ce"
+    },
+    {
+      "error": "AssertionError(('trillionnium/crates/trnm-protocol/src/../../../../config/pon/work-profile-v1.json', '54e43139d3691b62f76f9e8976e1d2a974e8524b', None))",
+      "label": "evidence/sparse-build-v2/build.json",
+      "original_sha256": "9d07c422ed3d34f5c504e423a67efc75d96fc93ba9031a75201c98741f3b6339"
+    }
+  ],
+  "schema": "cell-public-continuation-summary-v1",
+  "staging_counted_as_native_cell_transfer": false,
+  "successful_native_chunks": 17,
+  "successful_native_payload_bytes": 1011315,
+  "two_hosts_actual_git_input_sets_identical": true,
+  "utc_barrier_wait_counted_as_native_cell_transfer": false
+}

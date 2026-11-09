@@ -1,0 +1,93 @@
+{
+  "changed_files": [
+    {
+      "maintenance_sha256": "63740d4a390e379ab8b23848e86031ede66a6f4e8789108974a9c5734143095f",
+      "path": "codex-rs/hepta-agentd/REAL_MODEL_LEARNING_VALIDATION.md",
+      "tested_sha256": "20620d74fbae06c48bb2fda9776646d8b04a7e1ad6ae10026df57179a3dca5af"
+    },
+    {
+      "maintenance_sha256": "69d80b46de3040b109b0944105fe55274d7fc679712eed0c6a4d8ced40e0b3aa",
+      "path": "codex-rs/hepta-agentd/src/learning_iteration_os_process_recovery.rs",
+      "tested_sha256": "96071b295cfab2da0c219800940017632cfe2a2bff2b4cb7f5ca6a40017bca80"
+    },
+    {
+      "maintenance_sha256": "fcf53674eb2598cecc4c552acbbdb545d5a3af5a48202177955669649bc9768f",
+      "path": "codex-rs/hepta-agentd/src/neuron_generation_owner_process_recovery.rs",
+      "tested_sha256": "15c5db552a2946d120e62c17d11e48998a83437f3fa60b2b63802a3a69f9e1d9"
+    },
+    {
+      "maintenance_sha256": "f94a3b8ae874f952ed365ecf4b673254d9b25a9ad07d62b728bf629566eca00b",
+      "path": "codex-rs/hepta-agentd/src/neuron_generation_real_learning_tests.rs",
+      "tested_sha256": "17b89a988a6f965babd046053a23a60d58539ea50002d5ad2de952c145ddd60b"
+    }
+  ],
+  "maintenance_result": {
+    "abort_floor": 8589934592,
+    "commands": [
+      {
+        "argv": [
+          "/home/qian-qi/work/chain-hepta-native-1f3ba4601505/tools/bin/just",
+          "fix",
+          "-p",
+          "codex-hepta-agentd",
+          "--locked",
+          "--offline"
+        ],
+        "exit_code": 0,
+        "label": "fix",
+        "log_sha256": "69a56c5371fb8de5a25dbc8e9b65e6150b0e26ee301968224aef02759a1f6c5e"
+      },
+      {
+        "argv": [
+          "/home/qian-qi/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "clippy",
+          "--tests",
+          "-p",
+          "codex-hepta-agentd",
+          "--locked",
+          "--offline",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "label": "strict-clippy",
+        "log_sha256": "f46c968c11f4300dc1e3c339bc0236aa9a29b955f2df3d966f954102d123967a"
+      },
+      {
+        "argv": [
+          "/home/qian-qi/work/chain-hepta-native-1f3ba4601505/tools/bin/just",
+          "fmt",
+          "--base",
+          "bdf35d0991a02cdf201cc098257132fe3282f99f"
+        ],
+        "exit_code": 0,
+        "label": "fmt",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "end_unix_ns": 1794192678780652865,
+    "entry_free": 124060880896,
+    "free_after": 117364711424,
+    "git_status": " M codex-rs/hepta-agentd/REAL_MODEL_LEARNING_VALIDATION.md\n M codex-rs/hepta-agentd/src/learning_iteration_os_process_recovery.rs\n M codex-rs/hepta-agentd/src/neuron_generation_owner_process_recovery.rs\n M codex-rs/hepta-agentd/src/neuron_generation_real_learning_tests.rs\n",
+    "result": "PASS_MAINTENANCE",
+    "schema": "hepta-owner-os-recovery-post-test-maintenance-v1",
+    "start_unix_ns": 1794192308713427466,
+    "tested_source": "968430a3180baa3e64b7c275831595ae38c013c9",
+    "tests_rerun_after_maintenance": false
+  },
+  "maintenance_source": "9a72c6587536d12283f482ba04e3a24ec9910647",
+  "maintenance_tree": "88525a137d350a2818dd847d4681267ea73cca0a",
+  "native_tests_rerun_after_maintenance": false,
+  "other_changes": "Rust formatting and validation documentation.",
+  "raw_final_source_verification": {
+    "head": "9a72c6587536d12283f482ba04e3a24ec9910647",
+    "tracked_entries_verified": 11215,
+    "tree": "88525a137d350a2818dd847d4681267ea73cca0a"
+  },
+  "rust_non_format_change": "One redundant clone removed in the WrongIteration test branch; the local request is moved instead.",
+  "schema": "hepta.research.native-owner-process-source-relationship.v1",
+  "test_pass_attributed_to_maintenance_bytes": false,
+  "tested_source": "968430a3180baa3e64b7c275831595ae38c013c9",
+  "tested_tree": "2b0530ef5d0bbcdd1d2dbb2e3badd7d543a5e255"
+}

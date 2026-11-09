@@ -1,0 +1,21 @@
+{
+  "all_members_restored_and_sha256_verified": true,
+  "archive": "/data/chain-six-5176-20261108/w1-f0-proof-owner-22-5176-20261109.tar.gz",
+  "bytes": 45515,
+  "evidence_directory": "/data/chain-six-5176-20261108/f0-proof-owner-22",
+  "executable_bytes_included": false,
+  "file_count_including_manifest": 51,
+  "manifest_sha256": "10b8dc15557b5fe0876ed0f65c575d66dc79c4a4f01ea054988164616eeb201a",
+  "new_complete_proofs_generated": 0,
+  "prior_archives_unchanged": {
+    "w1-f0-native-proof-supplement-5176-20261109.tar.gz": "87ac846318dc90375b72cdd14e2a1447c962ef256705bfe9aa65ea2d520c554b",
+    "w1-fresh-stark-native-5176-20261109.tar.gz": "5c42a370d3c39c0d144047f0c2308c5b113a1e752e51fb90061643aa699f68f8"
+  },
+  "report": "/data/chain-six-5176-20261108/f0-proof-owner-22-public-bundle/README.md",
+  "retained_proof_fixture_bytes_included": false,
+  "schema": "trnm-w1-f0-proof-owner-22-archive-verification-v1",
+  "sha256": "0a92fe0713bee55a0a61da1825917b5ad4423775d5e3025c4d5bf678e0aceec2",
+  "source_head": "4505a598d6ec2644a175e47398d4a5f3f054bc5e",
+  "status": "PASS",
+  "summary_sha256": "08b1e211b96d74e8d07b6d7d79905ce76b0f1af995776eca1c65359e4ab7c469"
+}

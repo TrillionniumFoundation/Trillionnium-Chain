@@ -12,6 +12,11 @@ on:
     branches:
       - main
       - fix/chain-six-axis-performance-20261103
+      # Stacked qualification candidates need their own real head/merge scan.
+      # The read-only API exporter cannot generate a missing analysis, and its
+      # original missing-result refusal is deliberately unchanged.
+      - fix/chain-p0-unified-qualification-20261108-99b5
+      - fix/chain-six-full-d9fb-20261108
 permissions:
   contents: read
 jobs:
