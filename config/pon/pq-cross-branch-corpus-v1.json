@@ -1434,7 +1434,7 @@
     "trillionnium/crates/trnm-pon-node/examples/pon_w1_preparation_strategy_v4.rs": "10236458a1fabf587e2aace247a43edbfabda7a9",
     "trillionnium/crates/trnm-pon-node/examples/pon_w1_reused_cost_v3.rs": "92f1e2a9e971af5abe9e43b1ddfb976c41da9be4",
     "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "b0d6978f35ae42d1bde955bbe11fe6f05df79a75",
-    "trillionnium/crates/trnm-pon-node/examples/support/w1_cost_producers.rs": "06ee7d87a9252c467fddc1f3676cb7fabe733b33",
+    "trillionnium/crates/trnm-pon-node/examples/support/w1_cost_producers.rs": "7109064c900422e23f3ad2c2769e6d3a7386e8c8",
     "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs": "0f611459c4c1c37488861ba36c82ba8302e40c4c",
     "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness/native_growth/account_prefix_tests.rs": "10cccefbab932cc22569eb4a8c035f6de7defc05",
     "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs": "3ac7b48c55ed48f125dbab3ec2b23c0507ab3c13",
@@ -1924,6 +1924,6 @@
     "docs/research/PON_W1_LIFECYCLE_COST_V4.md": "d3034555c130a4263e99bea2c7f63972f070955b",
     "scripts/ci/test_w1_lifecycle_cost_v4.py": "932e123285a68592583d11eed85f04c958a12e60",
     "scripts/pon_w1_lifecycle_cost_v4.py": "06d92b853c8a7b0766b1152104c834109243d308",
-    "trillionnium/crates/trnm-pon-node/examples/pon_w1_lifecycle_cost_v4.rs": "112b8943a1cfc009d7a8fc70e8d486b41429409f"
+    "trillionnium/crates/trnm-pon-node/examples/pon_w1_lifecycle_cost_v4.rs": "e1870e82a3ddfb9e117d6c0e232acb23ca9c4008"
   }
 }

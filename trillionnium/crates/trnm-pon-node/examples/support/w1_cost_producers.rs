@@ -182,11 +182,14 @@ pub(crate) trait SearchObserver {
         Ok(())
     }
 }
+// V4 uses the observed entry; V2/V3 retain this shared compatibility adapter.
+#[allow(dead_code)]
 struct NoObserver;
 impl SearchObserver for NoObserver {
     const MEASURE_ATTEMPTS: bool = false;
 }
 
+#[allow(dead_code)] // Called by V2/V3, but not by the V4 diagnostic entry.
 pub(crate) fn search(
     producer: &Producer,
     target: Hash,

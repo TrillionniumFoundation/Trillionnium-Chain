@@ -164,7 +164,7 @@ fn cohort<W: Write>(
     };
     counts.cohorts += 1;
     if let Some(producer) = &prepared {
-        for search in 0..SEARCHES {
+        for (search, canonical_search) in canonical.iter_mut().enumerate() {
             let mut search_key = key.clone();
             search_key["search_index"] = search.into();
             journal.emit(event(&search_key, "search-start"))?;
@@ -191,7 +191,7 @@ fn cohort<W: Write>(
             journal.emit(finished)?;
             counts.searches += 1;
             counts.attempts += searched.attempts.len();
-            if let Some(original) = &canonical[search] {
+            if let Some(original) = canonical_search.as_ref() {
                 if original.attempts != searched.attempts || original.winner != searched.winner {
                     return Err("LIFECYCLE_SUPPORTED_STREAM_DISAGREEMENT".into());
                 }
@@ -236,8 +236,8 @@ fn cohort<W: Write>(
                 }
                 counts.verified_searches += 1;
             }
-            if canonical[search].is_none() {
-                canonical[search] = Some(searched);
+            if canonical_search.is_none() {
+                *canonical_search = Some(searched);
             }
         }
     }
