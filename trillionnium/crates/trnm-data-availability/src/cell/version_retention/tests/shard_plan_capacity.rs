@@ -7,6 +7,9 @@ use crate::cell::{
     MAX_CELL_RETAINED_SHARD_ROOTS_V1,
 };
 
+#[path = "shard_plan_paged.rs"]
+mod paged;
+
 fn capacity_cache(path: &Path) -> CellStoreV1 {
     // Explicit fixture admission within the unchanged ordinary cache limits:
     // 128 original chunks plus 768 independent original CRS1 wires/manifests.

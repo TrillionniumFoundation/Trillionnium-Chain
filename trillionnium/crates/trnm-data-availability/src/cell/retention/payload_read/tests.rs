@@ -91,6 +91,136 @@ fn bounded_arena_read_returns_exact_multichunk_bytes_without_cache_or_debit_chan
 }
 
 #[test]
+fn bounded_arena_chunk_read_returns_each_exact_original_range_without_full_payload_allocation() {
+    let dir = tempfile::tempdir().unwrap();
+    let (mut arena, cache, contract, bytes) = fixture(dir.path());
+    let initial = arena
+        .acknowledge(contract.operation, &cache, deadline())
+        .unwrap();
+    drop(cache);
+    fs::remove_file(dir.path().join("cache.sqlite")).unwrap();
+    for (index, expected) in bytes.chunks(16_384).enumerate() {
+        let actual = arena
+            .read_chunk_controlled(
+                contract.operation,
+                contract.manifest.id(),
+                index as u32,
+                deadline(),
+                &mut || Ok(()),
+            )
+            .unwrap();
+        assert_eq!(actual, expected);
+        assert!(actual.len() <= 16_384);
+    }
+    assert_eq!(
+        arena.verify(contract.operation, deadline()).unwrap(),
+        initial
+    );
+}
+
+#[test]
+fn bounded_arena_chunk_read_requires_ack_original_manifest_range_and_deadline() {
+    let dir = tempfile::tempdir().unwrap();
+    let (mut arena, cache, contract, _) = fixture(dir.path());
+    assert!(arena
+        .read_chunk_controlled(
+            contract.operation,
+            contract.manifest.id(),
+            0,
+            deadline(),
+            &mut || Ok(())
+        )
+        .is_err());
+    let initial = arena
+        .acknowledge(contract.operation, &cache, deadline())
+        .unwrap();
+    assert!(arena
+        .read_chunk_controlled(contract.operation, [99; 32], 0, deadline(), &mut || Ok(()))
+        .is_err());
+    assert!(arena
+        .read_chunk_controlled(
+            contract.operation,
+            contract.manifest.id(),
+            4,
+            deadline(),
+            &mut || Ok(())
+        )
+        .is_err());
+    assert!(arena
+        .read_chunk_controlled(
+            contract.operation,
+            contract.manifest.id(),
+            0,
+            Instant::now() - Duration::from_secs(1),
+            &mut || Ok(())
+        )
+        .is_err());
+    assert!(matches!(
+        arena.read_chunk_controlled(
+            contract.operation,
+            contract.manifest.id(),
+            0,
+            deadline(),
+            &mut || Err(CellErrorV1::Invalid("chunk owner cancelled"))
+        ),
+        Err(CellErrorV1::Invalid("chunk owner cancelled"))
+    ));
+    assert_eq!(
+        arena.verify(contract.operation, deadline()).unwrap(),
+        initial
+    );
+    arena
+        .retire(contract.operation, 10, None, deadline())
+        .unwrap();
+    assert!(arena
+        .read_chunk_controlled(
+            contract.operation,
+            contract.manifest.id(),
+            0,
+            deadline(),
+            &mut || Ok(())
+        )
+        .is_err());
+}
+
+#[test]
+fn bounded_arena_chunk_read_checks_requested_actual_bytes_without_using_valid_cache() {
+    let dir = tempfile::tempdir().unwrap();
+    let (mut arena, cache, contract, bytes) = fixture(dir.path());
+    arena
+        .acknowledge(contract.operation, &cache, deadline())
+        .unwrap();
+    arena.arena.seek(SeekFrom::Start(32_768)).unwrap();
+    arena.arena.write_all(&[0xff]).unwrap();
+    arena.arena.sync_all().unwrap();
+    cache.verify_complete(&contract.manifest).unwrap();
+    assert_eq!(
+        arena
+            .read_chunk_controlled(
+                contract.operation,
+                contract.manifest.id(),
+                0,
+                deadline(),
+                &mut || Ok(())
+            )
+            .unwrap(),
+        &bytes[..16_384]
+    );
+    assert!(arena
+        .read_chunk_controlled(
+            contract.operation,
+            contract.manifest.id(),
+            2,
+            deadline(),
+            &mut || Ok(())
+        )
+        .is_err());
+    let row = arena.required_row(contract.operation).unwrap();
+    assert_eq!(row.initial_bytes, bytes.len() as u64);
+    assert_eq!(row.repair_bytes, 0);
+}
+
+#[test]
 fn bounded_arena_read_refuses_pending_retired_and_missing_obligations() {
     let dir = tempfile::tempdir().unwrap();
     let (mut arena, cache, contract, bytes) = fixture(dir.path());

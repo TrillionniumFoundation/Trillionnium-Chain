@@ -15,6 +15,9 @@ use trnm_service_settlement::native_budget::NativeBudgetEffectCheckV1;
 #[path = "shard/plan.rs"]
 mod plan;
 pub use plan::{
+    NativeCellPagedRetainedShardPlanReadbackV2, NativeCellPagedRetainedShardPlanTargetsV2,
+    NativeCellPagedShardRecoveryBudgetV2, NativeCellPagedShardRecoveryReadbackV2,
+    NativeCellPagedShardRecoveryRequestV2, NativeCellRetainedShardPageReadbackV2,
     NativeCellRetainedShardPlanReadbackV1, NativeCellRetainedShardPlanRequestV1,
     NativeCellRetainedShardPlanTargetsV1, NativeCellRetainedShardSlotReadbackV1,
     NativeCellRetainedShardVerificationBudgetV1, NativeCellShardDamageV1,

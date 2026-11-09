@@ -12,6 +12,13 @@ use trnm_data_availability::cell::{
 #[path = "recovery/execute.rs"]
 mod execute;
 
+#[path = "paged_recovery.rs"]
+mod paged_recovery;
+pub use paged_recovery::{
+    NativeCellPagedShardRecoveryBudgetV2, NativeCellPagedShardRecoveryReadbackV2,
+    NativeCellPagedShardRecoveryRequestV2,
+};
+
 #[derive(Clone, Debug)]
 pub struct NativeCellShardRecoveryRequestV1 {
     /// Complete original storage claims; their original M12 intents must exist.

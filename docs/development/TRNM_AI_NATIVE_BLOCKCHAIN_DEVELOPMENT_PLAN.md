@@ -10811,3 +10811,73 @@ operation, independent placement, future availability, prepaid repair, WAN SLA,
 actual NVMe/VRAM, arbitrary-loader dependency confinement, ordinary Hepta next-task
 execution, current FinalUse or a whole-chain PQ lifetime bound. All six original
 operational qualifications remain HOLD until their own evidence is present.
+
+### 2026-11-09 Cell transport leaves and complete paged custody
+
+Continue the #836 storage composition from
+`0746a462e80067b78317597f2fa4bacf5e3db958` under the
+[V2 storage contract](specs/pon/CELL_PAGED_STORAGE_V2.md). Preserve the earlier
+TCM1, BEP52 V1, CRP1, TCA3, CSP1 and M12 profiles, original funding and all
+historical execution outcomes. This continuation has exact-source validation
+**PENDING** and does not change operational **HOLD / NO-GO**.
+
+- Derive CBM2 mappings and CBL2 companion proofs from actual bytes: keep 16 KiB
+  transport leaves while using the existing larger TCM1 storage/erasure chunks.
+  Check the ordinary storage SHA-256 separately from the Merkle subtree, retain
+  BEP52's minimal short-file tree and zero-leaf padding, and publish acquired
+  storage chunks only after complete original digest verification.
+- Add CRR2/CRG2 complete-root/page ownership. Derive one canonical protected set
+  from the real TCA3 catalog, bind every version/root, exact catalog snapshot,
+  original funding/effect identity and page range, and keep cross-page coverage
+  mandatory. Use acknowledged arena chunks instead of filling a complete source
+  cache; construction and page metadata confer no new effect authority.
+- Preflight all original native claims and the complete provider history/physical
+  capacity before the first provider effect. Commit the cumulative allowance
+  for two full verification passes, execute original New effects, and reconcile
+  Pending/Done only from original targets. The second pass rereads every slot;
+  page receipts cannot create complete-set authority or reset an Unknown effect.
+- Keep resource statements precise: per-page metadata and one-codeword payload
+  staging are bounded, while complete native request/claim metadata remains in
+  memory. The 4096-chunk paged union has a conditional 16 GiB payload ceiling;
+  page count, metadata, catalog, actual physical/history, funding, cache and
+  original deadline limits can bind earlier.
+- Use a dedicated disposable delivery staging cache. The explicit TCL4
+  `discard_manifest_until` API reclaims named content's byte/row allowance using
+  the existing writer and quota triggers after actual provider verification;
+  it is not automatic eviction, file shrinking or retained-object retirement.
+  Deleting a shared hash can make another cache manifest incomplete and requires
+  normal verified reacquisition. Exercise quota reuse, persistent reopening and
+  this shared-byte boundary with actual SQL/cache contents.
+- Add the separately framed `cell-bep52-storage-pinned-tcp-v2` adapter. It uses
+  owner-pinned mapping/context, an explicit peer set and the original cumulative
+  session budget; CBR2 requests a storage index whose CBD2 leaf responses share
+  one deadline, and success requires ordered full-payload verification. Its
+  custom framing cannot be reported as complete BEP52 peer interoperability,
+  authenticated peer identity or ordinary local execution authorization.
+  Exact-source runtime validation remains pending.
+- Add explicit `Node::recover_native_cell_paged_shard_plan` with
+  `NativeCellPagedShardRecoveryRequestV2`, `NativeCellPagedShardRecoveryBudgetV2`
+  and `NativeCellPagedShardRecoveryReadbackV2`. Admit the whole root's original
+  storage/repair claims and capacity, then commit one cumulative allowance for
+  three target scans and at most three codec admissions per chunk. Census all
+  pages from at least four actual targets per chunk before checking every
+  provider's original repair-history/byte capacity and admitting a new repair.
+  Copy only under independently funded New repair identities; Pending/Done
+  retain their target-only reconciliation and original Unknown responsibility.
+  Reconstruct per chunk into a disposable cache that can reuse two shard rows,
+  explicitly clear its named contents, and finish with fresh full-root target,
+  codeword, catalog and funding observations. The final durable storage-intent
+  check must be all Done even when a returned slot truthfully records Pending
+  as the replay observed before that call reconciled it.
+
+Retain exact-source runtime evidence before claiming component acceptance; test
+source, interrupted compilation and earlier #836 passes are not new execution.
+The new full CRP2 readback requires every original slot to be readable. Existing
+funded single-slot repair remains available, but CRP1 automatic recovery is not
+a CRP2 recovery adapter. The dedicated V2 recovery source and tests are now
+present with runtime validation pending; no background repair policy, new repair
+identity or funding is synthesized. Hot replication, cold erasure coding,
+prefetch and autonomous cache policy are not activated. Paid renewal/repair/exit,
+independent failure domains, WAN availability, ordinary Hepta FinalUse and remote
+pipeline inference remain separate open obligations under their original
+acceptance owners.

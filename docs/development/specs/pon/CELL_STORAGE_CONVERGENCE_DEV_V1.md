@@ -6,6 +6,12 @@ Hepta FinalUse authority. Every execution observation identifies its own complet
 source and original resource limits. The authoritative plan remains
 [the single project plan](../../TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
 
+The separate [V2 transport-mapping and paged-storage continuation](CELL_PAGED_STORAGE_V2.md)
+adds explicit CBM2/CBL2 and CRR2/CRG2 profiles over these original owners.
+Its validation remains pending. The V1 descriptions, finite bounds and historical
+execution observations below retain their original source and meaning; they are
+not reclassified as execution of the V2 continuation.
+
 ## 1. Source and protocol boundaries
 
 The continuation preserves the existing six-capability integration lineage.

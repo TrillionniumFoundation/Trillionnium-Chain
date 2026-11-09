@@ -16,6 +16,8 @@ use super::{
 
 static OUTPUT_SEQUENCE: AtomicU64 = AtomicU64::new(0);
 
+mod discard;
+
 #[cfg(test)]
 #[path = "cache_wal_tests.rs"]
 mod wal_tests;

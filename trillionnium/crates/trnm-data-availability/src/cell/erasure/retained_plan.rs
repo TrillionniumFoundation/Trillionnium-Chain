@@ -26,7 +26,14 @@ use crate::cell::{
 
 mod codec;
 mod file;
+mod paged;
 pub use file::CellRetainedShardPlanFileV1;
+pub use paged::{
+    CellPagedRetainedShardPlanFileV2, CellPagedRetainedShardPlanRequestV2,
+    CellPagedRetainedShardPlanV2, CellRetainedShardPagePinV2, CellRetainedShardPageV2,
+    MAX_CELL_PAGED_RETAINED_CHUNKS_V2, MAX_CELL_RETAINED_SHARD_PAGES_V2,
+    MAX_CELL_RETAINED_SHARD_ROOT_BYTES_V2,
+};
 
 // Initial published CRP1 profile: complete model/environment unions remain
 // bounded by 128 chunks, 64 roots and the independent 2 MiB metadata ceiling.
@@ -503,6 +510,22 @@ fn source_view(
     until: u64,
     deadline: Instant,
 ) -> CellResultV1<SourceView> {
+    source_view_bounded(
+        catalog,
+        from,
+        until,
+        MAX_CELL_RETAINED_SHARD_CHUNKS_V1,
+        deadline,
+    )
+}
+
+fn source_view_bounded(
+    catalog: &CellVersionRetentionStoreV3,
+    from: u64,
+    until: u64,
+    maximum_chunks: usize,
+    deadline: Instant,
+) -> CellResultV1<SourceView> {
     check(deadline)?;
     require(
         from < until && until <= i64::MAX as u64,
@@ -551,7 +574,7 @@ fn source_view(
             .ok_or(CellErrorV1::Invalid("retained shard plan chunk overflow"))
     })?;
     require(
-        chunks > 0 && chunks <= MAX_CELL_RETAINED_SHARD_CHUNKS_V1,
+        chunks > 0 && chunks <= maximum_chunks,
         "retained shard plan complete chunk capacity",
     )?;
     require(
