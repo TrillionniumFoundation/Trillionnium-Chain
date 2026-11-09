@@ -10713,3 +10713,29 @@ its own exact source, original operation and receipts. Separate branch logs
 cannot establish a same-iteration production loop. This composition does not
 automatically include #822, #823, #826, #828, #829 or #830. All seven original
 gates remain HOLD; production activation and FinalUse qualification stay false.
+
+### 2026-11-09 — Bind joint consensus qualification and dynamic participation
+
+Continue the exact #835 source `e2a02f9271b49f146e70806c8a66e161b5973971`
+with the [joint qualification contract](../protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_QUALIFICATION_V1.md).
+Bind 23 named native/parameter/cost sources and both PNH1/PNP1 and PGH2/PNP2
+owners to a separately anchored source map. Preserve the installed successor
+depth and required-work gates, all 16 unknown research cost points, 18 unknown
+joint environment inputs and 13 open proof obligations. A valid research
+contract returns HOLD_NO_GO; an explicit qualification request is refused.
+Source consistency is not full build identity, semantic verification or a
+native security probability.
+
+Extend the existing conditional fork argument through the
+[dynamic participation contract](../protocol/pon-nakamoto-v1/details/DYNAMIC_PARTICIPATION_V1.md):
+qualification before honest-progress accounting, current delivered score floor,
+inherited deadlines, separate newcomer/carry-in debt, and persistent task costs
+across leave/rejoin. Finite declared-event checks cannot authenticate bootstrap,
+complete initial state, real clocks or the assumed production/delivery laws.
+Credit quality, block-count quality and business inclusion remain distinct.
+
+Run these three defensive qualification/model commands exactly once in
+repository-truth with independent omission, duplication and relocation controls.
+Preserve original evidence and report the new exact source and actual commands.
+No native target, time, work score, confirmation threshold, signed domain,
+stored schema, production activation or FinalUse authority changes here.
