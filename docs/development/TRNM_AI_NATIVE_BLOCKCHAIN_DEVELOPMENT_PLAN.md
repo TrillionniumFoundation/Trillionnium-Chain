@@ -8592,3 +8592,26 @@ raw failure logs. Do not substitute these component results for the original
 hosted acceptance or entire-workspace execution. All five requested whole-chain
 blockers remain HOLD until their external evidence and security obligations are
 actually discharged; the local code additions alone close none of those gates.
+
+
+The first frozen continuation source `db48af79b9686f2c7bb50ff7dde9b2233fe32fb8`
+retains 39 completed successful command records and successful complete V3/V4
+native runner summaries. Its parent campaign was interrupted during strict
+Clippy after the compiler frontend reported SIGKILL; the environment became
+unavailable and no parent summary or source-after was produced. The cause of
+that SIGKILL is not established. Recovered raw command logs must remain separate
+from a completed campaign. Hosted strict Clippy separately identified an unused
+`RootStateV3` import left by fixture extraction; remove that import and update
+its reviewed source pins without changing any test body or protocol.
+
+The hosted complete-workspace build at that source returned zero, but its
+artifact validator still required the old shared two-feature list. Preserve
+`--workspace --all-targets --all-features`, the original test optimizations and
+all workload/budget checks. Require exact per-crate lists instead: Node has
+`default`, `pq-native-openssl`, `pq-root-v3`; M06 retains its original two. Apply
+the same Node list to the retained ancestry target and report both lists. Replay
+the actual workflow AST assertions with missing/extra/cross-crate/duplicate and
+conditional-skip controls, and make these controls mandatory in repository truth.
+The original native campaign failure and CodeQL export status remain separate.
+Re-freeze and re-execute the corrected candidate in an isolated checkout using
+the repository-pinned provider and toolchain; retain HOLD and every unknown bound.

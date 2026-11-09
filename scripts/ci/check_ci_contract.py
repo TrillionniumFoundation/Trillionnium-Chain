@@ -288,6 +288,7 @@ ROOT_RECOVERY_STRUCTURE_BLOCK = """    python3 -m unittest discover -s formal/po
     python3 scripts/ci/test_pq_root_migration_review_v1.py
     python3 scripts/ci/pq_root_migration_review_v1.py
     python3 scripts/ci/test_run_pq_root_continuation_v4.py
+    python3 scripts/ci/test_authenticated_suite_count.py
 """
 ROOT_RECOVERY_TRUTH_PREFIX = '''    bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_project_boundary.py
@@ -315,6 +316,7 @@ ROOT_RECOVERY_TEST_FILES = (
     'scripts/ci/test_pq_root_dependency_register.py',
     'scripts/ci/run_pq_root_continuation_v4.py',
     'scripts/ci/test_run_pq_root_continuation_v4.py',
+    'scripts/ci/test_authenticated_suite_count.py',
     'scripts/ci/test_pq_root_custody_review_v1.py',
     'scripts/ci/pq_root_custody_review_v1.py',
     'scripts/ci/test_pq_root_migration_review_v1.py',

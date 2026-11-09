@@ -645,6 +645,7 @@ NATIVE_FALSE = frozenset((
 NATIVE_REQUIRED_PATHS |= frozenset((
     "scripts/ci/run_pq_root_continuation_v4.py",
     "scripts/ci/test_run_pq_root_continuation_v4.py",
+    "scripts/ci/test_authenticated_suite_count.py",
     "scripts/ci/pq_root_custody_review_v1.py",
     "scripts/ci/test_pq_root_custody_review_v1.py",
     "scripts/ci/pq_root_migration_review_v1.py",

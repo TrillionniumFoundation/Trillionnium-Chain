@@ -14,7 +14,7 @@ use std::sync::{
 use std::time::{Duration, Instant};
 use trnm_crypto_primitives::pq_root_v3::{RootSignatureV3, VerificationBudgetV3};
 use trnm_pon_node::root_recovery_v3::*;
-use trnm_release_bundle::root_recovery_v3::{RootActionV3, RootStateV3};
+use trnm_release_bundle::root_recovery_v3::RootActionV3;
 
 #[test]
 fn native_owner_v3_domain_binds_each_independent_identity_without_zero_fallback() {

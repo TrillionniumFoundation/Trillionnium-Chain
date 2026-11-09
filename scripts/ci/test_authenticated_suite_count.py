@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Replay the actual workflow guards; not a new native execution."""
+import ast
 from pathlib import Path
 import gzip
 import hashlib
@@ -208,6 +209,239 @@ class WorkspaceSemanticRegistry(unittest.TestCase):
                          'timeout-minutes: 180', "CARGO_BUILD_JOBS: '2'"):
             self.assertIn(required, text)
         self.assertNotIn('continue-on-error: true', text)
+
+
+WORKSPACE_FEATURE_WORKFLOWS = (
+    (WORKSPACE_WORKFLOW, False),
+    (ROOT / '.github/workflows/pon-legacy-reorg-cost-20261104.yml', True),
+)
+WORKSPACE_EXPECTED_FEATURES = {
+    'trnm-pon-node': ['default', 'pq-native-openssl', 'pq-root-v3'],
+    'trnm-mvcc-fee': ['default', 'pq-native-openssl'],
+}
+
+
+def workspace_artifact_code(path):
+    bodies = re.findall(
+        r"(?ms)<<'PYART'\n(.*?)^[ \t]*PYART[ \t]*$",
+        path.read_text(),
+    )
+    if len(bodies) != 1:
+        raise ValueError('workspace feature guard: expected exactly one PYART block')
+    return textwrap.dedent(bodies[0])
+
+
+def workspace_feature_contract(tree, has_ancestry):
+    """Inspect the real workflow's fixed map and directly executed assertions."""
+    def require(condition, message):
+        if not condition:
+            raise ValueError('workspace feature guard: ' + message)
+
+    def same(left, right):
+        return ast.dump(left, include_attributes=False) == ast.dump(
+            right, include_attributes=False)
+
+    assignments = [
+        node for node in tree.body
+        if isinstance(node, ast.Assign)
+        and len(node.targets) == 1
+        and isinstance(node.targets[0], ast.Name)
+        and node.targets[0].id == 'expected_features'
+    ]
+    require(len(assignments) == 1, 'one top-level expected_features declaration')
+    assignment = assignments[0]
+    require(isinstance(assignment.value, ast.Dict)
+            and len(assignment.value.keys) == len(WORKSPACE_EXPECTED_FEATURES),
+            'explicit two-crate literal map without duplicate declarations')
+    expected = ast.literal_eval(assignment.value)
+    require(expected == WORKSPACE_EXPECTED_FEATURES,
+            'reviewed exact per-crate feature lists')
+
+    loop_target = ast.parse(
+        'for crate, target, opt in (): pass').body[0].target
+    loops = [
+        node for node in tree.body
+        if isinstance(node, ast.For) and same(node.target, loop_target)
+    ]
+    require(len(loops) == 1, 'one top-level complete-workspace artifact loop')
+    outer = loops[0]
+    require(ast.literal_eval(outer.iter) == (
+        ('trnm-pon-node', 'trnm_pon_node', '3'),
+        ('trnm-mvcc-fee', 'trnm_mvcc_fee', '1'),
+    ), 'both original crate targets and optimization levels')
+    require(tree.body.index(assignment) < tree.body.index(outer),
+            'fixed map declared before artifact validation')
+
+    artifact_loops = [
+        node for node in outer.body
+        if isinstance(node, ast.For)
+        and isinstance(node.target, ast.Name)
+        and node.target.id == 'artifact'
+        and isinstance(node.iter, ast.Name)
+        and node.iter.id == 'artifacts'
+    ]
+    require(len(artifact_loops) == 1, 'direct loop over every selected artifact')
+
+    def direct_assert(body, expression):
+        expected_test = ast.parse(expression, mode='eval').body
+        matches = [
+            node for node in body
+            if isinstance(node, ast.Assert) and same(node.test, expected_test)
+        ]
+        require(len(matches) == 1,
+                'direct exact feature assertion: ' + expression)
+        return matches[0]
+
+    guards = {
+        'library': direct_assert(
+            artifact_loops[0].body,
+            'artifact["features"] == expected_features[crate]',
+        ),
+    }
+    if has_ancestry:
+        guards['ancestry'] = direct_assert(
+            tree.body,
+            'ancestry_artifact["features"] == expected_features["trnm-pon-node"]',
+        )
+
+    last = tree.body[-1]
+    require(isinstance(last, ast.Expr)
+            and isinstance(last.value, ast.Call)
+            and isinstance(last.value.func, ast.Name)
+            and last.value.func.id == 'print',
+            'final artifact report remains printed')
+    report_refs = [
+        value
+        for node in ast.walk(last)
+        if isinstance(node, ast.Dict)
+        for key, value in zip(node.keys, node.values)
+        if isinstance(key, ast.Constant) and key.value == 'features_by_crate'
+    ]
+    require(len(report_refs) == 1
+            and isinstance(report_refs[0], ast.Name)
+            and report_refs[0].id == 'expected_features',
+            'report exposes the same exact per-crate map')
+    allowed_refs = [assignment.targets[0], report_refs[0]]
+    allowed_refs += [guard.test.comparators[0].value for guard in guards.values()]
+    actual_refs = [
+        node for node in ast.walk(tree)
+        if isinstance(node, ast.Name) and node.id == 'expected_features'
+    ]
+    require({id(node) for node in actual_refs}
+            == {id(node) for node in allowed_refs},
+            'fixed map cannot be rebound or otherwise reused')
+    return expected, guards
+
+
+def run_workspace_feature_assertion(guard, expected, crate, features):
+    """Execute only the extracted, structurally checked real assertion."""
+    module = ast.fix_missing_locations(ast.Module(body=[guard], type_ignores=[]))
+    code = compile(module, '<actual workflow feature assertion>', 'exec',
+                   dont_inherit=True, optimize=0)
+    exec(code, {
+        '__builtins__': {},
+        'expected_features': expected,
+        'crate': crate,
+        'artifact': {'features': list(features)},
+        'ancestry_artifact': {'features': list(features)},
+    })
+
+
+class WorkspaceArtifactFeatures(unittest.TestCase):
+    def test_exact_per_crate_features_pass_actual_workflow_assertions(self):
+        for path, has_ancestry in WORKSPACE_FEATURE_WORKFLOWS:
+            expected, guards = workspace_feature_contract(
+                ast.parse(workspace_artifact_code(path)), has_ancestry)
+            cases = [(crate, 'library') for crate in WORKSPACE_EXPECTED_FEATURES]
+            if has_ancestry:
+                cases.append(('trnm-pon-node', 'ancestry'))
+            for crate, kind in cases:
+                with self.subTest(workflow=path.name, crate=crate, kind=kind):
+                    run_workspace_feature_assertion(
+                        guards[kind], expected, crate, WORKSPACE_EXPECTED_FEATURES[crate])
+
+    def test_missing_extra_cross_crate_and_duplicate_features_are_rejected(self):
+        for path, has_ancestry in WORKSPACE_FEATURE_WORKFLOWS:
+            expected, guards = workspace_feature_contract(
+                ast.parse(workspace_artifact_code(path)), has_ancestry)
+            cases = [(crate, 'library') for crate in WORKSPACE_EXPECTED_FEATURES]
+            if has_ancestry:
+                cases.append(('trnm-pon-node', 'ancestry'))
+            for crate, kind in cases:
+                features = WORKSPACE_EXPECTED_FEATURES[crate]
+                other = next(name for name in WORKSPACE_EXPECTED_FEATURES if name != crate)
+                changes = [
+                    ('missing ' + feature, features[:index] + features[index + 1:])
+                    for index, feature in enumerate(features)
+                ]
+                changes += [
+                    ('extra', features + ['unexpected-feature']),
+                    ('cross-crate', WORKSPACE_EXPECTED_FEATURES[other]),
+                    ('duplicate', features + [features[0]]),
+                ]
+                for label, changed in changes:
+                    with self.subTest(workflow=path.name, crate=crate,
+                                      kind=kind, change=label):
+                        with self.assertRaises(AssertionError):
+                            run_workspace_feature_assertion(
+                                guards[kind], expected, crate, changed)
+
+    def test_subset_set_equality_and_disabled_guards_are_rejected(self):
+        for path, has_ancestry in WORKSPACE_FEATURE_WORKFLOWS:
+            source = workspace_artifact_code(path)
+            _, initial = workspace_feature_contract(ast.parse(source), has_ancestry)
+            for kind in initial:
+                actual = ('artifact["features"]' if kind == 'library'
+                          else 'ancestry_artifact["features"]')
+                wanted = ('expected_features[crate]' if kind == 'library'
+                          else 'expected_features["trnm-pon-node"]')
+                for replacement in (f'set({actual}).issubset({wanted})',
+                                    f'set({actual}) <= set({wanted})',
+                                    f'set({actual}) == set({wanted})', 'True'):
+                    tree = ast.parse(source)
+                    _, guards = workspace_feature_contract(tree, has_ancestry)
+                    guards[kind].test = ast.parse(replacement, mode='eval').body
+                    with self.subTest(workflow=path.name, kind=kind,
+                                      replacement=replacement):
+                        with self.assertRaisesRegex(ValueError, 'direct exact feature assertion'):
+                            workspace_feature_contract(tree, has_ancestry)
+
+    def test_exact_assertions_cannot_move_under_a_skipping_condition(self):
+        for path, has_ancestry in WORKSPACE_FEATURE_WORKFLOWS:
+            source = workspace_artifact_code(path)
+            _, initial = workspace_feature_contract(ast.parse(source), has_ancestry)
+            for kind in initial:
+                tree = ast.parse(source)
+                _, guards = workspace_feature_contract(tree, has_ancestry)
+                guard = guards[kind]
+                owners = [node.body for node in ast.walk(tree)
+                          if isinstance(getattr(node, 'body', None), list)
+                          and guard in node.body]
+                self.assertEqual(len(owners), 1)
+                body = owners[0]
+                body[body.index(guard)] = ast.If(
+                    test=ast.Constant(value=False), body=[guard], orelse=[])
+                with self.subTest(workflow=path.name, kind=kind):
+                    with self.assertRaisesRegex(ValueError, 'direct exact feature assertion'):
+                        workspace_feature_contract(tree, has_ancestry)
+
+    def test_expected_map_cannot_silently_follow_changed_features(self):
+        for path, has_ancestry in WORKSPACE_FEATURE_WORKFLOWS:
+            source = workspace_artifact_code(path)
+            for crate in WORKSPACE_EXPECTED_FEATURES:
+                changed = {name: list(features)
+                           for name, features in WORKSPACE_EXPECTED_FEATURES.items()}
+                changed[crate].append('unexpected-feature')
+                tree = ast.parse(source)
+                declaration = next(node for node in tree.body
+                                   if isinstance(node, ast.Assign)
+                                   and len(node.targets) == 1
+                                   and isinstance(node.targets[0], ast.Name)
+                                   and node.targets[0].id == 'expected_features')
+                declaration.value = ast.parse(repr(changed), mode='eval').body
+                with self.subTest(workflow=path.name, crate=crate):
+                    with self.assertRaisesRegex(ValueError, 'reviewed exact per-crate feature lists'):
+                        workspace_feature_contract(tree, has_ancestry)
 
 
 if __name__ == '__main__':

@@ -138,6 +138,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         for file in ('run_pq_root_native_v3.py', 'test_run_pq_root_native_v3.py',
                      'test_pq_root_dependency_register.py', 'pq_root_dependency_register.py',
                      'run_pq_root_continuation_v4.py', 'test_run_pq_root_continuation_v4.py',
+                     'test_authenticated_suite_count.py',
                      'test_pq_root_custody_review_v1.py', 'pq_root_custody_review_v1.py',
                      'test_pq_root_migration_review_v1.py', 'pq_root_migration_review_v1.py'):
             command = '    python3 scripts/ci/' + file + '\n'
