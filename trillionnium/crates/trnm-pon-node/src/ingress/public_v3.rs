@@ -1409,7 +1409,25 @@ struct Connection {
 }
 impl Drop for Connection {
     fn drop(&mut self) {
-        self.cancelled.store(true, Ordering::Release);
+        cancel_request_observed(
+            &self.cancelled,
+            self.observation.as_ref(),
+            "connection_cleanup",
+            "cleanup",
+        );
+    }
+}
+fn cancel_request_observed(
+    cancelled: &AtomicBool,
+    observation: Option<&ConnectionObservation>,
+    source: &'static str,
+    phase: &'static str,
+) {
+    if let Some(record) = observation {
+        record.cancel_request(cancelled, source, phase);
+    } else {
+        // No new clocks, allocations or observer atomics when disabled.
+        cancelled.store(true, Ordering::Release);
     }
 }
 // Completions are drained before the reactor's ordinary deadline scan. The
@@ -1444,7 +1462,12 @@ fn apply_finished_connection(
         None
     };
     if let Some((phase, code, expired)) = refusal {
-        conn.cancelled.store(true, Ordering::Release);
+        cancel_request_observed(
+            &conn.cancelled,
+            conn.observation.as_ref(),
+            "completion_refusal",
+            phase,
+        );
         if let Some(record) = &conn.observation {
             record.terminal_error(phase, &code.into());
         }
@@ -1637,6 +1660,8 @@ fn caller_write_half_alive(
     socket: &TcpStream,
     cancelled: &AtomicBool,
     metrics: &Mutex<PublicMetrics>,
+    observation: Option<&ConnectionObservation>,
+    phase: &'static str,
 ) -> Result<()> {
     let open = match caller_write_half_open(socket, true) {
         Ok(open) => open,
@@ -1644,7 +1669,7 @@ fn caller_write_half_alive(
             // A complete request has no further client frame. In particular,
             // one unread byte must not hide a FIN from every later peek. Keep
             // the original task/CPU obligations until their owners settle.
-            cancelled.store(true, Ordering::Release);
+            cancel_request_observed(cancelled, observation, "peer_input_failure", phase);
             return Err(error);
         }
     };
@@ -1653,7 +1678,7 @@ fn caller_write_half_alive(
             .lock()
             .map_err(|_| "PUBLIC_METRICS")?
             .disconnected_await_requests += 1;
-        cancelled.store(true, Ordering::Release);
+        cancel_request_observed(cancelled, observation, "peer_write_closed", phase);
         return Err("PUBLIC_EOF".into());
     }
     Ok(())
@@ -1673,12 +1698,17 @@ fn caller_write_half_open(socket: &TcpStream, body_complete: bool) -> Result<boo
         _ => Ok(true),
     }
 }
-fn pending_alive(conn: &Connection, stop: &AtomicBool) -> Result<()> {
+fn pending_alive(conn: &Connection, stop: &AtomicBool, phase: &'static str) -> Result<()> {
     task_alive(conn.deadline, stop, &conn.cancelled)?;
     // Pending Challenge/Ready input may already contain the next legal frame.
     // It is not trailing input until the declared body has been fully read.
     if !caller_write_half_open(&conn.socket, false)? {
-        conn.cancelled.store(true, Ordering::Release);
+        cancel_request_observed(
+            &conn.cancelled,
+            conn.observation.as_ref(),
+            "pending_peer_write_closed",
+            phase,
+        );
         return Err("PUBLIC_EOF".into());
     }
     Ok(())
@@ -2274,6 +2304,10 @@ fn serve_public_protected_v3_inner(
             let kernel_for_worker = host_kernel.as_ref();
             workers.push(scope.spawn(move || -> Result<()> {
                 loop {
+                    // Its drop is last in this iteration, after the dequeued
+                    // Task, scoped native work, CPU settlement and output handoff.
+                    // It measures this request's worker return, not process exit.
+                    let mut _worker_observation = None;
                     // Retain FIFO admission order while an already-dequeued
                     // task awaits CPU. Release before any native dispatch. The
                     // separate read queue and active workers remain independent.
@@ -2281,6 +2315,10 @@ fn serve_public_protected_v3_inner(
                     let task = dequeue_order.as_ref().unwrap().try_recv();
                     match task {
                         Ok(mut task) => {
+                            _worker_observation = task
+                                .observation
+                                .as_ref()
+                                .and_then(TaskObservation::worker_scope);
                             metrics.lock().map_err(|_| "PUBLIC_METRICS")?.tasks_dequeued += 1;
                             let alive = task_alive(task.deadline, &stop, &task.cancelled);
                             if let Some(record) = &task.observation {
@@ -2704,7 +2742,7 @@ fn serve_public_protected_v3_inner(
                                 Ok(Stage::WaitChallenge { hello, pending })
                             }
                             Stage::WaitChallenge { hello, pending } => {
-                                pending_alive(conn, &stop)?;
+                                pending_alive(conn, &stop, phase)?;
                                 if !heads.is_head(PendingKind::Challenge, hello.op, *id)
                                     || !intake.try_challenge(hello.op, Instant::now())?
                                 {
@@ -2848,7 +2886,7 @@ fn serve_public_protected_v3_inner(
                                 Ok(Stage::WaitGrant { cookie, pending })
                             }
                             Stage::WaitGrant { cookie, pending } => {
-                                pending_alive(conn, &stop)?;
+                                pending_alive(conn, &stop, phase)?;
                                 if !heads.is_head(PendingKind::Grant, cookie.op, *id) {
                                     return Ok(Stage::WaitGrant { cookie, pending });
                                 }
@@ -2874,7 +2912,7 @@ fn serve_public_protected_v3_inner(
                                     )?,
                                     256,
                                 )?;
-                                pending_alive(conn, &stop)?;
+                                pending_alive(conn, &stop, phase)?;
                                 conn.permit = Some(permit);
                                 conn.lane_permit = Some(Arc::new(lane));
                                 {
@@ -2988,9 +3026,13 @@ fn serve_public_protected_v3_inner(
                             }
                             Stage::Enqueue(task) => {
                                 task_alive(task.deadline, &stop, &task.cancelled)?;
-                                if let Err(error) =
-                                    caller_write_half_alive(&conn.socket, &conn.cancelled, &metrics)
-                                {
+                                if let Err(error) = caller_write_half_alive(
+                                    &conn.socket,
+                                    &conn.cancelled,
+                                    &metrics,
+                                    conn.observation.as_ref(),
+                                    phase,
+                                ) {
                                     if !error.is(crate::ErrorCode::PublicTrailingInput) {
                                         metrics
                                             .lock()
@@ -3012,7 +3054,13 @@ fn serve_public_protected_v3_inner(
                                 // close from shutdown(Write): either EOF cancels
                                 // queued/owner-waiting work. The ordinary client keeps
                                 // both halves open. This is no ledger verdict.
-                                caller_write_half_alive(&conn.socket, &conn.cancelled, &metrics)?;
+                                caller_write_half_alive(
+                                    &conn.socket,
+                                    &conn.cancelled,
+                                    &metrics,
+                                    conn.observation.as_ref(),
+                                    phase,
+                                )?;
                                 Ok(Stage::Await)
                             }
                             mut output @ Stage::Output { .. } => {
@@ -4556,6 +4604,17 @@ mod tests {
             assert!(phase.wall_ns.is_some());
             assert!(row.cpu_settlement.unwrap().budget_settled);
             let actual = row.cpu_settlement.unwrap();
+            let signal = row.cancellation.first_flag_transition.unwrap();
+            assert_eq!(signal.source, "peer_write_closed");
+            assert_eq!(signal.phase, "work");
+            assert!(row.cancellation.observed_signal_calls >= 1);
+            assert!(row.cancellation.worker_entered && row.cancellation.worker_returned);
+            let signal_before = signal.before_ns.unwrap();
+            let signal_after = signal.after_ns.unwrap();
+            assert!(row.cancellation.worker_entered_ns.unwrap() <= signal_before);
+            assert!(signal_before <= signal_after);
+            assert!(signal_after <= row.lifecycle.connection_closed_ns.unwrap());
+            assert!(row.cancellation.worker_returned_ns.unwrap() >= phase.ended_ns.unwrap());
             assert_eq!(actual.owner_cpu_ns, row.dispatch_thread_cpu_ns);
             assert_eq!(
                 actual.total_cpu_ns,
@@ -4572,6 +4631,10 @@ mod tests {
             .collect();
         assert_eq!(skipped.len(), 1);
         assert!(skipped[0].cpu_settlement.is_none());
+        let signal = skipped[0].cancellation.first_flag_transition.unwrap();
+        assert_eq!(signal.source, "peer_write_closed");
+        assert!(skipped[0].cancellation.worker_entered && skipped[0].cancellation.worker_returned);
+        assert!(skipped[0].cancellation.worker_returned_ns.unwrap() >= signal.before_ns.unwrap());
         assert!(
             !skipped[0]
                 .submit_phases
@@ -4579,6 +4642,26 @@ mod tests {
                 .find(|phase| phase.phase == SubmitPhase::CpuSettle)
                 .unwrap()
                 .started
+        );
+        assert!(snapshot
+            .records
+            .iter()
+            .all(|row| row.cancellation.worker_returned));
+        assert_eq!(
+            snapshot
+                .records
+                .iter()
+                .filter(|row| row
+                    .cancellation
+                    .first_flag_transition
+                    .is_some_and(|event| event.source == "connection_cleanup"))
+                .count(),
+            2,
+            "the successful Head and Submit cleanup are not cancellation successes"
+        );
+        println!(
+            "TRNM_PUBLIC_CANCELLATION_SNAPSHOT {}",
+            serde_json::to_string(&snapshot).unwrap()
         );
     }
     #[test]
@@ -4695,7 +4778,7 @@ mod tests {
             socket.set_nonblocking(true).unwrap();
             let cancelled = AtomicBool::new(false);
             let metrics = Mutex::new(PublicMetrics::default());
-            caller_write_half_alive(&socket, &cancelled, &metrics).unwrap();
+            caller_write_half_alive(&socket, &cancelled, &metrics, None, "work").unwrap();
             assert!(!cancelled.load(Ordering::Acquire));
             caller.write_all(b"X").unwrap();
             if half_close {
@@ -4710,7 +4793,8 @@ mod tests {
             assert_eq!(socket.peek(&mut [0; 1]).unwrap(), 1);
             socket.set_nonblocking(true).unwrap();
             assert!(caller_write_half_open(&socket, false).unwrap());
-            let error = caller_write_half_alive(&socket, &cancelled, &metrics).unwrap_err();
+            let error =
+                caller_write_half_alive(&socket, &cancelled, &metrics, None, "work").unwrap_err();
             assert!(error.is(crate::ErrorCode::PublicTrailingInput));
             assert_eq!(error.kind(), crate::ErrorKind::Transport);
             assert!(cancelled.load(Ordering::Acquire));

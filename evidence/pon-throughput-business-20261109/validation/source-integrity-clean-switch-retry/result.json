@@ -1,0 +1,34 @@
+{
+  "schema": "trnm-local-single-test-retry-v1",
+  "name": "source-integrity-clean-commit-switch-original-test-single-retry",
+  "argv": [
+    "python3",
+    "scripts/ci/test_ci_source_integrity.py",
+    "TrackedSourceTests.test_source_fence_clean_commit_switch_during_command_is_rejected",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/a0d4983b1065/chain-throughput",
+  "started_utc": "2026-11-09T14:05:10.542938+00:00",
+  "purpose": "One targeted retry of the original test after the retained 43-test failure; original failure is not erased.",
+  "test_body_changed": false,
+  "original_fenced_child_timeout_seconds": 5,
+  "timeout_override": null,
+  "source_before_sha256": {
+    "scripts/ci/test_ci_source_integrity.py": "d46d92b789dc95798e5406a0ccd685e4449dbc38ab040d8035621268fa4f5f6e",
+    "scripts/ci/ci_observation.py": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a",
+    "scripts/ci/verify_ci_source.py": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+    "formal/pon-nakamoto-v1/bounded_process.py": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356"
+  },
+  "exit_code": 0,
+  "elapsed_ns": 2138220345,
+  "finished_utc": "2026-11-09T14:05:12.681437+00:00",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "dac2484066f35d0ecf3cf0449ade4d9e7fca759dabaff08cd95bb9450e1ea4f3",
+  "source_after_sha256": {
+    "scripts/ci/test_ci_source_integrity.py": "d46d92b789dc95798e5406a0ccd685e4449dbc38ab040d8035621268fa4f5f6e",
+    "scripts/ci/ci_observation.py": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a",
+    "scripts/ci/verify_ci_source.py": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+    "formal/pon-nakamoto-v1/bounded_process.py": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356"
+  },
+  "source_bytes_unchanged": true
+}

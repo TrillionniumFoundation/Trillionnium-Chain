@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "formal/throughput-v1/host_prerequisites.py",
+    "--output",
+    "/workspace/scratch/a0d4983b1065/validation/host-prerequisites-20261109/observation.json"
+  ],
+  "exit_code": 1,
+  "elapsed_ns": 275001374,
+  "stdout_sha256": "d4d29b248db4be56451966057280981e611a6310a5f25fa90f78e63f1402597f",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "meaning": "read-only original prerequisites; no pressure workload started"
+}

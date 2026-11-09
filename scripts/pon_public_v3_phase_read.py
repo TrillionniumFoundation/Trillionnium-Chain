@@ -37,6 +37,14 @@ MAX_REPORT_BYTES = 256 * 1024 * 1024
 ARITHMETIC_REPORT_SCHEMA = 'native-public-v3-arithmetic-facts-separate-process-campaign-v1'
 ERROR_DIAGNOSTIC_SCHEMA = 'public-v3-request-error-diagnostics-v1'
 REQUEST_ERROR_TIMING_SCHEMA = 'public-v3-request-error-timing-v1'
+REQUEST_CANCELLATION_SCHEMA = 'public-v3-request-cancellation-observation-v1'
+REQUEST_CANCELLATION_SOURCE_PHASES = {
+    'connection_cleanup': {'cleanup'},
+    'completion_refusal': {'work', 'shutdown'},
+    'peer_input_failure': {'work', 'queue'},
+    'peer_write_closed': {'work', 'queue'},
+    'pending_peer_write_closed': {'hello', 'solution'},
+}
 REACTOR_IO_SCHEMA = 'public-v3-reactor-frame-io-observation-v1'
 FRAME_PHASES = ('hello', 'challenge', 'solution', 'ready', 'body', 'response')
 CPU_SETTLEMENT_SCHEMA = 'public-v3-cpu-settlement-observation-v1'
@@ -450,6 +458,160 @@ def request_error_timing_summary(rows):
     return result
 
 
+def validate_request_cancellation(row):
+    """Validate actual flag-write brackets separately from worker/owner stops."""
+    if 'cancellation' not in row:
+        return
+    value = row['cancellation']
+    fields = {'schema', 'observed_signal_calls', 'first_flag_transition',
+        'worker_entered', 'worker_entered_ns', 'worker_returned', 'worker_returned_ns',
+        'observation_failed', 'clock_is_observer_local', 'signals_are_request_flag_writes',
+        'has_control_authority'}
+    require(type(value) is dict and set(value) == fields
+            and value['schema'] == REQUEST_CANCELLATION_SCHEMA,
+            'request cancellation exact shape required')
+    require(value['clock_is_observer_local'] is True
+            and value['signals_are_request_flag_writes'] is True
+            and value['has_control_authority'] is False,
+            'request cancellation local flag-write scope required')
+    require(type(row.get('observation_failed')) is bool
+            and value['observation_failed'] is row['observation_failed'],
+            'request cancellation capture failure mismatch')
+    require('lifecycle' in row, 'request cancellation requires original lifecycle epoch')
+    request_owner_lifecycle_summary([row])
+    require(type(value['observed_signal_calls']) is int
+            and 0 <= value['observed_signal_calls'] < 1 << 64,
+            'request cancellation bounded signal count required')
+    failed = value['observation_failed']
+    accepted = row['lifecycle']['accepted_ns']
+    for name in ('worker_entered', 'worker_returned'):
+        stamp = value[name + '_ns']
+        require(type(value[name]) is bool, 'request cancellation worker flag required')
+        require(stamp is None or (type(stamp) is int and 0 <= stamp < 1 << 64),
+                'request cancellation worker clock must be u64 or unknown')
+        require((stamp is None or value[name]) and (not value[name] or stamp is not None or failed),
+                'request cancellation worker clock/flag mismatch')
+        require(accepted is None or stamp is None or accepted <= stamp,
+                'request cancellation worker event precedes accept')
+    require(not value['worker_entered'] or row['task_created'],
+            'request cancellation worker requires original task')
+    require(not value['worker_returned'] or value['worker_entered'],
+            'request cancellation return requires worker entry')
+    entered, returned = value['worker_entered_ns'], value['worker_returned_ns']
+    require(entered is None or returned is None or entered <= returned,
+            'request cancellation worker return precedes entry')
+    event = value['first_flag_transition']
+    if event is not None:
+        require(type(event) is dict and set(event) == {'before_ns', 'after_ns', 'source', 'phase'}
+                and value['observed_signal_calls'] > 0,
+                'request cancellation signal requires exact event and call count')
+        require(type(event['source']) is str and event['source'] in REQUEST_CANCELLATION_SOURCE_PHASES
+                and type(event['phase']) is str
+                and event['phase'] in REQUEST_CANCELLATION_SOURCE_PHASES[event['source']],
+                'request cancellation signal source and phase required')
+        for name in ('before_ns', 'after_ns'):
+            stamp = event[name]
+            require(stamp is None or (type(stamp) is int and 0 <= stamp < 1 << 64),
+                    'request cancellation signal clock must be u64 or unknown')
+            require(accepted is None or stamp is None or accepted <= stamp,
+                    'request cancellation signal precedes accept')
+            closed = row['lifecycle']['connection_closed_ns']
+            require(stamp is None or closed is None or stamp <= closed,
+                    'request cancellation signal follows its connection owner')
+        before, after = event['before_ns'], event['after_ns']
+        require(before is None or after is None or before <= after,
+                'request cancellation signal bracket reversed')
+
+
+def request_cancellation_summary(rows):
+    """A first flag transition has a time bracket, never an invented instant.
+
+    Completion handoff, actual per-request worker return and connection/task
+    resource release remain separate. A successful connection's ordinary drop
+    writes the same flag, so source labels must survive every aggregation.
+    """
+    observed = [row for row in rows if 'cancellation' in row]
+    if not observed:
+        return None
+    for row in observed:
+        validate_request_cancellation(row)
+
+    def bounds(event, terminal, unavailable, failed):
+        result = {'status': unavailable, 'lower_ns': None, 'upper_ns': None}
+        if failed:
+            result['status'] = 'capture_failed'
+        elif event is None:
+            result['status'] = 'first_flag_transition_unknown'
+        elif event['before_ns'] is None or event['after_ns'] is None:
+            result['status'] = 'signal_clock_unknown'
+        elif terminal is not None:
+            if terminal < event['before_ns']:
+                result['status'] = 'already_returned_before_signal_bracket'
+            elif terminal < event['after_ns']:
+                result['status'] = 'signal_and_terminal_order_unknown'
+            else:
+                result.update(status='bracketed', lower_ns=terminal - event['after_ns'],
+                              upper_ns=terminal - event['before_ns'])
+        return result
+
+    records = []
+    for index, row in enumerate(rows):
+        value = row.get('cancellation')
+        if value is None:
+            missing = dict(status='historical_extension_missing', lower_ns=None, upper_ns=None)
+            records.append(dict(record_index=index, source=None, phase=None,
+                worker_return=dict(missing), all_request_owners_closed=dict(missing)))
+            continue
+        event = value['first_flag_transition']
+        returned = value['worker_returned_ns'] if value['worker_returned'] else None
+        worker_status = ('worker_clock_unknown' if value['worker_returned'] else
+                         'worker_unfinished' if value['worker_entered'] else 'worker_not_entered')
+        closed = row['lifecycle']['connection_closed_ns']
+        task = row['lifecycle']['task_closed_ns']
+        owners_terminal = (row['connection_closed'] and closed is not None
+            and (not row['task_created'] or (row['task_closed'] and task is not None))
+            and (not value['worker_entered'] or (value['worker_returned'] and returned is not None)))
+        owner_end = max(closed, task if row['task_created'] else closed,
+                        returned if value['worker_entered'] else closed) if owners_terminal else None
+        records.append(dict(record_index=index,
+            source=event['source'] if event else None, phase=event['phase'] if event else None,
+            worker_return=bounds(event, returned, worker_status, value['observation_failed']),
+            all_request_owners_closed=bounds(event, owner_end, 'owners_or_worker_unfinished',
+                                             value['observation_failed'])))
+    return {
+        'schema': 'public-v3-request-cancellation-derivation-v1',
+        'observed_records': len(observed), 'historical_records_without_extension': len(rows) - len(observed),
+        'measurement_failed_records': sum(row['cancellation']['observation_failed'] for row in observed),
+        'first_flag_transition_records': sum(row['cancellation']['first_flag_transition'] is not None
+                                             for row in observed),
+        'signal_calls_without_first_transition_records': sum(
+            row['cancellation']['observed_signal_calls'] > 0
+            and row['cancellation']['first_flag_transition'] is None for row in observed),
+        'no_signal_call_observed_records': sum(row['cancellation']['observed_signal_calls'] == 0
+                                               for row in observed),
+        'worker_entered_records': sum(row['cancellation']['worker_entered'] for row in observed),
+        'worker_returned_records': sum(row['cancellation']['worker_returned'] for row in observed),
+        'first_transition_source_counts': dict(Counter(row['source'] for row in records
+                                                       if row['source'] is not None)),
+        'records': records,
+        'scope': {
+            'actual_request_flag_transition_is_bracketed': True,
+            'unobserved_earlier_signal_is_not_reconstructed': True,
+            'connection_cleanup_is_cancellation_success': False,
+            'worker_return_is_process_exit': False,
+            'worker_return_includes_task_cleanup_and_cpu_settlement': True,
+            'worker_return_includes_output_handoff_or_disposal': True,
+            'all_request_owners_includes_worker_return_when_entered': True,
+            'closed_owners_prove_durable_effect_rollback': False,
+            'external_caller_signal_and_shared_stop_time_measured': False,
+            'zero_lower_bound_is_an_exact_zero_latency': False,
+            'overlapping_signal_and_terminal_order_is_unknown': True,
+            'local_monotonic_epoch_only': True,
+            'has_control_authority': False,
+        },
+    }
+
+
 def validate_reactor_io(row):
     if 'reactor_io' not in row:
         return
@@ -843,6 +1005,7 @@ def execution_summary(rows, instrumented, arithmetic_profile=False, observer_v4=
         require(observer_v4, 'request error diagnostic extension requires v4 observer scope')
         result['error_diagnostics'] = diagnostics
     for name, summarize in (('error_timing', request_error_timing_summary),
+                            ('request_cancellation', request_cancellation_summary),
                             ('reactor_io', reactor_io_summary)):
         extension = summarize(rows)
         if extension is not None:

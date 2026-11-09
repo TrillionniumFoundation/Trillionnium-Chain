@@ -1,3 +1,33 @@
+**Business throughput accounting continuation, 2026-11-09 UTC — HOLD:**
+
+Continue the existing #819 source `f2d14f9ebd25e054fe17c880331ae0d0c7df46e3`.
+The [business accounting record](../../evidence/pon-throughput-business-20261109/README.md)
+keeps confirmed unique transactions, independently useful tasks with complete
+costs, whole-version weight access and actual model service as four separate
+denominators. Missing observations stay null. The 511-to-256 state-application
+reduction does not establish CPU or TPS doubling.
+
+One retained complete-block release experiment contains all 84 rows, including
+warmups and 12 measured pairs per sender distribution. Candidate/reference wall
+median changes are -11.23% (2 senders), +1.89% (64) and +8.18% (256). Per-arm CPU
+and qualified business TPS remain unknown. Four complete-root processes with
+equal roots show median RSS 205,704 to 72,416 KiB; two observations per arm do
+not establish a complete-path speed or CPU claim.
+
+The optional cancellation extension records first request-flag transition
+brackets and a worker-return boundary after task cleanup and output handling.
+Unknown ordering, older records and missing effects remain unknown. Local Node
+compilation failed with SIGKILL before its tests; no native cancellation latency
+is claimed. A dedicated, separately named CI component profile retains actual
+binary inventories, failures and seven planned processes on its own exact head.
+
+The historical useful-task adapter retains 18 command slots, all nonzero exits,
+three training receipts and 25 stage costs without adding overlapping levels.
+Independent useful-task counts, whole costs, future effect, retention and net
+value remain null. Original four-second prerequisites are still unavailable and
+the original thirty-second campaign was not rerun. No larger hardware profile,
+Python pass, component result or historical readback qualifies either gate.
+
 **Native throughput engineering continuation, 2026-11-08 UTC — HOLD:**
 
 Continue from the user-pinned throughput source `dbc1ca09c3db57ae683671a0e7c37ca0aca01f71`.
