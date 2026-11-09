@@ -1,7 +1,8 @@
 # Root dependency and query obligation register V3
 
-Status: **HOLD**. This is a reviewed inventory for the Python V2 root bridge and
-the native Rust V3 candidate. It neither computes a cryptographic lifetime
+Status: **HOLD**. This is a reviewed inventory for the Python V2 root bridge,
+native Rust V3 candidate and explicit V4 recovery-floor/provider-readback continuation.
+It neither computes a cryptographic lifetime
 failure bound nor activates a root, release, external effect or production
 service.
 
@@ -29,7 +30,7 @@ of keys, rosters and epochs over the lifetime remains unknown.
 | Successor possession | All three ML-DSA-87 keys AND all three SLH-DSA-SHA2-256s keys | Rotation, recovery and policy change, in addition to current-root approval | Python V2 and native V3 |
 | Anchor writer | Both fixed 2-of-3 quorums under a separately pinned writer roster | Fresh read and compare-and-swap request authentication | Python V2 and native V3 |
 | Anchor response | Both fixed 2-of-3 quorums under a separately pinned anchor roster | Fresh response bound to request, scope and complete retained head | Python V2 and native V3 |
-| Effect provider | Both fixed 2-of-3 quorums under a separately pinned provider roster | Outcome readback for the complete intent and exact orphan epoch | Python V2 only; native V3 remains unwired |
+| Effect provider | Both fixed 2-of-3 quorums under a separately pinned provider roster | Outcome readback for the complete intent and exact orphan epoch | Python V2 and native V4 declarations; actual effect entry remains unwired |
 
 The [native cryptographic module](../../trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs)
 uses the existing
@@ -68,7 +69,7 @@ recovery procedures.
 
 ## 2. Shared primitive accounting
 
-The register contains fourteen declared hash-use groups and four canonical
+The register contains sixteen declared hash-use groups and four canonical
 primitive entries. The use groups identify source-level purposes. They do not
 supply a reduction from scheme operations to primitive queries.
 
@@ -99,6 +100,8 @@ anchor requests and provider requests. The native mapping additionally names:
 | Release kernel `root_recovery_v3.rs` | Policy commitment; full state checkpoint; actual artifact bytes included in the complete release intent |
 | Owner `root_recovery_v3.rs` | Network/genesis/owner scope; enrollment and full journal heads, including retained event and state bindings |
 | Owner `anchor.rs` | Complete fresh writer request, carried into the signed anchor response |
+| Owner `recovery_floor.rs` | Full enrollment bound to the externally supplied V4 history floor |
+| Owner `effect_readback_v4.rs` | Complete provider enrollment and intent, fresh request, exact orphan epoch and retained evidence chain |
 
 The native crypto domains include `TRNM/RootV3/Key/v3`,
 `TRNM/RootV3/RosterCommitment/v3` and `TRNM/RootV3/Operation/v3`.
@@ -159,7 +162,7 @@ recorded review-base revision. Changing both a source file and its manifest
 digest therefore fails until the reviewed checker snapshot is deliberately
 updated. There is no auto-regeneration or accept-current-bytes mode.
 
-The review base `080c33cca445fca1735bc51ac4cf63f37a273263` is context for the
+The review base `57e6c17ae2fa8a9cc547e271f34d90ef09115f04` is context for the
 continuation. It is not a claim that the newly added files existed in that
 revision. The inspector does not verify Git ancestry or the eventual commit,
 and always returns `source_revision_bound = false`.
@@ -188,6 +191,18 @@ checks do not prove that SQLite's separate internal descriptor refers to the
 same inode across a concurrent open race. This register supplies no custom
 VFS proof and does not qualify protection against same-UID pathname changes.
 These host assumptions remain explicit in the frozen profiles.
+
+The [V4 recovery floor](PQ_ROOT_RECOVERY_FLOOR_V4.md) is an explicit trusted
+caller input. Its constructor, separate namespace and signed-ancestry checks do
+not authenticate an independent source or its age. The
+[V4 provider journal](PQ_ROOT_EFFECT_READBACK_NATIVE_V4.md) verifies retained
+provider declarations in a new namespace. Its `rust-v4-readback` entry is
+separate from actual effect-entry/production-owner integration: the latter
+remains in `native_unwired_roles`. A provider declaration cannot establish that
+payment, API, resource or compensation actually occurred. Fixed provider keys,
+provider-side request authentication/transport and their complete lifecycle
+remain integration obligations. Neither continuation creates a new resettable
+SHA-512 or signature query budget.
 
 ## 5. Result and regression contract
 

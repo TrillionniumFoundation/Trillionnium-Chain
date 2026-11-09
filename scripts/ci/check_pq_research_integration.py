@@ -640,6 +640,29 @@ NATIVE_FALSE = frozenset((
     "physical_rollback_resistant",
 ))
 
+# V4 continuation inputs are mandatory source dependencies, not proof of
+# independently deployed custody, external effects or algorithm migration.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "scripts/ci/run_pq_root_continuation_v4.py",
+    "scripts/ci/test_run_pq_root_continuation_v4.py",
+    "scripts/ci/test_authenticated_suite_count.py",
+    "scripts/ci/pq_root_custody_review_v1.py",
+    "scripts/ci/test_pq_root_custody_review_v1.py",
+    "scripts/ci/pq_root_migration_review_v1.py",
+    "scripts/ci/test_pq_root_migration_review_v1.py",
+    "config/pon/pq-root-custody-review-v1.json",
+    "config/pon/pq-root-migration-review-v1.json",
+    "docs/security/PQ_ROOT_RECOVERY_FLOOR_V4.md",
+    "docs/security/PQ_ROOT_EFFECT_READBACK_NATIVE_V4.md",
+    "docs/security/PQ_ROOT_MIGRATION_REVIEW_V1.md",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/recovery_floor.rs",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/effect_readback_v4.rs",
+    "trillionnium/crates/trnm-pon-node/tests/recovery_floor_v4_native.rs",
+    "trillionnium/crates/trnm-pon-node/tests/root_effect_readback_v4_native.rs",
+    "trillionnium/crates/trnm-pon-node/tests/root_budget_v4_native.rs",
+    "trillionnium/crates/trnm-pon-node/tests/support/root_recovery_v3_fixture.rs",
+))
+
 # These are bounded source contracts, not results of a cryptographic audit.
 # In particular, an always-compiled provider is not default chain activation.
 NATIVE_V2_EXPECTED = {

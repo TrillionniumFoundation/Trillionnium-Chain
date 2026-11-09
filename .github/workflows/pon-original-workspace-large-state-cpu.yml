@@ -144,6 +144,10 @@ jobs:
         rows = [json.loads(line) for line in (root / "build.jsonl").read_text().splitlines() if line.strip()]
         finished = [row for row in rows if row.get("reason") == "build-finished"]
         assert len(finished) == 1 and finished[0]["success"] is True
+        expected_features = {
+            "trnm-pon-node": ["default", "pq-native-openssl", "pq-root-v3"],
+            "trnm-mvcc-fee": ["default", "pq-native-openssl"],
+        }
         selected = {}
         for crate, target, opt in (("trnm-pon-node", "trnm_pon_node", "3"),
                                    ("trnm-mvcc-fee", "trnm_mvcc_fee", "1")):
@@ -156,7 +160,7 @@ jobs:
                 profile = artifact["profile"]
                 assert profile["opt_level"] == opt, "wrong original test optimization for " + crate
                 assert profile["debug_assertions"] is True and profile["overflow_checks"] is True, "test checks disabled for " + crate
-                assert artifact["features"] == ["default", "pq-native-openssl"], "wrong complete-workspace features for " + crate
+                assert artifact["features"] == expected_features[crate], "wrong complete-workspace features for " + crate
             selected[crate] = artifacts
         # Inspect M06's ordinary rlib used as a dependency, not just its separate test executable.
         m06_dependencies = [row for row in selected["trnm-mvcc-fee"]
@@ -204,7 +208,7 @@ jobs:
         (root / "m06-binary.txt").write_text(str(m06_binary) + "\n")
         print(json.dumps({"result": "PASS", "scope": "build profiles, feature sets and ELF identity only",
                           "node_opt_level": "3", "m06_opt_level": "1", "debug_assertions": True,
-                          "overflow_checks": True, "features": ["default", "pq-native-openssl"],
+                          "overflow_checks": True, "features_by_crate": expected_features,
                           "binary_sha256": digest, "m06_binary_sha256": m06_digest}, sort_keys=True))
         PYART
         artifact_reader=$?

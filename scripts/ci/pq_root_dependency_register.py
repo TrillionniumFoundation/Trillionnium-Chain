@@ -23,10 +23,10 @@ from pq_source_reader import SourceReadError, read_regular
 SCHEMA = "trnm-pq-root-dependency-register-v3"
 RESULT_SCHEMA = "trnm-pq-root-dependency-register-result-v3"
 DEFAULT_MANIFEST = "config/pon/pq-root-dependency-register-v3.json"
-REVIEW_BASE = "080c33cca445fca1735bc51ac4cf63f37a273263"
+REVIEW_BASE = "57e6c17ae2fa8a9cc547e271f34d90ef09115f04"
 MAX_BYTES = 1024 * 1024
 # Frozen after review of all declared files. No runtime regeneration is allowed.
-REVIEWED_SOURCE_SNAPSHOT_SHA256 = "ebbc43cb8a757abb195b208594a54d18ba0f37300c6585062fb8cf344283248a"
+REVIEWED_SOURCE_SNAPSHOT_SHA256 = "d3bd30198f56d855bbae4644e0a1f31e8ea9d0df13644b6589f6a01e25e3a4a1"
 
 PY = "formal/pon-nakamoto-v1/"
 POLICY = PY + "pq_root_recovery_policy_v1.py"
@@ -46,6 +46,8 @@ NATIVE_POLICY = RELEASE + "src/root_recovery_v3.rs"
 NATIVE_OWNER = NODE + "src/root_recovery_v3.rs"
 NATIVE_ANCHOR = NODE + "src/root_recovery_v3/anchor.rs"
 NATIVE_STORAGE = NODE + "src/root_recovery_v3/storage.rs"
+NATIVE_FLOOR = NODE + "src/root_recovery_v3/recovery_floor.rs"
+NATIVE_PROVIDER = NODE + "src/root_recovery_v3/effect_readback_v4.rs"
 ROLES = ("root-approval", "successor-possession", "anchor-writer",
          "anchor-response", "effect-provider")
 SUITES = ("ML-DSA-87", "SLH-DSA-SHA2-256s")
@@ -140,6 +142,11 @@ for _role in ROLES:
         "actual_lifetime_failure_bound": None,
         "independent_custody_verified": False,
     }
+    if _role == "effect-provider":
+        ROLE_CONTRACT[_role]["implementations"]["rust-v4-readback"] = implementation(
+            [NATIVE_CRYPTO, NATIVE_ML_ADAPTER, NATIVE_CRYPTO_PROFILE, NATIVE_POLICY,
+             NATIVE_OWNER, NATIVE_ANCHOR, NATIVE_STORAGE, NATIVE_FLOOR, NATIVE_PROVIDER],
+            "historical-operation-fresh-readback-only-no-effect-entry")
 
 
 def hash_use(primitives, constructions, paths, roles):
@@ -177,10 +184,10 @@ HASH_USES = {
         ("sha256",), ("trusted-local-executable-checksum",), (BACKEND,), ROLES),
     "native-key-identities-v3": hash_use(
         ("sha512",), ("native-v3-suite-and-key-encoding",),
-        (NATIVE_CRYPTO,), ROLES[:4]),
+        (NATIVE_CRYPTO,), ROLES),
     "native-roster-and-operation-v3": hash_use(
         ("sha512",), ("native-v3-complete-roster", "native-v3-witness-independent-operation"),
-        (NATIVE_CRYPTO,), ROLES[:4]),
+        (NATIVE_CRYPTO,), ROLES),
     "native-policy-checkpoint-artifact-v3": hash_use(
         ("sha512",), ("native-v3-policy", "native-v3-full-state-checkpoint",
                       "native-v3-actual-artifact-bytes"),
@@ -190,6 +197,13 @@ HASH_USES = {
                       "native-v3-enrollment-and-full-journal-head",
                       "native-v3-complete-anchor-request"),
         (NATIVE_OWNER, NATIVE_ANCHOR, NATIVE_STORAGE), ROLES[:4]),
+    "native-recovery-floor-v4": hash_use(
+        ("sha512",), ("native-v4-full-enrollment-external-floor-binding",),
+        (NATIVE_FLOOR, NATIVE_OWNER), ROLES[:4]),
+    "native-provider-readback-v4": hash_use(
+        ("sha512",), ("native-v4-complete-provider-enrollment", "native-v4-complete-intent",
+                      "native-v4-fresh-request-and-exact-orphan-epoch", "native-v4-retained-record-chain"),
+        (NATIVE_PROVIDER,), (ROLES[4],)),
 }
 
 PRIMITIVE_IDENTITIES = {
@@ -256,10 +270,14 @@ OPEN_OBLIGATIONS = {
 SOURCE_PATHS = sorted(set(
     (POLICY, SIGNATURES, JOURNAL, PROVIDER, BACKEND, BUDGET,
      NATIVE_CRYPTO, NATIVE_ML_ADAPTER, NATIVE_CRYPTO_PROFILE, NATIVE_POLICY, NATIVE_OWNER,
-     NATIVE_ANCHOR, NATIVE_STORAGE,
+     NATIVE_ANCHOR, NATIVE_STORAGE, NATIVE_FLOOR, NATIVE_PROVIDER,
      CRYPTO + "src/pq_root_v3/tests.rs", CRYPTO + "tests/pq_root_v3_native.rs",
      RELEASE + "src/root_recovery_v3_tests.rs",
      NODE + "tests/root_recovery_v3_native.rs",
+     NODE + "tests/support/root_recovery_v3_fixture.rs",
+     NODE + "tests/recovery_floor_v4_native.rs",
+     NODE + "tests/root_effect_readback_v4_native.rs",
+     NODE + "tests/root_budget_v4_native.rs",
      CRYPTO + "src/lib.rs", CRYPTO + "Cargo.toml",
      CRATES + "trnm-protocol/src/lib.rs", CRATES + "trnm-protocol/Cargo.toml",
      RELEASE + "src/lib.rs", RELEASE + "Cargo.toml",
@@ -284,6 +302,8 @@ FROZEN = {
         "native_clock_authority_qualified": False,
         "native_sqlite_descriptor_race_proved_absent": False,
         "native_m15_production_integration_complete": False,
+        "native_recovery_floor": "caller-authenticated-pin-not-independent-custody-proof",
+        "native_provider_readback": "v4-declarations-only-no-effect-dispatch",
     },
     "roles": ROLE_CONTRACT,
     "hash_uses": HASH_USES,
@@ -342,6 +362,8 @@ def validate_manifest(data):
         "declared_source_snapshot_sha256": REVIEWED_SOURCE_SNAPSHOT_SHA256,
         "source_file_count": len(SOURCE_PATHS), "declared_roles": list(ROLES),
         "native_unwired_roles": ["effect-provider"],
+        "native_unwired_role_scope": "effect-entry-and-production-owner-not-readback-code",
+        "native_readback_candidate_roles": ["effect-provider"],
         "hash_use_count": len(HASH_USES),
         "unknown_lifetime_query_budgets": sorted(PRIMITIVES),
         "unknown_role_lifetime_populations": list(ROLES),

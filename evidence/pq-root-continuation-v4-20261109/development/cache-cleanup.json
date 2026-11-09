@@ -1,0 +1,26 @@
+{
+  "scope": "obsolete executable build cache for prior same-task source only",
+  "removed": [
+    {
+      "name": "trnm_release_bundle-7822a04530c66569",
+      "bytes": 33254688
+    },
+    {
+      "name": "root_recovery_v3_native-e4ed7b6e40bb6e05",
+      "bytes": 211951216
+    },
+    {
+      "name": "trnm_pon_node-69a91523f715990b",
+      "bytes": 235351296
+    },
+    {
+      "name": "trnm_crypto_primitives-a1293a4edf2a5613",
+      "bytes": 54408832
+    },
+    {
+      "name": "trnm_release_bundle-2ec309a056a61302",
+      "bytes": 27496792
+    }
+  ],
+  "source_and_evidence_preserved": true
+}

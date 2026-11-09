@@ -8545,3 +8545,122 @@ release build. Retain its failed finite-experiment predicates, exact source and
 selected raw logs separately; no underlying causal diagnosis, weakened workload
 or all-hosted-gates PASS is claimed. The bounded readback is included in the
 same evidence directory.
+
+### 2026-11-09 root recovery-floor and native provider-readback continuation
+
+Continue #826 delivery `57e6c17ae2fa8a9cc547e271f34d90ef09115f04` on its
+complete ancestry. Preserve the original V3 APIs, persistent namespace, all
+twenty native owner tests and the original protocol/Host gates. Introduce an
+explicit [V4 recovery floor](../security/PQ_ROOT_RECOVERY_FLOOR_V4.md) and
+[native provider evidence](../security/PQ_ROOT_EFFECT_READBACK_NATIVE_V4.md),
+with separate signed/file namespaces. Neither is production M15/FinalUse
+admission or a proof of independent custody.
+
+Require full enrollment and exact signed ancestor matching for the supplied
+recovery floor. Pending-target recovery still needs complete signature replay,
+fresh exact-target anchor observation and explicit completion. A floor obtained
+from the same restored history provides no independent freshness. Check original
+writer/transport budget identity, cancellation and deadline before propagating
+callback errors as well as after success.
+
+For native provider readback, bind the original semantic operation, complete
+material, use kind, attempt, provider roster and exact orphan epoch. Synchronize
+the fresh request before the lookup, retain pending/Unknown outcomes, verify
+both signature families and revalidate complete root history before and after
+the callback. Provider keys must remain disjoint from all retained root/writer/
+anchor keys. Keep prior known declarations and all retained orphan-epoch
+declarations visible; never erase an unresolved epoch with a newer notification.
+The caller must retain a refused later notification until the prior epoch is
+explicitly reconciled. No execute, redispatch, payment, compensation or FinalUse
+method is added. Fixed provider-key lifecycle, provider-side request
+authentication/transport and actual external-effect integration remain open.
+
+Make the [custody declaration review](../security/PQ_ROOT_RECOVERY_FLOOR_V4.md)
+and [migration material review](../security/PQ_ROOT_MIGRATION_REVIEW_V1.md)
+mandatory source/CI inputs. The checked-in defaults contain no invented custody
+data and no proposed migration. Distinct labels and matching artifact bytes do
+not authenticate people, devices, backups, proofs or complete key populations.
+Migration review must retain lifetime identity, key/epoch, nonce, revocation,
+shared primitive and external liability history, without granting migration.
+
+Add three exact-name native selectors (recovery floor, provider readback and
+callback budget) alongside the unchanged V3 selectors. Re-freeze the declared
+source and hash-use register after review: all eight domain error bounds and
+all four shared primitive query bounds remain unknown. Exact-source validation
+must retain every attempted command, source-before/source-after receipts and
+raw failure logs. Do not substitute these component results for the original
+hosted acceptance or entire-workspace execution. All five requested whole-chain
+blockers remain HOLD until their external evidence and security obligations are
+actually discharged; the local code additions alone close none of those gates.
+
+
+The first frozen continuation source `db48af79b9686f2c7bb50ff7dde9b2233fe32fb8`
+retains 39 completed successful command records and successful complete V3/V4
+native runner summaries. Its parent campaign was interrupted during strict
+Clippy after the compiler frontend reported SIGKILL; the environment became
+unavailable and no parent summary or source-after was produced. The cause of
+that SIGKILL is not established. Recovered raw command logs must remain separate
+from a completed campaign. Hosted strict Clippy separately identified an unused
+`RootStateV3` import left by fixture extraction; remove that import and update
+its reviewed source pins without changing any test body or protocol.
+
+The hosted complete-workspace build at that source returned zero, but its
+artifact validator still required the old shared two-feature list. Preserve
+`--workspace --all-targets --all-features`, the original test optimizations and
+all workload/budget checks. Require exact per-crate lists instead: Node has
+`default`, `pq-native-openssl`, `pq-root-v3`; M06 retains its original two. Apply
+the same Node list to the retained ancestry target and report both lists. Replay
+the actual workflow AST assertions with missing/extra/cross-crate/duplicate and
+conditional-skip controls, and make these controls mandatory in repository truth.
+The original native campaign failure and CodeQL export status remain separate.
+Re-freeze and re-execute the corrected candidate in an isolated checkout using
+the repository-pinned provider and toolchain; retain HOLD and every unknown bound.
+
+
+### 2026-11-09 V4 corrected-source execution and retained delivery
+
+Frozen corrected source `0d99924005b70b1308bf3e62c53e9300fbb4aac4`, tree
+`9358521d635df532d71b807fab8cc3029ff83912`, completed 42/42 recorded commands.
+The exact V4 selectors passed 8 recovery-floor, 12 provider-readback and 6
+callback-budget tests; retained V3 selectors passed 10 structure, 8 crypto,
+12 kernel and 20 owner tests, including the common-restore counterexample.
+The 34 retained V2 native tests, 175 default crypto tests, 43 default release
+tests, exact-feature controls, source/CI/register controls, locked dependency
+graphs and strict workspace/all-target/all-feature Clippy also passed. Suite
+counts overlap: the default crypto library includes the ten V3 structural tests.
+No full protocol lane or all-workspace test execution is claimed.
+
+The V2 durable-journal suite also retained SQLite connection ResourceWarning
+messages while reporting 14 tests and exit zero. Those resource-lifetime warnings
+remain visible; allocation tracebacks and unique attribution were not obtained,
+and the result is not described as zero-warning execution.
+
+The [V4 retained evidence](../../evidence/pq-root-continuation-v4-20261109/README.md)
+contains the complete corrected campaign, exact commands, native selector
+inventories, raw-log hashes and before/after tracked-byte checks. Those two
+observations agree; continuous enforced immutability and independent executor
+authentication are not proved. This plan/evidence delivery is a later commit,
+not the source relabeled as executed. The recovery execution used the existing
+repository-pinned OpenSSL 3.5.9 preparation and Rust 1.95.0 in isolated paths.
+The interrupted first campaign used OpenSSL 3.5.7; it is a separate environment
+and source observation, not a same-environment repetition.
+
+The initial `db48af79` parent campaign remains incomplete: 39 completed exit-zero
+command records, complete V3/V4 selector evidence, a Clippy frontend SIGKILL,
+and no recorded outer Clippy exit, parent summary or parent source-after. Its
+underlying SIGKILL cause is unestablished. Separate hosted logs establish the
+unused-import and old shared-feature-validator failures corrected in this
+source. Original native campaign failures and other hosted outcomes remain
+separate; no workload, optimization profile, budget or original gate was relaxed.
+
+The dated corrected-source hosted snapshot at `2026-11-09 09:04:24 UTC` records 3 failure, 4 in_progress, 6 success. Workflow association alone does not identify every prospective-merge job as head. The evidence retains each source, run and observation time; unfinished runs are not predictions. There is no all-hosted-gates PASS claim.
+
+All five whole-chain blockers remain HOLD. A supplied external floor does not
+authenticate its origin, age or independent survival; signed provider declarations
+do not execute or verify actual payments, API/resource effects or compensation,
+and grant no M15/FinalUse authority. Custody defaults still lack deployment
+evidence and migration remains unproposed. The finite source register has 37
+files, five roles and 16 hash-use groups; the corpus has 771 exact source pins.
+The eight actual domain bounds remain null, shared primitive query budgets and
+complete lifetime populations remain unknown, and no production activation or
+algorithm replacement is authorized by these observations.
