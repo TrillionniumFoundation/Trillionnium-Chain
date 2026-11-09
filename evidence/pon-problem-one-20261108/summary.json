@@ -282,9 +282,19 @@
     "reason": "Development-plan source pin changed before its legitimate corpus refresh.",
     "record": "validation/preparation-source-pin.json"
   },
+  "preserved_prepublication_archive_observation": {
+    "expected_archive_members_at_that_stage": 238,
+    "implementation_source_changed": false,
+    "initial_archive_commit": "ae1ab19d036b077d841d82dd946bb5886e7cf703",
+    "initial_tracked_members": 236,
+    "missing_original_logs_explicitly_staged": true,
+    "raw_artifact_attribute_path_count": 3,
+    "record": "assembly/prepublication-archive-observation.json"
+  },
   "production_activation": false,
   "publication": {
     "actual_publication_attestation": "Subsequent GitHub PR/ref metadata; this archive predates its own evidence commit and push.",
+    "delivery_scope": "Evidence and three exact raw-artifact Git attributes; no implementation source changes.",
     "merge_or_activation_authorized": false,
     "projection_is_full_source": false,
     "record": "publication/prepared-sender-187.json",

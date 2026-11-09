@@ -37,3 +37,8 @@ evidence/pon-client-confirmation-v1/**/*.log -text -whitespace
 
 # Preserve byte-exact successful and failed proof-chain observations.
 /evidence/pon-w1-qrom-proof-chain-20261108/*.log -text -whitespace
+
+# Problem-one evidence preserves exact retained probe, diff and native stdout bytes.
+/evidence/pon-problem-one-20261108/metering/fixed_packet_identity_probe.py -text -whitespace
+/evidence/pon-problem-one-20261108/metering/metering-final.diff -text -whitespace
+/evidence/pon-problem-one-20261108/validation/native/pon-work-retained.stdout -text -whitespace

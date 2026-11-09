@@ -2,16 +2,16 @@
   "all_json_parse": true,
   "all_original_copies_byte_identical_at_assembly": true,
   "archive_finalized_utc": "2026-11-09T03:04:23.075789+00:00",
-  "file_count_excluding_manifest": 237,
+  "file_count_excluding_manifest": 238,
   "files": [
     {
-      "bytes": 16424,
+      "bytes": 17170,
       "path": "README.md",
       "provenance": {
         "kind": "generated-delivery-artifact",
         "purpose": "Final evidence index, scope and aggregate of retained exact-source observations; generated after implementation gates."
       },
-      "sha256": "4946e84af1f512fc9e80ebfd17051b20f84a6d0104d6428c4e01b5b068d65cc1"
+      "sha256": "b5f5e05cd4f561316304cbf8f8aa85b496e92ff7468a86d0a90ef97bddd87103"
     },
     {
       "bytes": 657,
@@ -81,6 +81,15 @@
         "purpose": "Actual assembly preflight stdout; no tests executed."
       },
       "sha256": "0febaba914868c3a856498fd37ca8dd93ddaef3ebf8e1c59d0ac3fc85bb31081"
+    },
+    {
+      "bytes": 3334,
+      "path": "assembly/prepublication-archive-observation.json",
+      "provenance": {
+        "kind": "generated-delivery-artifact",
+        "purpose": "Actual retained prepublication archive observation and precise corrective scope."
+      },
+      "sha256": "fab958f7f2a9e674e57f7a2cf4dfcbdf59f6fbf0bcd771c270779cd0be996373"
     },
     {
       "bytes": 2351,
@@ -717,13 +726,13 @@
       "sha256": "5daa843f352224cc92eb0347f11fde7b002d8b185cd4f16f5bc5eb3af3599b9b"
     },
     {
-      "bytes": 13838,
+      "bytes": 14375,
       "path": "summary.json",
       "provenance": {
         "kind": "generated-delivery-artifact",
         "purpose": "Final evidence index, scope and aggregate of retained exact-source observations; generated after implementation gates."
       },
-      "sha256": "4e6e4fc8eda01fec6b91df7f34b7f8714a596d9e48430a628b7f26cb0c515cad"
+      "sha256": "bb2fc4701f9e88f57f99cc058ad5af205b616da7c0aa7bf4e45cd7aae40cfbd4"
     },
     {
       "bytes": 3799,
@@ -2657,5 +2666,5 @@
   "schema": "pon-problem-one-evidence-manifest-v1",
   "scope": "Every regular file in this evidence directory except manifest.json itself.",
   "status": "EVIDENCE_ONLY_DRAFT",
-  "total_bytes_excluding_manifest": 3907751
+  "total_bytes_excluding_manifest": 3912368
 }

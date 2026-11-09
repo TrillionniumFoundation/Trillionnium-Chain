@@ -1,0 +1,28 @@
+{
+  "expected_archive_members": 238,
+  "initial_archive_commit": "ae1ab19d036b077d841d82dd946bb5886e7cf703",
+  "initial_shell_continued_after_whitespace_diagnostics": true,
+  "initial_tracked_members": 236,
+  "missing_tracked_members_due_to_existing_gitignore_log_rule": [
+    "metering/preflight-before.log",
+    "metering/preflight-schema-version.log"
+  ],
+  "observed_utc": "2026-11-09T03:07:51.061704+00:00",
+  "repair": "Explicitly stage the two hash-bound original logs; trim generated README EOF; apply existing raw-evidence byte-preservation convention to exactly three archived paths. No implementation source, original probe bytes, original raw output or gate command is changed.",
+  "replayed_format_check": {
+    "argv": [
+      "git",
+      "diff",
+      "--check",
+      "187b880048e30196407960f48b10c379859d1396",
+      "ae1ab19d036b077d841d82dd946bb5886e7cf703"
+    ],
+    "exit_code": 2,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_utf8": "",
+    "stdout_sha256": "74121e28e5e090c2e65ab8600bdefe3415ae2bd2424e7b92eede898bbd63f519",
+    "stdout_utf8": "evidence/pon-problem-one-20261108/README.md:145: new blank line at EOF.\nevidence/pon-problem-one-20261108/metering/fixed_packet_identity_probe.py:96: new blank line at EOF.\nevidence/pon-problem-one-20261108/metering/metering-final.diff:8: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/metering/metering-final.diff:35: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/metering/metering-final.diff:81: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/metering/metering-final.diff:84: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/metering/metering-final.diff:85: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/metering/metering-final.diff:129: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/metering/metering-final.diff:132: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/metering/metering-final.diff:133: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/metering/metering-final.diff:147: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/metering/metering-final.diff:148: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/metering/metering-final.diff:178: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/metering/metering-final.diff:179: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/metering/metering-final.diff:183: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/metering/metering-final.diff:212: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/metering/metering-final.diff:280: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/metering/metering-final.diff:343: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/metering/metering-final.diff:353: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/metering/metering-final.diff:365: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/metering/metering-final.diff:366: trailing whitespace.\n+ \nevidence/pon-problem-one-20261108/validation/native/pon-work-retained.stdout:38: new blank line at EOF.\n"
+  },
+  "schema": "pon-prepublication-archive-observation-v1",
+  "scope": "Archive preparation; not a failure or rerun of implementation tests."
+}
