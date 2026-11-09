@@ -1,0 +1,56 @@
+{
+  "base": "0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a",
+  "updated_existing_pins": [
+    {
+      "path": "tests/fuzz/Cargo.lock",
+      "before": "6af28eb8c0debfa095df2b19c320eaeefa95f8c1",
+      "after": "5abfb3620cd64f710a4d79ba4e748384151dc992"
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "before": "ce7b3d41c35e691bb4c21c3b6dc5be6b2bd8155e",
+      "after": "79d58dde329d85755a95177bc94f5cb20a117cdb"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+      "before": "d248078e438dfc89562f15bb41ac927c18559d43",
+      "after": "4b33379fded363dedecb1bb9ffc024ee58471c86"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+      "before": "309ae852e7a9eeb74a12eb5aff4045364c6f7335",
+      "after": "592218485be74b3f17aa3e37c65462bf4a0aa269"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "before": "e1f42c22aee90ef7d27138c8e7c41010d593c907",
+      "after": "62b9ae16c3c4a835b766ad2674ba6cf401c393c2"
+    }
+  ],
+  "required_paths_added": [
+    ".github/workflows/pon-next-architecture-security.yml",
+    "docs/development/specs/pon/CELL_PROVIDER_DISCOVERY_AUTH_PQ_V3.md",
+    "docs/development/specs/pon/CELL_PROVIDER_DISCOVERY_DEV_V1.md",
+    "docs/development/specs/pon/CELL_STORAGE_NETWORK_ACCEPTANCE_V1.md",
+    "formal/pon-nakamoto-v1/vectors/cell-discovery-epoch-v3.json",
+    "scripts/cell_discovery_epoch_v3_vector.py",
+    "scripts/ci/test_cell_discovery_v3_ci.py",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/epoch.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/epoch_directory.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/epoch_directory_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/epoch_tests.rs"
+  ],
+  "assertions": {
+    "allow_legacy_fallback": false,
+    "hepta_final_use_integrated": false,
+    "independent_accepted": false,
+    "native_pq_node_integrated": false,
+    "physical_rollback_resistant": false,
+    "production_activation": false,
+    "public_wan_accepted": false,
+    "quantum_pon_hardness_qualified": false
+  },
+  "status": "research-only-hold-no-go"
+}

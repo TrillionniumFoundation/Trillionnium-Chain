@@ -14,8 +14,13 @@ on:
       - docs/development/specs/pon/CELL_RS46_CHUNK_V1.md
       - docs/development/specs/pon/CELL_COMPLETE_VERSION_V1.md
       - docs/development/specs/pon/CELL_CUSTODY_CONTINUATION_V1.md
+      - docs/development/specs/pon/CELL_PROVIDER_DISCOVERY_DEV_V1.md
+      - docs/development/specs/pon/CELL_PROVIDER_DISCOVERY_AUTH_PQ_V3.md
+      - docs/development/specs/pon/CELL_STORAGE_NETWORK_ACCEPTANCE_V1.md
       - scripts/cell_complete_version_vector.py
+      - scripts/cell_discovery_epoch_v3_vector.py
       - formal/pon-nakamoto-v1/vectors/cell-complete-version-v1.json
+      - formal/pon-nakamoto-v1/vectors/cell-discovery-epoch-v3.json
       - trillionnium/crates/trnm-data-availability/**
       - trillionnium/crates/trnm-pon-node/**
       - trillionnium/crates/trnm-crypto-primitives/**
@@ -147,6 +152,8 @@ jobs:
           bash "$OUT/run-command.sh" next-python python3 -B -m unittest discover -s formal/next-architecture-security -p 'test_*.py' -v || status=1
           bash "$OUT/run-command.sh" counterexample-fixture python3 -B formal/next-architecture-security/counterexamples.py --check-fixture || status=1
           bash "$OUT/run-command.sh" complete-version-vector python3 -B scripts/cell_complete_version_vector.py --check || status=1
+          bash "$OUT/run-command.sh" discovery-epoch-vector python3 -B scripts/cell_discovery_epoch_v3_vector.py --check || status=1
+          bash "$OUT/run-command.sh" discovery-workflow-controls python3 -B scripts/ci/test_cell_discovery_v3_ci.py || status=1
           exit "$status"
       - name: Verify locked graph and unchanged all-source formatting
         id: graph_format

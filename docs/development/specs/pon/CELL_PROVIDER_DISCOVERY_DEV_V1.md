@@ -96,6 +96,15 @@ automatic namespace reset or expiry-based quota refund is introduced. A PN5
 public-discovery claim still needs authenticated source identities, independently
 established control domains and the declared surviving-source WAN campaign.
 
+The explicit [authenticated epoch PQ V3 profile](CELL_PROVIDER_DISCOVERY_AUTH_PQ_V3.md)
+addresses finite replay-state recovery and query-bound source authentication in
+a new signed wire and fresh directory. It preserves the V1/V2 meaning described
+here. Selecting V3 is explicit; neither a schema open nor an expired advertisement
+migrates or clears an old directory. The broader
+[storage-network acceptance contract](CELL_STORAGE_NETWORK_ACCEPTANCE_V1.md)
+keeps physical custody, funding, restricted loading and next-task use separate
+from discovery conformance.
+
 Every resulting manifest is checked against the pinned manifest digest and
 the independently pinned Cell context before output publication. Existing Cell
 chunk checks and the full ordered payload hash remain required.

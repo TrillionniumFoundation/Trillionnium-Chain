@@ -10606,3 +10606,87 @@ The composed F2 source at 0101b0ce76239832e0b2d19d0fd3f07e40fabeb4 remains prese
 The [current composition entry](../../evidence/chain-six-full-20261108/CURRENT_PQ_COMPOSITION.md) retains the original 29 commands, arguments, order, 1200-second per-command limits and complete source gates. It separately fixes the reviewed 55-name roster and test-source hash. Its nine retained-log mutation controls reject missing, duplicate, skipped, stale or falsely reported execution. Historical runner, tests, refusals and raw logs remain unmodified; the F2 log is parser-control input, never a fresh execution result.
 
 The retained credit-envelope workflow now invokes its unchanged 43-test source-integrity command with Python unbuffered output. Actual original tests succeeded in both observations, while only the unbuffered stream satisfied the unchanged terminal-OK parser; no test, parser, pipefail rule or other suite was relaxed. Native Rust and configuration inputs remain byte-identical to F2. New complete campaigns must identify this new frozen source and their actual outcomes; all broader qualification and production-activation flags remain HOLD / false.
+
+
+### 2026-11-08 authenticated epoch discovery and storage-network obligations
+
+Continue Cell PR #807 from exact
+`0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a` in an isolated stacked branch.
+The [authenticated PQ V3 contract](specs/pon/CELL_PROVIDER_DISCOVERY_AUTH_PQ_V3.md)
+adds explicitly signed 300-second sequence epochs, separate active/replay
+allocations, bounded authenticated-source shares, query nonces and exact
+bootstrap reply binding. Closed epochs can be reclaimed without reopening
+old signed sequence namespaces; existing V1/V2 namespaces retain their original
+meaning. Current provider authority expiry releases active capacity while
+history remains until epoch closure. Current-source authentication, original
+receipt-time conflict evidence, exact lease boundaries and the original shared
+connection/byte/validation/deadline reservation are independent obligations.
+
+The [source-bound evidence](../../evidence/cell-discovery-auth-epoch-20261108/README.md)
+retains an actual unchanged-source 52-pass discovery baseline and two actual
+desired-recovery red controls (0 passed / 2 failed, Cargo exit 101). Sixteen
+previous signed admissions remain allocated after expiry, a 601-second clock
+advance and reopen, and exclude a fresh signed identity. The tests augment
+only the old test modules; those failures are not new-source validation.
+New V3 source needs its own frozen-source complete crate and required gates.
+
+Independent review also identified operation-local sequence downgrade after a
+higher observed lease expires or its withdrawal is capacity-refused. Actual
+native red controls reproduce both expiry orderings and the quota-refused
+withdrawal path. Preserve the first quota fixture's setup failure separately;
+the diagnostic successor reaches the intended semantic failure. The candidate
+retains a bounded highest-verified sequence across both query rounds before
+current-expiry and quota filtering. This veto is distinct from, and cannot
+manufacture, the directory's committed cross-operation high water.
+
+The [five-part acceptance register](specs/pon/CELL_STORAGE_NETWORK_ACCEPTANCE_V1.md)
+keeps existing complete-target TCX1 delta, TCV1 closure, complete-replica
+intersection, protected shared-object GC and bounded RAM working sets. It
+records the missing persistent complete-version retained-set owner, shard
+lifecycle, independently administered placement, executed prepaid renewal/repair
+and ordinary restricted-loader/device/Hepta CURRENT/resource/FinalUse/next-task
+trace. A discovery location lease is not a funded storage lease. Exact-byte
+deduplication must be measured on the actual encoding and updates. Permanent
+historical retention needs an explicit funded capacity horizon.
+
+The existing PN5 independent 72-hour WAN gate, original four-second service
+contract and separate thirty-second pressure campaign remain unchanged.
+All five operational storage qualifications remain **HOLD_NO_GO**.
+
+The first frozen authenticated-epoch attempt, `d4a0643a29ed1a35576a36d88189cadd28929c65`,
+completed all 19 commands with 17 passes and two failures: library runtime
+463 passed / 5 failed, and strict all-feature lint lacked the required optional
+OpenSSL 3.5 API. Source-before/source-after matched and the worktree stayed clean.
+Preserve its complete logs. A test-only successor makes the short-lease receipt
+premise observable without extending its 1s/2s/10s bounds; production guard
+bytes stay unchanged. Desktop normal-priority diagnostics still failed all four
+original early-announcement controls and one timing premise, while the other two
+new sequence controls passed. Those observations remain failures. Use a new
+source-bound Linux development run with persistent native-test storage, compiler
+1.95.0 and the verified pinned optional backend before claiming a complete pass.
+
+Authenticated-epoch C2 verification and minimal lint successor (2026-11-08):
+the isolated ai395 development run on `939aa069af41d31d41082272d7ae7367ef08f812`
+passed the valid three-case old/fixed sequence differential and all four retained
+classical controls. Its full 19-gate run passed 18 gates, including unfiltered
+468 library + 34 integration tests and 13 compile-fail doctests. Strict all-feature
+Clippy found one redundant unit expression in the new epoch directory test;
+remove only that expression and refresh that test's source pin. Preserve the
+entire failed run, host/provider/toolchain inputs and all earlier failures.
+The successor still requires a new complete source-bound run. Production
+authentication bytes and original deadlines/budgets remain unchanged; all five
+storage-network operational qualifications stay HOLD_NO_GO.
+
+Authenticated-epoch frozen software acceptance (2026-11-08): exact candidate
+`d27619a725a6e2969a5bd25d45d5c8514631c320` passed all 19 unchanged gates on
+ai395 with persistent native-test storage, Rust/Cargo 1.95.0 and the verified
+isolated OpenSSL 3.5.9 backend. Unfiltered DA execution passed 468 library and
+34 integration tests plus 13 compile-fail doctests; strict all-feature Clippy,
+locked graphs, vectors, negative controls, links, 599 pins and source inventory
+passed. Source-before/source-after matched and source stayed clean. Archive
+the complete C3 run and retain both prior frozen failures. Record separately
+the early cloud preparation ENOSPC raw-log/argv gap and the desktop evidence
+transfer ENOSPC with bounded own-cache recovery; neither changes the C3 result.
+The final evidence commit still receives a complete exact-source rerun before
+PR publication. All five operational gates and missing implementation-owner
+boundaries remain HOLD_NO_GO under the storage acceptance contract.
