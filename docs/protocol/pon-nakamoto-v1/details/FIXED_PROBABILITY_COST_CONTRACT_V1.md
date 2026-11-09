@@ -219,6 +219,38 @@ legal W1/MU1 strategy class and initial state. The engineering next gate is an
 explicit new native admission/recovery profile on one tested source. Neither
 gate is replaced by a successful arithmetic certificate.
 
+## 7. Fixed-success query frontier and the output-checking loss
+
+The [fixed-success continuation](../../../../formal/pon-nakamoto-v1/FIXED_SUCCESS_QUERY_FRONTIER_V1.md)
+proves an exact optimum over every classical adaptive policy in a separately
+declared independent Bernoulli membership-query game. Its
+[calculator and independent verifier](../../../../formal/pon-nakamoto-v1/fixed_success_query_frontier.py)
+distinguish an unconditional expected producer-query cost, a hard query cap,
+the available finite domain, and terminal output checks performed outside the
+producer's account. Arbitrary exact private coins are free in this query metric;
+finite-seed or wall-clock attainment is not implied.
+
+For `p=1/16`, success at least `1/2`, enough fresh addresses and no unqueried
+terminal outputs, the minimum expected producer-query count is exactly `8`;
+the minimum feasible hard query cap is `11`. With one unqueried final output,
+the expected producer-query optimum is `112/15`. With eleven such outputs and
+enough available addresses, this relaxed model admits success at least one
+half with zero producer membership queries. Other computation and receiver
+verification remain outside that deliberately relaxed resource metric.
+
+MU1's existing ideal reduction grants valid unit construction for free and
+uses virtual terminal membership checks for extraction. Those checks cannot
+be silently billed to the producer. The new theorem quantifies that loss and
+states the required direction of an all-algorithm simulation and its additive
+overhead. It supplies no physical-cost simulation for W1, no bound increasing
+with the number of units, and no quantum optimum. All sixteen actual cost
+points retain their original `null/null/unproved` values.
+
+```bash
+python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_success_query_frontier.py' -v
+python3 formal/pon-nakamoto-v1/fixed_success_query_frontier.py --check
+```
+
 ## Primary references
 
 - [BCHN integer ASERT specification](https://bitcoin-cash-node.gitlab.io/bchn-sw/bitcoincash-upgrade-specifications/2020-11-15-asert/): integer division, polynomial, anchor semantics, and reference vectors; deployment parameters are not copied into PoN.

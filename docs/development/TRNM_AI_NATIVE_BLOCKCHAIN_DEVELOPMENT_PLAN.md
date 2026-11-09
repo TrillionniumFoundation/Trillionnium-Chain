@@ -1,3 +1,32 @@
+**All-policy fixed-success query continuation, 2026-11-09 America/New_York — HOLD:**
+
+Continue the exact #835 source `e2a02f9271b49f146e70806c8a66e161b5973971`
+on the existing integration stack. The
+[fixed-success theorem](../../formal/pon-nakamoto-v1/FIXED_SUCCESS_QUERY_FRONTIER_V1.md)
+proves the optimum over every classical adaptive policy in its explicitly
+declared independent Bernoulli query game, with a finite available domain,
+unconditional expected query costs, a hard query cap and a separate final
+unchecked-output budget. An exact calculator, independently reconstructed
+first-hit certificate verifier and finite decision-tree controls accompany it.
+The new commands must execute exactly once in the existing repository-truth
+lane and remain covered by the retained omission/duplication/movement checks.
+
+Distinguish `8` minimum expected producer queries from the minimum feasible
+hard cap `11` at success `1/2` and density `1/16`. A final unchecked-output
+budget changes that optimum; MU1's virtual extraction queries are not a
+producer bill. The proof records the all-algorithm simulation direction and
+overhead, the joint initial-state obligation, and the conditions needed before
+using a capped quantum bound for an expected resource cost. Exact private
+randomization in this query metric supplies no wall-clock or finite-seed claim.
+
+The complete legal W1/SHA resource simulation, authenticated initial state and
+public help, cross-branch lifetime accounting, physical resource/deadline model,
+quantum cost envelope and native security qualification remain open. Preserve
+all sixteen actual `null/null/unproved` cost points, existing relation source
+pins, valid shared/low-rank/cached implementations, and production refusal.
+Record validation on this candidate's own source; parent native logs remain
+historical. This continuation changes no native work policy or admitted credit.
+
 **Joint PoN resource-contract continuation, 2026-11-08 America/New_York — HOLD:**
 Continue the complete #821 source `e798d7125724d4b9f98c24d00cc80031f2eab4a9`,
 which already contains the #811 work-cost and #812 integration lineage.
