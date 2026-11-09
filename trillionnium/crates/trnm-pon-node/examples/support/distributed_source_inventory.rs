@@ -218,6 +218,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/pq-root-dependency-register-v3.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/pq-root-dependency-register-v3.json"
+        )),
+    ),
+    (
         "config/pon/pq-system-required-tests-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -876,6 +883,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -922,6 +943,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-crypto-primitives/tests/pq_openssl_native.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs"
         )),
     ),
     (
@@ -5489,6 +5517,27 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/anchor.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/root_recovery_v3/anchor.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/storage.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/root_recovery_v3/storage.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -6686,6 +6735,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/tests/root_recovery_v3_native.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/root_recovery_v3_native.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -7110,6 +7166,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-release-bundle/src/pq_release/validated_root_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-release-bundle/src/root_recovery_v3.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-release-bundle/src/root_recovery_v3.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-release-bundle/src/root_recovery_v3_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-release-bundle/src/root_recovery_v3_tests.rs"
         )),
     ),
     (

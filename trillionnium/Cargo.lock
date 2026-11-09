@@ -1297,6 +1297,7 @@ dependencies = [
 name = "trnm-release-bundle"
 version = "0.1.0"
 dependencies = [
+ "openssl",
  "sha2",
  "trnm-crypto-primitives",
  "trnm-protocol",

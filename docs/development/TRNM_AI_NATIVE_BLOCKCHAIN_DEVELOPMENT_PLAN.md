@@ -8484,3 +8484,64 @@ failures, source integrity and external qualification. Preserve hard research
 capacity refusal without pruning/reinitializing lifetime history. The original
 15-path lifetime register remains explicitly limited to its old declared sources;
 its pass cannot cover the new bridge or instantiate missing probability bounds.
+
+### 2026-11-09 native root/recovery V3 and dependency continuation
+
+Continue #813 delivery `080c33cca445fca1735bc51ac4cf63f37a273263` with
+[native root V3 components](../security/PQ_ROOT_RECOVERY_NATIVE_V3.md) and the
+[reviewed dependency register](../security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md).
+Preserve #806/#813 source identities, earlier failed observations, the existing
+M15 path and original CI commands. This is an opt-in Rust research candidate,
+not a production root change or whole-chain qualification.
+
+Require exact real ML-DSA-87 2/3 AND SLH-DSA-SHA2-256s 2/3 for all five actions
+and all-six separate successor possession. Fresh V3 encodings bind complete
+statements, intents, nonces, generation and predecessor. Retain revocations and
+nonces across generations; expired recovery retains both current quorums.
+Implementation resource caps do not instantiate adversary budgets. Check the
+original crypto budget at kernel entry and immediately before state commit,
+and reject budget replacement by owner callbacks.
+
+Add an explicitly enrolled native SQLite journal with network/genesis/owner
+scope, separately pinned writer/anchor rosters, complete signed replay, durable
+pending-before-CAS ordering and exact-target reconciliation after uncertainty.
+Retain the all-state rollback counterexample. Trusted private-directory
+administration, independently surviving anchor state, trusted time and real
+custody remain external assumptions. Current intent observations do not grant
+M15 installation, launch or FinalUse authority. External provider/reorg handling
+remains the Python V2 research scope until actual native sinks exist.
+
+Add mandatory exact-name native selectors and refusal controls without removing
+old gates. Freeze a finite source/role/hash inventory with null concrete bounds
+and shared primitive accounting. Exact-source records distinguish native
+component results, source integrity and original gate failures. No successful
+stub, silent algorithm fallback, claimed independent custody, full composition
+proof or production activation is authorized.
+
+The first frozen V3 campaign at `1f7ff4106f14e5b514d95a9faf2c5eea1233aea5`
+retains 29/35 successful commands and unchanged complete source bytes. Record
+the old authority export-pin refusal, explicit ENOSPC native build failures and
+unset OpenSSL-prefix V2 refusals separately from passing component observations.
+Review the one-line crypto export against all 44 old authority pins and retain
+its seven-route scope; do not label V3 owners as covered by that register. Add
+an irreversible owner cancellation latch so explicit or observed cancellation
+cannot be cleared through the external flag alias. Re-freeze exactly those two
+V3 source pins and run the corrected candidate with the declared native prefix.
+The corrected frozen candidate `a44344b25d12328fedd883a335585f03d059060b`
+completed 35/35 local commands with unchanged complete source: 50 V3 component
+tests, 34 V2 native tests, retained 175 crypto and 43 release tests, the declared
+source/control checks, and strict workspace/all-target/all-feature Clippy. The
+175 crypto count already includes the 10 V3 structural tests. The
+[retained V3 evidence](../../evidence/pq-root-native-v3-20261109/README.md) keeps
+both frozen attempts, development failures, exact commands and raw-log hashes.
+Full protocol and full workspace test execution are not claimed. Actual native
+M15/provider integration, independent surviving freshness/custody and complete
+lifetime/query/composition bounds remain open; HOLD and all nonactivation flags
+remain unchanged.
+
+Hosted original native campaign run `42554940456` subsequently reported three
+failed original campaign runs at the same tested source, after a successful
+release build. Retain its failed finite-experiment predicates, exact source and
+selected raw logs separately; no underlying causal diagnosis, weakened workload
+or all-hosted-gates PASS is claimed. The bounded readback is included in the
+same evidence directory.

@@ -227,3 +227,4 @@ pub mod qualified_work_task;
 pub mod pq_auth;
 pub mod pq_candidate;
 pub mod pq_profile_auth;
+pub mod pq_root_v3;

@@ -14,6 +14,7 @@ consensus_authority = false
 
 [features]
 default = []
+pq-root-v3 = ["pq-native-openssl", "trnm-release-bundle/pq-root-v3"]
 # Explicit fresh native network-owner namespace and separately selected
 # PQG1/QTX1 transfer-only account import. This is not whole-chain PQ activation.
 pq-native-openssl = ["trnm-crypto-primitives/pq-native-openssl", "trnm-mvcc-fee/pq-native-openssl", "dep:openssl"]
