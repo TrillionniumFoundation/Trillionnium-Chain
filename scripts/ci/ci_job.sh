@@ -14,6 +14,9 @@ case "${1:?required job}" in
     python3 scripts/ci/pq_authority_effect_register.py
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v
     python3 scripts/ci/test_pq_chain_claim_guard.py
+    # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.
+    python3 scripts/ci/test_w1_qrom_current_implementation_audit.py
+    python3 scripts/w1_qrom_current_implementation_audit.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
     python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
@@ -63,6 +66,7 @@ case "${1:?required job}" in
     python3 scripts/ci/test_ci_execution.py
     python3 scripts/ci/test_capture_chain_hepta_identity.py
     python3 scripts/ci/test_chain_hepta_qualification.py
+    python3 scripts/ci/test_chain_hepta_command_binding.py
     python3 scripts/ci/test_pon_daa_head_binding.py
     python3 -B scripts/ci/test_llm_hosted_once.py
     "${TRNM_RUNTIME_RELEASE_PYTHON:-python3}" scripts/test_llm_runtime_release.py
@@ -128,9 +132,11 @@ PY
     python3 scripts/ci/test_pon_public_v3_policy_read.py
     python3 scripts/ci/test_pon_v3_cookie_cpu_study.py
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
+    python3 scripts/ci/test_read_validated_business_goodput.py
     python3 scripts/ci/test_pon_w1_cost_matrix_reader.py
     python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py
     python3 scripts/ci/test_run_w1_reused_cost_v3.py
+    python3 scripts/ci/test_w1_lifecycle_cost_v4.py
     python3 scripts/ci/test_llm_cell_handoff_deadline.py
     python3 scripts/ci/test_read_original_native_campaign.py \
       --artifact-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963 \
@@ -150,6 +156,7 @@ PY
     PYTHONWARNINGS=error::ResourceWarning python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_migration_journal_owner.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_seed_relation_vectors_v1.py' -v
     python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"
+    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_lifecycle_cost_v4
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-checkpoint-types -p trnm-verification-profiles --all-targets --all-features
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --all-targets --all-features
     cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives -p trnm-mvcc-fee --examples

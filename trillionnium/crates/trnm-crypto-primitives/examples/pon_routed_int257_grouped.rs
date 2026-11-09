@@ -11,11 +11,12 @@ use std::{
 use trnm_crypto_primitives::{
     decode_hash32,
     pon_routed_int257_grouped::{
-        Context, Matrix, Model, PreparedBatch, PreparedModel, Request, CLASSES, DIM, EXPERTS,
-        MAX_BATCH, PROFILE,
+        AdapterFactors, Context, Matrix, Model, PreparedBatch, PreparedModel, Request, CLASSES,
+        DIM, EXPERTS, MAX_BATCH, MAX_FACTOR_RANK, PROFILE,
     },
 };
 const SCHEMA: &str = "pon-routed-int257-grouped-session-v0";
+const FACTORED_SCHEMA: &str = "pon-routed-int257-grouped-factored-session-v0";
 const MAX_LINE_BYTES: usize = 256 * 1024;
 const MAX_BATCH_COMMANDS: usize = 64;
 
@@ -408,13 +409,164 @@ fn run(input: &mut impl BufRead, out: &mut impl Write) -> Result<()> {
     }
     Ok(())
 }
-fn main() {
-    if std::env::args().collect::<Vec<_>>().get(1..) != Some(&["--grouped-research-v0".to_string()])
-    {
-        eprintln!("GROUPED_RESEARCH_SELECTOR");
-        std::process::exit(2);
+
+fn adapter_factors(value: &Value) -> Result<[AdapterFactors; EXPERTS]> {
+    let values = array(value, EXPERTS)?;
+    let mut adapters = std::array::from_fn(|_| AdapterFactors {
+        up: std::array::from_fn(|_| Vec::new()),
+        down: Vec::new(),
+    });
+    for (adapter, value) in adapters.iter_mut().zip(values) {
+        let value = fields(value, &["up", "down"])?;
+        let down = value["down"].as_array().ok_or("FACTOR_DOWN_ARRAY")?;
+        if !(1..=MAX_FACTOR_RANK).contains(&down.len()) {
+            return Err("FACTOR_RANK".into());
+        }
+        for row in down {
+            adapter.down.push(vector(row)?);
+        }
+        for (up, row) in adapter.up.iter_mut().zip(array(&value["up"], CLASSES)?) {
+            for coefficient in array(row, down.len())? {
+                up.push(
+                    i32::try_from(coefficient.as_i64().ok_or("SIGNED_INTEGER")?)
+                        .map_err(|_| "SIGNED_I32")?,
+                );
+            }
+        }
     }
-    if let Err(error) = run(&mut io::stdin().lock(), &mut io::stdout().lock()) {
+    Ok(adapters)
+}
+
+fn factored_batch(value: &Value) -> Result<Batch> {
+    let value = fields(value, &["type", "context", "requests", "now_ns"])?;
+    if value["type"] != "factored_batch" {
+        return Err("FACTORED_BATCH_REQUIRED".into());
+    }
+    // Share the unchanged bounded request decoder. This separate one-execution
+    // interface has no samples/warmup fields or hidden diagnostic repetitions.
+    let mut original = value.clone();
+    original.insert("type".into(), json!("batch"));
+    original.insert("samples".into(), json!(1));
+    original.insert("warmup".into(), json!(0));
+    batch(&Value::Object(original))
+}
+
+fn run_factored(input: &mut impl BufRead, out: &mut impl Write) -> Result<()> {
+    let init = read_frame(input)?.ok_or("FACTORED_INIT_REQUIRED")?;
+    let init = fields(&init, &["type", "model", "factors"])?;
+    if init["type"] != "init_factored" {
+        return Err("FACTORED_INIT_REQUIRED".into());
+    }
+    let start = Instant::now();
+    let prepared = PreparedModel::new(model(&init["model"])?).map_err(str::to_owned)?;
+    let model_preparation_ns = elapsed(start);
+    let start = Instant::now();
+    let factors = prepared
+        .prepare_factors(adapter_factors(&init["factors"])?)
+        .map_err(str::to_owned)?;
+    output(
+        out,
+        &json!({
+            "type":"prepared_factored","schema":FACTORED_SCHEMA,"profile":PROFILE,
+            "model_commitment":hex::encode(factors.model_commitment()),
+            "ranks":factors.ranks(),"preparation_macs":factors.preparation_macs(),
+            "model_preparation_ns":model_preparation_ns,"factor_preparation_ns":elapsed(start),
+            "preparation_scope":"original model validation, commitment and merged preparation; separate complete exact factor validation and coefficient comparison",
+            "dense_adapter_materialized_for_execution":false,
+            "business_credit":0,"pow_qualified":false,"production_activation":false
+        }),
+    )?;
+    let mut batches = 0;
+    let mut ids = BTreeSet::new();
+    let mut requests_seen = BTreeMap::new();
+    while let Some(value) = read_frame(input)? {
+        batches += 1;
+        if batches > MAX_BATCH_COMMANDS {
+            return Err("SESSION_BATCH_BOUND".into());
+        }
+        let handler = Instant::now();
+        let cpu_start = cpu_ns();
+        let parsed = factored_batch(&value)?;
+        if !ids.insert(parsed.context.batch_id) {
+            return Err("DUPLICATE_BATCH_ID".into());
+        }
+        let mut new_request_ids = 0;
+        for request in &parsed.requests {
+            match requests_seen.get(&request.id) {
+                Some(previous) if previous != request => return Err("REQUEST_ID_REBOUND".into()),
+                Some(_) => (),
+                None => new_request_ids += 1,
+            }
+        }
+        let prepare_now = completion_clock(&parsed, elapsed(handler), "FACTORED_INPUT_DEADLINE")?;
+        let (batch, preparation) = prepared
+            .prepare_batch(&parsed.context, &parsed.requests, prepare_now)
+            .map_err(str::to_owned)?;
+        let (claim, phase, counts) = prepared
+            .observe_factored(&batch, &factors)
+            .map_err(str::to_owned)?;
+        let verify_now = completion_clock(&parsed, elapsed(handler), "FACTORED_VERIFY_DEADLINE")?;
+        let verify_start = Instant::now();
+        let verified = prepared
+            .verify(&parsed.context, &parsed.requests, verify_now, &claim)
+            .map_err(str::to_owned)?;
+        let verify_ns = elapsed(verify_start);
+        let completion_now =
+            completion_clock(&parsed, elapsed(handler), "FACTORED_COMPLETION_DEADLINE")?;
+        for request in &parsed.requests {
+            requests_seen.insert(request.id, request.clone());
+        }
+        let product = verified.product();
+        let result = json!({
+            "type":"factored_batch","schema":FACTORED_SCHEMA,"profile":PROFILE,
+            "model_commitment":hex::encode(claim.model_commitment),
+            "input_commitment":hex::encode(claim.input_commitment),
+            "statement_commitment":hex::encode(verified.statement_commitment()),
+            "router_outputs":product.router_outputs,"routes":product.routes,"groups":product.groups,
+            "logits":product.logits,"predictions":product.predictions,
+            "useful_dense_macs":product.useful_dense_macs,"padded_macs":product.padded_macs,
+            "nonempty_expert_groups":product.nonempty_expert_groups,
+            "executed_macs":{"router":counts.router_macs(),"base":counts.base_macs(),
+                "adapter":counts.adapter_macs(),"total":counts.execution_macs()},
+            "output_additions":counts.output_additions(),
+            "phase_ns":{"validation":preparation.validation,"input_commitment":preparation.input_commitment,
+                "execution":phase.execution,"statement_commitment":phase.statement_commitment,"verify":verify_ns},
+            "handler_wall_ns":elapsed(handler),
+            "handler_cpu_ns":cpu_start.and_then(|start| cpu_ns()?.checked_sub(start)),
+            "completion_now_ns":completion_now,
+            "new_request_ids_in_session":new_request_ids,"unique_request_ids_in_session":requests_seen.len(),
+            "timing_scope":"one factored producer, fresh request preparation, statement and full original-coefficient verifier; excludes prior model/factor preparation, JSON frame parsing, response serialization and transit",
+            "arithmetic_count_scope":"implemented router, base, selected factor contractions and additions only; excludes validation, commitments, verification, memory, IPC and physical cost",
+            "response_deadline_checked_before_write":true,"semantic_verified":true,
+            "distinct_application_batches":null,"real_demand_verified":false,
+            "business_credit":0,"model_reward":0,"chainwork_awarded":0,
+            "pow_qualified":false,"production_activation":false,"public_reward_eligible":false
+        });
+        let mut response = serde_json::to_vec(&result).map_err(|e| e.to_string())?;
+        response.push(b'\n');
+        completion_clock(&parsed, elapsed(handler), "BEFORE_WRITE_DEADLINE")?;
+        out.write_all(&response)
+            .and_then(|_| out.flush())
+            .map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
+fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    let result = match args.get(1..) {
+        Some([selector]) if selector == "--grouped-research-v0" => {
+            run(&mut io::stdin().lock(), &mut io::stdout().lock())
+        }
+        Some([selector]) if selector == "--grouped-factored-research-v0" => {
+            run_factored(&mut io::stdin().lock(), &mut io::stdout().lock())
+        }
+        _ => {
+            eprintln!("GROUPED_RESEARCH_SELECTOR");
+            std::process::exit(2);
+        }
+    };
+    if let Err(error) = result {
         eprintln!("grouped research refused: {error}");
         std::process::exit(2);
     }
@@ -672,5 +824,100 @@ mod tests {
         assert!(read_frame(&mut io::Cursor::new(frame(json!({"x":1}))))
             .unwrap()
             .is_some());
+    }
+
+    fn factored_session(commands: Vec<Value>) -> (Result<()>, Vec<Value>) {
+        let input: Vec<u8> = commands.into_iter().flat_map(frame).collect();
+        let mut output = Vec::new();
+        let result = run_factored(&mut io::Cursor::new(input), &mut output);
+        let records = output
+            .split(|&b| b == b'\n')
+            .filter(|line| !line.is_empty())
+            .map(|line| serde_json::from_slice(line).unwrap())
+            .collect();
+        (result, records)
+    }
+    fn factored_init() -> Value {
+        // Existing zero-delta model, with exact rank-one zero adapters.
+        json!({"type":"init_factored","model":init(),"factors":(0..EXPERTS)
+            .map(|_| json!({"up":vec![vec![0]; CLASSES],"down":vec![vec![1; DIM]]})).collect::<Vec<_>>()})
+    }
+    fn factored_command(id: usize) -> Value {
+        let mut value = command(id);
+        let map = value.as_object_mut().unwrap();
+        map.remove("samples");
+        map.remove("warmup");
+        map.insert("type".into(), json!("factored_batch"));
+        value
+    }
+    #[test]
+    fn factored_session_reuses_one_admission_without_dense_or_credit_substitution() {
+        let (status, records) = factored_session(vec![
+            factored_init(),
+            factored_command(1),
+            factored_command(2),
+        ]);
+        status.unwrap();
+        assert_eq!(records.len(), 3);
+        assert_eq!(records[0]["preparation_macs"], EXPERTS * CLASSES * DIM);
+        assert_eq!(records[0]["ranks"], json!([1, 1, 1]));
+        for record in &records[1..] {
+            assert_eq!(record["schema"], FACTORED_SCHEMA);
+            assert_eq!(record["semantic_verified"], true);
+            assert_eq!(
+                record["executed_macs"]["total"],
+                2 * CLASSES * DIM + DIM + CLASSES
+            );
+            assert_eq!(record["useful_dense_macs"], 2 * CLASSES * DIM);
+            assert_eq!(record["output_additions"], CLASSES);
+            assert_eq!(record["chainwork_awarded"], 0);
+            assert_eq!(record["business_credit"], 0);
+            assert_eq!(record["production_activation"], false);
+            assert_eq!(record["response_deadline_checked_before_write"], true);
+        }
+        assert_eq!(records[1]["new_request_ids_in_session"], 1);
+        assert_eq!(records[2]["new_request_ids_in_session"], 0);
+        assert_ne!(
+            records[1]["statement_commitment"],
+            records[2]["statement_commitment"]
+        );
+        let (_, original) = session(vec![init(), command(1)]);
+        assert_eq!(
+            records[1]["statement_commitment"],
+            original[1]["statement_commitment"]
+        );
+    }
+    #[test]
+    fn factored_session_refuses_wrong_factors_replays_and_old_transport_schema() {
+        let mut invalid = factored_init();
+        invalid["factors"][0]["up"][0][0] = json!(1);
+        let (status, records) = factored_session(vec![invalid]);
+        assert_eq!(status.unwrap_err(), "FACTOR_NOT_SAME_DELTA");
+        assert!(records.is_empty());
+        let (status, records) = factored_session(vec![
+            factored_init(),
+            factored_command(1),
+            factored_command(1),
+        ]);
+        assert_eq!(status.unwrap_err(), "DUPLICATE_BATCH_ID");
+        assert_eq!(records.len(), 2);
+        let (status, records) = factored_session(vec![factored_init(), command(1)]);
+        assert_eq!(status.unwrap_err(), "EXACT_FIELDS");
+        assert_eq!(records.len(), 1);
+        assert!(session(vec![factored_init()]).0.is_err());
+    }
+    #[test]
+    fn factored_session_refuses_rebound_request_scope_and_expired_work() {
+        let mut rebound = factored_command(2);
+        rebound["requests"][0]["scope"] = json!("77".repeat(32));
+        let (status, records) =
+            factored_session(vec![factored_init(), factored_command(1), rebound]);
+        assert_eq!(status.unwrap_err(), "REQUEST_ID_REBOUND");
+        assert_eq!(records.len(), 2);
+        let mut expired = factored_command(1);
+        expired["now_ns"] = expired["requests"][0]["deadline_ns"].clone();
+        let (status, records) = factored_session(vec![factored_init(), expired]);
+        assert_eq!(status.unwrap_err(), "FACTORED_INPUT_DEADLINE");
+        assert_eq!(records.len(), 1);
     }
 }

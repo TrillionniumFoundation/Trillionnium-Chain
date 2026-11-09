@@ -1,3 +1,20 @@
+**Joint PoN resource-contract continuation, 2026-11-08 America/New_York — HOLD:**
+Continue the complete #821 source `e798d7125724d4b9f98c24d00cc80031f2eab4a9`,
+which already contains the #811 work-cost and #812 integration lineage.
+The [joint continuation record](../research/PON_JOINT_RESOURCE_CONTRACT_20261108.md)
+keeps cost, current-clock activation and receiver resource boundaries in one
+candidate. Recheck the original deadline after a successful Host observation
+before starting a History owner action. Public Growth activation now reobserves
+its entire target ancestry under the current clock, including exact duplicates,
+while retaining committed admission and the original fully charged,
+noncancellable tail. The separate [V4 lifecycle observer](../research/PON_W1_LIFECYCLE_COST_V4.md)
+flushes started attempts before native work and retains incomplete costs as
+unknown; complete W1 verification still grants zero consensus credit here.
+Historical source pins, public resource limits, failure observations, all
+unknown classical/quantum cost bounds and production refusal remain intact.
+These fixes require their own fixed-source execution receipts. They do not
+close the all-algorithm cost, joint chain-security or honest-service gates.
+
 **M12 witnessed generation recovery V3, 2026-11-08 America/New_York — HOLD:**
 The [guarded ordinary Node/M12 entry](specs/pon/M12_GENERATION_RECOVERY_V3.md)
 adds a separate M12 witness binding, complete-journal checkpoints and transaction
@@ -10606,3 +10623,93 @@ The composed F2 source at 0101b0ce76239832e0b2d19d0fd3f07e40fabeb4 remains prese
 The [current composition entry](../../evidence/chain-six-full-20261108/CURRENT_PQ_COMPOSITION.md) retains the original 29 commands, arguments, order, 1200-second per-command limits and complete source gates. It separately fixes the reviewed 55-name roster and test-source hash. Its nine retained-log mutation controls reject missing, duplicate, skipped, stale or falsely reported execution. Historical runner, tests, refusals and raw logs remain unmodified; the F2 log is parser-control input, never a fresh execution result.
 
 The retained credit-envelope workflow now invokes its unchanged 43-test source-integrity command with Python unbuffered output. Actual original tests succeeded in both observations, while only the unbuffered stream satisfied the unchanged terminal-OK parser; no test, parser, pipefail rule or other suite was relaxed. Native Rust and configuration inputs remain byte-identical to F2. New complete campaigns must identify this new frozen source and their actual outcomes; all broader qualification and production-activation flags remain HOLD / false.
+
+### 2026-11-08 — Preserve Hepta execution, learning scope and service outcomes
+
+Continue the exact #821 source `e798d7125724d4b9f98c24d00cc80031f2eab4a9`
+under the [Hepta operating-boundary contract](specs/pon/HEPTA_OPERATING_BOUNDARIES_V1.md).
+Add native factor-preserving production to the original grouped relation, with
+checked factor validation, the unchanged independent verifier, separate actual
+preparation/execution counts and no new work credit. Preserve merged, sparse,
+shared and repeated-input legal strategies rather than requiring dense expansion.
+
+Pair this with an explicitly scoped continuation of Hepta #5393: freeze Cell or
+organ update scope before dispatch and in cold recovery, and refuse base release
+at that medium-rate entry. Existing fast runtime ownership remains local; slow
+consensus/work-profile activation is not a learning-result permission. Historical
+unscoped checkpoints keep their original meaning.
+
+Keep service fees, improvement bonuses and consensus credit separate. Harden
+the actual native V2 payment readback against a stale persisted anchor and an
+intervening SQLite journal append while preserving historical `NoGain` payment,
+original operation identity and once-only execution. Independent `NoUpdate`
+qualification remains stronger than the low-level `NoGain` outcome.
+
+The continuation requires a single fixed Chain source for its native, protocol,
+source-integrity and lint controls, plus a separately fixed Hepta source for its
+scoped-learning controls. Record the original payment counterexamples and all
+failed attempts. These engineering properties do not close cheapest legal work,
+joint consensus security, external payment, independent model benefit, WAN or
+whole-state recovery obligations. Production qualification stays **HOLD_NO_GO**.
+
+### 2026-11-09 — Explicit architecture and validation boundaries
+
+Continue #821 on its exact composed source with the [architecture boundary
+contract](../protocol/pon-nakamoto-v1/details/ARCHITECTURE_BOUNDARIES_20261109.md).
+Preserve Hepta's shared base, low-rank adapters, sparse routing and private local
+state, original task/funding/evaluation/FinalUse owners, complete neural W1 and
+the original cost/resource contracts. Existing common-credit and fixed-probability
+research remains conditional on actual minimum legal cost hypotheses. Hidden
+progress, preparation, failures and restarts require a complete lifecycle;
+neither nominal operation count nor a finite solver closes that qualification.
+
+Correct the shared ordinary-service/History close paths so unavailable PQ
+authentication accounting cannot be cleared by a later scalar-only closer.
+Retain known-refusal clean-close behavior. Add real cross-stage parent controls
+for W1/M06/precommit, durable commit, cancellation, cold reopen and retry in both
+backends. The existing parent rule is retained; no bypass was established.
+
+Add an independently pinned validated-business observation reader and its CI
+omission/mutation controls. Count unique signed transactions with complete native
+Work observations preceding the same installed confirmation receipt, retain
+actual parent elapsed time and all scheduled slots, and keep missing evidence
+unknown. Separate application savings, model improvement, lifecycle cost and
+stale work. No Cell family gains work eligibility from being a valid application
+or from another family's cost argument. Closed readiness parsing admits only
+two explicitly reviewed source layouts without a failure fallback or expanded
+schema claim.
+
+The [execution record](../../evidence/chain-architecture-boundaries-20261109/README.md)
+must preserve original failed campaigns, compiler failures and diagnostic versus
+original-profile results on their exact sources. Full persistent accounting,
+all-entrypoint composition, general work-cost/hidden-progress security, family
+eligibility, honest-task tails, original Host/WAN acceptance and whole-chain PQ
+composition remain separate HOLD gates. Measure any DAG, parallel-chain,
+recursive-proof or grouped-GEMM gain only within those explicit boundaries.
+
+
+### 2026-11-09 — Compose sources and observe native executable identity
+
+Compose #824, #825 and #827 with real merge ancestry over #821. The composed
+base is `e8e2fcb8d811638eb5fa757d28590fbe8e408e61`. Retain both plan
+additions, the union of required source paths and actual combined source pins.
+Earlier branch results remain scoped to their original sources.
+
+The native recorder gains an explicit Linux ELF digest, dispatches the checked
+file descriptor and observes the owned child executable. Missing observations
+remain record_failed even with exit zero. This is a source observation, not a
+performance profile, memory image, library/model closure or build attestation.
+Preserve #817's original command/source reader and its original refusal controls.
+
+Use the separate [current W1 mapping](../security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md)
+for its reviewed local dependency closure. Preserve the historical contract,
+refusal, fixed proof assets, helpers and all unknown cryptographic terms. The
+current mapping commands must each execute once in the intended CI lane.
+
+Run fresh source, dependency, recorder, reader, mapping, formatting and selected
+native checks on the new committed source, then bind Cargo artifacts to actual
+executed objects. Retain unsuccessful attempts. Private Hepta owner work keeps
+its own exact source, original operation and receipts. Separate branch logs
+cannot establish a same-iteration production loop. This composition does not
+automatically include #822, #823, #826, #828, #829 or #830. All seven original
+gates remain HOLD; production activation and FinalUse qualification stay false.

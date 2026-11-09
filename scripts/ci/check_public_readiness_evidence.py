@@ -424,30 +424,43 @@ def native_durable_schema(root):
                 # Existing-owner open is a new closed source contract. Check
                 # the complete ordinary delegation before following its schema
                 # bindings; never retry the old body after a malformed split.
-                layout(body(source,'enum','SelectedOpen'), '''
-                    InitializeOrRecover { growth_observation_only: bool },
+                selected_modes = body(source,'enum','SelectedOpen')
+                observation_field = ('observation_only' if re.search(
+                    r'\bobservation_only\b',rust_code(selected_modes))
+                    else 'growth_observation_only')
+                # The broader read-only observer renamed this field. Select
+                # its separately reviewed complete implementation before any
+                # validation; a failure never retries another source contract.
+                observation_member = observation_field + (
+                    ',' if observation_field == 'growth_observation_only' else '')
+                layout(selected_modes, '''
+                    InitializeOrRecover { OBSERVATION_FIELD: bool },
                     ExistingPqOwner,
-                ''', 'durable backend selected modes')
+                '''.replace('OBSERVATION_FIELD',observation_field),
+                       'durable backend selected modes')
                 layout(selected_body, '''Self::open_selected_mode(
                     path, settings, workers, hook, owners, state_backend,
-                    SelectedOpen::InitializeOrRecover { growth_observation_only, },
-                )''', 'durable backend selected delegation')
+                    SelectedOpen::InitializeOrRecover { OBSERVATION_MEMBER },
+                )'''.replace('OBSERVATION_MEMBER',observation_member),
+                       'durable backend selected delegation')
                 selected_body = body(node,'fn','open_selected_mode')
                 selected_code = rust_code(selected_body)
-                mode = re.search(r'\blet\s*\(\s*growth_observation_only\s*,\s*existing_owner_only\s*\)\s*=\s*match\s+selection\s*\{',selected_code)
+                mode = re.search(r'\blet\s*\(\s*'+observation_field+r'\s*,\s*existing_owner_only\s*\)\s*=\s*match\s+selection\s*\{',selected_code)
                 require(mode is not None and direct(selected_code,mode.start()),
                         'durable backend selected mode binding')
                 mode_end = rust_group_end(selected_code,selected_code.index('{',mode.start()))
                 require(mode_end is not None, 'durable backend selected mode binding')
                 layout(selected_body[mode.start():mode_end], '''
-                    let (growth_observation_only, existing_owner_only) = match selection {
-                        SelectedOpen::InitializeOrRecover { growth_observation_only, }
-                            => (growth_observation_only, false),
+                    let (OBSERVATION_FIELD, existing_owner_only) = match selection {
+                        SelectedOpen::InitializeOrRecover { OBSERVATION_MEMBER }
+                            => (OBSERVATION_FIELD, false),
                         SelectedOpen::ExistingPqOwner => (false, true),
                     }
-                ''', 'durable backend selected mode binding')
+                '''.replace('OBSERVATION_MEMBER',observation_member)
+                   .replace('OBSERVATION_FIELD',observation_field),
+                       'durable backend selected mode binding')
                 mode_remaining = selected_code[:mode.start()]+selected_code[mode_end:]
-                mode_names = r'\b(?:selection|growth_observation_only|existing_owner_only)\b'
+                mode_names = r'\b(?:selection|'+observation_field+r'|existing_owner_only)\b'
                 require(not re.search(r'\blet\s+[^;=]*'+mode_names+r'[^;=]*=',mode_remaining)
                         and not re.search(mode_names+r'\s*=(?!=)',mode_remaining)
                         and not re.search(r'&\s*mut\s*\(*\s*'+mode_names,mode_remaining),
@@ -469,8 +482,8 @@ def native_durable_schema(root):
                 closed_header(node,'fn','open_selected', '''fn open_selected(
                     path: &Path, settings: Settings, workers: usize,
                     hook: Option<&mut Hook<'_>>, owners: NativeOwners,
-                    state_backend: StateBackend, growth_observation_only: bool,
-                ) -> Result<Self>''')
+                    state_backend: StateBackend, OBSERVATION_FIELD: bool,
+                ) -> Result<Self>'''.replace('OBSERVATION_FIELD',observation_field))
                 closed_header(node,'fn','open_selected_mode', '''fn open_selected_mode(
                     path: &Path, settings: Settings, workers: usize,
                     mut hook: Option<&mut Hook<'_>>, owners: NativeOwners,
@@ -481,8 +494,11 @@ def native_durable_schema(root):
                 # Rust control flow: an early return into another opener can
                 # leave every recognized schema assignment intact. New bodies
                 # require explicit review; no historical fallback is allowed.
-                require(sha(selected_body.encode()) ==
-                        '63905b7095fe69d6036775847e604eae33faedbbfca5d8997664a68a5f889671',
+                reviewed_bodies = {
+                    'growth_observation_only': '63905b7095fe69d6036775847e604eae33faedbbfca5d8997664a68a5f889671',
+                    'observation_only': '088b58a4072271bb60772bfacab6cf06ec4052700cef46f92708453d8b9a07be',
+                }
+                require(sha(selected_body.encode()) == reviewed_bodies[observation_field],
                         'durable backend selected implementation')
         else:
             matches = [match for match in re.finditer(r'\bhash\(\s*b"native-branch-schema-v2"\s*,\s*&\[\s*ddl\.as_bytes\(\)\s*\]\s*\)',source)

@@ -863,26 +863,46 @@ impl NativeTaskOperationStoreV2 {
         })
     }
 
+    /// Read the original payment against the complete journal's persisted anchor
+    /// floor. This is an observation, not another payment or an execution grant;
+    /// it never rewrites historical payment facts or advances the durable floor.
     pub fn reobserve_native_payment(
         &self,
         owner: &mut impl NativeTaskOperationOwnerV2,
         claim: Hash,
     ) -> Result<NativePaymentReadbackV1> {
-        let prior = self.snapshot(claim)?;
+        let (mut state, sequence, root) =
+            checked_snapshot(&self.connection, &self.configuration, None)?;
+        let prior = state.claim(claim)?.clone();
         let historical = prior.payment.as_ref().ok_or(NativeBudgetErrorV1::Invalid(
             "TASK_OPERATION_PAYMENT_REQUIRED_V2",
         ))?;
         let observed = owner.observe_payment(&payment_query(&prior, historical.operation)?)?;
-        anchor_context(observed.anchor, &self.configuration)?;
+        // Other operations may already have retained a newer native anchor.
+        // The existing journal rule also forbids different roots/blocks at one
+        // generation. Apply it only to this disposable, consistent snapshot.
+        state.observe(observed.anchor, &self.configuration)?;
         require(
-            observed.anchor.generation >= historical.anchor.generation
-                && observed.source == historical.source
+            observed.source == historical.source
                 && observed.subject == historical.subject
                 && observed.beneficiary == historical.beneficiary
                 && observed.operation == historical.operation
                 && observed.gross_escrow_debit == historical.gross_escrow_debit
                 && observed.beneficiary_credit == historical.beneficiary_credit,
             "TASK_OPERATION_PAYMENT_V2",
+        )?;
+        // A callback may overlap a writer using another SQLite connection.
+        // Leave the original read transaction before checking again so a WAL
+        // commit cannot remain hidden by that snapshot. Any changed head makes
+        // this bounded observation stale, even when its old prefix is valid.
+        let (_, current_sequence, current_root) = checked_snapshot(
+            &self.connection,
+            &self.configuration,
+            Some((sequence, root)),
+        )?;
+        require(
+            (current_sequence, current_root) == (sequence, root),
+            "TASK_OPERATION_PAYMENT_JOURNAL_CHANGED_V2",
         )?;
         Ok(NativePaymentReadbackV1 {
             historical: historical.clone(),

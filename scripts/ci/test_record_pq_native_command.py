@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 from record_pq_native_command import run
 
@@ -32,11 +33,12 @@ class CommandRecords(unittest.TestCase):
         return subprocess.check_output(["git", *args], cwd=self.root,
                                        text=True).strip()
 
-    def execute(self, source):
+    def execute(self, source, native_executable_sha256=None):
         args = argparse.Namespace(kind="head", candidate=self.head,
                                   tested=self.head, base=None, label="control",
                                   output=self.out,
-                                  command=[sys.executable, "-c", source])
+                                  command=[str(Path(sys.executable).resolve()), "-c", source],
+                                  native_executable_sha256=native_executable_sha256)
         return run(args, self.root)
 
     def receipt(self):
@@ -73,6 +75,72 @@ class CommandRecords(unittest.TestCase):
         with self.assertRaises(FileExistsError):
             self.execute("pass")
         self.assertEqual((self.out / "control.json").read_bytes(), original)
+
+    def native_pin(self):
+        return hashlib.sha256(Path(sys.executable).resolve().read_bytes()).hexdigest()
+
+    @unittest.skipUnless(sys.platform == "linux", "Linux executable observation")
+    def test_explicit_native_pin_is_observed_on_the_owned_child(self):
+        self.assertEqual(self.execute("import time; print('native'); time.sleep(0.1)",
+                                      self.native_pin()), 0)
+        value = self.receipt()
+        observation = value["native_execution"]
+        self.assertEqual(observation["status"], "PINNED_AND_OBSERVED")
+        self.assertTrue(observation["child_reaped"])
+        self.assertEqual(observation["observation"]["sha256"], self.native_pin())
+        self.assertEqual(observation["owned_pid"], observation["observation"]["process"]["pid"])
+        self.assertIsNone(observation["loaded_memory_sha256"])
+        self.assertFalse(observation["descendant_execution_verified"])
+        self.assertFalse(observation["performance_measurement"])
+
+    @unittest.skipUnless(sys.platform == "linux", "Linux executable observation")
+    def test_bad_native_pin_refuses_before_the_child_runs(self):
+        self.assertNotEqual(self.execute("from pathlib import Path; Path('ran').touch()",
+                                         "0" * 64), 0)
+        self.assertFalse((self.root / "ran").exists())
+        self.assertIsNone(self.receipt()["exit_code"])
+        self.assertEqual(self.receipt()["status"], "record_failed")
+        self.assertEqual(self.receipt()["native_execution"]["expected_sha256"], "0" * 64)
+        self.assertEqual(self.receipt()["native_execution"]["status"], "NOT_STARTED")
+
+    @unittest.skipUnless(sys.platform == "linux", "Linux executable observation")
+    def test_unavailable_process_observation_keeps_the_native_exit_separate(self):
+        with mock.patch("pinned_native_process.observe_executable", side_effect=PermissionError("procfs unavailable")):
+            self.assertNotEqual(self.execute("print('completed')", self.native_pin()), 0)
+        value = self.receipt()
+        self.assertEqual(value["exit_code"], 0)
+        self.assertEqual(value["status"], "record_failed")
+        self.assertEqual(value["native_execution"]["status"], "IDENTITY_INCOMPLETE")
+        self.assertEqual(value["native_execution"]["observation"]["status"], "NOT_OBSERVED")
+        self.assertTrue(value["native_execution"]["child_reaped"])
+        self.assertEqual(value["before"], value["after"])
+
+    @unittest.skipUnless(sys.platform == "linux", "Linux executable observation")
+    def test_pinned_child_failure_remains_a_native_failure(self):
+        self.assertEqual(self.execute("import time; time.sleep(0.1); raise SystemExit(7)",
+                                      self.native_pin()), 7)
+        value = self.receipt()
+        self.assertEqual(value["exit_code"], 7)
+        self.assertEqual(value["status"], "command_failed")
+        self.assertEqual(value["native_execution"]["status"], "PINNED_AND_OBSERVED")
+
+    @unittest.skipUnless(sys.platform == "linux", "Linux executable observation")
+    def test_script_pin_cannot_be_relabelled_as_the_interpreter(self):
+        script = self.root / "program"
+        script.write_text("#!/usr/bin/env python3\nprint('not native')\n")
+        script.chmod(0o755)
+        self.git("add", "program")
+        self.git("commit", "-qm", "script fixture")
+        self.head = self.git("rev-parse", "HEAD")
+        args = argparse.Namespace(kind="head", candidate=self.head, tested=self.head,
+                                  base=None, label="control", output=self.out,
+                                  command=[str(script)],
+                                  native_executable_sha256=hashlib.sha256(script.read_bytes()).hexdigest())
+        self.assertNotEqual(run(args, self.root), 0)
+        value = self.receipt()
+        self.assertEqual(value["status"], "record_failed")
+        self.assertIsNone(value["exit_code"])
+        self.assertIn("requires ELF", value["error"])
 
 
 if __name__ == "__main__":

@@ -56,7 +56,7 @@ outputs. This count describes this dense implementation. It is not a minimum
 attacker cost, measured FLOPs, proof of business demand or reward entitlement.
 Sparse, zero, repeated and low-rank inputs may admit cheaper lawful algorithms.
 
-## Two lawful producers for the same relation
+## Three lawful producers for the same relation
 
 `observe` uses the compact grouped matrices described above. `observe_direct`
 uses the existing direct selected-expert contraction, retains the same ordered
@@ -65,6 +65,32 @@ group/output statement, and avoids copying an expert-local activation matrix.
 launches. Both return exactly the same statement and product for the same model, context
 and requests, and both go through the independent verifier. The numeric
 relation does not require a needlessly expensive arithmetic implementation.
+
+`prepare_factors` and `observe_factored` add an explicit native exact-factor
+producer. Each expert supplies `B` with shape `3 x r` and `A` with shape
+`r x 257`, where `1 <= r <= 8` and every factor coefficient remains in
+`[-32767,32767]`. Preparation compares **every** coefficient of `B A` with
+the corresponding original delta, including coordinates absent from the supplied
+requests. It retains private immutable factors bound to the complete original
+model commitment, including its version. This is local numeric preparation;
+it neither authenticates an adapter source nor grants cross-owner reuse.
+
+The execution path computes the original router, the selected original base
+contraction and `B(Ax)` for only the selected expert. It does not expand the
+adapter or read the cached merged expert. Factor products and sums use checked
+signed i64 arithmetic; complete admission and the fixed dimensions bound all
+intermediates. The unchanged original-coefficient verifier checks the complete
+result. Packed, direct and factored producers therefore have identical model,
+input and statement commitments for the same original inputs. No factor
+encoding, implementation-specific count or randomized carrier enters lottery
+identity. This addition introduces no lottery at all.
+
+`PreparedFactors` is not a cached request or authorization. Every batch still
+binds its own context, ordered request IDs, scope, original arrival/deadline and
+features; the verifier rechecks the externally supplied expectations and current
+clock. A changed original model or model version cannot reuse the prepared
+factor object. No new activation cache, private Cell checkpoint, optimizer or
+shared mutable model is introduced.
 
 The ordinary control omits retained router/group diagnostics; direct selected
 and packed grouped producers retain them. Their three hot kernels are measured
@@ -156,6 +182,25 @@ positions into required inference work. Cached merged dense weights are also
 a legitimate competitor; the small three-output fixture does not establish
 that factor execution always wins.
 
+The native producer now makes that option executable in the same arithmetic
+relation. Its one-time coefficient-comparison count is
+`sum_e(3 * r_e * 257)`. For each request routed to expert `e`, its execution
+count is `3*257` router MAC positions, `3*257` base MAC positions and
+`r_e*(257+3)` factor MAC positions, plus three base/delta additions. These are
+instrumented positions of this particular implementation, outside the canonical
+statement. The existing `useful_dense_macs=2*3*257*n` field retains its original
+algebraic meaning and is never replaced with a claimed payment or cost floor.
+In this narrow fixture even rank one executes more MAC positions than the
+already merged control: 1,802 instead of 1,542 per request. No native latency,
+energy, LLM-scale speedup or all-strategy optimality follows from either count.
+
+The existing model constructor still prepares merged weights, so that initial
+work and residency remain in the measured preparation scope even when the
+factored hot path does not use them. Factor validation, model validation,
+commitments, full verification, copies, allocation, process startup and IPC
+are separate real costs. The factor representation does not establish a full
+shared-base/organ/cell runtime or a private-state ownership join.
+
 Existing [Hepta handoff](../../../../trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs),
 [Cell host supervisor](../../../../scripts/llm_cell_host_handoff.py) and resident
 immutable tensor views remain the paths for future integration. This relation
@@ -177,6 +222,27 @@ A faster grouped arithmetic relation without a lottery cannot be advertised as
 an equally secure PoW speedup over it. New results also cannot retroactively
 change the prior `not_adopted`, zero-model-reward observation or its failed
 independent future-evaluation gates.
+
+The same persistent native example has a separate explicit selector
+`--grouped-factored-research-v0` and transport schema
+`pon-routed-int257-grouped-factored-session-v0`. It accepts one
+`{type: "init_factored", model: <original init>, factors: [...]}` frame and up
+to 64 `factored_batch` frames containing only `type`, `context`, `requests` and
+`now_ns`. Frames retain the original bounded canonical JSON rules. Each batch
+executes one factored producer and one complete original-coefficient verifier;
+there are no warmup repetitions or timing samples hidden in that interface.
+Model and factor preparation times are reported separately. The old selector,
+old transport schema and three-arm timing experiment remain unchanged.
+Both interfaces keep zero credit and all qualification flags false.
+
+The existing Python grouped integration suite runs the factored selector when
+`TRNM_GROUPED_NATIVE` names the compiled example. It independently checks every
+router/group/logit/prediction, complete commitment bytes and arithmetic counts
+against the existing original-coefficient legal-strategy oracle. Rust controls
+also cover all batch sizes, mixed ranks, unobserved-coordinate substitutions,
+model/version changes, context/scope/deadline binding and cancelling extreme
+intermediates. These are numeric and transport qualification controls, not
+native payment, real customer demand or useful-work hardness evidence.
 
 ## External research and remaining qualification
 

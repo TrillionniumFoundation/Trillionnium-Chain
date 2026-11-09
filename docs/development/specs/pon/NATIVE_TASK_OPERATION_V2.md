@@ -170,6 +170,24 @@ it cannot erase the retained local cost, completion, output binding or operation
 marker. A refund is not provider payment. A replay result such as `Done` means the
 historical event already exists and does not assert current payment finality.
 
+Payment readback checks the complete journal's latest persisted native anchor,
+including observations for other tasks. A lower generation, or a different block,
+state root or height at the same generation, is refused. A newer generation can
+report the same monetary effect on another branch, including a lower height;
+the original payment record and operation fence remain unchanged. The callback
+is followed by a new SQLite snapshot that requires the original journal head to
+remain current. An intervening WAL append causes a stale-observation refusal,
+not an inferred nonpayment, another dispatch or a second fee.
+
+This check is read-only. It does not append the returned anchor, permanently
+advance a readback floor, establish independent anti-rollback custody or make
+the separate Node and M12 owners atomic. A later mutation can invalidate any
+returned observation. The generic owner callback still requires the original
+trusted Node integration; the check does not authenticate caller-constructed
+payment structs. The SQLite regression controls preserve the actual `NoGain`
+service-fee record, zero learning-bonus qualification and the consumed begin
+fence. `NoGain` alone is not an independently evaluated `NoUpdate` decision.
+
 Unit tests exercise the real SQLite journal with explicitly controlled owner
 callbacks, including unknown output, exact encodings, lost acknowledgements,
 second journals, checkpoints, root corruption, stale anchors and resource caps.

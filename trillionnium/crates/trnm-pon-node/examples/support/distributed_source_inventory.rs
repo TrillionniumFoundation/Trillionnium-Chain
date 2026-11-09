@@ -344,6 +344,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/w1-qrom-implementation-current-v2.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/w1-qrom-implementation-current-v2.json"
+        )),
+    ),
+    (
         "config/pon/w1-qrom-implementation-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -4359,6 +4366,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/examples/pon_w1_legal_strategy_v3.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/examples/pon_w1_lifecycle_cost_v4.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/pon_w1_lifecycle_cost_v4.rs"
         )),
     ),
     (

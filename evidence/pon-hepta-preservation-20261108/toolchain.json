@@ -1,0 +1,50 @@
+{
+  "rustc": {
+    "argv": [
+      "rustc",
+      "+1.95.0",
+      "--version",
+      "--verbose"
+    ],
+    "returncode": 0,
+    "stdout": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+    "stderr": ""
+  },
+  "cargo": {
+    "argv": [
+      "cargo",
+      "+1.95.0",
+      "--version"
+    ],
+    "returncode": 0,
+    "stdout": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\n",
+    "stderr": ""
+  },
+  "python": {
+    "argv": [
+      "python3",
+      "--version"
+    ],
+    "returncode": 0,
+    "stdout": "Python 3.12.14\n",
+    "stderr": ""
+  },
+  "openssl": {
+    "argv": [
+      "/workspace/scratch/ac851b3fedf0/provider/trnm-pq-provider-3.5.9.srxvzDCv/install/bin/openssl",
+      "version"
+    ],
+    "returncode": 0,
+    "stdout": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)\n",
+    "stderr": ""
+  },
+  "git": {
+    "argv": [
+      "git",
+      "--version"
+    ],
+    "returncode": 0,
+    "stdout": "git version 2.52.0\n",
+    "stderr": ""
+  }
+}

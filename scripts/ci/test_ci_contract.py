@@ -343,8 +343,10 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         # must not silently remove that command's negative coverage as well.
         paths = (
             'scripts/ci/test_pon_w1_cost_matrix_reader.py',
+            'scripts/ci/test_read_validated_business_goodput.py',
             'scripts/ci/test_pon_w1_reused_cost_reader_v3.py',
             'scripts/ci/test_run_w1_reused_cost_v3.py',
+            'scripts/ci/test_w1_lifecycle_cost_v4.py',
             'scripts/ci/test_pon_public_v3_policy_read.py',
             'scripts/ci/test_llm_cell_handoff_deadline.py',
             'scripts/test_llm_runtime_rss_owner.py',
@@ -557,6 +559,18 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                                        '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command))]:
                 with self.subTest(command=name, change=label), self.assertRaisesRegex(ValueError, 'demand evidence'):
                     check_independent_conformance(changed, self.lanes)
+
+    def test_native_lifecycle_cost_controls_cannot_be_omitted_duplicated_moved_or_swallowed(self):
+        command = '    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_lifecycle_cost_v4\n'
+        self.assertEqual(self.script.count(command), 1)
+        for label, changed in [('omitted', self.script.replace(command, '')),
+                               ('duplicated', self.script.replace(command, command * 2)),
+                               ('swallowed', self.script.replace(command, command.rstrip() + ' || true\n')),
+                               ('commented', self.script.replace(command, '    # ' + command.lstrip())),
+                               ('moved', self.script.replace(command, '').replace(
+                                   '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command))]:
+            with self.subTest(change=label), self.assertRaisesRegex(ValueError, 'native lifecycle cost'):
+                check_independent_conformance(changed, self.lanes)
 
     def test_native_demand_controls_cannot_be_omitted_duplicated_moved_or_swallowed(self):
         from check_ci_contract import NATIVE_DEMAND_CONTRACTS
@@ -2577,6 +2591,10 @@ class MergedQualificationLaneTests(unittest.TestCase):
             '    python3 scripts/ci/pq_authority_effect_register.py\n',
             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v\n",
         ), '    python3 scripts/ci/test_pq_chain_claim_guard.py\n'),
+        'qrom_current_source': ('repository-truth', '    python3 scripts/ci/test_pq_chain_claim_guard.py\n    # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.\n', (
+            '    python3 scripts/ci/test_w1_qrom_current_implementation_audit.py\n',
+            '    python3 scripts/w1_qrom_current_implementation_audit.py\n',
+        ), "    python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v\n"),
         'fixed_probability': ('repository-truth',
                               "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v\n", (
             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_probability_contract.py' -v\n",
@@ -2643,6 +2661,9 @@ class MergedQualificationLaneTests(unittest.TestCase):
 
     def test_pq_effect_root_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('pq_effect_root')
+
+    def test_current_mapping_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('qrom_current_source')
 
     def test_fixed_probability_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('fixed_probability')

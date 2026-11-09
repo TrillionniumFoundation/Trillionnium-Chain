@@ -269,5 +269,114 @@ class GroupedNativeIntegrationTests(unittest.TestCase):
                 self.assertIn(b'grouped research refused:', result.stderr)
 
 
+@unittest.skipUnless(os.environ.get('TRNM_GROUPED_NATIVE'),
+                     'TRNM_GROUPED_NATIVE is unset: actual native factored integration not executed')
+class GroupedFactoredNativeIntegrationTests(unittest.TestCase):
+    def run_native(self, records):
+        runner = Path(os.environ['TRNM_GROUPED_NATIVE']).resolve()
+        self.assertTrue(runner.is_file(), f'configured native runner missing: {runner}')
+        return run_bounded([str(runner), '--grouped-factored-research-v0'], encode_frames(records),
+                           timeout=10, stdout_limit=2 * 1024 * 1024, stderr_limit=65536, cwd=ROOT)
+
+    @staticmethod
+    def fixture(rank=1, count=64):
+        # Retain the existing lawful-strategy fixture and original-coefficient
+        # Python oracle; neither imports the native producer or its factors API.
+        from test_grouped_legal_strategy_v0 import fixture as factor_fixture, requests
+        model, factors = factor_fixture(rank)
+        rows = requests(count)
+        init = dict(type='init', model_version='11' * 32,
+                    **{key: copy.deepcopy(model[key]) for key in ('base', 'router', 'deltas')})
+        begin = dict(type='init_factored', model=init, factors=factors)
+        commands = []
+        for n in (1, 4, 16, 64):
+            if n > count:
+                continue
+            commands.append(dict(type='factored_batch', now_ns=0,
+                context=dict(chain='22' * 32, parent='33' * 32,
+                             challenge='44' * 32, batch_id=f'{n:064x}'),
+                requests=[dict(id=H('native-factor-request', row['id'].encode()).hex(),
+                               scope='66' * 32, arrival_ns=0, deadline_ns=10**12,
+                               x=row['x']) for row in rows[:n]]))
+        return model, rows, begin, commands
+
+    def test_real_factored_producer_matches_independent_full_products_and_canonical_bytes(self):
+        from grouped_legal_strategy_v0 import independent_reference
+        for rank in (1, 3, 8):
+            model, rows, begin, commands = self.fixture(rank)
+            result = self.run_native([begin, *commands])
+            self.assertEqual(result.returncode, 0, result.stderr.decode(errors='replace'))
+            frames = decode_frames(result.stdout, len(commands) + 1)
+            prepared = frames[0]
+            m = model_commitment(begin['model'])
+            self.assertEqual(prepared['schema'], 'pon-routed-int257-grouped-factored-session-v0')
+            self.assertEqual(prepared['model_commitment'], m)
+            self.assertEqual(prepared['preparation_macs'], 3 * 3 * rank * 257)
+            self.assertEqual(prepared['ranks'], [rank] * 3)
+            seen = 0
+            for command, observed in zip(commands, frames[1:]):
+                n = len(command['requests'])
+                expected, _ = independent_reference(model, rows[:n])
+                for key, value in expected.items():
+                    self.assertEqual(observed[key], value, (rank, n, key))
+                inputs = input_commitment(m, command)
+                self.assertEqual(observed['input_commitment'], inputs)
+                self.assertEqual(observed['statement_commitment'],
+                    statement_commitment(m, inputs, command['context'], expected))
+                self.assertEqual(observed['executed_macs'], dict(router=3 * 257 * n,
+                    base=3 * 257 * n, adapter=n * rank * (257 + 3),
+                    total=n * (6 * 257 + rank * (257 + 3))))
+                self.assertEqual(observed['output_additions'], 3 * n)
+                self.assertEqual(observed['new_request_ids_in_session'], n - seen)
+                self.assertEqual(observed['unique_request_ids_in_session'], n)
+                seen = n
+                self.assertTrue(observed['semantic_verified'])
+                self.assertEqual(observed['chainwork_awarded'], 0)
+                self.assertEqual(observed['business_credit'], 0)
+                self.assertFalse(observed['production_activation'])
+                self.assertFalse(observed['pow_qualified'])
+                self.assertFalse(observed['real_demand_verified'])
+
+    def test_real_factored_preparation_checks_unsampled_coordinates_and_strict_factor_bounds(self):
+        _, _, begin, _ = self.fixture(1, 1)
+        changed = copy.deepcopy(begin)
+        changed['factors'][0]['down'][0][17] += 1
+        zero_rank = copy.deepcopy(begin)
+        zero_rank['factors'][0]['down'] = []
+        high_rank = copy.deepcopy(begin)
+        high_rank['factors'][0]['down'] *= 9
+        bad_coefficient = copy.deepcopy(begin)
+        bad_coefficient['factors'][0]['up'][0][0] = 32768
+        boolean = copy.deepcopy(begin)
+        boolean['factors'][0]['down'][0][0] = True
+        extra = copy.deepcopy(begin)
+        extra['factors'][0]['qualified_work'] = True
+        for invalid, error in ((changed, b'FACTOR_NOT_SAME_DELTA'), (zero_rank, b'FACTOR_RANK'),
+                (high_rank, b'FACTOR_RANK'), (bad_coefficient, b'FACTOR_COEFFICIENT'),
+                (boolean, b'SIGNED_INTEGER'), (extra, b'EXACT_FIELDS')):
+            with self.subTest(error=error):
+                result = self.run_native([invalid])
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual(result.stdout, b'')
+                self.assertIn(error, result.stderr)
+
+    def test_real_factored_reuse_never_rebinds_scope_deadline_or_application_identity(self):
+        _, _, begin, commands = self.fixture(1, 1)
+        original = commands[0]
+        rebound = copy.deepcopy(original)
+        rebound['context']['batch_id'] = '77' * 32
+        rebound['requests'][0]['scope'] = '88' * 32
+        expired = copy.deepcopy(original)
+        expired['now_ns'] = expired['requests'][0]['deadline_ns']
+        for records, error, output_count in (([begin, original, original], b'DUPLICATE_BATCH_ID', 2),
+                ([begin, original, rebound], b'REQUEST_ID_REBOUND', 2),
+                ([begin, expired], b'FACTORED_INPUT_DEADLINE', 1)):
+            with self.subTest(error=error):
+                result = self.run_native(records)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(error, result.stderr)
+                self.assertEqual(len(decode_frames(result.stdout, output_count)), output_count)
+
+
 if __name__ == '__main__':
     unittest.main()

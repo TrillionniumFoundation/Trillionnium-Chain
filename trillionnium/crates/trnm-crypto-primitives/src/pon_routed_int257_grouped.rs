@@ -4,8 +4,8 @@
 //! proof of demand, deadline authority, model adoption, or production activation.
 //! It never invokes or changes W1. All 257 coordinates (including bias=8) are
 //! consumed; the router runs once and only the selected experts are evaluated.
-//! Direct selected and packed rectangular producers bind the same statement;
-//! packing is an implementation choice, not a requirement of this relation.
+//! Direct selected, packed rectangular and exact factored producers bind the
+//! same statement. Packing or expanding an adapter is not a relation requirement.
 use crate::{hash_domain, Hash32};
 use std::{collections::BTreeSet, time::Instant};
 
@@ -17,6 +17,9 @@ pub const MAX_BATCH: usize = 64;
 pub const MAX_COEFFICIENT: i32 = 32_767;
 pub const MAX_INPUT: i32 = 8;
 pub const MAX_MERGED_OUTPUT: i64 = 134_737_904;
+/// Bounded producer implementation, matching the existing Python comparison.
+/// This is not an additional restriction on the verified arithmetic relation.
+pub const MAX_FACTOR_RANK: usize = 8;
 pub type Matrix = [[i32; DIM]; CLASSES];
 pub type Result<T> = std::result::Result<T, &'static str>;
 
@@ -58,6 +61,67 @@ pub struct PreparedBatch {
     requests: Vec<Request>,
     model_commitment: Hash32,
     input_commitment: Hash32,
+}
+
+/// One exact adapter B A: up is B (3 x rank), down is A (rank x 257).
+/// No approximate factorization, scale change or rounding is admitted here.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct AdapterFactors {
+    pub up: [Vec<i32>; CLASSES],
+    pub down: Vec<[i32; DIM]>,
+}
+
+/// Immutable local preparation, constructible only by complete B A admission.
+/// It binds the entire original model, including its version; it is neither a
+/// cached request authorization nor a portable cost or consensus certificate.
+#[derive(Clone, Debug)]
+pub struct PreparedFactors {
+    model_commitment: Hash32,
+    adapters: [AdapterFactors; EXPERTS],
+    preparation_macs: u64,
+}
+
+impl PreparedFactors {
+    pub fn model_commitment(&self) -> Hash32 {
+        self.model_commitment
+    }
+    /// Actual complete coefficient-comparison positions paid at preparation.
+    /// Model preparation and all validation, memory and hashing costs are extra.
+    pub fn preparation_macs(&self) -> u64 {
+        self.preparation_macs
+    }
+    pub fn ranks(&self) -> [usize; EXPERTS] {
+        std::array::from_fn(|expert| self.adapters[expert].down.len())
+    }
+}
+
+/// Instrumented arithmetic of one factored producer call, not a cost floor.
+/// These counters are deliberately outside the unchanged canonical statement.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct FactoredCounts {
+    router_macs: u64,
+    base_macs: u64,
+    adapter_macs: u64,
+    output_additions: u64,
+}
+
+impl FactoredCounts {
+    pub fn router_macs(&self) -> u64 {
+        self.router_macs
+    }
+    pub fn base_macs(&self) -> u64 {
+        self.base_macs
+    }
+    pub fn adapter_macs(&self) -> u64 {
+        self.adapter_macs
+    }
+    pub fn output_additions(&self) -> u64 {
+        self.output_additions
+    }
+    pub fn execution_macs(&self) -> u64 {
+        // Only the bounded producer constructs nonzero private counters.
+        self.router_macs + self.base_macs + self.adapter_macs
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -190,6 +254,145 @@ impl PreparedModel {
     }
     pub fn commitment(&self) -> Hash32 {
         self.commitment
+    }
+
+    /// Compare every B A coefficient with every original expert delta once,
+    /// including coordinates absent from the later requests. No dense adapter
+    /// is materialized or substituted for the original model. Supplied factors
+    /// are moved into private immutable preparation after successful admission.
+    pub fn prepare_factors(&self, adapters: [AdapterFactors; EXPERTS]) -> Result<PreparedFactors> {
+        let mut preparation_macs = 0_u64;
+        for (expert, adapter) in adapters.iter().enumerate() {
+            let rank = adapter.down.len();
+            if !(1..=MAX_FACTOR_RANK).contains(&rank) {
+                return Err("FACTOR_RANK");
+            }
+            if adapter.up.iter().any(|row| row.len() != rank) {
+                return Err("FACTOR_SHAPE");
+            }
+            if adapter
+                .up
+                .iter()
+                .flatten()
+                .chain(adapter.down.iter().flatten())
+                .any(|&value| !(-MAX_COEFFICIENT..=MAX_COEFFICIENT).contains(&value))
+            {
+                return Err("FACTOR_COEFFICIENT");
+            }
+            for (row, up) in adapter.up.iter().enumerate() {
+                for column in 0..DIM {
+                    let mut coefficient = 0_i64;
+                    for (&value, down) in up.iter().zip(&adapter.down) {
+                        coefficient = checked_factor_mac(
+                            coefficient,
+                            i64::from(value),
+                            i64::from(down[column]),
+                        )?;
+                    }
+                    if coefficient != i64::from(self.model.deltas[expert][row][column]) {
+                        return Err("FACTOR_NOT_SAME_DELTA");
+                    }
+                }
+            }
+            preparation_macs += (CLASSES * rank * DIM) as u64;
+        }
+        Ok(PreparedFactors {
+            model_commitment: self.commitment,
+            adapters,
+            preparation_macs,
+        })
+    }
+
+    /// Exact base + B(Ax), with the original router and selected expert only.
+    /// The hot path does not expand B A or read a cached merged expert. No
+    /// activation cache is introduced: distinct scoped requests retain their
+    /// own inputs and complete commitments. Existing verifier authority applies.
+    pub fn factored(
+        &self,
+        batch: &PreparedBatch,
+        factors: &PreparedFactors,
+    ) -> Result<(Product, FactoredCounts)> {
+        if batch.model_commitment != self.commitment {
+            return Err("PREPARED_MODEL");
+        }
+        if factors.model_commitment != self.commitment {
+            return Err("FACTOR_MODEL");
+        }
+        let mut counts = FactoredCounts::default();
+        let mut router_outputs = Vec::with_capacity(batch.requests.len());
+        let mut routes = Vec::with_capacity(batch.requests.len());
+        let mut groups: [Vec<usize>; EXPERTS] = std::array::from_fn(|_| Vec::new());
+        let mut logits = Vec::with_capacity(batch.requests.len());
+        let mut predictions = Vec::with_capacity(batch.requests.len());
+        for (index, request) in batch.requests.iter().enumerate() {
+            let scores = std::array::from_fn(|row| dot(&self.model.router[row], &request.x));
+            let route = argmax(&scores);
+            let adapter = &factors.adapters[route];
+            let mut hidden = Vec::with_capacity(adapter.down.len());
+            for down in &adapter.down {
+                let mut value = 0_i64;
+                for (&coefficient, &input) in down.iter().zip(&request.x) {
+                    value = checked_factor_mac(value, i64::from(coefficient), i64::from(input))?;
+                }
+                hidden.push(value);
+            }
+            let mut output = [0_i64; CLASSES];
+            for (row, value) in output.iter_mut().enumerate() {
+                let mut delta = 0_i64;
+                for (&coefficient, &activation) in adapter.up[row].iter().zip(&hidden) {
+                    delta = checked_factor_mac(delta, i64::from(coefficient), activation)?;
+                }
+                *value = dot(&self.model.base[row], &request.x)
+                    .checked_add(delta)
+                    .ok_or("FACTOR_ARITHMETIC_OVERFLOW")?;
+                if value.unsigned_abs() > MAX_MERGED_OUTPUT as u64 {
+                    return Err("FACTOR_OUTPUT_BOUND");
+                }
+            }
+            counts.router_macs += (CLASSES * DIM) as u64;
+            counts.base_macs += (CLASSES * DIM) as u64;
+            counts.adapter_macs += (adapter.down.len() * (DIM + CLASSES)) as u64;
+            counts.output_additions += CLASSES as u64;
+            predictions.push(argmax(&output));
+            router_outputs.push(scores);
+            routes.push(route);
+            groups[route].push(index);
+            logits.push(output);
+        }
+        Ok((
+            Product {
+                router_outputs,
+                routes,
+                nonempty_expert_groups: groups.iter().filter(|group| !group.is_empty()).count(),
+                groups,
+                logits,
+                predictions,
+                // Preserve the algebraic statement across all lawful producers.
+                // Instrumented execution costs belong only to the separate counts.
+                useful_dense_macs: dense_macs(batch.requests.len()),
+                padded_macs: 0,
+            },
+            counts,
+        ))
+    }
+
+    pub fn observe_factored(
+        &self,
+        batch: &PreparedBatch,
+        factors: &PreparedFactors,
+    ) -> Result<(Observation, DirectPhaseNs, FactoredCounts)> {
+        let start = Instant::now();
+        let (product, counts) = self.factored(batch, factors)?;
+        let execution = ns(start);
+        let (observation, statement_commitment) = self.commit_observation(batch, product);
+        Ok((
+            observation,
+            DirectPhaseNs {
+                execution,
+                statement_commitment,
+            },
+            counts,
+        ))
     }
 
     pub fn prepare_batch(
@@ -550,6 +753,12 @@ fn statement_commitment(model: Hash32, inputs: Hash32, context: &Context, p: &Pr
 fn dense_macs(n: usize) -> u64 {
     (2 * CLASSES * DIM * n) as u64
 }
+fn checked_factor_mac(sum: i64, coefficient: i64, value: i64) -> Result<i64> {
+    coefficient
+        .checked_mul(value)
+        .and_then(|product| sum.checked_add(product))
+        .ok_or("FACTOR_ARITHMETIC_OVERFLOW")
+}
 fn dot(a: &[i32; DIM], b: &[i32; DIM]) -> i64 {
     a.iter()
         .zip(b)
@@ -574,6 +783,30 @@ fn reference_argmax(values: &[i64; CLASSES]) -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
+    fn factor_fixture(
+        rank: usize,
+        n: usize,
+    ) -> (Model, Context, Vec<Request>, [AdapterFactors; EXPERTS]) {
+        let (mut model, context, requests) = fixture(n);
+        let adapters = std::array::from_fn(|expert| {
+            let down: Vec<[i32; DIM]> = (0..rank)
+                .map(|j| std::array::from_fn(|k| ((k + j * 3 + expert) % 5) as i32 - 2))
+                .collect();
+            let up: [Vec<i32>; CLASSES] = std::array::from_fn(|row| {
+                (0..rank)
+                    .map(|j| ((row + j + expert) % 5) as i32 - 2)
+                    .collect()
+            });
+            for (row, coefficients) in up.iter().enumerate() {
+                for k in 0..DIM {
+                    model.deltas[expert][row][k] =
+                        coefficients.iter().zip(&down).map(|(&u, d)| u * d[k]).sum();
+                }
+            }
+            AdapterFactors { up, down }
+        });
+        (model, context, requests, adapters)
+    }
     fn fixture(n: usize) -> (Model, Context, Vec<Request>) {
         let mut model = Model {
             version: [4; 32],
@@ -825,5 +1058,209 @@ mod tests {
         bad = o;
         bad.model_commitment[0] ^= 1;
         assert!(m.verify(&c, &r, 20, &bad).is_err());
+    }
+
+    #[test]
+    fn factored_sampled_ranks_and_all_batch_sizes_preserve_statement_and_verifier() {
+        for rank in [1, 3, MAX_FACTOR_RANK] {
+            for n in 1..=MAX_BATCH {
+                let (model, context, requests, adapters) = factor_fixture(rank, n);
+                let prepared = PreparedModel::new(model).unwrap();
+                let factors = prepared.prepare_factors(adapters).unwrap();
+                let (batch, _) = prepared.prepare_batch(&context, &requests, 20).unwrap();
+                let (actual, _, counts) = prepared.observe_factored(&batch, &factors).unwrap();
+                let (direct, _) = prepared.observe_direct(&batch).unwrap();
+                assert_eq!(actual, direct);
+                assert_eq!(
+                    prepared
+                        .verify(&context, &requests, 20, &actual)
+                        .unwrap()
+                        .product(),
+                    &actual.product
+                );
+                assert_eq!(factors.ranks(), [rank; EXPERTS]);
+                assert_eq!(
+                    factors.preparation_macs(),
+                    (EXPERTS * CLASSES * rank * DIM) as u64
+                );
+                assert_eq!(counts.router_macs(), (n * CLASSES * DIM) as u64);
+                assert_eq!(counts.base_macs(), (n * CLASSES * DIM) as u64);
+                assert_eq!(counts.adapter_macs(), (n * rank * (DIM + CLASSES)) as u64);
+                assert_eq!(counts.output_additions(), (n * CLASSES) as u64);
+                // A narrow three-output matrix need not favor factor execution.
+                assert_eq!(
+                    counts.execution_macs(),
+                    actual.product.useful_dense_macs + counts.adapter_macs()
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn factored_preparation_rejects_invalid_rank_shape_and_coefficients() {
+        let (model, _, _, adapters) = factor_fixture(1, 1);
+        let prepared = PreparedModel::new(model).unwrap();
+        for rank in [0, MAX_FACTOR_RANK + 1] {
+            let mut invalid = adapters.clone();
+            invalid[0].down = vec![[0; DIM]; rank];
+            assert_eq!(
+                prepared.prepare_factors(invalid).unwrap_err(),
+                "FACTOR_RANK"
+            );
+        }
+        let mut invalid = adapters.clone();
+        invalid[0].up[0].clear();
+        assert_eq!(
+            prepared.prepare_factors(invalid).unwrap_err(),
+            "FACTOR_SHAPE"
+        );
+        for up in [true, false] {
+            let mut invalid = adapters.clone();
+            if up {
+                invalid[0].up[0][0] = i32::MAX;
+            } else {
+                invalid[0].down[0][0] = i32::MIN;
+            }
+            assert_eq!(
+                prepared.prepare_factors(invalid).unwrap_err(),
+                "FACTOR_COEFFICIENT"
+            );
+        }
+    }
+
+    #[test]
+    fn factored_admission_checks_every_unobserved_model_coordinate() {
+        let (model, _, _, mut adapters) = factor_fixture(1, 1);
+        // The fixture inputs have zero at coordinate 17, but admission must not
+        // rely on sampled outputs. Expert zero's up[0][0] is nonzero.
+        adapters[0].down[0][17] += 1;
+        let prepared = PreparedModel::new(model).unwrap();
+        assert_eq!(
+            prepared.prepare_factors(adapters).unwrap_err(),
+            "FACTOR_NOT_SAME_DELTA"
+        );
+    }
+
+    #[test]
+    fn factored_model_version_and_original_coefficients_cannot_be_substituted() {
+        let (model, context, requests, adapters) = factor_fixture(1, 3);
+        let prepared = PreparedModel::new(model.clone()).unwrap();
+        let factors = prepared.prepare_factors(adapters).unwrap();
+        let (batch, _) = prepared.prepare_batch(&context, &requests, 20).unwrap();
+        for index in 0..4 {
+            let mut other = model.clone();
+            match index {
+                0 => other.version[0] ^= 1,
+                1 => other.base[0][0] += 1,
+                2 => other.router[0][0] += 1,
+                _ => other.deltas[0][0][0] += 1,
+            }
+            let other = PreparedModel::new(other).unwrap();
+            assert_eq!(
+                other.factored(&batch, &factors).unwrap_err(),
+                "PREPARED_MODEL"
+            );
+            let (other_batch, _) = other.prepare_batch(&context, &requests, 20).unwrap();
+            assert_eq!(
+                other.factored(&other_batch, &factors).unwrap_err(),
+                "FACTOR_MODEL"
+            );
+        }
+    }
+
+    #[test]
+    fn factored_reuse_still_requires_fresh_context_scope_and_deadline_binding() {
+        let (model, context, requests, adapters) = factor_fixture(3, 2);
+        let prepared = PreparedModel::new(model).unwrap();
+        let factors = prepared.prepare_factors(adapters).unwrap();
+        let (batch, _) = prepared.prepare_batch(&context, &requests, 20).unwrap();
+        let (claim, _, _) = prepared.observe_factored(&batch, &factors).unwrap();
+        for i in 0..4 {
+            let mut next = context.clone();
+            match i {
+                0 => next.chain[0] ^= 1,
+                1 => next.parent[0] ^= 1,
+                2 => next.challenge[0] ^= 1,
+                _ => next.batch_id[0] ^= 1,
+            }
+            let (next_batch, _) = prepared.prepare_batch(&next, &requests, 20).unwrap();
+            let (next_claim, _, _) = prepared.observe_factored(&next_batch, &factors).unwrap();
+            assert_eq!(next_claim.product, claim.product);
+            assert_ne!(next_claim.statement_commitment, claim.statement_commitment);
+            assert!(prepared.verify(&next, &requests, 20, &claim).is_err());
+            assert!(prepared.verify(&next, &requests, 20, &next_claim).is_ok());
+        }
+        let mut other_scope = requests.clone();
+        other_scope[0].scope[0] ^= 1;
+        assert!(prepared.verify(&context, &other_scope, 20, &claim).is_err());
+        assert!(prepared.verify(&context, &requests, 1000, &claim).is_err());
+        assert!(prepared.prepare_batch(&context, &requests, 1000).is_err());
+    }
+
+    #[test]
+    fn factored_large_cancelling_intermediates_are_exact_i64() {
+        let (mut model, context, mut requests) = fixture(1);
+        model.base = [[MAX_COEFFICIENT; DIM]; CLASSES];
+        model.deltas = [[[0; DIM]; CLASSES]; EXPERTS];
+        model.router = [[0; DIM]; CLASSES];
+        requests[0].x = [MAX_INPUT; DIM];
+        let adapters = std::array::from_fn(|_| AdapterFactors {
+            up: std::array::from_fn(|_| {
+                (0..MAX_FACTOR_RANK)
+                    .map(|j| {
+                        if j < MAX_FACTOR_RANK / 2 {
+                            MAX_COEFFICIENT
+                        } else {
+                            -MAX_COEFFICIENT
+                        }
+                    })
+                    .collect()
+            }),
+            down: vec![[MAX_COEFFICIENT; DIM]; MAX_FACTOR_RANK],
+        });
+        let prepared = PreparedModel::new(model).unwrap();
+        let factors = prepared.prepare_factors(adapters).unwrap();
+        let (batch, _) = prepared.prepare_batch(&context, &requests, 20).unwrap();
+        let (claim, _, counts) = prepared.observe_factored(&batch, &factors).unwrap();
+        assert_eq!(claim.product.logits, vec![[MAX_MERGED_OUTPUT / 2; CLASSES]]);
+        assert_eq!(claim.product.routes, [0]);
+        assert_eq!(claim.product.nonempty_expert_groups, 1);
+        assert_eq!(
+            counts.adapter_macs(),
+            (MAX_FACTOR_RANK * (DIM + CLASSES)) as u64
+        );
+        assert!(prepared.verify(&context, &requests, 20, &claim).is_ok());
+        assert_eq!(
+            checked_factor_mac(0, i64::MAX, 2),
+            Err("FACTOR_ARITHMETIC_OVERFLOW")
+        );
+        assert_eq!(
+            checked_factor_mac(i64::MAX, 1, 1),
+            Err("FACTOR_ARITHMETIC_OVERFLOW")
+        );
+    }
+
+    #[test]
+    fn factored_preparation_owns_immutable_factors_and_reports_only_selected_costs() {
+        let (mut model, context, requests, mut adapters) = factor_fixture(1, 1);
+        model.router = [[0; DIM]; CLASSES];
+        // Extend unselected expert two from rank one to rank eight with zero
+        // columns. Admission charges all eight; route zero executes rank one.
+        adapters[2].down.resize(MAX_FACTOR_RANK, [0; DIM]);
+        for up in &mut adapters[2].up {
+            up.resize(MAX_FACTOR_RANK, 0);
+        }
+        let prepared = PreparedModel::new(model).unwrap();
+        let factors = prepared.prepare_factors(adapters.clone()).unwrap();
+        adapters[0].down[0][0] += 1;
+        let (batch, _) = prepared.prepare_batch(&context, &requests, 20).unwrap();
+        let (claim, _, counts) = prepared.observe_factored(&batch, &factors).unwrap();
+        assert_eq!(factors.ranks(), [1, 1, MAX_FACTOR_RANK]);
+        assert_eq!(
+            factors.preparation_macs(),
+            ((2 + MAX_FACTOR_RANK) * CLASSES * DIM) as u64
+        );
+        assert_eq!(counts.adapter_macs(), (DIM + CLASSES) as u64);
+        assert!(prepared.verify(&context, &requests, 20, &claim).is_ok());
     }
 }

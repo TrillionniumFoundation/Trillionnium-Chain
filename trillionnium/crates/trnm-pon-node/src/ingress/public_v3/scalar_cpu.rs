@@ -1299,6 +1299,23 @@ impl ServiceMutationCpuDomain {
         self.budget.lock().is_ok_and(|budget| !budget.unavailable)
     }
 
+    /// The original shared intake also owns PQ authentication intervals.
+    /// A known scalar settlement cannot make an unknown authentication sample
+    /// clean. Release the scalar lock before reading the separate intake lock;
+    /// this observation creates no budget, refund or recovery permission.
+    pub(crate) fn public_authentication_accounting_available(&self) -> bool {
+        let intake = {
+            let Ok(budget) = self.budget.lock() else {
+                return false;
+            };
+            budget.intake.clone()
+        };
+        intake
+            .pq_authentication
+            .usage()
+            .is_ok_and(|usage| !usage.unavailable)
+    }
+
     /// A History scope could not publish its original durable epoch close.
     /// Keep the same account unavailable; never substitute a fresh domain or
     /// infer that an abandoned reservation cost zero. Its marker remains.

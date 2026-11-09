@@ -1,0 +1,2757 @@
+{
+  "acceptance": {
+    "all_seven_gates_hold": true,
+    "build_or_test_durations_are_performance_measurements": false,
+    "complete_authority_to_final_effect_native_qualification": false,
+    "complete_joint_consensus_model_qualified": false,
+    "complete_source_pair_native_acceptance": false,
+    "gates": [
+      {
+        "id": "source_convergence",
+        "qualified": false,
+        "remaining_gap": "Complete same-source paired Chain/Hepta production build, loading and native acceptance remain open.",
+        "status": "HOLD"
+      },
+      {
+        "id": "consensus_safety",
+        "qualified": false,
+        "remaining_gap": "The joint lawful-cost, preparation-reuse, selection, quantum-resource, time/DAA/credit argument, full old-trajectory regression and real migration acceptance remain open.",
+        "status": "HOLD"
+      },
+      {
+        "id": "authority_and_effects",
+        "qualified": false,
+        "remaining_gap": "The complete native authority-to-final-effect path, independent recovery anchors, reorganization and Unknown duplicate-prevention acceptance remain open.",
+        "status": "HOLD"
+      },
+      {
+        "id": "hepta_closed_loop",
+        "qualified": false,
+        "remaining_gap": "A real same-iteration training, independent evaluation, NoUpdate, payment, cold retrieval, installation, next-task adoption and failure-recovery record remains absent.",
+        "status": "HOLD"
+      },
+      {
+        "id": "cell_network",
+        "qualified": false,
+        "remaining_gap": "Independent placement, renewals, challenges, repair, WAN cold recovery and real-device full-version loading under author/provider outages remain open.",
+        "status": "HOLD"
+      },
+      {
+        "id": "performance",
+        "qualified": false,
+        "remaining_gap": "The same-resource, same-security honest/hostile campaign and original confirmation/resource contract are not qualified; goodput and tail latency remain unmeasured for qualification.",
+        "status": "HOLD"
+      },
+      {
+        "id": "whole_chain_pq",
+        "qualified": false,
+        "remaining_gap": "All eight real domain paths, fixed crypto profile, lifetime/composition bounds and independent cryptographic and implementation qualification reviews remain open.",
+        "status": "HOLD"
+      }
+    ],
+    "honest_hostile_equivalent_resource_security_campaign_completed": false,
+    "independent_cryptographic_implementation_qualification_completed": false,
+    "independent_cryptographic_review_completed": false,
+    "original_resource_and_confirmation_contract_qualified": false,
+    "performance_qualified": false,
+    "production_qualified": false,
+    "qualified_goodput": null,
+    "qualified_tail_latency": null,
+    "real_hepta_same_iteration_closed_loop": false,
+    "real_node_migration_accepted": false,
+    "real_wan_full_version_recovery": false,
+    "whole_chain_quantum_security_qualified": false
+  },
+  "archive_count": 5,
+  "archives": {
+    "desktop-recovery.tar.gz": {
+      "bytes": 900919,
+      "directories": [
+        "chain-seven-source-9fe375f34217-validation"
+      ],
+      "directory_count": 1,
+      "duplicate_paths": 0,
+      "elf_payload_count": 0,
+      "format": "tar+gzip",
+      "member_count": 32,
+      "member_inventory_authority": "Actual regular members read from this archive. Embedded per-attempt manifests remain original local-record observations and are not assumed to enumerate this archive.",
+      "members": [
+        {
+          "bytes": 0,
+          "path": "chain-seven-source-9fe375f34217-validation/.hepta-lock-1266e3c7ac6226af1dfe8625",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "chain-seven-source-9fe375f34217-validation/.hepta-lock-49ef370b3b957032d1f5b148",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 0,
+          "path": "chain-seven-source-9fe375f34217-validation/.hepta-lock-dd4920a399328c2a8bbaa052",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 46,
+          "path": "chain-seven-source-9fe375f34217-validation/bundle-heads.log",
+          "sha256": "1fd83025f6aee8c2172b0fa76e608f9c86f007755f165d3b54b0a1ebe4e4393e"
+        },
+        {
+          "bytes": 177,
+          "path": "chain-seven-source-9fe375f34217-validation/bundle-import.log",
+          "sha256": "229c9bd1d56ac9501e3989f2fe9c62e8a01c5655fdcdf59e31e6b10d318910ec"
+        },
+        {
+          "bytes": 1455,
+          "path": "chain-seven-source-9fe375f34217-validation/bundle-materialization.json",
+          "sha256": "5cc6673f2dc9c5177c18334caab5e3d39272ba34879654bfc94281a7e9e0de31"
+        },
+        {
+          "bytes": 354,
+          "path": "chain-seven-source-9fe375f34217-validation/bundle-verify.log",
+          "sha256": "69bfcadd0a1f169f5cfff7592fe464836713accaa06c4a37243768e468d0bef8"
+        },
+        {
+          "bytes": 183,
+          "path": "chain-seven-source-9fe375f34217-validation/cache-preflight-audit.log",
+          "sha256": "8b42f7d020e726ad3a7242ec3830736ae911b020e9d4f88b6d3c491298d66d4b"
+        },
+        {
+          "bytes": 4013,
+          "path": "chain-seven-source-9fe375f34217-validation/context.json",
+          "sha256": "6e12ed3371aabe1f976ccf8cd6a5a67242732cb80a2ff480ebe1baaaa91b2094"
+        },
+        {
+          "bytes": 4867,
+          "path": "chain-seven-source-9fe375f34217-validation/desktop-progress-final.json",
+          "sha256": "16fc6877843d7915924d6d9931afde7722c8a79204111ed74b70cfc213cbdac6"
+        },
+        {
+          "bytes": 2520,
+          "path": "chain-seven-source-9fe375f34217-validation/exact-head-import.json",
+          "sha256": "10da4b6e41d2c468e050f1bbbb5fe799aac5b7815908c20791312d97d2686892"
+        },
+        {
+          "bytes": 596,
+          "path": "chain-seven-source-9fe375f34217-validation/exact-source-materialize.json",
+          "sha256": "09a4e39cc54167980e8a0d32026527a714255122f0f94db6c32c65b4ed79196f"
+        },
+        {
+          "bytes": 350,
+          "path": "chain-seven-source-9fe375f34217-validation/fetch-fixed-prerequisites.log",
+          "sha256": "32d7958ecb83b373bf34978b17d3d808a46b306a7ba1cf51ef2d03089eeef90c"
+        },
+        {
+          "bytes": 167,
+          "path": "chain-seven-source-9fe375f34217-validation/fetch-identified-thin-base.log",
+          "sha256": "3086d43f8c0154532553132d383a5c8ff3fe2a28c8963f1cea65811198f7ac4e"
+        },
+        {
+          "bytes": 369,
+          "path": "chain-seven-source-9fe375f34217-validation/fixed-checkout.log",
+          "sha256": "fd5871b44e9d203f8aef428853d25d8a9f897589b3e47db6612d8ed3efe2b245"
+        },
+        {
+          "bytes": 46,
+          "path": "chain-seven-source-9fe375f34217-validation/local-cache-head.log",
+          "sha256": "d5089f1544a7d933f70df17d551a83ac483de063bb8214642b92544af1e1c318"
+        },
+        {
+          "bytes": 103,
+          "path": "chain-seven-source-9fe375f34217-validation/local-cache-refs.log",
+          "sha256": "7f8b92eaf5c0d4605eb903c61f3c2d9d100a901430f51f0bddb2e4e96caa71c3"
+        },
+        {
+          "bytes": 73,
+          "path": "chain-seven-source-9fe375f34217-validation/local-object-clone.log",
+          "sha256": "8b81cf7a6e997f00eb41e0d40d6c5ecad9f6fd68d86c4382329a93caee40e3e5"
+        },
+        {
+          "bytes": 0,
+          "path": "chain-seven-source-9fe375f34217-validation/local-origin.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 1708,
+          "path": "chain-seven-source-9fe375f34217-validation/local-recovery-source.json",
+          "sha256": "e6016b6bd40cea581729e58a1e4811ade26b3156a61e6f8013bf00ee0bffa967"
+        },
+        {
+          "bytes": 152,
+          "path": "chain-seven-source-9fe375f34217-validation/missing-object-query.stderr",
+          "sha256": "5e7874971f0d934135d8e9085a8dfd1ad4c66bb0d9eb8563239854abb3dad116"
+        },
+        {
+          "bytes": 2420,
+          "path": "chain-seven-source-9fe375f34217-validation/missing-source-objects.json",
+          "sha256": "fc00cadcf43b650dc5ce55a969c1ebd84977c1f1ba5439a7319cd609d43a28f2"
+        },
+        {
+          "bytes": 154,
+          "path": "chain-seven-source-9fe375f34217-validation/nonthin-bundle-import.log",
+          "sha256": "ab9e7dcbb6f2910d4b1bd1bc4ed959c34d6cd6f7b36836e9abbea074e5fdf4e6"
+        },
+        {
+          "bytes": 352,
+          "path": "chain-seven-source-9fe375f34217-validation/nonthin-bundle-verify.log",
+          "sha256": "c84d0fb2a9069eca16023bed840bab30a5c456b03b4cce37f344fb0214b0c421"
+        },
+        {
+          "bytes": 1708,
+          "path": "chain-seven-source-9fe375f34217-validation/nonthin-source-import.json",
+          "sha256": "ba1ebf0745f9f2ab4c6c9cdb55249c88405877082e057b781e5f8ddec306ea1c"
+        },
+        {
+          "bytes": 4953,
+          "path": "chain-seven-source-9fe375f34217-validation/recovery-manifest.json",
+          "sha256": "43410d144d60da551f1cea2e4bb34f750250e2335dd63e291413230b767ca609"
+        },
+        {
+          "bytes": 171772,
+          "path": "chain-seven-source-9fe375f34217-validation/remaining-source-oids.txt.gz",
+          "sha256": "0fddd388d98864af0d3024948edc0967c1f667fb863e3a05107dc66e8f2dd3cd"
+        },
+        {
+          "bytes": 742,
+          "path": "chain-seven-source-9fe375f34217-validation/remaining-source-pack.json",
+          "sha256": "c259984af557470b9e0527a51687188399b06bcc903e031b38616f2f2de2f8c1"
+        },
+        {
+          "bytes": 2452152,
+          "path": "chain-seven-source-9fe375f34217-validation/remaining-source-paths.json",
+          "sha256": "2bd148e059c7b9e96c719b4c776308040153e8286168e620f43d07395a91f580"
+        },
+        {
+          "bytes": 2567141,
+          "path": "chain-seven-source-9fe375f34217-validation/source-cache-materialization.json",
+          "sha256": "cff5018e9ccd27d56b10eec01fb284c56180f0ed56a20700295c1eb8cc88ca12"
+        },
+        {
+          "bytes": 778,
+          "path": "chain-seven-source-9fe375f34217-validation/transport-object-observation.json",
+          "sha256": "be25ccd69c1795444619fca64734896945cecf48a2638f0cb747ebf3f856788b"
+        }
+      ],
+      "path": "desktop-recovery.tar.gz",
+      "path_safety_verified": true,
+      "regular_file_bytes": 5219351,
+      "regular_file_count": 31,
+      "sha256": "32166242913c079787b445204c24bcb7b095d9f71782606aef98d8f1183e8167",
+      "symlink_hardlink_device_or_other_members": 0
+    },
+    "local-controls.tar.gz": {
+      "bytes": 179177,
+      "directories": [
+        "local-validation-03"
+      ],
+      "directory_count": 1,
+      "duplicate_paths": 0,
+      "elf_payload_count": 0,
+      "format": "tar+gzip",
+      "member_count": 33,
+      "member_inventory_authority": "Actual regular members read from this archive. Embedded per-attempt manifests remain original local-record observations and are not assumed to enumerate this archive.",
+      "members": [
+        {
+          "bytes": 3460,
+          "path": "local-validation-03/SUMMARY.corrected.json",
+          "sha256": "2f99f52047d665962ad607195cdb3a9ae5c3fa7168607a1adf4a069ac56fe460"
+        },
+        {
+          "bytes": 2774,
+          "path": "local-validation-03/SUMMARY.json",
+          "sha256": "97c2a4da2de053562b7b03eb400fb3133e39896ee1ec436c3d10a220be71fef6"
+        },
+        {
+          "bytes": 877056,
+          "path": "local-validation-03/cargo_all_features.json",
+          "sha256": "0e9ed9bd9fc7a9973f5c4d4dc13c63cda0ec74b37ab3e6f4ddcaae24371bcdf3"
+        },
+        {
+          "bytes": 0,
+          "path": "local-validation-03/cargo_all_features.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 861893,
+          "path": "local-validation-03/cargo_default.json",
+          "sha256": "b6ba7993ad6ae1ee7d4c8132ca695f96e8e0b76d7e7b5132cbee11fc1465a1ce"
+        },
+        {
+          "bytes": 0,
+          "path": "local-validation-03/cargo_default.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 186,
+          "path": "local-validation-03/cargo_metadata_summary.json",
+          "sha256": "446bd1e7e41fac4a029c80c5b9e79115cf3c7294a89e3023ae306b1e35e27690"
+        },
+        {
+          "bytes": 431,
+          "path": "local-validation-03/check_ci_contract.log",
+          "sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb"
+        },
+        {
+          "bytes": 557,
+          "path": "local-validation-03/check_pq_research_integration.log",
+          "sha256": "75f23516231237f6a4d9a9ca9bfb9f666f2e0d9be02872bdd865a16e7d5d5ee1"
+        },
+        {
+          "bytes": 307,
+          "path": "local-validation-03/check_repository.log",
+          "sha256": "0c783dc58543541c2448252c726f0999b947a04254cb68ec05420aafdcc86d59"
+        },
+        {
+          "bytes": 100653,
+          "path": "local-validation-03/current_mapping.log",
+          "sha256": "2f2720785a1e1f81011eaf3aa741e67ae0e17d6c5390328256198cee491b48c9"
+        },
+        {
+          "bytes": 0,
+          "path": "local-validation-03/format.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 4343,
+          "path": "local-validation-03/manifest.corrected.json",
+          "sha256": "bc8675c3cac136f4f1cae6b5561a71f2d232b4d1c3b74fe7ae53a710f8462159"
+        },
+        {
+          "bytes": 3910,
+          "path": "local-validation-03/manifest.json",
+          "sha256": "6f393141f89e3911bd9cd80dcb54ca626390e65d90ac9d46a7e8655f21c947aa"
+        },
+        {
+          "bytes": 1343,
+          "path": "local-validation-03/merged-reader-controls.json",
+          "sha256": "7fe4575e4d5ef0af873fb1d13f86614e93e7ad51d3864bf92468f2f604a31614"
+        },
+        {
+          "bytes": 5665,
+          "path": "local-validation-03/results.json",
+          "sha256": "7c11ec274a82e3d9e17dad82ebfab7dda96981154c62125b86cecbd23205e85c"
+        },
+        {
+          "bytes": 423,
+          "path": "local-validation-03/source_after.log",
+          "sha256": "8a4b3426664db4066cdd7587f052751fc54c8744052d85627c45120d95241ddc"
+        },
+        {
+          "bytes": 423,
+          "path": "local-validation-03/source_after_all.json",
+          "sha256": "8a4b3426664db4066cdd7587f052751fc54c8744052d85627c45120d95241ddc"
+        },
+        {
+          "bytes": 423,
+          "path": "local-validation-03/source_before.log",
+          "sha256": "8a4b3426664db4066cdd7587f052751fc54c8744052d85627c45120d95241ddc"
+        },
+        {
+          "bytes": 1283,
+          "path": "local-validation-03/summary-correction.json",
+          "sha256": "6f7d2b8aaf3f8f548c56020da15e5d3afe02a9c5bc42b27b7739e4a38205732a"
+        },
+        {
+          "bytes": 112,
+          "path": "local-validation-03/test_chain_hepta_command_binding.log",
+          "sha256": "5167898cd46c11edd1aa10efaa61efe3984f0e81667a448bd30e560586a547bb"
+        },
+        {
+          "bytes": 147,
+          "path": "local-validation-03/test_chain_hepta_qualification.log",
+          "sha256": "b88fb9ab847b49e8d9dd24fcc9d963be7c12da366014c45806e69e6c190d1a3c"
+        },
+        {
+          "bytes": 28574,
+          "path": "local-validation-03/test_ci_contract.log",
+          "sha256": "4821f27b3287657854d59f72cac82fda016b20932f755352bef02a14d473de80"
+        },
+        {
+          "bytes": 7108,
+          "path": "local-validation-03/test_ci_source_integrity.log",
+          "sha256": "bdfdeffd28794eb43ad6364a1443f3d902beeb589a9ce90aeedbcd2739fb4b84"
+        },
+        {
+          "bytes": 12235,
+          "path": "local-validation-03/test_public_readiness_evidence-explicit-time.log",
+          "sha256": "dc711e7339a033afc5022d35b8a8a9cd77b95c9979676943f190b829eb069ac2"
+        },
+        {
+          "bytes": 17128,
+          "path": "local-validation-03/test_public_readiness_evidence.log",
+          "sha256": "b0fdd9fe27c330d06c85885c2d10792e4809f46867790496c712acc1d108165e"
+        },
+        {
+          "bytes": 128,
+          "path": "local-validation-03/test_read_validated_business_goodput.log",
+          "sha256": "6781a20e2df32a43a41201bb4df2d60fbb48b85be240adf2bc4062df48ddea35"
+        },
+        {
+          "bytes": 1492,
+          "path": "local-validation-03/test_record_pq_native_command.log",
+          "sha256": "82a792ec74e2b03c6d109255593b8debf0623c458609e9065a7cc17e1d6054e5"
+        },
+        {
+          "bytes": 110,
+          "path": "local-validation-03/test_w1_lifecycle_cost_v4.log",
+          "sha256": "e607e96577e89de6faace24a5b0738ef35ef10461822faf24ab3c9de00b167e2"
+        },
+        {
+          "bytes": 2179,
+          "path": "local-validation-03/test_w1_qrom_current_implementation_audit.log",
+          "sha256": "a1cf0616e2a5294b370b9e21008ab5c7e857a94842290f88d474d54335c603ca"
+        },
+        {
+          "bytes": 585,
+          "path": "prior-local-attempt.json",
+          "sha256": "83f0d8be54a74addde14c3457289e0370d12df6dc0d18c61b1ffe01b76163923"
+        },
+        {
+          "bytes": 2369,
+          "path": "run_local_validation.py",
+          "sha256": "7a838e555d1682c567d52b68a1c4de772d890412806b48ddefa64f05f439fd8d"
+        }
+      ],
+      "path": "local-controls.tar.gz",
+      "path_safety_verified": true,
+      "regular_file_bytes": 1937297,
+      "regular_file_count": 32,
+      "sha256": "ba47d47c4f6bb9a58fe295e018e8a732bfd563a61f7549a12f4a5e6004d2b839",
+      "symlink_hardlink_device_or_other_members": 0
+    },
+    "native-records.tar.gz": {
+      "bytes": 810985,
+      "directories": [],
+      "directory_count": 0,
+      "duplicate_paths": 0,
+      "elf_payload_count": 0,
+      "format": "tar+gzip",
+      "member_count": 128,
+      "member_inventory_authority": "Actual regular members read from this archive. Embedded per-attempt manifests remain original local-record observations and are not assumed to enumerate this archive.",
+      "members": [
+        {
+          "bytes": 40332,
+          "path": "local-native-qualification/native-75dc-attempt02/Cargo.lock",
+          "sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c"
+        },
+        {
+          "bytes": 846,
+          "path": "local-native-qualification/native-75dc-attempt02/active-command.json",
+          "sha256": "a5468075174aa84580d7529bee3554e3529ca0085a0636d2586eeea17ba343a4"
+        },
+        {
+          "bytes": 44878,
+          "path": "local-native-qualification/native-75dc-attempt02/cargo-cache-observation.json",
+          "sha256": "50b418294a43ea2f964dabdef8428237ed8d2f221eac4367f203cb5a9262b1fe"
+        },
+        {
+          "bytes": 433,
+          "path": "local-native-qualification/native-75dc-attempt02/clippy-sqlite-build-observation.json",
+          "sha256": "4142ea40429fbe9a7473df81af130dc1753ac880706ed3c00cbc735bc31007d5"
+        },
+        {
+          "bytes": 5274,
+          "path": "local-native-qualification/native-75dc-attempt02/clippy-sqlite-build-trnm-sqlite-io-boundary-b17636bc9558ec69.output",
+          "sha256": "82a4e487e52bea5922ad4fe5dae338317607cdae9e6710f792cf0f8310d147da"
+        },
+        {
+          "bytes": 997,
+          "path": "local-native-qualification/native-75dc-attempt02/dependency-source-audit/cargo-generated-markers.json",
+          "sha256": "66cdcc49a328bb0e321442da398d47e9ec3f8ef6710e37983acf7aca1216ff76"
+        },
+        {
+          "bytes": 6140644,
+          "path": "local-native-qualification/native-75dc-attempt02/dependency-source-audit/registry-source-bytes.json",
+          "sha256": "d0e3f267b0847d29285b5efbfa3ca2ea8615a9a0b2bf5c53e6a9648cdc346dda"
+        },
+        {
+          "bytes": 615,
+          "path": "local-native-qualification/native-75dc-attempt02/dependency-source-audit/summary.json",
+          "sha256": "8e181b1dd887853a078f693cf9e202753c5b4d3dc3bbab841dc0b731fa2f482f"
+        },
+        {
+          "bytes": 176,
+          "path": "local-native-qualification/native-75dc-attempt02/list-trnm_crypto_primitives.driver.log",
+          "sha256": "0dc5e20e64cd02450a90c5db4922f52566a28070e4f7b7dcaf6f777bf6fadea6"
+        },
+        {
+          "bytes": 2449,
+          "path": "local-native-qualification/native-75dc-attempt02/list-trnm_crypto_primitives.json",
+          "sha256": "5957cdd41f425557e9de6d42f5ab12c1acb23546571546a764b3da8ceed2eac1"
+        },
+        {
+          "bytes": 18761,
+          "path": "local-native-qualification/native-75dc-attempt02/list-trnm_crypto_primitives.log",
+          "sha256": "9d3fff8ba3d99858aa32cdbb04a9086cf848c5c89811fc91b9452b076999fb2d"
+        },
+        {
+          "bytes": 167,
+          "path": "local-native-qualification/native-75dc-attempt02/list-trnm_pon_node.driver.log",
+          "sha256": "d85e4329f00ffc5f349a69ee2ae4112eb80ba0566ba3cf20b828e7ff57e57ce5"
+        },
+        {
+          "bytes": 2432,
+          "path": "local-native-qualification/native-75dc-attempt02/list-trnm_pon_node.json",
+          "sha256": "5a1aee02851dc2249e414612f8151a1a95a41319503e0ce44ebdc2adc09edbc3"
+        },
+        {
+          "bytes": 156761,
+          "path": "local-native-qualification/native-75dc-attempt02/list-trnm_pon_node.log",
+          "sha256": "87e4f09cf2e74ee970cca3fc1060a205a26a84d927d3026072cc396a8793471c"
+        },
+        {
+          "bytes": 13895,
+          "path": "local-native-qualification/native-75dc-attempt02/local_native_runner.py",
+          "sha256": "2e28698376370de893692c5160a02a49351098cc60fa8552f690975d443f5c87"
+        },
+        {
+          "bytes": 5320,
+          "path": "local-native-qualification/native-75dc-attempt02/manifest.json",
+          "sha256": "b6a845dbe008075c3c61f0bbc8df6474c4afb1118510f0bf621a4d04c36b4701"
+        },
+        {
+          "bytes": 169,
+          "path": "local-native-qualification/native-75dc-attempt02/native-libtest-build.driver.log",
+          "sha256": "9834b4f1503f204805ba393433f0a63f9f72782f3530d85d343156af4d081f6b"
+        },
+        {
+          "bytes": 2632,
+          "path": "local-native-qualification/native-75dc-attempt02/native-libtest-build.json",
+          "sha256": "c7d5b1a1a12063c605428d05504a2ccb3f4fd760fc7904104a9c6bd3ec5ad10f"
+        },
+        {
+          "bytes": 125592,
+          "path": "local-native-qualification/native-75dc-attempt02/native-libtest-build.log",
+          "sha256": "b36048087f9e2c970240b5761286eee863d1d6ef80fda8209fb517ef24e65e05"
+        },
+        {
+          "bytes": 179,
+          "path": "local-native-qualification/native-75dc-attempt02/native-preflight.driver.log",
+          "sha256": "4ebf14eef63901007d7fbace18ec1733687effebf0ee53951235599802cebf16"
+        },
+        {
+          "bytes": 1593,
+          "path": "local-native-qualification/native-75dc-attempt02/provider-before.json",
+          "sha256": "54d7d3e393e4d3265c5e8950db2a928204ac8026be46d052c1a876a5348da082"
+        },
+        {
+          "bytes": 18956,
+          "path": "local-native-qualification/native-75dc-attempt02/resource-observations.jsonl",
+          "sha256": "5ac00511cc9b22ed47cf9f9ba124feb738712cadc79c692c2b3ef7fb1bb60af7"
+        },
+        {
+          "bytes": 285,
+          "path": "local-native-qualification/native-75dc-attempt02/runner-adaptation.json",
+          "sha256": "9db5bb96f44374ee64d38f1eb6b39ec913eebd337421ad1dc8f4bbd1a5d2b3bf"
+        },
+        {
+          "bytes": 8661,
+          "path": "local-native-qualification/native-75dc-attempt02/runner.log",
+          "sha256": "8c36085ee9629f14fd98c72f2b14f85731ca72ceae2aefc443cb486cd486bb32"
+        },
+        {
+          "bytes": 434,
+          "path": "local-native-qualification/native-75dc-attempt02/strict-clippy-readback.json",
+          "sha256": "4e0c1bf512b64f5506b9c7731a519ec74fd713985c17c52a7f1b190756aa7c09"
+        },
+        {
+          "bytes": 162,
+          "path": "local-native-qualification/native-75dc-attempt02/strict-clippy.driver.log",
+          "sha256": "ba597c80f0eb203353ef924162476707265e6070c160ce982cf355891d0b2926"
+        },
+        {
+          "bytes": 2553,
+          "path": "local-native-qualification/native-75dc-attempt02/strict-clippy.json",
+          "sha256": "7b5ebf4afb5b05d60de41ea4a9f519b07696f0ed0f02bec319b33f0f21cf202f"
+        },
+        {
+          "bytes": 6678,
+          "path": "local-native-qualification/native-75dc-attempt02/strict-clippy.log",
+          "sha256": "3fd2d7bae3a7e4fa74cbb381ad68a2a6932deded8bc14c4bdd51629cb799f194"
+        },
+        {
+          "bytes": 14006,
+          "path": "local-native-qualification/native-75dc-attempt02/summary.json",
+          "sha256": "7a8fa22e445dd6661f4f95d6f5bcdf3837a9ba380d3840cd6ef6cea84dbeba4e"
+        },
+        {
+          "bytes": 0,
+          "path": "local-native-qualification/native-75dc-attempt02/toolchain-cargo.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 328,
+          "path": "local-native-qualification/native-75dc-attempt02/toolchain-cargo.stdout",
+          "sha256": "c6cd47fb28b137d9450165b5b0796de3dfdac887c91ea225c53506f3fc5f6add"
+        },
+        {
+          "bytes": 0,
+          "path": "local-native-qualification/native-75dc-attempt02/toolchain-clippy-driver.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 38,
+          "path": "local-native-qualification/native-75dc-attempt02/toolchain-clippy-driver.stdout",
+          "sha256": "35a36a02149eb682cc65a0f29c482942cab20c49fe19f75208155febbcbb78e8"
+        },
+        {
+          "bytes": 5066,
+          "path": "local-native-qualification/native-75dc-attempt02/toolchain-observation.json",
+          "sha256": "4aa3a1c5c295dff091b863f65c0943ba21a0fc33bd9c3a7af88bc74dae8fe2bb"
+        },
+        {
+          "bytes": 0,
+          "path": "local-native-qualification/native-75dc-attempt02/toolchain-rustc.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 196,
+          "path": "local-native-qualification/native-75dc-attempt02/toolchain-rustc.stdout",
+          "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+        },
+        {
+          "bytes": 575,
+          "path": "local-native-qualification/native-75dc-continuation03/active-command.json",
+          "sha256": "d1599c517a29493f2eacbf9ea038f65c3616abdffdf9cea0cc42eac6620b03da"
+        },
+        {
+          "bytes": 3954,
+          "path": "local-native-qualification/native-75dc-continuation03/continuation-inputs.json",
+          "sha256": "f3f0243dfa74d1ec23434ff9efd5eeaa71be7cdfa4eaacd6070489327bcee109"
+        },
+        {
+          "bytes": 181,
+          "path": "local-native-qualification/native-75dc-continuation03/list-trnm_crypto_primitives.driver.log",
+          "sha256": "d53a645bd665564ede107284e8ad82ccb14733f66996ac6c6a12b9e6726e7c4e"
+        },
+        {
+          "bytes": 2449,
+          "path": "local-native-qualification/native-75dc-continuation03/list-trnm_crypto_primitives.json",
+          "sha256": "4dc02bef95c621a32473aeef8aa627b5d89d81c891da14fc6906e8248eaa7a99"
+        },
+        {
+          "bytes": 18761,
+          "path": "local-native-qualification/native-75dc-continuation03/list-trnm_crypto_primitives.log",
+          "sha256": "9d3fff8ba3d99858aa32cdbb04a9086cf848c5c89811fc91b9452b076999fb2d"
+        },
+        {
+          "bytes": 172,
+          "path": "local-native-qualification/native-75dc-continuation03/list-trnm_pon_node.driver.log",
+          "sha256": "d5d9fcdec45f8c738eba6bf3a3351cad0dae57ad76b95759ad8f0b4d0de4e022"
+        },
+        {
+          "bytes": 2432,
+          "path": "local-native-qualification/native-75dc-continuation03/list-trnm_pon_node.json",
+          "sha256": "d8ec524b9dce4c70780ff2ebd5dc786027acef3272e64f7019122e5eaa590fce"
+        },
+        {
+          "bytes": 156761,
+          "path": "local-native-qualification/native-75dc-continuation03/list-trnm_pon_node.log",
+          "sha256": "87e4f09cf2e74ee970cca3fc1060a205a26a84d927d3026072cc396a8793471c"
+        },
+        {
+          "bytes": 423,
+          "path": "local-native-qualification/native-75dc-continuation03/local-source-after.driver.log",
+          "sha256": "8a4b3426664db4066cdd7587f052751fc54c8744052d85627c45120d95241ddc"
+        },
+        {
+          "bytes": 423,
+          "path": "local-native-qualification/native-75dc-continuation03/local-source-after.json",
+          "sha256": "8a4b3426664db4066cdd7587f052751fc54c8744052d85627c45120d95241ddc"
+        },
+        {
+          "bytes": 14747,
+          "path": "local-native-qualification/native-75dc-continuation03/local_native_runner.py",
+          "sha256": "bfab03f375f32dca7c3e2bfdbdbcae13c7bf93ebb1321ce3ae345e498233bfb8"
+        },
+        {
+          "bytes": 10890,
+          "path": "local-native-qualification/native-75dc-continuation03/manifest.json",
+          "sha256": "3f35517ac68530dcf89c733509644ec79cc0340058c18c65a372e94e42790d25"
+        },
+        {
+          "bytes": 201,
+          "path": "local-native-qualification/native-75dc-continuation03/native-01-named-check.driver.log",
+          "sha256": "768938dd6da07503a549c2914c74ba530a944cb1dd888d2727311a454d7d2758"
+        },
+        {
+          "bytes": 163,
+          "path": "local-native-qualification/native-75dc-continuation03/native-01.driver.log",
+          "sha256": "70fd48907da42fe967098a1065d2b48e2ed094df702a7a8b845b214d2fb4f5a5"
+        },
+        {
+          "bytes": 4237,
+          "path": "local-native-qualification/native-75dc-continuation03/native-01.json",
+          "sha256": "b2c12c226ece2f76763cd5374e45f1820c445b5f3e128cb01a9dad05a23362cb"
+        },
+        {
+          "bytes": 235,
+          "path": "local-native-qualification/native-75dc-continuation03/native-01.log",
+          "sha256": "ef483ab4065128eaca10a776074008d7d54d407c41fb68482e67b48ab458d43c"
+        },
+        {
+          "bytes": 188,
+          "path": "local-native-qualification/native-75dc-continuation03/native-02-named-check.driver.log",
+          "sha256": "9053d3ddbf125f78ba517b5040c116deedc9fadf11636dfd1bc6f2fc9d87653f"
+        },
+        {
+          "bytes": 163,
+          "path": "local-native-qualification/native-75dc-continuation03/native-02.driver.log",
+          "sha256": "e6d843010b3e063d037ce59771dc3bfdcff0047c84ac2bd008eb27883c50889b"
+        },
+        {
+          "bytes": 4224,
+          "path": "local-native-qualification/native-75dc-continuation03/native-02.json",
+          "sha256": "373ccf574c60b7ff2beee116042f9747670924fe001f1af2839822f8627dabbe"
+        },
+        {
+          "bytes": 222,
+          "path": "local-native-qualification/native-75dc-continuation03/native-02.log",
+          "sha256": "938e66ed92b29ec75da7180866898f67b2aab6f75248e5aeb5536699208a32be"
+        },
+        {
+          "bytes": 195,
+          "path": "local-native-qualification/native-75dc-continuation03/native-03-named-check.driver.log",
+          "sha256": "a70b81ff462179f48fc0e1c848501071c9678c7babaed728f1e59c0079939833"
+        },
+        {
+          "bytes": 163,
+          "path": "local-native-qualification/native-75dc-continuation03/native-03.driver.log",
+          "sha256": "0d9fbda935008277b50ba23d41f913be7bbb97236a8f9b5b221f03f08270a4fd"
+        },
+        {
+          "bytes": 4206,
+          "path": "local-native-qualification/native-75dc-continuation03/native-03.json",
+          "sha256": "ed9e0f03d7ee5328291dcaa76d73bed5adaf84a98f336c6c95b84fa696039285"
+        },
+        {
+          "bytes": 230,
+          "path": "local-native-qualification/native-75dc-continuation03/native-03.log",
+          "sha256": "1a000fcf3f8857b8608f7263c4f0707819544a8407ea79ab0631f298702248c9"
+        },
+        {
+          "bytes": 196,
+          "path": "local-native-qualification/native-75dc-continuation03/native-04-named-check.driver.log",
+          "sha256": "b6e36b00be13de83e6a4c4d9a198f40b0fc048c635e60f96eccea0b331267f9a"
+        },
+        {
+          "bytes": 163,
+          "path": "local-native-qualification/native-75dc-continuation03/native-04.driver.log",
+          "sha256": "50438adbc45f1addcb7ca6fa52bd514a535e971498130b26d44754383f435c5d"
+        },
+        {
+          "bytes": 4207,
+          "path": "local-native-qualification/native-75dc-continuation03/native-04.json",
+          "sha256": "2fc6ab320200467f56cd3df600ba0c99aeaa76a6414650418b1171c1fd58d8c1"
+        },
+        {
+          "bytes": 231,
+          "path": "local-native-qualification/native-75dc-continuation03/native-04.log",
+          "sha256": "f6891b0dcce2aba79acec18631b896230c9df728212dc0fc6154d1028072745c"
+        },
+        {
+          "bytes": 205,
+          "path": "local-native-qualification/native-75dc-continuation03/native-05-named-check.driver.log",
+          "sha256": "c9ac66d479451c039dd8ec644b844b2a37b37b384f1161b811191b4b4a57f096"
+        },
+        {
+          "bytes": 163,
+          "path": "local-native-qualification/native-75dc-continuation03/native-05.driver.log",
+          "sha256": "41218c3a36054b8dd50d2917479f74dc4c0b76386370a5a60866c83fde75ce2b"
+        },
+        {
+          "bytes": 4216,
+          "path": "local-native-qualification/native-75dc-continuation03/native-05.json",
+          "sha256": "cd8d5760f41f7a32a915c1cf61dfef60623078bbf37ff5cdf39a5da8164facd9"
+        },
+        {
+          "bytes": 240,
+          "path": "local-native-qualification/native-75dc-continuation03/native-05.log",
+          "sha256": "e1d4984e015201f3feb37db5975e8092fd467f07e96b19a851c419f186b7a126"
+        },
+        {
+          "bytes": 214,
+          "path": "local-native-qualification/native-75dc-continuation03/native-06-named-check.driver.log",
+          "sha256": "9739634bde7c149a44956fefe1da5668fe9b5f9731a562878350a1148fbb5ee0"
+        },
+        {
+          "bytes": 163,
+          "path": "local-native-qualification/native-75dc-continuation03/native-06.driver.log",
+          "sha256": "de6fbff8ae22f2cab291665c47709faf1d8275e16fa324a96114b609d9e36f3e"
+        },
+        {
+          "bytes": 4225,
+          "path": "local-native-qualification/native-75dc-continuation03/native-06.json",
+          "sha256": "03c03ee06e08a467847ab70b123b6f01b66df594660d5b19f03727f488e5ee7e"
+        },
+        {
+          "bytes": 249,
+          "path": "local-native-qualification/native-75dc-continuation03/native-06.log",
+          "sha256": "074cb1d4df80700e788fa6e67ccb9ea1579a23b1ae37764ea81cd69c1ac7f952"
+        },
+        {
+          "bytes": 216,
+          "path": "local-native-qualification/native-75dc-continuation03/native-07-named-check.driver.log",
+          "sha256": "d5d16838652c7211483d1d30b2783a72c73581eeea89cdccd5e47206493c66ea"
+        },
+        {
+          "bytes": 163,
+          "path": "local-native-qualification/native-75dc-continuation03/native-07.driver.log",
+          "sha256": "973240cdc5f84ffa765e67cacb846aa7449774f0e5d14f2bd06f8a4263585315"
+        },
+        {
+          "bytes": 4227,
+          "path": "local-native-qualification/native-75dc-continuation03/native-07.json",
+          "sha256": "f89aa3842a1a82559b6decdd4258b96e7b2491185149cfb0b25b8c32b91901d4"
+        },
+        {
+          "bytes": 251,
+          "path": "local-native-qualification/native-75dc-continuation03/native-07.log",
+          "sha256": "4ecfc64d9e0a6a25884d8736b666de3ce0267c3b849160b2e2056fb2276bc3c1"
+        },
+        {
+          "bytes": 205,
+          "path": "local-native-qualification/native-75dc-continuation03/native-08-named-check.driver.log",
+          "sha256": "a3360c94a2153ffc5fd4f81dd0855339f03b221e52c72294640f090e53ac6bc0"
+        },
+        {
+          "bytes": 163,
+          "path": "local-native-qualification/native-75dc-continuation03/native-08.driver.log",
+          "sha256": "d8e85954b2f3115d8dc38dc22b0b72545c719c4a76ca653adc1960e379750d7e"
+        },
+        {
+          "bytes": 4220,
+          "path": "local-native-qualification/native-75dc-continuation03/native-08.json",
+          "sha256": "6215b1aaa57d72e44f6c8651fb5e7e11ca5cf000ff5cebfb10ccad07c6095a8a"
+        },
+        {
+          "bytes": 240,
+          "path": "local-native-qualification/native-75dc-continuation03/native-08.log",
+          "sha256": "df052b249e81190fe901aa0500b503e640abac03ed3fbbb3acc9d9f246c8a334"
+        },
+        {
+          "bytes": 215,
+          "path": "local-native-qualification/native-75dc-continuation03/native-09-named-check.driver.log",
+          "sha256": "3551b4448a3683226f02c5ddfaf2ae4568ec38c8cfaeeb989f1b093bedc5e796"
+        },
+        {
+          "bytes": 163,
+          "path": "local-native-qualification/native-75dc-continuation03/native-09.driver.log",
+          "sha256": "6555f60f6ff5e747b755d2627685ceff8c7016550cbf3d895e96efb18207be2c"
+        },
+        {
+          "bytes": 4229,
+          "path": "local-native-qualification/native-75dc-continuation03/native-09.json",
+          "sha256": "613e5be9106ea01ec2a2b44599a7248e339b921aae63502329ad98059486b690"
+        },
+        {
+          "bytes": 250,
+          "path": "local-native-qualification/native-75dc-continuation03/native-09.log",
+          "sha256": "9d26cf35777564b782deb8075d161cf4afa6100e606f14cb64dd516d3a0ad2e8"
+        },
+        {
+          "bytes": 203,
+          "path": "local-native-qualification/native-75dc-continuation03/native-10-named-check.driver.log",
+          "sha256": "00fad2601bc85945d204d7cdf5355ad13be8f2711c9ce38e9a96467f60049a96"
+        },
+        {
+          "bytes": 163,
+          "path": "local-native-qualification/native-75dc-continuation03/native-10.driver.log",
+          "sha256": "b59a628517e0049206b9edcafd3b3eea19aaf8bf77228cf34e2d85a4af46acb5"
+        },
+        {
+          "bytes": 4217,
+          "path": "local-native-qualification/native-75dc-continuation03/native-10.json",
+          "sha256": "9f17c12b39d94d74525a3feec3e3d5bcb4de859e807840da025c08f6577c89ce"
+        },
+        {
+          "bytes": 238,
+          "path": "local-native-qualification/native-75dc-continuation03/native-10.log",
+          "sha256": "517ca40b667ee3d12488b57d8c13bedc0d4466098ef5987dfc032139c43135e6"
+        },
+        {
+          "bytes": 208,
+          "path": "local-native-qualification/native-75dc-continuation03/native-11-named-check.driver.log",
+          "sha256": "5d1e2da0e0a5962268f74d3df950b013bf16f14c2c637590514be040c1ccc1bc"
+        },
+        {
+          "bytes": 163,
+          "path": "local-native-qualification/native-75dc-continuation03/native-11.driver.log",
+          "sha256": "10ddf219508b33c38632c82a3220e8fe264964097927894217413f1259793975"
+        },
+        {
+          "bytes": 4223,
+          "path": "local-native-qualification/native-75dc-continuation03/native-11.json",
+          "sha256": "99e9833f0d4cc3b9b9d009bb13f35ed9a68f1b6a3aa1a69d27ac1901e82760da"
+        },
+        {
+          "bytes": 243,
+          "path": "local-native-qualification/native-75dc-continuation03/native-11.log",
+          "sha256": "ebfd60a01ca5c281e6b83cdf5f93df0c478f468a61d19a6a5f76dbb14f6f734c"
+        },
+        {
+          "bytes": 212,
+          "path": "local-native-qualification/native-75dc-continuation03/native-12-named-check.driver.log",
+          "sha256": "6bd0513cae8564d4e328653f6cac8ad2f70198cc615892702f9784e85083a188"
+        },
+        {
+          "bytes": 163,
+          "path": "local-native-qualification/native-75dc-continuation03/native-12.driver.log",
+          "sha256": "09c4f5f499b0eb13e8bfd8b8796a2f7419141ae4d619c1796ce7029f3e23271a"
+        },
+        {
+          "bytes": 4226,
+          "path": "local-native-qualification/native-75dc-continuation03/native-12.json",
+          "sha256": "64f896f7338300df67391502886b57c10715b15b9c97ecb4f63016cddcdcc433"
+        },
+        {
+          "bytes": 247,
+          "path": "local-native-qualification/native-75dc-continuation03/native-12.log",
+          "sha256": "392360af0fdf90560e0d632fde77e8ffc2fb698b8288e642bc181bf731e688fd"
+        },
+        {
+          "bytes": 5274,
+          "path": "local-native-qualification/native-75dc-continuation03/native-build-trnm-sqlite-io-boundary-6481bee5a29908c8.output",
+          "sha256": "7edb593095ef5f99411e81368c34d3743f66c1b48ba2ee59b3922c98c12fbd3d"
+        },
+        {
+          "bytes": 5274,
+          "path": "local-native-qualification/native-75dc-continuation03/native-build-trnm-sqlite-io-boundary-b17636bc9558ec69.output",
+          "sha256": "82a4e487e52bea5922ad4fe5dae338317607cdae9e6710f792cf0f8310d147da"
+        },
+        {
+          "bytes": 179,
+          "path": "local-native-qualification/native-75dc-continuation03/native-preflight.driver.log",
+          "sha256": "4ebf14eef63901007d7fbace18ec1733687effebf0ee53951235599802cebf16"
+        },
+        {
+          "bytes": 8166,
+          "path": "local-native-qualification/native-75dc-continuation03/native-readback.json",
+          "sha256": "8c1c2d5495f004d166d22e3bfca7da86345c8f8bba7db111afdfb011baaa6665"
+        },
+        {
+          "bytes": 793,
+          "path": "local-native-qualification/native-75dc-continuation03/native-sqlite-build-observation.json",
+          "sha256": "090d716efdae019b52f0cdd3f7a121b6bd840028c1b9efd744c02c66c6c0941a"
+        },
+        {
+          "bytes": 1593,
+          "path": "local-native-qualification/native-75dc-continuation03/provider-after.json",
+          "sha256": "54d7d3e393e4d3265c5e8950db2a928204ac8026be46d052c1a876a5348da082"
+        },
+        {
+          "bytes": 1593,
+          "path": "local-native-qualification/native-75dc-continuation03/provider-before.json",
+          "sha256": "54d7d3e393e4d3265c5e8950db2a928204ac8026be46d052c1a876a5348da082"
+        },
+        {
+          "bytes": 4717,
+          "path": "local-native-qualification/native-75dc-continuation03/resource-observations.jsonl",
+          "sha256": "1ea6303ab2afc8e92a07dd03110f0196f48024271371a0c74cb4811f154c96da"
+        },
+        {
+          "bytes": 1043,
+          "path": "local-native-qualification/native-75dc-continuation03/retained-executables.json",
+          "sha256": "362367ca072363d78a7d26e02bc4277c3206b6f170216fb91f07baacc4dbce82"
+        },
+        {
+          "bytes": 533,
+          "path": "local-native-qualification/native-75dc-continuation03/runner-adaptation.json",
+          "sha256": "982830c81bfc85aa118230d6880c4bb1baaeea034ac26528ed6fe1806fe3ffd6"
+        },
+        {
+          "bytes": 49288,
+          "path": "local-native-qualification/native-75dc-continuation03/runner.log",
+          "sha256": "3c7a205e82643f3796913908b5794f600229a56c3552832e15081c1d0c23ccf7"
+        },
+        {
+          "bytes": 100888,
+          "path": "local-native-qualification/native-75dc-continuation03/summary.json",
+          "sha256": "e43c26043e721d41e9c507588869729fd39712d0d79f15649889148ed794c493"
+        },
+        {
+          "bytes": 1686,
+          "path": "local-native-qualification/native-75dc-continuation03/toolchain-after.json",
+          "sha256": "1f83fd93038a09de112b66d6ba30053b87c4d80e7d57ef77e284254eeaa3c0f9"
+        },
+        {
+          "bytes": 597,
+          "path": "local-native-qualification/native-75dc-run/attempt-cancellation.json",
+          "sha256": "92304e0fade9cf99ebc92475a2ebd49f54601d546d0829ff3cbc9ce6d0788721"
+        },
+        {
+          "bytes": 44878,
+          "path": "local-native-qualification/native-75dc-run/cargo-cache-observation.json",
+          "sha256": "50b418294a43ea2f964dabdef8428237ed8d2f221eac4367f203cb5a9262b1fe"
+        },
+        {
+          "bytes": 401,
+          "path": "local-native-qualification/native-75dc-run/final-receipt-observation.json",
+          "sha256": "ad6065bfb0090a7b79381829011662073f5851a688ef0b329ef53ec7051e67cc"
+        },
+        {
+          "bytes": 12356,
+          "path": "local-native-qualification/native-75dc-run/local_native_runner.py",
+          "sha256": "520c8ee0cc082344e54f545c0d464953025b4c2b38b1dfa4e13df026ad226d3c"
+        },
+        {
+          "bytes": 1904,
+          "path": "local-native-qualification/native-75dc-run/manifest.json",
+          "sha256": "7db0fe0b51ba3e1df7a9aa0aad445fcba8a282c9c1af67c4195f7f44faa92880"
+        },
+        {
+          "bytes": 179,
+          "path": "local-native-qualification/native-75dc-run/native-preflight.driver.log",
+          "sha256": "4ebf14eef63901007d7fbace18ec1733687effebf0ee53951235599802cebf16"
+        },
+        {
+          "bytes": 1593,
+          "path": "local-native-qualification/native-75dc-run/provider-before.json",
+          "sha256": "54d7d3e393e4d3265c5e8950db2a928204ac8026be46d052c1a876a5348da082"
+        },
+        {
+          "bytes": 225,
+          "path": "local-native-qualification/native-75dc-run/resource-observations.jsonl",
+          "sha256": "87f905bd870c2b4feccef4fb3adb0135ff3e2153c9d60b1cd98f74b8db9c166e"
+        },
+        {
+          "bytes": 865,
+          "path": "local-native-qualification/native-75dc-run/runner-adaptation.json",
+          "sha256": "3434e9528a86da9a305e4d026c2a53a3b3509587196ae0bd89255a276c770127"
+        },
+        {
+          "bytes": 1580,
+          "path": "local-native-qualification/native-75dc-run/runner.log",
+          "sha256": "a1db2de8664adbb9b1a5b5497209fabb9782cfab189fa031e66d9b241760bcb4"
+        },
+        {
+          "bytes": 0,
+          "path": "local-native-qualification/native-75dc-run/strict-clippy.driver.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 1386,
+          "path": "local-native-qualification/native-75dc-run/strict-clippy.json",
+          "sha256": "2dcf50e54c04e5275c9c58d475fb44ded78ca0f849bc96411988e2866caf0918"
+        },
+        {
+          "bytes": 7499,
+          "path": "local-native-qualification/native-75dc-run/strict-clippy.log",
+          "sha256": "9bf683ba7f9b8711ca1d56ec8f58fca9b65fa971284d520d3bf379dab9d4168a"
+        },
+        {
+          "bytes": 4784,
+          "path": "local-native-qualification/native-75dc-run/summary.json",
+          "sha256": "85df0c11fd96645aff9307b479431ed20b66dc8c42aaddab1842fafe4309773d"
+        },
+        {
+          "bytes": 249,
+          "path": "local-native-qualification/preflight.json",
+          "sha256": "be661bede0775e5ec47b1839a09299a8f5d7f058eeda7859aaa1d6072c69c4aa"
+        },
+        {
+          "bytes": 179,
+          "path": "local-native-qualification/preflight.log",
+          "sha256": "4ebf14eef63901007d7fbace18ec1733687effebf0ee53951235599802cebf16"
+        },
+        {
+          "bytes": 24218,
+          "path": "local-native-qualification/publication-archive-index.json",
+          "sha256": "2b881d1dc22443b542ffbd6ce720272ecb9781bfc67e19cc90a2eb50247d8f51"
+        },
+        {
+          "bytes": 4955,
+          "path": "local-native-qualification/root-final-native-review.json",
+          "sha256": "e5df57e13ca4b2353f89091f14fbefaffb0525db61912a538eaca168a7e1d693"
+        },
+        {
+          "bytes": 576,
+          "path": "local-native-qualification/tmpfs-cleanup.json",
+          "sha256": "d3ee2b9822453833463ca71074044b336b10249f5ff60c8a681b32ffcc00de9c"
+        }
+      ],
+      "path": "native-records.tar.gz",
+      "path_safety_verified": true,
+      "regular_file_bytes": 7180674,
+      "regular_file_count": 128,
+      "sha256": "eeeec7c91f778d2013069652ef98d74067a437dda85aa8c34815abb77522c57d",
+      "symlink_hardlink_device_or_other_members": 0
+    },
+    "repository-controls.tar.gz": {
+      "bytes": 1776321,
+      "directories": [],
+      "directory_count": 0,
+      "duplicate_paths": 0,
+      "elf_payload_count": 0,
+      "format": "tar+gzip",
+      "member_count": 15,
+      "member_inventory_authority": "Actual regular members read from this archive. Embedded per-attempt manifests remain original local-record observations and are not assumed to enumerate this archive.",
+      "members": [
+        {
+          "bytes": 4934790,
+          "path": "chain-seven-repository-controls-75dc7ec3/after-files.json",
+          "sha256": "9d49101c8cdc8656565868f185c24c1b398507625024a037d40845d233568baa"
+        },
+        {
+          "bytes": 452,
+          "path": "chain-seven-repository-controls-75dc7ec3/after-source.json",
+          "sha256": "4b26f870567875d2f7857f0daf82ec6c9d3f0ff531ef0723edb99f0394c456eb"
+        },
+        {
+          "bytes": 4934790,
+          "path": "chain-seven-repository-controls-75dc7ec3/before-files.json",
+          "sha256": "9d49101c8cdc8656565868f185c24c1b398507625024a037d40845d233568baa"
+        },
+        {
+          "bytes": 452,
+          "path": "chain-seven-repository-controls-75dc7ec3/before-source.json",
+          "sha256": "c8a2eb763de3c2211831f47d4554ac872ddb7023d594e2da8e72f03cc4de0bb9"
+        },
+        {
+          "bytes": 1828,
+          "path": "chain-seven-repository-controls-75dc7ec3/file-manifest.json",
+          "sha256": "d5dd315f731dac2dc1e1d65edfee451fd9467d96df3987444479a66334fd5b2c"
+        },
+        {
+          "bytes": 2887,
+          "path": "chain-seven-repository-controls-75dc7ec3/method-inventory.json",
+          "sha256": "acef641854ddf9fdd14e7c9bd819a0d9bb17da6db60d9612e0d6b8aa19eaaa6e"
+        },
+        {
+          "bytes": 10839,
+          "path": "chain-seven-repository-controls-75dc7ec3/original-check_repository.py",
+          "sha256": "0d7040ac82a54a97a2db0a3d94db30822a047af5a8f4946ff4d4fc29ae9a190f"
+        },
+        {
+          "bytes": 9909,
+          "path": "chain-seven-repository-controls-75dc7ec3/original-test_repository.py",
+          "sha256": "95ca70a3491a111ef97b97ce3bfb25324221433ea8fd854e83372b4b6ad0d605"
+        },
+        {
+          "bytes": 0,
+          "path": "chain-seven-repository-controls-75dc7ec3/preflight.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 181,
+          "path": "chain-seven-repository-controls-75dc7ec3/preflight.stdout",
+          "sha256": "9753ce408c4268a1a46b9fc38243a92ef5189ffa88eca325269acccf92fb15ee"
+        },
+        {
+          "bytes": 2934,
+          "path": "chain-seven-repository-controls-75dc7ec3/run.json",
+          "sha256": "a789d16eb35e3fc10618f90c4bc9b391d5567c125f7de687cd82dc06efbcc6f0"
+        },
+        {
+          "bytes": 7589,
+          "path": "chain-seven-repository-controls-75dc7ec3/runner.py",
+          "sha256": "b16dd8360b7dc88aa7e88a1b8bb496b6cbf692913dfa755307c123d3da7853db"
+        },
+        {
+          "bytes": 1272,
+          "path": "chain-seven-repository-controls-75dc7ec3/summary.json",
+          "sha256": "d5849f446e915b17607dc6d248b5436c8e3759c1b2fced455db8faa0d357861c"
+        },
+        {
+          "bytes": 5345,
+          "path": "chain-seven-repository-controls-75dc7ec3/test_repository.stderr",
+          "sha256": "a3658043411e2e3ac83757b4ed52b725516baad775bc034de5b47ea9dbc8fd83"
+        },
+        {
+          "bytes": 0,
+          "path": "chain-seven-repository-controls-75dc7ec3/test_repository.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "path": "repository-controls.tar.gz",
+      "path_safety_verified": true,
+      "regular_file_bytes": 9913268,
+      "regular_file_count": 15,
+      "sha256": "32707b6eb14893eb8128d458e7dc49324668d972eaccfb132cd984485c609b04",
+      "symlink_hardlink_device_or_other_members": 0
+    },
+    "supporting-records.tar.gz": {
+      "bytes": 21232,
+      "directories": [],
+      "directory_count": 0,
+      "duplicate_paths": 0,
+      "elf_payload_count": 0,
+      "format": "tar+gzip",
+      "member_count": 12,
+      "member_inventory_authority": "Actual regular members read from this archive. Embedded per-attempt manifests remain original local-record observations and are not assumed to enumerate this archive.",
+      "members": [
+        {
+          "bytes": 1455,
+          "path": "preparation/bundle-materialization.json",
+          "sha256": "5cc6673f2dc9c5177c18334caab5e3d39272ba34879654bfc94281a7e9e0de31"
+        },
+        {
+          "bytes": 181,
+          "path": "preparation/code-push-intent.txt",
+          "sha256": "7844b382664dd412feb921796f7e4453710d41a2da882eaea467fba6b511735f"
+        },
+        {
+          "bytes": 1134,
+          "path": "preparation/code-push-preflight.json",
+          "sha256": "f131720bde445f9fa8dddf02781d835c4d841658448650a31094f9d44a558749"
+        },
+        {
+          "bytes": 0,
+          "path": "preparation/code-push-preflight.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 180,
+          "path": "preparation/code-push-preflight.stdout",
+          "sha256": "b17dd0c6354ba306ec29a9ebd6495f44f81593e78272d23e15abe55d10eeb351"
+        },
+        {
+          "bytes": 1693,
+          "path": "preparation/manifest.json",
+          "sha256": "5e98f53c730f363ebcfc92700b4aa28bb025d122e85b0f6654702963e8036e67"
+        },
+        {
+          "bytes": 3527,
+          "path": "preparation/publication-preparation.json",
+          "sha256": "a2b6a02407d9d6199448c0e95734260e805cc72c66f38e8c23ac0681ee59486e"
+        },
+        {
+          "bytes": 3335,
+          "path": "preparation/source-review.json",
+          "sha256": "1799a6e60557c0c1ee5b88a2f688ac3fd6c29dfe0c70008461f2e6fe2ae6e6df"
+        },
+        {
+          "bytes": 713,
+          "path": "preparation/transport-new-pack.json",
+          "sha256": "933fc3c8b12a619efb4669f310589f333b2e0ada9e7272de9e5cb84c73d8ec67"
+        },
+        {
+          "bytes": 13725,
+          "path": "publication/chain-code-publication-records.tar.gz",
+          "sha256": "05eeb63d983ccb5ef9f812e638bb3b1d8b63f6516416a960df5b82bd9a46f9eb"
+        },
+        {
+          "bytes": 1112,
+          "path": "publication/new-blob-api-readback.json",
+          "sha256": "84757d03a718daed8b45fa5a1949dad85031323051a9eaae5bc7cb28f581e7cd"
+        },
+        {
+          "bytes": 8457,
+          "path": "publication/package-review.json",
+          "sha256": "a55c897820775bd8dc03e419fd5436dd9efd8d5a29081b45f350036e37857318"
+        }
+      ],
+      "path": "supporting-records.tar.gz",
+      "path_safety_verified": true,
+      "publication_record_finalization": {
+        "scope": "Includes the original full-local code push gate, both code publication attempts, immutable new-blob API readback, and package privacy/safety review. These are code-publication observations; the subsequent containing evidence commit and PR are separate metadata publication actions.",
+        "status": "COMPLETE_CODE_PUBLICATION_RECORDS_INCLUDED"
+      },
+      "regular_file_bytes": 35512,
+      "regular_file_count": 12,
+      "sha256": "390fd4b484a5c0d52d7dcb5bd77dbfff3a1794e079c692e4c7891f893654d251",
+      "symlink_hardlink_device_or_other_members": 0
+    }
+  },
+  "crypto_provider": {
+    "all_five_before_build_before_tests_after_tests_equal": true,
+    "complete_cryptographic_or_implementation_qualification": false,
+    "configured_version": "3.5.9",
+    "linkage_selection": "static",
+    "name": "OpenSSL",
+    "pinned_input_count": 5,
+    "pins": [
+      {
+        "after_tests": {
+          "bytes": 8839432,
+          "sha256": "2b1c8c97c617f33f76bb38ca6aac088cd9ea41cf07244d755b4a41825d6af05b"
+        },
+        "before_build": {
+          "bytes": 8839432,
+          "sha256": "2b1c8c97c617f33f76bb38ca6aac088cd9ea41cf07244d755b4a41825d6af05b"
+        },
+        "before_tests": {
+          "bytes": 8839432,
+          "sha256": "2b1c8c97c617f33f76bb38ca6aac088cd9ea41cf07244d755b4a41825d6af05b"
+        },
+        "expected_sha256": "2b1c8c97c617f33f76bb38ca6aac088cd9ea41cf07244d755b4a41825d6af05b",
+        "path": "/workspace/scratch/ac851b3fedf0/provider/trnm-pq-provider-3.5.9.srxvzDCv/install/bin/openssl"
+      },
+      {
+        "after_tests": {
+          "bytes": 3449,
+          "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+        },
+        "before_build": {
+          "bytes": 3449,
+          "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+        },
+        "before_tests": {
+          "bytes": 3449,
+          "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+        },
+        "expected_sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda",
+        "path": "/workspace/scratch/ac851b3fedf0/provider/trnm-pq-provider-3.5.9.srxvzDCv/install/include/openssl/opensslv.h"
+      },
+      {
+        "after_tests": {
+          "bytes": 4729,
+          "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+        },
+        "before_build": {
+          "bytes": 4729,
+          "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+        },
+        "before_tests": {
+          "bytes": 4729,
+          "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+        },
+        "expected_sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996",
+        "path": "/workspace/scratch/ac851b3fedf0/provider/trnm-pq-provider-3.5.9.srxvzDCv/install/include/openssl/configuration.h"
+      },
+      {
+        "after_tests": {
+          "bytes": 12103400,
+          "sha256": "5095a536bb59b5c8cd3b9f22dfa490bbbbcb70b5482deaf8013819e751f8d05b"
+        },
+        "before_build": {
+          "bytes": 12103400,
+          "sha256": "5095a536bb59b5c8cd3b9f22dfa490bbbbcb70b5482deaf8013819e751f8d05b"
+        },
+        "before_tests": {
+          "bytes": 12103400,
+          "sha256": "5095a536bb59b5c8cd3b9f22dfa490bbbbcb70b5482deaf8013819e751f8d05b"
+        },
+        "expected_sha256": "5095a536bb59b5c8cd3b9f22dfa490bbbbcb70b5482deaf8013819e751f8d05b",
+        "path": "/workspace/scratch/ac851b3fedf0/provider/trnm-pq-provider-3.5.9.srxvzDCv/install/lib/libcrypto.a"
+      },
+      {
+        "after_tests": {
+          "bytes": 2073650,
+          "sha256": "ce766975e2748030cdcab09302cae4a2e774130dff9376e42e1bef4f9918a490"
+        },
+        "before_build": {
+          "bytes": 2073650,
+          "sha256": "ce766975e2748030cdcab09302cae4a2e774130dff9376e42e1bef4f9918a490"
+        },
+        "before_tests": {
+          "bytes": 2073650,
+          "sha256": "ce766975e2748030cdcab09302cae4a2e774130dff9376e42e1bef4f9918a490"
+        },
+        "expected_sha256": "ce766975e2748030cdcab09302cae4a2e774130dff9376e42e1bef4f9918a490",
+        "path": "/workspace/scratch/ac851b3fedf0/provider/trnm-pq-provider-3.5.9.srxvzDCv/install/lib/libssl.a"
+      }
+    ],
+    "records": {
+      "after_tests": {
+        "archive": "native-records.tar.gz",
+        "bytes": 1593,
+        "member": "local-native-qualification/native-75dc-continuation03/provider-after.json",
+        "sha256": "54d7d3e393e4d3265c5e8950db2a928204ac8026be46d052c1a876a5348da082"
+      },
+      "before_build": {
+        "archive": "native-records.tar.gz",
+        "bytes": 1593,
+        "member": "local-native-qualification/native-75dc-attempt02/provider-before.json",
+        "sha256": "54d7d3e393e4d3265c5e8950db2a928204ac8026be46d052c1a876a5348da082"
+      },
+      "before_tests": {
+        "archive": "native-records.tar.gz",
+        "bytes": 1593,
+        "member": "local-native-qualification/native-75dc-continuation03/provider-before.json",
+        "sha256": "54d7d3e393e4d3265c5e8950db2a928204ac8026be46d052c1a876a5348da082"
+      }
+    }
+  },
+  "current_w1_mapping": {
+    "closure_scope": "all-local-path-crate-source-files-and-literal-includes; external-implementation-and-build-identity-unqualified",
+    "execution_source_commit": "75dc7ec3973ce3661c27c895418efd5c6cc8b4a8",
+    "execution_source_tree": "a58d215f954c1dee99ab7a031ff496e089499ba0",
+    "fresh_cryptographic_verification": false,
+    "historical_fixture_pass_transferred_to_current_source": false,
+    "historical_v1": {
+      "contract_sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22",
+      "named_roster_completed": false,
+      "reader_sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354",
+      "reason": "input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+      "result": "INPUT_REJECTED",
+      "workflow_passed": false
+    },
+    "lifetime_budget": {
+      "accepted_statements_lifetime": null,
+      "adaptive_composition_bound": null,
+      "concrete_hash_to_ideal_oracle_error": null,
+      "hash_output_sigma_bits": null,
+      "max_fs_rounds_per_reduction": null,
+      "max_recursive_nodes_per_statement": null,
+      "min_verifier_randomness_bits": null,
+      "policy_adopted": false,
+      "quantum_queries_lifetime": null,
+      "rrbr_knowledge_error": null,
+      "target_total_failure_probability": null
+    },
+    "literal_include_count": 8,
+    "literal_include_files": [
+      "config/pon/work-profile-v1.json",
+      "evidence/pon-w1-complete-succinct-20261028/full-proof/header.bin",
+      "evidence/pon-w1-complete-succinct-20261028/full-proof/succinct.bin",
+      "evidence/pon-w1-verifier-hardening-20261028/real-lift-0000.bin",
+      "tests/fixtures/cpq1-content-v1/vectors.json",
+      "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/pq/tuf_tap21_mldsa65_v1.json",
+      "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json",
+      "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der"
+    ],
+    "native_binary_executed_by_mapping": false,
+    "open_obligations": [
+      {
+        "id": "latest_theorem_version_equivalence",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "complete_relation_and_compiler",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "all_27_recursion_program_semantics",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "control_padding_and_recursive_trace_size_reachability",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "relaxed_rbr_knowledge_soundness",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "committed_relation_monotonicity",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "merkle_multi_extractability",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "sponge_and_domain_separation_mapping",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "fiat_shamir_challenge_and_salt_mapping",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "finite_field_sampling_and_challenge_length",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "sequential_adaptive_composition",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "lifetime_global_quantum_budget",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "concrete_enabled_features_and_debug_exclusion",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "quantum_work_and_chainweight",
+        "state": "UNRESOLVED"
+      },
+      {
+        "id": "pq_signature_owner_authorization",
+        "state": "UNRESOLVED"
+      }
+    ],
+    "qualification": {
+      "complete_w1_soundness_qualified": false,
+      "consensus_admission": false,
+      "post_quantum_soundness_qualified": false,
+      "pq_signature_qualification_inferred": false,
+      "production_qualified": false,
+      "quantum_work_qualified": false,
+      "security_bits_quantum": null
+    },
+    "reachable_crate_manifests": [
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml",
+      "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+      "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml",
+      "formal/pon-nakamoto-v1/w1_zkvm/relation/Cargo.toml",
+      "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+      "trillionnium/crates/trnm-protocol/Cargo.toml"
+    ],
+    "reachable_local_path_crates": 6,
+    "record": {
+      "archive": "local-controls.tar.gz",
+      "bytes": 100653,
+      "member": "local-validation-03/current_mapping.log",
+      "sha256": "2f2720785a1e1f81011eaf3aa741e67ae0e17d6c5390328256198cee491b48c9"
+    },
+    "result": "CURRENT_MAPPING_REPRODUCED_SECURITY_HOLD",
+    "reviewed_runtime_source_base": "e8e2fcb8d811638eb5fa757d28590fbe8e408e61",
+    "source_before_after_equal": true,
+    "source_files_checked": 134,
+    "unresolved_obligation_count": 15
+  },
+  "dependencies": {
+    "archive_lock_observation": {
+      "archive": "native-records.tar.gz",
+      "bytes": 44878,
+      "member": "local-native-qualification/native-75dc-attempt02/cargo-cache-observation.json",
+      "sha256": "50b418294a43ea2f964dabdef8428237ed8d2f221eac4367f203cb5a9262b1fe"
+    },
+    "archives_matching_cargo_lock": 155,
+    "cargo_generated_markers": {
+      ".cargo-checksum.json": {
+        "absent_from_archive_and_source_packages": 155,
+        "archive_member_packages": 0,
+        "generated_bytes": 0,
+        "generated_present_packages": 0
+      },
+      ".cargo-ok": {
+        "absent_from_archive_and_source_packages": 0,
+        "archive_member_packages": 0,
+        "generated_bytes": 1085,
+        "generated_present_packages": 155
+      }
+    },
+    "comparison_truth_source": "Actual .crate regular-member bytes independently hashed against actual unpacked regular-file bytes; mutable Cargo checksum metadata was not used as the truth source.",
+    "compressed_archive_bytes_audited": 34015893,
+    "different_members": 0,
+    "extra_directories": 0,
+    "extra_files_excluding_generated_markers": 0,
+    "extracted_packages_matching_actual_archive_members": 155,
+    "files_changed_during_read": 0,
+    "finished_utc": "2026-11-09T05:14:54Z",
+    "generated_marker_observation": {
+      "archive": "native-records.tar.gz",
+      "bytes": 997,
+      "member": "local-native-qualification/native-75dc-attempt02/dependency-source-audit/cargo-generated-markers.json",
+      "sha256": "66cdcc49a328bb0e321442da398d47e9ec3f8ef6710e37983acf7aca1216ff76"
+    },
+    "input_files_stable": true,
+    "missing_directories": 0,
+    "missing_files": 0,
+    "package_errors": 0,
+    "registry_packages": 155,
+    "regular_member_bytes_equal": 247219629,
+    "regular_member_files_equal": 11130,
+    "scope": "Point-in-time input-byte observation only; not every historical compiler read, a hermetic build, future cache immutability or independent provider qualification.",
+    "source_byte_audit": {
+      "archive": "native-records.tar.gz",
+      "bytes": 6140644,
+      "member": "local-native-qualification/native-75dc-attempt02/dependency-source-audit/registry-source-bytes.json",
+      "sha256": "d0e3f267b0847d29285b5efbfa3ca2ea8615a9a0b2bf5c53e6a9648cdc346dda"
+    },
+    "source_byte_audit_summary": {
+      "archive": "native-records.tar.gz",
+      "bytes": 615,
+      "member": "local-native-qualification/native-75dc-attempt02/dependency-source-audit/summary.json",
+      "sha256": "8e181b1dd887853a078f693cf9e202753c5b4d3dc3bbab841dc0b731fa2f482f"
+    },
+    "started_utc": "2026-11-09T05:14:48Z"
+  },
+  "derivation": {
+    "all_archive_snapshots_stable_during_read": true,
+    "embedded_local_manifests_are_not_archive_membership_tables": true,
+    "large_retained_libtest_elf_payloads_published": false,
+    "method": "Read the five existing archives, hash every actual regular member, compare source/receipt/log/build/provider/toolchain/native-review identities and derive counts without executing any build or test.",
+    "original_per_attempt_manifests_rewritten": false,
+    "root_publication_records_finalized_utc": "2026-11-09T06:08:33.413933+00:00"
+  },
+  "generated_utc": "2026-11-09T06:02:25.447662+00:00",
+  "native": {
+    "actual_elf_pinned_and_observed": 12,
+    "complete_build_provenance_verified_by_observer": false,
+    "complete_loaded_libraries_verified": false,
+    "complete_model_closure_verified": false,
+    "complete_process_memory_verified": false,
+    "continuation_input_record": {
+      "archive": "native-records.tar.gz",
+      "bytes": 3954,
+      "member": "local-native-qualification/native-75dc-continuation03/continuation-inputs.json",
+      "sha256": "f3f0243dfa74d1ec23434ff9efd5eeaa71be7cdfa4eaacd6070489327bcee109"
+    },
+    "descendant_execution_verified": false,
+    "discovered_registries": {
+      "trnm_crypto_primitives": {
+        "record": {
+          "archive": "native-records.tar.gz",
+          "bytes": 18761,
+          "member": "local-native-qualification/native-75dc-continuation03/list-trnm_crypto_primitives.log",
+          "sha256": "9d3fff8ba3d99858aa32cdbb04a9086cf848c5c89811fc91b9452b076999fb2d"
+        },
+        "test_count": 186
+      },
+      "trnm_pon_node": {
+        "record": {
+          "archive": "native-records.tar.gz",
+          "bytes": 156761,
+          "member": "local-native-qualification/native-75dc-continuation03/list-trnm_pon_node.log",
+          "sha256": "87e4f09cf2e74ee970cca3fc1060a205a26a84d927d3026072cc396a8793471c"
+        },
+        "test_count": 1385
+      }
+    },
+    "elf_artifacts": [
+      {
+        "binary_payload_in_publication": false,
+        "build_path": "/dev/shm/trnm-chain-75dc-native-attempt02-9fe375f34217/target/debug/deps/trnm_crypto_primitives-4505bee2b984fa3d",
+        "bytes": 67930472,
+        "retained_path": "/workspace/scratch/9fe375f34217/local-native-qualification/native-75dc-continuation03/executables/trnm_crypto_primitives.elf",
+        "root_rehashed": true,
+        "scope": "Exact byte copy of observed executable; copy has a distinct filesystem identity.",
+        "sha256": "440866eec44f30e544035dad0d5d8d4f172ca38d0c3c1bbaa0b9aba3a3619f48",
+        "target": "trnm_crypto_primitives"
+      },
+      {
+        "binary_payload_in_publication": false,
+        "build_path": "/dev/shm/trnm-chain-75dc-native-attempt02-9fe375f34217/target/debug/deps/trnm_pon_node-9a9076c05db486f1",
+        "bytes": 509454416,
+        "retained_path": "/workspace/scratch/9fe375f34217/local-native-qualification/native-75dc-continuation03/executables/trnm_pon_node.elf",
+        "root_rehashed": true,
+        "scope": "Exact byte copy of observed executable; copy has a distinct filesystem identity.",
+        "sha256": "741a76ae299273509fa9d4098ce430ce31e5ce1e0eaeae8d07505e5cd308ee64",
+        "target": "trnm_pon_node"
+      }
+    ],
+    "elf_observation_scope": "Pinned open Linux executable file object, owned direct child, real exit and reap, with dispatch-object hash after execution; instantaneous executable object identity only.",
+    "kernel_observed_count": 12,
+    "libtest_build": {
+      "argv": [
+        "/workspace/scratch/ac851b3fedf0/toolchains/cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--lib",
+        "--no-run",
+        "--message-format=json-render-diagnostics"
+      ],
+      "cwd": "/workspace/scratch/9fe375f34217/chain-convergence",
+      "exit_code": 0,
+      "log": {
+        "archive": "native-records.tar.gz",
+        "bytes": 125592,
+        "member": "local-native-qualification/native-75dc-attempt02/native-libtest-build.log",
+        "sha256": "b36048087f9e2c970240b5761286eee863d1d6ef80fda8209fb517ef24e65e05"
+      },
+      "receipt": {
+        "archive": "native-records.tar.gz",
+        "bytes": 2632,
+        "member": "local-native-qualification/native-75dc-attempt02/native-libtest-build.json",
+        "sha256": "c7d5b1a1a12063c605428d05504a2ccb3f4fd760fc7904104a9c6bd3ec5ad10f"
+      },
+      "scope": "Original all-feature library build for trnm-crypto-primitives and trnm-pon-node; --no-run is not a test pass.",
+      "source_before_after_equal": true,
+      "status": "command_succeeded"
+    },
+    "native_tests_dispatched_before_selector_correction": 0,
+    "observer_enabled_for_every_ci_command": false,
+    "readback": {
+      "archive": "native-records.tar.gz",
+      "bytes": 8166,
+      "member": "local-native-qualification/native-75dc-continuation03/native-readback.json",
+      "sha256": "8c1c2d5495f004d166d22e3bfca7da86345c8f8bba7db111afdfb011baaa6665"
+    },
+    "results": [
+      {
+        "actual_elf_status": "PINNED_AND_OBSERVED",
+        "argv": [
+          "/dev/shm/trnm-chain-75dc-native-attempt02-9fe375f34217/target/debug/deps/trnm_crypto_primitives-4505bee2b984fa3d",
+          "pon_routed_int257_grouped::tests::factored_sampled_ranks_and_all_batch_sizes_preserve_statement_and_verifier",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1",
+          "--format=pretty"
+        ],
+        "cwd": "/workspace/scratch/9fe375f34217/chain-convergence",
+        "discovered_matches": 1,
+        "elf_bytes": 67930472,
+        "elf_sha256": "440866eec44f30e544035dad0d5d8d4f172ca38d0c3c1bbaa0b9aba3a3619f48",
+        "exit_code": 0,
+        "kernel_observation_status": "OBSERVED",
+        "label": "native-01",
+        "log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 235,
+          "member": "local-native-qualification/native-75dc-continuation03/native-01.log",
+          "sha256": "ef483ab4065128eaca10a776074008d7d54d407c41fb68482e67b48ab458d43c"
+        },
+        "named_execution_check_exit": 0,
+        "named_execution_check_log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 201,
+          "member": "local-native-qualification/native-75dc-continuation03/native-01-named-check.driver.log",
+          "sha256": "768938dd6da07503a549c2914c74ba530a944cb1dd888d2727311a454d7d2758"
+        },
+        "native_exit_code": 0,
+        "receipt": {
+          "archive": "native-records.tar.gz",
+          "bytes": 4237,
+          "member": "local-native-qualification/native-75dc-continuation03/native-01.json",
+          "sha256": "b2c12c226ece2f76763cd5374e45f1820c445b5f3e128cb01a9dad05a23362cb"
+        },
+        "source_before_after_equal": true,
+        "status": "command_succeeded",
+        "target": "trnm_crypto_primitives",
+        "test": "pon_routed_int257_grouped::tests::factored_sampled_ranks_and_all_batch_sizes_preserve_statement_and_verifier"
+      },
+      {
+        "actual_elf_status": "PINNED_AND_OBSERVED",
+        "argv": [
+          "/dev/shm/trnm-chain-75dc-native-attempt02-9fe375f34217/target/debug/deps/trnm_crypto_primitives-4505bee2b984fa3d",
+          "pon_routed_int257_grouped::tests::both_producers_have_identical_statements_for_every_batch_size",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1",
+          "--format=pretty"
+        ],
+        "cwd": "/workspace/scratch/9fe375f34217/chain-convergence",
+        "discovered_matches": 1,
+        "elf_bytes": 67930472,
+        "elf_sha256": "440866eec44f30e544035dad0d5d8d4f172ca38d0c3c1bbaa0b9aba3a3619f48",
+        "exit_code": 0,
+        "kernel_observation_status": "OBSERVED",
+        "label": "native-02",
+        "log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 222,
+          "member": "local-native-qualification/native-75dc-continuation03/native-02.log",
+          "sha256": "938e66ed92b29ec75da7180866898f67b2aab6f75248e5aeb5536699208a32be"
+        },
+        "named_execution_check_exit": 0,
+        "named_execution_check_log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 188,
+          "member": "local-native-qualification/native-75dc-continuation03/native-02-named-check.driver.log",
+          "sha256": "9053d3ddbf125f78ba517b5040c116deedc9fadf11636dfd1bc6f2fc9d87653f"
+        },
+        "native_exit_code": 0,
+        "receipt": {
+          "archive": "native-records.tar.gz",
+          "bytes": 4224,
+          "member": "local-native-qualification/native-75dc-continuation03/native-02.json",
+          "sha256": "373ccf574c60b7ff2beee116042f9747670924fe001f1af2839822f8627dabbe"
+        },
+        "source_before_after_equal": true,
+        "status": "command_succeeded",
+        "target": "trnm_crypto_primitives",
+        "test": "pon_routed_int257_grouped::tests::both_producers_have_identical_statements_for_every_batch_size"
+      },
+      {
+        "actual_elf_status": "PINNED_AND_OBSERVED",
+        "argv": [
+          "/dev/shm/trnm-chain-75dc-native-attempt02-9fe375f34217/target/debug/deps/trnm_pon_node-9a9076c05db486f1",
+          "ingress::public_v3::pq_identity::tests::pq_authentication_known_refusal_preserves_clean_listener_close",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1",
+          "--format=pretty"
+        ],
+        "cwd": "/workspace/scratch/9fe375f34217/chain-convergence",
+        "discovered_matches": 1,
+        "elf_bytes": 509454416,
+        "elf_sha256": "741a76ae299273509fa9d4098ce430ce31e5ce1e0eaeae8d07505e5cd308ee64",
+        "exit_code": 0,
+        "kernel_observation_status": "OBSERVED",
+        "label": "native-03",
+        "log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 230,
+          "member": "local-native-qualification/native-75dc-continuation03/native-03.log",
+          "sha256": "1a000fcf3f8857b8608f7263c4f0707819544a8407ea79ab0631f298702248c9"
+        },
+        "named_execution_check_exit": 0,
+        "named_execution_check_log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 195,
+          "member": "local-native-qualification/native-75dc-continuation03/native-03-named-check.driver.log",
+          "sha256": "a70b81ff462179f48fc0e1c848501071c9678c7babaed728f1e59c0079939833"
+        },
+        "native_exit_code": 0,
+        "receipt": {
+          "archive": "native-records.tar.gz",
+          "bytes": 4206,
+          "member": "local-native-qualification/native-75dc-continuation03/native-03.json",
+          "sha256": "ed9e0f03d7ee5328291dcaa76d73bed5adaf84a98f336c6c95b84fa696039285"
+        },
+        "source_before_after_equal": true,
+        "status": "command_succeeded",
+        "target": "trnm_pon_node",
+        "test": "ingress::public_v3::pq_identity::tests::pq_authentication_known_refusal_preserves_clean_listener_close"
+      },
+      {
+        "actual_elf_status": "PINNED_AND_OBSERVED",
+        "argv": [
+          "/dev/shm/trnm-chain-75dc-native-attempt02-9fe375f34217/target/debug/deps/trnm_pon_node-9a9076c05db486f1",
+          "ingress::history_import::tests::deadline_controls::history_control_resource_expiry_refuses_late_success",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1",
+          "--format=pretty"
+        ],
+        "cwd": "/workspace/scratch/9fe375f34217/chain-convergence",
+        "discovered_matches": 1,
+        "elf_bytes": 509454416,
+        "elf_sha256": "741a76ae299273509fa9d4098ce430ce31e5ce1e0eaeae8d07505e5cd308ee64",
+        "exit_code": 0,
+        "kernel_observation_status": "OBSERVED",
+        "label": "native-04",
+        "log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 231,
+          "member": "local-native-qualification/native-75dc-continuation03/native-04.log",
+          "sha256": "f6891b0dcce2aba79acec18631b896230c9df728212dc0fc6154d1028072745c"
+        },
+        "named_execution_check_exit": 0,
+        "named_execution_check_log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 196,
+          "member": "local-native-qualification/native-75dc-continuation03/native-04-named-check.driver.log",
+          "sha256": "b6e36b00be13de83e6a4c4d9a198f40b0fc048c635e60f96eccea0b331267f9a"
+        },
+        "native_exit_code": 0,
+        "receipt": {
+          "archive": "native-records.tar.gz",
+          "bytes": 4207,
+          "member": "local-native-qualification/native-75dc-continuation03/native-04.json",
+          "sha256": "2fc6ab320200467f56cd3df600ba0c99aeaa76a6414650418b1171c1fd58d8c1"
+        },
+        "source_before_after_equal": true,
+        "status": "command_succeeded",
+        "target": "trnm_pon_node",
+        "test": "ingress::history_import::tests::deadline_controls::history_control_resource_expiry_refuses_late_success"
+      },
+      {
+        "actual_elf_status": "PINNED_AND_OBSERVED",
+        "argv": [
+          "/dev/shm/trnm-chain-75dc-native-attempt02-9fe375f34217/target/debug/deps/trnm_pon_node-9a9076c05db486f1",
+          "ingress::history_import::tests::deadline_controls::history_control_resource_expiry_keeps_original_resource_error",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1",
+          "--format=pretty"
+        ],
+        "cwd": "/workspace/scratch/9fe375f34217/chain-convergence",
+        "discovered_matches": 1,
+        "elf_bytes": 509454416,
+        "elf_sha256": "741a76ae299273509fa9d4098ce430ce31e5ce1e0eaeae8d07505e5cd308ee64",
+        "exit_code": 0,
+        "kernel_observation_status": "OBSERVED",
+        "label": "native-05",
+        "log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 240,
+          "member": "local-native-qualification/native-75dc-continuation03/native-05.log",
+          "sha256": "e1d4984e015201f3feb37db5975e8092fd467f07e96b19a851c419f186b7a126"
+        },
+        "named_execution_check_exit": 0,
+        "named_execution_check_log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 205,
+          "member": "local-native-qualification/native-75dc-continuation03/native-05-named-check.driver.log",
+          "sha256": "c9ac66d479451c039dd8ec644b844b2a37b37b384f1161b811191b4b4a57f096"
+        },
+        "native_exit_code": 0,
+        "receipt": {
+          "archive": "native-records.tar.gz",
+          "bytes": 4216,
+          "member": "local-native-qualification/native-75dc-continuation03/native-05.json",
+          "sha256": "cd8d5760f41f7a32a915c1cf61dfef60623078bbf37ff5cdf39a5da8164facd9"
+        },
+        "source_before_after_equal": true,
+        "status": "command_succeeded",
+        "target": "trnm_pon_node",
+        "test": "ingress::history_import::tests::deadline_controls::history_control_resource_expiry_keeps_original_resource_error"
+      },
+      {
+        "actual_elf_status": "PINNED_AND_OBSERVED",
+        "argv": [
+          "/dev/shm/trnm-chain-75dc-native-attempt02-9fe375f34217/target/debug/deps/trnm_pon_node-9a9076c05db486f1",
+          "ingress::history_import::tests::deadline_controls::history_owner_resource_expiry_never_invokes_exclusive_or_shared_action",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1",
+          "--format=pretty"
+        ],
+        "cwd": "/workspace/scratch/9fe375f34217/chain-convergence",
+        "discovered_matches": 1,
+        "elf_bytes": 509454416,
+        "elf_sha256": "741a76ae299273509fa9d4098ce430ce31e5ce1e0eaeae8d07505e5cd308ee64",
+        "exit_code": 0,
+        "kernel_observation_status": "OBSERVED",
+        "label": "native-06",
+        "log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 249,
+          "member": "local-native-qualification/native-75dc-continuation03/native-06.log",
+          "sha256": "074cb1d4df80700e788fa6e67ccb9ea1579a23b1ae37764ea81cd69c1ac7f952"
+        },
+        "named_execution_check_exit": 0,
+        "named_execution_check_log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 214,
+          "member": "local-native-qualification/native-75dc-continuation03/native-06-named-check.driver.log",
+          "sha256": "9739634bde7c149a44956fefe1da5668fe9b5f9731a562878350a1148fbb5ee0"
+        },
+        "native_exit_code": 0,
+        "receipt": {
+          "archive": "native-records.tar.gz",
+          "bytes": 4225,
+          "member": "local-native-qualification/native-75dc-continuation03/native-06.json",
+          "sha256": "03c03ee06e08a467847ab70b123b6f01b66df594660d5b19f03727f488e5ee7e"
+        },
+        "source_before_after_equal": true,
+        "status": "command_succeeded",
+        "target": "trnm_pon_node",
+        "test": "ingress::history_import::tests::deadline_controls::history_owner_resource_expiry_never_invokes_exclusive_or_shared_action"
+      },
+      {
+        "actual_elf_status": "PINNED_AND_OBSERVED",
+        "argv": [
+          "/dev/shm/trnm-chain-75dc-native-attempt02-9fe375f34217/target/debug/deps/trnm_pon_node-9a9076c05db486f1",
+          "ingress::history_import::tests::deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1",
+          "--format=pretty"
+        ],
+        "cwd": "/workspace/scratch/9fe375f34217/chain-convergence",
+        "discovered_matches": 1,
+        "elf_bytes": 509454416,
+        "elf_sha256": "741a76ae299273509fa9d4098ce430ce31e5ce1e0eaeae8d07505e5cd308ee64",
+        "exit_code": 0,
+        "kernel_observation_status": "OBSERVED",
+        "label": "native-07",
+        "log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 251,
+          "member": "local-native-qualification/native-75dc-continuation03/native-07.log",
+          "sha256": "4ecfc64d9e0a6a25884d8736b666de3ce0267c3b849160b2e2056fb2276bc3c1"
+        },
+        "named_execution_check_exit": 0,
+        "named_execution_check_log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 216,
+          "member": "local-native-qualification/native-75dc-continuation03/native-07-named-check.driver.log",
+          "sha256": "d5d16838652c7211483d1d30b2783a72c73581eeea89cdccd5e47206493c66ea"
+        },
+        "native_exit_code": 0,
+        "receipt": {
+          "archive": "native-records.tar.gz",
+          "bytes": 4227,
+          "member": "local-native-qualification/native-75dc-continuation03/native-07.json",
+          "sha256": "f89aa3842a1a82559b6decdd4258b96e7b2491185149cfb0b25b8c32b91901d4"
+        },
+        "source_before_after_equal": true,
+        "status": "command_succeeded",
+        "target": "trnm_pon_node",
+        "test": "ingress::history_import::tests::deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline"
+      },
+      {
+        "actual_elf_status": "PINNED_AND_OBSERVED",
+        "argv": [
+          "/dev/shm/trnm-chain-75dc-native-attempt02-9fe375f34217/target/debug/deps/trnm_pon_node-9a9076c05db486f1",
+          "ingress::history_import::tests::deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1",
+          "--format=pretty"
+        ],
+        "cwd": "/workspace/scratch/9fe375f34217/chain-convergence",
+        "discovered_matches": 1,
+        "elf_bytes": 509454416,
+        "elf_sha256": "741a76ae299273509fa9d4098ce430ce31e5ce1e0eaeae8d07505e5cd308ee64",
+        "exit_code": 0,
+        "kernel_observation_status": "OBSERVED",
+        "label": "native-08",
+        "log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 240,
+          "member": "local-native-qualification/native-75dc-continuation03/native-08.log",
+          "sha256": "df052b249e81190fe901aa0500b503e640abac03ed3fbbb3acc9d9f246c8a334"
+        },
+        "named_execution_check_exit": 0,
+        "named_execution_check_log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 205,
+          "member": "local-native-qualification/native-75dc-continuation03/native-08-named-check.driver.log",
+          "sha256": "a3360c94a2153ffc5fd4f81dd0855339f03b221e52c72294640f090e53ac6bc0"
+        },
+        "native_exit_code": 0,
+        "receipt": {
+          "archive": "native-records.tar.gz",
+          "bytes": 4220,
+          "member": "local-native-qualification/native-75dc-continuation03/native-08.json",
+          "sha256": "6215b1aaa57d72e44f6c8651fb5e7e11ca5cf000ff5cebfb10ccad07c6095a8a"
+        },
+        "source_before_after_equal": true,
+        "status": "command_succeeded",
+        "target": "trnm_pon_node",
+        "test": "ingress::history_import::tests::deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu"
+      },
+      {
+        "actual_elf_status": "PINNED_AND_OBSERVED",
+        "argv": [
+          "/dev/shm/trnm-chain-75dc-native-attempt02-9fe375f34217/target/debug/deps/trnm_pon_node-9a9076c05db486f1",
+          "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1",
+          "--format=pretty"
+        ],
+        "cwd": "/workspace/scratch/9fe375f34217/chain-convergence",
+        "discovered_matches": 1,
+        "elf_bytes": 509454416,
+        "elf_sha256": "741a76ae299273509fa9d4098ce430ce31e5ce1e0eaeae8d07505e5cd308ee64",
+        "exit_code": 0,
+        "kernel_observation_status": "OBSERVED",
+        "label": "native-09",
+        "log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 250,
+          "member": "local-native-qualification/native-75dc-continuation03/native-09.log",
+          "sha256": "9d26cf35777564b782deb8075d161cf4afa6100e606f14cb64dd516d3a0ad2e8"
+        },
+        "named_execution_check_exit": 0,
+        "named_execution_check_log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 215,
+          "member": "local-native-qualification/native-75dc-continuation03/native-09-named-check.driver.log",
+          "sha256": "3551b4448a3683226f02c5ddfaf2ae4568ec38c8cfaeeb989f1b093bedc5e796"
+        },
+        "native_exit_code": 0,
+        "receipt": {
+          "archive": "native-records.tar.gz",
+          "bytes": 4229,
+          "member": "local-native-qualification/native-75dc-continuation03/native-09.json",
+          "sha256": "613e5be9106ea01ec2a2b44599a7248e339b921aae63502329ad98059486b690"
+        },
+        "source_before_after_equal": true,
+        "status": "command_succeeded",
+        "target": "trnm_pon_node",
+        "test": "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account"
+      },
+      {
+        "actual_elf_status": "PINNED_AND_OBSERVED",
+        "argv": [
+          "/dev/shm/trnm-chain-75dc-native-attempt02-9fe375f34217/target/debug/deps/trnm_pon_node-9a9076c05db486f1",
+          "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1",
+          "--format=pretty"
+        ],
+        "cwd": "/workspace/scratch/9fe375f34217/chain-convergence",
+        "discovered_matches": 1,
+        "elf_bytes": 509454416,
+        "elf_sha256": "741a76ae299273509fa9d4098ce430ce31e5ce1e0eaeae8d07505e5cd308ee64",
+        "exit_code": 0,
+        "kernel_observation_status": "OBSERVED",
+        "label": "native-10",
+        "log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 238,
+          "member": "local-native-qualification/native-75dc-continuation03/native-10.log",
+          "sha256": "517ca40b667ee3d12488b57d8c13bedc0d4466098ef5987dfc032139c43135e6"
+        },
+        "named_execution_check_exit": 0,
+        "named_execution_check_log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 203,
+          "member": "local-native-qualification/native-75dc-continuation03/native-10-named-check.driver.log",
+          "sha256": "00fad2601bc85945d204d7cdf5355ad13be8f2711c9ce38e9a96467f60049a96"
+        },
+        "native_exit_code": 0,
+        "receipt": {
+          "archive": "native-records.tar.gz",
+          "bytes": 4217,
+          "member": "local-native-qualification/native-75dc-continuation03/native-10.json",
+          "sha256": "9f17c12b39d94d74525a3feec3e3d5bcb4de859e807840da025c08f6577c89ce"
+        },
+        "source_before_after_equal": true,
+        "status": "command_succeeded",
+        "target": "trnm_pon_node",
+        "test": "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen"
+      },
+      {
+        "actual_elf_status": "PINNED_AND_OBSERVED",
+        "argv": [
+          "/dev/shm/trnm-chain-75dc-native-attempt02-9fe375f34217/target/debug/deps/trnm_pon_node-9a9076c05db486f1",
+          "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1",
+          "--format=pretty"
+        ],
+        "cwd": "/workspace/scratch/9fe375f34217/chain-convergence",
+        "discovered_matches": 1,
+        "elf_bytes": 509454416,
+        "elf_sha256": "741a76ae299273509fa9d4098ce430ce31e5ce1e0eaeae8d07505e5cd308ee64",
+        "exit_code": 0,
+        "kernel_observation_status": "OBSERVED",
+        "label": "native-11",
+        "log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 243,
+          "member": "local-native-qualification/native-75dc-continuation03/native-11.log",
+          "sha256": "ebfd60a01ca5c281e6b83cdf5f93df0c478f468a61d19a6a5f76dbb14f6f734c"
+        },
+        "named_execution_check_exit": 0,
+        "named_execution_check_log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 208,
+          "member": "local-native-qualification/native-75dc-continuation03/native-11-named-check.driver.log",
+          "sha256": "5d1e2da0e0a5962268f74d3df950b013bf16f14c2c637590514be040c1ccc1bc"
+        },
+        "native_exit_code": 0,
+        "receipt": {
+          "archive": "native-records.tar.gz",
+          "bytes": 4223,
+          "member": "local-native-qualification/native-75dc-continuation03/native-11.json",
+          "sha256": "99e9833f0d4cc3b9b9d009bb13f35ed9a68f1b6a3aa1a69d27ac1901e82760da"
+        },
+        "source_before_after_equal": true,
+        "status": "command_succeeded",
+        "target": "trnm_pon_node",
+        "test": "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry"
+      },
+      {
+        "actual_elf_status": "PINNED_AND_OBSERVED",
+        "argv": [
+          "/dev/shm/trnm-chain-75dc-native-attempt02-9fe375f34217/target/debug/deps/trnm_pon_node-9a9076c05db486f1",
+          "store::growth::tests::header_timestamp::growth_header_timestamp_preserves_classic_outputs_admission_and_retained_replay",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1",
+          "--format=pretty"
+        ],
+        "cwd": "/workspace/scratch/9fe375f34217/chain-convergence",
+        "discovered_matches": 1,
+        "elf_bytes": 509454416,
+        "elf_sha256": "741a76ae299273509fa9d4098ce430ce31e5ce1e0eaeae8d07505e5cd308ee64",
+        "exit_code": 0,
+        "kernel_observation_status": "OBSERVED",
+        "label": "native-12",
+        "log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 247,
+          "member": "local-native-qualification/native-75dc-continuation03/native-12.log",
+          "sha256": "392360af0fdf90560e0d632fde77e8ffc2fb698b8288e642bc181bf731e688fd"
+        },
+        "named_execution_check_exit": 0,
+        "named_execution_check_log": {
+          "archive": "native-records.tar.gz",
+          "bytes": 212,
+          "member": "local-native-qualification/native-75dc-continuation03/native-12-named-check.driver.log",
+          "sha256": "6bd0513cae8564d4e328653f6cac8ad2f70198cc615892702f9784e85083a188"
+        },
+        "native_exit_code": 0,
+        "receipt": {
+          "archive": "native-records.tar.gz",
+          "bytes": 4226,
+          "member": "local-native-qualification/native-75dc-continuation03/native-12.json",
+          "sha256": "64f896f7338300df67391502886b57c10715b15b9c97ecb4f63016cddcdcc433"
+        },
+        "source_before_after_equal": true,
+        "status": "command_succeeded",
+        "target": "trnm_pon_node",
+        "test": "store::growth::tests::header_timestamp::growth_header_timestamp_preserves_classic_outputs_admission_and_retained_replay"
+      }
+    ],
+    "root_independent_record_review": {
+      "archive": "native-records.tar.gz",
+      "bytes": 4955,
+      "member": "local-native-qualification/root-final-native-review.json",
+      "sha256": "e5df57e13ca4b2353f89091f14fbefaffb0525db61912a538eaca168a7e1d693"
+    },
+    "root_review_reran_native_tests": false,
+    "selected_tests_passed": 12,
+    "selected_tests_total": 12,
+    "source_changes_or_rebuild_to_supply_continuation_results": false,
+    "strict_clippy": {
+      "argv": [
+        "/workspace/scratch/ac851b3fedf0/toolchains/cargo/bin/cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/workspace/scratch/9fe375f34217/chain-convergence",
+      "exit_code": 0,
+      "log": {
+        "archive": "native-records.tar.gz",
+        "bytes": 6678,
+        "member": "local-native-qualification/native-75dc-attempt02/strict-clippy.log",
+        "sha256": "3fd2d7bae3a7e4fa74cbb381ad68a2a6932deded8bc14c4bdd51629cb799f194"
+      },
+      "receipt": {
+        "archive": "native-records.tar.gz",
+        "bytes": 2553,
+        "member": "local-native-qualification/native-75dc-attempt02/strict-clippy.json",
+        "sha256": "7b5ebf4afb5b05d60de41ea4a9f519b07696f0ed0f02bec319b33f0f21cf202f"
+      },
+      "scope": "Whole workspace, all targets, all features, locked/offline, -D warnings; compile/lint result only.",
+      "source_before_after_equal": true,
+      "status": "command_succeeded"
+    },
+    "whole_lifetime_image_verified": false,
+    "whole_repository_native_suite_executed": false
+  },
+  "private_owner_reference": {
+    "pull_request": "https://github.com/TrillionniumFoundation/hepta-private-ci/pull/5432",
+    "tested_code_commit": "756968dba94e969a1ee9bc151683682b6fb4da31",
+    "tested_code_tree": "1348a43f8ced85980b39df46d2e995eca73f9f6f"
+  },
+  "publication": {
+    "containing_evidence_commit": null,
+    "containing_evidence_commit_resolution": "Resolve from the Git commit containing this package; its identity is distinct from the explicitly tested code and is not itself a new native-execution claim.",
+    "desktop_role": "Git materialization/recovery and publication transport only",
+    "desktop_successful_native_execution_claimed": false,
+    "desktop_worktree_qualified": false,
+    "kind": "evidence_only",
+    "prepared_outside_repository": true,
+    "private_test_names_or_raw_records_in_this_manifest": false,
+    "source_or_tests_modified_by_manifest_generation": false,
+    "successful_execution_environment": "Complete fixed local checkout at /workspace/scratch/9fe375f34217/chain-convergence",
+    "tested_code_commit": "75dc7ec3973ce3661c27c895418efd5c6cc8b4a8",
+    "tested_code_tree": "a58d215f954c1dee99ab7a031ff496e089499ba0",
+    "tests_or_builds_rerun_by_manifest_generation": false
+  },
+  "python_controls": {
+    "count_expression": "404 + 50",
+    "distinct_passing_methods": 454,
+    "local_controls": {
+      "distinct_passing_methods": 404,
+      "original_summary_retained": {
+        "archive": "local-controls.tar.gz",
+        "bytes": 2774,
+        "member": "local-validation-03/SUMMARY.json",
+        "sha256": "97c2a4da2de053562b7b03eb400fb3133e39896ee1ec436c3d10a220be71fef6"
+      },
+      "passing_suite_count": 9,
+      "passing_suites": [
+        {
+          "methods": 13,
+          "record": {
+            "archive": "local-controls.tar.gz",
+            "bytes": 112,
+            "member": "local-validation-03/test_chain_hepta_command_binding.log",
+            "sha256": "5167898cd46c11edd1aa10efaa61efe3984f0e81667a448bd30e560586a547bb"
+          },
+          "sha256": "5167898cd46c11edd1aa10efaa61efe3984f0e81667a448bd30e560586a547bb",
+          "terminal_ok": true
+        },
+        {
+          "methods": 48,
+          "record": {
+            "archive": "local-controls.tar.gz",
+            "bytes": 147,
+            "member": "local-validation-03/test_chain_hepta_qualification.log",
+            "sha256": "b88fb9ab847b49e8d9dd24fcc9d963be7c12da366014c45806e69e6c190d1a3c"
+          },
+          "sha256": "b88fb9ab847b49e8d9dd24fcc9d963be7c12da366014c45806e69e6c190d1a3c",
+          "terminal_ok": true
+        },
+        {
+          "methods": 166,
+          "record": {
+            "archive": "local-controls.tar.gz",
+            "bytes": 28574,
+            "member": "local-validation-03/test_ci_contract.log",
+            "sha256": "4821f27b3287657854d59f72cac82fda016b20932f755352bef02a14d473de80"
+          },
+          "sha256": "4821f27b3287657854d59f72cac82fda016b20932f755352bef02a14d473de80",
+          "terminal_ok": true
+        },
+        {
+          "methods": 43,
+          "record": {
+            "archive": "local-controls.tar.gz",
+            "bytes": 7108,
+            "member": "local-validation-03/test_ci_source_integrity.log",
+            "sha256": "bdfdeffd28794eb43ad6364a1443f3d902beeb589a9ce90aeedbcd2739fb4b84"
+          },
+          "sha256": "bdfdeffd28794eb43ad6364a1443f3d902beeb589a9ce90aeedbcd2739fb4b84",
+          "status_evidence": "unittest Ran/OK summary and recorded process exit 0; expected control receipt output follows the summary",
+          "terminal_ok": true
+        },
+        {
+          "methods": 71,
+          "record": {
+            "archive": "local-controls.tar.gz",
+            "bytes": 12235,
+            "member": "local-validation-03/test_public_readiness_evidence-explicit-time.log",
+            "sha256": "dc711e7339a033afc5022d35b8a8a9cd77b95c9979676943f190b829eb069ac2"
+          },
+          "sha256": "dc711e7339a033afc5022d35b8a8a9cd77b95c9979676943f190b829eb069ac2",
+          "terminal_ok": true
+        },
+        {
+          "methods": 29,
+          "record": {
+            "archive": "local-controls.tar.gz",
+            "bytes": 128,
+            "member": "local-validation-03/test_read_validated_business_goodput.log",
+            "sha256": "6781a20e2df32a43a41201bb4df2d60fbb48b85be240adf2bc4062df48ddea35"
+          },
+          "sha256": "6781a20e2df32a43a41201bb4df2d60fbb48b85be240adf2bc4062df48ddea35",
+          "terminal_ok": true
+        },
+        {
+          "methods": 9,
+          "record": {
+            "archive": "local-controls.tar.gz",
+            "bytes": 1492,
+            "member": "local-validation-03/test_record_pq_native_command.log",
+            "sha256": "82a792ec74e2b03c6d109255593b8debf0623c458609e9065a7cc17e1d6054e5"
+          },
+          "sha256": "82a792ec74e2b03c6d109255593b8debf0623c458609e9065a7cc17e1d6054e5",
+          "status_evidence": "unittest Ran/OK summary and recorded process exit 0; expected control receipt output follows the summary",
+          "terminal_ok": true
+        },
+        {
+          "methods": 11,
+          "record": {
+            "archive": "local-controls.tar.gz",
+            "bytes": 110,
+            "member": "local-validation-03/test_w1_lifecycle_cost_v4.log",
+            "sha256": "e607e96577e89de6faace24a5b0738ef35ef10461822faf24ab3c9de00b167e2"
+          },
+          "sha256": "e607e96577e89de6faace24a5b0738ef35ef10461822faf24ab3c9de00b167e2",
+          "terminal_ok": true
+        },
+        {
+          "methods": 14,
+          "record": {
+            "archive": "local-controls.tar.gz",
+            "bytes": 2179,
+            "member": "local-validation-03/test_w1_qrom_current_implementation_audit.log",
+            "sha256": "a1cf0616e2a5294b370b9e21008ab5c7e857a94842290f88d474d54335c603ca"
+          },
+          "sha256": "a1cf0616e2a5294b370b9e21008ab5c7e857a94842290f88d474d54335c603ca",
+          "terminal_ok": true
+        }
+      ],
+      "retained_failed_attempts_not_added_to_passing_total": [
+        {
+          "methods": 71,
+          "record": {
+            "archive": "local-controls.tar.gz",
+            "bytes": 17128,
+            "member": "local-validation-03/test_public_readiness_evidence.log",
+            "sha256": "b0fdd9fe27c330d06c85885c2d10792e4809f46867790496c712acc1d108165e"
+          },
+          "sha256": "b0fdd9fe27c330d06c85885c2d10792e4809f46867790496c712acc1d108165e",
+          "terminal_ok": false
+        }
+      ],
+      "summary": {
+        "archive": "local-controls.tar.gz",
+        "bytes": 3460,
+        "member": "local-validation-03/SUMMARY.corrected.json",
+        "sha256": "2f99f52047d665962ad607195cdb3a9ae5c3fa7168607a1adf4a069ac56fe460"
+      },
+      "summary_correction": {
+        "archive": "local-controls.tar.gz",
+        "bytes": 1283,
+        "member": "local-validation-03/summary-correction.json",
+        "sha256": "6f7d2b8aaf3f8f548c56020da15e5d3afe02a9c5bc42b27b7739e4a38205732a"
+      },
+      "summary_revision": 2
+    },
+    "native_tests_and_dependency_file_comparisons_included_in_total": false,
+    "original_repository_controls": {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/test_repository.py"
+      ],
+      "automatic_retries": 0,
+      "cwd": "/workspace/scratch/9fe375f34217/chain-convergence",
+      "distinct_passing_methods": 50,
+      "errors": 0,
+      "failures": 0,
+      "full_temporary_source_copies": 1,
+      "original_entrypoint": "scripts/ci/test_repository.py",
+      "original_file_manifest_entries_verified": 13,
+      "original_script": {
+        "archive": "repository-controls.tar.gz",
+        "bytes": 9909,
+        "member": "chain-seven-repository-controls-75dc7ec3/original-test_repository.py",
+        "sha256": "95ca70a3491a111ef97b97ce3bfb25324221433ea8fd854e83372b4b6ad0d605"
+      },
+      "original_test_and_copy_implementation_unchanged": true,
+      "run_record": {
+        "archive": "repository-controls.tar.gz",
+        "bytes": 2934,
+        "member": "chain-seven-repository-controls-75dc7ec3/run.json",
+        "sha256": "a789d16eb35e3fc10618f90c4bc9b391d5567c125f7de687cd82dc06efbcc6f0"
+      },
+      "runner": {
+        "archive": "repository-controls.tar.gz",
+        "bytes": 7589,
+        "member": "chain-seven-repository-controls-75dc7ec3/runner.py",
+        "sha256": "b16dd8360b7dc88aa7e88a1b8bb496b6cbf692913dfa755307c123d3da7853db"
+      },
+      "runner_exit_code": 0,
+      "skips": 0,
+      "stderr": {
+        "archive": "repository-controls.tar.gz",
+        "bytes": 5345,
+        "member": "chain-seven-repository-controls-75dc7ec3/test_repository.stderr",
+        "sha256": "a3658043411e2e3ac83757b4ed52b725516baad775bc034de5b47ea9dbc8fd83"
+      },
+      "stdout": {
+        "archive": "repository-controls.tar.gz",
+        "bytes": 0,
+        "member": "chain-seven-repository-controls-75dc7ec3/test_repository.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "summary": {
+        "archive": "repository-controls.tar.gz",
+        "bytes": 1272,
+        "member": "chain-seven-repository-controls-75dc7ec3/summary.json",
+        "sha256": "d5849f446e915b17607dc6d248b5436c8e3759c1b2fced455db8faa0d357861c"
+      },
+      "test_exit_code": 0
+    }
+  },
+  "qualification": "HOLD_NO_GO",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "retained_failures_and_corrections": [
+    {
+      "event": "Direct-Cargo preparation and interrupted collector",
+      "interpretation": "Original incomplete attempt retained; stale running/incomplete fields are not rewritten into success and no missing child exit is invented.",
+      "records": [
+        {
+          "archive": "native-records.tar.gz",
+          "bytes": 4784,
+          "member": "local-native-qualification/native-75dc-run/summary.json",
+          "sha256": "85df0c11fd96645aff9307b479431ed20b66dc8c42aaddab1842fafe4309773d"
+        },
+        {
+          "archive": "native-records.tar.gz",
+          "bytes": 1386,
+          "member": "local-native-qualification/native-75dc-run/strict-clippy.json",
+          "sha256": "2dcf50e54c04e5275c9c58d475fb44ded78ca0f849bc96411988e2866caf0918"
+        },
+        {
+          "archive": "native-records.tar.gz",
+          "bytes": 7499,
+          "member": "local-native-qualification/native-75dc-run/strict-clippy.log",
+          "sha256": "9bf683ba7f9b8711ca1d56ec8f58fca9b65fa971284d520d3bf379dab9d4168a"
+        }
+      ]
+    },
+    {
+      "event": "Successful standard-entry build followed by canonical-selector refusal before selected dispatch",
+      "record": {
+        "archive": "native-records.tar.gz",
+        "bytes": 14006,
+        "member": "local-native-qualification/native-75dc-attempt02/summary.json",
+        "sha256": "7a8fa22e445dd6661f4f95d6f5bcdf3837a9ba380d3840cd6ef6cea84dbeba4e"
+      },
+      "selected_native_tests_dispatched": 0
+    },
+    {
+      "event": "Exact continuation using the same build receipt and ELF hashes",
+      "record": {
+        "archive": "native-records.tar.gz",
+        "bytes": 3954,
+        "member": "local-native-qualification/native-75dc-continuation03/continuation-inputs.json",
+        "sha256": "f3f0243dfa74d1ec23434ff9efd5eeaa71be7cdfa4eaacd6070489327bcee109"
+      },
+      "source_test_semantics_changed": false
+    },
+    {
+      "event": "GNU Time initial readiness errors and explicit-tool recovery",
+      "initial_missing_default_binary_errors": 3,
+      "original_suite_passing_methods_counted_once": 71,
+      "record": {
+        "archive": "local-controls.tar.gz",
+        "bytes": 3460,
+        "member": "local-validation-03/SUMMARY.corrected.json",
+        "sha256": "2f99f52047d665962ad607195cdb3a9ae5c3fa7168607a1adf4a069ac56fe460"
+      }
+    },
+    {
+      "event": "Summary interpretation correction",
+      "raw_logs_modified": false,
+      "record": {
+        "archive": "local-controls.tar.gz",
+        "bytes": 1283,
+        "member": "local-validation-03/summary-correction.json",
+        "sha256": "6f7d2b8aaf3f8f548c56020da15e5d3afe02a9c5bc42b27b7739e4a38205732a"
+      },
+      "tests_rerun_for_correction": false
+    },
+    {
+      "archive": "desktop-recovery.tar.gz",
+      "event": "Incomplete desktop source recovery",
+      "successful_desktop_checkout_or_native_test_claimed": false
+    },
+    {
+      "event": "Code publication: first Git push refused, second normal fast-forward push succeeded",
+      "first_attempt": {
+        "exit_code": 1,
+        "reason": "Missing historical promisor blob during automatic delta-base reuse",
+        "remote_branch_created": false
+      },
+      "record": {
+        "archive": "supporting-records.tar.gz",
+        "bytes": 13725,
+        "member": "publication/chain-code-publication-records.tar.gz",
+        "sha256": "05eeb63d983ccb5ef9f812e638bb3b1d8b63f6516416a960df5b82bd9a46f9eb"
+      },
+      "scope": "Transport recovery only; no source mutation or additional build/native qualification.",
+      "second_attempt": {
+        "exit_code": 0,
+        "force_push": false,
+        "no_thin": true,
+        "pack_depth": 0,
+        "pack_window": 0,
+        "published_code_commit": "75dc7ec3973ce3661c27c895418efd5c6cc8b4a8"
+      }
+    }
+  ],
+  "schema": "trnm-chain-seven-gate-publication-manifest-v1",
+  "source": {
+    "clean_status_before_after": true,
+    "commit": "75dc7ec3973ce3661c27c895418efd5c6cc8b4a8",
+    "inventory_sha256_before_after": "9d49101c8cdc8656565868f185c24c1b398507625024a037d40845d233568baa",
+    "local_controls_source_records": [
+      {
+        "archive": "local-controls.tar.gz",
+        "bytes": 423,
+        "member": "local-validation-03/source_before.log",
+        "sha256": "8a4b3426664db4066cdd7587f052751fc54c8744052d85627c45120d95241ddc"
+      },
+      {
+        "archive": "local-controls.tar.gz",
+        "bytes": 423,
+        "member": "local-validation-03/source_after_all.json",
+        "sha256": "8a4b3426664db4066cdd7587f052751fc54c8744052d85627c45120d95241ddc"
+      }
+    ],
+    "native_before_after_receipts": "Each build, Clippy and selected native receipt below binds the same commit/tree and complete tracked source.",
+    "observed_after_utc": "2026-11-09T05:38:00Z",
+    "observed_before_utc": "2026-11-09T05:35:02Z",
+    "raw_blob_or_executable_mode_mismatches_before_after": [
+      0,
+      0
+    ],
+    "records": {
+      "after-files.json": {
+        "archive": "repository-controls.tar.gz",
+        "bytes": 4934790,
+        "member": "chain-seven-repository-controls-75dc7ec3/after-files.json",
+        "sha256": "9d49101c8cdc8656565868f185c24c1b398507625024a037d40845d233568baa"
+      },
+      "after-source.json": {
+        "archive": "repository-controls.tar.gz",
+        "bytes": 452,
+        "member": "chain-seven-repository-controls-75dc7ec3/after-source.json",
+        "sha256": "4b26f870567875d2f7857f0daf82ec6c9d3f0ff531ef0723edb99f0394c456eb"
+      },
+      "before-files.json": {
+        "archive": "repository-controls.tar.gz",
+        "bytes": 4934790,
+        "member": "chain-seven-repository-controls-75dc7ec3/before-files.json",
+        "sha256": "9d49101c8cdc8656565868f185c24c1b398507625024a037d40845d233568baa"
+      },
+      "before-source.json": {
+        "archive": "repository-controls.tar.gz",
+        "bytes": 452,
+        "member": "chain-seven-repository-controls-75dc7ec3/before-source.json",
+        "sha256": "c8a2eb763de3c2211831f47d4554ac872ddb7023d594e2da8e72f03cc4de0bb9"
+      }
+    },
+    "source_unchanged": true,
+    "tracked_bytes_before_after": 2496904943,
+    "tracked_files_before_after": 26153,
+    "tree": "a58d215f954c1dee99ab7a031ff496e089499ba0",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/75dc7ec3973ce3661c27c895418efd5c6cc8b4a8"
+  },
+  "toolchain": {
+    "after_record": {
+      "archive": "native-records.tar.gz",
+      "bytes": 1686,
+      "member": "local-native-qualification/native-75dc-continuation03/toolchain-after.json",
+      "sha256": "1f83fd93038a09de112b66d6ba30053b87c4d80e7d57ef77e284254eeaa3c0f9"
+    },
+    "all_selected_executable_hashes_unchanged": true,
+    "before_record": {
+      "archive": "native-records.tar.gz",
+      "bytes": 5066,
+      "member": "local-native-qualification/native-75dc-attempt02/toolchain-observation.json",
+      "sha256": "4aa3a1c5c295dff091b863f65c0943ba21a0fc33bd9c3a7af88bc74dae8fe2bb"
+    },
+    "cargo_lock": {
+      "archive": "native-records.tar.gz",
+      "bytes": 40332,
+      "member": "local-native-qualification/native-75dc-attempt02/Cargo.lock",
+      "sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c"
+    },
+    "cargo_version": "1.95.0",
+    "clippy_version": "0.1.95",
+    "effective_selected_environment": {
+      "AR": null,
+      "ARFLAGS": null,
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_ENCODED_RUSTFLAGS": "",
+      "CARGO_HOME": "/workspace/scratch/ac851b3fedf0/toolchains/cargo",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_TARGET_DIR": "/dev/shm/trnm-chain-75dc-native-attempt02-9fe375f34217/target",
+      "CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER": null,
+      "CC": null,
+      "CFLAGS": null,
+      "CPATH": null,
+      "CPPFLAGS": null,
+      "CXXFLAGS": null,
+      "HOST_CC": null,
+      "LD_LIBRARY_PATH": "/workspace/scratch/ac851b3fedf0/toolchains/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+      "LD_PRELOAD": null,
+      "LIBRARY_PATH": null,
+      "RUSTC": "/workspace/scratch/ac851b3fedf0/toolchains/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "RUSTC_WORKSPACE_WRAPPER": "",
+      "RUSTC_WRAPPER": "",
+      "RUSTFLAGS": "",
+      "RUSTUP_HOME": "/workspace/scratch/ac851b3fedf0/toolchains/rustup",
+      "RUSTUP_TOOLCHAIN": "1.95.0",
+      "TARGET_CC": null
+    },
+    "entrypoint": {
+      "bytes": 21347088,
+      "name": "cargo",
+      "path": "/workspace/scratch/ac851b3fedf0/toolchains/cargo/bin/cargo",
+      "resolved_path": "/workspace/scratch/ac851b3fedf0/toolchains/cargo/bin/rustup",
+      "sha256": "b1c8cb14e30889e7e2999e6b69e62d9e9b9ffc0f4df8180564d306d9680e6c55"
+    },
+    "rustc_version": "1.95.0",
+    "rustup_version": null,
+    "rustup_version_note": "Rustup executable identity is recorded; no rustup version command is present in these observations.",
+    "scope": "Actual selected executable bytes and version commands under the recorded runner environment; not complete loaded-library or build provenance verification.",
+    "selected_executables_after": [
+      {
+        "bytes": 644784,
+        "matches_before": true,
+        "path": "/workspace/scratch/ac851b3fedf0/toolchains/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6"
+      },
+      {
+        "bytes": 42185192,
+        "matches_before": true,
+        "path": "/workspace/scratch/ac851b3fedf0/toolchains/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      {
+        "bytes": 20339280,
+        "matches_before": true,
+        "path": "/workspace/scratch/ac851b3fedf0/toolchains/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/clippy-driver",
+        "sha256": "81bd985ee50d78e9d8c5810f6ca836614d1bf95e0e8142f1ec5f42eb250ed729"
+      },
+      {
+        "bytes": 1263912,
+        "matches_before": true,
+        "path": "/workspace/scratch/ac851b3fedf0/toolchains/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo-clippy",
+        "sha256": "b71b1263063707608daa1e9b231ad9d87507c11d6aa178ede2b01d8372d5effb"
+      },
+      {
+        "bytes": 21347088,
+        "matches_before": true,
+        "path": "/workspace/scratch/ac851b3fedf0/toolchains/cargo/bin/cargo",
+        "sha256": "b1c8cb14e30889e7e2999e6b69e62d9e9b9ffc0f4df8180564d306d9680e6c55"
+      },
+      {
+        "bytes": 21347088,
+        "matches_before": true,
+        "path": "/workspace/scratch/ac851b3fedf0/toolchains/cargo/bin/rustup",
+        "sha256": "b1c8cb14e30889e7e2999e6b69e62d9e9b9ffc0f4df8180564d306d9680e6c55"
+      }
+    ],
+    "selected_executables_before": [
+      {
+        "argv": [
+          "/workspace/scratch/ac851b3fedf0/toolchains/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+          "-vV"
+        ],
+        "bytes": 644784,
+        "name": "rustc",
+        "path": "/workspace/scratch/ac851b3fedf0/toolchains/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "resolved_path": "/workspace/scratch/ac851b3fedf0/toolchains/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+        "stderr": "",
+        "stdout": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+        "version_exit_code": 0
+      },
+      {
+        "argv": [
+          "/workspace/scratch/ac851b3fedf0/toolchains/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "-vV"
+        ],
+        "bytes": 42185192,
+        "name": "cargo",
+        "path": "/workspace/scratch/ac851b3fedf0/toolchains/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "resolved_path": "/workspace/scratch/ac851b3fedf0/toolchains/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66",
+        "stderr": "",
+        "stdout": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\nrelease: 1.95.0\ncommit-hash: f2d3ce0bd7f24a49f8f72d9000448f8838c4e850\ncommit-date: 2026-03-21\nhost: x86_64-unknown-linux-gnu\nlibgit2: 1.9.2 (sys:0.20.4 vendored)\nlibcurl: 8.15.0-DEV (sys:0.4.83+curl-8.15.0 vendored ssl:OpenSSL/3.5.4)\nssl: OpenSSL 3.5.4 30 Sep 2025\nos: Debian 13.0.0 [64-bit]\n",
+        "version_exit_code": 0
+      },
+      {
+        "argv": [
+          "/workspace/scratch/ac851b3fedf0/toolchains/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/clippy-driver",
+          "--version"
+        ],
+        "bytes": 20339280,
+        "name": "clippy-driver",
+        "path": "/workspace/scratch/ac851b3fedf0/toolchains/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/clippy-driver",
+        "resolved_path": "/workspace/scratch/ac851b3fedf0/toolchains/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/clippy-driver",
+        "sha256": "81bd985ee50d78e9d8c5810f6ca836614d1bf95e0e8142f1ec5f42eb250ed729",
+        "stderr": "",
+        "stdout": "clippy 0.1.95 (59807616e1 2026-04-14)\n",
+        "version_exit_code": 0
+      },
+      {
+        "bytes": 1263912,
+        "name": "cargo-clippy",
+        "path": "/workspace/scratch/ac851b3fedf0/toolchains/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo-clippy",
+        "resolved_path": "/workspace/scratch/ac851b3fedf0/toolchains/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo-clippy",
+        "sha256": "b71b1263063707608daa1e9b231ad9d87507c11d6aa178ede2b01d8372d5effb"
+      },
+      {
+        "bytes": 21347088,
+        "name": "cargo",
+        "path": "/workspace/scratch/ac851b3fedf0/toolchains/cargo/bin/cargo",
+        "resolved_path": "/workspace/scratch/ac851b3fedf0/toolchains/cargo/bin/rustup",
+        "sha256": "b1c8cb14e30889e7e2999e6b69e62d9e9b9ffc0f4df8180564d306d9680e6c55"
+      },
+      {
+        "bytes": 21347088,
+        "name": "rustup",
+        "path": "/workspace/scratch/ac851b3fedf0/toolchains/cargo/bin/rustup",
+        "resolved_path": "/workspace/scratch/ac851b3fedf0/toolchains/cargo/bin/rustup",
+        "sha256": "b1c8cb14e30889e7e2999e6b69e62d9e9b9ffc0f4df8180564d306d9680e6c55"
+      }
+    ],
+    "selected_rust_toolchain": "1.95.0",
+    "selection": "Standard rustup Cargo proxy with explicit +1.95.0 toolchain and the normal selected-toolchain loader environment"
+  }
+}
