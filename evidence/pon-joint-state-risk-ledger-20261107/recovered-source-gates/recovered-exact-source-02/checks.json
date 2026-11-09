@@ -1,0 +1,363 @@
+{
+  "schema": "pon-recovered-exact-source-v1",
+  "source_commit": "1a426b6ed3a32745d996be328ec31929660fee5b",
+  "checks": [
+    {
+      "name": "fetch-bundle",
+      "argv": [
+        "git",
+        "fetch",
+        "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/recovered-lifecycle.bundle",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/checkout",
+      "exit_code": 0,
+      "elapsed_seconds": 0.3155385989230126
+    },
+    {
+      "name": "preserve-mirror-branch",
+      "argv": [
+        "git",
+        "branch",
+        "-m",
+        "fix/chain-pon-joint-state-risk-ledger-mirror-20261107"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/checkout",
+      "exit_code": 0,
+      "elapsed_seconds": 0.004543076967820525
+    },
+    {
+      "name": "new-publish-worktree",
+      "argv": [
+        "git",
+        "worktree",
+        "add",
+        "--no-checkout",
+        "-b",
+        "fix/chain-pon-joint-state-risk-ledger-20261107",
+        "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+        "1a426b6ed3a32745d996be328ec31929660fee5b"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/checkout",
+      "exit_code": 0,
+      "elapsed_seconds": 0.01683462201617658
+    },
+    {
+      "name": "sparse-init",
+      "argv": [
+        "git",
+        "sparse-checkout",
+        "init",
+        "--cone"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 0.004318570019677281
+    },
+    {
+      "name": "sparse-select",
+      "argv": [
+        "git",
+        "sparse-checkout",
+        "set",
+        ".githooks",
+        ".github",
+        "config",
+        "docs",
+        "formal",
+        "qualification",
+        "scripts",
+        "tests",
+        "trillionnium",
+        "evidence/pon-work-native-certificates-20261107",
+        "evidence/pon-actual-certificates-20261107",
+        "evidence/pon-lifecycle-closure-20261107"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 0.004280801163986325
+    },
+    {
+      "name": "checkout-recovered",
+      "argv": [
+        "git",
+        "reset",
+        "--hard",
+        "1a426b6ed3a32745d996be328ec31929660fee5b"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 0.4658786910586059
+    },
+    {
+      "name": "hook-config",
+      "argv": [
+        "git",
+        "config",
+        "core.hooksPath",
+        ".githooks"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 0.004521938972175121
+    },
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 0.11517644091509283
+    },
+    {
+      "name": "cargo-graph",
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 0.41560150403529406
+    },
+    {
+      "name": "rust-format",
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 19.415389830013737
+    },
+    {
+      "name": "strict-owner-clippy",
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo-clippy",
+        "clippy",
+        "--profile",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--config",
+        "profile.test.package.trnm-pon-node.opt-level=0",
+        "--lib",
+        "--test",
+        "native_owner_journal",
+        "--test",
+        "native_owner_observation",
+        "--example",
+        "native_owner_journal_v1",
+        "--example",
+        "native_owner_observation_v1",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 91.87026097089984
+    },
+    {
+      "name": "native-owner-tests",
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--profile",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--config",
+        "profile.test.package.trnm-pon-node.opt-level=0",
+        "--test",
+        "native_owner_journal",
+        "--test",
+        "native_owner_observation",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 192.02593956002966
+    },
+    {
+      "name": "native-journal-build",
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "build",
+        "--profile",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--config",
+        "profile.test.package.trnm-pon-node.opt-level=0",
+        "--example",
+        "native_owner_journal_v1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 2.070135542191565
+    },
+    {
+      "name": "fresh-native-scenario",
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/target/debug/examples/native_owner_journal_v1",
+        "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/recovered-exact-source-02/native-owner-journal"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 52.602782973786816
+    },
+    {
+      "name": "independent-native-reader-tests",
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_native_owner_journal.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 1.5186234021093696
+    },
+    {
+      "name": "exact-certificate-composition",
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "formal/pon-nakamoto-v1/certificate_composition_evidence.py",
+        "--native-run",
+        "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/recovered-exact-source-02/native-owner-journal/run.json",
+        "--output-dir",
+        "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/recovered-exact-source-02/composition"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 1.56874630600214
+    },
+    {
+      "name": "query-models",
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "formal/pon-nakamoto-v1/lifecycle_query_tests.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 0.2647720400709659
+    },
+    {
+      "name": "composition-models",
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "certificate_composition_tests.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 0.6165822930634022
+    },
+    {
+      "name": "source-inventory",
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 0.17791634099557996
+    },
+    {
+      "name": "ci-source-contract",
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 16.056101359194145
+    },
+    {
+      "name": "ci-execution-contract",
+      "argv": [
+        "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/venv/bin/python",
+        "scripts/ci/test_ci_execution.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 26.78701320895925
+    },
+    {
+      "name": "pre-push-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 0.1152318709064275
+    },
+    {
+      "name": "publish-recovered",
+      "argv": [
+        "git",
+        "push",
+        "-u",
+        "origin",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 65.29559947317466
+    },
+    {
+      "name": "remote-readback",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-pon-joint-state-risk-ledger-20261107",
+        "--jq",
+        ".object.sha"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/publish",
+      "exit_code": 0,
+      "elapsed_seconds": 1.620968921808526
+    }
+  ],
+  "production_qualified": false
+}

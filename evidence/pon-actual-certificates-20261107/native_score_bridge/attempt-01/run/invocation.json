@@ -1,0 +1,10 @@
+{
+  "schema": "pon-native-owner-invocation-v1",
+  "binary": "/workspace/scratch/b9454e263603/native_w1_target/debug/examples/native_owner_observation_v1",
+  "binary_sha256_before": "83be115cd94733c490bc30fbea0e0664f0b031b9eb62ed438fc6c4cf7293d993",
+  "native_runtime_attested": false,
+  "returncode": 0,
+  "binary_sha256_after": "83be115cd94733c490bc30fbea0e0664f0b031b9eb62ed438fc6c4cf7293d993",
+  "native_json_sha256": "0f5cfd9af78818ace0d9c0ddd36d9a0be7582f4e3e4d4d4abd5d6f569c72a98d",
+  "status": "passed"
+}

@@ -1,0 +1,17 @@
+{
+  "label": "final-07-commit",
+  "argv": [
+    "git",
+    "commit",
+    "-m",
+    "Complete actual MU1 reuse control and register native research sources",
+    "-m",
+    "Retain a full outer-winning hybrid whose stale unit transcript is refused without new credit, while observing legal prepared-matrix reuse. Keep this separate from any all-algorithm cost bound. Register the two new native research files in the generated distributed inventory; preserve the original failed inventory check."
+  ],
+  "exit": 0,
+  "duration_seconds": 0.20804122718982399,
+  "source_head_before": "747a7169fae3bc27618e267eef8a5a03701bb6f3",
+  "source_head_after": "103cdf67108a667d8570388f9dd402210c160157",
+  "native_passed_counts": [],
+  "unittest_counts": []
+}

@@ -9,6 +9,10 @@ mod error;
 pub mod host_kernel_parent;
 pub mod ingress;
 pub mod mining;
+/// Opt-in durable local owner observations; grants no global execution authority.
+pub mod native_owner_journal;
+/// Persistent declared risk expenditure; grants no probability-law authority.
+pub mod native_risk_ledger;
 pub mod operator_checkpoint_tile;
 pub mod operator_continuous_controller;
 mod operator_continuous_cpu;
@@ -30,6 +34,8 @@ pub mod pq_rollback_witness;
 pub mod public_submit;
 /// Isolated V2 certificate reader; never votes, installs models or activates consensus.
 pub mod release_finality;
+/// Opt-in bounded work-schedule checks; never selected by native admission.
+pub mod research_work_schedule;
 mod store;
 pub use error::{Error, ErrorCode, ErrorKind};
 use serde_json::{json, Value};
@@ -53,6 +59,10 @@ pub use store::mempool::{
 pub use store::native_budget::{
     NativeBudgetInventoryV1, NativeBudgetLaneV1, NativeBudgetLocalRecordV1,
     NativeBudgetObservationV1, NativeBudgetRequestV1, NativeContributionClaimV1,
+};
+pub use store::native_owner_observation::{
+    OwnerCensus, OwnerCensusBlock, OwnerCensusLimits, OwnerCensusProgress, MAX_CENSUS_BLOCKS,
+    MAX_CENSUS_PACKET_BYTES,
 };
 pub use store::pinned_account_query::PinnedNativeAccountQuery;
 pub use store::storage_service::{

@@ -1,0 +1,188 @@
+{
+  "accounting": {
+    "all_attempt_costs_counted": true,
+    "already_credited_identity_in_potential": false,
+    "epoch_restart_or_profile_resets_account": false,
+    "initial_potential_bound": null,
+    "post_win_proof_is_per_grover_query_cost": false,
+    "public-model-training-charged-to-each-miner": false,
+    "resource_model": "not-yet-certified-for-all-legal-algorithms",
+    "setup_charged_once": true,
+    "single_scale_bound_implies_joint_bound": false,
+    "success_standard": "at-least-one-valid-distinct-result-with-probability-at-least-one-half"
+  },
+  "cost_envelopes": {
+    "classical": [
+      {
+        "lower": null,
+        "status": "unproved",
+        "units": 1,
+        "upper": null
+      },
+      {
+        "lower": null,
+        "status": "unproved",
+        "units": 2,
+        "upper": null
+      },
+      {
+        "lower": null,
+        "status": "unproved",
+        "units": 3,
+        "upper": null
+      },
+      {
+        "lower": null,
+        "status": "unproved",
+        "units": 4,
+        "upper": null
+      },
+      {
+        "lower": null,
+        "status": "unproved",
+        "units": 5,
+        "upper": null
+      },
+      {
+        "lower": null,
+        "status": "unproved",
+        "units": 6,
+        "upper": null
+      },
+      {
+        "lower": null,
+        "status": "unproved",
+        "units": 7,
+        "upper": null
+      },
+      {
+        "lower": null,
+        "status": "unproved",
+        "units": 8,
+        "upper": null
+      }
+    ],
+    "quantum": [
+      {
+        "lower": null,
+        "status": "unproved",
+        "units": 1,
+        "upper": null
+      },
+      {
+        "lower": null,
+        "status": "unproved",
+        "units": 2,
+        "upper": null
+      },
+      {
+        "lower": null,
+        "status": "unproved",
+        "units": 3,
+        "upper": null
+      },
+      {
+        "lower": null,
+        "status": "unproved",
+        "units": 4,
+        "upper": null
+      },
+      {
+        "lower": null,
+        "status": "unproved",
+        "units": 5,
+        "upper": null
+      },
+      {
+        "lower": null,
+        "status": "unproved",
+        "units": 6,
+        "upper": null
+      },
+      {
+        "lower": null,
+        "status": "unproved",
+        "units": 7,
+        "upper": null
+      },
+      {
+        "lower": null,
+        "status": "unproved",
+        "units": 8,
+        "upper": null
+      }
+    ]
+  },
+  "relation": {
+    "context_fields": [
+      "network",
+      "chain_parameters",
+      "window_anchor",
+      "window_start_height",
+      "window_end_height",
+      "parent",
+      "height",
+      "timestamp",
+      "miner",
+      "tx_root",
+      "state_root",
+      "receipts_root",
+      "nonce",
+      "tasks",
+      "target",
+      "relation_parameters"
+    ],
+    "ideal_probability": {
+      "denominator": 16,
+      "numerator": 1
+    },
+    "implemented_hash": "SHA-256",
+    "inclusive_target": true,
+    "maximum_units": 8,
+    "minimum_units": 1,
+    "native_consensus_credit": false,
+    "parameter_digest_hex": "0d25474289a0149ed7c12824f8c06ee703c0c3bf1bc734c4cf765d70ceb732b1",
+    "probability_assumption": "independent-uniform-terminal-oracle",
+    "profile": "pon-mandatory-w1-64-research-v1",
+    "research_credit_per_unit": 16,
+    "target_hex": "0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+  },
+  "required_strategy_classes": [
+    "batching",
+    "shared-base-and-low-rank-work",
+    "cached-products",
+    "precomputation-and-nonce-banks",
+    "adaptive-cross-scale-selection",
+    "shared-work-across-scales",
+    "all-legal-task-and-parameter-choices",
+    "public-help-and-outsourced-work",
+    "failed-abandoned-unpublished-attempts",
+    "all-competing-forks",
+    "restart-and-profile-transition-state",
+    "proof-and-encoding-grinding",
+    "false-root-first-search",
+    "quantum-restricted-subsets",
+    "quantum-state-preparation-and-uncomputation",
+    "quantum-variable-time-and-parallel-search",
+    "retained-quantum-state"
+  ],
+  "schema": "pon-fixed-probability-cost-contract-v1",
+  "source_sha256": {
+    "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+    "formal/pon-nakamoto-v1/mandatory_units_relation.py": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834",
+    "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+  },
+  "unclosed_obligations": [
+    "complete-legal-strategy-simulation",
+    "classical-amortized-cost-lower-bound",
+    "quantum-amortized-cost-lower-bound",
+    "bounded-initial-classical-and-quantum-potential",
+    "cross-scale-and-cross-fork-composition",
+    "actual-hash-to-search-model-reduction",
+    "resource-to-physical-time-and-network-model",
+    "mixed-miner-common-prefix-chain-quality-chain-growth",
+    "native-work-identity-and-weight-bridge",
+    "real-cell-quality-and-owner-adoption"
+  ]
+}

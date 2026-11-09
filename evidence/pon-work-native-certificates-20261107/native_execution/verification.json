@@ -1,0 +1,30 @@
+{
+  "schema": "pon-native-execution-verification-v1",
+  "date_utc": "2026-11-07",
+  "base_commit": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+  "unit_command": "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_execution_certificate.py' -v",
+  "evidence_command": "python3 formal/pon-nakamoto-v1/native_execution_certificate.py --verify-evidence evidence/pon-work-native-certificates-20261107/native_execution/model_evidence_v1.json",
+  "unit_tests": 35,
+  "unit_result": "PASS",
+  "model_fixtures": 8,
+  "model_pair_witnesses": 9,
+  "deficit_identity_score_triples": 2601,
+  "source_readback": "PASS",
+  "exact_evidence_readback": "PASS",
+  "initial_failed_run_preserved": true,
+  "initial_failure_reason": "Test expected pacer event sequence 40; replay correctly returned 39. Only expected test sequence corrected.",
+  "native_runtime_attested": false,
+  "probabilistic_environment_bound": false,
+  "six_successor_risk_qualified": false,
+  "native_execution_qualified": false,
+  "native_risk_bound": null,
+  "model_numbers_are_native_risk": false,
+  "independent_review": "code_audit reviewed equations (1)-(7), explicit observation cut c>=r and crossing rho<=c, early-window mapping, all-event r/s deadline cuts, candidate maxima, and qualification boundary; probability-parameter and whole-execution envelope-failure clarification applied.",
+  "artifact_hashes": {
+    "README.md": "4790d7a106ab01fb754421bc4ac8c71bd21c2dca09ded5fc386a7dd10d809b11",
+    "model_evidence_v1.json": "0abf7f65541ea566ded7329ed3538310e3e3cea51ccee2a882ed4c3e64fdbfb7",
+    "native_source_readback.json": "f69d87791bd73e827c8ae712a27cdedf8ea564835c2d6683e378c2f220fa583e",
+    "unittest_final.log": "69d6298f73c808e6ca9a6cd3b75ce399e565026b0036a7af2a5d003473a63edf",
+    "unittest_initial.log": "2e5824bc4738bf6475ac007b5d1144e5d7475d3eab5b7e684bc1da5f20411ce4"
+  }
+}

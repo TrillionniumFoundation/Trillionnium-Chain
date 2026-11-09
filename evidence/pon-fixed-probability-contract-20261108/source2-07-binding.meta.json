@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "python3",
+    "formal/pon-nakamoto-v1/fixed_probability_contract.py"
+  ],
+  "exit": 0,
+  "duration_seconds": 0.11069827596656978,
+  "cwd": "/home/qian-qi/pon-fixed-probability-contract-20261108-63b38",
+  "source_head": "ae90d186b79a9269bdb7d9ac8dfc0bcf7e5bfe0c"
+}

@@ -1,0 +1,1 @@
+Repository check failed: CI contract: inline source pin differs: .github/workflows/pon-recent-batch-acceptance.yml:78: trillionnium/crates/trnm-pon-node/src/store.rs: expected f41b5d8d39fa5a4bcc8e89c6066365ecee227d51, observed 29822797bf5e6d7cde68a6dcf4904bbbc7982e15

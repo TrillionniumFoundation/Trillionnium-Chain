@@ -1,0 +1,640 @@
+[
+  {
+    "name": "preflight",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 0.093,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "preflight.stdout",
+    "stderr": "preflight.stderr"
+  },
+  {
+    "name": "source-before",
+    "command": [
+      "python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "bd696c35f8b838823fad7ccf2868582554f33559",
+      "--output",
+      "/home/qian-qi/work/chain-time-credit-20261108-qf01-evidence/validation-native-01/source-before.json"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 10.783,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "source-before.stdout",
+    "stderr": "source-before.stderr"
+  },
+  {
+    "name": "strict-clippy",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "clippy",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 71.92,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "strict-clippy.stdout",
+    "stderr": "strict-clippy.stderr"
+  },
+  {
+    "name": "green-public-regression",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "ingress::public_v3::growth::tests::public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work",
+      "--",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 195.967,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "green-public-regression.stdout",
+    "stderr": "green-public-regression.stderr"
+  },
+  {
+    "name": "growth-branch-clock",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "native_growth_v2_observed_clock_",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 3.734,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "growth-branch-clock.stdout",
+    "stderr": "growth-branch-clock.stderr"
+  },
+  {
+    "name": "research-terminal-height",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "research_work_schedule::incremental_boundary_tests::terminal_arithmetic_fixture_accepts_one_complete_w1_then_refuses_successor",
+      "--",
+      "--exact",
+      "--test-threads=1"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 0.189,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "research-terminal-height.stdout",
+    "stderr": "research-terminal-height.stderr"
+  },
+  {
+    "name": "cli-resampled-clock",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--bin",
+      "trnm-pon-node",
+      "growth_cli::clock_tests::native_growth_v2_cli_resamples_wall_clock_after_work_and_keeps_explicit_time_fixed",
+      "--",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 87.231,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "cli-resampled-clock.stdout",
+    "stderr": "cli-resampled-clock.stderr"
+  },
+  {
+    "name": "research-work-schedule",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "research_work_schedule",
+      "--",
+      "--test-threads=1"
+    ],
+    "extra_env": {
+      "TRNM_WORK_SCHEDULE_RESEARCH_DIR": "/home/qian-qi/work/chain-time-credit-20261108-qf01-evidence/validation-native-01/branch-work-schedule"
+    },
+    "exit_code": 0,
+    "elapsed_seconds": 19.251,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "research-work-schedule.stdout",
+    "stderr": "research-work-schedule.stderr"
+  },
+  {
+    "name": "research-reader-pnh1-authenticated",
+    "command": [
+      "python3",
+      "scripts/pon_branch_work_schedule_reader.py",
+      "--raw-dir",
+      "/home/qian-qi/work/chain-time-credit-20261108-qf01-evidence/validation-native-01/branch-work-schedule/pnh1-authenticated",
+      "--report-sha256",
+      "e3fd4c236991529124ab5a493c31c0559694403aa57ec570267f8ac7ad0fec6d"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 1.472,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "research-reader-pnh1-authenticated.stdout",
+    "stderr": "research-reader-pnh1-authenticated.stderr"
+  },
+  {
+    "name": "research-reader-controls-pnh1-authenticated",
+    "command": [
+      "python3",
+      "scripts/ci/test_pon_branch_work_schedule_reader.py",
+      "--raw-dir",
+      "/home/qian-qi/work/chain-time-credit-20261108-qf01-evidence/validation-native-01/branch-work-schedule/pnh1-authenticated",
+      "--report-sha256",
+      "e3fd4c236991529124ab5a493c31c0559694403aa57ec570267f8ac7ad0fec6d",
+      "-v"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 2.719,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "research-reader-controls-pnh1-authenticated.stdout",
+    "stderr": "research-reader-controls-pnh1-authenticated.stderr"
+  },
+  {
+    "name": "research-reader-pgh2-growth",
+    "command": [
+      "python3",
+      "scripts/pon_branch_work_schedule_reader.py",
+      "--raw-dir",
+      "/home/qian-qi/work/chain-time-credit-20261108-qf01-evidence/validation-native-01/branch-work-schedule/pgh2-growth",
+      "--report-sha256",
+      "5a80454acc7f899d3440bdfdda2a7856df5030c3bf7ba089e96abe8a405add04"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 1.34,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "research-reader-pgh2-growth.stdout",
+    "stderr": "research-reader-pgh2-growth.stderr"
+  },
+  {
+    "name": "research-reader-controls-pgh2-growth",
+    "command": [
+      "python3",
+      "scripts/ci/test_pon_branch_work_schedule_reader.py",
+      "--raw-dir",
+      "/home/qian-qi/work/chain-time-credit-20261108-qf01-evidence/validation-native-01/branch-work-schedule/pgh2-growth",
+      "--report-sha256",
+      "5a80454acc7f899d3440bdfdda2a7856df5030c3bf7ba089e96abe8a405add04",
+      "-v"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 2.592,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "research-reader-controls-pgh2-growth.stdout",
+    "stderr": "research-reader-controls-pgh2-growth.stderr"
+  },
+  {
+    "name": "growth-cli",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_growth_cli",
+      "--",
+      "--test-threads=1"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 8.865,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "growth-cli.stdout",
+    "stderr": "growth-cli.stderr"
+  },
+  {
+    "name": "growth-public-cli",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_growth_public_cli",
+      "--",
+      "--test-threads=1"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 13.791,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "growth-public-cli.stdout",
+    "stderr": "growth-public-cli.stderr"
+  },
+  {
+    "name": "growth-persistence-cancellation",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "growth_persistence_cancellation",
+      "--",
+      "--test-threads=1"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 11.66,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "growth-persistence-cancellation.stdout",
+    "stderr": "growth-persistence-cancellation.stderr"
+  },
+  {
+    "name": "growth-owner",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "store::growth::",
+      "--",
+      "--test-threads=1"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 49.871,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "growth-owner.stdout",
+    "stderr": "growth-owner.stderr"
+  },
+  {
+    "name": "public-growth",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "ingress::public_v3::growth::tests",
+      "--",
+      "--test-threads=1"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 5.116,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "public-growth.stdout",
+    "stderr": "public-growth.stderr"
+  },
+  {
+    "name": "consensus",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "consensus::tests",
+      "--",
+      "--test-threads=1"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 0.244,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "consensus.stdout",
+    "stderr": "consensus.stderr"
+  },
+  {
+    "name": "legacy-reorg",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "store::legacy_reorg_root_tests",
+      "--",
+      "--test-threads=1"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 2.447,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "legacy-reorg.stdout",
+    "stderr": "legacy-reorg.stderr"
+  },
+  {
+    "name": "reorg-readback",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "store::reorg_readback_tests",
+      "--",
+      "--test-threads=1"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 11.834,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "reorg-readback.stdout",
+    "stderr": "reorg-readback.stderr"
+  },
+  {
+    "name": "append-readback",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "store::append_readback_tests",
+      "--",
+      "--test-threads=1"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 2.952,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "append-readback.stdout",
+    "stderr": "append-readback.stderr"
+  },
+  {
+    "name": "joint-daa",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "daa_joint_consensus",
+      "--",
+      "--test-threads=1"
+    ],
+    "extra_env": {
+      "TRNM_JOINT_DAA_EVIDENCE_DIR": "/home/qian-qi/work/chain-time-credit-20261108-qf01-evidence/validation-native-01/joint-daa"
+    },
+    "exit_code": 0,
+    "elapsed_seconds": 37.666,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "joint-daa.stdout",
+    "stderr": "joint-daa.stderr"
+  },
+  {
+    "name": "joint-reader-pnh1-authenticated",
+    "command": [
+      "python3",
+      "scripts/pon_joint_daa_reader.py",
+      "--raw-dir",
+      "/home/qian-qi/work/chain-time-credit-20261108-qf01-evidence/validation-native-01/joint-daa/pnh1-authenticated",
+      "--expected-report-sha256",
+      "664ef8549b32794aac16ea884860f1d447e59cae779c0f33dc370ffde13f175c"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 20.596,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "joint-reader-pnh1-authenticated.stdout",
+    "stderr": "joint-reader-pnh1-authenticated.stderr"
+  },
+  {
+    "name": "joint-reader-controls-pnh1-authenticated",
+    "command": [
+      "python3",
+      "scripts/ci/test_pon_joint_daa_reader.py",
+      "--raw-dir",
+      "/home/qian-qi/work/chain-time-credit-20261108-qf01-evidence/validation-native-01/joint-daa/pnh1-authenticated"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 25.251,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "joint-reader-controls-pnh1-authenticated.stdout",
+    "stderr": "joint-reader-controls-pnh1-authenticated.stderr"
+  },
+  {
+    "name": "joint-reader-pgh2-growth",
+    "command": [
+      "python3",
+      "scripts/pon_joint_daa_reader.py",
+      "--raw-dir",
+      "/home/qian-qi/work/chain-time-credit-20261108-qf01-evidence/validation-native-01/joint-daa/pgh2-growth",
+      "--expected-report-sha256",
+      "d0e548d0a685a6da9e022a6d94576168d959a45c70e45d3c8590d71eca674dda"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 20.74,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "joint-reader-pgh2-growth.stdout",
+    "stderr": "joint-reader-pgh2-growth.stderr"
+  },
+  {
+    "name": "joint-reader-controls-pgh2-growth",
+    "command": [
+      "python3",
+      "scripts/ci/test_pon_joint_daa_reader.py",
+      "--raw-dir",
+      "/home/qian-qi/work/chain-time-credit-20261108-qf01-evidence/validation-native-01/joint-daa/pgh2-growth"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 26.232,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "joint-reader-controls-pgh2-growth.stdout",
+    "stderr": "joint-reader-controls-pgh2-growth.stderr"
+  },
+  {
+    "name": "daa-adversarial",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "daa_adversarial_schedule",
+      "--",
+      "--test-threads=1"
+    ],
+    "extra_env": {
+      "TRNM_DAA_EVIDENCE_DIR": "/home/qian-qi/work/chain-time-credit-20261108-qf01-evidence/validation-native-01/daa-bounds"
+    },
+    "exit_code": 0,
+    "elapsed_seconds": 21.059,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "daa-adversarial.stdout",
+    "stderr": "daa-adversarial.stderr"
+  },
+  {
+    "name": "daa-reader",
+    "command": [
+      "python3",
+      "scripts/pon_daa_schedule_reader.py",
+      "--raw-dir",
+      "/home/qian-qi/work/chain-time-credit-20261108-qf01-evidence/validation-native-01/daa-bounds",
+      "--expected-report-sha256",
+      "c08f5c11419656408ee179ea49f41701c2edcb25178dc9b963b995a460cb62db"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 14.805,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "daa-reader.stdout",
+    "stderr": "daa-reader.stderr"
+  },
+  {
+    "name": "daa-reader-controls",
+    "command": [
+      "python3",
+      "scripts/ci/test_pon_daa_schedule_reader.py",
+      "--raw-dir",
+      "/home/qian-qi/work/chain-time-credit-20261108-qf01-evidence/validation-native-01/daa-bounds"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 29.598,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "daa-reader-controls.stdout",
+    "stderr": "daa-reader-controls.stderr"
+  },
+  {
+    "name": "source-after",
+    "command": [
+      "python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "bd696c35f8b838823fad7ccf2868582554f33559",
+      "--output",
+      "/home/qian-qi/work/chain-time-credit-20261108-qf01-evidence/validation-native-01/source-after.json"
+    ],
+    "extra_env": {},
+    "exit_code": 0,
+    "elapsed_seconds": 4.582,
+    "source_head": "bd696c35f8b838823fad7ccf2868582554f33559",
+    "stdout": "source-after.stdout",
+    "stderr": "source-after.stderr"
+  }
+]

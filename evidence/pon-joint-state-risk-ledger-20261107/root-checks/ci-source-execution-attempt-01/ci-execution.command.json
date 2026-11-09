@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "scripts/ci/test_ci_execution.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/8f0d1a7a75bb/chain_certificates",
+  "elapsed_seconds": 23.817802499001118,
+  "exit_code": 0,
+  "name": "ci-execution",
+  "started_at_utc": "2026-11-07T23:42:17.127745+00:00",
+  "streams": {
+    "stderr": {
+      "bytes": 12414,
+      "path": "ci-execution.stderr.log",
+      "sha256": "148d1f23a51f68411710e0443f7ea5b4e98b34011bee9a833e0bf9625670df25"
+    },
+    "stdout": {
+      "bytes": 484,
+      "path": "ci-execution.stdout.log",
+      "sha256": "78ce8bafde7878ef4bfc56922d0d2893f4193880e0ebc3cdd112b8ae43cb7cc8"
+    }
+  }
+}

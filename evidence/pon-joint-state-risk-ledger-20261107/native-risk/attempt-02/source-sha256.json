@@ -1,0 +1,15 @@
+{
+  "trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs": "55bc3bd73cd386c27186374ea578fb726e531d5b9b88cea0806cbded02b2ab86",
+  "trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs": "715495f6db25532e7b12a6a3dbf1973f6c1972cc844689c6ba48f5012add9395",
+  "trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs": "f0255574fcb54e8c5c2e2a255a7869289821c3a062d3df13eb0b594013de6007",
+  "trillionnium/crates/trnm-pon-node/examples/support/native_risk_scenario.rs": "b291ff343fb0d91151513a5007ff834c0999ebde9edb695546e3bfd68d5aaf2e",
+  "trillionnium/crates/trnm-pon-node/src/lib.rs": "110a36db8e7e2257b4e1c8e606911d69abfde36e172ef1d27801bf0f9ee8f80e",
+  "formal/pon-nakamoto-v1/native_risk_ledger.py": "0ad35c6756d04eeedeb1e12bb6b92f28d1cb6674ce1b6841e8af0d463e211007",
+  "formal/pon-nakamoto-v1/test_native_risk_ledger.py": "6526f3a1c30ee8912d4a8ed7ceeee120b702cdaca6b99db2775c17ddfdbf2a2d",
+  "formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md": "2215ca3ba62b8c279a6b07928e74ff3af70920df8a9f8c5daa4f1d63d85f2a55",
+  "trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs": "ae0f83bbc9c5d76b7ded11272ca31b403b65a68b0a8930eb8ee5a3070f1de5be",
+  "formal/pon-nakamoto-v1/native_owner_journal.py": "9a8a3eae2615d4c84194d58578897849ac3f0714408a98184a18365dabe34338",
+  "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+  "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+  "trillionnium/crates/trnm-pon-node/Cargo.toml": "98f1a0ee417eb117c7a5a425de49160b21c4a147a756db0a0fa815ec9dbdeb7b"
+}

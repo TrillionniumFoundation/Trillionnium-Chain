@@ -1,0 +1,285 @@
+Independent review: MU1 ideal terminal-oracle query tail
+Reviewer: code_audit agent, 2026-11-07
+
+RESULT
+
+The proposed recording-basis argument and both rational upper envelopes are
+valid under the explicit fresh ideal-oracle game below. In particular, the
+selected-coordinate projection has the factor sqrt(C(k,i)); the global-tail
+recurrence has cross-layer factor 2 sqrt(p(1-p)), with no additional dimension
+factor. The saturated Cauchy envelope implemented in mandatory_units_query.py
+is a valid, sometimes substantially smaller, consequence of the same proof.
+
+This is an independently checked conditional query theorem. It is not a lower
+bound on all algorithms for W1, a physical-resource certificate, a reduction
+for actual SHA-256, or a native confirmation probability. The flags marking
+those claims false are necessary. Passing a QueryBudget object validates the
+arithmetic input contract; it does not establish that a real execution paid
+the declared preprocessing, public-help, or residual-state costs.
+
+Reviewed checkout base: 2789e9d9999920d858c1b65d3bff29122079cb4e.
+Reviewed working files (SHA-256 at review):
+  formal/pon-nakamoto-v1/mandatory_units_relation.py
+    329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834
+  formal/pon-nakamoto-v1/mandatory_units_query.py
+    8127186bf3355ab749d753494caeeb14adbb875e13c7edf629df213f04e4ce0e
+  formal/pon-nakamoto-v1/MANDATORY_UNITS_RELATION_V1.md
+    29bfa2d9aa76931d7dd01f10a44912ccb2699e46c0eca01822886efb7861bc97
+These are uncommitted research additions at review time, not changes to the
+native admission, activation, header, or confirmation rules. Repository
+preflight passed before writing this review.
+
+1. REQUIRED GAME AND INFORMATION CONDITIONS
+
+Let D be a finite terminal-input domain and f:D->{0,1} have independent
+Bernoulli(p) entries. At the beginning of the entire charged computation,
+the algorithm's joint initial classical/quantum state and advice are
+independent of f. Arbitrary computational power and arbitrary f-independent
+advice are allowed. Independent side-oracle tables may also be given for free.
+All oracle-free operations act on the algorithm and its auxiliary registers,
+not directly on the inaccessible f table.
+
+The query budget covers the complete computation from this independent
+initial state, including preprocessing, retained quantum states, batching,
+selection, and all external/helper queries whose results become information
+for the algorithm. Treating all such participants as one joint algorithm
+requires no independence between their later states or their outputs. It
+does require the sum of their relevant oracle queries to be charged. A
+concurrent batch can be serialized for this total-query bound; this does not
+turn total queries into a wall-clock or circuit-depth bound.
+
+An adversary may output at most M complete candidate packets, adaptively or
+at the end. Adaptive measurements can be purified/deferred and the transcript
+retained. Any oracle-dependent acceptance feedback used during production
+must be represented by charged oracle calls in the joint algorithm, or by an
+explicitly bounded verification-query subroutine included in N. The M final
+virtual checks are not a license for unlimited uncharged online feedback.
+
+Counterexamples if conditions are dropped:
+  * Initial advice listing k winning addresses gives success probability one
+    with zero online queries. Charging only the online interval is unsound.
+  * Free published/helper winners give the same problem.
+  * An unbounded output list can enumerate D without querying it; M cannot be
+    omitted from a bound on finding some successful output subset.
+  * Repeating one winning address k times does not constitute k distinct wins.
+  * Conditioning on a favorable history or restarting at confirmation does
+    not restore a fresh independent oracle state.
+
+2. GLOBAL RECORD-WEIGHT RECURRENCE
+
+Purify the random f table. On each table coordinate use the real self-inverse
+unitary
+
+  U = [[sqrt(1-p), sqrt(p)], [sqrt(p), -sqrt(1-p)]].
+
+U|0> is the Bernoulli purification. In the dual basis the initial table is
+all zero. Change a Boolean bit-query's answer qubit to the Fourier basis.
+For answer-frequency zero it is identity; for frequency one, the query on
+the addressed table coordinate becomes
+
+  U Z U = [[1-2p, c], [c, 2p-1]],   c = 2 sqrt(p(1-p)).
+
+Thus a query changes at most one table bit. Its block from global record
+weight i-1 to weights at least i has operator norm at most c. This remains
+true for a superposition of query addresses: the query is block diagonal in
+the address register, so the bound is a maximum, not a sum over addresses.
+
+Let P_ge_i project onto global dual-table weight at least i, and
+a[n,i] = ||P_ge_i phi_n||. Oracle-free operations commute with this projector.
+There is no transition from weights at most i-2 to weights at least i in
+one query. Splitting the input into weight >=i, weight i-1, and lower weight,
+then using the triangle inequality gives, for i>=1,
+
+  a[n+1,i] <= a[n,i] + c a[n,i-1].
+
+Starting with a[0,0]=1 and a[0,i]=0 for i>0, Pascal induction gives
+
+  a[N,i] <= min(1, C(N,i) c^i),
+
+with C(N,i)=0 for i>N. The final state has no support above global record
+weight N. These are norm bounds, not independent Bernoulli-trial assumptions.
+
+3. SELECTED-COORDINATE SUCCESS PROJECTOR
+
+Let X be the output register containing k mutually distinct addresses. Define
+Xi_i, controlled by X, as the projector onto exactly i ones among THESE k
+dual-table coordinates. This is not the projector onto exact global weight i.
+Because those addresses are distinct, Xi_i <= P_ge_i. Retain all output,
+workspace, and purification registers when taking norms; discarding coherent
+register labels as if they were scalars would not justify the bound.
+
+For each fixed distinct output tuple, the row of U^{tensor k} corresponding
+to all k standard-basis table bits being one has, on each weight-i basis
+vector, absolute amplitude p^((k-i)/2)(1-p)^(i/2). There are C(k,i) such
+orthogonal basis vectors. Consequently the restricted operator norm is
+
+  d_i = ||Pi_success U^{tensor D} Xi_i||
+      = sqrt(C(k,i)) p^((k-i)/2) (1-p)^(i/2).
+
+Unselected table coordinates undergo a unitary and do not change the norm.
+The output-controlled construction is a direct sum over distinct tuples,
+so it has the same norm. An output-controlled coordinate permutation also
+preserves global Hamming weight. There is no extra union over adaptively
+chosen addresses at this step.
+
+Partitioning by Xi_i and using the previous section yields
+
+  P_success <= (sum_{i=0}^{min(k,N)} d_i a[N,i])^2
+            <= p^k (sum_i sqrt(C(k,i)) C(N,i) [2(1-p)]^i)^2,
+
+always capped at one. The untruncated expression can equivalently include
+all i<=k with C(N,i)=0 above N.
+
+4. EXACT RATIONAL ENVELOPES
+
+Replacing sqrt(C(k,i)) by C(k,i) gives the implemented triangle_rational
+upper bound. It is conservative and can be vacuous.
+
+Alternatively let
+  r_i = min(1, C(N,i)^2 [4p(1-p)]^i).
+For nonnegative summands, (sum_{i=0}^k t_i)^2 <= (k+1) sum_i t_i^2.
+Apply this with t_i=d_i a[N,i] to get
+
+  P_success <= min(1,
+      (k+1) sum_{i=0}^{min(k,N)}
+          C(k,i) p^(k-i) (1-p)^i r_i).
+
+This is the implemented cauchy_saturated expression. The use of k+1 rather
+than min(k,N)+1 is harmlessly conservative. The pointwise minimum of these
+two proved upper bounds is still an upper bound. No independence premise is
+introduced by either Cauchy--Schwarz or taking their minimum.
+
+The checked numerical example p=1/16, Q=1, M=32, k=32 has N=34 and
+triangle_rational=1, cauchy_saturated approximately 0.06575603822076288.
+This is only a finite ideal-model arithmetic example. It is not an attack
+measurement or a native rollback probability.
+
+5. FULL-VALUE RANDOM ORACLE REDUCTION DIRECTION
+
+Let S1 be the 256-bit interval at or below T0 and S0 its complement. Here
+|S1|/2^256=p=1/16. Independently sample stable tables g1(x) uniformly in S1
+and g0(x) uniformly in S0, independently of f. Define H(x)=g_{f(x)}(x).
+The resulting H is exactly an independent uniform 256-bit random function,
+and its marked-bit predicate is exactly f. It is not correct to sample
+independent full H and independent f while still identifying f with its
+threshold predicate.
+
+An H XOR query is simulated coherently by computing f(x) into a clean bit,
+XORing the independently provided conditional table g_{f(x)}(x) into the
+answer, and uncomputing that bit. It uses at most two f queries. Granting the
+independent tables for free only strengthens the Bernoulli-game adversary.
+Thus every Q-query full-value algorithm is simulated by a <=2Q-query Boolean
+algorithm; a Boolean upper bound therefore bounds the original algorithm.
+
+Domain-separated nonterminal random-oracle tables may be granted for free if
+they are independent of the terminal table in the stated idealization. Count
+arbitrary cross-domain full-oracle queries conservatively, or define the
+terminal-oracle interface explicitly. No claim follows for a fixed concrete
+hash function from this simulation alone.
+
+6. OUTPUT EXTRACTION AND MU1 CREDIT
+
+After producing a transcript of at most M candidate packets, use at most M
+additional Boolean queries to check their terminal inputs. Select k distinct
+marked inputs when they exist, in a fixed deterministic order; otherwise
+return a failure flag. That produces a valid k-address search algorithm with
+N=2Q+M. Its success event contains the original event of at least k distinct
+successful credited identities. A failure-flag output can be treated by a
+success projector that kills it. Hence no uncharged post-hoc subset selection
+or missing union factor is needed. If k>M, the event is impossible.
+
+In the reviewed MU1 code, b"identity" and b"ticket" are fixed domain tags,
+and both hash the same (context_digest, ordered_root) pair. Therefore two
+different credit identities necessarily have different terminal-input pairs:
+identical pairs deterministically produce identical identity values. This
+implication does not require injectivity or collision resistance. Miner,
+nonce, u, tasks, and the other bindings occur in the context. A variable
+identity outside the terminal input would have invalidated this step, but
+that is not how this code is written.
+
+UniqueWorkCounter deduplicates those identities across all supplied branches.
+Every unique identity has credit at most 16*8=128. Thus total UNIQUE observed
+credit >= x requires k=ceil(x/128) distinct winning terminal inputs. The
+claim applies to that all-branch unique accounting, not to arbitrary repeated
+deliveries or a changed consensus rule that might credit the same work again.
+Deduplication is in-memory research accounting, not a native consensus rule.
+
+7. WHAT REMAINS UNPROVED
+
+Making the complete W1-unit relation free gives a stronger adversary. This
+legitimately covers any unit-selection, product-cache, batching, or reuse
+strategy inside the ideal query game, but removes precisely the u-dependent
+cost that the physical obligation needs. Maximum credit 128 is being used;
+there is no proved minimum gate cost proportional to u, no circuit lower
+bound for the complete native relation, and no measured-machine-to-query
+conversion in this theorem.
+
+It also does not supply a conditional per-interval law after an arbitrary
+history, a ready-stock bound, a propagation law, a native view-completeness
+certificate, or a six-successor risk bound. Such claims require their own
+bridges. Combining valid event inclusions and unconditional upper bounds
+does not require independence, but moving this fresh-game law through an
+unproved conditioning or budget reset is not a valid composition.
+
+In particular, this query bound counts MU1 credit 16u. The existing native
+chainwork and six-successor rule count required_work(target). These are not
+interchangeable variables merely because both are called A or weight. An
+unactivated MU1 relation cannot yet supply the native work-tail premise.
+Likewise, an unconditional fresh-epoch bound does not automatically become
+the risk conditional on a particular observed confirmation. A fixed-epoch
+total-output bound can dominate new output at a later cut by event inclusion,
+but a claimed conditional checkpoint bound needs an additional justified
+state/conditioning argument.
+
+8. RESIDUAL-STATE INTERFACE: IMPLEMENTED ARITHMETIC, NOT A STATE CERTIFICATE
+
+The same recurrence can start from certified initial global record tails
+a[0,i], instead of zeros. It gives the conservative convolution
+
+  a[N,i] <= min(1, sum_{j=0}^{min(N,i)} C(N,j) c^j a[0,i-j]).
+
+The final implementation residual_bernoulli_bound now propagates externally
+supplied rational squared-norm bounds b_i. For each i, let J_i contain the
+j<=min(N,i) for which b_(i-j)>0. Cauchy--Schwarz gives the valid upper bound
+
+  b_hat[N,i] = min(1, |J_i| sum_{j in J_i}
+                           C(N,j)^2 [4p(1-p)]^j b_(i-j)).
+
+Empty J_i gives zero. A second Cauchy inequality gives
+
+  P_success <= min(1, (k+1) sum_{i=0}^k d_i^2 b_hat[N,i]).
+
+The code implements both formulas correctly. A fresh profile (1,0,...)
+recovers exactly the fresh saturated Cauchy branch, because each nonzero
+convolution contains one term. The unrestricted profile (1,1,...) returns
+one. A known standard-basis winner at k=1 has recording squared-tail profile
+(1,1-p), which correctly refuses a fresh-zero-record interpretation.
+
+Review found and corrected a documentation hazard: the residual derivation
+must use the UNTRUNCATED selected-coordinate sum i=0,...,k. The fresh formula's
+upper limit min(k,N) came from zero initial record weight and is invalid for
+a correlated initial state. The implementation and its final formula already
+used all k+1 layers. The final reviewed Markdown explicitly corrects the
+reference to the fresh truncated formula and explains the zero-new-query
+known-winner counterexample. No implementation change was required for this
+review correction.
+
+The missing scientific step is a justified bound on the actual joint initial
+record tails, including f-correlated advice and retained helper information.
+The tuple shape checks, a reduced private density matrix, and a budget flag
+do not supply that bound. The new arithmetic function explicitly reports its
+input certificate unproved and actual W1 residual state uncertified. The
+fresh-game QueryBudget still rejects correlated initial states. This review
+approves the conditional propagation calculation, not an actual state claim.
+
+LITERATURE HANDLING
+
+The original published PDF was consulted directly:
+https://quantum-journal.org/papers/q-2023-03-09-944/pdf/
+(Quantum Multi-Solution Bernoulli Search with Applications to Bitcoin's
+Post-Quantum Security, 2023). This review derives its constants above and
+does not rely on that paper's displayed final constants. No claim that the
+paper is incorrect is made here; PDF text extraction or HTML rendering is
+not by itself an adequate basis for a publication-error assertion.
+
+END OF REVIEW

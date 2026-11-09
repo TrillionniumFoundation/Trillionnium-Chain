@@ -1,0 +1,118 @@
+[
+  {
+    "name": "final-repository",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/check_repository.py"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 398.27195123489946,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0"
+  },
+  {
+    "name": "final-corpus",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 2.9656004749704152,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0"
+  },
+  {
+    "name": "final-corpus-negative",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/test_pq_research_integration.py"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 88.56365905003622,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0"
+  },
+  {
+    "name": "final-source-integrity-negative",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/test_ci_source_integrity.py"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 15.641128110932186,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0"
+  },
+  {
+    "name": "final-ci-execution-negative",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/test_ci_execution.py"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 32.02502525784075,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0"
+  },
+  {
+    "name": "final-ci-contract-negative",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/test_ci_contract.py"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 211.08234833693132,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0"
+  },
+  {
+    "name": "final-arithmetic",
+    "command": [
+      "python3",
+      "-B",
+      "formal/pon-nakamoto-v1/test_joint_consensus_boundaries.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 0.49337286385707557,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0"
+  },
+  {
+    "name": "final-inventory",
+    "command": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 0.10040353913791478,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0"
+  },
+  {
+    "name": "final-format",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 19.351072478108108,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0"
+  },
+  {
+    "name": "final-whitespace",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 0.015018519945442677,
+    "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0"
+  }
+]

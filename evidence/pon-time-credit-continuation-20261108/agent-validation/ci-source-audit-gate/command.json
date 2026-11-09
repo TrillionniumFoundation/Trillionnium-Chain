@@ -1,0 +1,10 @@
+{
+  "job_id": "1a1be2e1163-138b0-903",
+  "execution_program": "/usr/bin/python3",
+  "arguments": [
+    "-c",
+    "import hashlib,json,subprocess,sys,os\nfrom pathlib import Path\nsys.dont_write_bytecode=True\nchanges=json.load(sys.stdin)\nenv=dict(os.environ);env[\"PYTHONDONTWRITEBYTECODE\"]=\"1\"\np=subprocess.run([\"bash\",\"scripts/project-preflight.sh\"],text=True,capture_output=True,env=env)\nprint(json.dumps({\"step\":\"preflight\",\"exit_code\":p.returncode,\"stdout\":p.stdout,\"stderr\":p.stderr}),flush=True)\nif p.returncode:raise SystemExit(p.returncode)\nready=[]\nfor row in changes:\n path=Path(row[\"path\"]);raw=path.read_bytes()\n blob=hashlib.sha1(b\"blob \"+str(len(raw)).encode()+b\"\\0\"+raw,usedforsecurity=False).hexdigest()\n if blob!=row[\"blob\"]:raise RuntimeError(\"file changed after review: \"+row[\"path\"])\n old=row[\"old\"].encode();new=row[\"new\"].encode()\n if raw.count(old)!=1:raise RuntimeError(\"ambiguous insertion\")\n ready.append((row,path,raw.replace(old,new,1)))\nfor row,path,new in ready:\n path.write_bytes(new)\n print(json.dumps({\"step\":\"quantum-source-required-gate\",\"path\":row[\"path\"],\"sha256\":hashlib.sha256(new).hexdigest(),\"blob\":hashlib.sha1(b\"blob \"+str(len(new)).encode()+b\"\\0\"+new,usedforsecurity=False).hexdigest()}),flush=True)\ncommands=[\n [\"python3\",\"scripts/ci/check_ci_contract.py\"],\n [\"python3\",\"scripts/ci/test_ci_contract.py\",\"EvaluationQuorumLaneTests.test_quantum_source_audit_cannot_be_removed_skipped_or_swallowed\",\"EvaluationQuorumLaneTests.test_joint_consensus_arithmetic_controls_cannot_be_removed_skipped_or_swallowed\",\"EvaluationQuorumLaneTests.test_actual_lane_preserves_quorum_reference_and_retained_vector_checks\",\"-v\"]]\nexit_code=0\nfor command in commands:\n p=subprocess.run(command,text=True,capture_output=True,env=env)\n print(json.dumps({\"command\":command,\"exit_code\":p.returncode,\"stdout\":p.stdout,\"stderr\":p.stderr}),flush=True)\n exit_code=exit_code or p.returncode\nraise SystemExit(exit_code)\n"
+  ],
+  "cwd": "/home/qian-qi/work/chain-time-credit-20261108-qf01",
+  "idempotency_key": null
+}

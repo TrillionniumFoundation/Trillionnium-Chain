@@ -1,0 +1,47 @@
+{
+  "graphs": [
+    {
+      "manifest": "trillionnium/Cargo.toml",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--all-features",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "exit": 0,
+      "lock_sha256_before": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+      "lock_sha256_after": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+      "packages": 180,
+      "workspace_members": 26,
+      "resolved_nodes": 180
+    },
+    {
+      "manifest": "tests/fuzz/Cargo.toml",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--all-features",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml"
+      ],
+      "exit": 0,
+      "lock_sha256_before": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1",
+      "lock_sha256_after": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1",
+      "packages": 147,
+      "workspace_members": 1,
+      "resolved_nodes": 147
+    }
+  ],
+  "all_passed": true
+}

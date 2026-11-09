@@ -1,0 +1,15 @@
+{
+  "status": "PUSHED_AND_EXACT_REMOTE_SHA_VERIFIED",
+  "head": "b66e66d2465258d808c0f56ff851123306d4bdb4",
+  "tree": "11eee4a56ccab63394102a19204ab3922021d87c",
+  "branch": "fix/chain-pon-joint-state-risk-ledger-20261107",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "github_readback_head": "b66e66d2465258d808c0f56ff851123306d4bdb4",
+  "core_gates_passed": true,
+  "same_head_full_tree_repository_gate_passed": true,
+  "same_head_tracked_markdown_gate_passed": true,
+  "source_modified": false,
+  "standalone_example_reexecuted_in_this_gate": false,
+  "remote_core_job": "1a1b87382c1-12894-f7f",
+  "read_control_failure": "One process_read request returned a transport tool-call error; the same job terminal status subsequently confirmed success. No command was replayed."
+}

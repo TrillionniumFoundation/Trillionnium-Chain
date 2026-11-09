@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+  "elapsed_seconds": 0.10887093399651349,
+  "exit_code": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "390eaae41b4cea9817edf58dae3def992730ea1e0af10cf6403a7fd9e47bd304"
+}

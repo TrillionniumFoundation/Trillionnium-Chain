@@ -1,0 +1,3 @@
+Local metadata-write attempt 01 failed before Python executed any statements.
+SyntaxError: unterminated string literal (detected at line 10)
+Cause: a multiline preflight string was inserted into a single-quoted Python literal. The next attempt escaped newlines, succeeded, and retained the original preflight bytes. Downloaded archive bytes were not modified by this failed attempt.

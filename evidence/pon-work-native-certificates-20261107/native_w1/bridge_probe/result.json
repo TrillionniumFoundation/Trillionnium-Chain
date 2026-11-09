@@ -1,0 +1,550 @@
+{
+  "schema": "pon-native-w1-unit-bridge-probe-v1",
+  "source": {
+    "repository_head_observed": "2789e9d9999920d858c1b65d3bff29122079cb4e",
+    "files": [
+      {
+        "path": "trillionnium/Cargo.lock",
+        "sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+        "sha256": "3f06e812783fc7fa5037ecfb4550a58edea0ef68675b4062115e4b06088d6b24"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs",
+        "sha256": "2377bbb748a67fb238c2d113799adce472e905465b5ac46372597ff7ab4dd0b3"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs",
+        "sha256": "344f09d0a7112ac4c507d262b9b11391b892df74c24c06b67253b3272fa185cf"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/work_oracle.py",
+        "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/contract_wire.py",
+        "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/native_w1_units_probe/probe.py",
+        "sha256": "f19ad7769ae98dff3ce9d4a4af5549be5615666a1d2d7b163c88ec226146c1a7"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs",
+        "sha256": "b6f453410f588391b8a05427299f7e7c3b10d1972d2057620146cde5ca28fbb9"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs",
+        "sha256": "d8e2d55c858925a749c97ea39d1c8935ef7767ae01436189d0e2fb587076e8c5"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs",
+        "sha256": "1e53a6aa598d0fcb23866253f5c89add025cdd0654d6e82570a761a2d253f7a5"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/full_limb_controls.rs",
+        "sha256": "b418bcbac9261335b0296f46fed8644f2cdc11d3df368bee9b39f7909a357905"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs",
+        "sha256": "f93b72aa1b5dec2b991de6586214f274a7797f8a347d0444125101f0e52cee2f"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs",
+        "sha256": "fd99053e94bb38b929b848898f4f2ad9f7d3ce33d48097e444337f6ed1d82919"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs",
+        "sha256": "214552a72056e7b0a87e90f0e094cb2668a54de18bcf82e3eddc1896ab0b0031"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs",
+        "sha256": "be1b375808d0923e3f938f1c4d23475a16bfe43bf665cb464d79d1dc9ef85f8f"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs",
+        "sha256": "0c9c4ddb772292efd0cf92dc174e8b2353b1e0f16f36df484a5e16b280316a0f"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs",
+        "sha256": "d3e10fd0b3f2ab50fbf95778bd38353a1c9da38f44cf6f558d309661f47606a2"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs",
+        "sha256": "010410761dc0a71e03f32f43e82b09f808ee69cab860f5a708081ae661f6396e"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs",
+        "sha256": "fae34d70af6ac6fc61fb0e2e6f022df1548a333aaacd91eb83597e0174f41101"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs",
+        "sha256": "e029837d050952046c9c4fa694a8191470a8733cd96a3dc81e98cc46af59a0a3"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt/low_rank.rs",
+        "sha256": "b167b51b07a6fbf186a1485c1f742de3df1007cb9794c364c7421d77e0afacb4"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs",
+        "sha256": "4dcb3b9280005cd022cb99c30752525406463d963419608b1532a7092198891d"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs",
+        "sha256": "5fd27cac9ddad5c87a4623f25d2a97f488d16d8542d9402f59f621db33dfb9ac"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs",
+        "sha256": "a88ab5bccbc7085fd0c4823e574a6dfe48b18c9d5d70493b817b97cf0a106899"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs",
+        "sha256": "3facd5578e8f57b88722e2c3c9c7a19b3d6c3427f9dad22648a13254656a9bab"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+        "sha256": "93d708c2eac3684af0a397e6b51de452c4857048c23c26ced8d0601b8819fcea"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs",
+        "sha256": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c"
+      }
+    ]
+  },
+  "binaries": {
+    "pon_work_io": {
+      "sha256": "41222016523672bd32670358f693476560f8641c03f6c738c7a75a2f0f0c7437",
+      "bytes": 554832
+    },
+    "pon_zero_io": {
+      "sha256": "368293c7cf20a3c1b9a50d39be0b1bdb84bb80b44331968c76323599fd698749",
+      "bytes": 583304
+    }
+  },
+  "inner_target_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "unit_sets": [
+    {
+      "units": 1,
+      "task_id_hex": "7157c6b71b4fcf12704c7fefdcd0fda57f5174d8e2ed426e51e9f6ee3d1c5683",
+      "witnesses": [
+        {
+          "index": 0,
+          "challenge_hex": "2311d8a5ab8f9196a47177b5ca3c3bdf96a4cef6b9f52eb8b8a39179e4cc0cee",
+          "proof_sha256": "06fcc4ec09f01144fccb38fefefeb1dbc221caa779b61f0a2b5cb92ba3ba6438",
+          "trace_hex": "c375c6fa67d37c8f244cf9e96ca6750a1feaf9561039df6d822eab00582405d1",
+          "proof_bytes": 49188,
+          "native_full_verification_receipt_hex": "3c65998e8ca471244b259f663f166761d79d34b2ab60bf64e781da56e3b18b11"
+        }
+      ]
+    },
+    {
+      "units": 2,
+      "task_id_hex": "7157c6b71b4fcf12704c7fefdcd0fda57f5174d8e2ed426e51e9f6ee3d1c5683",
+      "witnesses": [
+        {
+          "index": 0,
+          "challenge_hex": "0af14a96d911a2503ca879a64f97e9c26acc2f4106c53b9de0de9e11c979e1a3",
+          "proof_sha256": "a52769acc61725dc3bc060a0aaf7760a9f6419a6300e6289722c4a02bdd1d309",
+          "trace_hex": "883ce77dc7be9fc137e83658a41c00cb4bac0b0877eefecfdf5838a533711343",
+          "proof_bytes": 49188,
+          "native_full_verification_receipt_hex": "cec7263189eb9058052f8a69cb96243d0876f93c08c725acf3988f054e5932e4"
+        },
+        {
+          "index": 1,
+          "challenge_hex": "6d08cba6c2ac1d7294684ea3d18890359e29d986e3bf2e4b157c6a40b9663f3f",
+          "proof_sha256": "0eeb5f4bacedd7c12b7fd92b352b880718a41e0cdf4f294290fecd9a5b3c77d9",
+          "trace_hex": "21f3884f94aa45492308e491fb56bc2ee2cb8021964b02c488e499929e9dc427",
+          "proof_bytes": 49188,
+          "native_full_verification_receipt_hex": "f5bfd771fefac38a3193b8ef79635a2aeb533a441425e21c7864c44d74653e15"
+        }
+      ]
+    }
+  ],
+  "controls": [
+    {
+      "name": "correct-product-false-trace",
+      "native_rejected": true,
+      "independent_cheap_filter_passed": true
+    },
+    {
+      "name": "correct-trace-false-product",
+      "native_rejected": true,
+      "independent_cheap_filter_passed": true
+    },
+    {
+      "name": "wrong-task",
+      "native_rejected": true,
+      "independent_cheap_filter_passed": null
+    },
+    {
+      "name": "duplicate-unit-at-new-index",
+      "native_rejected": true,
+      "independent_cheap_filter_passed": null
+    },
+    {
+      "name": "reordered-unit-at-index-zero",
+      "native_rejected": true,
+      "independent_cheap_filter_passed": null
+    },
+    {
+      "name": "cross-unit-count-transplant",
+      "native_rejected": true,
+      "independent_cheap_filter_passed": null
+    },
+    {
+      "name": "truncated-proof",
+      "native_rejected": true,
+      "independent_cheap_filter_passed": null
+    },
+    {
+      "name": "trailing-proof-bytes",
+      "native_rejected": true,
+      "independent_cheap_filter_passed": null
+    },
+    {
+      "name": "legal-structured-producer-same-full-proof",
+      "same_complete_proof": true,
+      "native_full_verification_passed": true,
+      "cheapest_cost_claim": false
+    },
+    {
+      "name": "zero-only-refuses-nonzero",
+      "unsupported_is_not_silently_replaced": true
+    }
+  ],
+  "scope": {
+    "complete_native_w1_producer_executed": true,
+    "complete_native_w1_verifier_executed": true,
+    "independent_python_proof_bytes_compared": true,
+    "mu1_outer_context_and_aggregate_lottery_checked": false,
+    "native_chain_admission_executed": false,
+    "minimum_classical_or_quantum_cost_proved": false,
+    "strategy_uniform_resource_tail_proved": false,
+    "consensus_or_six_confirmation_risk_qualified": false,
+    "production_activation": false
+  },
+  "calls": [
+    {
+      "name": "u1-unit0-scalar",
+      "binary": "pon_work_io",
+      "mode": "prove",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns_observed_including_process_start": 2189985,
+      "input_bytes": 32800,
+      "input_sha256": "a62dde56918d9306d56a62dcfc6b790286049113cf9b1a611ce4ba4b881566c4",
+      "stdout_bytes": 49188,
+      "stdout_sha256": "06fcc4ec09f01144fccb38fefefeb1dbc221caa779b61f0a2b5cb92ba3ba6438",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error": null,
+      "pass": true
+    },
+    {
+      "name": "u1-unit0-prepared",
+      "binary": "pon_zero_io",
+      "mode": "generic",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns_observed_including_process_start": 1994688,
+      "input_bytes": 32800,
+      "input_sha256": "a62dde56918d9306d56a62dcfc6b790286049113cf9b1a611ce4ba4b881566c4",
+      "stdout_bytes": 49188,
+      "stdout_sha256": "06fcc4ec09f01144fccb38fefefeb1dbc221caa779b61f0a2b5cb92ba3ba6438",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error": null,
+      "pass": true
+    },
+    {
+      "name": "u1-unit0-verify",
+      "binary": "pon_work_io",
+      "mode": "verify",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns_observed_including_process_start": 2798561,
+      "input_bytes": 49284,
+      "input_sha256": "f60d1ff3913119b469e4fc3758c02b9a5bbf70d78dd9b4cd3b436c09dd166a36",
+      "stdout_bytes": 32,
+      "stdout_sha256": "bfe1372204e890881a51fda30232bf9a8fdc9c0278086ac58ca6e2aeb8c1e47a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error": null,
+      "pass": true
+    },
+    {
+      "name": "u2-unit0-scalar",
+      "binary": "pon_work_io",
+      "mode": "prove",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns_observed_including_process_start": 2036309,
+      "input_bytes": 32800,
+      "input_sha256": "89cb724236043fc1b60a644a525184f6cbb031687a5ea62404ce05783097c64b",
+      "stdout_bytes": 49188,
+      "stdout_sha256": "a52769acc61725dc3bc060a0aaf7760a9f6419a6300e6289722c4a02bdd1d309",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error": null,
+      "pass": true
+    },
+    {
+      "name": "u2-unit0-prepared",
+      "binary": "pon_zero_io",
+      "mode": "generic",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns_observed_including_process_start": 2555695,
+      "input_bytes": 32800,
+      "input_sha256": "89cb724236043fc1b60a644a525184f6cbb031687a5ea62404ce05783097c64b",
+      "stdout_bytes": 49188,
+      "stdout_sha256": "a52769acc61725dc3bc060a0aaf7760a9f6419a6300e6289722c4a02bdd1d309",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error": null,
+      "pass": true
+    },
+    {
+      "name": "u2-unit0-verify",
+      "binary": "pon_work_io",
+      "mode": "verify",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns_observed_including_process_start": 2295711,
+      "input_bytes": 49284,
+      "input_sha256": "eb4ef75b4eebcf8e2bdca7ce65c65fbd30087bd748756c9ba41d6e7fb9e7b7b7",
+      "stdout_bytes": 32,
+      "stdout_sha256": "d25e9a0ae19f961547bbb45b77e4dae329040cd7612706461e534848692b9de1",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error": null,
+      "pass": true
+    },
+    {
+      "name": "u2-unit1-scalar",
+      "binary": "pon_work_io",
+      "mode": "prove",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns_observed_including_process_start": 2058191,
+      "input_bytes": 32800,
+      "input_sha256": "0bb726327cfa0fd3878c2192b9f1cb5f773e099b356f18979e43459b1d8b789c",
+      "stdout_bytes": 49188,
+      "stdout_sha256": "0eeb5f4bacedd7c12b7fd92b352b880718a41e0cdf4f294290fecd9a5b3c77d9",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error": null,
+      "pass": true
+    },
+    {
+      "name": "u2-unit1-prepared",
+      "binary": "pon_zero_io",
+      "mode": "generic",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns_observed_including_process_start": 2496336,
+      "input_bytes": 32800,
+      "input_sha256": "0bb726327cfa0fd3878c2192b9f1cb5f773e099b356f18979e43459b1d8b789c",
+      "stdout_bytes": 49188,
+      "stdout_sha256": "0eeb5f4bacedd7c12b7fd92b352b880718a41e0cdf4f294290fecd9a5b3c77d9",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error": null,
+      "pass": true
+    },
+    {
+      "name": "u2-unit1-verify",
+      "binary": "pon_work_io",
+      "mode": "verify",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns_observed_including_process_start": 2294590,
+      "input_bytes": 49284,
+      "input_sha256": "cf0f6b5a283ffcabfdad373c4a95c5a65b4b469967df8dbe78d619c84f493ce6",
+      "stdout_bytes": 32,
+      "stdout_sha256": "25511246240f20e37e99fac22157fd801e8ba866c7f15fa5eec7e5309f17b13e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error": null,
+      "pass": true
+    },
+    {
+      "name": "correct-product-false-trace",
+      "binary": "pon_work_io",
+      "mode": "verify",
+      "exit_code": 2,
+      "expected_exit": 2,
+      "wall_ns_observed_including_process_start": 1991754,
+      "input_bytes": 49284,
+      "input_sha256": "ff61648f52ca33667380adacc702f79aca73398a8caee2b2467d8a2adb2b9379",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "303693f3281d7d3715c55a6b76f00ffcedbb46302e7f103136135da8de55a42e",
+      "expected_error": "WORK",
+      "pass": true
+    },
+    {
+      "name": "correct-trace-false-product",
+      "binary": "pon_work_io",
+      "mode": "verify",
+      "exit_code": 2,
+      "expected_exit": 2,
+      "wall_ns_observed_including_process_start": 1939136,
+      "input_bytes": 49284,
+      "input_sha256": "aedf7eefd7a026b7c764552f185bb5bd50e194f3af0411ac638ac9bdb7d310fc",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "303693f3281d7d3715c55a6b76f00ffcedbb46302e7f103136135da8de55a42e",
+      "expected_error": "WORK",
+      "pass": true
+    },
+    {
+      "name": "wrong-task",
+      "binary": "pon_work_io",
+      "mode": "verify",
+      "exit_code": 2,
+      "expected_exit": 2,
+      "wall_ns_observed_including_process_start": 1267086,
+      "input_bytes": 49284,
+      "input_sha256": "09a7fa73c0cfb140fcd2f8764dcbc000a3928705bff96a0c78a4ce4772f44b09",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "303693f3281d7d3715c55a6b76f00ffcedbb46302e7f103136135da8de55a42e",
+      "expected_error": "WORK",
+      "pass": true
+    },
+    {
+      "name": "duplicate-unit-at-new-index",
+      "binary": "pon_work_io",
+      "mode": "verify",
+      "exit_code": 2,
+      "expected_exit": 2,
+      "wall_ns_observed_including_process_start": 1753843,
+      "input_bytes": 49284,
+      "input_sha256": "19bc737727d34cfbe547f98c9806a965b9300b18059d92f488275e640c1d79b5",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "303693f3281d7d3715c55a6b76f00ffcedbb46302e7f103136135da8de55a42e",
+      "expected_error": "WORK",
+      "pass": true
+    },
+    {
+      "name": "reordered-unit-at-index-zero",
+      "binary": "pon_work_io",
+      "mode": "verify",
+      "exit_code": 2,
+      "expected_exit": 2,
+      "wall_ns_observed_including_process_start": 1667607,
+      "input_bytes": 49284,
+      "input_sha256": "37c0593ec041542ec3f895fcf05b4b4aa5d18808c26983a14502cc6cbb7ce455",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "303693f3281d7d3715c55a6b76f00ffcedbb46302e7f103136135da8de55a42e",
+      "expected_error": "WORK",
+      "pass": true
+    },
+    {
+      "name": "cross-unit-count-transplant",
+      "binary": "pon_work_io",
+      "mode": "verify",
+      "exit_code": 2,
+      "expected_exit": 2,
+      "wall_ns_observed_including_process_start": 1891726,
+      "input_bytes": 49284,
+      "input_sha256": "371426e8d36c201ee66a171e84d260b62fd191b234971b2701ba593e21294f3d",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "303693f3281d7d3715c55a6b76f00ffcedbb46302e7f103136135da8de55a42e",
+      "expected_error": "WORK",
+      "pass": true
+    },
+    {
+      "name": "truncated-proof",
+      "binary": "pon_work_io",
+      "mode": "verify",
+      "exit_code": 2,
+      "expected_exit": 2,
+      "wall_ns_observed_including_process_start": 1563864,
+      "input_bytes": 49283,
+      "input_sha256": "a1d1044d0fb72746b392eab90f5f18ea951522abe95a0d349e18bb6b29484d55",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "25684244fd5ae17fa8c2e6df195e63e49e469d568aa8fdbc878e8d5acbfcc83a",
+      "expected_error": "LENGTH",
+      "pass": true
+    },
+    {
+      "name": "trailing-proof-bytes",
+      "binary": "pon_work_io",
+      "mode": "verify",
+      "exit_code": 2,
+      "expected_exit": 2,
+      "wall_ns_observed_including_process_start": 1147330,
+      "input_bytes": 49285,
+      "input_sha256": "9ab66ea237ad7e6220e2993e031b6069c0059a5bb93f1c2a918dc27980bd08a0",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "25684244fd5ae17fa8c2e6df195e63e49e469d568aa8fdbc878e8d5acbfcc83a",
+      "expected_error": "LENGTH",
+      "pass": true
+    },
+    {
+      "name": "zero-generic",
+      "binary": "pon_zero_io",
+      "mode": "generic",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns_observed_including_process_start": 2344023,
+      "input_bytes": 32800,
+      "input_sha256": "1aa91b22dcc62d3d6aa61155fe0437daa844b489e5fbb8aea2f9f3f620b0355e",
+      "stdout_bytes": 49188,
+      "stdout_sha256": "018903555d9376d384f64bf2f81f592b9c3947750e581166ef2517e79a088c21",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error": null,
+      "pass": true
+    },
+    {
+      "name": "zero-blocked",
+      "binary": "pon_zero_io",
+      "mode": "blocked-zero",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns_observed_including_process_start": 1683970,
+      "input_bytes": 32800,
+      "input_sha256": "1aa91b22dcc62d3d6aa61155fe0437daa844b489e5fbb8aea2f9f3f620b0355e",
+      "stdout_bytes": 49188,
+      "stdout_sha256": "018903555d9376d384f64bf2f81f592b9c3947750e581166ef2517e79a088c21",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error": null,
+      "pass": true
+    },
+    {
+      "name": "zero-complete-verify",
+      "binary": "pon_work_io",
+      "mode": "verify",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "wall_ns_observed_including_process_start": 2713527,
+      "input_bytes": 49284,
+      "input_sha256": "dc59801c8826c1df9c592e311cafb77c6a0baafe83656770b90decfaf440c101",
+      "stdout_bytes": 32,
+      "stdout_sha256": "e44f68fe84225d99bd1c179b7c9f88cfe9d390cc3fd1fe7364de6a19dc5094e1",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_error": null,
+      "pass": true
+    },
+    {
+      "name": "zero-only-refuses-nonzero",
+      "binary": "pon_zero_io",
+      "mode": "blocked-zero",
+      "exit_code": 2,
+      "expected_exit": 2,
+      "wall_ns_observed_including_process_start": 1442624,
+      "input_bytes": 32800,
+      "input_sha256": "89cb724236043fc1b60a644a525184f6cbb031687a5ea62404ce05783097c64b",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "fb78c2b20ac0c2fb3f498587b5ba2ddd8705ebd145e29b0b5634e473e44170e8",
+      "expected_error": "UNSUPPORTED",
+      "pass": true
+    }
+  ],
+  "pass": true
+}

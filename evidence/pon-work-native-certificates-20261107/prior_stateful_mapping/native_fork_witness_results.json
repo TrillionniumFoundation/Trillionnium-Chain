@@ -1,0 +1,71 @@
+{
+  "schema": "pon-native-fork-algebra-v1",
+  "scope": "Independent exact finite additive-score model; conditional algebra only",
+  "exhaustive": {
+    "enumerated_trees": 6564,
+    "ordered_branch_pairs": 160048,
+    "confirmed_strict_removal_witnesses": 86516,
+    "max_original_non_genesis_blocks": 4,
+    "weights": [
+      1,
+      2
+    ],
+    "producer_labels": [
+      "A",
+      "H"
+    ],
+    "probability_calibration": false,
+    "native_validation_test": false
+  },
+  "all_honest_bounded_delay_counterexample": {
+    "model_only": true,
+    "delay_limit": 20,
+    "reveal_time": 17,
+    "all_producers_honest": true,
+    "confirmation": {
+      "included": "a1",
+      "tip": "a7",
+      "present": true,
+      "depth": 6,
+      "work_delta": 6,
+      "threshold": 6,
+      "confirmed": true,
+      "finalized": false,
+      "native_probability_bound": null
+    },
+    "local_removal": {
+      "kind": "local_strict_first_removal_necessary_witness",
+      "included": "a1",
+      "confirmed_tip": "a7",
+      "incumbent": "a7",
+      "challenger": "b8",
+      "ancestor": "g",
+      "cutoff": 14,
+      "competing_suffix_ids": [
+        "b1",
+        "b2",
+        "b3",
+        "b4",
+        "b5",
+        "b6",
+        "b7",
+        "b8"
+      ],
+      "competing_suffix_weight": 8,
+      "incumbent_suffix_weight": 7,
+      "confirmation_cut_weight": 7,
+      "native_score_growth": 0,
+      "inclusion_weight": 1,
+      "six_successor_minimum_cut": 7,
+      "inventory_weight": 6,
+      "new_adversarial_weight": 0,
+      "new_honest_offbranch_weight": 2,
+      "required_new_adversarial_integer_weight": 0,
+      "probability_bound": null
+    },
+    "conclusion": "Attack-only tail events do not cover honest fork/propagation failures."
+  },
+  "native_common_prefix_proved": false,
+  "native_confirmation_risk_calibrated": false,
+  "actual_work_relation_lower_bound_proved": false
+}

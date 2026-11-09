@@ -1,0 +1,1 @@
+2026-11-07: command -v cargo returned exit 1 on the inherited PATH. No compile or test ran in that probe. An existing absolute Rust 1.95.0 toolchain and offline cargo cache were subsequently located.

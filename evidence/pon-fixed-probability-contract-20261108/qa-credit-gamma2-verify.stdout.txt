@@ -1,0 +1,10 @@
+{
+  "problem_sha256": "b6b6db96bd5f85db007d3ae76869edde9d655860f82b1059261147962c909c70",
+  "qualification": {
+    "domain": "finite_declared_envelopes",
+    "lifecycle_composition": "not_proved",
+    "lower_bound_claims": "unverified_declarations",
+    "native_consensus": "not_qualified"
+  },
+  "verification": "passed"
+}
