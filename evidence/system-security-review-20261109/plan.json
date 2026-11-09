@@ -1,0 +1,75 @@
+{
+  "build_load": {
+    "chain": {
+      "build_sha256": null,
+      "configuration_sha256": null,
+      "environment_sha256": null,
+      "interpreter_sha256": null,
+      "libraries_sha256": null,
+      "load_sha256": null
+    },
+    "hepta": {
+      "build_sha256": null,
+      "configuration_sha256": null,
+      "environment_sha256": null,
+      "interpreter_sha256": null,
+      "libraries_sha256": null,
+      "load_sha256": null,
+      "model_closure_sha256": null
+    }
+  },
+  "campaign_id": "system-security-audit-20261109-e2a02f9",
+  "cases": {
+    "account_transaction_service": [],
+    "build_load": [],
+    "content_commitment": [],
+    "cost_decomposition": [],
+    "current_revocation_load": [],
+    "dependency_closure": [],
+    "entry_to_effect": [],
+    "hostile_honest_confirmation": [],
+    "independent_crypto_implementation_review": [],
+    "independent_custody_wan": [],
+    "lifetime_composition": [],
+    "matched_confirmation_tail_latency": [],
+    "native_registry": [],
+    "no_update": [],
+    "quantum_work_daa_weight": [],
+    "recovery_effects": [],
+    "release_root_authority": [],
+    "renewal_repair_recovery": [],
+    "reorg": [],
+    "restart": [],
+    "revocation": [],
+    "rollback_external_effects": [],
+    "same_iteration": [
+      "historical-completion-readback"
+    ],
+    "source_locks": [],
+    "stark_fri_qrom": [],
+    "timestamp_daa_chainweight": [],
+    "unknown_timeout": [],
+    "w1_minimum_cost": []
+  },
+  "effect_intents": [],
+  "identity_observation_sha256": null,
+  "profile_sha256": "807037076b2e2c39d044e07ed2bac231b0862355fe623d7975167ae5d7cfa1da",
+  "schema": "trnm-chain-hepta-qualification-plan-v1",
+  "source_pair": {
+    "chain": {
+      "locks": {
+        "trillionnium/Cargo.lock": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c"
+      },
+      "sha": "e2a02f9271b49f146e70806c8a66e161b5973971",
+      "tree": "86d2014b560659106b3af6e6c19e1f82a290a60e"
+    },
+    "hepta": {
+      "locks": {
+        "MODULE.bazel.lock": null,
+        "codex-rs/Cargo.lock": null
+      },
+      "sha": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+      "tree": "c7588a07d20310059d4016559fa550d397b7eb09"
+    }
+  }
+}

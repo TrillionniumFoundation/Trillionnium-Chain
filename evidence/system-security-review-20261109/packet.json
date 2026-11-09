@@ -1,0 +1,42 @@
+{
+  "effects": [],
+  "identity_observation": null,
+  "learning": null,
+  "plan_sha256": "a4c34a0389320bdce8117124662c7d11ac3e29ee0bd511e3e27c02a329984553",
+  "records": [
+    {
+      "attempt": 1,
+      "build_load_sha256": null,
+      "bundle_sha256": null,
+      "campaign_id": "system-security-audit-20261109-e2a02f9",
+      "case_id": "historical-completion-readback",
+      "collector_exit": 0,
+      "counts": {
+        "failed": 0,
+        "filtered": 0,
+        "ignored": 0,
+        "passed": 0,
+        "unknown": 0
+      },
+      "effect_intent_sha256": null,
+      "effect_outcome": null,
+      "evidence": {
+        "path": "inputs/completion-readback.json",
+        "sha256": "916bce16c6293421ff70c6c79bbf5aa811a7e37dde030fe4b2d3e7cab1af3fae"
+      },
+      "id": "retained-completion-adopt-readback",
+      "iteration_id": null,
+      "manifest_sha256": null,
+      "native_exit": null,
+      "obligation": "same_iteration",
+      "operation_id": null,
+      "outcome": "UNKNOWN",
+      "profile_sha256": null,
+      "scope": "engineering-control",
+      "source_pair": null,
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e2a02f9271b49f146e70806c8a66e161b5973971/evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/stdout.json",
+      "stage": null
+    }
+  ],
+  "schema": "trnm-chain-hepta-qualification-packet-v1"
+}

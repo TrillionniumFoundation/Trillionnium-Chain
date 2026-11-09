@@ -1,0 +1,40 @@
+test_absent_source_is_not_inferred_from_url_or_current_plan (test_chain_system_security.SystemSecurityTests.test_absent_source_is_not_inferred_from_url_or_current_plan) ... ok
+test_arithmetically_consistent_smaller_campaign_does_not_replace_original (test_chain_system_security.SystemSecurityTests.test_arithmetically_consistent_smaller_campaign_does_not_replace_original) ... ok
+test_binding_pass_and_true_cost_flags_remain_declarations (test_chain_system_security.SystemSecurityTests.test_binding_pass_and_true_cost_flags_remain_declarations) ... ok
+test_campaign_keeps_planned_observed_confirmed_and_unknown_separate (test_chain_system_security.SystemSecurityTests.test_campaign_keeps_planned_observed_confirmed_and_unknown_separate) ... ok
+test_campaign_total_and_phase_denominator_conflicts_are_retained (test_chain_system_security.SystemSecurityTests.test_campaign_total_and_phase_denominator_conflicts_are_retained) ... ok
+test_changed_raw_artifact_is_refused_by_existing_hash_reader (test_chain_system_security.SystemSecurityTests.test_changed_raw_artifact_is_refused_by_existing_hash_reader) ... ok
+test_cli_returns_hold_and_refuses_malformed_input (test_chain_system_security.SystemSecurityTests.test_cli_returns_hold_and_refuses_malformed_input) ... ok
+test_controller_resources_cannot_replace_receiver_contract (test_chain_system_security.SystemSecurityTests.test_controller_resources_cannot_replace_receiver_contract) ... ok
+test_daa_extract_cannot_change_scope_or_impersonate_original (test_chain_system_security.SystemSecurityTests.test_daa_extract_cannot_change_scope_or_impersonate_original) ... ok
+test_daa_extract_stays_explicitly_partial_and_unverified (test_chain_system_security.SystemSecurityTests.test_daa_extract_stays_explicitly_partial_and_unverified) ... ok
+test_daa_true_flags_supply_no_theorem_or_authority (test_chain_system_security.SystemSecurityTests.test_daa_true_flags_supply_no_theorem_or_authority) ... ok
+test_duplicate_artifact_identity_is_not_another_observation (test_chain_system_security.SystemSecurityTests.test_duplicate_artifact_identity_is_not_another_observation) ... ok
+test_duplicate_campaign_phase_and_boolean_counts_are_not_normalized (test_chain_system_security.SystemSecurityTests.test_duplicate_campaign_phase_and_boolean_counts_are_not_normalized) ... ok
+test_eight_priorities_and_original_vetoes_remain_open (test_chain_system_security.SystemSecurityTests.test_eight_priorities_and_original_vetoes_remain_open) ... ok
+test_embedded_historical_source_cannot_be_overwritten_by_current_descriptor (test_chain_system_security.SystemSecurityTests.test_embedded_historical_source_cannot_be_overwritten_by_current_descriptor) ... ok
+test_local_owner_true_flags_are_still_unverified (test_chain_system_security.SystemSecurityTests.test_local_owner_true_flags_are_still_unverified) ... ok
+test_missing_and_invalid_boolean_declarations_are_separate (test_chain_system_security.SystemSecurityTests.test_missing_and_invalid_boolean_declarations_are_separate) ... ok
+test_missing_duplicate_and_boolean_cost_points_are_diagnosed (test_chain_system_security.SystemSecurityTests.test_missing_duplicate_and_boolean_cost_points_are_diagnosed) ... ok
+test_one_half_diagnostic_cannot_fill_one_sixteenth_contract (test_chain_system_security.SystemSecurityTests.test_one_half_diagnostic_cannot_fill_one_sixteenth_contract) ... ok
+test_original_plan_pin_refusal_is_reused (test_chain_system_security.SystemSecurityTests.test_original_plan_pin_refusal_is_reused) ... ok
+test_same_declared_identity_cannot_claim_same_source_acceptance (test_chain_system_security.SystemSecurityTests.test_same_declared_identity_cannot_claim_same_source_acceptance) ... ok
+test_same_tree_different_commit_is_historical (test_chain_system_security.SystemSecurityTests.test_same_tree_different_commit_is_historical) ... ok
+test_sixteen_null_points_are_preserved_as_unknown (test_chain_system_security.SystemSecurityTests.test_sixteen_null_points_are_preserved_as_unknown) ... ok
+test_stage_and_effect_gaps_are_retained_without_modifying_original_inputs (test_chain_system_security.SystemSecurityTests.test_stage_and_effect_gaps_are_retained_without_modifying_original_inputs) ... FAIL
+test_started_campaign_without_phase_observation_remains_incomplete (test_chain_system_security.SystemSecurityTests.test_started_campaign_without_phase_observation_remains_incomplete) ... ok
+test_supplied_cost_bound_cannot_become_a_certificate (test_chain_system_security.SystemSecurityTests.test_supplied_cost_bound_cannot_become_a_certificate) ... ok
+test_unknown_schema_with_pass_claim_does_not_supply_evidence (test_chain_system_security.SystemSecurityTests.test_unknown_schema_with_pass_claim_does_not_supply_evidence) ... ok
+
+======================================================================
+FAIL: test_stage_and_effect_gaps_are_retained_without_modifying_original_inputs (test_chain_system_security.SystemSecurityTests.test_stage_and_effect_gaps_are_retained_without_modifying_original_inputs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/ab60bfa410b1/chain-security/scripts/ci/test_chain_system_security.py", line 341, in test_stage_and_effect_gaps_are_retained_without_modifying_original_inputs
+    self.assertTrue(any("EFFECT:" in issue for issue in
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.344s
+
+FAILED (failures=1)

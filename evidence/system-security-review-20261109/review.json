@@ -1,0 +1,1830 @@
+{
+  "all_blockers_closed": false,
+  "artifacts": [
+    {
+      "blockers": [
+        "ACTUAL_ALL_LEGAL_COST_BOUND_UNVERIFIED",
+        "DECLARATION_NOT_VERIFIED:relation.native_consensus_credit",
+        "INITIAL_POTENTIAL_AND_CREDIT_BRIDGE_UNVERIFIED",
+        "SOURCE_AND_ORIGINAL_EVIDENCE_UNAUTHENTICATED"
+      ],
+      "evidence": {
+        "path": "inputs/fixed-probability.json",
+        "sha256": "e249dfcda10720a1fc388cef9613302253a96b125c0ab1f0eda1b584b72cebef"
+      },
+      "facts": {
+        "cost_bound_verified": false,
+        "duplicate_cost_points": [],
+        "expected_cost_points": 16,
+        "ideal_probability_declaration": {
+          "denominator": 16,
+          "numerator": 1
+        },
+        "initial_potential_bound_declaration": null,
+        "missing_cost_points": [],
+        "native_credit_indicator": {
+          "native_consensus_credit": {
+            "declaration_status": "NOT_ESTABLISHED",
+            "expected": true,
+            "observed": false,
+            "observed_type": "bool",
+            "present": true
+          }
+        },
+        "observed_cost_rows": [
+          {
+            "category": "classical",
+            "lower": null,
+            "status": "unproved",
+            "units": 1,
+            "upper": null
+          },
+          {
+            "category": "classical",
+            "lower": null,
+            "status": "unproved",
+            "units": 2,
+            "upper": null
+          },
+          {
+            "category": "classical",
+            "lower": null,
+            "status": "unproved",
+            "units": 3,
+            "upper": null
+          },
+          {
+            "category": "classical",
+            "lower": null,
+            "status": "unproved",
+            "units": 4,
+            "upper": null
+          },
+          {
+            "category": "classical",
+            "lower": null,
+            "status": "unproved",
+            "units": 5,
+            "upper": null
+          },
+          {
+            "category": "classical",
+            "lower": null,
+            "status": "unproved",
+            "units": 6,
+            "upper": null
+          },
+          {
+            "category": "classical",
+            "lower": null,
+            "status": "unproved",
+            "units": 7,
+            "upper": null
+          },
+          {
+            "category": "classical",
+            "lower": null,
+            "status": "unproved",
+            "units": 8,
+            "upper": null
+          },
+          {
+            "category": "quantum",
+            "lower": null,
+            "status": "unproved",
+            "units": 1,
+            "upper": null
+          },
+          {
+            "category": "quantum",
+            "lower": null,
+            "status": "unproved",
+            "units": 2,
+            "upper": null
+          },
+          {
+            "category": "quantum",
+            "lower": null,
+            "status": "unproved",
+            "units": 3,
+            "upper": null
+          },
+          {
+            "category": "quantum",
+            "lower": null,
+            "status": "unproved",
+            "units": 4,
+            "upper": null
+          },
+          {
+            "category": "quantum",
+            "lower": null,
+            "status": "unproved",
+            "units": 5,
+            "upper": null
+          },
+          {
+            "category": "quantum",
+            "lower": null,
+            "status": "unproved",
+            "units": 6,
+            "upper": null
+          },
+          {
+            "category": "quantum",
+            "lower": null,
+            "status": "unproved",
+            "units": 7,
+            "upper": null
+          },
+          {
+            "category": "quantum",
+            "lower": null,
+            "status": "unproved",
+            "units": 8,
+            "upper": null
+          }
+        ],
+        "unclosed_obligations": [
+          "complete-legal-strategy-simulation",
+          "classical-amortized-cost-lower-bound",
+          "quantum-amortized-cost-lower-bound",
+          "bounded-initial-classical-and-quantum-potential",
+          "cross-scale-and-cross-fork-composition",
+          "actual-hash-to-search-model-reduction",
+          "resource-to-physical-time-and-network-model",
+          "mixed-miner-common-prefix-chain-quality-chain-growth",
+          "native-work-identity-and-weight-bridge",
+          "real-cell-quality-and-owner-adoption"
+        ],
+        "unknown_cost_point_count": 16
+      },
+      "id": "fixed-probability",
+      "input_diagnostics": [],
+      "kind": "fixed_probability_cost",
+      "native_outcome_verified": false,
+      "original_evidence_authenticated": false,
+      "projection_status": "DECLARATIONS_PROJECTED",
+      "qualification": "HOLD_NO_GO",
+      "qualified": false,
+      "reported_schema": "pon-fixed-probability-cost-contract-v1",
+      "same_source_acceptance": false,
+      "source": {
+        "classification": "SAME_DECLARED_SOURCE_UNAUTHENTICATED",
+        "declared": {
+          "sha": "e2a02f9271b49f146e70806c8a66e161b5973971",
+          "tree": "86d2014b560659106b3af6e6c19e1f82a290a60e"
+        },
+        "embedded": null,
+        "same_source_acceptance": false,
+        "source_verified": false
+      },
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e2a02f9271b49f146e70806c8a66e161b5973971/formal/pon-nakamoto-v1/fixed_probability_contract_v1.json"
+    },
+    {
+      "blockers": [
+        "DECLARATION_NOT_VERIFIED:limitations.native_node_activation_executed",
+        "DECLARATION_NOT_VERIFIED:limitations.network_profitability_or_consensus_safety_theorem",
+        "DECLARATION_NOT_VERIFIED:limitations.production_consensus_activation",
+        "DECLARATION_NOT_VERIFIED:limitations.proof_latency_propagation_availability_and_reorg_state_priced",
+        "DECLARATION_NOT_VERIFIED:limitations.uniform_iid_ticket_premise_proved_for_w1",
+        "DECLARATION_NOT_VERIFIED:limitations.w1_oracle_cost_measured_or_synthesized",
+        "EXTRACTED_FIELDS_NOT_FULL_ORIGINAL",
+        "HISTORICAL_EVIDENCE_NOT_CURRENT_ACCEPTANCE",
+        "JOINT_NETWORK_SECURITY_THEOREM_UNVERIFIED",
+        "SOURCE_AND_ORIGINAL_EVIDENCE_UNAUTHENTICATED"
+      ],
+      "evidence": {
+        "path": "inputs/joint-consensus.json",
+        "sha256": "9cc5314a0cdf5716e1561e502098b299ec49d01c7d6352bc303168cf86d38013"
+      },
+      "facts": {
+        "extraction": "limitations-only",
+        "extraction_completeness_verified": false,
+        "indicators": {
+          "native_node_activation_executed": {
+            "declaration_status": "NOT_ESTABLISHED",
+            "expected": true,
+            "observed": false,
+            "observed_type": "bool",
+            "present": true
+          },
+          "network_profitability_or_consensus_safety_theorem": {
+            "declaration_status": "NOT_ESTABLISHED",
+            "expected": true,
+            "observed": false,
+            "observed_type": "bool",
+            "present": true
+          },
+          "production_consensus_activation": {
+            "declaration_status": "DECLARED_UNVERIFIED",
+            "expected": false,
+            "observed": false,
+            "observed_type": "bool",
+            "present": true
+          },
+          "proof_latency_propagation_availability_and_reorg_state_priced": {
+            "declaration_status": "NOT_ESTABLISHED",
+            "expected": true,
+            "observed": false,
+            "observed_type": "bool",
+            "present": true
+          },
+          "uniform_iid_ticket_premise_proved_for_w1": {
+            "declaration_status": "NOT_ESTABLISHED",
+            "expected": true,
+            "observed": false,
+            "observed_type": "bool",
+            "present": true
+          },
+          "w1_oracle_cost_measured_or_synthesized": {
+            "declaration_status": "NOT_ESTABLISHED",
+            "expected": true,
+            "observed": false,
+            "observed_type": "bool",
+            "present": true
+          }
+        },
+        "native_w1_proofs_declared": 0,
+        "original_report_authenticated": false,
+        "original_report_replayed": false,
+        "original_schema_declaration": "trnm-joint-consensus-boundaries-v1",
+        "original_sha256_declaration": "9985a32e65792d6ff8137c48546f14ce1becca5b48912dc9d4b1bc549c34b7fa",
+        "scope_declaration": null,
+        "security_theorem_verified": false
+      },
+      "id": "joint-consensus",
+      "input_diagnostics": [],
+      "kind": "joint_daa",
+      "native_outcome_verified": false,
+      "original_evidence_authenticated": false,
+      "projection_status": "DECLARATIONS_PROJECTED",
+      "qualification": "HOLD_NO_GO",
+      "qualified": false,
+      "reported_schema": "trnm-joint-consensus-limitations-extract-v1",
+      "same_source_acceptance": false,
+      "source": {
+        "classification": "HISTORICAL_SOURCE",
+        "declared": {
+          "sha": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0",
+          "tree": "e881dd7cf318a562b09de38ff7774a508724fa18"
+        },
+        "embedded": null,
+        "same_source_acceptance": false,
+        "source_verified": false
+      },
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e2a02f9271b49f146e70806c8a66e161b5973971/evidence/pon-joint-consensus-daa-20261108/joint-boundaries.json"
+    },
+    {
+      "blockers": [
+        "DECLARATION_NOT_VERIFIED:all_reports_valid",
+        "HISTORICAL_EVIDENCE_NOT_CURRENT_ACCEPTANCE",
+        "NATIVE_CAMPAIGN_NOT_AUTHENTICATED",
+        "ORIGINAL_ACCEPTANCE_VALIDATOR_NOT_EXECUTED",
+        "REPORTED_CAMPAIGN_ACCEPTANCE_INCOMPLETE",
+        "REPORTED_CONFIRMATION_TARGET_INCOMPLETE",
+        "REPORTED_ORIGINAL_CAMPAIGN_FAILURE",
+        "SOURCE_AND_ORIGINAL_EVIDENCE_UNAUTHENTICATED",
+        "UNOBSERVED_CONFIRMATION_ROUNDS_RETAINED"
+      ],
+      "evidence": {
+        "path": "inputs/campaign.json",
+        "sha256": "afaa75e008ba9097460e7f1ddcf9070dcb74b81249e035d0b72ddd0025bf1b0e"
+      },
+      "facts": {
+        "acceptance_verified": false,
+        "actual_campaigns": 3,
+        "build_returncode": 0,
+        "complete_campaigns": 0,
+        "controller_resources_declaration": {
+          "cpu_max": "400000 100000",
+          "memory_max": "17179869184",
+          "nice": 10
+        },
+        "failure_declaration": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+        "finalization_failures_declaration": [],
+        "indicators": {
+          "all_reports_valid": {
+            "declaration_status": "DECLARED_UNVERIFIED",
+            "expected": true,
+            "observed": true,
+            "observed_type": "bool",
+            "present": true
+          }
+        },
+        "missing_original_phases": [],
+        "phase_coverage_complete": true,
+        "phase_totals": {
+          "confirmed_rounds": 3,
+          "observed_confirmation_rounds": 12,
+          "scheduled_confirmation_rounds": 27,
+          "unobserved_scheduled_rounds": 15
+        },
+        "phases": [
+          {
+            "confirmed_rounds": 1,
+            "mode": "baseline",
+            "observed_confirmation_rounds": 2,
+            "run": 1,
+            "scheduled_confirmation_rounds": 3,
+            "unobserved_scheduled_rounds": 1
+          },
+          {
+            "confirmed_rounds": 0,
+            "mode": "from-zero",
+            "observed_confirmation_rounds": 1,
+            "run": 1,
+            "scheduled_confirmation_rounds": 3,
+            "unobserved_scheduled_rounds": 2
+          },
+          {
+            "confirmed_rounds": 0,
+            "mode": "late-product",
+            "observed_confirmation_rounds": 1,
+            "run": 1,
+            "scheduled_confirmation_rounds": 3,
+            "unobserved_scheduled_rounds": 2
+          },
+          {
+            "confirmed_rounds": 1,
+            "mode": "baseline",
+            "observed_confirmation_rounds": 2,
+            "run": 2,
+            "scheduled_confirmation_rounds": 3,
+            "unobserved_scheduled_rounds": 1
+          },
+          {
+            "confirmed_rounds": 0,
+            "mode": "from-zero",
+            "observed_confirmation_rounds": 1,
+            "run": 2,
+            "scheduled_confirmation_rounds": 3,
+            "unobserved_scheduled_rounds": 2
+          },
+          {
+            "confirmed_rounds": 0,
+            "mode": "late-product",
+            "observed_confirmation_rounds": 1,
+            "run": 2,
+            "scheduled_confirmation_rounds": 3,
+            "unobserved_scheduled_rounds": 2
+          },
+          {
+            "confirmed_rounds": 1,
+            "mode": "baseline",
+            "observed_confirmation_rounds": 2,
+            "run": 3,
+            "scheduled_confirmation_rounds": 3,
+            "unobserved_scheduled_rounds": 1
+          },
+          {
+            "confirmed_rounds": 0,
+            "mode": "from-zero",
+            "observed_confirmation_rounds": 1,
+            "run": 3,
+            "scheduled_confirmation_rounds": 3,
+            "unobserved_scheduled_rounds": 2
+          },
+          {
+            "confirmed_rounds": 0,
+            "mode": "late-product",
+            "observed_confirmation_rounds": 1,
+            "run": 3,
+            "scheduled_confirmation_rounds": 3,
+            "unobserved_scheduled_rounds": 2
+          }
+        ],
+        "planned_campaigns": 3,
+        "public_phase_placement_declaration": {
+          "attacker_processes_remain_in_original_controller_domain": true,
+          "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+          "original_3x3_workload_and_depletion_predicates_changed": false,
+          "profile": "fixed-public-phase-external-actors-v1",
+          "receiver_and_verifier_cpu_max": "25000 100000",
+          "receiver_and_verifier_memory_max": "2147483648"
+        },
+        "totals": {
+          "confirmed_rounds": 3,
+          "observed_confirmation_rounds": 12,
+          "scheduled_confirmation_rounds": 27,
+          "unobserved_scheduled_rounds": 15
+        },
+        "unobserved_cost": null
+      },
+      "id": "campaign",
+      "input_diagnostics": [],
+      "kind": "original_campaign",
+      "native_outcome_verified": false,
+      "original_evidence_authenticated": false,
+      "projection_status": "DECLARATIONS_PROJECTED",
+      "qualification": "HOLD_NO_GO",
+      "qualified": false,
+      "reported_schema": "pon-root-original-campaign-crosscheck-v1",
+      "same_source_acceptance": false,
+      "source": {
+        "classification": "HISTORICAL_SOURCE",
+        "declared": {
+          "sha": "11791e2da79b69322271be2cffe03725165151d1",
+          "tree": "162552848110fda532504b78865a16930bc6d9bb"
+        },
+        "embedded": {
+          "sha": "11791e2da79b69322271be2cffe03725165151d1",
+          "tree": "162552848110fda532504b78865a16930bc6d9bb"
+        },
+        "same_source_acceptance": false,
+        "source_verified": false
+      },
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c2297ad53fef1d9b552e657cfd205d583c91980d/evidence/pon-joint-resource-contract-20261109/original-campaign-root-crosscheck.json"
+    },
+    {
+      "blockers": [
+        "ALL_ENTRY_RESOURCE_BOUND_AND_HONEST_SERVICE_UNVERIFIED",
+        "DECLARATION_NOT_VERIFIED:honest_service_bound_qualified",
+        "DECLARATION_NOT_VERIFIED:independent_rollback_anchor_qualified",
+        "DECLARATION_NOT_VERIFIED:observer_actual_cpu_measured",
+        "DECLARATION_NOT_VERIFIED:observer_actual_io_measured",
+        "DECLARATION_NOT_VERIFIED:physical_resource_bound_qualified",
+        "DECLARATION_NOT_VERIFIED:production_activation",
+        "DECLARATION_NOT_VERIFIED:whole_entry_coverage_qualified",
+        "HISTORICAL_EVIDENCE_NOT_CURRENT_ACCEPTANCE",
+        "SOURCE_AND_ORIGINAL_EVIDENCE_UNAUTHENTICATED"
+      ],
+      "evidence": {
+        "path": "inputs/resource.json",
+        "sha256": "6d365f28207d199fd51e66936ff51449a8004228284306f7f08571109dffd9f6"
+      },
+      "facts": {
+        "indicators": {
+          "honest_service_bound_qualified": {
+            "declaration_status": "NOT_ESTABLISHED",
+            "expected": true,
+            "observed": false,
+            "observed_type": "bool",
+            "present": true
+          },
+          "independent_rollback_anchor_qualified": {
+            "declaration_status": "NOT_ESTABLISHED",
+            "expected": true,
+            "observed": false,
+            "observed_type": "bool",
+            "present": true
+          },
+          "observer_actual_cpu_measured": {
+            "declaration_status": "NOT_ESTABLISHED",
+            "expected": true,
+            "observed": false,
+            "observed_type": "bool",
+            "present": true
+          },
+          "observer_actual_io_measured": {
+            "declaration_status": "NOT_ESTABLISHED",
+            "expected": true,
+            "observed": false,
+            "observed_type": "bool",
+            "present": true
+          },
+          "physical_resource_bound_qualified": {
+            "declaration_status": "NOT_ESTABLISHED",
+            "expected": true,
+            "observed": false,
+            "observed_type": "bool",
+            "present": true
+          },
+          "production_activation": {
+            "declaration_status": "DECLARED_UNVERIFIED",
+            "expected": false,
+            "observed": false,
+            "observed_type": "bool",
+            "present": true
+          },
+          "whole_entry_coverage_qualified": {
+            "declaration_status": "NOT_ESTABLISHED",
+            "expected": true,
+            "observed": false,
+            "observed_type": "bool",
+            "present": true
+          }
+        },
+        "native_integration_declaration": "observe_existing_packet_owned",
+        "physical_cost_bound_verified": false,
+        "status_declaration": "experimental-local-component-hold-no-go"
+      },
+      "id": "resource",
+      "input_diagnostics": [],
+      "kind": "local_resource_owner",
+      "native_outcome_verified": false,
+      "original_evidence_authenticated": false,
+      "projection_status": "DECLARATIONS_PROJECTED",
+      "qualification": "HOLD_NO_GO",
+      "qualified": false,
+      "reported_schema": "trnm-local-resource-owner-contract-v1",
+      "same_source_acceptance": false,
+      "source": {
+        "classification": "HISTORICAL_SOURCE",
+        "declared": {
+          "sha": "bb3f13ed78edd367381275a3ae4752f1f4da4c22",
+          "tree": "ece61caafae0b994f16ed3f744c35297ccc45cd8"
+        },
+        "embedded": null,
+        "same_source_acceptance": false,
+        "source_verified": false
+      },
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/bb3f13ed78edd367381275a3ae4752f1f4da4c22/config/pon/local-resource-owner-v1.json"
+    }
+  ],
+  "authority": "DENY_ALL",
+  "engineering_controls_only": true,
+  "full_pq_security_qualified": false,
+  "independent_control_accepted": false,
+  "independent_wan_accepted": false,
+  "input_refused": false,
+  "native_outcome_verified": false,
+  "original_evidence_authenticated": false,
+  "original_review": {
+    "actual_model_execution": false,
+    "authority": "DENY_ALL",
+    "build_load": {
+      "chain": {
+        "build_sha256": null,
+        "configuration_sha256": null,
+        "environment_sha256": null,
+        "interpreter_sha256": null,
+        "libraries_sha256": null,
+        "load_sha256": null
+      },
+      "hepta": {
+        "build_sha256": null,
+        "configuration_sha256": null,
+        "environment_sha256": null,
+        "interpreter_sha256": null,
+        "libraries_sha256": null,
+        "load_sha256": null,
+        "model_closure_sha256": null
+      }
+    },
+    "campaign_id": "system-security-audit-20261109-e2a02f9",
+    "effect_blockers": [
+      "NO_FROZEN_EXTERNAL_EFFECT_ROSTER"
+    ],
+    "effects": [],
+    "engineering_controls_only": true,
+    "full_pq_security_qualified": false,
+    "gates": {
+      "P0_CONSENSUS": {
+        "blockers": [
+          "MISSING_IDENTITY:chain:build_sha256",
+          "MISSING_IDENTITY:chain:configuration_sha256",
+          "MISSING_IDENTITY:chain:environment_sha256",
+          "MISSING_IDENTITY:chain:interpreter_sha256",
+          "MISSING_IDENTITY:chain:libraries_sha256",
+          "MISSING_IDENTITY:chain:load_sha256",
+          "MISSING_IDENTITY:hepta:build_sha256",
+          "MISSING_IDENTITY:hepta:configuration_sha256",
+          "MISSING_IDENTITY:hepta:environment_sha256",
+          "MISSING_IDENTITY:hepta:interpreter_sha256",
+          "MISSING_IDENTITY:hepta:libraries_sha256",
+          "MISSING_IDENTITY:hepta:load_sha256",
+          "MISSING_IDENTITY:hepta:model_closure_sha256",
+          "MISSING_LOCK:hepta:MODULE.bazel.lock",
+          "MISSING_LOCK:hepta:codex-rs/Cargo.lock",
+          "MISSING_SOURCE_OBSERVATION",
+          "UNCONFIGURED_CASE_ROSTER:hostile_honest_confirmation",
+          "UNCONFIGURED_CASE_ROSTER:timestamp_daa_chainweight",
+          "UNCONFIGURED_CASE_ROSTER:w1_minimum_cost"
+        ],
+        "material_status": "BLOCKED",
+        "qualification": "HOLD_NO_GO",
+        "recorded_counts_across_attempts": {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 0,
+          "unknown": 0
+        },
+        "recorded_outcomes": {
+          "FAIL": 0,
+          "FILTERED": 0,
+          "IGNORED": 0,
+          "PASS": 0,
+          "TIMEOUT": 0,
+          "UNKNOWN": 0
+        },
+        "records": []
+      },
+      "P0_HEPTA": {
+        "blockers": [
+          "MISSING_IDENTITY:chain:build_sha256",
+          "MISSING_IDENTITY:chain:configuration_sha256",
+          "MISSING_IDENTITY:chain:environment_sha256",
+          "MISSING_IDENTITY:chain:interpreter_sha256",
+          "MISSING_IDENTITY:chain:libraries_sha256",
+          "MISSING_IDENTITY:chain:load_sha256",
+          "MISSING_IDENTITY:hepta:build_sha256",
+          "MISSING_IDENTITY:hepta:configuration_sha256",
+          "MISSING_IDENTITY:hepta:environment_sha256",
+          "MISSING_IDENTITY:hepta:interpreter_sha256",
+          "MISSING_IDENTITY:hepta:libraries_sha256",
+          "MISSING_IDENTITY:hepta:load_sha256",
+          "MISSING_IDENTITY:hepta:model_closure_sha256",
+          "MISSING_LOCK:hepta:MODULE.bazel.lock",
+          "MISSING_LOCK:hepta:codex-rs/Cargo.lock",
+          "MISSING_SAME_ITERATION",
+          "MISSING_SOURCE_OBSERVATION",
+          "NO_FROZEN_EXTERNAL_EFFECT_ROSTER",
+          "UNCONFIGURED_CASE_ROSTER:no_update",
+          "UNCONFIGURED_CASE_ROSTER:reorg",
+          "UNCONFIGURED_CASE_ROSTER:restart",
+          "UNCONFIGURED_CASE_ROSTER:revocation",
+          "UNCONFIGURED_CASE_ROSTER:unknown_timeout",
+          "retained-completion-adopt-readback:CONTEXT_MISMATCH:build_load_sha256",
+          "retained-completion-adopt-readback:CONTEXT_MISMATCH:profile_sha256",
+          "retained-completion-adopt-readback:CONTEXT_MISMATCH:source_pair",
+          "retained-completion-adopt-readback:INCOMPLETE_EXPECTED_IDENTITY",
+          "retained-completion-adopt-readback:NATIVE_EXIT_NOT_ZERO_OR_UNKNOWN",
+          "retained-completion-adopt-readback:NOT_PRODUCTION_EVIDENCE:engineering-control",
+          "retained-completion-adopt-readback:RAW_OUTCOME_UNVERIFIED",
+          "retained-completion-adopt-readback:RETAINED_OUTCOME:UNKNOWN"
+        ],
+        "material_status": "BLOCKED",
+        "qualification": "HOLD_NO_GO",
+        "recorded_counts_across_attempts": {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 0,
+          "unknown": 0
+        },
+        "recorded_outcomes": {
+          "FAIL": 0,
+          "FILTERED": 0,
+          "IGNORED": 0,
+          "PASS": 0,
+          "TIMEOUT": 0,
+          "UNKNOWN": 1
+        },
+        "records": [
+          "retained-completion-adopt-readback"
+        ]
+      },
+      "P0_INTEGRATION": {
+        "blockers": [
+          "MISSING_IDENTITY:chain:build_sha256",
+          "MISSING_IDENTITY:chain:configuration_sha256",
+          "MISSING_IDENTITY:chain:environment_sha256",
+          "MISSING_IDENTITY:chain:interpreter_sha256",
+          "MISSING_IDENTITY:chain:libraries_sha256",
+          "MISSING_IDENTITY:chain:load_sha256",
+          "MISSING_IDENTITY:hepta:build_sha256",
+          "MISSING_IDENTITY:hepta:configuration_sha256",
+          "MISSING_IDENTITY:hepta:environment_sha256",
+          "MISSING_IDENTITY:hepta:interpreter_sha256",
+          "MISSING_IDENTITY:hepta:libraries_sha256",
+          "MISSING_IDENTITY:hepta:load_sha256",
+          "MISSING_IDENTITY:hepta:model_closure_sha256",
+          "MISSING_LOCK:hepta:MODULE.bazel.lock",
+          "MISSING_LOCK:hepta:codex-rs/Cargo.lock",
+          "MISSING_SOURCE_OBSERVATION",
+          "UNCONFIGURED_CASE_ROSTER:build_load",
+          "UNCONFIGURED_CASE_ROSTER:native_registry",
+          "UNCONFIGURED_CASE_ROSTER:source_locks"
+        ],
+        "material_status": "BLOCKED",
+        "qualification": "HOLD_NO_GO",
+        "recorded_counts_across_attempts": {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 0,
+          "unknown": 0
+        },
+        "recorded_outcomes": {
+          "FAIL": 0,
+          "FILTERED": 0,
+          "IGNORED": 0,
+          "PASS": 0,
+          "TIMEOUT": 0,
+          "UNKNOWN": 0
+        },
+        "records": []
+      },
+      "P0_PERMISSION": {
+        "blockers": [
+          "MISSING_IDENTITY:chain:build_sha256",
+          "MISSING_IDENTITY:chain:configuration_sha256",
+          "MISSING_IDENTITY:chain:environment_sha256",
+          "MISSING_IDENTITY:chain:interpreter_sha256",
+          "MISSING_IDENTITY:chain:libraries_sha256",
+          "MISSING_IDENTITY:chain:load_sha256",
+          "MISSING_IDENTITY:hepta:build_sha256",
+          "MISSING_IDENTITY:hepta:configuration_sha256",
+          "MISSING_IDENTITY:hepta:environment_sha256",
+          "MISSING_IDENTITY:hepta:interpreter_sha256",
+          "MISSING_IDENTITY:hepta:libraries_sha256",
+          "MISSING_IDENTITY:hepta:load_sha256",
+          "MISSING_IDENTITY:hepta:model_closure_sha256",
+          "MISSING_LOCK:hepta:MODULE.bazel.lock",
+          "MISSING_LOCK:hepta:codex-rs/Cargo.lock",
+          "MISSING_SOURCE_OBSERVATION",
+          "NO_FROZEN_EXTERNAL_EFFECT_ROSTER",
+          "UNCONFIGURED_CASE_ROSTER:current_revocation_load",
+          "UNCONFIGURED_CASE_ROSTER:entry_to_effect",
+          "UNCONFIGURED_CASE_ROSTER:recovery_effects"
+        ],
+        "material_status": "BLOCKED",
+        "qualification": "HOLD_NO_GO",
+        "recorded_counts_across_attempts": {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 0,
+          "unknown": 0
+        },
+        "recorded_outcomes": {
+          "FAIL": 0,
+          "FILTERED": 0,
+          "IGNORED": 0,
+          "PASS": 0,
+          "TIMEOUT": 0,
+          "UNKNOWN": 0
+        },
+        "records": []
+      },
+      "P1_DATA": {
+        "blockers": [
+          "MISSING_IDENTITY:chain:build_sha256",
+          "MISSING_IDENTITY:chain:configuration_sha256",
+          "MISSING_IDENTITY:chain:environment_sha256",
+          "MISSING_IDENTITY:chain:interpreter_sha256",
+          "MISSING_IDENTITY:chain:libraries_sha256",
+          "MISSING_IDENTITY:chain:load_sha256",
+          "MISSING_IDENTITY:hepta:build_sha256",
+          "MISSING_IDENTITY:hepta:configuration_sha256",
+          "MISSING_IDENTITY:hepta:environment_sha256",
+          "MISSING_IDENTITY:hepta:interpreter_sha256",
+          "MISSING_IDENTITY:hepta:libraries_sha256",
+          "MISSING_IDENTITY:hepta:load_sha256",
+          "MISSING_IDENTITY:hepta:model_closure_sha256",
+          "MISSING_LOCK:hepta:MODULE.bazel.lock",
+          "MISSING_LOCK:hepta:codex-rs/Cargo.lock",
+          "MISSING_SOURCE_OBSERVATION",
+          "UNCONFIGURED_CASE_ROSTER:dependency_closure",
+          "UNCONFIGURED_CASE_ROSTER:independent_custody_wan",
+          "UNCONFIGURED_CASE_ROSTER:renewal_repair_recovery"
+        ],
+        "material_status": "BLOCKED",
+        "qualification": "HOLD_NO_GO",
+        "recorded_counts_across_attempts": {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 0,
+          "unknown": 0
+        },
+        "recorded_outcomes": {
+          "FAIL": 0,
+          "FILTERED": 0,
+          "IGNORED": 0,
+          "PASS": 0,
+          "TIMEOUT": 0,
+          "UNKNOWN": 0
+        },
+        "records": []
+      },
+      "P2_THROUGHPUT": {
+        "blockers": [
+          "MISSING_IDENTITY:chain:build_sha256",
+          "MISSING_IDENTITY:chain:configuration_sha256",
+          "MISSING_IDENTITY:chain:environment_sha256",
+          "MISSING_IDENTITY:chain:interpreter_sha256",
+          "MISSING_IDENTITY:chain:libraries_sha256",
+          "MISSING_IDENTITY:chain:load_sha256",
+          "MISSING_IDENTITY:hepta:build_sha256",
+          "MISSING_IDENTITY:hepta:configuration_sha256",
+          "MISSING_IDENTITY:hepta:environment_sha256",
+          "MISSING_IDENTITY:hepta:interpreter_sha256",
+          "MISSING_IDENTITY:hepta:libraries_sha256",
+          "MISSING_IDENTITY:hepta:load_sha256",
+          "MISSING_IDENTITY:hepta:model_closure_sha256",
+          "MISSING_LOCK:hepta:MODULE.bazel.lock",
+          "MISSING_LOCK:hepta:codex-rs/Cargo.lock",
+          "MISSING_SOURCE_OBSERVATION",
+          "UNCONFIGURED_CASE_ROSTER:cost_decomposition",
+          "UNCONFIGURED_CASE_ROSTER:matched_confirmation_tail_latency"
+        ],
+        "material_status": "BLOCKED",
+        "qualification": "HOLD_NO_GO",
+        "recorded_counts_across_attempts": {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 0,
+          "unknown": 0
+        },
+        "recorded_outcomes": {
+          "FAIL": 0,
+          "FILTERED": 0,
+          "IGNORED": 0,
+          "PASS": 0,
+          "TIMEOUT": 0,
+          "UNKNOWN": 0
+        },
+        "records": []
+      },
+      "P3_PQ": {
+        "blockers": [
+          "MISSING_IDENTITY:chain:build_sha256",
+          "MISSING_IDENTITY:chain:configuration_sha256",
+          "MISSING_IDENTITY:chain:environment_sha256",
+          "MISSING_IDENTITY:chain:interpreter_sha256",
+          "MISSING_IDENTITY:chain:libraries_sha256",
+          "MISSING_IDENTITY:chain:load_sha256",
+          "MISSING_IDENTITY:hepta:build_sha256",
+          "MISSING_IDENTITY:hepta:configuration_sha256",
+          "MISSING_IDENTITY:hepta:environment_sha256",
+          "MISSING_IDENTITY:hepta:interpreter_sha256",
+          "MISSING_IDENTITY:hepta:libraries_sha256",
+          "MISSING_IDENTITY:hepta:load_sha256",
+          "MISSING_IDENTITY:hepta:model_closure_sha256",
+          "MISSING_LOCK:hepta:MODULE.bazel.lock",
+          "MISSING_LOCK:hepta:codex-rs/Cargo.lock",
+          "MISSING_SOURCE_OBSERVATION",
+          "UNCONFIGURED_CASE_ROSTER:account_transaction_service",
+          "UNCONFIGURED_CASE_ROSTER:content_commitment",
+          "UNCONFIGURED_CASE_ROSTER:independent_crypto_implementation_review",
+          "UNCONFIGURED_CASE_ROSTER:lifetime_composition",
+          "UNCONFIGURED_CASE_ROSTER:quantum_work_daa_weight",
+          "UNCONFIGURED_CASE_ROSTER:release_root_authority",
+          "UNCONFIGURED_CASE_ROSTER:rollback_external_effects",
+          "UNCONFIGURED_CASE_ROSTER:stark_fri_qrom"
+        ],
+        "material_status": "BLOCKED",
+        "qualification": "HOLD_NO_GO",
+        "recorded_counts_across_attempts": {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 0,
+          "unknown": 0
+        },
+        "recorded_outcomes": {
+          "FAIL": 0,
+          "FILTERED": 0,
+          "IGNORED": 0,
+          "PASS": 0,
+          "TIMEOUT": 0,
+          "UNKNOWN": 0
+        },
+        "records": []
+      }
+    },
+    "identity_observation": null,
+    "identity_observation_consistent": false,
+    "independent_control_accepted": false,
+    "independent_wan_accepted": false,
+    "learning": null,
+    "learning_blockers": [
+      "MISSING_SAME_ITERATION"
+    ],
+    "loaded_bytes_verified": false,
+    "original_attempt_inventory_verified": false,
+    "original_evidence_authenticated": false,
+    "packet_sha256": "e7c21be6cdc682c2a4bfb559763890153edcf751074b0cde1d373d2b6ae042cb",
+    "plan_sha256": "a4c34a0389320bdce8117124662c7d11ac3e29ee0bd511e3e27c02a329984553",
+    "production_activation": false,
+    "production_final_use_qualified": false,
+    "profile_sha256": "807037076b2e2c39d044e07ed2bac231b0862355fe623d7975167ae5d7cfa1da",
+    "qualification": "HOLD_NO_GO",
+    "qualification_note": "MATERIALS_RECORDED means retained bindings only; original owners and independent review remain required.",
+    "records": [
+      {
+        "current_materials_consistent": false,
+        "declared_result_consistent": false,
+        "issues": [
+          "INCOMPLETE_EXPECTED_IDENTITY",
+          "CONTEXT_MISMATCH:source_pair",
+          "CONTEXT_MISMATCH:profile_sha256",
+          "CONTEXT_MISMATCH:build_load_sha256",
+          "NOT_PRODUCTION_EVIDENCE:engineering-control",
+          "RETAINED_OUTCOME:UNKNOWN",
+          "NATIVE_EXIT_NOT_ZERO_OR_UNKNOWN",
+          "RAW_OUTCOME_UNVERIFIED"
+        ],
+        "raw_result_conflicts": [],
+        "raw_result_summary": {
+          "cost_completeness_verified": false,
+          "current_permission_exported": false,
+          "full_learning_iteration_completed": false,
+          "hepta_final_use_accepted": false,
+          "independent_control_accepted": false,
+          "learning_signatures_verified": false,
+          "native_origin_authenticated": false,
+          "physical_installation_accepted": false,
+          "pre_dispatch_freeze_authenticated": false,
+          "production_activation": false,
+          "qualification": "HOLD_NO_GO",
+          "real_model_training_verified": false,
+          "settlement_verified": false
+        },
+        "record": {
+          "attempt": 1,
+          "build_load_sha256": null,
+          "bundle_sha256": null,
+          "campaign_id": "system-security-audit-20261109-e2a02f9",
+          "case_id": "historical-completion-readback",
+          "collector_exit": 0,
+          "counts": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "passed": 0,
+            "unknown": 0
+          },
+          "effect_intent_sha256": null,
+          "effect_outcome": null,
+          "evidence": {
+            "path": "inputs/completion-readback.json",
+            "sha256": "916bce16c6293421ff70c6c79bbf5aa811a7e37dde030fe4b2d3e7cab1af3fae"
+          },
+          "id": "retained-completion-adopt-readback",
+          "iteration_id": null,
+          "manifest_sha256": null,
+          "native_exit": null,
+          "obligation": "same_iteration",
+          "operation_id": null,
+          "outcome": "UNKNOWN",
+          "profile_sha256": null,
+          "scope": "engineering-control",
+          "source_pair": null,
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e2a02f9271b49f146e70806c8a66e161b5973971/evidence/hepta-real-native-adoption-20261108/chain-reader/adopt-v1/stdout.json",
+          "stage": null
+        },
+        "result_payload_verified": false,
+        "retained_bindings_consistent": false
+      }
+    ],
+    "schema": "trnm-chain-hepta-qualification-review-v1",
+    "settlement_verified": false,
+    "source_objects_verified": false,
+    "source_pair": {
+      "chain": {
+        "locks": {
+          "trillionnium/Cargo.lock": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c"
+        },
+        "sha": "e2a02f9271b49f146e70806c8a66e161b5973971",
+        "tree": "86d2014b560659106b3af6e6c19e1f82a290a60e"
+      },
+      "hepta": {
+        "locks": {
+          "MODULE.bazel.lock": null,
+          "codex-rs/Cargo.lock": null
+        },
+        "sha": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+        "tree": "c7588a07d20310059d4016559fa550d397b7eb09"
+      }
+    }
+  },
+  "packet_sha256": "e7c21be6cdc682c2a4bfb559763890153edcf751074b0cde1d373d2b6ae042cb",
+  "plan_sha256": "a4c34a0389320bdce8117124662c7d11ac3e29ee0bd511e3e27c02a329984553",
+  "production_activation": false,
+  "production_final_use_qualified": false,
+  "qualification": "HOLD_NO_GO",
+  "qualified": false,
+  "same_source_acceptance": false,
+  "schema": "trnm-chain-system-security-review-v1",
+  "scope": "negative declarations and retained arithmetic only; no original acceptance or independence is authenticated",
+  "security_inputs_sha256": "166feff9ea93cdb37ea381aff7c62b82e3dc3259b7c0b8e1a050d633161ada25",
+  "settlement_verified": false,
+  "source_objects_verified": false,
+  "source_pair": {
+    "chain": {
+      "locks": {
+        "trillionnium/Cargo.lock": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c"
+      },
+      "sha": "e2a02f9271b49f146e70806c8a66e161b5973971",
+      "tree": "86d2014b560659106b3af6e6c19e1f82a290a60e"
+    },
+    "hepta": {
+      "locks": {
+        "MODULE.bazel.lock": null,
+        "codex-rs/Cargo.lock": null
+      },
+      "sha": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+      "tree": "c7588a07d20310059d4016559fa550d397b7eb09"
+    }
+  },
+  "stage_review": {
+    "authority": "DENY_ALL",
+    "build_load_sha256": "50fcefc3eb9a4048eee5fa379e92bb81ac63dc64c0b3e44f63f81a12f87c585e",
+    "campaign_id": "system-security-audit-20261109-e2a02f9",
+    "iteration_id": null,
+    "learning_structure_blockers": [
+      "MISSING_SAME_ITERATION"
+    ],
+    "original_evidence_authenticated": false,
+    "packet_sha256": "e7c21be6cdc682c2a4bfb559763890153edcf751074b0cde1d373d2b6ae042cb",
+    "plan_sha256": "a4c34a0389320bdce8117124662c7d11ac3e29ee0bd511e3e27c02a329984553",
+    "production_activation": false,
+    "production_final_use_qualified": false,
+    "profile_sha256": "807037076b2e2c39d044e07ed2bac231b0862355fe623d7975167ae5d7cfa1da",
+    "qualification": "HOLD_NO_GO",
+    "schema": "trnm-chain-hepta-stage-qualification-v1",
+    "scope": "Retained-declaration diagnostics only; missing or negative qualification is not a native execution failure, and matching declarations are not authenticated qualification.",
+    "source_pair": {
+      "chain": {
+        "locks": {
+          "trillionnium/Cargo.lock": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c"
+        },
+        "sha": "e2a02f9271b49f146e70806c8a66e161b5973971",
+        "tree": "86d2014b560659106b3af6e6c19e1f82a290a60e"
+      },
+      "hepta": {
+        "locks": {
+          "MODULE.bazel.lock": null,
+          "codex-rs/Cargo.lock": null
+        },
+        "sha": "edf03ecb8a814a0f5e86b1d6a752aeac80b1a978",
+        "tree": "c7588a07d20310059d4016559fa550d397b7eb09"
+      }
+    },
+    "stage_qualification_verified": false,
+    "stages": {
+      "cold_fetch": {
+        "applicability": "REQUIRED",
+        "blockers": [
+          "MISSING_STAGE_RECORD",
+          "NOT_REPORTED:cost_completeness_verified",
+          "NOT_REPORTED:engineering_controls_only",
+          "NOT_REPORTED:independent_wan_accepted",
+          "NOT_REPORTED:native_origin_authenticated",
+          "ORIGINAL_STAGE_QUALIFICATION_UNVERIFIED"
+        ],
+        "declared_result_consistent": null,
+        "indicators": {
+          "cost_completeness_verified": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "engineering_controls_only": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": false,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "independent_wan_accepted": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "native_origin_authenticated": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          }
+        },
+        "qualified": false,
+        "record_id": null,
+        "record_issues": [],
+        "required_for_declared_path": true,
+        "stage_context_consistent": false
+      },
+      "evaluation": {
+        "applicability": "REQUIRED",
+        "blockers": [
+          "MATCHED_STRONG_CONTROLS_UNVERIFIED",
+          "MISSING_STAGE_RECORD",
+          "NOT_REPORTED:cost_completeness_verified",
+          "NOT_REPORTED:engineering_controls_only",
+          "NOT_REPORTED:evaluation_profile_semantics_verified",
+          "NOT_REPORTED:future_window_accepted",
+          "NOT_REPORTED:independent_control_accepted",
+          "NOT_REPORTED:independent_evaluation",
+          "NOT_REPORTED:native_origin_authenticated",
+          "NOT_REPORTED:prior_tasks_and_outcomes_exposed",
+          "ORIGINAL_STAGE_QUALIFICATION_UNVERIFIED"
+        ],
+        "declared_result_consistent": null,
+        "indicators": {
+          "cost_completeness_verified": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "engineering_controls_only": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": false,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "evaluation_profile_semantics_verified": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "future_window_accepted": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "independent_control_accepted": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "independent_evaluation": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "native_origin_authenticated": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "prior_tasks_and_outcomes_exposed": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": false,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          }
+        },
+        "qualified": false,
+        "record_id": null,
+        "record_issues": [],
+        "required_for_declared_path": true,
+        "stage_context_consistent": false
+      },
+      "installation": {
+        "applicability": "REQUIRED",
+        "blockers": [
+          "MISSING_STAGE_RECORD",
+          "NOT_REPORTED:cost_completeness_verified",
+          "NOT_REPORTED:engineering_controls_only",
+          "NOT_REPORTED:native_origin_authenticated",
+          "NOT_REPORTED:physical_installation_accepted",
+          "ORIGINAL_STAGE_QUALIFICATION_UNVERIFIED"
+        ],
+        "declared_result_consistent": null,
+        "indicators": {
+          "cost_completeness_verified": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "engineering_controls_only": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": false,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "native_origin_authenticated": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "physical_installation_accepted": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          }
+        },
+        "qualified": false,
+        "record_id": null,
+        "record_issues": [],
+        "required_for_declared_path": true,
+        "stage_context_consistent": false
+      },
+      "load": {
+        "applicability": "REQUIRED",
+        "blockers": [
+          "MISSING_STAGE_RECORD",
+          "NOT_REPORTED:cost_completeness_verified",
+          "NOT_REPORTED:current_permission_exported",
+          "NOT_REPORTED:engineering_controls_only",
+          "NOT_REPORTED:hepta_final_use_accepted",
+          "NOT_REPORTED:native_origin_authenticated",
+          "ORIGINAL_STAGE_QUALIFICATION_UNVERIFIED"
+        ],
+        "declared_result_consistent": null,
+        "indicators": {
+          "cost_completeness_verified": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "current_permission_exported": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "engineering_controls_only": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": false,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "hepta_final_use_accepted": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "native_origin_authenticated": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          }
+        },
+        "qualified": false,
+        "record_id": null,
+        "record_issues": [],
+        "required_for_declared_path": true,
+        "stage_context_consistent": false
+      },
+      "next_task": {
+        "applicability": "REQUIRED",
+        "blockers": [
+          "MISSING_STAGE_RECORD",
+          "NOT_REPORTED:cost_completeness_verified",
+          "NOT_REPORTED:current_permission_exported",
+          "NOT_REPORTED:engineering_controls_only",
+          "NOT_REPORTED:full_learning_iteration_completed",
+          "NOT_REPORTED:hepta_final_use_accepted",
+          "NOT_REPORTED:independent_control_accepted",
+          "NOT_REPORTED:native_origin_authenticated",
+          "ORIGINAL_STAGE_QUALIFICATION_UNVERIFIED"
+        ],
+        "declared_result_consistent": null,
+        "indicators": {
+          "cost_completeness_verified": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "current_permission_exported": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "engineering_controls_only": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": false,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "full_learning_iteration_completed": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "hepta_final_use_accepted": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "independent_control_accepted": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "native_origin_authenticated": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          }
+        },
+        "qualified": false,
+        "record_id": null,
+        "record_issues": [],
+        "required_for_declared_path": true,
+        "stage_context_consistent": false
+      },
+      "payment": {
+        "applicability": "REQUIRED",
+        "blockers": [
+          "MISSING_STAGE_RECORD",
+          "NOT_REPORTED:cost_completeness_verified",
+          "NOT_REPORTED:engineering_controls_only",
+          "NOT_REPORTED:native_origin_authenticated",
+          "NOT_REPORTED:settlement_verified",
+          "ORIGINAL_STAGE_QUALIFICATION_UNVERIFIED"
+        ],
+        "declared_result_consistent": null,
+        "indicators": {
+          "cost_completeness_verified": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "engineering_controls_only": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": false,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "native_origin_authenticated": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "settlement_verified": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          }
+        },
+        "qualified": false,
+        "record_id": null,
+        "record_issues": [],
+        "required_for_declared_path": true,
+        "stage_context_consistent": false
+      },
+      "selection": {
+        "applicability": "REQUIRED",
+        "blockers": [
+          "MISSING_STAGE_RECORD",
+          "NOT_REPORTED:cost_completeness_verified",
+          "NOT_REPORTED:engineering_controls_only",
+          "NOT_REPORTED:learning_signatures_verified",
+          "NOT_REPORTED:native_origin_authenticated",
+          "NOT_REPORTED:pre_dispatch_freeze_authenticated",
+          "ORIGINAL_STAGE_QUALIFICATION_UNVERIFIED"
+        ],
+        "declared_result_consistent": null,
+        "indicators": {
+          "cost_completeness_verified": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "engineering_controls_only": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": false,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "learning_signatures_verified": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "native_origin_authenticated": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "pre_dispatch_freeze_authenticated": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          }
+        },
+        "qualified": false,
+        "record_id": null,
+        "record_issues": [],
+        "required_for_declared_path": true,
+        "stage_context_consistent": false
+      },
+      "training": {
+        "applicability": "REQUIRED",
+        "blockers": [
+          "MISSING_STAGE_RECORD",
+          "NOT_REPORTED:cost_completeness_verified",
+          "NOT_REPORTED:engineering_controls_only",
+          "NOT_REPORTED:native_origin_authenticated",
+          "NOT_REPORTED:real_model_training_verified",
+          "ORIGINAL_STAGE_QUALIFICATION_UNVERIFIED"
+        ],
+        "declared_result_consistent": null,
+        "indicators": {
+          "cost_completeness_verified": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "engineering_controls_only": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": false,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "native_origin_authenticated": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          },
+          "real_model_training_verified": {
+            "declaration_status": "NOT_REPORTED",
+            "expected": true,
+            "observed": null,
+            "observed_type": "absent",
+            "present": false
+          }
+        },
+        "qualified": false,
+        "record_id": null,
+        "record_issues": [],
+        "required_for_declared_path": true,
+        "stage_context_consistent": false
+      }
+    }
+  },
+  "system_blockers": {
+    "P0_AUTHORIZATION_EXTERNAL_EFFECTS": {
+      "artifact_ids": [],
+      "blockers": [
+        "EFFECT:NO_FROZEN_EXTERNAL_EFFECT_ROSTER",
+        "LEARNING:MISSING_SAME_ITERATION",
+        "ORIGINAL_OWNER_FINAL_USE_AND_EFFECT_RECONCILIATION_UNVERIFIED",
+        "STAGE:load:MISSING_STAGE_RECORD",
+        "STAGE:load:NOT_REPORTED:cost_completeness_verified",
+        "STAGE:load:NOT_REPORTED:current_permission_exported",
+        "STAGE:load:NOT_REPORTED:engineering_controls_only",
+        "STAGE:load:NOT_REPORTED:hepta_final_use_accepted",
+        "STAGE:load:NOT_REPORTED:native_origin_authenticated",
+        "STAGE:load:ORIGINAL_STAGE_QUALIFICATION_UNVERIFIED",
+        "STAGE:next_task:MISSING_STAGE_RECORD",
+        "STAGE:next_task:NOT_REPORTED:cost_completeness_verified",
+        "STAGE:next_task:NOT_REPORTED:current_permission_exported",
+        "STAGE:next_task:NOT_REPORTED:engineering_controls_only",
+        "STAGE:next_task:NOT_REPORTED:full_learning_iteration_completed",
+        "STAGE:next_task:NOT_REPORTED:hepta_final_use_accepted",
+        "STAGE:next_task:NOT_REPORTED:independent_control_accepted",
+        "STAGE:next_task:NOT_REPORTED:native_origin_authenticated",
+        "STAGE:next_task:ORIGINAL_STAGE_QUALIFICATION_UNVERIFIED",
+        "STAGE:payment:MISSING_STAGE_RECORD",
+        "STAGE:payment:NOT_REPORTED:cost_completeness_verified",
+        "STAGE:payment:NOT_REPORTED:engineering_controls_only",
+        "STAGE:payment:NOT_REPORTED:native_origin_authenticated",
+        "STAGE:payment:NOT_REPORTED:settlement_verified",
+        "STAGE:payment:ORIGINAL_STAGE_QUALIFICATION_UNVERIFIED",
+        "UNCONFIGURED_CASE_ROSTER:current_revocation_load",
+        "UNCONFIGURED_CASE_ROSTER:entry_to_effect",
+        "UNCONFIGURED_CASE_ROSTER:recovery_effects",
+        "UNCONFIGURED_CASE_ROSTER:reorg",
+        "UNCONFIGURED_CASE_ROSTER:restart",
+        "UNCONFIGURED_CASE_ROSTER:revocation",
+        "UNCONFIGURED_CASE_ROSTER:unknown_timeout"
+      ],
+      "boundary": "authorization through real external effects",
+      "material_status": "BLOCKED",
+      "obligations": [
+        "entry_to_effect",
+        "current_revocation_load",
+        "recovery_effects",
+        "unknown_timeout",
+        "revocation",
+        "restart",
+        "reorg"
+      ],
+      "priority": "P0",
+      "qualification": "HOLD_NO_GO",
+      "qualified": false,
+      "record_ids": [],
+      "stages": [
+        "payment",
+        "load",
+        "next_task"
+      ]
+    },
+    "P0_MODEL_EVALUATION_POISONING": {
+      "artifact_ids": [],
+      "blockers": [
+        "INDEPENDENT_EVALUATION_AND_FUTURE_DATA_UNVERIFIED",
+        "LEARNING:MISSING_SAME_ITERATION",
+        "MATCHED_STRONG_CONTROLS_UNVERIFIED",
+        "STAGE:evaluation:MATCHED_STRONG_CONTROLS_UNVERIFIED",
+        "STAGE:evaluation:MISSING_STAGE_RECORD",
+        "STAGE:evaluation:NOT_REPORTED:cost_completeness_verified",
+        "STAGE:evaluation:NOT_REPORTED:engineering_controls_only",
+        "STAGE:evaluation:NOT_REPORTED:evaluation_profile_semantics_verified",
+        "STAGE:evaluation:NOT_REPORTED:future_window_accepted",
+        "STAGE:evaluation:NOT_REPORTED:independent_control_accepted",
+        "STAGE:evaluation:NOT_REPORTED:independent_evaluation",
+        "STAGE:evaluation:NOT_REPORTED:native_origin_authenticated",
+        "STAGE:evaluation:NOT_REPORTED:prior_tasks_and_outcomes_exposed",
+        "STAGE:evaluation:ORIGINAL_STAGE_QUALIFICATION_UNVERIFIED",
+        "STAGE:selection:MISSING_STAGE_RECORD",
+        "STAGE:selection:NOT_REPORTED:cost_completeness_verified",
+        "STAGE:selection:NOT_REPORTED:engineering_controls_only",
+        "STAGE:selection:NOT_REPORTED:learning_signatures_verified",
+        "STAGE:selection:NOT_REPORTED:native_origin_authenticated",
+        "STAGE:selection:NOT_REPORTED:pre_dispatch_freeze_authenticated",
+        "STAGE:selection:ORIGINAL_STAGE_QUALIFICATION_UNVERIFIED",
+        "STAGE:training:MISSING_STAGE_RECORD",
+        "STAGE:training:NOT_REPORTED:cost_completeness_verified",
+        "STAGE:training:NOT_REPORTED:engineering_controls_only",
+        "STAGE:training:NOT_REPORTED:native_origin_authenticated",
+        "STAGE:training:NOT_REPORTED:real_model_training_verified",
+        "STAGE:training:ORIGINAL_STAGE_QUALIFICATION_UNVERIFIED",
+        "UNCONFIGURED_CASE_ROSTER:no_update",
+        "retained-completion-adopt-readback:CONTEXT_MISMATCH:build_load_sha256",
+        "retained-completion-adopt-readback:CONTEXT_MISMATCH:profile_sha256",
+        "retained-completion-adopt-readback:CONTEXT_MISMATCH:source_pair",
+        "retained-completion-adopt-readback:INCOMPLETE_EXPECTED_IDENTITY",
+        "retained-completion-adopt-readback:NATIVE_EXIT_NOT_ZERO_OR_UNKNOWN",
+        "retained-completion-adopt-readback:NOT_PRODUCTION_EVIDENCE:engineering-control",
+        "retained-completion-adopt-readback:RAW_OUTCOME_UNVERIFIED",
+        "retained-completion-adopt-readback:RETAINED_OUTCOME:UNKNOWN"
+      ],
+      "boundary": "model evaluation and poisoning",
+      "material_status": "BLOCKED",
+      "obligations": [
+        "same_iteration",
+        "no_update"
+      ],
+      "priority": "P0",
+      "qualification": "HOLD_NO_GO",
+      "qualified": false,
+      "record_ids": [
+        "retained-completion-adopt-readback"
+      ],
+      "stages": [
+        "training",
+        "evaluation",
+        "selection"
+      ]
+    },
+    "P0_TIME_DIFFICULTY_FORK_PROGRESS": {
+      "artifact_ids": [
+        "joint-consensus"
+      ],
+      "blockers": [
+        "ARTIFACT:joint-consensus:DECLARATION_NOT_VERIFIED:limitations.native_node_activation_executed",
+        "ARTIFACT:joint-consensus:DECLARATION_NOT_VERIFIED:limitations.network_profitability_or_consensus_safety_theorem",
+        "ARTIFACT:joint-consensus:DECLARATION_NOT_VERIFIED:limitations.production_consensus_activation",
+        "ARTIFACT:joint-consensus:DECLARATION_NOT_VERIFIED:limitations.proof_latency_propagation_availability_and_reorg_state_priced",
+        "ARTIFACT:joint-consensus:DECLARATION_NOT_VERIFIED:limitations.uniform_iid_ticket_premise_proved_for_w1",
+        "ARTIFACT:joint-consensus:DECLARATION_NOT_VERIFIED:limitations.w1_oracle_cost_measured_or_synthesized",
+        "ARTIFACT:joint-consensus:EXTRACTED_FIELDS_NOT_FULL_ORIGINAL",
+        "ARTIFACT:joint-consensus:HISTORICAL_EVIDENCE_NOT_CURRENT_ACCEPTANCE",
+        "ARTIFACT:joint-consensus:JOINT_NETWORK_SECURITY_THEOREM_UNVERIFIED",
+        "ARTIFACT:joint-consensus:SOURCE_AND_ORIGINAL_EVIDENCE_UNAUTHENTICATED",
+        "JOINT_COMMON_PREFIX_CHAIN_GROWTH_CHAIN_QUALITY_UNVERIFIED",
+        "PARTICIPATION_DELAY_AND_CLOCK_MAPPING_UNVERIFIED",
+        "UNCONFIGURED_CASE_ROSTER:quantum_work_daa_weight",
+        "UNCONFIGURED_CASE_ROSTER:timestamp_daa_chainweight"
+      ],
+      "boundary": "time, difficulty, forks and progress",
+      "material_status": "BLOCKED",
+      "obligations": [
+        "timestamp_daa_chainweight",
+        "quantum_work_daa_weight"
+      ],
+      "priority": "P0",
+      "qualification": "HOLD_NO_GO",
+      "qualified": false,
+      "record_ids": [],
+      "stages": []
+    },
+    "P0_VERIFICATION_COST_HONEST_SERVICE": {
+      "artifact_ids": [
+        "campaign",
+        "resource"
+      ],
+      "blockers": [
+        "ALL_ENTRY_PHYSICAL_COST_COVERAGE_UNVERIFIED",
+        "ARTIFACT:campaign:DECLARATION_NOT_VERIFIED:all_reports_valid",
+        "ARTIFACT:campaign:HISTORICAL_EVIDENCE_NOT_CURRENT_ACCEPTANCE",
+        "ARTIFACT:campaign:NATIVE_CAMPAIGN_NOT_AUTHENTICATED",
+        "ARTIFACT:campaign:ORIGINAL_ACCEPTANCE_VALIDATOR_NOT_EXECUTED",
+        "ARTIFACT:campaign:REPORTED_CAMPAIGN_ACCEPTANCE_INCOMPLETE",
+        "ARTIFACT:campaign:REPORTED_CONFIRMATION_TARGET_INCOMPLETE",
+        "ARTIFACT:campaign:REPORTED_ORIGINAL_CAMPAIGN_FAILURE",
+        "ARTIFACT:campaign:SOURCE_AND_ORIGINAL_EVIDENCE_UNAUTHENTICATED",
+        "ARTIFACT:campaign:UNOBSERVED_CONFIRMATION_ROUNDS_RETAINED",
+        "ARTIFACT:resource:ALL_ENTRY_RESOURCE_BOUND_AND_HONEST_SERVICE_UNVERIFIED",
+        "ARTIFACT:resource:DECLARATION_NOT_VERIFIED:honest_service_bound_qualified",
+        "ARTIFACT:resource:DECLARATION_NOT_VERIFIED:independent_rollback_anchor_qualified",
+        "ARTIFACT:resource:DECLARATION_NOT_VERIFIED:observer_actual_cpu_measured",
+        "ARTIFACT:resource:DECLARATION_NOT_VERIFIED:observer_actual_io_measured",
+        "ARTIFACT:resource:DECLARATION_NOT_VERIFIED:physical_resource_bound_qualified",
+        "ARTIFACT:resource:DECLARATION_NOT_VERIFIED:production_activation",
+        "ARTIFACT:resource:DECLARATION_NOT_VERIFIED:whole_entry_coverage_qualified",
+        "ARTIFACT:resource:HISTORICAL_EVIDENCE_NOT_CURRENT_ACCEPTANCE",
+        "ARTIFACT:resource:SOURCE_AND_ORIGINAL_EVIDENCE_UNAUTHENTICATED",
+        "ORIGINAL_HOST_HONEST_SERVICE_UNVERIFIED",
+        "UNCONFIGURED_CASE_ROSTER:cost_decomposition",
+        "UNCONFIGURED_CASE_ROSTER:hostile_honest_confirmation",
+        "UNCONFIGURED_CASE_ROSTER:matched_confirmation_tail_latency"
+      ],
+      "boundary": "verification cost and honest service",
+      "material_status": "BLOCKED",
+      "obligations": [
+        "hostile_honest_confirmation",
+        "cost_decomposition",
+        "matched_confirmation_tail_latency"
+      ],
+      "priority": "P0",
+      "qualification": "HOLD_NO_GO",
+      "qualified": false,
+      "record_ids": [],
+      "stages": []
+    },
+    "P0_WHOLE_STATE_ROLLBACK": {
+      "artifact_ids": [
+        "resource"
+      ],
+      "blockers": [
+        "ARTIFACT:resource:ALL_ENTRY_RESOURCE_BOUND_AND_HONEST_SERVICE_UNVERIFIED",
+        "ARTIFACT:resource:DECLARATION_NOT_VERIFIED:honest_service_bound_qualified",
+        "ARTIFACT:resource:DECLARATION_NOT_VERIFIED:independent_rollback_anchor_qualified",
+        "ARTIFACT:resource:DECLARATION_NOT_VERIFIED:observer_actual_cpu_measured",
+        "ARTIFACT:resource:DECLARATION_NOT_VERIFIED:observer_actual_io_measured",
+        "ARTIFACT:resource:DECLARATION_NOT_VERIFIED:physical_resource_bound_qualified",
+        "ARTIFACT:resource:DECLARATION_NOT_VERIFIED:production_activation",
+        "ARTIFACT:resource:DECLARATION_NOT_VERIFIED:whole_entry_coverage_qualified",
+        "ARTIFACT:resource:HISTORICAL_EVIDENCE_NOT_CURRENT_ACCEPTANCE",
+        "ARTIFACT:resource:SOURCE_AND_ORIGINAL_EVIDENCE_UNAUTHENTICATED",
+        "SURVIVING_NEWER_INDEPENDENT_FACT_UNVERIFIED",
+        "UNCONFIGURED_CASE_ROSTER:recovery_effects",
+        "UNCONFIGURED_CASE_ROSTER:rollback_external_effects",
+        "WHOLE_STATE_RECOVERY_QUALIFICATION_UNVERIFIED"
+      ],
+      "boundary": "all retained authority restored to old state",
+      "material_status": "BLOCKED",
+      "obligations": [
+        "recovery_effects",
+        "rollback_external_effects"
+      ],
+      "priority": "P0",
+      "qualification": "HOLD_NO_GO",
+      "qualified": false,
+      "record_ids": [],
+      "stages": []
+    },
+    "P0_WORK_COST_CREDIT": {
+      "artifact_ids": [
+        "fixed-probability"
+      ],
+      "blockers": [
+        "ALL_LEGAL_STRATEGY_COST_BOUND_UNVERIFIED",
+        "ARTIFACT:fixed-probability:ACTUAL_ALL_LEGAL_COST_BOUND_UNVERIFIED",
+        "ARTIFACT:fixed-probability:DECLARATION_NOT_VERIFIED:relation.native_consensus_credit",
+        "ARTIFACT:fixed-probability:INITIAL_POTENTIAL_AND_CREDIT_BRIDGE_UNVERIFIED",
+        "ARTIFACT:fixed-probability:SOURCE_AND_ORIGINAL_EVIDENCE_UNAUTHENTICATED",
+        "NATIVE_CREDIT_CALIBRATION_UNVERIFIED",
+        "UNCONFIGURED_CASE_ROSTER:quantum_work_daa_weight",
+        "UNCONFIGURED_CASE_ROSTER:w1_minimum_cost"
+      ],
+      "boundary": "work cost and consensus credit",
+      "material_status": "BLOCKED",
+      "obligations": [
+        "w1_minimum_cost",
+        "quantum_work_daa_weight"
+      ],
+      "priority": "P0",
+      "qualification": "HOLD_NO_GO",
+      "qualified": false,
+      "record_ids": [],
+      "stages": []
+    },
+    "P1_SAME_SOURCE_INTEGRATION": {
+      "artifact_ids": [],
+      "blockers": [
+        "HISTORICAL_MATERIALS_RETAINED_WITHOUT_ACCEPTANCE_TRANSFER",
+        "MISSING_IDENTITY:chain:build_sha256",
+        "MISSING_IDENTITY:chain:configuration_sha256",
+        "MISSING_IDENTITY:chain:environment_sha256",
+        "MISSING_IDENTITY:chain:interpreter_sha256",
+        "MISSING_IDENTITY:chain:libraries_sha256",
+        "MISSING_IDENTITY:chain:load_sha256",
+        "MISSING_IDENTITY:hepta:build_sha256",
+        "MISSING_IDENTITY:hepta:configuration_sha256",
+        "MISSING_IDENTITY:hepta:environment_sha256",
+        "MISSING_IDENTITY:hepta:interpreter_sha256",
+        "MISSING_IDENTITY:hepta:libraries_sha256",
+        "MISSING_IDENTITY:hepta:load_sha256",
+        "MISSING_IDENTITY:hepta:model_closure_sha256",
+        "MISSING_LOCK:hepta:MODULE.bazel.lock",
+        "MISSING_LOCK:hepta:codex-rs/Cargo.lock",
+        "MISSING_SOURCE_OBSERVATION",
+        "SAME_SOURCE_COMPLETE_NATIVE_ACCEPTANCE_UNVERIFIED",
+        "UNCONFIGURED_CASE_ROSTER:build_load",
+        "UNCONFIGURED_CASE_ROSTER:native_registry",
+        "UNCONFIGURED_CASE_ROSTER:source_locks"
+      ],
+      "boundary": "complete acceptance on one integrated source",
+      "material_status": "BLOCKED",
+      "obligations": [
+        "source_locks",
+        "build_load",
+        "native_registry"
+      ],
+      "priority": "P1",
+      "qualification": "HOLD_NO_GO",
+      "qualified": false,
+      "record_ids": [],
+      "stages": []
+    },
+    "P1_STORAGE_COMMON_FAILURE": {
+      "artifact_ids": [],
+      "blockers": [
+        "COMPLETE_VERSION_RENEWAL_AND_WAN_REPAIR_UNVERIFIED",
+        "INDEPENDENT_OPERATOR_ADMIN_BACKUP_NETWORK_POWER_RECOVERY_UNVERIFIED",
+        "STAGE:cold_fetch:MISSING_STAGE_RECORD",
+        "STAGE:cold_fetch:NOT_REPORTED:cost_completeness_verified",
+        "STAGE:cold_fetch:NOT_REPORTED:engineering_controls_only",
+        "STAGE:cold_fetch:NOT_REPORTED:independent_wan_accepted",
+        "STAGE:cold_fetch:NOT_REPORTED:native_origin_authenticated",
+        "STAGE:cold_fetch:ORIGINAL_STAGE_QUALIFICATION_UNVERIFIED",
+        "STAGE:installation:MISSING_STAGE_RECORD",
+        "STAGE:installation:NOT_REPORTED:cost_completeness_verified",
+        "STAGE:installation:NOT_REPORTED:engineering_controls_only",
+        "STAGE:installation:NOT_REPORTED:native_origin_authenticated",
+        "STAGE:installation:NOT_REPORTED:physical_installation_accepted",
+        "STAGE:installation:ORIGINAL_STAGE_QUALIFICATION_UNVERIFIED",
+        "UNCONFIGURED_CASE_ROSTER:content_commitment",
+        "UNCONFIGURED_CASE_ROSTER:dependency_closure",
+        "UNCONFIGURED_CASE_ROSTER:independent_custody_wan",
+        "UNCONFIGURED_CASE_ROSTER:renewal_repair_recovery"
+      ],
+      "boundary": "storage availability and common failure",
+      "material_status": "BLOCKED",
+      "obligations": [
+        "dependency_closure",
+        "independent_custody_wan",
+        "renewal_repair_recovery",
+        "content_commitment"
+      ],
+      "priority": "P1",
+      "qualification": "HOLD_NO_GO",
+      "qualified": false,
+      "record_ids": [],
+      "stages": [
+        "cold_fetch",
+        "installation"
+      ]
+    }
+  }
+}

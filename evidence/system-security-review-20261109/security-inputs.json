@@ -1,0 +1,45 @@
+{
+  "artifacts": [
+    {
+      "evidence": {
+        "path": "inputs/fixed-probability.json",
+        "sha256": "e249dfcda10720a1fc388cef9613302253a96b125c0ab1f0eda1b584b72cebef"
+      },
+      "id": "fixed-probability",
+      "source_commit": "e2a02f9271b49f146e70806c8a66e161b5973971",
+      "source_tree": "86d2014b560659106b3af6e6c19e1f82a290a60e",
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e2a02f9271b49f146e70806c8a66e161b5973971/formal/pon-nakamoto-v1/fixed_probability_contract_v1.json"
+    },
+    {
+      "evidence": {
+        "path": "inputs/joint-consensus.json",
+        "sha256": "9cc5314a0cdf5716e1561e502098b299ec49d01c7d6352bc303168cf86d38013"
+      },
+      "id": "joint-consensus",
+      "source_commit": "06cb1834de5dc4a42bd54eba0f5a4491686b9cb0",
+      "source_tree": "e881dd7cf318a562b09de38ff7774a508724fa18",
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e2a02f9271b49f146e70806c8a66e161b5973971/evidence/pon-joint-consensus-daa-20261108/joint-boundaries.json"
+    },
+    {
+      "evidence": {
+        "path": "inputs/campaign.json",
+        "sha256": "afaa75e008ba9097460e7f1ddcf9070dcb74b81249e035d0b72ddd0025bf1b0e"
+      },
+      "id": "campaign",
+      "source_commit": "11791e2da79b69322271be2cffe03725165151d1",
+      "source_tree": "162552848110fda532504b78865a16930bc6d9bb",
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c2297ad53fef1d9b552e657cfd205d583c91980d/evidence/pon-joint-resource-contract-20261109/original-campaign-root-crosscheck.json"
+    },
+    {
+      "evidence": {
+        "path": "inputs/resource.json",
+        "sha256": "6d365f28207d199fd51e66936ff51449a8004228284306f7f08571109dffd9f6"
+      },
+      "id": "resource",
+      "source_commit": "bb3f13ed78edd367381275a3ae4752f1f4da4c22",
+      "source_tree": "ece61caafae0b994f16ed3f744c35297ccc45cd8",
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/bb3f13ed78edd367381275a3ae4752f1f4da4c22/config/pon/local-resource-owner-v1.json"
+    }
+  ],
+  "schema": "trnm-chain-system-security-inputs-v1"
+}

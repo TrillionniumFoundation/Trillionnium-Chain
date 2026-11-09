@@ -2604,6 +2604,11 @@ class MergedQualificationLaneTests(unittest.TestCase):
             '    python3 formal/pon-nakamoto-v1/fixed_probability_contract.py\n',
             '    python3 formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py --check\n',
         ), '    python3 formal/pon-nakamoto-v1/stateful_tail.py\n'),
+        'system_security': ('repository-truth',
+                            '    python3 scripts/ci/test_capture_chain_hepta_identity.py\n', (
+            '    python3 scripts/ci/test_chain_hepta_qualification.py\n',
+            '    python3 scripts/ci/test_chain_system_security.py\n',
+        ), '    python3 scripts/ci/test_chain_hepta_command_binding.py\n'),
         'completion': ('external-evidence-contract', '    python3 scripts/ci/test_invariant_evidence.py\n', (
             '    python3 scripts/ci/check_completion_evidence.py --historical\n',
             '    python3 scripts/ci/test_completion_evidence.py\n',
@@ -2670,6 +2675,9 @@ class MergedQualificationLaneTests(unittest.TestCase):
 
     def test_completion_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('completion')
+
+    def test_system_security_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('system_security')
 
     def test_complete_groups_cannot_reorder_duplicate_or_hide_in_shell_conditions(self):
         self.checked(self.script)

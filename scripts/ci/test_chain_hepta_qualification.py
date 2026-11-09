@@ -551,6 +551,129 @@ class QualificationTests(unittest.TestCase):
         self.assertEqual(self.plan, plan)
         self.assertEqual(self.packet, packet)
 
+    def test_stage_projection_exposes_missing_qualification_without_changing_review(self):
+        self.complete()
+        original = self.run_review()
+        before = copy.deepcopy(original)
+        result = gate.stage_qualification_gaps(original)
+        self.assertEqual(original, before)
+        self.assertEqual(result["schema"], "trnm-chain-hepta-stage-qualification-v1")
+        self.assertEqual(result["qualification"], "HOLD_NO_GO")
+        self.assertEqual(result["authority"], "DENY_ALL")
+        self.assertEqual(result["source_pair"], original["source_pair"])
+        self.assertEqual(result["plan_sha256"], original["plan_sha256"])
+        self.assertEqual(set(result["stages"]), set(gate.STAGES))
+        for stage in result["stages"].values():
+            self.assertIs(stage["declared_result_consistent"], True)
+            self.assertIs(stage["qualified"], False)
+            self.assertIn("ORIGINAL_STAGE_QUALIFICATION_UNVERIFIED", stage["blockers"])
+            self.assertTrue(all(value["declaration_status"] == "NOT_REPORTED"
+                                for value in stage["indicators"].values()))
+        self.assertIn("MATCHED_STRONG_CONTROLS_UNVERIFIED",
+                      result["stages"]["evaluation"]["blockers"])
+
+    def test_native_zero_and_complete_structure_preserve_explicit_qualification_false(self):
+        self.complete()
+        # Minimal declared facts from the existing completion-reader vocabulary;
+        # these synthetic local parser inputs are not original native receipts.
+        declarations = {"real_model_training_verified": False, "settlement_verified": False,
+                        "physical_installation_accepted": False, "hepta_final_use_accepted": False}
+        for stage in ("training", "payment", "installation", "next_task"):
+            self.row(self.packet["learning"]["stages"][stage])["evidence"] = self.artifact(declarations)
+        original = self.run_review()
+        result = gate.stage_qualification_gaps(original)
+        self.assertEqual(original["learning_blockers"], [])
+        for stage, field in (("training", "real_model_training_verified"),
+                             ("payment", "settlement_verified"),
+                             ("installation", "physical_installation_accepted"),
+                             ("next_task", "hepta_final_use_accepted")):
+            row = result["stages"][stage]
+            self.assertIs(row["declared_result_consistent"], True)
+            self.assertEqual(row["indicators"][field]["declaration_status"], "NOT_ESTABLISHED")
+            self.assertIs(row["indicators"][field]["observed"], False)
+            self.assertIs(row["qualified"], False)
+
+    def test_every_affirmative_stage_declaration_stays_unauthenticated(self):
+        self.complete()
+        for stage in gate.STAGES:
+            payload = {**gate.STAGE_COMMON_QUALIFICATION_INDICATORS,
+                       **gate.STAGE_QUALIFICATION_INDICATORS[stage], "matched_strong_controls": True}
+            self.row(self.packet["learning"]["stages"][stage])["evidence"] = self.artifact(payload)
+        result = gate.stage_qualification_gaps(self.run_review())
+        for row in result["stages"].values():
+            self.assertIs(row["qualified"], False)
+            self.assertTrue(all(value["declaration_status"] == "DECLARED_UNVERIFIED"
+                                for value in row["indicators"].values()))
+        self.assertIn("MATCHED_STRONG_CONTROLS_UNVERIFIED", result["stages"]["evaluation"]["blockers"])
+        for field in ("stage_qualification_verified", "original_evidence_authenticated",
+                      "production_final_use_qualified", "production_activation"):
+            self.assertIs(result[field], False)
+
+    def test_stage_qualification_distinguishes_absence_false_and_nonboolean_declarations(self):
+        self.complete()
+        row = self.row(self.packet["learning"]["stages"]["evaluation"])
+        row["evidence"] = self.artifact({"independent_evaluation": 1,
+                                        "independent_control_accepted": "true",
+                                        "future_window_accepted": None,
+                                        "prior_tasks_and_outcomes_exposed": True,
+                                        "nested": {"evaluation_profile_semantics_verified": True}})
+        report = gate.stage_qualification_gaps(self.run_review())["stages"]["evaluation"]
+        for field in ("independent_evaluation", "independent_control_accepted", "future_window_accepted"):
+            self.assertEqual(report["indicators"][field]["declaration_status"], "INVALID_DECLARATION")
+            self.assertIsNone(report["indicators"][field]["observed"])
+        self.assertEqual(report["indicators"]["prior_tasks_and_outcomes_exposed"]["declaration_status"],
+                         "NOT_ESTABLISHED")
+        self.assertEqual(report["indicators"]["evaluation_profile_semantics_verified"]["declaration_status"],
+                         "NOT_REPORTED")
+
+    def test_stage_projection_keeps_other_source_and_iteration_observations_ineligible(self):
+        self.complete()
+        row = self.row(self.packet["learning"]["stages"]["training"])
+        row["source_pair"]["chain"]["sha"] = pin("other-branch", 40)
+        row["iteration_id"] = "other-iteration"
+        row["evidence"] = self.artifact({"real_model_training_verified": True})
+        report = gate.stage_qualification_gaps(self.run_review())["stages"]["training"]
+        self.assertIs(report["stage_context_consistent"], False)
+        self.assertIn("STAGE_CONTEXT_NOT_ESTABLISHED", report["blockers"])
+        self.assertIn("CONTEXT_MISMATCH:source_pair", report["record_issues"])
+        self.assertEqual(report["indicators"]["real_model_training_verified"]["declaration_status"],
+                         "DECLARED_UNVERIFIED")
+        self.assertIs(report["qualified"], False)
+        row["source_pair"] = copy.deepcopy(self.plan["source_pair"])
+        row["iteration_id"] = self.packet["learning"]["iteration_id"]
+        row["evidence"] = self.artifact({"schema": "trnm-pq-native-command-v1",
+                                        "status": "command_succeeded", "exit_code": 0,
+                                        "before": {}, "after": {}})
+        report = gate.stage_qualification_gaps(self.run_review())["stages"]["training"]
+        self.assertIn("RAW_COMMAND_SOURCE_UNVERIFIED", report["record_issues"])
+        self.assertIs(report["stage_context_consistent"], False)
+
+    def test_retained_parent_structure_omits_only_cold_fetch_and_installation(self):
+        self.complete(no_update=True)
+        result = gate.stage_qualification_gaps(self.run_review())
+        for stage, row in result["stages"].items():
+            optional = stage in ("cold_fetch", "installation")
+            self.assertEqual(row["required_for_declared_path"], not optional)
+            self.assertIs(row["qualified"], False)
+            if optional:
+                self.assertEqual(row["applicability"], "NOT_REQUIRED_RETAINED_PARENT_STRUCTURE")
+                self.assertEqual(row["blockers"], [])
+        self.packet["learning"]["evaluation_status"] = "UNKNOWN"
+        blocked = gate.stage_qualification_gaps(self.run_review())
+        for stage in ("cold_fetch", "installation"):
+            self.assertIs(blocked["stages"][stage]["required_for_declared_path"], True)
+            self.assertIn("MISSING_STAGE_RECORD", blocked["stages"][stage]["blockers"])
+
+    def test_absent_learning_and_non_deny_all_report_cannot_grant_stage_qualification(self):
+        original = self.run_review()
+        report = gate.stage_qualification_gaps(original)
+        self.assertIsNone(report["iteration_id"])
+        self.assertTrue(all("MISSING_STAGE_RECORD" in row["blockers"]
+                            for row in report["stages"].values()))
+        original["authority"] = "ALLOW"
+        with self.assertRaisesRegex(gate.Refusal, "STAGE_REVIEW_SCOPE"):
+            gate.stage_qualification_gaps(original)
+
     def test_cli_returns_hold_not_success_exit_and_refuses_wrong_pin(self):
         plan_raw = gate.canonical(self.plan)
         self.packet["plan_sha256"] = gate.sha(plan_raw)

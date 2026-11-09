@@ -1,0 +1,24 @@
+{
+  "schema": "read-only-security-review-execution-v1",
+  "argv": [
+    "python3",
+    "scripts/ci/chain_system_security.py",
+    "--plan",
+    "/workspace/scratch/ab60bfa410b1/chain-security/evidence/system-security-review-20261109/plan.json",
+    "--plan-sha256",
+    "a4c34a0389320bdce8117124662c7d11ac3e29ee0bd511e3e27c02a329984553",
+    "--packet",
+    "/workspace/scratch/ab60bfa410b1/chain-security/evidence/system-security-review-20261109/packet.json",
+    "--evidence-root",
+    "/workspace/scratch/ab60bfa410b1/chain-security/evidence/system-security-review-20261109",
+    "--security-inputs",
+    "/workspace/scratch/ab60bfa410b1/chain-security/evidence/system-security-review-20261109/security-inputs.json"
+  ],
+  "started_at_utc": "2026-11-09T13:45:59.557449+00:00",
+  "finished_at_utc": "2026-11-09T13:45:59.657563+00:00",
+  "exit_code": 2,
+  "basis": "prepared-working-tree; committed-source verification recorded separately",
+  "stdout_sha256": "cc535c84cb866a41ca526def1fb4637437d4f252aad09a77f66bbe5dce25bce1",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "full_native_acceptance": false
+}

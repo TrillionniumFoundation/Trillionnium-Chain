@@ -1,0 +1,26 @@
+test_system_security_commands_cannot_change_position_multiplicity_or_failure_policy (__main__.MergedQualificationLaneTests.test_system_security_commands_cannot_change_position_multiplicity_or_failure_policy) ... 
+  test_system_security_commands_cannot_change_position_multiplicity_or_failure_policy (__main__.MergedQualificationLaneTests.test_system_security_commands_cannot_change_position_multiplicity_or_failure_policy) (group='system_security', lane='repository-truth', command='    python3 scripts/ci/test_chain_hepta_qualification.py\n', mutation='duplicated in fuzz lane') ... FAIL
+  test_system_security_commands_cannot_change_position_multiplicity_or_failure_policy (__main__.MergedQualificationLaneTests.test_system_security_commands_cannot_change_position_multiplicity_or_failure_policy) (group='system_security', lane='repository-truth', command='    python3 scripts/ci/test_chain_system_security.py\n', mutation='duplicated in fuzz lane') ... FAIL
+
+======================================================================
+FAIL: test_system_security_commands_cannot_change_position_multiplicity_or_failure_policy (__main__.MergedQualificationLaneTests.test_system_security_commands_cannot_change_position_multiplicity_or_failure_policy) (group='system_security', lane='repository-truth', command='    python3 scripts/ci/test_chain_hepta_qualification.py\n', mutation='duplicated in fuzz lane')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/ab60bfa410b1/chain-security/scripts/ci/test_ci_contract.py", line 2661, in reject_command_mutations
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_system_security_commands_cannot_change_position_multiplicity_or_failure_policy (__main__.MergedQualificationLaneTests.test_system_security_commands_cannot_change_position_multiplicity_or_failure_policy) (group='system_security', lane='repository-truth', command='    python3 scripts/ci/test_chain_system_security.py\n', mutation='duplicated in fuzz lane')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/ab60bfa410b1/chain-security/scripts/ci/test_ci_contract.py", line 2661, in reject_command_mutations
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.446s
+
+FAILED (failures=2)

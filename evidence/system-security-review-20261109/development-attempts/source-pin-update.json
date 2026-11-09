@@ -1,0 +1,52 @@
+{
+  "schema": "source-pin-update-observation-v1",
+  "scope": "explicit changed files only",
+  "updates": [
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "before": "88cfbf66086f151a5593101dbc5990bc1386b193",
+      "after": "61e65e8f331e3dea3e7631ed742757b385667a04"
+    },
+    {
+      "path": "scripts/ci/chain_hepta_qualification.py",
+      "before": "b5faf8360f85d7ce4b69b313b82afb592b4d0816",
+      "after": "8e79c681ada6ef2c8a40b7679c07e0be32729f02"
+    },
+    {
+      "path": "scripts/ci/test_chain_hepta_qualification.py",
+      "before": "7c97f68d9243a3a317fde7dbe14e9a1a3d747555",
+      "after": "a52c8e3f8b81525290867355f2f0a00a089bf5e9"
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "before": "8eeccef221a010129c6fc054d911b15a692be97a",
+      "after": "7773bf836e6a002a1505a7d3c70e99b64dc5d9b1"
+    },
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "before": "e5f130a9648c285d71abc9ce659ec66fecf8f92f",
+      "after": "520de4994e1792d538cb5bdcc9e04bfa663a217f"
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "before": "0b0596d5b2d5a0c26a1f746408180245ba2f2862",
+      "after": "eebc0ac0ebd7410c651d2d8b977d461b549d1730"
+    },
+    {
+      "path": "docs/security/SYSTEM_SECURITY_BLOCKERS_V1.md",
+      "before": null,
+      "after": "bb9421ec3b8e6a73c4210e95d394b7951cc83daf"
+    },
+    {
+      "path": "scripts/ci/chain_system_security.py",
+      "before": null,
+      "after": "26c17514e862c74d4a40e69b524649c080940505"
+    },
+    {
+      "path": "scripts/ci/test_chain_system_security.py",
+      "before": null,
+      "after": "f919a47c0882bc1945e359e9525fc3fd0538b784"
+    }
+  ],
+  "qualification": "HOLD_NO_GO"
+}

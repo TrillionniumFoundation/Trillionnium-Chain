@@ -1,0 +1,15 @@
+{
+  "extraction": "limitations-only",
+  "limitations": {
+    "native_node_activation_executed": false,
+    "native_w1_proofs_generated": 0,
+    "network_profitability_or_consensus_safety_theorem": false,
+    "production_consensus_activation": false,
+    "proof_latency_propagation_availability_and_reorg_state_priced": false,
+    "uniform_iid_ticket_premise_proved_for_w1": false,
+    "w1_oracle_cost_measured_or_synthesized": false
+  },
+  "original_sha256": "9985a32e65792d6ff8137c48546f14ce1becca5b48912dc9d4b1bc549c34b7fa",
+  "schema": "trnm-joint-consensus-limitations-extract-v1",
+  "source_schema": "trnm-joint-consensus-boundaries-v1"
+}

@@ -86,6 +86,36 @@ OUTCOMES = ("PASS", "FAIL", "TIMEOUT", "IGNORED", "FILTERED", "UNKNOWN")
 COUNTS = ("passed", "failed", "ignored", "filtered", "unknown")
 SCOPES = ("native-test", "native-owner", "provider-readback", "engineering-control", "sanitized-history")
 STAGES = ("training", "evaluation", "selection", "payment", "cold_fetch", "installation", "load", "next_task")
+STAGE_QUALIFICATION_SCHEMA = "trnm-chain-hepta-stage-qualification-v1"
+# Existing literal declarations used for diagnostics, not a new acceptance
+# contract. Missing/false does not mean a native execution failed; matching true
+# does not authenticate the fact or confer authority. Do not infer these from
+# process/key counts, an ACK, a digest, or a completed structural stage.
+STAGE_COMMON_QUALIFICATION_INDICATORS = {
+    "native_origin_authenticated": True,
+    "cost_completeness_verified": True,
+    "engineering_controls_only": False,
+}
+STAGE_QUALIFICATION_INDICATORS = {
+    "training": {"real_model_training_verified": True},
+    "evaluation": {
+        "independent_control_accepted": True,
+        "independent_evaluation": True,
+        "evaluation_profile_semantics_verified": True,
+        "future_window_accepted": True,
+        "prior_tasks_and_outcomes_exposed": False,
+    },
+    "selection": {"learning_signatures_verified": True,
+                  "pre_dispatch_freeze_authenticated": True},
+    "payment": {"settlement_verified": True},
+    "cold_fetch": {"independent_wan_accepted": True},
+    "installation": {"physical_installation_accepted": True},
+    "load": {"hepta_final_use_accepted": True, "current_permission_exported": True},
+    "next_task": {"hepta_final_use_accepted": True, "current_permission_exported": True,
+                  "independent_control_accepted": True, "full_learning_iteration_completed": True},
+}
+RAW_QUALIFICATION_FIELDS = frozenset(STAGE_COMMON_QUALIFICATION_INDICATORS).union(
+    *(set(fields) for fields in STAGE_QUALIFICATION_INDICATORS.values()))
 RECORD_FIELDS = ("id obligation case_id attempt source_pair campaign_id profile_sha256 "
                  "build_load_sha256 iteration_id stage manifest_sha256 bundle_sha256 "
                  "effect_intent_sha256 operation_id effect_outcome outcome native_exit "
@@ -412,9 +442,8 @@ def raw_negative_observations(raw, record):
             summary[key] = value[key]
             if value[key] != record["counts"][key]:
                 issues.append("RAW_COUNT_CONFLICT:" + key)
-    for key in ("qualification", "full_learning_iteration_completed", "real_model_training_verified",
-                "physical_installation_accepted", "settlement_verified", "hepta_final_use_accepted",
-                "production_activation", "engineering_controls_only", "actual_model_execution"):
+    for key in sorted(RAW_QUALIFICATION_FIELDS | {
+            "qualification", "production_activation", "actual_model_execution"}):
         if key in value:
             summary[key] = value[key]
     return summary, issues
@@ -687,6 +716,112 @@ def review(plan_raw, expected_plan_sha256, packet_raw, evidence_root):
                 settlement_verified=False, full_pq_security_qualified=False,
                 production_final_use_qualified=False, production_activation=False,
                 qualification_note="MATERIALS_RECORDED means retained bindings only; original owners and independent review remain required.")
+
+
+def stage_qualification_gaps(review_result):
+    """Project a local review() result into explicit stage qualification gaps.
+
+    This separate schema does not alter the v1 review's structural consistency,
+    learning blockers, outcomes or authority. It consumes the result produced by
+    review(), not an imported report as authenticated evidence. Only declarations
+    from each stage's own retained raw summary are inspected; another record or
+    nested object cannot supply a missing declaration. True remains unverified.
+    No independent data, strong controls, host, issuer or native owner is checked.
+    """
+    require(type(review_result) is dict and review_result.get("schema") == REPORT_SCHEMA and
+            review_result.get("qualification") == "HOLD_NO_GO" and
+            review_result.get("authority") == "DENY_ALL", "STAGE_REVIEW_SCOPE")
+    for flag in ("original_evidence_authenticated", "production_final_use_qualified",
+                 "production_activation"):
+        require(review_result.get(flag) is False, "STAGE_REVIEW_AUTHORITY")
+    sequence(review_result["records"])
+    by_id = {}
+    for row in review_result["records"]:
+        require(type(row) is dict and type(row.get("record")) is dict and
+                type(row.get("raw_result_summary")) is dict and
+                type(row.get("declared_result_consistent")) is bool and
+                type(row.get("retained_bindings_consistent")) is bool and
+                row.get("result_payload_verified") is False, "STAGE_REVIEW_RECORD")
+        record_id = row["record"]["id"]
+        label(record_id)
+        require(record_id not in by_id, "DUPLICATE_RECORD_ID")
+        by_id[record_id] = row
+    learning = review_result["learning"]
+    learning_blockers = review_result["learning_blockers"]
+    sequence(learning_blockers)
+    if learning is not None:
+        fields(learning, LEARNING_FIELDS, "LEARNING_FIELDS")
+        fields(learning["stages"], STAGES, "LEARNING_STAGE_ROSTER")
+    retained_parent = (learning is not None and not learning_blockers and
+                       learning["decision"] == "NO_UPDATE" and
+                       learning["evaluation_status"] == "COMPLETED" and
+                       learning["reset_receipt_sha256"] is None and all(
+                           learning["selected_" + part] == learning["parent_" + part]
+                           for part in ("manifest", "bundle")))
+    stages = {}
+    for stage in STAGES:
+        record_id = learning["stages"][stage] if learning is not None else None
+        row = by_id.get(record_id)
+        omitted_retained_parent_step = (retained_parent and record_id is None and
+                                        stage in ("cold_fetch", "installation"))
+        record = row["record"] if row is not None else None
+        context_consistent = (row is not None and learning is not None and
+                              row["retained_bindings_consistent"] and
+                              not any(issue.startswith("RAW_COMMAND_SOURCE")
+                                      for issue in row["raw_result_conflicts"]) and
+                              record["iteration_id"] == learning["iteration_id"] and
+                              record["stage"] == stage)
+        if context_consistent and stage in ("cold_fetch", "installation", "load", "next_task"):
+            context_consistent = all(record[part + "_sha256"] == learning["selected_" + part]
+                                     for part in ("manifest", "bundle"))
+        indicators, blockers = {}, []
+        if not omitted_retained_parent_step:
+            blockers.append("ORIGINAL_STAGE_QUALIFICATION_UNVERIFIED")
+            if row is None:
+                blockers.append("MISSING_STAGE_RECORD")
+            elif not context_consistent:
+                blockers.append("STAGE_CONTEXT_NOT_ESTABLISHED")
+            if row is not None and not row["declared_result_consistent"]:
+                blockers.append("DECLARED_STAGE_RESULT_INCONSISTENT")
+            raw = row["raw_result_summary"] if row is not None else {}
+            expected = {**STAGE_COMMON_QUALIFICATION_INDICATORS,
+                        **STAGE_QUALIFICATION_INDICATORS[stage]}
+            for field, wanted in sorted(expected.items()):
+                present, value = field in raw, raw.get(field)
+                if not present:
+                    status = "NOT_REPORTED"
+                elif type(value) is not bool:
+                    status = "INVALID_DECLARATION"
+                else:
+                    status = "DECLARED_UNVERIFIED" if value is wanted else "NOT_ESTABLISHED"
+                indicators[field] = dict(expected=wanted, present=present,
+                                         observed=value if type(value) is bool else None,
+                                         observed_type=type(value).__name__ if present else "absent",
+                                         declaration_status=status)
+                blockers.append(status + ":" + field)
+            if stage == "evaluation":
+                # There is no native adapter for cost-matched strong controls;
+                # an arbitrary self-reported boolean cannot close this gap.
+                blockers.append("MATCHED_STRONG_CONTROLS_UNVERIFIED")
+        stages[stage] = dict(
+            record_id=record_id, required_for_declared_path=not omitted_retained_parent_step,
+            applicability=("NOT_REQUIRED_RETAINED_PARENT_STRUCTURE" if omitted_retained_parent_step
+                           else "REQUIRED"),
+            declared_result_consistent=row["declared_result_consistent"] if row is not None else None,
+            stage_context_consistent=context_consistent,
+            record_issues=copy.deepcopy(row["issues"]) if row is not None else [],
+            indicators=indicators, blockers=sorted(set(blockers)), qualified=False)
+    return dict(
+        schema=STAGE_QUALIFICATION_SCHEMA, qualification="HOLD_NO_GO", authority="DENY_ALL",
+        source_pair=copy.deepcopy(review_result["source_pair"]),
+        campaign_id=review_result["campaign_id"], profile_sha256=review_result["profile_sha256"],
+        plan_sha256=review_result["plan_sha256"], packet_sha256=review_result["packet_sha256"],
+        build_load_sha256=build_load_digest(review_result),
+        iteration_id=learning["iteration_id"] if learning is not None else None,
+        learning_structure_blockers=copy.deepcopy(learning_blockers), stages=stages,
+        stage_qualification_verified=False, original_evidence_authenticated=False,
+        production_final_use_qualified=False, production_activation=False,
+        scope="Retained-declaration diagnostics only; missing or negative qualification is not a native execution failure, and matching declarations are not authenticated qualification.")
 
 
 def main(argv=None):

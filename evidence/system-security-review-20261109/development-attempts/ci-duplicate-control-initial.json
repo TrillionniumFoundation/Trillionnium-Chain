@@ -1,0 +1,17 @@
+{
+  "scope": "local parser-source development control only",
+  "argv": [
+    "python3",
+    "scripts/ci/test_ci_contract.py",
+    "MergedQualificationLaneTests.test_system_security_commands_cannot_change_position_multiplicity_or_failure_policy",
+    "-v"
+  ],
+  "returncode": 1,
+  "source_sha256": {
+    "scripts/ci/check_ci_contract.py": "09b61d2a34418001267db4b291e00ac970d94db236878b1b2806f67e9fb340f4",
+    "scripts/ci/test_ci_contract.py": "b323ca5035e7ee380f652592f93a8c7304ee14fe2977e1b92cc3702322998397",
+    "scripts/ci/ci_job.sh": "813df419cf597e3c959eded26ec7d016e72cba1bfc793a2c355b86ad78ca5ce1"
+  },
+  "full_source_acceptance": false,
+  "native_execution": false
+}

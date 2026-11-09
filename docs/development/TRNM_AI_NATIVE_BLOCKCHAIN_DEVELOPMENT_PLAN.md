@@ -10713,3 +10713,12 @@ its own exact source, original operation and receipts. Separate branch logs
 cannot establish a same-iteration production loop. This composition does not
 automatically include #822, #823, #826, #828, #829 or #830. All seven original
 gates remain HOLD; production activation and FinalUse qualification stay false.
+
+
+### 2026-11-09 — Explicit eight-boundary security evidence projection
+
+Continue the exact #835 source with the [read-only system security projection](../security/SYSTEM_SECURITY_BLOCKERS_V1.md). Preserve the original seven gates, source/build/load requirements and DENY_ALL authority. Expose the sixteen unknown cost points, joint-consensus limitations, complete original campaign denominators and local-resource coverage declarations without authenticating them. Historical source/tree identities remain historical.
+
+Add a separate learning/effect-stage qualification view so structure, actual training, independent evaluation, settlement and FinalUse are not conflated. True declarations remain unverified; missing and explicit negative declarations remain distinct. Preserve the complete retained-parent NoUpdate exception. Separate key-control, availability and joint-restoration evidence; key or process counts do not certify independent operation.
+
+Run the new suite once in repository-truth with independent source-contract omission, relocation and failure-propagation controls. Retain source-bound component logs and original historical outcomes. The #836 storage and #837 recovery stacks are related work, not an implicit same-source merge. All eight presentation rows and all original release gates remain HOLD_NO_GO.
