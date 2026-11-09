@@ -1,0 +1,106 @@
+{
+  "schema": "trnm-root-journal-cleanup-committed-source-observation-v1",
+  "observed_at_utc": "2026-11-09T14:09:40.043687+00:00",
+  "implementation_commit": "0f6598454b0d743259579e7e193b1158e5c9353d",
+  "implementation_tree": "b3cab76d5cf4321d94a6b8c64f578717d749c83e",
+  "base_commit": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+  "source_before": "source-before-identity.json",
+  "source_after": "source-after-identity.json",
+  "source_identity_before_after_equal": true,
+  "tracked_entries": 11775,
+  "tracked_bytes": 1120464907,
+  "implementation_files_unchanged_from_published_tree": true,
+  "evidence_archive_present_during_source_checks": false,
+  "observations": {
+    "preflight": {
+      "returncode": 0,
+      "record": "preflight.json",
+      "log": "preflight.log",
+      "log_sha256": "3a19011613a41392cc452a35f034f7c124ee9600d1bf05f48c5122981553e433"
+    },
+    "materialize": {
+      "returncode": 0,
+      "record": "materialize.json",
+      "log": "materialize.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source-before": {
+      "returncode": 0,
+      "record": "source-before.json",
+      "log": "source-before.log",
+      "log_sha256": "7936292c3ad9f93eb74dd676cec876c5d76423007aef03ac48e63be277d80fbb"
+    },
+    "cleanup": {
+      "returncode": 0,
+      "record": "cleanup.json",
+      "log": "cleanup.log",
+      "log_sha256": "d091cedf2a18ca68fb2ce088ab27c42ab629e3441e0a8a8d8d3981b6d294ace0",
+      "tests": 4
+    },
+    "dependency-controls": {
+      "returncode": 0,
+      "record": "dependency-controls.json",
+      "log": "dependency-controls.log",
+      "log_sha256": "832f9e046ca16d0b270910182ad53b3819639e6dcfa95533334384672b2623be",
+      "tests": 42
+    },
+    "source-controls": {
+      "returncode": 0,
+      "record": "source-controls.json",
+      "log": "source-controls.log",
+      "log_sha256": "ce97f30af569bd6759ad23ed2aa76f9064dab5ebbf6507ff234fa50385af598b",
+      "tests": 43
+    },
+    "ci-contract-controls": {
+      "returncode": 0,
+      "record": "ci-contract-controls.json",
+      "log": "ci-contract-controls.log",
+      "log_sha256": "aaf0bb7dc09f5f6888b6e66e0bff3ac702dc9486251be5f563f3d307d419a3c4",
+      "tests": 109
+    },
+    "corpus-controls": {
+      "returncode": 0,
+      "record": "corpus-controls.json",
+      "log": "corpus-controls.log",
+      "log_sha256": "2e6a9986e100eb38ff5a24e442ab6e5be45504aeb29abc9c0d94e0c76b9d07c5",
+      "tests": 55
+    },
+    "dependency-register": {
+      "returncode": 0,
+      "record": "dependency-register.json",
+      "log": "dependency-register.log",
+      "log_sha256": "120fb16a7aec016bf46fe67fe2c1fd7271aad58015fe2234bb95bf08c4a62cc1"
+    },
+    "ci-contract": {
+      "returncode": 0,
+      "record": "ci-contract.json",
+      "log": "ci-contract.log",
+      "log_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+    },
+    "corpus": {
+      "returncode": 0,
+      "record": "corpus.json",
+      "log": "corpus.log",
+      "log_sha256": "dac8828ba9f935f602a9adf11eef8bb79ad23edea7b890b661ab11d1dd55d1a6"
+    },
+    "diff-check": {
+      "returncode": 0,
+      "record": "diff-check.json",
+      "log": "diff-check.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source-after": {
+      "returncode": 0,
+      "record": "source-after.json",
+      "log": "source-after.log",
+      "log_sha256": "7936292c3ad9f93eb74dd676cec876c5d76423007aef03ac48e63be277d80fbb"
+    }
+  },
+  "native_root_suites_rerun": false,
+  "full_mandatory_gates_run": false,
+  "whole_chain_p0_closed": false,
+  "whole_chain_pq_qualified": false,
+  "production_activation": false,
+  "historical_42_of_42_and_hosted_0_of_3_reclassified": false,
+  "scope": "finite ordinary SQLite resource/transaction tests plus source/CI parser/register controls; no native or pressure campaign"
+}

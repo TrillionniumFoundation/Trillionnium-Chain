@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/ab60bfa410b1/root-cleanup/scripts/ci/check_ci_contract.py", line 911, in <module>
+    print(json.dumps(validate(), sort_keys=True))
+                     ^^^^^^^^^^
+  File "/workspace/scratch/ab60bfa410b1/root-cleanup/scripts/ci/check_ci_contract.py", line 871, in validate
+    require((root / 'tests/fuzz/Cargo.lock').is_file(), 'isolated fuzz lockfile missing')
+  File "/workspace/scratch/ab60bfa410b1/root-cleanup/scripts/ci/check_ci_contract.py", line 531, in require
+    raise ValueError('CI contract: ' + message)
+ValueError: CI contract: isolated fuzz lockfile missing

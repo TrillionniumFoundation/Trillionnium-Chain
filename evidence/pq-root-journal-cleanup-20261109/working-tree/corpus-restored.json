@@ -1,0 +1,12 @@
+{
+  "name": "corpus-restored",
+  "argv": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "started_utc": "2026-11-09T13:38:46.494078+00:00",
+  "elapsed_seconds": 0.6170110100010788,
+  "returncode": 0,
+  "log": "/workspace/scratch/ab60bfa410b1/root-cleanup-validation/corpus-restored.log",
+  "log_sha256": "dac8828ba9f935f602a9adf11eef8bb79ad23edea7b890b661ab11d1dd55d1a6"
+}
