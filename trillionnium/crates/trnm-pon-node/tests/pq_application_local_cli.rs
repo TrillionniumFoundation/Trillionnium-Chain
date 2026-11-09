@@ -132,7 +132,10 @@ fn ordinary_npq6_configuration_rejects_missing_null_extra_and_mixed_bindings() {
         assert!(!output.status.success(), "fault {fault}");
         let expected = match fault {
             0 => "missing field `owner_profile`",
-            1 | 6 => "invalid type: null",
+            // serde_json rejects a null externally tagged enum before enum
+            // deserialization; the optional witness uses its non-null reader.
+            1 => "JSON: expected value at line 1 column ",
+            6 => "invalid type: null",
             2..=4 => "PQ_NETWORK_CONTEXT",
             5 => "PQ_APPLICATION_NETWORK_POLICY",
             7 | 8 => "unknown field `unknown`",

@@ -600,6 +600,9 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "scripts/ci/test_w1_v2_current_stage_gate.py",
     "scripts/w1_current_source_observation.py",
     "scripts/ci/test_w1_current_source_observation.py",
+    "scripts/w1_current_source_mapping.py",
+    "scripts/ci/test_w1_current_source_mapping.py",
+    ".github/workflows/pon-w1-current-source-mapping.yml",
     "config/pon/w1-qrom-current-source-observation-v1.json",
     "docs/security/W1_QROM_CURRENT_SOURCE_OBSERVATION_DESIGN_20261108.md",
 ))

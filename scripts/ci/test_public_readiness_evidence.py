@@ -1258,12 +1258,10 @@ class NativeDurableSchemaTests(unittest.TestCase):
                     self.extract(self.replace_once(self.current,current,changed))
 
     def test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope(self):
-        mode = ('SelectedOpen::InitializeOrRecover {\n'
-                '                growth_observation_only,\n'
-                '            },')
+        mode = 'SelectedOpen::InitializeOrRecover { observation_only },'
         for replacement in ('SelectedOpen::ExistingPqOwner,',
-                            mode.replace('growth_observation_only,', 'growth_observation_only: true,'),
-                            mode.replace('growth_observation_only,', 'growth_observation_only: false,')):
+                            mode.replace('observation_only', 'observation_only: true'),
+                            mode.replace('observation_only', 'observation_only: false')):
             with self.subTest(mode=replacement), self.assertRaisesRegex(ValueError,'durable backend selected delegation'):
                 self.extract(self.replace_once(self.current,mode,replacement))
         call = ('Self::open_selected_mode(\n            path,\n            settings,\n'
@@ -1284,15 +1282,15 @@ class NativeDurableSchemaTests(unittest.TestCase):
             ('    ExistingPqOwner,',''),
             ('    ExistingPqOwner,','    ExistingPqOwner, OtherMode,'),
             ('fn open_selected_mode(', 'fn unrecognized_mode('),
-            ('let (growth_observation_only, existing_owner_only) = match selection {',
-             'let (growth_observation_only, existing_owner_only) = match other_selection {'),
+            ('let (observation_only, existing_owner_only) = match selection {',
+             'let (observation_only, existing_owner_only) = match other_selection {'),
         ]:
             with self.subTest(mutation=before), self.assertRaisesRegex(ValueError,'durable (?:backend|source)'):
                 self.extract(self.replace_once(self.current,before,after))
         pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
         for statement in ('let existing_owner_only = false;',
                           'existing_owner_only = false;',
-                          'let growth_observation_only = true;',
+                          'let observation_only = true;',
                           'let alias = &mut existing_owner_only;',
                           'let selection = SelectedOpen::ExistingPqOwner;'):
             with self.subTest(statement=statement), self.assertRaisesRegex(ValueError,'durable backend selected mode rebound'):
@@ -1306,7 +1304,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
         redirect = ('\n        if matches!(state_backend, StateBackend::Legacy) {\n'
                     '            return Self::open_with_authenticated_state(path, settings, workers);\n'
                     '        }')
-        mode = 'let (growth_observation_only, existing_owner_only) = match selection {'
+        mode = 'let (observation_only, existing_owner_only) = match selection {'
         pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
         mutations = [
             ('redirect-before-lock', boundary, boundary.replace('};', '};'+redirect, 1)),
@@ -1321,6 +1319,38 @@ class NativeDurableSchemaTests(unittest.TestCase):
         ]
         for label,before,after in mutations:
             with self.subTest(label=label), self.assertRaisesRegex(ValueError,'durable backend selected'):
+                self.extract(self.replace_once(self.current,before,after))
+
+    def test_selected_observation_profiles_cannot_mix_or_relabel_current_body(self):
+        enum = 'InitializeOrRecover { observation_only: bool },'
+        delegation = 'SelectedOpen::InitializeOrRecover { observation_only },'
+        renamed_enum = enum.replace('observation_only', 'growth_observation_only')
+        for before,after in (
+            (enum, renamed_enum),
+            (delegation, delegation.replace('observation_only', 'growth_observation_only')),
+            ('state_backend: StateBackend,\n        observation_only: bool,',
+             'state_backend: StateBackend,\n        growth_observation_only: bool,'),
+        ):
+            with self.subTest(mixed=before), self.assertRaisesRegex(ValueError,'durable backend selected'):
+                self.extract(self.replace_once(self.current,before,after))
+        # A complete textual relabel satisfies the old selector's shape but
+        # must still fail its unchanged historical implementation fingerprint.
+        renamed = re.sub(r'\bobservation_only\b', 'growth_observation_only', self.current)
+        renamed = renamed.replace('InitializeOrRecover { growth_observation_only }',
+                                  'InitializeOrRecover { growth_observation_only, }')
+        with self.assertRaisesRegex(ValueError,'durable backend selected implementation'):
+            self.extract(renamed)
+
+    def test_packet_observation_read_only_recovery_cannot_be_removed_or_broadened(self):
+        # These controls reach the complete-body guard after the selected
+        # namespace and bindings pass. The new profile is not a name whitelist.
+        for before,after in (
+            ('node.check_packet_observation_recovery()?;', 'node.recover()?;'),
+            ('!observation_only || !marker.exists()', 'true || !marker.exists()'),
+            ('OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,',
+             'OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NO_MUTEX,'),
+        ):
+            with self.subTest(mutation=before), self.assertRaisesRegex(ValueError,'durable backend selected implementation'):
                 self.extract(self.replace_once(self.current,before,after))
 
     def test_selected_settings_cannot_be_mutated_through_fields_or_borrowed(self):

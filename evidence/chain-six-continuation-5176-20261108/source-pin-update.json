@@ -1,0 +1,44 @@
+{
+  "changed_existing": {
+    ".github/workflows/codeql-real-exact-source.yml": {
+      "after": "fa7b71c86defb353b854ed7a433569b82edda176",
+      "before": "3091f8efebaf7f7d1d232a7100d241e7963c8ed6"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "after": "27fd3a1314ada02877a5af2f9c2c5af5a652fcdf",
+      "before": "7ab1a49080c4b99c3c3e12d3c636a5d655577f91"
+    },
+    "scripts/ci/check_pq_research_integration.py": {
+      "after": "2c6a4a1a708555d41301bfc2786b873fb6cf8b87",
+      "before": "283d19233a609da7844f5e89cb69fe2924b8ec89"
+    },
+    "scripts/ci/check_public_readiness_evidence.py": {
+      "after": "081a89482902e635940aa657e0c0b72157ae4430",
+      "before": "18e8f5ce45370ba8abc8e36390fb923afe8fc982"
+    },
+    "scripts/ci/test_public_readiness_evidence.py": {
+      "after": "5b98b0c48da75658a20cf316c78c0ccb135192c8",
+      "before": "c524695c9630ec49498dcd30619f548309ba1fa2"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/pq_application_local_cli.rs": {
+      "after": "9394dd8d691bf0360b3d167a01ab1748e8f74b60",
+      "before": "d0b3ffd9425d0a81f7c120ec8561a6b49691b17e"
+    },
+    "trillionnium/crates/trnm-service-settlement/src/native_budget/task_operation_v2.rs": {
+      "after": "98487709979ebae1f438d9edbde0bde4e41044bf",
+      "before": "d32dbf5c7cb9a2ef7f3ed6930f63db7fad2b5c6e"
+    },
+    "trillionnium/crates/trnm-service-settlement/src/native_budget/task_operation_v2/tests.rs": {
+      "after": "57cf57fbfb9300bf16c4e4933863cf450765967f",
+      "before": "d1eb34fc33b511b56c176cb110af02292b79f3dc"
+    }
+  },
+  "new_required_paths": [
+    "scripts/w1_current_source_mapping.py",
+    "scripts/ci/test_w1_current_source_mapping.py",
+    ".github/workflows/pon-w1-current-source-mapping.yml"
+  ],
+  "qualification_changed": false,
+  "required_paths": 810,
+  "source_pins": 902
+}
