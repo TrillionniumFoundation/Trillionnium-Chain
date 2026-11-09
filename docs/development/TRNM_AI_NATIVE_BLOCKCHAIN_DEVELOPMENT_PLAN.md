@@ -1,3 +1,30 @@
+**Original campaign diagnosis and source-scoped QROM observation, 2026-11-09 America/New_York — HOLD:**
+Continue the complete #835 integration source `e2a02f9271b49f146e70806c8a66e161b5973971`.
+The failed-campaign ZIP reader verifies the complete declared archive, source,
+binary, log and raw-report identities before deriving phase observations. It
+reuses the original positive reader's source/resource/step contracts and the
+original phase reader; a successfully read failure remains a failed campaign.
+For Actions 42575267109, 42579873262 and 42591962205, each of the three original
+attempts confirms one of three baseline business rounds and none in either
+pressure phase. Missing rounds remain unobserved; independent resets and nested
+CPU/wall measurements cannot be summed into qualified goodput.
+
+The existing History observer gains a separately named bounded attribution of
+actual Host checkpoint calls to the already-open native owner phase. Original
+Host calls, current kernel observations, typed failures, cancellation, budgets,
+transaction scopes and acceptance criteria remain unchanged. Unknown phase
+context remains explicit; worker Host CPU is not relabelled as owner-phase CPU.
+These additional measurements require new exact-source native execution; they
+are not a throughput repair or retrospective attribution of old artifacts.
+
+The W1 implementation workflow separates the unchanged historical V1 roster on
+fixed source `0c830e0be8939ce80c8443c9ad68021b87343a00` from the current V2 map
+and exact current head/prospective-merge roster. It also retains the real original
+V1-on-current rejection and exact changed input identities. Historical byte/SHA
+pins are not raised or rewritten. All unresolved cryptographic obligations,
+null lifetime bounds, native campaign failures and production refusal remain.
+Source-scoped CI observation is not cryptographic or public-service qualification.
+
 **Joint PoN resource-contract continuation, 2026-11-08 America/New_York — HOLD:**
 Continue the complete #821 source `e798d7125724d4b9f98c24d00cc80031f2eab4a9`,
 which already contains the #811 work-cost and #812 integration lineage.

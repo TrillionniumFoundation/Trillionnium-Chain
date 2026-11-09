@@ -201,6 +201,7 @@ COST_BOUNDARY_READERS = ('    python3 scripts/ci/test_pon_w1_budget_readers.py -
                          '    python3 scripts/ci/test_run_pon_w1_native_campaign.py\n')
 CURRENT_READER_COMMANDS = (
     'python3 scripts/ci/test_read_validated_business_goodput.py',
+    'python3 scripts/ci/test_read_failed_native_campaign_zip.py',
     'python3 scripts/ci/test_pon_w1_cost_matrix_reader.py',
     'python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py',
     'python3 scripts/ci/test_run_w1_reused_cost_v3.py',
@@ -632,6 +633,7 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.
     python3 scripts/ci/test_w1_qrom_current_implementation_audit.py
     python3 scripts/w1_qrom_current_implementation_audit.py
+    python3 scripts/ci/test_w1_qrom_current_ci.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
     python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
@@ -748,6 +750,7 @@ PY
     python3 scripts/ci/test_pon_v3_cookie_cpu_study.py
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
     python3 scripts/ci/test_read_validated_business_goodput.py
+    python3 scripts/ci/test_read_failed_native_campaign_zip.py
     python3 scripts/ci/test_pon_w1_cost_matrix_reader.py
     python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py
     python3 scripts/ci/test_run_w1_reused_cost_v3.py
@@ -1389,7 +1392,8 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
                 and code_lines(script).count(command) == 1,
                 'credit model controls must execute exactly once in repository-truth')
     for command in ('python3 scripts/ci/test_w1_qrom_current_implementation_audit.py',
-                    'python3 scripts/w1_qrom_current_implementation_audit.py'):
+                    'python3 scripts/w1_qrom_current_implementation_audit.py',
+                    'python3 scripts/ci/test_w1_qrom_current_ci.py'):
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'current W1 source mapping controls must execute exactly once in repository-truth')

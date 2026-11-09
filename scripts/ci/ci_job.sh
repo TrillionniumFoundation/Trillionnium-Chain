@@ -17,6 +17,7 @@ case "${1:?required job}" in
     # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.
     python3 scripts/ci/test_w1_qrom_current_implementation_audit.py
     python3 scripts/w1_qrom_current_implementation_audit.py
+    python3 scripts/ci/test_w1_qrom_current_ci.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
     python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
@@ -133,6 +134,7 @@ PY
     python3 scripts/ci/test_pon_v3_cookie_cpu_study.py
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
     python3 scripts/ci/test_read_validated_business_goodput.py
+    python3 scripts/ci/test_read_failed_native_campaign_zip.py
     python3 scripts/ci/test_pon_w1_cost_matrix_reader.py
     python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py
     python3 scripts/ci/test_run_w1_reused_cost_v3.py
