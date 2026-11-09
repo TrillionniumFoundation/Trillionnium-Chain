@@ -10713,3 +10713,24 @@ its own exact source, original operation and receipts. Separate branch logs
 cannot establish a same-iteration production loop. This composition does not
 automatically include #822, #823, #826, #828, #829 or #830. All seven original
 gates remain HOLD; production activation and FinalUse qualification stay false.
+
+
+### 2026-11-09 — Matched development-Node receiver cost (HOLD)
+
+Continue the exact #835 source `e2a02f9271b49f146e70806c8a66e161b5973971`
+with the [matched receiver comparison](../../formal/pon-nakamoto-v1/w1_node_adapter_research/RECEIVER_COST_COMPARISON.md).
+Add a real cold native Node comparator and disjoint stage observations to the
+existing scheduled-SHA proof-plus-native adapter. Both arms bind the same
+independent packet/header/artifact/context inputs and invoke original native
+admission, activation and current exact readback. Durable proof-start reservations,
+both complete proofs and the original native replay remain in the proof arm.
+
+The fixed benign NPPNNPPN campaign uses fresh receiver processes and Node stores
+for one retained packet: four proof replays, zero new proofs. Charge startup,
+I/O, preprocessing, proof checks, persistence, native Node work, reporting and
+teardown through the external process total; report owner provisioning separately.
+Preserve all failed/unfinished attempts, exact source/input/binary identities,
+actual kernel limits and unknown observations. Missing cgroup evidence cannot
+produce comparable medians. Full transport, original service pressure, production
+proof replacement, independent cryptographic qualification and whole-chain
+benefit remain separate HOLD gates. No existing acceptance criterion is relaxed.
