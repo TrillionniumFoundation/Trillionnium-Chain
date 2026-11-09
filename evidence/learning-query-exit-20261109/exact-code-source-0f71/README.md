@@ -4,7 +4,7 @@ This directory delivers previously observed evidence for **code-source commit
 `0f71bd817164feef370f75ee2ab881227693573d`**, tree
 `4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb`.
 
-The enclosing evidence-delivery commit is a direct, evidence-only descendant of
+The enclosing evidence-delivery commit is an evidence-only descendant of
 that code-source commit. Its identity is the Git commit containing this file and
 is recorded in PR #829. No driver, test, Rust, plan, configuration, signed domain,
 stored schema, budget or deadline changes are introduced by the delivery commit.
@@ -22,6 +22,8 @@ record, including empty output files. [Source before](qualification/frozen-sourc
 and [source after](qualification/frozen-source-after-report.json) verify all
 23,701 tracked entries / 2,384,661,017 bytes, including modes, against that same
 committed tree.
+
+The independent source-before command is also retained with its [actual exit](qualification/frozen-source-before.json), [full stdout](qualification/frozen-source-before.stdout) and [full stderr](qualification/frozen-source-before.stderr).
 
 | Observation on code-source 0f71 | Retained record |
 | --- | --- |

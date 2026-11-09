@@ -1,7 +1,7 @@
 {
-  "scope": "only the explicit 59 exact-qualification records and raw stdout/stderr",
-  "files": 59,
-  "bytes": 917261,
+  "scope": "only the explicit 62 exact-qualification records and raw stdout/stderr",
+  "files": 62,
+  "bytes": 918006,
   "high_confidence_credential_pattern_hits": 0,
   "cargo_source_urls": [
     "registry+https://github.com/rust-lang/crates.io-index"
@@ -241,6 +241,18 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "frozen-workspace-format.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "frozen-source-before.json": {
+      "bytes": 322,
+      "sha256": "fbf0ea8607c0181de871468978369fd53662188bb68ae705a3a5dad68d628461"
+    },
+    "frozen-source-before.stdout": {
+      "bytes": 423,
+      "sha256": "61fe54e658d607054ca45d3f847117e0a9fd210c14beff6e7c3f7918ed27a39f"
+    },
+    "frozen-source-before.stderr": {
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }

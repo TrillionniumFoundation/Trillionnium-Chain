@@ -2,7 +2,7 @@
   "schema": "learning-query-exit-evidence-delivery-v1",
   "code_source_commit": "0f71bd817164feef370f75ee2ab881227693573d",
   "code_source_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
-  "evidence_delivery_identity": "the enclosing Git commit; direct evidence-only descendant of code_source_commit",
+  "evidence_delivery_identity": "the enclosing Git commit; evidence-only descendant of code_source_commit",
   "test_execution_commit": "0f71bd817164feef370f75ee2ab881227693573d",
   "tests_rerun_as_part_of_evidence_copy": false,
   "production_acceptance": false,
@@ -39,8 +39,8 @@
   },
   "included_files": {
     "README.md": {
-      "bytes": 6261,
-      "sha256": "feaed0e6bfedb7144e744611f50aa0e0dda74df237a3e0a04147dc2c51101d74"
+      "bytes": 6494,
+      "sha256": "a7cb38b3c455bc8540338bb60904e3c81ba64e18449656be871e3746360c446d"
     },
     "original-owner/before-query.json": {
       "bytes": 3340,
@@ -362,6 +362,18 @@
       "bytes": 423,
       "sha256": "61fe54e658d607054ca45d3f847117e0a9fd210c14beff6e7c3f7918ed27a39f"
     },
+    "qualification/frozen-source-before.json": {
+      "bytes": 322,
+      "sha256": "fbf0ea8607c0181de871468978369fd53662188bb68ae705a3a5dad68d628461"
+    },
+    "qualification/frozen-source-before.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "qualification/frozen-source-before.stdout": {
+      "bytes": 423,
+      "sha256": "61fe54e658d607054ca45d3f847117e0a9fd210c14beff6e7c3f7918ed27a39f"
+    },
     "qualification/frozen-source-negative-43.json": {
       "bytes": 631,
       "sha256": "f7047956193809b2ec18d245f2d29de6877220310b40b22d990108258eaf1fa7"
@@ -399,8 +411,8 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "qualification/publication-review.json": {
-      "bytes": 9144,
-      "sha256": "bb5bd08583dc8cbfe74eb647323bda4e683c50a0258d0be1ff56395f8a5981f6"
+      "bytes": 9581,
+      "sha256": "64c104479b3b16f211b80d91cb280b08fa6a60505a8499a6cb14342fcc8b5f67"
     }
   }
 }
