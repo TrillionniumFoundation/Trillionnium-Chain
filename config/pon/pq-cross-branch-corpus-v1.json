@@ -140,7 +140,7 @@
   },
   "parent_profile": "pon-nakamoto-v1",
   "pinned_blobs": {
-    ".github/workflows/chain-hepta-closure-candidate.yml": "54b84c30ee9eece2ea770b0cdaadd2484df3340f",
+    ".github/workflows/chain-hepta-closure-candidate.yml": "2c309c806e04cf9bc3bf73cac56db2e608268ce8",
     ".github/workflows/codeql-real-exact-source.yml": "3091f8efebaf7f7d1d232a7100d241e7963c8ed6",
     ".github/workflows/cpq1-full-content.yml": "87ecbc31d5187a6a039c121174727d6116b46086",
     ".github/workflows/pon-branch-encoding-acceptance.yml": "8d8295d8a1117dcd8bff9858f4cb0c80c917ad81",
@@ -513,7 +513,7 @@
     "scripts/ci/test_pq_authority_surface_scan.py": "f9883291a2a844e7347d9cfd26d7c2f46288851b",
     "scripts/ci/test_pq_chain_claim_guard.py": "95d77463a35c690b188d5dbfcb16ebf499276cc6",
     "scripts/ci/test_pq_lifetime_budget.py": "fde7fa3f388db9ab9f9760b9229f928a7b2f2767",
-    "scripts/ci/test_pq_proof_profile_binding.py": "e34a7a8c7d381ea6fde8bdc7f961f2764a0b6b51",
+    "scripts/ci/test_pq_proof_profile_binding.py": "57f769a061d880a5da848a0f4ec1fe8dd176948a",
     "scripts/ci/test_pq_research_integration.py": "37bafb4d3536956d13de13ecf703e1ec1f70b19f",
     "scripts/ci/test_pq_root_custody_review_v1.py": "63d1dd99c10daa80705c4a1aa74f72b7e37294c9",
     "scripts/ci/test_pq_root_dependency_register.py": "6290751a6fd2d02a8e5a27af6270caca6495fc68",

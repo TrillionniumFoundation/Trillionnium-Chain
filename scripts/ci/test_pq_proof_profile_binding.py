@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import json
 from pathlib import Path
+import re
 import shutil
 import tempfile
 import unittest
@@ -226,14 +227,20 @@ class ProofProfileBindingTests(unittest.TestCase):
 
     def test_candidate_can_require_one_exact_profile_descriptor(self):
         first = binding.inspect(ROOT)
+        workflow = (ROOT / '.github/workflows/chain-hepta-closure-candidate.yml').read_text()
+        pins = re.findall(r'--expected-profile-descriptor-sha256\s+([0-9a-f]{64})', workflow)
+        self.assertEqual(pins, [first['selected_profile_descriptor_sha256']])
         bound = binding.inspect(ROOT, expected_profile_descriptor_sha256=
-                                first['selected_profile_descriptor_sha256'])
+                                pins[0])
         self.assertIs(bound['candidate_profile_identity_matched'], True)
         self.assertIs(bound['whole_chain_pq_qualified'], False)
 
     def test_wrong_candidate_profile_descriptor_is_refused(self):
-        with self.assertRaisesRegex(binding.ProfileError, 'candidate proof profile descriptor mismatch'):
-            binding.inspect(ROOT, expected_profile_descriptor_sha256='0' * 64)
+        for digest in ('0' * 64,
+                       'da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c'):
+            with self.subTest(digest=digest), self.assertRaisesRegex(
+                    binding.ProfileError, 'candidate proof profile descriptor mismatch'):
+                binding.inspect(ROOT, expected_profile_descriptor_sha256=digest)
 
     def test_boolean_is_not_a_descriptor_digest(self):
         with self.assertRaisesRegex(binding.ProfileError, 'full lowercase SHA-256'):
