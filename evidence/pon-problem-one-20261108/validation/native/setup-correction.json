@@ -1,0 +1,26 @@
+{
+  "schema": "native-setup-correction-v1",
+  "started_utc": "2026-11-09T02:48:30.449605+00:00",
+  "argv": [
+    "/workspace/scratch/6050776ac4f9/toolchain/cargo/bin/rustup",
+    "toolchain",
+    "uninstall",
+    "1.95.0-x86_64-unknown-linux-gnu"
+  ],
+  "env_overrides": {
+    "CARGO_HOME": "/home/agent/.cargo",
+    "RUSTUP_HOME": "/home/agent/.rustup",
+    "RUSTUP_AUTO_INSTALL": "0"
+  },
+  "evidence": "setup-observation.json",
+  "authorization": "Root explicitly authorized cleanup of this exact newly auto-installed duplicate after timestamp and compiler identity verification.",
+  "finished_utc": "2026-11-09T02:48:30.597326+00:00",
+  "exit_code": 0,
+  "duplicate_absent": true,
+  "task_toolchain_present": true,
+  "disk_after": {
+    "total": 67586535424,
+    "used": 61883191296,
+    "free": 2250596352
+  }
+}

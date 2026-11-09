@@ -1,0 +1,97 @@
+{
+  "discovery_errors": [],
+  "duration_ns": 403042159,
+  "effective_unittest_args": [
+    "discover",
+    "-s",
+    "/workspace/scratch/6050776ac4f9/chain-src/formal/pon-nakamoto-v1",
+    "-p",
+    "test_credit_envelope_contract.py",
+    "-v"
+  ],
+  "empty_suite": false,
+  "errored_test_ids": [],
+  "errors": 0,
+  "expected_failure_ids": [],
+  "expected_failures": 0,
+  "failed_test_ids": [],
+  "failures": 0,
+  "finished_utc": "2026-11-09T02:36:31.797140+00:00",
+  "imported_repository_modules_after": {
+    "credit_envelope_contract": {
+      "bytes": 21954,
+      "path": "formal/pon-nakamoto-v1/credit_envelope_contract.py",
+      "sha256": "1a6277134855202f9c8144519e47eb01ab70485ce9db54b4b43932f418155fb9"
+    },
+    "test_credit_envelope_contract": {
+      "bytes": 20777,
+      "path": "formal/pon-nakamoto-v1/test_credit_envelope_contract.py",
+      "sha256": "5560f9f04126685819e02149a312bfaa4091a2288e7526c2466c5e75da867eef"
+    }
+  },
+  "imported_repository_modules_before": {
+    "credit_envelope_contract": {
+      "bytes": 21954,
+      "path": "formal/pon-nakamoto-v1/credit_envelope_contract.py",
+      "sha256": "1a6277134855202f9c8144519e47eb01ab70485ce9db54b4b43932f418155fb9"
+    },
+    "test_credit_envelope_contract": {
+      "bytes": 20777,
+      "path": "formal/pon-nakamoto-v1/test_credit_envelope_contract.py",
+      "sha256": "5560f9f04126685819e02149a312bfaa4091a2288e7526c2466c5e75da867eef"
+    }
+  },
+  "passed": 40,
+  "pattern": "test_credit_envelope_contract.py",
+  "prior_module_bytes_unchanged": true,
+  "schema": "pon-existing-formal-suite-observation-v1",
+  "skipped": 0,
+  "skipped_tests": [],
+  "started_utc": "2026-11-09T02:36:31.394103+00:00",
+  "successful_test_ids": [
+    "test_credit_envelope_contract.ExactFeasibilityControls.test_below_boundary_supplies_exact_negative_cycle",
+    "test_credit_envelope_contract.ExactFeasibilityControls.test_deterministic_tiny_graphs_match_simple_cycle_enumeration",
+    "test_credit_envelope_contract.ExactFeasibilityControls.test_endpoint_enumeration_checks_worst_case_spreads",
+    "test_credit_envelope_contract.ExactFeasibilityControls.test_exact_boundary_rho_two_is_feasible",
+    "test_credit_envelope_contract.ExactFeasibilityControls.test_input_order_does_not_change_normalized_credit",
+    "test_credit_envelope_contract.ExactFeasibilityControls.test_large_exact_values_preserve_equality_without_float_logs",
+    "test_credit_envelope_contract.ExactFeasibilityControls.test_maximum_admitted_point_count_is_bounded_and_valid",
+    "test_credit_envelope_contract.ExactFeasibilityControls.test_proportional_exact_costs_allow_common_credit",
+    "test_credit_envelope_contract.ExactFeasibilityControls.test_robust_refusal_is_not_impossibility_for_unknown_actual_costs",
+    "test_credit_envelope_contract.ExactFeasibilityControls.test_second_independent_three_cycle_fixture",
+    "test_credit_envelope_contract.ExactFeasibilityControls.test_single_scale_wide_interval_has_no_self_comparison",
+    "test_credit_envelope_contract.ExactFeasibilityControls.test_three_cycle_survives_every_two_point_check",
+    "test_credit_envelope_contract.IndependentWitnessControls.test_certificate_rational_bit_limit_is_checked_before_arithmetic",
+    "test_credit_envelope_contract.IndependentWitnessControls.test_edge_weights_and_products_are_recomputed",
+    "test_credit_envelope_contract.IndependentWitnessControls.test_fake_normalization_or_spread_is_refused",
+    "test_credit_envelope_contract.IndependentWitnessControls.test_forged_status_and_extra_witness_fields_fail",
+    "test_credit_envelope_contract.IndependentWitnessControls.test_missing_duplicate_and_bool_credit_identities_fail",
+    "test_credit_envelope_contract.IndependentWitnessControls.test_mutated_positive_credit_fails_all_pair_check",
+    "test_credit_envelope_contract.IndependentWitnessControls.test_negative_edge_list_must_be_a_closed_walk",
+    "test_credit_envelope_contract.IndependentWitnessControls.test_single_point_cannot_be_falsely_refused_by_a_self_edge",
+    "test_credit_envelope_contract.IndependentWitnessControls.test_unit_product_cycle_does_not_certify_infeasibility",
+    "test_credit_envelope_contract.IndependentWitnessControls.test_verifiers_do_not_call_solver_or_constraint_builder",
+    "test_credit_envelope_contract.InputRefusalControls.test_all_rational_fields_reject_bool_float_null_and_noncanonical_text",
+    "test_credit_envelope_contract.InputRefusalControls.test_empty_and_overlarge_point_sets_fail_before_solving",
+    "test_credit_envelope_contract.InputRefusalControls.test_input_bit_limits_cover_numerator_and_denominator",
+    "test_credit_envelope_contract.InputRefusalControls.test_labels_are_bounded_and_cannot_hide_whitespace",
+    "test_credit_envelope_contract.InputRefusalControls.test_non_fraction_python_inputs_fail",
+    "test_credit_envelope_contract.InputRefusalControls.test_resource_success_and_competitive_scope_mismatch_fail",
+    "test_credit_envelope_contract.InputRefusalControls.test_rho_below_one_fails",
+    "test_credit_envelope_contract.InputRefusalControls.test_roundtrip_uses_exact_canonical_rationals",
+    "test_credit_envelope_contract.InputRefusalControls.test_scale_bool_float_zero_duplicate_and_unbounded_fail",
+    "test_credit_envelope_contract.InputRefusalControls.test_unknown_and_missing_fields_cannot_enable_qualification",
+    "test_credit_envelope_contract.InputRefusalControls.test_zero_negative_and_reversed_intervals_fail",
+    "test_credit_envelope_contract.ReportAndEncodingControls.test_cli_creates_and_independently_rechecks_report",
+    "test_credit_envelope_contract.ReportAndEncodingControls.test_json_byte_limit_is_enforced_before_parsing",
+    "test_credit_envelope_contract.ReportAndEncodingControls.test_json_duplicate_keys_floats_and_nonfinite_values_are_rejected",
+    "test_credit_envelope_contract.ReportAndEncodingControls.test_json_integer_limit_precedes_decimal_conversion",
+    "test_credit_envelope_contract.ReportAndEncodingControls.test_report_roundtrip_and_all_qualification_flags_remain_false",
+    "test_credit_envelope_contract.ReportAndEncodingControls.test_source_binding_input_and_case_roster_mutations_are_rejected",
+    "test_credit_envelope_contract.ReportAndEncodingControls.test_true_or_zero_qualification_flags_are_rejected"
+  ],
+  "tests_run": 40,
+  "unexpected_success_ids": [],
+  "unexpected_successes": 0,
+  "unittest_was_successful": true
+}

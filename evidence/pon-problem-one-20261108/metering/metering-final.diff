@@ -1,0 +1,479 @@
+diff --git a/docs/development/specs/pon/GROUPED_SECURITY_WORK_METERING_V1.md b/docs/development/specs/pon/GROUPED_SECURITY_WORK_METERING_V1.md
+index 76b1bf0..987884c 100644
+--- a/docs/development/specs/pon/GROUPED_SECURITY_WORK_METERING_V1.md
++++ b/docs/development/specs/pon/GROUPED_SECURITY_WORK_METERING_V1.md
+@@ -129,6 +129,30 @@ path. It does not rerun the workload or reauthenticate historical packet files.
+ The [retained evidence](../../../../evidence/pon-security-work-metering-20261107/README.md)
+ distinguishes this reanalysis from the separate recorded-query reinspection.
+ 
++The fixed two-packet fanout also binds each successful reception to its original
++packet slot. The valid and whitespace-only carrier replay use nonce 1; the
++discarded-response control uses nonce 2. A receiver cannot assign another work
++identity to one carrier, exchange the two slots, or reuse nonce 1's identity for
++nonce 2. The same identities must hold across receivers and topologies.
++
++These stronger report semantics use fresh output namespaces:
++`pon-grouped-fresh-deployment-cost-v1` for accounting and
++`pon-grouped-fanout-reanalysis-v2` for offline readback. The existing Python
++entrypoint filenames are retained. The historical campaign input remains
++`pon-grouped-fresh-fanout-campaign-v0`; stored old reports, signed protocol
++domains and the native work profile are unchanged.
++
++The actual runner passes the existing native producer table into the reader
++before receivers start. Offline reanalysis uses that table from the unchanged,
++externally pinned historical report. Missing or malformed producer entries stay
++a refusal; they are not reconstructed from receiver claims. An inconsistent
++complete identity count becomes unknown while reported partial identities,
++CPU, byte counts, rejected/canceled work and the original denominators remain
++visible. The direct accounting helper still supports unanchored structural
++observations, explicitly reporting that producer binding was not established.
++Neither a consistent label mapping nor the historical report pin reauthenticates
++the original native packet, proves useful demand, or grants chainwork.
++
+ These were report-integrity defects. Their rejection does not imply a native
+ consensus exploit or certify the public-network economic qualifications.
+ 
+diff --git a/formal/pon-nakamoto-v1/experiments/grouped_fresh_fanout_v0.py b/formal/pon-nakamoto-v1/experiments/grouped_fresh_fanout_v0.py
+index 32d696f..c7efd80 100644
+--- a/formal/pon-nakamoto-v1/experiments/grouped_fresh_fanout_v0.py
++++ b/formal/pon-nakamoto-v1/experiments/grouped_fresh_fanout_v0.py
+@@ -29,7 +29,7 @@ import grouped_work_lottery_v0 as old
+ from grouped_fresh_admission_wire_v0 import inspect_freeze
+ from grouped_fresh_deployment_cost_v0 import (
+     CASES, DEMAND_COMPONENTS, LOCAL_CAP, demand_bridge_audit, material_identity,
+-    topology_accounting,
++    topology_accounting, produced_work_ids,
+ )
+ from grouped_legal_strategy_v0 import prepare, execute, REPRESENTATION
+ from experiments.grouped_cell_operator_v0 import make_commands, model_commitment
+@@ -567,7 +567,8 @@ def run_topology(size, cfg, packets, out, timeout):
+         if path.is_file() and not path.is_symlink():
+             st = path.stat()
+             inodes.append((st.st_dev, st.st_ino))
+-    accounting = topology_accounting(size, observations)
++    accounting = topology_accounting(size, observations,
++                                     expected_work_ids=cfg['expected_work_ids'])
+     if len(inodes) != size or len(set(inodes)) != size:
+         accounting['issues'].append('RECEIVERS_DID_NOT_HAVE_DISTINCT_JOURNAL_FILES')
+     if not all(row['raw_readback_passed'] for row in observations):
+@@ -661,7 +662,8 @@ def run(args):
+                'timeout': args.timeout, 'source_pins': before['relevant_sources_sha256'],
+                'init': init, 'requests': requests, 'freeze_request': freeze_request,
+                'native_pins': native_pins, 'original_packet_hex': packets[1].hex(),
+-               'material_content_id': identity['material_content_id']}
++               'material_content_id': identity['material_content_id'],
++               'expected_work_ids': produced_work_ids(produced)}
+         for size in TOPOLOGIES:
+             topology = run_topology(size, cfg, packets, out, args.timeout)
+             topologies.append(topology)
+diff --git a/formal/pon-nakamoto-v1/experiments/reanalyze_grouped_fanout_v1.py b/formal/pon-nakamoto-v1/experiments/reanalyze_grouped_fanout_v1.py
+index ce27015..dc4371d 100644
+--- a/formal/pon-nakamoto-v1/experiments/reanalyze_grouped_fanout_v1.py
++++ b/formal/pon-nakamoto-v1/experiments/reanalyze_grouped_fanout_v1.py
+@@ -4,6 +4,8 @@
+ Only accounting over the report's supplied worker observations is recomputed.
+ Source, binary, host, transport-readback and qualification observations remain
+ historical claims in the unchanged pinned input; this is not a new experiment.
++The output uses v2 for producer-bound fixed-packet accounting; the historical
++campaign input remains v0, and its stored reports are retained without edits.
+ """
+ from __future__ import annotations
+ 
+@@ -21,7 +23,7 @@ if str(FORMAL_ROOT) not in sys.path:
+ import grouped_fresh_deployment_cost_v0 as accounting
+ 
+ 
+-SCHEMA = 'pon-grouped-fanout-reanalysis-v1'
++SCHEMA = 'pon-grouped-fanout-reanalysis-v2'
+ INPUT_SCHEMA = 'pon-grouped-fresh-fanout-campaign-v0'
+ MAX_INPUT_BYTES = 16 * 1024 * 1024
+ TOPOLOGIES = (1, 2, 4)
+@@ -136,6 +138,13 @@ def reanalyze(raw, *, expected_sha256):
+             issues.append('ORIGINAL_QUALIFICATION_BOUNDARY_' + field.upper())
+     if original.get('all_receptions_are_not_independent_tickets') is not True:
+         issues.append('ORIGINAL_TICKET_REUSE_BOUNDARY_UNAVAILABLE')
++    try:
++        expected_work_ids = accounting.produced_work_ids(original.get('produced'))
++    except ValueError as error:
++        issues.append('ORIGINAL_' + str(error))
++        # An explicit invalid map makes each accounting result incomplete while
++        # retaining its costs. Never infer expected IDs from receiver claims.
++        expected_work_ids = {}
+     topologies = []
+     new_failures = []
+     for size, row in zip(TOPOLOGIES, original['topologies']):
+@@ -143,7 +152,8 @@ def reanalyze(raw, *, expected_sha256):
+         old_topology_status = old_accounting.get('status') if type(old_accounting) is dict else None
+         # The denominator comes from this reader's fixed plan and the raw row,
+         # never from the old accounting's counters, status or issue list.
+-        checked = accounting.topology_accounting(size, row['workers'])
++        checked = accounting.topology_accounting(size, row['workers'],
++                                                expected_work_ids=expected_work_ids)
+         retained = _retained_inventory_issues(row, ('orchestration_failures', 'unstarted_clients'))
+         if old_topology_status != 'PASS':
+             retained.append('ORIGINAL_TOPOLOGY_NOT_PASS')
+diff --git a/formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py b/formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py
+index 30ac8dd..d7fd9ff 100644
+--- a/formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py
++++ b/formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py
+@@ -4,6 +4,10 @@ This module grants no demand, funding, admission, FinalUse or chainwork authorit
+ Material equality is not customer independence or proof of actual consumption.
+ The concrete source catalogue below identifies existing owners and the missing
+ composition; it does not replace a call to any of those owners.
++
++The emitted accounting report uses the fresh v1 namespace for fixed-packet
++identity binding. Historical worker observations and the original work profile
++retain their meanings; no stored v0 report is rewritten.
+ """
+ from __future__ import annotations
+ 
+@@ -16,10 +20,13 @@ from grouped_work_lottery_v0 import request_precommitment
+ from experiments.grouped_cell_operator_v0 import model_commitment
+ 
+ 
+-SCHEMA = 'pon-grouped-fresh-deployment-cost-v0'
++SCHEMA = 'pon-grouped-fresh-deployment-cost-v1'
+ CASES = ('valid', 'carrier_replay', 'forged_endpoint', 'truncated_cancel',
+          'discarded_response', 'after_local_cap')
+ LOCAL_CAP = 256
++FIXED_PACKET_NONCES = ('1', '2')
++FIXED_PACKET_BY_CASE = {'valid': '1', 'carrier_replay': '1', 'discarded_response': '2'}
++_EXPECTATIONS_UNSUPPLIED = object()
+ DEMAND_COMPONENTS = (
+     {
+         'owner': 'M06 native task lifecycle',
+@@ -121,6 +128,30 @@ def _identity(value):
+     return type(value) is str and 0 < len(value) <= 512 and value.strip() == value
+ 
+ 
++def _work_id_map(value):
++    return (type(value) is dict and set(value) == set(FIXED_PACKET_NONCES)
++            and all(_identity(value[nonce]) for nonce in FIXED_PACKET_NONCES)
++            and value['1'] != value['2'])
++
++
++def produced_work_ids(produced):
++    """Bind the original two nonce slots; labels alone do not authenticate work.
++
++    The campaign obtains these IDs from its original native freeze before any
++    receiver is started. Offline readback uses the unchanged pinned producer
++    table, not a receiver's chosen IDs or an old aggregate count.
++    """
++    if (type(produced) is not list or len(produced) != len(FIXED_PACKET_NONCES)
++            or any(type(row) is not dict or type(row.get('nonce')) is not int
++                   or row['nonce'] != int(nonce)
++                   for row, nonce in zip(produced, FIXED_PACKET_NONCES))):
++        raise ValueError('FIXED_PACKET_PRODUCER_ROSTER')
++    identities = {str(row['nonce']): row.get('work_id') for row in produced}
++    if not _work_id_map(identities):
++        raise ValueError('FIXED_PACKET_PRODUCER_WORK_IDS')
++    return identities
++
++
+ def _seconds(value):
+     if type(value) not in (int, float):
+         return None
+@@ -139,7 +170,7 @@ def _sum_seconds(values):
+     return total if math.isfinite(total) else None
+ 
+ 
+-def topology_accounting(planned_receivers, workers):
++def topology_accounting(planned_receivers, workers, *, expected_work_ids=_EXPECTATIONS_UNSUPPLIED):
+     """Check all precommitted slots; partial/failed workers stay in the denominator.
+ 
+     CPU in wait4 includes each reaped receiver and its waited native child on
+@@ -147,6 +178,11 @@ def topology_accounting(planned_receivers, workers):
+     Missing or malformed observations make complete totals null. Named partial
+     sums retain usable measurements without asserting coverage of omitted work.
+     Caller must independently bind these local observations to retained bytes.
++    Each fixed packet has one work identity across carrier replays and receivers.
++    The two fixed nonce slots have distinct work identities. Production-table
++    expectations, when supplied, bind every response to the original slot; an
++    omitted expectation is only an unanchored structural observation. Passing
++    an explicit malformed expectation never falls back to unanchored inspection.
+     """
+     if type(planned_receivers) is not int or planned_receivers not in (1, 2, 4):
+         raise ValueError('FANOUT_TOPOLOGY')
+@@ -162,6 +198,15 @@ def topology_accounting(planned_receivers, workers):
+     byte_known = dict.fromkeys(byte_parts, 0)
+     byte_complete = dict.fromkeys(byte_parts, True)
+     expected_attempts = planned_receivers * len(CASES)
++    packet_work_ids = {nonce: set() for nonce in FIXED_PACKET_NONCES}
++    expected = None
++    expectation_supplied = expected_work_ids is not _EXPECTATIONS_UNSUPPLIED
++    if expectation_supplied:
++        if _work_id_map(expected_work_ids):
++            expected = dict(expected_work_ids)
++        else:
++            issues.append('FIXED_PACKET_EXPECTATIONS_MALFORMED')
++            work_complete = False
+     if not slots_complete:
+         issues.append('RECEIVER_DENOMINATOR')
+ 
+@@ -317,6 +362,11 @@ def topology_accounting(planned_receivers, workers):
+                         work_complete = False
+                     else:
+                         work_ids.add(work_id)
++                        nonce = FIXED_PACKET_BY_CASE[case]
++                        packet_work_ids[nonce].add(work_id)
++                        if expected is not None and work_id != expected[nonce]:
++                            issues.append(entry + ':WORK_ID_NOT_FIXED_PACKET')
++                            work_complete = False
+             elif case == 'forged_endpoint':
+                 if response.get('status') != 'rejected' or response.get('error') != 'NATIVE_Seal(Endpoint)':
+                     issues.append(entry + ':FORGED_ENDPOINT')
+@@ -364,6 +414,13 @@ def topology_accounting(planned_receivers, workers):
+                     and client['received_bytes'] > row['ack_kernel_accepted_bytes']):
+                 issues.append(entry + ':CLIENT_BYTES_EXCEED_ACK')
+                 byte_complete['client'] = byte_complete['ack_kernel'] = False
++    for nonce, identities in packet_work_ids.items():
++        if len(identities) > 1:
++            issues.append('FIXED_PACKET_WORK_ID_REBINDING:' + nonce)
++            work_complete = False
++    if packet_work_ids['1'] & packet_work_ids['2']:
++        issues.append('DISTINCT_FIXED_PACKETS_ALIAS_WORK_ID')
++        work_complete = False
+     if known_material != planned_receivers or len(content_ids) != 1:
+         issues.append('MATERIAL_CONTENT_CHANGED_OR_UNKNOWN')
+     cpu, native_cpu = _sum_seconds(cpu_parts), _sum_seconds(native_parts)
+@@ -382,6 +439,10 @@ def topology_accounting(planned_receivers, workers):
+                 intentionally_discarded_client_responses=discarded,
+                 distinct_verified_work_ids=len(work_ids) if coverage and work_complete else None,
+                 observed_distinct_verified_work_ids_partial=len(work_ids),
++                observed_work_ids_by_fixed_packet={nonce: sorted(identities)
++                    for nonce, identities in packet_work_ids.items()},
++                producer_work_id_expectations_supplied=expectation_supplied,
++                producer_work_ids_bound=expected is not None and coverage and work_complete,
+                 distinct_material_content_ids=len(content_ids) if slots_complete
+                     and known_material == planned_receivers else None,
+                 observed_distinct_material_content_ids_partial=len(content_ids),
+diff --git a/formal/pon-nakamoto-v1/test_grouped_fanout_reanalysis_v1.py b/formal/pon-nakamoto-v1/test_grouped_fanout_reanalysis_v1.py
+index 44f9f0c..a6a31d3 100644
+--- a/formal/pon-nakamoto-v1/test_grouped_fanout_reanalysis_v1.py
++++ b/formal/pon-nakamoto-v1/test_grouped_fanout_reanalysis_v1.py
+@@ -38,6 +38,7 @@ def synthetic_campaign():
+         })
+     return {
+         'schema': replay.INPUT_SCHEMA, 'status': 'PASS', 'topologies': topologies,
++        'produced': [{'nonce': 1, 'work_id': 'first'}, {'nonce': 2, 'work_id': 'second'}],
+         'failures': [], 'not_started_topologies': [],
+         'expected_source_sha': 'a' * 40, 'runner_sha256': 'b' * 64,
+         'source_before': {'commit': 'a' * 40, 'synthetic_fixture': True},
+@@ -62,11 +63,14 @@ class FanoutReanalysisTests(unittest.TestCase):
+         raw = encode(value)
+         result = replay.reanalyze(raw, expected_sha256=sha(raw))
+         self.assertEqual(result['status'], 'PASS')
++        self.assertEqual(result['schema'], 'pon-grouped-fanout-reanalysis-v2')
++        self.assertEqual(replay.INPUT_SCHEMA, 'pon-grouped-fresh-fanout-campaign-v0')
+         self.assertEqual(result['topology_denominator'], [1, 2, 4])
+         self.assertEqual(result['planned_receiver_slots'], 7)
+         self.assertEqual(result['planned_transport_attempts'], 42)
+         self.assertEqual(result['input_sha256'], sha(raw))
+         for size, row in zip((1, 2, 4), result['topologies']):
++            self.assertEqual(row['new_accounting']['schema'], 'pon-grouped-fresh-deployment-cost-v1')
+             self.assertEqual(row['new_accounting']['planned_receivers'], size)
+             self.assertEqual(row['new_accounting']['verified_receptions'], size * 3)
+             self.assertEqual(row['new_accounting']['receiver_wait4_cpu_seconds'], size * 3.0)
+@@ -83,6 +87,59 @@ class FanoutReanalysisTests(unittest.TestCase):
+                          sha(Path(replay.accounting.__file__).read_bytes()))
+         self.assertEqual(result['checker']['reanalysis_source_sha256'], sha(Path(replay.__file__).read_bytes()))
+ 
++
++    def test_consistent_topology_renaming_cannot_replace_original_producer_ids(self):
++        value = synthetic_campaign()
++        for worker in value['topologies'][1]['workers']:
++            for row in worker['worker_report']['transport_records']:
++                if row['case'] in ('valid', 'carrier_replay', 'discarded_response'):
++                    row['verification']['work_id'] += '-renamed'
++        result = self.recheck(value)
++        self.assertEqual(result['status'], 'FAIL')
++        self.assertEqual([row['new_status'] for row in result['topologies']], ['PASS', 'FAIL', 'PASS'])
++        row = result['topologies'][1]['new_accounting']
++        self.assertIsNone(row['distinct_verified_work_ids'])
++        self.assertEqual(row['observed_distinct_verified_work_ids_partial'], 2)
++        self.assertEqual(row['receiver_wait4_cpu_seconds'], 6.0)
++        self.assertTrue(any('WORK_ID_NOT_FIXED_PACKET' in issue for issue in row['issues']))
++
++    def test_every_topology_cannot_swap_the_two_original_packet_slots(self):
++        value = synthetic_campaign()
++        for topology in value['topologies']:
++            for worker in topology['workers']:
++                for row in worker['worker_report']['transport_records']:
++                    if row['case'] in ('valid', 'carrier_replay', 'discarded_response'):
++                        current = row['verification']['work_id']
++                        row['verification']['work_id'] = 'second' if current == 'first' else 'first'
++        result = self.recheck(value)
++        self.assertEqual(result['status'], 'FAIL')
++        self.assertEqual(len(result['new_failures']), 3)
++        for size, topology in zip((1, 2, 4), result['topologies']):
++            report = topology['new_accounting']
++            self.assertFalse(report['producer_work_ids_bound'])
++            self.assertIsNone(report['distinct_verified_work_ids'])
++            self.assertEqual(report['completed_transport_attempts'], size * 6)
++            self.assertEqual(report['receiver_wait4_cpu_seconds'], size * 3.0)
++
++    def test_missing_or_aliased_producer_roster_retains_denominator_and_costs(self):
++        for produced in (None, [], [{'nonce': 1, 'work_id': 'first'}],
++                         [{'nonce': 1, 'work_id': 'first'}, {'nonce': 2, 'work_id': 'first'}],
++                         [{'nonce': True, 'work_id': 'first'}, {'nonce': 2, 'work_id': 'second'}]):
++            with self.subTest(produced=produced):
++                value = synthetic_campaign()
++                value['produced'] = produced
++                result = self.recheck(value)
++                self.assertEqual(result['status'], 'FAIL')
++                self.assertTrue(any(issue.startswith('ORIGINAL_FIXED_PACKET_PRODUCER')
++                                    for issue in result['issues']))
++                for size, topology in zip((1, 2, 4), result['topologies']):
++                    report = topology['new_accounting']
++                    self.assertIsNone(report['distinct_verified_work_ids'])
++                    self.assertEqual(report['completed_transport_attempts'], size * 6)
++                    self.assertEqual(report['receiver_wait4_cpu_seconds'], size * 3.0)
++                self.assertFalse(result['new_experiment_executed'])
++                self.assertEqual(result['qualification_status'], 'HOLD')
++
+     def test_external_pin_is_mandatory_and_tampered_input_is_refused(self):
+         raw = encode(synthetic_campaign())
+         for pin in (None, '', 'x' * 64, 'a' * 63, 'A' * 64, False):
+diff --git a/formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py b/formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py
+index 6f0f79b..f73bf41 100644
+--- a/formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py
++++ b/formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py
+@@ -13,7 +13,7 @@ import sys
+ from pathlib import Path
+ 
+ from grouped_fresh_deployment_cost_v0 import (
+-    CASES, LOCAL_CAP, demand_bridge_audit, topology_accounting,
++    CASES, LOCAL_CAP, demand_bridge_audit, topology_accounting, produced_work_ids,
+ )
+ from contract_wire import canonical
+ from experiments.grouped_fresh_fanout_v0 import (
+@@ -233,10 +233,10 @@ class FanoutEvidenceIntegrityTests(unittest.TestCase):
+             value = value[key]
+         value[path[-1]] = replacement
+ 
+-    def test_legacy_valid_fixture_preserves_schema_and_totals(self):
++    def test_legacy_valid_fixture_emits_fresh_schema_with_preserved_totals(self):
+         observed = topology_accounting(1, [synthetic_worker()])
+         self.assertEqual(observed['status'], 'PASS')
+-        self.assertEqual(observed['schema'], 'pon-grouped-fresh-deployment-cost-v0')
++        self.assertEqual(observed['schema'], 'pon-grouped-fresh-deployment-cost-v1')
+         self.assertEqual(observed['distinct_verified_work_ids'], 2)
+         self.assertEqual(observed['independent_full_cell_calls'], 4)
+         self.assertEqual(observed['independent_full_cell_macs'], 4 * 37008)
+@@ -505,5 +505,116 @@ class FanoutEvidenceIntegrityTests(unittest.TestCase):
+         self.assertEqual(self.refused([value]), first)
+ 
+ 
++class FixedPacketIdentityTests(unittest.TestCase):
++    """Counterexamples to turning relabelled carriers into new work identities."""
++
++    def refused(self, workers, planned=1, **kwargs):
++        before = copy.deepcopy(workers)
++        report = topology_accounting(planned, workers, **kwargs)
++        self.assertEqual(report['status'], 'FAIL')
++        self.assertIsNone(report['distinct_verified_work_ids'])
++        self.assertEqual(report['planned_transport_attempts'], planned * len(CASES))
++        self.assertEqual(report['completed_transport_attempts'], planned * len(CASES))
++        self.assertEqual(report['receiver_wait4_cpu_seconds'], planned * 3.0)
++        self.assertEqual(report['independent_full_cell_macs'], planned * 4 * 37008)
++        self.assertEqual(report['chainwork_awarded'], 0)
++        self.assertEqual(report['actual_consumer_uses_observed'], 0)
++        self.assertFalse(report['external_demand_authenticated'])
++        self.assertFalse(report['production_activation'])
++        self.assertEqual(workers, before)
++        return report
++
++    def test_carrier_replay_cannot_invent_a_third_work_identity(self):
++        worker = synthetic_worker()
++        worker['worker_report']['transport_records'][1]['verification']['work_id'] = 'third'
++        report = self.refused([worker])
++        self.assertIn('FIXED_PACKET_WORK_ID_REBINDING:1', report['issues'])
++        self.assertEqual(report['observed_distinct_verified_work_ids_partial'], 3)
++
++    def test_swapping_one_receiver_ids_is_detected_even_with_two_global_ids(self):
++        workers = [synthetic_worker(index) for index in range(2)]
++        for row in workers[1]['worker_report']['transport_records']:
++            if row['case'] in ('valid', 'carrier_replay', 'discarded_response'):
++                current = row['verification']['work_id']
++                row['verification']['work_id'] = 'second' if current == 'first' else 'first'
++        report = self.refused(workers, 2)
++        self.assertEqual(report['observed_distinct_verified_work_ids_partial'], 2)
++        self.assertIn('FIXED_PACKET_WORK_ID_REBINDING:1', report['issues'])
++        self.assertIn('FIXED_PACKET_WORK_ID_REBINDING:2', report['issues'])
++
++    def test_two_fixed_nonce_packets_cannot_share_one_work_identity(self):
++        worker = synthetic_worker()
++        worker['worker_report']['transport_records'][4]['verification']['work_id'] = 'first'
++        report = self.refused([worker])
++        self.assertIn('DISTINCT_FIXED_PACKETS_ALIAS_WORK_ID', report['issues'])
++        self.assertEqual(report['observed_distinct_verified_work_ids_partial'], 1)
++
++    def test_original_producer_pin_catches_coherent_receiver_renaming(self):
++        worker = synthetic_worker()
++        for row in worker['worker_report']['transport_records']:
++            if row['case'] in ('valid', 'carrier_replay', 'discarded_response'):
++                row['verification']['work_id'] += '-renamed'
++        report = self.refused([worker], expected_work_ids={'1': 'first', '2': 'second'})
++        self.assertTrue(any('WORK_ID_NOT_FIXED_PACKET' in issue for issue in report['issues']))
++        self.assertFalse(report['producer_work_ids_bound'])
++
++    def test_original_producer_pin_catches_global_slot_swap(self):
++        workers = [synthetic_worker(index) for index in range(4)]
++        report = self.refused(workers, 4, expected_work_ids={'1': 'second', '2': 'first'})
++        self.assertEqual(report['observed_distinct_verified_work_ids_partial'], 2)
++        self.assertTrue(any('WORK_ID_NOT_FIXED_PACKET' in issue for issue in report['issues']))
++
++    def test_valid_anchored_counts_preserve_costs_and_legacy_scope_is_explicit(self):
++        workers = [synthetic_worker(index) for index in range(4)]
++        before = copy.deepcopy(workers)
++        anchored = topology_accounting(4, workers, expected_work_ids={'1': 'first', '2': 'second'})
++        legacy = topology_accounting(4, workers)
++        for report in (anchored, legacy):
++            self.assertEqual(report['status'], 'PASS')
++            self.assertEqual(report['distinct_verified_work_ids'], 2)
++            self.assertEqual(report['verified_receptions'], 12)
++            self.assertEqual(report['receiver_wait4_cpu_seconds'], 12.0)
++            self.assertEqual(report['observed_work_ids_by_fixed_packet'],
++                             {'1': ['first'], '2': ['second']})
++        self.assertTrue(anchored['producer_work_id_expectations_supplied'])
++        self.assertTrue(anchored['producer_work_ids_bound'])
++        self.assertFalse(legacy['producer_work_id_expectations_supplied'])
++        self.assertFalse(legacy['producer_work_ids_bound'])
++        self.assertEqual(workers, before)
++
++    def test_explicit_bad_producer_expectation_never_falls_back(self):
++        for expected in (None, {}, [], {'1': 'first'}, {1: 'first', 2: 'second'},
++                         {'1': 'first', '2': 'first'}, {'1': False, '2': 'second'},
++                         {'1': 'first', '2': 'second', '3': 'third'}):
++            with self.subTest(expected=expected):
++                report = self.refused([synthetic_worker()], expected_work_ids=expected)
++                self.assertIn('FIXED_PACKET_EXPECTATIONS_MALFORMED', report['issues'])
++                self.assertTrue(report['producer_work_id_expectations_supplied'])
++                self.assertFalse(report['producer_work_ids_bound'])
++
++    def test_unknown_attempt_cannot_complete_producer_binding(self):
++        worker = synthetic_worker()
++        worker['worker_report']['transport_records'][0]['status'] = 'unknown'
++        report = topology_accounting(1, [worker], expected_work_ids={'1': 'first', '2': 'second'})
++        self.assertEqual(report['status'], 'FAIL')
++        self.assertIsNone(report['distinct_verified_work_ids'])
++        self.assertFalse(report['producer_work_ids_bound'])
++        self.assertEqual(report['completed_transport_attempts'], 5)
++        self.assertEqual(report['observed_distinct_verified_work_ids_partial'], 2)
++        self.assertEqual(report['receiver_wait4_cpu_seconds'], 3.0)
++        self.assertEqual(report['observed_transport_bytes_partial']['receiver'], 521)
++
++    def test_producer_roster_keeps_exact_slots_and_types(self):
++        valid = [{'nonce': 1, 'work_id': 'first'}, {'nonce': 2, 'work_id': 'second'}]
++        self.assertEqual(produced_work_ids(valid), {'1': 'first', '2': 'second'})
++        for rows in (None, [], valid[:1], valid + valid[:1], valid[::-1],
++                     [{'nonce': True, 'work_id': 'first'}, valid[1]],
++                     [{'nonce': 1.0, 'work_id': 'first'}, valid[1]],
++                     [valid[0], {'nonce': 2, 'work_id': 'first'}],
++                     [valid[0], {'nonce': 2, 'work_id': None}]):
++            with self.subTest(rows=rows), self.assertRaisesRegex(ValueError, 'FIXED_PACKET_PRODUCER'):
++                produced_work_ids(rows)
++
++
+ if __name__ == '__main__':
+     unittest.main()

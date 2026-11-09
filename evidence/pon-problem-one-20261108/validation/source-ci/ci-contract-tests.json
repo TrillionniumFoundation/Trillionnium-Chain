@@ -1,0 +1,35 @@
+{
+  "name": "ci-contract-tests",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "scripts/ci/test_ci_contract.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+  "head_before": "187b880048e30196407960f48b10c379859d1396",
+  "started_at": "2026-11-09T02:35:00.910808+00:00",
+  "source_sha256": {
+    "scripts/ci/test_ci_contract.py": "a90460a6b657c02edd13ba9b67c66254f669e55bf835d7b3e72ebc6697092a34"
+  },
+  "pid": 1837,
+  "exit_code": 0,
+  "finished_at": "2026-11-09T02:35:48.045335+00:00",
+  "wall_seconds": 47.13389467000002,
+  "head_after": "187b880048e30196407960f48b10c379859d1396",
+  "source_after_sha256": {
+    "scripts/ci/test_ci_contract.py": "a90460a6b657c02edd13ba9b67c66254f669e55bf835d7b3e72ebc6697092a34"
+  },
+  "stdout": {
+    "path": "ci-contract-tests.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "ci-contract-tests.stderr",
+    "bytes": 28147,
+    "sha256": "f16add9ae4d208680237b0899a5f5805607906ea3e5212b3c3e82568a1facc62"
+  },
+  "reported_test_count": 164,
+  "source_unchanged": true,
+  "passed": true
+}

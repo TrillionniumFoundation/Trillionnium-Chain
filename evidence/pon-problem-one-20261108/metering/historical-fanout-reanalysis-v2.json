@@ -1,0 +1,1436 @@
+{
+  "actual_consumer_uses_observed": 0,
+  "chainwork_awarded": 0,
+  "checker": {
+    "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "reanalysis_source": "formal/pon-nakamoto-v1/experiments/reanalyze_grouped_fanout_v1.py",
+    "reanalysis_source_sha256": "c1663aa6dea82fcd8dace728b8213aa4cb6359f149805b4e80fb38ea02af9b5e",
+    "source": "formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py",
+    "source_sha256": "aa02dcc782b45d70975ac8024a9d5c6fc953ec153a5108655482fb61c1fff2db"
+  },
+  "checker_hash_scope": "Accounting implementation and this replay reader, not a rebuilt native executable or full dependency closure.",
+  "external_demand_authenticated": false,
+  "external_input_pin_checked": true,
+  "global_verification_cap_enforced": false,
+  "hidden_verifier_side_channel_model_verified": false,
+  "independent_operators": false,
+  "input_bytes": 402979,
+  "input_path": "/workspace/scratch/6050776ac4f9/chain-src/evidence/pon-resource-transfer-20261107/rog/key-records/fanout-exact-rog/report.json",
+  "input_sha256": "915485a66d8b9ee4d1aadece413edb928274640a1830a840f818571b3042df96",
+  "input_unchanged_after_reanalysis": true,
+  "issues": [],
+  "minimum_fresh_neural_cost_proved": false,
+  "native_payment_for_grouped_output_observed": false,
+  "new_experiment_executed": false,
+  "new_failures": [],
+  "new_status": "PASS",
+  "old_status": "PASS",
+  "original_metadata": {
+    "actual_consumer_uses_observed": 0,
+    "all_receptions_are_not_independent_tickets": true,
+    "all_waited_children_system_seconds": 0.692642,
+    "all_waited_children_user_seconds": 2.167372,
+    "chainwork_awarded": 0,
+    "cost_scope": [
+      "Whole campaign includes source/input replay, producer, native startup/exit, independent Python workers, actual TCP, failures/cancellation/discard controls, budget exhaustion, persistence and readback.",
+      "Parent CPU includes its client threads; child wait4 covers each receiver and the native descendants it waited on Linux. Native-only and stage costs are subsets, never extra terms.",
+      "Receiver wait4 includes Python process start/import/exit; outer controller startup/import/exit and final report encoding remain outside the named campaign interval.",
+      "A sender discard records bytes accepted by its local kernel and zero received bytes. Server ACK send success never proves application consumption.",
+      "This is shared-host localhost, not WAN/TLS, public gossip, availability, succinct-proof benefit or independent operator qualification.",
+      "The named output filesystem is recorded. If tmpfs is used, journal fsync/reopen measures memory-backed persistence only, not durable disk or power loss.",
+      "Forced-kill partial stages or unwaited descendants remain unknown; no crash-complete accounting claim."
+    ],
+    "exact_committed_source_verified": true,
+    "expected_source_sha": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+    "external_demand_authenticated": false,
+    "failures": [],
+    "global_verification_cap_enforced": false,
+    "hidden_verifier_side_channel_model_verified": false,
+    "independent_operators": false,
+    "material": {
+      "actual_consumption_proved": false,
+      "economic_demand_authenticated": false,
+      "historical_corpus_not_new_demand": true,
+      "load_and_source_replay": {
+        "thread_cpu_ns": 210578905,
+        "wall_ns": 405418438
+      },
+      "material_content_id": "e3965142612da27939ec109edcd626ad0cfd0be38c45e8bbb2ed4bd2dd5e40a3",
+      "model_commitment": "e365293070b00d2c3600ff38324b5e730c94bb4b8b07f61b7eac4e451cce64a4",
+      "model_sha256": "d07ae8ce412746b5cc7289f65be3a5fb0e417aa3ad747aa71c2e3d1fd2f3514e",
+      "product_sha256": "6ada4494c3e0e67f84008c216d71faff0fd2d43041601de191d76a3323a858f3",
+      "provenance": {
+        "batch_offset": 0,
+        "batch_size": 16,
+        "evaluation_bundle": "485d1ddac3f10b859599297ede15c5703517952d3f507cdc3efea7f14214429e",
+        "evaluation_bundle_sha256": "e2a67320971f6620dc4c67c4114eb9fcf3389d4b9925daedfbb471f9936b8570",
+        "independent_administration": false,
+        "model_artifact": "d6ac3f24a43045dda6af862344918688b5fbb047599d423e27c567cf670ccfc2",
+        "model_sha256": "d07ae8ce412746b5cc7289f65be3a5fb0e417aa3ad747aa71c2e3d1fd2f3514e",
+        "ordinary_hepta_product_entry": false,
+        "partition": "consumer",
+        "production_activation": false,
+        "prospective_evaluation": false,
+        "public_reward_eligible": false,
+        "scope": "controlled-local-frozen-inputs-not-authorized-future-evidence",
+        "selected_tasks": {
+          "content_root": "2206cad582edcb914c231dbc132fef71f97e8809630e347fa688eabf6f5158e1",
+          "groups": [
+            "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+            "trillionnium/crates/trnm-types/src/request_status/transitions.rs",
+            "trillionnium/crates/trnm-types/src/transcript/mod.rs"
+          ],
+          "rows": 16,
+          "task_id_root": "e0be3a10d5cf1f00167b6b35746a1b3537319ce61ceb194289110f2af05730bf",
+          "tasks_digest": "b545fdb5dc980520302e7949c9e2d7072026277356042e926e14fadc50e8bcd6"
+        },
+        "source_commit": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+        "source_replayed": true,
+        "tasks_file_sha256": "f75d027312966d7316795629ba7ae0dfd82c2ccbaece417db30b8a28b4210051",
+        "whole_partition": {
+          "content_root": "8ce3cf3b37b5934cb8cd41304aa0840e97829e37845b3f60db9377bffad8f855",
+          "groups": [
+            "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs",
+            "trillionnium/crates/trnm-peer-lease/src/payload.rs",
+            "trillionnium/crates/trnm-research-protocol/src/lib.rs",
+            "trillionnium/crates/trnm-task-kernel/src/error.rs",
+            "trillionnium/crates/trnm-transport/src/proof_admission.rs",
+            "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+            "trillionnium/crates/trnm-types/src/request_status/transitions.rs",
+            "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+            "trillionnium/crates/trnm-worker-agent/src/adapter_parse.rs",
+            "trillionnium/crates/trnm-worker-agent/src/proof_adapter.rs",
+            "trillionnium/crates/trnm-worker-agent/src/proof_adapter_core.rs",
+            "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests.rs",
+            "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard_verify.rs",
+            "trillionnium/crates/trnm-worker-agent/src/state.rs",
+            "trillionnium/crates/trnm-worker-agent/src/state_ops.rs",
+            "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification.rs",
+            "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error.rs",
+            "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error_maps.rs",
+            "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_persist.rs",
+            "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_result.rs",
+            "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format_detect.rs",
+            "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request.rs",
+            "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_reject.rs",
+            "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_compat.rs",
+            "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_lookup.rs",
+            "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile.rs",
+            "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_layers.rs"
+          ],
+          "rows": 213,
+          "task_id_root": "fa32cc65e4356449024d124a457fe1250f6acdd2a7ff63750c38611fbfb9f8f5",
+          "tasks_digest": "18acb91d531f29dbc9539b0100881ab180a0fe6be1057615040041355dd8d200"
+        }
+      },
+      "request_precommitment": "bb88a820b3536ffae959f1518467f66de98d6231cc6d333effdee000e84bbf7b",
+      "tasks_sha256": "f75d027312966d7316795629ba7ae0dfd82c2ccbaece417db30b8a28b4210051"
+    },
+    "measurement_mode": "exact-source",
+    "minimum_fresh_neural_cost_proved": false,
+    "native_payment_for_grouped_output_observed": false,
+    "not_started_topologies": [],
+    "output_storage_after": {
+      "available_bytes": 68732489728,
+      "filesystem_type": "ext4",
+      "free_bytes": 78980063232,
+      "power_loss_durability_tested": false,
+      "resolved_directory": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/fanout-exact-rog"
+    },
+    "output_storage_before": {
+      "available_bytes": 68741349376,
+      "filesystem_type": "ext4",
+      "free_bytes": 78988922880,
+      "power_loss_durability_tested": false,
+      "resolved_directory": "/home/qian-qi/work/chain-resource-transfer-20261107-10a9/fanout-exact-rog"
+    },
+    "parent_process_cpu_ns": 323179142,
+    "physical_resource_lower_bound_proved": false,
+    "pow_qualified": false,
+    "preparation": {
+      "fresh_neural_contractions_after_preparation": 0,
+      "measured": {
+        "thread_cpu_ns": 2469812,
+        "wall_ns": 2468772
+      },
+      "model_preparation_counts": [
+        [
+          "model_elements_checked",
+          3855
+        ],
+        [
+          "input_elements_checked",
+          0
+        ],
+        [
+          "preparation_macs",
+          0
+        ],
+        [
+          "preparation_additions",
+          2313
+        ],
+        [
+          "execution_macs",
+          0
+        ],
+        [
+          "execution_additions",
+          0
+        ],
+        [
+          "input_scan_elements",
+          0
+        ],
+        [
+          "cache_key_elements",
+          0
+        ],
+        [
+          "cache_lookups",
+          0
+        ],
+        [
+          "cache_hits",
+          0
+        ],
+        [
+          "gather_elements",
+          0
+        ],
+        [
+          "scatter_elements",
+          0
+        ],
+        [
+          "reference_macs",
+          0
+        ],
+        [
+          "reference_additions",
+          0
+        ],
+        [
+          "hash_input_bytes",
+          14000
+        ]
+      ],
+      "product_execution_counts": {
+        "cache_hits": 0,
+        "cache_key_elements": 0,
+        "cache_lookups": 0,
+        "execution_additions": 0,
+        "execution_macs": 2160,
+        "gather_elements": 0,
+        "hash_input_bytes": 0,
+        "input_elements_checked": 4112,
+        "input_scan_elements": 4112,
+        "model_elements_checked": 0,
+        "preparation_additions": 0,
+        "preparation_macs": 0,
+        "reference_additions": 0,
+        "reference_macs": 0,
+        "scatter_elements": 0
+      }
+    },
+    "preregistered_plan_sha256": "8dd1a8bedfa69814c9cb2220e75347f7231253487b24b7f645f186aae5a4ad37",
+    "primary_hits": 1,
+    "primary_packets_generated": 2,
+    "produced": [
+      {
+        "challenge": "da9870f505c24a873363535b3d73ef8ea6c5a500898df7af17c439e50426941f",
+        "generation_crosscheck_capture": {
+          "thread_cpu_ns": 3845534,
+          "wall_ns": 50667521
+        },
+        "native": {
+          "chainwork_awarded": 0,
+          "challenge": "da9870f505c24a873363535b3d73ef8ea6c5a500898df7af17c439e50426941f",
+          "completed_steps": 64,
+          "durable_reservation": {
+            "thread_cpu_ns": 684403,
+            "wall_ns": 13766514
+          },
+          "final_query_evaluated": true,
+          "grouped_arithmetic_verified_by_this_api": false,
+          "native_authorization": {
+            "thread_cpu_ns": 280716,
+            "wall_ns": 280731
+          },
+          "native_seal_producer": {
+            "thread_cpu_ns": 18024,
+            "wall_ns": 17683
+          },
+          "nonce": 1,
+          "produced_claim_persistence": {
+            "thread_cpu_ns": 573364,
+            "wall_ns": 13798393
+          },
+          "proof_bytes": 134,
+          "proof_hex": "504753460000c773bd0284b1253ba17561ae902f530343830bb1551974a2230f52816c6d5a82da9870f505c24a873363535b3d73ef8ea6c5a500898df7af17c439e50426941fb4c77cdc0f2e90bbd93c33288eac6bae6bc6658b4ab65a9d9b0f4ad88b668885e018bca1c271195ad4694608b5236aa0ed1f6b40d92b92253edfb57fdc8521aa",
+          "proof_sha256": "912610fd642a4d46e77747f3d5333ba204b3b75db6c4bce4f8ca4ee0b1972cd0",
+          "statement": "b4c77cdc0f2e90bbd93c33288eac6bae6bc6658b4ab65a9d9b0f4ad88b668885",
+          "status": "produced",
+          "target_hit": false,
+          "ticket": "e018bca1c271195ad4694608b5236aa0ed1f6b40d92b92253edfb57fdc8521aa",
+          "work_id": "1074fd9f76cef3840861e2ec07ca6af4f46dd997ec63f414a978c147eb4e31ab"
+        },
+        "nonce": 1,
+        "packet_bytes": 3522,
+        "packet_sha256": "eb5979fc09845e9b9a0f8cf5f652fadca6a0d282e2ec59818d5fd400583103d3",
+        "statement": "b4c77cdc0f2e90bbd93c33288eac6bae6bc6658b4ab65a9d9b0f4ad88b668885",
+        "work_id": "1074fd9f76cef3840861e2ec07ca6af4f46dd997ec63f414a978c147eb4e31ab"
+      },
+      {
+        "challenge": "fab85f7275dec10ea6abf32aae97403acedd2b6e6f2b6430097c1e5614cd93b3",
+        "generation_crosscheck_capture": {
+          "thread_cpu_ns": 4183526,
+          "wall_ns": 41237256
+        },
+        "native": {
+          "chainwork_awarded": 0,
+          "challenge": "fab85f7275dec10ea6abf32aae97403acedd2b6e6f2b6430097c1e5614cd93b3",
+          "completed_steps": 64,
+          "durable_reservation": {
+            "thread_cpu_ns": 871755,
+            "wall_ns": 13287865
+          },
+          "final_query_evaluated": true,
+          "grouped_arithmetic_verified_by_this_api": false,
+          "native_authorization": {
+            "thread_cpu_ns": 571683,
+            "wall_ns": 572843
+          },
+          "native_seal_producer": {
+            "thread_cpu_ns": 12113,
+            "wall_ns": 11832
+          },
+          "nonce": 2,
+          "produced_claim_persistence": {
+            "thread_cpu_ns": 233507,
+            "wall_ns": 2700272
+          },
+          "proof_bytes": 134,
+          "proof_hex": "504753460000c773bd0284b1253ba17561ae902f530343830bb1551974a2230f52816c6d5a82fab85f7275dec10ea6abf32aae97403acedd2b6e6f2b6430097c1e5614cd93b3e98629c2ead8cbf672e5fae2d0d86fe90d0c72eb7edee20d1a3b821a980a72ff14011af45d82c87e7a4c57b3261aeed37826595a258895971dc06846af3af13b",
+          "proof_sha256": "8fd53730380b227e4f316708d4cc1786c2347a55e2e91805ec81f42e93b7157b",
+          "statement": "e98629c2ead8cbf672e5fae2d0d86fe90d0c72eb7edee20d1a3b821a980a72ff",
+          "status": "produced",
+          "target_hit": true,
+          "ticket": "14011af45d82c87e7a4c57b3261aeed37826595a258895971dc06846af3af13b",
+          "work_id": "922e078b6a191cd92b3b7d8892fb56398cd5f79e40cf651c8153652b42c19fca"
+        },
+        "nonce": 2,
+        "packet_bytes": 3522,
+        "packet_sha256": "da1d24d2b5cdaf82d49389acdaf60d34863197f3726e1760f674d3d52072f376",
+        "statement": "e98629c2ead8cbf672e5fae2d0d86fe90d0c72eb7edee20d1a3b821a980a72ff",
+        "work_id": "922e078b6a191cd92b3b7d8892fb56398cd5f79e40cf651c8153652b42c19fca"
+      }
+    ],
+    "producer_native_exit": {
+      "child_cpu_scope": "RUSAGE_CHILDREN delta; native child is the only subprocess in this interval",
+      "exit_code": 0,
+      "lifetime_includes_idle_fixture_orchestration": true,
+      "native_child_system_seconds": 0.00458699999999998,
+      "native_child_user_seconds": 0.005734000000000017,
+      "observed_child_lifetime_wall_ns": 160928550,
+      "observer_main_thread_cpu_ns": 12010529
+    },
+    "production_activation": false,
+    "quantum_security_proved": false,
+    "runner_bytes_stable": true,
+    "runner_sha256": "d76a3d713149f9ed9660a54c5310244677150fed440f8be730076eb25a2bf1ef",
+    "schema": "pon-grouped-fresh-fanout-campaign-v0",
+    "source_after": {
+      "clean": true,
+      "commit": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+      "owned_sources_sha256": {
+        "formal/pon-nakamoto-v1/experiments/grouped_legal_strategy_v0.py": "c5be5a3002cc66ecf67093eb82727c8c07fa7491d2a3ed40b131d31879058f5f",
+        "formal/pon-nakamoto-v1/grouped_legal_strategy_v0.py": "d7faeb40d3954bf78a268e19ad858586fdd7c57572bfd17d51030312187290a4",
+        "formal/pon-nakamoto-v1/test_grouped_legal_strategy_v0.py": "84b4645ec346480fc08e4b801e6746089170fe448700aa2eddf972d7e1f46263"
+      },
+      "relevant_sources": {
+        "config/pon/devnet-v1.json": {
+          "actual_bytes": 1964,
+          "actual_sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+          "head_sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "config/pon/evaluation-round-v1.json": {
+          "actual_bytes": 890,
+          "actual_sha256": "f65de29ae87bbcdb1cfb3a54bba22323e68d7decfd2976395468c1ba559f5d33",
+          "head_sha256": "f65de29ae87bbcdb1cfb3a54bba22323e68d7decfd2976395468c1ba559f5d33",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "config/pon/ledger-v1.json": {
+          "actual_bytes": 7793,
+          "actual_sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+          "head_sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "config/pon/model-family-v1.json": {
+          "actual_bytes": 1383,
+          "actual_sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+          "head_sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "config/pon/work-profile-v1.json": {
+          "actual_bytes": 1596,
+          "actual_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+          "head_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/bounded_process.py": {
+          "actual_bytes": 8627,
+          "actual_sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+          "head_sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/contract_wire.py": {
+          "actual_bytes": 8924,
+          "actual_sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+          "head_sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/evaluation.py": {
+          "actual_bytes": 5485,
+          "actual_sha256": "64abdc175b20a446421371380e244f401f658662a55e925f4bfb76c956f87842",
+          "head_sha256": "64abdc175b20a446421371380e244f401f658662a55e925f4bfb76c956f87842",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/evaluation_bundle.py": {
+          "actual_bytes": 15573,
+          "actual_sha256": "69468989c22369f812a866fde48ed4c8dd16f15306620a222527d4e645f5699f",
+          "head_sha256": "69468989c22369f812a866fde48ed4c8dd16f15306620a222527d4e645f5699f",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/experiments/grouped_cell_operator_v0.py": {
+          "actual_bytes": 31209,
+          "actual_sha256": "a5facb904ff068fe72a957bbf48c396bf3fecd37f3390973286a32d4c9251a8a",
+          "head_sha256": "a5facb904ff068fe72a957bbf48c396bf3fecd37f3390973286a32d4c9251a8a",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/experiments/grouped_fresh_fanout_v0.py": {
+          "actual_bytes": 43252,
+          "actual_sha256": "2eb7a2aa940dcaf53be76bea0ae5bbc0a72c7dac5337fd5516a620e9be614b94",
+          "head_sha256": "2eb7a2aa940dcaf53be76bea0ae5bbc0a72c7dac5337fd5516a620e9be614b94",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/experiments/grouped_fresh_work_v0.py": {
+          "actual_bytes": 40110,
+          "actual_sha256": "e4879c21b2c3b804003b5ac914ccedcaed25ed72b6b1f79646b754de722c11d7",
+          "head_sha256": "e4879c21b2c3b804003b5ac914ccedcaed25ed72b6b1f79646b754de722c11d7",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/experiments/grouped_legal_strategy_v0.py": {
+          "actual_bytes": 24152,
+          "actual_sha256": "c5be5a3002cc66ecf67093eb82727c8c07fa7491d2a3ed40b131d31879058f5f",
+          "head_sha256": "c5be5a3002cc66ecf67093eb82727c8c07fa7491d2a3ed40b131d31879058f5f",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/experiments/model_loop.py": {
+          "actual_bytes": 15358,
+          "actual_sha256": "d29b4b426825afdd90b3db9e1fbe79f931a543c307b896853a249ae909412fd0",
+          "head_sha256": "d29b4b426825afdd90b3db9e1fbe79f931a543c307b896853a249ae909412fd0",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/experiments/shared_cell_operator_v1.py": {
+          "actual_bytes": 50193,
+          "actual_sha256": "5c2c6d900c6a6898a5d5eb8b28d48a44217159b0efe11fb84d8f0f58277dbaf6",
+          "head_sha256": "5c2c6d900c6a6898a5d5eb8b28d48a44217159b0efe11fb84d8f0f58277dbaf6",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/fresh_work_query_floor_v0.py": {
+          "actual_bytes": 24978,
+          "actual_sha256": "1945cfe2d191355ad26a1076bca2e99490a3336d0ca49e7510d68bb91ded0001",
+          "head_sha256": "1945cfe2d191355ad26a1076bca2e99490a3336d0ca49e7510d68bb91ded0001",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/grouped_fresh_admission_wire_v0.py": {
+          "actual_bytes": 18651,
+          "actual_sha256": "b04362cf0a7d8a0b8b8aacda67cd2dd58ffa9bd9b807808c458c61cc57fe130c",
+          "head_sha256": "b04362cf0a7d8a0b8b8aacda67cd2dd58ffa9bd9b807808c458c61cc57fe130c",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py": {
+          "actual_bytes": 13667,
+          "actual_sha256": "dcc5f580574bc791235b491b0c3475df27227afa326f8f302ba70dcd0e62ebcf",
+          "head_sha256": "dcc5f580574bc791235b491b0c3475df27227afa326f8f302ba70dcd0e62ebcf",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/grouped_fresh_work_v0.py": {
+          "actual_bytes": 8003,
+          "actual_sha256": "d5b68f0bcacc558672923d87fd9a1839247a7d53f51fe89009c56a232a74ad99",
+          "head_sha256": "d5b68f0bcacc558672923d87fd9a1839247a7d53f51fe89009c56a232a74ad99",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/grouped_legal_strategy_v0.py": {
+          "actual_bytes": 17789,
+          "actual_sha256": "d7faeb40d3954bf78a268e19ad858586fdd7c57572bfd17d51030312187290a4",
+          "head_sha256": "d7faeb40d3954bf78a268e19ad858586fdd7c57572bfd17d51030312187290a4",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/grouped_work_lottery_v0.py": {
+          "actual_bytes": 18679,
+          "actual_sha256": "d1aef8f09f60169ba954da159f6d68efe139d62b6872e4f52e509178ceb02d47",
+          "head_sha256": "d1aef8f09f60169ba954da159f6d68efe139d62b6872e4f52e509178ceb02d47",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/ledger.py": {
+          "actual_bytes": 37985,
+          "actual_sha256": "129e64be6e26a97f0bfbbc698fee573c6d5b8fea2ef361e9e7ab2fe0ddd0333e",
+          "head_sha256": "129e64be6e26a97f0bfbbc698fee573c6d5b8fea2ef361e9e7ab2fe0ddd0333e",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/model_consumer_context.py": {
+          "actual_bytes": 6046,
+          "actual_sha256": "f672afc9146dca5d193e2477a3dbf7a810097f0cf90e035403706b2acc1cd0dc",
+          "head_sha256": "f672afc9146dca5d193e2477a3dbf7a810097f0cf90e035403706b2acc1cd0dc",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/model_contract.py": {
+          "actual_bytes": 2416,
+          "actual_sha256": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd",
+          "head_sha256": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/strict_signature.py": {
+          "actual_bytes": 2151,
+          "actual_sha256": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e",
+          "head_sha256": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/test_fresh_work_query_floor_v0.py": {
+          "actual_bytes": 21356,
+          "actual_sha256": "f52753f56a9bd70a4759967a4d017c89c1cbfd94e223c946fe55c42f5cd68e94",
+          "head_sha256": "f52753f56a9bd70a4759967a4d017c89c1cbfd94e223c946fe55c42f5cd68e94",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/test_grouped_fresh_admission_wire_v0.py": {
+          "actual_bytes": 15787,
+          "actual_sha256": "1d34ca09890f2e83c66014b936870dd550d1a041fcef538e5c64151cedbdb00c",
+          "head_sha256": "1d34ca09890f2e83c66014b936870dd550d1a041fcef538e5c64151cedbdb00c",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py": {
+          "actual_bytes": 11294,
+          "actual_sha256": "e763fe9fb23fb573a86ff8ff189a00e97f1ff80712c768775591828baac10bd0",
+          "head_sha256": "e763fe9fb23fb573a86ff8ff189a00e97f1ff80712c768775591828baac10bd0",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/test_grouped_fresh_work_v0.py": {
+          "actual_bytes": 7393,
+          "actual_sha256": "bb515e437fcbae375f48948326b08dcc75d55a51d95a31e8c4ce0d4bae38ab1d",
+          "head_sha256": "bb515e437fcbae375f48948326b08dcc75d55a51d95a31e8c4ce0d4bae38ab1d",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/test_grouped_legal_strategy_v0.py": {
+          "actual_bytes": 20357,
+          "actual_sha256": "84b4645ec346480fc08e4b801e6746089170fe448700aa2eddf972d7e1f46263",
+          "head_sha256": "84b4645ec346480fc08e4b801e6746089170fe448700aa2eddf972d7e1f46263",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/work_backend.py": {
+          "actual_bytes": 1841,
+          "actual_sha256": "cdda8a8ee3cc6fa280dbb7bce2e7527527f26602ea7056173d7e7e31ec4d1e27",
+          "head_sha256": "cdda8a8ee3cc6fa280dbb7bce2e7527527f26602ea7056173d7e7e31ec4d1e27",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/work_oracle.py": {
+          "actual_bytes": 2944,
+          "actual_sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+          "head_sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/Cargo.lock": {
+          "actual_bytes": 40044,
+          "actual_sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+          "head_sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/Cargo.toml": {
+          "actual_bytes": 2204,
+          "actual_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+          "head_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": {
+          "actual_bytes": 8025,
+          "actual_sha256": "b69caad8bcda8b41eb853667f4e3524f01ef47c1a854486ab71840a4b2e5441c",
+          "head_sha256": "b69caad8bcda8b41eb853667f4e3524f01ef47c1a854486ab71840a4b2e5441c",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_grouped_fresh_seal_v0.rs": {
+          "actual_bytes": 11106,
+          "actual_sha256": "e76b14e338e8de3a4a5dce5f7d420c18418329ef58bc7cc1e58988a703fbadda",
+          "head_sha256": "e76b14e338e8de3a4a5dce5f7d420c18418329ef58bc7cc1e58988a703fbadda",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tasks_v5.rs": {
+          "actual_bytes": 32264,
+          "actual_sha256": "1ba4028feb9a0f80a6d1bbea9abf3c8e1a67484b997ff2789f416588276a1120",
+          "head_sha256": "1ba4028feb9a0f80a6d1bbea9abf3c8e1a67484b997ff2789f416588276a1120",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-pon-node/examples/grouped_fresh_admission_v0.rs": {
+          "actual_bytes": 27522,
+          "actual_sha256": "e5a677b48d56760142817da2b4082a857b336b146de6dabb7d18249a13679ed7",
+          "head_sha256": "e5a677b48d56760142817da2b4082a857b336b146de6dabb7d18249a13679ed7",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-pon-node/src/grouped_fresh_admission_v0.rs": {
+          "actual_bytes": 34676,
+          "actual_sha256": "1497aad78223415b90f86c0562121acfed8b6263b7995ecc4bb9f50ba294a161",
+          "head_sha256": "1497aad78223415b90f86c0562121acfed8b6263b7995ecc4bb9f50ba294a161",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-pon-node/src/lib.rs": {
+          "actual_bytes": 33511,
+          "actual_sha256": "0e80c9c5f78aa43644cab3dc359957af4edacd17254b4ec8db955d6e6f57aaa2",
+          "head_sha256": "0e80c9c5f78aa43644cab3dc359957af4edacd17254b4ec8db955d6e6f57aaa2",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-pon-node/src/store/funding.rs": {
+          "actual_bytes": 3030,
+          "actual_sha256": "7cd7a6155e35d413ba1b31678a3e36c6d9f18bc2d6b49f3e9032a0146f34bc11",
+          "head_sha256": "7cd7a6155e35d413ba1b31678a3e36c6d9f18bc2d6b49f3e9032a0146f34bc11",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs": {
+          "actual_bytes": 21603,
+          "actual_sha256": "a2096b5dc5f8ec8290fe638e127e138000d932af34c74798e2a64a0d598d4da9",
+          "head_sha256": "a2096b5dc5f8ec8290fe638e127e138000d932af34c74798e2a64a0d598d4da9",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-pon-node/tests/grouped_fresh_admission_v0.rs": {
+          "actual_bytes": 27529,
+          "actual_sha256": "18f0fce456bc05d253a08181fa07f301d50e6249f88ced871d2a8b71d04b0360",
+          "head_sha256": "18f0fce456bc05d253a08181fa07f301d50e6249f88ced871d2a8b71d04b0360",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-service-settlement/src/native_budget.rs": {
+          "actual_bytes": 68208,
+          "actual_sha256": "dd200bb218967dc4456ad48cf81a4e648202f0ed6593972717d7ee4a5eafe4db",
+          "head_sha256": "dd200bb218967dc4456ad48cf81a4e648202f0ed6593972717d7ee4a5eafe4db",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        }
+      },
+      "relevant_sources_sha256": {
+        "config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+        "config/pon/evaluation-round-v1.json": "f65de29ae87bbcdb1cfb3a54bba22323e68d7decfd2976395468c1ba559f5d33",
+        "config/pon/ledger-v1.json": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+        "config/pon/model-family-v1.json": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+        "config/pon/work-profile-v1.json": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+        "formal/pon-nakamoto-v1/bounded_process.py": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+        "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+        "formal/pon-nakamoto-v1/evaluation.py": "64abdc175b20a446421371380e244f401f658662a55e925f4bfb76c956f87842",
+        "formal/pon-nakamoto-v1/evaluation_bundle.py": "69468989c22369f812a866fde48ed4c8dd16f15306620a222527d4e645f5699f",
+        "formal/pon-nakamoto-v1/experiments/grouped_cell_operator_v0.py": "a5facb904ff068fe72a957bbf48c396bf3fecd37f3390973286a32d4c9251a8a",
+        "formal/pon-nakamoto-v1/experiments/grouped_fresh_fanout_v0.py": "2eb7a2aa940dcaf53be76bea0ae5bbc0a72c7dac5337fd5516a620e9be614b94",
+        "formal/pon-nakamoto-v1/experiments/grouped_fresh_work_v0.py": "e4879c21b2c3b804003b5ac914ccedcaed25ed72b6b1f79646b754de722c11d7",
+        "formal/pon-nakamoto-v1/experiments/grouped_legal_strategy_v0.py": "c5be5a3002cc66ecf67093eb82727c8c07fa7491d2a3ed40b131d31879058f5f",
+        "formal/pon-nakamoto-v1/experiments/model_loop.py": "d29b4b426825afdd90b3db9e1fbe79f931a543c307b896853a249ae909412fd0",
+        "formal/pon-nakamoto-v1/experiments/shared_cell_operator_v1.py": "5c2c6d900c6a6898a5d5eb8b28d48a44217159b0efe11fb84d8f0f58277dbaf6",
+        "formal/pon-nakamoto-v1/fresh_work_query_floor_v0.py": "1945cfe2d191355ad26a1076bca2e99490a3336d0ca49e7510d68bb91ded0001",
+        "formal/pon-nakamoto-v1/grouped_fresh_admission_wire_v0.py": "b04362cf0a7d8a0b8b8aacda67cd2dd58ffa9bd9b807808c458c61cc57fe130c",
+        "formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py": "dcc5f580574bc791235b491b0c3475df27227afa326f8f302ba70dcd0e62ebcf",
+        "formal/pon-nakamoto-v1/grouped_fresh_work_v0.py": "d5b68f0bcacc558672923d87fd9a1839247a7d53f51fe89009c56a232a74ad99",
+        "formal/pon-nakamoto-v1/grouped_legal_strategy_v0.py": "d7faeb40d3954bf78a268e19ad858586fdd7c57572bfd17d51030312187290a4",
+        "formal/pon-nakamoto-v1/grouped_work_lottery_v0.py": "d1aef8f09f60169ba954da159f6d68efe139d62b6872e4f52e509178ceb02d47",
+        "formal/pon-nakamoto-v1/ledger.py": "129e64be6e26a97f0bfbbc698fee573c6d5b8fea2ef361e9e7ab2fe0ddd0333e",
+        "formal/pon-nakamoto-v1/model_consumer_context.py": "f672afc9146dca5d193e2477a3dbf7a810097f0cf90e035403706b2acc1cd0dc",
+        "formal/pon-nakamoto-v1/model_contract.py": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd",
+        "formal/pon-nakamoto-v1/strict_signature.py": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e",
+        "formal/pon-nakamoto-v1/test_fresh_work_query_floor_v0.py": "f52753f56a9bd70a4759967a4d017c89c1cbfd94e223c946fe55c42f5cd68e94",
+        "formal/pon-nakamoto-v1/test_grouped_fresh_admission_wire_v0.py": "1d34ca09890f2e83c66014b936870dd550d1a041fcef538e5c64151cedbdb00c",
+        "formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py": "e763fe9fb23fb573a86ff8ff189a00e97f1ff80712c768775591828baac10bd0",
+        "formal/pon-nakamoto-v1/test_grouped_fresh_work_v0.py": "bb515e437fcbae375f48948326b08dcc75d55a51d95a31e8c4ce0d4bae38ab1d",
+        "formal/pon-nakamoto-v1/test_grouped_legal_strategy_v0.py": "84b4645ec346480fc08e4b801e6746089170fe448700aa2eddf972d7e1f46263",
+        "formal/pon-nakamoto-v1/work_backend.py": "cdda8a8ee3cc6fa280dbb7bce2e7527527f26602ea7056173d7e7e31ec4d1e27",
+        "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+        "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+        "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+        "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "b69caad8bcda8b41eb853667f4e3524f01ef47c1a854486ab71840a4b2e5441c",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_grouped_fresh_seal_v0.rs": "e76b14e338e8de3a4a5dce5f7d420c18418329ef58bc7cc1e58988a703fbadda",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tasks_v5.rs": "1ba4028feb9a0f80a6d1bbea9abf3c8e1a67484b997ff2789f416588276a1120",
+        "trillionnium/crates/trnm-pon-node/examples/grouped_fresh_admission_v0.rs": "e5a677b48d56760142817da2b4082a857b336b146de6dabb7d18249a13679ed7",
+        "trillionnium/crates/trnm-pon-node/src/grouped_fresh_admission_v0.rs": "1497aad78223415b90f86c0562121acfed8b6263b7995ecc4bb9f50ba294a161",
+        "trillionnium/crates/trnm-pon-node/src/lib.rs": "0e80c9c5f78aa43644cab3dc359957af4edacd17254b4ec8db955d6e6f57aaa2",
+        "trillionnium/crates/trnm-pon-node/src/store/funding.rs": "7cd7a6155e35d413ba1b31678a3e36c6d9f18bc2d6b49f3e9032a0146f34bc11",
+        "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs": "a2096b5dc5f8ec8290fe638e127e138000d932af34c74798e2a64a0d598d4da9",
+        "trillionnium/crates/trnm-pon-node/tests/grouped_fresh_admission_v0.rs": "18f0fce456bc05d253a08181fa07f301d50e6249f88ced871d2a8b71d04b0360",
+        "trillionnium/crates/trnm-service-settlement/src/native_budget.rs": "dd200bb218967dc4456ad48cf81a4e648202f0ed6593972717d7ee4a5eafe4db"
+      },
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked_tree_clean": true,
+      "tracked_tree_status": "",
+      "working_tree_status": ""
+    },
+    "source_before": {
+      "clean": true,
+      "commit": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+      "owned_sources_sha256": {
+        "formal/pon-nakamoto-v1/experiments/grouped_legal_strategy_v0.py": "c5be5a3002cc66ecf67093eb82727c8c07fa7491d2a3ed40b131d31879058f5f",
+        "formal/pon-nakamoto-v1/grouped_legal_strategy_v0.py": "d7faeb40d3954bf78a268e19ad858586fdd7c57572bfd17d51030312187290a4",
+        "formal/pon-nakamoto-v1/test_grouped_legal_strategy_v0.py": "84b4645ec346480fc08e4b801e6746089170fe448700aa2eddf972d7e1f46263"
+      },
+      "relevant_sources": {
+        "config/pon/devnet-v1.json": {
+          "actual_bytes": 1964,
+          "actual_sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+          "head_sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "config/pon/evaluation-round-v1.json": {
+          "actual_bytes": 890,
+          "actual_sha256": "f65de29ae87bbcdb1cfb3a54bba22323e68d7decfd2976395468c1ba559f5d33",
+          "head_sha256": "f65de29ae87bbcdb1cfb3a54bba22323e68d7decfd2976395468c1ba559f5d33",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "config/pon/ledger-v1.json": {
+          "actual_bytes": 7793,
+          "actual_sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+          "head_sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "config/pon/model-family-v1.json": {
+          "actual_bytes": 1383,
+          "actual_sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+          "head_sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "config/pon/work-profile-v1.json": {
+          "actual_bytes": 1596,
+          "actual_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+          "head_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/bounded_process.py": {
+          "actual_bytes": 8627,
+          "actual_sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+          "head_sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/contract_wire.py": {
+          "actual_bytes": 8924,
+          "actual_sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+          "head_sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/evaluation.py": {
+          "actual_bytes": 5485,
+          "actual_sha256": "64abdc175b20a446421371380e244f401f658662a55e925f4bfb76c956f87842",
+          "head_sha256": "64abdc175b20a446421371380e244f401f658662a55e925f4bfb76c956f87842",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/evaluation_bundle.py": {
+          "actual_bytes": 15573,
+          "actual_sha256": "69468989c22369f812a866fde48ed4c8dd16f15306620a222527d4e645f5699f",
+          "head_sha256": "69468989c22369f812a866fde48ed4c8dd16f15306620a222527d4e645f5699f",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/experiments/grouped_cell_operator_v0.py": {
+          "actual_bytes": 31209,
+          "actual_sha256": "a5facb904ff068fe72a957bbf48c396bf3fecd37f3390973286a32d4c9251a8a",
+          "head_sha256": "a5facb904ff068fe72a957bbf48c396bf3fecd37f3390973286a32d4c9251a8a",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/experiments/grouped_fresh_fanout_v0.py": {
+          "actual_bytes": 43252,
+          "actual_sha256": "2eb7a2aa940dcaf53be76bea0ae5bbc0a72c7dac5337fd5516a620e9be614b94",
+          "head_sha256": "2eb7a2aa940dcaf53be76bea0ae5bbc0a72c7dac5337fd5516a620e9be614b94",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/experiments/grouped_fresh_work_v0.py": {
+          "actual_bytes": 40110,
+          "actual_sha256": "e4879c21b2c3b804003b5ac914ccedcaed25ed72b6b1f79646b754de722c11d7",
+          "head_sha256": "e4879c21b2c3b804003b5ac914ccedcaed25ed72b6b1f79646b754de722c11d7",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/experiments/grouped_legal_strategy_v0.py": {
+          "actual_bytes": 24152,
+          "actual_sha256": "c5be5a3002cc66ecf67093eb82727c8c07fa7491d2a3ed40b131d31879058f5f",
+          "head_sha256": "c5be5a3002cc66ecf67093eb82727c8c07fa7491d2a3ed40b131d31879058f5f",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/experiments/model_loop.py": {
+          "actual_bytes": 15358,
+          "actual_sha256": "d29b4b426825afdd90b3db9e1fbe79f931a543c307b896853a249ae909412fd0",
+          "head_sha256": "d29b4b426825afdd90b3db9e1fbe79f931a543c307b896853a249ae909412fd0",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/experiments/shared_cell_operator_v1.py": {
+          "actual_bytes": 50193,
+          "actual_sha256": "5c2c6d900c6a6898a5d5eb8b28d48a44217159b0efe11fb84d8f0f58277dbaf6",
+          "head_sha256": "5c2c6d900c6a6898a5d5eb8b28d48a44217159b0efe11fb84d8f0f58277dbaf6",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/fresh_work_query_floor_v0.py": {
+          "actual_bytes": 24978,
+          "actual_sha256": "1945cfe2d191355ad26a1076bca2e99490a3336d0ca49e7510d68bb91ded0001",
+          "head_sha256": "1945cfe2d191355ad26a1076bca2e99490a3336d0ca49e7510d68bb91ded0001",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/grouped_fresh_admission_wire_v0.py": {
+          "actual_bytes": 18651,
+          "actual_sha256": "b04362cf0a7d8a0b8b8aacda67cd2dd58ffa9bd9b807808c458c61cc57fe130c",
+          "head_sha256": "b04362cf0a7d8a0b8b8aacda67cd2dd58ffa9bd9b807808c458c61cc57fe130c",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py": {
+          "actual_bytes": 13667,
+          "actual_sha256": "dcc5f580574bc791235b491b0c3475df27227afa326f8f302ba70dcd0e62ebcf",
+          "head_sha256": "dcc5f580574bc791235b491b0c3475df27227afa326f8f302ba70dcd0e62ebcf",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/grouped_fresh_work_v0.py": {
+          "actual_bytes": 8003,
+          "actual_sha256": "d5b68f0bcacc558672923d87fd9a1839247a7d53f51fe89009c56a232a74ad99",
+          "head_sha256": "d5b68f0bcacc558672923d87fd9a1839247a7d53f51fe89009c56a232a74ad99",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/grouped_legal_strategy_v0.py": {
+          "actual_bytes": 17789,
+          "actual_sha256": "d7faeb40d3954bf78a268e19ad858586fdd7c57572bfd17d51030312187290a4",
+          "head_sha256": "d7faeb40d3954bf78a268e19ad858586fdd7c57572bfd17d51030312187290a4",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/grouped_work_lottery_v0.py": {
+          "actual_bytes": 18679,
+          "actual_sha256": "d1aef8f09f60169ba954da159f6d68efe139d62b6872e4f52e509178ceb02d47",
+          "head_sha256": "d1aef8f09f60169ba954da159f6d68efe139d62b6872e4f52e509178ceb02d47",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/ledger.py": {
+          "actual_bytes": 37985,
+          "actual_sha256": "129e64be6e26a97f0bfbbc698fee573c6d5b8fea2ef361e9e7ab2fe0ddd0333e",
+          "head_sha256": "129e64be6e26a97f0bfbbc698fee573c6d5b8fea2ef361e9e7ab2fe0ddd0333e",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/model_consumer_context.py": {
+          "actual_bytes": 6046,
+          "actual_sha256": "f672afc9146dca5d193e2477a3dbf7a810097f0cf90e035403706b2acc1cd0dc",
+          "head_sha256": "f672afc9146dca5d193e2477a3dbf7a810097f0cf90e035403706b2acc1cd0dc",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/model_contract.py": {
+          "actual_bytes": 2416,
+          "actual_sha256": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd",
+          "head_sha256": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/strict_signature.py": {
+          "actual_bytes": 2151,
+          "actual_sha256": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e",
+          "head_sha256": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/test_fresh_work_query_floor_v0.py": {
+          "actual_bytes": 21356,
+          "actual_sha256": "f52753f56a9bd70a4759967a4d017c89c1cbfd94e223c946fe55c42f5cd68e94",
+          "head_sha256": "f52753f56a9bd70a4759967a4d017c89c1cbfd94e223c946fe55c42f5cd68e94",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/test_grouped_fresh_admission_wire_v0.py": {
+          "actual_bytes": 15787,
+          "actual_sha256": "1d34ca09890f2e83c66014b936870dd550d1a041fcef538e5c64151cedbdb00c",
+          "head_sha256": "1d34ca09890f2e83c66014b936870dd550d1a041fcef538e5c64151cedbdb00c",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py": {
+          "actual_bytes": 11294,
+          "actual_sha256": "e763fe9fb23fb573a86ff8ff189a00e97f1ff80712c768775591828baac10bd0",
+          "head_sha256": "e763fe9fb23fb573a86ff8ff189a00e97f1ff80712c768775591828baac10bd0",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/test_grouped_fresh_work_v0.py": {
+          "actual_bytes": 7393,
+          "actual_sha256": "bb515e437fcbae375f48948326b08dcc75d55a51d95a31e8c4ce0d4bae38ab1d",
+          "head_sha256": "bb515e437fcbae375f48948326b08dcc75d55a51d95a31e8c4ce0d4bae38ab1d",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/test_grouped_legal_strategy_v0.py": {
+          "actual_bytes": 20357,
+          "actual_sha256": "84b4645ec346480fc08e4b801e6746089170fe448700aa2eddf972d7e1f46263",
+          "head_sha256": "84b4645ec346480fc08e4b801e6746089170fe448700aa2eddf972d7e1f46263",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/work_backend.py": {
+          "actual_bytes": 1841,
+          "actual_sha256": "cdda8a8ee3cc6fa280dbb7bce2e7527527f26602ea7056173d7e7e31ec4d1e27",
+          "head_sha256": "cdda8a8ee3cc6fa280dbb7bce2e7527527f26602ea7056173d7e7e31ec4d1e27",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "formal/pon-nakamoto-v1/work_oracle.py": {
+          "actual_bytes": 2944,
+          "actual_sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+          "head_sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/Cargo.lock": {
+          "actual_bytes": 40044,
+          "actual_sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+          "head_sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/Cargo.toml": {
+          "actual_bytes": 2204,
+          "actual_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+          "head_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": {
+          "actual_bytes": 8025,
+          "actual_sha256": "b69caad8bcda8b41eb853667f4e3524f01ef47c1a854486ab71840a4b2e5441c",
+          "head_sha256": "b69caad8bcda8b41eb853667f4e3524f01ef47c1a854486ab71840a4b2e5441c",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_grouped_fresh_seal_v0.rs": {
+          "actual_bytes": 11106,
+          "actual_sha256": "e76b14e338e8de3a4a5dce5f7d420c18418329ef58bc7cc1e58988a703fbadda",
+          "head_sha256": "e76b14e338e8de3a4a5dce5f7d420c18418329ef58bc7cc1e58988a703fbadda",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tasks_v5.rs": {
+          "actual_bytes": 32264,
+          "actual_sha256": "1ba4028feb9a0f80a6d1bbea9abf3c8e1a67484b997ff2789f416588276a1120",
+          "head_sha256": "1ba4028feb9a0f80a6d1bbea9abf3c8e1a67484b997ff2789f416588276a1120",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-pon-node/examples/grouped_fresh_admission_v0.rs": {
+          "actual_bytes": 27522,
+          "actual_sha256": "e5a677b48d56760142817da2b4082a857b336b146de6dabb7d18249a13679ed7",
+          "head_sha256": "e5a677b48d56760142817da2b4082a857b336b146de6dabb7d18249a13679ed7",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-pon-node/src/grouped_fresh_admission_v0.rs": {
+          "actual_bytes": 34676,
+          "actual_sha256": "1497aad78223415b90f86c0562121acfed8b6263b7995ecc4bb9f50ba294a161",
+          "head_sha256": "1497aad78223415b90f86c0562121acfed8b6263b7995ecc4bb9f50ba294a161",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-pon-node/src/lib.rs": {
+          "actual_bytes": 33511,
+          "actual_sha256": "0e80c9c5f78aa43644cab3dc359957af4edacd17254b4ec8db955d6e6f57aaa2",
+          "head_sha256": "0e80c9c5f78aa43644cab3dc359957af4edacd17254b4ec8db955d6e6f57aaa2",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-pon-node/src/store/funding.rs": {
+          "actual_bytes": 3030,
+          "actual_sha256": "7cd7a6155e35d413ba1b31678a3e36c6d9f18bc2d6b49f3e9032a0146f34bc11",
+          "head_sha256": "7cd7a6155e35d413ba1b31678a3e36c6d9f18bc2d6b49f3e9032a0146f34bc11",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs": {
+          "actual_bytes": 21603,
+          "actual_sha256": "a2096b5dc5f8ec8290fe638e127e138000d932af34c74798e2a64a0d598d4da9",
+          "head_sha256": "a2096b5dc5f8ec8290fe638e127e138000d932af34c74798e2a64a0d598d4da9",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-pon-node/tests/grouped_fresh_admission_v0.rs": {
+          "actual_bytes": 27529,
+          "actual_sha256": "18f0fce456bc05d253a08181fa07f301d50e6249f88ced871d2a8b71d04b0360",
+          "head_sha256": "18f0fce456bc05d253a08181fa07f301d50e6249f88ced871d2a8b71d04b0360",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        },
+        "trillionnium/crates/trnm-service-settlement/src/native_budget.rs": {
+          "actual_bytes": 68208,
+          "actual_sha256": "dd200bb218967dc4456ad48cf81a4e648202f0ed6593972717d7ee4a5eafe4db",
+          "head_sha256": "dd200bb218967dc4456ad48cf81a4e648202f0ed6593972717d7ee4a5eafe4db",
+          "matches_head_bytes": true,
+          "tracked_at_head": true
+        }
+      },
+      "relevant_sources_sha256": {
+        "config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+        "config/pon/evaluation-round-v1.json": "f65de29ae87bbcdb1cfb3a54bba22323e68d7decfd2976395468c1ba559f5d33",
+        "config/pon/ledger-v1.json": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+        "config/pon/model-family-v1.json": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+        "config/pon/work-profile-v1.json": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+        "formal/pon-nakamoto-v1/bounded_process.py": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+        "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+        "formal/pon-nakamoto-v1/evaluation.py": "64abdc175b20a446421371380e244f401f658662a55e925f4bfb76c956f87842",
+        "formal/pon-nakamoto-v1/evaluation_bundle.py": "69468989c22369f812a866fde48ed4c8dd16f15306620a222527d4e645f5699f",
+        "formal/pon-nakamoto-v1/experiments/grouped_cell_operator_v0.py": "a5facb904ff068fe72a957bbf48c396bf3fecd37f3390973286a32d4c9251a8a",
+        "formal/pon-nakamoto-v1/experiments/grouped_fresh_fanout_v0.py": "2eb7a2aa940dcaf53be76bea0ae5bbc0a72c7dac5337fd5516a620e9be614b94",
+        "formal/pon-nakamoto-v1/experiments/grouped_fresh_work_v0.py": "e4879c21b2c3b804003b5ac914ccedcaed25ed72b6b1f79646b754de722c11d7",
+        "formal/pon-nakamoto-v1/experiments/grouped_legal_strategy_v0.py": "c5be5a3002cc66ecf67093eb82727c8c07fa7491d2a3ed40b131d31879058f5f",
+        "formal/pon-nakamoto-v1/experiments/model_loop.py": "d29b4b426825afdd90b3db9e1fbe79f931a543c307b896853a249ae909412fd0",
+        "formal/pon-nakamoto-v1/experiments/shared_cell_operator_v1.py": "5c2c6d900c6a6898a5d5eb8b28d48a44217159b0efe11fb84d8f0f58277dbaf6",
+        "formal/pon-nakamoto-v1/fresh_work_query_floor_v0.py": "1945cfe2d191355ad26a1076bca2e99490a3336d0ca49e7510d68bb91ded0001",
+        "formal/pon-nakamoto-v1/grouped_fresh_admission_wire_v0.py": "b04362cf0a7d8a0b8b8aacda67cd2dd58ffa9bd9b807808c458c61cc57fe130c",
+        "formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py": "dcc5f580574bc791235b491b0c3475df27227afa326f8f302ba70dcd0e62ebcf",
+        "formal/pon-nakamoto-v1/grouped_fresh_work_v0.py": "d5b68f0bcacc558672923d87fd9a1839247a7d53f51fe89009c56a232a74ad99",
+        "formal/pon-nakamoto-v1/grouped_legal_strategy_v0.py": "d7faeb40d3954bf78a268e19ad858586fdd7c57572bfd17d51030312187290a4",
+        "formal/pon-nakamoto-v1/grouped_work_lottery_v0.py": "d1aef8f09f60169ba954da159f6d68efe139d62b6872e4f52e509178ceb02d47",
+        "formal/pon-nakamoto-v1/ledger.py": "129e64be6e26a97f0bfbbc698fee573c6d5b8fea2ef361e9e7ab2fe0ddd0333e",
+        "formal/pon-nakamoto-v1/model_consumer_context.py": "f672afc9146dca5d193e2477a3dbf7a810097f0cf90e035403706b2acc1cd0dc",
+        "formal/pon-nakamoto-v1/model_contract.py": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd",
+        "formal/pon-nakamoto-v1/strict_signature.py": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e",
+        "formal/pon-nakamoto-v1/test_fresh_work_query_floor_v0.py": "f52753f56a9bd70a4759967a4d017c89c1cbfd94e223c946fe55c42f5cd68e94",
+        "formal/pon-nakamoto-v1/test_grouped_fresh_admission_wire_v0.py": "1d34ca09890f2e83c66014b936870dd550d1a041fcef538e5c64151cedbdb00c",
+        "formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py": "e763fe9fb23fb573a86ff8ff189a00e97f1ff80712c768775591828baac10bd0",
+        "formal/pon-nakamoto-v1/test_grouped_fresh_work_v0.py": "bb515e437fcbae375f48948326b08dcc75d55a51d95a31e8c4ce0d4bae38ab1d",
+        "formal/pon-nakamoto-v1/test_grouped_legal_strategy_v0.py": "84b4645ec346480fc08e4b801e6746089170fe448700aa2eddf972d7e1f46263",
+        "formal/pon-nakamoto-v1/work_backend.py": "cdda8a8ee3cc6fa280dbb7bce2e7527527f26602ea7056173d7e7e31ec4d1e27",
+        "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+        "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+        "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+        "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "b69caad8bcda8b41eb853667f4e3524f01ef47c1a854486ab71840a4b2e5441c",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_grouped_fresh_seal_v0.rs": "e76b14e338e8de3a4a5dce5f7d420c18418329ef58bc7cc1e58988a703fbadda",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tasks_v5.rs": "1ba4028feb9a0f80a6d1bbea9abf3c8e1a67484b997ff2789f416588276a1120",
+        "trillionnium/crates/trnm-pon-node/examples/grouped_fresh_admission_v0.rs": "e5a677b48d56760142817da2b4082a857b336b146de6dabb7d18249a13679ed7",
+        "trillionnium/crates/trnm-pon-node/src/grouped_fresh_admission_v0.rs": "1497aad78223415b90f86c0562121acfed8b6263b7995ecc4bb9f50ba294a161",
+        "trillionnium/crates/trnm-pon-node/src/lib.rs": "0e80c9c5f78aa43644cab3dc359957af4edacd17254b4ec8db955d6e6f57aaa2",
+        "trillionnium/crates/trnm-pon-node/src/store/funding.rs": "7cd7a6155e35d413ba1b31678a3e36c6d9f18bc2d6b49f3e9032a0146f34bc11",
+        "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs": "a2096b5dc5f8ec8290fe638e127e138000d932af34c74798e2a64a0d598d4da9",
+        "trillionnium/crates/trnm-pon-node/tests/grouped_fresh_admission_v0.rs": "18f0fce456bc05d253a08181fa07f301d50e6249f88ced871d2a8b71d04b0360",
+        "trillionnium/crates/trnm-service-settlement/src/native_budget.rs": "dd200bb218967dc4456ad48cf81a4e648202f0ed6593972717d7ee4a5eafe4db"
+      },
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked_tree_clean": true,
+      "tracked_tree_status": "",
+      "working_tree_status": ""
+    },
+    "status": "PASS",
+    "whole_campaign_before_report": {
+      "thread_cpu_ns": 293578766,
+      "wall_ns": 7178171716
+    }
+  },
+  "original_metadata_is_retained_observation_not_reauthenticated": true,
+  "original_transport_files_reread": false,
+  "originals_modified": false,
+  "physical_resource_lower_bound_proved": false,
+  "planned_receiver_slots": 7,
+  "planned_transport_attempts": 42,
+  "pow_qualified": false,
+  "production_activation": false,
+  "qualification_status": "HOLD",
+  "quantum_security_proved": false,
+  "schema": "pon-grouped-fanout-reanalysis-v2",
+  "scope": "Offline cost reanalysis of pinned historical report bytes; no workload or original raw-file replay.",
+  "source_and_binary_checks_reexecuted": false,
+  "status": "PASS",
+  "status_changed": false,
+  "topologies": [
+    {
+      "new_accounting": {
+        "actual_consumer_uses_observed": 0,
+        "chainwork_awarded": 0,
+        "completed_transport_attempts": 6,
+        "configured_sum_of_local_caps": 256,
+        "distinct_material_content_ids": 1,
+        "distinct_verified_work_ids": 2,
+        "external_demand_authenticated": false,
+        "global_verification_cap_enforced": false,
+        "independent_full_cell_calls": 4,
+        "independent_full_cell_macs": 148032,
+        "independent_operators": false,
+        "intentionally_discarded_client_responses": 1,
+        "issues": [],
+        "known_native_cpu_receivers": 1,
+        "known_wait4_receivers": 1,
+        "native_cpu_is_subset_not_additional": true,
+        "native_cpu_seconds_subset": 0.10319899999999999,
+        "observed_distinct_material_content_ids_partial": 1,
+        "observed_distinct_verified_work_ids_partial": 2,
+        "observed_independent_full_cell_calls_partial": 4,
+        "observed_independent_full_cell_macs_partial": 148032,
+        "observed_local_reservations": 256,
+        "observed_local_reservations_partial": 256,
+        "observed_native_cpu_seconds_partial": 0.10319899999999999,
+        "observed_receiver_slots": 1,
+        "observed_transport_bytes_partial": {
+          "ack_kernel": 11229,
+          "client": 8372,
+          "receiver": 17654
+        },
+        "observed_wait4_cpu_seconds_partial": 0.309628,
+        "observed_work_ids_by_fixed_packet": {
+          "1": [
+            "1074fd9f76cef3840861e2ec07ca6af4f46dd997ec63f414a978c147eb4e31ab"
+          ],
+          "2": [
+            "922e078b6a191cd92b3b7d8892fb56398cd5f79e40cf651c8153652b42c19fca"
+          ]
+        },
+        "planned_receivers": 1,
+        "planned_transport_attempts": 6,
+        "producer_work_id_expectations_supplied": true,
+        "producer_work_ids_bound": true,
+        "production_activation": false,
+        "receiver_wait4_cpu_seconds": 0.309628,
+        "rejected_verifications": 2,
+        "schema": "pon-grouped-fresh-deployment-cost-v1",
+        "status": "PASS",
+        "tcp_ack_kernel_accepted_bytes_not_proof_of_peer_read": 11229,
+        "tcp_application_received_by_clients_bytes": 8372,
+        "tcp_application_received_by_receivers_bytes": 17654,
+        "transport_byte_observation_counts": {
+          "ack_kernel": 6,
+          "client": 6,
+          "receiver": 6
+        },
+        "truncated_sender_cancellations": 1,
+        "verified_receptions": 3
+      },
+      "new_status": "PASS",
+      "old_accounting": {
+        "actual_consumer_uses_observed": 0,
+        "chainwork_awarded": 0,
+        "completed_transport_attempts": 6,
+        "configured_sum_of_local_caps": 256,
+        "distinct_material_content_ids": 1,
+        "distinct_verified_work_ids": 2,
+        "external_demand_authenticated": false,
+        "global_verification_cap_enforced": false,
+        "independent_full_cell_calls": 4,
+        "independent_full_cell_macs": 148032,
+        "independent_operators": false,
+        "intentionally_discarded_client_responses": 1,
+        "issues": [],
+        "native_cpu_is_subset_not_additional": true,
+        "native_cpu_seconds_subset": 0.10319899999999999,
+        "observed_local_reservations": 256,
+        "observed_receiver_slots": 1,
+        "observed_wait4_cpu_seconds_partial": 0.309628,
+        "planned_receivers": 1,
+        "planned_transport_attempts": 6,
+        "production_activation": false,
+        "receiver_wait4_cpu_seconds": 0.309628,
+        "rejected_verifications": 2,
+        "schema": "pon-grouped-fresh-deployment-cost-v0",
+        "status": "PASS",
+        "tcp_ack_kernel_accepted_bytes_not_proof_of_peer_read": 11229,
+        "tcp_application_received_by_clients_bytes": 8372,
+        "tcp_application_received_by_receivers_bytes": 17654,
+        "truncated_sender_cancellations": 1,
+        "verified_receptions": 3
+      },
+      "old_status": "PASS",
+      "original_topology_metadata": {
+        "orchestration_failures": [],
+        "planned_receivers": 1,
+        "unstarted_clients": [],
+        "whole_topology": {
+          "thread_cpu_ns": 8499471,
+          "wall_ns": 1776853507
+        }
+      },
+      "planned_receivers": 1,
+      "raw_worker_count": 1,
+      "retained_gate_issues": [],
+      "status_changed": false
+    },
+    {
+      "new_accounting": {
+        "actual_consumer_uses_observed": 0,
+        "chainwork_awarded": 0,
+        "completed_transport_attempts": 12,
+        "configured_sum_of_local_caps": 512,
+        "distinct_material_content_ids": 1,
+        "distinct_verified_work_ids": 2,
+        "external_demand_authenticated": false,
+        "global_verification_cap_enforced": false,
+        "independent_full_cell_calls": 8,
+        "independent_full_cell_macs": 296064,
+        "independent_operators": false,
+        "intentionally_discarded_client_responses": 2,
+        "issues": [],
+        "known_native_cpu_receivers": 2,
+        "known_wait4_receivers": 2,
+        "native_cpu_is_subset_not_additional": true,
+        "native_cpu_seconds_subset": 0.20229399999999997,
+        "observed_distinct_material_content_ids_partial": 1,
+        "observed_distinct_verified_work_ids_partial": 2,
+        "observed_independent_full_cell_calls_partial": 8,
+        "observed_independent_full_cell_macs_partial": 296064,
+        "observed_local_reservations": 512,
+        "observed_local_reservations_partial": 512,
+        "observed_native_cpu_seconds_partial": 0.20229399999999997,
+        "observed_receiver_slots": 2,
+        "observed_transport_bytes_partial": {
+          "ack_kernel": 22482,
+          "client": 16766,
+          "receiver": 35308
+        },
+        "observed_wait4_cpu_seconds_partial": 0.5867209999999999,
+        "observed_work_ids_by_fixed_packet": {
+          "1": [
+            "1074fd9f76cef3840861e2ec07ca6af4f46dd997ec63f414a978c147eb4e31ab"
+          ],
+          "2": [
+            "922e078b6a191cd92b3b7d8892fb56398cd5f79e40cf651c8153652b42c19fca"
+          ]
+        },
+        "planned_receivers": 2,
+        "planned_transport_attempts": 12,
+        "producer_work_id_expectations_supplied": true,
+        "producer_work_ids_bound": true,
+        "production_activation": false,
+        "receiver_wait4_cpu_seconds": 0.5867209999999999,
+        "rejected_verifications": 4,
+        "schema": "pon-grouped-fresh-deployment-cost-v1",
+        "status": "PASS",
+        "tcp_ack_kernel_accepted_bytes_not_proof_of_peer_read": 22482,
+        "tcp_application_received_by_clients_bytes": 16766,
+        "tcp_application_received_by_receivers_bytes": 35308,
+        "transport_byte_observation_counts": {
+          "ack_kernel": 12,
+          "client": 12,
+          "receiver": 12
+        },
+        "truncated_sender_cancellations": 2,
+        "verified_receptions": 6
+      },
+      "new_status": "PASS",
+      "old_accounting": {
+        "actual_consumer_uses_observed": 0,
+        "chainwork_awarded": 0,
+        "completed_transport_attempts": 12,
+        "configured_sum_of_local_caps": 512,
+        "distinct_material_content_ids": 1,
+        "distinct_verified_work_ids": 2,
+        "external_demand_authenticated": false,
+        "global_verification_cap_enforced": false,
+        "independent_full_cell_calls": 8,
+        "independent_full_cell_macs": 296064,
+        "independent_operators": false,
+        "intentionally_discarded_client_responses": 2,
+        "issues": [],
+        "native_cpu_is_subset_not_additional": true,
+        "native_cpu_seconds_subset": 0.20229399999999997,
+        "observed_local_reservations": 512,
+        "observed_receiver_slots": 2,
+        "observed_wait4_cpu_seconds_partial": 0.5867209999999999,
+        "planned_receivers": 2,
+        "planned_transport_attempts": 12,
+        "production_activation": false,
+        "receiver_wait4_cpu_seconds": 0.5867209999999999,
+        "rejected_verifications": 4,
+        "schema": "pon-grouped-fresh-deployment-cost-v0",
+        "status": "PASS",
+        "tcp_ack_kernel_accepted_bytes_not_proof_of_peer_read": 22482,
+        "tcp_application_received_by_clients_bytes": 16766,
+        "tcp_application_received_by_receivers_bytes": 35308,
+        "truncated_sender_cancellations": 2,
+        "verified_receptions": 6
+      },
+      "old_status": "PASS",
+      "original_topology_metadata": {
+        "orchestration_failures": [],
+        "planned_receivers": 2,
+        "unstarted_clients": [],
+        "whole_topology": {
+          "thread_cpu_ns": 12949304,
+          "wall_ns": 2014869657
+        }
+      },
+      "planned_receivers": 2,
+      "raw_worker_count": 2,
+      "retained_gate_issues": [],
+      "status_changed": false
+    },
+    {
+      "new_accounting": {
+        "actual_consumer_uses_observed": 0,
+        "chainwork_awarded": 0,
+        "completed_transport_attempts": 24,
+        "configured_sum_of_local_caps": 1024,
+        "distinct_material_content_ids": 1,
+        "distinct_verified_work_ids": 2,
+        "external_demand_authenticated": false,
+        "global_verification_cap_enforced": false,
+        "independent_full_cell_calls": 16,
+        "independent_full_cell_macs": 592128,
+        "independent_operators": false,
+        "intentionally_discarded_client_responses": 4,
+        "issues": [],
+        "known_native_cpu_receivers": 4,
+        "known_wait4_receivers": 4,
+        "native_cpu_is_subset_not_additional": true,
+        "native_cpu_seconds_subset": 0.39203299999999996,
+        "observed_distinct_material_content_ids_partial": 1,
+        "observed_distinct_verified_work_ids_partial": 2,
+        "observed_independent_full_cell_calls_partial": 16,
+        "observed_independent_full_cell_macs_partial": 592128,
+        "observed_local_reservations": 1024,
+        "observed_local_reservations_partial": 1024,
+        "observed_native_cpu_seconds_partial": 0.39203299999999996,
+        "observed_receiver_slots": 4,
+        "observed_transport_bytes_partial": {
+          "ack_kernel": 44937,
+          "client": 33511,
+          "receiver": 70616
+        },
+        "observed_wait4_cpu_seconds_partial": 1.198597,
+        "observed_work_ids_by_fixed_packet": {
+          "1": [
+            "1074fd9f76cef3840861e2ec07ca6af4f46dd997ec63f414a978c147eb4e31ab"
+          ],
+          "2": [
+            "922e078b6a191cd92b3b7d8892fb56398cd5f79e40cf651c8153652b42c19fca"
+          ]
+        },
+        "planned_receivers": 4,
+        "planned_transport_attempts": 24,
+        "producer_work_id_expectations_supplied": true,
+        "producer_work_ids_bound": true,
+        "production_activation": false,
+        "receiver_wait4_cpu_seconds": 1.198597,
+        "rejected_verifications": 8,
+        "schema": "pon-grouped-fresh-deployment-cost-v1",
+        "status": "PASS",
+        "tcp_ack_kernel_accepted_bytes_not_proof_of_peer_read": 44937,
+        "tcp_application_received_by_clients_bytes": 33511,
+        "tcp_application_received_by_receivers_bytes": 70616,
+        "transport_byte_observation_counts": {
+          "ack_kernel": 24,
+          "client": 24,
+          "receiver": 24
+        },
+        "truncated_sender_cancellations": 4,
+        "verified_receptions": 12
+      },
+      "new_status": "PASS",
+      "old_accounting": {
+        "actual_consumer_uses_observed": 0,
+        "chainwork_awarded": 0,
+        "completed_transport_attempts": 24,
+        "configured_sum_of_local_caps": 1024,
+        "distinct_material_content_ids": 1,
+        "distinct_verified_work_ids": 2,
+        "external_demand_authenticated": false,
+        "global_verification_cap_enforced": false,
+        "independent_full_cell_calls": 16,
+        "independent_full_cell_macs": 592128,
+        "independent_operators": false,
+        "intentionally_discarded_client_responses": 4,
+        "issues": [],
+        "native_cpu_is_subset_not_additional": true,
+        "native_cpu_seconds_subset": 0.39203299999999996,
+        "observed_local_reservations": 1024,
+        "observed_receiver_slots": 4,
+        "observed_wait4_cpu_seconds_partial": 1.198597,
+        "planned_receivers": 4,
+        "planned_transport_attempts": 24,
+        "production_activation": false,
+        "receiver_wait4_cpu_seconds": 1.198597,
+        "rejected_verifications": 8,
+        "schema": "pon-grouped-fresh-deployment-cost-v0",
+        "status": "PASS",
+        "tcp_ack_kernel_accepted_bytes_not_proof_of_peer_read": 44937,
+        "tcp_application_received_by_clients_bytes": 33511,
+        "tcp_application_received_by_receivers_bytes": 70616,
+        "truncated_sender_cancellations": 4,
+        "verified_receptions": 12
+      },
+      "old_status": "PASS",
+      "original_topology_metadata": {
+        "orchestration_failures": [],
+        "planned_receivers": 4,
+        "unstarted_clients": [],
+        "whole_topology": {
+          "thread_cpu_ns": 14021224,
+          "wall_ns": 2252716241
+        }
+      },
+      "planned_receivers": 4,
+      "raw_worker_count": 4,
+      "retained_gate_issues": [],
+      "status_changed": false
+    }
+  ],
+  "topology_denominator": [
+    1,
+    2,
+    4
+  ]
+}

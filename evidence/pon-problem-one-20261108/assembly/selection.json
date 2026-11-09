@@ -1,0 +1,58 @@
+{
+  "copied_metering_names": [
+    "fixed_packet_identity_probe.py",
+    "legacy-counterexamples.json",
+    "legacy-counterexamples.stderr",
+    "fixed-v1-counterexamples.json",
+    "fixed-v1-counterexamples.stderr",
+    "summary-v1.json",
+    "historical-fanout-reanalysis-v2.json",
+    "historical-fanout-v2.stdout",
+    "historical-fanout-v2.stderr",
+    "accounting-v1-tests.stdout",
+    "accounting-v1-tests.stderr",
+    "reanalysis-v2-tests.stdout",
+    "reanalysis-v2-tests.stderr",
+    "preflight-before.log",
+    "preflight-schema-version.log",
+    "metering-final.diff"
+  ],
+  "excluded_metering_names": [
+    "accounting-tests.stderr",
+    "accounting-tests.stdout",
+    "fixed-counterexamples.json",
+    "fixed-counterexamples.stderr",
+    "fixed_packet_identity.patch",
+    "historical-fanout-reanalysis.json",
+    "historical-fanout.stderr",
+    "historical-fanout.stdout",
+    "manifest.json",
+    "metering.diff",
+    "reanalysis-tests.stderr",
+    "reanalysis-tests.stdout",
+    "summary.json"
+  ],
+  "excluded_review_subdirectories": [
+    "evidence-review/desktop-publication"
+  ],
+  "failed_observations_preserved": [
+    "owner/baseline-red.json",
+    "owner/baseline-red.stderr",
+    "review/independent-review-before-owner-correction.json",
+    "validation/preparation-source-pin.json",
+    "validation/preparation-source-pin.stderr",
+    "metering/legacy-counterexamples.json",
+    "metering/fixed-v1-counterexamples.json",
+    "assembly/assembly-first-attempt.json",
+    "assembly/assembly-first-attempt.stderr"
+  ],
+  "metering_exclusion_reason": "Superseded passed schema-stage outputs, duplicate old reanalysis, intermediate diffs, and obsolete prepared patch; final and original counterexamples retained.",
+  "not_selected": [
+    "Whole old repository snapshots and duplicate source archives.",
+    "Unrelated workspace files and any authentication or credential output.",
+    "Native execution, later whole-source verification, and publication records: parent will insert them."
+  ],
+  "review_exclusion_reason": "Publication preparation source projections and pack files duplicate source content and are not required to replay the retained checks.",
+  "schema": "pon-evidence-delivery-selection-v1",
+  "selection_policy": "Closed allowlist of task evidence; no authentication or credential command outputs selected."
+}

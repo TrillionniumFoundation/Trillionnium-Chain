@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "bytes": 1795,
+      "path": "README.md",
+      "sha256": "222b49a52e6370813f0307078d89817dcd32d18edd28487bb0a9200b0b7f0bc8"
+    },
+    {
+      "bytes": 3415,
+      "path": "independent-review-after-owner-correction.json",
+      "sha256": "2633098e5cf3baf68c25e0455fc7da017ef54c528e114bae086b3a77c01dc6a4"
+    },
+    {
+      "bytes": 3352,
+      "path": "independent-review-before-owner-correction.json",
+      "sha256": "a183fc45e060d76d6eec701ce087f4c255ed1b58736869983bce9f72c7cc4f70"
+    },
+    {
+      "bytes": 6147,
+      "path": "independent_review.py",
+      "sha256": "f94906dfd2b47d3307596bfe3e4df1750993246538375313ce9501435447023f"
+    },
+    {
+      "bytes": 261,
+      "path": "reviewed-source-snapshot.json",
+      "sha256": "2a0e8dc7fa182291de5436b8dfa321d4d1e18a052549168a2b269df22339de6a"
+    },
+    {
+      "bytes": 30464,
+      "path": "service_work_reviewed_snapshot.py",
+      "sha256": "5daa843f352224cc92eb0347f11fde7b002d8b185cd4f16f5bc5eb3af3599b9b"
+    }
+  ],
+  "schema": "pon-independent-review-files-v1"
+}

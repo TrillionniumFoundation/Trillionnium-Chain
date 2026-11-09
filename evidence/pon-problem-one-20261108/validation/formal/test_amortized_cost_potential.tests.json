@@ -1,0 +1,91 @@
+{
+  "discovery_errors": [],
+  "duration_ns": 746377454,
+  "effective_unittest_args": [
+    "discover",
+    "-s",
+    "/workspace/scratch/6050776ac4f9/chain-src/formal/pon-nakamoto-v1",
+    "-p",
+    "test_amortized_cost_potential.py",
+    "-v"
+  ],
+  "empty_suite": false,
+  "errored_test_ids": [],
+  "errors": 0,
+  "expected_failure_ids": [],
+  "expected_failures": 0,
+  "failed_test_ids": [],
+  "failures": 0,
+  "finished_utc": "2026-11-09T02:36:32.939802+00:00",
+  "imported_repository_modules_after": {
+    "amortized_cost_potential": {
+      "bytes": 23083,
+      "path": "formal/pon-nakamoto-v1/amortized_cost_potential.py",
+      "sha256": "150ec117b58b0c2bbf2f6b5943c35a3e4d17a0f49534403f56ea290944494e7b"
+    },
+    "test_amortized_cost_potential": {
+      "bytes": 19682,
+      "path": "formal/pon-nakamoto-v1/test_amortized_cost_potential.py",
+      "sha256": "ab5a0ae200315c0695414afa1407347102125b96d76709947f3b3a30822150a6"
+    }
+  },
+  "imported_repository_modules_before": {
+    "amortized_cost_potential": {
+      "bytes": 23083,
+      "path": "formal/pon-nakamoto-v1/amortized_cost_potential.py",
+      "sha256": "150ec117b58b0c2bbf2f6b5943c35a3e4d17a0f49534403f56ea290944494e7b"
+    },
+    "test_amortized_cost_potential": {
+      "bytes": 19682,
+      "path": "formal/pon-nakamoto-v1/test_amortized_cost_potential.py",
+      "sha256": "ab5a0ae200315c0695414afa1407347102125b96d76709947f3b3a30822150a6"
+    }
+  },
+  "passed": 34,
+  "pattern": "test_amortized_cost_potential.py",
+  "prior_module_bytes_unchanged": true,
+  "schema": "pon-existing-formal-suite-observation-v1",
+  "skipped": 0,
+  "skipped_tests": [],
+  "started_utc": "2026-11-09T02:36:32.193424+00:00",
+  "successful_test_ids": [
+    "test_amortized_cost_potential.AdditivePotentialTests.test_action_iterator_cannot_erase_a_profitable_loop",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_all_other_names_require_exact_strings",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_batch_cycle_prices_all_outcomes",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_calibrated_kappa_two_passes_without_changing_credit",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_constraint_labels_cannot_collide_at_colons",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_creation_and_release_cannot_be_counted_twice_at_same_cost",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_credit_entry_iterator_is_not_unpacked",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_credit_iterator_cannot_erase_positive_reward",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_cross_scale_positive_cost_cycle",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_dataclass_records_cannot_be_replaced_by_subclasses",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_eta_cannot_refill_on_restart",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_eta_debit_cannot_be_omitted",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_eta_is_a_finite_consumed_ledger",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_exact_boundary_below_kappa_two_is_rejected",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_exact_probability_and_resource_validation",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_false_native_and_quantum_claims_are_retained",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_fraction_subclasses_are_not_exact_rational_inputs",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_independent_adaptive_dp_is_bounded",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_infeasibility_has_a_verified_exact_dual",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_invalid_potential_and_dual_do_not_pass",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_label_kinds_arity_and_components_are_checked",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_list_containers_and_wrong_record_elements_are_rejected",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_model_and_certificate_mappings_require_exact_dicts",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_model_name_requires_an_exact_nonempty_string",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_outcome_iterator_is_refused_before_probability_sum",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_partial_search_may_return_a_valid_nonminimal_certificate",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_prefilled_initial_state_needs_its_own_budget",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_stochastic_dual_is_an_occupation_certificate",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_stochastic_failure_cache_has_exact_noniterative_solution",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_stop_name_cannot_hide_an_extra_terminal_reward",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_synthesizes_known_multi_scale_potential",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_the_omitted_conversion_is_the_only_new_violation",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_unfinished_search_returns_unknown",
+    "test_amortized_cost_potential.AdditivePotentialTests.test_zero_horizon_stop_never_pays_potential"
+  ],
+  "tests_run": 34,
+  "unexpected_success_ids": [],
+  "unexpected_successes": 0,
+  "unittest_was_successful": true
+}

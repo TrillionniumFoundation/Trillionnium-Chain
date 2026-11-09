@@ -1,0 +1,80 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-u",
+    "/workspace/scratch/6050776ac4f9/evidence-validation/formal/run_one_suite.py",
+    "/workspace/scratch/6050776ac4f9/chain-src",
+    "test_credit_feasibility.py",
+    "/workspace/scratch/6050776ac4f9/evidence-validation/formal/test_credit_feasibility.tests.json"
+  ],
+  "counts": {
+    "errors": 0,
+    "expected_failures": 0,
+    "failures": 0,
+    "passed": 31,
+    "skipped": 0,
+    "tests_run": 31,
+    "unexpected_successes": 0
+  },
+  "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+  "duration_ns": 1069451777,
+  "exit_code": 0,
+  "finished_utc": "2026-11-09T02:36:31.264612+00:00",
+  "head": "187b880048e30196407960f48b10c379859d1396",
+  "module_bytes_unchanged": true,
+  "name": "test_credit_feasibility",
+  "pid": 18,
+  "process_timeout_seconds": 300,
+  "python": {
+    "effective_selected_env": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONHASHSEED": null,
+      "PYTHONPATH": null,
+      "TRNM_PON_EVALUATION_POLICY": null
+    },
+    "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "executable_digest": {
+      "bytes": 30894944,
+      "sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7"
+    },
+    "executable_realpath": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "implementation": "cpython",
+    "package_versions": {
+      "cryptography": "50.0.0",
+      "numpy": "2.3.5"
+    },
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "uid": 1000,
+    "uname": [
+      "Linux",
+      "5e0f9cbcef87",
+      "6.18.57",
+      "#1 SMP Tue Oct 20 21:56:04 UTC 2026",
+      "x86_64",
+      ""
+    ],
+    "version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+  },
+  "runner_digest": {
+    "bytes": 3285,
+    "sha256": "01bcd050c78fa9d39e7ac8d833d9ecabfec021e8ef3f447c79353212e44be644"
+  },
+  "schema": "pon-formal-command-receipt-v1",
+  "started_utc": "2026-11-09T02:36:30.195140+00:00",
+  "stderr": {
+    "bytes": 5159,
+    "path": "test_credit_feasibility.stderr",
+    "sha256": "30dcd449adf8c2554d7432424cf439906140c8e7ffc6a508548155656f15ee51"
+  },
+  "stdout": {
+    "bytes": 0,
+    "path": "test_credit_feasibility.stdout",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "test_observation_file": {
+    "bytes": 5090,
+    "path": "test_credit_feasibility.tests.json",
+    "sha256": "abbed68375c83761857cfefabdeef1dbe0aa746cd7ce1c35dca8e406187773f4"
+  },
+  "timed_out": false
+}

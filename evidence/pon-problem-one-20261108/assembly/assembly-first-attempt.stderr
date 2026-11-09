@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/6050776ac4f9/evidence-delivery/build_evidence_draft.py", line 596, in <module>
+    assert not link_errors, link_errors
+           ^^^^^^^^^^^^^^^
+AssertionError: [{'source': 'README.md', 'destination': 'manifest.json'}]

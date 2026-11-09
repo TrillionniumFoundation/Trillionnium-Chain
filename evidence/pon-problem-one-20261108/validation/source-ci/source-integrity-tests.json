@@ -1,0 +1,35 @@
+{
+  "name": "source-integrity-tests",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "scripts/ci/test_ci_source_integrity.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+  "head_before": "187b880048e30196407960f48b10c379859d1396",
+  "started_at": "2026-11-09T02:34:54.415758+00:00",
+  "source_sha256": {
+    "scripts/ci/test_ci_source_integrity.py": "d46d92b789dc95798e5406a0ccd685e4449dbc38ab040d8035621268fa4f5f6e"
+  },
+  "pid": 42,
+  "exit_code": 0,
+  "finished_at": "2026-11-09T02:35:00.571956+00:00",
+  "wall_seconds": 6.1550253609998435,
+  "head_after": "187b880048e30196407960f48b10c379859d1396",
+  "source_after_sha256": {
+    "scripts/ci/test_ci_source_integrity.py": "d46d92b789dc95798e5406a0ccd685e4449dbc38ab040d8035621268fa4f5f6e"
+  },
+  "stdout": {
+    "path": "source-integrity-tests.stdout",
+    "bytes": 736,
+    "sha256": "b3671067a27fd7392575f36dc053a22f0d1eb1f5e83be7f396e68bcffad26dea"
+  },
+  "stderr": {
+    "path": "source-integrity-tests.stderr",
+    "bytes": 6414,
+    "sha256": "2d03e7e6fc0cf5838ef9a0daa2b709200758d6bfe2f805e9597ec398f81880b3"
+  },
+  "reported_test_count": 43,
+  "source_unchanged": true,
+  "passed": true
+}

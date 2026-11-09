@@ -1,0 +1,34 @@
+{
+  "name": "preflight",
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+  "head_before": "187b880048e30196407960f48b10c379859d1396",
+  "started_at": "2026-11-09T02:34:54.304107+00:00",
+  "source_sha256": {
+    "scripts/project-preflight.sh": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f"
+  },
+  "pid": 31,
+  "exit_code": 0,
+  "finished_at": "2026-11-09T02:34:54.403789+00:00",
+  "wall_seconds": 0.09937081600014608,
+  "head_after": "187b880048e30196407960f48b10c379859d1396",
+  "source_after_sha256": {
+    "scripts/project-preflight.sh": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f"
+  },
+  "stdout": {
+    "path": "preflight.stdout",
+    "bytes": 169,
+    "sha256": "0febaba914868c3a856498fd37ca8dd93ddaef3ebf8e1c59d0ac3fc85bb31081"
+  },
+  "stderr": {
+    "path": "preflight.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "reported_test_count": null,
+  "source_unchanged": true,
+  "passed": true
+}

@@ -1,0 +1,8 @@
+{
+  "commit": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "entries": 26119,
+  "bytes": 2485286315,
+  "errors": [],
+  "elapsed_seconds": 12.316325634999885,
+  "scope": "all tracked archive bytes compared to exact Git tree; no tests executed"
+}

@@ -1,0 +1,34 @@
+{
+  "name": "repository-check",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+  "head_before": "187b880048e30196407960f48b10c379859d1396",
+  "started_at": "2026-11-09T02:35:48.052507+00:00",
+  "source_sha256": {
+    "scripts/ci/check_repository.py": "0d7040ac82a54a97a2db0a3d94db30822a047af5a8f4946ff4d4fc29ae9a190f"
+  },
+  "pid": 4219,
+  "exit_code": 0,
+  "finished_at": "2026-11-09T02:36:19.114007+00:00",
+  "wall_seconds": 31.061265068999774,
+  "head_after": "187b880048e30196407960f48b10c379859d1396",
+  "source_after_sha256": {
+    "scripts/ci/check_repository.py": "0d7040ac82a54a97a2db0a3d94db30822a047af5a8f4946ff4d4fc29ae9a190f"
+  },
+  "stdout": {
+    "path": "repository-check.stdout",
+    "bytes": 307,
+    "sha256": "9397d065928a25b9e032a8c31db96bb36e85504f74e25b8cf67df5bdc1bfe6c1"
+  },
+  "stderr": {
+    "path": "repository-check.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "reported_test_count": null,
+  "source_unchanged": true,
+  "passed": true
+}

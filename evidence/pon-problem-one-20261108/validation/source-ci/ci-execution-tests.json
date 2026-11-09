@@ -1,0 +1,35 @@
+{
+  "name": "ci-execution-tests",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "scripts/ci/test_ci_execution.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+  "head_before": "187b880048e30196407960f48b10c379859d1396",
+  "started_at": "2026-11-09T02:35:00.593765+00:00",
+  "source_sha256": {
+    "scripts/ci/test_ci_execution.py": "19e74cf4dbbd247e36a3ce4625503d42aabadff871a5e7a1991b3f0b7092f04b"
+  },
+  "pid": 1819,
+  "exit_code": 0,
+  "finished_at": "2026-11-09T02:35:25.646982+00:00",
+  "wall_seconds": 25.05271229899995,
+  "head_after": "187b880048e30196407960f48b10c379859d1396",
+  "source_after_sha256": {
+    "scripts/ci/test_ci_execution.py": "19e74cf4dbbd247e36a3ce4625503d42aabadff871a5e7a1991b3f0b7092f04b"
+  },
+  "stdout": {
+    "path": "ci-execution-tests.stdout",
+    "bytes": 736,
+    "sha256": "41d481763b9b013cdbbce5405dd155f2f90aa7c84fb48a387f5b52454d76c107"
+  },
+  "stderr": {
+    "path": "ci-execution-tests.stderr",
+    "bytes": 12414,
+    "sha256": "4f3e9c1f0f5f90f860042c0886c7f4a7bc2d1c3272dfa97cfcd510256fbdbe48"
+  },
+  "reported_test_count": 77,
+  "source_unchanged": true,
+  "passed": true
+}

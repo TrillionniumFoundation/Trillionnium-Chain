@@ -1,0 +1,24 @@
+{
+  "schema": "native-setup-observation-v1",
+  "recorded_utc": "2026-11-09T02:48:30.439293+00:00",
+  "classification": "setup inspection side effect; no native gate failure",
+  "observation": "An earlier inspection invoked task rustup --version without explicit task homes from within this repository. Rustup reported the missing active 1.95.0 toolchain was auto-installed in the default home. The inspection command exited 2 only after a later ls found no task registry/cache directory. This is not a Cargo gate result.",
+  "prior_runtime_output": [
+    "warn: the missing active toolchain `1.95.0-x86_64-unknown-linux-gnu` has been auto-installed",
+    "info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`",
+    "ls: cannot access /workspace/scratch/6050776ac4f9/toolchain/cargo/registry/cache: No such file or directory"
+  ],
+  "duplicate_path": "/home/agent/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu",
+  "task_path": "/workspace/scratch/6050776ac4f9/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu",
+  "duplicate_exists": true,
+  "disk_before": {
+    "total": 67586535424,
+    "used": 61882195968,
+    "free": 2251591680
+  },
+  "duplicate_mtime_ns": 1794192311139042957,
+  "duplicate_ctime_ns": 1794192311139042957,
+  "duplicate_age_seconds": 199.30038380622864,
+  "duplicate_rustc_sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+  "task_rustc_sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6"
+}

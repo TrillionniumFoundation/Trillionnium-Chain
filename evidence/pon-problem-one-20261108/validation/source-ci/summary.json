@@ -1,0 +1,359 @@
+{
+  "schema": "pon-exact-source-ci-validation-summary-v1",
+  "head": "187b880048e30196407960f48b10c379859d1396",
+  "finished_at": "2026-11-09T02:37:47.109672+00:00",
+  "commands": [
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+      "head_before": "187b880048e30196407960f48b10c379859d1396",
+      "started_at": "2026-11-09T02:34:54.304107+00:00",
+      "source_sha256": {
+        "scripts/project-preflight.sh": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f"
+      },
+      "pid": 31,
+      "exit_code": 0,
+      "finished_at": "2026-11-09T02:34:54.403789+00:00",
+      "wall_seconds": 0.09937081600014608,
+      "head_after": "187b880048e30196407960f48b10c379859d1396",
+      "source_after_sha256": {
+        "scripts/project-preflight.sh": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f"
+      },
+      "stdout": {
+        "path": "preflight.stdout",
+        "bytes": 169,
+        "sha256": "0febaba914868c3a856498fd37ca8dd93ddaef3ebf8e1c59d0ac3fc85bb31081"
+      },
+      "stderr": {
+        "path": "preflight.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "reported_test_count": null,
+      "source_unchanged": true,
+      "passed": true
+    },
+    {
+      "name": "source-integrity-tests",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/test_ci_source_integrity.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+      "head_before": "187b880048e30196407960f48b10c379859d1396",
+      "started_at": "2026-11-09T02:34:54.415758+00:00",
+      "source_sha256": {
+        "scripts/ci/test_ci_source_integrity.py": "d46d92b789dc95798e5406a0ccd685e4449dbc38ab040d8035621268fa4f5f6e"
+      },
+      "pid": 42,
+      "exit_code": 0,
+      "finished_at": "2026-11-09T02:35:00.571956+00:00",
+      "wall_seconds": 6.1550253609998435,
+      "head_after": "187b880048e30196407960f48b10c379859d1396",
+      "source_after_sha256": {
+        "scripts/ci/test_ci_source_integrity.py": "d46d92b789dc95798e5406a0ccd685e4449dbc38ab040d8035621268fa4f5f6e"
+      },
+      "stdout": {
+        "path": "source-integrity-tests.stdout",
+        "bytes": 736,
+        "sha256": "b3671067a27fd7392575f36dc053a22f0d1eb1f5e83be7f396e68bcffad26dea"
+      },
+      "stderr": {
+        "path": "source-integrity-tests.stderr",
+        "bytes": 6414,
+        "sha256": "2d03e7e6fc0cf5838ef9a0daa2b709200758d6bfe2f805e9597ec398f81880b3"
+      },
+      "reported_test_count": 43,
+      "source_unchanged": true,
+      "passed": true
+    },
+    {
+      "name": "project-boundary-tests",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/test_project_boundary.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+      "head_before": "187b880048e30196407960f48b10c379859d1396",
+      "started_at": "2026-11-09T02:34:54.415586+00:00",
+      "source_sha256": {
+        "scripts/ci/test_project_boundary.py": "7ab3556cec8d9ce709581711c4601776449eac91724d50a2211d7aa1024c0da1"
+      },
+      "pid": 41,
+      "exit_code": 0,
+      "finished_at": "2026-11-09T02:35:00.904055+00:00",
+      "wall_seconds": 6.487532439999995,
+      "head_after": "187b880048e30196407960f48b10c379859d1396",
+      "source_after_sha256": {
+        "scripts/ci/test_project_boundary.py": "7ab3556cec8d9ce709581711c4601776449eac91724d50a2211d7aa1024c0da1"
+      },
+      "stdout": {
+        "path": "project-boundary-tests.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "project-boundary-tests.stderr",
+        "bytes": 2425,
+        "sha256": "6f8edf75506802c82e6a6300d54fd6b40397b9face5681190c99e6e13c100736"
+      },
+      "reported_test_count": 16,
+      "source_unchanged": true,
+      "passed": true
+    },
+    {
+      "name": "ci-execution-tests",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/test_ci_execution.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+      "head_before": "187b880048e30196407960f48b10c379859d1396",
+      "started_at": "2026-11-09T02:35:00.593765+00:00",
+      "source_sha256": {
+        "scripts/ci/test_ci_execution.py": "19e74cf4dbbd247e36a3ce4625503d42aabadff871a5e7a1991b3f0b7092f04b"
+      },
+      "pid": 1819,
+      "exit_code": 0,
+      "finished_at": "2026-11-09T02:35:25.646982+00:00",
+      "wall_seconds": 25.05271229899995,
+      "head_after": "187b880048e30196407960f48b10c379859d1396",
+      "source_after_sha256": {
+        "scripts/ci/test_ci_execution.py": "19e74cf4dbbd247e36a3ce4625503d42aabadff871a5e7a1991b3f0b7092f04b"
+      },
+      "stdout": {
+        "path": "ci-execution-tests.stdout",
+        "bytes": 736,
+        "sha256": "41d481763b9b013cdbbce5405dd155f2f90aa7c84fb48a387f5b52454d76c107"
+      },
+      "stderr": {
+        "path": "ci-execution-tests.stderr",
+        "bytes": 12414,
+        "sha256": "4f3e9c1f0f5f90f860042c0886c7f4a7bc2d1c3272dfa97cfcd510256fbdbe48"
+      },
+      "reported_test_count": 77,
+      "source_unchanged": true,
+      "passed": true
+    },
+    {
+      "name": "ci-contract-tests",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/test_ci_contract.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+      "head_before": "187b880048e30196407960f48b10c379859d1396",
+      "started_at": "2026-11-09T02:35:00.910808+00:00",
+      "source_sha256": {
+        "scripts/ci/test_ci_contract.py": "a90460a6b657c02edd13ba9b67c66254f669e55bf835d7b3e72ebc6697092a34"
+      },
+      "pid": 1837,
+      "exit_code": 0,
+      "finished_at": "2026-11-09T02:35:48.045335+00:00",
+      "wall_seconds": 47.13389467000002,
+      "head_after": "187b880048e30196407960f48b10c379859d1396",
+      "source_after_sha256": {
+        "scripts/ci/test_ci_contract.py": "a90460a6b657c02edd13ba9b67c66254f669e55bf835d7b3e72ebc6697092a34"
+      },
+      "stdout": {
+        "path": "ci-contract-tests.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "ci-contract-tests.stderr",
+        "bytes": 28147,
+        "sha256": "f16add9ae4d208680237b0899a5f5805607906ea3e5212b3c3e82568a1facc62"
+      },
+      "reported_test_count": 164,
+      "source_unchanged": true,
+      "passed": true
+    },
+    {
+      "name": "repository-check",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+      "head_before": "187b880048e30196407960f48b10c379859d1396",
+      "started_at": "2026-11-09T02:35:48.052507+00:00",
+      "source_sha256": {
+        "scripts/ci/check_repository.py": "0d7040ac82a54a97a2db0a3d94db30822a047af5a8f4946ff4d4fc29ae9a190f"
+      },
+      "pid": 4219,
+      "exit_code": 0,
+      "finished_at": "2026-11-09T02:36:19.114007+00:00",
+      "wall_seconds": 31.061265068999774,
+      "head_after": "187b880048e30196407960f48b10c379859d1396",
+      "source_after_sha256": {
+        "scripts/ci/check_repository.py": "0d7040ac82a54a97a2db0a3d94db30822a047af5a8f4946ff4d4fc29ae9a190f"
+      },
+      "stdout": {
+        "path": "repository-check.stdout",
+        "bytes": 307,
+        "sha256": "9397d065928a25b9e032a8c31db96bb36e85504f74e25b8cf67df5bdc1bfe6c1"
+      },
+      "stderr": {
+        "path": "repository-check.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "reported_test_count": null,
+      "source_unchanged": true,
+      "passed": true
+    },
+    {
+      "name": "ci-contract-check",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+      "head_before": "187b880048e30196407960f48b10c379859d1396",
+      "started_at": "2026-11-09T02:36:19.118380+00:00",
+      "source_sha256": {
+        "scripts/ci/check_ci_contract.py": "4a231ae15037b7d918c93fd3f90fd362aa54c4923ed4f2610734775f45d3e14f"
+      },
+      "pid": 4245,
+      "exit_code": 0,
+      "finished_at": "2026-11-09T02:36:19.424720+00:00",
+      "wall_seconds": 0.305976290000217,
+      "head_after": "187b880048e30196407960f48b10c379859d1396",
+      "source_after_sha256": {
+        "scripts/ci/check_ci_contract.py": "4a231ae15037b7d918c93fd3f90fd362aa54c4923ed4f2610734775f45d3e14f"
+      },
+      "stdout": {
+        "path": "ci-contract-check.stdout",
+        "bytes": 431,
+        "sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb"
+      },
+      "stderr": {
+        "path": "ci-contract-check.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "reported_test_count": null,
+      "source_unchanged": true,
+      "passed": true
+    },
+    {
+      "name": "pq-integration-check",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+      "head_before": "187b880048e30196407960f48b10c379859d1396",
+      "started_at": "2026-11-09T02:36:19.452422+00:00",
+      "source_sha256": {
+        "scripts/ci/check_pq_research_integration.py": "83d037563ba82c8c035b1cd01ad26642626530a4790a2b7ebb325663ab1df82e"
+      },
+      "pid": 4248,
+      "exit_code": 0,
+      "finished_at": "2026-11-09T02:36:20.717270+00:00",
+      "wall_seconds": 1.2645031669999298,
+      "head_after": "187b880048e30196407960f48b10c379859d1396",
+      "source_after_sha256": {
+        "scripts/ci/check_pq_research_integration.py": "83d037563ba82c8c035b1cd01ad26642626530a4790a2b7ebb325663ab1df82e"
+      },
+      "stdout": {
+        "path": "pq-integration-check.stdout",
+        "bytes": 557,
+        "sha256": "049ea5dda28da5d075f30488ec5359d5e6a69dc1fbc81c3d62af17ad211911de"
+      },
+      "stderr": {
+        "path": "pq-integration-check.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "reported_test_count": null,
+      "source_unchanged": true,
+      "passed": true
+    },
+    {
+      "name": "distributed-inventory-check",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+      "head_before": "187b880048e30196407960f48b10c379859d1396",
+      "started_at": "2026-11-09T02:36:20.723086+00:00",
+      "source_sha256": {
+        "scripts/refresh_distributed_source_inventory.py": "c83d9c0b84c21beec6917a86b2a3207c5f3bf6fd26cf432f2ef0990750e16a33"
+      },
+      "pid": 4251,
+      "exit_code": 0,
+      "finished_at": "2026-11-09T02:36:20.864799+00:00",
+      "wall_seconds": 0.14166349100014486,
+      "head_after": "187b880048e30196407960f48b10c379859d1396",
+      "source_after_sha256": {
+        "scripts/refresh_distributed_source_inventory.py": "c83d9c0b84c21beec6917a86b2a3207c5f3bf6fd26cf432f2ef0990750e16a33"
+      },
+      "stdout": {
+        "path": "distributed-inventory-check.stdout",
+        "bytes": 35,
+        "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+      },
+      "stderr": {
+        "path": "distributed-inventory-check.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "reported_test_count": null,
+      "source_unchanged": true,
+      "passed": true
+    },
+    {
+      "name": "pq-integration-tests",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/test_pq_research_integration.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+      "head_before": "187b880048e30196407960f48b10c379859d1396",
+      "started_at": "2026-11-09T02:35:25.656004+00:00",
+      "source_sha256": {
+        "scripts/ci/test_pq_research_integration.py": "181915e4255f0ab76599339597ff353c8c2f78b7540aa4d0b7031c09a57286a8"
+      },
+      "pid": 3666,
+      "exit_code": 0,
+      "finished_at": "2026-11-09T02:37:47.042117+00:00",
+      "wall_seconds": 141.38572978099978,
+      "head_after": "187b880048e30196407960f48b10c379859d1396",
+      "source_after_sha256": {
+        "scripts/ci/test_pq_research_integration.py": "181915e4255f0ab76599339597ff353c8c2f78b7540aa4d0b7031c09a57286a8"
+      },
+      "stdout": {
+        "path": "pq-integration-tests.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "pq-integration-tests.stderr",
+        "bytes": 8085,
+        "sha256": "715a5942f3e669cabc449013974092e25a77c2d190025028602fb99b1f43e99d"
+      },
+      "reported_test_count": 57,
+      "source_unchanged": true,
+      "passed": true
+    }
+  ],
+  "checked_source_roster_unchanged": true,
+  "head_after": "187b880048e30196407960f48b10c379859d1396",
+  "worktree_status": "",
+  "all_passed": true,
+  "scope": "Original source/CI component gates; no native consensus or production acceptance",
+  "test_counts_are_per_suite_and_overlap": true
+}

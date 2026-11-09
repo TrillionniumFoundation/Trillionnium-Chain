@@ -1,0 +1,34 @@
+{
+  "name": "pq-integration-check",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "cwd": "/workspace/scratch/6050776ac4f9/chain-src",
+  "head_before": "187b880048e30196407960f48b10c379859d1396",
+  "started_at": "2026-11-09T02:36:19.452422+00:00",
+  "source_sha256": {
+    "scripts/ci/check_pq_research_integration.py": "83d037563ba82c8c035b1cd01ad26642626530a4790a2b7ebb325663ab1df82e"
+  },
+  "pid": 4248,
+  "exit_code": 0,
+  "finished_at": "2026-11-09T02:36:20.717270+00:00",
+  "wall_seconds": 1.2645031669999298,
+  "head_after": "187b880048e30196407960f48b10c379859d1396",
+  "source_after_sha256": {
+    "scripts/ci/check_pq_research_integration.py": "83d037563ba82c8c035b1cd01ad26642626530a4790a2b7ebb325663ab1df82e"
+  },
+  "stdout": {
+    "path": "pq-integration-check.stdout",
+    "bytes": 557,
+    "sha256": "049ea5dda28da5d075f30488ec5359d5e6a69dc1fbc81c3d62af17ad211911de"
+  },
+  "stderr": {
+    "path": "pq-integration-check.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "reported_test_count": null,
+  "source_unchanged": true,
+  "passed": true
+}

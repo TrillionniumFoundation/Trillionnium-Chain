@@ -1,0 +1,35 @@
+test_completed_service_cannot_become_cancelled_after_reorg (test_service_work_settlement_v1.ServiceWorkResolutionTests.test_completed_service_cannot_become_cancelled_after_reorg) ... FAIL
+test_cancelled_service_cannot_become_complete_after_reorg (test_service_work_settlement_v1.ServiceWorkResolutionTests.test_cancelled_service_cannot_become_complete_after_reorg) ... FAIL
+test_completed_service_cannot_become_unknown_after_reorg (test_service_work_settlement_v1.ServiceWorkResolutionTests.test_completed_service_cannot_become_unknown_after_reorg) ... FAIL
+
+======================================================================
+FAIL: test_completed_service_cannot_become_cancelled_after_reorg (test_service_work_settlement_v1.ServiceWorkResolutionTests.test_completed_service_cannot_become_cancelled_after_reorg)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6050776ac4f9/chain-src/formal/pon-nakamoto-v1/test_service_work_settlement_v1.py", line 437, in test_completed_service_cannot_become_cancelled_after_reorg
+    with self.assertRaisesRegex(ValueError, 'SERVICE_ORIGINAL_RESOLUTION'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_cancelled_service_cannot_become_complete_after_reorg (test_service_work_settlement_v1.ServiceWorkResolutionTests.test_cancelled_service_cannot_become_complete_after_reorg)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6050776ac4f9/chain-src/formal/pon-nakamoto-v1/test_service_work_settlement_v1.py", line 445, in test_cancelled_service_cannot_become_complete_after_reorg
+    with self.assertRaisesRegex(ValueError, 'SERVICE_ORIGINAL_RESOLUTION'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_completed_service_cannot_become_unknown_after_reorg (test_service_work_settlement_v1.ServiceWorkResolutionTests.test_completed_service_cannot_become_unknown_after_reorg)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6050776ac4f9/chain-src/formal/pon-nakamoto-v1/test_service_work_settlement_v1.py", line 453, in test_completed_service_cannot_become_unknown_after_reorg
+    with self.assertRaisesRegex(ValueError, 'SERVICE_ORIGINAL_RESOLUTION'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.578s
+
+FAILED (failures=3)

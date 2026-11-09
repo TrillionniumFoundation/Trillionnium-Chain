@@ -1,0 +1,189 @@
+{
+  "empty_suites": [],
+  "executed_commands": 11,
+  "expected_commit": "187b880048e30196407960f48b10c379859d1396",
+  "final_head": "187b880048e30196407960f48b10c379859d1396",
+  "full_repository_source_check_owned_by_root": true,
+  "missing_observation_suites": [],
+  "production_qualification_granted": false,
+  "schema": "pon-existing-formal-campaign-result-v1",
+  "scope": "existing named Python formal suites; no native campaign or dependency substitution",
+  "status": "PASS",
+  "suite_count": 11,
+  "suites": [
+    {
+      "counts": {
+        "errors": 0,
+        "expected_failures": 0,
+        "failures": 0,
+        "passed": 50,
+        "skipped": 0,
+        "tests_run": 50,
+        "unexpected_successes": 0
+      },
+      "exit_code": 0,
+      "module_bytes_unchanged": true,
+      "name": "test_grouped_fresh_deployment_cost_v0",
+      "timed_out": false
+    },
+    {
+      "counts": {
+        "errors": 0,
+        "expected_failures": 0,
+        "failures": 0,
+        "passed": 21,
+        "skipped": 0,
+        "tests_run": 21,
+        "unexpected_successes": 0
+      },
+      "exit_code": 0,
+      "module_bytes_unchanged": true,
+      "name": "test_grouped_fanout_reanalysis_v1",
+      "timed_out": false
+    },
+    {
+      "counts": {
+        "errors": 0,
+        "expected_failures": 0,
+        "failures": 0,
+        "passed": 38,
+        "skipped": 0,
+        "tests_run": 38,
+        "unexpected_successes": 0
+      },
+      "exit_code": 0,
+      "module_bytes_unchanged": true,
+      "name": "test_service_work_settlement_v1",
+      "timed_out": false
+    },
+    {
+      "counts": {
+        "errors": 0,
+        "expected_failures": 0,
+        "failures": 0,
+        "passed": 23,
+        "skipped": 0,
+        "tests_run": 23,
+        "unexpected_successes": 0
+      },
+      "exit_code": 0,
+      "module_bytes_unchanged": true,
+      "name": "test_reward_budget_oracle",
+      "timed_out": false
+    },
+    {
+      "counts": {
+        "errors": 0,
+        "expected_failures": 0,
+        "failures": 0,
+        "passed": 16,
+        "skipped": 0,
+        "tests_run": 16,
+        "unexpected_successes": 0
+      },
+      "exit_code": 0,
+      "module_bytes_unchanged": true,
+      "name": "test_fixed_probability_contract",
+      "timed_out": false
+    },
+    {
+      "counts": {
+        "errors": 0,
+        "expected_failures": 0,
+        "failures": 0,
+        "passed": 31,
+        "skipped": 0,
+        "tests_run": 31,
+        "unexpected_successes": 0
+      },
+      "exit_code": 0,
+      "module_bytes_unchanged": true,
+      "name": "test_credit_feasibility",
+      "timed_out": false
+    },
+    {
+      "counts": {
+        "errors": 0,
+        "expected_failures": 0,
+        "failures": 0,
+        "passed": 40,
+        "skipped": 0,
+        "tests_run": 40,
+        "unexpected_successes": 0
+      },
+      "exit_code": 0,
+      "module_bytes_unchanged": true,
+      "name": "test_credit_envelope_contract",
+      "timed_out": false
+    },
+    {
+      "counts": {
+        "errors": 0,
+        "expected_failures": 0,
+        "failures": 0,
+        "passed": 37,
+        "skipped": 0,
+        "tests_run": 37,
+        "unexpected_successes": 0
+      },
+      "exit_code": 0,
+      "module_bytes_unchanged": true,
+      "name": "test_normalized_search_cost",
+      "timed_out": false
+    },
+    {
+      "counts": {
+        "errors": 0,
+        "expected_failures": 0,
+        "failures": 0,
+        "passed": 34,
+        "skipped": 0,
+        "tests_run": 34,
+        "unexpected_successes": 0
+      },
+      "exit_code": 0,
+      "module_bytes_unchanged": true,
+      "name": "test_amortized_cost_potential",
+      "timed_out": false
+    },
+    {
+      "counts": {
+        "errors": 0,
+        "expected_failures": 0,
+        "failures": 0,
+        "passed": 6,
+        "skipped": 0,
+        "tests_run": 6,
+        "unexpected_successes": 0
+      },
+      "exit_code": 0,
+      "module_bytes_unchanged": true,
+      "name": "test_amortized_cost_potential_independent",
+      "timed_out": false
+    },
+    {
+      "counts": {
+        "errors": 0,
+        "expected_failures": 0,
+        "failures": 0,
+        "passed": 31,
+        "skipped": 0,
+        "tests_run": 31,
+        "unexpected_successes": 0
+      },
+      "exit_code": 0,
+      "module_bytes_unchanged": true,
+      "name": "test_lifecycle_cost_v1",
+      "timed_out": false
+    }
+  ],
+  "totals": {
+    "errors": 0,
+    "expected_failures": 0,
+    "failures": 0,
+    "passed": 327,
+    "skipped": 0,
+    "tests_run": 327,
+    "unexpected_successes": 0
+  }
+}

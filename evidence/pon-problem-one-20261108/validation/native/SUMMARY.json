@@ -1,0 +1,284 @@
+{
+  "schema": "native-validation-final-v1",
+  "finalized_utc": "2026-11-09T03:01:27.904283+00:00",
+  "commit": "187b880048e30196407960f48b10c379859d1396",
+  "tree": "ad3b3f541edf816d5e0f44605d8ba29472b3b63c",
+  "requested_gates_passed": true,
+  "gates": [
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "finished_utc": "2026-11-09T02:48:12.933727+00:00",
+      "duration_seconds": 0.11536281700000472,
+      "exit_code": 0,
+      "stdout_sha256": "0febaba914868c3a856498fd37ca8dd93ddaef3ebf8e1c59d0ac3fc85bb31081",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "rustc-version",
+      "argv": [
+        "rustc",
+        "-Vv"
+      ],
+      "finished_utc": "2026-11-09T02:48:13.292044+00:00",
+      "duration_seconds": 0.250389486000131,
+      "exit_code": 0,
+      "stdout_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "cargo-version",
+      "argv": [
+        "cargo",
+        "-Vv"
+      ],
+      "finished_utc": "2026-11-09T02:48:13.536970+00:00",
+      "duration_seconds": 0.11289075400009096,
+      "exit_code": 0,
+      "stdout_sha256": "c6cd47fb28b137d9450165b5b0796de3dfdac887c91ea225c53506f3fc5f6add",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "cargo-graph",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "finished_utc": "2026-11-09T02:48:28.006434+00:00",
+      "duration_seconds": 14.299160775000018,
+      "exit_code": 0,
+      "stdout_sha256": "c3a7098e4648853e4f763102c846e0e16280ac094849e1c8e3364c848e6c00f0",
+      "stderr_sha256": "1071f217a0c6beca1f992e0fb1ebecb670122e01589689473ca00587e96d913b"
+    },
+    {
+      "name": "cargo-graph-all-features",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features"
+      ],
+      "finished_utc": "2026-11-09T02:48:36.213809+00:00",
+      "duration_seconds": 5.049423436999859,
+      "exit_code": 0,
+      "stdout_sha256": "172f9a53d93db857d6dada444bffc580894e2110000547fc562128e7f8bcb286",
+      "stderr_sha256": "55df6936e1deb7ed55389656233ca72a4ae2b1384b1814e6a0986bb1cdbf2eea"
+    },
+    {
+      "name": "cargo-graph-fuzz",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--all-features"
+      ],
+      "finished_utc": "2026-11-09T02:48:47.020620+00:00",
+      "duration_seconds": 9.889534505000029,
+      "exit_code": 0,
+      "stdout_sha256": "36b889a09332e8b731b9d16acb8fd63f390e6a0956e3048b6054ed143ce451b6",
+      "stderr_sha256": "08ea8a2d41ce1af28117f7315273884295d0c8f16717dcb4959e16b90b010572"
+    },
+    {
+      "name": "rust-format",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "finished_utc": "2026-11-09T02:49:05.929818+00:00",
+      "duration_seconds": 18.721438347000003,
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "preflight-build-attempt3",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "finished_utc": "2026-11-09T02:57:31.241379+00:00",
+      "duration_seconds": 0.06421367300026759,
+      "exit_code": 0,
+      "stdout_sha256": "0febaba914868c3a856498fd37ca8dd93ddaef3ebf8e1c59d0ac3fc85bb31081",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "rust-clippy-attempt3",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "finished_utc": "2026-11-09T02:59:05.119378+00:00",
+      "duration_seconds": 93.80464552500007,
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "7daad91be1ec7ed7469b881f95fb8a789de9c87de4e5f28e70aaa9c15f81dfbc"
+    },
+    {
+      "name": "pon-work-retained",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--lib",
+        "--all-features",
+        "pon_work::tests::",
+        "--",
+        "--test-threads=1"
+      ],
+      "finished_utc": "2026-11-09T03:00:46.546663+00:00",
+      "duration_seconds": 100.9303313219998,
+      "exit_code": 0,
+      "stdout_sha256": "60d2aa2bf9fb2d6a3514ec555eed4fd0f27aa9b282c4ba24f665cfe53b686295",
+      "stderr_sha256": "6022825d0cfee83f20c0091866655630d3885cb2b32bfb0928d617a461bad78d"
+    }
+  ],
+  "retained_work_tests": {
+    "passed": 33,
+    "failed": 0,
+    "ignored": 0,
+    "measured": 0,
+    "filtered_out": 146,
+    "execution_seconds": 0.58,
+    "roster": [
+      "pon_work::tests::bad_proof_never_gains_a_verified_type",
+      "pon_work::tests::borrowed_product_bytes_keep_rejection_before_cancellation_and_retry",
+      "pon_work::tests::borrowed_product_bytes_reject_first_middle_last_and_noncanonical_cells",
+      "pon_work::tests::cancellation_on_last_transcript_tile_never_starts_product_reconstruction",
+      "pon_work::tests::canonical_task_byte_reuse_preserves_asymmetric_inputs_and_field_precedence",
+      "pon_work::tests::cheap_rejection_precedes_progress_and_noise_cancellation_is_local",
+      "pon_work::tests::column_limb_each_prefix_matches_independent_scalar_with_strided_extremes",
+      "pon_work::tests::column_limb_full_proofs_keep_exact_statement_and_challenge_binding",
+      "pon_work::tests::controlled_verification_preserves_full_success_and_late_relation_errors",
+      "pon_work::tests::decoded_output_is_the_real_matrix_product",
+      "pon_work::tests::exact_length_and_field_are_required",
+      "pon_work::tests::expansion_cannot_exceed_fixed_hash_budget",
+      "pon_work::tests::fast_and_scalar_verifiers_match_extreme_products_and_error_precedence",
+      "pon_work::tests::fast_and_scalar_verifiers_preserve_observation_order_and_cancelled_results",
+      "pon_work::tests::final_output_only_shortcut_is_not_a_transcript_proof",
+      "pon_work::tests::fixed_task_preparation_is_byte_identical_across_challenges_and_shapes",
+      "pon_work::tests::full_limb_matrix_products_match_reference_for_all_w1_shapes",
+      "pon_work::tests::full_limb_preserves_every_cancellation_boundary_and_retry_isolation",
+      "pon_work::tests::in_place_correction_cancellation_stops_before_each_row_and_retry_is_fresh",
+      "pon_work::tests::in_place_corrections_match_independent_scalar_for_full_w1_shape",
+      "pon_work::tests::optimized_producer_matches_full_verifier_for_structures_and_extreme_fields",
+      "pon_work::tests::owned_square_transpose_preserves_allocation_and_exact_permutation",
+      "pon_work::tests::producer_reduction_matches_remainder_at_boundaries_and_deterministic_samples",
+      "pon_work::tests::product_row_and_final_cancellation_never_yield_verified_work",
+      "pon_work::tests::proof_encoding_precheck_enforces_exact_wire_and_all_matrix_boundaries",
+      "pon_work::tests::proof_encoding_precheck_never_substitutes_for_full_work_or_cancellation",
+      "pon_work::tests::proof_encoding_precheck_preserves_full_verifier_zero_target_precedence",
+      "pon_work::tests::proof_statement_precheck_never_promotes_a_passing_forgery",
+      "pon_work::tests::proof_statement_precheck_rejects_task_and_ticket_without_replay",
+      "pon_work::tests::transcript_mismatch_skips_corrections_but_matching_digest_requires_product",
+      "pon_work::tests::untrusted_trace_ticket_search_needs_no_producer_and_never_gains_verified_work",
+      "pon_work::tests::verifier_error_precedence_is_preserved_before_deferred_product",
+      "pon_work::tests::work_binds_challenge_and_inputs"
+    ],
+    "scope": "Existing pon_work::tests module under all features; remaining146 library tests intentionally outside this scoped suite."
+  },
+  "locked_metadata_graphs": [
+    {
+      "name": "cargo-graph",
+      "workspace_members": 26,
+      "total_packages": 176,
+      "metadata_version": 1,
+      "stdout_sha256": "c3a7098e4648853e4f763102c846e0e16280ac094849e1c8e3364c848e6c00f0"
+    },
+    {
+      "name": "cargo-graph-all-features",
+      "workspace_members": 26,
+      "total_packages": 181,
+      "metadata_version": 1,
+      "stdout_sha256": "172f9a53d93db857d6dada444bffc580894e2110000547fc562128e7f8bcb286"
+    },
+    {
+      "name": "cargo-graph-fuzz",
+      "workspace_members": 1,
+      "total_packages": 149,
+      "metadata_version": 1,
+      "stdout_sha256": "36b889a09332e8b731b9d16acb8fd63f390e6a0956e3048b6054ed143ce451b6"
+    }
+  ],
+  "prior_resource_stops_preserved": [
+    {
+      "name": "rust-clippy",
+      "exit_code": -15,
+      "stop_reason": "resource guard: disk reserve below 256 MiB target or 128 MiB evidence",
+      "duration_seconds": 90.02954891800027,
+      "record": "rust-clippy.json",
+      "passed": false
+    },
+    {
+      "name": "rust-clippy-attempt2",
+      "exit_code": -15,
+      "stop_reason": "resource guard: tmpfs reserve below 256 MiB; all mutable build/cache/evidence paths are on tmpfs",
+      "duration_seconds": 230.02498702499997,
+      "record": "rust-clippy-attempt2.json",
+      "passed": false
+    }
+  ],
+  "source_inputs_unchanged": true,
+  "worktree_clean": true,
+  "toolchain_binary_hashes_after": {
+    "cargo": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66",
+    "rustc": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+    "clippy-driver": "81bd985ee50d78e9d8c5810f6ca836614d1bf95e0e8142f1ec5f42eb250ed729",
+    "cargo-clippy": "b71b1263063707608daa1e9b231ad9d87507c11d6aa178ede2b01d8372d5effb",
+    "rustfmt": "56b31ad3ec8fe0277a2884a189e243b8f04e9b48e5fd22e547c1516c5f8fd34c"
+  },
+  "toolchain_unchanged": true,
+  "environment_profile": {
+    "rust_toolchain": "1.95.0",
+    "build_jobs": 1,
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "RUST_TEST_THREADS": "1",
+    "original_package_opt_levels_assertions_overflow_checks": "preserved",
+    "source_feature_or_warning_relaxation": false,
+    "build_gate_commands_offline_locked": true,
+    "metadata_graphs_locked": true,
+    "metadata_graphs_offline": false
+  },
+  "storage_note": "After two preserved resource guard stops from external storage contention, byte-identical owned target/cache/log directories were relocated to task workspace with original outside-repository path aliases. See storage-relocation.json and guarded-storage.json. No repository/Git alias or source hiding.",
+  "coverage_limit": "This validates requested locked graphs, formatting, strict workspace Clippy and33 retained native work tests. It does not claim the full original CI matrix, supply-chain advisory campaign, production readiness, real demand or a computational lower bound."
+}

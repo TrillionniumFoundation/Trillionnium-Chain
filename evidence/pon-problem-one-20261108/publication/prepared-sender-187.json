@@ -1,0 +1,71 @@
+{
+  "base": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "branch": "fix/chain-problem-one-20261108-6050776",
+  "bundle": {
+    "bytes": 28500,
+    "sha256": "7afb19f6b016e75490b453f9ff9ebd99858577d51dae838a3d3f0e812c6b2671",
+    "verified": true
+  },
+  "full_working_source_present": false,
+  "github_push_performed": false,
+  "head": "187b880048e30196407960f48b10c379859d1396",
+  "missing_source_manifest": {
+    "bytes": 5458940,
+    "path": "/home/qian-qi/work/chain-problem-one-6050776-missing-source.json",
+    "sha256": "05c9a5c93e80c92ae374392bff3a0cc4910839fbe168e3ceefe1ffafcddf7d1e"
+  },
+  "native_gate_run_here": false,
+  "observed_remote_branch_before_push": null,
+  "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+  "parent": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+  "preflight_after": {
+    "branch": "fix/chain-problem-one-20261108-6050776",
+    "mode": "--dev",
+    "packages": 26,
+    "project": "trillionnium-chain",
+    "remote_policy_mutated": false,
+    "result": "PASS"
+  },
+  "preflight_before": {
+    "branch": "fix/chain-problem-one-20261108-6050776",
+    "mode": "--dev",
+    "packages": 26,
+    "project": "trillionnium-chain",
+    "remote_policy_mutated": false,
+    "result": "PASS"
+  },
+  "preflight_push": {
+    "branch": "fix/chain-problem-one-20261108-6050776",
+    "mode": "--push",
+    "packages": 26,
+    "project": "trillionnium-chain",
+    "remote_policy_mutated": false,
+    "result": "PASS"
+  },
+  "projection_pack": {
+    "bytes": 14762,
+    "sha256": "96a53e19c38de301822e6e37320d32482eaec7c1108a7e42ac8a9b47f8fc0575"
+  },
+  "purpose": "Partial exact preflight projection for publication transport only. Complete source and actual tests/build gates run on the separate local checkout.",
+  "remote_policy_mutated": false,
+  "retained_setup_failures": {
+    "filtered_codeload": "metadata fetch succeeded; archive cancelled; terminal confirmed",
+    "independent_full_pack": "cancelled; terminal confirmed",
+    "old_source_cache_reuse": {
+      "cached_matching_bytes": 0,
+      "cached_matching_entries": 0,
+      "missing_distinct_blobs": 19496,
+      "missing_entries": 26119
+    },
+    "oversized_combined_transfer_request": "INVALID_ARGUMENT; no job or mutation admitted",
+    "shared_clone": "timed_out; dangling existing alternate"
+  },
+  "schema": "pon-problem-one-publication-sender-receipt-v1",
+  "sender": "ProfHepta",
+  "source_projection_files": 33,
+  "thin_bundle_prerequisite_pack": {
+    "bytes": 399930,
+    "sha256": "d83c9313aaf022604417fccfefed2714f89d83e73304275196e157ef309c9e2c"
+  },
+  "tree": "ad3b3f541edf816d5e0f44605d8ba29472b3b63c"
+}

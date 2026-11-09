@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "exit_code": 1,
+  "phase": "before refreshing the changed development-plan pin",
+  "observed_utc": "2026-11-09T02:32:04.572367+00:00"
+}

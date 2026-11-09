@@ -1,0 +1,94 @@
+{
+  "discovery_errors": [],
+  "duration_ns": 37680182,
+  "effective_unittest_args": [
+    "discover",
+    "-s",
+    "/workspace/scratch/6050776ac4f9/chain-src/formal/pon-nakamoto-v1",
+    "-p",
+    "test_normalized_search_cost.py",
+    "-v"
+  ],
+  "empty_suite": false,
+  "errored_test_ids": [],
+  "errors": 0,
+  "expected_failure_ids": [],
+  "expected_failures": 0,
+  "failed_test_ids": [],
+  "failures": 0,
+  "finished_utc": "2026-11-09T02:36:32.021067+00:00",
+  "imported_repository_modules_after": {
+    "normalized_search_cost": {
+      "bytes": 34027,
+      "path": "formal/pon-nakamoto-v1/normalized_search_cost.py",
+      "sha256": "1f77753abbfddeee9a7bd0911ce2a882e5f689c8d3181c7dfe122de3c7ba5424"
+    },
+    "test_normalized_search_cost": {
+      "bytes": 22833,
+      "path": "formal/pon-nakamoto-v1/test_normalized_search_cost.py",
+      "sha256": "31d47507ba4780fa9d28208898f2760ddf9af23443aa2317af5bc8683630015c"
+    }
+  },
+  "imported_repository_modules_before": {
+    "normalized_search_cost": {
+      "bytes": 34027,
+      "path": "formal/pon-nakamoto-v1/normalized_search_cost.py",
+      "sha256": "1f77753abbfddeee9a7bd0911ce2a882e5f689c8d3181c7dfe122de3c7ba5424"
+    },
+    "test_normalized_search_cost": {
+      "bytes": 22833,
+      "path": "formal/pon-nakamoto-v1/test_normalized_search_cost.py",
+      "sha256": "31d47507ba4780fa9d28208898f2760ddf9af23443aa2317af5bc8683630015c"
+    }
+  },
+  "passed": 37,
+  "pattern": "test_normalized_search_cost.py",
+  "prior_module_bytes_unchanged": true,
+  "schema": "pon-existing-formal-suite-observation-v1",
+  "skipped": 0,
+  "skipped_tests": [],
+  "started_utc": "2026-11-09T02:36:31.983381+00:00",
+  "successful_test_ids": [
+    "test_normalized_search_cost.BoundedReportTests.test_fixed_report_is_deterministic_and_survives_saved_json_replay",
+    "test_normalized_search_cost.BoundedReportTests.test_fraction_input_and_accumulation_caps_apply_to_direct_apis",
+    "test_normalized_search_cost.BoundedReportTests.test_json_reader_rejects_duplicate_keys_floats_large_numbers_and_oversize",
+    "test_normalized_search_cost.BoundedReportTests.test_report_recompute_rejects_flags_costs_contracts_source_and_type_changes",
+    "test_normalized_search_cost.IdealShortcutTests.test_cost_comparison_rejects_different_successful_events",
+    "test_normalized_search_cost.IdealShortcutTests.test_cost_units_and_categories_cannot_be_mixed",
+    "test_normalized_search_cost.IdealShortcutTests.test_direct_result_constructor_keeps_exact_model_guards",
+    "test_normalized_search_cost.IdealShortcutTests.test_endpoint_is_explicitly_only_an_ideal_scaling_comparison",
+    "test_normalized_search_cost.IdealShortcutTests.test_only_exact_square_roots_are_accepted",
+    "test_normalized_search_cost.IdealShortcutTests.test_preparation_and_uncomputation_can_reverse_apparent_advantage",
+    "test_normalized_search_cost.IdealShortcutTests.test_user_counterexample_is_exact",
+    "test_normalized_search_cost.IdealShortcutTests.test_zero_cost_and_nonfraction_cost_ratios_are_rejected",
+    "test_normalized_search_cost.NormalizedSearchTests.test_classical_and_quantum_masses_define_the_same_marked_overlap",
+    "test_normalized_search_cost.NormalizedSearchTests.test_direct_restriction_constructor_cannot_disguise_a_nonuniform_measure",
+    "test_normalized_search_cost.NormalizedSearchTests.test_invalid_domains_and_missing_marked_labels_are_rejected",
+    "test_normalized_search_cost.NormalizedSearchTests.test_masses_require_exact_fractions_and_normalization",
+    "test_normalized_search_cost.NormalizedSearchTests.test_no_winners_is_a_valid_measure_but_not_a_finite_win_cost",
+    "test_normalized_search_cost.NormalizedSearchTests.test_restriction_rejects_duplicate_empty_and_foreign_subsets",
+    "test_normalized_search_cost.NormalizedSearchTests.test_retaining_only_winners_does_not_make_f_the_winner_retention",
+    "test_normalized_search_cost.NormalizedSearchTests.test_success_contract_is_required_validated_and_retained",
+    "test_normalized_search_cost.NormalizedSearchTests.test_uniform_helper_preserves_explicit_contract_and_rejects_direct_mismatch",
+    "test_normalized_search_cost.NormalizedSearchTests.test_uniform_retention_is_not_the_normalized_success_ratio",
+    "test_normalized_search_cost.StationaryRenewalTests.test_certain_success_has_one_attempt_and_no_restart",
+    "test_normalized_search_cost.StationaryRenewalTests.test_costs_and_probabilities_reject_floats_bools_and_negative_values",
+    "test_normalized_search_cost.StationaryRenewalTests.test_duplicate_task_ids_cannot_duplicate_expected_work",
+    "test_normalized_search_cost.StationaryRenewalTests.test_failure_abandon_and_restart_costs_are_all_unconditional",
+    "test_normalized_search_cost.StationaryRenewalTests.test_history_state_or_interruptions_are_outside_this_formula",
+    "test_normalized_search_cost.StationaryRenewalTests.test_increasing_failure_cost_changes_win_cost_without_changing_q",
+    "test_normalized_search_cost.StationaryRenewalTests.test_outcomes_must_be_a_normalized_distinct_partition",
+    "test_normalized_search_cost.StationaryRenewalTests.test_positive_probability_attempts_cannot_be_free",
+    "test_normalized_search_cost.StationaryRenewalTests.test_post_win_proof_is_paid_once_not_per_attempt",
+    "test_normalized_search_cost.StationaryRenewalTests.test_q_zero_is_rejected_not_infinity_or_pass",
+    "test_normalized_search_cost.StationaryRenewalTests.test_reports_never_claim_w1_attack_or_resource_lower_bound",
+    "test_normalized_search_cost.StationaryRenewalTests.test_same_unit_required_across_attempts_proof_and_preparation",
+    "test_normalized_search_cost.StationaryRenewalTests.test_shared_preparation_is_paid_once_for_multiple_tasks",
+    "test_normalized_search_cost.StationaryRenewalTests.test_success_cannot_also_restart",
+    "test_normalized_search_cost.StationaryRenewalTests.test_success_event_is_explicit_and_retained"
+  ],
+  "tests_run": 37,
+  "unexpected_success_ids": [],
+  "unexpected_successes": 0,
+  "unittest_was_successful": true
+}
