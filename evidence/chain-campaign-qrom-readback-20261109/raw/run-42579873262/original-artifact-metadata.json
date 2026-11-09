@@ -1,0 +1,56 @@
+{
+  "artifact": {
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13656714263/zip",
+    "created_at": "2026-11-09T07:43:27Z",
+    "digest": "sha256:1fd9e41eb0f2c47b3ad7009cf1106fbefb9ab5185a34952d02d379e602e499b7",
+    "expired": false,
+    "expires_at": "2026-12-09T07:43:18Z",
+    "id": 13656714263,
+    "name": "pon-native-campaign-x64-head-release-097f59f505f8ec42f72e3b8255e6cb7822a70646-1",
+    "size_in_bytes": 70035072,
+    "updated_at": "2026-11-09T07:43:27Z",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13656714263",
+    "workflow_run": {
+      "head_branch": "fix/chain-cell-storage-convergence-f2568-20261109",
+      "head_repository_id": 1323087357,
+      "head_sha": "097f59f505f8ec42f72e3b8255e6cb7822a70646",
+      "id": 42579873262,
+      "repository_id": 1323087357
+    }
+  },
+  "diagnostic_reader_output": "diagnostic-readback.json",
+  "diagnostic_reader_output_sha256": "6a2af9796161f52ad8ae7a598b58451791c1c8df2a241ee8a78cd2ab52c08d93",
+  "external_archive_digest_verified": true,
+  "native_tests_executed_during_retention": false,
+  "qualification_granted": false,
+  "retained_source_files": {
+    "scripts/pon_public_v3_phase_read.py": "deeadace0e557298728aa10f7636b340a86fe2bd705b2d0ebd0c9b17773f3482",
+    "scripts/read_failed_native_campaign_zip.py": "14879a3aca2933420be47932edf6d10052b90648f371929cb440b4e645088ff4",
+    "scripts/read_original_native_campaign.py": "4381e3af6dac9ea2301cb78ff1761628a3b0e236750d1f291f4d51118c31b417"
+  },
+  "schema": "pon-original-native-campaign-artifact-metadata-v1",
+  "source": {
+    "head": "097f59f505f8ec42f72e3b8255e6cb7822a70646",
+    "tree": "4b1eb80fa88b0b8f98d216247f7b8bce2df73f20"
+  },
+  "workflow_run": {
+    "artifacts_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42579873262/artifacts",
+    "conclusion": "failure",
+    "created_at": "2026-11-09T07:31:26Z",
+    "event": "pull_request",
+    "head_branch": "fix/chain-cell-storage-convergence-f2568-20261109",
+    "head_sha": "097f59f505f8ec42f72e3b8255e6cb7822a70646",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42579873262",
+    "id": 42579873262,
+    "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42579873262/jobs",
+    "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42579873262/logs",
+    "name": "PoN original native campaign",
+    "path": ".github/workflows/pon-native-campaign-qualification.yml",
+    "run_attempt": 1,
+    "run_number": 1070,
+    "run_started_at": "2026-11-09T07:31:26Z",
+    "status": "completed",
+    "updated_at": "2026-11-09T07:43:31Z",
+    "workflow_id": 391170410
+  }
+}

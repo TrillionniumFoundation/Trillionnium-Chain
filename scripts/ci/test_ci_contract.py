@@ -2594,7 +2594,13 @@ class MergedQualificationLaneTests(unittest.TestCase):
         'qrom_current_source': ('repository-truth', '    python3 scripts/ci/test_pq_chain_claim_guard.py\n    # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.\n', (
             '    python3 scripts/ci/test_w1_qrom_current_implementation_audit.py\n',
             '    python3 scripts/w1_qrom_current_implementation_audit.py\n',
+            '    python3 scripts/ci/test_w1_qrom_current_ci.py\n',
         ), "    python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v\n"),
+        'failed_campaign_diagnostics': ('repository-truth',
+            '    python3 scripts/ci/test_run_pon_w1_native_campaign.py\n', (
+                '    python3 scripts/ci/test_read_validated_business_goodput.py\n',
+                '    python3 scripts/ci/test_read_failed_native_campaign_zip.py\n',
+            ), '    python3 scripts/ci/test_pon_w1_cost_matrix_reader.py\n'),
         'fixed_probability': ('repository-truth',
                               "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v\n", (
             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_probability_contract.py' -v\n",
