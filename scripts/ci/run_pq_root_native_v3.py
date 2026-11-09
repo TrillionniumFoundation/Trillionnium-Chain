@@ -39,6 +39,12 @@ CRYPTO_NATIVE = (
     "every_successor_proof_is_mandatory_and_cannot_move_between_roles_or_intents",
     "genuine_shake_key_is_rejected_despite_identical_key_and_signature_sizes",
     "malformed_and_cancelled_attempts_use_the_original_budget_before_crypto",
+    "warm_roster_preserves_full_quorum_and_budget_accounting",
+)
+CRYPTO_CACHED = (
+    "native_cache_v3_lazy_shared_and_identity_neutral",
+    "native_cache_v3_rechecks_exact_message_and_signature",
+    "native_cache_v3_waits_for_shape_and_original_budget",
 )
 KERNEL = (
     "native_v3_all_five_actions_require_real_fixed_dual_quorum",
@@ -110,6 +116,9 @@ def suites():
          tuple("pq_root_v3::tests::" + x for x in CRYPTO_STRUCTURE)),
         ("crypto-native", base + ["-p", "trnm-crypto-primitives", "--features", "pq-native-openssl",
                                  "--test", "pq_root_v3_native"] + suffix, CRYPTO_NATIVE),
+        ("crypto-cached-keys", base + ["-p", "trnm-crypto-primitives", "--features", "pq-native-openssl",
+                                      "--lib", "pq_root_v3::tests::native_cache_v3_"] + suffix,
+         tuple("pq_root_v3::tests::" + x for x in CRYPTO_CACHED)),
         ("root-kernel", base + ["-p", "trnm-release-bundle", "--features", "pq-root-v3",
                                "--lib", "root_recovery_v3::tests::"] + suffix,
          tuple("root_recovery_v3::tests::" + x for x in KERNEL)),

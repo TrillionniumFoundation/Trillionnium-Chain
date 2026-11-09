@@ -23,10 +23,10 @@ from pq_source_reader import SourceReadError, read_regular
 SCHEMA = "trnm-pq-root-dependency-register-v3"
 RESULT_SCHEMA = "trnm-pq-root-dependency-register-result-v3"
 DEFAULT_MANIFEST = "config/pon/pq-root-dependency-register-v3.json"
-REVIEW_BASE = "57e6c17ae2fa8a9cc547e271f34d90ef09115f04"
+REVIEW_BASE = "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0"
 MAX_BYTES = 1024 * 1024
 # Frozen after review of all declared files. No runtime regeneration is allowed.
-REVIEWED_SOURCE_SNAPSHOT_SHA256 = "d3bd30198f56d855bbae4644e0a1f31e8ea9d0df13644b6589f6a01e25e3a4a1"
+REVIEWED_SOURCE_SNAPSHOT_SHA256 = "cdfb0a429c3e2193782e4b61b68fab5a9b50627505189712716e09f747dfe455"
 
 PY = "formal/pon-nakamoto-v1/"
 POLICY = PY + "pq_root_recovery_policy_v1.py"
@@ -272,6 +272,7 @@ SOURCE_PATHS = sorted(set(
      NATIVE_CRYPTO, NATIVE_ML_ADAPTER, NATIVE_CRYPTO_PROFILE, NATIVE_POLICY, NATIVE_OWNER,
      NATIVE_ANCHOR, NATIVE_STORAGE, NATIVE_FLOOR, NATIVE_PROVIDER,
      CRYPTO + "src/pq_root_v3/tests.rs", CRYPTO + "tests/pq_root_v3_native.rs",
+     CRYPTO + "examples/pq_root_v3_cost_observation.rs",
      RELEASE + "src/root_recovery_v3_tests.rs",
      NODE + "tests/root_recovery_v3_native.rs",
      NODE + "tests/support/root_recovery_v3_fixture.rs",

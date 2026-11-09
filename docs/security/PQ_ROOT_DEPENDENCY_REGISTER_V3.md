@@ -162,10 +162,17 @@ recorded review-base revision. Changing both a source file and its manifest
 digest therefore fails until the reviewed checker snapshot is deliberately
 updated. There is no auto-regeneration or accept-current-bytes mode.
 
-The review base `57e6c17ae2fa8a9cc547e271f34d90ef09115f04` is context for the
+The review base `44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0` is context for the
 continuation. It is not a claim that the newly added files existed in that
 revision. The inspector does not verify Git ancestry or the eventual commit,
 and always returns `source_revision_bound = false`.
+
+The [signature cost continuation](PQ_ROOT_SIGNATURE_COST_V1.md) reviews the
+immutable ML-DSA-87 expansion cache and adds the native cost-observation example
+to this declared source map. The cache changes no signed domains, authority
+roles, operational charges, unknown lifetime populations or domain bounds.
+The reviewed snapshot is deliberately updated after those code and test changes;
+the runtime inspector still cannot regenerate its own approved snapshot.
 
 The checker reuses the existing
 [descriptor-bound source reader](../../scripts/ci/pq_source_reader.py).

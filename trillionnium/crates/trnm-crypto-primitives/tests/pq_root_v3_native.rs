@@ -8,7 +8,7 @@ use openssl::sign::{Signer, Verifier};
 use trnm_crypto_primitives::pq_root_v3::{
     approval_message_v3, operation_commitment_v3, possession_message_v3, DualFamilyRosterV3,
     RootCryptoErrorV3, RootPublicKeyV3, RootSignatureV3, RootSuiteV3, VerificationBudgetV3,
-    MAX_MESSAGE_BYTES_V3, MAX_STATEMENT_BYTES_V3,
+    ENCODED_ROSTER_BYTES_V3, MAX_MESSAGE_BYTES_V3, MAX_STATEMENT_BYTES_V3,
 };
 
 // Resolve an exact standard OID through the linked native library. This uses
@@ -362,4 +362,75 @@ fn malformed_and_cancelled_attempts_use_the_original_budget_before_crypto() {
         Err(RootCryptoErrorV3::Budget)
     );
     assert_eq!(cancelled.attempts(), 4);
+}
+
+#[test]
+fn warm_roster_preserves_full_quorum_and_budget_accounting() {
+    let fixture = Fixture::new();
+    let message = approval_message_v3(b"normal|warm-roster|same-original-operation").unwrap();
+    let signatures = fixture.quorum(&message, [[0, 1], [0, 1]]);
+    let expected_input_bytes = (ENCODED_ROSTER_BYTES_V3
+        + message.len()
+        + signatures
+            .iter()
+            .map(|row| 64 + row.signature.len())
+            .sum::<usize>()) as u64;
+    let encoded = fixture.roster.encode();
+    let commitment = fixture.roster.commitment();
+    let clone = fixture.roster.clone();
+    let mut shared = VerificationBudgetV3::new(28).unwrap();
+
+    for root in [&fixture.roster, &clone] {
+        assert_eq!(
+            root.verify_quorum(&message, &signatures, &mut shared)
+                .unwrap()
+                .len(),
+            4
+        );
+    }
+    assert_eq!(shared.attempts(), 8);
+    assert_eq!(shared.charged_bytes(), 2 * expected_input_bytes);
+
+    // Warming either clone does not cache a message or a successful signature.
+    // Both families still verify on every public call and spend the full charge.
+    let mut changed_message = message.clone();
+    changed_message[0] ^= 1;
+    assert!(clone
+        .verify_quorum(&changed_message, &signatures, &mut shared)
+        .is_err());
+    for index in [0, 2] {
+        let mut changed = signatures.clone();
+        changed[index].signature[0] ^= 1;
+        assert!(clone
+            .verify_quorum(&message, &changed, &mut shared)
+            .is_err());
+    }
+    assert_eq!(shared.attempts(), 20);
+    assert_eq!(shared.charged_bytes(), 5 * expected_input_bytes);
+
+    let decoded = DualFamilyRosterV3::decode(&encoded).unwrap();
+    for root in [&decoded, &fixture.roster] {
+        root.verify_quorum(&message, &signatures, &mut shared)
+            .unwrap();
+        assert_eq!(root, &fixture.roster);
+        assert_eq!(root.encode(), encoded);
+        assert_eq!(root.commitment(), commitment);
+    }
+    assert_eq!(shared.attempts(), 28);
+    assert_eq!(shared.charged_bytes(), 7 * expected_input_bytes);
+    assert_eq!(
+        clone.verify_quorum(&message, &signatures, &mut shared),
+        Err(RootCryptoErrorV3::Budget)
+    );
+    assert_eq!(shared.attempts(), 32);
+    assert_eq!(shared.charged_bytes(), 8 * expected_input_bytes);
+
+    let mut cancelled = budget();
+    cancelled.cancel();
+    assert_eq!(
+        clone.verify_quorum(&message, &signatures, &mut cancelled),
+        Err(RootCryptoErrorV3::Budget)
+    );
+    assert_eq!(cancelled.attempts(), 4);
+    assert_eq!(cancelled.charged_bytes(), expected_input_bytes);
 }

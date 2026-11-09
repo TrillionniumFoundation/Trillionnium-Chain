@@ -25,6 +25,9 @@ use std::fmt;
 use std::time::{Duration, Instant};
 
 #[cfg(feature = "pq-native-openssl")]
+use std::sync::{Arc, OnceLock};
+
+#[cfg(feature = "pq-native-openssl")]
 use crate::pq_candidate::{CandidateAlgorithm, CandidateVerifier};
 #[cfg(feature = "pq-native-openssl")]
 use openssl::{pkey::PKey, sign::Verifier};
@@ -173,11 +176,32 @@ pub struct RootSignatureV3 {
 /// Construction validates every member, including the two unused quorum keys.
 /// A caller must pin this complete immutable roster through its trusted owner.
 /// An untrusted, self-consistent roster never establishes current authority.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone)]
 pub struct DualFamilyRosterV3 {
     keys: Vec<RootPublicKeyV3>,
     ids: Vec<KeyIdV3>,
+    // Only the first, fixed ML-DSA family has expanded RustCrypto key material.
+    // These slots are private to this immutable, canonically ordered roster.
+    // Clones share successful key expansion, never signature or authority results.
+    // Expansion is lazy so construction/decoding cannot bypass the caller's
+    // reservation and deadline checks before native arithmetic.
+    #[cfg(feature = "pq-native-openssl")]
+    ml_dsa_verifiers: Arc<[OnceLock<Box<CandidateVerifier>>; 3]>,
 }
+impl fmt::Debug for DualFamilyRosterV3 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("DualFamilyRosterV3")
+            .field("keys", &self.keys)
+            .field("ids", &self.ids)
+            .finish()
+    }
+}
+impl PartialEq for DualFamilyRosterV3 {
+    fn eq(&self, other: &Self) -> bool {
+        self.keys == other.keys && self.ids == other.ids
+    }
+}
+impl Eq for DualFamilyRosterV3 {}
 impl DualFamilyRosterV3 {
     pub fn from_keys(keys: Vec<RootPublicKeyV3>) -> Result<Self, RootCryptoErrorV3> {
         if keys.len() != 6 {
@@ -199,7 +223,12 @@ impl DualFamilyRosterV3 {
         }
         entries.sort_unstable_by_key(|entry| (entry.1.suite, entry.0));
         let (ids, keys) = entries.into_iter().unzip();
-        Ok(Self { keys, ids })
+        Ok(Self {
+            keys,
+            ids,
+            #[cfg(feature = "pq-native-openssl")]
+            ml_dsa_verifiers: Arc::new(std::array::from_fn(|_| OnceLock::new())),
+        })
     }
 
     pub fn keys(&self) -> &[RootPublicKeyV3] {
@@ -279,7 +308,7 @@ impl DualFamilyRosterV3 {
         native_version()?;
         for (index, signature) in &ordered {
             budget.checkpoint()?;
-            verify_signature(&self.keys[*index], message, signature)?;
+            self.verify_signature(*index, message, signature)?;
             budget.checkpoint()?;
         }
         Ok(ordered
@@ -308,7 +337,7 @@ impl DualFamilyRosterV3 {
         for (index, signature) in &ordered {
             budget.checkpoint()?;
             let message = possession_message_v3(complete_statement, self, self.ids[*index])?;
-            verify_signature(&self.keys[*index], &message, signature)?;
+            self.verify_signature(*index, &message, signature)?;
             budget.checkpoint()?;
         }
         Ok(ordered
@@ -518,42 +547,63 @@ fn native_version() -> Result<(), RootCryptoErrorV3> {
     }
 }
 #[cfg(feature = "pq-native-openssl")]
-fn verify_signature(
-    key: &RootPublicKeyV3,
-    message: &[u8],
-    signature: &[u8],
-) -> Result<(), RootCryptoErrorV3> {
-    match key.suite {
-        RootSuiteV3::MlDsa87 => {
-            let verifier = CandidateVerifier::from_pinned_raw(
+impl DualFamilyRosterV3 {
+    fn verify_signature(
+        &self,
+        index: usize,
+        message: &[u8],
+        signature: &[u8],
+    ) -> Result<(), RootCryptoErrorV3> {
+        let key = &self.keys[index];
+        match key.suite {
+            RootSuiteV3::MlDsa87 => self
+                .ml_dsa_verifier(index)?
+                .verify(message, signature)
+                .map_err(|_| RootCryptoErrorV3::SignatureRejected),
+            RootSuiteV3::SlhDsaSha2_256s => {
+                // OID, AlgorithmIdentifier parameters, BIT STRING and all lengths
+                // were checked for all six immutable keys during construction.
+                // EVP keys and provider state are deliberately not cached here.
+                let public = PKey::public_key_from_der(&key.spki)
+                    .map_err(|_| RootCryptoErrorV3::NativeBackend)?;
+                if public
+                    .public_key_to_der()
+                    .map_err(|_| RootCryptoErrorV3::NativeBackend)?
+                    != key.spki
+                {
+                    return Err(RootCryptoErrorV3::PublicKeyEncoding);
+                }
+                let mut verifier = Verifier::new_without_digest(&public)
+                    .map_err(|_| RootCryptoErrorV3::NativeBackend)?;
+                match verifier.verify_oneshot(signature, message) {
+                    Ok(true) => Ok(()),
+                    Ok(false) => Err(RootCryptoErrorV3::SignatureRejected),
+                    Err(_) => Err(RootCryptoErrorV3::NativeBackend),
+                }
+            }
+        }
+    }
+
+    fn ml_dsa_verifier(&self, index: usize) -> Result<&CandidateVerifier, RootCryptoErrorV3> {
+        // The constructor fixes ML-DSA-87 at indices 0..3. No public API can
+        // mutate these keys, replace a slot, or import cached expanded material.
+        let slot = self
+            .ml_dsa_verifiers
+            .get(index)
+            .ok_or(RootCryptoErrorV3::Suite)?;
+        if slot.get().is_none() {
+            let expanded = CandidateVerifier::from_pinned_raw(
                 CandidateAlgorithm::MlDsa87,
-                &key.spki[ML_DSA_87_SPKI_PREFIX.len()..],
+                &self.keys[index].spki[ML_DSA_87_SPKI_PREFIX.len()..],
             )
             .map_err(|_| RootCryptoErrorV3::PublicKeyEncoding)?;
-            verifier
-                .verify(message, signature)
-                .map_err(|_| RootCryptoErrorV3::SignatureRejected)
+            // Concurrent callers may expand this same immutable key. Keep the
+            // first successful value; failures are never retained or promoted.
+            let _ = slot.set(Box::new(expanded));
         }
-        RootSuiteV3::SlhDsaSha2_256s => {
-            // OID, AlgorithmIdentifier parameters, BIT STRING and all lengths
-            // were checked for all six immutable keys during construction.
-            let public = PKey::public_key_from_der(&key.spki)
-                .map_err(|_| RootCryptoErrorV3::NativeBackend)?;
-            if public
-                .public_key_to_der()
-                .map_err(|_| RootCryptoErrorV3::NativeBackend)?
-                != key.spki
-            {
-                return Err(RootCryptoErrorV3::PublicKeyEncoding);
-            }
-            let mut verifier = Verifier::new_without_digest(&public)
-                .map_err(|_| RootCryptoErrorV3::NativeBackend)?;
-            match verifier.verify_oneshot(signature, message) {
-                Ok(true) => Ok(()),
-                Ok(false) => Err(RootCryptoErrorV3::SignatureRejected),
-                Err(_) => Err(RootCryptoErrorV3::NativeBackend),
-            }
-        }
+        slot.get()
+            .map(Box::as_ref)
+            .ok_or(RootCryptoErrorV3::NativeBackend)
     }
 }
 
