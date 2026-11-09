@@ -1,0 +1,18 @@
+{
+  "additional_original_target_files_deleted": false,
+  "after_cleanup_continuation_started": false,
+  "decision": "PRESERVE_BLOCKED_CONTINUATION_NO_FURTHER_CLEANUP_OR_NATIVE_RETRY",
+  "inspected_incremental_regular_files": 0,
+  "inspected_non_elf_compile_archives_allocated_bytes": 585773056,
+  "observed_after_cleanup_available_bytes": 16287776768,
+  "original_node_da_elfs_and_dynamic_libraries_preserved": true,
+  "planned_retry_entry_bytes": 17179869184,
+  "prior_observations_replaced": false,
+  "production_activation": false,
+  "reason": "Owned-cache repair did not meet the frozen retry-entry threshold; the final explicitly bounded capacity inspections found insufficient additional rebuildable bytes. No threshold was lowered.",
+  "runtime_disk_floor_bytes": 8589934592,
+  "runtime_head": "5633c55219c01c689f670c2ca35d122e39f3f791",
+  "schema": "trnm-owned-resource-final-decision-v1",
+  "subsequent_capacity_inspections_readonly": true,
+  "whole_chain_pq_qualified": false
+}

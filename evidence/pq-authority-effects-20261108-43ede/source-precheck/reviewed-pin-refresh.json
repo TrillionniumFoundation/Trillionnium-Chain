@@ -1,0 +1,128 @@
+{
+  "changes": [
+    {
+      "new_blob": "48065473cb3597b9672219b7f9d1717b5935e0fd",
+      "old_blob": "0026cebc61487c1069c4aefd2187d73031bc9371",
+      "path": ".github/workflows/pon-pq-system-continuation.yml",
+      "reason": "reviewed authority effects, timing controls or required CI composition"
+    },
+    {
+      "new_blob": "2be7f31931afe3aab4dc8d2cc09cec6a7ad9800a",
+      "old_blob": "3c4b2e2c68708793cb73fed67fbc2e119bc082c1",
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "reason": "reviewed authority effects, timing controls or required CI composition"
+    },
+    {
+      "new_blob": "eb9c0140f640dec74c33e42a289342dc6922be7d",
+      "old_blob": "ef8062b408fd52f780ec17a210487fa6aa93ccaf",
+      "path": "scripts/ci/check_ci_contract.py",
+      "reason": "reviewed authority effects, timing controls or required CI composition"
+    },
+    {
+      "new_blob": "58dca7876e4c79cf6de56cd309b9a4193bb3ad01",
+      "old_blob": "4b2ab6ec59f92e5ae396ea80c0b36e3d00664337",
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "reason": "reviewed authority effects, timing controls or required CI composition"
+    },
+    {
+      "new_blob": "90eebd6525f0ea930d7d6aaf9d52151cfdb35a9c",
+      "old_blob": "2999a9623e2eb21e3656f41bb952c6b31df57190",
+      "path": "scripts/ci/ci_job.sh",
+      "reason": "reviewed authority effects, timing controls or required CI composition"
+    },
+    {
+      "new_blob": "36e7bb4381fae59e416246f076b4ce150e86cdf0",
+      "old_blob": "6df25bea817bbb491d5549364bbe7a7c486f7b9a",
+      "path": "scripts/ci/pq_authority_surface_scan.py",
+      "reason": "reviewed authority effects, timing controls or required CI composition"
+    },
+    {
+      "new_blob": "2b9dfea31a3feae90b579394fbdf24dd27a3c9a3",
+      "old_blob": "42b8f37db5933e89033cac40a2544e02f10ae7a8",
+      "path": "scripts/ci/pq_chain_claim_guard.py",
+      "reason": "reviewed authority effects, timing controls or required CI composition"
+    },
+    {
+      "new_blob": "6a81550c228703ffee75d8a913d44ae19a2f6ac0",
+      "old_blob": "b803cfd3f6449ebd7bf1967d7b57c4a19c80b858",
+      "path": "scripts/ci/test_ci_contract.py",
+      "reason": "reviewed authority effects, timing controls or required CI composition"
+    },
+    {
+      "new_blob": "2e55d1c5b4bdd572b3b223a14e96910306efd58c",
+      "old_blob": "f9883291a2a844e7347d9cfd26d7c2f46288851b",
+      "path": "scripts/ci/test_pq_authority_surface_scan.py",
+      "reason": "reviewed authority effects, timing controls or required CI composition"
+    },
+    {
+      "new_blob": "b6ae14009ef03e3e24e09b91d4e83d2cb76f164b",
+      "old_blob": "e9af582430d48848a8ead295e013096949964561",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tests.rs",
+      "reason": "reviewed authority effects, timing controls or required CI composition"
+    },
+    {
+      "new_blob": "2c83646edc1d85c0b58cf605cc2fe7931ec36323",
+      "old_blob": "edefa3088bb4cd69ede6a83dca92b7b0d6a6bf87",
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs",
+      "reason": "reviewed authority effects, timing controls or required CI composition"
+    },
+    {
+      "new_blob": "3e253a930807cb029a535e039e9d0832ebbb0b45",
+      "old_blob": "ec30a78c755c0c11c9d0d4446888a34611129142",
+      "path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_tests.rs",
+      "reason": "reviewed authority effects, timing controls or required CI composition"
+    },
+    {
+      "new_blob": "56261e7e4879516edea749fea3fddc8b3bd69801",
+      "old_blob": "2dae36d2021844029e675a7353e30f0b65927e1c",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "reason": "reviewed authority effects, timing controls or required CI composition"
+    },
+    {
+      "new_blob": "20878eb6e6d576d5449ef1bf4623d03ff219f755",
+      "old_blob": null,
+      "path": "scripts/ci/pq_authority_trace.py",
+      "reason": "new reviewed source or retained execution contract"
+    },
+    {
+      "new_blob": "447f425d47168c8f8654aa045d8cba57e429ff8c",
+      "old_blob": null,
+      "path": "scripts/ci/test_pq_authority_trace.py",
+      "reason": "new reviewed source or retained execution contract"
+    },
+    {
+      "new_blob": "6e2a2b8bf8513defd07983c7cce01770fdc1f3e7",
+      "old_blob": null,
+      "path": "config/pon/pq-authority-traces-v1.json",
+      "reason": "new reviewed source or retained execution contract"
+    },
+    {
+      "new_blob": "6a5be2bcb8ffd5753f8838cc36d49bb5cd9ffe27",
+      "old_blob": null,
+      "path": "docs/security/PQ_AUTHORITY_TRACE_V1.md",
+      "reason": "new reviewed source or retained execution contract"
+    },
+    {
+      "new_blob": "8898be9a9957e059f8534ef0178ae53e29d5f392",
+      "old_blob": null,
+      "path": "docs/security/PQ_AUTHORITY_EFFECTS_20261108.md",
+      "reason": "new reviewed source or retained execution contract"
+    },
+    {
+      "new_blob": "7978a2999961b0580efebe2b0853e0d632b0bd0e",
+      "old_blob": null,
+      "path": "evidence/pq-authority-effects-20261108-43ede/authority-effects-validation-runner.py",
+      "reason": "new reviewed source or retained execution contract"
+    }
+  ],
+  "historical_failed_observation_preserved": true,
+  "inline_pin_change": {
+    "new_blob": "56261e7e4879516edea749fea3fddc8b3bd69801",
+    "old_blob": "2dae36d2021844029e675a7353e30f0b65927e1c",
+    "source": "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  "schema": "trnm-reviewed-source-pin-refresh-v1",
+  "source_base": "01e2c4c010c3cf65d1cf094368961efc1abab445",
+  "whole_chain_pq_qualified": false
+}

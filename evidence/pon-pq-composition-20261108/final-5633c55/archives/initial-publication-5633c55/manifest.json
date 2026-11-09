@@ -1,0 +1,3163 @@
+{
+  "additional_members": [
+    {
+      "bytes": 16371,
+      "path": "collection/collector.py",
+      "sha256": "7534c7b02787363e466fafbd3f35f31967583ec6b8512d8e9c05e45d6efa4900"
+    },
+    {
+      "bytes": 730,
+      "path": "collection/parent-terminal-status.json",
+      "sha256": "501d7ebdab45f304712ece0718ce958ed6b79a011fd1c9c716054b99723f9462"
+    }
+  ],
+  "archive_format": {
+    "gid": 0,
+    "gzip_filename": "",
+    "gzip_mtime": 0,
+    "member_order": "lexicographic",
+    "mode": "0644",
+    "mtime": 0,
+    "type": "tar+gzip",
+    "uid": 0
+  },
+  "evidence_roots": [
+    "publish-initial-5633"
+  ],
+  "excluded_subtrees": [],
+  "exclusion_policy": {
+    "cache_directory_names": [
+      ".cache",
+      ".cargo",
+      ".fingerprint",
+      ".pytest_cache",
+      ".rustup",
+      "__pycache__",
+      "incremental",
+      "native-target-default",
+      "native-target-pq",
+      "target"
+    ],
+    "excluded_subtree_contents_enumerated_or_hashed": false,
+    "large_files": "none over 16 MiB in included inventory; unexpected large input refuses collection",
+    "symlinks": "never followed; metadata observed by lstat/readlink only; none present in frozen scope"
+  },
+  "frozen_input_sha256": {
+    "pr-body-initial-terminal-5633.md": "7a779294355e83097013b8204d7d8bc35b2b79132c3de91a80e35a9df2bd4b58",
+    "publish_initial_5633.py": "7d1866f623303f5efe3fa831b4408da7fba5d7c6c40fc62c11100acd35b59866"
+  },
+  "input_roles": {
+    "pr-body-initial-terminal-5633.md": "exact initially published Draft body",
+    "publish_initial_5633.py": "frozen initial publisher"
+  },
+  "native_campaign_results_requalified": false,
+  "native_commands_executed_by_collector": false,
+  "original_logs_or_runners_modified": false,
+  "publication_commands_executed_by_collector": false,
+  "publication_summary_sha256": "5086dc2fcd100a30db3d36faaefe62abbcd1560981d2834dcdb7a39b88df32d5",
+  "published_pr": {
+    "actor": "ProfHepta",
+    "draft": true,
+    "head": "5633c55219c01c689f670c2ca35d122e39f3f791",
+    "number": 822
+  },
+  "schema": "trnm-initial-publication-evidence-archive-v1",
+  "secret_scan": {
+    "findings": [],
+    "scope": "bounded high-confidence credential pattern scan; not a universal absence proof"
+  },
+  "source_base": "/home/qian-qi/work/chain-pq-composition-663507-20261108",
+  "source_files": [
+    {
+      "bytes": 5503,
+      "path": "pr-body-initial-terminal-5633.md",
+      "sha256": "7a779294355e83097013b8204d7d8bc35b2b79132c3de91a80e35a9df2bd4b58",
+      "source_identity": {
+        "ctime_ns": 1794166571142480387,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905609,
+        "mode": 33152,
+        "mtime_ns": 1794166571136480558,
+        "nlink": 1,
+        "size": 5503,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 476,
+      "path": "publish-initial-5633/actor-after.json",
+      "sha256": "bedea3a4d5bb70ee545559904f1a7462295da06c84c70546ae10b10dacd0d063",
+      "source_identity": {
+        "ctime_ns": 1794166838955029699,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530715,
+        "mode": 33152,
+        "mtime_ns": 1794166838955029699,
+        "nlink": 1,
+        "size": 476,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/actor-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166838953820464,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530714,
+        "mode": 33152,
+        "mtime_ns": 1794166838953820464,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 10,
+      "path": "publish-initial-5633/actor-after.stdout",
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+      "source_identity": {
+        "ctime_ns": 1794166838953820464,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530713,
+        "mode": 33152,
+        "mtime_ns": 1794166838953820464,
+        "nlink": 1,
+        "size": 10,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 477,
+      "path": "publish-initial-5633/actor-before.json",
+      "sha256": "ce60561e3192d62bc74aed0cc51052db5f2eba95e6c7509cc5c42a03b6b9d4c7",
+      "source_identity": {
+        "ctime_ns": 1794166813407129573,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530666,
+        "mode": 33152,
+        "mtime_ns": 1794166813407129573,
+        "nlink": 1,
+        "size": 477,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/actor-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166813406618099,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530665,
+        "mode": 33152,
+        "mtime_ns": 1794166813406618099,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 10,
+      "path": "publish-initial-5633/actor-before.stdout",
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+      "source_identity": {
+        "ctime_ns": 1794166813406618099,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530664,
+        "mode": 33152,
+        "mtime_ns": 1794166813406618099,
+        "nlink": 1,
+        "size": 10,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 562,
+      "path": "publish-initial-5633/ancestor-0.json",
+      "sha256": "56d51287dc5fbcede9186c54ed3d96068aa73b4c27c64f5c412cc5e2678a1d65",
+      "source_identity": {
+        "ctime_ns": 1794166811904597755,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530648,
+        "mode": 33152,
+        "mtime_ns": 1794166811904597755,
+        "nlink": 1,
+        "size": 562,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/ancestor-0.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811903597784,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530647,
+        "mode": 33152,
+        "mtime_ns": 1794166811903597784,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/ancestor-0.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811903597784,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530646,
+        "mode": 33152,
+        "mtime_ns": 1794166811903597784,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 563,
+      "path": "publish-initial-5633/ancestor-1.json",
+      "sha256": "e7096ea0bcced5b32f1e573a57206f1b9883de411b5f3b6a870c8b0ca8f7d56d",
+      "source_identity": {
+        "ctime_ns": 1794166811921218409,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530651,
+        "mode": 33152,
+        "mtime_ns": 1794166811921218409,
+        "nlink": 1,
+        "size": 563,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/ancestor-1.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811920597295,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530650,
+        "mode": 33152,
+        "mtime_ns": 1794166811920597295,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/ancestor-1.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811920597295,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530649,
+        "mode": 33152,
+        "mtime_ns": 1794166811920597295,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 562,
+      "path": "publish-initial-5633/ancestor-2.json",
+      "sha256": "ca0f23547695504326714d4c4ff3895040e1623d580f48eb25e05db571c1c47c",
+      "source_identity": {
+        "ctime_ns": 1794166811936421836,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530654,
+        "mode": 33152,
+        "mtime_ns": 1794166811936421836,
+        "nlink": 1,
+        "size": 562,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/ancestor-2.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811935596865,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530653,
+        "mode": 33152,
+        "mtime_ns": 1794166811935596865,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/ancestor-2.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811935596865,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530652,
+        "mode": 33152,
+        "mtime_ns": 1794166811935596865,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 563,
+      "path": "publish-initial-5633/ancestor-3.json",
+      "sha256": "6f5979dfad4a3ecedb0da6dc296a437211fe8cc9a9b0dfd53ee6792f837233e9",
+      "source_identity": {
+        "ctime_ns": 1794166811949645659,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530657,
+        "mode": 33152,
+        "mtime_ns": 1794166811949645659,
+        "nlink": 1,
+        "size": 563,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/ancestor-3.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811948596491,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530656,
+        "mode": 33152,
+        "mtime_ns": 1794166811948596491,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/ancestor-3.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811948596491,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530655,
+        "mode": 33152,
+        "mtime_ns": 1794166811948596491,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 563,
+      "path": "publish-initial-5633/ancestor-4.json",
+      "sha256": "d9258a23925e0aaf48e965207c19c44b5a0c06b33b055d94478c151527b014e1",
+      "source_identity": {
+        "ctime_ns": 1794166811963848111,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530660,
+        "mode": 33152,
+        "mtime_ns": 1794166811963848111,
+        "nlink": 1,
+        "size": 563,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/ancestor-4.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811962596089,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530659,
+        "mode": 33152,
+        "mtime_ns": 1794166811962596089,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/ancestor-4.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811962596089,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530658,
+        "mode": 33152,
+        "mtime_ns": 1794166811962596089,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 563,
+      "path": "publish-initial-5633/ancestor-5.json",
+      "sha256": "42727c458d90dd40aa37dd28643c6de5aa824aef0c42c93333383df7b11f68e1",
+      "source_identity": {
+        "ctime_ns": 1794166811978471859,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530663,
+        "mode": 33152,
+        "mtime_ns": 1794166811978471859,
+        "nlink": 1,
+        "size": 563,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/ancestor-5.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811977595658,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530662,
+        "mode": 33152,
+        "mtime_ns": 1794166811977595658,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/ancestor-5.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811977595658,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530661,
+        "mode": 33152,
+        "mtime_ns": 1794166811977595658,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 706,
+      "path": "publish-initial-5633/base-pr-before.json",
+      "sha256": "6f5c4b11587ca9acf9558db0bf60f03ff0cc14ca492c99d26732bbdc6f854741",
+      "source_identity": {
+        "ctime_ns": 1794166815409497077,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530669,
+        "mode": 33152,
+        "mtime_ns": 1794166815409497077,
+        "nlink": 1,
+        "size": 706,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/base-pr-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166815409285106,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530668,
+        "mode": 33152,
+        "mtime_ns": 1794166815409285106,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 4484,
+      "path": "publish-initial-5633/base-pr-before.stdout",
+      "sha256": "91e43830d49c9ba6265228550a84567668bda87a1ba7ac41e12fa918a978e71c",
+      "source_identity": {
+        "ctime_ns": 1794166815409285106,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530667,
+        "mode": 33152,
+        "mtime_ns": 1794166815409285106,
+        "nlink": 1,
+        "size": 4484,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 867,
+      "path": "publish-initial-5633/create-draft.json",
+      "sha256": "a697b9225690db31d4823b3305a82472874f045aadadd936ee1d88f41213f5a2",
+      "source_identity": {
+        "ctime_ns": 1794166833013772326,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530706,
+        "mode": 33152,
+        "mtime_ns": 1794166833013772326,
+        "nlink": 1,
+        "size": 867,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/create-draft.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166833013244628,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530705,
+        "mode": 33152,
+        "mtime_ns": 1794166833013244628,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 70,
+      "path": "publish-initial-5633/create-draft.stdout",
+      "sha256": "ef633f382ff8059faafe940515f52e601c0868960960958ed1c1176282feb78a",
+      "source_identity": {
+        "ctime_ns": 1794166833013244628,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530704,
+        "mode": 33152,
+        "mtime_ns": 1794166833013244628,
+        "nlink": 1,
+        "size": 70,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 851,
+      "path": "publish-initial-5633/existing-prs.json",
+      "sha256": "0bb1761a61b12e155c6566cb2759ef4d6425ca152b82817051754bc6b22aebb8",
+      "source_identity": {
+        "ctime_ns": 1794166819651470574,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530675,
+        "mode": 33152,
+        "mtime_ns": 1794166819651470574,
+        "nlink": 1,
+        "size": 851,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/existing-prs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166819651010771,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530674,
+        "mode": 33152,
+        "mtime_ns": 1794166819651010771,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 3,
+      "path": "publish-initial-5633/existing-prs.stdout",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "source_identity": {
+        "ctime_ns": 1794166819651010771,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530673,
+        "mode": 33152,
+        "mtime_ns": 1794166819651010771,
+        "nlink": 1,
+        "size": 3,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 386,
+      "path": "publish-initial-5633/intent.json",
+      "sha256": "f970edd91cc1c180a1d525c64ac42b12070f772e510ce3d3d1a8456954e32f02",
+      "source_identity": {
+        "ctime_ns": 1794166810900362405,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530627,
+        "mode": 33152,
+        "mtime_ns": 1794166810900362405,
+        "nlink": 1,
+        "size": 386,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 494,
+      "path": "publish-initial-5633/origin.json",
+      "sha256": "312dde525f1e678d1ec73979aae8bce14b8e422a6ab777b6f6cfda3a86af2204",
+      "source_identity": {
+        "ctime_ns": 1794166811847599392,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530645,
+        "mode": 33152,
+        "mtime_ns": 1794166811847599392,
+        "nlink": 1,
+        "size": 494,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/origin.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811846599421,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530644,
+        "mode": 33152,
+        "mtime_ns": 1794166811846599421,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 700,
+      "path": "publish-initial-5633/pr-after.json",
+      "sha256": "194edcce33aacbcbe9dd397f60c17800bd6740da3708c1ac51f360f3f9322082",
+      "source_identity": {
+        "ctime_ns": 1794166834743925337,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530709,
+        "mode": 33152,
+        "mtime_ns": 1794166834743925337,
+        "nlink": 1,
+        "size": 700,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/pr-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166834743383854,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530708,
+        "mode": 33152,
+        "mtime_ns": 1794166834743383854,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 6103,
+      "path": "publish-initial-5633/pr-after.stdout",
+      "sha256": "e6a42db5fac4db67716e3cd61b08245cdcec6ab1c98b453e721725f892d179a6",
+      "source_identity": {
+        "ctime_ns": 1794166834743383854,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530707,
+        "mode": 33152,
+        "mtime_ns": 1794166834743383854,
+        "nlink": 1,
+        "size": 6103,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 472,
+      "path": "publish-initial-5633/preflight-before.json",
+      "sha256": "c0c4393c3d19f1e7dd12c55c2011a7e5a5d1bc5ddcca6db5bc7674249b8133ea",
+      "source_identity": {
+        "ctime_ns": 1794166811380314253,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530630,
+        "mode": 33152,
+        "mtime_ns": 1794166811380314253,
+        "nlink": 1,
+        "size": 472,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/preflight-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811380032482,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530629,
+        "mode": 33152,
+        "mtime_ns": 1794166811380032482,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 171,
+      "path": "publish-initial-5633/preflight-before.stdout",
+      "sha256": "3884089f0fab0f6cdda7ec1bcce584e1d7f513780e5c920c97b7f71425311e4b",
+      "source_identity": {
+        "ctime_ns": 1794166811380032482,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530628,
+        "mode": 33152,
+        "mtime_ns": 1794166811380032482,
+        "nlink": 1,
+        "size": 171,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 470,
+      "path": "publish-initial-5633/preflight-push.json",
+      "sha256": "0bac3078972c7f4734b2361ecfe2d2886b4dfa467c2a0dc5abb86936ed6a34d2",
+      "source_identity": {
+        "ctime_ns": 1794166819851321681,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530691,
+        "mode": 33152,
+        "mtime_ns": 1794166819851321681,
+        "nlink": 1,
+        "size": 470,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/preflight-push.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166819850877805,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530690,
+        "mode": 33152,
+        "mtime_ns": 1794166819850877805,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 171,
+      "path": "publish-initial-5633/preflight-push.stdout",
+      "sha256": "3884089f0fab0f6cdda7ec1bcce584e1d7f513780e5c920c97b7f71425311e4b",
+      "source_identity": {
+        "ctime_ns": 1794166819850877805,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530689,
+        "mode": 33152,
+        "mtime_ns": 1794166819850877805,
+        "nlink": 1,
+        "size": 171,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 531,
+      "path": "publish-initial-5633/push.json",
+      "sha256": "2eb3e1f9c775eeca5d5bd2f295e257cbbc03b2657f093402a2c3fc0c06fac7b6",
+      "source_identity": {
+        "ctime_ns": 1794166826174387401,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530700,
+        "mode": 33152,
+        "mtime_ns": 1794166826174387401,
+        "nlink": 1,
+        "size": 531,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 532,
+      "path": "publish-initial-5633/push.stderr",
+      "sha256": "c1a45e06807d80e1759b1b81fb2f41c98fe7b1984c557ee4f29179927b9cf1ab",
+      "source_identity": {
+        "ctime_ns": 1794166826174058855,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530699,
+        "mode": 33152,
+        "mtime_ns": 1794166826174058855,
+        "nlink": 1,
+        "size": 532,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 145,
+      "path": "publish-initial-5633/push.stdout",
+      "sha256": "0a9861157dc39556346a0633eb5593c40f15eaed44c378dbb2ae263c50db9549",
+      "source_identity": {
+        "ctime_ns": 1794166826173868834,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530698,
+        "mode": 33152,
+        "mtime_ns": 1794166826173868834,
+        "nlink": 1,
+        "size": 145,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 612,
+      "path": "publish-initial-5633/remote-refs-after-push.json",
+      "sha256": "9f12d42b7078c5168e0f317c5773ae26105719be1a96f8245ad8b246c80c9178",
+      "source_identity": {
+        "ctime_ns": 1794166828755556296,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530703,
+        "mode": 33152,
+        "mtime_ns": 1794166828755556296,
+        "nlink": 1,
+        "size": 612,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/remote-refs-after-push.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166828755093089,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530702,
+        "mode": 33152,
+        "mtime_ns": 1794166828755093089,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 194,
+      "path": "publish-initial-5633/remote-refs-after-push.stdout",
+      "sha256": "ef8746d3b76a91637ea6d3bcb94d38642429dbdada029a45eb929fd79609604a",
+      "source_identity": {
+        "ctime_ns": 1794166828755093089,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530701,
+        "mode": 33152,
+        "mtime_ns": 1794166828755093089,
+        "nlink": 1,
+        "size": 194,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 607,
+      "path": "publish-initial-5633/remote-refs-before.json",
+      "sha256": "0f4d2aecabb4c0ceb6eebecab277e540b49ba03aad233713de61dd2bf20ddd12",
+      "source_identity": {
+        "ctime_ns": 1794166818009422386,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530672,
+        "mode": 33152,
+        "mtime_ns": 1794166818009422386,
+        "nlink": 1,
+        "size": 607,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/remote-refs-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166818009046896,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530671,
+        "mode": 33152,
+        "mtime_ns": 1794166818009046896,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 101,
+      "path": "publish-initial-5633/remote-refs-before.stdout",
+      "sha256": "53d5a66af76a9b33851c7a2019ea67741d180dd870d02ae9f6811583ceb26f89",
+      "source_identity": {
+        "ctime_ns": 1794166818009046896,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530670,
+        "mode": 33152,
+        "mtime_ns": 1794166818009046896,
+        "nlink": 1,
+        "size": 101,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 607,
+      "path": "publish-initial-5633/remote-refs-final.json",
+      "sha256": "b0a390d93c1a2cef4eab61c85ebf15f31ea6803f22d432da41630ee3398834b1",
+      "source_identity": {
+        "ctime_ns": 1794166837315468124,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530712,
+        "mode": 33152,
+        "mtime_ns": 1794166837315468124,
+        "nlink": 1,
+        "size": 607,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/remote-refs-final.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166837314992810,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530711,
+        "mode": 33152,
+        "mtime_ns": 1794166837314992810,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 194,
+      "path": "publish-initial-5633/remote-refs-final.stdout",
+      "sha256": "ef8746d3b76a91637ea6d3bcb94d38642429dbdada029a45eb929fd79609604a",
+      "source_identity": {
+        "ctime_ns": 1794166837314992810,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530710,
+        "mode": 33152,
+        "mtime_ns": 1794166837314992810,
+        "nlink": 1,
+        "size": 194,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 474,
+      "path": "publish-initial-5633/source-after-branch.json",
+      "sha256": "aa19dde1a17f29cdf8c416dbce6d5165da1a8977d323291aacbc5ced03ac2cd1",
+      "source_identity": {
+        "ctime_ns": 1794166838967126864,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530724,
+        "mode": 33152,
+        "mtime_ns": 1794166838967126864,
+        "nlink": 1,
+        "size": 474,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/source-after-branch.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166838966859116,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530723,
+        "mode": 33152,
+        "mtime_ns": 1794166838966859116,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 41,
+      "path": "publish-initial-5633/source-after-branch.stdout",
+      "sha256": "fe6223247fa2dee8810ec4cfb915fe77ecce852e8d5098442826728c065003b4",
+      "source_identity": {
+        "ctime_ns": 1794166838966859116,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530722,
+        "mode": 33152,
+        "mtime_ns": 1794166838966859116,
+        "nlink": 1,
+        "size": 41,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 466,
+      "path": "publish-initial-5633/source-after-head.json",
+      "sha256": "6735832743f86351268986f7d8c64922be9bc879dd3e9254749b29c74e7eab95",
+      "source_identity": {
+        "ctime_ns": 1794166838958398216,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530718,
+        "mode": 33152,
+        "mtime_ns": 1794166838958398216,
+        "nlink": 1,
+        "size": 466,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/source-after-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166838958124673,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530717,
+        "mode": 33152,
+        "mtime_ns": 1794166838958124673,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 41,
+      "path": "publish-initial-5633/source-after-head.stdout",
+      "sha256": "e30efbd840ce71f5bcf2766e25f7816cb3e7e4e6d9379d502238002c5e6c1227",
+      "source_identity": {
+        "ctime_ns": 1794166838958124673,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530716,
+        "mode": 33152,
+        "mtime_ns": 1794166838958124673,
+        "nlink": 1,
+        "size": 41,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 500,
+      "path": "publish-initial-5633/source-after-status.json",
+      "sha256": "1bc0b291f15bcafa3e06daa27933cc2f7596dc440b9132c4b796fee80a3ddd61",
+      "source_identity": {
+        "ctime_ns": 1794166839048156333,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530727,
+        "mode": 33152,
+        "mtime_ns": 1794166839048156333,
+        "nlink": 1,
+        "size": 500,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/source-after-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166839046817790,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530726,
+        "mode": 33152,
+        "mtime_ns": 1794166839046817790,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/source-after-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166839045817819,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530725,
+        "mode": 33152,
+        "mtime_ns": 1794166839045817819,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 471,
+      "path": "publish-initial-5633/source-after-tree.json",
+      "sha256": "4ea73f2010f3ef7c8e39017a6452b83e10ba5b65fe7c12946589580c5e1fba30",
+      "source_identity": {
+        "ctime_ns": 1794166838963617085,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530721,
+        "mode": 33152,
+        "mtime_ns": 1794166838963617085,
+        "nlink": 1,
+        "size": 471,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/source-after-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166838963335277,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530720,
+        "mode": 33152,
+        "mtime_ns": 1794166838963335277,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 41,
+      "path": "publish-initial-5633/source-after-tree.stdout",
+      "sha256": "92bf1846e17803be5b9c19ea576606972e08c417f05fbb88f28eb63ec01b435c",
+      "source_identity": {
+        "ctime_ns": 1794166838963335277,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530719,
+        "mode": 33152,
+        "mtime_ns": 1794166838963335277,
+        "nlink": 1,
+        "size": 41,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 183,
+      "path": "publish-initial-5633/source-after.json",
+      "sha256": "75bd5a9d0d200fbc3ac0459df8a5474867877ec63e2a1c0e46a1c9f4a5c8de7b",
+      "source_identity": {
+        "ctime_ns": 1794166839048432313,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530728,
+        "mode": 33152,
+        "mtime_ns": 1794166839048432313,
+        "nlink": 1,
+        "size": 183,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 475,
+      "path": "publish-initial-5633/source-before-branch.json",
+      "sha256": "b3afe25b81798d6ef0fe6998b85a5d1c24add937255d511a6bb72706132261da",
+      "source_identity": {
+        "ctime_ns": 1794166811405205775,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530639,
+        "mode": 33152,
+        "mtime_ns": 1794166811405205775,
+        "nlink": 1,
+        "size": 475,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/source-before-branch.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811404966527,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530638,
+        "mode": 33152,
+        "mtime_ns": 1794166811404966527,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 41,
+      "path": "publish-initial-5633/source-before-branch.stdout",
+      "sha256": "fe6223247fa2dee8810ec4cfb915fe77ecce852e8d5098442826728c065003b4",
+      "source_identity": {
+        "ctime_ns": 1794166811404966527,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530637,
+        "mode": 33152,
+        "mtime_ns": 1794166811404966527,
+        "nlink": 1,
+        "size": 41,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 464,
+      "path": "publish-initial-5633/source-before-head.json",
+      "sha256": "97c7b3dfded645efee65132028c609fbcef04dea43077882661038451b50f095",
+      "source_identity": {
+        "ctime_ns": 1794166811383887082,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530633,
+        "mode": 33152,
+        "mtime_ns": 1794166811383887082,
+        "nlink": 1,
+        "size": 464,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/source-before-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811383639401,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530632,
+        "mode": 33152,
+        "mtime_ns": 1794166811383639401,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 41,
+      "path": "publish-initial-5633/source-before-head.stdout",
+      "sha256": "e30efbd840ce71f5bcf2766e25f7816cb3e7e4e6d9379d502238002c5e6c1227",
+      "source_identity": {
+        "ctime_ns": 1794166811383639401,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530631,
+        "mode": 33152,
+        "mtime_ns": 1794166811383639401,
+        "nlink": 1,
+        "size": 41,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 502,
+      "path": "publish-initial-5633/source-before-status.json",
+      "sha256": "60a337788fba9bb82710c63c6b246c627b36ba582e80582a67c625997f87d54b",
+      "source_identity": {
+        "ctime_ns": 1794166811843637945,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530642,
+        "mode": 33152,
+        "mtime_ns": 1794166811843637945,
+        "nlink": 1,
+        "size": 502,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/source-before-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811842599536,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530641,
+        "mode": 33152,
+        "mtime_ns": 1794166811842599536,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/source-before-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811842599536,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530640,
+        "mode": 33152,
+        "mtime_ns": 1794166811842599536,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 472,
+      "path": "publish-initial-5633/source-before-tree.json",
+      "sha256": "4f43d9a32041b29dbc81c4d015db781980d222b9b7ef60f3f5230924f9e63338",
+      "source_identity": {
+        "ctime_ns": 1794166811402072217,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530636,
+        "mode": 33152,
+        "mtime_ns": 1794166811402072217,
+        "nlink": 1,
+        "size": 472,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/source-before-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166811401838812,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530635,
+        "mode": 33152,
+        "mtime_ns": 1794166811401838812,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 41,
+      "path": "publish-initial-5633/source-before-tree.stdout",
+      "sha256": "92bf1846e17803be5b9c19ea576606972e08c417f05fbb88f28eb63ec01b435c",
+      "source_identity": {
+        "ctime_ns": 1794166811401838812,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530634,
+        "mode": 33152,
+        "mtime_ns": 1794166811401838812,
+        "nlink": 1,
+        "size": 41,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 183,
+      "path": "publish-initial-5633/source-before.json",
+      "sha256": "75bd5a9d0d200fbc3ac0459df8a5474867877ec63e2a1c0e46a1c9f4a5c8de7b",
+      "source_identity": {
+        "ctime_ns": 1794166811843925014,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530643,
+        "mode": 33152,
+        "mtime_ns": 1794166811843925014,
+        "nlink": 1,
+        "size": 183,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 478,
+      "path": "publish-initial-5633/source-pre-push-branch.json",
+      "sha256": "95d63cd83cd3f6428d01b7144273c014c84863782e4c79c7c92bfabc9223de24",
+      "source_identity": {
+        "ctime_ns": 1794166819664444210,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530684,
+        "mode": 33152,
+        "mtime_ns": 1794166819664444210,
+        "nlink": 1,
+        "size": 478,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/source-pre-push-branch.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166819664007440,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530683,
+        "mode": 33152,
+        "mtime_ns": 1794166819664007440,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 41,
+      "path": "publish-initial-5633/source-pre-push-branch.stdout",
+      "sha256": "fe6223247fa2dee8810ec4cfb915fe77ecce852e8d5098442826728c065003b4",
+      "source_identity": {
+        "ctime_ns": 1794166819664007440,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530682,
+        "mode": 33152,
+        "mtime_ns": 1794166819664007440,
+        "nlink": 1,
+        "size": 41,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 468,
+      "path": "publish-initial-5633/source-pre-push-head.json",
+      "sha256": "17805a7f6adcea41ac147c76a4e8237d1de78acad0a2c1cc48428d1923016ef1",
+      "source_identity": {
+        "ctime_ns": 1794166819655089385,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530678,
+        "mode": 33152,
+        "mtime_ns": 1794166819655089385,
+        "nlink": 1,
+        "size": 468,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/source-pre-push-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166819654573347,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530677,
+        "mode": 33152,
+        "mtime_ns": 1794166819654573347,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 41,
+      "path": "publish-initial-5633/source-pre-push-head.stdout",
+      "sha256": "e30efbd840ce71f5bcf2766e25f7816cb3e7e4e6d9379d502238002c5e6c1227",
+      "source_identity": {
+        "ctime_ns": 1794166819654573347,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530676,
+        "mode": 33152,
+        "mtime_ns": 1794166819654573347,
+        "nlink": 1,
+        "size": 41,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 504,
+      "path": "publish-initial-5633/source-pre-push-status.json",
+      "sha256": "82c784710e892fc79eaead591c4cde69917e634ba343fdcdd3e01e3d022e1744",
+      "source_identity": {
+        "ctime_ns": 1794166819758650482,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530687,
+        "mode": 33152,
+        "mtime_ns": 1794166819758650482,
+        "nlink": 1,
+        "size": 504,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/source-pre-push-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166819757372167,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530686,
+        "mode": 33152,
+        "mtime_ns": 1794166819757372167,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/source-pre-push-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166819757372167,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530685,
+        "mode": 33152,
+        "mtime_ns": 1794166819757372167,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 475,
+      "path": "publish-initial-5633/source-pre-push-tree.json",
+      "sha256": "c41212c52ad5779d379df6fd87447df77aab1b54809e10af97548e9ca27c9c8a",
+      "source_identity": {
+        "ctime_ns": 1794166819660634090,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530681,
+        "mode": 33152,
+        "mtime_ns": 1794166819660634090,
+        "nlink": 1,
+        "size": 475,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 0,
+      "path": "publish-initial-5633/source-pre-push-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_identity": {
+        "ctime_ns": 1794166819660021518,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530680,
+        "mode": 33152,
+        "mtime_ns": 1794166819660021518,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 41,
+      "path": "publish-initial-5633/source-pre-push-tree.stdout",
+      "sha256": "92bf1846e17803be5b9c19ea576606972e08c417f05fbb88f28eb63ec01b435c",
+      "source_identity": {
+        "ctime_ns": 1794166819660021518,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530679,
+        "mode": 33152,
+        "mtime_ns": 1794166819660021518,
+        "nlink": 1,
+        "size": 41,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 183,
+      "path": "publish-initial-5633/source-pre-push.json",
+      "sha256": "75bd5a9d0d200fbc3ac0459df8a5474867877ec63e2a1c0e46a1c9f4a5c8de7b",
+      "source_identity": {
+        "ctime_ns": 1794166819758941296,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530688,
+        "mode": 33152,
+        "mtime_ns": 1794166819758941296,
+        "nlink": 1,
+        "size": 183,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 6579,
+      "path": "publish-initial-5633/summary.json",
+      "sha256": "5086dc2fcd100a30db3d36faaefe62abbcd1560981d2834dcdb7a39b88df32d5",
+      "source_identity": {
+        "ctime_ns": 1794166839049325364,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530729,
+        "mode": 33152,
+        "mtime_ns": 1794166839049325364,
+        "nlink": 1,
+        "size": 6579,
+        "uid": 1000
+      }
+    },
+    {
+      "bytes": 8407,
+      "path": "publish_initial_5633.py",
+      "sha256": "7d1866f623303f5efe3fa831b4408da7fba5d7c6c40fc62c11100acd35b59866",
+      "source_identity": {
+        "ctime_ns": 1794166573766405791,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905612,
+        "mode": 33152,
+        "mtime_ns": 1794166573638635829,
+        "nlink": 1,
+        "size": 8407,
+        "uid": 1000
+      }
+    }
+  ],
+  "source_inventory": [
+    {
+      "kind": "directory",
+      "path": "publish-initial-5633",
+      "stat": {
+        "ctime_ns": 1794166839048432313,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530626,
+        "mode": 16832,
+        "mtime_ns": 1794166839048432313,
+        "nlink": 2,
+        "size": 4096,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/actor-after.json",
+      "stat": {
+        "ctime_ns": 1794166838955029699,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530715,
+        "mode": 33152,
+        "mtime_ns": 1794166838955029699,
+        "nlink": 1,
+        "size": 476,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/actor-after.stderr",
+      "stat": {
+        "ctime_ns": 1794166838953820464,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530714,
+        "mode": 33152,
+        "mtime_ns": 1794166838953820464,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/actor-after.stdout",
+      "stat": {
+        "ctime_ns": 1794166838953820464,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530713,
+        "mode": 33152,
+        "mtime_ns": 1794166838953820464,
+        "nlink": 1,
+        "size": 10,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/actor-before.json",
+      "stat": {
+        "ctime_ns": 1794166813407129573,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530666,
+        "mode": 33152,
+        "mtime_ns": 1794166813407129573,
+        "nlink": 1,
+        "size": 477,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/actor-before.stderr",
+      "stat": {
+        "ctime_ns": 1794166813406618099,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530665,
+        "mode": 33152,
+        "mtime_ns": 1794166813406618099,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/actor-before.stdout",
+      "stat": {
+        "ctime_ns": 1794166813406618099,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530664,
+        "mode": 33152,
+        "mtime_ns": 1794166813406618099,
+        "nlink": 1,
+        "size": 10,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/ancestor-0.json",
+      "stat": {
+        "ctime_ns": 1794166811904597755,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530648,
+        "mode": 33152,
+        "mtime_ns": 1794166811904597755,
+        "nlink": 1,
+        "size": 562,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/ancestor-0.stderr",
+      "stat": {
+        "ctime_ns": 1794166811903597784,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530647,
+        "mode": 33152,
+        "mtime_ns": 1794166811903597784,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/ancestor-0.stdout",
+      "stat": {
+        "ctime_ns": 1794166811903597784,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530646,
+        "mode": 33152,
+        "mtime_ns": 1794166811903597784,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/ancestor-1.json",
+      "stat": {
+        "ctime_ns": 1794166811921218409,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530651,
+        "mode": 33152,
+        "mtime_ns": 1794166811921218409,
+        "nlink": 1,
+        "size": 563,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/ancestor-1.stderr",
+      "stat": {
+        "ctime_ns": 1794166811920597295,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530650,
+        "mode": 33152,
+        "mtime_ns": 1794166811920597295,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/ancestor-1.stdout",
+      "stat": {
+        "ctime_ns": 1794166811920597295,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530649,
+        "mode": 33152,
+        "mtime_ns": 1794166811920597295,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/ancestor-2.json",
+      "stat": {
+        "ctime_ns": 1794166811936421836,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530654,
+        "mode": 33152,
+        "mtime_ns": 1794166811936421836,
+        "nlink": 1,
+        "size": 562,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/ancestor-2.stderr",
+      "stat": {
+        "ctime_ns": 1794166811935596865,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530653,
+        "mode": 33152,
+        "mtime_ns": 1794166811935596865,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/ancestor-2.stdout",
+      "stat": {
+        "ctime_ns": 1794166811935596865,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530652,
+        "mode": 33152,
+        "mtime_ns": 1794166811935596865,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/ancestor-3.json",
+      "stat": {
+        "ctime_ns": 1794166811949645659,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530657,
+        "mode": 33152,
+        "mtime_ns": 1794166811949645659,
+        "nlink": 1,
+        "size": 563,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/ancestor-3.stderr",
+      "stat": {
+        "ctime_ns": 1794166811948596491,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530656,
+        "mode": 33152,
+        "mtime_ns": 1794166811948596491,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/ancestor-3.stdout",
+      "stat": {
+        "ctime_ns": 1794166811948596491,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530655,
+        "mode": 33152,
+        "mtime_ns": 1794166811948596491,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/ancestor-4.json",
+      "stat": {
+        "ctime_ns": 1794166811963848111,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530660,
+        "mode": 33152,
+        "mtime_ns": 1794166811963848111,
+        "nlink": 1,
+        "size": 563,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/ancestor-4.stderr",
+      "stat": {
+        "ctime_ns": 1794166811962596089,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530659,
+        "mode": 33152,
+        "mtime_ns": 1794166811962596089,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/ancestor-4.stdout",
+      "stat": {
+        "ctime_ns": 1794166811962596089,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530658,
+        "mode": 33152,
+        "mtime_ns": 1794166811962596089,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/ancestor-5.json",
+      "stat": {
+        "ctime_ns": 1794166811978471859,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530663,
+        "mode": 33152,
+        "mtime_ns": 1794166811978471859,
+        "nlink": 1,
+        "size": 563,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/ancestor-5.stderr",
+      "stat": {
+        "ctime_ns": 1794166811977595658,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530662,
+        "mode": 33152,
+        "mtime_ns": 1794166811977595658,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/ancestor-5.stdout",
+      "stat": {
+        "ctime_ns": 1794166811977595658,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530661,
+        "mode": 33152,
+        "mtime_ns": 1794166811977595658,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/base-pr-before.json",
+      "stat": {
+        "ctime_ns": 1794166815409497077,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530669,
+        "mode": 33152,
+        "mtime_ns": 1794166815409497077,
+        "nlink": 1,
+        "size": 706,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/base-pr-before.stderr",
+      "stat": {
+        "ctime_ns": 1794166815409285106,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530668,
+        "mode": 33152,
+        "mtime_ns": 1794166815409285106,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/base-pr-before.stdout",
+      "stat": {
+        "ctime_ns": 1794166815409285106,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530667,
+        "mode": 33152,
+        "mtime_ns": 1794166815409285106,
+        "nlink": 1,
+        "size": 4484,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/create-draft.json",
+      "stat": {
+        "ctime_ns": 1794166833013772326,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530706,
+        "mode": 33152,
+        "mtime_ns": 1794166833013772326,
+        "nlink": 1,
+        "size": 867,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/create-draft.stderr",
+      "stat": {
+        "ctime_ns": 1794166833013244628,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530705,
+        "mode": 33152,
+        "mtime_ns": 1794166833013244628,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/create-draft.stdout",
+      "stat": {
+        "ctime_ns": 1794166833013244628,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530704,
+        "mode": 33152,
+        "mtime_ns": 1794166833013244628,
+        "nlink": 1,
+        "size": 70,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/existing-prs.json",
+      "stat": {
+        "ctime_ns": 1794166819651470574,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530675,
+        "mode": 33152,
+        "mtime_ns": 1794166819651470574,
+        "nlink": 1,
+        "size": 851,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/existing-prs.stderr",
+      "stat": {
+        "ctime_ns": 1794166819651010771,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530674,
+        "mode": 33152,
+        "mtime_ns": 1794166819651010771,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/existing-prs.stdout",
+      "stat": {
+        "ctime_ns": 1794166819651010771,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530673,
+        "mode": 33152,
+        "mtime_ns": 1794166819651010771,
+        "nlink": 1,
+        "size": 3,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/intent.json",
+      "stat": {
+        "ctime_ns": 1794166810900362405,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530627,
+        "mode": 33152,
+        "mtime_ns": 1794166810900362405,
+        "nlink": 1,
+        "size": 386,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/origin.json",
+      "stat": {
+        "ctime_ns": 1794166811847599392,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530645,
+        "mode": 33152,
+        "mtime_ns": 1794166811847599392,
+        "nlink": 1,
+        "size": 494,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/origin.stderr",
+      "stat": {
+        "ctime_ns": 1794166811846599421,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530644,
+        "mode": 33152,
+        "mtime_ns": 1794166811846599421,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/pr-after.json",
+      "stat": {
+        "ctime_ns": 1794166834743925337,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530709,
+        "mode": 33152,
+        "mtime_ns": 1794166834743925337,
+        "nlink": 1,
+        "size": 700,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/pr-after.stderr",
+      "stat": {
+        "ctime_ns": 1794166834743383854,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530708,
+        "mode": 33152,
+        "mtime_ns": 1794166834743383854,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/pr-after.stdout",
+      "stat": {
+        "ctime_ns": 1794166834743383854,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530707,
+        "mode": 33152,
+        "mtime_ns": 1794166834743383854,
+        "nlink": 1,
+        "size": 6103,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/preflight-before.json",
+      "stat": {
+        "ctime_ns": 1794166811380314253,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530630,
+        "mode": 33152,
+        "mtime_ns": 1794166811380314253,
+        "nlink": 1,
+        "size": 472,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/preflight-before.stderr",
+      "stat": {
+        "ctime_ns": 1794166811380032482,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530629,
+        "mode": 33152,
+        "mtime_ns": 1794166811380032482,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/preflight-before.stdout",
+      "stat": {
+        "ctime_ns": 1794166811380032482,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530628,
+        "mode": 33152,
+        "mtime_ns": 1794166811380032482,
+        "nlink": 1,
+        "size": 171,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/preflight-push.json",
+      "stat": {
+        "ctime_ns": 1794166819851321681,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530691,
+        "mode": 33152,
+        "mtime_ns": 1794166819851321681,
+        "nlink": 1,
+        "size": 470,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/preflight-push.stderr",
+      "stat": {
+        "ctime_ns": 1794166819850877805,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530690,
+        "mode": 33152,
+        "mtime_ns": 1794166819850877805,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/preflight-push.stdout",
+      "stat": {
+        "ctime_ns": 1794166819850877805,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530689,
+        "mode": 33152,
+        "mtime_ns": 1794166819850877805,
+        "nlink": 1,
+        "size": 171,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/push.json",
+      "stat": {
+        "ctime_ns": 1794166826174387401,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530700,
+        "mode": 33152,
+        "mtime_ns": 1794166826174387401,
+        "nlink": 1,
+        "size": 531,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/push.stderr",
+      "stat": {
+        "ctime_ns": 1794166826174058855,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530699,
+        "mode": 33152,
+        "mtime_ns": 1794166826174058855,
+        "nlink": 1,
+        "size": 532,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/push.stdout",
+      "stat": {
+        "ctime_ns": 1794166826173868834,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530698,
+        "mode": 33152,
+        "mtime_ns": 1794166826173868834,
+        "nlink": 1,
+        "size": 145,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/remote-refs-after-push.json",
+      "stat": {
+        "ctime_ns": 1794166828755556296,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530703,
+        "mode": 33152,
+        "mtime_ns": 1794166828755556296,
+        "nlink": 1,
+        "size": 612,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/remote-refs-after-push.stderr",
+      "stat": {
+        "ctime_ns": 1794166828755093089,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530702,
+        "mode": 33152,
+        "mtime_ns": 1794166828755093089,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/remote-refs-after-push.stdout",
+      "stat": {
+        "ctime_ns": 1794166828755093089,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530701,
+        "mode": 33152,
+        "mtime_ns": 1794166828755093089,
+        "nlink": 1,
+        "size": 194,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/remote-refs-before.json",
+      "stat": {
+        "ctime_ns": 1794166818009422386,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530672,
+        "mode": 33152,
+        "mtime_ns": 1794166818009422386,
+        "nlink": 1,
+        "size": 607,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/remote-refs-before.stderr",
+      "stat": {
+        "ctime_ns": 1794166818009046896,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530671,
+        "mode": 33152,
+        "mtime_ns": 1794166818009046896,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/remote-refs-before.stdout",
+      "stat": {
+        "ctime_ns": 1794166818009046896,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530670,
+        "mode": 33152,
+        "mtime_ns": 1794166818009046896,
+        "nlink": 1,
+        "size": 101,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/remote-refs-final.json",
+      "stat": {
+        "ctime_ns": 1794166837315468124,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530712,
+        "mode": 33152,
+        "mtime_ns": 1794166837315468124,
+        "nlink": 1,
+        "size": 607,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/remote-refs-final.stderr",
+      "stat": {
+        "ctime_ns": 1794166837314992810,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530711,
+        "mode": 33152,
+        "mtime_ns": 1794166837314992810,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/remote-refs-final.stdout",
+      "stat": {
+        "ctime_ns": 1794166837314992810,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530710,
+        "mode": 33152,
+        "mtime_ns": 1794166837314992810,
+        "nlink": 1,
+        "size": 194,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-after-branch.json",
+      "stat": {
+        "ctime_ns": 1794166838967126864,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530724,
+        "mode": 33152,
+        "mtime_ns": 1794166838967126864,
+        "nlink": 1,
+        "size": 474,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-after-branch.stderr",
+      "stat": {
+        "ctime_ns": 1794166838966859116,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530723,
+        "mode": 33152,
+        "mtime_ns": 1794166838966859116,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-after-branch.stdout",
+      "stat": {
+        "ctime_ns": 1794166838966859116,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530722,
+        "mode": 33152,
+        "mtime_ns": 1794166838966859116,
+        "nlink": 1,
+        "size": 41,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-after-head.json",
+      "stat": {
+        "ctime_ns": 1794166838958398216,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530718,
+        "mode": 33152,
+        "mtime_ns": 1794166838958398216,
+        "nlink": 1,
+        "size": 466,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-after-head.stderr",
+      "stat": {
+        "ctime_ns": 1794166838958124673,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530717,
+        "mode": 33152,
+        "mtime_ns": 1794166838958124673,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-after-head.stdout",
+      "stat": {
+        "ctime_ns": 1794166838958124673,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530716,
+        "mode": 33152,
+        "mtime_ns": 1794166838958124673,
+        "nlink": 1,
+        "size": 41,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-after-status.json",
+      "stat": {
+        "ctime_ns": 1794166839048156333,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530727,
+        "mode": 33152,
+        "mtime_ns": 1794166839048156333,
+        "nlink": 1,
+        "size": 500,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-after-status.stderr",
+      "stat": {
+        "ctime_ns": 1794166839046817790,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530726,
+        "mode": 33152,
+        "mtime_ns": 1794166839046817790,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-after-status.stdout",
+      "stat": {
+        "ctime_ns": 1794166839045817819,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530725,
+        "mode": 33152,
+        "mtime_ns": 1794166839045817819,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-after-tree.json",
+      "stat": {
+        "ctime_ns": 1794166838963617085,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530721,
+        "mode": 33152,
+        "mtime_ns": 1794166838963617085,
+        "nlink": 1,
+        "size": 471,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-after-tree.stderr",
+      "stat": {
+        "ctime_ns": 1794166838963335277,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530720,
+        "mode": 33152,
+        "mtime_ns": 1794166838963335277,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-after-tree.stdout",
+      "stat": {
+        "ctime_ns": 1794166838963335277,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530719,
+        "mode": 33152,
+        "mtime_ns": 1794166838963335277,
+        "nlink": 1,
+        "size": 41,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-after.json",
+      "stat": {
+        "ctime_ns": 1794166839048432313,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530728,
+        "mode": 33152,
+        "mtime_ns": 1794166839048432313,
+        "nlink": 1,
+        "size": 183,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-before-branch.json",
+      "stat": {
+        "ctime_ns": 1794166811405205775,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530639,
+        "mode": 33152,
+        "mtime_ns": 1794166811405205775,
+        "nlink": 1,
+        "size": 475,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-before-branch.stderr",
+      "stat": {
+        "ctime_ns": 1794166811404966527,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530638,
+        "mode": 33152,
+        "mtime_ns": 1794166811404966527,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-before-branch.stdout",
+      "stat": {
+        "ctime_ns": 1794166811404966527,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530637,
+        "mode": 33152,
+        "mtime_ns": 1794166811404966527,
+        "nlink": 1,
+        "size": 41,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-before-head.json",
+      "stat": {
+        "ctime_ns": 1794166811383887082,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530633,
+        "mode": 33152,
+        "mtime_ns": 1794166811383887082,
+        "nlink": 1,
+        "size": 464,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-before-head.stderr",
+      "stat": {
+        "ctime_ns": 1794166811383639401,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530632,
+        "mode": 33152,
+        "mtime_ns": 1794166811383639401,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-before-head.stdout",
+      "stat": {
+        "ctime_ns": 1794166811383639401,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530631,
+        "mode": 33152,
+        "mtime_ns": 1794166811383639401,
+        "nlink": 1,
+        "size": 41,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-before-status.json",
+      "stat": {
+        "ctime_ns": 1794166811843637945,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530642,
+        "mode": 33152,
+        "mtime_ns": 1794166811843637945,
+        "nlink": 1,
+        "size": 502,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-before-status.stderr",
+      "stat": {
+        "ctime_ns": 1794166811842599536,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530641,
+        "mode": 33152,
+        "mtime_ns": 1794166811842599536,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-before-status.stdout",
+      "stat": {
+        "ctime_ns": 1794166811842599536,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530640,
+        "mode": 33152,
+        "mtime_ns": 1794166811842599536,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-before-tree.json",
+      "stat": {
+        "ctime_ns": 1794166811402072217,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530636,
+        "mode": 33152,
+        "mtime_ns": 1794166811402072217,
+        "nlink": 1,
+        "size": 472,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-before-tree.stderr",
+      "stat": {
+        "ctime_ns": 1794166811401838812,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530635,
+        "mode": 33152,
+        "mtime_ns": 1794166811401838812,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-before-tree.stdout",
+      "stat": {
+        "ctime_ns": 1794166811401838812,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530634,
+        "mode": 33152,
+        "mtime_ns": 1794166811401838812,
+        "nlink": 1,
+        "size": 41,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-before.json",
+      "stat": {
+        "ctime_ns": 1794166811843925014,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530643,
+        "mode": 33152,
+        "mtime_ns": 1794166811843925014,
+        "nlink": 1,
+        "size": 183,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-pre-push-branch.json",
+      "stat": {
+        "ctime_ns": 1794166819664444210,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530684,
+        "mode": 33152,
+        "mtime_ns": 1794166819664444210,
+        "nlink": 1,
+        "size": 478,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-pre-push-branch.stderr",
+      "stat": {
+        "ctime_ns": 1794166819664007440,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530683,
+        "mode": 33152,
+        "mtime_ns": 1794166819664007440,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-pre-push-branch.stdout",
+      "stat": {
+        "ctime_ns": 1794166819664007440,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530682,
+        "mode": 33152,
+        "mtime_ns": 1794166819664007440,
+        "nlink": 1,
+        "size": 41,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-pre-push-head.json",
+      "stat": {
+        "ctime_ns": 1794166819655089385,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530678,
+        "mode": 33152,
+        "mtime_ns": 1794166819655089385,
+        "nlink": 1,
+        "size": 468,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-pre-push-head.stderr",
+      "stat": {
+        "ctime_ns": 1794166819654573347,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530677,
+        "mode": 33152,
+        "mtime_ns": 1794166819654573347,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-pre-push-head.stdout",
+      "stat": {
+        "ctime_ns": 1794166819654573347,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530676,
+        "mode": 33152,
+        "mtime_ns": 1794166819654573347,
+        "nlink": 1,
+        "size": 41,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-pre-push-status.json",
+      "stat": {
+        "ctime_ns": 1794166819758650482,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530687,
+        "mode": 33152,
+        "mtime_ns": 1794166819758650482,
+        "nlink": 1,
+        "size": 504,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-pre-push-status.stderr",
+      "stat": {
+        "ctime_ns": 1794166819757372167,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530686,
+        "mode": 33152,
+        "mtime_ns": 1794166819757372167,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-pre-push-status.stdout",
+      "stat": {
+        "ctime_ns": 1794166819757372167,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530685,
+        "mode": 33152,
+        "mtime_ns": 1794166819757372167,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-pre-push-tree.json",
+      "stat": {
+        "ctime_ns": 1794166819660634090,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530681,
+        "mode": 33152,
+        "mtime_ns": 1794166819660634090,
+        "nlink": 1,
+        "size": 475,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-pre-push-tree.stderr",
+      "stat": {
+        "ctime_ns": 1794166819660021518,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530680,
+        "mode": 33152,
+        "mtime_ns": 1794166819660021518,
+        "nlink": 1,
+        "size": 0,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-pre-push-tree.stdout",
+      "stat": {
+        "ctime_ns": 1794166819660021518,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530679,
+        "mode": 33152,
+        "mtime_ns": 1794166819660021518,
+        "nlink": 1,
+        "size": 41,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/source-pre-push.json",
+      "stat": {
+        "ctime_ns": 1794166819758941296,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530688,
+        "mode": 33152,
+        "mtime_ns": 1794166819758941296,
+        "nlink": 1,
+        "size": 183,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "regular",
+      "path": "publish-initial-5633/summary.json",
+      "stat": {
+        "ctime_ns": 1794166839049325364,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 5530729,
+        "mode": 33152,
+        "mtime_ns": 1794166839049325364,
+        "nlink": 1,
+        "size": 6579,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "publish_initial_5633.py",
+      "stat": {
+        "ctime_ns": 1794166573766405791,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905612,
+        "mode": 33152,
+        "mtime_ns": 1794166573638635829,
+        "nlink": 1,
+        "size": 8407,
+        "uid": 1000
+      }
+    },
+    {
+      "kind": "runner_regular",
+      "path": "pr-body-initial-terminal-5633.md",
+      "stat": {
+        "ctime_ns": 1794166571142480387,
+        "device": 2050,
+        "gid": 1000,
+        "inode": 4905609,
+        "mode": 33152,
+        "mtime_ns": 1794166571136480558,
+        "nlink": 1,
+        "size": 5503,
+        "uid": 1000
+      }
+    }
+  ],
+  "source_inventory_metadata_sha256": "5dccd8a4c59db656e6e8cce6822339f74bd2c93a4e293107715387ab46778806",
+  "source_regular_bytes": 50976,
+  "source_regular_files": 99,
+  "source_repository_accessed_by_collector": false,
+  "whole_chain_pq_qualified": false
+}

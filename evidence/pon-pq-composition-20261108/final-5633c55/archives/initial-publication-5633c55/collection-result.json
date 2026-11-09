@@ -1,0 +1,22 @@
+{
+  "archive": {
+    "bytes": 31528,
+    "file": "initial-publication-evidence-5633c55.tar.gz",
+    "sha256": "7ebb09474d7585deb4a96ec96cfe6235194ce7212d29f8644841041e4f688b8f"
+  },
+  "collector_before_after_equal": true,
+  "deterministic_rebuild_identical": true,
+  "manifest": {
+    "bytes": 82623,
+    "file": "manifest.json",
+    "sha256": "f0002bbfb6eb84a0f616b8511c2a04f351d19e6e8d6352a5bf10216c1fbcb331"
+  },
+  "members": 102,
+  "native_tests_executed": false,
+  "original_evidence_read_identities_and_bytes_equal": true,
+  "output": "/home/qian-qi/work/chain-pq-composition-663507-20261108/initial-publication-evidence-5633c55-v1",
+  "source_inventory_before_after_equal": true,
+  "source_regular_files": 99,
+  "status": "ARCHIVED_VERIFIED",
+  "whole_chain_pq_qualified": false
+}

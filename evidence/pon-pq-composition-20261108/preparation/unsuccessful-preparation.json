@@ -1,0 +1,43 @@
+{
+  "schema": "trnm-pq-composition-preparation-observations-v1",
+  "scope": "source transfer, merge and development observations; not native final-source qualification",
+  "observations": [
+    {
+      "stage": "local clone",
+      "result": "failed",
+      "reason": "partial/promisor source checkout lacked required Git objects; subsequent verified Git bundle/ancestry pack supplied actual objects"
+    },
+    {
+      "stage": "incomplete ancestry attempt",
+      "result": "not accepted as integration",
+      "reason": "incomplete graph reported already-up-to-date; six true merge commits were subsequently created after actual ancestry import"
+    },
+    {
+      "stage": "first bundle verification",
+      "result": "refused",
+      "reason": "required prerequisite commits unavailable in local shallow checkout; after verified ancestry import bundle verification passed"
+    },
+    {
+      "stage": "merge commit attempt",
+      "result": "failed",
+      "reason": "No space left on device; no commit was created; only own cache and duplicate own immutable Git packs were reclaimed before a later successful commit"
+    },
+    {
+      "stage": "trace refresh",
+      "result": "refused",
+      "reason": "old long anchor differed at inherited #812 observation-only backend; exact updated span then exceeded existing8192 limit; split into two full spans under unchanged bounds"
+    },
+    {
+      "stage": "component content tests",
+      "result": "exploratory observations retained separately",
+      "reason": "initial fixture had Vec<i32> inference error; first Clippy encountered disk-full; later38 content tests and packageClippy passed before final composition"
+    },
+    {
+      "stage": "component proof native attempts",
+      "result": "blocked",
+      "reason": "two local offline attempts lacked p3-air; Python15/fmt successes do not replace final desktop Rust18"
+    }
+  ],
+  "whole_chain_pq_qualified": false,
+  "production_activation": false
+}

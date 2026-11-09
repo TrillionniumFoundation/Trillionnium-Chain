@@ -25,6 +25,8 @@ OBSERVATION_FIELDS = {'passed', 'returncode', 'timed_out', 'panic_or_abort_detec
                       'observed_rejection_layers', 'report_error', 'process', 'case_directory'}
 MAX_JSON_BYTES = 2 * 1024 * 1024
 MAX_LOG_BYTES = 4 * 1024 * 1024
+HISTORICAL_STAGE_SCHEMA = 'TRNM-W1-STAGE-MEASUREMENT2'
+CURRENT_STAGE_SCHEMA = 'TRNM-W1-STAGE-MEASUREMENT3'
 
 
 def read_json(path):
@@ -34,12 +36,41 @@ def read_json(path):
 def require_fields(row, expected, context):
     controls.require(type(row) is dict, f'{context} must be an object')
     for key, value in expected.items():
-        controls.require(type(row.get(key)) is type(value) and row[key] == value,
+        controls.require(key in row and type(row[key]) is type(value) and row[key] == value,
                          f'{context} differs: {key}')
 
 
-def validate(out, proof, *, verifier_path, verifier_sha256, recorded_out=None):
-    """Validate retained observations; recorded paths are identities, never read or run."""
+def validate_process_observation(process, code, stage_schema):
+    """Select one explicit schema; current CLI observations cannot downgrade to v2."""
+    controls.require(type(stage_schema) is str and stage_schema in
+                     (HISTORICAL_STAGE_SCHEMA, CURRENT_STAGE_SCHEMA),
+                     'unsupported process observation version')
+    require_fields(process, {
+        'schema': stage_schema, 'returncode': code, 'timed_out': False,
+        'completion_observed_before_deadline': True, 'termination_reasons': [], 'error': None,
+        'owned_session_observation_complete': True, 'proc_scan_errors': [],
+        'group_probe_errors': [], 'cleanup_errors': [], 'members_after_child_exit': [],
+        'final_owned_session_members': [], 'process_group_remaining_after_child_exit': False,
+        # A clean expected rejection is a nonzero stage exit, not a failed control.
+        'stage_process_complete': code == 0, 'wall_limit_seconds': 120,
+    }, 'process observation')
+    if stage_schema == CURRENT_STAGE_SCHEMA:
+        require_fields(process, {
+            'cancellation_schema': 'TRNM-W1-CANCELLATION-HANDOFF1',
+            'result_is_pre_handoff_snapshot': True,
+            'canceled_signal': None, 'cancellation_event': None,
+            'deadline_exhausted_at_snapshot': False,
+            'prover_resource_completeness_established': False, 'complete_proof_claim': False,
+        }, 'current process observation')
+
+
+def validate(out, proof, *, verifier_path, verifier_sha256, recorded_out=None,
+             stage_schema=HISTORICAL_STAGE_SCHEMA):
+    """Validate retained evidence; default v2 preserves the original historical fixture.
+
+    The current CLI selects v3 explicitly. Recorded paths are identities, never
+    read or run. Neither version authenticates execution or claims qualification.
+    """
     out, proof = Path(out), Path(proof)
     recorded_out = out.resolve() if recorded_out is None else Path(recorded_out)
     verifier_path = Path(verifier_path)
@@ -92,15 +123,7 @@ def validate(out, proof, *, verifier_path, verifier_sha256, recorded_out=None):
         code, process = case['returncode'], case['process']
         controls.require(type(code) is int and (code == 0 if plan['expect'] == 'accept' else code > 0),
                          'control exit differs from expectation')
-        require_fields(process, {
-            'schema': 'TRNM-W1-STAGE-MEASUREMENT2', 'returncode': code, 'timed_out': False,
-            'completion_observed_before_deadline': True, 'termination_reasons': [], 'error': None,
-            'owned_session_observation_complete': True, 'proc_scan_errors': [],
-            'group_probe_errors': [], 'cleanup_errors': [], 'members_after_child_exit': [],
-            'final_owned_session_members': [], 'process_group_remaining_after_child_exit': False,
-            # A clean expected rejection is a nonzero stage exit, not a failed control.
-            'stage_process_complete': code == 0, 'wall_limit_seconds': 120,
-        }, 'process observation')
+        validate_process_observation(process, code, stage_schema)
         groups, pid = process['known_owned_groups'], process.get('pid')
         controls.require(type(groups) is list and groups
                          and all(type(group) is int and group > 0 for group in groups)
@@ -152,7 +175,8 @@ def main(argv=None):
     parser.add_argument('verifier', type=Path)
     args = parser.parse_args(argv)
     verifier = args.verifier.resolve(strict=True)
-    validate(args.out, args.proof, verifier_path=verifier, verifier_sha256=controls.sha(verifier))
+    validate(args.out, args.proof, verifier_path=verifier, verifier_sha256=controls.sha(verifier),
+             stage_schema=CURRENT_STAGE_SCHEMA)
     print('All 58 original saved-v2 controls passed; no new proof or qualification is claimed.')
     return 0
 

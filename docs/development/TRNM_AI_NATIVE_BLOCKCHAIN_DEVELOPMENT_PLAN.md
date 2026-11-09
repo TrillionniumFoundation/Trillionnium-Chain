@@ -1,3 +1,14 @@
+**M12 witnessed generation recovery V3, 2026-11-08 America/New_York — HOLD:**
+The [guarded ordinary Node/M12 entry](specs/pon/M12_GENERATION_RECOVERY_V3.md)
+adds a separate M12 witness binding, complete-journal checkpoints and transaction
+head fencing. New generation/settlement intents require an authenticated external
+CAS; uncertain replies keep the same operation and full unresolved reservation.
+Whole local rollback and an unwitnessed local successor refuse recovery. The
+original V2 research path and historical #782 Unknown operations remain outside
+this new profile's qualification. Native fixture evidence, independent current
+custody, provider query/idempotency, real power loss and original CPU/service
+budget acceptance are distinct requirements; no runtime activation is authorized.
+
 **Final 819 readback and ordinary-admission root continuation, 2026-11-07 UTC — HOLD:**
 
 > Corrected execution source ffcb687b43843ec92b3170f8841f92a3dd0a4d3d: all original static controls plus 17 suites / 666 methods passed; strict all-workspace Clippy and actual 67-harness inventory passed; 16 declared library exacts passed, including the original >8 MiB Legacy/Auth schedule. The separate transaction-History integration still failed 0/1 with PUBLIC_MUTATION_CPU_BUDGET. [Complete C2 results and original logs](../../evidence/pon-business-gates-819309-final-20261107/README.md#9-corrected-c2-local-validation-16-library-passes-separate-history-failure) preserve both outcomes. This publication child changes evidence and this plan only; it must run its own source controls, and does not inherit C2's native execution identity. Original business gates remain HOLD.
@@ -63,6 +74,29 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 [applicability](../architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md).
 
 ## 0. One authority and explicit retirement
+
+**PQ authority effect tracing and exact-expiry continuation, 2026-11-08 America/New_York:**
+Continue the exact #796 delivery `01e2c4c010c3cf65d1cf094368961efc1abab445`
+without promoting its recorded 31/32 command result into a pass. Bind the entire
+Rust inventory and checked-in Cargo/toolchain inputs to six selected source-trace
+records. Preserve the distinction between 23 mapped role hints, source anchors,
+actual execution and completed authority review; retain all untraced surfaces
+and whole-chain HOLD. Add the current account-profile refusal independently at
+the final classical listener boundary, with a test-only inconsistent-backend
+counterexample and actual no-accept/no-state-effect checks. Review all 120 original
+indicator files without relabelling source-context review as completed authority
+tracing. Refuse PQ accounts at the start of both classical local owner constructors,
+before their policy journals, reservations or required-owner markers can change;
+require two real signed-policy refusal controls and two classic positive controls.
+Retain the first source's 37-command observation separately and require all 45
+commands on the later owner-effect source. Synchronize the real
+clock fixture and wait for the original signed expiry, retaining the original
+two-second request deadline, exact refusal and durable-state assertions. Keep
+the original failed Node observations and the separately recovered hosted HTTP
+504 provider-download failure. The [effect review](../security/PQ_AUTHORITY_EFFECTS_20261108.md)
+and [trace contract](../security/PQ_AUTHORITY_TRACE_V1.md) define the scope;
+the [execution record](../../evidence/pq-authority-effects-20261108-43ede/README.md)
+must report fresh source-bound native results independently of prior runs.
 
 **PQ quorum preflight and root-family continuation, 2026-11-08 UTC:**
 Continue the existing #723 PQ candidate from `12e510b211110d93d9ead07e02c07a1eecc28ae9`.
@@ -10106,3 +10140,227 @@ implementation review remain required. Keep production activation, FinalUse
 and whole-chain PQ qualifications false and all seven requested gates at
 HOLD / NO-GO until their own complete, same-source evidence passes. Historical
 successes and failures retain their exact original source identities.
+
+
+### Actual material loading and static M15 profile V2, 2026-11-08
+
+The [actual-reader counterexample](../../evidence/loader-closure-20261108/README.md)
+retains two failing tests on the original continuous/mining reader: a duplicated
+file handle's shared cursor redirects loaded bytes while inode identity and
+length stay fixed. The repair retains each authenticated material digest, reads
+by explicit offset, and verifies the exact returned buffer inside the existing
+bounded progress loop. The original replay/resource checks remain required.
+
+The [static execution V2 contract](../security/M15_STATIC_EXECUTION_CLOSURE_V2.md)
+narrows the existing sealed M15 consumer with an explicit provider environment
+before authority open, secure-execution refusal, one non-executable stack,
+no text relocations and file-backed executable segments. Historical V1 records
+keep their original signed representation; the upgraded owner refuses new or
+current V1 execution until the original authority publishes a current V2
+configuration. This does not reset namespace/history or reinterpret an unknown
+launch as absent. Fixed-source checks must retain their original failures.
+General interpreters, shared-library loading, tokenizer/router extensions and
+external model runtime closure remain unsupported; isolated native deployment,
+original-8193 resources, whole-state rollback and activation remain HOLD / NO-GO.
+
+The published source `059e149ccf683a69e6dad4e7f5a21fdd76b671fc` (tree
+`c9ea28106d0dfc33f9edb04d396e6e3c6f8783ba`) has 15 complete official command
+receipts with unchanged before/after tracked bytes. Thirteen source/static
+commands and 155 Python cases pass; locked graphs remain 176/181 packages with
+26 workspace members. The selected complete policy/M15 groups finish **67
+passed, 8 failed, 1 ignored**, including all 12 new passing regressions. The
+eight unchanged service fixtures fail at Unix-socket creation with `EPERM`;
+owned-path and abstract-namespace diagnostics reproduce that environment
+boundary before any bind. Existing hosted full-library commands cover those
+tests, but no hosted pass is claimed here. Strict workspace/all-target/all-feature
+Clippy passes after explicitly aligning the Rustup shim with the actual compiler;
+its original exit-0 / SQLite-UNQUALIFIED observation remains retained separately.
+The isolated fixed-root ordinary consumer remains unexecuted. These results do
+not qualify the general model loader or any production activation.
+
+
+### P3 follow-up: actual pruned-MMCS two-opening collision reduction
+
+The [bounded structural argument](../../formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/BINDING_REDUCTION.md)
+extends the tagged SHA3-512 candidate to the actual locked P3 0.8.0 binary,
+cap-zero pruned verifier with pinned ordered power-of-two matrix heights,
+widths and statement context. It covers shorter-row injections, unequal and
+duplicate query lists, arbitrary full sibling digests and extension-field
+basis flattening. Two accepted outputs that disagree at a shared matrix-row
+coordinate yield a collision in the complete framed hash. With query counts
+q0/q1, tallest height 2^h and k distinct matrix heights, the postprocessor
+uses at most (q0+q1)(h+2k-1)+2 additional whole-hash calls including the witness
+recheck. It also postprocesses quantum-produced classical outputs in the same
+oracle/advice experiment; this is not quantum commitment or PCS extraction.
+
+The additive native executable uses the unchanged R1 role APIs and real P3
+pruned, restoration, single-path and ExtensionMmcs interfaces. Its real-hash
+controls and deliberately colliding test-oracle controls are separately
+identified. Forced test-oracle collisions are not SHA3 collisions or W1
+forgeries. The focused runner executes this harness and checks original
+profile bytes and locked dependency archives/source identities before and
+after testing. It preserves all earlier W1 campaign evidence and does not
+activate a consensus profile.
+
+Concrete primitive security, Merkle knowledge extraction, full PCS/Fiat–Shamir
+composition, recursive verification and lifetime qualification remain open.
+All concrete security-bit fields remain null; the decision stays HOLD_NO_GO.
+
+
+### 2026-11-08 W1 fixed mixed-AIR, DEEP and FRI equation replay
+
+Continue the exact #792 candidate
+`2e5150c41484a8b3196b33de2e997794145edd7c`. The
+[algebra continuation](../security/W1_FRI_ALGEBRA_REPLAY_20261108.md) preserves
+the preceding transcript and Merkle-opening replay byte-for-byte and evaluates
+the previously omitted equations on the same pinned historical join seal.
+The generated 12,359-operation mixed AIR program, all 50 DEEP starting values,
+150 incoming FRI equalities and 50 terminal-polynomial equalities are now
+numerically checked. The first 50 DEEP equalities are already part of the 150
+FRI equalities; the total is 201 algebraic equalities including the AIR check.
+
+A separate register-expanded implementation independently reproduces all
+DEEP and fold values, the 50 terminal values and 300 nonzero denominator
+identities, without importing the new combo-batched algebra implementation.
+The new exact-source workflow checks the head and prospective merge, runs a
+fixed named test roster, preserves unsuccessful observations and refuses
+promotion of fixed-input observations to complete proof/security claims.
+The [evidence packet](../../evidence/pon-w1-fri-algebra-20261108/README.md)
+records raw observations, the additional source identities and review limits.
+
+This closes only the named fixed-input numerical checks. It does not prove
+intended W1/guest/VM/compiler/AIR semantics, equivalence on every accepted
+receipt, any of the 27 recursive programs, RBR knowledge extraction, quantum
+state restoration, shared-oracle/Merkle extraction or lifetime composition.
+Zero DEEP denominators are refused by the audit while the SDK defines a zero
+inverse, so general language equivalence is explicitly not claimed. The eight
+full proof interfaces remain open, their complete bound remains unknown and
+production activation remains HOLD. P3 #795 and content-binding #789 remain
+separate candidates; no cross-branch qualification is inferred.
+
+### 2026-11-08 seven-layer source, effect and recovery-policy composition
+
+Continue [PR #790](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/790)
+at `88568e2511fcf166e6824947ac97b06b72104385` with the
+[seven-layer review](../security/PQ_SEVEN_LAYER_REVIEW_20261108.md).
+The retained remote observation keeps main at
+`dd6e1c3cbeacbdc532b0679297835b3a0aac78f0`; the independent #796 candidate is
+not merged into this work. Preserve #796's original 31/32 command outcome and
+its Node release-owner result of 38 passed, 2 failed, and 1 ignored at
+`ca3c4f88afc70399000b18fc7d68cfa62e57fb2f`. Other branch successes do not repair
+those failures or validate this composition.
+
+Bind the lifetime register's revision and 15 declared event paths to a reviewed
+regular-file SHA-256 lock generated from fixed Git blobs. Reject source changes,
+revision substitutions, omitted/extra paths, ambiguous JSON, and unavailable
+locks. The 58 lifetime and 49 claim-guard tests pass; arithmetic examples remain
+explicitly unbound, and source consistency never becomes authenticated
+provenance or a complete dependency closure.
+
+Add the bounded [root/recovery policy model](../security/PQ_ROOT_RECOVERY_POLICY_V1.md)
+and [authority/effect register](../security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md).
+Require both declared signature families across every modeled root path and
+successor policy, retain unknown custody/currentness/anchor/effect obligations,
+and never grant authority from supplied approval claims. Trace seven reviewed
+effect scopes, including the actual `pon_wire::Envelope` account path through
+executor debit/credit and Node persistence; do not substitute compatibility
+validation, discovery/cache writes, or read-only finality facts for that effect.
+
+This work changes no Rust authorization owner, native execution, signed wire,
+deployed root or production permission. Exact-source integration receipts remain
+separate from native and independent end-to-end qualification. All seven layers
+retain their open composition obligations; the complete actual lifetime bound
+stays null and whole-chain PQ/activation stay false.
+
+### 2026-11-08 unified PQ composition and actual cached-payload binding
+
+Continue the fixed #812 head `7e044b65454f4c9ea505591727332acffb33e7e5`
+with true merges of #799, #800, #801, #803, #798 and #806. The
+[composition contract](../security/PQ_COMPOSITION_20261108.md) lists every exact
+input and preserves each predecessor's evidence and limits. Concurrent root V2
+work and #807's separate version specification are not imported or counted.
+
+Add a TCM2/CCH1 cached-materialization API that binds the same owned payload
+buffers to output and the complete SHA-512 observer. Its independent pin,
+nonrefundable cumulative budget, original deadline, no-replace publication and
+sixteen negative/positive controls do not grant installation or FinalUse.
+Add per-call MMCS complete-frame and padded-block-equivalent accounting, plus
+an independent report reader. This closes a units/coverage ambiguity without
+inventing measured permutations, adversary query limits or security bits.
+
+The first composition source checks correctly refuse stale inventories and
+source locks. Rebind reviewed records to a committed combined source and retain
+these refusals. Then execute the retained affected suites, explicit owner guard
+green/red controls, locked Cargo graphs, strict Clippy and source/Markdown
+checks on a single clean revision. Preliminary component successes are not
+final combined-source results. Whole-chain PQ, production, quantum extraction
+and final-use qualification remain false throughout this work.
+
+
+### 2026-11-08 composed CI refusal controls and retained first attempt
+
+The first frozen composition source attempt at
+`8e636ca74df1eceda7000f8cad69ca1c920f5f25` preserves matching raw-source receipts
+and its unsuccessful commands in the [evidence packet](../../evidence/pon-pq-composition-20261108/README.md).
+Fix two obsolete literal expectations for the additive lifetime/effect/root and
+trace commands, retaining the exact full-lane and prefix predicates. Add two
+independent omission/duplication/skip/swallow/order regressions. Move the
+repository-copy source controls to the existing desktop environment after their
+cloud ENOSPC observations; do not silently retry or discard those results.
+All native suites will bind a new clean final candidate; all qualification
+flags and outstanding quantum/authority obligations remain unchanged.
+
+### 2026-11-08 frozen composition results and Draft #822
+
+Publish the fixed composition `5633c55219c01c689f670c2ca35d122e39f3f791`
+as [Draft #822](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/822)
+against the exact #812 base. The
+[execution packet](../../evidence/pon-pq-composition-20261108/README.md)
+retains 603 source/model/refusal cases, 18 P3 native example cases, four owner
+green controls and two intended guard-removal assertion failures. A separate
+normal-native SQLite component run observes its actual layout cfg and build
+fence; it does not qualify earlier binaries that emitted the unqualified-layout
+warning.
+
+The DA full library records 412 passes and three failures, including passes for
+all 16 new cached-payload controls. Each original failure is preserved and was
+reproduced once with the original ELF. The unmerged test-only child `f0e8dc9`
+records three exact single passes, not a full 415-test execution or resolution
+of all original causes. Keep its source identity and unknown-launch/guarded-
+recovery history separate.
+
+The Node full library is interrupted by the unchanged 8 GiB free-disk gate.
+Its 1,298-name roster has 792 passed, two failed and 24 ignored terminal records;
+480 names have no terminal record. Four subsequent build gates are blocked
+before execution. Preserve the wrong execution-environment prefix in the old
+runner as an additional inventory refusal, while independently recording the
+six actual module cases that did pass. Both observed Node failures passed once
+in separate original-ELF diagnostics; their original causes remain unresolved.
+
+Attach the exact raw receipts, manifests, incomplete and ignored rosters,
+counterexamples and diagnostics without editing prior observations. Later
+documentation/evidence commits must distinguish their source identity from the
+executed candidate and verify that the runtime/proof bytes remain unchanged.
+The full native campaign, whole-chain PQ, PQ128, production activation and
+FinalUse remain unqualified. Complete native coverage and the existing quantum,
+authority, lifetime and consensus composition obligations remain open.
+
+### 2026-11-08 bounded continuation and evidence publication
+
+Keep the later bounded continuation distinct from the original full campaign.
+It passed 16 auxiliary gates but all heavy commands were refused before launch;
+seven native or qualification gates remain failed/blocked and zero native cases
+executed. The 179 package cases and 25 TLS cases are expected rosters only.
+Retain the fixed 8 GiB running threshold and the 16 GiB planned repair-entry
+threshold. Cleanup of four task-owned derived paths preserved 449 OUT records
+but left 16,287,776,768 available bytes, so the repair continuation did not start.
+Retain the original primary Node/DA binaries, logs and unknown process observations; do not turn
+cleanup or metadata success into native qualification.
+
+Publish the final raw execution packets and diagnostics in a single metadata
+child of the executed runtime. Rebind only the two modified documentation pins,
+retain every earlier raw evidence blob, and verify unchanged runtime, proof,
+workflow and test bytes. Execute the separate 151-case source-negative roster
+on that committed child and retain its post-commit receipts without moving the
+verified candidate. Keep Draft #822 at HOLD with actual failed, interrupted,
+ignored, expected-red and successful observations separately visible.

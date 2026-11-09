@@ -13,6 +13,8 @@ mod deployment;
 #[cfg(target_os = "linux")]
 mod elf;
 #[cfg(target_os = "linux")]
+mod execution_environment;
+#[cfg(target_os = "linux")]
 mod execution_wire;
 #[cfg(target_os = "linux")]
 mod files;
@@ -137,6 +139,7 @@ pub fn run_admin(
             args.len() == expected.len() && args.keys().all(|key| expected.contains(&key.as_str())),
             "M15_EXACT_COMMAND_ARGUMENTS",
         )?;
+        execution_environment::require_provider_environment()?;
         match command {
             "m15-release-owner-frontier-initialize-v1" => frontier_service::Service::open(true)?
                 .initialization()

@@ -1,0 +1,647 @@
+[
+  {
+    "label": "preflight",
+    "argv": [
+      "/bin/bash",
+      "scripts/project-preflight.sh"
+    ],
+    "reader": "preflight"
+  },
+  {
+    "label": "source-guard-before",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "28306d24b5f606fc89a6de3d7d2c08949a2b3edc",
+      "--output",
+      "/workspace/scratch/43ede25c88ef/inventory-validation/runner45-static-out/verified-source-before.json"
+    ],
+    "reader": "source"
+  },
+  {
+    "label": "distributed-source-inventory",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "reader": "exit"
+  },
+  {
+    "label": "rustc-version",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "-Vv"
+    ],
+    "reader": "rustc"
+  },
+  {
+    "label": "cargo-version",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "-V"
+    ],
+    "reader": "cargo"
+  },
+  {
+    "label": "openssl-version",
+    "argv": [
+      "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/bin/openssl",
+      "version"
+    ],
+    "reader": "openssl"
+  },
+  {
+    "label": "metadata-default",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "reader": "metadata-main"
+  },
+  {
+    "label": "metadata-all-features",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all-features",
+      "--format-version",
+      "1"
+    ],
+    "reader": "metadata-main"
+  },
+  {
+    "label": "metadata-fuzz",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "tests/fuzz/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "reader": "metadata-fuzz"
+  },
+  {
+    "label": "formatting",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "reader": "exit"
+  },
+  {
+    "label": "release-non-test-library",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "check",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-release-bundle",
+      "--lib"
+    ],
+    "reader": "exit"
+  },
+  {
+    "label": "release-all-targets",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-release-bundle",
+      "--all-targets",
+      "--all-features",
+      "--no-fail-fast",
+      "--",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "reader": "release-tests"
+  },
+  {
+    "label": "five-package-all-targets",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-protocol",
+      "-p",
+      "trnm-crypto-primitives",
+      "-p",
+      "trnm-checkpoint-types",
+      "-p",
+      "trnm-checkpoint-store",
+      "-p",
+      "trnm-verification-profiles",
+      "--all-targets",
+      "--all-features",
+      "--no-fail-fast",
+      "--",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "reader": "rust-tests"
+  },
+  {
+    "label": "six-package-doc-tests",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-release-bundle",
+      "-p",
+      "trnm-protocol",
+      "-p",
+      "trnm-crypto-primitives",
+      "-p",
+      "trnm-checkpoint-types",
+      "-p",
+      "trnm-checkpoint-store",
+      "-p",
+      "trnm-verification-profiles",
+      "--doc",
+      "--all-features",
+      "--no-fail-fast",
+      "--",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "reader": "rust-docs"
+  },
+  {
+    "label": "node-release-owner",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--all-features",
+      "release_owner::",
+      "--",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "reader": "node-tests"
+  },
+  {
+    "label": "workspace-strict-clippy",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "clippy",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "reader": "exit"
+  },
+  {
+    "label": "ci-contract",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "reader": "json"
+  },
+  {
+    "label": "ci-contract-negatives",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_ci_contract.py"
+    ],
+    "reader": "unittest"
+  },
+  {
+    "label": "upstream-migration-signatures",
+    "argv": [
+      "/usr/bin/env",
+      "PYTHONWARNINGS=error::ResourceWarning",
+      "/usr/bin/python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "formal/pon-nakamoto-v1",
+      "-p",
+      "test_pq_account_migration.py",
+      "-v"
+    ],
+    "reader": "unittest"
+  },
+  {
+    "label": "upstream-migration-journal",
+    "argv": [
+      "/usr/bin/env",
+      "PYTHONWARNINGS=error::ResourceWarning",
+      "/usr/bin/python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "formal/pon-nakamoto-v1",
+      "-p",
+      "test_pq_migration_journal_owner.py",
+      "-v"
+    ],
+    "reader": "unittest"
+  },
+  {
+    "label": "upstream-public-seed-relation",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "formal/pon-nakamoto-v1",
+      "-p",
+      "test_pq_seed_relation_vectors_v1.py",
+      "-v"
+    ],
+    "reader": "unittest"
+  },
+  {
+    "label": "pq-root-quorum-research",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "formal/pon-nakamoto-v1",
+      "-p",
+      "test_pq_root_quorum_research.py",
+      "-v"
+    ],
+    "reader": "unittest"
+  },
+  {
+    "label": "pq-integration",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "reader": "hold-no-go"
+  },
+  {
+    "label": "pq-integration-negatives",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_pq_research_integration.py",
+      "-v"
+    ],
+    "reader": "unittest"
+  },
+  {
+    "label": "pq-claim",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/pq_chain_claim_guard.py"
+    ],
+    "reader": "hold"
+  },
+  {
+    "label": "pq-claim-negatives",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_pq_chain_claim_guard.py"
+    ],
+    "reader": "unittest"
+  },
+  {
+    "label": "pq-authority",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/pq_authority_surface_scan.py",
+      "--summary-only"
+    ],
+    "reader": "authority-hold"
+  },
+  {
+    "label": "pq-authority-negatives",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_pq_authority_surface_scan.py",
+      "-v"
+    ],
+    "reader": "unittest"
+  },
+  {
+    "label": "source-integrity-negatives",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_ci_source_integrity.py"
+    ],
+    "reader": "unittest"
+  },
+  {
+    "label": "canonical-plan",
+    "argv": [
+      "/bin/bash",
+      "scripts/ci/check_canonical_development_plan.sh"
+    ],
+    "reader": "exit"
+  },
+  {
+    "label": "repository-links",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/check_repository.py"
+    ],
+    "reader": "repository"
+  },
+  {
+    "label": "pq-authority-trace",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/pq_authority_trace.py",
+      "--summary-only"
+    ],
+    "reader": "authority-trace"
+  },
+  {
+    "label": "pq-authority-trace-negatives",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_pq_authority_trace.py",
+      "-v"
+    ],
+    "reader": "trace-unittest"
+  },
+  {
+    "label": "node-pq-network",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--all-features",
+      "ingress::pq_network::",
+      "--",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "reader": "pq-network-tests"
+  },
+  {
+    "label": "node-pq-profile-boundary",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--all-features",
+      "ingress::pq_network::tests::pq_account_profile_rejects_classical_listeners_with_inconsistent_backend_before_effects",
+      "--",
+      "--exact",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "reader": "pq-boundary-test"
+  },
+  {
+    "label": "node-pq-profile-boundary-readback",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/check_required_native_test.py",
+      "/workspace/scratch/43ede25c88ef/inventory-validation/runner45-static-out/node-pq-profile-boundary.stdout.log",
+      "--test",
+      "ingress::pq_network::tests::pq_account_profile_rejects_classical_listeners_with_inconsistent_backend_before_effects"
+    ],
+    "reader": "native-test-readback"
+  },
+  {
+    "label": "node-pq-task-owner-rejection",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--all-features",
+      "store::pq_owner_rejection_tests::pq_account_rejects_classical_task_owner_before_any_durable_effect",
+      "--",
+      "--exact",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "reader": "owner-exact:node-pq-task-owner-rejection"
+  },
+  {
+    "label": "node-pq-task-owner-rejection-readback",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/check_required_native_test.py",
+      "/workspace/scratch/43ede25c88ef/inventory-validation/runner45-static-out/node-pq-task-owner-rejection.stdout.log",
+      "--test",
+      "store::pq_owner_rejection_tests::pq_account_rejects_classical_task_owner_before_any_durable_effect"
+    ],
+    "reader": "owner-readback:node-pq-task-owner-rejection"
+  },
+  {
+    "label": "node-pq-mining-owner-rejection",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--all-features",
+      "store::pq_owner_rejection_tests::pq_account_rejects_classical_mining_owner_before_any_durable_effect",
+      "--",
+      "--exact",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "reader": "owner-exact:node-pq-mining-owner-rejection"
+  },
+  {
+    "label": "node-pq-mining-owner-rejection-readback",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/check_required_native_test.py",
+      "/workspace/scratch/43ede25c88ef/inventory-validation/runner45-static-out/node-pq-mining-owner-rejection.stdout.log",
+      "--test",
+      "store::pq_owner_rejection_tests::pq_account_rejects_classical_mining_owner_before_any_durable_effect"
+    ],
+    "reader": "owner-readback:node-pq-mining-owner-rejection"
+  },
+  {
+    "label": "node-classical-task-owner-positive",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--all-features",
+      "store::pq_owner_rejection_tests::classical_task_owner_with_signed_catalog_still_opens",
+      "--",
+      "--exact",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "reader": "owner-exact:node-classical-task-owner-positive"
+  },
+  {
+    "label": "node-classical-task-owner-positive-readback",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/check_required_native_test.py",
+      "/workspace/scratch/43ede25c88ef/inventory-validation/runner45-static-out/node-classical-task-owner-positive.stdout.log",
+      "--test",
+      "store::pq_owner_rejection_tests::classical_task_owner_with_signed_catalog_still_opens"
+    ],
+    "reader": "owner-readback:node-classical-task-owner-positive"
+  },
+  {
+    "label": "node-classical-mining-owner-positive",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--all-features",
+      "store::pq_owner_rejection_tests::classical_mining_owner_with_signed_catalog_still_opens",
+      "--",
+      "--exact",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "reader": "owner-exact:node-classical-mining-owner-positive"
+  },
+  {
+    "label": "node-classical-mining-owner-positive-readback",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/check_required_native_test.py",
+      "/workspace/scratch/43ede25c88ef/inventory-validation/runner45-static-out/node-classical-mining-owner-positive.stdout.log",
+      "--test",
+      "store::pq_owner_rejection_tests::classical_mining_owner_with_signed_catalog_still_opens"
+    ],
+    "reader": "owner-readback:node-classical-mining-owner-positive"
+  },
+  {
+    "label": "source-guard-after",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "28306d24b5f606fc89a6de3d7d2c08949a2b3edc",
+      "--output",
+      "/workspace/scratch/43ede25c88ef/inventory-validation/runner45-static-out/verified-source-after.json"
+    ],
+    "reader": "source"
+  }
+]

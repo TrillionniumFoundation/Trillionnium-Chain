@@ -60,6 +60,11 @@ COMPLETE_OWNER_SOURCE_DIRS = frozenset((
 # are not recreated by claiming their historical Git object identity. The
 # transport slice remains mandatory and separately bounded from whole-chain PQ.
 NATIVE_REQUIRED_PATHS = frozenset((
+    "trillionnium/crates/trnm-pon-node/src/store/pq_owner_rejection_tests.rs",
+    "scripts/ci/pq_authority_trace.py",
+    "scripts/ci/test_pq_authority_trace.py",
+    "config/pon/pq-authority-traces-v1.json",
+    "docs/security/PQ_AUTHORITY_TRACE_V1.md",
     "scripts/ci/pq_source_reader.py",
     "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
     "trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs",
@@ -128,6 +133,9 @@ NATIVE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-pon-node/src/operator_pq_startup_tests.rs",
     "trillionnium/crates/trnm-pon-node/src/operator_continuous_history.rs",
     "trillionnium/crates/trnm-pon-node/src/operator_continuous_policy.rs",
+    "trillionnium/crates/trnm-pon-node/src/operator_continuous_policy_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/operator_mining_policy.rs",
+    "trillionnium/crates/trnm-pon-node/src/operator_mining_policy_tests.rs",
     "trillionnium/crates/trnm-pon-node/src/operator_continuous_recipient.rs",
     "trillionnium/crates/trnm-pon-node/src/operator_continuous_recovery.rs",
     "trillionnium/crates/trnm-pon-node/src/operator_continuous_lease.rs",
@@ -262,7 +270,16 @@ CONVERGENCE_REQUIRED_PATHS = frozenset((
     "scripts/ci/pq_lifetime_budget.py",
     "scripts/ci/test_pq_lifetime_budget.py",
     "config/pon/pq128-lifetime-budget-v1.json",
+    "config/pon/pq128-source-lock-v1.json",
     "config/pon/pq128-lifetime-example-v1.json",
+    "formal/pon-nakamoto-v1/pq_root_recovery_policy_v1.py",
+    "formal/pon-nakamoto-v1/test_pq_root_recovery_policy_v1.py",
+    "docs/security/PQ_ROOT_RECOVERY_POLICY_V1.md",
+    "docs/security/PQ_SEVEN_LAYER_REVIEW_20261108.md",
+    "scripts/ci/pq_authority_effect_register.py",
+    "scripts/ci/test_pq_authority_effect_register.py",
+    "config/pon/pq-authority-effects-v1.json",
+    "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
     "docs/security/PQ128_LIFETIME_BUDGET_V1.md",
     "formal/pon-nakamoto-v1/cell_dependency_closure.py",
     "formal/pon-nakamoto-v1/test_cell_dependency_closure.py",
@@ -636,6 +653,8 @@ M15_RELEASE_OWNER_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-pon-node/src/release_owner/consumer.rs",
     "trillionnium/crates/trnm-pon-node/src/release_owner/deployment.rs",
     "trillionnium/crates/trnm-pon-node/src/release_owner/elf.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/execution_environment.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/execution_environment_tests.rs",
     "trillionnium/crates/trnm-pon-node/src/release_owner/execution_wire.rs",
     "trillionnium/crates/trnm-pon-node/src/release_owner/files.rs",
     "trillionnium/crates/trnm-pon-node/src/release_owner/files_faults.rs",
@@ -716,6 +735,17 @@ NATIVE_REQUIRED_PATHS |= frozenset((
     "trillionnium/crates/trnm-pon-node/tests/pq_application_local_cli/fixture.rs",
     "trillionnium/crates/trnm-pon-node/tests/pq_application_local_cli/fixture/tasks.rs",
     "trillionnium/crates/trnm-pon-node/tests/pq_application_local_feature_off.rs",
+))
+# The real cached-payload consumer and the per-call MMCS accounting are separate
+# source obligations. Neither establishes loader authority or quantum extraction.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "trillionnium/crates/trnm-data-availability/src/cell/content_v2/cached.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/content_v2/cached/tests.rs",
+    "formal/pon-nakamoto-v1/w1_public_stark_research/examples/tagged_sha3_mmcs_binding.rs",
+    "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/check_sponge_accounting.py",
+    "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/test_sponge_accounting.py",
+    "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/SPONGE_ACCOUNTING.md",
+    "docs/security/PQ_COMPOSITION_20261108.md",
 ))
 NATIVE_FALSE = frozenset((
     "whole_native_authorization_migrated", "default_profile_migrated",

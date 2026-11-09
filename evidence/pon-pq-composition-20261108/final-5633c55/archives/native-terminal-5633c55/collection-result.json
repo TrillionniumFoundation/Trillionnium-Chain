@@ -1,0 +1,22 @@
+{
+  "archive": {
+    "bytes": 602969,
+    "file": "native-terminal-evidence-5633c55.tar.gz",
+    "sha256": "53e0aef8dd10960f5dd5147df5bdd27ad1235fc481f152609c488cc0edb5a62e"
+  },
+  "collector_before_after_equal": true,
+  "deterministic_rebuild_identical": true,
+  "manifest": {
+    "bytes": 119873,
+    "file": "manifest.json",
+    "sha256": "17af88252f270578b4f78a036a243c56fd762b206988437567b1ac87ee28ab0d"
+  },
+  "members": 136,
+  "native_tests_executed": false,
+  "original_evidence_read_identities_and_bytes_equal": true,
+  "output": "/home/qian-qi/work/chain-pq-composition-663507-20261108/native-terminal-evidence-5633c55-v1",
+  "source_inventory_before_after_equal": true,
+  "source_regular_files": 133,
+  "status": "ARCHIVED_VERIFIED",
+  "whole_chain_pq_qualified": false
+}

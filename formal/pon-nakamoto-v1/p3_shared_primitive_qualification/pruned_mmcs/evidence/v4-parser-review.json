@@ -1,0 +1,36 @@
+{
+  "schema": "p3.pruned-mmcs.exact-name-parser-review.v1",
+  "source_log": "../runner-review-v3/rust-tests.stdout.txt",
+  "source_log_sha256": "9042433c41e42ed76a626fd27ef56cfc1abafb34e0ec63ea7449b408b920e9a7",
+  "runner_sha256": "410d5c2fccf0b131fec24cbfc5f68bceaaafbd693d5c55e0e6444e37641bf1e5",
+  "mechanism": "execute the actual required-name For AST from the final runner",
+  "required_tests": [
+    "sha_profile_pruned_mixed_heights_restore_to_native_paths",
+    "carry_profile_pruned_mixed_heights_restore_to_native_paths",
+    "extension_flattening_preserves_exact_rows_and_shared_paths",
+    "deliberately_colliding_leaves_yield_full_framed_collision",
+    "arbitrary_siblings_and_injected_row_conflict_yield_branch_collision",
+    "real_hash_rejects_duplicate_injection_shape_index_and_sibling_controls",
+    "shared_coordinate_is_the_reduced_matrix_row_not_the_global_index",
+    "conflict_search_never_erases_an_earlier_duplicate_value",
+    "a_single_row_conflict_needs_no_authentication_sibling",
+    "disjoint_valid_queries_are_not_reported_as_a_binding_violation",
+    "an_extra_cap_entry_is_outside_the_fixed_profile"
+  ],
+  "positive_original_log_pass": true,
+  "negative_inputs_are_derived_strings_not_new_cargo_runs": true,
+  "negatives": [
+    {
+      "kind": "remove-required-name",
+      "expected_rejection": "Pruned MMCS regression did not pass: sha_profile_pruned_mixed_heights_restore_to_native_paths",
+      "rejected": true,
+      "derived_log_sha256": "3a99f95a7ca3bdaf60969d85448f9f164e668d50beae2551bbe3f8933a17a7fe"
+    },
+    {
+      "kind": "prefix-required-name",
+      "expected_rejection": "Pruned MMCS regression did not pass: sha_profile_pruned_mixed_heights_restore_to_native_paths",
+      "rejected": true,
+      "derived_log_sha256": "a1b95a52df96581be87ac1733f182573c588f08761a6e24945bebbfb77fe5eb8"
+    }
+  ]
+}

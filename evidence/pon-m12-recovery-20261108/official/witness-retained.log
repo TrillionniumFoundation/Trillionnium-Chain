@@ -1,0 +1,104 @@
+    Finished `release` profile [optimized] target(s) in 0.37s
+     Running unittests src/lib.rs (/workspace/scratch/10366560c781/target-effects/release/deps/trnm_pon_node-55ae308ca29f5ac1)
+
+running 55 tests
+test pq_rollback_witness::test_observation::tests::abandoned_phases_and_overwritten_rows_remain_explicit_and_bounded ... ok
+test pq_rollback_witness::test_observation::tests::disabled_observation_and_failures_never_supply_authority_or_error_text ... ok
+test pq_rollback_witness::test_observation::tests::operation_macro_finishes_question_mark_and_early_return_once ... ok
+test pq_rollback_witness::test_observation::tests::operation_macro_keeps_success_unwind_and_disabled_scope_semantics ... ok
+test pq_rollback_witness::tests::active_owner_requires_its_known_head_for_current_and_cas ... ok
+test pq_rollback_witness::tests::authenticated_late_current_receipt_cannot_supply_live_authority ... ok
+test pq_rollback_witness::tests::authenticated_matching_late_cas_is_known_success_and_client_stays_usable ... ok
+test pq_rollback_witness::tests::cancellation_after_signing_before_send_preserves_same_client ... ok
+test pq_rollback_witness::tests::cold_reopen_requires_exact_independently_retained_checkpoint ... ok
+test pq_rollback_witness::tests::durable_predecessor_shape_distinguishes_registration_from_advancement ... ok
+test pq_rollback_witness::tests::failed_local_commit_fences_owner_until_explicit_reopen ... ok
+test pq_rollback_witness::tests::independent_clients_accept_other_writers_advances_and_cold_reopen ... ok
+test pq_rollback_witness::tests::invalid_external_checkpoint_is_rejected_before_touching_recovery_storage ... ok
+test pq_rollback_witness::tests::known_checkpoint_preserves_exact_retry_and_unobserved_other_writer_progress ... ok
+test pq_rollback_witness::tests::known_checkpoint_refuses_local_cas_conflicts_before_signing_or_transport ... ok
+test pq_rollback_witness::tests::late_committed_cas_cannot_write_past_original_connection_deadline ... ok
+test pq_rollback_witness::tests::malformed_local_checkpoints_never_enter_transport_or_poison_client ... ok
+test pq_rollback_witness::tests::same_keys_under_different_binding_generation_cannot_authorize_current ... ok
+test pq_rollback_witness::tests::schema_rejects_extra_sqlite_objects_and_oversized_sql_text ... ok
+test pq_rollback_witness::tests::service_expiry_after_update_before_commit_keeps_original_checkpoint ... ok
+test pq_rollback_witness::tests::signed_current_cannot_regress_or_change_an_observed_generation ... ok
+test pq_rollback_witness::tests::slow_drip_read_obeys_one_absolute_deadline ... ok
+test pq_rollback_witness::tests::slow_drip_write_obeys_one_absolute_deadline ... ok
+test store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart ... FAILED
+test store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics ... FAILED
+test store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart ... FAILED
+test store::pq_rollback_witness::combined_tests::independent_witness_process_child ... ok
+test store::pq_rollback_witness::tests::authenticated_cas_receipt_after_original_deadline_still_aligns_local_commit ... ok
+test store::pq_rollback_witness::tests::authenticated_successful_cas_commits_before_late_live_cancellation ... ok
+test store::pq_rollback_witness::tests::binding_generation_policy_and_distinct_identity_are_mandatory ... ok
+test store::pq_rollback_witness::tests::cached_permission_is_rechecked_after_actual_native_tcp_success ... ok
+test store::pq_rollback_witness::tests::captured_signed_reply_cannot_answer_a_new_random_challenge ... ok
+test store::pq_rollback_witness::tests::cold_reopen_rejects_oversized_metadata_and_accepts_exact_operator_repair ... ok
+test store::pq_rollback_witness::tests::committed_expiry_retirement_publishes_epoch_even_when_live_callback_refuses ... ok
+test store::pq_rollback_witness::tests::exact_cas_retry_is_idempotent_but_fork_skip_and_wrap_refuse ... ok
+test store::pq_rollback_witness::tests::expired_admission_commits_retirement_then_obtains_a_new_witness_guard ... ok
+test store::pq_rollback_witness::tests::expired_before_current_transport_does_not_poison_guarded_owner ... ok
+test store::pq_rollback_witness::tests::guarded_charge_pending_revocation_survive_service_cold_restart ... ok
+test store::pq_rollback_witness::tests::guarded_namespace_requires_explicit_guarded_open_and_existing_node ... ok
+test store::pq_rollback_witness::tests::live_cancellation_after_current_prevents_pending_insert_and_owner_can_resume ... ok
+test store::pq_rollback_witness::tests::local_commit_failure_after_external_cas_is_permanently_detectable ... ok
+test store::pq_rollback_witness::tests::lost_retirement_cas_reply_preserves_terminal_zero_epoch ... ok
+test store::pq_rollback_witness::tests::lost_successful_cas_reply_never_revives_old_local_authority ... ok
+test store::pq_rollback_witness::tests::missing_external_state_is_not_enrolled_on_open_and_registration_is_exclusive ... ok
+test store::pq_rollback_witness::tests::non_system_trigger_with_sqlitex_prefix_cannot_hide_from_schema_check ... ok
+test store::pq_rollback_witness::tests::ordinary_admission_reuses_fresh_witness_guard_without_rechecking_unchanged_state ... ok
+test store::pq_rollback_witness::tests::oversized_external_binding_and_roots_are_rejected_before_blob_copy ... ok
+test store::pq_rollback_witness::tests::oversized_local_binding_and_checkpoint_are_rejected_before_blob_copy ... ok
+test store::pq_rollback_witness::tests::oversized_restored_fixed_blob_is_rejected_before_hashing_and_external_advance ... ok
+test store::pq_rollback_witness::tests::pending_permission_and_revocation_are_rechecked_under_fresh_predecessor ... ok
+test store::pq_rollback_witness::tests::replacing_external_database_path_is_rejected_while_old_descriptor_is_locked ... ok
+test store::pq_rollback_witness::tests::uncertain_revocation_invalidates_epoch_of_already_admitted_work ... ok
+test store::pq_rollback_witness::tests::whole_node_old_sqlite_and_checkpoint_restore_is_rejected ... ok
+test store::pq_rollback_witness::tests::witness_commit_crossing_original_deadline_still_aligns_local_commit ... ok
+test store::pq_rollback_witness::tests::witness_outage_latches_owner_without_refunding_or_charging_quota ... ok
+
+failures:
+
+---- store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart stdout ----
+TRNM_PQ_PHASE_DIAGNOSTIC {"budgets_unchanged":true,"cpu_is_calling_thread_only":true,"failure_checkpoint_saved":false,"has_open_operations":false,"has_open_records":false,"last_failure":null,"last_service_failure":null,"last_tcp_failure":null,"mark_order":["transport_entered","cas_commit_attempted","cas_committed","local_commit_attempted","local_committed","matching_cas_receipt","fixture_delay_entered"],"measurement_failures":0,"nested_intervals_are_not_additive":true,"observation_has_authority":false,"operation_ids_are_process_local":true,"phase_totals":[],"process_id":95,"record_capacity":8,"records":[],"records_closed":0,"records_completed":0,"records_overwritten":0,"records_started":0,"schema":"pon-pq-test-phase-observation-v1","scope_snapshot_is_final":true,"snapshot_is_not_service_completion":true}
+
+thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart' (93) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:211:21:
+independent witness exited before ready (exit status: 101): 
+thread 'store::pq_rollback_witness::combined_tests::independent_witness_process_child' (96) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:330:71:
+called `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: "Operation not permitted" }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+TRNM_PQ_PHASE_DIAGNOSTIC {"budgets_unchanged":true,"cpu_is_calling_thread_only":true,"failure_checkpoint_saved":false,"has_open_operations":false,"has_open_records":false,"last_failure":null,"last_service_failure":null,"last_tcp_failure":null,"mark_order":["transport_entered","cas_commit_attempted","cas_committed","local_commit_attempted","local_committed","matching_cas_receipt","fixture_delay_entered"],"measurement_failures":0,"nested_intervals_are_not_additive":true,"observation_has_authority":false,"operation_ids_are_process_local":true,"phase_totals":[],"process_id":64,"record_capacity":8,"records":[],"records_closed":0,"records_completed":0,"records_overwritten":0,"records_started":0,"schema":"pon-pq-test-phase-observation-v1","scope_snapshot_is_final":true,"snapshot_is_not_service_completion":true}
+
+---- store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics stdout ----
+TRNM_PQ_PHASE_DIAGNOSTIC {"budgets_unchanged":true,"cpu_is_calling_thread_only":true,"failure_checkpoint_saved":false,"has_open_operations":false,"has_open_records":false,"last_failure":null,"last_service_failure":null,"last_tcp_failure":null,"mark_order":["transport_entered","cas_commit_attempted","cas_committed","local_commit_attempted","local_committed","matching_cas_receipt","fixture_delay_entered"],"measurement_failures":0,"nested_intervals_are_not_additive":true,"observation_has_authority":false,"operation_ids_are_process_local":true,"phase_totals":[],"process_id":99,"record_capacity":8,"records":[],"records_closed":0,"records_completed":0,"records_overwritten":0,"records_started":0,"schema":"pon-pq-test-phase-observation-v1","scope_snapshot_is_final":true,"snapshot_is_not_service_completion":true}
+
+thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics' (97) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:211:21:
+independent witness exited before ready (exit status: 101): 
+thread 'store::pq_rollback_witness::combined_tests::independent_witness_process_child' (100) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:330:71:
+called `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: "Operation not permitted" }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+TRNM_PQ_PHASE_DIAGNOSTIC {"budgets_unchanged":true,"cpu_is_calling_thread_only":true,"failure_checkpoint_saved":false,"has_open_operations":false,"has_open_records":false,"last_failure":null,"last_service_failure":null,"last_tcp_failure":null,"mark_order":["transport_entered","cas_commit_attempted","cas_committed","local_commit_attempted","local_committed","matching_cas_receipt","fixture_delay_entered"],"measurement_failures":0,"nested_intervals_are_not_additive":true,"observation_has_authority":false,"operation_ids_are_process_local":true,"phase_totals":[],"process_id":64,"record_capacity":8,"records":[],"records_closed":0,"records_completed":0,"records_overwritten":0,"records_started":0,"schema":"pon-pq-test-phase-observation-v1","scope_snapshot_is_final":true,"snapshot_is_not_service_completion":true}
+
+---- store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart stdout ----
+TRNM_PQ_PHASE_DIAGNOSTIC {"budgets_unchanged":true,"cpu_is_calling_thread_only":true,"failure_checkpoint_saved":false,"has_open_operations":false,"has_open_records":false,"last_failure":null,"last_service_failure":null,"last_tcp_failure":null,"mark_order":["transport_entered","cas_commit_attempted","cas_committed","local_commit_attempted","local_committed","matching_cas_receipt","fixture_delay_entered"],"measurement_failures":0,"nested_intervals_are_not_additive":true,"observation_has_authority":false,"operation_ids_are_process_local":true,"phase_totals":[],"process_id":103,"record_capacity":8,"records":[],"records_closed":0,"records_completed":0,"records_overwritten":0,"records_started":0,"schema":"pon-pq-test-phase-observation-v1","scope_snapshot_is_final":true,"snapshot_is_not_service_completion":true}
+
+thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart' (101) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:211:21:
+independent witness exited before ready (exit status: 101): 
+thread 'store::pq_rollback_witness::combined_tests::independent_witness_process_child' (104) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:330:71:
+called `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: "Operation not permitted" }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+TRNM_PQ_PHASE_DIAGNOSTIC {"budgets_unchanged":true,"cpu_is_calling_thread_only":true,"failure_checkpoint_saved":false,"has_open_operations":false,"has_open_records":false,"last_failure":null,"last_service_failure":null,"last_tcp_failure":null,"mark_order":["transport_entered","cas_commit_attempted","cas_committed","local_commit_attempted","local_committed","matching_cas_receipt","fixture_delay_entered"],"measurement_failures":0,"nested_intervals_are_not_additive":true,"observation_has_authority":false,"operation_ids_are_process_local":true,"phase_totals":[],"process_id":64,"record_capacity":8,"records":[],"records_closed":0,"records_completed":0,"records_overwritten":0,"records_started":0,"schema":"pon-pq-test-phase-observation-v1","scope_snapshot_is_final":true,"snapshot_is_not_service_completion":true}
+
+
+failures:
+    store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart
+    store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics
+    store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart
+
+test result: FAILED. 52 passed; 3 failed; 0 ignored; 0 measured; 1169 filtered out; finished in 8.60s
+
+error: test failed, to rerun pass `-p trnm-pon-node --lib`

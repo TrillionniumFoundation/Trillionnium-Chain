@@ -1,0 +1,19 @@
+{
+  "schema": "trnm-pq-composition-source-inputs-v1",
+  "implementation_commit": "7005fee55f2ba82d6c7aa3ccf1f60e616750ae2b",
+  "implementation_tree": "abf811930a83d7c514c99784975fe1d65c6f4003",
+  "base_pr": 812,
+  "base_head": "7e044b65454f4c9ea505591727332acffb33e7e5",
+  "merged_heads": {
+    "799": "d0a567658ae907ad51e45538b90130402c79a3d0",
+    "800": "f63890781e21f65e3779f3a6f1ce27aaaa804b94",
+    "801": "50a1fad7156dedd7db31f08a4bb1c94cc0c9d015",
+    "803": "ebc31f07f96060fe1e9fb165aae0123de0fcbc1a",
+    "798": "a49bcd0c1f88cacf35421208977df3ae9d9df3af",
+    "806": "0788c44f4139c74772a8a9d7d475821f56e5b727"
+  },
+  "all_inputs_actual_ancestors": true,
+  "whole_chain_pq_qualified": false,
+  "production_activation": false,
+  "final_use_qualified": false
+}

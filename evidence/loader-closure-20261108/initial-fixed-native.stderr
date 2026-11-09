@@ -1,0 +1,33 @@
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/10366560c781/chain-loader/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/10366560c781/chain-loader/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized] target(s) in 5m 49s
+     Running unittests src/lib.rs (/workspace/scratch/10366560c781/loader-target/debug/deps/trnm_pon_node-f01516c2d8410e1d)
+
+thread 'operator_mining_policy::tests::held_fault_sink_survives_open_failure_and_unfinished_operation_unwind' (576) panicked at crates/trnm-pon-node/src/operator_mining_policy_tests.rs:579:13:
+expected source fault-sink mechanism
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'release_owner::service_tests::actual_signed_clock_wrong_request_nonce_namespace_or_backward_floor_fences' (622) panicked at crates/trnm-pon-node/src/release_owner/service_test_fixture.rs:70:56:
+called `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: "Operation not permitted" }
+
+thread 'release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch' (623) panicked at crates/trnm-pon-node/src/release_owner/service_test_fixture.rs:70:56:
+called `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: "Operation not permitted" }
+
+thread 'release_owner::service_tests::clock_reply_then_real_elapsed_expiry_refuses_without_cas' (624) panicked at crates/trnm-pon-node/src/release_owner/service_test_fixture.rs:70:56:
+called `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: "Operation not permitted" }
+
+thread 'release_owner::service_tests::durable_preparation_then_real_elapsed_expiry_refuses_without_cas' (625) panicked at crates/trnm-pon-node/src/release_owner/service_test_fixture.rs:70:56:
+called `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: "Operation not permitted" }
+
+thread 'release_owner::service_tests::last_clock_callback_lock_row_or_provisioning_drift_refuses_and_retains_fault' (626) panicked at crates/trnm-pon-node/src/release_owner/service_test_fixture.rs:70:56:
+called `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: "Operation not permitted" }
+
+thread 'release_owner::service_tests::prepared_failure_keeps_canonical_row_and_temp_is_not_admission' (627) panicked at crates/trnm-pon-node/src/release_owner/service_test_fixture.rs:70:56:
+called `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: "Operation not permitted" }
+
+thread 'release_owner::service_tests::signed_cas_uses_exact_old_once_and_returns_only_the_observed_lower_floor' (628) panicked at crates/trnm-pon-node/src/release_owner/service_test_fixture.rs:70:56:
+called `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: "Operation not permitted" }
+
+thread 'release_owner::service_tests::wrong_signature_domain_binding_namespace_and_nonce_cannot_mutate_or_fence' (629) panicked at crates/trnm-pon-node/src/release_owner/service_test_fixture.rs:70:56:
+called `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: "Operation not permitted" }
+error: test failed, to rerun pass `-p trnm-pon-node --lib`

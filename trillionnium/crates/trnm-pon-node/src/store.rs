@@ -1551,16 +1551,28 @@ impl Node {
         Ok(())
     }
     pub(crate) fn require_classical_network_profile(&self) -> Result<()> {
+        // Openers already bind account profiles to their backend. Recheck both
+        // facts at the listener boundary so this refusal does not depend only
+        // on that construction invariant or a backend selector staying intact.
         ensure(
-            !matches!(
-                self.state_backend,
-                StateBackend::PqNetworkV2
-                    | StateBackend::PqContinuousV3
-                    | StateBackend::PqWitnessV4
-            ),
+            !self.settings.app.is_pq_account_profile()
+                && !matches!(
+                    self.state_backend,
+                    StateBackend::PqNetworkV2
+                        | StateBackend::PqContinuousV3
+                        | StateBackend::PqWitnessV4
+                ),
             "PQ_NETWORK_REQUIRED",
         )?;
         Ok(())
+    }
+    #[cfg(all(test, feature = "pq-native-openssl"))]
+    pub(crate) fn select_classical_backend_for_profile_guard_test(&mut self) {
+        // Fault injection only. Public openers cannot construct this mismatch;
+        // retain real PQ Settings and durable state while corrupting the selector.
+        assert!(self.settings.app.is_pq_account_profile());
+        assert_eq!(self.state_backend, StateBackend::PqNetworkV2);
+        self.state_backend = StateBackend::Legacy;
     }
     /// Enable bounded volatile final-ROOT rejection reuse for this Node owner.
     /// Default is off; no CLI/profile/consensus or CPU-budget change is implied.
@@ -1647,6 +1659,10 @@ impl Node {
         workers: usize,
         inputs: crate::operator_task_policy::RestrictedNodeInputs,
     ) -> Result<Self> {
+        ensure(
+            !settings.app.is_pq_account_profile(),
+            "PQ_ACCOUNT_REQUIRES_PQ_NETWORK_OWNER",
+        )?;
         let policy = crate::operator_task_policy::authenticate(
             &inputs.raw_policy,
             &inputs.authority,
@@ -8712,6 +8728,9 @@ mod native_ancestry_tests {
 #[cfg(test)]
 #[path = "operator_task_store_tests.rs"]
 mod operator_task_store_tests;
+
+#[cfg(all(test, target_os = "linux"))]
+mod pq_owner_rejection_tests;
 
 #[cfg(test)]
 mod branch_target_tests {

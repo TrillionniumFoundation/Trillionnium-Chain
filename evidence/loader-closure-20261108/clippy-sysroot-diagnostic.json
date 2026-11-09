@@ -1,0 +1,36 @@
+{
+  "schema": "trnm-loader-clippy-sysroot-diagnostic-v1",
+  "source_unchanged": true,
+  "observations": [
+    {
+      "name": "implicit-rustup",
+      "argv": [
+        "/workspace/scratch/d95a703b8dd6/toolchain/cargo/bin/clippy-driver",
+        "--print",
+        "sysroot"
+      ],
+      "environment": {
+        "RUSTUP_HOME": null,
+        "RUSTUP_TOOLCHAIN": null
+      },
+      "exit_code": 0,
+      "stdout": "/home/agent/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu\n",
+      "stderr": ""
+    },
+    {
+      "name": "explicit-rustup",
+      "argv": [
+        "/workspace/scratch/d95a703b8dd6/toolchain/cargo/bin/clippy-driver",
+        "--print",
+        "sysroot"
+      ],
+      "environment": {
+        "RUSTUP_HOME": "/workspace/scratch/d95a703b8dd6/toolchain/rustup",
+        "RUSTUP_TOOLCHAIN": "1.95.0-x86_64-unknown-linux-gnu"
+      },
+      "exit_code": 0,
+      "stdout": "/workspace/scratch/d95a703b8dd6/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu\n",
+      "stderr": ""
+    }
+  ]
+}

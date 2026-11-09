@@ -22,7 +22,9 @@ fn window(f: &Fixture, seconds: u64) -> Validity {
     }
 }
 fn wait_until(time: &Time, seconds: u64) {
-    let until = Instant::now() + Duration::from_secs(20);
+    wait_until_before(time, seconds, Instant::now() + Duration::from_secs(20));
+}
+fn wait_until_before(time: &Time, seconds: u64, until: Instant) {
     while time.now() < seconds {
         assert!(
             Instant::now() < until,
@@ -30,6 +32,10 @@ fn wait_until(time: &Time, seconds: u64) {
         );
         std::thread::sleep(Duration::from_millis(10));
     }
+    assert!(
+        Instant::now() < until,
+        "real fixture clock reached target after the original deadline"
+    );
 }
 fn row_frontier(f: &Fixture) -> Option<Frontier> {
     let row: serde_json::Value = serde_json::from_slice(&f.row()).unwrap();
@@ -69,6 +75,10 @@ fn signed_cas_uses_exact_old_once_and_returns_only_the_observed_lower_floor() {
 fn pause_before_admission(point: Point) {
     let mut f = Fixture::new();
     let mut service = f.initialized();
+    // Align setup with an actual integer clock boundary, so the two signed
+    // seconds do not begin at an arbitrary fraction of the fixture's 2x tick.
+    // Neither the signed window nor the production request deadline is widened.
+    wait_until(&f.time, f.time.now() + 1);
     let validity = window(&f, 2);
     let raw = f.request(None, Some(proposal()), Some(validity));
     let original = f.row();
@@ -76,13 +86,20 @@ fn pause_before_admission(point: Point) {
     let marker = reached.clone();
     let time = f.time.clone();
     f.scope(|| {
+        let until = deadline();
         faults::once(point, move || {
+            assert!(
+                time.last_signed() < validity.expires_at && time.now() < validity.expires_at,
+                "signed window expired before the intended pause point"
+            );
             marker.store(true, Ordering::SeqCst);
-            std::thread::sleep(Duration::from_millis(1100));
+            // Wait only until the original signed expiry. A fixed extra sleep
+            // also spent the transport deadline and could test TimedOut instead.
+            wait_until_before(&time, validity.expires_at, until);
             assert!(time.now() >= validity.expires_at);
             Ok(())
         });
-        let error = service.answer(&raw, deadline()).unwrap_err();
+        let error = service.answer(&raw, until).unwrap_err();
         assert!(reached.load(Ordering::SeqCst));
         assert_eq!(error.kind(), std::io::ErrorKind::PermissionDenied);
         assert_eq!(

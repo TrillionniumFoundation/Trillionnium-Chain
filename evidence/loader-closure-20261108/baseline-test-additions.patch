@@ -1,0 +1,76 @@
+diff --git a/trillionnium/crates/trnm-pon-node/src/operator_continuous_policy_tests.rs b/trillionnium/crates/trnm-pon-node/src/operator_continuous_policy_tests.rs
+index 9965a73..1842928 100644
+--- a/trillionnium/crates/trnm-pon-node/src/operator_continuous_policy_tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/operator_continuous_policy_tests.rs
+@@ -2,6 +2,36 @@ use super::*;
+ use crate::operator_continuous_test_support::{
+     allocation, binding, identity, signed, signed_allocation,
+ };
++
++#[test]
++fn loaded_material_is_not_redirected_by_a_shared_file_cursor() {
++    // A duplicated File shares the open-file description and its cursor. The
++    // callback models another legitimate holder seeking between read chunks;
++    // no bytes, pathname, length or filesystem metadata change.
++    use std::cell::{Cell, RefCell};
++    use std::io::{Seek, SeekFrom};
++    let directory = tempfile::tempdir().unwrap();
++    let path = directory.path().join("model");
++    let raw = [vec![0x41; 65536], vec![0x42; 65536]].concat();
++    fs::write(&path, &raw).unwrap();
++    let file = File::open(&path).unwrap();
++    let duplicate = RefCell::new(file.try_clone().unwrap());
++    let catalog = HeldCatalog {
++        rows: vec![(path, file, same_meta_continuous(&duplicate.borrow().metadata().unwrap()))],
++        roles: vec!["model".into()],
++        catalog_sha256: "11".repeat(32),
++        domain: b"TRNM-RESTRICTED-NODE-CATALOG1",
++    };
++    let calls = Cell::new(0);
++    let loaded = catalog.read_role("model", raw.len() as u64, &|| {
++        let offset = if calls.get() < 2 { 0 } else { raw.len() as u64 };
++        duplicate.borrow_mut().seek(SeekFrom::Start(offset))?;
++        calls.set(calls.get() + 1);
++        Ok(())
++    }).unwrap();
++    assert_eq!(sha(&loaded), sha(&raw), "actual loaded bytes differ from authenticated bytes");
++}
++
+ pub(crate) fn inputs() -> Inputs {
+     let body = allocation("parent-reconcile");
+     let (raw, authority) = signed_allocation(&body);
+diff --git a/trillionnium/crates/trnm-pon-node/src/operator_mining_policy_tests.rs b/trillionnium/crates/trnm-pon-node/src/operator_mining_policy_tests.rs
+index c511804..cb46f3e 100644
+--- a/trillionnium/crates/trnm-pon-node/src/operator_mining_policy_tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/operator_mining_policy_tests.rs
+@@ -1,5 +1,30 @@
+ //! Meaningful source definitions only; no synthetic task is Native qualification.
+ use super::*;
++
++#[test]
++fn loaded_material_is_not_redirected_by_a_shared_file_cursor() {
++    use std::cell::{Cell, RefCell};
++    use std::io::{Seek, SeekFrom};
++    let directory = tempfile::tempdir().unwrap();
++    let path = directory.path().join("model");
++    let raw = [vec![0x41; 65536], vec![0x42; 65536]].concat();
++    fs::write(&path, &raw).unwrap();
++    let file = File::open(&path).unwrap();
++    let duplicate = RefCell::new(file.try_clone().unwrap());
++    let catalog = HeldCatalog {
++        rows: vec![(path, file, same_meta(&duplicate.borrow().metadata().unwrap()))],
++        roles: vec!["model".into()],
++        catalog_sha256: "11".repeat(32),
++    };
++    let calls = Cell::new(0);
++    let loaded = catalog.read_role("model", raw.len() as u64, &|| {
++        let offset = if calls.get() < 2 { 0 } else { raw.len() as u64 };
++        duplicate.borrow_mut().seek(SeekFrom::Start(offset))?;
++        calls.set(calls.get() + 1);
++        Ok(())
++    }).unwrap();
++    assert_eq!(sha(&loaded), sha(&raw), "actual loaded bytes differ from authenticated bytes");
++}
+ use std::os::unix::fs::PermissionsExt;
+ use trnm_crypto_primitives::{public_key_hex, sign_hex, signing_key_from_hex};
+ pub(crate) fn view() -> TaskView {

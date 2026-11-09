@@ -1,0 +1,197 @@
+{
+  "allocated_bytes": 585773056,
+  "allocated_gib": 0.5455436706542969,
+  "deletion_authorized": false,
+  "eligible_by_suffix": {
+    ".a": {
+      "allocated_bytes": 5902336,
+      "inodes_with_links_not_fully_counted_in_this_group": 0,
+      "logical_bytes": 5893998,
+      "paths": 3,
+      "unique_inodes": 3
+    },
+    ".o": {
+      "allocated_bytes": 0,
+      "inodes_with_links_not_fully_counted_in_this_group": 0,
+      "logical_bytes": 0,
+      "paths": 0,
+      "unique_inodes": 0
+    },
+    ".rlib": {
+      "allocated_bytes": 439635968,
+      "inodes_with_links_not_fully_counted_in_this_group": 0,
+      "logical_bytes": 439301266,
+      "paths": 106,
+      "unique_inodes": 106
+    },
+    ".rmeta": {
+      "allocated_bytes": 140234752,
+      "inodes_with_links_not_fully_counted_in_this_group": 0,
+      "logical_bytes": 139704795,
+      "paths": 182,
+      "unique_inodes": 182
+    }
+  },
+  "eligible_nlink1_file_count": 291,
+  "excluded_elf_suffix_objects": {
+    "allocated_bytes": 5890048,
+    "inodes_with_links_not_fully_counted_in_this_group": 0,
+    "logical_bytes": 5886200,
+    "paths": 3,
+    "unique_inodes": 3
+  },
+  "jobs": [
+    {
+      "job_id": "1a1bce56d0a-138b0-50c",
+      "scope": "initial capacity and top 10",
+      "terminal_exit": 0
+    },
+    {
+      "job_id": "1a1bce73a59-138b0-511",
+      "scope": "root-requested exact nlink1 candidate manifest",
+      "terminal_exit": 0
+    }
+  ],
+  "native_commands_executed": false,
+  "notes": [
+    "Allocated space is metadata, not a reclaimability guarantee; no open-file or process-table scan was performed.",
+    "Original test ELFs, dynamic libraries, logs, receipts, sources and databases were not read for content by the remote capacity observations; the first four bytes of suffix-matching ELF objects were read only to exclude them. No file was deleted.",
+    "Suffix candidates were opened O_NOFOLLOW and only their first four bytes were read to exclude ELF.",
+    "The full manifest records all 291 nlink1 non-ELF .rlib/.rmeta/.a candidates; this report does not authorize deletion."
+  ],
+  "observed_free_bytes": 16288522240,
+  "original_retained_test_elf_identities_from_archived_rosters": {
+    "da": {
+      "bytes": 87187480,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/native-target-default/x86_64-unknown-linux-gnu/debug/deps/trnm_data_availability-e2df522b48ec374b",
+      "sha256": "54c44c15717a751bb669a28f1065f3f1c948dbc7efdd6f6c009fd39be6d01fd9"
+    },
+    "node": {
+      "bytes": 506457320,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/native-target-default/x86_64-unknown-linux-gnu/debug/deps/trnm_pon_node-cf56cc7c22eb0fc0",
+      "sha256": "b8beb2cddc818af3ddc59ce44b7d184ad21c27d5170318fdf6be7b388797b466"
+    }
+  },
+  "read_only": true,
+  "required_16gib": 17179869184,
+  "root": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/native-target-default",
+  "root_identity": {
+    "device": 2050,
+    "inode": 9349389,
+    "mode": "0o700",
+    "uid": 1000
+  },
+  "shortfall_even_if_all_candidate_allocated_space_released": 305573888,
+  "top_10": [
+    {
+      "allocated_bytes": 71237632,
+      "device": 2050,
+      "first_four_bytes_hex": "213c6172",
+      "inode": 9866211,
+      "logical_bytes": 71231158,
+      "mode": "0o600",
+      "nlink": 1,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/native-target-default/x86_64-unknown-linux-gnu/debug/deps/libtrnm_mvcc_fee-0e2ac4e176df535b.rlib",
+      "suffix": ".rlib"
+    },
+    {
+      "allocated_bytes": 53477376,
+      "device": 2050,
+      "first_four_bytes_hex": "213c6172",
+      "inode": 9866164,
+      "logical_bytes": 53473120,
+      "mode": "0o600",
+      "nlink": 1,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/native-target-default/x86_64-unknown-linux-gnu/debug/deps/libtrnm_data_availability-5ddb4146872d5af2.rlib",
+      "suffix": ".rlib"
+    },
+    {
+      "allocated_bytes": 23293952,
+      "device": 2050,
+      "first_four_bytes_hex": "213c6172",
+      "inode": 9616713,
+      "logical_bytes": 23286120,
+      "mode": "0o600",
+      "nlink": 1,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/native-target-default/x86_64-unknown-linux-gnu/debug/deps/libtrnm_crypto_primitives-82360359d0d025e9.rlib",
+      "suffix": ".rlib"
+    },
+    {
+      "allocated_bytes": 23293952,
+      "device": 2050,
+      "first_four_bytes_hex": "213c6172",
+      "inode": 9866156,
+      "logical_bytes": 23289626,
+      "mode": "0o600",
+      "nlink": 1,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/native-target-default/x86_64-unknown-linux-gnu/debug/deps/libtrnm_crypto_primitives-c6e386d89a992862.rlib",
+      "suffix": ".rlib"
+    },
+    {
+      "allocated_bytes": 21430272,
+      "device": 2050,
+      "first_four_bytes_hex": "213c6172",
+      "inode": 9866170,
+      "logical_bytes": 21422256,
+      "mode": "0o600",
+      "nlink": 1,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/native-target-default/x86_64-unknown-linux-gnu/debug/deps/libtrnm_service_settlement-5da30ded0279f8b3.rlib",
+      "suffix": ".rlib"
+    },
+    {
+      "allocated_bytes": 19345408,
+      "device": 2050,
+      "first_four_bytes_hex": "213c6172",
+      "inode": 9568552,
+      "logical_bytes": 19340172,
+      "mode": "0o600",
+      "nlink": 1,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/native-target-default/debug/deps/libsyn-79658c543ab0ffa1.rlib",
+      "suffix": ".rlib"
+    },
+    {
+      "allocated_bytes": 16801792,
+      "device": 2050,
+      "first_four_bytes_hex": "213c6172",
+      "inode": 9866105,
+      "logical_bytes": 16796202,
+      "mode": "0o600",
+      "nlink": 1,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/native-target-default/x86_64-unknown-linux-gnu/debug/deps/libtrnm_task_kernel-221d78d5ee9da337.rlib",
+      "suffix": ".rlib"
+    },
+    {
+      "allocated_bytes": 15011840,
+      "device": 2050,
+      "first_four_bytes_hex": "213c6172",
+      "inode": 9866087,
+      "logical_bytes": 15004772,
+      "mode": "0o600",
+      "nlink": 1,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/native-target-default/x86_64-unknown-linux-gnu/debug/deps/librustix-f9e6db6a725dd2c4.rlib",
+      "suffix": ".rlib"
+    },
+    {
+      "allocated_bytes": 12308480,
+      "device": 2050,
+      "first_four_bytes_hex": "213c6172",
+      "inode": 9586777,
+      "logical_bytes": 12303964,
+      "mode": "0o600",
+      "nlink": 1,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/native-target-default/x86_64-unknown-linux-gnu/debug/deps/librustix-fbf03ec8248163b5.rlib",
+      "suffix": ".rlib"
+    },
+    {
+      "allocated_bytes": 11657216,
+      "device": 2050,
+      "first_four_bytes_hex": "213c6172",
+      "inode": 9586778,
+      "logical_bytes": 11649940,
+      "mode": "0o600",
+      "nlink": 1,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-native-5633c55/native-target-default/x86_64-unknown-linux-gnu/debug/deps/libtrnm_protocol-a94a1f92c2fe7e1a.rlib",
+      "suffix": ".rlib"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "all_archive_members_payloads_verified": true,
+  "members": 102,
+  "new_native_or_publication_executed": false,
+  "old_native_archive_and_manifest_unchanged": true,
+  "original_bytes": 50976,
+  "original_regular_files": 99,
+  "pins": {
+    "collection-result.json": {
+      "bytes": 788,
+      "sha256": "28f5477442c56baced4d46398b74257bd266b9bea4c7cf667b131cc69e68b507"
+    },
+    "initial-publication-evidence-5633c55.tar.gz": {
+      "bytes": 31528,
+      "sha256": "7ebb09474d7585deb4a96ec96cfe6235194ce7212d29f8644841041e4f688b8f"
+    },
+    "manifest.json": {
+      "bytes": 82623,
+      "sha256": "f0002bbfb6eb84a0f616b8511c2a04f351d19e6e8d6352a5bf10216c1fbcb331"
+    }
+  },
+  "published_body_matches_exact_retained_bytes": true,
+  "published_draft": {
+    "actor": "ProfHepta",
+    "base": "7e044b65454f4c9ea505591727332acffb33e7e5",
+    "draft": true,
+    "head": "5633c55219c01c689f670c2ca35d122e39f3f791",
+    "number": 822,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/822"
+  },
+  "retained_publisher_source_identity_receipts_equal": true,
+  "status": "LOCAL_ARCHIVE_VERIFIED",
+  "whole_chain_pq_qualified": false
+}

@@ -1,0 +1,137 @@
+{
+  "schema": "trnm-original-elf-diagnostic-archive-v1",
+  "original_head": "5633c55219c01c689f670c2ca35d122e39f3f791",
+  "exact_cases_once": 2,
+  "passed_cases": 2,
+  "original_failure_causes_known": false,
+  "original_failed_run_replaced": false,
+  "full_suite_complete": false,
+  "io_pressure_established_as_cause": false,
+  "source_root": "/workspace/scratch/6635074442e1",
+  "archive": "node-original-elf-diagnostics-5633.tar.gz",
+  "bytes": 80902,
+  "sha256": "388faf78a8c90170b19b2f8ffd28fc49c5391b78cef2158c31f053bf2c866ab1",
+  "member_count": 24,
+  "members": [
+    {
+      "path": "authority-audit/node-default-terminal-partial-5633.libtest.log",
+      "bytes": 91444,
+      "sha256": "3ed7d7cfa252d8a5aad4392101c4f279c955f5e4e68237f9d77f8908170fa380"
+    },
+    {
+      "path": "authority-audit/node-default-terminal-partial-5633.readback.json",
+      "bytes": 200309,
+      "sha256": "7f98dc876a0f0f357bfea2f3a8564e143366cc4b4563717116c71578f03a7834"
+    },
+    {
+      "path": "authority-audit/node-diagnostic-5633-receipts/environment.json",
+      "bytes": 2715,
+      "sha256": "3159a3990c36023d4aa1fdd0bbb093a83e37d8ae428b85c1e261552bbc50b8b2"
+    },
+    {
+      "path": "authority-audit/node-diagnostic-5633-receipts/job_status.json",
+      "bytes": 730,
+      "sha256": "44fccf2c6bee973fdbaea7eb4ce3a9d7e93aff7e50c73ec79df117637b124ae4"
+    },
+    {
+      "path": "authority-audit/node-diagnostic-5633-receipts/launch_request.json",
+      "bytes": 364,
+      "sha256": "f1fd5598aa1a2a716646cc37d47393569e4a5a72e707d37200f3e3d4900dfb57"
+    },
+    {
+      "path": "authority-audit/node-diagnostic-5633-receipts/launch_response.json",
+      "bytes": 1131,
+      "sha256": "69be8d7135aefd746c02fa62a8d7198a48085de944a05a5875305f8b786876a2"
+    },
+    {
+      "path": "authority-audit/node-diagnostic-5633-receipts/m12-transaction-head.libtest.log",
+      "bytes": 135,
+      "sha256": "af66be99bf91ff5728dcdc08e58929b59dedcededf155af83e7ceabbceab8649"
+    },
+    {
+      "path": "authority-audit/node-diagnostic-5633-receipts/m12-transaction-head.receipt.json",
+      "bytes": 2521,
+      "sha256": "87473065ea3725d28584bf65f68fedfe32c914a425371bbbf3daeb3868352796"
+    },
+    {
+      "path": "authority-audit/node-diagnostic-5633-receipts/m12-transaction-head.stderr.log",
+      "bytes": 34,
+      "sha256": "5a14954714f63630e6a37439c71847cfd13e71ce4dad3bb7c1b9c98e68082447"
+    },
+    {
+      "path": "authority-audit/node-diagnostic-5633-receipts/m12-transaction-head.stdout.log",
+      "bytes": 259,
+      "sha256": "48c2946f3e0954bd44eb50521fc47b8591c58bb8198e2086dca9c482fcb73d7a"
+    },
+    {
+      "path": "authority-audit/node-diagnostic-5633-receipts/m15-clock.libtest.log",
+      "bytes": 90,
+      "sha256": "e269c998b2933298bb651d52fdd93b5c6a588405de860cda9dfa641037f499ef"
+    },
+    {
+      "path": "authority-audit/node-diagnostic-5633-receipts/m15-clock.receipt.json",
+      "bytes": 2329,
+      "sha256": "ae110ca92083464d8d8ac8b989331dc068a2b1ad9e1564b232e7719fe734e879"
+    },
+    {
+      "path": "authority-audit/node-diagnostic-5633-receipts/m15-clock.stderr.log",
+      "bytes": 34,
+      "sha256": "5a14954714f63630e6a37439c71847cfd13e71ce4dad3bb7c1b9c98e68082447"
+    },
+    {
+      "path": "authority-audit/node-diagnostic-5633-receipts/m15-clock.stdout.log",
+      "bytes": 214,
+      "sha256": "d405bfd1ed7d954bc443ef57f419e2dcc0ebb11be928a33b71be3152d9c73191"
+    },
+    {
+      "path": "authority-audit/node-diagnostic-5633-receipts/original-live-failures.json",
+      "bytes": 1247,
+      "sha256": "53681f33fec3e839f9821e32697e610e760ffe54b4e12393536cb4a3abca43b4"
+    },
+    {
+      "path": "authority-audit/node-diagnostic-5633-receipts/source-after.json",
+      "bytes": 4501,
+      "sha256": "b19e2625880a674f6f4c8507e92b6e62447bfb1348aa7059ce803f0c421d27a5"
+    },
+    {
+      "path": "authority-audit/node-diagnostic-5633-receipts/source-before.json",
+      "bytes": 4501,
+      "sha256": "b19e2625880a674f6f4c8507e92b6e62447bfb1348aa7059ce803f0c421d27a5"
+    },
+    {
+      "path": "authority-audit/node-diagnostic-5633-receipts/summary.json",
+      "bytes": 24440,
+      "sha256": "2b2cdfc80da31e0013116a33c10fa7dda5a5839c90e0cd314098e225be14ee7d"
+    },
+    {
+      "path": "authority-audit/node-diagnostic-5633-receipts/transfer-manifest.json",
+      "bytes": 5979,
+      "sha256": "9c2181f0fe9e39a389650ca3f63fc39ab17060e5b6f172930acbdfb40ef6caea"
+    },
+    {
+      "path": "authority-audit/node-diagnostic-small-transfer-5633.json",
+      "bytes": 52712,
+      "sha256": "790826736ecdfc128bc84c624c6f5a7abd2873cec79356ea9a9b4e11b24d6fbe"
+    },
+    {
+      "path": "authority-audit/node-partial-inventory-5633.json",
+      "bytes": 19512,
+      "sha256": "537d503637778bbdfc98453c23cc0ef7a0a9557c3d11c81aaa14b076a94fc058"
+    },
+    {
+      "path": "authority-audit/node_failure_diagnostic_5633.py",
+      "bytes": 22071,
+      "sha256": "9535d6cb24cced430e0187d65ab8615f85d5b6a544b45acf394902459011e218"
+    },
+    {
+      "path": "authority-audit/owned-native-terminal-observation-5633.json",
+      "bytes": 2036,
+      "sha256": "6d796f77869bd153581d375274866296a8b86657218d6549560baff32051048c"
+    },
+    {
+      "path": "authority-audit/resource-observation-5633-20261108.json",
+      "bytes": 21234,
+      "sha256": "aad68879fae7c173b86c81a856c87ddb667d3d85d8e2690cff2fc0bce27470f6"
+    }
+  ]
+}

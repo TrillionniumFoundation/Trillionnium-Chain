@@ -1,0 +1,13 @@
+
+running 2 tests
+test operator_mining_policy::tests::loaded_material_is_not_redirected_by_a_shared_file_cursor ... FAILED
+test operator_continuous_policy::tests::loaded_material_is_not_redirected_by_a_shared_file_cursor ... FAILED
+
+failures:
+
+failures:
+    operator_continuous_policy::tests::loaded_material_is_not_redirected_by_a_shared_file_cursor
+    operator_mining_policy::tests::loaded_material_is_not_redirected_by_a_shared_file_cursor
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 1209 filtered out; finished in 0.00s
+

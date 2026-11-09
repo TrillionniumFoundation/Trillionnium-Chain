@@ -1,0 +1,13 @@
+{
+  "head": "8e636ca74df1eceda7000f8cad69ca1c920f5f25",
+  "source_before": {
+    "scripts/ci/check_ci_contract.py": "e88a1a015083c67aaf06bab3d7d4bcd93a9c79ec1588c2631b2a4824359caaaa",
+    "scripts/ci/test_ci_contract.py": "1f5a07a7b67c0790bd350af700225f24cbbe271373e68cfc155c187749a4f815"
+  },
+  "original_failure": {
+    "path": "/workspace/scratch/6635074442e1/local-checks/final-8e636ca/ci-contract/stderr.log",
+    "bytes": 353935,
+    "sha256": "e8a6e605ed25524ce2c927edbeb82a1f3860f181f41be8aca6bb7166ae20979e",
+    "summary": "160 tests; 17 failures, 6 errors. Preserve original log; real current source fails trace-order assertion, mutated fixtures also fail full straight-line expectation."
+  }
+}

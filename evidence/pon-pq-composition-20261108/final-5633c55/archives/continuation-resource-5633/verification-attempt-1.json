@@ -1,0 +1,17 @@
+{
+  "archive_modified": false,
+  "combined_output": "Traceback (most recent call last):\n  File \"/workspace/scratch/6635074442e1/collected-evidence/continuation-resource-5633/verify_download.py\", line 119, in <module>\n    main()\n  File \"/workspace/scratch/6635074442e1/collected-evidence/continuation-resource-5633/verify_download.py\", line 85, in main\n    require([r['path'] for r in manifest['excluded_subtrees']] == ['native-continuation-5633c55/native-target'], 'target exclusion differs')\n  File \"/workspace/scratch/6635074442e1/collected-evidence/continuation-resource-5633/verify_download.py\", line 20, in require\n    raise ValueError(message)\nValueError: target exclusion differs\n",
+  "command": [
+    "python3",
+    "-B",
+    "collected-evidence/continuation-resource-5633/verify_download.py"
+  ],
+  "exit_code": 1,
+  "finding": "The verifier incorrectly required an excluded directory to exist although the fixed zero-native campaign had never created it. The immutable inventory records no entry at that path; the exclusion policy still names exactly that path.",
+  "followup": "Independent verify_download_v2.py requires exact declared exclusion policy, exact actual inventory/exclusion equality, correct directory type if present, and absence of any target payload; revalidates all chunks/members and rebuilds deterministic bytes.",
+  "native_commands_retried": false,
+  "raw_logs_modified": false,
+  "schema": "trnm-archive-local-verification-attempt-v1",
+  "verifier_bytes": 7481,
+  "verifier_sha256": "d8fe8b3c4a323fe5bb597dd6b34bf4c21391fa0a7025d8e18b885e549bf98a5f"
+}

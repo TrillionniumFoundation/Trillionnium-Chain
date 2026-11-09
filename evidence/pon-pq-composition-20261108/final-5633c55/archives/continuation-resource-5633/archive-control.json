@@ -1,0 +1,237 @@
+{
+  "schema": "trnm-continuation-resource-archive-control-v1",
+  "collector": {
+    "bytes": 19039,
+    "sha256": "f4be91a732c4fef5f36f32721dcd1004d23dd2c98ee666fe66065ba200a3233f",
+    "read_only_peer_review": "/root/pq_content: no concrete blocker"
+  },
+  "request": {
+    "host": "desktop",
+    "executable": "/usr/bin/python3.12",
+    "args": [
+      "-B",
+      "/home/qian-qi/work/chain-pq-composition-663507-20261108/archive_continuation_resource_5633.py",
+      "--expected-runner-sha256",
+      "f4be91a732c4fef5f36f32721dcd1004d23dd2c98ee666fe66065ba200a3233f"
+    ],
+    "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108",
+    "idempotency_key": "chain-pq-continuation-resource-archive-5633-20261108-once",
+    "timeout_seconds": 600
+  },
+  "launch": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"audit_recorded\": true,\n  \"job\": {\n    \"args\": [\n      \"-B\",\n      \"/home/qian-qi/work/chain-pq-composition-663507-20261108/archive_continuation_resource_5633.py\",\n      \"--expected-runner-sha256\",\n      \"f4be91a732c4fef5f36f32721dcd1004d23dd2c98ee666fe66065ba200a3233f\"\n    ],\n    \"created_unix_ms\": 1794171335494,\n    \"cwd\": \"/home/qian-qi/work/chain-pq-composition-663507-20261108\",\n    \"env_keys\": [],\n    \"executable\": \"/usr/bin/python3.12\",\n    \"execution_mode\": \"operator\",\n    \"host\": \"desktop\",\n    \"id\": \"1a1bcf1f346-138b0-534\",\n    \"idempotency_key\": \"chain-pq-continuation-resource-archive-5633-20261108-once\",\n    \"launch_error\": null,\n    \"launch_state\": \"launched\",\n    \"remote_job_dir\": \"/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1bcf1f346-138b0-534\",\n    \"request_digest\": \"e0440ef4c20059075b5ffb1548f0e2f4de266743eb887eb703ecc640a7a722b5\",\n    \"request_fingerprint\": 16160057807301794055,\n    \"ssh_target\": \"desktop-ts\",\n    \"system_jobctl\": false,\n    \"unit\": \"hepta-runtime-job-1a1bcf1f346-138b0-534\"\n  },\n  \"launch\": {\n    \"backend\": \"systemd\",\n    \"launcher_pid\": null,\n    \"ok\": true,\n    \"unit\": \"hepta-runtime-job-1a1bcf1f346-138b0-534\"\n  },\n  \"local_record_pending\": false,\n  \"reused\": false\n}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "terminal_status": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"at_unix_ms\": 1794171338103,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 0,\n  \"job_id\": \"1a1bcf1f346-138b0-534\",\n  \"launch_nonce\": \"5ca4576f2120d4c35d95b6cd8d4eaa3e\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 737,\n      \"stored\": 737\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"succeeded\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "terminal_process_read": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"audit_recorded\": true,\n  \"job_id\": \"1a1bcf1f346-138b0-534\",\n  \"stderr\": {\n    \"bytes_hex\": \"\",\n    \"eof\": true,\n    \"next_offset\": 0,\n    \"offset\": 0,\n    \"size\": 0,\n    \"text\": \"\"\n  },\n  \"stdout\": {\n    \"bytes_hex\": \"7b2261726368697665223a207b226279746573223a203336393837332c202266696c65223a2022636f6e74696e756174696f6e2d7265736f757263652d65766964656e63652d353633336335352e7461722e677a222c2022736861323536223a202265313336366138386137396461623032656132646561613561663839313562626139313365393766336330326432316562303662616466336661326638326463227d2c2022636f6c6c6563746f725f6265666f72655f61667465725f657175616c223a20747275652c202264657465726d696e69737469635f72656275696c645f6964656e746963616c223a20747275652c20226d616e6966657374223a207b226279746573223a203136323934352c202266696c65223a20226d616e69666573742e6a736f6e222c2022736861323536223a202232623966623133336237333031666331666136373466363162616137643839393436613033333361633265396435303939343165346165613963306238336239227d2c20226d656d62657273223a203139302c20226e61746976655f74657374735f6578656375746564223a2066616c73652c20226f726967696e616c5f65766964656e63655f726561645f6964656e7469746965735f616e645f62797465735f657175616c223a20747275652c20226f7574707574223a20222f686f6d652f7169616e2d71692f776f726b2f636861696e2d70712d636f6d706f736974696f6e2d3636333530372d32303236313130382f636f6e74696e756174696f6e2d7265736f757263652d65766964656e63652d353633336335352d7631222c2022736f757263655f696e76656e746f72795f6265666f72655f61667465725f657175616c223a20747275652c2022736f757263655f726567756c61725f66696c6573223a203138372c2022737461747573223a202241524348495645445f5645524946494544222c202277686f6c655f636861696e5f70715f7175616c6966696564223a2066616c73657d0a\",\n    \"eof\": true,\n    \"next_offset\": 737,\n    \"offset\": 0,\n    \"size\": 737,\n    \"text\": \"{\\\"archive\\\": {\\\"bytes\\\": 369873, \\\"file\\\": \\\"continuation-resource-evidence-5633c55.tar.gz\\\", \\\"sha256\\\": \\\"e1366a88a79dab02ea2deaa5af8915bba913e97f3c02d21eb06badf3fa2f82dc\\\"}, \\\"collector_before_after_equal\\\": true, \\\"deterministic_rebuild_identical\\\": true, \\\"manifest\\\": {\\\"bytes\\\": 162945, \\\"file\\\": \\\"manifest.json\\\", \\\"sha256\\\": \\\"2b9fb133b7301fc1fa674f61baa7d89946a0333ac2e9d509941e4aea9c0b83b9\\\"}, \\\"members\\\": 190, \\\"native_tests_executed\\\": false, \\\"original_evidence_read_identities_and_bytes_equal\\\": true, \\\"output\\\": \\\"/home/qian-qi/work/chain-pq-composition-663507-20261108/continuation-resource-evidence-5633c55-v1\\\", \\\"source_inventory_before_after_equal\\\": true, \\\"source_regular_files\\\": 187, \\\"status\\\": \\\"ARCHIVED_VERIFIED\\\", \\\"whole_chain_pq_qualified\\\": false}\\n\"\n  }\n}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "remote_result": {
+    "archive": {
+      "bytes": 369873,
+      "file": "continuation-resource-evidence-5633c55.tar.gz",
+      "sha256": "e1366a88a79dab02ea2deaa5af8915bba913e97f3c02d21eb06badf3fa2f82dc"
+    },
+    "collector_before_after_equal": true,
+    "deterministic_rebuild_identical": true,
+    "manifest": {
+      "bytes": 162945,
+      "file": "manifest.json",
+      "sha256": "2b9fb133b7301fc1fa674f61baa7d89946a0333ac2e9d509941e4aea9c0b83b9"
+    },
+    "members": 190,
+    "native_tests_executed": false,
+    "original_evidence_read_identities_and_bytes_equal": true,
+    "output": "/home/qian-qi/work/chain-pq-composition-663507-20261108/continuation-resource-evidence-5633c55-v1",
+    "source_inventory_before_after_equal": true,
+    "source_regular_files": 187,
+    "status": "ARCHIVED_VERIFIED",
+    "whole_chain_pq_qualified": false
+  },
+  "input_upload_receipts": [
+    {
+      "name": "native-continuation-5633-launch-request.json",
+      "receipt": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"mode\":384,\"sha256\":\"3460db6596bbdb1d46dee18fd3013ba4faa1ae24c04a6866cf554d806e2e23a9\",\"size\":1106,\"version\":\"2050:4885689:1106:1794171262502415800:1794171262505877998\",\"written\":1106}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "name": "native-continuation-5633-launch-receipt.json",
+      "receipt": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"mode\":384,\"sha256\":\"1b5365912b65703b19aa1421552b4bdc6e836c0aa0cfd1b5243399ce5ac23a74\",\"size\":2524,\"version\":\"2050:4885691:2524:1794171264566067565:1794171264569811806\",\"written\":2524}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "name": "native-continuation-5633-upload-receipts.json",
+      "receipt": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"mode\":384,\"sha256\":\"a673663e2fb9f63e018e7581405e16cbacc4b2c9bfe0bfe323ab197ab3dcdfef\",\"size\":1145,\"version\":\"2050:4885693:1145:1794171266597471228:1794171266722742763\",\"written\":1145}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "name": "native-continuation-5633-final-upload-receipt.json",
+      "receipt": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"mode\":384,\"sha256\":\"64360beb374b14ccbee949b93174f4fd01a6a681c46a5a16edf74aa184e93e23\",\"size\":691,\"version\":\"2050:4885695:691:1794171268840794516:1794171268857674300\",\"written\":691}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "name": "native-continuation-independent-readback-5633.json",
+      "receipt": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"mode\":384,\"sha256\":\"35d2f2276c932b06199e01b43812e9e7fd28e4fb5bfb72c8b2f886713ff4d6fa\",\"size\":14681,\"version\":\"2050:4885697:14681:1794171270937206860:1794171270953607090\",\"written\":14681}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "name": "native-continuation-terminal-read-5633.json",
+      "receipt": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"mode\":384,\"sha256\":\"f5c48a988fba463541e07f18a8951c126ecee01d667ea9793fd123a344cb88d1\",\"size\":23348,\"version\":\"2050:4885699:23348:1794171273200798665:1794171273217534495\",\"written\":23348}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "name": "owned-resource-repair-readback-5633.json",
+      "receipt": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"mode\":384,\"sha256\":\"a241d387d3dc785aad13e5a55933005ff12292eb09d51092474345807d649ed2\",\"size\":12226,\"version\":\"2050:4885701:12226:1794171275321467177:1794171275401464469\",\"written\":12226}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "name": "metadata_import_terminal_evidence_5633.json",
+      "receipt": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"mode\":384,\"sha256\":\"9767b7ad4c41d76fef47e2657f3ba6b2dbda1aab56204a8a1d817ee32fe00fed\",\"size\":15229,\"version\":\"2050:4885703:15229:1794171282971945811:1794171282988221222\",\"written\":15229}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "name": "continuation_resource_authoritative_controls_5633.json",
+      "receipt": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"mode\":384,\"sha256\":\"40845fb47514f65be156b3e9adc4b5a70937be9e85c350d7c055be9fbc7f1303\",\"size\":17968,\"version\":\"2050:4885705:17968:1794171285227837355:1794171285244148899\",\"written\":17968}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "name": "continuation_resource_scope_decision_5633.json",
+      "receipt": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"mode\":384,\"sha256\":\"6933d69c96f42454f821bcfc0ae6f2a93ef39fb5c3a258dfe4a066c401d4a61e\",\"size\":695,\"version\":\"2050:4885707:695:1794171287249026273:1794171287626072539\",\"written\":695}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    },
+    {
+      "name": "archive_continuation_resource_5633.py",
+      "receipt": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"mode\":384,\"sha256\":\"f4be91a732c4fef5f36f32721dcd1004d23dd2c98ee666fe66065ba200a3233f\",\"size\":19039,\"version\":\"2050:4885709:19039:1794171289847073879:1794171290104993073\",\"written\":19039}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      }
+    }
+  ],
+  "local_v2": {
+    "command": [
+      "python3",
+      "-B",
+      "collected-evidence/continuation-resource-5633/verify_download_v2.py"
+    ],
+    "verifier_sha256": "71a5b1a6aa397496d2bee64275cc6f72613e1b165affd799f3186781d1af5bee",
+    "result": {
+      "chunk_id": "222b75",
+      "wall_time_seconds": 0.068068303,
+      "exit_code": 0,
+      "original_token_count": 101,
+      "output": "{\"status\": \"VERIFIED\", \"archive\": {\"bytes\": 369873, \"sha256\": \"e1366a88a79dab02ea2deaa5af8915bba913e97f3c02d21eb06badf3fa2f82dc\"}, \"manifest\": {\"bytes\": 162945, \"sha256\": \"2b9fb133b7301fc1fa674f61baa7d89946a0333ac2e9d509941e4aea9c0b83b9\"}, \"transport_chunks_verified\": 10, \"members_verified\": 190, \"source_regular_files\": 187, \"source_regular_bytes\": 3361088, \"deterministic_rebuild_identical\": true}\n"
+    }
+  },
+  "first_local_verifier_failure_retained": "verification-attempt-1.json",
+  "raw_campaign_result_replaced": false,
+  "native_tests_executed_by_archive_or_verification": false,
+  "whole_chain_pq_qualified": false
+}

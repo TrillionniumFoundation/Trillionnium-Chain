@@ -1,0 +1,32 @@
+{
+  "commit_executed_before_this_repair": false,
+  "native_tests_executed": false,
+  "original_first_staged_whitespace_check_exit": 2,
+  "original_first_staged_whitespace_messages": [
+    "archives/initial-publication-5633c55/runtime-transfer-receipt.json:185: new blank line at EOF.",
+    "archives/native-terminal-5633c55/runtime-transfer-receipt.json:247: new blank line at EOF."
+  ],
+  "prior_campaign_results_replaced": false,
+  "reason": "Preserve original JSON trailing bytes in deterministic gzip containers without changing raw evidence; no whitespace rule is disabled.",
+  "receipts": [
+    {
+      "container_bytes": 1368,
+      "container_path": "archives/initial-publication-5633c55/runtime-transfer-receipt.json.gz",
+      "container_sha256": "a0e263a12f170065a179d3465b23c6608fcc08c8ffebc2b174a3394fcc9776e9",
+      "decompression_exact_bytes_verified": true,
+      "original_bytes": 5698,
+      "original_path": "archives/initial-publication-5633c55/runtime-transfer-receipt.json",
+      "original_sha256": "e696724bdb268375d6581d13e39f21b19c526d3f4f5fd6c11c4f78533df545f9"
+    },
+    {
+      "container_bytes": 1893,
+      "container_path": "archives/native-terminal-5633c55/runtime-transfer-receipt.json.gz",
+      "container_sha256": "c190e9d328e04a7e8215be6a9c6bc48f5b7fdb9a97828e18b60f2b01eab04c6b",
+      "decompression_exact_bytes_verified": true,
+      "original_bytes": 8187,
+      "original_path": "archives/native-terminal-5633c55/runtime-transfer-receipt.json",
+      "original_sha256": "b74e91b48e5b1c2955f39166955faacd97ef24baea8c4128608aae2decb79350"
+    }
+  ],
+  "schema": "trnm-raw-receipt-container-preservation-v1"
+}

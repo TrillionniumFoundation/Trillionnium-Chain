@@ -1,0 +1,812 @@
+{
+  "entries": [
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 2454,
+        "sha256": "c286b41fe7c092b671f72a87bb527acf57bbab9cb32434c9d454ad218f36682a"
+      },
+      "original_name": "authority-scanner-negatives.stderr.txt",
+      "stored": {
+        "bytes": 568,
+        "sha256": "da3cc9d04325cf97902aec69c272bee94f100c6d592c9a51f8e56a303ff8e417"
+      },
+      "stored_name": "authority-scanner-negatives.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "authority-scanner-negatives.stdout.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "authority-scanner-negatives.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "cargo-version.stderr.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "cargo-version.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 36,
+        "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+      },
+      "original_name": "cargo-version.stdout.txt",
+      "stored": {
+        "bytes": 56,
+        "sha256": "2d9aa426f568cbd429c96ffe8d2721d3ab3c51ba1ebf79ee3a73e026a591447b"
+      },
+      "stored_name": "cargo-version.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 17489,
+        "sha256": "2019795342aec915a0d1fef02fbac7ca3850483c3afe0fb41ec631e4b33dbeaf"
+      },
+      "original_name": "ci-contract-negatives.stderr.txt",
+      "stored": {
+        "bytes": 2795,
+        "sha256": "56f4a851393f35ea541eae4a3a75530acd127233b34e65bd1886e93629e53dcf"
+      },
+      "stored_name": "ci-contract-negatives.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "ci-contract-negatives.stdout.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "ci-contract-negatives.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "ci-contract.stderr.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "ci-contract.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 180,
+        "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+      },
+      "original_name": "ci-contract.stdout.txt",
+      "stored": {
+        "bytes": 151,
+        "sha256": "03b93bde5a0f37aaeb67de02c8088d74b7f8aab104e1b8b35730c08a982dbeb7"
+      },
+      "stored_name": "ci-contract.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "claim-report.stderr.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "claim-report.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 4835,
+        "sha256": "1071e58361cfdbc4b70e270822fc6984fe5f82331614be861ea41db0b9d6b7ec"
+      },
+      "original_name": "claim-report.stdout.txt",
+      "stored": {
+        "bytes": 1549,
+        "sha256": "b91a331dcb975d57d9513cf6a28a74e79828f2bdf3b5528a0780fe2469039329"
+      },
+      "stored_name": "claim-report.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 6148,
+        "sha256": "5167c638213b869e8b1bfe9ff5a7d8794f751e39fc62b269ba17a6a430f109a9"
+      },
+      "original_name": "claim-tests.stderr.txt",
+      "stored": {
+        "bytes": 1082,
+        "sha256": "6871df1ec2795e94df2cffd86adc44fd554489906dc5d1b6299d7313f85820fa"
+      },
+      "stored_name": "claim-tests.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "claim-tests.stdout.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "claim-tests.stdout.txt.gz"
+    },
+    {
+      "encoding": "identity",
+      "original": {
+        "bytes": 6194,
+        "sha256": "cf37bcc3e694ca25bb3f7704ada2357552e9d3ebce101e3cafb3a85c0c4f0a82"
+      },
+      "original_name": "commands.json",
+      "stored": {
+        "bytes": 6194,
+        "sha256": "cf37bcc3e694ca25bb3f7704ada2357552e9d3ebce101e3cafb3a85c0c4f0a82"
+      },
+      "stored_name": "commands.json"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "diff-check.stderr.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "diff-check.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "diff-check.stdout.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "diff-check.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 76,
+        "sha256": "3060c11e06f46d1cbf92fbb40b0ecf6bfd5482816a73a13c7267e2efa34b28fb"
+      },
+      "original_name": "distributed-inventory.stderr.txt",
+      "stored": {
+        "bytes": 83,
+        "sha256": "91e79f7d7f8098df02e4f260c0ebc808743d233b341ce4aa1728ed69a741da2e"
+      },
+      "stored_name": "distributed-inventory.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "distributed-inventory.stdout.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "distributed-inventory.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "effect-register-report.stderr.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "effect-register-report.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 13223,
+        "sha256": "0deea7a4eb4b75986c30c90e0d04247d45f817e4777a43ab41e26deddc1390ab"
+      },
+      "original_name": "effect-register-report.stdout.txt",
+      "stored": {
+        "bytes": 3585,
+        "sha256": "e064ca26a96d76e091cadc918f13d0c8fd559fd48a6031025abdda2ec21f9530"
+      },
+      "stored_name": "effect-register-report.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 3019,
+        "sha256": "7492fb22d3ae3ca068e123b992c3dd8369dd66bd40cb88e5f440dd831a07462a"
+      },
+      "original_name": "effect-register-tests.stderr.txt",
+      "stored": {
+        "bytes": 720,
+        "sha256": "7c41b6069c2f7cc82c3ee6402d561a42a1e9867c53f3efcb397668d6b7c56278"
+      },
+      "stored_name": "effect-register-tests.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "effect-register-tests.stdout.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "effect-register-tests.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "formatting.stderr.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "formatting.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "formatting.stdout.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "formatting.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "lifetime-report.stderr.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "lifetime-report.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 12824,
+        "sha256": "5ec6d9237665c7c7500b3f63b35a4380b397dada80668b3804913be008c09b90"
+      },
+      "original_name": "lifetime-report.stdout.txt",
+      "stored": {
+        "bytes": 3806,
+        "sha256": "899a7d71fa7fd4f6fe4d948970b3155f73797261dcb43f3d5ec7485117ac40b1"
+      },
+      "stored_name": "lifetime-report.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 9494,
+        "sha256": "cf09305ba976e6bbed04de3ac727f082dae422ca347f82304660dab77e6961fa"
+      },
+      "original_name": "lifetime-tests.stderr.txt",
+      "stored": {
+        "bytes": 2011,
+        "sha256": "2d6cc10194c44e6f1f15888ff8be1a3bc8788fae81985876958068c7146ae272"
+      },
+      "stored_name": "lifetime-tests.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "lifetime-tests.stdout.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "lifetime-tests.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "metadata-all-features.stderr.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "metadata-all-features.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 867107,
+        "sha256": "984b28c6aeffac547f276adfb082a694b98643c18e541937479c5783d0bc8cc6"
+      },
+      "original_name": "metadata-all-features.stdout.txt",
+      "stored": {
+        "bytes": 68653,
+        "sha256": "a778f6230a10e568e9564abfcb6f25b6e7ed6eb65fa992ab615f3baec0b0d32e"
+      },
+      "stored_name": "metadata-all-features.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "metadata-default.stderr.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "metadata-default.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 852308,
+        "sha256": "5b34ca197b2396d48ec0a92ff5691761e09b86070df07accc25c0d69b17d7a28"
+      },
+      "original_name": "metadata-default.stdout.txt",
+      "stored": {
+        "bytes": 67585,
+        "sha256": "9e9def62858e5396de408e5405507178450ea81bef8371f56c638fa585d6d32d"
+      },
+      "stored_name": "metadata-default.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "metadata-fuzz.stderr.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "metadata-fuzz.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 733815,
+        "sha256": "a77a36ed059dac37d10cd6e3d37ed525e0827cccad101e5a1c8a82d2229eb7e6"
+      },
+      "original_name": "metadata-fuzz.stdout.txt",
+      "stored": {
+        "bytes": 59665,
+        "sha256": "b73c664ffa344b13e326a8d08e32ff7731d2f0229f2709e4a71cdc1541240b65"
+      },
+      "stored_name": "metadata-fuzz.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 1864,
+        "sha256": "0e19137c7acc2ccbb9d077b82d4e7db05f1f1c56cb097a9ab6b15066c4dcf561"
+      },
+      "original_name": "native-crypto-default.stderr.txt",
+      "stored": {
+        "bytes": 662,
+        "sha256": "163a88ab345abaf32dbee808b947b317dbfa5dc132740c02f75be9dcaa284b4e"
+      },
+      "stored_name": "native-crypto-default.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 17642,
+        "sha256": "75b641f41e038fb17714b43aa1a636791b6a98805eb5d878bfbc4526f6319647"
+      },
+      "original_name": "native-crypto-default.stdout.txt",
+      "stored": {
+        "bytes": 4439,
+        "sha256": "9b61dbac3296ca989f8d1cfd20c70a6e8a59710c68e88a10b4ad0ce9a74222ec"
+      },
+      "stored_name": "native-crypto-default.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 572,
+        "sha256": "6bd08150814c35f7c7e058b26a64ea060c86e1d2fb777dd5e1d9777232d9822c"
+      },
+      "original_name": "native-hepta-pq-comparator.stderr.txt",
+      "stored": {
+        "bytes": 273,
+        "sha256": "eeb3110896bcde5a8bf95e5c632e2f001356c151eb760c75f9bcbf9fbf087baf"
+      },
+      "stored_name": "native-hepta-pq-comparator.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 546,
+        "sha256": "7740f394332d3070a45766b45e4d10a97a59fe17e2ece3df82bee77ef62dc585"
+      },
+      "original_name": "native-hepta-pq-comparator.stdout.txt",
+      "stored": {
+        "bytes": 317,
+        "sha256": "c9aee2f0f407edaf56577de226a6d904b2ae9bc21ddc6254638ff9c5abe4f5d4"
+      },
+      "stored_name": "native-hepta-pq-comparator.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "pq-source-integration.stderr.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "pq-source-integration.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 557,
+        "sha256": "ca45054e85acee439a5eb75ba4b6f65d8cbaa52bf81b7a1973683c80301be99e"
+      },
+      "original_name": "pq-source-integration.stdout.txt",
+      "stored": {
+        "bytes": 294,
+        "sha256": "4b013ab4428576bc5b1096fe157f2c857caa91fe41d92b32264d542a56414677"
+      },
+      "stored_name": "pq-source-integration.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 7769,
+        "sha256": "5f0f233337fa122138b487c10e6f5386e2fb3c0f79b1dbab8947ff18fc0e6189"
+      },
+      "original_name": "pq-source-negatives.stderr.txt",
+      "stored": {
+        "bytes": 1407,
+        "sha256": "0d4300149c833c9cc078e2744147060b0bf1a8bc311adfc2119f9ecd6e8aefcd"
+      },
+      "stored_name": "pq-source-negatives.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "pq-source-negatives.stdout.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "pq-source-negatives.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "preflight.stderr.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "preflight.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 182,
+        "sha256": "25149fad129e04a157b6c504027844a5fd1b64ee0ce2014007a2e6f98610cb40"
+      },
+      "original_name": "preflight.stdout.txt",
+      "stored": {
+        "bytes": 164,
+        "sha256": "6e6ea58d6bfd306c35078d425e81248f93aade2f5ae88e54ecca6c8e3fc52af3"
+      },
+      "stored_name": "preflight.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 5345,
+        "sha256": "73ceaf881037f2d5c64ee5a0663ee4e76c1cb8270a56b898802ae27c11b10c60"
+      },
+      "original_name": "repository-negatives.stderr.txt",
+      "stored": {
+        "bytes": 1046,
+        "sha256": "a76ee29f6c0e01f43d769093643e035f348d382e1395b0ac10290b11fc987235"
+      },
+      "stored_name": "repository-negatives.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "repository-negatives.stdout.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "repository-negatives.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "repository.stderr.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "repository.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 307,
+        "sha256": "568cfd9944c1e489fb0e89363a2b42e5c2fb1d2aebd5a64dc2a2a225c1391078"
+      },
+      "original_name": "repository.stdout.txt",
+      "stored": {
+        "bytes": 240,
+        "sha256": "d842fb1a1ce490b48493af6139ee492d25146dc2f2eaeb41a7ce5f6145bc3fb8"
+      },
+      "stored_name": "repository.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "root-policy-example.stderr.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "root-policy-example.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 1298,
+        "sha256": "fbf8889ff8ed18bee29936437ae41446c54009a57368fb639e0bf078825b8c53"
+      },
+      "original_name": "root-policy-example.stdout.txt",
+      "stored": {
+        "bytes": 700,
+        "sha256": "d0b4071a6b749063eb6d5a3da9cf7f7823d95a743d984ab67947e3c6294f8fd6"
+      },
+      "stored_name": "root-policy-example.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 5281,
+        "sha256": "16ee15b6df7424ceed14fa9879804f19febdc29ab0cbd5a225829f5612c21858"
+      },
+      "original_name": "root-policy-tests.stderr.txt",
+      "stored": {
+        "bytes": 1071,
+        "sha256": "c0af773e4dac8e9c70322dcd99d15d4ce31c2edbd79f6f8f31240e78923ac087"
+      },
+      "stored_name": "root-policy-tests.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "root-policy-tests.stdout.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "root-policy-tests.stdout.txt.gz"
+    },
+    {
+      "encoding": "identity",
+      "original": {
+        "bytes": 423,
+        "sha256": "dfb471ce59447406ae96bb190f40aea0fb43c8b039dacef7b47e608c53255e94"
+      },
+      "original_name": "source-after.json",
+      "stored": {
+        "bytes": 423,
+        "sha256": "dfb471ce59447406ae96bb190f40aea0fb43c8b039dacef7b47e608c53255e94"
+      },
+      "stored_name": "source-after.json"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "source-after.stderr.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "source-after.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 423,
+        "sha256": "dfb471ce59447406ae96bb190f40aea0fb43c8b039dacef7b47e608c53255e94"
+      },
+      "original_name": "source-after.stdout.txt",
+      "stored": {
+        "bytes": 255,
+        "sha256": "842ba14a3883bbc6f24196b99dc467e7e6785f2c4bc93384844f84e206939431"
+      },
+      "stored_name": "source-after.stdout.txt.gz"
+    },
+    {
+      "encoding": "identity",
+      "original": {
+        "bytes": 423,
+        "sha256": "dfb471ce59447406ae96bb190f40aea0fb43c8b039dacef7b47e608c53255e94"
+      },
+      "original_name": "source-before.json",
+      "stored": {
+        "bytes": 423,
+        "sha256": "dfb471ce59447406ae96bb190f40aea0fb43c8b039dacef7b47e608c53255e94"
+      },
+      "stored_name": "source-before.json"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "source-before.stderr.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "source-before.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 423,
+        "sha256": "dfb471ce59447406ae96bb190f40aea0fb43c8b039dacef7b47e608c53255e94"
+      },
+      "original_name": "source-before.stdout.txt",
+      "stored": {
+        "bytes": 255,
+        "sha256": "842ba14a3883bbc6f24196b99dc467e7e6785f2c4bc93384844f84e206939431"
+      },
+      "stored_name": "source-before.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 6414,
+        "sha256": "b33984e8e3968ad7c23acd7bb0365bfa0a4d128bb768808d72a926656ee8a90f"
+      },
+      "original_name": "source-integrity-negatives.stderr.txt",
+      "stored": {
+        "bytes": 1133,
+        "sha256": "9bf4677333f9965527d7e10b5e4dbd25040e68ab733235a64445919f5f0d99f6"
+      },
+      "stored_name": "source-integrity-negatives.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 484,
+        "sha256": "1cb9d36939dac830e9ce1e06e24ecc8c253fa5f506e93b0a9a4795ae65e65c1c"
+      },
+      "original_name": "source-integrity-negatives.stdout.txt",
+      "stored": {
+        "bytes": 151,
+        "sha256": "bd84e7eda426a11f15a5d7b2169ef8c8af41653e82dfafdd34e6659a08d5a986"
+      },
+      "stored_name": "source-integrity-negatives.stdout.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 7585,
+        "sha256": "451c54f8a4bc5f63f74d55c949748b1d22308c0fa8a27cc5e8638a1d0e5f24ef"
+      },
+      "original_name": "strict-workspace-clippy.stderr.txt",
+      "stored": {
+        "bytes": 1641,
+        "sha256": "ea774aa0a3d19c92d5a59bd8a27eca406ac612fa88a044ee78600f4bc4e53582"
+      },
+      "stored_name": "strict-workspace-clippy.stderr.txt.gz"
+    },
+    {
+      "encoding": "gzip; lossless original bytes; mtime=0",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "original_name": "strict-workspace-clippy.stdout.txt",
+      "stored": {
+        "bytes": 20,
+        "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+      },
+      "stored_name": "strict-workspace-clippy.stdout.txt.gz"
+    },
+    {
+      "encoding": "identity",
+      "original": {
+        "bytes": 20853,
+        "sha256": "72c7ec8fc2bad63c04eb833db23f5f3cb94a0401531b664992c744b002967415"
+      },
+      "original_name": "summary.json",
+      "stored": {
+        "bytes": 20853,
+        "sha256": "72c7ec8fc2bad63c04eb833db23f5f3cb94a0401531b664992c744b002967415"
+      },
+      "stored_name": "summary.json"
+    }
+  ],
+  "original_summary_unchanged": true,
+  "schema": "trnm-pq-command-capture-encoding-v1"
+}

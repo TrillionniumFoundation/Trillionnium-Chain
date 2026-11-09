@@ -1,0 +1,628 @@
+{
+  "accounting_reader": {
+    "adversary_lifetime_query_budget": null,
+    "checked_call_records": 76,
+    "native_permutation_telemetry": false,
+    "qualified": false,
+    "schema": "p3.tagged-mmcs.sponge-accounting-check.v1",
+    "security_bits": null,
+    "source_report_sha256": "fb0793f4bbbca75a66486b68f4d3564f108ef93cd29805741b6e069f3d7bbcac",
+    "status": "ACCOUNTING_CONSISTENT"
+  },
+  "adversary_lifetime_query_budget": null,
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "5633c55219c01c689f670c2ca35d122e39f3f791",
+        "--output",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-5633c55/source-before.json"
+      ],
+      "attempt": 1,
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo",
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T18:05:15.523567+00:00",
+      "name": "source-before",
+      "program_after": {
+        "bytes": 8020928,
+        "path": "/usr/bin/python3.12",
+        "sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f"
+      },
+      "program_before": {
+        "bytes": 8020928,
+        "path": "/usr/bin/python3.12",
+        "sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f"
+      },
+      "started_utc": "2026-11-08T18:03:50.696406+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 423,
+      "stdout_sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "wall_seconds": 84.82692951499484
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "--version",
+        "--verbose"
+      ],
+      "attempt": 1,
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo",
+      "exit_code": 0,
+      "expected_program_identity": {
+        "bytes": 644784,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6"
+      },
+      "finished_utc": "2026-11-08T18:05:15.948442+00:00",
+      "name": "rustc-version",
+      "program_after": {
+        "bytes": 644784,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6"
+      },
+      "program_before": {
+        "bytes": 644784,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6"
+      },
+      "started_utc": "2026-11-08T18:05:15.929018+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 196,
+      "stdout_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "wall_seconds": 0.019206025172024965
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "--version"
+      ],
+      "attempt": 1,
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo",
+      "exit_code": 0,
+      "expected_program_identity": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "finished_utc": "2026-11-08T18:05:16.152858+00:00",
+      "name": "cargo-version",
+      "program_after": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "program_before": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "started_utc": "2026-11-08T18:05:15.951562+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 36,
+      "stdout_sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "wall_seconds": 0.2011080130469054
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--exit-code",
+        "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+        "HEAD",
+        "--",
+        "trillionnium",
+        "config",
+        "qualification"
+      ],
+      "attempt": 1,
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo",
+      "exit_code": 1,
+      "finished_utc": "2026-11-08T18:05:17.089535+00:00",
+      "name": "historical-unchanged-runtime-scope",
+      "program_after": {
+        "bytes": 4066232,
+        "path": "/usr/bin/git",
+        "sha256": "eb54b535467e0975c1284d4c4d08eea779aeb248a5d34b02e2ee171382e22201"
+      },
+      "program_before": {
+        "bytes": 4066232,
+        "path": "/usr/bin/git",
+        "sha256": "eb54b535467e0975c1284d4c4d08eea779aeb248a5d34b02e2ee171382e22201"
+      },
+      "started_utc": "2026-11-08T18:05:16.308376+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 4606039,
+      "stdout_sha256": "a7e0dd165f87fdd610ca71f7f9a7f9fcc445f651dbeff674b5eef11520b1b759",
+      "wall_seconds": 0.780904287006706
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--manifest-path",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "attempt": 1,
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo",
+      "exit_code": 0,
+      "expected_program_identity": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "finished_utc": "2026-11-08T18:05:17.667626+00:00",
+      "name": "metadata",
+      "program_after": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "program_before": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "started_utc": "2026-11-08T18:05:17.147776+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 333376,
+      "stdout_sha256": "e1337a2539ce3c3bfce175a26648f85b4f3cbdce5b30f6cc11f951ad278d848b",
+      "wall_seconds": 0.5196315860375762
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/verify_upstream_source.py",
+        "--repository",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo",
+        "--cargo-metadata",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-5633c55/metadata.stdout.txt"
+      ],
+      "attempt": 1,
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo",
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T18:05:18.403380+00:00",
+      "name": "dependency-source-before",
+      "program_after": {
+        "bytes": 8020928,
+        "path": "/usr/bin/python3.12",
+        "sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f"
+      },
+      "program_before": {
+        "bytes": 8020928,
+        "path": "/usr/bin/python3.12",
+        "sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f"
+      },
+      "started_utc": "2026-11-08T18:05:17.857720+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 13459,
+      "stdout_sha256": "c924a21dcc76689870bb33ea3a72fab5f926294d85edb5a23be4a0796f2deed5",
+      "wall_seconds": 0.5454212429467589
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "attempt": 1,
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo",
+      "exit_code": 0,
+      "expected_program_identity": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "finished_utc": "2026-11-08T18:05:18.865141+00:00",
+      "name": "format",
+      "program_after": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "program_before": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "started_utc": "2026-11-08T18:05:18.444171+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 0.42067459784448147
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "clippy",
+        "--manifest-path",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "--release",
+        "--all-features",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-target-5633c55",
+        "--example",
+        "tagged_sha3_mmcs_binding",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "attempt": 1,
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo",
+      "exit_code": 0,
+      "expected_program_identity": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "finished_utc": "2026-11-08T18:05:35.573128+00:00",
+      "name": "strict-example-clippy",
+      "program_after": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "program_before": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "started_utc": "2026-11-08T18:05:19.056720+00:00",
+      "stderr_bytes": 2433,
+      "stderr_sha256": "beb77acba191602549551dbe5f7b05c3ed7fde08690a30b85f00d09ad77a2d05",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 16.51618997892365
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--manifest-path",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "--release",
+        "--all-features",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-target-5633c55",
+        "--example",
+        "tagged_sha3_mmcs_binding",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "attempt": 1,
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo",
+      "exit_code": 0,
+      "expected_program_identity": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "finished_utc": "2026-11-08T18:06:08.753591+00:00",
+      "name": "build-example-tests",
+      "program_after": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "program_before": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "started_utc": "2026-11-08T18:05:35.750788+00:00",
+      "stderr_bytes": 2087,
+      "stderr_sha256": "2b2d93f9fb3ac79ac59ef8046752afd21de6386314990fc98ec1ab91dbd90440",
+      "stdout_bytes": 85935,
+      "stdout_sha256": "7550748af92e12f82c9327db70a9e67aa455bf6de0a73d403386c8ad12d26ab5",
+      "wall_seconds": 33.00258732889779
+    },
+    {
+      "argv": [
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-target-5633c55/release/examples/tagged_sha3_mmcs_binding-b67c7781c6f4f4e3"
+      ],
+      "attempt": 1,
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo",
+      "exit_code": 0,
+      "expected_program_identity": {
+        "bytes": 1582480,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-target-5633c55/release/examples/tagged_sha3_mmcs_binding-b67c7781c6f4f4e3",
+        "sha256": "d5b61ecd3bce0a0ab90d53de23d74a548d2e33c9022281c2d47d935e1c99390c"
+      },
+      "finished_utc": "2026-11-08T18:06:08.970049+00:00",
+      "name": "release-example-tests",
+      "program_after": {
+        "bytes": 1582480,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-target-5633c55/release/examples/tagged_sha3_mmcs_binding-b67c7781c6f4f4e3",
+        "sha256": "d5b61ecd3bce0a0ab90d53de23d74a548d2e33c9022281c2d47d935e1c99390c"
+      },
+      "program_before": {
+        "bytes": 1582480,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-target-5633c55/release/examples/tagged_sha3_mmcs_binding-b67c7781c6f4f4e3",
+        "sha256": "d5b61ecd3bce0a0ab90d53de23d74a548d2e33c9022281c2d47d935e1c99390c"
+      },
+      "started_utc": "2026-11-08T18:06:08.946671+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 1552,
+      "stdout_sha256": "57f44ed40ca355d2f42020652a98096addfa120f0095afb2b4b6661e1bb08336",
+      "wall_seconds": 0.023111614165827632
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "build",
+        "--manifest-path",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.toml",
+        "--release",
+        "--all-features",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-target-5633c55",
+        "--example",
+        "tagged_sha3_mmcs_binding",
+        "--message-format=json"
+      ],
+      "attempt": 1,
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo",
+      "exit_code": 0,
+      "expected_program_identity": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "finished_utc": "2026-11-08T18:06:22.996779+00:00",
+      "name": "build-example",
+      "program_after": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "program_before": {
+        "bytes": 42185192,
+        "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+      },
+      "started_utc": "2026-11-08T18:06:08.981609+00:00",
+      "stderr_bytes": 224,
+      "stderr_sha256": "d9f0dcb909a33292d21c4683280c4ab105cd0ef6d631c77de53fe7aba7cc3ad8",
+      "stdout_bytes": 85840,
+      "stdout_sha256": "96e0c49457411b29b30d8549efc908601d3f8c28a2fa5407ecf8cd10f1f9d7aa",
+      "wall_seconds": 14.014945934992284
+    },
+    {
+      "argv": [
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-target-5633c55/release/examples/tagged_sha3_mmcs_binding"
+      ],
+      "attempt": 1,
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo",
+      "exit_code": 0,
+      "expected_program_identity": {
+        "bytes": 981760,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-target-5633c55/release/examples/tagged_sha3_mmcs_binding",
+        "sha256": "591e2bf8072245601398b53674c68aac40bed10e6ef1cb489abe4bd60d052e1c"
+      },
+      "finished_utc": "2026-11-08T18:06:23.223238+00:00",
+      "name": "native-mmcs-report",
+      "program_after": {
+        "bytes": 981760,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-target-5633c55/release/examples/tagged_sha3_mmcs_binding",
+        "sha256": "591e2bf8072245601398b53674c68aac40bed10e6ef1cb489abe4bd60d052e1c"
+      },
+      "program_before": {
+        "bytes": 981760,
+        "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-target-5633c55/release/examples/tagged_sha3_mmcs_binding",
+        "sha256": "591e2bf8072245601398b53674c68aac40bed10e6ef1cb489abe4bd60d052e1c"
+      },
+      "started_utc": "2026-11-08T18:06:23.201612+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 38795,
+      "stdout_sha256": "fb0793f4bbbca75a66486b68f4d3564f108ef93cd29805741b6e069f3d7bbcac",
+      "wall_seconds": 0.021347271045669913
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/check_sponge_accounting.py",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-5633c55/native-mmcs-report.stdout.txt"
+      ],
+      "attempt": 1,
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo",
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T18:06:23.371780+00:00",
+      "name": "independent-accounting-reader",
+      "program_after": {
+        "bytes": 8020928,
+        "path": "/usr/bin/python3.12",
+        "sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f"
+      },
+      "program_before": {
+        "bytes": 8020928,
+        "path": "/usr/bin/python3.12",
+        "sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f"
+      },
+      "started_utc": "2026-11-08T18:06:23.229236+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 352,
+      "stdout_sha256": "f933d9ceb7070fcb1fcd0c79d53bf2c427975392573b603a8c51189134e6ee0d",
+      "wall_seconds": 0.14228014391846955
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/verify_upstream_source.py",
+        "--repository",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo",
+        "--cargo-metadata",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-5633c55/metadata.stdout.txt"
+      ],
+      "attempt": 1,
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo",
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T18:06:23.665522+00:00",
+      "name": "dependency-source-after",
+      "program_after": {
+        "bytes": 8020928,
+        "path": "/usr/bin/python3.12",
+        "sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f"
+      },
+      "program_before": {
+        "bytes": 8020928,
+        "path": "/usr/bin/python3.12",
+        "sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f"
+      },
+      "started_utc": "2026-11-08T18:06:23.416423+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 13459,
+      "stdout_sha256": "c924a21dcc76689870bb33ea3a72fab5f926294d85edb5a23be4a0796f2deed5",
+      "wall_seconds": 0.2488305668812245
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo/scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "5633c55219c01c689f670c2ca35d122e39f3f791",
+        "--output",
+        "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-5633c55/source-after.json"
+      ],
+      "attempt": 1,
+      "cwd": "/home/qian-qi/work/chain-pq-composition-663507-20261108/repo",
+      "exit_code": 0,
+      "finished_utc": "2026-11-08T18:06:29.415293+00:00",
+      "name": "source-after",
+      "program_after": {
+        "bytes": 8020928,
+        "path": "/usr/bin/python3.12",
+        "sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f"
+      },
+      "program_before": {
+        "bytes": 8020928,
+        "path": "/usr/bin/python3.12",
+        "sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f"
+      },
+      "started_utc": "2026-11-08T18:06:23.705782+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 423,
+      "stdout_sha256": "0c0c76846a4cace0b3a378b631f16fb23a88841d22a5edcce4ce1ddf7cb8d1b1",
+      "wall_seconds": 5.709278889000416
+    }
+  ],
+  "complete_repository_ci": false,
+  "dependency_source_after_sha256": "c924a21dcc76689870bb33ea3a72fab5f926294d85edb5a23be4a0796f2deed5",
+  "dependency_source_before_sha256": "c924a21dcc76689870bb33ea3a72fab5f926294d85edb5a23be4a0796f2deed5",
+  "emitted_elfs": {
+    "build-example": {
+      "bytes": 981760,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-target-5633c55/release/examples/tagged_sha3_mmcs_binding",
+      "sha256": "591e2bf8072245601398b53674c68aac40bed10e6ef1cb489abe4bd60d052e1c"
+    },
+    "build-example-tests": {
+      "bytes": 1582480,
+      "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final-proof-target-5633c55/release/examples/tagged_sha3_mmcs_binding-b67c7781c6f4f4e3",
+      "sha256": "d5b61ecd3bce0a0ab90d53de23d74a548d2e33c9022281c2d47d935e1c99390c"
+    }
+  },
+  "errors": [],
+  "expected_head": "5633c55219c01c689f670c2ca35d122e39f3f791",
+  "full_historical_runner_qualified": false,
+  "historical_scope_observation": {
+    "argv": [
+      "git",
+      "diff",
+      "--exit-code",
+      "cc836dfc13ef0006eb0878abd8cb5eca9a76bec0",
+      "HEAD",
+      "--",
+      "trillionnium",
+      "config",
+      "qualification"
+    ],
+    "disposition": "REFUSED_INTEGRATED_RUNTIME_DIFF",
+    "exit_code": 1,
+    "full_historical_runner_executed": false,
+    "historical_gate_passed": false,
+    "historical_runner_qualified": false,
+    "original_runner_sha256": "410d5c2fccf0b131fec24cbfc5f68bceaaafbd693d5c55e0e6444e37641bf1e5"
+  },
+  "native_permutation_telemetry": false,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "qualified": false,
+  "required_example_tests": 18,
+  "runner_after": {
+    "bytes": 20731,
+    "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final_proof_campaign.py",
+    "sha256": "e533fa59a596290caef42d59c2d4e5450bcc0f186aaa87ed036b595c94723b77"
+  },
+  "runner_before": {
+    "bytes": 20731,
+    "path": "/home/qian-qi/work/chain-pq-composition-663507-20261108/final_proof_campaign.py",
+    "sha256": "e533fa59a596290caef42d59c2d4e5450bcc0f186aaa87ed036b595c94723b77"
+  },
+  "runner_unchanged": true,
+  "schema": "p3.mmcs.final-native-campaign.v1",
+  "scoped_native_checks_passed": true,
+  "security_bits": null,
+  "source_after": {
+    "base": null,
+    "candidate": "5633c55219c01c689f670c2ca35d122e39f3f791",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "5633c55219c01c689f670c2ca35d122e39f3f791",
+    "tested_tree": "3baafa8923d1a1e7bfb6f24cff9965a4e82fba4c",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2384483193,
+    "tracked_entries": 23699,
+    "tracked_worktree_verified": true
+  },
+  "source_before": {
+    "base": null,
+    "candidate": "5633c55219c01c689f670c2ca35d122e39f3f791",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "5633c55219c01c689f670c2ca35d122e39f3f791",
+    "tested_tree": "3baafa8923d1a1e7bfb6f24cff9965a4e82fba4c",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2384483193,
+    "tracked_entries": 23699,
+    "tracked_worktree_verified": true
+  },
+  "source_unchanged": true,
+  "status": "NATIVE_CHECKS_PASSED_WITH_HISTORICAL_SCOPE_REFUSAL",
+  "toolchain_unchanged": true
+}

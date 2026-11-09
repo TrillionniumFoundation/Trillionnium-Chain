@@ -1,0 +1,276 @@
+{
+  "schema": "trnm-retained-diagnostic-archive-v1",
+  "archive": "da-fixture-diagnostics-f0e8dc9.tar.gz",
+  "sha256": "47fd783d604449249ed65882fcfd0c9a0cf823f42f316754890e50d1e6aca9b2",
+  "bytes": 114591,
+  "source_root": "/workspace/scratch/6635074442e1",
+  "member_count": 53,
+  "members": [
+    {
+      "path": "content-audit/da-native-diagnostics/bundle-export-launch-20261108.json",
+      "bytes": 2251,
+      "sha256": "8f52020ccdf8bde70a455b6d368f6416f523249e7f7d1bd2eaae9b33a04c8da8"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/bundle-export-terminal-20261108.json",
+      "bytes": 1607,
+      "sha256": "788ad1b0493a5f9020a13b524fd5c9d8ff47a3ecae754f7747712b9fc65f37cd"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/cancel-observation-20261108T1902Z.json",
+      "bytes": 2037,
+      "sha256": "001be50ccde68e5a3c0355a08bdbb18546538b24701616fb65b6200f7f032c4f"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/candidate/trillionnium/crates/trnm-data-availability/src/cell/discovery/equivocation_history_tests.rs",
+      "bytes": 11587,
+      "sha256": "c0cd82771a14e1621c32d3bf783b425856ddc3c2d6cce052dbe1fc137a6c61c2"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/candidate/trillionnium/crates/trnm-data-availability/src/cell/network/serving/tests.rs",
+      "bytes": 30352,
+      "sha256": "5030e360c575209b569aebab75d7ce37c98be09780dbe4b4607d6e4005a318b8"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/candidate/trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests/rarest.rs",
+      "bytes": 6615,
+      "sha256": "d26de33724d83a7be0c246f4f9839631dc0fb1831f156fa347dc5fd39003ed92"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/final-evidence-manifest-20261108.json",
+      "bytes": 29353,
+      "sha256": "dd917845794243afbca968e0c0d15961f6cc664268f9d2ad555e5db4fbd11f06"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-diagnostic.patch",
+      "bytes": 6973,
+      "sha256": "fa029f0542db3024ee4cfdfc6bacbf554af5aa572e8b629c3567e8f316b2a647"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-execution/execute-inputs.json",
+      "bytes": 3992,
+      "sha256": "5f599099230ad4ce5e5d65db2e3b805113649a2e9fb84dea30e92dd7fe2cd597"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-execution/execute-summary.json",
+      "bytes": 17277,
+      "sha256": "24ec386433bd7fbbd591ad60005879efcf2732a8b487617b8149172c68fcd25c"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-execution/fixture-native-01.libtest.log",
+      "bytes": 119,
+      "sha256": "db4606bc6b0d9155a15ef60875891ae21ddc5f54b944ef48113362d28f0d970e"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-execution/fixture-native-01.receipt.json",
+      "bytes": 2036,
+      "sha256": "8bab5d4ae880418478e5e620655da85982f97ed593ca62a34ec3814cefcb96bb"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-execution/fixture-native-01.stderr.log",
+      "bytes": 34,
+      "sha256": "5a14954714f63630e6a37439c71847cfd13e71ce4dad3bb7c1b9c98e68082447"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-execution/fixture-native-01.stdout.log",
+      "bytes": 242,
+      "sha256": "e677dba4fe328a7c6e3e7fed856425e64716ba1fa382d5647b51948d02de8497"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-execution/fixture-native-02.libtest.log",
+      "bytes": 90,
+      "sha256": "639b709d37512564ffd4c4a3cce4777aaaacbbffbb4dcbeb326a3da8d5552dbf"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-execution/fixture-native-02.receipt.json",
+      "bytes": 2009,
+      "sha256": "0648550d6a177329a43725d0a160253fa89999fb7a31e0c2fb57df9922f95b7d"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-execution/fixture-native-02.stderr.log",
+      "bytes": 34,
+      "sha256": "5a14954714f63630e6a37439c71847cfd13e71ce4dad3bb7c1b9c98e68082447"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-execution/fixture-native-02.stdout.log",
+      "bytes": 213,
+      "sha256": "6bd9ee2b211037be48cbc1c56645d6bae281057f94698dfc99f25cb35599f0b4"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-execution/fixture-native-03.libtest.log",
+      "bytes": 124,
+      "sha256": "9cf72b4576196cf5ed61f66fcf6befe5a0932b2cb9ffaee97ce8cb91137d1caf"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-execution/fixture-native-03.receipt.json",
+      "bytes": 2041,
+      "sha256": "2c09a1902d6b8141e51d8fa9f99e8f603cbf2a911d4cf802e9916fd8d9901254"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-execution/fixture-native-03.stderr.log",
+      "bytes": 34,
+      "sha256": "5a14954714f63630e6a37439c71847cfd13e71ce4dad3bb7c1b9c98e68082447"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-execution/fixture-native-03.stdout.log",
+      "bytes": 247,
+      "sha256": "c09ed5bebdd7db6cdcf5ae6e120be846c395a1c031114cfbcbc17e0045dba1d1"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-execution/list-harness.receipt.json",
+      "bytes": 4587,
+      "sha256": "529d6866be749e0dd3edb6607f933e6e0bdc09558d1c08b97ceee1389a4d26c4"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-execution/list-harness.stdout.log",
+      "bytes": 42315,
+      "sha256": "a9d25cddbd722da0aae074e49d99473368d0731157777014dba1b1c71b909526"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-execution/local-native-readback-validation.json",
+      "bytes": 559,
+      "sha256": "e522a0baa61b7f36b8851988d91dcadcbcd7282b643393258b5f4d61e0d09a56"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-execution/native-readback.json",
+      "bytes": 65260,
+      "sha256": "839d343a9d42e9abd2cb67accb292d47b3e0f88b632603a060db86c550e2fdbe"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-preparation/prepare-summary.json",
+      "bytes": 29007,
+      "sha256": "2e444fa853e5c5dd26b52abfb1b107a4a9c82e005da86b4749bac9d8c6fb7cc2"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-preparation/prepared-source.json",
+      "bytes": 2238,
+      "sha256": "235affb99e0b08fdae50c674c6094e514f043fbbcf0ffe98261955a4d19ae8c9"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-transfer/da-fixture-f0e8dc9-parent-5633.bundle",
+      "bytes": 2927,
+      "sha256": "2974103d828948b085cba6fc213643e2dbf38b1a2936489ceaf958244a7fbd53"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/fixture-transfer/transfer-report.json",
+      "bytes": 6512,
+      "sha256": "e0f338a9b3b8a14a3f08ffe706d2423fddfb9f75ffe43e278b94726e52dfb86d"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/frozen-evidence-manifest-20261108.json",
+      "bytes": 24150,
+      "sha256": "dfd9856a6221935f2b0a59e35824ea0ddbe0b65261f4f188bc2873102bc4da2b"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/frozen-evidence-manifest-20261108.sha256",
+      "bytes": 105,
+      "sha256": "d33859169f01b27959a44a1f3ddc1b72a342b591b32a83f60a566ff3acd1a75f"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/launch-observation-20261108T1900Z.json",
+      "bytes": 5259,
+      "sha256": "ead073783256c096cb4eebc14d8c0e16651741db2948962753a15eb96e2701f6"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/manifest.json",
+      "bytes": 1499,
+      "sha256": "0633d7448f090a192f52ff9db0dd1a5f3773ea147c4145a0f214540bab78248c"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/original-elf-run/diagnostic-01.receipt.json",
+      "bytes": 2306,
+      "sha256": "425a28d3759534ecd5eb8bd0d9b20d7cfb3b3489b193b11dd67f936db8c3bb47"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/original-elf-run/diagnostic-02.receipt.json",
+      "bytes": 2277,
+      "sha256": "7221889a7eb98c1d06e2608ef0b43e4d05f54d5ec0c6734ac05624a167c777b0"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/original-elf-run/diagnostic-03.receipt.json",
+      "bytes": 2312,
+      "sha256": "5e7fc0f4cd9c69c9ccf75a431c05104392f3dba645045246aeb854f26fae4881"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/original-elf-run/diagnostic-summary.json",
+      "bytes": 21697,
+      "sha256": "402361853973dc783dbf3019579d7146f17c4c69ae83ca3a5d8471e62e7873a8"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/original/trillionnium/crates/trnm-data-availability/src/cell/discovery/equivocation_history_tests.rs",
+      "bytes": 10726,
+      "sha256": "4d3066245a02147b331eee2d7cf4ef6561cdeb469ae0a0c09e400849caff1065"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/original/trillionnium/crates/trnm-data-availability/src/cell/network/serving/tests.rs",
+      "bytes": 29337,
+      "sha256": "b34c3e64411f5be65b8794cfb125b79dd637af2190f202389c3a293bcd22d347"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/original/trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests/rarest.rs",
+      "bytes": 5709,
+      "sha256": "36a93c676f664a0eb9f4301965fc3b8ff6a2b1e7af0b7176807fcf7b99bc7638"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/recovery-execution-intent.json",
+      "bytes": 515,
+      "sha256": "bae51865d6cc3dac17f9b8db8658508ca065b023d79357995b3e02859ad4186d"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/recovery-launch-20261108.json",
+      "bytes": 2545,
+      "sha256": "e254586914a55a9dacaabe318b16ef410dc42d23e7f4f1f4b9dda5df06dc561d"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/recovery-operation-chain-20261108.json",
+      "bytes": 8139,
+      "sha256": "c9a870a2db9da59f2f72163b1cc45746bd84e9664bc6a95aed22cccfd4cf9c60"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/recovery-preflight-20261108.json",
+      "bytes": 63090,
+      "sha256": "c262f711e0b78c43ebdc6275a776f51ffc7670a74a64c31ebf6d62706fac26ee"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/recovery-start-observation-20261108.json",
+      "bytes": 2314,
+      "sha256": "856faf197c9dc711ec2839e77d9fdd76be5bac586a041d85d69fe89062c134fb"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/recovery-terminal-20261108.json",
+      "bytes": 4608,
+      "sha256": "0421ce7c2ca188352ef11285d65851122bd740897cf7e7540776c6a68927ec82"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/runtime-recheck-20261108.json",
+      "bytes": 1248,
+      "sha256": "2c123f86cc9c15b75ff30e89627393e171e66ca92620c819df51fa51d2073638"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/rustfmt.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "content-audit/da-native-diagnostics/rustfmt.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "content-audit/da_diagnostics_5633.py",
+      "bytes": 16426,
+      "sha256": "a2403eb189313b50f8292ccb97bd0fb9bfbfd3d518592be0c7702ed14d9c397e"
+    },
+    {
+      "path": "content-audit/da_fixture_campaign_5633.py",
+      "bytes": 19380,
+      "sha256": "af4b547c2dfb34fba76de9fdbc64b0447db18c5a0949c39521f25ba654586817"
+    },
+    {
+      "path": "content-audit/export_da_fixture_bundle_5633.py",
+      "bytes": 6336,
+      "sha256": "c8e3da055c3291c348ceff303a307bef7a13a23d46648c638d2933ab79aa4d51"
+    }
+  ],
+  "interpretation": "Unmerged test-only child f0e8dc9; three exact tests once; not a complete 415-test run; original failures and unknown launch retained."
+}

@@ -1,0 +1,296 @@
+{
+  "all_ci_green": false,
+  "failed_run_scope": [
+    {
+      "classification": "source_contract_incompatibility",
+      "failed_jobs": [
+        {
+          "decoded_log": "job-128839705423.log",
+          "decoded_log_sha256": "769098ed8962a79cf342dba446846d415dc48f6bbd3beef1c20ebd2c2226ccbe",
+          "failed_steps": [
+            {
+              "conclusion": "failure",
+              "name": "Execute every fixed named Python control exactly once",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Reproduce the fixed implementation and saved-fixture map",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Require every stage and retain failed or skipped status",
+              "number": 12,
+              "status": "completed"
+            }
+          ],
+          "id": 128839705423,
+          "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220496/job/128839705423",
+          "name": "W1 QROM implementation (head, x64)"
+        },
+        {
+          "decoded_log": "job-128839705749.log",
+          "decoded_log_sha256": "a70c01cbaaa6e0a63bd6caf4b5e66bf34bc1a04d2a8dcf2c6190e79d7ab6685c",
+          "failed_steps": [
+            {
+              "conclusion": "failure",
+              "name": "Execute every fixed named Python control exactly once",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Reproduce the fixed implementation and saved-fixture map",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Require every stage and retain failed or skipped status",
+              "number": 12,
+              "status": "completed"
+            }
+          ],
+          "id": 128839705749,
+          "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220496/job/128839705749",
+          "name": "W1 QROM implementation (prospective-merge, x64)"
+        }
+      ],
+      "observed_failure": "Pinned input read cap 9233 bytes; actual fixed-source main.rs 11172 bytes.",
+      "observed_jobs_first_page": 2,
+      "run_id": 42516220496,
+      "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220496",
+      "source_owner": "scripts/w1_qrom_implementation_audit.py:85-121"
+    },
+    {
+      "classification": "observer_gate_schema_incompatibility",
+      "failed_jobs": [
+        {
+          "decoded_log": "job-128839705308.log",
+          "decoded_log_sha256": "ab69bb0ea03e979bb67f29f21f5d7c63692b1b8360677f029fd542d882a7b464",
+          "failed_steps": [
+            {
+              "conclusion": "failure",
+              "name": "Retain all 58 actual saved-v2 receipt controls",
+              "number": 15,
+              "status": "completed"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Record completed, failed and skipped observations",
+              "number": 22,
+              "status": "completed"
+            }
+          ],
+          "id": 128839705308,
+          "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220353/job/128839705308",
+          "name": "W1 transparent candidate (head, x64)"
+        },
+        {
+          "decoded_log": "job-128839705462.log",
+          "decoded_log_sha256": "90795b05dd1cd6f335eb735db971fdfef18038ee6b65a0aa0b7c32ddb5c46e70",
+          "failed_steps": [
+            {
+              "conclusion": "failure",
+              "name": "Retain all 58 actual saved-v2 receipt controls",
+              "number": 15,
+              "status": "completed"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Record completed, failed and skipped observations",
+              "number": 22,
+              "status": "completed"
+            }
+          ],
+          "id": 128839705462,
+          "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220353/job/128839705462",
+          "name": "W1 transparent candidate (prospective-merge, x64)"
+        }
+      ],
+      "observed_failure": "58 head artifact records use MEASUREMENT3; gate expects MEASUREMENT2. Both lanes refuse schema after controls.",
+      "observed_jobs_first_page": 2,
+      "run_id": 42516220353,
+      "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220353",
+      "source_owner": "scripts/ci/w1_v2_controls_gate.py:95-103"
+    },
+    {
+      "classification": "actual_native_finite_acceptance_failure",
+      "failed_jobs": [
+        {
+          "decoded_log": "job-128839705345.log",
+          "decoded_log_sha256": "5b682a958ce52eae4f4031c9ac251809274496a842cc312fada1076cc7be35f4",
+          "failed_steps": [
+            {
+              "conclusion": "failure",
+              "name": "Run three original campaigns under verified actual limits",
+              "number": 7,
+              "status": "completed"
+            }
+          ],
+          "id": 128839705345,
+          "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220381/job/128839705345",
+          "name": "original native campaign (x64, head, release)"
+        }
+      ],
+      "observed_failure": "Three planned executions exit101. Economics true, all nine phase confirmation/criteria predicates false; deeper cause unresolved.",
+      "observed_jobs_first_page": 1,
+      "run_id": 42516220381,
+      "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220381",
+      "source_owner": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1744-1768"
+    },
+    {
+      "classification": "source_contract_incompatibility",
+      "failed_jobs": [
+        {
+          "decoded_log": "job-128839705385.log",
+          "decoded_log_sha256": "a6f257e46c8b32ea9fa17be76dac83e9b9c3eba1a12abef9ae9869ed2b59fbbd",
+          "failed_steps": [
+            {
+              "conclusion": "failure",
+              "name": "Execute the complete fixed named roster",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Reproduce pinned observations and unknown project inputs",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Validate named completion and every required stage independently",
+              "number": 9,
+              "status": "completed"
+            }
+          ],
+          "id": 128839705385,
+          "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220415/job/128839705385",
+          "name": "W1 QROM closure (prospective-merge, x64)"
+        },
+        {
+          "decoded_log": "job-128839705544.log",
+          "decoded_log_sha256": "4a706b5a3338b6a9f6c44ba45bdefe91e349c29db1934dd6a62ecfa3fc37ea88",
+          "failed_steps": [
+            {
+              "conclusion": "failure",
+              "name": "Execute the complete fixed named roster",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Reproduce pinned observations and unknown project inputs",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "failure",
+              "name": "Validate named completion and every required stage independently",
+              "number": 9,
+              "status": "completed"
+            }
+          ],
+          "id": 128839705544,
+          "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220415/job/128839705544",
+          "name": "W1 QROM closure (head, x64)"
+        }
+      ],
+      "observed_failure": "Pinned store.rs SHA differs; lifetime setUpClass fails and fixed completion/report gates refuse.",
+      "observed_jobs_first_page": 2,
+      "run_id": 42516220415,
+      "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220415",
+      "source_owner": "scripts/w1_lifetime_ledger.py:492-500"
+    },
+    {
+      "classification": "upstream_analysis_completion_deadline",
+      "failed_jobs": [
+        {
+          "decoded_log": "job-128839704531.log",
+          "decoded_log_sha256": "811394b6c4230412a7a82fe9779918a540e94f37fa36f6b647a094396b2cdeae",
+          "failed_steps": [
+            {
+              "conclusion": "failure",
+              "name": "Export exact PR analyses with the existing read-only token",
+              "number": 5,
+              "status": "completed"
+            }
+          ],
+          "id": 128839704531,
+          "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220346/job/128839704531",
+          "name": "export"
+        }
+      ],
+      "observed_failure": "CodeQL analyses/checks did not complete and stabilize; underlying cause unknown.",
+      "observed_jobs_first_page": 1,
+      "run_id": 42516220346,
+      "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220346",
+      "source_owner": "scripts/export_codeql_analysis.py:344"
+    },
+    {
+      "classification": "actual_native_business_target_failure",
+      "failed_jobs": [
+        {
+          "decoded_log": "job-128839705656.log",
+          "decoded_log_sha256": "e53f15f3895bdd2b9c6d309f2932ad47ca3c9f93e315060136e6431cb0e1cb33",
+          "failed_steps": [
+            {
+              "conclusion": "failure",
+              "name": "Execute original and fresh service with original Host resources",
+              "number": 7,
+              "status": "completed"
+            }
+          ],
+          "id": 128839705656,
+          "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220377/job/128839705656",
+          "name": "W1 fresh challenge service (x64, head)"
+        },
+        {
+          "decoded_log": "job-128839705693.log",
+          "decoded_log_sha256": "fdcb611daa88636272ffc3406b20de7fc299e91f37c87d9ac33183dab28f7cae",
+          "failed_steps": [
+            {
+              "conclusion": "failure",
+              "name": "Execute original and fresh service with original Host resources",
+              "number": 7,
+              "status": "completed"
+            }
+          ],
+          "id": 128839705693,
+          "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220377/job/128839705693",
+          "name": "W1 fresh challenge service (x64, prospective-merge)"
+        }
+      ],
+      "observed_failure": "Original exact process exit0 but finite_target false; fresh exact process exit101. Pressure confirms0, PUBLIC_REQUEST_DEADLINE, invariants true; deeper cause unresolved.",
+      "observed_jobs_first_page": 23,
+      "run_id": 42516220377,
+      "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42516220377",
+      "source_owner": "scripts/ci/run_from_zero_native.py:426; scripts/ci/run_w1_fresh_service_v1.py:336-344; tests/public_v3_from_zero/fresh_challenge.rs:244"
+    }
+  ],
+  "first_page_counts": {
+    "failure": 6,
+    "in_progress": 3,
+    "success": 12
+  },
+  "first_page_run_count": 21,
+  "full_artifact_archives_republished": false,
+  "head": "5633c55219c01c689f670c2ca35d122e39f3f791",
+  "native_commands_started_by_this_audit": false,
+  "observation_started_utc": "2026-11-08T20:51:09.961Z",
+  "original_local_campaign_results_replaced": false,
+  "production_activation": false,
+  "prospective_merge": "7fa3b95144048469a816f0f5b251f85ec5c132ac",
+  "readback_created_utc": "2026-11-08T21:02:36.318970+00:00",
+  "schema": "trnm-initial-pr-ci-failure-readback-v1",
+  "selected_members_only": true,
+  "source_modified": false,
+  "tree": "3baafa8923d1a1e7bfb6f24cff9965a4e82fba4c",
+  "whole_chain_pq_qualified": false,
+  "workflow_scope": "connector first page of pull_request-triggered runs only",
+  "workflows_rerun_or_cancelled": false
+}

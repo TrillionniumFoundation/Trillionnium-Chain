@@ -12,6 +12,9 @@
 //! payload's ModelPayload domain. Readback requires a caller-pinned *complete*
 //! manifest claim, never a short ID received alongside the content. No returned
 //! value authorizes installation, CURRENT, FinalUse, or production activation.
+//! `materialize_cached_payload` also binds the exact buffers written to a new
+//! output file, using TCM1 only for bounded cache/chunk lookup. It preserves the
+//! caller's cumulative content budget and original absolute deadline.
 //! This module does not change the TCM1 chunk/transport/cache formats, implement
 //! a Merkle tree, authenticate provenance, or freeze a mutable source file.
 
@@ -24,6 +27,7 @@ use trnm_protocol::content_commitment::{
 
 use super::{CellContextV1, CellErrorV1, MAX_CELL_BYTES};
 
+mod cached;
 mod closure;
 pub use closure::{
     CellContentClosureReadbackV2, CellContentClosureV2, CellContentDependencyV2,

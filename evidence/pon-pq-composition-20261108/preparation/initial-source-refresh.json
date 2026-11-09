@@ -1,0 +1,109 @@
+{
+  "trace_inventory_before": "1f214048db3c61f1e9862c3d8a748fe6276c3b785792dda64ca4884432855d19",
+  "trace_inventory_after": "275062d95bb8cdb8fb5bb16ca3ef05c8ee378bb3639310761cbe90bee741ba9a",
+  "trace_changed_source_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "old": "b9509768af22dc936afb340fa0ea4dc71174ee077e0ee033f5598f02e78f40f1",
+      "new": "7a0ea0cc4a000a693d94faa43b6acf8541cf1f8965f9fe837d01e7d757a0bee7"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "old": "b579c72b6f51c42cbec5ece54779048fc3b01df1bab8e5c5987c90b7f8b8a13f",
+      "new": "e1fcdf6758f7e730b36f701d6d17a3eac1ecec308d4681a8723abe5c1fae8c59"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "old": "d7ae3ab6b2084696b43b075604ed260074c023088ba3edcf5e145444e29b838d",
+      "new": "e920bccd04d4ef884b9f870515534c036025b0294fce46ea546b40526238d72a"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/funding.rs",
+      "old": "7cd7a6155e35d413ba1b31678a3e36c6d9f18bc2d6b49f3e9032a0146f34bc11",
+      "new": "59dbf4f341e290c9f327ea984ca633ce1eb2eb77b38f45703141294ba2857358"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+      "old": "0e0cc9809fcc05249ce56b7dd1a02a4151eb4f60aa21f546d9bd5e7c62d0fc1f",
+      "new": "752ab9482ef84ed50e8a26054b294dae4964df64c457084cd8bd04bb6a110e4f"
+    }
+  ],
+  "trace_anchor_changes": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "old_sha256": "b40e3604ecb09572c55baf4175ac0a4f78e5491bc6135ea4d0ba2b9e44a1e2ec",
+      "new_sha256": "1c348d7123dd6febb960e5f7401d7bd3aca32997a225e1931553b36eb6bc66cb",
+      "scope": "inherited #812 existing-store observation backend; first owner guard retained; two anchors preserve bounded full spans",
+      "new_anchor_lengths": [
+        5348,
+        2843
+      ]
+    }
+  ],
+  "trace_status": "HOLD_INCOMPLETE_AUTHORITY_TRACING",
+  "corpus_old_pins": 895,
+  "corpus_pins": 902,
+  "corpus_required": 810,
+  "corpus_changes": [
+    {
+      "path": "config/pon/pq-authority-traces-v1.json",
+      "old": "358866c070ba0f9fab537c4deadc59c6aa453332",
+      "new": "10af001d734ef60f2aef4f789e66d483f8502dcf"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "old": "472969c6445f20e8c6da185dc3b48a716497fb4f",
+      "new": "b0bf2caf809dd00f45a5bf98faae3d5345b5ed86"
+    },
+    {
+      "path": "docs/security/PQ_COMPOSITION_20261108.md",
+      "old": null,
+      "new": "97d7cb7d0b99e4793f0c958cc295718667a3e22b"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/SPONGE_ACCOUNTING.md",
+      "old": null,
+      "new": "56c85926a2ae9b6d73ac0ac2f25a57fd9ba8b8f4"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/check_sponge_accounting.py",
+      "old": null,
+      "new": "dfd60e292cf9fc843677d403a9d35d10ac7617be"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/pruned_mmcs/test_sponge_accounting.py",
+      "old": null,
+      "new": "27ad009c82635dd2a21d53d018c57b0f77c599f4"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_public_stark_research/examples/tagged_sha3_mmcs_binding.rs",
+      "old": null,
+      "new": "dce3020bf9cc58a0a94c495c4ddbe67a0798adb6"
+    },
+    {
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "old": "f4f5237ce8ad59f79c771ac5bee19724923042d5",
+      "new": "7c65e20ff04ae58bc804cd06f9524216222148e6"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/content_v2.rs",
+      "old": "fd1a693fddfc38249f04b5451dff685c57b7aa81",
+      "new": "0b5297593dd2cf05493989b2c7c79379a832d35a"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/content_v2/cached.rs",
+      "old": null,
+      "new": "e4a9f34c2276eaaeeb702470c89864e2abae1fbc"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/content_v2/cached/tests.rs",
+      "old": null,
+      "new": "933c4c370bd041f0f57463e4e1037d5da06ec292"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "old": "20cc618a4fac1b9096cce77380bf2f3e953baa8d",
+      "new": "5bd33250219a3ad69e5500e05601fe4038c5572e"
+    }
+  ]
+}

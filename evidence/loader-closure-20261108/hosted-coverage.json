@@ -1,0 +1,21 @@
+{
+  "source_commit": "059e149ccf683a69e6dad4e7f5a21fdd76b671fc",
+  "hosted_run_observed": false,
+  "required_baseline": {
+    "trigger": "pull_request",
+    "job": "rust-baseline-shards (runtime)",
+    "command": "cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features",
+    "shard_keeps_original_runtime_block": true
+  },
+  "pq_continuation": {
+    "trigger": "pull_request paths trillionnium/**",
+    "command": "cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features -- --show-output --test-threads=1"
+  },
+  "all_eight_non_ignored_tests_covered_by_commands": true,
+  "paths": {
+    ".github/workflows/trnm-required-baseline.yml": "1cb75c13bea9e7f9913985ff4c0210ff73a3f61ba72ae3584c34ee9476e0579d",
+    "scripts/ci/rust_baseline_shards.py": "58776aaaca6fa59a94561dbfcd626d362ee8b0b299ee64fa8ae94a31b12f1671",
+    "scripts/ci/ci_job.sh": "e36d81f0499e015299d25064cb48d0caba88b75f10556108dc06ec3214d61b7b",
+    ".github/workflows/pon-pq-system-continuation.yml": "71d173d851b9a30f79e7b1956de5aba5afa07f94a1ff6021dd03faff5b080f9a"
+  }
+}

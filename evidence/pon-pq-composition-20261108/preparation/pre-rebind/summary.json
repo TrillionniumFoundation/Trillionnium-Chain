@@ -1,0 +1,75 @@
+[
+  {
+    "name": "corpus",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "exit": 1,
+    "seconds": 0.143,
+    "stdout": "",
+    "stderr": "HOLD_NO_GO: changed source: trillionnium/crates/trnm-data-availability/src/cell/content_v2.rs\n"
+  },
+  {
+    "name": "authority-trace",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/pq_authority_trace.py"
+    ],
+    "exit": 2,
+    "seconds": 3.648,
+    "stdout": "",
+    "stderr": "{\"reason\": \"stale full Rust source inventory\", \"status\": \"REFUSE\", \"whole_chain_pq_qualified\": false}\n"
+  },
+  {
+    "name": "authority-effect",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/pq_authority_effect_register.py"
+    ],
+    "exit": 2,
+    "seconds": 0.049,
+    "stdout": "",
+    "stderr": "{\"reason\": \"source lock hash mismatch: trillionnium/crates/trnm-crypto-primitives/src/lib.rs\", \"schema\": \"trnm-pq-authority-effects-result-v1\", \"status\": \"REFUSE\"}\n"
+  },
+  {
+    "name": "lifetime",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/pq_lifetime_budget.py"
+    ],
+    "exit": 2,
+    "seconds": 0.048,
+    "stdout": "",
+    "stderr": "{\"reason\": \"source lock hash mismatch: trillionnium/crates/trnm-data-availability/src/cell/manifest.rs\", \"schema\": \"trnm-pq128-lifetime-budget-result-v1\", \"status\": \"REFUSE\"}\n"
+  },
+  {
+    "name": "claim-guard",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/ci/pq_chain_claim_guard.py"
+    ],
+    "exit": 2,
+    "seconds": 0.053,
+    "stdout": "",
+    "stderr": "{\"reason\": \"invalid lifetime budget: source lock hash mismatch: trillionnium/crates/trnm-data-availability/src/cell/manifest.rs\", \"schema\": \"trnm-whole-chain-pq-claim-guard-v1\", \"status\": \"REFUSE\"}\n"
+  },
+  {
+    "name": "inventory",
+    "command": [
+      "python3",
+      "-B",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "exit": 1,
+    "seconds": 0.057,
+    "stdout": "",
+    "stderr": "distributed native source inventory differs; refresh before freezing source\n"
+  }
+]

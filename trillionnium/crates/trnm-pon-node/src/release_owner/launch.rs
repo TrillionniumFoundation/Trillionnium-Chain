@@ -43,6 +43,7 @@ pub(super) fn check_inputs(contract: &Contract, raw: &[u8], expected: Digest32) 
 /// The CLI does not choose a root, executable path, argv or environment. All are
 /// selected by the currently signed policy under the fixed OS deployment root.
 pub(super) fn execute() -> Result<()> {
+    super::execution_environment::require_provider_environment()?;
     let mut owner = Owner::open()?;
     let state = owner.reload()?;
     let policy = state
@@ -51,6 +52,7 @@ pub(super) fn execute() -> Result<()> {
         .ok_or_else(|| invalid("M15 current policy missing"))?
         .clone();
     let contract = policy.contract.clone();
+    contract.require_closed_execution()?;
     owner.revalidate_current(&state, &contract)?;
     let (installation_id, installation) = state
         .installations

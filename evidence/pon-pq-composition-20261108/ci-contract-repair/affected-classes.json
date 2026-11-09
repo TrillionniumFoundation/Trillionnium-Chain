@@ -1,0 +1,13 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "scripts/ci/test_ci_contract.py",
+    "EvaluationQuorumLaneTests",
+    "W1PostwinLaneTests",
+    "W1ReuseV3LaneTests",
+    "-v"
+  ],
+  "exit": 0,
+  "seconds": 5.806035596000129
+}
