@@ -11210,3 +11210,25 @@ all duplicated descriptors or mappings. Freeze this follow-on source before
 rerunning the full data-availability library and the other four retained owner
 libraries. Keep all M4 failures, timeouts and counting corrections separately;
 the original Host, campaign and deployment thresholds remain unchanged.
+
+The frozen M5 source `3ad605ecdac4b3b123dff83c1cb7458430acd776` completed
+the original five-library selection under the pinned, static OpenSSL 3.5.9
+provider with 2,449 passed, one failed and 41 ignored. Its data-availability
+library passed all 715 tests, including the descriptor negative control. The
+sole node failure was `WouldBlock` at the unknown-publication journal's cold
+reopen after `drop`; the full harness ended without a timeout. Neither a lock
+owner snapshot nor a spawn/exec trace was captured, so the failure's cause
+remains unestablished. The separate system-3.5.5 cohort does not replace this
+observation or its provider identity.
+
+The next source isolates that entire existing test in an executed copy of the
+same test ELF before creating its fixture. Initialization, a new live-owner
+second-open `WouldBlock` control, the original publication fault and sticky
+refusals, `drop`, cold open, used-call/attempt conservation and prepared-file
+absence all execute within that one child. The parent requires a successful
+exit, one actual selected test and a completion marker emitted after the original
+assertions. No production lock or journal source, test roster, original sixty-
+second plan, service budget, retry policy or ignored gate changes. This
+isolates concurrent test-harness process creation; it does not prove the cause
+of M5's failure or production behavior across concurrent spawn/exec. Preserve
+M5's failed observation and bind fresh results to the new source and actual ELF.

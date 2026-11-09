@@ -215,10 +215,55 @@ fn journal_prepared_request_and_attempt_fsync_cuts_finish_exact_local_transition
 
 #[test]
 fn journal_unknown_publication_is_sticky_and_cold_replay_does_not_refund_attempt() {
+    const CHILD_ENV: &str = "TRNM_PQ_JOURNAL_UNKNOWN_PUBLICATION_ISOLATED";
+    const TEST: &str = "public_submit::pq::journal::tests::journal_unknown_publication_is_sticky_and_cold_replay_does_not_refund_attempt";
+    const COMPLETE: &str = "TRNM_PQ_JOURNAL_UNKNOWN_PUBLICATION_BODY_COMPLETE";
+    // Keep the entire owner lifetime after exec: unrelated parallel tests may
+    // spawn processes while a lock is live. Moving only the reopen after exec
+    // would hide a descriptor leak behind CLOEXEC and weaken this assertion.
+    if std::env::var_os(CHILD_ENV).as_deref() != Some(std::ffi::OsStr::new("1")) {
+        let output = std::process::Command::new(std::env::current_exe().unwrap())
+            .args([
+                "--exact",
+                TEST,
+                "--nocapture",
+                "--test-threads=1",
+                "--color=never",
+            ])
+            .env(CHILD_ENV, "1")
+            .output()
+            .unwrap();
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        assert!(
+            output.status.success(),
+            "isolated journal test failed ({:?})\n{stdout}\n{stderr}",
+            output.status
+        );
+        assert!(
+            stdout.lines().any(|line| line == "running 1 test"),
+            "{stdout}"
+        );
+        assert!(stdout.contains(COMPLETE), "{stdout}");
+        print!("{stdout}");
+        eprint!("{stderr}");
+        return;
+    }
     let f = Fixture::new();
     let client = f.client(address());
     let path = f.path();
     let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();
+    let locked = match Journal::open(&path, &client, [41; 32], 1) {
+        Ok(_) => panic!("a live journal owner allowed a second owner"),
+        Err(error) => error,
+    };
+    assert_eq!(
+        std::error::Error::source(&locked)
+            .and_then(|source| source.downcast_ref::<std::io::Error>())
+            .unwrap()
+            .kind(),
+        std::io::ErrorKind::WouldBlock
+    );
     journal
         .prepare_or_restore(&client, &Request::Head, expiry())
         .unwrap();
@@ -231,6 +276,7 @@ fn journal_unknown_publication_is_sticky_and_cold_replay_does_not_refund_attempt
     assert_eq!(cold.status().unwrap().used_calls, 1);
     assert_eq!(cold.pending_request().unwrap().unwrap().attempts, 1);
     assert!(!path.join("prepared").exists());
+    println!("{COMPLETE}");
 }
 
 #[test]
