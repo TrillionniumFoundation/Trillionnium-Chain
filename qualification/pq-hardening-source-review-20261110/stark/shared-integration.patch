@@ -1,0 +1,130 @@
+diff --git a/scripts/ci/check_ci_contract.py b/scripts/ci/check_ci_contract.py
+--- a/scripts/ci/check_ci_contract.py
++++ b/scripts/ci/check_ci_contract.py
+@@ -632,6 +632,14 @@
+     # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.
+     python3 scripts/ci/test_w1_qrom_current_implementation_audit.py
+     python3 scripts/w1_qrom_current_implementation_audit.py
++    # Exact field/source correspondence does not discharge STARK/QROM obligations.
++    python3 scripts/ci/test_w1_stark_field_certificates.py
++    python3 scripts/w1_stark_field_certificates.py
++    python3 scripts/ci/test_w1_stark_route_audit.py
++    python3 scripts/w1_stark_route_audit.py
++    # Conditional iid counting does not establish the actual transcript distribution.
++    python3 scripts/ci/test_w1_fri_ideal_sampler.py
++    python3 scripts/w1_fri_query_replay.py --ideal-sampler-law
+     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
+     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
+     python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
+@@ -1393,6 +1401,15 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
+         require(code_lines(lanes['repository-truth']).count(command) == 1
+                 and code_lines(script).count(command) == 1,
+                 'current W1 source mapping controls must execute exactly once in repository-truth')
++    for command in ('python3 scripts/ci/test_w1_stark_field_certificates.py',
++                    'python3 scripts/w1_stark_field_certificates.py',
++                    'python3 scripts/ci/test_w1_stark_route_audit.py',
++                    'python3 scripts/w1_stark_route_audit.py',
++                    'python3 scripts/ci/test_w1_fri_ideal_sampler.py',
++                    'python3 scripts/w1_fri_query_replay.py --ideal-sampler-law'):
++        require(code_lines(lanes['repository-truth']).count(command) == 1
++                and code_lines(script).count(command) == 1,
++                'STARK route and field controls must execute exactly once in repository-truth')
+     # Preserve the preceding specific refusal diagnostics when an unrelated
+     # required command is moved into this prefix.
+     require(code_lines(lanes['repository-truth'])[:3] == code_lines(CREDIT_MODEL_PREFIX),
+diff --git a/scripts/ci/check_pq_research_integration.py b/scripts/ci/check_pq_research_integration.py
+--- a/scripts/ci/check_pq_research_integration.py
++++ b/scripts/ci/check_pq_research_integration.py
+@@ -61,6 +61,16 @@
+ # transport slice remains mandatory and separately bounded from whole-chain PQ.
+ NATIVE_REQUIRED_PATHS = frozenset((
+     "scripts/ci/pq_source_reader.py",
++    "config/pon/w1-stark-route-registry-v1.json",
++    "config/pon/w1-stark-literature-evidence-v1.json",
++    "scripts/w1_stark_field_certificates.py",
++    "scripts/w1_stark_route_audit.py",
++    "scripts/ci/test_w1_stark_field_certificates.py",
++    "scripts/ci/test_w1_stark_route_audit.py",
++    "scripts/w1_fri_query_replay.py",
++    "scripts/ci/test_w1_fri_ideal_sampler.py",
++    "docs/security/W1_STARK_ROUTE_INSTANCE_AUDIT_V1.md",
++    "docs/protocol/pon-nakamoto-v1/details/STARK_THREE_ROUTE_LITERATURE_20261109.md",
+     "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+     "trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs",
+     "trillionnium/crates/trnm-protocol/src/pq_legacy_profile.rs",
+diff --git a/scripts/ci/ci_job.sh b/scripts/ci/ci_job.sh
+--- a/scripts/ci/ci_job.sh
++++ b/scripts/ci/ci_job.sh
+@@ -17,6 +17,14 @@ case "${1:?required job}" in
+     # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.
+     python3 scripts/ci/test_w1_qrom_current_implementation_audit.py
+     python3 scripts/w1_qrom_current_implementation_audit.py
++    # Exact field/source correspondence does not discharge STARK/QROM obligations.
++    python3 scripts/ci/test_w1_stark_field_certificates.py
++    python3 scripts/w1_stark_field_certificates.py
++    python3 scripts/ci/test_w1_stark_route_audit.py
++    python3 scripts/w1_stark_route_audit.py
++    # Conditional iid counting does not establish the actual transcript distribution.
++    python3 scripts/ci/test_w1_fri_ideal_sampler.py
++    python3 scripts/w1_fri_query_replay.py --ideal-sampler-law
+     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
+     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
+     python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
+diff --git a/scripts/ci/test_ci_contract.py b/scripts/ci/test_ci_contract.py
+--- a/scripts/ci/test_ci_contract.py
++++ b/scripts/ci/test_ci_contract.py
+@@ -2594,6 +2594,16 @@ class MergedQualificationLaneTests(unittest.TestCase):
+         'qrom_current_source': ('repository-truth', '    python3 scripts/ci/test_pq_chain_claim_guard.py\n    # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.\n', (
+             '    python3 scripts/ci/test_w1_qrom_current_implementation_audit.py\n',
+             '    python3 scripts/w1_qrom_current_implementation_audit.py\n',
++        ), '    # Exact field/source correspondence does not discharge STARK/QROM obligations.\n    python3 scripts/ci/test_w1_stark_field_certificates.py\n'),
++        'stark_routes_and_fields': ('repository-truth', '    python3 scripts/w1_qrom_current_implementation_audit.py\n    # Exact field/source correspondence does not discharge STARK/QROM obligations.\n', (
++            '    python3 scripts/ci/test_w1_stark_field_certificates.py\n',
++            '    python3 scripts/w1_stark_field_certificates.py\n',
++            '    python3 scripts/ci/test_w1_stark_route_audit.py\n',
++            '    python3 scripts/w1_stark_route_audit.py\n',
++        ), '    # Conditional iid counting does not establish the actual transcript distribution.\n    python3 scripts/ci/test_w1_fri_ideal_sampler.py\n'),
++        'conditional_sampler': ('repository-truth', '    python3 scripts/w1_stark_route_audit.py\n    # Conditional iid counting does not establish the actual transcript distribution.\n', (
++            '    python3 scripts/ci/test_w1_fri_ideal_sampler.py\n',
++            '    python3 scripts/w1_fri_query_replay.py --ideal-sampler-law\n',
+         ), "    python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v\n"),
+         'fixed_probability': ('repository-truth',
+                               "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v\n", (
+@@ -2665,6 +2675,12 @@ def test_pq_effect_root_commands_cannot_change_position_multiplicity_or_failure_
+     def test_current_mapping_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+         self.reject_command_mutations('qrom_current_source')
+ 
++    def test_stark_route_field_commands_cannot_change_position_multiplicity_or_failure_policy(self):
++        self.reject_command_mutations('stark_routes_and_fields')
++
++    def test_conditional_sampler_commands_cannot_change_position_multiplicity_or_failure_policy(self):
++        self.reject_command_mutations('conditional_sampler')
++
+     def test_fixed_probability_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+         self.reject_command_mutations('fixed_probability')
+ 
+diff --git a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+--- a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
++++ b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+@@ -371,6 +371,20 @@ pub const FILES: &[(&str, &[u8])] = &[
+             "/../../../config/pon/w1-retained-disposition-v1.json"
+         )),
+     ),
++    (
++        "config/pon/w1-stark-literature-evidence-v1.json",
++        include_bytes!(concat!(
++            env!("CARGO_MANIFEST_DIR"),
++            "/../../../config/pon/w1-stark-literature-evidence-v1.json"
++        )),
++    ),
++    (
++        "config/pon/w1-stark-route-registry-v1.json",
++        include_bytes!(concat!(
++            env!("CARGO_MANIFEST_DIR"),
++            "/../../../config/pon/w1-stark-route-registry-v1.json"
++        )),
++    ),
+     (
+         "config/pon/work-profile-v1.json",
+         include_bytes!(concat!(
+
