@@ -113,6 +113,54 @@ explicit complete current observation. The latter verifies every page's
 actual bytes, global coverage and identities, then rechecks root and catalog;
 it is a sequential observation, not an atomic filesystem snapshot.
 
+## A hard three-domain RS(6,4) placement limit
+
+The current CRR2/CRG2 paged plan commits **one provider per each of six
+distinct CRS1 indices** for a chunk. Its six slots do not express copies of
+one index at another provider. Therefore a claim of surviving *any two
+complete domain losses among exactly three domains* is mathematically
+impossible under this unchanged six-slot profile, even when three physical
+operators have been independently authenticated.
+
+Let the three domains hold `a,b,c` of the six nonreplicated indices, with
+`a+b+c=6`. After losing the other two domains, the survivor has at most
+`min(a,b,c) <= 2` indices in the worst case, strictly fewer than the four
+required by CRS1. For the balanced `2/2/2` layout, losing any one domain
+leaves exactly four indices and can be decoded; losing any two leaves two
+and cannot. This distinguishes **one-domain** from **two-domain** tolerance.
+The separate PN5 condition of three independent administrators does not,
+by itself, choose either fault model.
+
+For exactly three domains, a distinct, correct four-shard recovery after any
+two-domain loss requires at least four different indices in **each** domain:
+at least twelve physical shard placements in total, versus the present
+six. With large equal-sized CRS1 shards, these twelve placements contain
+approximately `3 * original_chunk_bytes` of payload before headers, replicas'
+lifetime capacity, WAN, renewal and repair costs. Three independently held
+complete original copies are a different possible design at the same ideal
+3x byte ratio. Either design needs its own versioned binding, original
+provider-capacity/funding admission and real authenticated readback; simply
+declaring additional identities cannot create stored replicas.
+
+Two native regression cases in
+`trillionnium/crates/trnm-data-availability/src/cell/placement/tests.rs`
+express this boundary using the existing conditional placement evaluator:
+six slots in three `2/2/2` domains fail a two-loss contract; twelve
+explicit placements (four distinct indices per domain) satisfy the declared
+two-loss administrator/domain combinations, and removing one replica fails
+again. These are source regression tests, **not** observations of paid,
+independent operators. They require execution on the exact new committed
+source before being reported as passing.
+
+For PN5 qualification, freeze the exact fault family **before** observing
+results. If two-domain tolerance is selected, the existing six-slot
+CRR2/CRG2 production candidate remains structurally **HOLD** until a
+replica-aware physical profile and its authenticated, capacity-accounted
+recovery are implemented. A one-domain claim still requires real
+independent administrators, WAN fault injection, sustained custody/repair
+and the original at-least-72-hour campaign; the present local fixture is
+not that campaign.
+
 ## Native recovery across pages
 
 `recover_native_cell_paged_shard_plan` uses a dedicated non-cloneable V2
