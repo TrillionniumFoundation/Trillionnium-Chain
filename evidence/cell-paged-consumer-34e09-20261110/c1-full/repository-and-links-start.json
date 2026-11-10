@@ -1,0 +1,10 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "commit": "c8214f7e41f8c8f1d885bf990dba6b7ddf829ea2",
+  "cwd": "/home/qq/work/chain-cell-paged-consumer-34e09-20261109",
+  "started_at_utc": "2026-11-10T06:53:37.803500+00:00",
+  "tree": "4c09f0bfbd6933ce4d4f17194387141560038c00"
+}

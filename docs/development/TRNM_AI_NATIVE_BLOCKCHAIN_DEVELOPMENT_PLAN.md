@@ -1,3 +1,24 @@
+**Paged selected-version consumer restoration — local validation PASS; qualification HOLD:**
+
+The V2 capacity continuation adds `restore_cell_paged_version_to_cache_v2`
+to reconstruct one independently pinned complete version from its original
+CRR2/CRG2 shard contracts into a quota-controlled consumer cache. Admission
+checks the complete current catalog/pages, original root operation, TCV1
+loader policy and independent TCV2 content pin before reads or cache writes.
+One original deadline and scope-bound cumulative budget reserve the complete
+selected-version attempt across all pages, including potential provider reads,
+codec work, cache publication/readback and final ordered content readback.
+Recovery uses the supplied original shard bytes without publisher, delivery-cache
+or catalog-payload fallback. Completion requires full TCV2 readback and another
+complete current page/catalog check. The consumer path grants no provider
+repair, funding, settlement or execution authority. Eleven added local tests
+cover 129 synthetic chunks across two pages, actual local provider targets,
+a parity-bearing four-slot subset, pin/page/catalog refusals, late quorum failure,
+original cumulative limits and final same-inode page corruption. On committed source `c8214f7e41f8c8f1d885bf990dba6b7ddf829ea2`, these tests passed 11/11; the complete DA crate passed 823 cases and Node storage passed 44. Strict Clippy, formatting, Cargo graph and source/link checks also passed. [Original C1 evidence](../../evidence/cell-paged-consumer-34e09-20261110/README.md) retains exact source and raw logs; prior #848 C2 results remain scoped to their original source.
+The [capacity contract](specs/pon/CELL_STORAGE_CAPACITY_V2.md) retains the real-model
+native paged reconstruction, independent domains/WAN, paid retention lifecycle,
+ordinary Hepta FinalUse and production qualification as **HOLD**.
+
 **Complete model capacity continuation — HOLD:**
 
 The [explicit V2 capacity profiles](specs/pon/CELL_STORAGE_CAPACITY_V2.md)
