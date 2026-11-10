@@ -1,0 +1,71 @@
+{
+  "result": "FAILED",
+  "commands": [
+    {
+      "label": "original-preflight",
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records/original-preflight.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records/original-preflight.stderr"
+    },
+    {
+      "label": "clone",
+      "args": [
+        "git",
+        "clone",
+        "--shared",
+        "--no-checkout",
+        "/home/qq/work/w1-dft-resume-20261110-035f-candidate",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records/clone.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records/clone.stderr"
+    },
+    {
+      "label": "origin",
+      "args": [
+        "git",
+        "remote",
+        "set-url",
+        "origin",
+        "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records/origin.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records/origin.stderr"
+    },
+    {
+      "label": "checkout",
+      "args": [
+        "git",
+        "checkout",
+        "-b",
+        "research/w1-preprocess-diag-20261110-1017-035f",
+        "f2ad7e1389588a9913e308df8633277ae7c22f4d"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records/checkout.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records/checkout.stderr"
+    },
+    {
+      "label": "pre-edit-preflight",
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 2,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records/pre-edit-preflight.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records/pre-edit-preflight.stderr"
+    }
+  ],
+  "scope": "isolated instrumented diagnostic; never a formal ABBA/performance sample",
+  "formal_receiver_samples": 0,
+  "new_complete_w1_proofs": 0,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "error": "ValueError('pre-edit-preflight failed')"
+}

@@ -1,0 +1,135 @@
+{
+  "result": "DIAGNOSTIC_BUILD_COMPLETE",
+  "commands": [
+    {
+      "label": "pre-repair-preflight",
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/pre-repair-preflight.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/pre-repair-preflight.stderr"
+    },
+    {
+      "label": "diagnostic-format",
+      "args": [
+        "/home/qq/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source/formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/Cargo.toml",
+        "--all"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/diagnostic-format.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/diagnostic-format.stderr"
+    },
+    {
+      "label": "precommit-preflight",
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/precommit-preflight.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/precommit-preflight.stderr"
+    },
+    {
+      "label": "stage",
+      "args": [
+        "git",
+        "add",
+        "--",
+        "formal/pon-nakamoto-v1/w1_node_adapter_research",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/stage.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/stage.stderr"
+    },
+    {
+      "label": "commit",
+      "args": [
+        "git",
+        "-c",
+        "user.name=Codex",
+        "-c",
+        "user.email=codex@openai.com",
+        "commit",
+        "-m",
+        "research(w1): freeze isolated cache request and miss diagnostics"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/commit.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/commit.stderr"
+    },
+    {
+      "label": "full-source",
+      "args": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d12cd31e43f984196f01a517341c2017071dd697",
+        "--output",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/source-before.json"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/full-source.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/full-source.stderr"
+    },
+    {
+      "label": "prebuild-preflight",
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/prebuild-preflight.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/prebuild-preflight.stderr"
+    },
+    {
+      "label": "release-build",
+      "args": [
+        "/home/qq/.cargo/bin/cargo",
+        "+1.95.0",
+        "build",
+        "--release",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source/formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/release-build.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/release-build.stderr"
+    },
+    {
+      "label": "source-after",
+      "args": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d12cd31e43f984196f01a517341c2017071dd697",
+        "--output",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/source-after.json"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/source-after.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-03/source-after.stderr"
+    }
+  ],
+  "scope": "isolated instrumented diagnostic; never a formal ABBA/performance sample",
+  "formal_receiver_samples": 0,
+  "new_complete_w1_proofs": 0,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "source": "d12cd31e43f984196f01a517341c2017071dd697",
+  "binary": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/target/release/w1-node-adapter-research"
+}

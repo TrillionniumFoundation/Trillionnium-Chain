@@ -1,0 +1,21 @@
+[fix/chain-w1-preprocess-diag-20261110-1017-035f d12cd31e43] research(w1): freeze isolated cache request and miss diagnostics
+ 22 files changed, 6259 insertions(+), 2 deletions(-)
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/.cargo_vcs_info.json
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/CHANGELOG.md
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/Cargo.lock
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/Cargo.toml
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/Cargo.toml.orig
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/README.md
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/benches/fft.rs
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/butterflies.rs
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/lib.rs
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/naive.rs
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/radix_2_bowers.rs
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/radix_2_dit.rs
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/radix_2_dit_parallel.rs
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/radix_2_small_batch.rs
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/traits.rs
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/twiddle_cache.rs
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/util.rs
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/tests/lde_blocks.rs
+ create mode 100644 formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/tests/testing.rs

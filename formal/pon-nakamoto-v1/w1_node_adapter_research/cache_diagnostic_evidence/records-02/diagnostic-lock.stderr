@@ -1,0 +1,9 @@
+     Locking 173 packages to latest Rust 1.95.0 compatible versions
+      Adding cc v1.2.59 (available: v1.11.0)
+      Adding generic-array v0.14.7 (available: v0.14.9)
+      Adding rustix v1.1.4 (available: v1.1.5)
+      Adding serde v1.0.228 (available: v1.0.229)
+      Adding serde_core v1.0.228 (available: v1.0.229)
+      Adding serde_derive v1.0.228 (available: v1.0.229)
+      Adding serde_json v1.0.149 (available: v1.0.154)
+      Adding sha2 v0.10.9 (available: v0.11.1)
