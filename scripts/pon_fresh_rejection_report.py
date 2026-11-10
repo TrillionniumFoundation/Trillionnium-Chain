@@ -12,12 +12,12 @@ import argparse
 from fractions import Fraction
 from functools import lru_cache
 import hashlib
-import importlib.util
 import json
 from pathlib import Path
 import re
 import struct
 import sys
+import types
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts' / 'ci'))
@@ -104,6 +104,7 @@ def trace_for(challenge, nonce):
 
 
 def verify_reference_sources():
+    sources = {}
     for name, expected in REFERENCE_FILES.items():
         try:
             data = read_regular(ROOT, name, RAW_LIMIT)
@@ -111,23 +112,26 @@ def verify_reference_sources():
             raise ValueError('fresh W1 rejection: independent reference ' + name + ': ' + str(error)) from error
         require(digest(data) == expected,
                 'changed or missing independent reference ' + name)
+        sources[name] = data
+    return sources
 
 
 @lru_cache(maxsize=1)
 def scalar_reference():
-    verify_reference_sources()
+    sources = verify_reference_sources()
     base = ROOT / 'formal/pon-nakamoto-v1'
     # Bind the oracle's one local import to the verified original module. Restore
     # any pre-existing import after initialization; never consume an unrelated one.
     old = sys.modules.get('contract_wire')
     try:
-        wire_spec = importlib.util.spec_from_file_location('contract_wire', base / 'contract_wire.py')
-        wire = importlib.util.module_from_spec(wire_spec)
-        wire_spec.loader.exec_module(wire)
+        wire = types.ModuleType('contract_wire')
+        wire.__file__ = str(base / 'contract_wire.py')
+        exec(compile(sources['formal/pon-nakamoto-v1/contract_wire.py'], wire.__file__, 'exec'), wire.__dict__)
         sys.modules['contract_wire'] = wire
-        spec = importlib.util.spec_from_file_location('_fresh_rejection_scalar', base / 'work_oracle.py')
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
+        module = types.ModuleType('_fresh_rejection_scalar')
+        module.__file__ = str(base / 'work_oracle.py')
+        exec(compile(sources['formal/pon-nakamoto-v1/work_oracle.py'], module.__file__, 'exec'), module.__dict__)
+        verify_reference_sources()
         return module
     finally:
         if old is None:

@@ -82,8 +82,8 @@ fn put_work(db: &Connection, id: Hash, work: Work) {
     );
 }
 
-fn assert_local(error: Error) {
-    assert_eq!(error.to_string(), "STORAGE_PACKET");
+fn assert_local(error: Error, expected_code: &str) {
+    assert_eq!(error.to_string(), expected_code);
     assert_eq!(error.kind(), ErrorKind::LocalStructure);
     assert!(error.requires_owner_stop());
 }
@@ -97,7 +97,17 @@ fn full_width_retained_work_corruption_refuses_tip_inclusion_and_middle() {
         for height in [8, 1, 4] {
             let work = node.record(ids[height]).unwrap().work;
             put_work(&node.db, ids[height], increment(work));
-            assert_local(node.confirmation(transaction, ids[1], 1000).unwrap_err());
+            // AuthenticatedV1 already checks the active tip/parent edge before
+            // this ancestry walk. Preserve that exact earlier refusal contract.
+            let expected_code = if authenticated && height == 8 {
+                "NATIVE_STATE_PARENT"
+            } else {
+                "STORAGE_PACKET"
+            };
+            let error = node
+                .confirmation(transaction, ids[1], 1000)
+                .expect_err(&format!("authenticated={authenticated}, height={height}"));
+            assert_local(error, expected_code);
             assert_eq!(node.active().unwrap(), active);
             assert_eq!(node.record(ids[height]).unwrap().work, increment(work));
             put_work(&node.db, ids[height], work);
@@ -123,7 +133,10 @@ fn a_common_work_offset_cannot_replace_the_zero_work_genesis_anchor() {
         }
         // Every child-parent difference still matches the target. Only a full
         // walk anchored to the exact zero-work genesis detects this damage.
-        assert_local(node.confirmation(transaction, ids[1], 1000).unwrap_err());
+        assert_local(
+            node.confirmation(transaction, ids[1], 1000).unwrap_err(),
+            "STORAGE_PACKET",
+        );
         for (id, work) in ids.iter().zip(original) {
             put_work(&node.db, *id, work);
         }
