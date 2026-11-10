@@ -1,0 +1,81 @@
+{
+  "control_receipts": [
+    {
+      "bytes": 135,
+      "path": "async-process-list-request.json",
+      "sha256": "550cab58cb5d46720715c6a06efed6df2d598a9c06c1bbeaaf05a8680c7d33d0"
+    },
+    {
+      "bytes": 183,
+      "path": "async-process-list-start.json",
+      "sha256": "5a55d64a5d0cf2b5d78ac63783aac6a53639129de71420fc499922963731a255"
+    },
+    {
+      "bytes": 285,
+      "path": "deploy-receipt.json",
+      "sha256": "cf11ebb3092504591cddbbcb18290591bdd3cddd23e0c693bd63884ffd8eec0c"
+    },
+    {
+      "bytes": 23574,
+      "path": "deploy-request.json",
+      "sha256": "3562b4c11cbb19560acb79658f0ab8b768da6974cc58723314c39f39e1f6098d"
+    },
+    {
+      "bytes": 567,
+      "path": "deployed-file-info.json",
+      "sha256": "0d353386dd6a8519c8f577fcea55a3f634a0da9719980e5f9f7048f30c1fe027"
+    },
+    {
+      "bytes": 276,
+      "path": "early-record-list.json",
+      "sha256": "214664a829ed9ccada3be21a48c26aeea34e6db4b7358daf40bcf6d5bcd50967"
+    },
+    {
+      "bytes": 1480,
+      "path": "findings.json",
+      "sha256": "9074dfdc75a35da3ab72c6cda446f75976947b6e4393d9d041807f097ef7b965"
+    },
+    {
+      "bytes": 30,
+      "path": "process-list-matched.json",
+      "sha256": "6934b95de7a693f439cbc1651bfdb250eba55f55c8711947395da9de6303272c"
+    },
+    {
+      "bytes": 181,
+      "path": "start-receipt.json",
+      "sha256": "db2d4b642618ef0d69018fef7a2ffba24cd58eacfb0ac444db2bfa20cddde3e1"
+    },
+    {
+      "bytes": 181,
+      "path": "start-recovery-01.json",
+      "sha256": "db2d4b642618ef0d69018fef7a2ffba24cd58eacfb0ac444db2bfa20cddde3e1"
+    },
+    {
+      "bytes": 349,
+      "path": "start-request.json",
+      "sha256": "15f3a0273d9391ad6ec0fd9ebd7c05c39c9fbcd30a736566da19819fedd1b0ae"
+    },
+    {
+      "bytes": 172,
+      "path": "worker-job-search.json",
+      "sha256": "dc440906b8e9206c5c0499f615e07394acc1200c2966b7d7bb9bbfcef10aae12"
+    }
+  ],
+  "exact_retry_result": "start-recovery-01.json",
+  "expected_records_base": "/home/qian-qi/chain-joint-tail-native-20261110-8e76",
+  "host": "rog",
+  "job_id": null,
+  "native_execution_state": "UNKNOWN",
+  "no_alternative_host_started": true,
+  "no_new_key_replay_performed": true,
+  "original_start_request": "start-request.json",
+  "original_start_result": "start-receipt.json",
+  "probability_qualification": false,
+  "production_activation": false,
+  "remote_runner_path": "/home/qian-qi/work/joint-tail-native-8e76-20261110-runner.py",
+  "remote_runner_sha256": "66f2e33da06d9e1167a5240027d6363defa79ff7e235e7763d96980c47d603b8",
+  "schema": "joint-tail-rog-control-recovery-v1",
+  "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+  "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310",
+  "stable_job_key": "joint-tail-rust-gates-20261110-8e76-r1"
+}
