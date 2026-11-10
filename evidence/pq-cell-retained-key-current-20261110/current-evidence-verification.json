@@ -1,0 +1,271 @@
+{
+  "actual_executed_source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+  "actual_executed_tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff",
+  "actual_lifetime_failure_bound": null,
+  "all_new_or_changed_paths_within_current_evidence_folder": true,
+  "cell_performance_improvement_measured": false,
+  "command_receipts_verified": 21,
+  "command_scopes": [
+    {
+      "command_count": 14,
+      "commands": [
+        {
+          "exit_code": 0,
+          "label": "ci-contract",
+          "log_bytes": 30528,
+          "log_sha256": "d3d3489562a97324278f8acd47e08d6e16b2ceca5adad738e88c93dad5fb249f",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "ci-execution",
+          "log_bytes": 12898,
+          "log_sha256": "b5d9a4de964d9d718b6e8b74428c54c3ab8361154e715036c2d1636f126177c1",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "claim-controls",
+          "log_bytes": 154,
+          "log_sha256": "58a0ef0d47a286b0f3d48b748f12e8eace0a29674b221d455a527610e0bf8b1d",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "claim-inspector",
+          "log_bytes": 4835,
+          "log_sha256": "623bb3cadb0ab38069aa6812927e2f663f2cbbcaa795be9a0c836b4036ffc2b4",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "custody-v2",
+          "log_bytes": 118,
+          "log_sha256": "fa6f55853a070622dd6fb42985b73355c0070efa1db86af568a47a7946be04ce",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "custody-v2-inspector",
+          "log_bytes": 3577,
+          "log_sha256": "c69968d65ddba2dc49a98ad140976c992a8e5a015e3171f2cc30fc96ddb851b9",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "inventory",
+          "log_bytes": 35,
+          "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "lifetime-inspector",
+          "log_bytes": 12824,
+          "log_sha256": "08d7ac76dbbd8d31b4ee1ecf9697df6bd11203253a45ae88991a159828d1bbb9",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "lifetime-tests",
+          "log_bytes": 157,
+          "log_sha256": "34eeb4c3cea3a15370d77fa296e1f04f57ba4c93113bbaccfcd6eb737cc15365",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "phase-reader",
+          "log_bytes": 161,
+          "log_sha256": "60e0c55634da627b66589239c378ea6e1d10a9d4213ce07031b35a8d47410f5d",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "pq-corpus",
+          "log_bytes": 558,
+          "log_sha256": "09e9ca5c60f1ac1bd4900bdde3df4975c03f62f0c67bedf0b3a0ac1667760eb8",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "pq-source-controls",
+          "log_bytes": 160,
+          "log_sha256": "9183adf2fb6766825c5383dae6559f094990c1529ca8f44f2be47fb179cfee6f",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "repository",
+          "log_bytes": 307,
+          "log_sha256": "00be4c6e80e57617b408d38e573bab8aa67c0e5bc9d3ba3f43d3704f22353f0d",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "source-controls",
+          "log_bytes": 6898,
+          "log_sha256": "f1ad1feb88385c635c58af731e0e58c868150ac37f958575606921daca9e4e00",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        }
+      ],
+      "scope": "source-controls"
+    },
+    {
+      "command_count": 7,
+      "commands": [
+        {
+          "exit_code": 0,
+          "label": "da-complete",
+          "log_bytes": 88143,
+          "log_sha256": "ac6e9b27898fa3cd48be157c55b9def1eeb4a29ec5005584db1d644e2255a1b4",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "format",
+          "log_bytes": 0,
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "graph-offline",
+          "log_bytes": 886371,
+          "log_sha256": "d2169a6287bc9da432f19726c59dc4aa4593785a1e55b23636776598f1218836",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "npq-cli",
+          "log_bytes": 2761,
+          "log_sha256": "7ec68f26fe0a23ff8286f496b2ab8fe0ccb7f018c558948b5ed8407828da01cb",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "pipeline-build",
+          "log_bytes": 2968,
+          "log_sha256": "f8712142ba261e82fb2333812a4f8c689867b77d5a144995f7b3a7829b615de1",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "signed-sealed-pipeline",
+          "log_bytes": 6053,
+          "log_sha256": "3974f3253d0079fb530b4415f9071a1c4b201ae9b475cf19f46f95c2317ceedb",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        },
+        {
+          "exit_code": 0,
+          "label": "strict-clippy",
+          "log_bytes": 5674,
+          "log_sha256": "49efe31f0408a7b0e86b579b3f0942a8da130a4790628bfed07ff1b0ae07b976",
+          "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+          "source_endpoints_equal": true,
+          "status": "command_succeeded",
+          "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff"
+        }
+      ],
+      "scope": "native-and-toolchain"
+    }
+  ],
+  "compare_available_originals": true,
+  "complete_lifetime_executable_image_verified": false,
+  "composition_coverage_proved": false,
+  "gzip_originals_verified": 30,
+  "independent_execution_authentication": false,
+  "new_or_changed_path_count": 125,
+  "original_files_compared": 123,
+  "pipeline": {
+    "component_result": "PASS_COMPONENT_PIPELINE",
+    "dispatch_after_and_live_process_pins_agree": true,
+    "hashed_original_path_preserves_original_file_object": true,
+    "later_observation_files_rechecked": true,
+    "later_plain_path_replaced": true,
+    "later_plain_path_sha256": "9130435d98a85bdab278b31c94720ecd8a84f166f5b6155fc2b33a6cabcbdc12",
+    "native_command_exit": 0,
+    "native_process_status": "PINNED_AND_OBSERVED",
+    "original_pinned_sha256": "abdadf76b9cd14f84b7ed807775816b1eb601b8419217dd41c0b2f4de7d91816",
+    "postcheck_verifier_failure_is_native_pipeline_failure": false,
+    "postcheck_verifier_failure_retained": true,
+    "synthetic_fixture": true
+  },
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "real_model_efficacy_assessed": false,
+  "result": "PASS",
+  "retained_originals_mapping_sha256": "fc78b5ab933d1ca04b04e07d85b243ef4c7206d4267273287b0a1f0cb0e78c41",
+  "retained_originals_verified": 123,
+  "retention_scopes": {
+    "explicit_native_selection_files": 62,
+    "source_validation_and_setup_files": 61,
+    "source_validation_receipt_log_files": 57
+  },
+  "reviewed_checkout_head": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+  "schema": "trnm-current-cell-evidence-independent-byte-review-v1",
+  "scope": "retained-byte integrity and command/source relationship checks only",
+  "test_counts_across_commands_or_harnesses_summed": false,
+  "verified_utc": "2026-11-10T08:12:17.771934+00:00",
+  "whole_chain_pq_qualified": false,
+  "whole_workspace_test_total": null
+}

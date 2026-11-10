@@ -1,0 +1,7 @@
+{
+  "path": "/workspace/scratch/e52be1cc2d9e/runtime-current/target/debug/examples/cell_signed_sealed_pipeline_v1",
+  "bytes": 60135680,
+  "sha256": "abdadf76b9cd14f84b7ed807775816b1eb601b8419217dd41c0b2f4de7d91816",
+  "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+  "scope": "build fingerprint before explicitly pinned direct dispatch"
+}

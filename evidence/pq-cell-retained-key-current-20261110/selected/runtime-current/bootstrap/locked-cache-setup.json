@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "cargo",
+    "metadata",
+    "--locked",
+    "--all-features",
+    "--format-version",
+    "1",
+    "--manifest-path",
+    "trillionnium/Cargo.toml"
+  ],
+  "cwd": "/workspace/scratch/e52be1cc2d9e/chain-pq",
+  "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+  "exit_code": 0,
+  "elapsed_ns": 9948719908,
+  "stdout": {
+    "bytes": 886371,
+    "sha256": "d2169a6287bc9da432f19726c59dc4aa4593785a1e55b23636776598f1218836"
+  },
+  "stderr": {
+    "bytes": 5050,
+    "sha256": "ed57ff788ece238241cfc5be6927bc06ab79fb2d962ac697a07930598f42cd21"
+  }
+}

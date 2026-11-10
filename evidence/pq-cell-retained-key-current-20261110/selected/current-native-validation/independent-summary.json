@@ -1,0 +1,79 @@
+{
+  "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+  "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff",
+  "all_seven_commands_exit_zero": true,
+  "records": [
+    {
+      "label": "graph-offline",
+      "exit_code": 0,
+      "source_endpoints_equal": true,
+      "log_bytes": 886371,
+      "log_sha256": "d2169a6287bc9da432f19726c59dc4aa4593785a1e55b23636776598f1218836",
+      "elapsed_ns": 5068260426
+    },
+    {
+      "label": "format",
+      "exit_code": 0,
+      "source_endpoints_equal": true,
+      "log_bytes": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "elapsed_ns": 17378714475
+    },
+    {
+      "label": "pipeline-build",
+      "exit_code": 0,
+      "source_endpoints_equal": true,
+      "log_bytes": 2968,
+      "log_sha256": "f8712142ba261e82fb2333812a4f8c689867b77d5a144995f7b3a7829b615de1",
+      "elapsed_ns": 55292198407
+    },
+    {
+      "label": "signed-sealed-pipeline",
+      "exit_code": 0,
+      "source_endpoints_equal": true,
+      "log_bytes": 6053,
+      "log_sha256": "3974f3253d0079fb530b4415f9071a1c4b201ae9b475cf19f46f95c2317ceedb",
+      "elapsed_ns": 5754042213
+    },
+    {
+      "label": "da-complete",
+      "exit_code": 0,
+      "source_endpoints_equal": true,
+      "log_bytes": 88143,
+      "log_sha256": "ac6e9b27898fa3cd48be157c55b9def1eeb4a29ec5005584db1d644e2255a1b4",
+      "elapsed_ns": 207360148122
+    },
+    {
+      "label": "strict-clippy",
+      "exit_code": 0,
+      "source_endpoints_equal": true,
+      "log_bytes": 5674,
+      "log_sha256": "49efe31f0408a7b0e86b579b3f0942a8da130a4790628bfed07ff1b0ae07b976",
+      "elapsed_ns": 189326246939
+    },
+    {
+      "label": "npq-cli",
+      "exit_code": 0,
+      "source_endpoints_equal": true,
+      "log_bytes": 2761,
+      "log_sha256": "7ec68f26fe0a23ff8286f496b2ab8fe0ccb7f018c558948b5ed8407828da01cb",
+      "elapsed_ns": 390953396582
+    }
+  ],
+  "da_library_passed": 720,
+  "da_integration_passed": 34,
+  "da_doctests_passed": 16,
+  "da_failed": 0,
+  "da_ignored": 0,
+  "npq_cli_passed": 4,
+  "npq_cli_failed": 0,
+  "npq_cli_original_ignored": 1,
+  "pipeline_native_execution": "PINNED_AND_OBSERVED",
+  "pipeline_hepta_started": false,
+  "pipeline_final_use_granted": false,
+  "native_process_scope": "one live owned executable-object observation, not memory/libraries/descendants/whole lifetime",
+  "performance_gain_established": false,
+  "independent_execution_authentication": false,
+  "whole_chain_pq_qualified": false,
+  "production_activation": false
+}

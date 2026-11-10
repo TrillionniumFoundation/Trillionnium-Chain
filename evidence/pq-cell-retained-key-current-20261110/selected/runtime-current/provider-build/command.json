@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "bash",
+    "scripts/ci/prepare_pq_provider.sh"
+  ],
+  "cwd": "/workspace/scratch/e52be1cc2d9e/chain-pq",
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "GITHUB_ENV": "/workspace/scratch/e52be1cc2d9e/runtime-current/provider-build/provider.env",
+    "RUNNER_TEMP": "/workspace/scratch/e52be1cc2d9e/runtime-current/provider-build/tmp"
+  },
+  "qualification": "provider build and ML-DSA-65 smoke only; no full Rust execution or FIPS module certification",
+  "script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+  "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667"
+}

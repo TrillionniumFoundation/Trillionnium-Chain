@@ -1,0 +1,44 @@
+{
+  "actual_chunk_references": 4,
+  "actual_payload_bytes": 32930,
+  "build_provenance_attested": false,
+  "child_reaped": true,
+  "complete_lifetime_image_verified": false,
+  "complete_source_endpoints_match": true,
+  "component_source_hashes_match_exact_git_blobs": true,
+  "current_binary_fingerprint_verified": false,
+  "executable_sha256": "abdadf76b9cd14f84b7ed807775816b1eb601b8419217dd41c0b2f4de7d91816",
+  "final_use_granted": false,
+  "hepta_started": false,
+  "independent_execution_authentication": false,
+  "limits": "Checks retained observations and relationships. The original opened-dispatch/post-dispatch/proc executable pins agree; a separately reported later target-path fingerprint may differ or be unavailable. No independent execution/kernel/transport attestation, full library image, real model execution, WAN, deployment or cryptographic security theorem.",
+  "native_bep52_fetches": 2,
+  "native_exit_code": 0,
+  "native_process_status": "PINNED_AND_OBSERVED",
+  "negative_controls": {
+    "corrupt_signature_error": "cell: PQ content signature",
+    "duplicate_model_bundle_error": "cell: content complete sealed version scopes"
+  },
+  "performance_improvement_measured": false,
+  "post_execution_path_observation": {
+    "bytes": 64304208,
+    "sha256": "9130435d98a85bdab278b31c94720ecd8a84f166f5b6155fc2b33a6cabcbdc12",
+    "status": "REPLACED_SINCE_RECORDED_EXECUTION"
+  },
+  "production_activation": false,
+  "real_model_efficacy_assessed": false,
+  "receipts_verified": [
+    "pipeline-build",
+    "signed-sealed-pipeline"
+  ],
+  "recorded_dispatch_and_observed_process_hashes_match": true,
+  "result": "PASS",
+  "schema": "trnm-current-pipeline-independent-verification-v1",
+  "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+  "synthetic_fixture": true,
+  "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff",
+  "two_complete_sealed_closures_and_native_readers_observed": true,
+  "verified_utc": "2026-11-10T07:50:56.443775+00:00",
+  "wan_sla_observed": false,
+  "whole_chain_pq_qualified": false
+}

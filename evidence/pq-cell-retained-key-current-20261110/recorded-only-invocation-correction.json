@@ -1,0 +1,17 @@
+{
+  "scope": "Local verifier invocation, not a native/source test result",
+  "first_argv": [
+    "verify_current_pq_cell_evidence.py",
+    "--root",
+    ".",
+    "--recorded-only",
+    "--output",
+    "../current-recorded-only-verification.json"
+  ],
+  "observed_exit_code": 1,
+  "observed_error": "ValueError: report must be outside source",
+  "reason": "Output argument was relative; the reader requires an absolute outside-source path",
+  "original_console_retained_in_tool_transcript": true,
+  "separate_original_raw_stream_file_retained": false,
+  "correction": "Use the unchanged reader with absolute /workspace/scratch/e52be1cc2d9e/current-recorded-only-verification.json"
+}

@@ -1,0 +1,41 @@
+{
+  "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+  "records": [
+    {
+      "label": "graph-offline",
+      "recorder_exit": 0,
+      "wall_ns": 5112163570
+    },
+    {
+      "label": "format",
+      "recorder_exit": 0,
+      "wall_ns": 17423318884
+    },
+    {
+      "label": "pipeline-build",
+      "recorder_exit": 0,
+      "wall_ns": 55332514657
+    },
+    {
+      "label": "signed-sealed-pipeline",
+      "recorder_exit": 0,
+      "wall_ns": 5795029639
+    },
+    {
+      "label": "da-complete",
+      "recorder_exit": 0,
+      "wall_ns": 207401274866
+    },
+    {
+      "label": "strict-clippy",
+      "recorder_exit": 0,
+      "wall_ns": 189376245222
+    },
+    {
+      "label": "npq-cli",
+      "recorder_exit": 0,
+      "wall_ns": 390998918884
+    }
+  ],
+  "complete": true
+}

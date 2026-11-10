@@ -1,0 +1,20 @@
+{
+  "PATH": "/workspace/scratch/e52be1cc2d9e/runtime-current/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/opt/codex/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/agent/.local/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+  "RUSTUP_HOME": "/workspace/scratch/e52be1cc2d9e/runtime-current/rustup",
+  "CARGO_HOME": "/workspace/scratch/e52be1cc2d9e/runtime-current/cargo",
+  "CARGO_TARGET_DIR": "/workspace/scratch/e52be1cc2d9e/runtime-current/target",
+  "CARGO_BUILD_JOBS": "1",
+  "CARGO_INCREMENTAL": "0",
+  "RUST_TEST_THREADS": "1",
+  "RUSTC": "/workspace/scratch/e52be1cc2d9e/runtime-current/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+  "LD_LIBRARY_PATH": "/workspace/scratch/e52be1cc2d9e/runtime-current/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+  "RUSTFLAGS": null,
+  "CARGO_ENCODED_RUSTFLAGS": null,
+  "OPENSSL_DIR": "/workspace/scratch/e52be1cc2d9e/runtime-current/provider-build/tmp/trnm-pq-provider-3.5.9.1I0yz0vy/install",
+  "OPENSSL_STATIC": "1",
+  "OPENSSL_CONF": "/dev/null",
+  "OPENSSL_MODULES": "/workspace/scratch/e52be1cc2d9e/runtime-current/provider-build/tmp/trnm-pq-provider-3.5.9.1I0yz0vy/install/lib/ossl-modules",
+  "TRNM_PQ_OPENSSL": "/workspace/scratch/e52be1cc2d9e/runtime-current/provider-build/tmp/trnm-pq-provider-3.5.9.1I0yz0vy/install/bin/openssl",
+  "TRNM_PQ_OPENSSL_SHA256": "a276f36fcf2a4b6da6da41d55e053bd112ca237ad15d9afc6c97bec728690352",
+  "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+}

@@ -1,0 +1,32 @@
+{
+  "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+  "argv": [
+    "bash",
+    "/workspace/scratch/e52be1cc2d9e/runtime-current/bootstrap/rustup-init.sh",
+    "-y",
+    "--no-modify-path",
+    "--profile",
+    "minimal",
+    "--default-toolchain",
+    "1.95.0",
+    "--component",
+    "rustfmt",
+    "--component",
+    "clippy"
+  ],
+  "cwd": "/workspace/scratch/e52be1cc2d9e/chain-pq",
+  "exit_code": 0,
+  "started_ns": 15698762742834,
+  "rustup_home": "/workspace/scratch/e52be1cc2d9e/runtime-current/rustup",
+  "cargo_home": "/workspace/scratch/e52be1cc2d9e/runtime-current/cargo",
+  "elapsed_ns": 22185404685,
+  "stdout": {
+    "bytes": 1646,
+    "sha256": "2431c6ea627e3149699632554894d86415ce41346c1ebba44960a30668fe8196"
+  },
+  "stderr": {
+    "bytes": 346,
+    "sha256": "39ccce955085c9f6c17bd74624da004525c4514a8519a36076b8f08726fd9f1a"
+  },
+  "installer_sha256": "d890e2fef6fa991b19cde2e608199bc1dca4e37f41f884edf8849ff693048de6"
+}

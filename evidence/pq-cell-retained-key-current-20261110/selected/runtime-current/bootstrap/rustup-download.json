@@ -1,0 +1,28 @@
+{
+  "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+  "argv": [
+    "curl",
+    "--fail",
+    "--location",
+    "--max-time",
+    "300",
+    "https://sh.rustup.rs",
+    "-o",
+    "/workspace/scratch/e52be1cc2d9e/runtime-current/bootstrap/rustup-init.sh"
+  ],
+  "cwd": "/workspace/scratch/e52be1cc2d9e/chain-pq",
+  "exit_code": 0,
+  "started_ns": 15692503060506,
+  "rustup_home": "/workspace/scratch/e52be1cc2d9e/runtime-current/rustup",
+  "cargo_home": "/workspace/scratch/e52be1cc2d9e/runtime-current/cargo",
+  "elapsed_ns": 6258935564,
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "bytes": 870,
+    "sha256": "9e4ae53439250a4af26a6cbc678efd4b2d2af8b03a80b44de7fbd3509462d5e1"
+  },
+  "installer_sha256": "d890e2fef6fa991b19cde2e608199bc1dca4e37f41f884edf8849ff693048de6"
+}

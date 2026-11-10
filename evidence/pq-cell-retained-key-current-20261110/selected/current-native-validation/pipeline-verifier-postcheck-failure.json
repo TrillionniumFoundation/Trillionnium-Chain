@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "python3",
+    "/workspace/scratch/e52be1cc2d9e/verify_current_pipeline.original.py",
+    "--root",
+    "/workspace/scratch/e52be1cc2d9e/chain-pq",
+    "--records",
+    "/workspace/scratch/e52be1cc2d9e/current-native-validation",
+    "--output",
+    "/workspace/scratch/e52be1cc2d9e/current-native-validation/pipeline-independent-verification.json"
+  ],
+  "current_path_observation": {
+    "bytes": 64304208,
+    "sha256": "9130435d98a85bdab278b31c94720ecd8a84f166f5b6155fc2b33a6cabcbdc12"
+  },
+  "exit_code": 1,
+  "expected_recorded_binary": {
+    "bytes": 60135680,
+    "path": "/workspace/scratch/e52be1cc2d9e/runtime-current/target/debug/examples/cell_signed_sealed_pipeline_v1",
+    "scope": "build fingerprint before explicitly pinned direct dispatch",
+    "sha256": "abdadf76b9cd14f84b7ed807775816b1eb601b8419217dd41c0b2f4de7d91816",
+    "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667"
+  },
+  "failure": "extra post-execution current-file size equality failed",
+  "not_a_native_execution_rerun": true,
+  "original_verifier_sha256": "a814fbab7bccc4850b5c99293a0df70589351ed08f57d56ff3a835fb9fc30c3d",
+  "production_activation": false,
+  "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+  "whole_chain_pq_qualified": false
+}

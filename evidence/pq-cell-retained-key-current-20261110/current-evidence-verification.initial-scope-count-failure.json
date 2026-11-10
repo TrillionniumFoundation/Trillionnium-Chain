@@ -1,0 +1,7 @@
+{
+  "production_activation": false,
+  "reason": "source/native retention selections changed",
+  "result": "FAIL",
+  "schema": "trnm-current-cell-evidence-independent-byte-review-v1",
+  "whole_chain_pq_qualified": false
+}

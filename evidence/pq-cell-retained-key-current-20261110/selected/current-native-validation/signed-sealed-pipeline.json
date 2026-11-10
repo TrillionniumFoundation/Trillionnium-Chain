@@ -1,0 +1,100 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+    "tested_tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2528691640,
+    "tracked_entries": 27855,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "/workspace/scratch/e52be1cc2d9e/runtime-current/target/debug/examples/cell_signed_sealed_pipeline_v1"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+    "tested_tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2528691640,
+    "tracked_entries": 27855,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/workspace/scratch/e52be1cc2d9e/chain-pq",
+  "elapsed_ns": 5754042213,
+  "environment": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/workspace/scratch/e52be1cc2d9e/runtime-current/target",
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": "/workspace/scratch/e52be1cc2d9e/runtime-current/provider-build/tmp/trnm-pq-provider-3.5.9.1I0yz0vy/install",
+    "OPENSSL_STATIC": "1",
+    "RUNNER_ARCH": null,
+    "RUSTC": "/workspace/scratch/e52be1cc2d9e/runtime-current/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": "1",
+    "TRNM_PQ_OPENSSL": "/workspace/scratch/e52be1cc2d9e/runtime-current/provider-build/tmp/trnm-pq-provider-3.5.9.1I0yz0vy/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "a276f36fcf2a4b6da6da41d55e053bd112ca237ad15d9afc6c97bec728690352",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "exit_code": 0,
+  "log_bytes": 6053,
+  "log_file": "signed-sealed-pipeline.log",
+  "log_sha256": "3974f3253d0079fb530b4415f9071a1c4b201ae9b475cf19f46f95c2317ceedb",
+  "native_execution": {
+    "build_provenance_verified_by_observer": false,
+    "child_reaped": true,
+    "descendant_execution_verified": false,
+    "dispatch_object": {
+      "bytes": 60135680,
+      "device": 27,
+      "inode": 2648042,
+      "sha256": "abdadf76b9cd14f84b7ed807775816b1eb601b8419217dd41c0b2f4de7d91816"
+    },
+    "dispatch_object_after_sha256": "abdadf76b9cd14f84b7ed807775816b1eb601b8419217dd41c0b2f4de7d91816",
+    "entire_lifetime_image_verified": false,
+    "expected_sha256": "abdadf76b9cd14f84b7ed807775816b1eb601b8419217dd41c0b2f4de7d91816",
+    "libraries_sha256": null,
+    "loaded_memory_sha256": null,
+    "model_closure_sha256": null,
+    "native_exit_code": 0,
+    "observation": {
+      "bytes": 60135680,
+      "device": 27,
+      "exe_link": "/workspace/scratch/e52be1cc2d9e/runtime-current/target/debug/examples/cell_signed_sealed_pipeline_v1",
+      "executable_opened_monotonic_ns": 16059488521450,
+      "hash_finished_monotonic_ns": 16059540865361,
+      "inode": 2648042,
+      "observation_started_monotonic_ns": 16059488465346,
+      "process": {
+        "parent_pid": 1844,
+        "pid": 1898,
+        "start_ticks": 1605948
+      },
+      "process_binding_finished_monotonic_ns": 16059488550644,
+      "sha256": "abdadf76b9cd14f84b7ed807775816b1eb601b8419217dd41c0b2f4de7d91816",
+      "status": "OBSERVED"
+    },
+    "owned_pid": 1898,
+    "performance_measurement": false,
+    "requested_path": "/workspace/scratch/e52be1cc2d9e/runtime-current/target/debug/examples/cell_signed_sealed_pipeline_v1",
+    "schema": "trnm-pinned-native-process-v1",
+    "status": "PINNED_AND_OBSERVED"
+  },
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-10T07:42:04.929049+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}

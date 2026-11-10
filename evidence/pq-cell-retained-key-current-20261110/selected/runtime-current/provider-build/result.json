@@ -1,0 +1,18 @@
+{
+  "exit_code": 0,
+  "production_activation": false,
+  "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+  "source_endpoints_equal": true,
+  "streams": {
+    "stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout.log": {
+      "bytes": 217,
+      "sha256": "ec2cf86665bf289500e3d00d06a894d29bf3ea0d7573a321556bcb9ef1e57178"
+    }
+  },
+  "wall_seconds": 104.48867346900079,
+  "whole_chain_pq_qualified": false
+}

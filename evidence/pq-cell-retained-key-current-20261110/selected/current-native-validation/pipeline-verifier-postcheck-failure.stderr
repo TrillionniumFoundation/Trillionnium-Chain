@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/e52be1cc2d9e/verify_current_pipeline.original.py", line 132, in <module>
+    report=verify(root,args.records.resolve());out.write_text(json.dumps(report,indent=2,sort_keys=True)+'\n')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e52be1cc2d9e/verify_current_pipeline.original.py", line 65, in verify
+    require(binary.stat().st_size==pin['bytes']==n['dispatch_object']['bytes']==n['observation']['bytes'],'binary size mismatch')
+  File "/workspace/scratch/e52be1cc2d9e/verify_current_pipeline.original.py", line 23, in require
+    if not ok:raise ValueError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: binary size mismatch
