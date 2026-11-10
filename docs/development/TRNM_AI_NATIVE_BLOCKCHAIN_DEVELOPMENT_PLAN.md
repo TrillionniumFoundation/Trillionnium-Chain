@@ -10793,3 +10793,14 @@ table-sharing speedup, verifier-key shortcut, native replay removal or
 production dispatch change follows. Original quarter-CPU/four-second service,
 WAN/ACK, cheapest legal work, whole-chain gain and concrete cryptographic
 qualification remain separate HOLD gates. Production activation remains false.
+
+
+### 2026-11-10 — Isolated DFT cache diagnostic (not performance qualification)
+
+An isolated source rooted at f2ad7e138958 copies the checksum-pinned p3-dft
+0.8.0 crate and adds stderr events at actual cache requests and miss closures.
+It records actual keys, retains both independent setups/PCS/native replay and
+uses a separate target. Logging changes timing; no formal receiver sample or
+benefit follows. This diagnostic path patch and offline-generated lock belong
+to this source only; published #871, its locks, original reader and completed
+ABBA are untouched. Qualification remains HOLD_NO_GO.
