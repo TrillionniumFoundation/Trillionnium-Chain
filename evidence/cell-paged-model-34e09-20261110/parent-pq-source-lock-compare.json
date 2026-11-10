@@ -1,0 +1,61 @@
+{
+  "schema": "trnm.paged-parent-pq-source-lock-comparison.v1",
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+      "versions": {
+        "parent848": {
+          "sha256": "e51a5e9777578dfa378dbd17db3d79850822c5a5da31dbc99b11936f0cbd48c1",
+          "bytes": 8420
+        },
+        "publication858": {
+          "sha256": "e51a5e9777578dfa378dbd17db3d79850822c5a5da31dbc99b11936f0cbd48c1",
+          "bytes": 8420
+        }
+      },
+      "identical": true
+    },
+    {
+      "path": "config/pon/pq-authority-effects-v1.json",
+      "versions": {
+        "parent848": {
+          "sha256": "547902b48e185df987c2204eeb4113e01f975ad54ce3ef1c44c509a16cc1cbea",
+          "bytes": 14196
+        },
+        "publication858": {
+          "sha256": "547902b48e185df987c2204eeb4113e01f975ad54ce3ef1c44c509a16cc1cbea",
+          "bytes": 14196
+        }
+      },
+      "identical": true
+    },
+    {
+      "path": "scripts/ci/pq_authority_effect_register.py",
+      "versions": {
+        "parent848": {
+          "sha256": "3a364b46622416f8bcd79b7b3892acaca8663224b9b9f4f5abd987447fe8c42a",
+          "bytes": 10970
+        },
+        "publication858": {
+          "sha256": "3a364b46622416f8bcd79b7b3892acaca8663224b9b9f4f5abd987447fe8c42a",
+          "bytes": 10970
+        }
+      },
+      "identical": true
+    },
+    {
+      "path": "scripts/ci/test_pq_authority_effect_register.py",
+      "versions": {
+        "parent848": {
+          "sha256": "81667c72e16b6540f2893eb7ffdad362909ec111abfc33aaf1f1c492b147fe26",
+          "bytes": 13427
+        },
+        "publication858": {
+          "sha256": "81667c72e16b6540f2893eb7ffdad362909ec111abfc33aaf1f1c492b147fe26",
+          "bytes": 13427
+        }
+      },
+      "identical": true
+    }
+  ]
+}

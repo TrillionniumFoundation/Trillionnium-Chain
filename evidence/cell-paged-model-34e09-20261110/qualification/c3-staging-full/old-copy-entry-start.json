@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "-p",
+    "trnm-data-availability",
+    "--example",
+    "cell_sealed_research_next_use_v2",
+    "--",
+    "--test-threads=1"
+  ],
+  "commit": "03c4cf3dbcfe228135190e61e1fdfbf2ca28c135",
+  "cwd": "/home/qq/work/chain-cell-paged-model-34e09-20261110/trillionnium",
+  "started_at_utc": "2026-11-10T09:56:39.547117+00:00",
+  "tree": "8730387e2f58e1c6ed9c4647985d05096db4d8f3"
+}

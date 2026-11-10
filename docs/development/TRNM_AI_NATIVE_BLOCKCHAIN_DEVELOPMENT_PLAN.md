@@ -1,3 +1,14 @@
+**Paged real-model research bridge — NOT_RUN; qualification HOLD:**
+
+An explicit [paged sealed research route](specs/pon/CELL_SEALED_PAGED_RESEARCH_NEXT_USE_V1.md)
+keeps the original model/environment version and strict V2 source wire while
+adding fresh operation/profile identities, two CRR2/CRG2 pages, six local
+provider publications and four-provider cold consumer reconstruction. All
+catalog, codec, storage and next-use work remains inside the original
+300-second operation. Its failure/usage observations must remain distinct from
+prior TCA3 copy recovery. Native funding, original custody responsibilities,
+ordinary FinalUse and production are not promoted.
+
 **Paged selected-version consumer restoration — local validation PASS; qualification HOLD:**
 
 The V2 capacity continuation adds `restore_cell_paged_version_to_cache_v2`
