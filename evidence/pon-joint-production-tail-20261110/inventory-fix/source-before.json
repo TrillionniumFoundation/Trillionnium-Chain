@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "db9991c537e3469f1b7b6e1fa6f8466ac62edc4f",
+    "--output",
+    "/workspace/scratch/8e76272d9258/inventory-repair/source-before.report.json"
+  ],
+  "exit_code": 0,
+  "expected_exit": 0,
+  "passed": true,
+  "elapsed_seconds": 6.8235759579984006,
+  "source_commit": "db9991c537e3469f1b7b6e1fa6f8466ac62edc4f",
+  "source_tree": "64f5c864417aa567239dd67d3113eb8a0cef795e",
+  "stdout_sha256": "52d94942437ad618987d84c7e1360c1ea09e6f02b31becb37165d32375b9dc91",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
