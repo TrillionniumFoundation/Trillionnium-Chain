@@ -62,20 +62,23 @@ fn cancellation_authorizer(context: AuthContext<'_>) -> Authorization {
 }
 
 struct CleanupSqlGuard<'a> {
-    db: &'a Connection,
+    node: &'a mut Node,
     prior_busy_ms: u64,
 }
 impl Drop for CleanupSqlGuard<'_> {
     fn drop(&mut self) {
-        self.db
+        self.node
+            .db
             .authorizer(None::<fn(AuthContext<'_>) -> Authorization>)
             .expect("Node owns the SQLite connection when removing its authorizer");
-        self.db
+        self.node
+            .db
             .progress_handler(0, None::<fn() -> bool>)
             .expect("Node owns the SQLite connection when removing its progress handler");
         // Restoring the same connection policy grants no work authority. A
         // panic still rolls back the transaction and poisons its outer owner.
         let _ = self
+            .node
             .db
             .busy_timeout(Duration::from_millis(self.prior_busy_ms));
     }
@@ -353,7 +356,7 @@ impl Node {
     }
 
     pub(super) fn finish_or_cancel_reorg(
-        &self,
+        &mut self,
         reservation: &Reservation,
         outcome: Result<Hash>,
         hook: &mut Option<&mut Hook<'_>>,
@@ -378,7 +381,7 @@ impl Node {
     }
 
     fn cancel_unpublished_reorg(
-        &self,
+        &mut self,
         reservation: &Reservation,
         reason: &str,
         hook: &mut Option<&mut Hook<'_>>,
@@ -394,26 +397,32 @@ impl Node {
             .db
             .query_row("PRAGMA busy_timeout", [], |row| row.get(0))?;
         self.db.busy_timeout(Duration::ZERO)?;
-        let _guard = CleanupSqlGuard {
-            db: &self.db,
+        let guard = CleanupSqlGuard {
+            node: self,
             prior_busy_ms,
         };
-        self.db
+        guard
+            .node
+            .db
             .progress_handler(100, Some(reorg_cleanup_interrupt()?))?;
-        self.db.authorizer(Some(cancellation_authorizer))?;
+        guard.node.db.authorizer(Some(cancellation_authorizer))?;
         cut(hook, "cancel-before-transaction")?;
         let tx = rusqlite::Transaction::new_unchecked(
-            &self.db,
+            &guard.node.db,
             rusqlite::TransactionBehavior::Immediate,
         )?;
-        let data_version: u64 = self
+        let data_version: u64 = guard
+            .node
             .db
             .query_row("PRAGMA data_version", [], |row| row.get(0))?;
-        let schema_version: u64 = self
+        let schema_version: u64 = guard
+            .node
             .db
             .query_row("PRAGMA schema_version", [], |row| row.get(0))?;
         let temp_schema_version: u64 =
-            self.db
+            guard
+                .node
+                .db
                 .query_row("PRAGMA temp.schema_version", [], |row| row.get(0))?;
         ensure(
             data_version == reservation.data_version
@@ -423,65 +432,77 @@ impl Node {
         )
         .map_err(Error::local_integrity)?;
         let done: u64 =
-            self.db
+            guard
+                .node
+                .db
                 .query_row("SELECT done FROM reorg WHERE singleton=1", [], |row| {
                     row.get(0)
                 })?;
         if done == 1 {
-            self.check_reserved_reorg_lifecycle(reservation, 1, None, "")?;
+            guard
+                .node
+                .check_reserved_reorg_lifecycle(reservation, 1, None, "")?;
             tx.rollback()?;
             return Ok(());
         }
         ensure(
             done == 0
-                && self.active()? == (reservation.old, reservation.generation - 1)
-                && self.slot()? == reservation.old_slot
-                && self.record(reservation.old)?.root == reservation.old_root,
+                && guard.node.active()? == (reservation.old, reservation.generation - 1)
+                && guard.node.slot()? == reservation.old_slot
+                && guard.node.record(reservation.old)?.root == reservation.old_root,
             "REORG_LIFECYCLE",
         )
         .map_err(Error::local_integrity)?;
-        self.check_reserved_reorg_lifecycle(reservation, 0, None, "")?;
+        guard
+            .node
+            .check_reserved_reorg_lifecycle(reservation, 0, None, "")?;
         let cursor: u64 =
-            self.db
+            guard
+                .node
+                .db
                 .query_row("SELECT cursor FROM reorg WHERE singleton=1", [], |row| {
                     row.get(0)
                 })?;
-        self.check_reorg_row(
+        guard.node.check_reorg_row(
             reservation.old,
             reservation.target,
             reservation.generation,
             cursor,
             0,
         )?;
-        let before = self.db.total_changes();
-        ensure(self.db.execute(
+        let before = guard.node.db.total_changes();
+        ensure(guard.node.db.execute(
             "UPDATE reorg_lifecycle_v1 SET outcome=2,cancelled_cursor=?,reason=? WHERE operation=? AND outcome=0",
             params![cursor, reason, reservation.operation.ok_or("REORG_LIFECYCLE")?],
         )? == 1, "REORG_LIFECYCLE").map_err(Error::local_integrity)?;
         cut(hook, "cancel-lifecycle-written")?;
-        ensure(self.db.execute(
+        ensure(guard.node.db.execute(
             "UPDATE reorg SET done=2 WHERE singleton=1 AND done=0 AND old_tip=? AND new_tip=? AND generation=? AND cursor=?",
             params![reservation.old.as_slice(), reservation.target.as_slice(), reservation.generation, cursor],
         )? == 1, "REORG_LIFECYCLE").map_err(Error::local_integrity)?;
         ensure(
-            self.db.total_changes() == before + 2
-                && self.active()? == (reservation.old, reservation.generation - 1)
-                && self.slot()? == reservation.old_slot,
+            guard.node.db.total_changes() == before + 2
+                && guard.node.active()? == (reservation.old, reservation.generation - 1)
+                && guard.node.slot()? == reservation.old_slot,
             "REORG_LIFECYCLE",
         )
         .map_err(Error::local_integrity)?;
-        self.check_reserved_reorg_lifecycle(reservation, 2, Some(cursor), reason)?;
-        self.check_reorg_row(
+        guard
+            .node
+            .check_reserved_reorg_lifecycle(reservation, 2, Some(cursor), reason)?;
+        guard.node.check_reorg_row(
             reservation.old,
             reservation.target,
             reservation.generation,
             cursor,
             2,
         )?;
-        let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1
-            || self.native_legacy_reorg_observation_enabled())
+        let commit_observation = (guard.node.state_backend == StateBackend::AuthenticatedV1
+            || guard.node.native_legacy_reorg_observation_enabled())
         .then(|| {
-            self.authenticated_arithmetic
+            guard
+                .node
+                .authenticated_arithmetic
                 .history
                 .observe_sql_commit(native_authenticated::SqlCommitSite::ReorgTermination)
         });
