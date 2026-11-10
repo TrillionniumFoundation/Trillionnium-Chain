@@ -1,6 +1,11 @@
 """Refuse denominator changes, wrong source and CPU accounting confusion."""
+import tempfile
 import unittest
-from host_budget_feasibility import analyze, SOURCE_COMMIT, SOURCE_RUN, SOURCE_ZIP_SHA256
+from pathlib import Path
+from host_budget_feasibility import (
+    analyze, read_pinned_source, SOURCE_COMMIT, SOURCE_RUN, SOURCE_ZIP_SHA256,
+    SOURCE_SUMMARY_SHA256, ORIGINAL_REPORT_SHA256,
+)
 
 
 def fixture():
@@ -13,6 +18,7 @@ def fixture():
                 "host_checkpoint_calls": 100,
                 "host_checkpoint_thread_cpu_ns": 4_750_000_000,
                 "history_import_thread_cpu_ns": 5_500_000_000,
+                "raw_report_sha256": ORIGINAL_REPORT_SHA256[run-1],
             })
     return {"schema": "pon-original-native-host-checkpoint-cost-v1",
             "source_commit": SOURCE_COMMIT, "source_ci_run": SOURCE_RUN,
@@ -33,6 +39,8 @@ class FixedHostAccountingTests(unittest.TestCase):
         self.assertFalse(row["is_exact_quota_window_bound"])
         self.assertFalse(output["all_original_phase_gates_met"])
         self.assertFalse(output["production_qualified"])
+        self.assertEqual(output["source_summary_sha256"], SOURCE_SUMMARY_SHA256)
+        self.assertEqual(output["original_report_sha256"], list(ORIGINAL_REPORT_SHA256))
 
     def test_missing_or_reordered_phase_refused(self):
         data = fixture()
@@ -64,6 +72,34 @@ class FixedHostAccountingTests(unittest.TestCase):
             data[key] = value
             with self.assertRaises(ValueError):
                 analyze(data)
+
+    def test_wrong_raw_report_digest_refused_even_if_self_declared_identity_matches(self):
+        data = fixture()
+        data["observations"][3]["raw_report_sha256"] = ORIGINAL_REPORT_SHA256[0]
+        with self.assertRaisesRegex(ValueError, "changed or missing original phase"):
+            analyze(data)
+
+    def test_exact_github_evidence_passes_full_byte_pin(self):
+        original = Path(__file__).resolve().parents[2] / "evidence/pon-original-host-cost-20261110/host-phase-summary.json"
+        result = analyze(read_pinned_source(original))
+        self.assertEqual(len(result["rows"]), 9)
+        self.assertFalse(result["production_qualified"])
+        self.assertTrue(all(not phase["original_phase_accepted"] for phase in result["rows"]))
+
+    def test_tampered_summary_symlink_and_missing_file_refused(self):
+        original = Path(__file__).resolve().parents[2] / "evidence/pon-original-host-cost-20261110/host-phase-summary.json"
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            forged = root / "modified.json"
+            forged.write_bytes(original.read_bytes() + b" ")
+            with self.assertRaisesRegex(ValueError, "SHA256"):
+                read_pinned_source(forged)
+            alias = root / "alias.json"
+            alias.symlink_to(original)
+            with self.assertRaisesRegex(ValueError, "symlink"):
+                read_pinned_source(alias)
+            with self.assertRaises(ValueError):
+                read_pinned_source(root / "missing.json")
 
     def test_bool_string_and_missing_cpu_are_not_accepted_numbers(self):
         for value in (None, True, "4750000000"):
