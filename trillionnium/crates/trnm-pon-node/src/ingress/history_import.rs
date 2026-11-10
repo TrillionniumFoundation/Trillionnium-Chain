@@ -7,6 +7,8 @@ use super::{
     WorkCheckedPacket, MAX_FRAME,
 };
 use public_v3::{request_observation::TaskObservation, SubmitPhase};
+mod attribution;
+use attribution::{observe_epoch, CpuWaitGuard, HistoryEpochSubstep, NativeAttribution};
 mod observation;
 pub(super) use observation::{observe_host, HistoryHostPhase};
 pub use observation::{HistoryImportObservationSnapshot, HistoryImportObserver};
@@ -128,21 +130,32 @@ fn scoped<T>(
     control: &Control<'_>,
     native: impl FnOnce(&mut Owner<'_>, &public_v3::ServiceMutationCpuDomain) -> Result<T>,
 ) -> Result<T> {
-    scoped_observed(owner, control, None, native)
+    scoped_observed(owner, control, None, None, native)
 }
 
 fn scoped_observed<T>(
     owner: &mut Owner<'_>,
     control: &Control<'_>,
     observation: Option<&TaskObservation>,
+    attribution: Option<&NativeAttribution>,
     native: impl FnOnce(&mut Owner<'_>, &public_v3::ServiceMutationCpuDomain) -> Result<T>,
 ) -> Result<T> {
+    if let Some(record) = attribution {
+        record.owner(match owner {
+            Owner::Exclusive(_) => "exclusive",
+            Owner::Shared(_) => "shared",
+        });
+    }
     let cpu = super::observe_submit_phase(observation, SubmitPhase::HistoryEpochOpen, || {
         owner.with(control, |node| {
             // #498's continuous-mode deny gate remains before any paid work.
             // Generic scalar begin is not the continuous durable-operation journal.
-            let cpu = node.remote_history_cpu_domain()?;
-            node.begin_remote_history_cpu_epoch()?;
+            let cpu = observe_epoch(attribution, HistoryEpochSubstep::DomainLookup, || {
+                node.remote_history_cpu_domain()
+            })?;
+            observe_epoch(attribution, HistoryEpochSubstep::DurableBegin, || {
+                node.begin_remote_history_cpu_epoch()
+            })?;
             Ok(cpu)
         })
     })?;
@@ -169,27 +182,53 @@ fn begin_cpu(
     cpu: &public_v3::ServiceMutationCpuDomain,
     control: &Control<'_>,
 ) -> Result<public_v3::ServiceMutationCpuOperation> {
+    begin_cpu_observed(cpu, control, None)
+}
+
+fn begin_cpu_observed(
+    cpu: &public_v3::ServiceMutationCpuDomain,
+    control: &Control<'_>,
+    attribution: Option<&NativeAttribution>,
+) -> Result<public_v3::ServiceMutationCpuOperation> {
     // Keep a depleted peer from owning the poller's entire (possibly long)
     // runtime. This local wait ceiling can only shorten the original end.
     let wait_end = control
         .deadline
         .min(Instant::now() + Duration::from_secs(2));
-    loop {
+    let mut diagnostic =
+        attribution.map(|record| CpuWaitGuard::new(record, control.deadline, wait_end));
+    let result = (|| loop {
         control.check()?;
         ensure(Instant::now() < wait_end, "PUBLIC_MUTATION_CPU_BUDGET")?;
-        match cpu.begin() {
+        if let Some(record) = &mut diagnostic {
+            record.reserve_started();
+        }
+        let reservation = cpu.begin();
+        if let Some(record) = &mut diagnostic {
+            record.reserve_returned(&reservation);
+        }
+        match reservation {
             Ok(operation) => return Ok(operation),
             Err(error) if error.is(crate::ErrorCode::PublicMutationCpuBudget) => {
                 // No Node guard; the fixed business deadline never advances.
                 cut("cpu_wait");
-                thread::sleep(
-                    Duration::from_millis(2)
-                        .min(wait_end.saturating_duration_since(Instant::now())),
-                );
+                let duration = Duration::from_millis(2)
+                    .min(wait_end.saturating_duration_since(Instant::now()));
+                let start = diagnostic
+                    .as_mut()
+                    .map(|record| record.sleep_started(duration));
+                thread::sleep(duration);
+                if let (Some(record), Some(start)) = (&mut diagnostic, start) {
+                    record.sleep_completed(start);
+                }
             }
             Err(error) => return Err(error),
         }
+    })();
+    if let Some(record) = diagnostic {
+        record.finish(&result);
     }
+    result
 }
 
 fn metered<T>(
@@ -197,18 +236,21 @@ fn metered<T>(
     control: &Control<'_>,
     native: impl FnOnce(&public_v3::ServiceMutationCpuOperation) -> Result<T>,
 ) -> Result<T> {
-    metered_observed(cpu, control, None, native)
+    metered_observed(cpu, control, None, None, native)
 }
 
 fn metered_observed<T>(
     cpu: &public_v3::ServiceMutationCpuDomain,
     control: &Control<'_>,
     observation: Option<&TaskObservation>,
+    attribution: Option<&NativeAttribution>,
     native: impl FnOnce(&public_v3::ServiceMutationCpuOperation) -> Result<T>,
 ) -> Result<T> {
-    let operation = super::observe_submit_phase(observation, SubmitPhase::CpuWait, || {
-        begin_cpu(cpu, control)
-    })?;
+    let operation =
+        super::observe_submit_phase(observation, SubmitPhase::CpuWait, || match attribution {
+            Some(record) => begin_cpu_observed(cpu, control, Some(record)),
+            None => begin_cpu(cpu, control),
+        })?;
     let result = operation
         .bind_history_request(control.deadline)
         .and_then(|()| native(&operation));
@@ -296,13 +338,14 @@ fn admit_packet(
     clock: u64,
     control: &Control<'_>,
     activate: Option<Hash>,
-    observation: Option<&TaskObservation>,
+    observations: (Option<&TaskObservation>, Option<&NativeAttribution>),
 ) -> Result<(Hash, bool, Option<Hash>)> {
+    let (observation, attribution) = observations;
     if let Some(tip) = activate {
         ensure(tip == packet.id()?, "PAGE_COMPLETE")?;
     }
     let owns_node_mutex = matches!(owner, Owner::Shared(_));
-    metered_observed(cpu, control, observation, |operation| {
+    metered_observed(cpu, control, observation, attribution, |operation| {
         let progress = operation.checkpoint_handle();
         // history_checkpoint checks the original deadline and actual Host
         // before its CPU observation, then again throughout every refill wait.
@@ -452,6 +495,7 @@ pub(super) fn receive_observed(
         observer.enter(tip, after, page.packets.len());
     }
     let page_observation = observation.map(HistoryImportObserver::page);
+    let page_attribution = observation.map(HistoryImportObserver::native_page);
     super::observe_submit_phase(page_observation, SubmitPhase::HistoryImport, || {
         let (codec, continuous) =
             super::observe_submit_phase(page_observation, SubmitPhase::Context, || {
@@ -487,61 +531,78 @@ pub(super) fn receive_observed(
                 })
             });
         }
-        scoped_observed(&mut owner, &control, page_observation, |owner, cpu| {
-            let (packets, next) = metered_observed(cpu, &control, page_observation, |operation| {
-                super::observe_submit_phase(page_observation, SubmitPhase::Decode, || {
-                    let mut packets = Vec::with_capacity(page.packets.len());
-                    let mut next = after;
-                    for (index, raw) in page.packets.iter().enumerate() {
-                        control.check()?;
-                        operation.checkpoint()?;
-                        let packet = hex_packet_for_context(raw, &codec)?;
-                        ensure(packet.header.parent == next, "PAGE_PARENT")?;
-                        next = packet.id()?;
-                        if let Some(observer) = observation {
-                            observer.decoded_packet(index, next);
-                        }
-                        packets.push(packet);
-                    }
-                    ensure(
-                        page.next == hex::encode(next) && page.complete == (next == tip),
-                        "PAGE_COMPLETE",
-                    )?;
-                    control.check()?;
-                    operation.checkpoint()?;
-                    Ok((packets, next))
-                })
-            })?;
-            cut("decoded");
-            let count = packets.len();
-            for (index, packet) in packets.into_iter().enumerate() {
-                let activate = (page.complete && index + 1 == count).then_some(tip);
-                let packet_observation = observation.and_then(|observer| observer.packet(index));
-                super::observe_submit_phase(
-                    packet_observation,
-                    SubmitPhase::HistoryImport,
-                    || {
-                        admit_packet(
-                            owner,
-                            cpu,
-                            packet,
-                            clock,
-                            &control,
-                            activate,
-                            packet_observation,
-                        )
+        scoped_observed(
+            &mut owner,
+            &control,
+            page_observation,
+            page_attribution,
+            |owner, cpu| {
+                let (packets, next) = metered_observed(
+                    cpu,
+                    &control,
+                    page_observation,
+                    page_attribution,
+                    |operation| {
+                        super::observe_submit_phase(page_observation, SubmitPhase::Decode, || {
+                            let mut packets = Vec::with_capacity(page.packets.len());
+                            let mut next = after;
+                            for (index, raw) in page.packets.iter().enumerate() {
+                                control.check()?;
+                                operation.checkpoint()?;
+                                let packet = hex_packet_for_context(raw, &codec)?;
+                                ensure(packet.header.parent == next, "PAGE_PARENT")?;
+                                next = packet.id()?;
+                                if let Some(observer) = observation {
+                                    observer.decoded_packet(index, next);
+                                }
+                                packets.push(packet);
+                            }
+                            ensure(
+                                page.next == hex::encode(next) && page.complete == (next == tip),
+                                "PAGE_COMPLETE",
+                            )?;
+                            control.check()?;
+                            operation.checkpoint()?;
+                            Ok((packets, next))
+                        })
                     },
                 )?;
-            }
-            if page.complete && count == 0 {
-                metered(cpu, &control, |operation| {
-                    super::observe_submit_phase(page_observation, SubmitPhase::SubmitResult, || {
-                        activate_packet(owner, tip, clock, &control, operation)
-                    })
-                })?;
-            }
-            Ok(next)
-        })
+                cut("decoded");
+                let count = packets.len();
+                for (index, packet) in packets.into_iter().enumerate() {
+                    let activate = (page.complete && index + 1 == count).then_some(tip);
+                    let packet_observation =
+                        observation.and_then(|observer| observer.packet(index));
+                    let packet_attribution =
+                        observation.and_then(|observer| observer.native_packet(index));
+                    super::observe_submit_phase(
+                        packet_observation,
+                        SubmitPhase::HistoryImport,
+                        || {
+                            admit_packet(
+                                owner,
+                                cpu,
+                                packet,
+                                clock,
+                                &control,
+                                activate,
+                                (packet_observation, packet_attribution),
+                            )
+                        },
+                    )?;
+                }
+                if page.complete && count == 0 {
+                    metered_observed(cpu, &control, None, page_attribution, |operation| {
+                        super::observe_submit_phase(
+                            page_observation,
+                            SubmitPhase::SubmitResult,
+                            || activate_packet(owner, tip, clock, &control, operation),
+                        )
+                    })?;
+                }
+                Ok(next)
+            },
+        )
     })
 }
 
@@ -569,7 +630,7 @@ pub(crate) fn admit_shared_packet(
         Ok(())
     })?;
     scoped(&mut owner, &control, |owner, cpu| {
-        admit_packet(owner, cpu, packet, now()?, &control, activate, None)
+        admit_packet(owner, cpu, packet, now()?, &control, activate, (None, None))
             .map(|(_, inserted, active)| (inserted, active))
     })
 }

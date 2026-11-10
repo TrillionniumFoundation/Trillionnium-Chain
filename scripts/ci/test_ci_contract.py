@@ -144,6 +144,26 @@ class InlineSourcePinTests(unittest.TestCase):
                 self.assertTrue((output / 'SCOPE.txt').is_file())
 
 
+class NativeConsensusOracleLaneTests(unittest.TestCase):
+    def setUp(self):
+        self.script = (ROOT / 'scripts/ci/ci_job.sh').read_text()
+        self.lanes = {'repository-truth', 'protocol-contract', 'fuzz-smoke',
+                      'rust-baseline', 'external-evidence-contract'}
+
+    def test_native_domain_and_historical_oracles_both_execute(self):
+        check_independent_conformance(self.script, self.lanes)
+
+    def test_native_domain_oracle_cannot_be_omitted_skipped_or_swallowed(self):
+        command = '    python3 formal/pon-nakamoto-v1/test_native_consensus_reference_v1.py\n'
+        for replacement in ('', '    true\n', command * 2,
+                            '    if false; then\n' + command + '    fi\n',
+                            command.rstrip() + ' || true\n',
+                            command.rstrip() + ' &\n',
+                            command.replace('test_native_', 'test_missing_')):
+            with self.subTest(replacement=replacement), self.assertRaises(ValueError):
+                check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+
+
 class EvaluationQuorumLaneTests(unittest.TestCase):
     """Check the real lane without copying unrelated retained evidence."""
 

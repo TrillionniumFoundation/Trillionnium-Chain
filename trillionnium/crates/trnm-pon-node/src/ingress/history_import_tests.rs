@@ -757,6 +757,24 @@ fn observed_history_retains_complete_native_path_and_real_w1_cancellation() {
         assert_eq!(snapshot.packet_capacity, 16);
         assert_eq!(snapshot.packets.len(), 1);
         assert_eq!(snapshot.packets[0].packet_id, Some(id));
+        let attribution = snapshot.native_attribution.as_ref().unwrap();
+        let page = attribution.page.as_ref().unwrap();
+        assert_eq!(page.owner_mode, Some("exclusive"));
+        assert_eq!(page.epoch_substeps.len(), 2);
+        assert!(page.epoch_substeps.iter().all(|step| {
+            step.span.completed && step.span.accepted == Some(true) && step.span.wall_ns.is_some()
+        }));
+        assert_eq!(page.cpu_waits.len(), 1);
+        assert_eq!(attribution.packets.len(), 1);
+        assert_eq!(attribution.packets[0].packet_index, 0);
+        assert_eq!(attribution.packets[0].packet_id, Some(id));
+        let wait = attribution.packets[0].attribution.cpu_waits[0];
+        // W1 can subsequently reject/cancel despite a real successful reserve.
+        assert_eq!(wait.span.accepted, Some(true));
+        assert_eq!(wait.reserve_granted, 1);
+        assert_eq!(wait.reserve_attempts, wait.reserve_returns);
+        let encoded = serde_json::to_value(&snapshot).unwrap();
+        assert_eq!(encoded["packets"][0].as_object().unwrap().len(), 3);
         let imported = snapshot.phases[SubmitPhase::HistoryImport as usize];
         assert!(imported.started && imported.completed);
         assert_eq!(imported.accepted, Some(!cancel));
@@ -811,6 +829,7 @@ fn observed_expired_history_keeps_failure_and_unentered_phases_null() {
     let snapshot = observation.snapshot();
     assert_eq!(snapshot.measurement_failures, 0);
     assert!(snapshot.packets.is_empty());
+    assert!(snapshot.native_attribution.is_none());
     for phase in &snapshot.phases {
         let entered = matches!(
             phase.phase,

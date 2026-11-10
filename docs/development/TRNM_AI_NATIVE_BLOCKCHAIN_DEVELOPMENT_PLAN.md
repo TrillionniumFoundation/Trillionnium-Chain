@@ -11486,3 +11486,51 @@ two journal suites, MVCC tests, retained cost-reader/gate controls and actual
 integration inspectors. The 39336622 native cost experiment, be24e0be mapping
 checks and incoming fcc3/hosted observations retain their own source identities;
 none qualifies the merged source by inheritance. Production refusal remains.
+
+
+### 2026-11-10 continue native lease, arithmetic-domain and History diagnosis
+
+Continue the existing combined native-boundary candidate `62378d28415ead28b5f99ec6ea6033fde93e3215`.
+Keep all earlier failure packets, work-cost contracts, acceptance deadlines and
+production refusals. This continuation has three bounded implementation scopes:
+
+- Bind the live native-owner journal to its held directory and lock as well as
+  its journal inode. Create the lock/log through the held directory descriptor;
+  require locally owned, single-link regular owner files without group/other
+  write permission. Refuse named replacements, directory substitution and
+  hard-link aliases before new checkpoints or native operations. A detected
+  lease-check failure fences that live instance even if names are restored.
+  Preserve journal encoding and all prior journal/recovery controls. Undetected
+  replace-and-restore between calls, same-inode content mutation and joint
+  restoration of all trust domains remain separate obligations.
+- Add an explicitly versioned independent Python native-domain oracle and
+  83 cross-language arithmetic vectors: preserve and recheck all 75 historical
+  rows, then add eight native retarget refusal rows. Reject empty ancestry,
+  non-u64 time inputs and both overflowing u64 retarget products, while retaining
+  upper-median ordering and the native wider future-clock sum. Keep frozen
+  `reference.py`, its tests and the original vector file byte-identical: the
+  historical work-cost replay must continue to check its own exact inputs.
+  Native Rust changes in this scope are test-only. Run the new oracle in the
+  existing mandatory fuzz-smoke lane with omission/failure-propagation controls.
+- Add bounded optional History import attribution for domain lookup, durable
+  epoch begin, actual reservation outcomes, actual sleeps and remaining original
+  deadlines. Preserve original packet/phase/Host row shapes and put new records
+  only in an optional top-level extension. Unknown or unentered observations
+  remain absent, incomplete spans remain incomplete, and nested intervals are
+  not added as independent costs. Do not infer why credit was unavailable from
+  the budget-refusal code. Existing Host checks, request deadlines, refill and
+  two-second local wait ceiling remain unchanged. Diagnostic overhead does not
+  itself establish a service performance improvement.
+
+Retain the real pre-fix lease failures, restore source bindings after reviewing
+the complete changes, freeze one source, and run affected native suites, the
+original historical replay checks, current mapping/profile/corpus inspectors,
+source-integrity controls, exact locked graphs, formatting and strict Clippy.
+Record new failures and later recovery as separate observations. Hosted
+acceptance and independent deployments retain their own source-bound results.
+
+These changes do not prove all-legal-strategy classical/quantum work cost,
+CP/CG/CQ or confirmation tails, real independent demand, model net benefit,
+evaluator independence, cross-host resource responsibility or target-side
+external-effect reconciliation. Do not change `HOLD_NO_GO`, production activation
+or a null cost/security bound merely because these controls pass.

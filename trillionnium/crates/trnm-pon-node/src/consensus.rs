@@ -231,15 +231,11 @@ pub fn check_time(candidate: u64, ancestors: &[u64], now: u64, skew: u64) -> Res
 mod tests {
     use super::*;
 
-    #[test]
-    fn native_arithmetic_matches_python_integer_vectors() {
-        // Formal test_reference independently recomputes every committed result
+    fn check_python_arithmetic_vectors(raw: &str, schema: &str) {
+        // Python vector suites independently recompute every committed result
         // with Python integers. No native wrapping_sub is shared by that oracle.
-        let vectors: serde_json::Value = serde_json::from_str(include_str!(
-            "../../../../formal/pon-nakamoto-v1/vectors/consensus-arithmetic-v1.json"
-        ))
-        .unwrap();
-        assert_eq!(vectors["schema"], "pon-native-consensus-integer-vectors-v1");
+        let vectors: serde_json::Value = serde_json::from_str(raw).unwrap();
+        assert_eq!(vectors["schema"], schema);
         fn bytes<const N: usize>(value: &serde_json::Value) -> [u8; N] {
             hex::decode(value.as_str().unwrap())
                 .unwrap()
@@ -273,6 +269,22 @@ mod tests {
                 assert_eq!(result.unwrap().bytes(), bytes(&row["expected"]), "{row}");
             }
         }
+    }
+
+    #[test]
+    fn native_arithmetic_matches_python_integer_vectors() {
+        check_python_arithmetic_vectors(
+            include_str!("../../../../formal/pon-nakamoto-v1/vectors/consensus-arithmetic-v1.json"),
+            "pon-native-consensus-integer-vectors-v1",
+        );
+    }
+
+    #[test]
+    fn native_arithmetic_matches_versioned_python_domain_vectors() {
+        check_python_arithmetic_vectors(
+            include_str!("../../../../formal/pon-nakamoto-v1/vectors/consensus-domain-v2.json"),
+            "pon-native-consensus-domain-v2",
+        );
     }
 
     #[test]

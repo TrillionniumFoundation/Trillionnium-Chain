@@ -1,4 +1,5 @@
 //! Optional local import measurements. No resource, proof or owner authority.
+use super::attribution::{HistoryNativeAttributionSnapshot, NativeAttribution};
 use crate::ingress::public_v3::{
     request_observation::{TaskObservation, ThreadCpuStamp},
     SubmitPhaseObservation,
@@ -90,6 +91,8 @@ pub struct HistoryImportObserver {
     context: Mutex<Context>,
     failures: AtomicU64,
     host: Mutex<[HistoryHostObservation; 4]>,
+    page_attribution: NativeAttribution,
+    packet_attribution: [NativeAttribution; MAX_HISTORY_IMPORT_OBSERVATION_PACKETS],
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -100,6 +103,22 @@ pub struct HistoryPacketObservation {
 }
 
 #[derive(Clone, Debug, Serialize)]
+pub struct HistoryPacketNativeAttribution {
+    pub packet_index: usize,
+    pub packet_id: Option<Hash>,
+    pub attribution: HistoryNativeAttributionSnapshot,
+}
+
+/// Optional top-level extension. The retained packet/phase/Host row shapes
+/// remain unchanged for existing strict readers; missing capture stays absent.
+#[derive(Clone, Debug, Serialize)]
+pub struct HistoryImportNativeAttribution {
+    pub schema: &'static str,
+    pub page: Option<HistoryNativeAttributionSnapshot>,
+    pub packets: Vec<HistoryPacketNativeAttribution>,
+}
+
+#[derive(Clone, Debug, Serialize)]
 pub struct HistoryImportObservationSnapshot {
     pub schema: &'static str,
     pub tip: Option<Hash>,
@@ -107,6 +126,8 @@ pub struct HistoryImportObservationSnapshot {
     pub supplied_packets: Option<usize>,
     pub packet_capacity: usize,
     pub phases: [SubmitPhaseObservation; 19],
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub native_attribution: Option<HistoryImportNativeAttribution>,
     pub packets: Vec<HistoryPacketObservation>,
     pub measurement_failures: u64,
     pub host_checks: [HistoryHostObservation; 4],
@@ -134,6 +155,8 @@ impl HistoryImportObserver {
             context: Mutex::new(Context::default()),
             failures: AtomicU64::new(0),
             host: Mutex::new(host_slots()),
+            page_attribution: NativeAttribution::new(epoch),
+            packet_attribution: std::array::from_fn(|_| NativeAttribution::new(epoch)),
         }
     }
     fn fail(&self) {
@@ -156,6 +179,16 @@ impl HistoryImportObserver {
     }
     pub(super) fn page(&self) -> &TaskObservation {
         &self.page
+    }
+    pub(super) fn native_page(&self) -> &NativeAttribution {
+        &self.page_attribution
+    }
+    pub(super) fn native_packet(&self, index: usize) -> Option<&NativeAttribution> {
+        let record = self.packet_attribution.get(index);
+        if record.is_none() {
+            self.fail();
+        }
+        record
     }
     pub(super) fn decoded_packet(&self, index: usize, id: Hash) {
         match self.context.try_lock() {
@@ -194,17 +227,31 @@ impl HistoryImportObserver {
             }
         };
         let (phases, phase_failures) = self.page.phase_snapshot();
+        let (page_attribution, attribution_failures) = self.page_attribution.snapshot();
         let mut failures = self
             .failures
             .load(Ordering::Acquire)
-            .saturating_add(phase_failures);
+            .saturating_add(phase_failures)
+            .saturating_add(attribution_failures);
+        let mut packet_attributions = Vec::new();
         let packets = self
             .packets
             .iter()
             .enumerate()
             .filter_map(|(index, packet)| {
                 let (phases, phase_failures) = packet.phase_snapshot();
-                failures = failures.saturating_add(phase_failures);
+                let (native_attribution, attribution_failures) =
+                    self.packet_attribution[index].snapshot();
+                failures = failures
+                    .saturating_add(phase_failures)
+                    .saturating_add(attribution_failures);
+                if let Some(attribution) = native_attribution {
+                    packet_attributions.push(HistoryPacketNativeAttribution {
+                        packet_index: index,
+                        packet_id: context.packet_ids[index],
+                        attribution,
+                    });
+                }
                 (context.packet_ids[index].is_some() || phases.iter().any(|phase| phase.started))
                     .then_some(HistoryPacketObservation {
                         packet_index: index,
@@ -213,6 +260,12 @@ impl HistoryImportObserver {
                     })
             })
             .collect();
+        let native_attribution = (page_attribution.is_some() || !packet_attributions.is_empty())
+            .then_some(HistoryImportNativeAttribution {
+                schema: "pon-local-history-import-native-attribution-v1",
+                page: page_attribution,
+                packets: packet_attributions,
+            });
         HistoryImportObservationSnapshot {
             schema: "pon-local-history-import-observation-v1",
             tip: context.tip,
@@ -220,6 +273,7 @@ impl HistoryImportObserver {
             supplied_packets: context.supplied_packets,
             packet_capacity: MAX_HISTORY_IMPORT_OBSERVATION_PACKETS,
             phases,
+            native_attribution,
             packets,
             measurement_failures: failures,
             host_checks,

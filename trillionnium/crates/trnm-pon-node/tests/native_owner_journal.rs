@@ -69,6 +69,115 @@ fn assert_refused(root: &Path, options: NativeJournalOptions, expected: &str) {
 }
 
 #[test]
+fn live_sidecar_lock_replacement_refuses_checkpoint_and_native_work_without_append() {
+    let root = tempfile::tempdir().unwrap();
+    let mut owner = open(root.path(), NativeJournalOptions::default());
+    let journal = root.path().join("journal");
+    let before = fs::read(journal.join("journal.pnoj1")).unwrap();
+    fs::rename(journal.join("owner.lock"), journal.join("old-owner.lock")).unwrap();
+    fs::write(journal.join("owner.lock"), b"").unwrap();
+
+    assert!(
+        owner.checkpoint().is_err(),
+        "a replaced lock cannot retain a live lease"
+    );
+    assert!(owner.status().is_err());
+    assert!(owner.observe(100).is_err());
+    assert_eq!(fs::read(journal.join("journal.pnoj1")).unwrap(), before);
+    fs::remove_file(journal.join("owner.lock")).unwrap();
+    fs::rename(journal.join("old-owner.lock"), journal.join("owner.lock")).unwrap();
+    assert!(
+        owner.checkpoint().is_err(),
+        "restoring the lock cannot clear a detected loss"
+    );
+    assert!(owner.observe(100).is_err());
+    assert_eq!(fs::read(journal.join("journal.pnoj1")).unwrap(), before);
+}
+
+#[test]
+fn live_sidecar_directory_replacement_refuses_even_when_all_file_inodes_are_retained() {
+    use std::os::unix::fs::DirBuilderExt;
+
+    let root = tempfile::tempdir().unwrap();
+    let mut owner = open(root.path(), NativeJournalOptions::default());
+    let journal = root.path().join("journal");
+    let held = root.path().join("held-journal-directory");
+    let before = fs::read(journal.join("journal.pnoj1")).unwrap();
+    fs::rename(&journal, &held).unwrap();
+    fs::DirBuilder::new().mode(0o700).create(&journal).unwrap();
+    for name in ["owner.lock", "journal.pnoj1", "packets"] {
+        fs::rename(held.join(name), journal.join(name)).unwrap();
+    }
+
+    assert!(
+        owner.checkpoint().is_err(),
+        "the directory is part of the held lease"
+    );
+    assert!(owner.status().is_err());
+    assert!(owner.observe(100).is_err());
+    assert_eq!(fs::read(journal.join("journal.pnoj1")).unwrap(), before);
+    for name in ["owner.lock", "journal.pnoj1", "packets"] {
+        fs::rename(journal.join(name), held.join(name)).unwrap();
+    }
+    fs::remove_dir(&journal).unwrap();
+    fs::rename(&held, &journal).unwrap();
+    assert!(
+        owner.checkpoint().is_err(),
+        "restoring the directory cannot clear a detected loss"
+    );
+    assert!(owner.observe(100).is_err());
+    assert_eq!(fs::read(journal.join("journal.pnoj1")).unwrap(), before);
+}
+
+#[test]
+fn live_sidecar_lock_and_journal_hardlink_aliases_refuse_without_append() {
+    for name in ["owner.lock", "journal.pnoj1"] {
+        let root = tempfile::tempdir().unwrap();
+        let mut owner = open(root.path(), NativeJournalOptions::default());
+        let journal = root.path().join("journal");
+        let before = fs::read(journal.join("journal.pnoj1")).unwrap();
+        fs::hard_link(journal.join(name), root.path().join("outside-alias")).unwrap();
+
+        assert!(
+            owner.checkpoint().is_err(),
+            "a live {name} alias must refuse"
+        );
+        assert!(owner.status().is_err());
+        assert!(owner.observe(100).is_err());
+        assert_eq!(fs::read(journal.join("journal.pnoj1")).unwrap(), before);
+        fs::remove_file(root.path().join("outside-alias")).unwrap();
+        assert!(
+            owner.checkpoint().is_err(),
+            "removing an alias cannot clear a detected loss"
+        );
+        assert!(owner.observe(100).is_err());
+        assert_eq!(fs::read(journal.join("journal.pnoj1")).unwrap(), before);
+    }
+}
+
+#[test]
+fn cold_sidecar_lock_and_journal_hardlink_aliases_refuse_without_append() {
+    for name in ["owner.lock", "journal.pnoj1"] {
+        let root = tempfile::tempdir().unwrap();
+        open(root.path(), NativeJournalOptions::default())
+            .finish(100)
+            .unwrap();
+        let journal = root.path().join("journal");
+        let before = fs::read(journal.join("journal.pnoj1")).unwrap();
+        fs::hard_link(journal.join(name), root.path().join("outside-alias")).unwrap();
+
+        let result = JournaledNativeOwner::open(
+            &root.path().join("store"),
+            &journal,
+            settings(),
+            NativeJournalOptions::default(),
+        );
+        assert!(result.is_err(), "a cold {name} alias must refuse");
+        assert_eq!(fs::read(journal.join("journal.pnoj1")).unwrap(), before);
+    }
+}
+
+#[test]
 fn actual_legacy_and_authenticated_restart_preserve_unadmitted_output_identity() {
     for backend in [JournalBackend::Legacy, JournalBackend::AuthenticatedV1] {
         let root = tempfile::tempdir().unwrap();

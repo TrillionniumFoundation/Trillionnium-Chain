@@ -13,6 +13,13 @@ from check_cross_arch_cost import (COST_JOB_TIMEOUT_MINUTES, COST_JOB_OVERHEAD_S
                                    cost_job_budget_seconds)
 
 ROOT = Path(__file__).resolve().parents[2]
+NATIVE_CONSENSUS_ORACLE_BLOCK = '''    python3 scripts/ci/test_repository.py
+    python3 formal/pon-nakamoto-v1/test_reference.py
+    python3 formal/pon-nakamoto-v1/test_native_consensus_reference_v1.py
+    python3 formal/pon-nakamoto-v1/test_honest_rate_model.py -v
+    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives fixed_hash_text -- --nocapture
+    python3 scripts/ci/run_fuzz_smoke.py
+'''
 WORKFLOW = '.github/workflows/trnm-required-baseline.yml'
 CHECKOUT = 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262'
 UPLOAD = 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02'
@@ -1493,6 +1500,10 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
             'W1 post-win controls and all retained repository-truth commands require one straight-line lane without skipped or swallowed failures')
     require(code_lines(lanes['external-evidence-contract']) == code_lines(EXTERNAL_EVIDENCE_CONTRACT_BLOCK),
             'external-evidence-contract must retain its complete straight-line command sequence without skipped or swallowed failures')
+    require(code_lines(lanes['fuzz-smoke']) == code_lines(NATIVE_CONSENSUS_ORACLE_BLOCK),
+            'native-domain and historical oracles must retain the complete fuzz-smoke sequence without skipped or swallowed failures')
+    require(script.count('python3 formal/pon-nakamoto-v1/test_native_consensus_reference_v1.py') == 1,
+            'native-domain oracle must execute exactly once in fuzz-smoke')
     for command in ('python3 scripts/ci/check_completion_evidence.py --historical',
                     'python3 scripts/ci/test_completion_evidence.py'):
         require(code_lines(lanes['external-evidence-contract']).count(command) == 1
