@@ -11,6 +11,8 @@ import argparse
 from collections import Counter
 import hashlib
 import json
+import os
+import stat
 from pathlib import Path
 import re
 import sys
@@ -187,14 +189,90 @@ def check(root, output, expected_digest):
     return value
 
 
+HISTORICAL_SEMANTICS = 'evidence/pon-w1-qrom-semantics-20261107/report.json'
+HISTORICAL_SEMANTICS_SHA256 = '66e017dfb3d58206c6372e6ba059ea7991ed7606dcd91e52dd63c73007d0f221'
+REVIEWED_LOCK = 'formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock'
+HISTORICAL_LOCK_SHA256 = 'af7ee60b8f9f95c200d3dddac41b70c037e2bb3395122fe67ab20885140f247f'
+CURRENT_LOCK_SHA256 = 'ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a'
+
+
+def bounded_regular(path):
+    path = Path(path).absolute()
+    require(path == path.resolve(strict=True), 'semantics input path alias')
+    descriptor = os.open(path, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
+    try:
+        before = os.fstat(descriptor)
+        require(stat.S_ISREG(before.st_mode) and before.st_size <= 2 * 1024 * 1024,
+                'nonregular or oversized semantics input')
+        with os.fdopen(descriptor, 'rb', closefd=False) as stream:
+            raw = stream.read(2 * 1024 * 1024 + 1)
+        after, visible = os.fstat(descriptor), path.lstat()
+        identity = lambda value: (value.st_dev, value.st_ino, value.st_size,
+                                  value.st_mtime_ns, value.st_ctime_ns)
+        require(identity(before) == identity(after) == identity(visible)
+                and len(raw) == before.st_size, 'semantics input changed during read')
+        return raw
+    finally:
+        os.close(descriptor)
+
+
+def check_semantics(root, current_report):
+    """Require exact report correspondence except one separately pinned lock SHA.
+
+    This preserves the complete historical report bytes. It is neither a new
+    execution nor an equivalence theorem for the changed dependency graph.
+    """
+    original = bounded_regular(Path(root) / HISTORICAL_SEMANTICS)
+    require(hashlib.sha256(original).hexdigest() == HISTORICAL_SEMANTICS_SHA256,
+            'historical semantics report bytes changed')
+    lock = bounded_regular(Path(root) / REVIEWED_LOCK)
+    require(hashlib.sha256(lock).hexdigest() == CURRENT_LOCK_SHA256,
+            'reviewed current lock bytes changed')
+    expected = strict_json(original)
+    actual = strict_json(bounded_regular(current_report))
+    historical_rows = expected['provenance']['lock_checks']
+    require(type(historical_rows) is list and len(historical_rows) == 3
+            and historical_rows[2]['path'] == REVIEWED_LOCK
+            and historical_rows[2]['sha256'] == HISTORICAL_LOCK_SHA256,
+            'historical lock provenance differs')
+    actual_rows = actual['provenance']['lock_checks']
+    require(type(actual_rows) is list and len(actual_rows) == 3
+            and actual_rows[2]['path'] == REVIEWED_LOCK
+            and actual_rows[2]['sha256'] == CURRENT_LOCK_SHA256,
+            'current reviewed lock provenance differs')
+    # Only this exact property may differ. Canonical JSON also refuses bool/int
+    # or int/float aliases that ordinary Python dictionary equality accepts.
+    historical_rows[2]['sha256'] = CURRENT_LOCK_SHA256
+    canonical = lambda value: json.dumps(value, sort_keys=True,
+                                        separators=(',', ':'), allow_nan=False)
+    require(canonical(actual) == canonical(expected),
+            'semantics report differs outside reviewed lock provenance')
+    return {
+        'schema': 'TRNM-W1-SEMANTICS-CURRENT-CORRESPONDENCE2',
+        'historical_report_sha256': HISTORICAL_SEMANTICS_SHA256,
+        'reviewed_lock_path': REVIEWED_LOCK,
+        'historical_lock_sha256': HISTORICAL_LOCK_SHA256,
+        'current_lock_sha256': CURRENT_LOCK_SHA256,
+        'only_changed_json_pointer': '/provenance/lock_checks/2/sha256',
+        'all_other_report_fields_identical': True,
+        'historical_report_bytes_rewritten': False,
+        'new_native_execution_or_dependency_equivalence_proved': False,
+        'qualification': dict(QUALIFICATION),
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('mode', choices=['run', 'check'])
+    parser.add_argument('mode', choices=['run', 'check', 'check-semantics'])
     parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument('--output', required=True, type=Path)
-    parser.add_argument('--roster-sha256', required=True)
+    parser.add_argument('--roster-sha256')
     args = parser.parse_args()
     try:
+        if args.mode == 'check-semantics':
+            print(json.dumps(check_semantics(args.root, args.output), sort_keys=True))
+            return 0
+        require(args.roster_sha256 is not None, 'named controls require a roster digest')
         value = {'run': run, 'check': check}[args.mode](args.root, args.output, args.roster_sha256)
     except (ValueError, OSError, TypeError, KeyError, RecursionError) as error:
         print('Current QROM closure controls refused: ' + str(error), file=sys.stderr)

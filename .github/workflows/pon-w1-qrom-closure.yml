@@ -182,7 +182,7 @@ jobs:
       matrix:
         source: [head, prospective-merge]
     env:
-      W1_CLOSURE_ROSTER_SHA256: 1fe96c129c5417a86082c5adef28f43988e08b05352b5b17dfc103184bad6380
+      W1_CLOSURE_ROSTER_SHA256: f5292042233ba22fad6af1b7d89c0b57298038e9b98558d360b8feae50ecdfed
       SOURCE_KIND: ${{ matrix.source }}
       EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
       EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
@@ -272,7 +272,7 @@ jobs:
           python3 scripts/w1_qrom_joint_oracle_diagnostic.py > "$W1_CLOSURE_OUT/joint-oracle-unknown.json"
           python3 scripts/w1_qrom_joint_oracle_diagnostic.py --example alias > "$W1_CLOSURE_OUT/joint-oracle-alias.json"
           python3 scripts/w1_qrom_joint_oracle_diagnostic.py --example separated > "$W1_CLOSURE_OUT/joint-oracle-separated.json"
-          cmp evidence/pon-w1-qrom-semantics-20261107/report.json "$W1_CLOSURE_OUT/semantics.json"
+          python3 scripts/ci/w1_qrom_closure_current_controls.py check-semantics --output "$W1_CLOSURE_OUT/semantics.json" > "$W1_CLOSURE_OUT/semantics-correspondence.json"
           for name in composition-unknown composition-example joint-oracle-unknown joint-oracle-alias joint-oracle-separated; do
             cmp "evidence/pon-w1-qrom-formal-bridge-20261107/$name.json" "$W1_CLOSURE_OUT/$name.json"
           done

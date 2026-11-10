@@ -10751,7 +10751,8 @@ closure source. Current head and ordered prospective merge instead use an
 explicit current 20-path source contract and distinct observation schema,
 retaining the actual V1 source-identity refusal and all unknown lifetime inputs.
 
-Require current named completion, all six unaffected report comparisons,
+Require current named completion, all five unaffected report comparisons,
+an explicitly frozen comparison of the single semantics lock-provenance delta,
 source-before/after equality and final stage outcomes. Keep historical and
 current rosters separate, register the new source observer and controls in the
 original repository lane, and preserve original failures. This repairs source

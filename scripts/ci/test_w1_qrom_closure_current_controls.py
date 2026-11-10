@@ -454,6 +454,9 @@ class CurrentClosureWorkflowCompletionTests(unittest.TestCase):
         self.assertNotIn('cmp evidence/pon-w1-lifetime-20261107/project-report.json', current)
         self.assertIn('test \"$code\" -eq 2', current)
         self.assertIn('source identity mismatch: ', current)
+        self.assertIn('check-semantics --output', current)
+        self.assertNotIn('cmp evidence/pon-w1-qrom-semantics-20261107/report.json', current)
+        self.assertIn('cmp evidence/pon-w1-qrom-semantics-20261107/report.json', historical)
         path = self.repository / 'config/pon/w1-qrom-closure-required-tests-v1.json'
         self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(),
                          'ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f')
@@ -471,6 +474,96 @@ class CurrentClosureWorkflowCompletionTests(unittest.TestCase):
         self.assertIn('test_w1_lifetime_current_observation', gate.MODULES)
         self.assertIn('test_w1_qrom_closure_current_controls', gate.MODULES)
         self.assertNotEqual(digest, 'ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f')
+
+
+
+class CurrentSemanticsCorrespondenceTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.repository = Path(__file__).resolve().parents[2]
+        cls.generated = tempfile.TemporaryDirectory(prefix='semantics-current-actual-')
+        cls.addClassCleanup(cls.generated.cleanup)
+        target = Path(cls.generated.name) / 'actual.json'
+        child = subprocess.run([sys.executable, str(cls.repository / 'scripts/w1_qrom_semantics_audit.py'),
+                                '--out', str(target)], cwd=cls.repository,
+                               capture_output=True, text=True, timeout=60, check=False)
+        if child.returncode != 0:
+            raise ValueError('actual semantics observation failed: ' + child.stderr)
+        cls.actual_bytes = target.read_bytes()
+
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory(prefix='semantics-correspondence-')
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        for name in (gate.HISTORICAL_SEMANTICS, gate.REVIEWED_LOCK):
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes((self.repository / name).read_bytes())
+        self.current = self.root / 'current.json'
+        self.current.write_bytes(self.actual_bytes)
+
+    def reject(self):
+        with self.assertRaises((ValueError, KeyError, TypeError, OSError)):
+            gate.check_semantics(self.root, self.current)
+
+    def test_actual_report_has_only_the_reviewed_lock_provenance_delta(self):
+        historical = (self.root / gate.HISTORICAL_SEMANTICS).read_bytes()
+        result = gate.check_semantics(self.root, self.current)
+        self.assertEqual(result['only_changed_json_pointer'], '/provenance/lock_checks/2/sha256')
+        self.assertTrue(result['all_other_report_fields_identical'])
+        self.assertFalse(result['historical_report_bytes_rewritten'])
+        self.assertFalse(result['new_native_execution_or_dependency_equivalence_proved'])
+        self.assertEqual(result['qualification'], gate.QUALIFICATION)
+        self.assertEqual((self.root / gate.HISTORICAL_SEMANTICS).read_bytes(), historical)
+
+    def test_any_other_report_field_change_is_refused(self):
+        value = json.loads(self.current.read_text())
+        value['unreviewed_extra_claim'] = True
+        self.current.write_text(json.dumps(value))
+        self.reject()
+
+    def test_missing_or_relabelled_reviewed_lock_entry_is_refused(self):
+        value = json.loads(self.actual_bytes)
+        value['provenance']['lock_checks'].pop(2)
+        self.current.write_text(json.dumps(value))
+        self.reject()
+        value = json.loads(self.actual_bytes)
+        value['provenance']['lock_checks'][2]['path'] = 'unrelated/Cargo.lock'
+        self.current.write_text(json.dumps(value))
+        self.reject()
+
+    def test_changed_other_lock_sha_is_refused(self):
+        value = json.loads(self.actual_bytes)
+        value['provenance']['lock_checks'][0]['sha256'] = '0' * 64
+        self.current.write_text(json.dumps(value))
+        self.reject()
+
+    def test_changed_current_lock_bytes_cannot_be_relabelled_in_report(self):
+        path = self.root / gate.REVIEWED_LOCK
+        changed = path.read_bytes() + b'\n'
+        path.write_bytes(changed)
+        value = json.loads(self.actual_bytes)
+        value['provenance']['lock_checks'][2]['sha256'] = hashlib.sha256(changed).hexdigest()
+        self.current.write_text(json.dumps(value))
+        self.reject()
+
+    def test_historical_report_bytes_are_frozen_even_for_json_whitespace(self):
+        path = self.root / gate.HISTORICAL_SEMANTICS
+        path.write_bytes(path.read_bytes() + b'\n')
+        self.reject()
+
+    def test_real_cli_accepts_actual_observation_and_rejects_scope_change(self):
+        command = [sys.executable, str(self.repository / 'scripts/ci/w1_qrom_closure_current_controls.py'),
+                   'check-semantics', '--root', str(self.root), '--output', str(self.current)]
+        first = subprocess.run(command, capture_output=True, text=True, timeout=30, check=False)
+        self.assertEqual(first.returncode, 0, first.stderr)
+        self.assertEqual(json.loads(first.stdout)['schema'], 'TRNM-W1-SEMANTICS-CURRENT-CORRESPONDENCE2')
+        value = json.loads(self.actual_bytes)
+        value['unreviewed_extra_claim'] = True
+        self.current.write_text(json.dumps(value))
+        second = subprocess.run(command, capture_output=True, text=True, timeout=30, check=False)
+        self.assertEqual(second.returncode, 2)
+        self.assertEqual(second.stdout, '')
 
 
 if __name__ == '__main__':

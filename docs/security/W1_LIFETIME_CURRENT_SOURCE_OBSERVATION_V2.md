@@ -45,10 +45,18 @@ continues to reject the current store. The arithmetic evaluator and three
 independent acceptance lines are unchanged; supplied counts remain premises.
 
 The new output schema is `TRNM-W1-LIFETIME-CURRENT-OBSERVATION2`. Current jobs
-do not compare it to the historical V1 lifetime report. They still compare
-the six unaffected reports with their retained exact values, check complete
-source identity before and after, and require every stage and every actual
-named test to complete successfully. The current 103-name roster and the
+do not compare it to the historical V1 lifetime report. They compare five
+unaffected reports byte for byte. The semantics report has an independent,
+explicit current comparison: the only reviewed difference is the SHA-256 of
+`formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock` in its provenance. The current lock
+adds the `risc0-binfmt` and `sha2` dependency edges to the local
+`trnm-w1-zk-methods-v2` package; package entries and other report values remain
+unchanged. Both lock identities and the original report identity are frozen;
+arbitrary provenance or mathematical-output changes are refused. This is not
+dependency-graph execution or compiler refinement evidence.
+
+The jobs check complete source identity before and after, and require every
+stage and every actual named test to complete successfully. The current roster and the
 historical 105-name roster have separate namespaces and are not interchangeable.
 
 ## Validation and remaining obligations

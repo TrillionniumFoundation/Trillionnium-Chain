@@ -1733,7 +1733,7 @@
     "config/pon/cpq1-content-commitments-v1.json": "5aeb922e53443d24925911c418a9789f47e71561",
     "config/pon/pq128-lifetime-budget-v1.json": "b676299c5ac99e66fafe5d51f26b8876605b076d",
     "config/pon/pq128-lifetime-example-v1.json": "19aba0a047f92e4f8fd99f84590519c4831d4418",
-    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "346e21c35b72301dd40bba3c8e054efe68e4adf7",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "a258632abb8f638b7168f31edfd73c7c46395dc7",
     "docs/development/specs/pon/DEMAND_EVALUATION_UPGRADE_V1.md": "b86241d41bf68c0753c759cb826411c1cada1ede",
     "docs/development/specs/pon/FUNDED_SERVICE_TASK_V1.md": "54fed6ac1217c3d4c44a706903135286a1f40388",
     "docs/development/specs/pon/NATIVE_TASK_EVIDENCE_V1.md": "1e38a37fdad66f56f9919579885abeb36bcc752a",
@@ -1958,12 +1958,12 @@
     "scripts/ci/test_w1_qrom_current_ci.py": "0caccedf68cf28364bd0d540d007b5ad3fbe5487",
     "scripts/ci/w1_qrom_current_ci.py": "870929f0a690fcc29d7e7a6bccbf935bbf32d7dd",
     "scripts/read_failed_native_campaign_zip.py": "7b438a537824726129b6160e69c88ce9e29918f0",
-    "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md": "802e1f3e41d66a7b4ff244324a2cd4924153b75f",
+    "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md": "3aab4435202952f01e0ac9e55f19b8ec8209e6c1",
     "scripts/ci/test_w1_lifetime_current_observation.py": "0bd9c855f0983bbd4fc7b202e096ad400654c8d4",
-    "scripts/ci/w1_qrom_closure_current_controls.py": "ab4f1891d1eb836972399cd5a59133f76e0fb99f",
+    "scripts/ci/w1_qrom_closure_current_controls.py": "bb47591f471b3b7554ce8997f487568d8de0f64d",
     "config/pon/w1-lifetime-current-source-v2.json": "74deb1ccb3305e2737e0d1950eb0973bc449a2a7",
     "scripts/w1_lifetime_current_observation.py": "caecb6af1a8fe9d66a27558ac3fbf5382cd347e2",
-    "scripts/ci/test_w1_qrom_closure_current_controls.py": "83cee653977dae11689b86a20bd44a962dd807f0",
-    "config/pon/w1-qrom-closure-current-required-tests-v2.json": "519d6e41e58d2814bc7a751faa8056ca1cd61f64"
+    "scripts/ci/test_w1_qrom_closure_current_controls.py": "5a26bb37d80921edc95f3079c4ed5a3a95d1c3cd",
+    "config/pon/w1-qrom-closure-current-required-tests-v2.json": "859bc8a918dc7b9676ce4e00f69f936af3d89021"
   }
 }

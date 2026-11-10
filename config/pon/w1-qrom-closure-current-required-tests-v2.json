@@ -1,5 +1,5 @@
 {
-  "expected_tests": 103,
+  "expected_tests": 110,
   "qualification": {
     "complete_w1_soundness_qualified": false,
     "consensus_admission": false,
@@ -146,7 +146,14 @@
         "test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_real_fixture_completion_retains_unqualified_scope",
         "test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_reserves_a_fresh_directory_without_reuse",
         "test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_source_identity_remains_strict_under_optimization",
-        "test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_zero_exit_without_named_completion_is_refused"
+        "test_w1_qrom_closure_current_controls.CurrentClosureWorkflowCompletionTests.test_workflow_zero_exit_without_named_completion_is_refused",
+        "test_w1_qrom_closure_current_controls.CurrentSemanticsCorrespondenceTests.test_actual_report_has_only_the_reviewed_lock_provenance_delta",
+        "test_w1_qrom_closure_current_controls.CurrentSemanticsCorrespondenceTests.test_any_other_report_field_change_is_refused",
+        "test_w1_qrom_closure_current_controls.CurrentSemanticsCorrespondenceTests.test_changed_current_lock_bytes_cannot_be_relabelled_in_report",
+        "test_w1_qrom_closure_current_controls.CurrentSemanticsCorrespondenceTests.test_changed_other_lock_sha_is_refused",
+        "test_w1_qrom_closure_current_controls.CurrentSemanticsCorrespondenceTests.test_historical_report_bytes_are_frozen_even_for_json_whitespace",
+        "test_w1_qrom_closure_current_controls.CurrentSemanticsCorrespondenceTests.test_missing_or_relabelled_reviewed_lock_entry_is_refused",
+        "test_w1_qrom_closure_current_controls.CurrentSemanticsCorrespondenceTests.test_real_cli_accepts_actual_observation_and_rejects_scope_change"
       ]
     }
   ]
