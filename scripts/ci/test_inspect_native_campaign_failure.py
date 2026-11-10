@@ -156,5 +156,66 @@ class FailureInspectionTests(unittest.TestCase):
         self.assertFalse(inspect(self.root)["runs"][1]["original_input_shape_valid"])
 
 
+    def test_terminal_admission_deadline_precedes_nested_commit_deadline(self):
+        data = fixture()
+        last = data["phases"][0]["history"][-1]
+        last["status"] = "ok"
+        last["client_import"].update({"succeeded": False, "error": "PUBLIC_REQUEST_DEADLINE"})
+        last["client_import"]["native_import_observation"]["packets"] = [{"phases": [
+            {"phase": "admission", "started": True, "completed": True,
+             "accepted": False, "error_code": "PUBLIC_REQUEST_DEADLINE"},
+            {"phase": "commit", "started": True, "completed": True,
+             "accepted": False, "error_code": "PUBLIC_REQUEST_DEADLINE"},
+            {"phase": "submit_result", "started": False, "completed": False,
+             "accepted": None, "error_code": None},
+            {"phase": "history_import", "started": True, "completed": True,
+             "accepted": False, "error_code": "PUBLIC_REQUEST_DEADLINE"},
+        ]}]
+        self.put(1, data)
+        result = inspect(self.root)["runs"][0]["phases"][0]["terminal_history_import_boundary"]
+        self.assertEqual(result["network_status"], "ok")
+        self.assertEqual(result["client_import_error"], "PUBLIC_REQUEST_DEADLINE")
+        self.assertEqual(result["boundary_stage"], "admission")
+        self.assertEqual(result["boundary_status"], "observed_deadline_at_stage")
+
+    def test_terminal_submit_result_deadline_after_accepted_commit(self):
+        data = fixture()
+        last = data["phases"][1]["history"][-1]
+        last["status"] = "ok"
+        last["client_import"].update({"succeeded": False, "error": "PUBLIC_REQUEST_DEADLINE"})
+        last["client_import"]["native_import_observation"]["packets"] = [{"phases": [
+            {"phase": "admission", "started": True, "completed": True,
+             "accepted": True, "error_code": None},
+            {"phase": "commit", "started": True, "completed": True,
+             "accepted": True, "error_code": None},
+            {"phase": "submit_result", "started": True, "completed": True,
+             "accepted": False, "error_code": "PUBLIC_REQUEST_DEADLINE"},
+            {"phase": "history_import", "started": True, "completed": True,
+             "accepted": False, "error_code": "PUBLIC_REQUEST_DEADLINE"},
+        ]}]
+        self.put(1, data)
+        result = inspect(self.root)["runs"][0]["phases"][1]["terminal_history_import_boundary"]
+        self.assertEqual(result["boundary_stage"], "submit_result")
+        self.assertEqual(result["client_import_succeeded"], False)
+        self.assertIn("not proof", result["warning"])
+
+    def test_terminal_missing_or_duplicate_stage_does_not_infer_success(self):
+        data = fixture()
+        self.put(1, data)
+        first = inspect(self.root)["runs"][0]["phases"][0]["terminal_history_import_boundary"]
+        self.assertEqual(first["boundary_status"], "unknown")
+        last = data["phases"][0]["history"][-1]
+        last["client_import"].update({"succeeded": False, "error": "PUBLIC_REQUEST_DEADLINE"})
+        stages = [{"phase": name, "started": True, "completed": True,
+                   "accepted": False, "error_code": "PUBLIC_REQUEST_DEADLINE"}
+                  for name in ("admission", "commit", "submit_result", "history_import")]
+        stages.append(dict(stages[0]))
+        last["client_import"]["native_import_observation"]["packets"] = [{"phases": stages}]
+        self.put(2, data)
+        second = inspect(self.root)["runs"][1]["phases"][0]["terminal_history_import_boundary"]
+        self.assertEqual(second["boundary_status"], "unknown")
+        self.assertIsNone(second["boundary_stage"])
+
+
 if __name__ == "__main__":
     unittest.main()
