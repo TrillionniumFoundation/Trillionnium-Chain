@@ -1,10 +1,105 @@
 # Native paged shard research next use V2
 
-Status: **explicit grouped V3 candidate under validation; no full real-model pass.**
+Status: **same-operation local real-model research PASS; qualification HOLD.**
 Production qualification remains **HOLD**. The entry name stays
-`cell_native_shard_research_next_use_v2`; its proposed grouped funding owner
-has a separate V3 child-journal namespace. This document records the rejected
-precursor and the proposed replacement contract, not a new runtime pass.
+`cell_native_shard_research_next_use_v2`; its grouped funding owner
+has a separate V3 child-journal namespace. This records one known-key development
+ledger run, an independent 12/12 PASS-HOLD audit and preserved failed attempts.
+
+## Observed S3 operation and limitations
+
+[Original records and scope](../../../../evidence/cell-native-shard-674c72-20261110/README.md)
+retain the complete run and independent **12/12 PASS-HOLD** audit. The executable
+used S3 b6f39277b39e0b41e552ec4d32c5f8d354c8255b, tree
+6a0f38318b3cfb021240cda7f3d266c28aa76e78; later documentation commits do not
+relabel that tested source.
+
+| Observation | Actual value |
+| --- | --- |
+| Operation | 23120317a3cc20853fbcf0de37924311788e251d59395afc1816b4f6b2b7bbdc |
+| Source-input SHA256 | 83e4ab28cd84813c1a489c4c53222764b6437edf0eaad8924776c0777ff61835 |
+| Frozen ordinary-main ELF SHA256 | 07b711687a223e670280e72c1397e628ef05e97183b60cb9decd66120631226e |
+| Base weights | 269,060,552 bytes; 65 original storage chunks |
+| Complete model/environment | 280,269,602 bytes; 30 manifests; 95 canonical chunk bindings; three pages |
+| Original M12 parents | 79: 31 direct root/member, 36 storage groups, 12 repair groups |
+| V3 child history | 760 Done: 570 storage, 190 repair; 48 groups; 1,568 events |
+| Final development escrow | 79 reserved Task rows; 79,100 units; common native height/generation 5 |
+| Native internal / external process / whole wrapper | 235,959 ms / 236.083946 s / 239.801018 s |
+| Original bounds | 300 s; 512 MiB capture; 8 GiB memory ceiling; CPU bandwidth 4; worker grant 4 |
+| Whole-job cgroup memory peak | 4,202,799,104 bytes; no OOM |
+
+All thirty members crossed actual loopback BT before native retention. Owners
+then closed and publisher, receiver and initial delivery caches were removed.
+The operation zeroed the entire 536,870,912-byte TCA3 arena and original providers
+4/5 arenas of 70,414,336 bytes each, preserving descriptors/history/identities.
+Native recovery repaired 190 original targets. Consumer reconstruction used
+current original slots 0–3 for all 95 chunks, followed by complete TCV1/TCV2
+verification, original CTS1 admission, CHB1 handoff and both original forwards.
+The transport plan does not include CTS1; its raw envelope remains an outer pin.
+
+The independent audit copied only the closed small CGJ3 database and sidecars,
+then opened only that copy. All 1,568 events, exact final snapshot, 48 group
+receipts, source/cap/provider bindings and 760 child Done records matched.
+Original DB/WAL/SHM bytes remained unchanged. Native funding rows are the original
+authenticated Node readbacks, not a second independently administered ledger.
+The audit also streamed all 512 MiB of TCA3 and confirmed that it remains zero.
+Both following fields remain **false**:
+
+- cold_restore.source_catalog_payload_repaired
+- cold_restore.root_member_payload_current_readback_after_catalog_overwrite
+
+Root/member M12 Done therefore records historical initial retention. Separate
+final live escrow does not establish current complete TCA3 payload custody,
+future Positive evidence, payment eligibility or qualified settlement.
+
+S3 local checks passed: 43 unchanged source-integrity controls; eighteen authority
+controls with all seven routes false/HOLD; sixty native controls (44 retained
+plus 16 new); seven native-example and five original DA-example controls;
+strict Clippy, formatting, 26 workspace packages and 6,224 Markdown links.
+The 181-package lockfile retained the existing getrandom dependency; the example
+added its existing getrandom development edge. Global CI remains unqualified.
+
+The frozen executable used existing Cargo --profile test with an ordinary main,
+target.test=false/profile.test=false, opt-level 3, debug assertions and overflow
+checks enabled. No Cargo profile/RUSTFLAGS change was made. Dev ELF f84afd93…
+was build-only; cached dependencies were not claimed fresh. This optimized run
+is not a performance comparison with C3's earlier debug 270-second observation.
+
+Build provenance retains a gap: start.controller_sha256
+969e55a8c721200786ca7e913e8fc8f19487cbaacf9d80cd1a7bee3442ef8b9f
+binds the imported native controller. The checked-build wrapper's own prelaunch
+SHA is **NOT_RECORDED**; its post-run 9a29… hash cannot retroactively fill that
+gap. Actual model wrapper 120c70…, config 111d10f2… and native ELF 07b711…
+retain before/after pins in the run records.
+
+Failed observations remain intact: direct-source pending-task LIMIT; a repair
+fixture parent/child identity alias; 128-wire-manifest quota refusal; the helper's
+omitted manifest/key byte charges; and S2 /tmp inode exhaustion plus one stale
+workflow pin. S3 passed the unchanged controls with ext4 TMPDIR and the reviewed
+single workflow pin repair. The original 44-path authority closure remains at
+reviewed S0; all 26 inline workflow pins matched on S3.
+
+The e6 operation never started native execution. Unavailable optional io.stat
+caused the root wrapper's memory dictionary to be discarded, and hard preflight
+refused with native_started=false. That attempt is preserved. After isolating
+optional I/O absence, a probe confirmed memory.max=8 GiB and cpu.max=400000 100000;
+I/O remains unavailable/disclosed. The fresh 23120317… operation retained its
+31 input pins and original duration/capture/memory/worker allowances.
+
+Storage wire usage exactly matched 570 manifests/chunks and 420,642,144 logical
+bytes; repair matched 190/190 and 140,214,048 bytes. The separate wire profile
+is 768 manifests / 2,048 chunks / 512 MiB; input and consumer remain 128 manifests.
+The original 128-wire-manifest gate did not pass.
+
+Recovery CPU receipts exclude metadata/funding preflight; child repair intervals
+exclude preceding cache/codec/CGJ3-begin work; provider-owned journal work in
+repair/reconcile remains included. Committed byte/read/cache counters are
+protocol accounting, not OS I/O or physical write measurements. Worker wait4
+peak 1,466,822,656 bytes and sampled direct-child peak 1,411,952,640 bytes are
+not simultaneous process-tree RSS. One exit sampling gap was retained and
+reconciled by the original pidfd cleanup path. Cgroup peak is a distinct footprint;
+CPU bandwidth/grant 4 does not prove peak OS thread count. Both original forward
+receipts include preparation/scoring/hashing and establish execution, not utility.
 
 ## Observed precursor failure and scope
 
@@ -38,7 +133,7 @@ that whole policy cap. A second positive claim cannot share the same Task
 budget: cumulative monetary commitments would exceed the cap. Deleting the
 old complete-plan source-alias refusal cannot make that design valid.
 
-The proposed route therefore keeps one original M12 parent budget and claim
+The grouped route keeps one original M12 parent budget and claim
 per group. A distinct V3 journal records the group's independent child intents,
 receipts and windows. Original V1 Task/M12 schemas and the original complete-plan
 unique-source route retain their existing meanings and refusal conditions.
@@ -66,7 +161,7 @@ omitted, repeated, foreign or reordered children. Source and budget identities
 are unique between groups. A group cannot borrow another group's capacity or
 change membership on retry.
 
-For the existing 30-manifest / 95-chunk input, the planned roster is:
+For the observed 30-manifest / 95-chunk operation, the roster was:
 
 | Owner | Native Task sources / original M12 claims | Independent child intents |
 | --- | ---: | ---: |
@@ -76,8 +171,8 @@ For the existing 30-manifest / 95-chunk input, the planned roster is:
 | Total | **79** | **760** |
 
 There are 791 logical root/member/child items, **not 791 original M12 claims**.
-Three 32-chunk pages cover the planned 95 original bindings. These numbers
-are derived plan sizes, not observations of a successful grouped run.
+Three 32-chunk pages covered the observed 95 original bindings. These counts
+were checked against actual reports and independently replayed child history.
 
 Before any provider effect in a phase, use the original M12 `check_effects`
 against the real persistent journal for all proposed parent effects in that
@@ -115,7 +210,7 @@ journal or authorise another initial attempt after cold restart. Complete
 release observation still requires all pages, all children, all parents and
 the original version/catalog pins.
 
-## Intended same-operation data path
+## Same-operation data path
 
 1. Reuse the independently pinned source capture and actual loopback BEP52
    transfer. Preserve the original operation, TCV1, TCV2, CTS1, transport plan,
@@ -183,17 +278,18 @@ runtime dependencies must not be implied to fall within a narrower native
 codec receipt. Preserve outer wall/resource observations and failed attempts.
 
 Use the pinned native-PQ/SQLite build environment and independently verified
-inputs. The following commands are future validation instructions, not passes:
+inputs. The following are reproduction commands, not permission to rerun the archived
+operation. Use a fresh operation/output and independently frozen inputs:
 
 ```bash
 bash scripts/project-preflight.sh
 cargo test --locked --manifest-path trillionnium/Cargo.toml \
   -p trnm-pon-node --features pq-native-openssl \
   --example cell_native_shard_research_next_use_v2
-cargo build --locked --manifest-path trillionnium/Cargo.toml \
+cargo build --profile test --locked --manifest-path trillionnium/Cargo.toml \
   -p trnm-pon-node --features pq-native-openssl \
   --example cell_native_shard_research_next_use_v2
-cargo run --locked --manifest-path trillionnium/Cargo.toml \
+cargo run --profile test --locked --manifest-path trillionnium/Cargo.toml \
   -p trnm-pon-node --features pq-native-openssl \
   --example cell_native_shard_research_next_use_v2 -- \
   /absolute/path/to/source-inputs.v2.json INDEPENDENT_SOURCE_SHA256
@@ -209,7 +305,7 @@ source-integrity controls, graph/link checks and required CI remain separate.
 
 Retain the original source JSON, complete BT member receipts, direct root/member
 effects, canonical group rosters and sums, original M12 report and new V3 child
-journal/history. The proposed `native-shards/funding.jsonl` schema is
+journal/history. The observed `native-shards/funding.jsonl` schema is
 `trnm.cell-native-shard-group-funding-receipt.v3`, with `begin`,
 `signed_transaction`, `block_admitted`, `native_funding_readback` and `complete`
 events. It retains actual signed transaction bytes and SHA-256, sources,
@@ -235,8 +331,15 @@ partial group or failed forward remains failed or incomplete.
 
 ## Qualification boundary
 
-If observed, grouped M12 admission would concern actual reserved tasks and
-effects in this **known-key development ledger**. It would establish neither
+The grouped research callback admits at most 128 original chunks, with the
+512-MiB capture and wire logical-byte ceilings still enforced. This successful
+269,060,552-byte base is one bounded sample. The separate 64-GiB per-object
+and 16-GiB complete-plan structural bounds were not full-size benchmarks here.
+Multi-GiB model/GPU loading and larger or multi-version concurrency remain
+unqualified.
+
+Observed grouped M12 admission concerns actual reserved tasks and effects
+in this **known-key development ledger**. It establishes neither
 independent real-money funding nor a paid service fee or continuous paid
 custody. No future retention Positive outcome or group payment qualification
 is created by the grouping mechanism.
@@ -245,6 +348,7 @@ Independent operators/failure domains, WAN availability, real-money economics,
 ordinary Hepta FinalUse, installation authority, model efficacy and production
 activation remain **HOLD**. Distinct labels on six local providers do not
 establish physical independence. Python/native runtime dependencies retain
-the separate pinned-host-snapshot boundary. New V3 validation must report its
-own exact source and receipts; neither the older complete-copy pass nor the
-precursor's six passing controls qualify it.
+the separate pinned-host-snapshot boundary and were not all sealed or transported.
+Future attempts must retain their own exact source/receipts. This pass does not
+qualify future paid custody, independent operators/domains, WAN, real money,
+efficacy, global CI, ordinary Hepta FinalUse or production activation.

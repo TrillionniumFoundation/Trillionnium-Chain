@@ -1,0 +1,24 @@
+import pathlib,re,base64,zlib,json,hashlib,subprocess,os
+repo=pathlib.Path('/home/qq/work/chain-cell-native-shard-674c72-20261110');control=pathlib.Path(str(repo)+'-control');validation=pathlib.Path(str(repo)+'-validation')
+out=validation/'precursor-limit-source';rebuild=validation/'precursor-limit-reconstruction'
+out.mkdir(parents=True,exist_ok=False);rebuild.mkdir(exist_ok=False)
+env=os.environ.copy();tc=pathlib.Path('/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu')
+env.update({'PATH':str(tc/'bin')+':'+env['PATH'],'RUSTC':str(tc/'bin/rustc'),'RUSTDOC':str(tc/'bin/rustdoc'),'CARGO_HOME':'/home/qq/.cargo','LD_LIBRARY_PATH':str(tc/'lib')})
+with (out/'preflight.log').open('wb') as f:r=subprocess.run(['bash','scripts/project-preflight.sh'],cwd=repo,env=env,stdout=f,stderr=subprocess.STDOUT)
+assert r.returncode==0,'preflight'
+m=re.findall(r"base64\.b64decode\('([A-Za-z0-9+/=]+)'\)",(control/'native-overlay-02.py').read_text());assert len(m)==1
+entries=json.loads(zlib.decompress(base64.b64decode(m[0])));rust=[]
+for e in entries:
+ p=rebuild/e['path'];p.parent.mkdir(parents=True,exist_ok=True);p.write_text(e['content'])
+ if p.suffix=='.rs':rust.append(str(p))
+def fmt():subprocess.run([str(tc/'bin/rustfmt'),'--edition','2021','--config','skip_children=true',*rust],env=env,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+fmt();p=rebuild/'trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/funding.rs';s=p.read_text()
+for old,new in [('transaction.signing_digest()?', 'transaction.signing_digest().map_err(|_| "native funding signing digest")?'),('transactions.push(transaction.encode()?);','transactions.push(transaction.encode().map_err(|_| "native funding transaction encoding")?);')]:
+ assert s.count(old)==1,old;s=s.replace(old,new)
+p.write_text(s);fmt();rows=[]
+for e in entries:
+ rel=e['path'];a=(repo/rel).read_bytes();b=(rebuild/rel).read_bytes();assert a==b,rel
+ p=out/rel;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(a)
+ rows.append({'path':rel,'bytes':len(a),'sha256':hashlib.sha256(a).hexdigest(),'independent_overlay02_literal_fixes_rustfmt_reconstruction_equal':True})
+result={'scope':'precommit precursor actually compiled and hit original pending-task LIMIT in attempt02; not subsequent V3/C1','git_head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip(),'files':rows,'all_original_bytes_reconstructed':True,'attempt02_results':json.loads((validation/'native-example-attempt02/result.json').read_text())}
+(out/'manifest.json').write_text(json.dumps(result,indent=2));print(json.dumps({'archived':True,'files':len(rows),'reconstructed_equal':True,'manifest':str(out/'manifest.json')}),flush=True)

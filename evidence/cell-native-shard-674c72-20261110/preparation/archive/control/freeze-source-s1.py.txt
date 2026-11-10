@@ -1,0 +1,20 @@
+from pathlib import Path
+import json,subprocess,sys
+r=Path('/home/qq/work/chain-cell-native-shard-674c72-20261110'); base='d9c725f27b197f71208754b0a5ac0717798d3587'
+def run(a): return subprocess.run(a,cwd=r,check=True)
+def out(a): return subprocess.check_output(a,cwd=r,text=True).strip()
+assert sys.argv[1:]==['--freeze']
+assert out(['git','rev-parse','HEAD'])==base
+paths=['config/pon/pq-authority-effects-v1.json','scripts/ci/pq_authority_effect_register.py','scripts/ci/test_pq_authority_effect_register.py','docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md','docs/security/PQ_AUTHORITY_STORAGE_SOURCE_LOCK_REVIEW_20261109.md','evidence/pq-authority-storage-source-review-20261109/review.json']
+assert set(out(['git','diff','--name-only']).splitlines())==set(paths)
+assert out(['git','ls-files','--others','--exclude-standard'])==''
+assert out(['git','diff','--cached','--name-only'])==''
+run(['bash','scripts/project-preflight.sh']);run(['git','diff','--check'])
+run(['git','add','--',*paths])
+run(['git','-c','user.name=ProfHepta','-c','user.email=102159240+ProfHepta@users.noreply.github.com','commit','-s','-m','fix(ci): bind authority register to reviewed grouped storage source'])
+assert out(['git','rev-parse','HEAD^'])==base
+assert out(['git','status','--porcelain','--untracked-files=all'])==''
+record={'checkpoint':'S1','head':out(['git','rev-parse','HEAD']),'tree':out(['git','rev-parse','HEAD^{tree}']),'parent':base,'clean':True,'runtime_code_identical_to_s0':out(['git','diff','--name-only',base,'HEAD','--','trillionnium/'])==''}
+assert record['runtime_code_identical_to_s0']
+with Path(str(r)+'-control/source-checkpoint-s1.json').open('x') as f: json.dump(record,f,indent=2,sort_keys=True);f.write('\n')
+print(json.dumps(record,sort_keys=True))

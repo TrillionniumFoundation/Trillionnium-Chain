@@ -1,0 +1,237 @@
+"""Synthetic format/refusal controls; no model, network, or repository writes."""
+import copy
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import shutil
+import sqlite3
+import subprocess
+import sys
+import tempfile
+import unittest
+from unittest.mock import patch
+
+HERE = Path(__file__).resolve().parent
+spec = importlib.util.spec_from_file_location("journal_audit", HERE / "journal_audit.py")
+a = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(a)
+
+
+def H(label):
+    return hashlib.sha256(label.encode()).digest()
+
+
+def raw(domain, *parts):
+    return hashlib.sha256(domain + b"".join(parts)).digest()
+
+
+def pon(tag, *parts):
+    return raw(b"TRNM-PON1\0", len(tag).to_bytes(2, "little"), tag,
+               *(len(p).to_bytes(4, "little") + p for p in parts))
+
+
+def J(value):
+    return json.dumps(value, separators=(",", ":")).encode()
+
+
+def u(value, n=8):
+    return value.to_bytes(n, "big")
+
+
+def make_fixture(root):
+    root.mkdir()
+    db = root / "groups.sqlite"
+    config = {k: H(k).hex() for k in ("network", "parameters", "genesis", "plan")}
+    config["owner_generation"] = 1
+    context = b"CGJ3\0" + J({**{k: list(bytes.fromhex(config[k])) for k in ("network", "parameters", "genesis", "plan")}, "owner_generation": 1})
+    context_hash = raw(b"trnm.native-cell-group-child-context.v3\0", context)
+    crc = b"CRC1" + H("originalmanifest") + u(0, 4) + u(16, 4) + H("originalpayload") + b"".join(H("shard" + str(i)) for i in range(6))
+    placements = b"".join(H(str(i) + key) for i in range(6) for key in ("provider", "responsible", "admin", "failure", "evidence", "repair"))
+    contracts, storage_subjects, funding_ops = [], [], []
+    for slot in range(6):
+        payload = H("physicalpayload" + str(slot))
+        manifest = b"TCM1" + u(1, 1) + b"f" + b"".join(H(k) for k in ("base", "parent", "tokenizer", "layout", "runtime")) + u(100) + payload + u(4194304, 4) + u(1, 4) + u(100, 4) + payload
+        funding = H("childfund" + str(slot))
+        wire = b"CSP1" + H("originaloperation") + H("store" + str(slot)) + u(1) + funding + u(0) + u(100) + u(100) + u(slot, 1) + crc + placements + u(len(manifest), 4) + manifest
+        operation = raw(b"trnm.cell-rs46-provider-slot.v1\0", wire)
+        subject = raw(b"trnm.cell-retention-contract.v1\0", H("store" + str(slot)), operation, funding,
+                      raw(b"trnm.cell-manifest.v1\0", manifest), u(0), u(100), u(100), b"\0")
+        contracts.append((wire, operation))
+        storage_subjects.append(subject)
+        funding_ops.append(funding)
+    register, endings, row_groups, row_children, funding, parents = [], [], [], [], {}, {}
+    for kind, slots in ((1, range(6)), (2, (4, 5))):
+        for slot in slots:
+            suffix = str(kind) + str(slot)
+            group, budget, source, parent_claim = (H(k + suffix) for k in ("group", "budget", "source", "parentclaim"))
+            wire, storage_operation = contracts[slot]
+            child_claim = funding_ops[slot] if kind == 1 else H("repairclaim" + suffix)
+            operation = storage_operation if kind == 1 else H("repairop" + suffix)
+            subject = storage_subjects[slot] if kind == 1 else pon(b"trnm.native-cell-shard-repair-subject.v1\0", storage_subjects[slot], operation, child_claim)
+            beneficiary = H(str(slot) + ("responsible" if kind == 1 else "repair"))
+            resource = b"\1" + u(100) + u(10000) if kind == 1 else b"\2" + u(1000) + u(100) + u(100) + u(1)
+            parent_wire = parent_claim + budget + beneficiary + u(5) + resource
+            child_wire = child_claim + budget + subject + beneficiary + u(5) + resource
+            descriptor = b"CPG3" + u(kind, 1) + bytes.fromhex(config["plan"]) + u(slot, 1) + u(0, 4) + group + budget + b"TASK" + source + u(5) + u(100) + resource + u(1, 4) + parent_wire + u(1, 2) + u(len(wire), 4) + wire + child_wire + (b"\0" if kind == 1 else b"\1" + operation)
+            parent_subject = pon(b"trnm.native-cell-shard-parent-group.v3\0", descriptor)
+            receipt = pon(b"trnm.native-cell-group-child-" + (b"storage" if kind == 1 else b"repair") + b"-readback.v3\0", subject)
+            parents[group.hex()] = pon(b"trnm.native-cell-parent-group-current-readback.v3\0", parent_subject, group + operation + receipt).hex()
+            funding[source.hex()] = {"amount": 5, "provider": beneficiary.hex(), "deadline": 200}
+            binding = {"operation": list(operation), "effect": list(subject), "from": 0, "until": 100}
+            register.append({"event": "register", "group": list(group), "descriptor_hex": descriptor.hex(), "children": [binding]})
+            endings.extend([{"event": "begin", "group": list(group), "index": 0},
+                            {"event": "complete", "group": list(group), "index": 0, "receipt": list(receipt)}])
+            row_groups.append((group, descriptor, raw(b"trnm.native-cell-group-child-descriptor.v3\0", descriptor), 1))
+            row_children.append((group, 0, operation, subject, 0, 100, 2, receipt))
+    c = sqlite3.connect(db)
+    c.execute("PRAGMA journal_mode=WAL")
+    c.execute("PRAGMA wal_autocheckpoint=0")
+    for sql in a.SCHEMA.values():
+        c.execute(sql)
+    c.execute("PRAGMA application_id=" + str(a.APP))
+    c.execute("PRAGMA user_version=3")
+    previous = raw(b"trnm.native-cell-group-child-genesis.v3\0", context)
+    for seq, event in enumerate(register + endings, 1):
+        payload = J(event)
+        digest = raw(b"trnm.native-cell-group-child-event.v3\0", context_hash, u(seq), previous, u(len(payload)), payload)
+        c.execute("INSERT INTO events VALUES(?,?,?,?)", (seq, previous, payload, digest))
+        previous = digest
+    c.execute("INSERT INTO journal_context VALUES(1,?,?,?)", (context, len(register + endings), previous))
+    c.executemany("INSERT INTO groups VALUES(?,?,?,?)", row_groups)
+    c.executemany("INSERT INTO children VALUES(?,?,?,?,?,?,?,?)", row_children)
+    c.commit()
+    expected = {"context": config, "groups": 8, "storage_groups": 6, "repair_groups": 2,
+                "children": 8, "storage_children": 6, "repair_children": 2,
+                "funding_by_source": funding, "parent_receipts": parents, "repair_slots": [4, 5]}
+    (root / "expected.json").write_text(json.dumps(expected))
+    return c
+
+
+class Controls(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory(prefix="cgj3-audit-controls-")
+        self.root = Path(self.tmp.name)
+        self.original = self.root / "producer"
+        # Real process exits after committed WAL writes, leaving no live writer.
+        subprocess.run([sys.executable, "-B", str(Path(__file__).resolve()), "--produce", str(self.original)], check=True)
+        self.db = self.original / "groups.sqlite"
+        self.expected = json.loads((self.original / "expected.json").read_text())
+        self.serial = 0
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def run_audit(self, expected=None):
+        self.serial += 1
+        return a.audit_journal(self.db, self.root / ("snapshot" + str(self.serial)), expected or self.expected,
+                               closed=True, terminal_record_sha256=H("terminal").hex())
+
+    def mutate(self, sql):
+        with sqlite3.connect(self.db) as c:
+            c.execute(sql)
+
+    def test_retained_wal_copy_and_no_original_sqlite_open(self):
+        self.assertGreater(Path(str(self.db) + "-wal").stat().st_size, 0)
+        original = sqlite3.connect
+        opened = []
+        def only_copy(database, *args, **kwargs):
+            self.assertNotIn(str(self.original), str(database))
+            opened.append(str(database))
+            return original(database, *args, **kwargs)
+        with patch.object(a.sqlite3, "connect", only_copy):
+            result = self.run_audit()
+        self.assertEqual((result["groups"], result["children"], result["events"]), (8, 8, 24))
+        self.assertEqual(len(opened), 1)
+        self.assertTrue(result["snapshot"]["original_bytes_unchanged"])
+
+    def test_explicit_terminal_and_new_directory_required(self):
+        with self.assertRaisesRegex(a.AuditError, "producer-closed"):
+            a.audit_journal(self.db, self.root / "absent", self.expected)
+        self.assertFalse((self.root / "absent").exists())
+        self.run_audit()
+        with self.assertRaises(FileExistsError):
+            a.audit_journal(self.db, self.root / "snapshot1", self.expected, closed=True, terminal_record_sha256=H("terminal").hex())
+
+    def test_snapshot_row_mutation(self):
+        self.mutate("UPDATE children SET receipt=zeroblob(32) WHERE rowid=1")
+        with self.assertRaisesRegex(a.AuditError, "materialized child"):
+            self.run_audit()
+
+    def test_chain_change(self):
+        self.mutate("UPDATE events SET digest=zeroblob(32) WHERE sequence=4")
+        with self.assertRaisesRegex(a.AuditError, "hashchain"):
+            self.run_audit()
+
+    def test_context_change(self):
+        expected = copy.deepcopy(self.expected)
+        expected["context"]["plan"] = H("wrongplan").hex()
+        with self.assertRaisesRegex(a.AuditError, "pinned context"):
+            self.run_audit(expected)
+
+    def test_parent_receipt_and_funding_binding(self):
+        for key, field in (("parent_receipts", None), ("funding_by_source", "amount"), ("funding_by_source", "provider")):
+            expected = copy.deepcopy(self.expected)
+            first = next(iter(expected[key]))
+            if field is None:
+                expected[key][first] = H("wrongreceipt").hex()
+            else:
+                expected[key][first][field] = 1 if field == "amount" else H("wrongpayee").hex()
+            with self.assertRaises(a.AuditError):
+                self.run_audit(expected)
+
+    def test_missing_history_and_illegal_transition(self):
+        with sqlite3.connect(self.db) as c:
+            context, _, _ = c.execute("SELECT context,sequence,root FROM journal_context").fetchone()
+            payloads = [r[0] for r in c.execute("SELECT payload FROM events ORDER BY sequence")]
+            # Remove first Begin; rehash coherent history to prove state machine,
+            # rather than hash mismatch, rejects direct Unstarted->Complete.
+            del payloads[8]
+            c.execute("DELETE FROM events")
+            previous = raw(b"trnm.native-cell-group-child-genesis.v3\0", context)
+            ch = raw(b"trnm.native-cell-group-child-context.v3\0", context)
+            for seq, payload in enumerate(payloads, 1):
+                digest = raw(b"trnm.native-cell-group-child-event.v3\0", ch, u(seq), previous, u(len(payload)), payload)
+                c.execute("INSERT INTO events VALUES(?,?,?,?)", (seq, previous, payload, digest))
+                previous = digest
+            c.execute("UPDATE journal_context SET sequence=?,root=?", (len(payloads), previous))
+        with self.assertRaisesRegex(a.AuditError, "Complete requires Pending"):
+            self.run_audit()
+
+    def test_coherent_truncation_is_not_terminal_done(self):
+        with sqlite3.connect(self.db) as c:
+            seq, previous, payload = c.execute("SELECT sequence,previous,payload FROM events ORDER BY sequence DESC LIMIT 1").fetchone()
+            event = json.loads(payload)
+            c.execute("DELETE FROM events WHERE sequence=?", (seq,))
+            c.execute("UPDATE journal_context SET sequence=?,root=?", (seq - 1, previous))
+            c.execute("UPDATE children SET state=1,receipt=NULL WHERE group_id=? AND ordinal=?",
+                      (bytes(event["group"]), event["index"]))
+        with self.assertRaisesRegex(a.AuditError, "terminal child Done/receipt"):
+            self.run_audit()
+
+    def test_event_rust_array_and_unknown_fields_are_required(self):
+        event = {"event": "begin", "group": list(H("group")), "index": 0}
+        self.assertEqual(a._event(J(event)), event)
+        event["group"] = H("group").hex()
+        with self.assertRaisesRegex(a.AuditError, "array encoding"):
+            a._event(J(event))
+        event["group"] = list(H("group"))
+        event["unknown"] = 1
+        with self.assertRaisesRegex(a.AuditError, "event fields"):
+            a._event(J(event))
+
+    def test_foreign_schema_refusal_preserves_original_files(self):
+        self.mutate("CREATE TABLE foreign_table(x INTEGER)")
+        before = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in self.original.glob("groups.sqlite*")}
+        with self.assertRaisesRegex(a.AuditError, "schema count"):
+            self.run_audit()
+        after = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in self.original.glob("groups.sqlite*")}
+        self.assertEqual(before, after)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) == 3 and sys.argv[1] == "--produce":
+        owner = make_fixture(Path(sys.argv[2]))
+        os._exit(0)
+    unittest.main()

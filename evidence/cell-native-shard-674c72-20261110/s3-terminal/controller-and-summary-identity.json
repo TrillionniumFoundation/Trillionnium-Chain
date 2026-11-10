@@ -1,0 +1,12 @@
+{
+  "actual_model_execution_observed": false,
+  "debug_executable_build_only": true,
+  "native_observation_passed": true,
+  "native_sha256": "969e55a8c721200786ca7e913e8fc8f19487cbaacf9d80cd1a7bee3442ef8b9f",
+  "native_start_matches": true,
+  "schema": "trnm.s3-controller-identity.v1",
+  "source_observation_matches": true,
+  "source_observation_passed": true,
+  "source_sha256": "b8829eced75d362c085b0768e5085b5c5af1d2310aef77e268df46f71c0c814a",
+  "source_start_matches": true
+}

@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "b6f39277b39e0b41e552ec4d32c5f8d354c8255b"
+  ],
+  "elapsed_seconds": 1.5042555730324239,
+  "returncode": 0,
+  "stage": "exact-source-before"
+}

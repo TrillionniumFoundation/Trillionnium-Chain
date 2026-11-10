@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "elapsed_seconds": 0.024499030085280538,
+  "returncode": 0,
+  "stage": "preflight"
+}

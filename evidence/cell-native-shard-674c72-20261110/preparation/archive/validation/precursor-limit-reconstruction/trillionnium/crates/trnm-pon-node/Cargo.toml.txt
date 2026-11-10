@@ -1,0 +1,56 @@
+[package]
+name = "trnm-pon-node"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+module = "M15"
+role = "experimental-native-composition"
+production_activation = false
+consensus_authority = false
+
+[features]
+default = []
+# Explicit fresh native network-owner namespace and separately selected
+# PQG1/QTX1 transfer-only account import. This is not whole-chain PQ activation.
+pq-native-openssl = ["trnm-crypto-primitives/pq-native-openssl", "trnm-mvcc-fee/pq-native-openssl", "dep:openssl"]
+
+[dependencies]
+trnm-sqlite-io-boundary = { version = "=0.1.0", path = "../trnm-sqlite-io-boundary" }
+trnm-data-availability = { version = "=0.1.0", path = "../trnm-data-availability" }
+trnm-service-settlement = { version = "=0.1.0", path = "../trnm-service-settlement" }
+trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
+trnm-crypto-primitives = { version = "=0.1.0", path = "../trnm-crypto-primitives" }
+trnm-mvcc-fee = { version = "=0.1.0", path = "../trnm-mvcc-fee" }
+trnm-transport = { version = "=0.1.0", path = "../trnm-transport" }
+trnm-mempool = { version = "=0.1.0", path = "../trnm-mempool" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+hex = "0.4"
+fs2 = "0.4"
+libc = "0.2"
+rustix = { version = "1.1.4", features = ["fs", "net", "process", "time"] }
+sha2 = "0.10"
+rusqlite = { version = "=0.39.0", features = ["bundled", "fallible_uint", "hooks"] }
+openssl = { version = "=0.10.81", optional = true }
+zeroize = "=1.9.1"
+
+tempfile = "3"
+
+[dev-dependencies]
+# The explicit native research example reuses the original sealed research owner.
+# This package is already pinned in the existing DA dependency graph.
+getrandom = "=0.2.17"
+# Test-only safe executed-SQL observation. Production features stay unchanged;
+# this uses the existing pinned rusqlite package and adds no lockfile package.
+rusqlite = { version = "=0.39.0", features = ["trace"] }
+
+# Explicit Linux sealed-object profile; no path-exec/platform fallback.
+[target.'cfg(target_os = "linux")'.dependencies]
+trnm-release-bundle = { version = "=0.1.0", path = "../trnm-release-bundle" }
+nix = { version = "=0.30.1", features = ["fs", "poll", "process"] }
+rustix = { version = "1.1.4", features = ["rand"] }
+

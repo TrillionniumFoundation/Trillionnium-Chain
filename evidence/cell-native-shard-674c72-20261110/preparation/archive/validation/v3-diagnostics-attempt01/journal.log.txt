@@ -1,0 +1,16 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running unittests src/lib.rs (/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/trnm_pon_node-1c6acfc1d5eeef55)
+
+running 9 tests
+test store::storage_service::shard::plan::grouped_v3::journal::tests::group_child_journal_bounds_full_64_group_1024_child_roster ... ok
+test store::storage_service::shard::plan::grouped_v3::journal::tests::group_child_journal_cold_open_retains_real_pending_and_done ... ok
+test store::storage_service::shard::plan::grouped_v3::journal::tests::group_child_journal_exclusive_owner_and_replaced_path_are_refused ... ok
+test store::storage_service::shard::plan::grouped_v3::journal::tests::group_child_journal_expiry_and_structural_bounds_cannot_start_children ... ok
+test store::storage_service::shard::plan::grouped_v3::journal::tests::group_child_journal_foreign_snapshot_history_and_context_are_refused ... ok
+test store::storage_service::shard::plan::grouped_v3::journal::tests::group_child_journal_missing_changed_and_foreign_rosters_refuse_without_new_history ... ok
+test store::storage_service::shard::plan::grouped_v3::journal::tests::group_child_journal_readonly_refusal_preserves_corrupt_context_chain_and_snapshot ... ok
+test store::storage_service::shard::plan::grouped_v3::journal::tests::group_child_journal_refusal_preserves_foreign_and_old_database_bytes ... ok
+test store::storage_service::shard::plan::grouped_v3::journal::tests::group_child_journal_schema_caps_and_oversized_non_null_sql_are_not_null ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 1402 filtered out; finished in 1.23s
+

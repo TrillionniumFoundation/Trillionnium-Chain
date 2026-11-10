@@ -1,0 +1,4 @@
+{"kind":"generated_scope_note","checked_job":"1a1c418493b-cf39-10a","state":"succeeded","exit_code":0,"elf_payload_copied":false}
+{"kind":"generated_scope_note","e6_job":"1a1c41b9b4d-cf39-114","state":"failed","exit_code":1,"native_started":false,"scope":"PRELAUNCH_RESOURCE_OBSERVATION_REFUSAL"}
+{"kind":"generated_scope_note","probe_job":"1a1c41f5911-cf39-127","state":"succeeded","exit_code":0,"model_started":false}
+{"kind":"source_owner_confirmation","direct_checked_self_prehash":"NOT_RECORDED","start_reference":"reused native-controller SHA969e55","archived_checked_runner_scope":"post-run SHA9a29","no_gap_covering_rerun":true}

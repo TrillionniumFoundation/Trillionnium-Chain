@@ -1,0 +1,19 @@
+from pathlib import Path
+import json,subprocess,sys
+r=Path('/home/qq/work/chain-cell-native-shard-674c72-20261110'); base='368db622152e51bf1efbbfedf6f6a87a80ae094b'; p='trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs'
+def run(a): return subprocess.run(a,cwd=r,check=True)
+def out(a): return subprocess.check_output(a,cwd=r,text=True).strip()
+assert sys.argv[1:]==['--freeze']
+assert out(['git','rev-parse','HEAD'])==base
+assert out(['git','diff','--name-only'])==p
+assert out(['git','ls-files','--others','--exclude-standard'])==''
+assert out(['git','diff','--cached','--name-only'])==''
+run(['bash','scripts/project-preflight.sh']);run(['git','diff','--check'])
+run(['git','-c','core.pager=cat','diff','--',p])
+run(['git','add','--',p])
+run(['git','-c','user.name=ProfHepta','-c','user.email=102159240+ProfHepta@users.noreply.github.com','commit','-s','-m','fix(research): account complete wire cache logical usage'])
+assert out(['git','rev-parse','HEAD^'])==base
+assert out(['git','status','--porcelain','--untracked-files=all'])==''
+record={'checkpoint':'S2','head':out(['git','rev-parse','HEAD']),'tree':out(['git','rev-parse','HEAD^{tree}']),'parent':base,'clean':True,'changed_path':p,'authority_pins_unchanged':out(['git','diff','--name-only',base,'HEAD','--','config/','scripts/'])==''}
+with Path(str(r)+'-control/source-checkpoint-s2.json').open('x') as f:json.dump(record,f,indent=2,sort_keys=True);f.write('\n')
+print(json.dumps(record,sort_keys=True))

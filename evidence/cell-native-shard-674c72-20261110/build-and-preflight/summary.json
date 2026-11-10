@@ -1,0 +1,35 @@
+{
+  "actual_model_results_collected": false,
+  "all_original_manifests_unchanged": true,
+  "append_policy": "Keep this packet immutable. Collect root-confirmed later campaigns in separate sibling packets.",
+  "binary_references": "binary-references.json",
+  "candidate_source_written": false,
+  "checked_build_records_collected": true,
+  "closed_phase_scope": {
+    "checked_build": "Succeeded0. Original compile JSON/argv, source guards and accepted dual ELF identities preserved. ELF payloads are not copied or rehashed; only original declared hashes/sizes plus current stat are referenced.",
+    "checked_runner_gap": "NOT_RECORDED: source owner confirms no direct self SHA was persisted before checked runner launch. Original start.controller_sha256969e55... binds reused native-controller prefix. Archived checked runner9a29... is post-run material SHA. Pre-launch editor text existed without self-prehash field; request digest bound argv/env/path. Do not fabricate direct prehash binding or rerun.",
+    "e6": "Wrapper failed1 BEFORE native launch: native_started=false; missing optional io.stat made old resource collector discard the entire dictionary and the 8GiB guard refused. This is pre-launch resource observation refusal, not a real native/model failure.",
+    "e6_bindings": "Preserve run_model.e6-used.py91bd..., configc737..., audit4020... . Earlier packet preserves e6 source d1a7... and verification d4c47...; cross-reference immutable originals.",
+    "model_scope": "No 231 model results, current run_model.py120c70..., live SQLite or payload is collected. Build-stage model_executed=false is scoped to the closed build observation.",
+    "probe_v2": "Separate closed probe succeeded with memory.max8589934592 and cpu.max400000/100000, model_started=false; it does not upgrade e6 failure."
+  },
+  "copied_files": 31,
+  "copied_original_bytes": 1051311,
+  "copy_only": true,
+  "created_at_utc": "2026-11-10T06:39:25.307374+00:00",
+  "generated_inventory_is_summary_not_original_manifest": true,
+  "native_tests_executed_by_collector": false,
+  "original_manifest_count": 0,
+  "path_mapping": "original-to-archive.json",
+  "phase_scope": "closed-phase-scope-verification.json",
+  "prelaunch_refusal_records_collected": true,
+  "repository_evidence_written": false,
+  "result": "COPIED_AND_READBACK_VERIFIED",
+  "schema": "trnm.checked-build-e6-preflight-staging.v1",
+  "selected_control_files": 4,
+  "selected_validation_top_items": 4,
+  "source_candidate_context": {
+    "commit": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78"
+  }
+}

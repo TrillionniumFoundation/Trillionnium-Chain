@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--format-version",
+    "1",
+    "--features",
+    "trnm-pon-node/pq-native-openssl"
+  ],
+  "elapsed_seconds": 0.0557633878197521,
+  "returncode": 0,
+  "stage": "cargo-metadata"
+}

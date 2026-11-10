@@ -1,0 +1,5 @@
+{
+  "before": "ebfc1c3f7ab93de0d3e78403a171bea064f404c6b8ee62c8bcb50c9b775fa56a",
+  "after": "ef777151475bceb372a1df4528de2bef0b88ecf6ad32c2bf1c0bb36a0f113566",
+  "change": "model inventory actual _archive relative path; no artifact alias or metadata rewrite"
+}

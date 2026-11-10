@@ -1,0 +1,15 @@
+{
+  "expected_chunk_rows": 570,
+  "expected_logical_bytes": 420642144,
+  "expected_manifest_rows": 570,
+  "full_payload_profile_not_unconditionally_supported": true,
+  "input_and_consumer_max_manifest_rows": 128,
+  "max_chunk_rows": 2048,
+  "max_database_bytes": 1073741824,
+  "max_logical_bytes": 536870912,
+  "max_manifest_rows": 768,
+  "new_temporary_wire_metadata_grant": true,
+  "original_128_temporary_wire_gate_passed": false,
+  "original_absolute_deadline": true,
+  "profile": "native-grouped-temporary-wire-cache-v3"
+}

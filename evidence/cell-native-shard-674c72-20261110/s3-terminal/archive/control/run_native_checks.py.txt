@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+"""Run and retain the original native gates on one fixed, clean grouped candidate."""
+import datetime, fcntl, hashlib, json, os, re, subprocess, sys, time
+from pathlib import Path
+REPO = Path('/home/qq/work/chain-cell-native-shard-674c72-20261110')
+BASE = Path(str(REPO) + '-validation')
+TARGET = Path(str(REPO) + '-target')
+RUST = Path('/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin')
+PROVIDER = Path('/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install')
+PROVIDER_SHA = 'ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62'
+head, tree, label = sys.argv[1:]
+assert re.fullmatch('[0-9a-f]{40}', head) and re.fullmatch('[0-9a-f]{40}', tree)
+assert re.fullmatch('[a-z0-9][a-z0-9_-]{0,80}', label)
+destination = BASE / label
+destination.mkdir(mode=0o700)
+temporary = BASE / 'tmp' / 'native-qualified-s2'
+temporary.mkdir(parents=True, mode=0o700, exist_ok=True)
+assert temporary.is_dir() and not temporary.is_symlink()
+guard = Path(str(TARGET) + '.owner.lock').open('a')
+fcntl.flock(guard, fcntl.LOCK_EX | fcntl.LOCK_NB)
+env = os.environ.copy()
+env.update({
+ 'PATH': str(RUST) + os.pathsep + env.get('PATH', ''),
+ 'RUSTC': str(RUST/'rustc'), 'RUSTDOC': str(RUST/'rustdoc'),
+ 'CARGO_HOME': '/home/qq/.cargo', 'CARGO_TARGET_DIR': str(TARGET),
+ 'CARGO_BUILD_JOBS': '2', 'CARGO_INCREMENTAL': '0', 'CARGO_TERM_COLOR': 'never',
+ 'RUST_TEST_THREADS': '1', 'PYTHONDONTWRITEBYTECODE': '1',
+ 'LD_LIBRARY_PATH': str(RUST.parent/'lib'), 'TMPDIR': str(temporary),
+ 'OPENSSL_DIR': str(PROVIDER), 'OPENSSL_STATIC': '1', 'OPENSSL_CONF': '/dev/null',
+ 'OPENSSL_MODULES': str(PROVIDER/'lib/ossl-modules'),
+ 'TRNM_PQ_OPENSSL': str(PROVIDER/'bin/openssl'),
+ 'TRNM_PQ_OPENSSL_SHA256': PROVIDER_SHA, 'TRNM_PQ_OPENSSL_VERSION': '3.5.9'
+})
+def sha(path):
+ h=hashlib.sha256()
+ with path.open('rb') as f:
+  for b in iter(lambda:f.read(1048576),b''): h.update(b)
+ return h.hexdigest()
+def save(path, value):
+ with path.open('x') as f:
+  json.dump(value,f,sort_keys=True,indent=2); f.write('\n')
+def ident():
+ actual={k:subprocess.check_output(['git',*v],cwd=REPO,text=True).strip() for k,v in {
+  'head':['rev-parse','HEAD'],'tree':['rev-parse','HEAD^{tree}'],
+  'status':['status','--porcelain','--untracked-files=all']}.items()}
+ assert actual=={'head':head,'tree':tree,'status':''}, 'exact clean source mismatch'
+ return actual
+assert sha(PROVIDER/'bin/openssl')==PROVIDER_SHA
+prior_path='evidence/cell-capacity-release-dc0357-20261109/node/node-storage-original-qualified-exact-6ea3bf3-20261109-v1.log'
+prior=subprocess.check_output(['git','show','06233be630f8eff6cea59cd5111e5941135a4aa5:'+prior_path],cwd=REPO)
+expected=set(re.findall(r'^test (store::storage_service::\S+) \.\.\. ok$',prior.decode(),re.M))
+assert len(expected)==44, 'original 44-test roster must be recovered exactly'
+save(destination/'start.json',{'identity':ident(),'environment':{k:env[k] for k in (
+ 'RUSTC','RUSTDOC','CARGO_HOME','CARGO_TARGET_DIR','CARGO_BUILD_JOBS','CARGO_INCREMENTAL',
+ 'LD_LIBRARY_PATH','TMPDIR','OPENSSL_DIR','OPENSSL_STATIC','TRNM_PQ_OPENSSL_SHA256')},
+ 'prior_roster_sha256':hashlib.sha256(prior).hexdigest(),
+ 'original_storage_test_names':sorted(expected),
+ 'runner_sha256':sha(Path(__file__))})
+cargo=str(RUST/'cargo')
+feature='trnm-pon-node/pq-native-openssl'
+gates=[
+ ('preflight',['bash','scripts/project-preflight.sh'],REPO),
+ ('exact-source',['python3','scripts/ci/verify_ci_source.py','--kind','head','--expected-head',head],REPO),
+ ('cargo-graph',[cargo,'metadata','--locked','--offline','--format-version','1','--features',feature],REPO/'trillionnium'),
+ ('node-storage',[cargo,'test','--locked','--offline','--jobs','2','-p','trnm-pon-node','--features','pq-native-openssl','--lib','store::storage_service::','--','--test-threads=1'],REPO/'trillionnium'),
+ ('grouped-example',[cargo,'test','--locked','--offline','--jobs','2','-p','trnm-pon-node','--features','pq-native-openssl','--example','cell_native_shard_research_next_use_v2','--','--test-threads=1'],REPO/'trillionnium'),
+ ('original-da-example',[cargo,'test','--locked','--offline','--jobs','2','-p','trnm-data-availability','--example','cell_sealed_research_next_use_v2','--','--test-threads=1'],REPO/'trillionnium'),
+ ('strict-clippy',[cargo,'clippy','--locked','--offline','--jobs','2','--all-targets','-p','trnm-data-availability','-p','trnm-pon-node','--features',feature,'--','-D','warnings'],REPO/'trillionnium'),
+ ('fmt',[cargo,'fmt','--all','--','--check'],REPO/'trillionnium'),
+ ('actual-model-binary',[cargo,'build','--locked','--offline','--jobs','2','-p','trnm-pon-node','--features','pq-native-openssl','--example','cell_native_shard_research_next_use_v2'],REPO/'trillionnium'),
+ ('exact-source-end',['python3','scripts/ci/verify_ci_source.py','--kind','head','--expected-head',head],REPO)
+]
+results=[]
+for name,command,cwd in gates:
+ ident(); start=time.monotonic()
+ with (destination/(name+'.stdout.log')).open('xb') as out,(destination/(name+'.stderr.log')).open('xb') as err:
+  try:
+   p=subprocess.run(command,cwd=cwd,env=env,stdout=out,stderr=err,timeout=3600); rc=p.returncode
+  except subprocess.TimeoutExpired: rc=124
+ row={'name':name,'command':command,'exit_code':rc,'elapsed_seconds':time.monotonic()-start,
+      'stdout_sha256':sha(destination/(name+'.stdout.log')),
+      'stderr_sha256':sha(destination/(name+'.stderr.log'))}
+ if name=='node-storage':
+  text=(destination/(name+'.stdout.log')).read_text()
+  actual=set(re.findall(r'^test (store::storage_service::\S+) \.\.\. ok$',text,re.M))
+  row['original_roster_preserved']=expected<=actual
+  row['missing_original_tests']=sorted(expected-actual)
+  row['successful_names']=sorted(actual)
+ if name in ('grouped-example','original-da-example'):
+  text=(destination/(name+'.stdout.log')).read_text()
+  row['test_summaries']=re.findall(r'test result: ([^\n]+)',text)
+  row['full_scope_observed']=bool(re.search(r'test result: ok\. \d+ passed; 0 failed; 0 ignored; 0 measured; 0 filtered out',text))
+ if name=='cargo-graph' and rc==0:
+  data=json.loads((destination/(name+'.stdout.log')).read_text())
+  row['workspace_packages']=len(data['workspace_members'])
+ save(destination/(name+'-observation.json'),row)
+ results.append(row); print(json.dumps(row if name!='node-storage' else {k:v for k,v in row.items() if k!='successful_names'}),flush=True)
+ if name in ('preflight','exact-source','cargo-graph') and rc: break
+binary=TARGET/'debug/examples/cell_native_shard_research_next_use_v2'
+summary={'schema':'trnm.native-grouped-shard-exact-native-gates.v1','identity':ident(),
+ 'completed_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'gates':results,
+ 'binary':str(binary),'binary_sha256':sha(binary) if binary.is_file() else None,
+ 'passed':len(results)==len(gates) and all(r['exit_code']==0 for r in results)
+  and all(r.get('original_roster_preserved',True) for r in results)
+  and all(r.get('full_scope_observed',True) for r in results)}
+save(destination/'observation.json',summary)
+print(json.dumps({'passed':summary['passed'],'head':head,'binary_sha256':summary['binary_sha256']}),flush=True)
+raise SystemExit(0 if summary['passed'] else 1)

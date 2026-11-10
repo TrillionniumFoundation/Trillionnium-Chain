@@ -1,0 +1,84 @@
+{
+  "schema": "trnm.checked-build-and-e6-preflight-selection.v1",
+  "source_candidate_context": {
+    "commit": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78"
+  },
+  "validation": [
+    "checked-test-profile-s3",
+    "real-native-e6e7fc414690-attempt-01-wrapper",
+    "model-cgroup-resource-probe-v2.json",
+    "model-prepare-s3-input-pin-audit.json"
+  ],
+  "control": [
+    "run_checked_test_profile_s3.py",
+    "run_model.e6-used.py",
+    "model-config-e6e7-s3.json",
+    "probe_model_cgroup_v2.py"
+  ],
+  "excluded_validation": [
+    "tmp",
+    "real-native-231-operation",
+    "model-prepare-s3-attempt02-input-pin-audit.json"
+  ],
+  "deferred_control": [
+    "run_model.py"
+  ],
+  "unexecuted_prepared_controls": [],
+  "deferred_followup": [
+    "actual 231 model operation separately authorized",
+    "live native SQLite/cache/arena/model weights"
+  ],
+  "estimated_payload_bytes": 1051311,
+  "estimated_payload_files": 31,
+  "expected_original_sha256": {
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/model-cgroup-resource-probe-v2.json": "f57e42949ae7d838ba0ef201af9390a37f02ad481531d947e1d5d0db50e2fd5e",
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/model-prepare-s3-input-pin-audit.json": "4020be304c1af71e38cc6367e4287fee9c134156b6bdc55fdb48a2ea0ed25467",
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-control/model-config-e6e7-s3.json": "c7378a2516255aba7331a572862ff38894fbd2d74806543e0af5110de2418809",
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-control/probe_model_cgroup_v2.py": "59bf3261a56150c470a7a57c60353ca8e9e92ba2fbad2f4f2e1cefbb9ebe449d",
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-control/run_checked_test_profile_s3.py": "9a29fa1da56fce5eb4d092e25bea80e7620916938ef21dde6d64e6fc2fca516b",
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-control/run_model.e6-used.py": "91bd492aecdd2a2dca4d7b817aeefff6535b7fa4f2a64f0969db9c7c8789f80f",
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/checked-test-profile-s3/accepted-artifact.json": "f34056fa5ab8fd8e5360975350d615d140ba5b9fc26e9afcd47ac3c297dc7f3e",
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/checked-test-profile-s3/start.json": "292be91695df3bccaa3501dc315a9426cacc408fcab5e2454fb9135517cc98f9",
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/checked-test-profile-s3/debug-snapshot.json": "afc5de035526e39a89c5eab9dfe8e7f7a340094e82bbaed8a3a01d35480220a0",
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-e6e7fc414690-attempt-01-wrapper/observation.json": "d19866ac5754e3b538442c5f0c6ffa7dc56d121c6a6bfd7b0bc3a5cc43d002dd"
+  },
+  "extra_metadata": [
+    {
+      "control_name": "collect-batch4-v1.checked-process-status.json",
+      "archive_path": "metadata/checked-process-status.json"
+    },
+    {
+      "control_name": "collect-batch4-v1.checked-process-read.json",
+      "archive_path": "metadata/checked-process-read.json"
+    },
+    {
+      "control_name": "collect-batch4-v1.e6-process-status.json",
+      "archive_path": "metadata/e6-process-status.json"
+    },
+    {
+      "control_name": "collect-batch4-v1.e6-process-read.json",
+      "archive_path": "metadata/e6-process-read.json"
+    },
+    {
+      "control_name": "collect-batch4-v1.probe-process-status.json",
+      "archive_path": "metadata/probe-process-status.json"
+    },
+    {
+      "control_name": "collect-batch4-v1.probe-process-read.json",
+      "archive_path": "metadata/probe-process-read.json"
+    },
+    {
+      "control_name": "collect-batch4-v1.earlier-input-refs.json",
+      "archive_path": "metadata/earlier-input-refs.json"
+    }
+  ],
+  "closed_preparation_scope_notes": {
+    "checked_build": "Succeeded0. Original compile JSON/argv, source guards and accepted dual ELF identities preserved. ELF payloads are not copied or rehashed; only original declared hashes/sizes plus current stat are referenced.",
+    "checked_runner_gap": "NOT_RECORDED: source owner confirms no direct self SHA was persisted before checked runner launch. Original start.controller_sha256969e55... binds reused native-controller prefix. Archived checked runner9a29... is post-run material SHA. Pre-launch editor text existed without self-prehash field; request digest bound argv/env/path. Do not fabricate direct prehash binding or rerun.",
+    "e6": "Wrapper failed1 BEFORE native launch: native_started=false; missing optional io.stat made old resource collector discard the entire dictionary and the 8GiB guard refused. This is pre-launch resource observation refusal, not a real native/model failure.",
+    "e6_bindings": "Preserve run_model.e6-used.py91bd..., configc737..., audit4020... . Earlier packet preserves e6 source d1a7... and verification d4c47...; cross-reference immutable originals.",
+    "probe_v2": "Separate closed probe succeeded with memory.max8589934592 and cpu.max400000/100000, model_started=false; it does not upgrade e6 failure.",
+    "model_scope": "No 231 model results, current run_model.py120c70..., live SQLite or payload is collected. Build-stage model_executed=false is scoped to the closed build observation."
+  }
+}

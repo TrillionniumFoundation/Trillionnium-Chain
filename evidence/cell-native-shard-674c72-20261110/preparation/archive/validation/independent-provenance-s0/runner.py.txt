@@ -1,0 +1,218 @@
+#!/usr/bin/env python3
+"""Reproduce a source-only C3/S0 review from exact Git objects; execute no Cargo."""
+from __future__ import annotations
+
+import datetime as dt
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+import sys
+import time
+import tomllib
+
+ROOT = Path('/home/qq/work/chain-cell-native-shard-674c72-20261110')
+OUT = Path('/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-provenance-s0')
+C3 = '06233be630f8eff6cea59cd5111e5941135a4aa5'
+S0 = 'd9c725f27b197f71208754b0a5ac0717798d3587'
+S0_TREE = 'a71a4ede1686baa27c1eb985472928920be41f30'
+COMMANDS: list[dict] = []
+
+
+def sha(raw: bytes) -> str:
+    return hashlib.sha256(raw).hexdigest()
+
+
+def save(relative: str, raw: bytes) -> dict:
+    target = OUT / relative
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with target.open('xb') as stream:
+        stream.write(raw)
+    return {'path': relative, 'bytes': len(raw), 'sha256': sha(raw)}
+
+
+def encoded(value) -> bytes:
+    return (json.dumps(value, indent=2, sort_keys=True) + '\n').encode()
+
+
+def command(label: str, argv: list[str], allowed=(0,)) -> bytes:
+    started = dt.datetime.now(dt.timezone.utc).isoformat()
+    clock = time.monotonic_ns()
+    env = dict(os.environ)
+    env['PYTHONDONTWRITEBYTECODE'] = '1'
+    result = subprocess.run(argv, cwd=ROOT, env=env, capture_output=True, timeout=120)
+    entry = {
+        'label': label, 'argv': argv, 'cwd': str(ROOT),
+        'started_at_utc': started, 'elapsed_ns': time.monotonic_ns() - clock,
+        'returncode': result.returncode,
+        'environment_override': {'PYTHONDONTWRITEBYTECODE': '1'},
+        'stdout': save('raw/' + label + '.stdout', result.stdout),
+        'stderr': save('raw/' + label + '.stderr', result.stderr),
+    }
+    COMMANDS.append(entry)
+    if result.returncode not in allowed:
+        save('commands-incomplete.json', encoded(COMMANDS))
+        raise RuntimeError(f'{label} exit {result.returncode}')
+    return result.stdout
+
+
+def git(label: str, *args: str, allowed=(0,)) -> bytes:
+    return command(label, ['git', '-c', 'core.sparseCheckout=false', *args], allowed)
+
+
+def blob(label: str, revision: str, path: str, records: list[dict]) -> bytes:
+    raw = git('blob/' + label + '/' + path, 'show', revision + ':' + path)
+    actual = hashlib.sha1(b'blob ' + str(len(raw)).encode() + b'\0' + raw).hexdigest()
+    records.append({'revision': revision, 'path': path, 'git_blob_sha1': actual,
+                    'bytes': len(raw), 'sha256': sha(raw),
+                    'raw_path': 'raw/blob/' + label + '/' + path + '.stdout'})
+    return raw
+
+
+def test_names(raw: bytes) -> list[str]:
+    pattern = rb'(?m)^[ \t]*#\[test\]\s*(?:#\[[\s\S]*?\]\s*)*(?:pub(?:\([^)]*\))?\s+)?(?:async\s+)?fn\s+(\w+)\s*\('
+    result = [x.decode() for x in re.findall(pattern, raw)]
+    if len(result) != raw.count(b'#[test]'):
+        raise RuntimeError('test attribute/name count mismatch')
+    return result
+
+
+def main() -> None:
+    if not OUT.is_dir() or sorted(p.name for p in OUT.iterdir()) != sorted(['runner.py', 'preflight-before-write.stderr', 'preflight-before-write.stdout']):
+        raise RuntimeError('output must contain only the create-only runner and prerequisite preflight')
+    before_head = git('working-head-before', 'rev-parse', 'HEAD').decode().strip()
+    git('working-status-before', 'status', '--short')
+    command('project-preflight-readonly', ['bash', 'scripts/project-preflight.sh'])
+    for label, revision in [('c3', C3), ('s0', S0)]:
+        observed = git(label + '-identity', 'show', '--no-patch', '--format=%H%n%T%n%P%n%s', revision).decode().splitlines()
+        if observed[0] != revision or (label == 's0' and observed[1] != S0_TREE):
+            raise RuntimeError('exact revision/tree mismatch')
+    git('c3-ancestor-of-s0', 'merge-base', '--is-ancestor', C3, S0)
+    names = git('source-changed-name-status', 'diff', '--name-status', '--no-renames', C3, S0).decode()
+    git('source-changed-numstat', 'diff', '--numstat', C3, S0)
+    git('source-diff-check', 'diff', '--check', C3, S0)
+    git('cargo-diff', 'diff', C3, S0, '--', ':(glob)**/Cargo.toml', ':(glob)**/Cargo.lock')
+    base_paths = git('c3-native-paths', 'ls-tree', '-r', '--name-only', C3, '--', 'trillionnium').decode().splitlines()
+    next_paths = git('s0-native-paths', 'ls-tree', '-r', '--name-only', S0, '--', 'trillionnium').decode().splitlines()
+    manifest_paths = sorted(path for path in base_paths if path.endswith('/Cargo.toml') or path.endswith('/Cargo.lock'))
+    if manifest_paths != sorted(path for path in next_paths if path.endswith('/Cargo.toml') or path.endswith('/Cargo.lock')):
+        raise RuntimeError('native Cargo path roster changed')
+    records: list[dict] = []
+    raw_manifests = {}
+    manifest_comparison = []
+    for path in manifest_paths:
+        before = blob('c3', C3, path, records)
+        after = blob('s0', S0, path, records)
+        raw_manifests[path] = (before, after)
+        manifest_comparison.append({'path': path, 'same_bytes': before == after})
+    package_maps = []
+    lock_records = []
+    for label, raw in zip(('c3', 's0'), raw_manifests['trillionnium/Cargo.lock']):
+        data = tomllib.loads(raw.decode())
+        packages = data['package']
+        identities = [(p['name'], p['version'], p.get('source', '')) for p in packages]
+        if len(set(identities)) != len(identities):
+            raise RuntimeError('duplicate lock package identity')
+        package_maps.append(dict(zip(identities, packages)))
+        lock_records.append({'label': label, 'revision': C3 if label == 'c3' else S0,
+                             'packages': packages, 'package_count': len(packages)})
+    left, right = package_maps
+    lock_summary = {
+        'c3_package_count': len(left), 's0_package_count': len(right),
+        'added_packages': [list(k) for k in sorted(right.keys() - left.keys())],
+        'removed_packages': [list(k) for k in sorted(left.keys() - right.keys())],
+        'changed_records': [{'identity': list(k), 'before': left[k], 'after': right[k]}
+                            for k in sorted(left.keys() & right.keys()) if left[k] != right[k]],
+    }
+    node = 'trillionnium/crates/trnm-pon-node/Cargo.toml'
+    old_node, new_node = [tomllib.loads(x.decode()) for x in raw_manifests[node]]
+    nondev_equal = {k:v for k,v in old_node.items() if k != 'dev-dependencies'} == {k:v for k,v in new_node.items() if k != 'dev-dependencies'}
+    lock_summary['node_nondev_manifest_semantics_equal'] = nondev_equal
+    lock_summary['node_development_before'] = old_node.get('dev-dependencies', {})
+    lock_summary['node_development_after'] = new_node.get('dev-dependencies', {})
+    tests_dir = 'trillionnium/crates/trnm-pon-node/src/store/storage_service/'
+    original_tests = sorted(path for path in base_paths
+                            if path.startswith(tests_dir) and '/' not in path[len(tests_dir):]
+                            and (path.endswith('_tests.rs') or path.endswith('/tests.rs')))
+    roster = []
+    original_test_preservation = []
+    for path in original_tests:
+        before = blob('c3', C3, path, records)
+        after = blob('s0', S0, path, records)
+        previous, current = test_names(before), test_names(after)
+        roster.extend({'path': path, 'name': name} for name in previous)
+        original_test_preservation.append({'path': path, 'same_bytes': before == after,
+                                          'preserves_entire_c3_prefix': after.startswith(before),
+                                          'c3_names': previous, 's0_direct_names': current,
+                                          'removed_names': sorted(set(previous) - set(current))})
+    original_sources = [
+        'trillionnium/crates/trnm-pon-node/src/lib.rs',
+        'trillionnium/crates/trnm-pon-node/src/store.rs',
+        tests_dir.rstrip('/') + '.rs', tests_dir + 'shard.rs', tests_dir + 'shard/plan.rs',
+    ]
+    append_review = []
+    for path in original_sources:
+        before = blob('c3', C3, path, records)
+        after = blob('s0', S0, path, records)
+        append_review.append({'path': path, 'preserves_entire_c3_prefix': after.startswith(before),
+                              'appended_bytes': len(after) - len(before)})
+        git('diff-source/' + path, 'diff', C3, S0, '--', path)
+    shared = 'trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs'
+    shared_c3 = blob('c3', C3, shared, records)
+    shared_s0 = blob('s0', S0, shared, records)
+    git('diff-shared-research-owner', 'diff', C3, S0, '--', shared)
+    retain_route = b'pub fn run() -> Result<()> {\n    run_with_retention(retain_complete_copy)\n}' in shared_s0
+    git('working-head-after', 'rev-parse', 'HEAD')
+    git('working-status-after', 'status', '--short')
+    summary = {
+        'schema': 'trnm.independent-native-shard-source-provenance.v1',
+        'observed_at_utc': dt.datetime.now(dt.timezone.utc).isoformat(),
+        'comparison': {'base': C3, 'candidate': S0, 'candidate_tree': S0_TREE},
+        'working_head_before': before_head,
+        'scope': 'Exact committed Git blobs, source test-name roster and frozen Cargo manifest/lock records only.',
+        'cargo_execution_performed': False, 'native_tests_executed': False,
+        'runtime_reachability_proved': False, 'model_efficacy_proved': False,
+        'publication_or_production_qualification': False,
+        'cargo_manifest_comparison': manifest_comparison, 'lock_summary': lock_summary,
+        'original_test_count': len(roster),
+        'original_test_prefix_preserved': all(p['preserves_entire_c3_prefix'] for p in original_test_preservation),
+        'original_source_prefix_review': append_review,
+        'existing_complete_copy_entry_retains_explicit_route': retain_route,
+        'changed_existing_historical_evidence_paths': [line for line in names.splitlines()
+            if line.split('\t', 1)[0] != 'A' and '\tevidence/' in line],
+        'all_blob_records': 'git-blob-identities.json',
+        'complete_lock_records': 'native-lock-records.json',
+        'original_test_roster': 'original-storage-test-roster.json',
+        'original_test_preservation': 'original-storage-test-preservation.json',
+        'commands': 'commands.json',
+    }
+    if len(roster) != 44 or len(left) != 181 or len(right) != 181 or not nondev_equal or not summary['original_test_prefix_preserved'] or not all(p['preserves_entire_c3_prefix'] for p in append_review) or not retain_route:
+        save('failed-summary.json', encoded(summary))
+        raise RuntimeError('source-review expectation failed; retained as failure')
+    save('git-blob-identities.json', encoded(records))
+    save('native-lock-records.json', encoded(lock_records))
+    save('original-storage-test-roster.json', encoded(roster))
+    save('original-storage-test-preservation.json', encoded(original_test_preservation))
+    save('commands.json', encoded(COMMANDS))
+    save('summary.json', encoded(summary))
+    files = []
+    for path in sorted(OUT.rglob('*')):
+        if path.is_file():
+            raw = path.read_bytes()
+            files.append({'path': str(path.relative_to(OUT)), 'bytes': len(raw), 'sha256': sha(raw)})
+    manifest = {'schema': 'trnm.independent-provenance-files.v1', 'manifest_self_excluded': True,
+                'files': files, 'file_count_excluding_manifest': len(files),
+                'total_bytes_excluding_manifest': sum(x['bytes'] for x in files)}
+    m = save('file-manifest.json', encoded(manifest))
+    print(json.dumps({'result': 'SOURCE_REVIEW_PASS', 'source_only': True, 'output': str(OUT),
+                      'original_test_names': len(roster), 'lock_packages_each': len(left),
+                      'command_count': len(COMMANDS), 'manifest': m,
+                      'summary_sha256': sha((OUT / 'summary.json').read_bytes()),
+                      'file_count_excluding_manifest': len(files),
+                      'total_bytes_excluding_manifest': manifest['total_bytes_excluding_manifest']}, sort_keys=True))
+
+
+if __name__ == '__main__':
+    main()

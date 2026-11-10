@@ -1,0 +1,19 @@
+{
+  "after": {
+    "config/pon/pq-authority-effects-v1.json": "1e0b3d123e6a078398c3e489c7c8d051a88484878b7a0cbf416eda5f7ccff94b",
+    "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md": "fa3a7868790bc1bf6c35ef1d010634e76c66340d28a9b176a1fc910905bad131",
+    "docs/security/PQ_AUTHORITY_STORAGE_SOURCE_LOCK_REVIEW_20261109.md": "e05bfe9b5a32472d0bc59ed633efb230d26b65735a2c21e29925266d88337e80",
+    "evidence/pq-authority-storage-source-review-20261109/review.json": "df5915360eba1f876b2a34720f689fac35af00522ad7f0d6f50b6e3d97bfc637",
+    "scripts/ci/pq_authority_effect_register.py": "479a43d8ee60e595937f545b9a2c1d30ada6acefd7ffb4c6317c37f32ff0a485",
+    "scripts/ci/test_pq_authority_effect_register.py": "72cf4adfea8aea54a8ca565754c0060b42797e23eca0219d5cba036c094e8597"
+  },
+  "before": {
+    "config/pon/pq-authority-effects-v1.json": "1e0b3d123e6a078398c3e489c7c8d051a88484878b7a0cbf416eda5f7ccff94b",
+    "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md": "fa3a7868790bc1bf6c35ef1d010634e76c66340d28a9b176a1fc910905bad131",
+    "docs/security/PQ_AUTHORITY_STORAGE_SOURCE_LOCK_REVIEW_20261109.md": "e05bfe9b5a32472d0bc59ed633efb230d26b65735a2c21e29925266d88337e80",
+    "evidence/pq-authority-storage-source-review-20261109/review.json": "df5915360eba1f876b2a34720f689fac35af00522ad7f0d6f50b6e3d97bfc637",
+    "scripts/ci/pq_authority_effect_register.py": "479a43d8ee60e595937f545b9a2c1d30ada6acefd7ffb4c6317c37f32ff0a485",
+    "scripts/ci/test_pq_authority_effect_register.py": "72cf4adfea8aea54a8ca565754c0060b42797e23eca0219d5cba036c094e8597"
+  },
+  "unchanged": true
+}

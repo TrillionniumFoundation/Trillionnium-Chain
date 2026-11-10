@@ -1,0 +1,15 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5m 37s
+     Running unittests src/lib.rs (/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/trnm_pon_node-1c6acfc1d5eeef55)
+
+running 7 tests
+test store::storage_service::tests::version::shard_plan::paged_tests::grouped_v3_tests::native_grouped_cold_repair_uses_four_original_shards_and_preserves_done_debits ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::grouped_v3_tests::native_grouped_done_reconcile_survives_unrelated_native_block_and_child_reopen ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::grouped_v3_tests::native_grouped_late_alias_foreign_child_and_short_caps_preflight_before_effects ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::grouped_v3_tests::native_grouped_pending_and_unstarted_children_never_redispatch_initial_copy ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::grouped_v3_tests::native_grouped_pending_parent_cannot_recreate_missing_child_history ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::grouped_v3_tests::native_grouped_repair_requires_distinct_complete_parent_authority_before_effects ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::grouped_v3_tests::native_grouped_storage_keeps_six_parents_eighteen_children_and_cold_done_readback ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 1404 filtered out; finished in 11.87s
+

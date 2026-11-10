@@ -1,0 +1,99 @@
+   Compiling cfg-if v1.0.4
+   Compiling typenum v1.20.1
+   Compiling cpufeatures v0.2.17
+   Compiling zeroize v1.9.1
+   Compiling libc v0.2.184
+   Compiling generic-array v0.14.7
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling cmov v0.5.4
+   Compiling bitflags v2.11.0
+   Compiling ctutils v0.4.6
+   Compiling digest v0.10.7
+   Compiling hybrid-array v0.4.15
+   Compiling sha2-asm v0.6.4
+   Compiling sha2 v0.10.9
+   Compiling curve25519-dalek v4.1.3
+   Compiling serde_core v1.0.228
+   Compiling crypto-common v0.2.2
+   Compiling signature v2.2.0
+   Compiling foldhash v0.2.0
+   Compiling subtle v2.6.1
+   Compiling hashbrown v0.16.1
+   Compiling ed25519 v2.2.3
+   Compiling digest v0.11.3
+   Compiling zmij v1.0.21
+   Compiling memchr v2.8.0
+   Compiling itoa v1.0.18
+   Compiling serde_json v1.0.149
+   Compiling serde v1.0.228
+   Compiling num-traits v0.2.19
+   Compiling ed25519-dalek v2.2.0
+   Compiling hashlink v0.11.1
+   Compiling libsqlite3-sys v0.37.0
+   Compiling keccak v0.2.2
+   Compiling smallvec v1.15.1
+   Compiling foreign-types-shared v0.1.1
+   Compiling fallible-iterator v0.3.0
+   Compiling sponge-cursor v0.1.0
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling shake v0.1.0
+   Compiling rusqlite v0.39.0
+   Compiling foreign-types v0.3.2
+   Compiling thiserror v1.0.69
+   Compiling module-lattice v0.2.3
+   Compiling signature v3.0.0
+   Compiling openssl-sys v0.9.117
+   Compiling hex v0.4.3
+   Compiling trnm-protocol v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-protocol)
+   Compiling openssl v0.10.81
+   Compiling ml-dsa v0.1.1
+   Compiling borsh v1.8.0
+   Compiling anyhow v1.0.103
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-crypto-primitives)
+   Compiling linux-raw-sys v0.12.1
+   Compiling rustix v1.1.4
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling getrandom v0.4.2
+   Compiling trnm-task-kernel v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-verification-profiles)
+   Compiling getrandom v0.2.17
+   Compiling fs2 v0.4.3
+   Compiling once_cell v1.21.4
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-service-settlement v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-service-settlement)
+   Compiling nix v0.30.1
+   Compiling trnm-release-bundle v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-release-bundle)
+   Compiling trnm-mempool v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-transport)
+   Compiling trnm-pon-node v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 32s
+     Running unittests examples/cell_native_shard_research_next_use_v2.rs (/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/examples/cell_native_shard_research_next_use_v2-3e2ece6cd88ccb25)
+
+running 7 tests
+test cell_native_shard_research_v2::tests::expired_callback_cannot_start_funding_or_remove_original_caches ... ok
+test cell_native_shard_research_v2::tests::native_callback_cold_reconstructs_all_pages_from_four_original_providers ... FAILED
+test original::bep52::tests::explicit_endpoint_allowances_fit_one_total ... ok
+test original::bep52::tests::old_network_profile_unknown_fields_and_missing_grants_are_refused ... ok
+test original::bep52::tests::same_operation_transfer_handles_cross_member_cache_dedup ... ok
+test original::snapshot::tests::actual_worker_and_closed_composition_profile_are_required ... ok
+test original::snapshot::tests::dense_roster_rejects_unknown_dtype_duplicate_fields_and_layout_gaps ... ok
+
+failures:
+
+---- cell_native_shard_research_v2::tests::native_callback_cold_reconstructs_all_pages_from_four_original_providers stdout ----
+
+thread 'cell_native_shard_research_v2::tests::native_callback_cold_reconstructs_all_pages_from_four_original_providers' (1843305) panicked at crates/trnm-pon-node/examples/cell_native_shard_research_v2/tests.rs:220:6:
+called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: "LIMIT", source: None, request_history_budget: false }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    cell_native_shard_research_v2::tests::native_callback_cold_reconstructs_all_pages_from_four_original_providers
+
+test result: FAILED. 6 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.28s
+
+error: test failed, to rerun pass `-p trnm-pon-node --example cell_native_shard_research_next_use_v2`

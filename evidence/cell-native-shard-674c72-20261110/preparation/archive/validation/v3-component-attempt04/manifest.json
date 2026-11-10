@@ -1,0 +1,5 @@
+{
+  "source_base": "368db622152e51bf1efbbfedf6f6a87a80ae094b",
+  "only_changed": "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs",
+  "sha256": "6f6fb3397d6be92d851aa4ad631ea7ddba70247f80f5e6d1bf56311bf78e77b6"
+}

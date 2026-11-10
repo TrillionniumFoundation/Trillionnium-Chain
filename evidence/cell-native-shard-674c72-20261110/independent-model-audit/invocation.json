@@ -1,0 +1,21 @@
+[
+  "/usr/bin/python3",
+  "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/audit_model_run.py",
+  "--run-dir",
+  "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02",
+  "--audit-dir",
+  "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/evidence",
+  "--repo",
+  "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+  "--build-record",
+  "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/checked-test-profile-s3/accepted-artifact.json",
+  "--terminal-record",
+  "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/raw-process-status.json",
+  "--producer-closed",
+  "--expected-job-id",
+  "1a1c420eb26-cf39-12d",
+  "--expected-operation",
+  "23120317a3cc20853fbcf0de37924311788e251d59395afc1816b4f6b2b7bbdc",
+  "--expected-source-input-sha",
+  "83e4ab28cd84813c1a489c4c53222764b6437edf0eaad8924776c0777ff61835"
+]

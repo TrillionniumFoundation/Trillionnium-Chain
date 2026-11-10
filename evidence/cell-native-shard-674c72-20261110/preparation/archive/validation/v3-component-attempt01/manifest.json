@@ -1,0 +1,9 @@
+{
+  "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs": "bbafd9f715dde61a310b63d166530c1b4de79b382e38cebc2dfc4d52a9fe9cdd",
+  "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/funding.rs": "c34feb23f683ab7e768f02a9a961fdb199dc23b01f50b69f0e9267ea9c075c7f",
+  "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/groups_v3.rs": "23eb3f58582fe04b0ab2c10c3b135108e06e45d640b8b610ebe272da12293d85",
+  "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/recovery.rs": "517e27e7d514d0469deab4004bcb76b224938712e09208cee58e211d2cdafdb4",
+  "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/tests.rs": "a8b0143013676b1973559c24cc8abb1c1dbbd4608b944ba2256b0722ead30ad4",
+  "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_grouped_shard_v3_tests.rs": "04015f83338d9d9a46a270b7be44de7ee59d41abdb950ff79de1664c6fb5a448",
+  "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs": "fb9af8c325f25aec3f4275b5f00419bdc1d9f9bb3005d16b9bcdb681ad34aac5"
+}

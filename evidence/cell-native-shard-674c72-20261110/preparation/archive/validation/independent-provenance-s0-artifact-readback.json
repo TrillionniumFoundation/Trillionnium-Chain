@@ -1,0 +1,57 @@
+{
+  "errors": [],
+  "files": [
+    {
+      "bytes": 13641,
+      "path": "runner.py",
+      "sha256": "14f1e3a3f0ddb86e38962a0b0b17193c806936f5fa5c4a82879da6b9df3379e8"
+    },
+    {
+      "bytes": 7717,
+      "path": "summary.json",
+      "sha256": "1cda9e7784377ca73922e14e53a8476b8ce48dcc01b22328ebf2b2f893d48cc6"
+    },
+    {
+      "bytes": 105857,
+      "path": "commands.json",
+      "sha256": "b98fdf32eed3713eb7c351a339215c1ddeac654897ef7256e1247325b92d9e2f"
+    },
+    {
+      "bytes": 36315,
+      "path": "git-blob-identities.json",
+      "sha256": "d28f32f3b0b27a6dcb383661e3c703db00c495734b6552cd18bddd54e59db189"
+    },
+    {
+      "bytes": 107115,
+      "path": "native-lock-records.json",
+      "sha256": "7b8efaf054d1385732cc66aa22164b8faadd958f8fcdec777e7291d97c9001d2"
+    },
+    {
+      "bytes": 8762,
+      "path": "original-storage-test-roster.json",
+      "sha256": "5d8ea78df51bd166155b0ec64d4416d02c831ee21baa0a92b4ba6f7dc5ed37c3"
+    },
+    {
+      "bytes": 10525,
+      "path": "original-storage-test-preservation.json",
+      "sha256": "0318c77beeceb4948ec4b2578be8c1c5b5df510f5c4354569f33380b49be313a"
+    },
+    {
+      "bytes": 45983,
+      "path": "prior-overstrong-prefix-failure-inventory.json",
+      "sha256": "ed74c55a337138c4afb6096c7ef3c1a83e1727c1ea442bd04ce83b0a8f052cdf"
+    },
+    {
+      "bytes": 46574,
+      "path": "file-manifest.json",
+      "sha256": "5c9e47c975853c90498e505e6f41c1b7baf5c1dc85e49444b75f2023e511f421"
+    }
+  ],
+  "manifest_files_checked": 230,
+  "native_tests_executed": false,
+  "observed_at_utc": "2026-11-10T05:49:01.079672+00:00",
+  "prior_errors": [],
+  "prior_failed_files_checked": 224,
+  "schema": "trnm.independent-provenance-artifact-readback.v1",
+  "source_only": true
+}

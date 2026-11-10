@@ -1,0 +1,29 @@
+from pathlib import Path
+import copy,hashlib,json,sys,importlib.util,os
+sys.dont_write_bytecode=True
+r=Path('/home/qq/work/chain-cell-native-shard-674c72-20261110');c=Path(str(r)+'-control');v=Path(str(r)+'-validation')
+p=c/'run_model.py';s=importlib.util.spec_from_file_location('prepare_model_v2',p);m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+assert m.sha(p)=='120c70fb52909072eacf84251a44ff6c62f777479685db2cacf8cc1846a9e139'
+old_config=c/'model-config-e6e7-s3.json';assert m.sha(old_config)=='c7378a2516255aba7331a572862ff38894fbd2d74806543e0af5110de2418809'
+config=json.loads(old_config.read_text());identity=m.identity(config)
+prior_source=Path(config['source']);prior_audit=Path(config['audit']);assert m.sha(prior_source)==config['source_sha256'] and m.sha(prior_audit)==config['audit_sha256']
+prior=json.loads(prior_source.read_text());audit=json.loads(prior_audit.read_text());old_observation=Path(str(prior['output'])+'-wrapper/observation.json');failed=json.loads(old_observation.read_text())
+assert failed['passed'] is False and failed['native_started'] is False and not Path(prior['output']).exists()
+assert failed['wrapper_sha256']=='91bd492aecdd2a2dca4d7b817aeefff6535b7fa4f2a64f0969db9c7c8789f80f'
+probe=v/'model-cgroup-resource-probe-v2.json';observed=json.loads(probe.read_text());assert observed['passed'] is True and observed['wrapper_sha256']==m.sha(p) and observed['identity']==identity
+operation=hashlib.sha256(b'TRNM/native-funded-grouped-paged-rs46-research/674c72/attempt-02\0'+bytes.fromhex(audit['source_sha256'])).hexdigest()
+spec=copy.deepcopy(prior);spec['operation']=operation;spec['output']=str(v/('real-native-'+operation[:12]+'-attempt-02'))
+assert operation!=prior['operation'] and not Path(spec['output']).exists() and not Path(spec['output']+'-wrapper').exists()
+audit=copy.deepcopy(audit);audit['operation']=operation
+inputs=m.inputs(spec,audit);assert len(inputs)==31
+assert (spec['seconds'],spec['max_snapshot_bytes'],spec['runtime_rss_bytes'],spec['threads'])==(300,536870912,8589934592,4)
+source=v/'source-inputs.native-v2.attempt02.json';audit_path=v/'source-inputs.native-v2.attempt02.verification.json';m.save(source,spec);m.save(audit_path,audit)
+pin=v/'model-prepare-s3-attempt02-input-pin-audit.json';m.save(pin,{'schema':'trnm.model-source-controller-preflight.v2','identity':identity,'operation':operation,'model_started':False,'source_sha256':m.sha(source),'audit_sha256':m.sha(audit_path),'wrapper_sha256':m.sha(p),'resource_probe_sha256':m.sha(probe),'inputs':inputs})
+old_pin=str(v/'model-prepare-s3-input-pin-audit.json');config['gate_artifacts']=[z for z in config['gate_artifacts'] if z['path']!=old_pin]
+for z in config['gate_artifacts']:assert m.sha(Path(z['path']))==z['sha256']
+config['gate_artifacts'] += [{'path':str(z),'sha256':m.sha(z)} for z in [pin,probe]]
+config.update(source=str(source),source_sha256=m.sha(source),audit=str(audit_path),audit_sha256=m.sha(audit_path),wrapper_sha256=m.sha(p),schema='trnm.native-model-run-config.v2')
+assert m.sha(Path(config['binary']))==config['binary_sha256']
+new_config=c/'model-config-attempt02-s3.json';m.save(new_config,config);new_config.chmod(0o400)
+record={'schema':'trnm.model-preflight-continuation.v1','identity':identity,'previous_operation':prior['operation'],'previous_native_started':False,'previous_failed_observation_sha256':m.sha(old_observation),'previous_failure':'optional io.stat collection discarded required resource observations','previous_records_preserved':True,'operation':operation,'output':spec['output'],'source':str(source),'source_sha256':m.sha(source),'audit':str(audit_path),'audit_sha256':m.sha(audit_path),'config':str(new_config),'config_sha256':m.sha(new_config),'wrapper_sha256':m.sha(p),'binary_sha256':config['binary_sha256'],'same_31_independent_inputs':True,'native_started':False,'original_limits_preserved':True,'prepare_runner_sha256':m.sha(Path(__file__))}
+m.save(v/'model-attempt02-preparation.json',record);print(json.dumps(record,sort_keys=True),flush=True)

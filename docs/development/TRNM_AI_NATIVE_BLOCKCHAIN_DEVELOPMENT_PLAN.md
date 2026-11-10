@@ -1,55 +1,55 @@
-## Native grouped-shard continuation — explicit V3 candidate
+## Native grouped-shard continuation — observed local research / HOLD
 
-Status: **V3 implementation under validation; no same-operation real-model pass**.
-Production qualification remains **HOLD**. The compiled direct-source
-precursor's seven-control attempt remains **6 passed / 1 failed**, with the
-original `LIMIT` refusal preserved. The unchanged native ledger permits at
-most 256 pending tasks. Its proposed 293-source synthetic and 791-source
-real-model rosters exceed that limit; sixteen expirations per height solve
-a separate limit. No production threshold is raised.
+Status: **same-operation real-model research PASS; qualification HOLD**.
+Tested S3: b6f39277b39e0b41e552ec4d32c5f8d354c8255b;
+tree 6a0f38318b3cfb021240cda7f3d266c28aa76e78. Later docs do not relabel tested code.
+[Original evidence and scope](../../evidence/cell-native-shard-674c72-20261110/README.md)
+and the [research contract](specs/pon/CELL_NATIVE_SHARD_RESEARCH_V2.md) retain raw failures and receipts.
 
-Original Task/M12 V1 remains indivisible: its one claim reserves the whole
-Task amount, so sharing one V1 budget across sixteen positive claims is not a
-valid fix. The authorised new V3 route instead uses one original M12 parent
-claim per canonical group and a separately persisted V3 child journal. Every
-child retains its own operation, effect, service window and target receipt.
-For each storage or cold-repair phase, every parent request is checked against
-the actual existing M12 journal and every original hold is installed before
-that phase starts provider work. A parent becomes Done only after every child
-and complete current group readback succeed.
-Pending/Done retries cannot replay initial writes or replace child history.
+Operation 23120317a3cc20853fbcf0de37924311788e251d59395afc1816b4f6b2b7bbdc
+transferred all 30 model/environment members through actual loopback BT.
+Base weights were 269,060,552 bytes / 65 original storage chunks; the complete
+closure was 280,269,602 bytes / 95 canonical chunk bindings across three pages.
+TCV1/TCV2/CTS1/CHB1, worker, parent, OP and both original requests stayed bound.
 
-For the original 30-manifest / 95-chunk input, the planned grouping is 31
-direct root/member sources, 36 storage-group sources and 12 repair-group
-sources: **79 original M12 claims and 760 independent V3 child intents**.
-The 791 logical items must not be reported as 791 original M12 claims.
-Groups contain at most sixteen canonical same-provider children with exact
-monetary/resource sums; sources/budgets are unique between groups. No Task
-is cancelled, paid early or assigned a false future-retention Positive outcome
-to obtain this reduction.
+Actual funding remained 79 reserved development Tasks / 79,100 units at one
+height/generation-5 anchor. Original M12 parents were 31 direct root/member,
+36 storage groups and 12 repair groups. Separate V3 children were 570 storage
+and 190 repair: 760 Done in 48 groups, with 1,568 events independently replayed.
+791 logical items are not 791 M12 claims. No cancellation or payment freed capacity.
 
-The intended data path retains the original BT/TCV1/TCV2/CTS1 pins and absolute
-deadline, complete CRR2/CRG2 coverage, deliberate loss of the TCA3 payload and
-provider slots 4/5, anchored cold reopen, grouped native repair, four-original-
-slot consumer reconstruction and the original sealed-worker forwards.
-The [research contract](specs/pon/CELL_NATIVE_SHARD_RESEARCH_V2.md) defines the
-new grouped boundary, commands, original limits and required raw records.
+After closing owners and deleting old caches, the run zeroed the 512-MiB TCA3
+arena and original providers 4/5 arenas of 70,414,336 bytes each. Native repair
+restored 190 original shard targets; original slots 0–3 reconstructed all 95 chunks.
+Complete content/CTS1 admission and two original sealed-worker forwards passed.
+TCA3 itself remains all zero: source_catalog_payload_repaired=false and
+root_member_payload_current_readback_after_catalog_overwrite=false. Live funds
+and historical root/member Done do not establish current complete TCA3 custody.
 
-The research delivery cache has a separate explicit 768-wire-manifest
-metadata admission. Input and consumer caches retain 128 manifests, and wire
-chunk rows, logical bytes, original wall/memory/thread limits remain fixed.
-The preceding 128-wire-manifest attempt failed with
-`CELL_CACHE_QUOTA_EXHAUSTED`; that original temporary-cache gate did not pass.
+Native elapsed was 235,959 ms; external process 236.083946 s; whole wrapper
+239.801018 s. Original 300 s / 512 MiB / 8 GiB / CPU-bandwidth 4 and worker-grant 4
+bounds stayed fixed. Cgroup peak was 4,202,799,104 bytes with no OOM; it is not RSS
+or proof of peak OS thread count. One worker exit sampling gap was reconciled.
+The independent post-terminal audit passed 12/12; it opened only a copied small CGJ3.
 
-The separate eighteen authority-register controls previously passed with
-`HOLD`; they establish their source-consistency scope only. New V3 code needs
-its own exact-source build, complete controls, strict Clippy, source/graph/link
-checks and fresh real-model operation. Preserve the failed precursor and
-the prior complete-copy observation without upgrading either. Development
-coins and six local provider labels establish neither real-money economics
-nor independent custody. Continuous paid retention, WAN, ordinary Hepta
-FinalUse, model efficacy and production activation remain HOLD.
+The explicit wire metadata profile is 768 manifests / 2,048 chunks / 512 MiB;
+input/consumer remain 128 manifests. Exact actual union charges matched; the
+old 128-wire-manifest gate did not pass. Original LIMIT, alias-fixture, quota
+and byte-accounting failures, S2 /tmp inode/workflow failures and e6 preflight
+refusal (native_started=false) remain preserved; unavailable optional I/O is disclosed.
+S3 local gates passed 43 unchanged source negatives, 18 authority/HOLD, 60 native
+(44 retained + 16 new), 7 native-example and 5 DA-example controls, Clippy/fmt,
+26 packages and 6,224 links. The 181-package lockfile kept existing getrandom;
+only its existing example dev edge was added. These local gates do not establish global CI.
 
+Existing --profile test built an ordinary main: profile.test=false, opt3, debug
+assertions/overflow checks on; no profile/RUSTFLAGS change. Dev f84a was build-only.
+Do not compare optimized timing with C3 debug 270 s. Checked-build wrapper's own
+prelaunch SHA is NOT_RECORDED (post-run 9a29…); start 969e… pins its imported controller.
+Actual model wrapper/config/frozen ELF had before/after pins. Host runtime was not all sealed.
+
+Real payment, continuous custody, independent operators/domains, WAN, FinalUse,
+efficacy/utility/inherited gains, full host-runtime sealing and production remain HOLD.
 
 **Complete model capacity continuation — HOLD:**
 

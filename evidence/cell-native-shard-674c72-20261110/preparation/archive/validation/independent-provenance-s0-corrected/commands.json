@@ -1,0 +1,3012 @@
+[
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 951356,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "working-head-before",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.781363+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/working-head-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "raw/working-head-before.stdout",
+      "sha256": "e99f9fd8645cf8d2f70b5c181e5adec107ecf39511f993dda1edfdc51a6f2020"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "status",
+      "--short"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 30267161,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "working-status-before",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.782515+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/working-status-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "raw/working-status-before.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 27574908,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "project-preflight-readonly",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.812919+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/project-preflight-readonly.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 174,
+      "path": "raw/project-preflight-readonly.stdout",
+      "sha256": "c27e73a9200cdd86e67a0a33ade2544ec59587c2867c275db30ca8839c1afda3"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "--no-patch",
+      "--format=%H%n%T%n%P%n%s",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1268415,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "c3-identity",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.840676+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/c3-identity.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 188,
+      "path": "raw/c3-identity.stdout",
+      "sha256": "9b5f495a1a3ef81898f818c2d204e92056f788177ca06147ab59585b28a86209"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "--no-patch",
+      "--format=%H%n%T%n%P%n%s",
+      "d9c725f27b197f71208754b0a5ac0717798d3587"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 2275928,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "s0-identity",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.842094+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/s0-identity.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 181,
+      "path": "raw/s0-identity.stdout",
+      "sha256": "fc62a1cade75589b1ed70805475b32bebade4c233439f6a242956ea86aa31796"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "merge-base",
+      "--is-ancestor",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5",
+      "d9c725f27b197f71208754b0a5ac0717798d3587"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1164229,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "c3-ancestor-of-s0",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.844494+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/c3-ancestor-of-s0.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "raw/c3-ancestor-of-s0.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "diff",
+      "--name-status",
+      "--no-renames",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5",
+      "d9c725f27b197f71208754b0a5ac0717798d3587"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1977869,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "source-changed-name-status",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.845724+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/source-changed-name-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 2091,
+      "path": "raw/source-changed-name-status.stdout",
+      "sha256": "94e250184e006266b19f7decd2c21dbda43f64678eff42ff65d9ae2e35529785"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "diff",
+      "--numstat",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5",
+      "d9c725f27b197f71208754b0a5ac0717798d3587"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 14172380,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "source-changed-numstat",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.847801+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/source-changed-numstat.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 2187,
+      "path": "raw/source-changed-numstat.stdout",
+      "sha256": "1d0df5898308607944e31b6dfc9246d9253bb5be54fc7944a6263bc109a27d53"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "diff",
+      "--check",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5",
+      "d9c725f27b197f71208754b0a5ac0717798d3587"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 14563157,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "source-diff-check",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.862071+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/source-diff-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "raw/source-diff-check.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "diff",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5",
+      "d9c725f27b197f71208754b0a5ac0717798d3587",
+      "--",
+      ":(glob)**/Cargo.toml",
+      ":(glob)**/Cargo.lock"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 2216050,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "cargo-diff",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.876688+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/cargo-diff.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 1009,
+      "path": "raw/cargo-diff.stdout",
+      "sha256": "b621794cffc287f063402c25eac59b30e3d68519993852121dc7f5fcee629845"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "ls-tree",
+      "-r",
+      "--name-only",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5",
+      "--",
+      "trillionnium"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1928310,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "c3-native-paths",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.879054+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/c3-native-paths.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 114935,
+      "path": "raw/c3-native-paths.stdout",
+      "sha256": "ce91b1f953a2a20c7297516008d412a2888f740ae40a88784f5b341a4d7f15a8"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "ls-tree",
+      "-r",
+      "--name-only",
+      "d9c725f27b197f71208754b0a5ac0717798d3587",
+      "--",
+      "trillionnium"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 2310457,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "s0-native-paths",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.881234+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/s0-native-paths.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 115990,
+      "path": "raw/s0-native-paths.stdout",
+      "sha256": "f2b0c669e0b963ef06acd9522ca9e980eca025830cd3e4cac13feb68b5738c9d"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/Cargo.lock"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 998434,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/Cargo.lock",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.884062+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/Cargo.lock.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 40353,
+      "path": "raw/blob/c3/trillionnium/Cargo.lock.stdout",
+      "sha256": "3db3a086971106994f9e824df0bc64e8fa99cae22dc7bb8bd800643ee573b1ef"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/Cargo.lock"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1324352,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/Cargo.lock",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.885446+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/Cargo.lock.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 40374,
+      "path": "raw/blob/s0/trillionnium/Cargo.lock.stdout",
+      "sha256": "9a09acd113a1db1918ff81922e9f3f9a91ddae94b873d75951bca2fd5f6868b3"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 789262,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.887080+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 2204,
+      "path": "raw/blob/c3/trillionnium/Cargo.toml.stdout",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1008924,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.887987+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 2204,
+      "path": "raw/blob/s0/trillionnium/Cargo.toml.stdout",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-audit-events/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1283384,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-audit-events/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.889155+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-audit-events/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 273,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-audit-events/Cargo.toml.stdout",
+      "sha256": "3b3ea395d825949d15125b2de9ebb3f3a1f737ea2fba1f6655123bfe0bc94b81"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-audit-events/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 946786,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-audit-events/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.890660+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-audit-events/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 273,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-audit-events/Cargo.toml.stdout",
+      "sha256": "3b3ea395d825949d15125b2de9ebb3f3a1f737ea2fba1f6655123bfe0bc94b81"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-bench/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 2359615,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-bench/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.891807+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-bench/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 325,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-bench/Cargo.toml.stdout",
+      "sha256": "6659a2800bf7ab244b4ed07f5a6c01eb3d4110686912f591898432a712b4b64a"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-bench/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 722525,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-bench/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.894299+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-bench/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 325,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-bench/Cargo.toml.stdout",
+      "sha256": "6659a2800bf7ab244b4ed07f5a6c01eb3d4110686912f591898432a712b4b64a"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-checkpoint-store/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1183177,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-checkpoint-store/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.895197+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-checkpoint-store/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 1057,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-checkpoint-store/Cargo.toml.stdout",
+      "sha256": "fdae031e687aaccd0a8b22bdd4ba916ee6c77cd61a90ee5d54d1a5533b416ab1"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-checkpoint-store/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1301493,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-checkpoint-store/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.896560+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-checkpoint-store/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 1057,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-checkpoint-store/Cargo.toml.stdout",
+      "sha256": "fdae031e687aaccd0a8b22bdd4ba916ee6c77cd61a90ee5d54d1a5533b416ab1"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-checkpoint-types/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1213596,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-checkpoint-types/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.898012+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-checkpoint-types/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 331,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-checkpoint-types/Cargo.toml.stdout",
+      "sha256": "fb881e814d9837952b0e291edbbb3bcfa498b8281e139321c556420cf313df15"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-checkpoint-types/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 926597,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-checkpoint-types/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.899395+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-checkpoint-types/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 331,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-checkpoint-types/Cargo.toml.stdout",
+      "sha256": "fb881e814d9837952b0e291edbbb3bcfa498b8281e139321c556420cf313df15"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-control-plane/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1308483,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-control-plane/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.900505+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-control-plane/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 333,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-control-plane/Cargo.toml.stdout",
+      "sha256": "680461e37dc91dfac8c9eff9a3e713922fc117f88e0291f0e7fdf4cc735a9adf"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-control-plane/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1255025,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-control-plane/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.901956+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-control-plane/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 333,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-control-plane/Cargo.toml.stdout",
+      "sha256": "680461e37dc91dfac8c9eff9a3e713922fc117f88e0291f0e7fdf4cc735a9adf"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-crypto-primitives/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1068962,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.903397+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-crypto-primitives/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 924,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-crypto-primitives/Cargo.toml.stdout",
+      "sha256": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-crypto-primitives/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1308343,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.904601+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-crypto-primitives/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 924,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-crypto-primitives/Cargo.toml.stdout",
+      "sha256": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-data-availability/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1222236,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.906098+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-data-availability/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 1250,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-data-availability/Cargo.toml.stdout",
+      "sha256": "d1a23863a1ee4890528a7fa929a4f7b29e22d06ae5c997987a435ea805f01946"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-data-availability/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1334612,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.907513+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-data-availability/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 1250,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-data-availability/Cargo.toml.stdout",
+      "sha256": "d1a23863a1ee4890528a7fa929a4f7b29e22d06ae5c997987a435ea805f01946"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-escrow-vault/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1175298,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-escrow-vault/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.909037+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-escrow-vault/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 347,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-escrow-vault/Cargo.toml.stdout",
+      "sha256": "d7d15fe56bffccf5035e99702fbff36f19cde68adb978cddcb99cc81c909283e"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-escrow-vault/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1047342,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-escrow-vault/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.910364+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-escrow-vault/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 347,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-escrow-vault/Cargo.toml.stdout",
+      "sha256": "d7d15fe56bffccf5035e99702fbff36f19cde68adb978cddcb99cc81c909283e"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-executor/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1299334,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-executor/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.911545+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-executor/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 168,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-executor/Cargo.toml.stdout",
+      "sha256": "a5e4d8f26d975149bd33019d28dabd650066370e8126aad11913c4c87d2a7899"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-executor/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 859109,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-executor/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.913021+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-executor/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 168,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-executor/Cargo.toml.stdout",
+      "sha256": "a5e4d8f26d975149bd33019d28dabd650066370e8126aad11913c4c87d2a7899"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-governance-guard/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 861639,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-governance-guard/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.914006+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-governance-guard/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 351,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-governance-guard/Cargo.toml.stdout",
+      "sha256": "0beb309f98afc7188026936d9c670be343acc969371cfa552eeb6f3444f1a7bf"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-governance-guard/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1314303,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-governance-guard/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.915003+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-governance-guard/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 351,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-governance-guard/Cargo.toml.stdout",
+      "sha256": "0beb309f98afc7188026936d9c670be343acc969371cfa552eeb6f3444f1a7bf"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-mempool/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 2381285,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-mempool/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.916499+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-mempool/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 141,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-mempool/Cargo.toml.stdout",
+      "sha256": "b0fcd75b13e78b66d0b20e3a2176c9c0962dfbe1ca5e0670274198c963756c85"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-mempool/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1108630,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-mempool/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.919004+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-mempool/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 141,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-mempool/Cargo.toml.stdout",
+      "sha256": "b0fcd75b13e78b66d0b20e3a2176c9c0962dfbe1ca5e0670274198c963756c85"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-mvcc-fee/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1248625,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.920304+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-mvcc-fee/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 998,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-mvcc-fee/Cargo.toml.stdout",
+      "sha256": "9aa41333719fd478a784a57ffb2bf5afdae18359af815f30db03217440c36fff"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-mvcc-fee/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1134800,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.921638+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-mvcc-fee/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 998,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-mvcc-fee/Cargo.toml.stdout",
+      "sha256": "9aa41333719fd478a784a57ffb2bf5afdae18359af815f30db03217440c36fff"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-oracle/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 922506,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-oracle/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.922916+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-oracle/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 235,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-oracle/Cargo.toml.stdout",
+      "sha256": "74d413acf566aac890f01a5062f0dc828c2220edde665aeb7500bf71bf08e759"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-oracle/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 805911,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-oracle/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.924015+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-oracle/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 235,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-oracle/Cargo.toml.stdout",
+      "sha256": "74d413acf566aac890f01a5062f0dc828c2220edde665aeb7500bf71bf08e759"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-peer-lease/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 955825,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-peer-lease/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.924937+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-peer-lease/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 2011,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-peer-lease/Cargo.toml.stdout",
+      "sha256": "d330e720fdadff49d3a4566f0f6408e1fbbf914117ff89d6bd0ae4321e33b658"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-peer-lease/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1960159,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-peer-lease/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.926024+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-peer-lease/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 2011,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-peer-lease/Cargo.toml.stdout",
+      "sha256": "d330e720fdadff49d3a4566f0f6408e1fbbf914117ff89d6bd0ae4321e33b658"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-pon-node/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 716124,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.928071+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 2114,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/Cargo.toml.stdout",
+      "sha256": "91bc17c392f5a56cbebc92ca8d2954f5eefeb4294f50d2f5c99927543e70483a"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-pon-node/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1021183,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.928971+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 2288,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/Cargo.toml.stdout",
+      "sha256": "0f2de622c9ab032f666033da43a1b4fc6adabd1781d561703452bd9ba987fe14"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-protocol/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 872789,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-protocol/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.930182+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-protocol/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 684,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-protocol/Cargo.toml.stdout",
+      "sha256": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-protocol/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1193767,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-protocol/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.931190+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-protocol/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 684,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-protocol/Cargo.toml.stdout",
+      "sha256": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-release-bundle/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1301623,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-release-bundle/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.932559+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-release-bundle/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 523,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-release-bundle/Cargo.toml.stdout",
+      "sha256": "1253706cf981ca12a4d4da734ffd14412d13a6941fd8f6649dab34b488cf2c52"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-release-bundle/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1205767,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-release-bundle/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.933984+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-release-bundle/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 523,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-release-bundle/Cargo.toml.stdout",
+      "sha256": "1253706cf981ca12a4d4da734ffd14412d13a6941fd8f6649dab34b488cf2c52"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-research-protocol/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 895207,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-research-protocol/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.935372+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-research-protocol/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 426,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-research-protocol/Cargo.toml.stdout",
+      "sha256": "d509ee983b0128ed70468ce224694f1edbab899ff0c4b0fa6b60e69cf5ce278b"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-research-protocol/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1361451,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-research-protocol/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.936447+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-research-protocol/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 426,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-research-protocol/Cargo.toml.stdout",
+      "sha256": "d509ee983b0128ed70468ce224694f1edbab899ff0c4b0fa6b60e69cf5ce278b"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-service-settlement/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1168038,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-service-settlement/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.937983+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-service-settlement/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 630,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-service-settlement/Cargo.toml.stdout",
+      "sha256": "ef6d0d6b16ca5600808bbbed76b902f2004d427a29ebe4f5b5d6c78360cc517d"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-service-settlement/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1174587,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-service-settlement/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.939295+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-service-settlement/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 630,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-service-settlement/Cargo.toml.stdout",
+      "sha256": "ef6d0d6b16ca5600808bbbed76b902f2004d427a29ebe4f5b5d6c78360cc517d"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1178158,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.940641+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 594,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml.stdout",
+      "sha256": "91f0c5dee1d02ff6ee62b276e11429c0f616eae7d7a8bd00d1315ac777c987e9"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1165778,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.941995+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 594,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml.stdout",
+      "sha256": "91f0c5dee1d02ff6ee62b276e11429c0f616eae7d7a8bd00d1315ac777c987e9"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-state-import/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1040853,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-state-import/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.943306+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-state-import/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 408,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-state-import/Cargo.toml.stdout",
+      "sha256": "fab1897088c6a5f81ef52c33de2cfae63854cd3ed435b3e70ce8054acfba0d9b"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-state-import/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1184777,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-state-import/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.944487+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-state-import/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 408,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-state-import/Cargo.toml.stdout",
+      "sha256": "fab1897088c6a5f81ef52c33de2cfae63854cd3ed435b3e70ce8054acfba0d9b"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-task-kernel/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1101141,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-task-kernel/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.945830+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-task-kernel/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 563,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-task-kernel/Cargo.toml.stdout",
+      "sha256": "d87cc43b8dbe3ba163886d25f1587c32ae3c562603102a5bf0645abcedef0063"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-task-kernel/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1145659,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-task-kernel/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.947015+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-task-kernel/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 563,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-task-kernel/Cargo.toml.stdout",
+      "sha256": "d87cc43b8dbe3ba163886d25f1587c32ae3c562603102a5bf0645abcedef0063"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-transport/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 963225,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-transport/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.948347+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-transport/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 395,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-transport/Cargo.toml.stdout",
+      "sha256": "720d1ac4ca279d52da65eb63ecbbea94d9b880f2befc1d873ab2a9b654a71ed7"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-transport/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1191387,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-transport/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.949486+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-transport/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 395,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-transport/Cargo.toml.stdout",
+      "sha256": "720d1ac4ca279d52da65eb63ecbbea94d9b880f2befc1d873ab2a9b654a71ed7"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-types/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 897438,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-types/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.950853+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-types/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 238,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-types/Cargo.toml.stdout",
+      "sha256": "ff83cf759d5233c0cbb5b642f81f7e43fb4578716de5f76ff9128810148e9814"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-types/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1257925,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-types/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.951885+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-types/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 238,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-types/Cargo.toml.stdout",
+      "sha256": "ff83cf759d5233c0cbb5b642f81f7e43fb4578716de5f76ff9128810148e9814"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-verification-profiles/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1242755,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-verification-profiles/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.953328+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-verification-profiles/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 336,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-verification-profiles/Cargo.toml.stdout",
+      "sha256": "a834c59008c5f2ff6c131cba6ed73d7c7ef61ead7ad9eeb154eedae31dc21155"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-verification-profiles/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1132569,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-verification-profiles/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.954696+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-verification-profiles/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 336,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-verification-profiles/Cargo.toml.stdout",
+      "sha256": "a834c59008c5f2ff6c131cba6ed73d7c7ef61ead7ad9eeb154eedae31dc21155"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-worker-agent/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1151439,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-worker-agent/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.955914+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-worker-agent/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 561,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-worker-agent/Cargo.toml.stdout",
+      "sha256": "04bfc738e6b161237988e77304b0bf660d31583b3708e8499566b4b717ca9554"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-worker-agent/Cargo.toml"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 815101,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-worker-agent/Cargo.toml",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.957182+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-worker-agent/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 561,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-worker-agent/Cargo.toml.stdout",
+      "sha256": "04bfc738e6b161237988e77304b0bf660d31583b3708e8499566b4b717ca9554"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-pon-node/src/store/storage_service/cache_quota_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 999574,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/cache_quota_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.963056+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/cache_quota_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 3411,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/cache_quota_tests.rs.stdout",
+      "sha256": "2c135db9fbadf25fe330c62f05c4729c47741269ffec933b8042bd741e844bfb"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-pon-node/src/store/storage_service/cache_quota_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1145629,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/cache_quota_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.964229+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/cache_quota_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 3411,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/cache_quota_tests.rs.stdout",
+      "sha256": "2c135db9fbadf25fe330c62f05c4729c47741269ffec933b8042bd741e844bfb"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 895027,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.965715+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 7499,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs.stdout",
+      "sha256": "0024d618e98db072b566a3a2921d891ed933d5d82e3e502d2fc4ec8dc21ce574"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 925307,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.966704+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 7499,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs.stdout",
+      "sha256": "0024d618e98db072b566a3a2921d891ed933d5d82e3e502d2fc4ec8dc21ce574"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1087871,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.967900+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 28806,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs.stdout",
+      "sha256": "ff16b9fefbb8ae63b4b6c2c78462d6896b0f8b6a0309a35e8b7fde8cc8ccd0e8"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1220156,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.969150+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 28806,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs.stdout",
+      "sha256": "ff16b9fefbb8ae63b4b6c2c78462d6896b0f8b6a0309a35e8b7fde8cc8ccd0e8"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-pon-node/src/store/storage_service/replay_owner_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1032113,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/replay_owner_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.970712+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/replay_owner_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 23044,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/replay_owner_tests.rs.stdout",
+      "sha256": "d6999c5c54b2492e8ce34d66883a27277aece0697c4b047d56fa963d4dd03271"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-pon-node/src/store/storage_service/replay_owner_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1248525,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/replay_owner_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.971975+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/replay_owner_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 23044,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/replay_owner_tests.rs.stdout",
+      "sha256": "d6999c5c54b2492e8ce34d66883a27277aece0697c4b047d56fa963d4dd03271"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 945636,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.973513+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 14451,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs.stdout",
+      "sha256": "c53280c69183ef36f2d22d2b10839dc73b15a5ba96e858d4a72654d5c0570a12"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 933667,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.974618+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 14451,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs.stdout",
+      "sha256": "c53280c69183ef36f2d22d2b10839dc73b15a5ba96e858d4a72654d5c0570a12"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1346242,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.975771+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 28147,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs.stdout",
+      "sha256": "5e295e1beed76ac833d43b87c1fc3a6f2476cd5ada73230d3fd561a119c4148d"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 999534,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.977358+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 28147,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs.stdout",
+      "sha256": "5e295e1beed76ac833d43b87c1fc3a6f2476cd5ada73230d3fd561a119c4148d"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1314253,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.978941+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 21919,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs.stdout",
+      "sha256": "595aa302e46696e187b94a127a6406f77314569121f948b9f4c471d30375a6d1"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 920667,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.980431+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 22016,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs.stdout",
+      "sha256": "fb9af8c325f25aec3f4275b5f00419bdc1d9f9bb3005d16b9bcdb681ad34aac5"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1058102,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.981794+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 16258,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs.stdout",
+      "sha256": "db2c42cb97067d1553a36fe6be4d67bdeea204a0132952ae1d62cddb97ec8db8"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1367541,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.983002+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 16258,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs.stdout",
+      "sha256": "db2c42cb97067d1553a36fe6be4d67bdeea204a0132952ae1d62cddb97ec8db8"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1399250,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.984777+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 16392,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs.stdout",
+      "sha256": "d10e7a28a800344700ba21e936dc8421a16123c0ad7ad3809a03fae1b298670f"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1013784,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.986356+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 16392,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs.stdout",
+      "sha256": "d10e7a28a800344700ba21e936dc8421a16123c0ad7ad3809a03fae1b298670f"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1398250,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.987780+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 27480,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs.stdout",
+      "sha256": "258e21b0c13030f59a1b467bb6bde612f7a74fe1a1fb0731b05e5a6f7e961601"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1047722,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.989428+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 27480,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs.stdout",
+      "sha256": "258e21b0c13030f59a1b467bb6bde612f7a74fe1a1fb0731b05e5a6f7e961601"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1284034,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.990981+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 22044,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs.stdout",
+      "sha256": "21179b4f545c03b11db983714a57a912094a00797651e318eaf9f8778137da34"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1026363,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.992486+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 22044,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs.stdout",
+      "sha256": "21179b4f545c03b11db983714a57a912094a00797651e318eaf9f8778137da34"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-pon-node/src/lib.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1310993,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-pon-node/src/lib.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.993945+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/lib.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 36955,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/lib.rs.stdout",
+      "sha256": "a6ec39ecbdd3e0ff0f54bd1615a0d03cb8b4347c337451a71b0288c533642c1c"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-pon-node/src/lib.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1260475,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-pon-node/src/lib.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.995463+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/lib.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 37582,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/lib.rs.stdout",
+      "sha256": "d8d5cd3f0e17f42589965f7de57575a2147277f0b34b5f1424d013f001fa0324"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "diff",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5",
+      "d9c725f27b197f71208754b0a5ac0717798d3587",
+      "--",
+      "trillionnium/crates/trnm-pon-node/src/lib.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1784486,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "diff-source/trillionnium/crates/trnm-pon-node/src/lib.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.997494+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/lib.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 1098,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/lib.rs.stdout",
+      "sha256": "c40001a996e32807d72200be0c9b713a6f6cc38031f1f58ad454ab2cf7e890ae"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-pon-node/src/store.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 3151467,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-pon-node/src/store.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:53.999490+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 382866,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store.rs.stdout",
+      "sha256": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-pon-node/src/store.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 2071515,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-pon-node/src/store.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:54.003475+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 383503,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store.rs.stdout",
+      "sha256": "ae9602b648ceadbc6c8b786fae74048e172572d18bfce41ecceab65728f2bdac"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "diff",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5",
+      "d9c725f27b197f71208754b0a5ac0717798d3587",
+      "--",
+      "trillionnium/crates/trnm-pon-node/src/store.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 3935098,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "diff-source/trillionnium/crates/trnm-pon-node/src/store.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:54.020075+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/store.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 971,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/store.rs.stdout",
+      "sha256": "0764c94fa98dda674bd8fa9420616b205bad01109da2e7210509eae80a10699a"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-pon-node/src/store/storage_service.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1281914,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:54.024133+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 17835,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs.stdout",
+      "sha256": "6bd082d824ca4876b906ba484bc85eff4b2990f92d0bf26af95d00ef04e412e0"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-pon-node/src/store/storage_service.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1361541,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:54.025562+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 18462,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs.stdout",
+      "sha256": "66a0006a069aa50ed5e63eb13d329c6588ea1b460ce869969234a3d313a94f14"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "diff",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5",
+      "d9c725f27b197f71208754b0a5ac0717798d3587",
+      "--",
+      "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1638021,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "diff-source/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:54.027606+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 1013,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs.stdout",
+      "sha256": "b039a6c3b42ec25233e33056dfe63416273f06a455efc0ee8a5f14cbad1184d6"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 773252,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:54.029379+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 14095,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs.stdout",
+      "sha256": "22a85789d5ae8e2cdc38cff2b8be5b6911ccf9e66d77fc1f682c8e564b7451c8"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 956896,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:54.030253+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 14721,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs.stdout",
+      "sha256": "6d5ed788928927bce0aaad7a6292ea0fc74d3740c8eee96c445fbbfe4553726d"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "diff",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5",
+      "d9c725f27b197f71208754b0a5ac0717798d3587",
+      "--",
+      "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1082112,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "diff-source/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:54.031545+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 1053,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs.stdout",
+      "sha256": "8a5db5876a9c827c9fcd4980b918d422d569a05b26a823d7dc23cda22263a2cf"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 957995,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:54.032707+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 11847,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs.stdout",
+      "sha256": "101f99ef4ee04a7785ae2270166112a76f2515f45c0f15f04cdb65453a36086c"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 912428,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:54.033823+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 12559,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs.stdout",
+      "sha256": "9b2a8c33581acd7c7986e8a8546aef5acf6c771dcec49bd6bcab59e654de235b"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "diff",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5",
+      "d9c725f27b197f71208754b0a5ac0717798d3587",
+      "--",
+      "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1208776,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "diff-source/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:54.035014+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 1140,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs.stdout",
+      "sha256": "6dc5e6712d1c46c28cb8c45273abb1d1ae94decd9c259f9b8ca0770efa148b3e"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5:trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 942466,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/c3/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:54.036349+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 33019,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs.stdout",
+      "sha256": "bfa43839b352882a8e2ddad83f5b4b6af5149252d44e4cef69d72aed81d5094c"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "show",
+      "d9c725f27b197f71208754b0a5ac0717798d3587:trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1014343,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "blob/s0/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:54.037570+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 35388,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs.stdout",
+      "sha256": "a3032e60636b8c30f10a41ce62ee787c5ec4996315871b0fab3b5932359485a6"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "diff",
+      "06233be630f8eff6cea59cd5111e5941135a4aa5",
+      "d9c725f27b197f71208754b0a5ac0717798d3587",
+      "--",
+      "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 1243065,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "diff-shared-research-owner",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:54.038772+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/diff-shared-research-owner.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 10362,
+      "path": "raw/diff-shared-research-owner.stdout",
+      "sha256": "476cebcb50f1bc641a8ae978bdd4fbb5e4039e78e35719c3e4482f91826bc857"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 790762,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "working-head-after",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:54.040147+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/working-head-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "raw/working-head-after.stdout",
+      "sha256": "e99f9fd8645cf8d2f70b5c181e5adec107ecf39511f993dda1edfdc51a6f2020"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.sparseCheckout=false",
+      "status",
+      "--short"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "elapsed_ns": 29519879,
+    "environment_override": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "label": "working-status-after",
+    "returncode": 0,
+    "started_at_utc": "2026-11-10T05:47:54.041086+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "raw/working-status-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "raw/working-status-after.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]

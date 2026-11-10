@@ -1,0 +1,11 @@
+from pathlib import Path
+import importlib.util,json,hashlib,sys
+sys.dont_write_bytecode=True
+r=Path('/home/qq/work/chain-cell-native-shard-674c72-20261110');p=Path(str(r)+'-control/run_model.py')
+assert hashlib.sha256(p.read_bytes()).hexdigest()=='120c70fb52909072eacf84251a44ff6c62f777479685db2cacf8cc1846a9e139'
+s=importlib.util.spec_from_file_location('resource_probe',p);m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+j={'schema':'trnm.model-resource-preflight.v2','model_started':False,'wrapper_sha256':m.sha(p),'identity':m.identity({'head':'b6f39277b39e0b41e552ec4d32c5f8d354c8255b','tree':'6a0f38318b3cfb021240cda7f3d266c28aa76e78'}),'cgroup':m.memory()}
+cpu=j['cgroup'].get('cpu.max','').split();j['passed']=j['cgroup'].get('memory.max')=='8589934592' and len(cpu)==2 and cpu[0].isdigit() and cpu[1].isdigit() and int(cpu[0])==4*int(cpu[1])
+m.save(Path(str(r)+'-validation/model-cgroup-resource-probe-v2.json'),j)
+print(json.dumps(j,sort_keys=True),flush=True)
+raise SystemExit(0 if j['passed'] else 1)
