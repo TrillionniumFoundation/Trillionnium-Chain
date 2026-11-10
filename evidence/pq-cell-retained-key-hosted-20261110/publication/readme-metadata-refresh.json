@@ -1,0 +1,20 @@
+{
+  "schema": "delivery-metadata-readme-pin-refresh-v1",
+  "original_refusal": "ValueError: changed delivery metadata: README.md",
+  "cause": "Root added publication record links after the observer metadata map was prepared. Only editorial delivery README metadata changed.",
+  "changed_rows": [
+    {
+      "path": "README.md",
+      "old": {
+        "path": "README.md",
+        "bytes": 2848,
+        "sha256": "166a03ecc3c1598f7f47524206a25f671abdb7664e04a48ad6925da74da3a9f4"
+      },
+      "new_bytes": 3056,
+      "new_sha256": "a417a892ae1e6dbc4063490ccb205e006e42aa8ea96c72ebda9748788a8d271c"
+    }
+  ],
+  "original_source_files_changed": false,
+  "native_tests_rerun": false,
+  "whole_chain_pq_qualified": false
+}

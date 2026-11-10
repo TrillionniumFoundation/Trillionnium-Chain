@@ -1,0 +1,1 @@
+Original record_pq_native_command.py combines stdout and stderr into each retained .log using stderr=STDOUT. These artifacts contain the original complete combined streams, not separate original stdout/stderr files. native-41.phases.jsonl is derived from complete phase lines; native-41.log remains unchanged.

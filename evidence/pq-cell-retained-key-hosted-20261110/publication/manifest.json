@@ -1,0 +1,50 @@
+{
+  "schema": "retained-actual-ee-publication-files-v1",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 1483,
+      "sha256": "54db7eb64e227aba805b8e82ef6c606ee0ebc6512a5786c956e422446ffb6ddf"
+    },
+    {
+      "path": "actual-publisher-with-bounded-object-retry.sh",
+      "bytes": 3251,
+      "sha256": "284ebb4c6a96c42cc2e5ad094fb15b2190f9e0075ce594855396b996849926ea"
+    },
+    {
+      "path": "bounded-retry-success-pty-read.json",
+      "bytes": 2936,
+      "sha256": "8a80eea1bbe4ea4493d923e5c306b9eefa6255158937a6e99f4284b6f03d8f6d"
+    },
+    {
+      "path": "initial-map-before-readme-link-refresh.json",
+      "bytes": 7815,
+      "sha256": "9ab7683c8246324ac6675d0c9f1ef742192f968d29f9990eb81db10fd799bf55"
+    },
+    {
+      "path": "original-failed-job-read.json",
+      "bytes": 896,
+      "sha256": "8c76f01ca64aec79d23151ff8608d6ff1f844aae3c1db18bf804844f5073b731"
+    },
+    {
+      "path": "readme-metadata-refresh.json",
+      "bytes": 724,
+      "sha256": "9675982a3835748f31edacb4c6d609fe5e9cee89bb7092a849bcac445b956d67"
+    },
+    {
+      "path": "remote-commit-readback.json",
+      "bytes": 623,
+      "sha256": "90b1d23b4ed3b47a7bba254347941bddd03ca0e70d7046d162b53cc4b43ac0db"
+    },
+    {
+      "path": "remote-pr-readback.json",
+      "bytes": 250,
+      "sha256": "74068680b3221d5c7a93f46504c6a2e6c31beff3452ffded449e5a6a951b57eb"
+    },
+    {
+      "path": "second-failed-pty-read.json",
+      "bytes": 1440,
+      "sha256": "222bfbf038b5007d5d7e9964f4bc929a69094911f3430a2004d295b6f6c3c971"
+    }
+  ]
+}

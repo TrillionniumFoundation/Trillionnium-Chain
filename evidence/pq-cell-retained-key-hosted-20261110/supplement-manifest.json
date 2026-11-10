@@ -1,0 +1,17 @@
+{
+  "schema": "analysis-supplement-manifest-v1",
+  "original_manifest_unchanged_sha256": "3b1dbb95a302aa92a5f546e6c2d5764e97dba58fc2eb3ad2487a5c86b5f06942",
+  "files": [
+    {
+      "path": "analysis-no-rerun.json",
+      "bytes": 6841,
+      "sha256": "20b5916125f632975942db59305748e8cb74086a77a3d00775630a6f92b62962"
+    },
+    {
+      "path": "workflow-final-read-snapshot.json",
+      "bytes": 11970,
+      "sha256": "09802d46719ad4bdcd25690e9fc48e5de9a65642b61bdeb327fc6316df82a042"
+    }
+  ],
+  "self_excluded": true
+}

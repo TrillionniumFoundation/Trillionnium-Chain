@@ -1,0 +1,177 @@
+{
+  "schema": "analysis-no-rerun-v1",
+  "scope": "Static source inspection and analysis of original hosted records; no new native execution or budget change.",
+  "source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+  "tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff",
+  "target_source": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "test_command": [
+    "cargo",
+    "+1.95.0",
+    "test",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "--all-features",
+    "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+    "--",
+    "--exact",
+    "--show-output",
+    "--test-threads=1"
+  ],
+  "actual_exit_code": 101,
+  "failure": "First legitimate sender.send(... Duration::from_secs(10)) returned FRAME_EOF; Result::unwrap panicked at combined_tests.rs:586:6. Subsequent exact replay and witness-process restart assertions were not reached.",
+  "lifecycle": [
+    "combined_tests.rs:70 constructs WitnessClient with WitnessBinding, writer key and already-connected UnixStream.",
+    "Process::start begins at line103. A separate child opens the existing DurableWitness, binds witness.sock, atomically publishes ready with its PID; the parent waits up to10s and checks a distinct matching PID before Node creation.",
+    "The child accepts the UDS connection and repeatedly calls serve_one with min(fixture end, now+10s); total fixture lifetime remains60s.",
+    "The bad-signature TCP request is deliberately refused before the first legitimate submit. The legitimate submit reaches its guarded mutation CAS; its outer TCP sender budget is10s."
+  ],
+  "budget": {
+    "unchanged_constant": "pq_rollback_witness.rs:76 MAX_EXCHANGE = Duration::from_millis(250)",
+    "entry": "WitnessClient::request at line335 chooses min(original deadline, Instant::now()+MAX_EXCHANGE) for each current/CAS request.",
+    "included_work": [
+      "challenge and body",
+      "request signing plus self-verification",
+      "transport write/read",
+      "reply context",
+      "reply signature verification",
+      "final checks"
+    ],
+    "observed_cas": {
+      "effective_remaining_ns": 249999939,
+      "original_remaining_ns": 9845912857,
+      "signing_wall_ns": 9760176,
+      "transport_wall_ns": 240278340,
+      "total_wall_ns": 250070213,
+      "calling_thread_cpu_ns": 11409434,
+      "error": "PQ_WITNESS_DEADLINE"
+    },
+    "observed_witness_write": {
+      "wall_ns": 291611450,
+      "calling_thread_cpu_ns": 8256284,
+      "error": "broken_pipe",
+      "raw_os_error": 32
+    },
+    "phase_summaries": [
+      {
+        "process_id": 23178,
+        "budgets_unchanged": true,
+        "last_failure": {
+          "error": {
+            "code": null,
+            "io_kind": "broken_pipe",
+            "origin": "io",
+            "raw_os_error": 32,
+            "sqlite_extended_code": null
+          },
+          "id": 25,
+          "kind": "witness_connection",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "witness_write",
+          "thread_cpu_ns": 8256284,
+          "wall_ns": 291611450
+        },
+        "last_tcp_failure": null,
+        "record_capacity": 8,
+        "records_overwritten": 18,
+        "operation_ids_are_process_local": true
+      },
+      {
+        "process_id": 23175,
+        "budgets_unchanged": true,
+        "last_failure": {
+          "error": {
+            "code": "PQ_WITNESS_DEADLINE",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 19,
+          "kind": "tcp_request",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "tcp_handle",
+          "thread_cpu_ns": 58593659,
+          "wall_ns": 404208704
+        },
+        "last_tcp_failure": {
+          "error": {
+            "code": "PQ_WITNESS_DEADLINE",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 19,
+          "kind": "tcp_request",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "tcp_handle",
+          "thread_cpu_ns": 58593659,
+          "wall_ns": 404208704
+        },
+        "record_capacity": 8,
+        "records_overwritten": 26,
+        "operation_ids_are_process_local": true
+      }
+    ]
+  },
+  "unknown_cas": [
+    "A transport error can leave an unread response or uncertain external CAS. WitnessClient::request marks that transport unavailable after transport-entry errors.",
+    "Mutation::commit_with_check requires successful advance_until before its normal paired local commit. It cannot report this CAS as confirmed success.",
+    "FRAME_EOF and missing authenticated reply do not prove that external CAS never happened; no false zero-effect conclusion is inferred."
+  ],
+  "cache_call_chain": {
+    "new_Cell_cached_APIs_in_this_path": false,
+    "existing_verifiers": "WitnessBinding already retained its witness/writer PqNativeVerifier fields at pq_rollback_witness.rs:111/112, constructed at141/143; these are unchanged existing implementations.",
+    "no_references_to": [
+      "CellPqKeyPinsV2",
+      "verify_at_with_pins",
+      "verify_cached_at_with_pins"
+    ],
+    "compared_source_scope": [
+      "trnm-pon-node/src",
+      "trnm-crypto-primitives/src"
+    ],
+    "difference_from_target_in_compared_scope": [],
+    "witness_subtree_git_oid_at_both_sources": "9e1e7f16bbc5d0c5480dc5d5b0e87ad52af6ac82"
+  },
+  "causal_limit": "The failing native witness code is unchanged from the target and the new Cell key-pin cache is absent from this call chain. No same-environment baseline execution or complete scheduler/disk-wait trace was collected, so these facts do not establish a unique concurrency/host cause or prove all possible indirect PR effects absent.",
+  "target_baseline_execution_comparison_performed": false,
+  "preserved_open_blockers": [
+    "Original250ms honest witness CAS completion in this observed run",
+    "Authenticated outcome reconciliation after transport uncertainty",
+    "The selected test remaining exact replay/process-restart assertions were not reached"
+  ],
+  "budgets_modified": false,
+  "assertions_weakened": false,
+  "tests_rerun": false,
+  "independent_execution_authentication": false,
+  "whole_chain_pq_qualified": false
+}

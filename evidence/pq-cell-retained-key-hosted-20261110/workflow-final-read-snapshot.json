@@ -1,0 +1,329 @@
+{
+  "schema": "last-read-only-hosted-snapshot-v1",
+  "observed_at": "2026-11-10T09:22:42.772Z",
+  "pr": {
+    "number": 851,
+    "reported_head": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+    "live_branch_head": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+    "base": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+    "draft": true,
+    "state": "open",
+    "mergeable": true
+  },
+  "exact_observation_source": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+  "all_workflow_runs_terminal": false,
+  "run_counts": {
+    "queued": 12,
+    "pending": 1,
+    "success": 8,
+    "in_progress": 1
+  },
+  "runs": [
+    {
+      "id": 42776139413,
+      "name": "PoN classical and quantum credit contract",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139413"
+    },
+    {
+      "id": 42776139265,
+      "name": "CodeQL exact-source analysis export",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139265"
+    },
+    {
+      "id": 42776139498,
+      "name": "W1 QROM proof-chain observations",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139498"
+    },
+    {
+      "id": 42776139654,
+      "name": "PoN W1 QROM implementation observations",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139654"
+    },
+    {
+      "id": 42776139412,
+      "name": "PoN W1 transparent candidate observations",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139412"
+    },
+    {
+      "id": 42776139404,
+      "name": "PoN native full relation and path controls",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139404"
+    },
+    {
+      "id": 42776139387,
+      "name": "PoN original large-state CPU acceptance",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139387"
+    },
+    {
+      "id": 42776139244,
+      "name": "PoN next architecture exact-source observations",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139244"
+    },
+    {
+      "id": 42776139614,
+      "name": "PoN original native campaign",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139614"
+    },
+    {
+      "id": 42776139684,
+      "name": "trnm-required-baseline",
+      "status": "pending",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139684"
+    },
+    {
+      "id": 42776139214,
+      "name": "PoN owned process cleanup",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139214"
+    },
+    {
+      "id": 42776139195,
+      "name": "Release finality reference and native baseline",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139195"
+    },
+    {
+      "id": 42776139640,
+      "name": "PoN baseline diagnostic readback",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139640"
+    },
+    {
+      "id": 42776139164,
+      "name": "PoN work and time contract V1",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139164"
+    },
+    {
+      "id": 42776139649,
+      "name": "Chain Hepta closure evidence contracts",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139649"
+    },
+    {
+      "id": 42776139426,
+      "name": "PoN PQ network and rollback witness",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139426"
+    },
+    {
+      "id": 42776139469,
+      "name": "PoN W1 work security observations",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139469"
+    },
+    {
+      "id": 42776139589,
+      "name": "PoN original workspace test-profile CPU acceptance",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139589"
+    },
+    {
+      "id": 42776139291,
+      "name": "CPQ1 complete content bindings",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139291"
+    },
+    {
+      "id": 42776139593,
+      "name": "PoN W1 QROM closure observations",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139593"
+    },
+    {
+      "id": 42776139595,
+      "name": "PoN priority acceptance",
+      "status": "queued",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139595"
+    },
+    {
+      "id": 42776139735,
+      "name": "PoN four-axis throughput evidence controls",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139735"
+    }
+  ],
+  "pq_jobs": [
+    {
+      "id": 129694964658,
+      "name": "CPQ1 complete candidate observations (ubuntu-24.04, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139426/job/129694964658",
+      "failed_steps": [],
+      "in_progress_steps": []
+    },
+    {
+      "id": 129694964812,
+      "name": "ML-DSA independent C implementation (ubuntu-24.04-arm, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139426/job/129694964812",
+      "failed_steps": [],
+      "in_progress_steps": []
+    },
+    {
+      "id": 129694964834,
+      "name": "PQ network and witness (ubuntu-24.04-arm, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139426/job/129694964834",
+      "failed_steps": [],
+      "in_progress_steps": []
+    },
+    {
+      "id": 129694964872,
+      "name": "ML-DSA independent C implementation (ubuntu-24.04-arm, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139426/job/129694964872",
+      "failed_steps": [],
+      "in_progress_steps": []
+    },
+    {
+      "id": 129694964874,
+      "name": "TAP21 actual SDK interoperability (ubuntu-24.04, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139426/job/129694964874",
+      "failed_steps": [],
+      "in_progress_steps": []
+    },
+    {
+      "id": 129694964905,
+      "name": "CPQ1 complete candidate observations (ubuntu-24.04-arm, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139426/job/129694964905",
+      "failed_steps": [],
+      "in_progress_steps": []
+    },
+    {
+      "id": 129694964925,
+      "name": "TAP21 actual SDK interoperability (ubuntu-24.04-arm, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139426/job/129694964925",
+      "failed_steps": [],
+      "in_progress_steps": []
+    },
+    {
+      "id": 129694964931,
+      "name": "TAP21 actual SDK interoperability (ubuntu-24.04, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139426/job/129694964931",
+      "failed_steps": [],
+      "in_progress_steps": []
+    },
+    {
+      "id": 129694964940,
+      "name": "ML-DSA independent C implementation (ubuntu-24.04, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139426/job/129694964940",
+      "failed_steps": [],
+      "in_progress_steps": []
+    },
+    {
+      "id": 129694964944,
+      "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139426/job/129694964944",
+      "failed_steps": [],
+      "in_progress_steps": [
+        "Preserve the complete original Node library regression suite"
+      ]
+    },
+    {
+      "id": 129694964946,
+      "name": "CPQ1 complete candidate observations (ubuntu-24.04, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139426/job/129694964946",
+      "failed_steps": [],
+      "in_progress_steps": []
+    },
+    {
+      "id": 129694964965,
+      "name": "CPQ1 complete candidate observations (ubuntu-24.04-arm, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139426/job/129694964965",
+      "failed_steps": [],
+      "in_progress_steps": []
+    },
+    {
+      "id": 129694964972,
+      "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139426/job/129694964972",
+      "failed_steps": [],
+      "in_progress_steps": []
+    },
+    {
+      "id": 129694965008,
+      "name": "ML-DSA independent C implementation (ubuntu-24.04, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139426/job/129694965008",
+      "failed_steps": [],
+      "in_progress_steps": []
+    },
+    {
+      "id": 129694965021,
+      "name": "TAP21 actual SDK interoperability (ubuntu-24.04-arm, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139426/job/129694965021",
+      "failed_steps": [],
+      "in_progress_steps": []
+    },
+    {
+      "id": 129694965028,
+      "name": "PQ network and witness (ubuntu-24.04, head)",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42776139426/job/129694965028",
+      "failed_steps": [
+        "Execute every required native effect and rejection control"
+      ],
+      "in_progress_steps": []
+    }
+  ],
+  "local_results_counted_as_hosted": false,
+  "missing_or_running_results_are_not_passes": true
+}

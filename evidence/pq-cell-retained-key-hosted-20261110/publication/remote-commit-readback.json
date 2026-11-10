@@ -1,0 +1,15 @@
+{
+  "schema": "observed-mac-local-gh-commit-readback-v1",
+  "commit": "ee48626f687614d95782cafbd1ea15a397abfe34",
+  "tree": "058eed239851d6dfd0f15f65a5f2a96a10fb11ec",
+  "parents": [
+    "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667"
+  ],
+  "host": "mac",
+  "session_id": "dpty-f4f50758445002559c4b8ed050bf072606efe9622034250eb2af76d44994a13d",
+  "exit_code": 0,
+  "output_complete": true,
+  "raw_output_bytes": 352,
+  "raw_output_sha256": "c0db6a9db3d79f3fde8fc7312fdf5f7444c74ad66de5b07a08ea76f81ea1d543",
+  "scope": "Parsed commit fields from read-only gh response; raw ANSI terminal archive remains on original runtime."
+}

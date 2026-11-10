@@ -1,0 +1,63 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+    "tested_tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2528691640,
+    "tracked_entries": 27855,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "python3",
+    "-c",
+    "import json,pathlib,re,sys; text=pathlib.Path(sys.argv[1]).read_text(); names=re.findall(r\"^test crates/trnm-data-availability/src/cell/pq\\.rs - cell::pq::VerifiedCellPqReleaseV2 \\(line 423\\) - compile fail \\.\\.\\. ok$\",text,re.M); summaries=re.findall(r\"^test result: ok\\. ([0-9]+) passed; ([0-9]+) failed; ([0-9]+) ignored; ([0-9]+) measured; ([0-9]+) filtered out;\",text,re.M); errors=re.findall(r\"^error\\[(E[0-9]+)\\]:\",text,re.M); valid=(len(names)==1 and len(summaries)==1 and tuple(map(int,summaries[0][:4]))==(1,0,0,0) and errors==[\"E0308\"] and \"CellPqReleaseExpectationV2\" in text and \"integer\" in text and \"release_at(300)\" in text); print(json.dumps({\"result\":\"PASS\" if valid else \"FAIL\",\"contract\":\"cell-current-view-required\",\"executed_tests\":len(names),\"diagnostic_codes\":errors,\"scope\":\"compile-fail-type-boundary-observation\"},sort_keys=True)); sys.exit(0 if valid else 1)",
+    "/home/runner/work/_temp/mldsa-interoperability/cell-current-api.log"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "a4c594fc9d5f43d0d2b7ae7e0835d0e1514dc667",
+    "tested_tree": "b621fde199f0e52a8410f765fbda0d633a32d5ff",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2528691640,
+    "tracked_entries": 27855,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/chain",
+  "elapsed_ns": 6145962219,
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/runner/work/_temp/mldsa-rust-target",
+    "GITHUB_RUN_ATTEMPT": "1",
+    "GITHUB_RUN_ID": "42776139426",
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": "X64",
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 0,
+  "log_bytes": 164,
+  "log_file": "cell-current-api-readback.log",
+  "log_sha256": "bd49d58636f387847e4bd117abc17f01f87bcdcd9ec5f59720bae0bfd2d2fd65",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-10T08:26:06.413606+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}

@@ -1,0 +1,10 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"audit_recorded\": true,\n  \"job_id\": \"1a1c4a597b4-cf39-3af\",\n  \"stderr\": {\n    \"bytes_hex\": \"506f7374202268747470733a2f2f6170692e6769746875622e636f6d2f7265706f732f5472696c6c696f6e6e69756d466f756e646174696f6e2f5472696c6c696f6e6e69756d2d436861696e2f6769742f626c6f6273223a206469616c20746370203134302e38322e3131342e363a3434333a20692f6f2074696d656f75740a\",\n    \"eof\": true,\n    \"next_offset\": 128,\n    \"offset\": 0,\n    \"size\": 128,\n    \"text\": \"Post \\\"https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs\\\": dial tcp 140.82.114.6:443: i/o timeout\\n\"\n  },\n  \"stdout\": {\n    \"bytes_hex\": \"\",\n    \"eof\": true,\n    \"next_offset\": 0,\n    \"offset\": 0,\n    \"size\": 0,\n    \"text\": \"\"\n  }\n}"
+    }
+  ],
+  "structuredContent": null,
+  "isError": false
+}
