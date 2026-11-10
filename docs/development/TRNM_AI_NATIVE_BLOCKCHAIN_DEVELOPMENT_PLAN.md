@@ -11352,3 +11352,22 @@ support this cause; they are not a captured dynamic statement/close trace.
 Freeze the repaired source and exact affected bindings before rerunning the
 complete DA harness, retained/direct-owner libraries and original remaining
 gates. M12's successful node run does not qualify that successor source.
+
+
+## Independent content-to-use review, 2026-11-10
+
+[The content-chain review](../security/PQ_CONTENT_CHAIN_REVIEW_V1.md) separates
+preimage, collision, commitment and work-search claims. It reads five exact
+archived #848 records, checking operation, version, content, snapshot, descriptor,
+worker, parent, material profile and request identities, plus byte/chunk totals
+and original finite budgets. It does not integrate or execute #848's Rust code.
+Mandatory repository-truth controls preserve all installation, ordinary-owner,
+FinalUse and whole-chain PQ refusals. Historical observations keep their own
+source identities; the new reader receives fresh independent validation.
+
+A temporary workspace reset erased the prior unpublished local implementation
+and raw validation logs. This continuation rebuilds from fixed GitHub originals
+on current integration source da1374a200022bc14dc2bd325cc9ba29dbcd24ab; lost
+passes and logs are not reconstructed or attributed to this new source.
+Ordinary installation/currentness, original owner/FinalUse, independent
+consumers/evaluation, WAN custody/funding and lifetime proof remain open.
