@@ -21,6 +21,8 @@ def summarize_phase(p):
     mode = p["mode"]
     if mode not in MODES:
         raise ValueError("unknown phase mode")
+    if type(p["duration_seconds"]) is not int or p["duration_seconds"] != 30:
+        raise ValueError("original phase duration must be 30 seconds")
     if type(p["finite_phase_criteria_met"]) is not bool:
         raise ValueError("invalid phase verdict")
     rounds = p["confirmations"]
@@ -47,13 +49,17 @@ def summarize_phase(p):
     if p["all_signed_rounds_confirmed_in_window"] != all_confirmed:
         raise ValueError("confirmation verdict contradicts raw rounds")
     equal = p["final_receiver_tip"] == p["final_client_tip"]
-    if equal != p["receiver_client_state_equal"]:
-        raise ValueError("tip equality contradicts report")
+    reported_state_equal = p["receiver_client_state_equal"]
+    if type(reported_state_equal) is not bool or (reported_state_equal and not equal):
+        raise ValueError("full state equality contradicts recorded tips")
+    # False may mean an auxiliary checked state differed even with equal tips.
     if not isinstance(p["verifier_errors"], list):
         raise ValueError("invalid verifier errors")
     failed = []
     if not all_confirmed:
         failed.append("three_signed_rounds_not_confirmed_in_window")
+    if not reported_state_equal:
+        failed.append("receiver_client_state_mismatch")
     if not equal:
         failed.append("receiver_client_final_tip_mismatch")
     if p["verifier_errors"]:
@@ -75,6 +81,7 @@ def summarize_phase(p):
             "observation_present": c["observation"] is not None,
         } for c in rounds],
         "receiver_client_tip_equal": equal,
+        "receiver_client_state_equal_reported": reported_state_equal,
         "verifier_errors": p["verifier_errors"],
         "budget_depletion_observed": p["genuine_budget_depletion_observed"],
         "cpu_credit_ns": credit,
