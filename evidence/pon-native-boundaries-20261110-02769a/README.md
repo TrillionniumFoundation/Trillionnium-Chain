@@ -8,6 +8,8 @@ This packet records two bounded changes on one fixed source: refuse FIFO replace
 
 **Publication:** the [fixed source](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/39336622c63df1ae746d83a76bb53202cd01ba17) was published through the authenticated local GitHub channel and read back with its identical commit and tree. The initial native packet was delivered in evidence-only commit `42d6ab45598cbba3d476a3c558b7fce562f13877`. The later [integration binding recheck](INTEGRATION-RECHECK.md) preserves two additional inspector failures and the consistency repair on `be24e0be`; all native execution and quality receipts below retain their original source identity. Hosted CI is a separate observation and no hosted pass is claimed in this packet. The failed first quality commands and precommit negative controls remain intact.
 
+The subsequent [combined-source recheck](COMPOSITION-RECHECK.md) records the ordinary merge with integration candidate `df927b6f`, fresh native and control execution on `f5e836c2`, and separately retained build failures and recoveries. It does not rerun or transfer this report's native cost measurements. The original archives and their execution identities remain unchanged.
+
 ## Fixed execution identity
 
 | Identity | Observed value |
