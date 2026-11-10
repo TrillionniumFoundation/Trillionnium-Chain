@@ -161,6 +161,80 @@ fn three_shards_per_domain_fail_on_one_lost_domain() {
 }
 
 #[test]
+fn three_domains_with_two_nonreplicated_shards_each_fail_two_domain_loss() {
+    // The six distinct CRS1 indices are recoverable after any ONE domain is
+    // lost. Three domain labels are not enough for a TWO-domain failure claim:
+    // only two unique indices survive in the last remaining domain.
+    let mut pins = providers(6);
+    for (index, pin) in pins.iter_mut().enumerate() {
+        pin.administrator = [50 + (index / 2) as u8; 32];
+        pin.failure_domain = [60 + (index / 2) as u8; 32];
+    }
+    let placements = shards(&pins);
+    let one = evaluate(
+        &pins,
+        &placements,
+        &policy(&[CellRecoveryFaultAxisV1::FailureDomain], 1),
+    );
+    assert!(one.recoverable_now());
+    assert!(one.survives_declared_faults());
+    assert_eq!(one.minimum_distinct_shards(), 4);
+
+    let two = evaluate(
+        &pins,
+        &placements,
+        &policy(&[CellRecoveryFaultAxisV1::FailureDomain], 2),
+    );
+    assert!(two.recoverable_now());
+    assert!(!two.survives_declared_faults());
+    assert_eq!(two.minimum_distinct_shards(), 2);
+    assert_eq!(two.scenarios(), 7);
+    assert_eq!(two.worst_case_events().len(), 2);
+}
+
+#[test]
+fn three_domains_need_four_distinct_indices_in_each_surviving_domain() {
+    // This is a CONDITIONAL placement counterexample/control, not actual
+    // provider independence or custody. Each of the three declared domains
+    // has four different indices, needing twelve physical shard placements.
+    // The cross-axis policy also catches mixed administrator/domain loss.
+    let groups = [[0_u8, 1, 2, 3], [0, 1, 4, 5], [2, 3, 4, 5]];
+    let mut pins = providers(12);
+    let placements: Vec<_> = pins
+        .iter_mut()
+        .enumerate()
+        .map(|(index, pin)| {
+            let domain = index / 4;
+            pin.administrator = [70 + domain as u8; 32];
+            pin.failure_domain = [80 + domain as u8; 32];
+            CellRecoveryPlacementV1 {
+                provider_id: pin.provider_id,
+                part: CellRecoveryPartV1::Rs46(groups[domain][index % 4]),
+            }
+        })
+        .collect();
+    let faults = policy(
+        &[
+            CellRecoveryFaultAxisV1::Administrator,
+            CellRecoveryFaultAxisV1::FailureDomain,
+        ],
+        2,
+    );
+    let healthy = evaluate(&pins, &placements, &faults);
+    assert!(healthy.recoverable_now());
+    assert!(healthy.survives_declared_faults());
+    assert_eq!(healthy.minimum_distinct_shards(), 4);
+    assert_eq!(healthy.scenarios(), 22);
+
+    // Omit only the last replica: all six indices still exist globally,
+    // but losing two declared domains now leaves only three indices.
+    let missing_replica = evaluate(&pins, &placements[..11], &faults);
+    assert!(missing_replica.recoverable_now());
+    assert!(!missing_replica.survives_declared_faults());
+    assert_eq!(missing_replica.minimum_distinct_shards(), 3);
+}
+
+#[test]
 fn mixed_operator_and_domain_events_are_enumerated_together() {
     // Every shard has two copies: one in each of two operators and two domains.
     // Losing either operator or either domain alone is harmless. Losing operator
