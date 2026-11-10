@@ -185,6 +185,49 @@ fn native_floor_v4_fresh_anchor_authentication_remains_required() {
 }
 
 #[test]
+fn native_floor_v4_common_restore_contrast_stale_pin_accepts_surviving_pin_rejects() {
+    // Control: two real signed operations exist before the local and external
+    // anchor histories are both restored to the first signed operation.
+    let h = Harness::new();
+    let mut owner = h.create();
+    let first = append(&mut owner, 49);
+    let old_owner_snapshot = std::fs::read(h.path()).unwrap();
+    let second = append(&mut owner, 50);
+    assert_eq!(second.head.version, first.head.version + 1);
+    drop(owner);
+    std::fs::write(h.path(), &old_owner_snapshot).unwrap();
+    h.service.state.borrow_mut().head = first.head;
+
+    // This pin is replayed from the same old state as the owner and anchor.
+    // It has the right enrollment and signed ancestry but is *not* evidence of
+    // external provenance or freshness. The old intent is still accepted.
+    let stale_floor = RecoveryFloorV4::from_external_pin(&h.enrollment, first.head).unwrap();
+    let mut accepted = open_with_floor(&h, stale_floor).unwrap();
+    assert_eq!(
+        accepted.context(&mut owner_budget()).unwrap().head,
+        first.head
+    );
+    assert!(accepted
+        .observe_current_intent(first.operation_id, 112, &mut owner_budget())
+        .is_ok());
+    drop(accepted);
+
+    // Contrasting only the pin: an actually surviving second head refuses the
+    // same common restore before any anchor exchange or file mutation. This
+    // test does not authenticate the pin's custody, survival, or age.
+    let before = std::fs::read(h.path()).unwrap();
+    let calls = h.service.state.borrow().calls;
+    let surviving_floor = RecoveryFloorV4::from_external_pin(&h.enrollment, second.head).unwrap();
+    let error = open_with_floor(&h, surviving_floor).err().unwrap();
+    assert_eq!(
+        error.to_string(),
+        "ROOT_OWNER_RECOVERY_FLOOR_NOT_IN_SIGNED_HISTORY"
+    );
+    assert_eq!(std::fs::read(h.path()).unwrap(), before);
+    assert_eq!(h.service.state.borrow().calls, calls);
+}
+
+#[test]
 fn native_floor_v4_invalid_pin_shapes_are_refused() {
     let h = Harness::new();
     for head in [

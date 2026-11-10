@@ -1,0 +1,51 @@
+{
+  "schema": "pq-root-common-restore-contrast-evidence-v1",
+  "source_base_commit": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+  "source_base_tree": "b5e23d6ea6105b5bbdfcccc36219681b681441ec",
+  "baseline_test_blob": "29a9ceba0e84bec9882e83e10cfa3c7c422b5e74",
+  "modified_test_blob": "8aafd512b6f4dab05478fa15a231a5089eefaebf",
+  "observed_runtime_source": "baseline HEAD plus exactly 43 added Rust test lines; evidence files not part of runtime",
+  "observed_host": "ai395",
+  "observed_job_id": "1a1c52749c1-cf39-622",
+  "reported_test_command": "cargo test --offline --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --features pq-root-v3 --test recovery_floor_v4_native -- --nocapture",
+  "passed_tests": 9,
+  "failed_tests": 0,
+  "local_git_diff_check": true,
+  "evidence_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/recovery_floor_v4_native.rs",
+      "size_bytes": 9402,
+      "sha256": "3616d905976853c2a6a8d7b7b98db156b653d056f9f170f77454ce3b66602fe1",
+      "git_blob": "8aafd512b6f4dab05478fa15a231a5089eefaebf"
+    },
+    {
+      "path": "evidence/pq-root-co-restore-contrast-20261110/README.md",
+      "size_bytes": 2586,
+      "sha256": "5f46577b693846dae9bb6a304a41399ad36f4a3a914abdf9938258d88ec0973e",
+      "git_blob": "276fb5471da37cc90c3c3acf4a45bf19a18fc2c3"
+    },
+    {
+      "path": "evidence/pq-root-co-restore-contrast-20261110/native-stdout.log",
+      "size_bytes": 822,
+      "sha256": "18a8bd22dc7781e1a81f5780801f56e3e7806bcbcb3eceb6e68d1908f8bc0819",
+      "git_blob": "4179c93067ac40a2476fb0980a3868c85e063f0b"
+    },
+    {
+      "path": "evidence/pq-root-co-restore-contrast-20261110/native-stderr.log",
+      "size_bytes": 355,
+      "sha256": "052ae54bde20fbf4bd9c01e73b4708978edd305e311b05eed50b8b6185d3cc11",
+      "git_blob": "a29bd0ab8958501078ad028c831355e5f1189485"
+    }
+  ],
+  "qualification": {
+    "status": "HOLD_NO_GO",
+    "independent_custody_verified": false,
+    "anchor_independence_verified": false,
+    "freshness_source_authenticated": false,
+    "independent_common_restore_exclusion_proved": false,
+    "whole_chain_pq_qualified": false,
+    "actual_lifetime_failure_bound": null,
+    "production_activation": false
+  },
+  "notes": "No independent operator, key custody, WAN, physical rollback/restore or production evidence. Tests reproduce one local counterexample and one control; not cryptographic qualification."
+}
