@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "python3",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "exit_code": 1,
+  "elapsed_ns": 60131481,
+  "head": "d2fdb31cf8b507a2eb9e2309778d5675385bb78f",
+  "tree": "c21b52213990285afa8f729b589eb2ad3dbc4af5",
+  "tracked_changes": "",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "3060c11e06f46d1cbf92fbb40b0ecf6bfd5482816a73a13c7267e2efa34b28fb"
+}

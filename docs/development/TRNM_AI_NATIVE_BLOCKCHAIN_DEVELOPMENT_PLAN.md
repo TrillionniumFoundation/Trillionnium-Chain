@@ -11386,3 +11386,14 @@ the exact current-source/doctest repairs. The 8079 ten-command validation and
 independent byte audit are retained as historical receipts for the combined
 descendant. Runtime Rust source is unchanged; qualify this combined source
 separately before interpreting new hosted results.
+
+The original generated-inventory check on combined source
+`d2fdb31cf8b507a2eb9e2309778d5675385bb78f` refused the missing
+`config/pon/pq-root-custody-review-v2.json` entry. Preserve that refusal.
+The canonical generator adds this one seven-line entry, with no generator
+change; refresh only its existing corpus pin and this plan's pin. This
+descendant changes the generated Rust inventory, so the complete Rust subtree
+is no longer byte-identical to `81f89b01`. Handwritten cryptographic source
+remains unchanged, while examples using the inventory now embed the added
+custody declaration. Earlier native results remain attributed to their original
+source; this descendant requires its own validation and qualification.

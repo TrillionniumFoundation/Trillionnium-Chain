@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "exit_code": 0,
+  "elapsed_ns": 45616436,
+  "head": "d2fdb31cf8b507a2eb9e2309778d5675385bb78f",
+  "tree": "c21b52213990285afa8f729b589eb2ad3dbc4af5",
+  "tracked_changes": "",
+  "stdout_sha256": "3bac1aef092b2bb3470dc63068aa5653ef3d0c8c222629b7f61568cb8decfd24",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

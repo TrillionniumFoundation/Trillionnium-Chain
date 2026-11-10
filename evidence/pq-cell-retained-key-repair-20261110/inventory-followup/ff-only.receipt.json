@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "git",
+    "merge",
+    "--ff-only",
+    "d2fdb31cf8b507a2eb9e2309778d5675385bb78f"
+  ],
+  "exit_code": 0,
+  "elapsed_ns": 72403970,
+  "head": "d2fdb31cf8b507a2eb9e2309778d5675385bb78f",
+  "tree": "c21b52213990285afa8f729b589eb2ad3dbc4af5",
+  "tracked_changes": "",
+  "stdout_sha256": "17b033a3909142f94384ac530f9472506423b63e84f05c53553cbd6d2604a61c",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

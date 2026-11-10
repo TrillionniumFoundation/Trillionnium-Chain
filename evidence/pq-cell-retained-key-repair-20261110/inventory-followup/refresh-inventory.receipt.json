@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "scripts/refresh_distributed_source_inventory.py"
+  ],
+  "exit_code": 0,
+  "elapsed_ns": 63142663,
+  "head": "d2fdb31cf8b507a2eb9e2309778d5675385bb78f",
+  "tree": "c21b52213990285afa8f729b589eb2ad3dbc4af5",
+  "tracked_changes": " M trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\n",
+  "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,12 @@
+diff --git a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+index 1073fbf92..4fe60f533 100644
+--- a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
++++ b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+@@ -261,0 +262,7 @@ pub const FILES: &[(&str, &[u8])] = &[
++    (
++        "config/pon/pq-root-custody-review-v2.json",
++        include_bytes!(concat!(
++            env!("CARGO_MANIFEST_DIR"),
++            "/../../../config/pon/pq-root-custody-review-v2.json"
++        )),
++    ),

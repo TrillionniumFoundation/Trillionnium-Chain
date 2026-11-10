@@ -1,0 +1,123 @@
+Updating 8079efb7b..d2fdb31cf
+Fast-forward
+ config/pon/pq-cross-branch-corpus-v1.json          |  24 +-
+ config/pon/pq-root-custody-review-v2.json          |  49 ++++
+ .../TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md  |  29 ++
+ docs/security/PQ_ROOT_CUSTODY_REVIEW_V2.md         | 112 ++++++++
+ .../SYSTEM_BOUNDARY_QUALIFICATION_20261109.md      | 147 ++++++++++
+ .../8079-initial-hosted-blocker.json               |  12 +
+ .../pq-cell-retained-key-repair-20261110/README.md |  65 +++++
+ .../base-advance-da1374.json                       | 126 +++++++++
+ .../gzip-originals.json                            |  62 +++++
+ .../manifest.json                                  | 255 ++++++++++++++++++
+ .../repair-source-before.json                      |  13 +
+ .../run_exact_repair_validation.py                 |  32 +++
+ .../summary.json                                   |  15 ++
+ .../validation/ci-contract.json                    |  61 +++++
+ .../validation/ci-contract.log.gz                  | Bin 0 -> 4606 bytes
+ .../validation/ci-contract.recorder.stderr         |   0
+ .../validation/ci-contract.recorder.stdout         |   1 +
+ .../validation/claim-controls.json                 |  61 +++++
+ .../validation/claim-controls.log.gz               | Bin 0 -> 56 bytes
+ .../validation/claim-controls.recorder.stderr      |   0
+ .../validation/claim-controls.recorder.stdout      |   1 +
+ .../validation/claim-inspector.json                |  61 +++++
+ .../validation/claim-inspector.log.gz              | Bin 0 -> 1551 bytes
+ .../validation/claim-inspector.recorder.stderr     |   0
+ .../validation/claim-inspector.recorder.stdout     |   1 +
+ .../validation/evidence-verification.json          | 119 +++++++++
+ .../validation/inventory.json                      |  62 +++++
+ .../validation/inventory.log.gz                    | Bin 0 -> 55 bytes
+ .../validation/inventory.recorder.stderr           |   0
+ .../validation/inventory.recorder.stdout           |   1 +
+ .../validation/lifetime-inspector.json             |  61 +++++
+ .../validation/lifetime-inspector.log.gz           | Bin 0 -> 3806 bytes
+ .../validation/lifetime-inspector.recorder.stderr  |   0
+ .../validation/lifetime-inspector.recorder.stdout  |   1 +
+ .../validation/lifetime-tests.json                 |  61 +++++
+ .../validation/lifetime-tests.log.gz               | Bin 0 -> 56 bytes
+ .../validation/lifetime-tests.recorder.stderr      |   0
+ .../validation/lifetime-tests.recorder.stdout      |   1 +
+ .../validation/pq-corpus.json                      |  61 +++++
+ .../validation/pq-corpus.log.gz                    | Bin 0 -> 294 bytes
+ .../validation/pq-corpus.recorder.stderr           |   0
+ .../validation/pq-corpus.recorder.stdout           |   1 +
+ .../validation/pq-source-controls.json             |  61 +++++
+ .../validation/pq-source-controls.log.gz           | Bin 0 -> 58 bytes
+ .../validation/pq-source-controls.recorder.stderr  |   0
+ .../validation/pq-source-controls.recorder.stdout  |   1 +
+ .../validation/repository.json                     |  61 +++++
+ .../validation/repository.log.gz                   | Bin 0 -> 241 bytes
+ .../validation/repository.recorder.stderr          |   0
+ .../validation/repository.recorder.stdout          |   1 +
+ .../validation/source-controls.json                |  61 +++++
+ .../validation/source-controls.log.gz              | Bin 0 -> 1253 bytes
+ .../validation/source-controls.recorder.stderr     |   0
+ .../validation/source-controls.recorder.stdout     |   1 +
+ .../validation/summary.json                        |  46 ++++
+ .../verify_pq_cell_evidence.py                     | 258 ++++++++++++++++++
+ scripts/ci/check_ci_contract.py                    |   6 +
+ scripts/ci/check_pq_research_integration.py        |   5 +
+ scripts/ci/ci_job.sh                               |   2 +
+ scripts/ci/pq_root_custody_review_v2.py            | 237 +++++++++++++++++
+ scripts/ci/test_ci_contract.py                     |  15 ++
+ scripts/ci/test_pon_public_v3_phase_read.py        |  86 ++++++
+ scripts/ci/test_pq_root_custody_review_v2.py       | 295 +++++++++++++++++++++
+ scripts/pon_public_v3_phase_read.py                |  26 ++
+ 64 files changed, 2650 insertions(+), 7 deletions(-)
+ create mode 100644 config/pon/pq-root-custody-review-v2.json
+ create mode 100644 docs/security/PQ_ROOT_CUSTODY_REVIEW_V2.md
+ create mode 100644 docs/security/SYSTEM_BOUNDARY_QUALIFICATION_20261109.md
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/8079-initial-hosted-blocker.json
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/README.md
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/base-advance-da1374.json
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/gzip-originals.json
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/manifest.json
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/repair-source-before.json
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/run_exact_repair_validation.py
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/summary.json
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/ci-contract.json
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/ci-contract.log.gz
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/ci-contract.recorder.stderr
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/ci-contract.recorder.stdout
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/claim-controls.json
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/claim-controls.log.gz
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/claim-controls.recorder.stderr
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/claim-controls.recorder.stdout
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/claim-inspector.json
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/claim-inspector.log.gz
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/claim-inspector.recorder.stderr
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/claim-inspector.recorder.stdout
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/evidence-verification.json
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/inventory.json
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/inventory.log.gz
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/inventory.recorder.stderr
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/inventory.recorder.stdout
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/lifetime-inspector.json
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/lifetime-inspector.log.gz
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/lifetime-inspector.recorder.stderr
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/lifetime-inspector.recorder.stdout
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/lifetime-tests.json
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/lifetime-tests.log.gz
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/lifetime-tests.recorder.stderr
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/lifetime-tests.recorder.stdout
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/pq-corpus.json
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/pq-corpus.log.gz
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/pq-corpus.recorder.stderr
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/pq-corpus.recorder.stdout
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/pq-source-controls.json
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/pq-source-controls.log.gz
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/pq-source-controls.recorder.stderr
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/pq-source-controls.recorder.stdout
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/repository.json
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/repository.log.gz
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/repository.recorder.stderr
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/repository.recorder.stdout
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/source-controls.json
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/source-controls.log.gz
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/source-controls.recorder.stderr
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/source-controls.recorder.stdout
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/validation/summary.json
+ create mode 100644 evidence/pq-cell-retained-key-repair-20261110/verify_pq_cell_evidence.py
+ create mode 100644 scripts/ci/pq_root_custody_review_v2.py
+ create mode 100644 scripts/ci/test_pq_root_custody_review_v2.py

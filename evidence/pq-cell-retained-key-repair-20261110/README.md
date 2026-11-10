@@ -63,3 +63,17 @@ these `8079efb7` results are historical for that descendant.
 physical recovery freshness, actual external-effect integration or complete
 PQ lifetime/QROM qualification follows. Bounds remain null and production
 activation remains false.
+
+## Combined source d2 result and index correction
+
+The real two-parent source `d2fdb31cf8b507a2eb9e2309778d5675385bb78f`
+completed fourteen exact-source commands: thirteen passed and the original
+distributed source inventory check failed. Complete unchanged source endpoints
+and raw logs are retained under `d2-validation/`. The added custody declaration
+was absent from the generated list. The canonical generator adds one entry,
+exactly seven lines, without changing itself. The subsequent source updates
+only this generated list and its existing corpus pin, plus provenance. Its
+complete Rust subtree therefore differs; original native receipts remain at
+81f89, and this successor requires fresh executable observations. The staged
+index correction and the retained local eight-versus-seven line expectation
+error are under `inventory-followup/`; no assertion or workload was weakened.

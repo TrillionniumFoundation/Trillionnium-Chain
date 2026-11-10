@@ -1,0 +1,22 @@
+{
+  "base": "d2fdb31cf8b507a2eb9e2309778d5675385bb78f",
+  "generated_entry": "config/pon/pq-root-custody-review-v2.json",
+  "generated_lines_added": 7,
+  "generated_lines_removed": 0,
+  "updated_existing_pins": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "old_blob": "1073fbf92c159b82f0822f13281018a46198e1a8",
+      "new_blob": "4fe60f533f051cd1a68c4358e96d210d8f7d32c0"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "old_blob": "f802b0bc2ad4f596dd64def3dfa2a8f587f4a447",
+      "new_blob": "99f1302c3887da191ebc5723978bfb56275caca2"
+    }
+  ],
+  "pin_count": 1081,
+  "required_path_count": 989,
+  "complete_runtime_subtree_unchanged": false,
+  "handwritten_rust_source_unchanged": true
+}
