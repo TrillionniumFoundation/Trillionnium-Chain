@@ -251,6 +251,28 @@ python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_success_qu
 python3 formal/pon-nakamoto-v1/fixed_success_query_frontier.py --check
 ```
 
+
+## 8. Integrate resource tails without changing the actual cost rows
+
+The [resource-tail continuation](../../../../formal/pon-nakamoto-v1/COST_TAIL_TRANSFER_V1.md)
+proves `E[C] >= sum_t (alpha-H(t))_+` for nonnegative observable integer
+resource cost, under a legal success-preserving budget truncation and a valid
+cap-success bound at every budget. Every finite prefix is usable without
+extrapolating the uncomputed tail. This strengthens the retained single-cut
+Markov conversion. It places additive simulator/virtual-check queries inside
+the cap function, without charging them as actual producer work.
+
+The exact arithmetic verifier does not verify reference search theorems,
+initial-state coverage or the universal real-resource simulation. Its finite
+advice counterexample shows why state probability domination alone cannot
+transport the independent-state expected-cost optimum. The original sixteen
+actual `lower`, `upper` and `status` fields remain `null`, `null`, `unproved`.
+
+```bash
+python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_cost_tail_transfer.py' -v
+python3 formal/pon-nakamoto-v1/cost_tail_transfer.py --check
+```
+
 ## Primary references
 
 - [BCHN integer ASERT specification](https://bitcoin-cash-node.gitlab.io/bchn-sw/bitcoincash-upgrade-specifications/2020-11-15-asert/): integer division, polynomial, anchor semantics, and reference vectors; deployment parameters are not copied into PoN.
