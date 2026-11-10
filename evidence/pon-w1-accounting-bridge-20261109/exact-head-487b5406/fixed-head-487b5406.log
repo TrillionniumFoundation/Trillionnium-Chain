@@ -1,0 +1,2199 @@
+{"running": ["python3", "-B", "formal/pon-nakamoto-v1/test_four_propositions_w1_v2.py", "-v"]}
+test_cli_round_trip_and_false_success_report_refusal (__main__.W1AccountingTests.test_cli_round_trip_and_false_success_report_refusal) ... ERROR
+test_different_inputs_with_coincident_product_keep_distinct_task_identity (__main__.W1AccountingTests.test_different_inputs_with_coincident_product_keep_distinct_task_identity) ... ok
+test_every_derived_content_field_must_match (__main__.W1AccountingTests.test_every_derived_content_field_must_match) ... ok
+test_fresh_namespace_exact_vectors (__main__.W1AccountingTests.test_fresh_namespace_exact_vectors) ... ok
+test_fresh_signed_demand_binds_verified_v2_matrix_roots (__main__.W1AccountingTests.test_fresh_signed_demand_binds_verified_v2_matrix_roots) ... ok
+test_full_verifier_failure_cannot_become_success (__main__.W1AccountingTests.test_full_verifier_failure_cannot_become_success) ... ok
+test_native_environment_does_not_switch_explicit_scalar_verifier (__main__.W1AccountingTests.test_native_environment_does_not_switch_explicit_scalar_verifier) ... ok
+test_noncanonical_hex_lengths_trailing_bytes_and_type_aliases_refuse (__main__.W1AccountingTests.test_noncanonical_hex_lengths_trailing_bytes_and_type_aliases_refuse) ... ok
+test_nonce_variants_share_exact_content_key_and_keep_all_costs (__main__.W1AccountingTests.test_nonce_variants_share_exact_content_key_and_keep_all_costs) ... ok
+test_producer_repin_cannot_change_reviewer_statement (__main__.W1AccountingTests.test_producer_repin_cannot_change_reviewer_statement) ... ok
+test_proof_digest_is_independently_pinned (__main__.W1AccountingTests.test_proof_digest_is_independently_pinned) ... ok
+test_real_scalar_relation_is_replayed_before_accounting (__main__.W1AccountingTests.test_real_scalar_relation_is_replayed_before_accounting) ... ok
+test_real_scalar_verifier_refuses_corruption_after_digest_repin (__main__.W1AccountingTests.test_real_scalar_verifier_refuses_corruption_after_digest_repin) ... ok
+test_relation_success_does_not_supply_other_propositions_or_authority (__main__.W1AccountingTests.test_relation_success_does_not_supply_other_propositions_or_authority) ... ok
+test_source_drift_refuses_before_verification (__main__.W1AccountingTests.test_source_drift_refuses_before_verification) ... ERROR
+test_strict_json_refuses_aliases_duplicates_and_size (__main__.W1AccountingTests.test_strict_json_refuses_aliases_duplicates_and_size) ... ok
+test_unknown_fields_cannot_promote_qualification (__main__.W1AccountingTests.test_unknown_fields_cannot_promote_qualification) ... ok
+
+======================================================================
+ERROR: test_cli_round_trip_and_false_success_report_refusal (__main__.W1AccountingTests.test_cli_round_trip_and_false_success_report_refusal)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/formal/pon-nakamoto-v1/test_four_propositions_w1_v2.py", line 196, in test_cli_round_trip_and_false_success_report_refusal
+    (folder / "input.json").write_bytes(bridge.canonical(value))
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 797, in write_bytes
+    with self.open(mode='wb') as f:
+         ~~~~~~~~~^^^^^^^^^^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 772, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/tmp2farthj0/input.json'
+
+======================================================================
+ERROR: test_source_drift_refuses_before_verification (__main__.W1AccountingTests.test_source_drift_refuses_before_verification)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 1012, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmp6q_xj8n7/formal/pon-nakamoto-v1'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/formal/pon-nakamoto-v1/test_four_propositions_w1_v2.py", line 184, in test_source_drift_refuses_before_verification
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 1016, in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 1012, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/tmp6q_xj8n7/formal'
+
+----------------------------------------------------------------------
+Ran 17 tests in 2.645s
+
+FAILED (errors=2)
+{"running": ["python3", "-B", "formal/pon-nakamoto-v1/test_four_propositions_v1.py", "-v"]}
+test_cli_reproduces_view_and_refuses_changed_proven_flag (__main__.FourPropositionsTests.test_cli_reproduces_view_and_refuses_changed_proven_flag) ... ERROR
+test_dependency_byte_drift_refuses_before_import (__main__.FourPropositionsTests.test_dependency_byte_drift_refuses_before_import) ... ERROR
+test_duplicate_content_and_all_attempt_costs_are_replayed (__main__.FourPropositionsTests.test_duplicate_content_and_all_attempt_costs_are_replayed) ... ok
+test_empty_utility_container_has_no_cost_observation (__main__.FourPropositionsTests.test_empty_utility_container_has_no_cost_observation) ... ok
+test_full_positive_replay_grants_none_of_the_four_propositions (__main__.FourPropositionsTests.test_full_positive_replay_grants_none_of_the_four_propositions) ... ok
+test_historical_checker_is_not_run_on_current_tree (__main__.FourPropositionsTests.test_historical_checker_is_not_run_on_current_tree) ... ok
+test_input_identity_cannot_silently_change (__main__.FourPropositionsTests.test_input_identity_cannot_silently_change) ... ok
+test_malformed_nested_containers_and_missing_event_fields_refuse (__main__.FourPropositionsTests.test_malformed_nested_containers_and_missing_event_fields_refuse) ... ok
+test_missing_raw_rows_cannot_borrow_evaluation_summary (__main__.FourPropositionsTests.test_missing_raw_rows_cannot_borrow_evaluation_summary) ... ok
+test_missing_reports_remain_missing_without_total_pass (__main__.FourPropositionsTests.test_missing_reports_remain_missing_without_total_pass) ... ok
+test_modified_signature_refuses_before_projection (__main__.FourPropositionsTests.test_modified_signature_refuses_before_projection) ... ok
+test_no_gain_keeps_service_fee_observation_separate (__main__.FourPropositionsTests.test_no_gain_keeps_service_fee_observation_separate) ... ok
+test_original_net_arithmetic_retains_negative_cost_result (__main__.FourPropositionsTests.test_original_net_arithmetic_retains_negative_cost_result) ... ok
+test_report_qualification_boolean_cannot_override_reader (__main__.FourPropositionsTests.test_report_qualification_boolean_cannot_override_reader) ... ok
+test_signed_delivery_alone_is_not_computation_proof_or_net_benefit (__main__.FourPropositionsTests.test_signed_delivery_alone_is_not_computation_proof_or_net_benefit) ... ok
+test_source_scope_profile_and_units_are_bound (__main__.FourPropositionsTests.test_source_scope_profile_and_units_are_bound) ... ok
+test_strict_json_and_numeric_alias_refuse (__main__.FourPropositionsTests.test_strict_json_and_numeric_alias_refuse) ... ok
+test_tampered_cost_summary_and_unknown_gpu_refuse (__main__.FourPropositionsTests.test_tampered_cost_summary_and_unknown_gpu_refuse) ... ok
+test_timeout_noupdate_is_not_completed_evaluation (__main__.FourPropositionsTests.test_timeout_noupdate_is_not_completed_evaluation) ... ok
+test_unknown_authority_field_refuses_even_when_repinned (__main__.FourPropositionsTests.test_unknown_authority_field_refuses_even_when_repinned) ... ok
+test_zero_denominator_and_excessive_integer_text_refuse (__main__.FourPropositionsTests.test_zero_denominator_and_excessive_integer_text_refuse) ... ok
+
+======================================================================
+ERROR: test_cli_reproduces_view_and_refuses_changed_proven_flag (__main__.FourPropositionsTests.test_cli_reproduces_view_and_refuses_changed_proven_flag)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/formal/pon-nakamoto-v1/test_four_propositions_v1.py", line 298, in test_cli_reproduces_view_and_refuses_changed_proven_flag
+    (folder / "input.json").write_bytes(view.canonical(value))
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 797, in write_bytes
+    with self.open(mode='wb') as f:
+         ~~~~~~~~~^^^^^^^^^^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 772, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/tmp01xv5msf/input.json'
+
+======================================================================
+ERROR: test_dependency_byte_drift_refuses_before_import (__main__.FourPropositionsTests.test_dependency_byte_drift_refuses_before_import)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 1012, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpe_bauh_c/formal/pon-nakamoto-v1'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/formal/pon-nakamoto-v1/test_four_propositions_v1.py", line 287, in test_dependency_byte_drift_refuses_before_import
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 1016, in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 1012, in mkdir
+    os.mkdir(self, mode)
+    ~~~~~~~~^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/tmpe_bauh_c/formal'
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.131s
+
+FAILED (errors=2)
+{"running": ["python3", "-B", "formal/pon-nakamoto-v1/test_demand_evidence.py", "-v"]}
+test_customer_may_itself_adopt_but_producer_or_evaluator_conflicts_block_bonus (__main__.DemandTests.test_customer_may_itself_adopt_but_producer_or_evaluator_conflicts_block_bonus) ... ok
+test_duplicate_improvement_output_or_adoption_receipt_is_atomic (__main__.DemandTests.test_duplicate_improvement_output_or_adoption_receipt_is_atomic) ... ok
+test_empty_queue_and_stale_snapshot_use_existing_zero_credit_maintenance (__main__.DemandTests.test_empty_queue_and_stale_snapshot_use_existing_zero_credit_maintenance) ... ok
+test_exact_replay_is_idempotent_and_changed_height_is_not_a_fresh_observation (__main__.DemandTests.test_exact_replay_is_idempotent_and_changed_height_is_not_a_fresh_observation) ... ok
+test_explicit_objective_dispute_owner_resolution_can_support_fee_only (__main__.DemandTests.test_explicit_objective_dispute_owner_resolution_can_support_fee_only) ... ok
+test_fixed_evaluator_fee_is_equal_for_positive_and_negative_results (__main__.DemandTests.test_fixed_evaluator_fee_is_equal_for_positive_and_negative_results) ... ok
+test_global_cap_cannot_be_split_across_sources_or_task_ids (__main__.DemandTests.test_global_cap_cannot_be_split_across_sources_or_task_ids) ... ok
+test_improvement_recipient_cannot_pay_reviewers_a_positive_vote_bonus (__main__.DemandTests.test_improvement_recipient_cannot_pay_reviewers_a_positive_vote_bonus) ... ok
+test_independent_review_dispute_and_bonus_time_travel_counterexamples (__main__.DemandTests.test_independent_review_dispute_and_bonus_time_travel_counterexamples) ... ok
+test_independent_review_fixed_net_evaluation_and_retroactive_scope (__main__.DemandTests.test_independent_review_fixed_net_evaluation_and_retroactive_scope) ... ok
+test_independent_review_new_task_cannot_reaward_identical_candidate (__main__.DemandTests.test_independent_review_new_task_cannot_reaward_identical_candidate) ... ok
+test_independent_review_settled_sources_do_not_become_queued_funding (__main__.DemandTests.test_independent_review_settled_sources_do_not_become_queued_funding) ... ok
+test_missing_provenance_and_unknown_or_revoked_control_stay_unknown (__main__.DemandTests.test_missing_provenance_and_unknown_or_revoked_control_stay_unknown) ... ok
+test_missing_underfunded_expired_and_cancelled_funding_refuse (__main__.DemandTests.test_missing_underfunded_expired_and_cancelled_funding_refuse) ... ok
+test_negative_outcome_unknown_origin_missing_adoption_cannot_pay_bonus (__main__.DemandTests.test_negative_outcome_unknown_origin_missing_adoption_cannot_pay_bonus) ... ok
+test_no_gain_keeps_completed_service_evaluation_and_da_fees (__main__.DemandTests.test_no_gain_keeps_completed_service_evaluation_and_da_fees) ... ok
+test_partial_late_or_incorrect_delivery_cannot_collect_fees (__main__.DemandTests.test_partial_late_or_incorrect_delivery_cannot_collect_fees) ... ok
+test_payment_replay_source_reuse_fixed_fee_and_time_travel_refuse (__main__.DemandTests.test_payment_replay_source_reuse_fixed_fee_and_time_travel_refuse) ... ok
+test_positive_conditional_adoption_and_five_distinct_accounts (__main__.DemandTests.test_positive_conditional_adoption_and_five_distinct_accounts) ... ok
+test_queue_accepts_provenance_at_its_last_valid_height (__main__.DemandTests.test_queue_accepts_provenance_at_its_last_valid_height) ... ok
+test_queue_excludes_provenance_expired_after_the_observation (__main__.DemandTests.test_queue_excludes_provenance_expired_after_the_observation) ... ok
+test_queue_missing_provenance_remains_unknown_with_original_funding_expiry (__main__.DemandTests.test_queue_missing_provenance_remains_unknown_with_original_funding_expiry) ... ok
+test_refund_pending_dispute_and_prior_failed_delivery_are_not_new_queue_work (__main__.DemandTests.test_refund_pending_dispute_and_prior_failed_delivery_are_not_new_queue_work) ... ok
+test_same_controller_two_keys_are_related (__main__.DemandTests.test_same_controller_two_keys_are_related) ... ok
+test_self_project_and_unknown_funding_do_not_become_external_revenue (__main__.DemandTests.test_self_project_and_unknown_funding_do_not_become_external_revenue) ... ok
+test_signatures_context_anchor_registry_and_expected_contract_are_pinned (__main__.DemandTests.test_signatures_context_anchor_registry_and_expected_contract_are_pinned) ... ok
+test_strict_types_limits_canonical_shape_and_duplicate_json_keys (__main__.DemandTests.test_strict_types_limits_canonical_shape_and_duplicate_json_keys) ... ok
+test_task_rewrapping_counts_real_service_fees_but_only_one_result (__main__.DemandTests.test_task_rewrapping_counts_real_service_fees_but_only_one_result) ... ok
+test_unaccepted_or_unresolved_delivery_never_silently_settles (__main__.DemandTests.test_unaccepted_or_unresolved_delivery_never_silently_settles) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 0.108s
+
+OK
+{"running": ["python3", "-B", "formal/pon-nakamoto-v1/test_work_utility.py", "-v"]}
+test_attempt_and_verification_replay_cannot_reset_costs (__main__.UsefulOutputTests.test_attempt_and_verification_replay_cannot_reset_costs) ... ok
+test_changed_output_or_reused_consumer_operation_reject (__main__.UsefulOutputTests.test_changed_output_or_reused_consumer_operation_reject) ... ok
+test_cost_retry_stages_charge_every_invocation (__main__.UsefulOutputTests.test_cost_retry_stages_charge_every_invocation) ... ok
+test_duplicate_AB_wrapper_new_signer_nonce_and_function_do_not_add_useful_output (__main__.UsefulOutputTests.test_duplicate_AB_wrapper_new_signer_nonce_and_function_do_not_add_useful_output) ... ok
+test_invalid_reorg_leaves_accepted_history_intact (__main__.UsefulOutputTests.test_invalid_reorg_leaves_accepted_history_intact) ... ok
+test_missing_cost_stage_blocks_adoption_and_unknown_gpu_is_not_zero (__main__.UsefulOutputTests.test_missing_cost_stage_blocks_adoption_and_unknown_gpu_is_not_zero) ... ok
+test_rejected_attempt_costs_are_not_dropped (__main__.UsefulOutputTests.test_rejected_attempt_costs_are_not_dropped) ... ok
+test_reorg_does_not_erase_prior_adoption_or_cost_history (__main__.UsefulOutputTests.test_reorg_does_not_erase_prior_adoption_or_cost_history) ... ok
+test_returned_events_cannot_mutate_retained_adoption_history (__main__.UsefulOutputTests.test_returned_events_cannot_mutate_retained_adoption_history) ... ok
+test_same_output_reexecution_on_new_branch_cannot_double_historical_credit (__main__.UsefulOutputTests.test_same_output_reexecution_on_new_branch_cannot_double_historical_credit) ... ok
+test_stale_verified_attempt_cannot_be_adopted_but_all_costs_remain (__main__.UsefulOutputTests.test_stale_verified_attempt_cannot_be_adopted_but_all_costs_remain) ... ok
+test_total_cost_overflow_rejects_without_losing_existing_history (__main__.UsefulOutputTests.test_total_cost_overflow_rejects_without_losing_existing_history) ... ok
+test_unknown_numeric_aliases_and_unbounded_histories_reject (__main__.UsefulOutputTests.test_unknown_numeric_aliases_and_unbounded_histories_reject) ... ok
+test_verification_alone_is_not_actual_downstream_adoption (__main__.UsefulOutputTests.test_verification_alone_is_not_actual_downstream_adoption) ... ok
+test_zero_and_negative_gain_cannot_be_relabelled_useful (__main__.UsefulOutputTests.test_zero_and_negative_gain_cannot_be_relabelled_useful) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.002s
+
+OK
+{"running": ["python3", "-B", "formal/pon-nakamoto-v1/test_upgrade_policy.py", "-v"]}
+test_canary_binds_candidate_window_operation_and_native_time (__main__.UpgradePolicyTests.test_canary_binds_candidate_window_operation_and_native_time) ... ok
+test_canary_requires_actual_declared_use_net_gain_safety_and_separate_control (__main__.UpgradePolicyTests.test_canary_requires_actual_declared_use_net_gain_safety_and_separate_control) ... ok
+test_current_revocation_after_successful_canary_still_blocks (__main__.UpgradePolicyTests.test_current_revocation_after_successful_canary_still_blocks) ... ok
+test_duplicate_and_renamed_content_holdouts_are_refused (__main__.UpgradePolicyTests.test_duplicate_and_renamed_content_holdouts_are_refused) ... ok
+test_exact_evalues_and_three_stages_never_grant_native_authority (__main__.UpgradePolicyTests.test_exact_evalues_and_three_stages_never_grant_native_authority) ... ok
+test_exact_fair_null_distribution_respects_the_first_attempt_error_budget (__main__.UpgradePolicyTests.test_exact_fair_null_distribution_respects_the_first_attempt_error_budget) ... ok
+test_failed_cancelled_attempts_spend_alpha_across_new_parents (__main__.UpgradePolicyTests.test_failed_cancelled_attempts_spend_alpha_across_new_parents) ... ok
+test_fixed_sample_forbids_prefix_peeking_and_second_readout (__main__.UpgradePolicyTests.test_fixed_sample_forbids_prefix_peeking_and_second_readout) ... ok
+test_forged_or_wrong_phase_owner_receipts_cannot_be_reused (__main__.UpgradePolicyTests.test_forged_or_wrong_phase_owner_receipts_cannot_be_reused) ... ok
+test_fresh_window_is_not_just_a_new_round_label (__main__.UpgradePolicyTests.test_fresh_window_is_not_just_a_new_round_label) ... ok
+test_full_upfront_cost_can_reverse_apparent_accuracy_gain (__main__.UpgradePolicyTests.test_full_upfront_cost_can_reverse_apparent_accuracy_gain) ... ok
+test_large_exact_rationals_use_bounded_hex_encoding (__main__.UpgradePolicyTests.test_large_exact_rationals_use_bounded_hex_encoding) ... ok
+test_many_small_wins_do_not_establish_positive_mean_net_gain (__main__.UpgradePolicyTests.test_many_small_wins_do_not_establish_positive_mean_net_gain) ... ok
+test_missing_costs_nonfinite_values_booleans_and_alignment_refuse_atomically (__main__.UpgradePolicyTests.test_missing_costs_nonfinite_values_booleans_and_alignment_refuse_atomically) ... ok
+test_mutable_snapshots_do_not_rewrite_alpha_or_proposal_budget (__main__.UpgradePolicyTests.test_mutable_snapshots_do_not_rewrite_alpha_or_proposal_budget) ... ok
+test_owner_cannot_sign_future_evaluation_canary_or_proposal_events (__main__.UpgradePolicyTests.test_owner_cannot_sign_future_evaluation_canary_or_proposal_events) ... ok
+test_plan_is_strict_canonical_and_bound_to_external_pin (__main__.UpgradePolicyTests.test_plan_is_strict_canonical_and_bound_to_external_pin) ... ok
+test_proposal_cap_survives_new_parent_and_new_window (__main__.UpgradePolicyTests.test_proposal_cap_survives_new_parent_and_new_window) ... ok
+test_receipt_expiry_future_signature_and_clock_rewind_are_refused (__main__.UpgradePolicyTests.test_receipt_expiry_future_signature_and_clock_rewind_are_refused) ... ok
+test_same_candidate_cannot_restart_after_no_update (__main__.UpgradePolicyTests.test_same_candidate_cannot_restart_after_no_update) ... ok
+test_signed_unknown_revoked_or_conflicted_evidence_is_no_update (__main__.UpgradePolicyTests.test_signed_unknown_revoked_or_conflicted_evidence_is_no_update) ... ok
+test_stale_current_parent_blocks_evaluation_and_final_proposal (__main__.UpgradePolicyTests.test_stale_current_parent_blocks_evaluation_and_final_proposal) ... ok
+test_zero_gain_and_one_stronger_control_each_block (__main__.UpgradePolicyTests.test_zero_gain_and_one_stronger_control_each_block) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 0.165s
+
+OK
+{"running": ["python3", "-B", "scripts/ci/test_ci_contract.py", "-v"]}
+setUpClass (__main__.CiContractTests) ... ERROR
+test_actual_lane_preserves_quorum_reference_and_retained_vector_checks (__main__.EvaluationQuorumLaneTests.test_actual_lane_preserves_quorum_reference_and_retained_vector_checks) ... ok
+test_bounded_native_growth_cannot_accept_a_passing_transcript_without_its_export (__main__.EvaluationQuorumLaneTests.test_bounded_native_growth_cannot_accept_a_passing_transcript_without_its_export) ... ERROR
+test_bounded_native_growth_requires_each_guard_and_exact_export_binding (__main__.EvaluationQuorumLaneTests.test_bounded_native_growth_requires_each_guard_and_exact_export_binding) ... ok
+test_branch_schedule_export_and_full_reader_cannot_be_omitted_or_forged (__main__.EvaluationQuorumLaneTests.test_branch_schedule_export_and_full_reader_cannot_be_omitted_or_forged) ... ok
+test_cell_host_native_handoff_cannot_skip_build_or_use_an_unbound_binary (__main__.EvaluationQuorumLaneTests.test_cell_host_native_handoff_cannot_skip_build_or_use_an_unbound_binary) ... ok
+test_cost_counterexamples_require_their_real_input_arguments (__main__.EvaluationQuorumLaneTests.test_cost_counterexamples_require_their_real_input_arguments) ... ok
+test_credit_model_commands_cannot_be_omitted_duplicated_or_moved (__main__.EvaluationQuorumLaneTests.test_credit_model_commands_cannot_be_omitted_duplicated_or_moved) ... ok
+test_credit_model_commands_cannot_be_skipped_by_false_shell_branch (__main__.EvaluationQuorumLaneTests.test_credit_model_commands_cannot_be_skipped_by_false_shell_branch) ... ok
+test_credit_model_failures_cannot_be_swallowed_by_shell_condition (__main__.EvaluationQuorumLaneTests.test_credit_model_failures_cannot_be_swallowed_by_shell_condition) ... ok
+test_current_readers_and_runtime_controls_cannot_be_missing_duplicated_stubbed_or_moved (__main__.EvaluationQuorumLaneTests.test_current_readers_and_runtime_controls_cannot_be_missing_duplicated_stubbed_or_moved) ... ok
+test_current_runtime_controls_cannot_split_parent_material_and_parent_step (__main__.EvaluationQuorumLaneTests.test_current_runtime_controls_cannot_split_parent_material_and_parent_step) ... ok
+test_current_runtime_controls_must_follow_pilot_and_parent_material (__main__.EvaluationQuorumLaneTests.test_current_runtime_controls_must_follow_pilot_and_parent_material) ... ok
+test_demand_upgrade_controls_cannot_be_omitted_duplicated_moved_or_swallowed (__main__.EvaluationQuorumLaneTests.test_demand_upgrade_controls_cannot_be_omitted_duplicated_moved_or_swallowed) ... ok
+test_entire_credit_model_prefix_cannot_be_wrapped_or_preceded (__main__.EvaluationQuorumLaneTests.test_entire_credit_model_prefix_cannot_be_wrapped_or_preceded) ... ok
+test_fresh_work_theory_and_native_admission_controls_are_additive_and_mandatory (__main__.EvaluationQuorumLaneTests.test_fresh_work_theory_and_native_admission_controls_are_additive_and_mandatory) ... ok
+test_growth_sqlite_readback_failure_remains_a_shell_failure (__main__.EvaluationQuorumLaneTests.test_growth_sqlite_readback_failure_remains_a_shell_failure) ... ERROR
+test_gsc2_synthetic_reader_cannot_be_removed_duplicated_commented_or_moved (__main__.EvaluationQuorumLaneTests.test_gsc2_synthetic_reader_cannot_be_removed_duplicated_commented_or_moved) ... ok
+test_integration_legacy_reorg_reader_retains_its_mandatory_lane (__main__.EvaluationQuorumLaneTests.test_integration_legacy_reorg_reader_retains_its_mandatory_lane) ... ok
+test_joint_consensus_arithmetic_controls_cannot_be_removed_skipped_or_swallowed (__main__.EvaluationQuorumLaneTests.test_joint_consensus_arithmetic_controls_cannot_be_removed_skipped_or_swallowed) ... ok
+test_native_cell_suite_cannot_disappear_from_mandatory_conformance (__main__.EvaluationQuorumLaneTests.test_native_cell_suite_cannot_disappear_from_mandatory_conformance) ... ok
+test_native_daa_reader_requires_fresh_full_work_export_and_actual_digest (__main__.EvaluationQuorumLaneTests.test_native_daa_reader_requires_fresh_full_work_export_and_actual_digest) ... ok
+test_native_demand_controls_cannot_be_omitted_duplicated_moved_or_swallowed (__main__.EvaluationQuorumLaneTests.test_native_demand_controls_cannot_be_omitted_duplicated_moved_or_swallowed) ... ok
+test_native_growth_cannot_lower_threshold_relabel_test_or_reuse_export (__main__.EvaluationQuorumLaneTests.test_native_growth_cannot_lower_threshold_relabel_test_or_reuse_export) ... ok
+test_native_growth_every_guard_and_command_is_mandatory_once_and_in_rust_lane (__main__.EvaluationQuorumLaneTests.test_native_growth_every_guard_and_command_is_mandatory_once_and_in_rust_lane) ... ok
+test_native_growth_libtest_check_must_precede_sqlite_readback (__main__.EvaluationQuorumLaneTests.test_native_growth_libtest_check_must_precede_sqlite_readback) ... ok
+test_native_joint_daa_requires_both_fresh_profiles_and_current_report_digests (__main__.EvaluationQuorumLaneTests.test_native_joint_daa_requires_both_fresh_profiles_and_current_report_digests) ... ok
+test_native_lifecycle_cost_controls_cannot_be_omitted_duplicated_moved_or_swallowed (__main__.EvaluationQuorumLaneTests.test_native_lifecycle_cost_controls_cannot_be_omitted_duplicated_moved_or_swallowed) ... ok
+test_new_evolution_and_cost_checks_cannot_be_removed_skipped_duplicated_or_moved (__main__.EvaluationQuorumLaneTests.test_new_evolution_and_cost_checks_cannot_be_removed_skipped_duplicated_or_moved) ... ok
+test_original_campaign_reader_keeps_original_pins_and_lane (__main__.EvaluationQuorumLaneTests.test_original_campaign_reader_keeps_original_pins_and_lane) ... ok
+test_parent_commands_cannot_be_skipped_by_false_shell_branch (__main__.EvaluationQuorumLaneTests.test_parent_commands_cannot_be_skipped_by_false_shell_branch) ... ok
+test_parent_commands_cannot_have_failures_swallowed_by_shell_condition (__main__.EvaluationQuorumLaneTests.test_parent_commands_cannot_have_failures_swallowed_by_shell_condition) ... ok
+test_parent_material_checks_cannot_be_omitted_duplicated_or_moved (__main__.EvaluationQuorumLaneTests.test_parent_material_checks_cannot_be_omitted_duplicated_or_moved) ... ok
+test_pq_migration_commands_cannot_be_removed_skipped_repointed_or_moved (__main__.EvaluationQuorumLaneTests.test_pq_migration_commands_cannot_be_removed_skipped_repointed_or_moved) ... ok
+test_pq_migration_commands_keep_actual_shell_failure_propagation (__main__.EvaluationQuorumLaneTests.test_pq_migration_commands_keep_actual_shell_failure_propagation) ... ok
+test_pq_migration_prefix_preserves_the_original_ordered_from_zero_callsite (__main__.EvaluationQuorumLaneTests.test_pq_migration_prefix_preserves_the_original_ordered_from_zero_callsite) ... ERROR
+test_proof_latency_controls_cannot_be_missing_duplicated_stubbed_or_moved (__main__.EvaluationQuorumLaneTests.test_proof_latency_controls_cannot_be_missing_duplicated_stubbed_or_moved) ... ok
+test_quorum_checks_cannot_be_removed_duplicated_skipped_or_rewrite_vectors (__main__.EvaluationQuorumLaneTests.test_quorum_checks_cannot_be_removed_duplicated_skipped_or_rewrite_vectors) ... ok
+test_quorum_checks_cannot_move_to_another_lane_or_reverse_verification (__main__.EvaluationQuorumLaneTests.test_quorum_checks_cannot_move_to_another_lane_or_reverse_verification) ... ok
+test_resource_transfer_and_shared_authority_controls_cannot_be_omitted_or_swallowed (__main__.EvaluationQuorumLaneTests.test_resource_transfer_and_shared_authority_controls_cannot_be_omitted_or_swallowed) ... ok
+test_reward_budget_controls_cannot_be_omitted_duplicated_or_moved (__main__.EvaluationQuorumLaneTests.test_reward_budget_controls_cannot_be_omitted_duplicated_or_moved) ... ok
+test_selected_lane_cannot_be_wrapped_in_an_outer_shell_condition (__main__.EvaluationQuorumLaneTests.test_selected_lane_cannot_be_wrapped_in_an_outer_shell_condition) ... ok
+test_useful_cell_relation_controls_cannot_be_removed_skipped_duplicated_or_moved (__main__.EvaluationQuorumLaneTests.test_useful_cell_relation_controls_cannot_be_removed_skipped_duplicated_or_moved) ... ok
+test_actual_workflow_guards_bind_current_bytes (__main__.InlineSourcePinTests.test_actual_workflow_guards_bind_current_bytes) ... ok
+test_recent_log_inventory_retains_absence_and_source_failure (__main__.InlineSourcePinTests.test_recent_log_inventory_retains_absence_and_source_failure) ... 
+  test_recent_log_inventory_retains_absence_and_source_failure (__main__.InlineSourcePinTests.test_recent_log_inventory_retains_absence_and_source_failure) (source_status=0, logs=[]) ... ERROR
+  test_recent_log_inventory_retains_absence_and_source_failure (__main__.InlineSourcePinTests.test_recent_log_inventory_retains_absence_and_source_failure) (source_status=0, logs=['first.log', 'with space.log']) ... ERROR
+  test_recent_log_inventory_retains_absence_and_source_failure (__main__.InlineSourcePinTests.test_recent_log_inventory_retains_absence_and_source_failure) (source_status=7, logs=[]) ... ERROR
+  test_recent_log_inventory_retains_absence_and_source_failure (__main__.InlineSourcePinTests.test_recent_log_inventory_retains_absence_and_source_failure) (source_status=7, logs=['failed.log']) ... ERROR
+test_stale_missing_and_bypassed_literal_guards_are_rejected (__main__.InlineSourcePinTests.test_stale_missing_and_bypassed_literal_guards_are_rejected) ... ERROR
+test_actual_merged_lanes_keep_all_original_controls (__main__.MergedQualificationLaneTests.test_actual_merged_lanes_keep_all_original_controls) ... ok
+test_complete_groups_cannot_reorder_duplicate_or_hide_in_shell_conditions (__main__.MergedQualificationLaneTests.test_complete_groups_cannot_reorder_duplicate_or_hide_in_shell_conditions) ... ok
+test_completion_commands_cannot_change_position_multiplicity_or_failure_policy (__main__.MergedQualificationLaneTests.test_completion_commands_cannot_change_position_multiplicity_or_failure_policy) ... ok
+test_credit_commands_cannot_change_position_multiplicity_or_failure_policy (__main__.MergedQualificationLaneTests.test_credit_commands_cannot_change_position_multiplicity_or_failure_policy) ... ok
+test_current_mapping_commands_cannot_change_position_multiplicity_or_failure_policy (__main__.MergedQualificationLaneTests.test_current_mapping_commands_cannot_change_position_multiplicity_or_failure_policy) ... ok
+test_fixed_probability_commands_cannot_change_position_multiplicity_or_failure_policy (__main__.MergedQualificationLaneTests.test_fixed_probability_commands_cannot_change_position_multiplicity_or_failure_policy) ... ok
+test_independent_literals_keep_original_neighbors_and_unique_commands (__main__.MergedQualificationLaneTests.test_independent_literals_keep_original_neighbors_and_unique_commands) ... ok
+test_pq_effect_root_commands_cannot_change_position_multiplicity_or_failure_policy (__main__.MergedQualificationLaneTests.test_pq_effect_root_commands_cannot_change_position_multiplicity_or_failure_policy) ... ok
+test_whole_repository_and_external_lanes_cannot_suppress_failures (__main__.MergedQualificationLaneTests.test_whole_repository_and_external_lanes_cannot_suppress_failures) ... ok
+test_actual_exact_loop_checks_every_result_and_preserves_failure_status (__main__.PqReleaseAuthorityCiTests.test_actual_exact_loop_checks_every_result_and_preserves_failure_status) ... ERROR
+test_actual_python_harness_runs_all_eighteen_and_readback_has_no_native_claim (__main__.PqReleaseAuthorityCiTests.test_actual_python_harness_runs_all_eighteen_and_readback_has_no_native_claim) ... ERROR
+test_actual_registry_cannot_substitute_legacy_52_or_non_unix_54 (__main__.PqReleaseAuthorityCiTests.test_actual_registry_cannot_substitute_legacy_52_or_non_unix_54) ... ERROR
+test_actual_registry_reader_requires_exact_complete_55_and_four_groups (__main__.PqReleaseAuthorityCiTests.test_actual_registry_reader_requires_exact_complete_55_and_four_groups) ... ERROR
+test_harness_source_keeps_all_eighteen_reviewed_test_double_names (__main__.PqReleaseAuthorityCiTests.test_harness_source_keeps_all_eighteen_reviewed_test_double_names) ... ERROR
+test_manifest_and_actual_reader_reject_wrong_unix_scope_or_missing_cch1 (__main__.PqReleaseAuthorityCiTests.test_manifest_and_actual_reader_reject_wrong_unix_scope_or_missing_cch1) ... ERROR
+test_manifest_rejects_wrong_counts_duplicates_partitions_and_scope_claims (__main__.PqReleaseAuthorityCiTests.test_manifest_rejects_wrong_counts_duplicates_partitions_and_scope_claims) ... ERROR
+test_original_initial_root_and_quorum_names_cannot_be_relabelled_together (__main__.PqReleaseAuthorityCiTests.test_original_initial_root_and_quorum_names_cannot_be_relabelled_together) ... ERROR
+test_reviewed_groups_complete_registry_and_hosted_execution_are_required (__main__.PqReleaseAuthorityCiTests.test_reviewed_groups_complete_registry_and_hosted_execution_are_required) ... ERROR
+test_v2_preserves_the_complete_legacy_manifest_and_ordered_groups (__main__.PqReleaseAuthorityCiTests.test_v2_preserves_the_complete_legacy_manifest_and_ordered_groups) ... ERROR
+test_workflow_cannot_reduce_registry_queue_exact_execution_or_readback (__main__.PqReleaseAuthorityCiTests.test_workflow_cannot_reduce_registry_queue_exact_execution_or_readback) ... ERROR
+test_workflow_cannot_skip_or_untrigger_authority_and_harness_controls (__main__.PqReleaseAuthorityCiTests.test_workflow_cannot_skip_or_untrigger_authority_and_harness_controls) ... ERROR
+test_actual_footer_refuses_each_failed_skipped_or_missing_original_stage (__main__.W1PostwinLaneTests.test_actual_footer_refuses_each_failed_skipped_or_missing_original_stage) ... ERROR
+test_actual_postwin_lanes_retain_real_controls (__main__.W1PostwinLaneTests.test_actual_postwin_lanes_retain_real_controls) ... ok
+test_added_source_snapshot_triggers_cannot_be_removed (__main__.W1PostwinLaneTests.test_added_source_snapshot_triggers_cannot_be_removed) ... ok
+test_both_receiver_suites_and_final_outcome_block_are_mandatory (__main__.W1PostwinLaneTests.test_both_receiver_suites_and_final_outcome_block_are_mandatory) ... ok
+test_new_named_mapper_and_v2_gate_controls_cannot_be_reduced (__main__.W1PostwinLaneTests.test_new_named_mapper_and_v2_gate_controls_cannot_be_reduced) ... ok
+test_postwin_controls_keep_head_merge_matrix_and_read_only_scope (__main__.W1PostwinLaneTests.test_postwin_controls_keep_head_merge_matrix_and_read_only_scope) ... ok
+test_postwin_count_and_original_budget_controls_cannot_be_softened (__main__.W1PostwinLaneTests.test_postwin_count_and_original_budget_controls_cannot_be_softened) ... ok
+test_postwin_staged_count_and_source_identity_cannot_be_softened (__main__.W1PostwinLaneTests.test_postwin_staged_count_and_source_identity_cannot_be_softened) ... ok
+test_real_receiver_requires_all_exact_v2_inputs_and_fresh_output (__main__.W1PostwinLaneTests.test_real_receiver_requires_all_exact_v2_inputs_and_fresh_output) ... ok
+test_real_receiver_requires_current_successful_release_build (__main__.W1PostwinLaneTests.test_real_receiver_requires_current_successful_release_build) ... ok
+test_real_receiver_step_cannot_be_missing_duplicated_or_bypassed (__main__.W1PostwinLaneTests.test_real_receiver_step_cannot_be_missing_duplicated_or_bypassed) ... ok
+test_repository_contracts_cannot_move_into_optional_profile (__main__.W1PostwinLaneTests.test_repository_contracts_cannot_move_into_optional_profile) ... ok
+test_required_postwin_commands_cannot_be_missing_stubbed_or_swallowed (__main__.W1PostwinLaneTests.test_required_postwin_commands_cannot_be_missing_stubbed_or_swallowed) ... ok
+test_required_postwin_commands_cannot_change_or_duplicate_lane (__main__.W1PostwinLaneTests.test_required_postwin_commands_cannot_change_or_duplicate_lane) ... ok
+test_saved_58_suite_keeps_all_original_inputs_readback_and_four_minutes (__main__.W1PostwinLaneTests.test_saved_58_suite_keeps_all_original_inputs_readback_and_four_minutes) ... ok
+test_verifier_keeps_all_three_exact_tests_and_independent_build (__main__.W1PostwinLaneTests.test_verifier_keeps_all_three_exact_tests_and_independent_build) ... ok
+test_actual_v3_source_shell_binds_head_ordered_merge_and_unchanged_bytes (__main__.W1ReuseV3LaneTests.test_actual_v3_source_shell_binds_head_ordered_merge_and_unchanged_bytes) ... ERROR
+test_v3_cannot_skip_rename_rebudget_or_substitute_local_observation (__main__.W1ReuseV3LaneTests.test_v3_cannot_skip_rename_rebudget_or_substitute_local_observation) ... ok
+test_v3_lane_is_additive_and_keeps_all_four_exact_source_cells (__main__.W1ReuseV3LaneTests.test_v3_lane_is_additive_and_keeps_all_four_exact_source_cells) ... ok
+
+======================================================================
+ERROR: setUpClass (__main__.CiContractTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 1316, in setUpClass
+    shutil.copytree(ROOT, cls.root, ignore=ignore)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/shutil.py", line 654, in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+                     ignore=ignore, copy_function=copy_function,
+                     ignore_dangling_symlinks=ignore_dangling_symlinks,
+                     dirs_exist_ok=dirs_exist_ok)
+  File "/usr/lib/python3.14/shutil.py", line 552, in _copytree
+    os.makedirs(dst, exist_ok=dirs_exist_ok)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 236, in makedirs
+OSError: [Errno 28] No space left on device: '/tmp/trnm-ci-contract-rgbzaojm/source'
+
+======================================================================
+ERROR: test_bounded_native_growth_cannot_accept_a_passing_transcript_without_its_export (__main__.EvaluationQuorumLaneTests.test_bounded_native_growth_cannot_accept_a_passing_transcript_without_its_export)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 491, in test_bounded_native_growth_cannot_accept_a_passing_transcript_without_its_export
+    with tempfile.TemporaryDirectory(prefix='growth-v2-export-shell-') as temporary:
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/growth-v2-export-shell-vl4vhfni'
+
+======================================================================
+ERROR: test_growth_sqlite_readback_failure_remains_a_shell_failure (__main__.EvaluationQuorumLaneTests.test_growth_sqlite_readback_failure_remains_a_shell_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 526, in test_growth_sqlite_readback_failure_remains_a_shell_failure
+    with tempfile.TemporaryDirectory(prefix='growth-readback-shell-') as temporary:
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/growth-readback-shell-nzuvs4c8'
+
+======================================================================
+ERROR: test_pq_migration_prefix_preserves_the_original_ordered_from_zero_callsite (__main__.EvaluationQuorumLaneTests.test_pq_migration_prefix_preserves_the_original_ordered_from_zero_callsite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 207, in test_pq_migration_prefix_preserves_the_original_ordered_from_zero_callsite
+    with tempfile.TemporaryDirectory(prefix='trnm-pq-ci-callsite-') as directory:
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/trnm-pq-ci-callsite-7wzhwolr'
+
+======================================================================
+ERROR: test_recent_log_inventory_retains_absence_and_source_failure (__main__.InlineSourcePinTests.test_recent_log_inventory_retains_absence_and_source_failure) (source_status=0, logs=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 121, in test_recent_log_inventory_retains_absence_and_source_failure
+    tempfile.TemporaryDirectory(prefix='trnm-recent-log-test-') as directory:
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/trnm-recent-log-test-bw0wkvr5'
+
+======================================================================
+ERROR: test_recent_log_inventory_retains_absence_and_source_failure (__main__.InlineSourcePinTests.test_recent_log_inventory_retains_absence_and_source_failure) (source_status=0, logs=['first.log', 'with space.log'])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 121, in test_recent_log_inventory_retains_absence_and_source_failure
+    tempfile.TemporaryDirectory(prefix='trnm-recent-log-test-') as directory:
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/trnm-recent-log-test-jj8oz2rs'
+
+======================================================================
+ERROR: test_recent_log_inventory_retains_absence_and_source_failure (__main__.InlineSourcePinTests.test_recent_log_inventory_retains_absence_and_source_failure) (source_status=7, logs=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 121, in test_recent_log_inventory_retains_absence_and_source_failure
+    tempfile.TemporaryDirectory(prefix='trnm-recent-log-test-') as directory:
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/trnm-recent-log-test-2g8gmx9n'
+
+======================================================================
+ERROR: test_recent_log_inventory_retains_absence_and_source_failure (__main__.InlineSourcePinTests.test_recent_log_inventory_retains_absence_and_source_failure) (source_status=7, logs=['failed.log'])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 121, in test_recent_log_inventory_retains_absence_and_source_failure
+    tempfile.TemporaryDirectory(prefix='trnm-recent-log-test-') as directory:
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/trnm-recent-log-test-tkyn52s0'
+
+======================================================================
+ERROR: test_stale_missing_and_bypassed_literal_guards_are_rejected (__main__.InlineSourcePinTests.test_stale_missing_and_bypassed_literal_guards_are_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 88, in test_stale_missing_and_bypassed_literal_guards_are_rejected
+    with tempfile.TemporaryDirectory(prefix='trnm-inline-source-') as directory:
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/trnm-inline-source-yqa3p53w'
+
+======================================================================
+ERROR: test_actual_exact_loop_checks_every_result_and_preserves_failure_status (__main__.PqReleaseAuthorityCiTests.test_actual_exact_loop_checks_every_result_and_preserves_failure_status)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 952, in setUp
+    self.temporary = tempfile.TemporaryDirectory(prefix='trnm-pq-authority-ci-')
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/trnm-pq-authority-ci-vvg4y2bz'
+
+======================================================================
+ERROR: test_actual_python_harness_runs_all_eighteen_and_readback_has_no_native_claim (__main__.PqReleaseAuthorityCiTests.test_actual_python_harness_runs_all_eighteen_and_readback_has_no_native_claim)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 952, in setUp
+    self.temporary = tempfile.TemporaryDirectory(prefix='trnm-pq-authority-ci-')
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/trnm-pq-authority-ci-42_kao0q'
+
+======================================================================
+ERROR: test_actual_registry_cannot_substitute_legacy_52_or_non_unix_54 (__main__.PqReleaseAuthorityCiTests.test_actual_registry_cannot_substitute_legacy_52_or_non_unix_54)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 952, in setUp
+    self.temporary = tempfile.TemporaryDirectory(prefix='trnm-pq-authority-ci-')
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/trnm-pq-authority-ci-ei509lul'
+
+======================================================================
+ERROR: test_actual_registry_reader_requires_exact_complete_55_and_four_groups (__main__.PqReleaseAuthorityCiTests.test_actual_registry_reader_requires_exact_complete_55_and_four_groups)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 952, in setUp
+    self.temporary = tempfile.TemporaryDirectory(prefix='trnm-pq-authority-ci-')
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/trnm-pq-authority-ci-au14snto'
+
+======================================================================
+ERROR: test_harness_source_keeps_all_eighteen_reviewed_test_double_names (__main__.PqReleaseAuthorityCiTests.test_harness_source_keeps_all_eighteen_reviewed_test_double_names)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 952, in setUp
+    self.temporary = tempfile.TemporaryDirectory(prefix='trnm-pq-authority-ci-')
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/trnm-pq-authority-ci-89r3zbt9'
+
+======================================================================
+ERROR: test_manifest_and_actual_reader_reject_wrong_unix_scope_or_missing_cch1 (__main__.PqReleaseAuthorityCiTests.test_manifest_and_actual_reader_reject_wrong_unix_scope_or_missing_cch1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 952, in setUp
+    self.temporary = tempfile.TemporaryDirectory(prefix='trnm-pq-authority-ci-')
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/trnm-pq-authority-ci-uti7q5rk'
+
+======================================================================
+ERROR: test_manifest_rejects_wrong_counts_duplicates_partitions_and_scope_claims (__main__.PqReleaseAuthorityCiTests.test_manifest_rejects_wrong_counts_duplicates_partitions_and_scope_claims)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 952, in setUp
+    self.temporary = tempfile.TemporaryDirectory(prefix='trnm-pq-authority-ci-')
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/trnm-pq-authority-ci-r9fxwiyt'
+
+======================================================================
+ERROR: test_original_initial_root_and_quorum_names_cannot_be_relabelled_together (__main__.PqReleaseAuthorityCiTests.test_original_initial_root_and_quorum_names_cannot_be_relabelled_together)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 952, in setUp
+    self.temporary = tempfile.TemporaryDirectory(prefix='trnm-pq-authority-ci-')
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/trnm-pq-authority-ci-x7u67q74'
+
+======================================================================
+ERROR: test_reviewed_groups_complete_registry_and_hosted_execution_are_required (__main__.PqReleaseAuthorityCiTests.test_reviewed_groups_complete_registry_and_hosted_execution_are_required)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 952, in setUp
+    self.temporary = tempfile.TemporaryDirectory(prefix='trnm-pq-authority-ci-')
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/trnm-pq-authority-ci-qe4wb0j6'
+
+======================================================================
+ERROR: test_v2_preserves_the_complete_legacy_manifest_and_ordered_groups (__main__.PqReleaseAuthorityCiTests.test_v2_preserves_the_complete_legacy_manifest_and_ordered_groups)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 952, in setUp
+    self.temporary = tempfile.TemporaryDirectory(prefix='trnm-pq-authority-ci-')
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/trnm-pq-authority-ci-ndodxq0_'
+
+======================================================================
+ERROR: test_workflow_cannot_reduce_registry_queue_exact_execution_or_readback (__main__.PqReleaseAuthorityCiTests.test_workflow_cannot_reduce_registry_queue_exact_execution_or_readback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 952, in setUp
+    self.temporary = tempfile.TemporaryDirectory(prefix='trnm-pq-authority-ci-')
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/trnm-pq-authority-ci-613g_h7h'
+
+======================================================================
+ERROR: test_workflow_cannot_skip_or_untrigger_authority_and_harness_controls (__main__.PqReleaseAuthorityCiTests.test_workflow_cannot_skip_or_untrigger_authority_and_harness_controls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 952, in setUp
+    self.temporary = tempfile.TemporaryDirectory(prefix='trnm-pq-authority-ci-')
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/trnm-pq-authority-ci-v5v10r2h'
+
+======================================================================
+ERROR: test_actual_footer_refuses_each_failed_skipped_or_missing_original_stage (__main__.W1PostwinLaneTests.test_actual_footer_refuses_each_failed_skipped_or_missing_original_stage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 2546, in test_actual_footer_refuses_each_failed_skipped_or_missing_original_stage
+    with tempfile.TemporaryDirectory(prefix='w1-final-outcome-') as directory:
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/w1-final-outcome-hqufn2rc'
+
+======================================================================
+ERROR: test_actual_v3_source_shell_binds_head_ordered_merge_and_unchanged_bytes (__main__.W1ReuseV3LaneTests.test_actual_v3_source_shell_binds_head_ordered_merge_and_unchanged_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_contract.py", line 892, in test_actual_v3_source_shell_binds_head_ordered_merge_and_unchanged_bytes
+    with tempfile.TemporaryDirectory(prefix='w1-v3-source-shell-') as temporary:
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 907, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/tmp/w1-v3-source-shell-80_ec8u9'
+
+----------------------------------------------------------------------
+Ran 85 tests in 3.601s
+
+FAILED (errors=23)
+{"running": ["python3", "-B", "scripts/ci/test_ci_source_integrity.py", "-v"]}
+test_actual_bytes_are_checked_even_if_status_reports_clean (__main__.TrackedSourceTests.test_actual_bytes_are_checked_even_if_status_reports_clean) ... ERROR
+test_assume_unchanged_cannot_hide_modified_source (__main__.TrackedSourceTests.test_assume_unchanged_cannot_hide_modified_source) ... ERROR
+test_executable_mode_checked_even_when_git_ignores_filemode (__main__.TrackedSourceTests.test_executable_mode_checked_even_when_git_ignores_filemode) ... ERROR
+test_graft_file_is_rejected (__main__.TrackedSourceTests.test_graft_file_is_rejected) ... ERROR
+test_hidden_index_flag_is_rejected_even_without_changes (__main__.TrackedSourceTests.test_hidden_index_flag_is_rejected_even_without_changes) ... ERROR
+test_intermediate_directory_symlink_rejected (__main__.TrackedSourceTests.test_intermediate_directory_symlink_rejected) ... ERROR
+test_new_native_c_bytes_are_verified_without_an_extension_allowlist (__main__.TrackedSourceTests.test_new_native_c_bytes_are_verified_without_an_extension_allowlist) ... ERROR
+test_nonregular_file_rejected_without_waiting_for_fifo (__main__.TrackedSourceTests.test_nonregular_file_rejected_without_waiting_for_fifo) ... ERROR
+test_prospective_merge_accepts_exact_ancestor_candidate_tree (__main__.TrackedSourceTests.test_prospective_merge_accepts_exact_ancestor_candidate_tree) ... ERROR
+test_prospective_merge_accepts_exact_diverged_combination (__main__.TrackedSourceTests.test_prospective_merge_accepts_exact_diverged_combination) ... ERROR
+test_prospective_merge_ignores_environment_merge_driver (__main__.TrackedSourceTests.test_prospective_merge_ignores_environment_merge_driver) ... ERROR
+test_prospective_merge_ignores_local_union_attributes (__main__.TrackedSourceTests.test_prospective_merge_ignores_local_union_attributes) ... ERROR
+test_prospective_merge_local_binary_attributes_cannot_reject_valid_tree (__main__.TrackedSourceTests.test_prospective_merge_local_binary_attributes_cannot_reject_valid_tree) ... ERROR
+test_prospective_merge_never_executes_local_merge_driver (__main__.TrackedSourceTests.test_prospective_merge_never_executes_local_merge_driver) ... ERROR
+test_prospective_merge_rejects_injected_committed_source (__main__.TrackedSourceTests.test_prospective_merge_rejects_injected_committed_source) ... ERROR
+test_prospective_merge_rejects_omitted_base_change (__main__.TrackedSourceTests.test_prospective_merge_rejects_omitted_base_change) ... ERROR
+test_prospective_merge_rejects_unreviewed_conflict_resolution (__main__.TrackedSourceTests.test_prospective_merge_rejects_unreviewed_conflict_resolution) ... ERROR
+test_receipt_reuses_raw_source_guard (__main__.TrackedSourceTests.test_receipt_reuses_raw_source_guard) ... ERROR
+test_regular_file_symlink_substitution_rejected (__main__.TrackedSourceTests.test_regular_file_symlink_substitution_rejected) ... ERROR
+test_replacement_commit_cannot_relabel_different_source (__main__.TrackedSourceTests.test_replacement_commit_cannot_relabel_different_source) ... ERROR
+test_same_size_stat_cached_change_is_rejected (__main__.TrackedSourceTests.test_same_size_stat_cached_change_is_rejected) ... ERROR
+test_skip_worktree_cannot_hide_modified_source (__main__.TrackedSourceTests.test_skip_worktree_cannot_hide_modified_source) ... ERROR
+test_source_fence_checked_retains_actual_failed_observation (__main__.TrackedSourceTests.test_source_fence_checked_retains_actual_failed_observation) ... ERROR
+test_source_fence_clean_child_keeps_actual_success_and_bytes (__main__.TrackedSourceTests.test_source_fence_clean_child_keeps_actual_success_and_bytes) ... ERROR
+test_source_fence_clean_commit_switch_during_command_is_rejected (__main__.TrackedSourceTests.test_source_fence_clean_commit_switch_during_command_is_rejected) ... ERROR
+test_source_fence_clean_wrong_head_cannot_start_child (__main__.TrackedSourceTests.test_source_fence_clean_wrong_head_cannot_start_child) ... ERROR
+test_source_fence_dirty_before_command_cannot_start_child (__main__.TrackedSourceTests.test_source_fence_dirty_before_command_cannot_start_child) ... ERROR
+test_source_fence_dirty_source_preserves_primary_failure (__main__.TrackedSourceTests.test_source_fence_dirty_source_preserves_primary_failure) ... ERROR
+test_source_fence_existing_fuzz_and_supply_callers_pin_every_command (__main__.TrackedSourceTests.test_source_fence_existing_fuzz_and_supply_callers_pin_every_command) ... ERROR
+test_source_fence_finish_clean_other_commit_cannot_borrow_pass (__main__.TrackedSourceTests.test_source_fence_finish_clean_other_commit_cannot_borrow_pass) ... ERROR
+test_source_fence_finish_dirty_source_cannot_write_pass (__main__.TrackedSourceTests.test_source_fence_finish_dirty_source_cannot_write_pass) ... ERROR
+test_source_fence_finish_requires_initial_pin (__main__.TrackedSourceTests.test_source_fence_finish_requires_initial_pin) ... ERROR
+test_source_fence_finish_valid_source_never_upgrades_existing_failure (__main__.TrackedSourceTests.test_source_fence_finish_valid_source_never_upgrades_existing_failure) ... ERROR
+test_source_fence_index_hidden_child_mutation_still_refuses (__main__.TrackedSourceTests.test_source_fence_index_hidden_child_mutation_still_refuses) ... ERROR
+test_source_fence_keeps_nonzero_primary_error_and_drift (__main__.TrackedSourceTests.test_source_fence_keeps_nonzero_primary_error_and_drift) ... ERROR
+test_source_fence_pin_is_clean_and_does_not_follow_later_changes (__main__.TrackedSourceTests.test_source_fence_pin_is_clean_and_does_not_follow_later_changes) ... ERROR
+test_source_fence_timeout_and_source_failure_preserve_both (__main__.TrackedSourceTests.test_source_fence_timeout_and_source_failure_preserve_both) ... ERROR
+test_source_fence_zero_exit_with_real_dirty_source_is_not_success (__main__.TrackedSourceTests.test_source_fence_zero_exit_with_real_dirty_source_is_not_success) ... ERROR
+test_staged_change_is_rejected (__main__.TrackedSourceTests.test_staged_change_is_rejected) ... ERROR
+test_subdirectory_is_not_a_complete_source_root (__main__.TrackedSourceTests.test_subdirectory_is_not_a_complete_source_root) ... ERROR
+test_tracked_symlink_target_change_rejected (__main__.TrackedSourceTests.test_tracked_symlink_target_change_rejected) ... ERROR
+test_untracked_configuration_cannot_hide_new_source (__main__.TrackedSourceTests.test_untracked_configuration_cannot_hide_new_source) ... ERROR
+test_valid_raw_files_modes_and_symlink (__main__.TrackedSourceTests.test_valid_raw_files_modes_and_symlink) ... ERROR
+
+======================================================================
+ERROR: test_actual_bytes_are_checked_even_if_status_reports_clean (__main__.TrackedSourceTests.test_actual_bytes_are_checked_even_if_status_reports_clean)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_assume_unchanged_cannot_hide_modified_source (__main__.TrackedSourceTests.test_assume_unchanged_cannot_hide_modified_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_executable_mode_checked_even_when_git_ignores_filemode (__main__.TrackedSourceTests.test_executable_mode_checked_even_when_git_ignores_filemode)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_graft_file_is_rejected (__main__.TrackedSourceTests.test_graft_file_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_hidden_index_flag_is_rejected_even_without_changes (__main__.TrackedSourceTests.test_hidden_index_flag_is_rejected_even_without_changes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_intermediate_directory_symlink_rejected (__main__.TrackedSourceTests.test_intermediate_directory_symlink_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_new_native_c_bytes_are_verified_without_an_extension_allowlist (__main__.TrackedSourceTests.test_new_native_c_bytes_are_verified_without_an_extension_allowlist)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_nonregular_file_rejected_without_waiting_for_fifo (__main__.TrackedSourceTests.test_nonregular_file_rejected_without_waiting_for_fifo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_prospective_merge_accepts_exact_ancestor_candidate_tree (__main__.TrackedSourceTests.test_prospective_merge_accepts_exact_ancestor_candidate_tree)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_prospective_merge_accepts_exact_diverged_combination (__main__.TrackedSourceTests.test_prospective_merge_accepts_exact_diverged_combination)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_prospective_merge_ignores_environment_merge_driver (__main__.TrackedSourceTests.test_prospective_merge_ignores_environment_merge_driver)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_prospective_merge_ignores_local_union_attributes (__main__.TrackedSourceTests.test_prospective_merge_ignores_local_union_attributes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_prospective_merge_local_binary_attributes_cannot_reject_valid_tree (__main__.TrackedSourceTests.test_prospective_merge_local_binary_attributes_cannot_reject_valid_tree)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_prospective_merge_never_executes_local_merge_driver (__main__.TrackedSourceTests.test_prospective_merge_never_executes_local_merge_driver)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_prospective_merge_rejects_injected_committed_source (__main__.TrackedSourceTests.test_prospective_merge_rejects_injected_committed_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_prospective_merge_rejects_omitted_base_change (__main__.TrackedSourceTests.test_prospective_merge_rejects_omitted_base_change)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_prospective_merge_rejects_unreviewed_conflict_resolution (__main__.TrackedSourceTests.test_prospective_merge_rejects_unreviewed_conflict_resolution)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_receipt_reuses_raw_source_guard (__main__.TrackedSourceTests.test_receipt_reuses_raw_source_guard)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_regular_file_symlink_substitution_rejected (__main__.TrackedSourceTests.test_regular_file_symlink_substitution_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_replacement_commit_cannot_relabel_different_source (__main__.TrackedSourceTests.test_replacement_commit_cannot_relabel_different_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_same_size_stat_cached_change_is_rejected (__main__.TrackedSourceTests.test_same_size_stat_cached_change_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_skip_worktree_cannot_hide_modified_source (__main__.TrackedSourceTests.test_skip_worktree_cannot_hide_modified_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_source_fence_checked_retains_actual_failed_observation (__main__.TrackedSourceTests.test_source_fence_checked_retains_actual_failed_observation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_source_fence_clean_child_keeps_actual_success_and_bytes (__main__.TrackedSourceTests.test_source_fence_clean_child_keeps_actual_success_and_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_source_fence_clean_commit_switch_during_command_is_rejected (__main__.TrackedSourceTests.test_source_fence_clean_commit_switch_during_command_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_source_fence_clean_wrong_head_cannot_start_child (__main__.TrackedSourceTests.test_source_fence_clean_wrong_head_cannot_start_child)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_source_fence_dirty_before_command_cannot_start_child (__main__.TrackedSourceTests.test_source_fence_dirty_before_command_cannot_start_child)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_source_fence_dirty_source_preserves_primary_failure (__main__.TrackedSourceTests.test_source_fence_dirty_source_preserves_primary_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_source_fence_existing_fuzz_and_supply_callers_pin_every_command (__main__.TrackedSourceTests.test_source_fence_existing_fuzz_and_supply_callers_pin_every_command)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_source_fence_finish_clean_other_commit_cannot_borrow_pass (__main__.TrackedSourceTests.test_source_fence_finish_clean_other_commit_cannot_borrow_pass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_source_fence_finish_dirty_source_cannot_write_pass (__main__.TrackedSourceTests.test_source_fence_finish_dirty_source_cannot_write_pass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_source_fence_finish_requires_initial_pin (__main__.TrackedSourceTests.test_source_fence_finish_requires_initial_pin)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_source_fence_finish_valid_source_never_upgrades_existing_failure (__main__.TrackedSourceTests.test_source_fence_finish_valid_source_never_upgrades_existing_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_source_fence_index_hidden_child_mutation_still_refuses (__main__.TrackedSourceTests.test_source_fence_index_hidden_child_mutation_still_refuses)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_source_fence_keeps_nonzero_primary_error_and_drift (__main__.TrackedSourceTests.test_source_fence_keeps_nonzero_primary_error_and_drift)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_source_fence_pin_is_clean_and_does_not_follow_later_changes (__main__.TrackedSourceTests.test_source_fence_pin_is_clean_and_does_not_follow_later_changes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_source_fence_timeout_and_source_failure_preserve_both (__main__.TrackedSourceTests.test_source_fence_timeout_and_source_failure_preserve_both)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_source_fence_zero_exit_with_real_dirty_source_is_not_success (__main__.TrackedSourceTests.test_source_fence_zero_exit_with_real_dirty_source_is_not_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_staged_change_is_rejected (__main__.TrackedSourceTests.test_staged_change_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_subdirectory_is_not_a_complete_source_root (__main__.TrackedSourceTests.test_subdirectory_is_not_a_complete_source_root)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_tracked_symlink_target_change_rejected (__main__.TrackedSourceTests.test_tracked_symlink_target_change_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_untracked_configuration_cannot_hide_new_source (__main__.TrackedSourceTests.test_untracked_configuration_cannot_hide_new_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+======================================================================
+ERROR: test_valid_raw_files_modes_and_symlink (__main__.TrackedSourceTests.test_valid_raw_files_modes_and_symlink)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 22, in setUp
+    self.git('init', '-q', '-b', 'candidate')
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qq/work/chain-w1-accounting-a1f04f22-20261109/scripts/ci/test_ci_source_integrity.py", line 37, in git
+    return subprocess.check_output(['git', *args], cwd=self.root, text=True,
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                   stderr=subprocess.DEVNULL).strip()
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'init', '-q', '-b', 'candidate']' returned non-zero exit status 1.
+
+----------------------------------------------------------------------
+Ran 43 tests in 0.042s
+
+FAILED (errors=43)
+{"running": ["python3", "-B", "scripts/ci/check_repository.py"]}
+{"activation": false, "head": "487b5406b20b487c1a372d19a103f29dcea110b9", "local_links": 6074, "normal_dependency_edges": 27, "result": "PASS", "runtime_implemented": false, "rust_files": 1390, "source_state": "committed-clean", "tree": "7eb19399c2fabeab81441d06fb6e2d8762effb24", "workspace_packages": 26}
+{"running": ["python3", "-B", "scripts/ci/check_ci_contract.py"]}
+{"artifact_comparison_jobs": 1, "head_jobs": 5, "inline_source_pins": 26, "merge_lanes": 5, "native_cost_architectures": 2, "pq_release_authority_controls": {"complete_release": 55, "groups": {"cch1_content_binding": 3, "initial_root_material": 6, "original_release": 37, "quorum_preflight": 9}, "platform_scope": "unix", "python_test_doubles": 18, "tests_executed": false}, "tests_executed": false, "w1_actual_reuse_v3_cells": 4}
+{"running": ["python3", "-B", "scripts/ci/check_pq_research_integration.py"]}
+{"canonical_default_provider_contract_checked": true, "canonical_pnq2_contract_checked": true, "continuous_npq6_combination_accepted": false, "cryptographic_acceptance": false, "exact_source_blobs": 915, "legacy_qtx1_optional_adapter_contract_checked": true, "native_transfer_account_contract_checked": true, "native_transport_contract_checked": true, "node_activated": false, "production_confidentiality_accepted": false, "schema": "trnm-pq-cross-branch-check-v1", "status": "HOLD_NO_GO", "upstream_heads": 6, "whole_native_authorization_migrated": false}
+{"running": ["python3", "-B", "scripts/refresh_distributed_source_inventory.py", "--check"]}
+distributed source inventory: PASS
+{"running": ["python3", "-B", "formal/pon-nakamoto-v1/four_propositions_w1_v2.py", "--input", "evidence/pon-w1-accounting-bridge-20261109/challenge-1-input.json", "--pins", "evidence/pon-w1-accounting-bridge-20261109/challenge-1-pins.json", "--check-view", "evidence/pon-w1-accounting-bridge-20261109/challenge-1-view.json"]}
+{
+  "accounting_namespace": "new-v2-content-roots-only; historical-signatures-unchanged",
+  "all_algorithm_cost_bound": null,
+  "authority": {
+    "adoption_authorized": false,
+    "consensus_credit_authorized": false,
+    "payment_authorized": false,
+    "production_activation": false
+  },
+  "content_scope": "same-context-fixed-profile-exact-matrix-bytes; no-global-semantic-dedup",
+  "cross_proposition_semantic_binding_authenticated": false,
+  "derived_binding": {
+    "inputs": "a86210e188f3175935c0889abe476264ad0e7d4b3c0719931279a78915e1fd97",
+    "output_content": "22dc7e05e41d8ee1e49c57e06add5df37e971276c894618e31b30a973e4ed811",
+    "output_spec": "fa5b3a1cec58999d95236a982eb55524b38e10b2e7735d2f1800e58273e305fc",
+    "qualified_work": "a195a4e643f9a34f8f68dcc0358a85f7c049e2b918974b6fd13035ccd8edb595",
+    "task_content": "7c2ae2ba8c038735be49e31a2f9d1017dfdcfef35b71004bab73963cec989c85",
+    "work_profile": "pon-matmul-transcript-64-v1"
+  },
+  "exact_matrix_accounting_binding_verified": true,
+  "execution_source_provenance_authenticated": false,
+  "independent_net_benefit_verified": false,
+  "input_sha256": "133a1397272f591a1ce1318d7f0ba3095eb44df0c0400fbd142dcd8b89298988",
+  "native_admission_verified": false,
+  "native_header_statement_authenticated": false,
+  "original_accounting_view": {
+    "authority": {
+      "adoption_authorized": false,
+      "consensus_credit_authorized": false,
+      "payment_authorized": false,
+      "production_activation": false
+    },
+    "binding": {
+      "context": "ea7792a26f405e2ae9c6f49ca93bbe6076ceac0a1fc53d83426c7d7f2d9377e4",
+      "cost_unit": "dbafe5623d6808800580cc318dc9e12dfc366734b981b6db9191e767399936be",
+      "evaluation_protocol": "542831fc5dde324b9cf32136db472fd0ba1fe64a2f3ce0596103f0fd68396051",
+      "inputs": "a86210e188f3175935c0889abe476264ad0e7d4b3c0719931279a78915e1fd97",
+      "output_content": "22dc7e05e41d8ee1e49c57e06add5df37e971276c894618e31b30a973e4ed811",
+      "output_spec": "fa5b3a1cec58999d95236a982eb55524b38e10b2e7735d2f1800e58273e305fc",
+      "parent": "e47125968b3b71049fbc4802d1e40a71ea1359decfabacf70b34588037d4ff0c",
+      "qualified_work": "a195a4e643f9a34f8f68dcc0358a85f7c049e2b918974b6fd13035ccd8edb595",
+      "task_content": "7c2ae2ba8c038735be49e31a2f9d1017dfdcfef35b71004bab73963cec989c85",
+      "work_profile": "pon-matmul-transcript-64-v1"
+    },
+    "binding_scope": "supplied-label-equality-only; no-derived-equivalence-between-task-content-inputs-and-evaluation",
+    "cross_proposition_semantic_binding_authenticated": false,
+    "declared_evidence_source": "e96fff2f06e433932ed889676f2bf46e76e3eb3e",
+    "execution_source_provenance_authenticated": false,
+    "history_scope": "complete-supplied-history-only; omitted-or-restored-global-history-not-detected",
+    "input_sha256": "b10282be9193b6a2012861269761b14b0a2badad0341b709729d9bafc5511774",
+    "propositions": {
+      "computation": {
+        "facts": {
+          "raw_computation_proof_verified_by_this_view": false,
+          "signed_delivery_observations": [],
+          "specified_numeric_semantics": {
+            "encoding": "canonical-u32-little-endian",
+            "field_modulus": 4294967291,
+            "n": 64,
+            "noise_hash_limit_per_label": 128,
+            "proof_bytes": 49188,
+            "rank": 8,
+            "word_bytes": 4
+          },
+          "specified_work_profile": "pon-matmul-transcript-64-v1"
+        },
+        "observation_state": "MISSING",
+        "proven": false,
+        "unresolved_obligations": [
+          "COMPUTATION_PROGRAM_INPUT_OUTPUT_BINDING",
+          "COMPUTATION_ACTUAL_RELATION_VERIFICATION",
+          "COMPUTATION_NUMERIC_SEMANTICS",
+          "COMPUTATION_EXECUTION_PROVENANCE"
+        ]
+      },
+      "demand": {
+        "facts": {
+          "composition": null,
+          "customer_independence_status": "UNKNOWN",
+          "data_rights_status": "UNKNOWN",
+          "funding_truth_status": "UNKNOWN"
+        },
+        "observation_state": "MISSING",
+        "proven": false,
+        "unresolved_obligations": [
+          "DEMAND_COMMISSION_AUTHENTICITY",
+          "DEMAND_CUSTOMER_INDEPENDENCE",
+          "DEMAND_CURRENT_FUNDED_BUDGET",
+          "DEMAND_DATA_RIGHTS",
+          "DEMAND_COMPUTATION_BINDING",
+          "DEMAND_DURABLE_IDENTITY"
+        ]
+      },
+      "sybil": {
+        "facts": {
+          "all_algorithm_cost_bound": null,
+          "cost_bound_rule": "best measured legal implementation is an upper bound on minimum cost",
+          "original_historical_source_checker_executed": false,
+          "original_research_contract_source": "b16bae2824e6c8236ef2011fc93a74df3ac7f039",
+          "original_research_qualification": {
+            "all_legal_algorithm_cost_lower_bound": false,
+            "joint_cp_cq_cg_proof": false,
+            "lifetime_security_bound": null,
+            "native_time_daa_upgrade": false,
+            "production_activation": false,
+            "real_hepta_product_loop": false,
+            "same_iteration_deployment": false,
+            "variable_u_native_relation": false
+          },
+          "resource_model_status": "UNKNOWN"
+        },
+        "observation_state": "OBSERVED",
+        "proven": false,
+        "unresolved_obligations": [
+          "ALL_LEGAL_STRATEGIES",
+          "INITIAL_SHARED_STATE",
+          "COMPLETE_LIFECYCLE_COST",
+          "PUBLIC_HELP_COVERAGE",
+          "RESOURCE_MODEL_REDUCTION",
+          "HASH_ORACLE_INSTANTIATION",
+          "QUANTUM_LIFECYCLE",
+          "TIME_DAA_CREDIT_COMPOSITION",
+          "NATIVE_SUCCESS_BINDING"
+        ]
+      },
+      "utility": {
+        "facts": {
+          "complete_external_cost_coverage": "UNKNOWN",
+          "cost_conversion_scope": "only-the-frozen-upgrade-plan; resource-counters-not-added-to-utility",
+          "output_accounting": {
+            "snapshot": {
+              "accepted_but_unadopted_unique_outputs": 0,
+              "attempts": 2,
+              "attempts_with_incomplete_required_costs": 0,
+              "context": "ea7792a26f405e2ae9c6f49ca93bbe6076ceac0a1fc53d83426c7d7f2d9377e4",
+              "cost_records": 8,
+              "cost_records_with_unknown_gpu": 8,
+              "cost_scope": "all-reported-attempts-including-rejections-and-replays; wall-is-cumulative-not-parallel-elapsed",
+              "cost_stages": {
+                "intake": 2,
+                "normalization": 2,
+                "proof": 2,
+                "quality": 2
+              },
+              "cost_totals": {
+                "bytes_read": 0,
+                "bytes_written": 0,
+                "cpu_ns": 80,
+                "gpu_ns": null,
+                "memory_peak_bytes": 0,
+                "operations": 240,
+                "wall_ns": 160
+              },
+              "current_branch": "f38c764c8aa00b6578f4254a4dc6d9b50f88fa926e270ea7859bd1b707cd8662",
+              "currently_valid_unique_useful_outputs": 1,
+              "downstream_adoption_events": 2,
+              "durability_owner": "existing-kernel-operations-outbox",
+              "event_root": "672afbcf904395471532ba3c92c64c35505d28973ba1eb030980943d4faecd16",
+              "independent_accepted": false,
+              "ordinary_hepta_entry": false,
+              "public_reward_authority": false,
+              "rejected_attempts": 0,
+              "repeated_output_attempts": 1,
+              "schema": "pon-unique-useful-output-observation-v1",
+              "stale_attempts": 0,
+              "unfinished_attempts": 0,
+              "unique_useful_outputs_actually_adopted": 1,
+              "verified_useful_unique_outputs": 1
+            },
+            "supplied_event_replay": true
+          },
+          "upgrade": null
+        },
+        "observation_state": "OBSERVED",
+        "proven": false,
+        "unresolved_obligations": [
+          "UTILITY_PROSPECTIVE_EVALUATION",
+          "UTILITY_INDEPENDENT_EVALUATOR",
+          "UTILITY_MATCHED_CONTROLS",
+          "UTILITY_COMPLETE_COST_COVERAGE",
+          "UTILITY_MEASURED_COST_AUTHENTICITY",
+          "UTILITY_DOWNSTREAM_USE",
+          "UTILITY_NET_BENEFIT",
+          "UTILITY_RETENTION",
+          "UTILITY_RESULT_DEDUP"
+        ]
+      }
+    },
+    "reader_blob_pins": {
+      "config/pon/devnet-v1.json": "a60f403b2f0e7343aed61170ca2aef875a787790",
+      "config/pon/ledger-v1.json": "f7d8dba05cd0267b716834d76774a7ce94a1276b",
+      "config/pon/model-family-v1.json": "9a931f21ca86563cf7e5c6415acd20a0ced7da68",
+      "config/pon/work-profile-v1.json": "54e43139d3691b62f76f9e8976e1d2a974e8524b",
+      "formal/pon-nakamoto-v1/bounded_process.py": "b8579d1ea76e8c84214570f3f08d84595bfc77b6",
+      "formal/pon-nakamoto-v1/contract_wire.py": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b",
+      "formal/pon-nakamoto-v1/demand_evidence.py": "ebe593a26270b9a4ecf04c088342fa7cdae9cc7b",
+      "formal/pon-nakamoto-v1/evaluation.py": "71fb186646c1e61672bf4cfdb56bbf46d5d3863a",
+      "formal/pon-nakamoto-v1/evaluation_bundle.py": "c0d1447b6caec75a64736150e651c127d8385f08",
+      "formal/pon-nakamoto-v1/ledger.py": "ea90d7df31a6765302d59ae53a86ed5486dc7618",
+      "formal/pon-nakamoto-v1/model_contract.py": "eb5f30a1b4f67c9117d696da6233ff90655ae218",
+      "formal/pon-nakamoto-v1/strict_signature.py": "b0cedca3a0423f2563359a8645ba322f966804dc",
+      "formal/pon-nakamoto-v1/upgrade_policy.py": "b88a4ed2a727cff06a12b0689e1503d214af22c6",
+      "formal/pon-nakamoto-v1/work_backend.py": "bc2f7ab213bd598c8028030da9907b40b2e20e1b",
+      "formal/pon-nakamoto-v1/work_oracle.py": "9cbfccd2d50af48fc43522b967ffdfb1f45ec098",
+      "formal/pon-nakamoto-v1/work_profile_contract_v1.py": "f9f5784cb92399aaffd0463eec847c2800707d81",
+      "formal/pon-nakamoto-v1/work_utility.py": "883e7126178c95221d3803459a24181490ae122b"
+    },
+    "reader_source_scope": "checked-source-bytes-only; no-loaded-code-or-execution-attestation",
+    "resource_units": {
+      "bytes_read": "bytes",
+      "bytes_written": "bytes",
+      "cpu_ns": "nanoseconds",
+      "gpu_ns": "nanoseconds-or-unknown",
+      "memory_peak_bytes": "maximum-reported-operation-peak-not-concurrent-total",
+      "operations": "declared-operation-count-not-a-cost-lower-bound",
+      "wall_ns": "cumulative-operation-nanoseconds"
+    },
+    "review_pins_sha256": "e18cc48d3e298f18adaee305061a4d721aeb38d7bc0b992392d74deae23ab596",
+    "reviewed_reader_source": "e2a02f9271b49f146e70806c8a66e161b5973971",
+    "schema": "pon-four-propositions-evidence-view-v1",
+    "supplied_observations_count": 14,
+    "supplied_observations_replayed": true
+  },
+  "reader_blob_pins": {
+    "formal/pon-nakamoto-v1/contract_wire.py": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b",
+    "formal/pon-nakamoto-v1/four_propositions_v1.py": "12436c7a0740d0a184814958fbb789a7a4ba7c86",
+    "formal/pon-nakamoto-v1/work_oracle.py": "9cbfccd2d50af48fc43522b967ffdfb1f45ec098"
+  },
+  "reader_source_scope": "checked-source-bytes; trusted-local-python-runtime; no-execution-attestation",
+  "real_customer_authenticity_verified": false,
+  "relation": {
+    "full_transcript_and_product_verified": true,
+    "numeric_semantics": {
+      "field_modulus": 4294967291,
+      "input_shapes": [
+        [
+          64,
+          64
+        ],
+        [
+          64,
+          64
+        ]
+      ],
+      "layout": "row-major",
+      "output_shape": [
+        64,
+        64
+      ],
+      "product_semantics": "A*B-modulo-field_modulus",
+      "proof_encoding": "PNW1-full-tiled-transcript-v1",
+      "scalar_encoding": "u32-little-endian",
+      "work_profile": "pon-matmul-transcript-64-v1"
+    },
+    "product_bytes_sha256": "e02b8400d9117033418e1720ebd75b133869d6fc717bd7b260f1afc6a6ac5097",
+    "proof_sha256": "c2371f911cc750694756849dc6ce8a5a6cdc194335c1c4cadc11923c0c67c061",
+    "statement": {
+      "challenge": "0101010101010101010101010101010101010101010101010101010101010101",
+      "target": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "task": "a86210e188f3175935c0889abe476264ad0e7d4b3c0719931279a78915e1fd97"
+    },
+    "status": "VERIFIED_SUPPLIED_W1_RELATION",
+    "ticket": "e5cd92e6f0c4fc2130e0f10ecd331a980f2ad10a19a1af7d3762612c3a6e31b4",
+    "verifier": "independent-scalar-work_oracle.py"
+  },
+  "review_pins_sha256": "6f206305fb158782115924344d279e87086d7772900f430842464a304a8df45f",
+  "schema": "pon-four-propositions-w1-view-v2",
+  "unique_output_key": "b33d660478a3c0e0951880943955e7aff610c3f02c2d83ff92b2364775ba3e64"
+}
+{"running": ["python3", "-B", "formal/pon-nakamoto-v1/four_propositions_w1_v2.py", "--input", "evidence/pon-w1-accounting-bridge-20261109/challenge-2-input.json", "--pins", "evidence/pon-w1-accounting-bridge-20261109/challenge-2-pins.json", "--check-view", "evidence/pon-w1-accounting-bridge-20261109/challenge-2-view.json"]}
+{
+  "accounting_namespace": "new-v2-content-roots-only; historical-signatures-unchanged",
+  "all_algorithm_cost_bound": null,
+  "authority": {
+    "adoption_authorized": false,
+    "consensus_credit_authorized": false,
+    "payment_authorized": false,
+    "production_activation": false
+  },
+  "content_scope": "same-context-fixed-profile-exact-matrix-bytes; no-global-semantic-dedup",
+  "cross_proposition_semantic_binding_authenticated": false,
+  "derived_binding": {
+    "inputs": "a86210e188f3175935c0889abe476264ad0e7d4b3c0719931279a78915e1fd97",
+    "output_content": "22dc7e05e41d8ee1e49c57e06add5df37e971276c894618e31b30a973e4ed811",
+    "output_spec": "fa5b3a1cec58999d95236a982eb55524b38e10b2e7735d2f1800e58273e305fc",
+    "qualified_work": "3d41a72c89f7b54680150d1446b02458a2fb2dc83bb5f956d124f61f3e99c7f2",
+    "task_content": "7c2ae2ba8c038735be49e31a2f9d1017dfdcfef35b71004bab73963cec989c85",
+    "work_profile": "pon-matmul-transcript-64-v1"
+  },
+  "exact_matrix_accounting_binding_verified": true,
+  "execution_source_provenance_authenticated": false,
+  "independent_net_benefit_verified": false,
+  "input_sha256": "3e28db357102bace891ec511649ac7a2f96867d06c2bfe782604d2897f469391",
+  "native_admission_verified": false,
+  "native_header_statement_authenticated": false,
+  "original_accounting_view": {
+    "authority": {
+      "adoption_authorized": false,
+      "consensus_credit_authorized": false,
+      "payment_authorized": false,
+      "production_activation": false
+    },
+    "binding": {
+      "context": "ea7792a26f405e2ae9c6f49ca93bbe6076ceac0a1fc53d83426c7d7f2d9377e4",
+      "cost_unit": "dbafe5623d6808800580cc318dc9e12dfc366734b981b6db9191e767399936be",
+      "evaluation_protocol": "542831fc5dde324b9cf32136db472fd0ba1fe64a2f3ce0596103f0fd68396051",
+      "inputs": "a86210e188f3175935c0889abe476264ad0e7d4b3c0719931279a78915e1fd97",
+      "output_content": "22dc7e05e41d8ee1e49c57e06add5df37e971276c894618e31b30a973e4ed811",
+      "output_spec": "fa5b3a1cec58999d95236a982eb55524b38e10b2e7735d2f1800e58273e305fc",
+      "parent": "e47125968b3b71049fbc4802d1e40a71ea1359decfabacf70b34588037d4ff0c",
+      "qualified_work": "3d41a72c89f7b54680150d1446b02458a2fb2dc83bb5f956d124f61f3e99c7f2",
+      "task_content": "7c2ae2ba8c038735be49e31a2f9d1017dfdcfef35b71004bab73963cec989c85",
+      "work_profile": "pon-matmul-transcript-64-v1"
+    },
+    "binding_scope": "supplied-label-equality-only; no-derived-equivalence-between-task-content-inputs-and-evaluation",
+    "cross_proposition_semantic_binding_authenticated": false,
+    "declared_evidence_source": "e96fff2f06e433932ed889676f2bf46e76e3eb3e",
+    "execution_source_provenance_authenticated": false,
+    "history_scope": "complete-supplied-history-only; omitted-or-restored-global-history-not-detected",
+    "input_sha256": "cacec513bfb9463d40d52398e09e083eca720efde5d0cf432eae51e09395fe12",
+    "propositions": {
+      "computation": {
+        "facts": {
+          "raw_computation_proof_verified_by_this_view": false,
+          "signed_delivery_observations": [],
+          "specified_numeric_semantics": {
+            "encoding": "canonical-u32-little-endian",
+            "field_modulus": 4294967291,
+            "n": 64,
+            "noise_hash_limit_per_label": 128,
+            "proof_bytes": 49188,
+            "rank": 8,
+            "word_bytes": 4
+          },
+          "specified_work_profile": "pon-matmul-transcript-64-v1"
+        },
+        "observation_state": "MISSING",
+        "proven": false,
+        "unresolved_obligations": [
+          "COMPUTATION_PROGRAM_INPUT_OUTPUT_BINDING",
+          "COMPUTATION_ACTUAL_RELATION_VERIFICATION",
+          "COMPUTATION_NUMERIC_SEMANTICS",
+          "COMPUTATION_EXECUTION_PROVENANCE"
+        ]
+      },
+      "demand": {
+        "facts": {
+          "composition": null,
+          "customer_independence_status": "UNKNOWN",
+          "data_rights_status": "UNKNOWN",
+          "funding_truth_status": "UNKNOWN"
+        },
+        "observation_state": "MISSING",
+        "proven": false,
+        "unresolved_obligations": [
+          "DEMAND_COMMISSION_AUTHENTICITY",
+          "DEMAND_CUSTOMER_INDEPENDENCE",
+          "DEMAND_CURRENT_FUNDED_BUDGET",
+          "DEMAND_DATA_RIGHTS",
+          "DEMAND_COMPUTATION_BINDING",
+          "DEMAND_DURABLE_IDENTITY"
+        ]
+      },
+      "sybil": {
+        "facts": {
+          "all_algorithm_cost_bound": null,
+          "cost_bound_rule": "best measured legal implementation is an upper bound on minimum cost",
+          "original_historical_source_checker_executed": false,
+          "original_research_contract_source": "b16bae2824e6c8236ef2011fc93a74df3ac7f039",
+          "original_research_qualification": {
+            "all_legal_algorithm_cost_lower_bound": false,
+            "joint_cp_cq_cg_proof": false,
+            "lifetime_security_bound": null,
+            "native_time_daa_upgrade": false,
+            "production_activation": false,
+            "real_hepta_product_loop": false,
+            "same_iteration_deployment": false,
+            "variable_u_native_relation": false
+          },
+          "resource_model_status": "UNKNOWN"
+        },
+        "observation_state": "OBSERVED",
+        "proven": false,
+        "unresolved_obligations": [
+          "ALL_LEGAL_STRATEGIES",
+          "INITIAL_SHARED_STATE",
+          "COMPLETE_LIFECYCLE_COST",
+          "PUBLIC_HELP_COVERAGE",
+          "RESOURCE_MODEL_REDUCTION",
+          "HASH_ORACLE_INSTANTIATION",
+          "QUANTUM_LIFECYCLE",
+          "TIME_DAA_CREDIT_COMPOSITION",
+          "NATIVE_SUCCESS_BINDING"
+        ]
+      },
+      "utility": {
+        "facts": {
+          "complete_external_cost_coverage": "UNKNOWN",
+          "cost_conversion_scope": "only-the-frozen-upgrade-plan; resource-counters-not-added-to-utility",
+          "output_accounting": {
+            "snapshot": {
+              "accepted_but_unadopted_unique_outputs": 0,
+              "attempts": 2,
+              "attempts_with_incomplete_required_costs": 0,
+              "context": "ea7792a26f405e2ae9c6f49ca93bbe6076ceac0a1fc53d83426c7d7f2d9377e4",
+              "cost_records": 8,
+              "cost_records_with_unknown_gpu": 8,
+              "cost_scope": "all-reported-attempts-including-rejections-and-replays; wall-is-cumulative-not-parallel-elapsed",
+              "cost_stages": {
+                "intake": 2,
+                "normalization": 2,
+                "proof": 2,
+                "quality": 2
+              },
+              "cost_totals": {
+                "bytes_read": 0,
+                "bytes_written": 0,
+                "cpu_ns": 80,
+                "gpu_ns": null,
+                "memory_peak_bytes": 0,
+                "operations": 240,
+                "wall_ns": 160
+              },
+              "current_branch": "f38c764c8aa00b6578f4254a4dc6d9b50f88fa926e270ea7859bd1b707cd8662",
+              "currently_valid_unique_useful_outputs": 1,
+              "downstream_adoption_events": 2,
+              "durability_owner": "existing-kernel-operations-outbox",
+              "event_root": "672afbcf904395471532ba3c92c64c35505d28973ba1eb030980943d4faecd16",
+              "independent_accepted": false,
+              "ordinary_hepta_entry": false,
+              "public_reward_authority": false,
+              "rejected_attempts": 0,
+              "repeated_output_attempts": 1,
+              "schema": "pon-unique-useful-output-observation-v1",
+              "stale_attempts": 0,
+              "unfinished_attempts": 0,
+              "unique_useful_outputs_actually_adopted": 1,
+              "verified_useful_unique_outputs": 1
+            },
+            "supplied_event_replay": true
+          },
+          "upgrade": null
+        },
+        "observation_state": "OBSERVED",
+        "proven": false,
+        "unresolved_obligations": [
+          "UTILITY_PROSPECTIVE_EVALUATION",
+          "UTILITY_INDEPENDENT_EVALUATOR",
+          "UTILITY_MATCHED_CONTROLS",
+          "UTILITY_COMPLETE_COST_COVERAGE",
+          "UTILITY_MEASURED_COST_AUTHENTICITY",
+          "UTILITY_DOWNSTREAM_USE",
+          "UTILITY_NET_BENEFIT",
+          "UTILITY_RETENTION",
+          "UTILITY_RESULT_DEDUP"
+        ]
+      }
+    },
+    "reader_blob_pins": {
+      "config/pon/devnet-v1.json": "a60f403b2f0e7343aed61170ca2aef875a787790",
+      "config/pon/ledger-v1.json": "f7d8dba05cd0267b716834d76774a7ce94a1276b",
+      "config/pon/model-family-v1.json": "9a931f21ca86563cf7e5c6415acd20a0ced7da68",
+      "config/pon/work-profile-v1.json": "54e43139d3691b62f76f9e8976e1d2a974e8524b",
+      "formal/pon-nakamoto-v1/bounded_process.py": "b8579d1ea76e8c84214570f3f08d84595bfc77b6",
+      "formal/pon-nakamoto-v1/contract_wire.py": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b",
+      "formal/pon-nakamoto-v1/demand_evidence.py": "ebe593a26270b9a4ecf04c088342fa7cdae9cc7b",
+      "formal/pon-nakamoto-v1/evaluation.py": "71fb186646c1e61672bf4cfdb56bbf46d5d3863a",
+      "formal/pon-nakamoto-v1/evaluation_bundle.py": "c0d1447b6caec75a64736150e651c127d8385f08",
+      "formal/pon-nakamoto-v1/ledger.py": "ea90d7df31a6765302d59ae53a86ed5486dc7618",
+      "formal/pon-nakamoto-v1/model_contract.py": "eb5f30a1b4f67c9117d696da6233ff90655ae218",
+      "formal/pon-nakamoto-v1/strict_signature.py": "b0cedca3a0423f2563359a8645ba322f966804dc",
+      "formal/pon-nakamoto-v1/upgrade_policy.py": "b88a4ed2a727cff06a12b0689e1503d214af22c6",
+      "formal/pon-nakamoto-v1/work_backend.py": "bc2f7ab213bd598c8028030da9907b40b2e20e1b",
+      "formal/pon-nakamoto-v1/work_oracle.py": "9cbfccd2d50af48fc43522b967ffdfb1f45ec098",
+      "formal/pon-nakamoto-v1/work_profile_contract_v1.py": "f9f5784cb92399aaffd0463eec847c2800707d81",
+      "formal/pon-nakamoto-v1/work_utility.py": "883e7126178c95221d3803459a24181490ae122b"
+    },
+    "reader_source_scope": "checked-source-bytes-only; no-loaded-code-or-execution-attestation",
+    "resource_units": {
+      "bytes_read": "bytes",
+      "bytes_written": "bytes",
+      "cpu_ns": "nanoseconds",
+      "gpu_ns": "nanoseconds-or-unknown",
+      "memory_peak_bytes": "maximum-reported-operation-peak-not-concurrent-total",
+      "operations": "declared-operation-count-not-a-cost-lower-bound",
+      "wall_ns": "cumulative-operation-nanoseconds"
+    },
+    "review_pins_sha256": "7e49fbf0ace83d3853b60a4bfec134c4ff5af9899b607282fdf47c45ad62c84d",
+    "reviewed_reader_source": "e2a02f9271b49f146e70806c8a66e161b5973971",
+    "schema": "pon-four-propositions-evidence-view-v1",
+    "supplied_observations_count": 14,
+    "supplied_observations_replayed": true
+  },
+  "reader_blob_pins": {
+    "formal/pon-nakamoto-v1/contract_wire.py": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b",
+    "formal/pon-nakamoto-v1/four_propositions_v1.py": "12436c7a0740d0a184814958fbb789a7a4ba7c86",
+    "formal/pon-nakamoto-v1/work_oracle.py": "9cbfccd2d50af48fc43522b967ffdfb1f45ec098"
+  },
+  "reader_source_scope": "checked-source-bytes; trusted-local-python-runtime; no-execution-attestation",
+  "real_customer_authenticity_verified": false,
+  "relation": {
+    "full_transcript_and_product_verified": true,
+    "numeric_semantics": {
+      "field_modulus": 4294967291,
+      "input_shapes": [
+        [
+          64,
+          64
+        ],
+        [
+          64,
+          64
+        ]
+      ],
+      "layout": "row-major",
+      "output_shape": [
+        64,
+        64
+      ],
+      "product_semantics": "A*B-modulo-field_modulus",
+      "proof_encoding": "PNW1-full-tiled-transcript-v1",
+      "scalar_encoding": "u32-little-endian",
+      "work_profile": "pon-matmul-transcript-64-v1"
+    },
+    "product_bytes_sha256": "e02b8400d9117033418e1720ebd75b133869d6fc717bd7b260f1afc6a6ac5097",
+    "proof_sha256": "8cdbd07b7aa1776e4d51e525dbaab72ec186379235272924e132855b5187af4c",
+    "statement": {
+      "challenge": "0202020202020202020202020202020202020202020202020202020202020202",
+      "target": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "task": "a86210e188f3175935c0889abe476264ad0e7d4b3c0719931279a78915e1fd97"
+    },
+    "status": "VERIFIED_SUPPLIED_W1_RELATION",
+    "ticket": "ea16a13122a92485c698d119dc4a58317d4150a42fd8e54ea5e4c439bb4bfd2c",
+    "verifier": "independent-scalar-work_oracle.py"
+  },
+  "review_pins_sha256": "671fbafc5ebfc13441f5fcc718fd80b1d8c00f758e3c714ba31ac1214ca88ab7",
+  "schema": "pon-four-propositions-w1-view-v2",
+  "unique_output_key": "b33d660478a3c0e0951880943955e7aff610c3f02c2d83ff92b2364775ba3e64"
+}
+{"command_results": [{"argv": ["python3", "-B", "formal/pon-nakamoto-v1/test_four_propositions_w1_v2.py", "-v"], "exit_code": 1}, {"argv": ["python3", "-B", "formal/pon-nakamoto-v1/test_four_propositions_v1.py", "-v"], "exit_code": 1}, {"argv": ["python3", "-B", "formal/pon-nakamoto-v1/test_demand_evidence.py", "-v"], "exit_code": 0}, {"argv": ["python3", "-B", "formal/pon-nakamoto-v1/test_work_utility.py", "-v"], "exit_code": 0}, {"argv": ["python3", "-B", "formal/pon-nakamoto-v1/test_upgrade_policy.py", "-v"], "exit_code": 0}, {"argv": ["python3", "-B", "scripts/ci/test_ci_contract.py", "-v"], "exit_code": 1}, {"argv": ["python3", "-B", "scripts/ci/test_ci_source_integrity.py", "-v"], "exit_code": 1}, {"argv": ["python3", "-B", "scripts/ci/check_repository.py"], "exit_code": 0}, {"argv": ["python3", "-B", "scripts/ci/check_ci_contract.py"], "exit_code": 0}, {"argv": ["python3", "-B", "scripts/ci/check_pq_research_integration.py"], "exit_code": 0}, {"argv": ["python3", "-B", "scripts/refresh_distributed_source_inventory.py", "--check"], "exit_code": 0}, {"argv": ["python3", "-B", "formal/pon-nakamoto-v1/four_propositions_w1_v2.py", "--input", "evidence/pon-w1-accounting-bridge-20261109/challenge-1-input.json", "--pins", "evidence/pon-w1-accounting-bridge-20261109/challenge-1-pins.json", "--check-view", "evidence/pon-w1-accounting-bridge-20261109/challenge-1-view.json"], "exit_code": 0}, {"argv": ["python3", "-B", "formal/pon-nakamoto-v1/four_propositions_w1_v2.py", "--input", "evidence/pon-w1-accounting-bridge-20261109/challenge-2-input.json", "--pins", "evidence/pon-w1-accounting-bridge-20261109/challenge-2-pins.json", "--check-view", "evidence/pon-w1-accounting-bridge-20261109/challenge-2-view.json"], "exit_code": 0}], "production_activation": false}
