@@ -1,0 +1,101 @@
+"""No acceptance promotion or denominator contraction in failure inspection."""
+import json
+import tempfile
+import unittest
+from pathlib import Path
+
+from inspect_native_campaign_failure import inspect, PHASES
+
+
+def fixture():
+    def phase(name, attackers):
+        return {"mode": name, "duration_seconds": 30,
+                "attacker_processes_requested": attackers,
+                "attacker_processes_ready": attackers,
+                "observer_complete": True,
+                "all_signed_rounds_confirmed_in_window": False,
+                "receiver_client_state_equal": False,
+                "verifier_errors": ["PUBLIC_REQUEST_DEADLINE"],
+                "finite_phase_criteria_met": False,
+                "genuine_budget_depletion_observed": False,
+                "actor_reports_successful_without_cap_or_kill": True,
+                "submissions": [{"elapsed_wall_ns": 9}],
+                "confirmations": [{"confirmed_inside_pressure_window": False}],
+                "history": [{"elapsed_wall_ns": 2, "client_import": {
+                    "wall_ns": 7, "thread_cpu_ns": 3,
+                    "native_import_observation": {"host_checks": [
+                        {"phase": "checkpoint", "calls_accepted": 11}]}}}],
+                "full_work_accepted": 1, "full_work_failed": 0}
+    return {"schema": "native-public-v3-separate-process-campaign-v2",
+            "state_backend": "authenticated-v1",
+            "preparation": {"actual_signed_seed_transfers": 1024,
+                            "seed_blocks": 4, "business_blocks": 21},
+            "finite_experiment_criteria_met": False,
+            "economics_complete": True,
+            "phases": [phase(name, attackers) for name, attackers in PHASES]}
+
+
+class FailureInspectionTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+
+    def put(self, number, data):
+        folder = self.root / f"run-{number}-raw"
+        folder.mkdir(parents=True)
+        (folder / "report.json").write_text(json.dumps(data), encoding="utf-8")
+
+    def test_missing_runs_remain_in_three_run_denominator(self):
+        self.put(1, fixture())
+        summary = inspect(self.root)
+        self.assertEqual(summary["original_run_denominator"], 3)
+        self.assertEqual(summary["report_files_with_original_input_shape"], 1)
+        self.assertTrue(summary["runs"][1]["error"])
+        self.assertFalse(summary["grants_qualification_or_activation"])
+
+    def test_nested_timings_remain_separate(self):
+        for n in range(1, 4):
+            self.put(n, fixture())
+        summary = inspect(self.root)
+        self.assertEqual(summary["report_files_with_original_input_shape"], 3)
+        baseline = summary["runs"][0]["phases"][0]
+        self.assertEqual(baseline["history_import_wall_ns"]["total"], 7)
+        self.assertEqual(baseline["history_network_wall_ns"]["total"], 2)
+        self.assertEqual(baseline["submit_client_wall_ns"]["total"], 9)
+        self.assertEqual(baseline["history_checkpoint_host_calls"]["total"], 11)
+        self.assertIn("no_verifier_errors", baseline["unmet_flags"])
+
+    def test_changed_workload_is_detected_without_inheriting_reported_success(self):
+        altered = fixture()
+        altered["phases"][1]["attacker_processes_requested"] = 1
+        altered["finite_experiment_criteria_met"] = True
+        self.put(1, altered)
+        observed = inspect(self.root)["runs"][0]
+        self.assertFalse(observed["original_input_shape_valid"])
+        self.assertTrue(observed["reported_finite_experiment_criteria_met"])
+        self.assertFalse(observed["phases"][1]["flags"]["original_inputs"])
+
+    def test_missing_import_cpu_is_null_not_zero(self):
+        altered = fixture()
+        altered["phases"][0]["history"][0]["client_import"].pop("thread_cpu_ns")
+        self.put(1, altered)
+        metric = inspect(self.root)["runs"][0]["phases"][0]["history_import_thread_cpu_ns"]
+        self.assertIsNone(metric["total"])
+        self.assertEqual(metric["observed"], 0)
+
+    def test_report_symlink_and_duplicate_mode_are_refused(self):
+        target = self.root / "external.json"
+        target.write_text(json.dumps(fixture()))
+        p = self.root / "run-1-raw"
+        p.mkdir()
+        (p / "report.json").symlink_to(target)
+        self.assertIn("symlink", inspect(self.root)["runs"][0]["error"])
+        changed = fixture()
+        changed["phases"][1]["mode"] = "baseline"
+        self.put(2, changed)
+        self.assertFalse(inspect(self.root)["runs"][1]["original_input_shape_valid"])
+
+
+if __name__ == "__main__":
+    unittest.main()
