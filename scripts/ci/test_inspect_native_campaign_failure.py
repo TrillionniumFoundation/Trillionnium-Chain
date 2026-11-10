@@ -217,5 +217,59 @@ class FailureInspectionTests(unittest.TestCase):
         self.assertIsNone(second["boundary_stage"])
 
 
+class TerminalBoundaryIntegrityTests(unittest.TestCase):
+    @staticmethod
+    def history():
+        return [{"status": "ok", "error": None, "client_import": {
+            "succeeded": False, "error": "PUBLIC_REQUEST_DEADLINE",
+            "native_import_observation": {"packets": [{"phases": [
+                {"phase": name, "started": True, "completed": True,
+                 "accepted": False, "error_code": "PUBLIC_REQUEST_DEADLINE"}
+                for name in ("admission", "commit", "submit_result", "history_import")
+            ]}]}}}]
+
+    def test_missing_or_nonboolean_terminal_flags_remain_unknown(self):
+        from inspect_native_campaign_failure import _terminal_import_boundary
+        for key, value in (("started", None), ("started", "true"),
+                           ("completed", 1), ("accepted", 0)):
+            with self.subTest(key=key, value=value):
+                history = self.history()
+                stage = history[0]["client_import"]["native_import_observation"]["packets"][0]["phases"][0]
+                if value is None:
+                    stage.pop(key)
+                else:
+                    stage[key] = value
+                result = _terminal_import_boundary(history)
+                self.assertEqual(result["boundary_status"], "unknown")
+                self.assertIsNone(result["boundary_stage"])
+
+    def test_conflicting_import_success_does_not_hide_stage_failure(self):
+        from inspect_native_campaign_failure import _terminal_import_boundary
+        history = self.history()
+        history[0]["client_import"]["succeeded"] = True
+        result = _terminal_import_boundary(history)
+        self.assertEqual(result["boundary_status"], "unknown")
+        self.assertIsNone(result["boundary_stage"])
+        imported = history[0]["client_import"]
+        imported["error"] = None
+        stages = imported["native_import_observation"]["packets"][0]["phases"]
+        for stage in stages:
+            stage.update(accepted=True, error_code=None)
+        self.assertEqual(_terminal_import_boundary(history)["boundary_status"],
+                         "no_terminal_import_failure")
+        stages[0].update(accepted=False, error_code="PUBLIC_REQUEST_DEADLINE")
+        self.assertEqual(_terminal_import_boundary(history)["boundary_status"], "unknown")
+
+    def test_unreturned_or_unstarted_stage_cannot_be_a_deadline_boundary(self):
+        from inspect_native_campaign_failure import _terminal_import_boundary
+        for key in ("started", "completed"):
+            with self.subTest(key=key):
+                history = self.history()
+                history[0]["client_import"]["native_import_observation"]["packets"][0]["phases"][0][key] = False
+                result = _terminal_import_boundary(history)
+                self.assertEqual(result["boundary_status"], "unknown")
+                self.assertIsNone(result["boundary_stage"])
+
+
 if __name__ == "__main__":
     unittest.main()
