@@ -1,0 +1,18 @@
+{
+  "failed_source": "f1dff3e0f7e151987b20459f591e9e46a37b694d",
+  "reason": "new custody V2 JSON absent from generated native source include inventory",
+  "pin_updates": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "before": "1073fbf92c159b82f0822f13281018a46198e1a8",
+      "after": "4fe60f533f051cd1a68c4358e96d210d8f7d32c0"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "before": "f41eced48f55e35fd9264d19d4050dbd25fff1b0",
+      "after": "9c71bcfd8393bca9b5aae35cfb171705c6cc637f"
+    }
+  ],
+  "corpus_pin_count": 1079,
+  "required_path_count": 987
+}

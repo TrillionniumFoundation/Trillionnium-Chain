@@ -11382,3 +11382,5 @@ next-task use and cold recovery. Original four-second Host service, independent
 long-term custody and actual payment remain separate gates. No historical M14
 pass transfers to changed source. Production activation and overall qualification
 remain HOLD; this entry adds no second development plan or acceptance shortcut.
+
+The current-source inventory check exposed an omitted custody V2 configuration entry. Refresh the generated native include inventory and its existing corpus pin before freezing this child. Preserve the failed f1dff3e check and keep runtime and security qualification unchanged.

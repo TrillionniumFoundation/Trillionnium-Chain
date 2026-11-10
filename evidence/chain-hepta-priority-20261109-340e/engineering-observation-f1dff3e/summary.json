@@ -1,0 +1,84 @@
+{
+  "source": "f1dff3e0f7e151987b20459f591e9e46a37b694d",
+  "commands": [
+    {
+      "name": "repository",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 9.082799508003518,
+      "stdout_sha256": "0607539460d520c54623c03ee7d6b17a15e65ee579cb82f21eadb323f0c84e74",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "inventory",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 0.05505721701774746,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "3060c11e06f46d1cbf92fbb40b0ecf6bfd5482816a73a13c7267e2efa34b28fb",
+      "stderr_tail": "distributed native source inventory differs; refresh before freezing source\n"
+    },
+    {
+      "name": "semantics",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/report_current_implementation.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.030978868016973138,
+      "stdout_sha256": "431e373353829a7aa76abab6c3a606519c90290e2dc0909202c9a9f4cab92be3",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "cargo-fmt",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 7.3385989560047165,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "cargo-graph",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.16481922601815313,
+      "stdout_sha256": "41121cc510bf8df4b1abd4c67c2ab8eb38c960cbf6c28cd551b3036248c4ea3b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "cargo_home": "/home/qian-qi/chain-hepta-481716-native-check/m14/quality-cargo-home",
+  "qualification": "HOLD_NO_GO",
+  "business_campaign_performed": false,
+  "head_after": "f1dff3e0f7e151987b20459f591e9e46a37b694d",
+  "worktree_status_after": "",
+  "completed": true,
+  "all_passed": false
+}
