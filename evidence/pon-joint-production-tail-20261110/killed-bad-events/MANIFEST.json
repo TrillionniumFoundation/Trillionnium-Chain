@@ -2,8 +2,8 @@
   "files": [
     {
       "path": "README.md",
-      "bytes": 9006,
-      "sha256": "e09ff26f01859e58cdd485d8798f9285a058f6083059058bdef997fdcd932481"
+      "bytes": 9293,
+      "sha256": "8096a029e5efd8da6dce5a2dc89f47d95c75aa00c2258d354839cac22bf3f69a"
     },
     {
       "path": "check.py",
@@ -132,5 +132,9 @@
     }
   ],
   "source": "85905b41943cd872fbaedbcfe19ea753839847ef",
-  "scope": "new conditional proof and finite helper only; no native qualification"
+  "scope": "new conditional proof and finite helper only; no native qualification",
+  "documentation_followup": {
+    "parent_evidence_head": "8c45fbffaa5db835283fd0028a89812c20ea651c",
+    "scope": "README distinguishes unclipped pathwise spending from probability cap; executed helper/tests and original validation receipts unchanged"
+  }
 }

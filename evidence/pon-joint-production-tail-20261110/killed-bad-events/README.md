@@ -108,9 +108,13 @@ ones. A None next-state denotes a bad outcome whose probability is paid; its
 zero credit fields are unused canonical placeholders, not a claim of zero
 physical cost or credit. Good outcomes retain their original probabilities.
 The helper separately maximizes the finite bad-or-crossing event and the bad
-event over adaptive policies by Bellman recursion. Its hazard allowance is the
-finite pathwise ceiling horizon * maximum declared one-step bad mass. That
-finite ceiling does not extend to an unbounded lifetime unless justified.
+event over adaptive policies by Bellman recursion. The **unclipped** value
+horizon * maximum declared one-step bad mass is a finite pathwise spending
+ceiling. The reported `finite_hazard_budget` field is its probability cap
+min(1, ceiling), not a ledger expenditure. When the ceiling exceeds one, the
+probability cap uses only the trivial probability bound; it does not certify
+a pathwise spending allowance of one or refund any charge. The finite ceiling
+does not extend to an unbounded lifetime unless justified.
 
 One benign control has good increments +1 with probability 1/8, -1 with 3/4,
 and bad mass 1/8, z=2, f=1, gap=2, horizon=2. Its good-subkernel moment is
