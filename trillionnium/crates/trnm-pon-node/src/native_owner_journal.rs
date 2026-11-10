@@ -647,23 +647,24 @@ impl Sidecar {
             | rustix::fs::OFlags::NONBLOCK
             | rustix::fs::OFlags::CLOEXEC;
         let mode = rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR;
-        let lock = File::from(rustix::fs::openat(
-            &directory_file,
-            "owner.lock",
-            flags,
-            mode,
-        )?);
+        let lock = File::from(
+            rustix::fs::openat(&directory_file, "owner.lock", flags, mode)
+                .map_err(std::io::Error::from)?,
+        );
         owner_lease(path, &directory_file, &lock)?;
         lock.try_lock_exclusive()
             .map_err(|_| Error::from("OWNER_JOURNAL_BUSY"))?;
         owner_lease(path, &directory_file, &lock)?;
         directory(&path.join("packets"))?;
-        let mut file = File::from(rustix::fs::openat(
-            &directory_file,
-            "journal.pnoj1",
-            flags | rustix::fs::OFlags::APPEND,
-            mode,
-        )?);
+        let mut file = File::from(
+            rustix::fs::openat(
+                &directory_file,
+                "journal.pnoj1",
+                flags | rustix::fs::OFlags::APPEND,
+                mode,
+            )
+            .map_err(std::io::Error::from)?,
+        );
         owner_lease(path, &directory_file, &lock)?;
         let metadata = owner_file(&path.join("journal.pnoj1"), &file, "OWNER_JOURNAL_REPLACED")?;
         ensure(
