@@ -184,7 +184,7 @@
     "config/pon/work-profile-v1.json": "54e43139d3691b62f76f9e8976e1d2a974e8524b",
     "config/portability-inventory-v1.json": "94b92f2a4877036ea3929a83f90ba3bbe8ca2ae3",
     "config/systemd/trnmponpublic.slice": "8981b6aeed4c08c21679664940366b36a991444a",
-    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "538f2056b698df8d1120e0220af172bae873ac45",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "3a24aaebe1dc30b87defd982a38dfddd29de0b81",
     "docs/development/specs/pon/CELL_BEP52_PEER_V1.md": "b83e92b8b31b217337ff3685668290a9e03d3a3b",
     "docs/development/specs/pon/CELL_DEPENDENCY_CLOSURE_V1.md": "7e709ef812e4773ae14959270649235f4bb7c239",
     "docs/development/specs/pon/CELL_FULL_CONTENT_V2.md": "69c6d91ee7dced705f2ea7e937fc3188c0d2d793",

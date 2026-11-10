@@ -110,8 +110,23 @@ remain Unknown.
 
 ## This documentation delivery
 
-Only the publication-plan section and these public-source audit records are
-changed. No native source, acceptance threshold or activation flag changes.
+The publication-plan section, these public-source audit records and the existing
+corpus manifest's single plan-blob binding are changed. No native source, acceptance threshold or activation flag changes.
 Fresh checks cover project boundary, changed-document links, JSON consistency
 and diff scope. Archived Cargo/Clippy/native outcomes remain attributed to their
 original source; this documentation successor does not inherit a full test pass.
+
+### Plan-binding correction
+
+The initial documentation commit 156dd879 changed the authoritative plan while
+its existing corpus pin still named the prior plan bytes. The unchanged actual
+corpus inspector correctly refused with changed source for that plan. The
+follow-up changes only that one existing blob value to the new plan digest; it
+retains all 1,079 pinned paths, 987 required paths, source checks and false
+qualification flags. No assertion is removed or weakened. The original refusal
+is retained here rather than represented as a successful first inspection.
+
+After correction, the unchanged corpus inspector exits zero with 1,079 exact
+source blobs and all scientific/activation flags still false (HOLD_NO_GO).
+The distributed source-inventory check also passes. These are source-contract
+checks, not fresh native execution or security acceptance.
