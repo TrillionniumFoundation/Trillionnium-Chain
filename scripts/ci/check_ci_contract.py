@@ -294,6 +294,8 @@ ROOT_RECOVERY_TRUTH_PREFIX = '''    bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_project_boundary.py
     python3 scripts/ci/test_pq_lifetime_budget.py
     python3 scripts/ci/pq_lifetime_budget.py
+    python3 scripts/ci/test_pq_lifetime_composition.py
+    python3 scripts/ci/pq_lifetime_composition.py
     python3 scripts/ci/test_pq_authority_effect_register.py
     python3 scripts/ci/pq_authority_effect_register.py
 ''' + ROOT_RECOVERY_STRUCTURE_BLOCK
@@ -306,6 +308,8 @@ ROOT_RECOVERY_NATIVE_BLOCK = '''    python3 formal/pon-nakamoto-v1/test_pq_root_
     python3 scripts/ci/run_pq_root_continuation_v4.py
 '''
 ROOT_RECOVERY_TEST_FILES = (
+    'scripts/ci/test_pq_lifetime_composition.py',
+    'scripts/ci/pq_lifetime_composition.py',
     'formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py',
     'formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py',
     'formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_native_v2.py',
@@ -814,6 +818,8 @@ def validate(root: Path = ROOT) -> dict:
     lane_pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*)\)\n(.*?)(?=^    ;;$)', script)
     for budget_command in ('    python3 scripts/ci/test_pq_lifetime_budget.py\n',
                            '    python3 scripts/ci/pq_lifetime_budget.py\n',
+                           '    python3 scripts/ci/test_pq_lifetime_composition.py\n',
+                           '    python3 scripts/ci/pq_lifetime_composition.py\n',
                            '    python3 scripts/ci/test_pq_authority_effect_register.py\n',
                            '    python3 scripts/ci/pq_authority_effect_register.py\n',
                            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v\n"):

@@ -663,6 +663,16 @@ NATIVE_REQUIRED_PATHS |= frozenset((
     "trillionnium/crates/trnm-pon-node/tests/support/root_recovery_v3_fixture.rs",
 ))
 
+# The V2 composition bridge keeps the old lifetime and root registers separate
+# while requiring their declared shared-resource and event-accounting inputs.
+# Its finite source union is not a complete dependency or security theorem.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "scripts/ci/pq_lifetime_composition.py",
+    "scripts/ci/test_pq_lifetime_composition.py",
+    "config/pon/pq128-lifetime-composition-v2.json",
+    "docs/security/PQ128_LIFETIME_COMPOSITION_V2.md",
+))
+
 # These are bounded source contracts, not results of a cryptographic audit.
 # In particular, an always-compiled provider is not default chain activation.
 NATIVE_V2_EXPECTED = {
