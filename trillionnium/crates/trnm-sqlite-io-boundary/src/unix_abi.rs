@@ -23,16 +23,16 @@ type RawFd = c_int;
 
 #[cfg(trnm_sqlite_layout_witness)]
 const SOURCE_ID: &[u8] =
-    b"2026-03-13 10:38:09 737ae4a34738ffa0c3ff7f9bb18df914dd1cad163f28fd6b6e114a344fe6d618";
+    b"2026-10-16 14:45:20 555e07ef33f69a0957d24d8e555b702464a131d6f1607f4c3c1e4551e8e6ca76";
 #[cfg(trnm_sqlite_layout_witness)]
 const UNIX_FILE_BYTES: c_int = 120;
 #[cfg(trnm_sqlite_layout_witness)]
 const UNIX_VFS_NAME: &[u8] = b"unix\0";
 #[cfg(trnm_sqlite_layout_witness)]
-const BUILD_FENCE: &str = "sqlite-3.51.3-normal-native-linux-layout-v3";
+const BUILD_FENCE: &str = "sqlite-3.54.1-normal-native-linux-layout-v4";
 #[cfg(trnm_sqlite_layout_witness)]
 const AMALGAMATION_SHA256: &str =
-    "9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5";
+    "0c657666d819f261cc4007526ad57e1669de9949df7a8ea847aa284a2bf0ee52";
 
 #[cfg(trnm_sqlite_layout_witness)]
 unsafe extern "C" {
@@ -42,7 +42,7 @@ unsafe extern "C" {
     fn trnm_io_witness_source_id() -> *const c_char;
 }
 
-// sqlite3.c:39459-39469. All members through p_shm are unconditional. No
+// sqlite3.c:40911 (reviewed 3.54.1 source). All members through p_shm are unconditional. No
 // shared Rust reference to this prefix is ever constructed: individual raw
 // fields are read so that unrelated mutable C members are not borrowed.
 #[repr(C)]
@@ -60,13 +60,13 @@ struct UnixFilePrefix {
     p_shm: *mut UnixShmPrefix,
 }
 
-// sqlite3.c:43791-43792. Only the immutable first pointer is represented.
+// sqlite3.c:45244 (reviewed 3.54.1 source). Only the immutable first pointer is represented.
 #[repr(C)]
 struct UnixShmPrefix {
     p_shm_node: *mut UnixShmNodePrefix,
 }
 
-// sqlite3.c:43757-43761. The first three fields establish h_shm's offset;
+// sqlite3.c:45210 (reviewed 3.54.1 source). The first three fields establish h_shm's offset;
 // they are not read. In particular, no n_ref, lock array, region count or
 // other concurrently mutable node member is read.
 #[repr(C)]
@@ -180,8 +180,8 @@ fn verify_abi_compatibility() -> Result<(), String> {
     // These are public API/compile-time witness reads, not VFS callbacks.
     // The owner establishes the source/build and in-process trust boundary.
     unsafe {
-        if ffi::sqlite3_libversion_number() != 3_051_003 || trnm_io_witness_version() != 3_051_003 {
-            return Err("PRIVATE_ABI_UNSUPPORTED: SQLite version must be exactly 3.51.3".into());
+        if ffi::sqlite3_libversion_number() != 3_054_001 || trnm_io_witness_version() != 3_054_001 {
+            return Err("PRIVATE_ABI_UNSUPPORTED: SQLite version must be exactly 3.54.1".into());
         }
         let source_id = ffi::sqlite3_sourceid();
         let witnessed_source_id = trnm_io_witness_source_id();
