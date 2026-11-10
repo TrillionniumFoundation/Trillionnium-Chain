@@ -10764,3 +10764,32 @@ reused historical pass counts. Retain all new failed or incomplete observations,
 including missing resource readback; do not relax the original service contract.
 Production proof replacement, WAN/ACK benefit and concrete cryptographic
 qualification remain open. Qualification remains HOLD_NO_GO.
+
+
+### 2026-11-10 — Complete DFT-sharing receiver result (negative, ai395)
+
+The [retained exact-source receiver record](../../formal/pon-nakamoto-v1/w1_node_adapter_research/evidence/dft-sharing-20261110-ai395/README.md)
+compares fixed baseline 9133a2218890cfca837df34e7d6b892cec780868 with
+candidate 9c7da5551d48bac6e7e79d62e31fc8b6a6cc2e4a. All 217 selected
+methods, locked graphs, formatting, strict Clippy and original full-source
+guards passed. Four original NPPNNPPN batches in ABBA order retain 32 fresh
+receiver processes, 16 old full-proof replays, one input task and zero new
+complete W1 proofs. All original reader decisions pass their local evidence
+contract; this does not establish a performance gain.
+
+Candidate proof-plus-native wall/CPU/RSS medians are 0.527050337 seconds,
+0.878571500 CPU seconds and 126650 KiB, versus baseline 0.515773328,
+0.874163500 and 126168. Payload is unchanged at 4023864 bytes. These shared-host
+descriptive observations do not support the optimization. Preserve initial
+cache, ENOSPC, wrong historical receipt and sparse-source refusals.
+The audit archive retains 634 files; ELF originals remain on ai395, explicitly
+excluded with exact paths/digests. Evidence delivery does not transfer these
+results to a prospective merge or different runtime source.
+
+Next isolate public-table, polynomial-extension and commitment-hashing costs,
+inspect transform-shape reuse, and test any preprocessing algorithm with exact
+commitment/proof equality and fresh complete-receiver comparisons. No
+table-sharing speedup, verifier-key shortcut, native replay removal or
+production dispatch change follows. Original quarter-CPU/four-second service,
+WAN/ACK, cheapest legal work, whole-chain gain and concrete cryptographic
+qualification remain separate HOLD gates. Production activation remains false.
