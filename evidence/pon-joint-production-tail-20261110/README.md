@@ -88,3 +88,12 @@ open and HOLD_NO_GO remains.
 [Exact committed recovery-source validation](r1-terminal-validation/README.md)
 retains the four successful local evidence checks and the explicit local/public
 commit mapping for their identical tree. These checks add no Rust execution.
+
+## Conditional bad-event composition
+
+The [good-subkernel interface and finite controls](killed-bad-events/README.md)
+make the killed-process and lifetime bad-event spending premises explicit.
+This evidence-only specialization preserves actual conditional probability
+mass and the residual initial potential. It supplies no native law or risk
+bound, changes no installed checker or CI command, and closes no actual joint
+qualification obligation.
