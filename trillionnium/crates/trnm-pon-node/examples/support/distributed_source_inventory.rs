@@ -260,6 +260,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/pq-root-custody-review-v2.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/pq-root-custody-review-v2.json"
+        )),
+    ),
+    (
         "config/pon/pq-root-dependency-register-v3.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -607,6 +614,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_cost.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_from_zero_filter_cost_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_from_zero_filter_cost_v1.rs"
         )),
     ),
     (

@@ -11352,3 +11352,41 @@ support this cause; they are not a captured dynamic statement/close trace.
 Freeze the repaired source and exact affected bindings before rerunning the
 complete DA harness, retained/direct-owner libraries and original remaining
 gates. M12's successful node run does not qualify that successor source.
+
+
+### 2026-11-10 native journal input progress and from-zero filter costs
+
+Continue the fixed joint candidate `da1374a200022bc14dc2bd325cc9ba29dbcd24ab`
+in an isolated child of the existing integration branch. Two actual native
+subprocess controls reproduce blocking before regular-file validation: a cached
+owner packet replaced by a FIFO, and a retained risk owner reopening a FIFO at
+its native journal path. Each original control exhausts its separate one-second
+read observation budget and reaps the child. Add `O_NONBLOCK` to those two read
+opens, preserving descriptor type checks, refusal codes, stored schemas, native
+work rules, risk spending, and the original journals. Preserve the original
+failures and run both complete integration suites on the committed repair.
+
+Add the [finite component cost probe](../../trillionnium/crates/trnm-crypto-primitives/examples/pon_from_zero_filter_cost_v1.rs)
+and its [exact-source runner and strict reader](../../scripts/ci/run_from_zero_filter_cost_v1.py).
+The fixed grid uses two public matrix recipes, three diagnostic targets and eight
+samples per construction arm: 96 constructions and 576 native stage observations.
+The from-zero arm never acquires a valid proof; retain every search miss and its
+first target hit. Measure preparation, all search work, standalone preliminary
+filtering, raw verification, exact-statement arithmetic cache use and scalar
+verification separately. Stop interval clocks before JSON/hex/output work; retain
+that overhead in the whole-campaign interval. Reject inconsistent stage totals,
+missing trials, changed proof bytes, partial streams and qualification promotion.
+Refresh the existing embedded native-source inventory for the added example
+and the already-existing custody V2 config omitted by the parent inventory.
+
+These are fixed finite component observations. The legal comparator is the
+specified full-limb/dense preparation with lazy winner materialization, not a
+minimum over all lawful producers. Raw call order does not control hardware
+cache temperature; the opt-in arithmetic cache is not default listener service.
+Keep full public Host/campaign budgets, receiver-wide responsibility, lifetime
+PQ authentication recovery, all-strategy cost bounds, CP/CG/CQ and confirmation
+risk, independent task/evaluation governance, and external-effect recovery open.
+Active sidecar content checking against noncooperating same-inode writers also
+requires a separate design and cost review; do not add quadratic prefix rescans
+inside this bounded-input repair. Source and finite test success grant no
+production admission. `HOLD_NO_GO` and all activation refusals remain in force.

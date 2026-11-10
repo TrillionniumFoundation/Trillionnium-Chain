@@ -380,6 +380,95 @@ fn input_artifact_budget_refuses_before_any_native_admission_intent() {
 }
 
 #[test]
+fn cached_packet_replaced_by_fifo_refuses_before_admission_without_blocking() {
+    use std::process::Stdio;
+    use std::time::{Duration, Instant};
+
+    let root = tempfile::tempdir().unwrap();
+    let mut child = Command::new(std::env::current_exe().unwrap())
+        .args([
+            "--exact",
+            "native_journal_fifo_packet_child",
+            "--ignored",
+            "--nocapture",
+        ])
+        .env("TRNM_NATIVE_JOURNAL_FIFO_TEST_ROOT", root.path())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let ready = root.path().join("fifo-open-ready");
+    let mut deadline = Instant::now() + Duration::from_secs(15);
+    let mut read_started = false;
+    let timed_out = loop {
+        if child.try_wait().unwrap().is_some() {
+            break false;
+        }
+        // Allow native setup its own budget. Once the cached artifact has
+        // become a FIFO, the regular-file refusal must return without a writer.
+        if !read_started && ready.exists() {
+            read_started = true;
+            deadline = Instant::now() + Duration::from_secs(1);
+        }
+        if Instant::now() >= deadline {
+            break true;
+        }
+        std::thread::sleep(Duration::from_millis(5));
+    };
+    if timed_out {
+        child.kill().unwrap();
+    }
+    // Reap even the deliberately timed-out original implementation. A FIFO
+    // regression must fail this test instead of hanging the entire test suite.
+    let output = child.wait_with_output().unwrap();
+    assert!(
+        !timed_out && output.status.success(),
+        "cached artifact refusal timed_out={timed_out}, read_started={read_started}, \
+         status={}, stdout={}, stderr={}",
+        output.status,
+        String::from_utf8_lossy(&output.stdout),
+        String::from_utf8_lossy(&output.stderr),
+    );
+}
+
+#[test]
+#[ignore = "owned subprocess helper, actually executed by the FIFO refusal test"]
+fn native_journal_fifo_packet_child() {
+    use std::os::unix::fs::FileTypeExt;
+
+    let root = std::path::PathBuf::from(
+        std::env::var_os("TRNM_NATIVE_JOURNAL_FIFO_TEST_ROOT")
+            .expect("explicit parent test directory required"),
+    );
+    let mut owner = open(&root, NativeJournalOptions::default());
+    let packet = make(&mut owner);
+    let before = owner.checkpoint().unwrap();
+    let journal = root.join("journal/journal.pnoj1");
+    let retained = fs::read(&journal).unwrap();
+    let artifact = root
+        .join("journal/packets")
+        .join(format!("{}.pnp1", digest(&packet.encode().unwrap())));
+    fs::remove_file(&artifact).unwrap();
+    rustix::fs::mkfifoat(
+        rustix::fs::CWD,
+        &artifact,
+        rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR,
+    )
+    .unwrap();
+    fs::write(root.join("fifo-open-ready"), b"ready").unwrap();
+    assert_eq!(
+        owner.admit(&packet, 100).unwrap_err().to_string(),
+        "OWNER_JOURNAL_ARTIFACT",
+    );
+    assert_eq!(owner.checkpoint().unwrap(), before);
+    assert_eq!(fs::read(&journal).unwrap(), retained);
+    assert!(fs::symlink_metadata(artifact)
+        .unwrap()
+        .file_type()
+        .is_fifo());
+}
+
+#[test]
 fn invalid_same_id_packet_never_inherits_another_packets_valid_native_weight() {
     let root = tempfile::tempdir().unwrap();
     let producer = tempfile::tempdir().unwrap();

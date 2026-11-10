@@ -54,6 +54,113 @@ fn refused(root: &Path, native: NativeJournalOptions, risk: RiskLedgerOptions, c
     }
 }
 
+#[test]
+fn native_prefix_replaced_by_fifo_refuses_without_spending_or_blocking() {
+    use std::os::unix::fs::FileTypeExt;
+    use std::process::Stdio;
+    use std::time::{Duration, Instant};
+
+    let root = tempfile::tempdir().unwrap();
+    let owner = open(root.path(), NativeJournalOptions::default(), options()).unwrap();
+    let (bank_pin, native_pin) = owner.finish(100).unwrap();
+    let journal = root.path().join("native/journal.pnoj1");
+    let saved = root.path().join("native/original-journal.pnoj1");
+    let journal_bytes = fs::read(&journal).unwrap();
+    let bank = root.path().join("bank/risk.pnrl1");
+    let bank_bytes = fs::read(&bank).unwrap();
+    fs::rename(&journal, &saved).unwrap();
+    rustix::fs::mkfifoat(
+        rustix::fs::CWD,
+        &journal,
+        rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR,
+    )
+    .unwrap();
+
+    let mut child = Command::new(std::env::current_exe().unwrap())
+        .args([
+            "--exact",
+            "native_risk_fifo_prefix_child",
+            "--ignored",
+            "--nocapture",
+        ])
+        .env("TRNM_NATIVE_RISK_FIFO_TEST_ROOT", root.path())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let ready = root.path().join("prefix-open-ready");
+    let mut deadline = Instant::now() + Duration::from_secs(15);
+    let mut read_started = false;
+    let timed_out = loop {
+        if child.try_wait().unwrap().is_some() {
+            break false;
+        }
+        if !read_started && ready.exists() {
+            read_started = true;
+            deadline = Instant::now() + Duration::from_secs(1);
+        }
+        if Instant::now() >= deadline {
+            break true;
+        }
+        std::thread::sleep(Duration::from_millis(5));
+    };
+    if timed_out {
+        child.kill().unwrap();
+    }
+    // Always reap the actual API caller, including the original blocking
+    // implementation. The FIFO has no writer and must not outlive this test.
+    let output = child.wait_with_output().unwrap();
+    assert_eq!(fs::read(&bank).unwrap(), bank_bytes);
+    assert_eq!(fs::read(&saved).unwrap(), journal_bytes);
+    assert!(fs::symlink_metadata(&journal)
+        .unwrap()
+        .file_type()
+        .is_fifo());
+    assert!(
+        !timed_out && output.status.success(),
+        "native prefix refusal timed_out={timed_out}, read_started={read_started}, \
+         status={}, stdout={}, stderr={}",
+        output.status,
+        String::from_utf8_lossy(&output.stdout),
+        String::from_utf8_lossy(&output.stderr),
+    );
+
+    // Restoring the exact original regular file still admits the retained
+    // checkpoint. A refusal must not rewrite the native journal or risk bank.
+    fs::remove_file(&journal).unwrap();
+    fs::rename(&saved, &journal).unwrap();
+    let owner = open(
+        root.path(),
+        NativeJournalOptions {
+            expected_checkpoint: Some(native_pin),
+            ..NativeJournalOptions::default()
+        },
+        RiskLedgerOptions {
+            expected_checkpoint: Some(bank_pin),
+            ..options()
+        },
+    )
+    .unwrap();
+    assert_eq!(owner.status().unwrap()["spent_units"], 0);
+    owner.finish(100).unwrap();
+}
+
+#[test]
+#[ignore = "owned subprocess helper, actually executed by the native prefix FIFO test"]
+fn native_risk_fifo_prefix_child() {
+    let root = std::path::PathBuf::from(
+        std::env::var_os("TRNM_NATIVE_RISK_FIFO_TEST_ROOT")
+            .expect("explicit parent test directory required"),
+    );
+    fs::write(root.join("prefix-open-ready"), b"ready").unwrap();
+    refused(
+        &root,
+        NativeJournalOptions::default(),
+        options(),
+        "RISK_LEDGER_NATIVE_PATH",
+    );
+}
+
 fn append_nonready_start(root: &Path, before: JournalCheckpoint, spent: u64) {
     let path = root.join("bank/risk.pnrl1");
     let raw = fs::read(&path).unwrap();

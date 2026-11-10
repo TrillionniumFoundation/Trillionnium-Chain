@@ -542,9 +542,11 @@ fn safe_absolute(path: &Path) -> Result<()> {
 }
 fn read_packet_file(path: &Path, length: u64) -> Result<Vec<u8>> {
     ensure((1..=1_048_576).contains(&length), "OWNER_JOURNAL_ARTIFACT")?;
+    // A cached artifact may have been replaced by a FIFO. Open without waiting
+    // for its writer, then keep the descriptor-bound regular-file refusal.
     let file = OpenOptions::new()
         .read(true)
-        .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+        .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC | libc::O_NONBLOCK)
         .open(path)?;
     let metadata = file.metadata()?;
     ensure(
