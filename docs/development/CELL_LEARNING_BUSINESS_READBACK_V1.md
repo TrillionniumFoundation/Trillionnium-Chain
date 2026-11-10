@@ -18,6 +18,13 @@ contains one operation, one invocation identifier and one declared pair of
 Chain/Hepta source commits and trees. Every material has its own original-byte
 SHA-256, operation and source pair. Declared mismatches are refused.
 
+The strict bindings input remains
+`trnm-cell-learning-business-bindings-v1`. Output schema
+`trnm-cell-learning-business-review-v2` adds the actor provenance and missing
+independent-consumer receipt diagnostics. The versioned output does not change
+input acceptance or authenticate an owner; archived V1 reports remain historical
+observations.
+
 The original completion reader replays the actual binary checkpoint and the
 original owner bytes. There is no import path for a precomputed positive summary.
 The request must contain the HEPLCP02 pre-frozen evaluation profile. Root outer
@@ -33,6 +40,26 @@ Selection exports the complete original trained candidate descriptor. NoUpdate
 exports the complete original incumbent descriptor, including all component,
 lineage and rollback bindings. This is not proof that independent providers
 possess every byte or that a device loaded those bytes.
+
+The original NextUse observation requires the same original principal, agent
+and cell with a different run identifier. The report derives
+`next_use_provenance.source_actor` from the decoded completed request and
+`next_use_provenance.next_use_actor` from the decoded final state partition. It
+reports the matching three identities and different run identifiers as
+`SAME_ORIGINAL_ACTOR_DISTINCT_RUN_ONLY`, scoped to structural identifier
+comparison with `authenticated=false` and the original completed checkpoint's
+SHA-256. Run inequality alone does not establish
+an independently authorized distinct task or independent consumer. The existing
+`consumer` binding names that same actor; changing the label or its declared
+capture basis cannot establish independence.
+
+`independent_consumer_gate` therefore remains
+`MISSING_ORIGINAL_INDEPENDENT_CONSUMER_RECEIPT`, with `verified=false`, and
+`independent_consumer_verified` remains false. Qualification still requires a
+separate original, authenticated consumer receipt tied to the authorized
+consumer, exact operation and selected or retained version, distinct task and
+observed task outcome. This report adds no input fields or authentication path,
+and its original completion subreport remains unchanged.
 
 ## Original native economic owner
 
