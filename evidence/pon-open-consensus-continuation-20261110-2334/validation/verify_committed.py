@@ -65,7 +65,7 @@ def main() -> int:
         "schema": "pon-continuation-committed-validation-v1",
         "source_expected": args.expected_head,
         "group": args.group,
-        "result": "PASS",
+        "result": "RUNNING",
         "qualification": "HOLD_NO_GO",
         "production_activation": False,
         "open_consensus_qualified": False,
@@ -86,6 +86,8 @@ def main() -> int:
             break
     if len(report["observations"]) != len(commands):
         report["result"] = "FAIL"
+    elif report["result"] == "RUNNING":
+        report["result"] = "PASS"
     observation.finish(output, report, [
         "trillionnium/Cargo.lock", "trillionnium/Cargo.toml", "rust-toolchain.toml",
         "scripts/pon_w1_lifecycle_cost_v4.py",

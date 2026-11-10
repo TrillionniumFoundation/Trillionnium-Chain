@@ -118,14 +118,17 @@ No retained ELF was executed in this readback.
 Each campaign uses nine material classes, eight samples and four searches per
 sample: 288 candidates and 573 actual trials. All four campaigns repeat the
 same deterministic 288-candidate set. They do not yield 1,152 distinct
-candidates. Every fake candidate is rejected as `TRANSCRIPT`; default and
-full-limb modes retain 1,152 and 1,440 production-verifier calls respectively.
+candidates. Every fake candidate is rejected as `TRANSCRIPT`. Each campaign
+has 288 production-verifier calls. Default and full-limb modes retain 1,152 and
+1,440 verifier observations across four and five paths respectively; those
+totals include reference/alternative paths as well as production.
 
 The denominator includes actual prefix setup, all four reuse searches, misses,
 hashing, record construction and winner cloning. It excludes material
 generation, buffer destruction, evidence JSON output, network traffic, service
-queues and signing. The verifier total includes the full recorded validation
-call grid. This is a measured native microbenchmark ratio, not whole-service
+queues and signing. Each ratio's numerator sums only the 288 production-path
+calls in that row; the other verifier paths are excluded. This is a measured
+native microbenchmark ratio, not whole-service
 amplification, a minimum attack cost or evidence of accepted fake work.
 
 ### Original four-second service failures
@@ -180,6 +183,32 @@ records file hashes for the working-source controls; it is not a whole-tree
 execution certificate. Exact committed validation is reported separately and
 must not borrow an old-source success.
 
+### Completed validation of the committed source
+
+The retained [static manifest](validation/committed-fcc3/static/manifest.json)
+and [native manifest](validation/committed-fcc3/native/manifest.json) bind the
+actually executed commands to commit
+`fcc3c86631c4fb5a1be59ba6da49d9d98d560761`, tree
+`dcbeaec3ae9cf300c10223f12ae9890e05285b22`. Both final manifests report `PASS`
+and `source_consistent=true`; every command verifies the raw committed source
+before and after execution.
+
+| Exact committed-source group | Actual outcome |
+| --- | --- |
+| Source and Python controls | All 12 listed commands pass: preflight, locked/offline Cargo graph, format, repository links, generated inventory, 177 CI-contract tests, 43 source-integrity tests, 59 corpus negatives, corpus check, 15 V4 reader tests, 32 material-reader tests and 9 native-gate tests |
+| Public V3 native tests | 59 passed, 0 failed, 0 ignored, 1,263 filtered |
+| MVCC default-feature library/integration tests | 259 passed, 0 failed, 9 ignored, 0 filtered, across 17 harnesses; the feature-gated OpenSSL account harness reports zero tests |
+| Strict workspace Clippy | `--workspace --all-targets --all-features -- -D warnings` passes |
+
+The [effective-version observation](validation/committed-fcc3/toolchain.json)
+records Rust 1.95.0 and Cargo 1.95.0 using the same explicit runtime paths.
+`--all-features` belongs to Clippy here, not to the runtime test commands.
+The later publication extension changes only this evidence directory, including
+the diagnostic collector's intermediate-state label; it does not change native
+sources, tests, the Cargo graph or protocol/configuration inputs. The executed
+manifests retain their exact `fcc3` source identity. They do not certify a later
+whole-tree CI run or turn any qualification flag on.
+
 The [committed validation runner](validation/verify_committed.py) uses the
 existing `ci_observation` raw-source fence before and after every command. Run
 it only from a clean committed checkout with the pinned toolchain and prepared
@@ -197,7 +226,10 @@ python3 evidence/pon-open-consensus-continuation-20261110-2334/validation/verify
 The native group includes all default-feature MVCC library/integration targets,
 the selected Public V3 tests, and strict workspace/all-target/all-feature
 Clippy. Listing those commands is not an assertion that they have already
-passed; their source-bound manifests retain actual outcomes. The
+passed at any other source; their source-bound manifests retain actual outcomes.
+Only a final `manifest.json` can report completion. `progress.json` is an
+intermediate observation and now remains `RUNNING` until a failure is observed;
+it never grants completion even when its last command has returned. The
 [service diagnosis](service-diagnosis.md) distinguishes observed phases from
 unmeasured causes and describes the remaining bounded diagnostic work.
 
@@ -213,6 +245,21 @@ unmeasured causes and describes the remaining bounded diagnostic work.
 | Joint consensus | DAA, timestamps, credited work, changing participation, congestion, hidden ancestry and classical/quantum strategies in one security model |
 | Evaluation governance | Collusion, shared controllers, copied models, holdout contamination and fabricated demand |
 | External effects | Target-side idempotency, durable non-rewinding journals, reconciliation and explicit `Unknown` handling for the same operation |
+
+At the tested source, the
+[fixed-probability contract](../../formal/pon-nakamoto-v1/fixed_probability_contract_v1.json)
+still has 16 actual classical/quantum points with `lower=null`, `upper=null`
+and `status="unproved"`; the [scope readback](validation/committed-fcc3/scope.json)
+retains those fields and the false evaluation authority flags. Historical V4's
+one-half target density cannot fill the MU1 contract's one-sixteenth terminal
+probability cost points.
+
+Existing durable same-operation, pending/`Unknown`, reopen and liability
+components are retained. The remaining external-effect obligation is their
+combination with actual provider/payment/resource evidence, a production
+adapter, an effect sink and an authenticated reorganization feed. Verifiable
+provider declarations alone do not prove a real external action or compensation;
+see the [native effect-readback limits](../../docs/security/PQ_ROOT_EFFECT_READBACK_NATIVE_V4.md).
 
 No public-prefix, chain-growth, chain-quality or six-confirmation failure bound
 is established by this continuation. Synthetic joint models and local semantic
