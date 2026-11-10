@@ -10758,3 +10758,14 @@ run exactly once in repository-truth under the existing omission, movement,
 multiplicity and failure-policy controls. The native consensus, thresholds,
 signed domains, stored schema and production activation remain unchanged.
 [Evidence and recovery boundary](../../evidence/pon-joint-production-tail-20261110/README.md).
+
+## Joint qualification: restore complete embedded source inventory (2026-11-10)
+
+The original #863 source CI exposed the omitted existing
+`config/pon/joint-consensus-qualification-v1.json` entry in the generated native
+source inventory. Regenerate with the unchanged inventory tool and retain that
+original refusal. The sole added entry binds the existing configuration bytes;
+no qualification source pin, threshold, signed domain or stored schema changes.
+New-candidate Rust graph/format/Clippy/native gates require their own execution;
+the original source runtime successes are not reassigned to this fix. All
+thirteen actual joint proof obligations remain open and HOLD_NO_GO remains.
