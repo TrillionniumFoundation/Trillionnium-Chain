@@ -1,0 +1,41 @@
+{
+  "commands": [
+    {
+      "name": "preflight-before",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.02773787803016603,
+      "stdout_sha256": "e1d909adf2a7971324fabfc5f10a5ed6236ee0b19582d17ea3c31ae64b761cb8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "ci-contract",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/test_ci_contract.py",
+        "-v"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 25.355717395083047,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "758336bd86f9c603a680b2039636a46e01d97e9aae06e9ef78c9738c1cb5f1d3",
+      "unittest_methods_reported": [
+        177
+      ]
+    }
+  ],
+  "native_execution_performed": false,
+  "qualification": "HOLD_NO_GO",
+  "executed_source": {
+    "head": "9891218ac5f8df50e545dcac36bd10399c95195e",
+    "tree": "26e3d65b1012d4a49b6c0df89c486bea87c280bc",
+    "files": 27706,
+    "bytes": 2529029284,
+    "source_map_sha256": "26289fddef317338a5732d861436d6a9e537b2043f2838484597ab2257af8c2c"
+  },
+  "error": "ci-contract failed",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/qian-qi/chain-hepta-validate-review-340e-v3.py\", line 37, in <module>\n    for name,path in suites:run(name,['/usr/bin/python3',path,'-v'])\n                            ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/qian-qi/chain-hepta-validate-review-340e-v3.py\", line 15, in run\n    if p.returncode:raise RuntimeError(name+' failed')\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: ci-contract failed\n"
+}

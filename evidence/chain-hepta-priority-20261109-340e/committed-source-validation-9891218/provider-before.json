@@ -1,0 +1,7 @@
+{
+  "bin/openssl": "742a393279b769f7b2bbcaabdcdd152d5565d5108b4b920c69c55a1d42c4e6d7",
+  "include/openssl/opensslv.h": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda",
+  "include/openssl/configuration.h": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996",
+  "lib/libcrypto.a": "c82db203024d8d53f97a2f81161385f04444365232f5e2e6deaef77a2aff0468",
+  "lib/libssl.a": "d7cddef12614789118f792fb4b07748c9a413d241895c1501fe12e3998658d90"
+}

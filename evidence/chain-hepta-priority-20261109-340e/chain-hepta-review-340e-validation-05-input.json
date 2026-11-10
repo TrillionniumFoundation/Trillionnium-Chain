@@ -1,0 +1,19 @@
+{
+  "head": "9891218ac5f8df50e545dcac36bd10399c95195e",
+  "filesystem_before": {
+    "/tmp": {
+      "free_bytes": 23811043328,
+      "free_inodes": 35233,
+      "device": 51
+    },
+    "/home/qian-qi": {
+      "free_bytes": 39122206720,
+      "free_inodes": 52193041,
+      "device": 66306
+    }
+  },
+  "tmpdir": "/home/qian-qi/chain-hepta-review-340e-tmp-05",
+  "recipe_before_sha256": "e9352a79586948e909f7985d5648817348cb078f8effccf7cddcabea73dc0667",
+  "recipe_sha256": "9abdd508bff99df016930d49647f58b4254e31faca78f889ecf8b0d556dc64ef",
+  "time_unix": 1794305143.237761
+}
