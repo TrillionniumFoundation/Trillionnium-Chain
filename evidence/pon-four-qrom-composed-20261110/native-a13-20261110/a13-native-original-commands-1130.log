@@ -1,0 +1,699 @@
+TRACKED_FUZZ_MANIFESTS ["tests/fuzz/Cargo.toml"]
+EXECUTING ["cargo", "metadata", "--manifest-path", "tests/fuzz/Cargo.toml", "--locked", "--offline", "--format-version", "1"]
+
+METADATA_OUTPUT {"file": "a13-native-1130-0.stdout", "bytes": 722204, "sha256": "4cfdfbe9320eb840cec65a2f1cbdfe092667cf39a44b1b052f96344edf2164a9"}
+RESULT {"argv": ["cargo", "metadata", "--manifest-path", "tests/fuzz/Cargo.toml", "--locked", "--offline", "--format-version", "1"], "exit_code": 0}
+EXECUTING ["cargo", "test", "--locked", "--offline", "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-crypto-primitives", "-p", "trnm-checkpoint-types", "-p", "trnm-verification-profiles", "--all-targets", "--all-features"]
+   Compiling typenum v1.20.1
+   Compiling shlex v1.3.0
+   Compiling find-msvc-tools v0.1.9
+   Compiling cc v1.2.59
+   Compiling version_check v0.9.5
+   Compiling generic-array v0.14.7
+   Compiling cfg-if v1.0.4
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.45
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling sha2-asm v0.6.4
+   Compiling syn v2.0.117
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling zeroize v1.9.1
+   Compiling sha2 v0.10.9
+   Compiling cmov v0.5.4
+   Compiling ctutils v0.4.6
+   Compiling hybrid-array v0.4.15
+   Compiling pkg-config v0.3.32
+   Compiling vcpkg v0.2.15
+   Compiling semver v1.0.27
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.228
+   Compiling rustc_version v0.4.1
+   Compiling num-traits v0.2.19
+   Compiling openssl-sys v0.9.117
+   Compiling crypto-common v0.2.2
+   Compiling libc v0.2.184
+   Compiling digest v0.11.3
+   Compiling curve25519-dalek v4.1.3
+   Compiling serde v1.0.228
+   Compiling zmij v1.0.21
+   Compiling thiserror v1.0.69
+   Compiling serde_derive v1.0.228
+   Compiling thiserror-impl v1.0.69
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling keccak v0.2.2
+   Compiling signature v2.2.0
+   Compiling openssl v0.10.81
+   Compiling subtle v2.6.1
+   Compiling sponge-cursor v0.1.0
+   Compiling serde_json v1.0.149
+   Compiling bitflags v2.11.0
+   Compiling foreign-types-shared v0.1.1
+   Compiling anyhow v1.0.103
+   Compiling foreign-types v0.3.2
+   Compiling shake v0.1.0
+   Compiling ed25519 v2.2.3
+   Compiling module-lattice v0.2.3
+   Compiling signature v3.0.0
+   Compiling openssl-macros v0.1.1
+   Compiling hex v0.4.3
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.0
+   Compiling rustix v1.1.4
+   Compiling trnm-protocol v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-protocol)
+   Compiling ml-dsa v0.1.1
+   Compiling ed25519-dalek v2.2.0
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-verification-profiles v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-verification-profiles)
+   Compiling trnm-checkpoint-types v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-checkpoint-types)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 53.02s
+     Running unittests src/lib.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/deps/trnm_checkpoint_types-86581e40bdf6b274)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/deps/trnm_crypto_primitives-20c2b945985eeb99)
+
+running 186 tests
+test pon_grouped_fresh_seal_v0::tests::cached_cell_statement_still_requires_a_new_complete_chain ... ok
+test pon_grouped_fresh_seal_v0::tests::observer_cancellation_includes_the_just_evaluated_query ... ok
+test pon_grouped_fresh_seal_v0::tests::observer_captures_actual_framed_seed_and_step_inputs ... ok
+test owned_ed25519::tests::public_and_signature_only_match_existing_strict_verifier ... ok
+test pon_grouped_fresh_seal_v0::tests::every_fixed_field_and_extra_byte_are_rejected ... ok
+test pon_grouped_fresh_seal_v0::tests::fabricated_low_endpoint_passes_filter_but_fails_full_replay ... ok
+test pon_grouped_fresh_seal_v0::tests::cancellation_never_yields_a_partial_verified_receipt ... ok
+test pon_routed_int257_grouped::tests::duplicate_request_identity_and_expired_or_future_requests_refuse ... ok
+test pon_grouped_fresh_seal_v0::tests::observer_distinguishes_precheck_rejection_from_false_endpoint_replay ... ok
+test pon_routed_int257_grouped::tests::canonical_binary_domains_have_fixed_cross_language_vectors ... ok
+test pon_grouped_fresh_seal_v0::tests::fixed_work_and_canonical_witness_replay ... ok
+test pon_routed_int257_grouped::tests::bound_and_bias_violations_refuse_before_execution ... ok
+test pon_routed_int257_grouped::tests::every_external_context_and_request_field_binds_verification ... ok
+test pon_routed_int257_grouped::tests::factored_admission_checks_every_unobserved_model_coordinate ... ok
+test pon_routed_int257_grouped::tests::extreme_signed_values_and_merged_bounds_are_exact ... ok
+test pon_routed_int257_grouped::tests::factored_large_cancelling_intermediates_are_exact_i64 ... ok
+test pon_routed_int257_grouped::tests::factored_preparation_owns_immutable_factors_and_reports_only_selected_costs ... ok
+test pon_routed_int257_grouped::tests::factored_preparation_rejects_invalid_rank_shape_and_coefficients ... ok
+test pon_routed_int257_grouped::tests::factored_reuse_still_requires_fresh_context_scope_and_deadline_binding ... ok
+test pon_routed_int257_grouped::tests::factored_model_version_and_original_coefficients_cannot_be_substituted ... ok
+test pon_routed_int257_grouped::tests::false_statement_or_input_commitments_cannot_yield_typed_product ... ok
+test pon_routed_int257_grouped::tests::model_version_original_matrices_and_prepared_owner_are_bound ... ok
+test pon_routed_int257_grouped::tests::mutated_router_group_output_and_accounting_are_rejected_even_if_rehashed ... ok
+test pon_routed_int257_grouped::tests::ties_use_lowest_index_and_empty_groups_do_no_work ... ok
+test pon_work::artifacts::tests::shape_rejection_and_raw_noncanonical_bytes_preserve_parent_semantics ... ok
+test pon_work::blocked_one_zero::tests::only_exactly_one_zero_and_a_complete_nonzero_rank_one_material_are_supported ... ok
+test pon_work::artifacts::tests::exact_original_domains_raw_bytes_and_matrix_boundaries ... ok
+test pon_work::blocked_zero::tests::exact_task_detection_rejects_invalid_and_nonzero_material_without_fallback ... ok
+test pon_work::arithmetic_facts::controls::every_warm_call_keeps_current_cheap_checks_and_the_original_error_order ... ok
+test pon_work::blocked_zero::tests::complete_zero_certificates_match_independent_python_oracle_vectors ... ok
+test pon_work::arithmetic_facts::controls::a_late_trace_publication_cannot_downgrade_a_concurrently_completed_product ... ok
+test pon_work::blocked_zero_paired::tests::complete_canonical_zero_detection_never_substitutes_another_material ... ok
+test pon_work::arithmetic_facts::controls::cold_progress_is_original_and_warm_success_still_obeys_each_authorizing_boundary ... ok
+test pon_work::arithmetic_facts::tests::completed_trace_arithmetic_is_reused_without_caching_a_rejection ... ok
+test pon_work::arithmetic_facts::controls::trace_only_fact_must_recompute_product_before_accepting_a_new_matching_trace ... ok
+test pon_work::arithmetic_facts::controls::warm_product_does_not_override_the_current_bad_trace_or_current_product ... ok
+test pon_work::arithmetic_facts::full_limb_controls::full_field_trace_upgrade_and_product_reuse_preserve_current_claim_checks ... ok
+test pon_work::arithmetic_facts::controls::holding_the_cache_lock_never_waits_or_reports_reuse_instead_of_real_arithmetic ... ok
+test pon_work::facts::tests::cancelled_leader_wakes_waiter_for_its_own_complete_verification ... ok
+test pon_work::blocked_zero::tests::all_prefix_cells_match_scalar_trace_with_extreme_noise_operands ... ok
+test pon_work::blocked_one_zero::tests::complete_certificates_match_original_independent_python_scalar_vectors ... ok
+test pon_work::arithmetic_facts::tests::completed_product_arithmetic_survives_bad_current_claim_then_accepts_exact_valid_claim ... ok
+test pon_work::facts::tests::poisoned_local_slot_is_unavailable_not_invalid_work_or_fallback ... ok
+test pon_work::arithmetic_facts::controls::no_callback_holds_the_cache_lock_and_reentrant_replacement_cannot_change_the_result ... ok
+test pon_work::facts::tests::one_success_avoids_three_full_product_replays ... ok
+test pon_work::arithmetic_facts::churn_controls::three_rotating_challenges_over_two_slots_repeat_every_actual_transcript ... ok
+test pon_work::arithmetic_facts::full_limb_controls::cancelling_trace_upgrade_keeps_only_the_preexisting_completed_trace ... ok
+test pon_work::arithmetic_facts::controls::cancellation_at_each_cold_boundary_publishes_no_new_fact_and_replays_on_retry ... ok
+test pon_work::arithmetic_facts::controls::poisoned_cache_is_unavailable_but_cannot_override_earlier_current_grammar_errors ... ok
+test pon_work::arithmetic_facts::controls::capacity_eviction_reopen_and_caller_owned_product_keep_exact_verification ... ok
+test pon_work::facts::tests::capacity_eviction_and_new_owner_are_explicit ... ok
+test pon_work::facts::tests::returned_product_does_not_mutate_retained_fact ... ok
+test pon_work::blocked_zero_paired::tests::every_extreme_prefix_word_matches_the_original_scalar_relation ... ok
+test pon_work::integer_paired::tests::unreduced_integer_pairs_cover_extremes_and_nonnegative_subtraction ... ok
+test pon_work::legal_attempt::low_rank::tests::both_inputs_are_fully_validated_before_zero_or_high_rank_shortcuts ... ok
+test pon_work::facts::tests::unwind_does_not_leave_a_computing_slot ... ok
+test pon_work::blocked_zero_paired::tests::actual_checkpoint_order_cancels_without_retaining_challenge_state ... ok
+test pon_work::facts::tests::invalid_first_never_poisoned_the_later_valid_statement ... ok
+test pon_work::facts::tests::warm_final_cancel_does_not_return_authority_or_destroy_math ... ok
+test pon_work::legal_attempt::tests::preparation_never_reduces_noncanonical_fields_or_wrong_shapes ... ok
+test pon_work::facts::tests::warm_fact_rechecks_current_target_task_and_canonical_fields ... ok
+test pon_work::legal_attempt::tests::boundary_target_is_inclusive_and_zero_target_refuses_before_work ... ok
+test pon_work::legal_attempt::tests::sparse_preparation_rejects_hidden_noncanonical_words_and_wrong_lengths ... ok
+test pon_work::facts::tests::no_negative_cache_and_no_cross_challenge_reuse ... ok
+test pon_work::arithmetic_facts::controls::exact_challenge_and_all_current_matrix_bytes_are_required_for_a_hit ... ok
+test pon_work::legal_attempt::low_rank::tests::bounded_factorization_reconstructs_exact_full_field_rank_and_pivot_orders ... ok
+test pon_work::legal_attempt::tests::changed_challenge_and_task_never_gain_acceptance_from_cached_product ... ok
+test pon_work::maintenance_limb::tests::split_limb_extremes_and_field_carries_match_independent_remainder ... ok
+test pon_work::facts::tests::legal_fact_reuse_and_cancellation_do_not_decode_input_matrices ... ok
+test pon_work::legal_attempt::low_rank::tests::exact_rank_limit_chooses_left_then_right_and_explicit_paid_dense_fallback ... ok
+test pon_work::maintenance_periodic::tests::exact_maintenance_constructor_rejects_other_material_without_fallback ... ok
+test pon_work::maintenance_periodic::tests::periodic_integer_product_and_all_wrap_prefixes_match_direct_sums ... ok
+test pon_work::arithmetic_facts::full_limb_controls::legal_arithmetic_reuse_decodes_only_when_full_replay_is_needed ... ok
+test pon_work::maintenance_prefix::tests::both_maintenance_prefix_constructors_reject_unsupported_and_malformed_inputs ... ok
+test pon_work::facts::tests::unrelated_slot_collision_finishes_before_held_leader_without_publication ... ok
+test pon_work::blocked_one_zero::tests::reassociated_trace_matches_every_scalar_prefix_under_extreme_noise_values ... ok
+test pon_work::maintenance_prefix::tests::periodic_challenge_prefix_bounds_cover_all_intercepts_and_lengths ... ok
+test pon_work::legal_attempt::tests::losing_attempt_still_replays_every_transcript_tile_without_lazy_serialization ... ok
+test pon_work::facts::tests::unrelated_slot_replay_preserves_native_refusal_and_cancellation_checkpoints ... ok
+test pon_work::paired_product::tests::paired_constructors_validate_complete_material_without_substitution ... ok
+test pon_work::paired_product::tests::paired_field_identity_covers_canonical_extremes_and_prefixes ... ok
+test pon_work::maintenance_limb::tests::every_prefix_word_matches_independent_scalar_at_maximum_and_mixed_fields ... ok
+test pon_work::maintenance_limb::tests::bounded_limb_all_lengths_extremes_and_carries_match_independent_remainder ... ok
+test pon_work::rejection_cache::observation_tests::retained_owner_bounds_count_allocated_slot_capacity ... ok
+test pon_work::legal_attempt::low_rank::tests::misses_still_replay_all_tiles_and_cancelled_retries_preserve_the_same_task ... ok
+test pon_work::maintenance_prefix::tests::periodic_factorization_matches_every_prefix_word_with_extreme_noise ... ok
+test pon_work::rejection_cache::tests::cheap_structural_refusals_never_hash_the_whole_proof_for_optional_reuse ... ok
+test pon_work::blocked_one_zero::tests::delayed_pivots_extreme_values_and_caller_mutation_preserve_exact_task_binding ... ok
+test pon_work::arithmetic_facts::full_limb_controls::full_field_cold_claims_match_transposed_results_and_all_progress_boundaries ... ok
+test pon_work::rejection_cache::observation_tests::observation_distinguishes_replayed_refusal_hit_cancellation_and_valid_work ... ok
+test pon_work::facts::tests::waiter_cancels_without_cancelling_the_leader ... ok
+test pon_work::rejection_cache::tests::malformed_width_has_no_cache_key_and_retains_native_length_precedence ... ok
+test pon_work::structured::tests::invalid_or_nearly_structured_material_cannot_create_a_shortcut ... ok
+test pon_work::structured::tests::strassen_tiles_equal_exact_integer_products_with_signed_extremes ... ok
+test pon_work::rejection_cache::tests::local_cancellation_cannot_use_a_cached_fact_as_a_verdict ... ok
+test pon_work::rejection_cache::tests::four_distinct_from_zero_false_traces_each_owe_first_full_replay ... ok
+test pon_work::arithmetic_facts::controls::task_discriminator_alias_keeps_full_inputs_at_lookup_and_publication ... ok
+test pon_work::rejection_cache::tests::false_transcript_replay_is_skipped_but_real_proof_still_passes ... ok
+test pon_work::rejection_cache::observation_tests::complete_key_expiry_collision_and_restart_keep_current_native_verification ... ok
+test pon_work::rejection_cache::tests::poisoned_cache_keeps_native_math_and_caller_cancellation ... ok
+test pon_work::structured::tests::zero_reassociation_matches_the_retained_python_oracle_bytes ... ok
+test pon_work::rejection_cache::tests::contended_cache_retains_caller_cancellation_and_cheap_errors ... ok
+test pon_work::tests::bad_proof_never_gains_a_verified_type ... ok
+test pon_work::paired_product::tests::paired_cancellation_discards_complete_or_partial_work_and_reuse_stays_exact ... ok
+test pon_work::tests::cheap_rejection_precedes_progress_and_noise_cancellation_is_local ... ok
+test pon_work::rejection_cache::tests::contended_lookup_and_publication_keep_complete_native_replay ... ok
+test pon_work::tests::cancellation_on_last_transcript_tile_never_starts_product_reconstruction ... ok
+test pon_work::tests::decoded_output_is_the_real_matrix_product ... ok
+test pon_work::tests::exact_length_and_field_are_required ... ok
+test pon_work::tests::expansion_cannot_exceed_fixed_hash_budget ... ok
+test pon_work::blocked_zero::tests::complete_proofs_match_old_zero_scalar_and_generic_across_challenges_and_reuse ... ok
+test pon_work::tests::canonical_task_byte_reuse_preserves_asymmetric_inputs_and_field_precedence ... ok
+test pon_work::structured::tests::tiled_task_validation_and_reuse_never_depend_on_a_previous_challenge ... ok
+test pon_routed_int257_grouped::tests::all_batch_sizes_match_independent_original_coefficient_reference ... ok
+test pon_work::arithmetic_facts::controls::dense_zero_one_zero_identity_and_rank_one_claims_match_the_raw_oracle ... ok
+test pon_work::tests::final_output_only_shortcut_is_not_a_transcript_proof ... ok
+test pon_work::tests::controlled_verification_preserves_full_success_and_late_relation_errors ... ok
+test pon_work::legal_attempt::tests::sparse_setup_keeps_complete_misses_callbacks_and_cancelled_retry ... ok
+test pon_routed_int257_grouped::tests::both_producers_have_identical_statements_for_every_batch_size ... ok
+test pon_work::tests::owned_square_transpose_preserves_allocation_and_exact_permutation ... ok
+test pon_work::maintenance_periodic::tests::shared_prepared_cancellation_stops_before_proof_and_cache_reuse_is_exact ... ok
+test pon_work::tests::producer_reduction_matches_remainder_at_boundaries_and_deterministic_samples ... ok
+test pon_work::tests::proof_encoding_precheck_enforces_exact_wire_and_all_matrix_boundaries ... ok
+test pon_work::maintenance_prefix::tests::both_prefix_generators_cancel_at_real_boundaries_and_reuse_no_challenge_state ... ok
+test pon_work::tests::proof_encoding_precheck_preserves_full_verifier_zero_target_precedence ... ok
+test pon_work::tests::in_place_corrections_match_independent_scalar_for_full_w1_shape ... ok
+test pon_work::tests::borrowed_product_bytes_keep_rejection_before_cancellation_and_retry ... ok
+test pon_work::tests::product_row_and_final_cancellation_never_yield_verified_work ... ok
+test pon_work::tests::full_limb_matrix_products_match_reference_for_all_w1_shapes ... ok
+test pon_work::tests::proof_statement_precheck_never_promotes_a_passing_forgery ... ok
+test pon_work::tests::proof_statement_precheck_rejects_task_and_ticket_without_replay ... ok
+test pon_work::tests::proof_encoding_precheck_never_substitutes_for_full_work_or_cancellation ... ok
+test pon_work::tests::in_place_correction_cancellation_stops_before_each_row_and_retry_is_fresh ... ok
+test pon_work::tests::verifier_error_precedence_is_preserved_before_deferred_product ... ok
+test pon_work::tests::work_binds_challenge_and_inputs ... ok
+test pon_work::tests::untrusted_trace_ticket_search_needs_no_producer_and_never_gains_verified_work ... ok
+test pon_work::tests::transcript_mismatch_skips_corrections_but_matching_digest_requires_product ... ok
+test pon_work::tests::column_limb_each_prefix_matches_independent_scalar_with_strided_extremes ... ok
+test pon_work::tests::borrowed_product_bytes_reject_first_middle_last_and_noncanonical_cells ... ok
+test pon_work::maintenance_limb::tests::exact_material_full_proofs_tickets_and_ordered_rejections_remain_equal ... ok
+test pon_work::blocked_zero_paired::tests::full_proof_and_ticket_match_scalar_generic_zero_and_paired_across_reuse ... ok
+test pon_work::legal_attempt::tests::every_stage_cancellation_returns_no_attempt_and_does_not_poison_retry ... ok
+test pon_work::maintenance_periodic::tests::maintenance_setup_preserves_full_proofs_tickets_and_reject_paths ... ok
+test pon_work::facts::tests::concurrent_identical_statements_have_one_leader ... ok
+test pon_work::blocked_one_zero::tests::complete_proofs_and_tickets_match_scalar_generic_and_product_only_producers ... ok
+test pon_work::maintenance_prefix::tests::periodic_and_integer_paired_complete_proofs_match_scalar_and_verifier_errors ... ok
+test pon_work::tests::fixed_task_preparation_is_byte_identical_across_challenges_and_shapes ... ok
+test pon_work::maintenance_limb::tests::original_observation_order_and_cancelled_call_isolation_are_preserved ... ok
+test pon_work::structured::tests::tiled_complete_proofs_match_scalar_and_independent_python_extreme_vectors ... ok
+test pon_work::tests::fast_and_scalar_verifiers_match_extreme_products_and_error_precedence ... ok
+test pon_work::tests::optimized_producer_matches_full_verifier_for_structures_and_extreme_fields ... ok
+test tests::domain_hash_is_framed_and_domain_separated ... ok
+test tests::ed25519_roundtrip_rejects_tamper ... ok
+test tests::fixed_hash_text_reproduces_every_byte_value_without_normalization ... ok
+test tests::strict_signatures_reject_small_order_and_noncanonical_points ... ok
+test pon_work::facts::tests::differential_dense_zero_identity_rank_one_and_mutations ... ok
+test pon_routed_int257_grouped::tests::factored_sampled_ranks_and_all_batch_sizes_preserve_statement_and_verifier ... ok
+test tests::fixed_hash_text_preserves_all_ascii_substitutions_and_error_precedence ... ok
+test pon_work::structured::tests::structure_specific_products_and_transcripts_match_both_verifiers ... ok
+test pq_candidate::tests::mldsa65_rejects_context_prehash_and_raw_internal_modes ... ok
+test pon_work::paired_product::tests::paired_complete_proofs_match_scalar_on_maintenance_and_extreme_materials ... ok
+test pq_auth::tests::contexts_and_internal_prehash_are_not_interchangeable_with_application_messages ... ok
+test pon_work::tests::fast_and_scalar_verifiers_preserve_observation_order_and_cancelled_results ... ok
+test pq_auth::tests::canonical_key_algorithm_parameters_lengths_and_independent_pin_are_required ... ok
+test pq_content_auth::profile_boundary_tests::genuine_foreign_candidate_profile_cannot_cross_the_content_join_even_with_the_same_key ... ok
+test pon_work::legal_attempt::tests::factorial_kernels_match_independent_reference_for_full_and_structured_fields ... ok
+test pon_work::legal_attempt::tests::sparse_preparation_matches_dense_and_independent_full_field_proofs ... ok
+test pon_work::arithmetic_facts::churn_controls::sixty_five_rotating_challenges_over_sixty_four_slots_keep_zero_hits_and_bounded_storage ... ok
+test pon_work::tests::column_limb_full_proofs_keep_exact_statement_and_challenge_binding ... ok
+test pq_candidate::tests::mldsa87_rejects_context_prehash_and_raw_internal_modes ... ok
+test pq_profile_auth::tests::key_parameters_duplicates_foreign_network_and_old_wire_are_refused ... ok
+test pq_content_auth::profile_boundary_tests::decoded_legacy_or_unregistered_contexts_never_override_the_pinned_candidate_profile ... ok
+test pq_candidate::tests::exact_key_and_signature_lengths_reject_truncation_and_trailing_bytes ... ok
+test pon_work::legal_attempt::low_rank::tests::low_rank_complete_proofs_equal_both_original_kernels_and_verifiers ... ok
+test pq_auth::tests::message_domain_wrong_key_and_signature_malleation_never_fall_back ... ok
+test pq_candidate::tests::oversized_messages_are_rejected_by_signer_and_verifier ... ok
+test pq_candidate::tests::cross_suite_keys_and_signatures_cannot_select_another_algorithm ... ok
+test pq_auth::tests::exact_message_limit_is_enforced_on_both_sides ... ok
+test pq_auth::tests::default_backend_authenticates_all_six_purposes_and_every_bound_field ... ok
+test pq_candidate::tests::deterministic_candidate_seeds_have_no_implicit_key_or_nonce_source ... ok
+test pq_profile_auth::tests::real_complete_multisignatures_verify_in_both_candidates_but_cannot_activate ... ok
+test pq_candidate::tests::wrong_message_wrong_key_and_late_invalid_signatures_fail ... ok
+test pon_work::tests::full_limb_preserves_every_cancellation_boundary_and_retry_isolation ... ok
+test pq_candidate::tests::fips_lengths_categories_and_bounded_messages_match_both_candidates ... ok
+test pq_content_auth::tests::actual_mldsa_signatures_bind_complete_content_and_refuse_downgrade ... ok
+test pq_auth::tests::pinned_independent_wycheproof_corpus_and_application_context_policy ... ok
+
+test result: ok. 186 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s
+
+     Running tests/pq_openssl_native.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/deps/pq_openssl_native-e5f3136d163e6d01)
+
+running 5 tests
+test canonical_spki_and_classical_downgrade_refuse_without_fallback ... ok
+test syntactically_valid_fake_signature_never_becomes_verified ... ok
+test adapter_and_direct_evp_interoperate_on_the_same_native_frame ... ok
+test all_signed_bytes_context_payload_lifetime_and_pin_fail_closed ... ok
+test all_six_purposes_use_actual_native_sign_and_verify ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/qualified_task_lifecycle_v2.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/deps/qualified_task_lifecycle_v2-fb944b5d4cd2a21f)
+
+running 4 tests
+test actual_signed_material_and_renewal_revision_are_bound ... ok
+test v1_signatures_unsigned_payloads_and_lease_context_tampering_do_not_admit ... ok
+test genuine_signature_on_false_material_claim_does_not_verify_availability ... ok
+test cheap_legal_matrices_remain_experimental_without_accepted_cost_claim ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/qualified_work_task.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/deps/qualified_work_task-1fe41bcbf099a5d0)
+
+running 5 tests
+test real_signed_material_admission_and_recipe_derivation_match_every_field ... ok
+test unsigned_true_zero_signature_tampering_and_weak_source_never_admit ... ok
+test source_demand_scope_withdrawal_and_availability_pinnings_cannot_be_substituted ... ok
+test rehashed_matrix_claim_cannot_substitute_a_different_contraction_or_noncanonical_field ... ok
+test repeated_challenges_bind_one_product_meter_and_maintenance_produces_no_learning_credit ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/tuf_tap21.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/deps/tuf_tap21-24796dcbb4ff70b5)
+
+running 8 tests
+test malformed_signature_and_untrusted_key_pin_are_rejected ... ok
+test independent_sdk_canonicalization_and_openssl_signature_are_accepted ... ok
+test canonical_integer_domain_and_resource_budgets_are_checked_before_crypto ... ok
+test altered_role_or_content_cannot_reuse_a_signature ... ok
+test trusted_scheme_is_exact_and_never_inferred_from_signature ... ok
+test reordered_object_fields_and_integer_extremes_have_unique_canonical_meaning ... ok
+test rust_signing_uses_exact_independent_presigning_bytes ... ok
+test context_raw_metadata_digest_and_other_version_have_no_fallback ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running unittests examples/pon_adversarial_cost.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_adversarial_cost-2c1fdd41f1173f61)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_cost.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_cost-dddec38191361e3b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_maintenance_cost.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_maintenance_cost-4980e300b3d0b55d)
+
+running 4 tests
+test tests::options_and_material_rejection_are_explicit_without_substitutions ... ok
+test tests::exact_maintenance_material_and_observed_ranks_are_bound_to_the_fixed_task ... ok
+test tests::exhausted_searches_keep_all_attempts_costs_and_full_proof_streams ... ok
+test tests::actual_cold_and_reused_setup_counts_and_complete_search_outcomes_agree ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running unittests examples/pon_one_zero_io.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_one_zero_io-addf4de770e0f2d6)
+
+running 3 tests
+test tests::exact_extent_and_canonical_bytes_are_required_before_support_decisions ... ok
+test tests::all_three_operations_return_identical_complete_proofs_for_both_directions ... ok
+test tests::unsupported_inputs_return_no_proof_and_never_substitute_a_generic_kernel ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_one_zero_locality_cost.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_one_zero_locality_cost-e500ad2fbc8c52f7)
+
+running 5 tests
+test tests::options_are_bounded_unambiguous_and_do_not_accept_other_materials ... ok
+test tests::constructors_and_search_reject_malformed_inputs_without_fallback ... ok
+test tests::new_challenge_and_stream_domains_are_exact_and_separate ... ok
+test tests::exhausted_searches_retain_all_attempt_bytes_and_null_verifier_fields ... ok
+test tests::actual_constructors_and_exact_winners_match_across_both_directions_and_all_six_paths ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running unittests examples/pon_paired_io.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_paired_io-9175a84a3214d820)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_prepared_cost.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_prepared_cost-f7cb2e18ce1f7e51)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_producer_comparison.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_producer_comparison-22ea84cc0a812916)
+
+running 2 tests
+test tests::generated_dense_case_is_full_rank_and_periodic_case_is_labelled_exactly ... ok
+test tests::exhausted_search_retains_attempts_and_the_same_ticket_stream ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_rejection_cost.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_rejection_cost-ea350971c21ab5a7)
+
+running 3 tests
+test tests::bounded_search_and_fake_ticket_exhaustion_keep_every_attempt ... ok
+test tests::product_last_cell_mutation_is_canonical_even_at_modulus_boundary ... ok
+test tests::actual_late_rejection_stage_matches_scalar_and_keeps_cancellation_distinct ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests examples/pon_reused_cost.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_reused_cost-832530e51be04af3)
+
+running 7 tests
+test tests::constructors_and_search_reject_invalid_material_or_proof_lengths ... ok
+test tests::unsupported_structured_retains_real_setup_count_and_outcomes ... ok
+test tests::options_enforce_bounds_pairing_and_unambiguous_flags ... ok
+test w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok
+test w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok
+test tests::exhaustion_retains_every_attempt_and_complete_proof_stream ... ok
+test tests::actual_constructor_calls_and_all_winners_match_in_both_modes ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests examples/pon_routed_int257_grouped.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_routed_int257_grouped-85041c73d44eae72)
+
+running 12 tests
+test tests::completion_clock_refuses_boundary_and_overflow ... ok
+test tests::missing_init_and_unbounded_arrays_refuse ... ok
+test tests::typed_fields_refuse_bool_overflow_extra_and_bad_hash ... ok
+test tests::transport_rejects_duplicate_keys_noncanonical_and_truncation ... ok
+test tests::frame_bound_holds_with_small_reader_chunks ... ok
+test tests::selected_complete_relation_and_three_arm_measurement_are_disclosed ... ok
+test tests::persistent_replay_keeps_one_model_and_zero_business_credit ... ok
+test tests::factored_session_reuses_one_admission_without_dense_or_credit_substitution ... ok
+test tests::factored_session_refuses_rebound_request_scope_and_expired_work ... ok
+test tests::batch_reuse_and_request_identity_rebinding_refuse_without_another_product ... ok
+test tests::factored_session_refuses_wrong_factors_replays_and_old_transport_schema ... ok
+test tests::session_and_benchmark_bounds_fail_closed ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests examples/pon_shared_material_v1.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_shared_material_v1-68d75e2181da2252)
+
+running 9 tests
+test tests::explicit_preparation_or_verifier_count_selects_v2_without_changing_defaults ... ok
+test tests::explicit_canonical_controls_are_bounded ... ok
+test tests::matched_challenges_bind_task_target_seed_cycle_nonce_but_not_arm_or_reuse ... ok
+test tests::raw_material_is_exact_and_is_never_reduced ... ok
+test tests::malformed_material_has_failed_summary_and_no_winner ... ok
+test tests::v2_invalid_material_retains_failure_without_any_handoff ... ok
+test tests::forged_same_material_keeps_cold_warm_churn_and_owner_loss_distinct ... ok
+test tests::native_and_reference_handoff_reuses_one_setup_and_keeps_all_attempts ... ok
+test tests::sparse_and_dense_v2_keep_identical_work_and_charge_each_real_full_verifier_once ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests examples/pon_tiled_io.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_tiled_io-9d174749660986d8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_w1_native_winner_v2.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_w1_native_winner_v2-55d0405d6d7b5907)
+
+running 2 tests
+test tests::original_deadline_cannot_move_to_another_boot_or_gain_more_time ... ok
+test tests::full_material_rejects_noncanonical_and_incomplete_inputs ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_w1_rank_batch_v5.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_w1_rank_batch_v5-78827e274c07bad6)
+
+running 9 tests
+test tests::declaration_is_fixed_and_rejects_resource_or_domain_overrides ... ok
+test w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok
+test tests::parallel_workers_really_overlap_and_keep_declared_order_after_error_or_panic ... ok
+test tests::partial_last_batch_obeys_total_attempt_limit_and_never_skips_complete_misses ... ok
+test w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok
+test tests::changed_task_and_challenge_are_not_a_cross_challenge_trace_cache ... ok
+test tests::batch_retains_every_post_winner_attempt_and_every_materialized_buffer ... ok
+test tests::rank_materials_have_exact_field_ranks_and_preserve_full_rank_partners ... ok
+test tests::all_existing_producers_keep_the_same_complete_legal_proof_and_prefix ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests examples/pon_work.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_work-a2b410774ef436c5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_work_expensive_v1.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_work_expensive_v1-0990771df2ff71ea)
+
+running 10 tests
+test material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok
+test tests::external_material_refuses_length_and_noncanonical_words ... ok
+test tests::options_reject_ambiguous_unbounded_or_noncanonical_counts ... ok
+test tests::work_identity_binds_only_the_versioned_statement ... ok
+test tests::unsupported_optimization_is_not_silently_counted_as_an_executed_cell ... ok
+test material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok
+test tests::one_zero_optimized_and_full_limb_keep_identical_complete_streams ... ok
+test tests::fixed_attempt_census_keeps_misses_and_actual_cache_recreation ... ok
+test tests::sparse_v2_cell_retains_every_hit_miss_and_closed_epoch ... ok
+test tests::sparse_dispatch_matches_dense_and_independent_complete_proofs ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests examples/pon_work_expensive_verifier_v1.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_work_expensive_verifier_v1-b63ac58bf6284a80)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_work_io.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_work_io-3c5fca920b82a923)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_zero_io.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_zero_io-7ac04da72c79ab68)
+
+running 2 tests
+test tests::exact_input_extent_canonical_values_and_explicit_unsupported_are_checked ... ok
+test tests::all_five_zero_operations_return_the_same_complete_certificate ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_zero_locality_cost.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pon_zero_locality_cost-d8f8e0f5c295b366)
+
+running 6 tests
+test tests::adjacent_sample_pairs_balance_all_ten_actual_invocation_positions ... ok
+test tests::constructors_and_search_reject_malformed_inputs_without_fallback ... ok
+test tests::options_are_bounded_unambiguous_and_do_not_accept_other_materials ... ok
+test tests::new_challenge_and_stream_domains_are_exact_and_separate ... ok
+test tests::exhausted_searches_retain_all_attempt_bytes_and_null_verifier_fields ... ok
+test tests::actual_constructors_and_exact_winners_match_across_all_ten_paths ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests examples/pq_message_oracle.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pq_message_oracle-83c6f573caa691d5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pq_parameter_bench.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pq_parameter_bench-16eedf086283559a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pq_profile_bench.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/pq_profile_bench-f1c120b17fb65191)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/deps/trnm_verification_profiles-ed3e89ccb01f32f5)
+
+running 5 tests
+test closed_round::tests::author_exclusion_requires_all_remaining_eligible_signers ... ok
+test closed_round::tests::fixed_roster_and_score_range_are_checked ... ok
+test closed_round::tests::missing_or_zero_attestation_cannot_unlock_positive_value ... ok
+test closed_round::tests::every_arrival_order_closes_at_the_same_minimum ... ok
+test exact_integer_linear_v1::tests::checked_arithmetic_defense_and_permitted_intermediate_bound ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/exact_integer_linear_v1.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/deps/exact_integer_linear_v1-e8b4bbfa48b9ebf5)
+
+running 5 tests
+test full_product_cancellation_checks_i64_before_delta_bound ... ok
+test perturbation_and_complementary_updates_are_not_collapsed ... ok
+test malformed_factor_bytes_and_unbounded_work_refuse ... ok
+test parent_slot_family_numeric_and_adapter_context_are_closed ... ok
+test basis_sign_padding_and_full_vector_equality_without_digest_oracle ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/profiles.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/deps/profiles-269374024e0e8ab8)
+
+running 6 tests
+test duplicate_challenge_is_rejected_and_lifecycle_is_forward_only ... ok
+test disabled_expired_revoked_and_unknown_profiles_do_not_fallback ... ok
+test exact_resolution_and_evidence_precede_backend ... ok
+test subjective_profiles_cannot_escalate_objective_authority ... ok
+test verified_rejected_and_unavailable_are_distinct_and_non_authoritative ... ok
+test withdrawal_and_expiry_close_without_economic_or_order_authority ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/integer_linear_normal_form.rs (/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target/debug/examples/integer_linear_normal_form-9a72c82b31d04717)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+RESULT {"argv": ["cargo", "test", "--locked", "--offline", "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-crypto-primitives", "-p", "trnm-checkpoint-types", "-p", "trnm-verification-profiles", "--all-targets", "--all-features"], "exit_code": 0}
+EXECUTING ["cargo", "clippy", "--locked", "--offline", "--manifest-path", "trillionnium/Cargo.toml", "--workspace", "--all-targets", "--all-features", "--", "-D", "warnings"]
+    Checking typenum v1.20.1
+    Checking cfg-if v1.0.4
+    Checking trnm-mempool v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-mempool)
+    Checking cpufeatures v0.2.17
+    Checking sha2-asm v0.6.4
+   Compiling syn v2.0.117
+    Checking generic-array v0.14.7
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking digest v0.10.7
+    Checking sha2 v0.10.9
+   Compiling libc v0.2.184
+    Checking zeroize v1.9.1
+    Checking serde_core v1.0.228
+    Checking bitflags v2.11.0
+   Compiling serde_derive v1.0.228
+   Compiling serde_json v1.0.149
+    Checking zmij v1.0.21
+   Compiling getrandom v0.4.2
+    Checking memchr v2.8.0
+    Checking itoa v1.0.18
+    Checking hex v0.4.3
+    Checking rand_core v0.10.1
+    Checking serde v1.0.228
+   Compiling curve25519-dalek v4.1.3
+   Compiling curve25519-dalek-derive v0.1.1
+    Checking subtle v2.6.1
+    Checking signature v2.2.0
+    Checking ed25519 v2.2.3
+   Compiling rustix v1.1.4
+    Checking linux-raw-sys v0.12.1
+    Checking ed25519-dalek v2.2.0
+    Checking cmov v0.5.4
+    Checking ctutils v0.4.6
+    Checking hybrid-array v0.4.15
+    Checking crypto-common v0.2.2
+   Compiling thiserror-impl v1.0.69
+    Checking const-oid v0.10.2
+    Checking thiserror v1.0.69
+    Checking digest v0.11.3
+    Checking num-traits v0.2.19
+    Checking keccak v0.2.2
+    Checking sponge-cursor v0.1.0
+    Checking shake v0.1.0
+    Checking module-lattice v0.2.3
+    Checking signature v3.0.0
+    Checking trnm-protocol v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-protocol)
+    Checking der v0.8.3
+    Checking spki v0.8.1
+    Checking pkcs8 v0.11.0
+    Checking ml-dsa v0.1.1
+    Checking anyhow v1.0.103
+    Checking foreign-types-shared v0.1.1
+    Checking foreign-types v0.3.2
+    Checking openssl-sys v0.9.117
+   Compiling openssl-macros v0.1.1
+    Checking openssl v0.10.81
+    Checking fastrand v2.3.0
+    Checking once_cell v1.21.4
+    Checking tempfile v3.27.0
+   Compiling libsqlite3-sys v0.37.0
+    Checking trnm-crypto-primitives v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-crypto-primitives)
+    Checking foldhash v0.2.0
+    Checking hashbrown v0.16.1
+    Checking hashlink v0.11.1
+    Checking smallvec v1.15.1
+    Checking fallible-iterator v0.3.0
+    Checking fallible-streaming-iterator v0.1.9
+   Compiling cfg_aliases v0.2.2
+   Compiling equivalent v1.0.2
+   Compiling winnow v1.0.4
+   Compiling indexmap v2.13.1
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling toml_edit v0.25.13+spec-1.1.0
+    Checking rusqlite v0.39.0
+   Compiling proc-macro-crate v3.5.0
+   Compiling borsh v1.8.0
+    Checking fs2 v0.4.3
+    Checking trnm-verification-profiles v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-verification-profiles)
+   Compiling borsh-derive v1.8.0
+    Checking trnm-mvcc-fee v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-data-availability v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-sqlite-io-boundary)
+    Checking trnm-task-kernel v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-task-kernel)
+   Compiling nix v0.30.1
+    Checking trnm-transport v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-transport)
+    Checking trnm-service-settlement v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-service-settlement)
+    Checking trnm-release-bundle v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-release-bundle)
+    Checking trnm-types v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-types)
+    Checking trnm-pon-node v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-pon-node)
+    Checking trnm-peer-lease v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-peer-lease)
+    Checking utf8parse v0.2.2
+    Checking anstyle-parse v1.0.0
+    Checking anstyle v1.0.14
+    Checking colorchoice v1.0.5
+    Checking is_terminal_polyfill v1.70.2
+    Checking anstyle-query v1.1.5
+    Checking anstream v1.0.0
+    Checking trnm-checkpoint-types v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-checkpoint-types)
+    Checking clap_lex v1.1.0
+   Compiling heck v0.5.0
+    Checking strsim v0.11.1
+    Checking clap_builder v4.6.0
+   Compiling clap_derive v4.6.0
+    Checking clap v4.6.0
+    Checking trnm-checkpoint-store v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-checkpoint-store)
+    Checking wait-timeout v0.2.1
+    Checking trnm-audit-events v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-audit-events)
+    Checking shell-escape v0.1.5
+    Checking shlex v1.3.0
+    Checking trnm-executor v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-executor)
+    Checking trnm-research-protocol v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-research-protocol)
+    Checking trnm-bench v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-bench)
+    Checking trnm-worker-agent v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-worker-agent)
+    Checking trnm-governance-guard v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-governance-guard)
+    Checking trnm-escrow-vault v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-escrow-vault)
+    Checking trnm-state-import v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-state-import)
+    Checking trnm-oracle v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-oracle)
+    Checking trnm-control-plane v0.1.0 (/home/qq/work/chain-four-qrom-composed-20261110/trillionnium/crates/trnm-control-plane)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 55.40s
+RESULT {"argv": ["cargo", "clippy", "--locked", "--offline", "--manifest-path", "trillionnium/Cargo.toml", "--workspace", "--all-targets", "--all-features", "--", "-D", "warnings"], "exit_code": 0}
+COMMAND_RESULTS [{"argv": ["cargo", "metadata", "--manifest-path", "tests/fuzz/Cargo.toml", "--locked", "--offline", "--format-version", "1"], "exit_code": 0}, {"argv": ["cargo", "test", "--locked", "--offline", "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-crypto-primitives", "-p", "trnm-checkpoint-types", "-p", "trnm-verification-profiles", "--all-targets", "--all-features"], "exit_code": 0}, {"argv": ["cargo", "clippy", "--locked", "--offline", "--manifest-path", "trillionnium/Cargo.toml", "--workspace", "--all-targets", "--all-features", "--", "-D", "warnings"], "exit_code": 0}]
