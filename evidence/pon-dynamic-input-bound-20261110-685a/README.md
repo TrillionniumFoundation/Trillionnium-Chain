@@ -51,3 +51,19 @@ above. The original bounded-input patch is preserved byte-for-byte.
 `manifest.json` hashes every other member in this finite packet. The manifest
 does not authenticate independent operators, source semantics or execution by
 itself. All whole-chain/production qualification fields remain false.
+
+
+## Publication completeness repair
+
+The initial publication at `9b4c6866b846c74fd9d827225e6ce66eb0bcdec3` declared 47 packet files, but its Git tree
+contained only 15. The existing log ignore rule excluded
+32 original `.log` files from the ordinary add. A subsequent GitHub
+read of `checks/dynamic-tests.log` returned 404. The initial commit and its
+incomplete manifest remain in history; `publication-history.json` records the
+exact missing paths and original ignore-rule output.
+
+The follow-up explicitly stages only those manifest-bound log files after
+checking their original lengths and SHA256 values. It also checks every packet
+member from the committed Git tree. No test is rerun or attributed to this
+evidence-only follow-up: the executions remain bound to source `8d4c915939f2ae7659e254ec3475d2dadb919f2a`.
+Strict Clippy remains an incomplete exit-124 observation, not a pass.
