@@ -6,7 +6,7 @@ This packet records two bounded changes on one fixed source: refuse FIFO replace
 
 **Overall qualification remains HOLD / NO-GO.** Source and component execution are the new evidence. Real task demand, correct end-to-end delivery, independent model net benefit and an all-legal-strategy consensus work-cost bound remain separate obligations.
 
-**Publication:** the [fixed source](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/39336622c63df1ae746d83a76bb53202cd01ba17) was published through the authenticated local GitHub channel and read back with its identical commit and tree. This packet is an evidence-only child of that source. Its enclosing Git commit identifies delivery; all native execution and quality receipts retain the source identity below. Hosted CI is a separate observation and no hosted pass is claimed in this packet. The failed first quality commands and precommit negative controls remain intact.
+**Publication:** the [fixed source](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/39336622c63df1ae746d83a76bb53202cd01ba17) was published through the authenticated local GitHub channel and read back with its identical commit and tree. The initial native packet was delivered in evidence-only commit `42d6ab45598cbba3d476a3c558b7fce562f13877`. The later [integration binding recheck](INTEGRATION-RECHECK.md) preserves two additional inspector failures and the consistency repair on `be24e0be`; all native execution and quality receipts below retain their original source identity. Hosted CI is a separate observation and no hosted pass is claimed in this packet. The failed first quality commands and precommit negative controls remain intact.
 
 ## Fixed execution identity
 
@@ -22,7 +22,7 @@ This packet records two bounded changes on one fixed source: refuse FIFO replace
 | Native cost stream SHA-256 | `953ef816f391839d1bae8b7c3cb2c6653b2bfad2eb611968288167afcf2d3f7d` |
 | Runtime | Rust 1.95.0; Linux x86_64; kernel 6.18.57 |
 | Observed CPU | Intel Xeon Platinum 8573C; 9 logical CPUs |
-| Evidence-only delivery identity | The enclosing Git commit; parent is the executed source above |
+| Initial evidence-only delivery | `42d6ab45598cbba3d476a3c558b7fce562f13877`; parent is the executed source above |
 | Hosted execution | No hosted execution pass claimed at packaging |
 
 The native source commit contains nine changed files: the two production read-boundary fixes, two affected test files, the new cost example and its runner/controls, the regenerated distributed source inventory and the existing sole development plan. No consensus work formula, target, difficulty adjustment, chainwork rule, signed domain or production activation flag was changed. Any later evidence-only child identifies delivery; it does not acquire a new execution claim from this source commit.
