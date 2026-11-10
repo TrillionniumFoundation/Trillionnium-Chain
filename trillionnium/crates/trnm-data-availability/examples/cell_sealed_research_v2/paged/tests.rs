@@ -315,6 +315,12 @@ fn paged_research_restores_two_pages_from_four_reopened_targets() {
     let observed = &report["paged_custody"];
     assert_eq!(observed["passed"], true);
     assert_eq!(observed["chunk_count"], 66);
+    let provider_wire = observed["provider_wire_bytes"].as_u64().unwrap();
+    let provider_capacity = observed["provider_capacity_bytes"].as_u64().unwrap();
+    assert_eq!(provider_capacity, 65 * 8192 + 4096);
+    assert_eq!(provider_capacity % 4096, 0);
+    assert!(provider_capacity > provider_wire);
+    assert_eq!(observed["potential"]["input_bytes"], provider_wire * 6);
     assert_eq!(observed["page_count"], 2);
     assert_eq!(observed["quarantined_slots"], json!([1, 3]));
     assert_eq!(observed["verified_shards"], 264);

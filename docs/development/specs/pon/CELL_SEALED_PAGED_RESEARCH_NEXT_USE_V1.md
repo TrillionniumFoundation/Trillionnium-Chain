@@ -69,3 +69,5 @@ not be converted into a pass by increasing the deadline or reusing hidden work.
 
 Independent domains/WAN, continuous paid custody, real-model native M12
 settlement, ordinary FinalUse and production remain **HOLD**.
+
+Provider storage capacity sums one 4096-byte-aligned extent per shard obligation. Wire input and reconstruction reservations remain byte-exact and are reported separately; storage alignment does not enlarge the original transfer or execution budgets.

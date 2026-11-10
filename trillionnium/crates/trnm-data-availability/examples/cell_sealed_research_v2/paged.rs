@@ -194,6 +194,7 @@ fn restore_inner(
     let mut chunks = 0_u64;
     let mut payload = 0_u64;
     let mut provider_payload = 0_u64;
+    let mut provider_capacity = 0_u64;
     let header = (MAX_CELL_RS46_SHARD_WIRE_BYTES_V1 as u64)
         .checked_sub(u64::from(MAX_CHUNK_BYTES) / 4)
         .ok_or("RS46 public wire limits")?;
@@ -203,9 +204,18 @@ fn restore_inner(
             payload = payload
                 .checked_add(u64::from(chunk.size))
                 .ok_or("paged payload overflow")?;
+            let wire_bytes = header + u64::from(chunk.size).div_ceil(4);
             provider_payload = provider_payload
-                .checked_add(header + u64::from(chunk.size).div_ceil(4))
+                .checked_add(wire_bytes)
                 .ok_or("paged shard payload overflow")?;
+            // Retention reserves a separately aligned extent for every obligation.
+            let extent_bytes = wire_bytes
+                .checked_add(4095)
+                .map(|bytes| bytes / 4096 * 4096)
+                .ok_or("paged provider extent overflow")?;
+            provider_capacity = provider_capacity
+                .checked_add(extent_bytes)
+                .ok_or("paged provider capacity overflow")?;
         }
     }
     check(
@@ -235,6 +245,12 @@ fn restore_inner(
         "reconstruction_bytes": reconstruction, "cache_bytes": cache_bytes,
         "readback_payload_bytes": payload, "readback_chunks": chunks});
 
+    check(
+        provider_capacity <= SNAPSHOT_BOUND,
+        "paged provider original storage bound",
+    )?;
+    report["provider_wire_bytes"] = json!(provider_payload);
+    report["provider_capacity_bytes"] = json!(provider_capacity);
     let maximum_obligations = u32::try_from(chunks)?;
     let configs: [CellRs46ShardProviderConfigV1; 6] = std::array::from_fn(|slot| {
         let slot = slot as u8;
@@ -248,7 +264,7 @@ fn restore_inner(
                 repair_owner: identity(&operation, b"local-fixture-repair-owner", 0, slot),
             },
             owner_generation: 1,
-            capacity_bytes: provider_payload,
+            capacity_bytes: provider_capacity,
             maximum_obligations,
         }
     });
@@ -292,7 +308,8 @@ fn restore_inner(
             "plan": hex::encode(plan_pin), "catalog_anchor": hex::encode(anchor.encode()),
             "version": hex::encode(version.commitment()), "content": hex::encode(content.commitment()),
             "available_slots": profile.available_slots,
-            "provider_capacity_bytes": provider_payload, "provider_obligations": chunks,
+            "provider_capacity_bytes": provider_capacity, "provider_wire_bytes": provider_payload,
+            "provider_obligations": chunks,
             "six_declared_local_slots_are_independent_operators": false,
         }))?,
     )?;
