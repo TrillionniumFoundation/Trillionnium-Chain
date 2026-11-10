@@ -36,15 +36,34 @@ def _sum_observed(rows: list, *keys: str) -> dict:
             "total": sum(values) if rows and len(values) == len(rows) else None}
 
 
-def _checkpoint_calls(history: list) -> dict:
+def _checkpoint_observations(history: list) -> dict:
+    """Actual fresh Host checks; CPU is nested inside History import CPU.
+
+    A missing/malformed stage is not a zero-cost check, and the same phase
+    may not be counted twice. This is a measurement, not permission to cache
+    kernel identity, thread membership or resource limits.
+    """
     rows = []
     for item in history:
         imported = item.get("client_import")
         native = imported.get("native_import_observation") if isinstance(imported, dict) else None
         stages = native.get("host_checks") if isinstance(native, dict) else None
-        matching = [stage for stage in stages if isinstance(stage, dict) and stage.get("phase") == "checkpoint"] if isinstance(stages, list) else []
+        matching = [stage for stage in stages if isinstance(stage, dict)
+                    and stage.get("phase") == "checkpoint"] if isinstance(stages, list) else []
         rows.append(matching[0] if len(matching) == 1 else {})
-    return _sum_observed(rows, "calls_accepted")
+    names = ("calls_started", "calls_completed", "calls_accepted",
+             "calls_rejected", "calls_unfinished", "cpu_clock_unknown_calls",
+             "wall_clock_unknown_calls", "thread_cpu_ns", "wall_ns")
+    return {name: _sum_observed(rows, name) for name in names}
+
+
+def _checkpoint_fraction(checks: dict, import_cpu: dict) -> int | None:
+    """Measured nested CPU fraction, in ppm, NEVER a potential speedup."""
+    spent = checks["thread_cpu_ns"]["total"]
+    whole = import_cpu["total"]
+    if spent is None or whole is None or whole == 0:
+        return None
+    return spent * 1_000_000 // whole
 
 
 def _packet_stage_observations(history: list) -> dict:
@@ -102,6 +121,8 @@ def _phase(phase: dict, name: str, attackers: int) -> dict:
         flags["budget_depletion_observed"] = phase.get("genuine_budget_depletion_observed") is True
         flags["attacker_actors_successful"] = phase.get("actor_reports_successful_without_cap_or_kill") is True
     signals = [key for key, value in flags.items() if not value]
+    checkpoints = _checkpoint_observations(history)
+    import_cpu = _sum_observed(history, "client_import", "thread_cpu_ns")
     return {
         "mode": name, "requested_attackers": attackers,
         "ready_attackers": phase.get("attacker_processes_ready"),
@@ -113,8 +134,14 @@ def _phase(phase: dict, name: str, attackers: int) -> dict:
         "history_calls": len(history),
         "history_network_wall_ns": _sum_observed(history, "elapsed_wall_ns"),
         "history_import_wall_ns": _sum_observed(history, "client_import", "wall_ns"),
-        "history_import_thread_cpu_ns": _sum_observed(history, "client_import", "thread_cpu_ns"),
-        "history_checkpoint_host_calls": _checkpoint_calls(history),
+        "history_import_thread_cpu_ns": import_cpu,
+        "history_checkpoint_host_calls": checkpoints["calls_accepted"],
+        "history_checkpoint_host_observations": checkpoints,
+        "history_checkpoint_cpu_fraction_ppm": _checkpoint_fraction(checkpoints, import_cpu),
+        "history_checkpoint_scope": (
+            "Original kernel check each time: boot, root-owned inode, calling-thread "
+            "membership and five fresh limits; CPU nested in import, not an avoidable-cost claim"
+        ),
         "native_packet_stage_observations": _packet_stage_observations(history),
         "submit_client_wall_ns": _sum_observed(submissions, "elapsed_wall_ns"),
         "full_work_accepted": phase.get("full_work_accepted"),
