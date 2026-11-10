@@ -1,0 +1,363 @@
+{
+  "all_legal_work_cost_lower_bound_proved": false,
+  "consensus_credit_added": 0,
+  "controls": [
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_w1_lifecycle_cost_v4.py",
+        "-v"
+      ],
+      "cwd": "/tmp/pon-cost-replay-work-_xx02ntd/before-fix-overlay",
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "expected_failure_subtests": 76,
+      "expected_test_methods": 15,
+      "name": "lifecycle-before",
+      "native_executed": false,
+      "observed_failure_summaries": [
+        "failures=76"
+      ],
+      "observed_test_methods": [
+        15
+      ],
+      "reader_or_control_wall_ns": 8804423208,
+      "stderr_bytes": 70219,
+      "stderr_sha256": "5d3492cc062a69d024c89b6c061e7c1086848d52f7e1675220f00a13cec2570c",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_w1_lifecycle_cost_v4.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "expected_test_methods": 15,
+      "name": "lifecycle-after",
+      "native_executed": false,
+      "observed_test_methods": [
+        15
+      ],
+      "reader_or_control_wall_ns": 4385821143,
+      "stderr_bytes": 2226,
+      "stderr_sha256": "d834243d7d8dd9539ca500a38412d20f24fba80258772144e93f3867d092b286",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_w1_factorial_native_gate.py",
+        "-v"
+      ],
+      "cwd": "/tmp/pon-cost-replay-work-_xx02ntd/before-fix-overlay",
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "expected_failure_subtests": 3,
+      "expected_test_methods": 9,
+      "name": "native-gate-before",
+      "native_executed": false,
+      "observed_failure_summaries": [
+        "failures=3"
+      ],
+      "observed_test_methods": [
+        9
+      ],
+      "reader_or_control_wall_ns": 12040116735,
+      "stderr_bytes": 6108,
+      "stderr_sha256": "eeeb1ab77393809f7f4b25db1dd885c6612f85e33426972a06633d06f27fd971",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_w1_factorial_native_gate.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "expected_test_methods": 9,
+      "name": "native-gate-after",
+      "native_executed": false,
+      "observed_test_methods": [
+        9
+      ],
+      "reader_or_control_wall_ns": 11990490246,
+      "stderr_bytes": 1514,
+      "stderr_sha256": "f88911f7ebbb3e270590db49ea48f51c91e6b00c2316599124f357ba4c00034d",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_pon_w1_cost_matrix_reader.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "expected_test_methods": 32,
+      "name": "retained-material-reader",
+      "native_executed": false,
+      "observed_test_methods": [
+        32
+      ],
+      "reader_or_control_wall_ns": 28120455135,
+      "stderr_bytes": 5048,
+      "stderr_sha256": "0cfbd86255fc681fd5974dca99b29454317d35021947d3713b58f21d9876c635",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "full_w1_relation_replayed": false,
+  "historical_v4": {
+    "archive_bytes": 976596,
+    "archive_sha256": "eeaa11ad8a6f565f989edf035d6cb5f59d45ed2956276c824b4daac7064ea8f6",
+    "historical_source": {
+      "base": null,
+      "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "11791e2da79b69322271be2cffe03725165151d1",
+      "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2485379627,
+      "tracked_entries": 26124,
+      "tracked_worktree_verified": true
+    },
+    "journal_replays": [
+      {
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/pon_w1_lifecycle_cost_v4.py",
+          "/tmp/pon-cost-replay-work-_xx02ntd/complete.jsonl",
+          "--process-exit-code",
+          "0"
+        ],
+        "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "historical_readback_byte_identical": true,
+        "name": "historical-complete",
+        "native_executed": false,
+        "original_native_exit_code": 0,
+        "original_reader_exit_code": 0,
+        "readback": {
+          "all_legal_work_cost_lower_bound_proved": false,
+          "complete_records": 23069,
+          "consensus_credit_added": 0,
+          "failure": null,
+          "full_relation_replayed_by_reader": false,
+          "generation_records_with_unknown_cpu": 0,
+          "last_phase": "complete",
+          "native_process_exit_code": 0,
+          "observed_counts": {
+            "attempts": 3848,
+            "candidates": 288,
+            "cohorts": 936,
+            "searches": 1888,
+            "verified_searches": 1888,
+            "verifiers": 3776
+          },
+          "observed_generation_cpu_subtotal_ns": 1876108995,
+          "production_qualified": false,
+          "raw_sha256": "2ae1c73382b3d4bede8412c9ff725d6e51bf37ea50ff6810a84617c4c8ec6f04",
+          "schema": "pon-w1-lifecycle-readback-v4",
+          "source_binary_resource_identity_authenticated_by_reader": false,
+          "status": "COMPLETE_DECLARED_OBSERVATION",
+          "trailing_partial_bytes": 0,
+          "unfinished_cohort": null,
+          "unfinished_resource_cost": null,
+          "unfinished_search": null
+        },
+        "reader_or_control_wall_ns": 3566419042,
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 903,
+        "stdout_sha256": "ee171af7e4d1cbb548c8ae9a36810d412722e5c552ed7043f1eeb4c009f4e0e6"
+      },
+      {
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/pon_w1_lifecycle_cost_v4.py",
+          "/tmp/pon-cost-replay-work-_xx02ntd/terminated.jsonl",
+          "--process-exit-code",
+          "-15"
+        ],
+        "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+        "exit_code": 3,
+        "expected_exit_code": 3,
+        "historical_readback_byte_identical": true,
+        "name": "historical-terminated",
+        "native_executed": false,
+        "original_native_exit_code": -15,
+        "original_reader_exit_code": 3,
+        "readback": {
+          "all_legal_work_cost_lower_bound_proved": false,
+          "complete_records": 9,
+          "consensus_credit_added": 0,
+          "failure": null,
+          "full_relation_replayed_by_reader": false,
+          "generation_records_with_unknown_cpu": 0,
+          "last_phase": "attempt-finish",
+          "native_process_exit_code": -15,
+          "observed_counts": {
+            "attempts": 0,
+            "candidates": 0,
+            "cohorts": 1,
+            "searches": 0,
+            "verified_searches": 0,
+            "verifiers": 0
+          },
+          "observed_generation_cpu_subtotal_ns": 0,
+          "production_qualified": false,
+          "raw_sha256": "aa2bf4bddff47a234c36941091409a34013243555f2a254854695dea92430073",
+          "schema": "pon-w1-lifecycle-readback-v4",
+          "source_binary_resource_identity_authenticated_by_reader": false,
+          "status": "INCOMPLETE",
+          "trailing_partial_bytes": 0,
+          "unfinished_cohort": {
+            "arm": "scalar-original",
+            "class": "periodic-dense-fixture",
+            "invocation_order": 0,
+            "next_search": 0,
+            "sample": 0,
+            "supported": true,
+            "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34"
+          },
+          "unfinished_resource_cost": null,
+          "unfinished_search": {
+            "attempts": 0,
+            "index": 0,
+            "pending": [
+              0,
+              "080a26b73fd1600c716039822cfc8920c64874aeba931b59b4d96833d331b252"
+            ],
+            "trial_stream_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "verifiers": 0,
+            "winner": null
+          }
+        },
+        "reader_or_control_wall_ns": 124948505,
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 1459,
+        "stdout_sha256": "a2b39be706216e9e1a5b6fdf7fde33250e2aefc1bef1b0b90780b4f19e0c543a"
+      }
+    ],
+    "native_executed": false,
+    "retained_binary_bytes": 903328,
+    "retained_binary_sha256": "bd74dea5a8b1ddc57e86f1d181c3cdb287321dc0b9651e03b6f21adfcfe2f45a",
+    "verified_member_count": 105
+  },
+  "hosted_gate_replays": [
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-c",
+        "from pathlib import Path\nimport re, sys\ntext = Path(sys.argv[1]).read_text()\nrows = re.findall(r'^test result: ok\\. ([0-9]+) passed; 0 failed; 0 ignored;', text, re.M)\nif rows != ['8']:\n    raise SystemExit('four retained legal, two versioned legal and two shared material controls did not execute')\n",
+        "/workspace/scratch/23345083847a/Trillionnium-Chain/evidence/pon-open-consensus-continuation-20261110-2334/validation/cost/portable-replay-01/hosted-spans/legal-native-controls.log"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "inline_code_sha256": "c5ae06439d34327c32abf516ca9dda61fbe3fccb760a828a7810d5edae9849fd",
+      "name": "hosted-legal-before",
+      "native_executed": false,
+      "reader_or_control_wall_ns": 53413733,
+      "stderr_bytes": 90,
+      "stderr_sha256": "58d92f4f4da778bfbbdf56997ad672a53e6aba46cd36459a7cdede0aa0da9fc4",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow_sha256": "739854d721f5be0f2055bf211a9ebf929b64e8a3a5047a777fea4ab4166b3490"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-c",
+        "from pathlib import Path\nimport re, sys\nroot = Path(sys.argv[1])\n# The one ignored History entry is the existing subprocess fixture;\n# its parent control selects real SIGKILL cuts. It is not a skipped gate.\nexpected = {\"factorial-kernel-tests\": (14, 0), \"factorial-example-tests\": (6, 0),\n    \"header-binding-tests\": (1, 0), \"history-w1-tests\": (5, 0),\n    \"history-import-tests\": (28, 1), \"cpu-completion-tests\": (11, 0)}\nfor name, counts in expected.items():\n    text = (root / (name + \".log\")).read_text()\n    rows = re.findall(r'^test result: ok\\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', text, re.M)\n    if rows != [tuple(map(str, counts))]:\n        raise SystemExit(name + ': exact native controls did not execute')\nkernel = (root / 'factorial-kernel-tests.log').read_text()\nkernel_expected = {\n    'pon_work::legal_attempt::low_rank::tests::bounded_factorization_reconstructs_exact_full_field_rank_and_pivot_orders',\n    'pon_work::legal_attempt::low_rank::tests::exact_rank_limit_chooses_left_then_right_and_explicit_paid_dense_fallback',\n    'pon_work::legal_attempt::low_rank::tests::both_inputs_are_fully_validated_before_zero_or_high_rank_shortcuts',\n    'pon_work::legal_attempt::low_rank::tests::low_rank_complete_proofs_equal_both_original_kernels_and_verifiers',\n    'pon_work::legal_attempt::low_rank::tests::misses_still_replay_all_tiles_and_cancelled_retries_preserve_the_same_task',\n    'pon_work::legal_attempt::tests::boundary_target_is_inclusive_and_zero_target_refuses_before_work',\n    'pon_work::legal_attempt::tests::changed_challenge_and_task_never_gain_acceptance_from_cached_product',\n    'pon_work::legal_attempt::tests::every_stage_cancellation_returns_no_attempt_and_does_not_poison_retry',\n    'pon_work::legal_attempt::tests::factorial_kernels_match_independent_reference_for_full_and_structured_fields',\n    'pon_work::legal_attempt::tests::losing_attempt_still_replays_every_transcript_tile_without_lazy_serialization',\n    'pon_work::legal_attempt::tests::preparation_never_reduces_noncanonical_fields_or_wrong_shapes',\n    'pon_work::legal_attempt::tests::sparse_preparation_matches_dense_and_independent_full_field_proofs',\n    'pon_work::legal_attempt::tests::sparse_preparation_rejects_hidden_noncanonical_words_and_wrong_lengths',\n    'pon_work::legal_attempt::tests::sparse_setup_keeps_complete_misses_callbacks_and_cancelled_retry',\n}\nkernel_rows = re.findall(r'^test (pon_work::legal_attempt::\\S+) \\.\\.\\. ok$', kernel, re.M)\nif len(kernel_rows) != len(kernel_expected) or set(kernel_rows) != kernel_expected:\n    raise SystemExit('factorial-kernel-tests: exact named kernel controls did not execute once')\nhistory = (root / 'history-import-tests.log').read_text()\nfor name in (\n    'final_resource_completion_preserves_error_priority_and_original_deadline',\n    'final_resource_expiry_keeps_committed_history_and_settled_cpu',\n):\n    selector = 'ingress::history_import::tests::deadline_controls::' + name\n    rows = re.findall(r'^test ' + re.escape(selector) + r' \\.\\.\\. ok$', history, re.M)\n    if len(rows) != 1:\n        raise SystemExit(selector + ': exact deadline control did not execute once')\ncodec_selector = ('ingress::history_import::tests::'\n    'history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors')\ncodec_rows = re.findall(r'^test ' + re.escape(codec_selector) + r' \\.\\.\\. ok$', history, re.M)\nif len(codec_rows) != 1:\n    raise SystemExit(codec_selector + ': exact codec control did not execute once')\n",
+        "/workspace/scratch/23345083847a/Trillionnium-Chain/evidence/pon-open-consensus-continuation-20261110-2334/validation/cost/portable-replay-01/hosted-spans"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "inline_code_sha256": "40b01cbfc2d56e11efeb544af2c48c5af05b459abfb9cf3faa10e4b720f91dd3",
+      "name": "hosted-factorial-before",
+      "native_executed": false,
+      "reader_or_control_wall_ns": 57337988,
+      "stderr_bytes": 63,
+      "stderr_sha256": "68532cf9bb5495991127f3629d8bacc5f33eaabba6e4fdc235d238d0933497ed",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow_sha256": "739854d721f5be0f2055bf211a9ebf929b64e8a3a5047a777fea4ab4166b3490"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-c",
+        "from pathlib import Path\nimport re, sys\ntext = Path(sys.argv[1]).read_text()\nexpected = {\n    'tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments',\n    'tests::versions_keep_exact_namespaces_and_eight_new_sample_streams',\n    'tests::v2_final_sample_keeps_both_legal_producers_and_complete_negative_verification',\n    'tests::public_dispatch_keeps_complete_bytes_and_all_misses',\n    'tests::last_product_mutation_wraps_canonically_and_changes_only_that_word',\n    'tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity',\n    'w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values',\n    'w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks',\n    'w1_cost_producers::observed_search_tests::observer_begin_refusal_precedes_native_generation',\n    'w1_cost_producers::observed_search_tests::native_failure_retains_completed_attempt_and_failed_begin',\n    'w1_cost_producers::observed_search_tests::malformed_generated_proof_has_started_and_failed_record',\n    'w1_cost_producers::observed_search_tests::completion_observer_failure_never_starts_another_attempt',\n    'w1_cost_producers::observed_search_tests::complete_observed_stream_matches_retained_wrapper_byte_for_byte',\n}\nrows = re.findall(r'^test result: (\\S+)\\. ([0-9]+) passed; ([0-9]+) failed; ([0-9]+) ignored; ([0-9]+) measured; ([0-9]+) filtered out;', text, re.M)\nif rows != [('ok', str(len(expected)), '0', '0', '0', '0')]:\n    raise SystemExit('legal-native-controls: complete unfiltered native summary required once')\nnames = re.findall(r'^test (\\S+) \\.\\.\\. (.+)$', text, re.M)\nif (len(names) != len(expected) or {name for name, _ in names} != expected\n        or any(outcome != 'ok' for _, outcome in names)):\n    raise SystemExit('legal-native-controls: retained, versioned, material and observer controls must each pass once')\n",
+        "/workspace/scratch/23345083847a/Trillionnium-Chain/evidence/pon-open-consensus-continuation-20261110-2334/validation/cost/portable-replay-01/hosted-spans/legal-native-controls.log"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "inline_code_sha256": "0854bdf5eb7abe172cad2edcec6681b64571ebb98835c16242dad35257cab7e5",
+      "name": "hosted-legal-after",
+      "native_executed": false,
+      "reader_or_control_wall_ns": 51104847,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow_sha256": "d6bfeef7f57e311fa904d6fd55fb77474e887c443d52a1ef858bd611111c49b7"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-c",
+        "from pathlib import Path\nimport re, sys\nroot = Path(sys.argv[1])\nexample_expected = {\n    'tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments',\n    'tests::factorial_search_keeps_every_miss_and_identical_complete_winners',\n    'tests::last_product_mutation_wraps_canonically_and_changes_only_that_word',\n    'tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity',\n    'w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values',\n    'w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks',\n    'w1_cost_producers::observed_search_tests::observer_begin_refusal_precedes_native_generation',\n    'w1_cost_producers::observed_search_tests::native_failure_retains_completed_attempt_and_failed_begin',\n    'w1_cost_producers::observed_search_tests::malformed_generated_proof_has_started_and_failed_record',\n    'w1_cost_producers::observed_search_tests::completion_observer_failure_never_starts_another_attempt',\n    'w1_cost_producers::observed_search_tests::complete_observed_stream_matches_retained_wrapper_byte_for_byte',\n}\n# The one ignored History entry is the existing subprocess fixture;\n# its parent control selects real SIGKILL cuts. It is not a skipped gate.\nexpected = {\"factorial-kernel-tests\": (14, 0), \"factorial-example-tests\": (len(example_expected), 0),\n    \"header-binding-tests\": (1, 0), \"history-w1-tests\": (5, 0),\n    \"history-import-tests\": (33, 1), \"cpu-completion-tests\": (11, 0)}\nfor name, counts in expected.items():\n    text = (root / (name + \".log\")).read_text()\n    rows = re.findall(r'^test result: (\\S+)\\. ([0-9]+) passed; ([0-9]+) failed; ([0-9]+) ignored;', text, re.M)\n    if rows != [('ok', str(counts[0]), '0', str(counts[1]))]:\n        raise SystemExit(name + ': exact native controls did not execute')\nexample = (root / 'factorial-example-tests.log').read_text()\nexample_summaries = re.findall(r'^test result: (\\S+)\\. ([0-9]+) passed; ([0-9]+) failed; ([0-9]+) ignored; ([0-9]+) measured; ([0-9]+) filtered out;', example, re.M)\nexample_rows = re.findall(r'^test (\\S+) \\.\\.\\. (.+)$', example, re.M)\nif (example_summaries != [('ok', str(len(example_expected)), '0', '0', '0', '0')]\n        or len(example_rows) != len(example_expected)\n        or {name for name, _ in example_rows} != example_expected\n        or any(outcome != 'ok' for _, outcome in example_rows)):\n    raise SystemExit('factorial-example-tests: retained, material and observer controls must each pass once')\nkernel = (root / 'factorial-kernel-tests.log').read_text()\nkernel_expected = {\n    'pon_work::legal_attempt::low_rank::tests::bounded_factorization_reconstructs_exact_full_field_rank_and_pivot_orders',\n    'pon_work::legal_attempt::low_rank::tests::exact_rank_limit_chooses_left_then_right_and_explicit_paid_dense_fallback',\n    'pon_work::legal_attempt::low_rank::tests::both_inputs_are_fully_validated_before_zero_or_high_rank_shortcuts',\n    'pon_work::legal_attempt::low_rank::tests::low_rank_complete_proofs_equal_both_original_kernels_and_verifiers',\n    'pon_work::legal_attempt::low_rank::tests::misses_still_replay_all_tiles_and_cancelled_retries_preserve_the_same_task',\n    'pon_work::legal_attempt::tests::boundary_target_is_inclusive_and_zero_target_refuses_before_work',\n    'pon_work::legal_attempt::tests::changed_challenge_and_task_never_gain_acceptance_from_cached_product',\n    'pon_work::legal_attempt::tests::every_stage_cancellation_returns_no_attempt_and_does_not_poison_retry',\n    'pon_work::legal_attempt::tests::factorial_kernels_match_independent_reference_for_full_and_structured_fields',\n    'pon_work::legal_attempt::tests::losing_attempt_still_replays_every_transcript_tile_without_lazy_serialization',\n    'pon_work::legal_attempt::tests::preparation_never_reduces_noncanonical_fields_or_wrong_shapes',\n    'pon_work::legal_attempt::tests::sparse_preparation_matches_dense_and_independent_full_field_proofs',\n    'pon_work::legal_attempt::tests::sparse_preparation_rejects_hidden_noncanonical_words_and_wrong_lengths',\n    'pon_work::legal_attempt::tests::sparse_setup_keeps_complete_misses_callbacks_and_cancelled_retry',\n}\nkernel_rows = re.findall(r'^test (pon_work::legal_attempt::\\S+) \\.\\.\\. ok$', kernel, re.M)\nif len(kernel_rows) != len(kernel_expected) or set(kernel_rows) != kernel_expected:\n    raise SystemExit('factorial-kernel-tests: exact named kernel controls did not execute once')\nhistory = (root / 'history-import-tests.log').read_text()\nfor name in (\n    'final_resource_completion_preserves_error_priority_and_original_deadline',\n    'final_resource_expiry_keeps_committed_history_and_settled_cpu',\n    'history_control_keeps_original_timely_single_resource_observation',\n    'history_control_preexpired_does_not_invoke_resource',\n    'history_control_resource_expiry_refuses_late_success',\n    'history_control_resource_expiry_keeps_original_resource_error',\n    'history_owner_resource_expiry_never_invokes_exclusive_or_shared_action',\n):\n    selector = 'ingress::history_import::tests::deadline_controls::' + name\n    rows = re.findall(r'^test ' + re.escape(selector) + r' \\.\\.\\. ok$', history, re.M)\n    if len(rows) != 1:\n        raise SystemExit(selector + ': exact deadline control did not execute once')\ncodec_selector = ('ingress::history_import::tests::'\n    'history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors')\ncodec_rows = re.findall(r'^test ' + re.escape(codec_selector) + r' \\.\\.\\. ok$', history, re.M)\nif len(codec_rows) != 1:\n    raise SystemExit(codec_selector + ': exact codec control did not execute once')\n",
+        "/workspace/scratch/23345083847a/Trillionnium-Chain/evidence/pon-open-consensus-continuation-20261110-2334/validation/cost/portable-replay-01/hosted-spans"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "inline_code_sha256": "1943d90f60ec4b73c4376851ceb3ec5e9a436107e99f4bbb86d99cdbe400bf6d",
+      "name": "hosted-factorial-after",
+      "native_executed": false,
+      "reader_or_control_wall_ns": 43068449,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workflow_sha256": "d6bfeef7f57e311fa904d6fd55fb77474e887c443d52a1ef858bd611111c49b7"
+    }
+  ],
+  "native_executed": false,
+  "production_qualified": false,
+  "public_resource_qualified": false,
+  "schema": "pon-open-consensus-cost-regression-replay-v1",
+  "source_files_unchanged_after_replay": true,
+  "status": "PASS",
+  "verified_input_files": 83,
+  "verified_repository_source_files": 18
+}

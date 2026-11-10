@@ -89,6 +89,23 @@ across supported producers (including losing attempts), candidate
 proof hashes and final counters. It verifies both full-verifier observation
 paths and refuses a target-hit-only promotion.
 
+The reader reconstructs the same nine frozen material recipes as the retained
+[V2 cost reader](../../scripts/pon_w1_cost_matrix_reader.py). A self-consistent
+task hash cannot relabel zero matrices as full-rank input, or replace a frozen
+recipe with different canonical matrices. The same fixed constructor support
+matrix binds all 117 material/producer pairs: 59 pairs are supported, including
+14 specialized pairs in addition to the 45 generic pairs. Declaring a supported
+specialist unsupported cannot omit its four searches while closing the roster.
+With eight samples, a complete observation has 1,888 searches; exhausted searches
+remain searches and are never imputed as verified winners.
+
+Every completed trial's proof digest, including a losing trial, is checked
+against the reconstructed canonical `PNW1` A/B/AB prefix and that trial's reported
+trace. Reusing the prefix hash makes this check independent of producer claims
+without repeating full matrix products per attempt. The reader still does not
+replay the challenge-dependent W1 transcript or authenticate execution. Source,
+binary, process and resource receipts remain separate requirements.
+
 Deleted or duplicated records and reordered events within an active operation
 cannot close the grammar. The reader permits a different ordering of complete
 cohorts when their identities, trial streams and final roster still agree.

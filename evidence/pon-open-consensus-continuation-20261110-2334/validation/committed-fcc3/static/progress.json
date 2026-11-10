@@ -1,0 +1,241 @@
+{
+  "schema": "pon-continuation-committed-validation-v1",
+  "source_expected": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+  "group": "static",
+  "result": "PASS",
+  "qualification": "HOLD_NO_GO",
+  "production_activation": false,
+  "open_consensus_qualified": false,
+  "business_service_qualified": false,
+  "observations": [
+    {
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 13836918592,
+      "log": "preflight.log",
+      "executed": true,
+      "process_exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "source_before_verified": true,
+      "source_after_verified": true,
+      "source_verified": true
+    },
+    {
+      "name": "cargo-metadata",
+      "command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 9245920529,
+      "log": "cargo-metadata.log",
+      "executed": true,
+      "process_exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "source_before_verified": true,
+      "source_after_verified": true,
+      "source_verified": true
+    },
+    {
+      "name": "format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 60680528302,
+      "log": "format.log",
+      "executed": true,
+      "process_exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "source_before_verified": true,
+      "source_after_verified": true,
+      "source_verified": true
+    },
+    {
+      "name": "repository",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/ci/check_repository.py"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 40569571909,
+      "log": "repository.log",
+      "executed": true,
+      "process_exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "source_before_verified": true,
+      "source_after_verified": true,
+      "source_verified": true
+    },
+    {
+      "name": "inventory",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 10609625827,
+      "log": "inventory.log",
+      "executed": true,
+      "process_exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "source_before_verified": true,
+      "source_after_verified": true,
+      "source_verified": true
+    },
+    {
+      "name": "ci-contract",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 101429339326,
+      "log": "ci-contract.log",
+      "executed": true,
+      "process_exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "source_before_verified": true,
+      "source_after_verified": true,
+      "source_verified": true
+    },
+    {
+      "name": "source-integrity",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 25424077943,
+      "log": "source-integrity.log",
+      "executed": true,
+      "process_exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "source_before_verified": true,
+      "source_after_verified": true,
+      "source_verified": true
+    },
+    {
+      "name": "corpus-negatives",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 264034983323,
+      "log": "corpus-negatives.log",
+      "executed": true,
+      "process_exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "source_before_verified": true,
+      "source_after_verified": true,
+      "source_verified": true
+    },
+    {
+      "name": "corpus",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 19083487465,
+      "log": "corpus.log",
+      "executed": true,
+      "process_exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "source_before_verified": true,
+      "source_after_verified": true,
+      "source_verified": true
+    },
+    {
+      "name": "v4-reader",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/ci/test_w1_lifecycle_cost_v4.py"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 16735327566,
+      "log": "v4-reader.log",
+      "executed": true,
+      "process_exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "source_before_verified": true,
+      "source_after_verified": true,
+      "source_verified": true
+    },
+    {
+      "name": "material-reader",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/ci/test_pon_w1_cost_matrix_reader.py"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 32457905669,
+      "log": "material-reader.log",
+      "executed": true,
+      "process_exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "source_before_verified": true,
+      "source_after_verified": true,
+      "source_verified": true
+    },
+    {
+      "name": "native-gate",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/ci/test_w1_factorial_native_gate.py"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 26007580594,
+      "log": "native-gate.log",
+      "executed": true,
+      "process_exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "source_before_verified": true,
+      "source_after_verified": true,
+      "source_verified": true
+    }
+  ]
+}

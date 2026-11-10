@@ -1,0 +1,14 @@
+test_complete_current_native_roster_passes (__main__.LegalGateTests.test_complete_current_native_roster_passes) ... ok
+test_every_retained_versioned_material_and_observer_control_executes_once (__main__.LegalGateTests.test_every_retained_versioned_material_and_observer_control_executes_once) ... ok
+test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused (__main__.LegalGateTests.test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused) ... ok
+test_complete_roster_passes (__main__.NativeGateTests.test_complete_roster_passes) ... ok
+test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary (__main__.NativeGateTests.test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary) ... ok
+test_factorial_example_does_not_accept_filtered_or_measured_tests (__main__.NativeGateTests.test_factorial_example_does_not_accept_filtered_or_measured_tests) ... ok
+test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control (__main__.NativeGateTests.test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control) ... ok
+test_history_named_controls_remain_required_once (__main__.NativeGateTests.test_history_named_controls_remain_required_once) ... ok
+test_kernel_rejects_missing_duplicate_or_replaced_named_control (__main__.NativeGateTests.test_kernel_rejects_missing_duplicate_or_replaced_named_control) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 9.618s
+
+OK

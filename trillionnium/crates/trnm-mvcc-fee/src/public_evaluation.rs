@@ -364,13 +364,16 @@ fn validate_reveals(evaluation: &Value) -> Result<()> {
     Ok(())
 }
 
-/// Check the classic closure against the immutable commit/reveal records.
+/// Check the retained closure against the immutable commit/reveal records.
 /// A later conflict can block adoption, but cannot rescore historical closure.
 /// Classic conflict rows do not retain insertion heights: after an aborted
 /// closure gains more conflicts, its exact old subset cannot be reconstructed.
 /// In that case validate the summary/count bounds without inventing a subset.
-fn validate_classic_closure(evaluation: &Value) -> Result<()> {
-    if is_quorum(evaluation)? || evaluation["closed"].is_null() {
+fn validate_closure(evaluation: &Value) -> Result<()> {
+    if is_quorum(evaluation)? {
+        return quorum_v2::validate_closure(evaluation);
+    }
+    if evaluation["closed"].is_null() {
         return Ok(());
     }
     check(
@@ -502,7 +505,7 @@ pub fn adoption_allowed_with_disqualified(
         return quorum_v2::adoption_allowed(evaluation, height, false, current_disqualified);
     }
     validate_reveals(evaluation)?;
-    validate_classic_closure(evaluation)?;
+    validate_closure(evaluation)?;
     check(
         height >= n(&evaluation["plan"], "adoption_start")?
             && evaluation["closed"]["status"] == "complete-scored"
@@ -725,7 +728,7 @@ pub fn compact(evaluation: &Value) -> Result<Value> {
 pub fn hydrate(compact: &Value, candidate: Hash, rows: &BTreeMap<String, Value>) -> Result<Value> {
     if pq_storage::enabled(compact) {
         let value = pq_storage::hydrate(compact, candidate, rows)?;
-        validate_classic_closure(&value)?;
+        validate_closure(&value)?;
         return Ok(value);
     }
     is_quorum(compact)?;
@@ -770,7 +773,7 @@ pub fn hydrate(compact: &Value, candidate: Hash, rows: &BTreeMap<String, Value>)
         )?;
     }
     validate_reveals(&value)?;
-    validate_classic_closure(&value)?;
+    validate_closure(&value)?;
     Ok(value)
 }
 pub fn read_evaluation(state: &BTreeMap<String, Value>, candidate: Hash) -> Result<Value> {

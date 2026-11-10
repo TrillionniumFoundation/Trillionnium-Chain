@@ -1,0 +1,81 @@
+{
+  "evidence_commit": "c2297ad53fef1d9b552e657cfd205d583c91980d",
+  "historical_native_source_commit": "11791e2da79b69322271be2cffe03725165151d1",
+  "historical_native_tree": "162552848110fda532504b78865a16930bc6d9bb",
+  "source_receipts_byte_identical": true,
+  "source_receipt_sha256": "4c753951d66399d4c89c8126852524ff16a5f8f8b7e7b7aa9fe0fc3adff6d086",
+  "git_tree_entry_count_verified": 26124,
+  "source_receipt_reported_tracked_bytes": 2485379627,
+  "historical_checkout_not_recreated": true,
+  "current_repo_head": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "loaded_before_after_binary_verified_from_retained_gzip": true,
+  "retained_binary_bytes": 903328,
+  "retained_binary_sha256": "bd74dea5a8b1ddc57e86f1d181c3cdb287321dc0b9651e03b6f21adfcfe2f45a",
+  "process_and_reader_receipt_bindings": [
+    {
+      "name": "complete",
+      "native_exit_code": 0,
+      "original_reader_exit_code": 0,
+      "raw_sha256": "2ae1c73382b3d4bede8412c9ff725d6e51bf37ea50ff6810a84617c4c8ec6f04",
+      "raw_bytes": 40704359,
+      "receipt_sha256": "066899eacdef00ee8326ecfbf7ade1e1997459f56b1570d8df5db3a137d43ace"
+    },
+    {
+      "name": "terminated",
+      "native_exit_code": -15,
+      "original_reader_exit_code": 3,
+      "raw_sha256": "aa2bf4bddff47a234c36941091409a34013243555f2a254854695dea92430073",
+      "raw_bytes": 69094,
+      "receipt_sha256": "232c1d19960b0a8eb13fa3babdc8f367e3003701f7583ee3dd9c8238d0ba96ad"
+    }
+  ],
+  "source_files": [
+    {
+      "path": "scripts/pon_w1_lifecycle_cost_v4.py",
+      "historical_git_blob": "06d92b853c8a7b0766b1152104c834109243d308",
+      "historical_sha256": "da6b94cccafc0d32518afc2ffeb3fac5d4f3bb91c6b6b646590cd3e4d85bf6ba",
+      "historical_bytes": 25288,
+      "current_sha256": "1d0fb8a0b0d0d3ba9be398801488e90feea7364c6adf5d805e06aa2c1811381b",
+      "current_bytes": 25902,
+      "bytes_unchanged": false
+    },
+    {
+      "path": "scripts/pon_w1_cost_matrix_reader.py",
+      "historical_git_blob": "fe710e05048916145180cf1cf8870bc31a94dec8",
+      "historical_sha256": "6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa",
+      "historical_bytes": 35800,
+      "current_sha256": "6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa",
+      "current_bytes": 35800,
+      "bytes_unchanged": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/pon_w1_lifecycle_cost_v4.rs",
+      "historical_git_blob": "e1870e82a3ddfb9e117d6c0e232acb23ca9c4008",
+      "historical_sha256": "04423d9609bdda68646940328c1fca9b7e94cb2f6c84522f4cd1ea4bd13875d5",
+      "historical_bytes": 19072,
+      "current_sha256": "04423d9609bdda68646940328c1fca9b7e94cb2f6c84522f4cd1ea4bd13875d5",
+      "current_bytes": 19072,
+      "bytes_unchanged": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/w1_cost_producers.rs",
+      "historical_git_blob": "7109064c900422e23f3ad2c2769e6d3a7386e8c8",
+      "historical_sha256": "9dad341b103836badc53bec50774114b97ae08db061f7a3e9d9b9c4a37c80f5f",
+      "historical_bytes": 14345,
+      "current_sha256": "9dad341b103836badc53bec50774114b97ae08db061f7a3e9d9b9c4a37c80f5f",
+      "current_bytes": 14345,
+      "bytes_unchanged": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs",
+      "historical_git_blob": "83ab348459f3e5cae409d4dcffba359ef90aaf64",
+      "historical_sha256": "ca6196f9067ea3ac86a2d743c13de9c9cac0715e4ae652654cdd6592a6d0cf9a",
+      "historical_bytes": 7114,
+      "current_sha256": "ca6196f9067ea3ac86a2d743c13de9c9cac0715e4ae652654cdd6592a6d0cf9a",
+      "current_bytes": 7114,
+      "bytes_unchanged": true
+    }
+  ],
+  "native_executed_this_review": false,
+  "scope": "Published bytes and retained source/process bindings checked; no new execution authentication or original-machine source recapture."
+}

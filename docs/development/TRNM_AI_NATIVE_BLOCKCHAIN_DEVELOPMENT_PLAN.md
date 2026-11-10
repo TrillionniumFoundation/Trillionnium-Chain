@@ -11353,6 +11353,63 @@ Freeze the repaired source and exact affected bindings before rerunning the
 complete DA harness, retained/direct-owner libraries and original remaining
 gates. M12's successful node run does not qualify that successor source.
 
+### 2026-11-10 — PoN cost evidence and retained evaluation integrity
+
+Continue the existing Chain/Hepta integration candidate from
+`da1374a200022bc14dc2bd325cc9ba29dbcd24ab`. Keep the native W1 relation,
+lottery/chainwork rules, source-pinned toolchain and lock, original Host budgets,
+Hepta counterpart and all qualification/activation refusals. The
+[continuation evidence](../../evidence/pon-open-consensus-continuation-20261110-2334/README.md)
+separates newly executed source controls from independent readback of that
+predecessor's original hosted artifacts.
+
+The V4 lifecycle reader must bind every fixed material class to the actual
+frozen A/B recipe and task, enforce all 117 producer/material support decisions,
+and bind the complete proof digest for losing trials as well as winners. The
+fixed roster has 59 supported pairs; silently dropping specialized legal arms
+must not produce a complete cost observation. These checks establish internal
+record consistency, not experiment authenticity, fresh useful work, a cheapest
+strategy lower bound or an actual public-network query budget.
+
+Validate retained native quorum closure metadata on hydration and consumption.
+Recount historical score/evidence/counters with the retained historical
+exclusion set, preserve the frozen denominator and all four false authority
+claims, and reject adoption before the recorded closure height. Current late
+conflicts still govern current adoption without rewriting historical closure.
+The existing schema cannot always identify a nonempty historical conflict
+subset after more conflicts arrive. State-root/ancestry authentication remains
+necessary for historical exclusion and timing facts; no new independent
+governance or finality authority follows from the local semantic checks.
+
+Retain the original cancellation test's two dispatched and one queued requests
+by observing cancellation of the queued request before cancelling either
+dispatched worker. The original source's full native run observed four CPU
+reservations instead of its expected three while native work remained blocked.
+Preserve the original no-work, one later success, per-request settlement and
+total CPU equality assertions. This is deterministic test coordination, not a
+change to production cancellation, accounting, connection or worker policy.
+
+The original hosted legal and factorial controls executed successfully but their
+workflow rejected stale totals (8 versus 13, 6 versus 11, and History 28 versus
+33 passed with one retained subprocess fixture). Require the complete legal and
+factorial example name sets, retain existing kernel/History controls and reject
+missing, repeated, failed, filtered or ignored example observations. Replaying
+old logs through the corrected gate does not rewrite the original workflow
+failure or constitute new native execution. Refresh the generated distributed
+source inventory for the already present custody V2 configuration and rebind
+only actually changed curated source blobs.
+
+Independent predecessor readback retains the adverse production-verifier CPU
+ratios of 19.6405--24.5502 times the measured complete false-trace producer
+cohort, with every fake candidate rejected. These are fixed microbenchmarks,
+not measured whole-service amplification. The predecessor's original and fresh
+four-second pressure phases both confirmed zero of one business target despite
+seven successful submissions. Preserve `CONFIRMATION_TARGET` and
+`FRESH_NATIVE_PROCESS_REQUIRED`, all failed process exits, original deadlines
+and nested CPU scopes. Open-network liveness, all-legal-strategy cost, joint
+classical/quantum DAA and chain quality, independent useful demand/model benefit,
+and ordinary same-operation external-effect recovery remain open.
+
 
 ### 2026-11-10 native journal input progress and from-zero filter costs
 
@@ -11409,3 +11466,23 @@ mapping, profile binding, corpus and authority inspectors with their retained
 controls; mechanism-test counts alone cannot substitute for those commands.
 The prior native execution remains bound to `39336622`; a binding successor gains
 no new native or hosted execution claim. Keep all HOLD flags and unknown bounds.
+
+
+### 2026-11-10 compose the native boundary slice with the concurrent candidate
+
+The integration candidate advanced independently to
+`df927b6ffaecff293b9e9428e3ba516f47cd101a` while the native-boundary slice
+reached `bf010229a877eb7baf162830abf23bb515ac3a36`. Preserve both histories
+and both appended plan sections in a normal merge. Retain the incoming quorum
+closure validation, lifecycle reader/workflow corrections, ingress-test ordering
+and every original failure/evidence artifact. The native boundary changes do
+not overlap those production changes. The source inventory union remains 1,573;
+the custody V2 entry is shared, not a second new input. Preserve all 1,079
+corpus paths and 987 required paths; merge the 17 changed pin entries, then
+bind the composed plan and inventory bytes. The existing QROM 138/16 input
+records and selected profile descriptor remain byte-identical and require no
+new source-base declaration. Freeze the composition before running the complete
+two journal suites, MVCC tests, retained cost-reader/gate controls and actual
+integration inspectors. The 39336622 native cost experiment, be24e0be mapping
+checks and incoming fcc3/hosted observations retain their own source identities;
+none qualifies the merged source by inheritance. Production refusal remains.

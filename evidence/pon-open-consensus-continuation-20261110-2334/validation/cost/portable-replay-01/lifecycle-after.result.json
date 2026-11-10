@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "scripts/ci/test_w1_lifecycle_cost_v4.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "expected_test_methods": 15,
+  "name": "lifecycle-after",
+  "native_executed": false,
+  "observed_test_methods": [
+    15
+  ],
+  "reader_or_control_wall_ns": 4385821143,
+  "stderr_bytes": 2226,
+  "stderr_sha256": "d834243d7d8dd9539ca500a38412d20f24fba80258772144e93f3867d092b286",
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

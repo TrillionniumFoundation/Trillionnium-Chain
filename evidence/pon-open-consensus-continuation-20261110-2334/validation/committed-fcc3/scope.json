@@ -1,0 +1,112 @@
+{
+  "source_expected": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+  "contract_sha256": "e249dfcda10720a1fc388cef9613302253a96b125c0ab1f0eda1b584b72cebef",
+  "actual_cost_points": [
+    {
+      "path": "/cost_envelopes/classical/0",
+      "lower": null,
+      "upper": null,
+      "status": "unproved"
+    },
+    {
+      "path": "/cost_envelopes/classical/1",
+      "lower": null,
+      "upper": null,
+      "status": "unproved"
+    },
+    {
+      "path": "/cost_envelopes/classical/2",
+      "lower": null,
+      "upper": null,
+      "status": "unproved"
+    },
+    {
+      "path": "/cost_envelopes/classical/3",
+      "lower": null,
+      "upper": null,
+      "status": "unproved"
+    },
+    {
+      "path": "/cost_envelopes/classical/4",
+      "lower": null,
+      "upper": null,
+      "status": "unproved"
+    },
+    {
+      "path": "/cost_envelopes/classical/5",
+      "lower": null,
+      "upper": null,
+      "status": "unproved"
+    },
+    {
+      "path": "/cost_envelopes/classical/6",
+      "lower": null,
+      "upper": null,
+      "status": "unproved"
+    },
+    {
+      "path": "/cost_envelopes/classical/7",
+      "lower": null,
+      "upper": null,
+      "status": "unproved"
+    },
+    {
+      "path": "/cost_envelopes/quantum/0",
+      "lower": null,
+      "upper": null,
+      "status": "unproved"
+    },
+    {
+      "path": "/cost_envelopes/quantum/1",
+      "lower": null,
+      "upper": null,
+      "status": "unproved"
+    },
+    {
+      "path": "/cost_envelopes/quantum/2",
+      "lower": null,
+      "upper": null,
+      "status": "unproved"
+    },
+    {
+      "path": "/cost_envelopes/quantum/3",
+      "lower": null,
+      "upper": null,
+      "status": "unproved"
+    },
+    {
+      "path": "/cost_envelopes/quantum/4",
+      "lower": null,
+      "upper": null,
+      "status": "unproved"
+    },
+    {
+      "path": "/cost_envelopes/quantum/5",
+      "lower": null,
+      "upper": null,
+      "status": "unproved"
+    },
+    {
+      "path": "/cost_envelopes/quantum/6",
+      "lower": null,
+      "upper": null,
+      "status": "unproved"
+    },
+    {
+      "path": "/cost_envelopes/quantum/7",
+      "lower": null,
+      "upper": null,
+      "status": "unproved"
+    }
+  ],
+  "evaluation_flags": {
+    "fresh_dataset_activation": false,
+    "objective_model_quality": false,
+    "independent_governance_accepted": false,
+    "consensus_finality": false,
+    "execution_authority": false,
+    "production_activation": false
+  },
+  "qualification": "HOLD_NO_GO",
+  "native_execution": false
+}

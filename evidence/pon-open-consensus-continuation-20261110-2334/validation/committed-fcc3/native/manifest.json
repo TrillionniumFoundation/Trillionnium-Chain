@@ -1,0 +1,139 @@
+{
+  "artifact_sha256": {
+    "mvcc-tests.log": "2f01acc0b053a0906f04f5cb6f055d8c1370db363134dd2c368109fcb6fefc34",
+    "preflight.log": "9e9d4144463e544ae14797fbc46c29aec41551f7019ee04bfd56fd0a461ed3ce",
+    "progress.json": "b5475b6e60d297a16eac881109902405b1cd863c837693607065063cb3a85ae6",
+    "public-v3.log": "80a5a22b7c14061780168aa4d5ff27b1e6137353c7a4ae0075bea59fdd1878d1",
+    "strict-clippy.log": "481c955481ba3e76755ec441de22f986fe4efd44ad580caa9bff9fa955e04a23"
+  },
+  "business_service_qualified": false,
+  "group": "native",
+  "input_sha256": {
+    ".github/workflows/pon-w1-work-security.yml": "d6bfeef7f57e311fa904d6fd55fb77474e887c443d52a1ef858bd611111c49b7",
+    "rust-toolchain.toml": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+    "scripts/pon_w1_lifecycle_cost_v4.py": "1d0fb8a0b0d0d3ba9be398801488e90feea7364c6adf5d805e06aa2c1811381b",
+    "trillionnium/Cargo.lock": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs": "cb2d527090ad4a2cf119a778b9854bde35fc12ee8e82f7f7d3218fc91fd5eca1",
+    "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs": "2a5bad8cd045ffd65a18a811c813cd948feef130d975eb6b34acb334f43d4757",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "6eda639f4db34ed8f6673100dc4c57da12aa0d1798e24a8bc7ac0120f0f49786"
+  },
+  "observations": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "elapsed_ns": 14112580341,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "log": "preflight.log",
+      "name": "preflight",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::tests::",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "elapsed_ns": 941015997901,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "log": "public-v3.log",
+      "name": "public-v3",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "--tests",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "elapsed_ns": 299064743722,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "log": "mvcc-tests.log",
+      "name": "mvcc-tests",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "elapsed_ns": 211155981346,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "log": "strict-clippy.log",
+      "name": "strict-clippy",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    }
+  ],
+  "open_consensus_qualified": false,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "result": "PASS",
+  "schema": "pon-continuation-committed-validation-v1",
+  "source": {
+    "commit": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+    "source_state": "committed-clean",
+    "tracked_bytes": 2550522172,
+    "tracked_entries": 27833,
+    "tracked_worktree_verified": true,
+    "tree": "dcbeaec3ae9cf300c10223f12ae9890e05285b22"
+  },
+  "source_consistent": true,
+  "source_expected": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761"
+}

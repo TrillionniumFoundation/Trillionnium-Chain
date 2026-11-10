@@ -1,0 +1,113 @@
+{
+  "schema": "pon-continuation-committed-validation-v1",
+  "source_expected": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+  "group": "native",
+  "result": "PASS",
+  "qualification": "HOLD_NO_GO",
+  "production_activation": false,
+  "open_consensus_qualified": false,
+  "business_service_qualified": false,
+  "observations": [
+    {
+      "name": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 14112580341,
+      "log": "preflight.log",
+      "executed": true,
+      "process_exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "source_before_verified": true,
+      "source_after_verified": true,
+      "source_verified": true
+    },
+    {
+      "name": "public-v3",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::tests::",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 941015997901,
+      "log": "public-v3.log",
+      "executed": true,
+      "process_exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "source_before_verified": true,
+      "source_after_verified": true,
+      "source_verified": true
+    },
+    {
+      "name": "mvcc-tests",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "--tests",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 299064743722,
+      "log": "mvcc-tests.log",
+      "executed": true,
+      "process_exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "source_before_verified": true,
+      "source_after_verified": true,
+      "source_verified": true
+    },
+    {
+      "name": "strict-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 211155981346,
+      "log": "strict-clippy.log",
+      "executed": true,
+      "process_exit_code": 0,
+      "expected_source": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "source_before_verified": true,
+      "source_after_verified": true,
+      "source_verified": true
+    }
+  ]
+}

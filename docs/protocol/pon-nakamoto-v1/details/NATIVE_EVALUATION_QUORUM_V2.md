@@ -170,6 +170,29 @@ adoption also checks the retained closure's candidate and quorum against the
 frozen plan. A well-formed replacement roster cannot reuse an earlier round
 commitment even when its generation subcontext is unchanged.
 
+Restoration and consumption also validate the retained closure's exact set of
+20 fields, frozen context, status, score, evidence and vote counts. The historical
+count uses `disqualified_signers_before_close`, including the frozen exclusions;
+later conflicts remain inputs to the separate current adoption count. Restoring
+an older closure therefore never rescores it using a later ban. The four
+non-authority flags remain false. A closure must be after the reveal deadline,
+and adoption additionally requires the consuming height to be at least
+`closed_height`. Hydration has no current-height authority and may retain a
+semantically valid closure from a later height; such a record cannot authorize
+earlier adoption.
+
+The original record digest is recomputed when closure had no local conflicts,
+including after later conflicts arrive, or when the current local conflict count
+equals the recorded closure count. The existing schema does not retain
+conflict insertion heights. When a nonempty original conflict subset is followed
+by more conflicts, the exact old subset cannot always be reconstructed from the
+current map. The reader checks the historical score and count constraints and
+the digest's canonical shape without inventing a subset or rewriting the
+closure. These local semantic checks do not authenticate the occurrence of a
+historical cross-candidate exclusion or the actual closure height. The verified
+State root, packet ancestry and durable observation anchors remain responsible
+for those facts; no independent governance, time or execution authority is added.
+
 Both durable observation APIs bind the candidate to one exact transaction in
 the root-checked intake packet. Historical tag6 retains its existing membership
 rule under the original model selector. Factor profiles use the existing
@@ -192,6 +215,11 @@ generation. The
 [native parity test](../../../../trillionnium/crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs)
 compares exact frozen/round/closure/digest/storage bytes and refusal outcomes.
 These seeded state-machine vectors do not substitute for native model execution.
+The retained-closure regressions reconstruct valid signed commit/reveal histories,
+then reject substituted or missing closure fields at hydration and consumption,
+and refuse adoption before the retained closure height. A separate positive
+control preserves an original nonempty conflict history after another real
+signed conflict arrives, while the new current count can still refuse adoption.
 
 The actual
 [V3 node regression](../../../../trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs)
