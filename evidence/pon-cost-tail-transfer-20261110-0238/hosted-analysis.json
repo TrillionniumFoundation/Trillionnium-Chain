@@ -1,0 +1,527 @@
+{
+  "actual_cost_rows_changed": false,
+  "all_legal_w1_cost_bound_proved": false,
+  "baseline_jobs": [
+    {
+      "conclusion": "success",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129594035850,
+      "name": "fuzz-smoke",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129594035850"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129594036050,
+      "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129594036050"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129594036106,
+      "name": "prospective-merge (external-evidence-contract)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129594036106"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129594036107,
+      "name": "rust-baseline shard (runtime)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129594036107"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129594036193,
+      "name": "W1 actual reuse V3 (x64, prospective-merge)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129594036193"
+    },
+    {
+      "conclusion": "failure",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129594036196,
+      "name": "protocol-contract",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129594036196"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129594036242,
+      "name": "repository-truth",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129594036242"
+    },
+    {
+      "conclusion": "failure",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129594036245,
+      "name": "cross-arch-cost (arm64)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129594036245"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129594036254,
+      "name": "W1 actual reuse V3 (x64, head)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129594036254"
+    },
+    {
+      "conclusion": "failure",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129594036264,
+      "name": "rust-baseline shard (quality)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129594036264"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129594036300,
+      "name": "prospective-merge (repository-truth)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129594036300"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129594036301,
+      "name": "prospective Rust shard (runtime)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129594036301"
+    },
+    {
+      "conclusion": "failure",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129594036340,
+      "name": "prospective Rust shard (quality)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129594036340"
+    },
+    {
+      "conclusion": "failure",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129594036390,
+      "name": "cross-arch-cost (x64)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129594036390"
+    },
+    {
+      "conclusion": "failure",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129594036406,
+      "name": "prospective-merge (protocol-contract)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129594036406"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129594036434,
+      "name": "W1 actual reuse V3 (arm64, head)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129594036434"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129594036537,
+      "name": "prospective-merge (fuzz-smoke)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129594036537"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129594036627,
+      "name": "external-evidence-contract",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129594036627"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129606481927,
+      "name": "cross-arch-cost-consistency",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129606481927"
+    },
+    {
+      "conclusion": "failure",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129627858009,
+      "name": "rust-baseline",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129627858009"
+    },
+    {
+      "conclusion": "failure",
+      "head_sha": "6fac9cddd982ce4e26197ca23e39490604422370",
+      "id": 129634011767,
+      "name": "prospective-merge (rust-baseline)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973/job/129634011767"
+    }
+  ],
+  "focused_successful_test_groups": {
+    "129594036242": {
+      "test_ci_source_integrity.": {
+        "distinct_count": 43,
+        "invocations": 43,
+        "successful_identifiers": [
+          "test_ci_source_integrity.TrackedSourceTests.test_actual_bytes_are_checked_even_if_status_reports_clean",
+          "test_ci_source_integrity.TrackedSourceTests.test_assume_unchanged_cannot_hide_modified_source",
+          "test_ci_source_integrity.TrackedSourceTests.test_executable_mode_checked_even_when_git_ignores_filemode",
+          "test_ci_source_integrity.TrackedSourceTests.test_graft_file_is_rejected",
+          "test_ci_source_integrity.TrackedSourceTests.test_hidden_index_flag_is_rejected_even_without_changes",
+          "test_ci_source_integrity.TrackedSourceTests.test_intermediate_directory_symlink_rejected",
+          "test_ci_source_integrity.TrackedSourceTests.test_new_native_c_bytes_are_verified_without_an_extension_allowlist",
+          "test_ci_source_integrity.TrackedSourceTests.test_nonregular_file_rejected_without_waiting_for_fifo",
+          "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_accepts_exact_ancestor_candidate_tree",
+          "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_accepts_exact_diverged_combination",
+          "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_ignores_environment_merge_driver",
+          "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_ignores_local_union_attributes",
+          "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_local_binary_attributes_cannot_reject_valid_tree",
+          "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_never_executes_local_merge_driver",
+          "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_rejects_injected_committed_source",
+          "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_rejects_omitted_base_change",
+          "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_rejects_unreviewed_conflict_resolution",
+          "test_ci_source_integrity.TrackedSourceTests.test_receipt_reuses_raw_source_guard",
+          "test_ci_source_integrity.TrackedSourceTests.test_regular_file_symlink_substitution_rejected",
+          "test_ci_source_integrity.TrackedSourceTests.test_replacement_commit_cannot_relabel_different_source",
+          "test_ci_source_integrity.TrackedSourceTests.test_same_size_stat_cached_change_is_rejected",
+          "test_ci_source_integrity.TrackedSourceTests.test_skip_worktree_cannot_hide_modified_source",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_checked_retains_actual_failed_observation",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_child_keeps_actual_success_and_bytes",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_commit_switch_during_command_is_rejected",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_wrong_head_cannot_start_child",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_dirty_before_command_cannot_start_child",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_dirty_source_preserves_primary_failure",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_existing_fuzz_and_supply_callers_pin_every_command",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_clean_other_commit_cannot_borrow_pass",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_dirty_source_cannot_write_pass",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_requires_initial_pin",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_valid_source_never_upgrades_existing_failure",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_index_hidden_child_mutation_still_refuses",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_keeps_nonzero_primary_error_and_drift",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_pin_is_clean_and_does_not_follow_later_changes",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_timeout_and_source_failure_preserve_both",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_zero_exit_with_real_dirty_source_is_not_success",
+          "test_ci_source_integrity.TrackedSourceTests.test_staged_change_is_rejected",
+          "test_ci_source_integrity.TrackedSourceTests.test_subdirectory_is_not_a_complete_source_root",
+          "test_ci_source_integrity.TrackedSourceTests.test_tracked_symlink_target_change_rejected",
+          "test_ci_source_integrity.TrackedSourceTests.test_untracked_configuration_cannot_hide_new_source",
+          "test_ci_source_integrity.TrackedSourceTests.test_valid_raw_files_modes_and_symlink"
+        ]
+      },
+      "test_cost_tail_transfer.": {
+        "distinct_count": 18,
+        "invocations": 18,
+        "successful_identifiers": [
+          "test_cost_tail_transfer.CertificateBoundaryTests.test_bernoulli_endpoints_finite_domain_and_invalid_inputs",
+          "test_cost_tail_transfer.CertificateBoundaryTests.test_cli_retains_unverified_premises_and_false_qualification",
+          "test_cost_tail_transfer.CertificateBoundaryTests.test_every_row_field_order_and_complete_prefix_are_bound",
+          "test_cost_tail_transfer.CertificateBoundaryTests.test_input_and_exact_sum_encodings_are_bound",
+          "test_cost_tail_transfer.CertificateBoundaryTests.test_invalid_exact_types_probability_ranges_and_missing_caps_refuse",
+          "test_cost_tail_transfer.CertificateBoundaryTests.test_scope_flags_cannot_be_promoted_or_retyped",
+          "test_cost_tail_transfer.CertificateBoundaryTests.test_verifier_does_not_call_the_constructor",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_additive_failure_allowance_precedes_probability_saturation",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_arbitrary_input_caps_remain_unverified_even_when_the_sum_is_large",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_caps_match_all_tiny_feedback_trees_and_terminal_output_choices",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_correlated_tables_use_their_own_full_policy_caps",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_exact_domination_two_improvement_over_markov",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_finite_prefix_never_extrapolates_missing_tail",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_fractional_resource_conversion_floors_each_query_cap",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_one_advice_bit_refutes_direct_expected_frontier_transport",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_private_policy_mixtures_preserve_the_unconditional_bound",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_tail_sum_dominates_every_single_cut_with_exact_inequalities",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_virtual_check_overhead_is_inside_the_cap_not_deducted_from_result"
+        ]
+      },
+      "test_fixed_probability_contract.": {
+        "distinct_count": 16,
+        "invocations": 16,
+        "successful_identifiers": [
+          "test_fixed_probability_contract.ContractTests.test_actual_mu1_sources_bind_without_promoting_the_cost_gate",
+          "test_fixed_probability_contract.ContractTests.test_changed_actual_source_is_detected_even_with_unchanged_profile",
+          "test_fixed_probability_contract.ContractTests.test_contract_byte_limit_preserves_exact_boundary_and_refuses_extra_data",
+          "test_fixed_probability_contract.ContractTests.test_duplicate_nested_keys_and_float_tokens_are_rejected",
+          "test_fixed_probability_contract.ContractTests.test_lifecycle_reset_and_omitted_strategies_are_rejected",
+          "test_fixed_probability_contract.ContractTests.test_missing_scale_class_or_duplicate_scale_is_rejected",
+          "test_fixed_probability_contract.ContractTests.test_no_unknown_cost_is_replaced_by_zero_or_observed_time",
+          "test_fixed_probability_contract.ContractTests.test_open_proof_obligation_cannot_be_deleted",
+          "test_fixed_probability_contract.ContractTests.test_scope_cannot_change_probability_credit_units_or_context_fields",
+          "test_fixed_probability_contract.ContractTests.test_source_path_cannot_escape_the_exact_source_set",
+          "test_fixed_probability_contract.SubsetTests.test_classical_negative_screen_can_miss_quantum_advantage",
+          "test_fixed_probability_contract.SubsetTests.test_eight_point_domain_subset_mass_feasibility_by_actual_enumeration",
+          "test_fixed_probability_contract.SubsetTests.test_exact_boundary_comparison_does_not_round_an_irrational_root",
+          "test_fixed_probability_contract.SubsetTests.test_impossible_inside_and_outside_winner_masses_rejected",
+          "test_fixed_probability_contract.SubsetTests.test_non_rational_zero_and_boolean_inputs_rejected",
+          "test_fixed_probability_contract.SubsetTests.test_quarter_winners_quarter_domain_does_not_quarter_density"
+        ]
+      },
+      "test_fixed_success_query_frontier.": {
+        "distinct_count": 20,
+        "invocations": 20,
+        "successful_identifiers": [
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_all_tiny_deterministic_trees_and_randomized_convex_hulls",
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_enough_final_guesses_have_zero_paid_query_optimum",
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_exact_feasibility_boundary_has_no_float_tolerance",
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_finite_domain_limits_success_even_when_query_cap_is_large",
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_fixed_half_success_distinguishes_expected_eight_and_cap_eleven",
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_fixed_mark_count_is_a_different_probability_law",
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_free_outputs_reserve_only_addresses_that_really_exist",
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_independent_verifier_does_not_call_frontier_constructor",
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_one_final_guess_does_not_bill_a_virtual_check_to_the_producer",
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_zero_and_one_probability_empty_domain_and_zero_target",
+          "test_fixed_success_query_frontier.ValidationTests.test_changed_experiment_and_digest_are_rejected",
+          "test_fixed_success_query_frontier.ValidationTests.test_cli_check_emits_exact_examples_and_retains_hold",
+          "test_fixed_success_query_frontier.ValidationTests.test_cli_writes_once_and_verifies_the_same_fixed_experiment",
+          "test_fixed_success_query_frontier.ValidationTests.test_cost_or_feasibility_cannot_be_upgraded",
+          "test_fixed_success_query_frontier.ValidationTests.test_implementation_size_limits_refuse_without_rounding",
+          "test_fixed_success_query_frontier.ValidationTests.test_json_duplicate_keys_floats_and_size_limit_rejected",
+          "test_fixed_success_query_frontier.ValidationTests.test_noncanonical_rationals_booleans_and_extra_fields_rejected",
+          "test_fixed_success_query_frontier.ValidationTests.test_nonexact_probability_and_invalid_budgets_are_rejected",
+          "test_fixed_success_query_frontier.ValidationTests.test_policy_mutations_are_rejected",
+          "test_fixed_success_query_frontier.ValidationTests.test_scope_cannot_promote_query_arithmetic_or_change_billing"
+        ]
+      }
+    },
+    "129594036300": {
+      "test_ci_source_integrity.": {
+        "distinct_count": 43,
+        "invocations": 43,
+        "successful_identifiers": [
+          "test_ci_source_integrity.TrackedSourceTests.test_actual_bytes_are_checked_even_if_status_reports_clean",
+          "test_ci_source_integrity.TrackedSourceTests.test_assume_unchanged_cannot_hide_modified_source",
+          "test_ci_source_integrity.TrackedSourceTests.test_executable_mode_checked_even_when_git_ignores_filemode",
+          "test_ci_source_integrity.TrackedSourceTests.test_graft_file_is_rejected",
+          "test_ci_source_integrity.TrackedSourceTests.test_hidden_index_flag_is_rejected_even_without_changes",
+          "test_ci_source_integrity.TrackedSourceTests.test_intermediate_directory_symlink_rejected",
+          "test_ci_source_integrity.TrackedSourceTests.test_new_native_c_bytes_are_verified_without_an_extension_allowlist",
+          "test_ci_source_integrity.TrackedSourceTests.test_nonregular_file_rejected_without_waiting_for_fifo",
+          "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_accepts_exact_ancestor_candidate_tree",
+          "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_accepts_exact_diverged_combination",
+          "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_ignores_environment_merge_driver",
+          "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_ignores_local_union_attributes",
+          "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_local_binary_attributes_cannot_reject_valid_tree",
+          "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_never_executes_local_merge_driver",
+          "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_rejects_injected_committed_source",
+          "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_rejects_omitted_base_change",
+          "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_rejects_unreviewed_conflict_resolution",
+          "test_ci_source_integrity.TrackedSourceTests.test_receipt_reuses_raw_source_guard",
+          "test_ci_source_integrity.TrackedSourceTests.test_regular_file_symlink_substitution_rejected",
+          "test_ci_source_integrity.TrackedSourceTests.test_replacement_commit_cannot_relabel_different_source",
+          "test_ci_source_integrity.TrackedSourceTests.test_same_size_stat_cached_change_is_rejected",
+          "test_ci_source_integrity.TrackedSourceTests.test_skip_worktree_cannot_hide_modified_source",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_checked_retains_actual_failed_observation",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_child_keeps_actual_success_and_bytes",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_commit_switch_during_command_is_rejected",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_wrong_head_cannot_start_child",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_dirty_before_command_cannot_start_child",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_dirty_source_preserves_primary_failure",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_existing_fuzz_and_supply_callers_pin_every_command",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_clean_other_commit_cannot_borrow_pass",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_dirty_source_cannot_write_pass",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_requires_initial_pin",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_valid_source_never_upgrades_existing_failure",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_index_hidden_child_mutation_still_refuses",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_keeps_nonzero_primary_error_and_drift",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_pin_is_clean_and_does_not_follow_later_changes",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_timeout_and_source_failure_preserve_both",
+          "test_ci_source_integrity.TrackedSourceTests.test_source_fence_zero_exit_with_real_dirty_source_is_not_success",
+          "test_ci_source_integrity.TrackedSourceTests.test_staged_change_is_rejected",
+          "test_ci_source_integrity.TrackedSourceTests.test_subdirectory_is_not_a_complete_source_root",
+          "test_ci_source_integrity.TrackedSourceTests.test_tracked_symlink_target_change_rejected",
+          "test_ci_source_integrity.TrackedSourceTests.test_untracked_configuration_cannot_hide_new_source",
+          "test_ci_source_integrity.TrackedSourceTests.test_valid_raw_files_modes_and_symlink"
+        ]
+      },
+      "test_cost_tail_transfer.": {
+        "distinct_count": 18,
+        "invocations": 18,
+        "successful_identifiers": [
+          "test_cost_tail_transfer.CertificateBoundaryTests.test_bernoulli_endpoints_finite_domain_and_invalid_inputs",
+          "test_cost_tail_transfer.CertificateBoundaryTests.test_cli_retains_unverified_premises_and_false_qualification",
+          "test_cost_tail_transfer.CertificateBoundaryTests.test_every_row_field_order_and_complete_prefix_are_bound",
+          "test_cost_tail_transfer.CertificateBoundaryTests.test_input_and_exact_sum_encodings_are_bound",
+          "test_cost_tail_transfer.CertificateBoundaryTests.test_invalid_exact_types_probability_ranges_and_missing_caps_refuse",
+          "test_cost_tail_transfer.CertificateBoundaryTests.test_scope_flags_cannot_be_promoted_or_retyped",
+          "test_cost_tail_transfer.CertificateBoundaryTests.test_verifier_does_not_call_the_constructor",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_additive_failure_allowance_precedes_probability_saturation",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_arbitrary_input_caps_remain_unverified_even_when_the_sum_is_large",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_caps_match_all_tiny_feedback_trees_and_terminal_output_choices",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_correlated_tables_use_their_own_full_policy_caps",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_exact_domination_two_improvement_over_markov",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_finite_prefix_never_extrapolates_missing_tail",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_fractional_resource_conversion_floors_each_query_cap",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_one_advice_bit_refutes_direct_expected_frontier_transport",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_private_policy_mixtures_preserve_the_unconditional_bound",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_tail_sum_dominates_every_single_cut_with_exact_inequalities",
+          "test_cost_tail_transfer.IndependentPolicyTests.test_virtual_check_overhead_is_inside_the_cap_not_deducted_from_result"
+        ]
+      },
+      "test_fixed_probability_contract.": {
+        "distinct_count": 16,
+        "invocations": 16,
+        "successful_identifiers": [
+          "test_fixed_probability_contract.ContractTests.test_actual_mu1_sources_bind_without_promoting_the_cost_gate",
+          "test_fixed_probability_contract.ContractTests.test_changed_actual_source_is_detected_even_with_unchanged_profile",
+          "test_fixed_probability_contract.ContractTests.test_contract_byte_limit_preserves_exact_boundary_and_refuses_extra_data",
+          "test_fixed_probability_contract.ContractTests.test_duplicate_nested_keys_and_float_tokens_are_rejected",
+          "test_fixed_probability_contract.ContractTests.test_lifecycle_reset_and_omitted_strategies_are_rejected",
+          "test_fixed_probability_contract.ContractTests.test_missing_scale_class_or_duplicate_scale_is_rejected",
+          "test_fixed_probability_contract.ContractTests.test_no_unknown_cost_is_replaced_by_zero_or_observed_time",
+          "test_fixed_probability_contract.ContractTests.test_open_proof_obligation_cannot_be_deleted",
+          "test_fixed_probability_contract.ContractTests.test_scope_cannot_change_probability_credit_units_or_context_fields",
+          "test_fixed_probability_contract.ContractTests.test_source_path_cannot_escape_the_exact_source_set",
+          "test_fixed_probability_contract.SubsetTests.test_classical_negative_screen_can_miss_quantum_advantage",
+          "test_fixed_probability_contract.SubsetTests.test_eight_point_domain_subset_mass_feasibility_by_actual_enumeration",
+          "test_fixed_probability_contract.SubsetTests.test_exact_boundary_comparison_does_not_round_an_irrational_root",
+          "test_fixed_probability_contract.SubsetTests.test_impossible_inside_and_outside_winner_masses_rejected",
+          "test_fixed_probability_contract.SubsetTests.test_non_rational_zero_and_boolean_inputs_rejected",
+          "test_fixed_probability_contract.SubsetTests.test_quarter_winners_quarter_domain_does_not_quarter_density"
+        ]
+      },
+      "test_fixed_success_query_frontier.": {
+        "distinct_count": 20,
+        "invocations": 20,
+        "successful_identifiers": [
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_all_tiny_deterministic_trees_and_randomized_convex_hulls",
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_enough_final_guesses_have_zero_paid_query_optimum",
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_exact_feasibility_boundary_has_no_float_tolerance",
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_finite_domain_limits_success_even_when_query_cap_is_large",
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_fixed_half_success_distinguishes_expected_eight_and_cap_eleven",
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_fixed_mark_count_is_a_different_probability_law",
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_free_outputs_reserve_only_addresses_that_really_exist",
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_independent_verifier_does_not_call_frontier_constructor",
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_one_final_guess_does_not_bill_a_virtual_check_to_the_producer",
+          "test_fixed_success_query_frontier.ExactFrontierTests.test_zero_and_one_probability_empty_domain_and_zero_target",
+          "test_fixed_success_query_frontier.ValidationTests.test_changed_experiment_and_digest_are_rejected",
+          "test_fixed_success_query_frontier.ValidationTests.test_cli_check_emits_exact_examples_and_retains_hold",
+          "test_fixed_success_query_frontier.ValidationTests.test_cli_writes_once_and_verifies_the_same_fixed_experiment",
+          "test_fixed_success_query_frontier.ValidationTests.test_cost_or_feasibility_cannot_be_upgraded",
+          "test_fixed_success_query_frontier.ValidationTests.test_implementation_size_limits_refuse_without_rounding",
+          "test_fixed_success_query_frontier.ValidationTests.test_json_duplicate_keys_floats_and_size_limit_rejected",
+          "test_fixed_success_query_frontier.ValidationTests.test_noncanonical_rationals_booleans_and_extra_fields_rejected",
+          "test_fixed_success_query_frontier.ValidationTests.test_nonexact_probability_and_invalid_budgets_are_rejected",
+          "test_fixed_success_query_frontier.ValidationTests.test_policy_mutations_are_rejected",
+          "test_fixed_success_query_frontier.ValidationTests.test_scope_cannot_promote_query_arithmetic_or_change_billing"
+        ]
+      }
+    }
+  },
+  "focused_test_count_policy": "Each truth lane separately has new18 + frontier20 + fixed16. Separate lane reruns are not pooled as independent methods. Source-integrity43 may be imported elsewhere and are not summed into a new denominator.",
+  "head": "6fac9cddd982ce4e26197ca23e39490604422370",
+  "parent": "99c55cbaa5eac18420d401172a0a0a1c1aa28715",
+  "parent_comparison": {
+    "observed": "Parent quality log also reports dependency policy refusal; parent protocol controller also reports passed=false and systemd_run_exit=1. This matches observed failure categories, not an independently proved unique cause or guarantee no new failure exists. Parent dependency artifact not inspected.",
+    "protocol_job": 129265343291,
+    "quality_job": 129265342940,
+    "run_id": 42629494778
+  },
+  "protocol": {
+    "conclusion": "failure",
+    "failure": null,
+    "final_host_errors": [],
+    "full_campaign_artifact_inspected": false,
+    "job_id": 129594036196,
+    "native_build_completed": true,
+    "native_build_exit_code": 0,
+    "passed": false,
+    "systemd_run_exit": 1,
+    "unique_phase_cause_established": false
+  },
+  "provenance": "Logs are complete decoded UTF-8 text returned by GitHub connector, saved without timestamp/line transformations. They are not the original GitHub raw log ZIP bytes. JSON snapshots are normalized parsed API responses. Quality artifact ZIP bytes match GitHub digest. No lost local receipt was reconstructed.",
+  "qualification": "HOLD_NO_GO",
+  "quality": {
+    "advisory_database": [
+      {
+        "archive": "advisories-0-d9cb059f3217db87aeccd190b81eaffe8cc29cb9.tar.gz",
+        "commit": "d9cb059f3217db87aeccd190b81eaffe8cc29cb9",
+        "commit_time": "2026-11-09T17:13:08+01:00",
+        "origin": "https://github.com/RustSec/advisory-db",
+        "tree": "a0577016182744385411ed2d706309fe58a077f1"
+      }
+    ],
+    "archive_bytes": 607219,
+    "archive_id": 13732002282,
+    "archive_members": 14,
+    "archive_sha256": "d4d0945e584cd5d79b92c98a0f36a6e4ea31b920d6fb2fed623cb4acb6eb277c",
+    "command_order": "cargo fmt completed before supply policy failure under set -e; later doctests, Clippy and native release controls in this quality shard were not reached.",
+    "conclusion": "failure",
+    "graph_errors": {
+      "supply-chain/check-0.jsonl": [
+        {
+          "advisory_id": "RUSTSEC-2026-0459",
+          "code": "vulnerability",
+          "message": "`libsqlite3-sys` via C SQLite CVE-2026-119375",
+          "package": "libsqlite3-sys"
+        }
+      ],
+      "supply-chain/check-1.jsonl": [
+        {
+          "advisory_id": "RUSTSEC-2026-0459",
+          "code": "vulnerability",
+          "message": "`libsqlite3-sys` via C SQLite CVE-2026-119375",
+          "package": "libsqlite3-sys"
+        }
+      ]
+    },
+    "job_id": 129594036264,
+    "member_digests_verified": true,
+    "original_error": "dependency policy refused one or more graphs; inspect retained diagnostics",
+    "source_consistent": true,
+    "supply_chain_result": "FAIL"
+  },
+  "schema": "pon-cost-tail-hosted-recovery-v1",
+  "tree": "c5d38dbd45d13fa0f591cc925076836fd38b84b6",
+  "truth_source_observations": {
+    "129594036242": [
+      {
+        "base": null,
+        "candidate": "6fac9cddd982ce4e26197ca23e39490604422370",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "6fac9cddd982ce4e26197ca23e39490604422370",
+        "tested_tree": "c5d38dbd45d13fa0f591cc925076836fd38b84b6",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2502732567,
+        "tracked_entries": 26183,
+        "tracked_worktree_verified": true
+      },
+      {
+        "base": null,
+        "candidate": "6fac9cddd982ce4e26197ca23e39490604422370",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "6fac9cddd982ce4e26197ca23e39490604422370",
+        "tested_tree": "c5d38dbd45d13fa0f591cc925076836fd38b84b6",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2502732567,
+        "tracked_entries": 26183,
+        "tracked_worktree_verified": true
+      }
+    ],
+    "129594036300": [
+      {
+        "base": "99c55cbaa5eac18420d401172a0a0a1c1aa28715",
+        "candidate": "6fac9cddd982ce4e26197ca23e39490604422370",
+        "kind": "prospective-merge",
+        "prospective_merge": "2905e52749253bd50e7ce52f9d75de87fd62944a",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "2905e52749253bd50e7ce52f9d75de87fd62944a",
+        "tested_tree": "c5d38dbd45d13fa0f591cc925076836fd38b84b6",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2502732567,
+        "tracked_entries": 26183,
+        "tracked_worktree_verified": true
+      },
+      {
+        "base": "99c55cbaa5eac18420d401172a0a0a1c1aa28715",
+        "candidate": "6fac9cddd982ce4e26197ca23e39490604422370",
+        "kind": "prospective-merge",
+        "prospective_merge": "2905e52749253bd50e7ce52f9d75de87fd62944a",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "2905e52749253bd50e7ce52f9d75de87fd62944a",
+        "tested_tree": "c5d38dbd45d13fa0f591cc925076836fd38b84b6",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2502732567,
+        "tracked_entries": 26183,
+        "tracked_worktree_verified": true
+      }
+    ]
+  },
+  "workflow_conclusion": "failure",
+  "workflow_run": 42744740973,
+  "workflow_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744740973"
+}
