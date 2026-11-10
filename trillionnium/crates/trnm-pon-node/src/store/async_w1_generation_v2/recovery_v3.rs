@@ -24,6 +24,10 @@ pub struct NodeGenerationOwnerV3<'a, R> {
     store: NativeGenerationStoreV2,
     witness: WitnessClient,
     fenced: bool,
+    // Test-only scheduling boundary: the reply has already been authenticated
+    // and its original exchange deadline checked. Never compiled into owners.
+    #[cfg(test)]
+    pub(super) before_recovery_transaction: Option<Box<dyn FnOnce() + Send>>,
 }
 
 fn checkpoint(store: &NativeGenerationStoreV2) -> Result<Checkpoint> {
@@ -63,6 +67,8 @@ impl<'a, R: OwnedGenerationRuntimeV2> NodeGenerationOwnerV3<'a, R> {
             store,
             witness,
             fenced: false,
+            #[cfg(test)]
+            before_recovery_transaction: None,
         })
     }
 
@@ -91,6 +97,10 @@ impl<'a, R: OwnedGenerationRuntimeV2> NodeGenerationOwnerV3<'a, R> {
         ) -> Result<T>,
     ) -> Result<T> {
         let before = self.check_current()?;
+        #[cfg(test)]
+        if let Some(hook) = self.before_recovery_transaction.take() {
+            hook();
+        }
         // The ordinary V2 transaction rechecks this exact authenticated head
         // under its existing SQLite write lock, before invoking an owner or
         // applying an event. A path hash before the transaction is insufficient.

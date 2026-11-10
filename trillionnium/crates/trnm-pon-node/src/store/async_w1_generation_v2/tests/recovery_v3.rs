@@ -422,8 +422,10 @@ fn independent_pin_authority_generation_and_random_journal_cannot_be_rebound() {
     assert_eq!(calls, f.external.calls.load(Ordering::SeqCst));
 }
 
-#[test]
-fn transaction_head_change_after_witness_read_is_not_promoted_to_a_signed_successor() {
+// The injection boundary is after full authenticated current() validation, not
+// merely after the service created a reply. Slow local fixture I/O must not
+// silently change this into the separate transport-deadline refusal test.
+fn transaction_head_race(after_verified_current: bool, delayed: bool) {
     let f = Fixture::prepared();
     let mut node = f.node();
     let mut runtime = f.runtime();
@@ -432,25 +434,63 @@ fn transaction_head_change_after_witness_read_is_not_promoted_to_a_signed_succes
     let path = f.local().join("m12.sqlite");
     let config = f.config.clone();
     let id = f.id;
-    *f.external.after_current.lock().unwrap() = Some(Box::new(move || {
-        // A real second SQLite writer runs after the authenticated read but
-        // before the guarded owner's transaction. It has no V3 authority.
+    let fired = Arc::new(AtomicUsize::new(0));
+    let observed = fired.clone();
+    let hook = Box::new(move || {
+        if delayed {
+            std::thread::sleep(
+                crate::pq_rollback_witness::MAX_EXCHANGE + std::time::Duration::from_millis(5),
+            );
+        }
+        // A real second SQLite writer commits before the guarded transaction.
+        // It has no V3 authority; reopen and the durable cancel are not mocked.
         NativeGenerationStoreV2::open(&path, config)
             .unwrap()
             .cancel(id, [61; 32])
             .unwrap();
-    }));
-    assert!(owner
-        .begin(f.id)
-        .err()
-        .unwrap()
-        .to_string()
-        .contains("TRANSACTION_HEAD"));
+        observed.fetch_add(1, Ordering::SeqCst);
+    });
+    if after_verified_current {
+        owner.before_recovery_transaction = Some(hook);
+    } else {
+        *f.external.after_current.lock().unwrap() = Some(hook);
+    }
+    let error = owner.begin(f.id).err().unwrap().to_string();
+    let expected = if after_verified_current {
+        "GENERATION_RECOVERY_TRANSACTION_HEAD"
+    } else {
+        "PQ_WITNESS_DEADLINE"
+    };
+    assert!(error.contains(expected), "actual refusal: {error}");
+    assert_eq!(fired.load(Ordering::SeqCst), 1);
     assert!(owner.is_quarantined());
     assert_eq!(f.external.client().current().unwrap(), before);
     let retained = owner.historical_readback(f.id).unwrap();
     assert_eq!(retained.cancellation, Some([61; 32]));
     assert!(!retained.dispatch_intent);
+    assert!(owner
+        .begin(f.id)
+        .err()
+        .unwrap()
+        .to_string()
+        .contains("QUARANTINED"));
+    assert_eq!(fired.load(Ordering::SeqCst), 1);
+    assert_eq!(owner.historical_readback(f.id).unwrap(), retained);
+}
+
+#[test]
+fn transaction_head_change_after_witness_read_is_not_promoted_to_a_signed_successor() {
+    transaction_head_race(true, false);
+}
+
+#[test]
+fn slow_transaction_head_race_after_verified_current_still_checks_actual_transaction() {
+    transaction_head_race(true, true);
+}
+
+#[test]
+fn transaction_race_inside_slow_current_exchange_preserves_deadline_refusal() {
+    transaction_head_race(false, true);
 }
 
 #[test]
