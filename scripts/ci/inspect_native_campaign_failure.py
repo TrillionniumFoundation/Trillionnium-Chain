@@ -142,8 +142,28 @@ def _terminal_import_boundary(history: list) -> dict:
             "started": s.get("started"), "completed": s.get("completed"),
             "accepted": s.get("accepted"), "error_code": s.get("error_code"),
         }
+    # Retain the raw observations, but do not classify malformed or conflicting
+    # flags. In particular bool is distinct from int in the original JSON.
+    for stage in record["stage_observations"].values():
+        started, completed, accepted, error = (
+            stage["started"], stage["completed"], stage["accepted"], stage["error_code"])
+        if (type(started) is not bool or type(completed) is not bool
+                or (accepted is not None and type(accepted) is not bool)):
+            return record
+        if completed:
+            if (not started or type(accepted) is not bool
+                    or (accepted and error is not None)
+                    or (not accepted and (not isinstance(error, str) or not error))):
+                return record
+        elif started or accepted is not None or error is not None:
+            return record
+    if type(imported.get("succeeded")) is not bool:
+        return record
     if imported.get("succeeded") is True:
-        record["boundary_status"] = "no_terminal_import_failure"
+        if (imported.get("error") is None
+                and not any(stage["accepted"] is False
+                            for stage in record["stage_observations"].values())):
+            record["boundary_status"] = "no_terminal_import_failure"
         return record
     if imported.get("error") != "PUBLIC_REQUEST_DEADLINE":
         return record
