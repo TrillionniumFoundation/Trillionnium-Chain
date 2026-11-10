@@ -22,6 +22,7 @@ use std::{
 };
 
 mod bep52;
+mod paged;
 mod snapshot;
 
 use serde::Deserialize;
@@ -79,6 +80,98 @@ struct Spec {
     material_profile: String,
     parent: CellHostResearchParentV1,
     requests: Vec<CellHostResearchQueryV1>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PagedExpected {
+    previous_operation: String,
+    tcv1: String,
+    tcv2: String,
+    cts1: String,
+    bep52_plan: String,
+    payload_bytes: u64,
+    manifest_count: usize,
+    chunks: u64,
+}
+
+impl PagedExpected {
+    fn validate(&self) -> Result<()> {
+        check(
+            digest(&self.previous_operation)? != [0; 32],
+            "original operation pin required",
+        )?;
+        for pin in [&self.tcv1, &self.tcv2, &self.cts1, &self.bep52_plan] {
+            check(
+                pin.len() == 128
+                    && pin
+                        .bytes()
+                        .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
+                "canonical independent complete-version pin",
+            )?;
+        }
+        check(
+            (1..=SNAPSHOT_BOUND).contains(&self.payload_bytes)
+                && (1..=128).contains(&self.manifest_count)
+                && (1..=2048).contains(&self.chunks),
+            "bounded independent complete-version scope",
+        )
+    }
+    fn verify(
+        &self,
+        version: &CellVersionManifestV1,
+        content: &CellVersionContentV2,
+        snapshot: &CellReleaseSnapshotV1,
+        total: u64,
+    ) -> Result<()> {
+        self.validate()?;
+        let chunks: u64 = version
+            .manifests()
+            .iter()
+            .map(|m| m.chunks().len() as u64)
+            .sum();
+        check(
+            self.tcv1 == hex::encode(version.commitment())
+                && self.tcv2 == hex::encode(content.commitment())
+                && self.cts1 == hex::encode(snapshot.commitment())
+                && self.payload_bytes == total
+                && self.manifest_count == version.manifests().len()
+                && self.chunks == chunks,
+            "original independently pinned version/content/snapshot must remain exact",
+        )
+    }
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+#[allow(
+    dead_code,
+    reason = "Shared module supports separately selected copy and paged example entry points."
+)]
+struct PagedSpec {
+    schema: String,
+    source: Spec,
+    custody: paged::Profile,
+    expected: PagedExpected,
+}
+#[allow(
+    dead_code,
+    reason = "Shared module supports separately selected copy and paged example entry points."
+)]
+impl PagedSpec {
+    fn validate(&self) -> Result<()> {
+        check(
+            self.schema == "trnm.cell-sealed-paged-research-source.v1"
+                && self.source.schema == "trnm.cell-sealed-research-source.v2",
+            "explicit fresh paged research source required",
+        )?;
+        self.custody.validate()?;
+        self.expected.validate()?;
+        check(
+            digest(&self.source.operation)? != [0; 32]
+                && self.source.operation != self.expected.previous_operation,
+            "fresh paged research operation must differ from original one-shot",
+        )
+    }
 }
 
 fn check(value: bool, reason: &'static str) -> Result<()> {
@@ -320,12 +413,21 @@ fn pack(
 }
 
 fn observe(spec: &Spec, report: &mut Value) -> Result<()> {
+    observe_with_custody(spec, report, None)
+}
+
+fn observe_with_custody(
+    spec: &Spec,
+    report: &mut Value,
+    paged_route: Option<(&paged::Profile, &PagedExpected)>,
+) -> Result<()> {
     check(
         (1..=300).contains(&spec.seconds),
         "original bounded research duration",
     )?;
     let started = Instant::now();
     let deadline = started + Duration::from_secs(spec.seconds);
+    let cancelled = AtomicBool::new(false);
     let operation = digest(&spec.operation)?;
     check(
         spec.schema == "trnm.cell-sealed-research-source.v2"
@@ -468,6 +570,16 @@ fn observe(spec: &Spec, report: &mut Value) -> Result<()> {
         "composition_worker_executed": false,
         "compatibility_from_hashes_alone": false,
     });
+    if let Some((_, expected)) = paged_route {
+        expected.verify(&version, &content, &release_snapshot, total)?;
+        report["original_version_pins_verified"] = json!(true);
+        report["expected_version"] = json!({
+            "previous_operation": expected.previous_operation, "tcv1": expected.tcv1,
+            "tcv2": expected.tcv2, "cts1": expected.cts1, "bep52_plan": expected.bep52_plan,
+            "payload_bytes": expected.payload_bytes, "manifest_count": expected.manifest_count,
+            "chunks": expected.chunks,
+        });
+    }
     report["stage"] = json!("complete pinned release over actual loopback TCP");
     let received_path = spec.output.join("bep52-received.sqlite");
     let received = cache(&received_path)?;
@@ -486,6 +598,13 @@ fn observe(spec: &Spec, report: &mut Value) -> Result<()> {
         report,
     )?;
 
+    if let Some((_, expected)) = paged_route {
+        check(
+            expected.bep52_plan == hex::encode(transport_plan),
+            "original independently pinned BEP52 plan must remain exact",
+        )?;
+        report["original_transport_plan_verified"] = json!(true);
+    }
     report["operation_pins"] = json!({
         "operation": hex::encode(operation),
         "tcv1": hex::encode(version.commitment()),
@@ -541,25 +660,52 @@ fn observe(spec: &Spec, report: &mut Value) -> Result<()> {
         &spec.output.join("independent-catalog-anchor.cva3"),
         &anchor.encode(),
     )?;
-    drop(archive);
-    drop(source);
-    drop(received);
-    remove_cache(&source_path)?;
-    remove_cache(&received_path)?;
-    report["stage"] = json!("reopen anchored owner and actual cold arena restore");
-    let mut archive = CellVersionRetentionStoreV3::open(&archive_path, config, anchor)?;
-    let consumer = cache(&spec.output.join("consumer.sqlite"))?;
-    check(
-        consumer.cache_usage()?.chunk_rows == 0,
-        "consumer must be actually cold",
-    )?;
-    archive.populate_cache(operation, &consumer, deadline)?;
-    report["cold_restore"] = json!({"source_cache_absent": !source_path.exists(),
-        "bep52_cache_absent": !received_path.exists(),
-        "retained_from_bep52_received_cache": true,
-        "anchored_reopen": true, "actual_target_readback": true,
-        "consumer_chunks": consumer.cache_usage()?.chunk_rows,
-        "m12_funding_admitted": false, "retention_heights_are_research_terms": true});
+    let consumer = if let Some((profile, _)) = paged_route {
+        paged::restore(
+            paged::Restore {
+                source,
+                received,
+                archive,
+                config,
+                anchor,
+                version: &version,
+                content: &content,
+                owner: &owner_view,
+                source_path: &source_path,
+                received_path: &received_path,
+                archive_path: &archive_path,
+                output: &spec.output,
+                operation,
+                deadline,
+                started,
+                cancelled: &cancelled,
+            },
+            profile,
+            report,
+        )?
+    } else {
+        drop(archive);
+        drop(source);
+        drop(received);
+        remove_cache(&source_path)?;
+        remove_cache(&received_path)?;
+        report["stage"] = json!("reopen anchored owner and actual cold arena restore");
+        let mut archive = CellVersionRetentionStoreV3::open(&archive_path, config, anchor)?;
+        let consumer = cache(&spec.output.join("consumer.sqlite"))?;
+        check(
+            consumer.cache_usage()?.chunk_rows == 0,
+            "consumer must be actually cold",
+        )?;
+        archive.populate_cache(operation, &consumer, deadline)?;
+        report["cold_restore"] = json!({"source_cache_absent": !source_path.exists(),
+            "bep52_cache_absent": !received_path.exists(),
+            "retained_from_bep52_received_cache": true,
+            "anchored_reopen": true, "actual_target_readback": true,
+            "consumer_chunks": consumer.cache_usage()?.chunk_rows,
+            "m12_funding_admitted": false, "retention_heights_are_research_terms": true});
+
+        consumer
+    };
 
     report["stage"] = json!("actual CPV4 consumer verification and joint residency");
     let timestamp = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
@@ -605,7 +751,6 @@ fn observe(spec: &Spec, report: &mut Value) -> Result<()> {
     let mut read_session = session(deadline, spec.max_snapshot_bytes)?;
     let verified =
         authorization.verify_cached_at(&content, &consumer, &expected, &mut read_session)?;
-    let cancelled = AtomicBool::new(false);
     let limits = CellResidencyConfigV1 {
         max_resident_bytes: spec.max_snapshot_bytes,
         max_resident_closures: 2,
@@ -871,6 +1016,61 @@ pub fn run() -> Result<()> {
     println!("{}", serde_json::to_string(&report)?);
     result
 }
+
+#[allow(
+    dead_code,
+    reason = "Shared module supports separately selected copy and paged example entry points."
+)]
+pub fn run_paged() -> Result<()> {
+    let arguments: Vec<_> = std::env::args().collect();
+    check(
+        arguments.len() == 3,
+        "usage: cell_sealed_research_paged_next_use_v1 SOURCE_JSON INDEPENDENT_SHA256",
+    )?;
+    let raw = read_pinned(
+        &Input {
+            path: PathBuf::from(&arguments[1]),
+            sha256: arguments[2].clone(),
+        },
+        128 * 1024,
+    )?;
+    let input: PagedSpec = serde_json::from_slice(&raw)?;
+    input.validate()?;
+    let spec = &input.source;
+    check(
+        spec.output.is_absolute(),
+        "absolute create-only output required",
+    )?;
+    fs::create_dir(&spec.output)?;
+    fs::set_permissions(&spec.output, fs::Permissions::from_mode(0o700))?;
+    write_new(&spec.output.join("original-paged-source-inputs.json"), &raw)?;
+    let mut report = json!({
+        "schema": "trnm.cell-sealed-paged-research-native.v1", "stage": "initial",
+        "source_input_sha256": arguments[2], "storage_profile": "trnm.cell-sealed-paged-custody.v1",
+        "original_hepta_owner_used": false, "hepta_final_use": false,
+        "installation_authorized": false, "m12_funding_admitted": false,
+        "independent_operators": false, "production_activation": false,
+        "loopback_only": true, "typed_snapshot_admitted": false,
+        "composition_worker_executed": false, "actual_model_run": "not_started",
+        "original_version_pins_verified": false, "original_transport_plan_verified": false,
+        "original_seconds": spec.seconds, "snapshot_payload_limit": spec.max_snapshot_bytes,
+        "worker_rss_limit": spec.runtime_rss_bytes, "threads": spec.threads,
+    });
+    let started = Instant::now();
+    let result = observe_with_custody(spec, &mut report, Some((&input.custody, &input.expected)));
+    report["entry_elapsed_ms"] = json!(started.elapsed().as_millis());
+    report["passed"] = json!(result.is_ok());
+    if let Err(error) = &result {
+        report["error"] = json!(error.to_string());
+    }
+    write_new(
+        &spec.output.join("native-result.json"),
+        &serde_json::to_vec_pretty(&report)?,
+    )?;
+    println!("{}", serde_json::to_string(&report)?);
+    result
+}
+
 fn remove_cache(path: &Path) -> Result<()> {
     fs::remove_file(path)?;
     for extension in ["sqlite-wal", "sqlite-shm"] {
