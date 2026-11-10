@@ -108,6 +108,41 @@ class FailureInspectionTests(unittest.TestCase):
         self.assertIsNone(metric["total"])
         self.assertEqual(metric["observed"], 0)
 
+    def test_host_checkpoint_cpu_fraction_is_nested_not_a_speedup(self):
+        data = fixture()
+        original = data["phases"][0]["history"][0]["client_import"]
+        original["thread_cpu_ns"] = 200
+        host = original["native_import_observation"]["host_checks"][0]
+        host.update({"calls_started": 12, "calls_completed": 12,
+                     "calls_accepted": 12, "calls_rejected": 0,
+                     "calls_unfinished": 0, "cpu_clock_unknown_calls": 0,
+                     "wall_clock_unknown_calls": 0,
+                     "thread_cpu_ns": 160, "wall_ns": 640})
+        self.put(1, data)
+        phase = inspect(self.root)["runs"][0]["phases"][0]
+        self.assertEqual(phase["history_checkpoint_host_calls"]["total"], 12)
+        self.assertEqual(phase["history_checkpoint_cpu_fraction_ppm"], 800000)
+        self.assertEqual(phase["history_checkpoint_host_observations"]["thread_cpu_ns"]["total"], 160)
+        self.assertIn("kernel check each time", phase["history_checkpoint_scope"])
+
+    def test_missing_duplicate_or_malformed_host_measurement_is_unknown(self):
+        data = fixture()
+        original = data["phases"][0]["history"][0]["client_import"]
+        original["thread_cpu_ns"] = 200
+        host = original["native_import_observation"]["host_checks"][0]
+        host.update({"thread_cpu_ns": False, "wall_ns": "0"})
+        self.put(1, data)
+        phase = inspect(self.root)["runs"][0]["phases"][0]
+        self.assertIsNone(phase["history_checkpoint_cpu_fraction_ppm"])
+        self.assertIsNone(phase["history_checkpoint_host_observations"]["wall_ns"]["total"])
+        other = fixture()
+        checks = other["phases"][0]["history"][0]["client_import"]["native_import_observation"]["host_checks"]
+        checks.append(dict(checks[0]))
+        self.put(2, other)
+        duplicate = inspect(self.root)["runs"][1]["phases"][0]
+        self.assertIsNone(duplicate["history_checkpoint_host_calls"]["total"])
+        self.assertEqual(duplicate["history_checkpoint_host_calls"]["observed"], 0)
+
     def test_report_symlink_and_duplicate_mode_are_refused(self):
         target = self.root / "external.json"
         target.write_text(json.dumps(fixture()))
