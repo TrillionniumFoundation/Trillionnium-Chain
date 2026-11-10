@@ -1,0 +1,30 @@
+{
+  "code_commit": "6fac9cddd982ce4e26197ca23e39490604422370",
+  "files": {
+    "README.md": {
+      "bytes": 3742,
+      "sha256": "87dba6635e05e35216b7a92c6f307b561f6911095902438050abfc805190c0ae"
+    },
+    "archive-members.json": {
+      "bytes": 4887,
+      "sha256": "54cd1179af7389691d3fc33d0d2307b79fc14ee6e6eaa7d20e5a6c5fab7cf7ca"
+    },
+    "historical-observations.json": {
+      "bytes": 786,
+      "sha256": "276374c2ac44f008e793d73d0b81341b2a14eb81b58ffd8c296c91df4854b759"
+    },
+    "hosted-analysis.json": {
+      "bytes": 35796,
+      "sha256": "9c990b88520e8880ac87f32b5b57cb67af1850114841c7b33df0604d842e3e7f"
+    },
+    "retrieved-records.tar.gz": {
+      "bytes": 1876821,
+      "sha256": "27421acc4b61765e06304c03075f4924f4194916988540f69617017f59f2aa20"
+    },
+    "source-eight-blobs.json": {
+      "bytes": 2051,
+      "sha256": "6aaa8d8092124d97e38141980d92de6c8f87d9d285a2d52521ce724289b708bf"
+    }
+  },
+  "schema": "pon-cost-tail-evidence-recovery-v1"
+}

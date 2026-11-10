@@ -1,3 +1,23 @@
+**Cost-prefix tail transfer, 2026-11-09 America/New_York — HOLD:**
+
+Continue #838 at `99c55cbaa5eac18420d401172a0a0a1c1aa28715` on its
+existing integration stack. The [tail transfer](../../formal/pon-nakamoto-v1/COST_TAIL_TRANSFER_V1.md)
+sums success deficits at every observed integer resource budget. Any finite
+prefix gives a conditional expectation lower bound at least as strong as the
+single-cut Markov calculation. Its exact-rational calculator and separate
+certificate verifier preserve all unverified initial-state, reference-cap and
+all-legal-simulation premises. A complete finite advice counterexample rejects
+directly transporting an independent-state expected-cost frontier through
+one-way state domination. Include the new commands exactly once in the
+existing repository-truth lane and retained command-mutation controls.
+
+This closes a conditional mathematical conversion, not the actual W1/SHA
+coverage or physical-resource bridge. Keep all sixteen actual cost points
+`null/null/unproved`, original source pins, deadlines, work credits and all
+qualification/production flags unchanged. Initial help, preprocessing, sharing,
+old branch stock, proof/transport/verification/recovery and every unsuccessful
+attempt still need the same full-lifecycle accounting theorem.
+
 **All-policy fixed-success query continuation, 2026-11-09 America/New_York — HOLD:**
 
 Continue the exact #835 source `e2a02f9271b49f146e70806c8a66e161b5973971`
