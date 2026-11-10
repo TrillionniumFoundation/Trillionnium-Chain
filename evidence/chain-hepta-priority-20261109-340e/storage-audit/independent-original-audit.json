@@ -1,0 +1,112 @@
+{
+  "failed_audit": {
+    "audit_recorded": true,
+    "job_id": "1a1c3340914-e62c-398",
+    "stderr": {
+      "eof": true,
+      "next_offset": 1514,
+      "offset": 0,
+      "size": 1514,
+      "text": "Traceback (most recent call last):\n  File \"<string>\", line 38, in <module>\n    assert any('34 passed; 0 failed; 0 ignored' in x for x in summaries),summaries\n           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ['test result: ok. 762 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 116.18s', 'test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s', 'test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s', 'test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s', 'test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s', 'test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s', 'test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s', 'test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s', 'test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s', 'test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s', 'test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.40s', 'test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s', 'test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s']\n"
+    },
+    "stdout": {
+      "eof": true,
+      "next_offset": 0,
+      "offset": 0,
+      "size": 0,
+      "text": ""
+    }
+  },
+  "failed_status": {
+    "at_unix_ms": 1794276342845,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 1,
+    "job_id": "1a1c3340914-e62c-398",
+    "launch_nonce": "5e26119796c62b60b6290bfd36b0d4cb",
+    "log_bytes": {
+      "stderr": {
+        "seen": 1514,
+        "stored": 1514
+      },
+      "stdout": {
+        "seen": 0,
+        "stored": 0
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "failed",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "success_audit": {
+    "audit_recorded": true,
+    "job_id": "1a1c3359a2a-e62c-3a7",
+    "stderr": {
+      "eof": true,
+      "next_offset": 0,
+      "offset": 0,
+      "size": 0,
+      "text": ""
+    },
+    "stdout": {
+      "eof": true,
+      "next_offset": 2417,
+      "offset": 0,
+      "size": 2417,
+      "text": "{\"artifact_bytes_verified\": 6423128, \"audit_kind\": \"original evidence and Git object readback, no project runtime rerun\", \"da_original_summaries\": [\"test result: ok. 762 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 116.18s\", \"test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\", \"test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\", \"test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s\", \"test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s\", \"test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s\", \"test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s\", \"test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s\", \"test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s\", \"test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s\", \"test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.40s\", \"test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s\", \"test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s\"], \"manifest_records_verified\": 146, \"model_index_sha256\": \"7fca2784bd10f7dd2643f3b6b113bb04a50bfe2588dc116bdc959e3297597031\", \"model_scope\": {\"answers_correct\": 1, \"forwards\": 2, \"hepta_final_use\": false, \"loopback_only\": true, \"native_elapsed_ms\": 270246, \"native_erasure_shard_recovery\": false, \"payload_bytes\": 280269602, \"production_activation\": false, \"restore_profile\": \"TCA3 complete-copy catalog anchored cold restore\"}, \"native_receipt_sha256\": \"b6f25ae1ee224ab9a619b7d7993635284495f43bc28f05f7c2b1bd8eacd4dc4b\", \"published_head\": \"06233be630f8eff6cea59cd5111e5941135a4aa5\", \"runtime_source\": \"6ea3bf3fe13d66333bba3a8c7b97e14b4319b39f\", \"schema\": \"storage-independent-original-audit.v1\", \"subtrees_byte_identical\": {\".github\": \"719b67597118c4b3cb6f4a654cb26ff2b16e4afe\", \"config\": \"b8cfa6dc4e10e8c1e4d6e865ab7e003bfa08151c\", \"formal\": \"bbcdba40e81f791ea9fc93a0e9e4bc6148152493\", \"scripts\": \"6cd6883bad4e7dd22663e1fc65ecb936bebe32a2\", \"trillionnium\": \"675d8b64bbdb823866d4f0c62b69769a66513841\"}}\n"
+    }
+  },
+  "success_status": {
+    "at_unix_ms": 1794276447055,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1c3359a2a-e62c-3a7",
+    "launch_nonce": "ce069db3b82c5589962f548be6aa35f2",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 2417,
+        "stored": 2417
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  }
+}

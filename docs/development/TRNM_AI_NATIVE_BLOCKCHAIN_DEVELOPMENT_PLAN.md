@@ -11330,3 +11330,33 @@ support this cause; they are not a captured dynamic statement/close trace.
 Freeze the repaired source and exact affected bindings before rerunning the
 complete DA harness, retained/direct-owner libraries and original remaining
 gates. M12's successful node run does not qualify that successor source.
+
+## Priority continuation: reviewed 340e packet (2026-11-09)
+
+The [priority evidence packet](../../evidence/chain-hepta-priority-20261109-340e/README.md)
+records a bounded continuation from fixed Chain M14
+`ac8501a85a770ba34f34e1bed507ca747e5c3f8d` and declared Hepta counterpart
+`71738345326b98d88b738250d2b84ecbcb466eb8`. The proof-profile reader now
+checks all three audit helpers already declared by its selected mapping,
+including their roster, sizes, hashes and before/after source observations.
+The descriptor, unresolved proof obligations and qualification flags remain
+unchanged. Added controls retain both their failures against the prior reader
+and scoped passes against the correction; those materialized inputs do not
+constitute a complete-checkout preflight or native execution.
+
+An independently reviewed conditional time-bin lemma connects the existing
+first-competition witness to residual-state resource certificates, completed-pacer
+lower tails, cumulative entry-debt bounds and summable failure budgets without
+assuming independence. Actual W1 all-strategy costs, initial potential and
+native CP/CQ/CG probabilities remain unproved. The original M14 Host campaign
+remains 0/3 complete passes and 0/9 phase passes; F0 remains 0/6. Separate
+History observations and external storage component results retain their own
+source, binary, deadline and artifact identities.
+
+Next promotion still requires one ordinary-daemon operation covering real
+training, independent evaluation, Selection/NoUpdate, installation, FinalUse,
+next-task use and cold recovery. Original four-second Host service, independent
+30-second campaigns, capacity/churn, independently administered fault domains,
+long-term custody and actual payment remain separate gates. No historical M14
+pass transfers to changed source. Production activation and overall qualification
+remain HOLD; this entry adds no second development plan or acceptance shortcut.

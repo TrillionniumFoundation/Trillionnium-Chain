@@ -1,0 +1,1417 @@
+{
+  "candidate": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+  "lanes": [
+    {
+      "architecture": "x64",
+      "artifact_id": 13712641233,
+      "binary_sha256": "ece8c30e4c60973f1ce6207b748157c3f9e4c8c2e7b7c323bc702d3680d276c0",
+      "commit": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+      "confirmed_packets": null,
+      "corrupt_active_index_reopen_refused": null,
+      "exit_code": 101,
+      "failure_location": {
+        "activation_cursor": null,
+        "advertised_page_complete": null,
+        "completed_import_calls": 2759,
+        "durable_committed_blocks": null,
+        "head_rpc_elapsed_ns": 6676100,
+        "last_history_rpc_elapsed_ns": 124463,
+        "last_import_call_expression_elapsed_ns": null,
+        "last_requested_after": "927713cb9adab18708be704db3ec7131bc702c63cf01d6329c284c1286933186",
+        "last_successful_after": "927713cb9adab18708be704db3ec7131bc702c63cf01d6329c284c1286933186",
+        "pinned_tip": "486060ce4639fbc373f81fbd6e1a8f3dd843d219df2200e47c96a438245d0e66",
+        "production_activation": false,
+        "schema": "native-ancestry-independent-sync-failure-location-v1",
+        "scope": "Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.",
+        "stage": "history-rpc"
+      },
+      "failures": [
+        "ValueError:HISTORY_NATIVE_PROCESS_REQUIRED",
+        "ValueError:required-native-test: expected one passed, zero failed/ignored/measured",
+        "ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED"
+      ],
+      "independent_wan_qualified": false,
+      "legacy_reorg_observation": {
+        "after": {
+          "backend": "legacy",
+          "counter_scope": "raw zero counters mean unentered; saturated or failed measurements are unavailable; compare only the same owner's monotone snapshots without reset",
+          "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+          "enabled": true,
+          "has_consensus_authority": false,
+          "interval_scope": "component intervals are not complete importer time; nested observations are not generally additive",
+          "roles": [
+            {
+              "collector_stage": "verify_state",
+              "complete_cpu_ns": null,
+              "complete_wall_ns": null,
+              "counter_saturated": false,
+              "known_cpu_ns_subtotal": null,
+              "per_outcome_counts": null,
+              "role": "staging_validation",
+              "totals": {
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              }
+            },
+            {
+              "collector_stage": "read_active",
+              "complete_cpu_ns": null,
+              "complete_wall_ns": null,
+              "counter_saturated": false,
+              "known_cpu_ns_subtotal": null,
+              "per_outcome_counts": null,
+              "role": "active_tail_validation",
+              "totals": {
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              }
+            }
+          ],
+          "schema": "pon-native-legacy-reorg-observation-v1",
+          "scope": "explicit owner-local cumulative diagnostics; fresh staging validation and active-tail validation in original reorg transactions, including intent, detach/attach and publication; no State, SQL or validation result is reused",
+          "sql_commit": {
+            "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+            "has_consensus_authority": false,
+            "observation_failed": false,
+            "pre_commit_refusals": "remain in the original caller outcomes; zero entered SQL calls does not count or classify cancellations",
+            "schema": "pon-native-legacy-reorg-sql-commit-call-observation-v1",
+            "scope": "explicitly enabled Legacy owner only; actual Transaction::commit API intervals at reorg_step and reorg_termination; reorg_step includes intent, detach/attach and final publication; admission_persistence and atomic are not enabled by this mode; errors may include existing rollback-on-drop; not isolated SQL statement time or physical fsync",
+            "sites": [
+              {
+                "calls_in_flight": 0,
+                "site": "admission_persistence",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "atomic",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "reorg_step",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "reorg_termination",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              }
+            ]
+          },
+          "stage_observation_failed": false,
+          "stage_outcomes": "calls include ordinary errors, cancellation and unwind; there are no per-role success, failure or cancellation counters"
+        },
+        "before": {
+          "backend": "legacy",
+          "counter_scope": "raw zero counters mean unentered; saturated or failed measurements are unavailable; compare only the same owner's monotone snapshots without reset",
+          "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+          "enabled": true,
+          "has_consensus_authority": false,
+          "interval_scope": "component intervals are not complete importer time; nested observations are not generally additive",
+          "roles": [
+            {
+              "collector_stage": "verify_state",
+              "complete_cpu_ns": null,
+              "complete_wall_ns": null,
+              "counter_saturated": false,
+              "known_cpu_ns_subtotal": null,
+              "per_outcome_counts": null,
+              "role": "staging_validation",
+              "totals": {
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              }
+            },
+            {
+              "collector_stage": "read_active",
+              "complete_cpu_ns": null,
+              "complete_wall_ns": null,
+              "counter_saturated": false,
+              "known_cpu_ns_subtotal": null,
+              "per_outcome_counts": null,
+              "role": "active_tail_validation",
+              "totals": {
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              }
+            }
+          ],
+          "schema": "pon-native-legacy-reorg-observation-v1",
+          "scope": "explicit owner-local cumulative diagnostics; fresh staging validation and active-tail validation in original reorg transactions, including intent, detach/attach and publication; no State, SQL or validation result is reused",
+          "sql_commit": {
+            "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+            "has_consensus_authority": false,
+            "observation_failed": false,
+            "pre_commit_refusals": "remain in the original caller outcomes; zero entered SQL calls does not count or classify cancellations",
+            "schema": "pon-native-legacy-reorg-sql-commit-call-observation-v1",
+            "scope": "explicitly enabled Legacy owner only; actual Transaction::commit API intervals at reorg_step and reorg_termination; reorg_step includes intent, detach/attach and final publication; admission_persistence and atomic are not enabled by this mode; errors may include existing rollback-on-drop; not isolated SQL statement time or physical fsync",
+            "sites": [
+              {
+                "calls_in_flight": 0,
+                "site": "admission_persistence",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "atomic",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "reorg_step",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "reorg_termination",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              }
+            ]
+          },
+          "stage_observation_failed": false,
+          "stage_outcomes": "calls include ordinary errors, cancellation and unwind; there are no per-role success, failure or cancellation counters"
+        },
+        "delta_computed": false,
+        "enabled": true,
+        "production_activation": false,
+        "schema": "native-ancestry-legacy-reorg-observation-pair-v1",
+        "scope": "Two cumulative snapshots of the same confirmer after its first open and after the original replay Result returns, before its first close. Cold reopen and Node drop are outside this pair. No reset or per-call history is retained; native errors and unreturned observations are not replaced."
+      },
+      "member_count": 4140,
+      "member_inventory_sha256": "f72fbaba2847794358f90b580f1b441d4d079b0e8823b1684a24201fb0eef290",
+      "passed": false,
+      "production_activation": false,
+      "resources": {
+        "Exit status": "101",
+        "File system inputs": "0",
+        "File system outputs": "3390360",
+        "Involuntary context switches": "100975",
+        "Major (requiring I/O) page faults": "0",
+        "Maximum resident set size (kbytes)": "16748",
+        "Minor (reclaiming a frame) page faults": "2935338",
+        "System time (seconds)": "494.51",
+        "User time (seconds)": "309.68",
+        "Voluntary context switches": "4745657"
+      },
+      "server_elapsed_ns": 1800001517493,
+      "server_loop_exit": {
+        "configured_lifetime_ns": 1800000000000,
+        "elapsed_ns": 1800000877499,
+        "lifetime_reached_before_shutdown": true,
+        "reason": "lifetime_expired",
+        "stop_requested_before_shutdown": false
+      },
+      "source_kind": "head",
+      "successful_test_summary_elapsed_ns": null,
+      "sync_error": "IO: Connection refused (os error 111)",
+      "sync_exit_elapsed_from_test_start_ns": 3217000408716,
+      "sync_progress": [
+        {
+          "elapsed_ns": 1735906490833,
+          "height": 500,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 2061786637863,
+          "height": 1000,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 2388089143301,
+          "height": 1500,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 2716898900707,
+          "height": 2000,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 3045604269026,
+          "height": 2500,
+          "kind": "independent-native-fullsync-progress"
+        }
+      ],
+      "tree": "3f321d412ab7eb1f5c03f18ba21201e96a3db144",
+      "zip_sha256": "d9d4b4656159fa19d150c3c25df5832baed82adcdbb3c93c34b8a162cbd44177"
+    },
+    {
+      "architecture": "arm64",
+      "artifact_id": 13711273994,
+      "binary_sha256": "e60eb96394a2c5ea8bb134c8bf0aaf570d6921786afc2b5618366b16f94eaf09",
+      "commit": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+      "confirmed_packets": 4105,
+      "corrupt_active_index_reopen_refused": true,
+      "exit_code": 0,
+      "failure_location": null,
+      "failures": [],
+      "independent_wan_qualified": false,
+      "legacy_reorg_observation": {
+        "after": {
+          "backend": "legacy",
+          "counter_scope": "raw zero counters mean unentered; saturated or failed measurements are unavailable; compare only the same owner's monotone snapshots without reset",
+          "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+          "enabled": true,
+          "has_consensus_authority": false,
+          "interval_scope": "component intervals are not complete importer time; nested observations are not generally additive",
+          "roles": [
+            {
+              "collector_stage": "verify_state",
+              "complete_cpu_ns": 1291119720,
+              "complete_wall_ns": 5226137350,
+              "counter_saturated": false,
+              "known_cpu_ns_subtotal": 1291119720,
+              "per_outcome_counts": null,
+              "role": "staging_validation",
+              "totals": {
+                "calls": 4107,
+                "cpu_known_calls": 4107,
+                "cpu_ns": 1291119720,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 5226137350
+              }
+            },
+            {
+              "collector_stage": "read_active",
+              "complete_cpu_ns": 1831362768,
+              "complete_wall_ns": 7915834406,
+              "counter_saturated": false,
+              "known_cpu_ns_subtotal": 1831362768,
+              "per_outcome_counts": null,
+              "role": "active_tail_validation",
+              "totals": {
+                "calls": 4107,
+                "cpu_known_calls": 4107,
+                "cpu_ns": 1831362768,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 7915834406
+              }
+            }
+          ],
+          "schema": "pon-native-legacy-reorg-observation-v1",
+          "scope": "explicit owner-local cumulative diagnostics; fresh staging validation and active-tail validation in original reorg transactions, including intent, detach/attach and publication; no State, SQL or validation result is reused",
+          "sql_commit": {
+            "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+            "has_consensus_authority": false,
+            "observation_failed": false,
+            "pre_commit_refusals": "remain in the original caller outcomes; zero entered SQL calls does not count or classify cancellations",
+            "schema": "pon-native-legacy-reorg-sql-commit-call-observation-v1",
+            "scope": "explicitly enabled Legacy owner only; actual Transaction::commit API intervals at reorg_step and reorg_termination; reorg_step includes intent, detach/attach and final publication; admission_persistence and atomic are not enabled by this mode; errors may include existing rollback-on-drop; not isolated SQL statement time or physical fsync",
+            "sites": [
+              {
+                "calls_in_flight": 0,
+                "site": "admission_persistence",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "atomic",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "reorg_step",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 4107,
+                  "calls_started": 4107,
+                  "calls_succeeded": 4107,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 4107,
+                  "cpu_ns": 335952840,
+                  "cpu_ns_known_sum": 335952840,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": 1958428950,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "reorg_termination",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              }
+            ]
+          },
+          "stage_observation_failed": false,
+          "stage_outcomes": "calls include ordinary errors, cancellation and unwind; there are no per-role success, failure or cancellation counters"
+        },
+        "before": {
+          "backend": "legacy",
+          "counter_scope": "raw zero counters mean unentered; saturated or failed measurements are unavailable; compare only the same owner's monotone snapshots without reset",
+          "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+          "enabled": true,
+          "has_consensus_authority": false,
+          "interval_scope": "component intervals are not complete importer time; nested observations are not generally additive",
+          "roles": [
+            {
+              "collector_stage": "verify_state",
+              "complete_cpu_ns": null,
+              "complete_wall_ns": null,
+              "counter_saturated": false,
+              "known_cpu_ns_subtotal": null,
+              "per_outcome_counts": null,
+              "role": "staging_validation",
+              "totals": {
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              }
+            },
+            {
+              "collector_stage": "read_active",
+              "complete_cpu_ns": null,
+              "complete_wall_ns": null,
+              "counter_saturated": false,
+              "known_cpu_ns_subtotal": null,
+              "per_outcome_counts": null,
+              "role": "active_tail_validation",
+              "totals": {
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              }
+            }
+          ],
+          "schema": "pon-native-legacy-reorg-observation-v1",
+          "scope": "explicit owner-local cumulative diagnostics; fresh staging validation and active-tail validation in original reorg transactions, including intent, detach/attach and publication; no State, SQL or validation result is reused",
+          "sql_commit": {
+            "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+            "has_consensus_authority": false,
+            "observation_failed": false,
+            "pre_commit_refusals": "remain in the original caller outcomes; zero entered SQL calls does not count or classify cancellations",
+            "schema": "pon-native-legacy-reorg-sql-commit-call-observation-v1",
+            "scope": "explicitly enabled Legacy owner only; actual Transaction::commit API intervals at reorg_step and reorg_termination; reorg_step includes intent, detach/attach and final publication; admission_persistence and atomic are not enabled by this mode; errors may include existing rollback-on-drop; not isolated SQL statement time or physical fsync",
+            "sites": [
+              {
+                "calls_in_flight": 0,
+                "site": "admission_persistence",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "atomic",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "reorg_step",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "reorg_termination",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              }
+            ]
+          },
+          "stage_observation_failed": false,
+          "stage_outcomes": "calls include ordinary errors, cancellation and unwind; there are no per-role success, failure or cancellation counters"
+        },
+        "delta_computed": false,
+        "enabled": true,
+        "production_activation": false,
+        "schema": "native-ancestry-legacy-reorg-observation-pair-v1",
+        "scope": "Two cumulative snapshots of the same confirmer after its first open and after the original replay Result returns, before its first close. Cold reopen and Node drop are outside this pair. No reset or per-call history is retained; native errors and unreturned observations are not replaced."
+      },
+      "member_count": 4140,
+      "member_inventory_sha256": "264351ab1be101900ed26a0bb12364cc9dc705bf285eba409346ade545e88227",
+      "passed": true,
+      "production_activation": false,
+      "resources": {
+        "Exit status": "0",
+        "File system inputs": "0",
+        "File system outputs": "4172000",
+        "Involuntary context switches": "52286",
+        "Major (requiring I/O) page faults": "0",
+        "Maximum resident set size (kbytes)": "15336",
+        "Minor (reclaiming a frame) page faults": "1106685",
+        "System time (seconds)": "406.89",
+        "User time (seconds)": "290.86",
+        "Voluntary context switches": "4780198"
+      },
+      "server_elapsed_ns": 1408810965239,
+      "server_loop_exit": {
+        "configured_lifetime_ns": 1800000000000,
+        "elapsed_ns": 1408810170982,
+        "lifetime_reached_before_shutdown": false,
+        "reason": "stop_requested",
+        "stop_requested_before_shutdown": true
+      },
+      "source_kind": "head",
+      "successful_test_summary_elapsed_ns": 2791477705633,
+      "sync_error": null,
+      "sync_exit_elapsed_from_test_start_ns": 2791395706610,
+      "sync_progress": [
+        {
+          "elapsed_ns": 1546887493863,
+          "height": 500,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 1712784570041,
+          "height": 1000,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 1880087585334,
+          "height": 1500,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 2048287432850,
+          "height": 2000,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 2218284716875,
+          "height": 2500,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 2387601613328,
+          "height": 3000,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 2557098205914,
+          "height": 3500,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 2727886381258,
+          "height": 4000,
+          "kind": "independent-native-fullsync-progress"
+        }
+      ],
+      "tree": "3f321d412ab7eb1f5c03f18ba21201e96a3db144",
+      "zip_sha256": "44e57a33ba80890d3532d148d1223efea3c695c0bda2eb7bcf99c1aa8554f270"
+    },
+    {
+      "architecture": "x64",
+      "artifact_id": 13710089902,
+      "binary_sha256": "ece8c30e4c60973f1ce6207b748157c3f9e4c8c2e7b7c323bc702d3680d276c0",
+      "commit": "56151b7e8fc831382edfd88888705803ec101b01",
+      "confirmed_packets": 4105,
+      "corrupt_active_index_reopen_refused": true,
+      "exit_code": 0,
+      "failure_location": null,
+      "failures": [],
+      "independent_wan_qualified": false,
+      "legacy_reorg_observation": {
+        "after": {
+          "backend": "legacy",
+          "counter_scope": "raw zero counters mean unentered; saturated or failed measurements are unavailable; compare only the same owner's monotone snapshots without reset",
+          "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+          "enabled": true,
+          "has_consensus_authority": false,
+          "interval_scope": "component intervals are not complete importer time; nested observations are not generally additive",
+          "roles": [
+            {
+              "collector_stage": "verify_state",
+              "complete_cpu_ns": 1475451428,
+              "complete_wall_ns": 6805911214,
+              "counter_saturated": false,
+              "known_cpu_ns_subtotal": 1475451428,
+              "per_outcome_counts": null,
+              "role": "staging_validation",
+              "totals": {
+                "calls": 4107,
+                "cpu_known_calls": 4107,
+                "cpu_ns": 1475451428,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 6805911214
+              }
+            },
+            {
+              "collector_stage": "read_active",
+              "complete_cpu_ns": 2082927696,
+              "complete_wall_ns": 8602429570,
+              "counter_saturated": false,
+              "known_cpu_ns_subtotal": 2082927696,
+              "per_outcome_counts": null,
+              "role": "active_tail_validation",
+              "totals": {
+                "calls": 4107,
+                "cpu_known_calls": 4107,
+                "cpu_ns": 2082927696,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 8602429570
+              }
+            }
+          ],
+          "schema": "pon-native-legacy-reorg-observation-v1",
+          "scope": "explicit owner-local cumulative diagnostics; fresh staging validation and active-tail validation in original reorg transactions, including intent, detach/attach and publication; no State, SQL or validation result is reused",
+          "sql_commit": {
+            "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+            "has_consensus_authority": false,
+            "observation_failed": false,
+            "pre_commit_refusals": "remain in the original caller outcomes; zero entered SQL calls does not count or classify cancellations",
+            "schema": "pon-native-legacy-reorg-sql-commit-call-observation-v1",
+            "scope": "explicitly enabled Legacy owner only; actual Transaction::commit API intervals at reorg_step and reorg_termination; reorg_step includes intent, detach/attach and final publication; admission_persistence and atomic are not enabled by this mode; errors may include existing rollback-on-drop; not isolated SQL statement time or physical fsync",
+            "sites": [
+              {
+                "calls_in_flight": 0,
+                "site": "admission_persistence",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "atomic",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "reorg_step",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 4107,
+                  "calls_started": 4107,
+                  "calls_succeeded": 4107,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 4107,
+                  "cpu_ns": 387630923,
+                  "cpu_ns_known_sum": 387630923,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": 2926729432,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "reorg_termination",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              }
+            ]
+          },
+          "stage_observation_failed": false,
+          "stage_outcomes": "calls include ordinary errors, cancellation and unwind; there are no per-role success, failure or cancellation counters"
+        },
+        "before": {
+          "backend": "legacy",
+          "counter_scope": "raw zero counters mean unentered; saturated or failed measurements are unavailable; compare only the same owner's monotone snapshots without reset",
+          "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+          "enabled": true,
+          "has_consensus_authority": false,
+          "interval_scope": "component intervals are not complete importer time; nested observations are not generally additive",
+          "roles": [
+            {
+              "collector_stage": "verify_state",
+              "complete_cpu_ns": null,
+              "complete_wall_ns": null,
+              "counter_saturated": false,
+              "known_cpu_ns_subtotal": null,
+              "per_outcome_counts": null,
+              "role": "staging_validation",
+              "totals": {
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              }
+            },
+            {
+              "collector_stage": "read_active",
+              "complete_cpu_ns": null,
+              "complete_wall_ns": null,
+              "counter_saturated": false,
+              "known_cpu_ns_subtotal": null,
+              "per_outcome_counts": null,
+              "role": "active_tail_validation",
+              "totals": {
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              }
+            }
+          ],
+          "schema": "pon-native-legacy-reorg-observation-v1",
+          "scope": "explicit owner-local cumulative diagnostics; fresh staging validation and active-tail validation in original reorg transactions, including intent, detach/attach and publication; no State, SQL or validation result is reused",
+          "sql_commit": {
+            "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+            "has_consensus_authority": false,
+            "observation_failed": false,
+            "pre_commit_refusals": "remain in the original caller outcomes; zero entered SQL calls does not count or classify cancellations",
+            "schema": "pon-native-legacy-reorg-sql-commit-call-observation-v1",
+            "scope": "explicitly enabled Legacy owner only; actual Transaction::commit API intervals at reorg_step and reorg_termination; reorg_step includes intent, detach/attach and final publication; admission_persistence and atomic are not enabled by this mode; errors may include existing rollback-on-drop; not isolated SQL statement time or physical fsync",
+            "sites": [
+              {
+                "calls_in_flight": 0,
+                "site": "admission_persistence",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "atomic",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "reorg_step",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "reorg_termination",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              }
+            ]
+          },
+          "stage_observation_failed": false,
+          "stage_outcomes": "calls include ordinary errors, cancellation and unwind; there are no per-role success, failure or cancellation counters"
+        },
+        "delta_computed": false,
+        "enabled": true,
+        "production_activation": false,
+        "schema": "native-ancestry-legacy-reorg-observation-pair-v1",
+        "scope": "Two cumulative snapshots of the same confirmer after its first open and after the original replay Result returns, before its first close. Cold reopen and Node drop are outside this pair. No reset or per-call history is retained; native errors and unreturned observations are not replaced."
+      },
+      "member_count": 4140,
+      "member_inventory_sha256": "461ff12d54f00a4a5d2a3738d1006786ad62f8967f9843b4c46995fd84f9496a",
+      "passed": true,
+      "production_activation": false,
+      "resources": {
+        "Exit status": "0",
+        "File system inputs": "0",
+        "File system outputs": "4163800",
+        "Involuntary context switches": "68174",
+        "Major (requiring I/O) page faults": "0",
+        "Maximum resident set size (kbytes)": "17000",
+        "Minor (reclaiming a frame) page faults": "2846626",
+        "System time (seconds)": "342.86",
+        "User time (seconds)": "341.63",
+        "Voluntary context switches": "4426413"
+      },
+      "server_elapsed_ns": 1504494593877,
+      "server_loop_exit": {
+        "configured_lifetime_ns": 1800000000000,
+        "elapsed_ns": 1504492928906,
+        "lifetime_reached_before_shutdown": false,
+        "reason": "stop_requested",
+        "stop_requested_before_shutdown": true
+      },
+      "source_kind": "prospective-merge",
+      "successful_test_summary_elapsed_ns": 2738482137729,
+      "sync_error": null,
+      "sync_exit_elapsed_from_test_start_ns": 2738401282829,
+      "sync_progress": [
+        {
+          "elapsed_ns": 1408692840843,
+          "height": 500,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 1586000369192,
+          "height": 1000,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 1764794771327,
+          "height": 1500,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 1944582154567,
+          "height": 2000,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 2125201234580,
+          "height": 2500,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 2307194803888,
+          "height": 3000,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 2488190940386,
+          "height": 3500,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 2669996276409,
+          "height": 4000,
+          "kind": "independent-native-fullsync-progress"
+        }
+      ],
+      "tree": "3f321d412ab7eb1f5c03f18ba21201e96a3db144",
+      "zip_sha256": "67cd4f349b3ae2ed7b316cb33e96c5bfb3ca50773a65e5ff3aeba21ac6cad7b8"
+    },
+    {
+      "architecture": "arm64",
+      "artifact_id": 13712350460,
+      "binary_sha256": "e60eb96394a2c5ea8bb134c8bf0aaf570d6921786afc2b5618366b16f94eaf09",
+      "commit": "56151b7e8fc831382edfd88888705803ec101b01",
+      "confirmed_packets": 4105,
+      "corrupt_active_index_reopen_refused": true,
+      "exit_code": 0,
+      "failure_location": null,
+      "failures": [],
+      "independent_wan_qualified": false,
+      "legacy_reorg_observation": {
+        "after": {
+          "backend": "legacy",
+          "counter_scope": "raw zero counters mean unentered; saturated or failed measurements are unavailable; compare only the same owner's monotone snapshots without reset",
+          "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+          "enabled": true,
+          "has_consensus_authority": false,
+          "interval_scope": "component intervals are not complete importer time; nested observations are not generally additive",
+          "roles": [
+            {
+              "collector_stage": "verify_state",
+              "complete_cpu_ns": 1309947872,
+              "complete_wall_ns": 5461933059,
+              "counter_saturated": false,
+              "known_cpu_ns_subtotal": 1309947872,
+              "per_outcome_counts": null,
+              "role": "staging_validation",
+              "totals": {
+                "calls": 4107,
+                "cpu_known_calls": 4107,
+                "cpu_ns": 1309947872,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 5461933059
+              }
+            },
+            {
+              "collector_stage": "read_active",
+              "complete_cpu_ns": 1852902056,
+              "complete_wall_ns": 7424167007,
+              "counter_saturated": false,
+              "known_cpu_ns_subtotal": 1852902056,
+              "per_outcome_counts": null,
+              "role": "active_tail_validation",
+              "totals": {
+                "calls": 4107,
+                "cpu_known_calls": 4107,
+                "cpu_ns": 1852902056,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 7424167007
+              }
+            }
+          ],
+          "schema": "pon-native-legacy-reorg-observation-v1",
+          "scope": "explicit owner-local cumulative diagnostics; fresh staging validation and active-tail validation in original reorg transactions, including intent, detach/attach and publication; no State, SQL or validation result is reused",
+          "sql_commit": {
+            "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+            "has_consensus_authority": false,
+            "observation_failed": false,
+            "pre_commit_refusals": "remain in the original caller outcomes; zero entered SQL calls does not count or classify cancellations",
+            "schema": "pon-native-legacy-reorg-sql-commit-call-observation-v1",
+            "scope": "explicitly enabled Legacy owner only; actual Transaction::commit API intervals at reorg_step and reorg_termination; reorg_step includes intent, detach/attach and final publication; admission_persistence and atomic are not enabled by this mode; errors may include existing rollback-on-drop; not isolated SQL statement time or physical fsync",
+            "sites": [
+              {
+                "calls_in_flight": 0,
+                "site": "admission_persistence",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "atomic",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "reorg_step",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 4107,
+                  "calls_started": 4107,
+                  "calls_succeeded": 4107,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 4107,
+                  "cpu_ns": 342084360,
+                  "cpu_ns_known_sum": 342084360,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": 2347840521,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "reorg_termination",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              }
+            ]
+          },
+          "stage_observation_failed": false,
+          "stage_outcomes": "calls include ordinary errors, cancellation and unwind; there are no per-role success, failure or cancellation counters"
+        },
+        "before": {
+          "backend": "legacy",
+          "counter_scope": "raw zero counters mean unentered; saturated or failed measurements are unavailable; compare only the same owner's monotone snapshots without reset",
+          "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+          "enabled": true,
+          "has_consensus_authority": false,
+          "interval_scope": "component intervals are not complete importer time; nested observations are not generally additive",
+          "roles": [
+            {
+              "collector_stage": "verify_state",
+              "complete_cpu_ns": null,
+              "complete_wall_ns": null,
+              "counter_saturated": false,
+              "known_cpu_ns_subtotal": null,
+              "per_outcome_counts": null,
+              "role": "staging_validation",
+              "totals": {
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              }
+            },
+            {
+              "collector_stage": "read_active",
+              "complete_cpu_ns": null,
+              "complete_wall_ns": null,
+              "counter_saturated": false,
+              "known_cpu_ns_subtotal": null,
+              "per_outcome_counts": null,
+              "role": "active_tail_validation",
+              "totals": {
+                "calls": 0,
+                "cpu_known_calls": 0,
+                "cpu_ns": 0,
+                "cpu_unknown_calls": 0,
+                "unwinding_calls": 0,
+                "wall_ns": 0
+              }
+            }
+          ],
+          "schema": "pon-native-legacy-reorg-observation-v1",
+          "scope": "explicit owner-local cumulative diagnostics; fresh staging validation and active-tail validation in original reorg transactions, including intent, detach/attach and publication; no State, SQL or validation result is reused",
+          "sql_commit": {
+            "cpu_scope": "calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU",
+            "has_consensus_authority": false,
+            "observation_failed": false,
+            "pre_commit_refusals": "remain in the original caller outcomes; zero entered SQL calls does not count or classify cancellations",
+            "schema": "pon-native-legacy-reorg-sql-commit-call-observation-v1",
+            "scope": "explicitly enabled Legacy owner only; actual Transaction::commit API intervals at reorg_step and reorg_termination; reorg_step includes intent, detach/attach and final publication; admission_persistence and atomic are not enabled by this mode; errors may include existing rollback-on-drop; not isolated SQL statement time or physical fsync",
+            "sites": [
+              {
+                "calls_in_flight": 0,
+                "site": "admission_persistence",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "atomic",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "reorg_step",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              },
+              {
+                "calls_in_flight": 0,
+                "site": "reorg_termination",
+                "totals": {
+                  "calls_abandoned": 0,
+                  "calls_failed": 0,
+                  "calls_returned": 0,
+                  "calls_started": 0,
+                  "calls_succeeded": 0,
+                  "calls_unwinding": 0,
+                  "cpu_known_calls": 0,
+                  "cpu_ns": null,
+                  "cpu_ns_known_sum": 0,
+                  "cpu_unknown_calls": 0,
+                  "wall_ns": null,
+                  "wall_unknown_calls": 0
+                }
+              }
+            ]
+          },
+          "stage_observation_failed": false,
+          "stage_outcomes": "calls include ordinary errors, cancellation and unwind; there are no per-role success, failure or cancellation counters"
+        },
+        "delta_computed": false,
+        "enabled": true,
+        "production_activation": false,
+        "schema": "native-ancestry-legacy-reorg-observation-pair-v1",
+        "scope": "Two cumulative snapshots of the same confirmer after its first open and after the original replay Result returns, before its first close. Cold reopen and Node drop are outside this pair. No reset or per-call history is retained; native errors and unreturned observations are not replaced."
+      },
+      "member_count": 4140,
+      "member_inventory_sha256": "31ddcf44b22a512d5180118d68a6a68e14754ddde2daa69e4bd2aaa13089b273",
+      "passed": true,
+      "production_activation": false,
+      "resources": {
+        "Exit status": "0",
+        "File system inputs": "0",
+        "File system outputs": "4159048",
+        "Involuntary context switches": "54947",
+        "Major (requiring I/O) page faults": "0",
+        "Maximum resident set size (kbytes)": "15192",
+        "Minor (reclaiming a frame) page faults": "2770840",
+        "System time (seconds)": "415.39",
+        "User time (seconds)": "297.96",
+        "Voluntary context switches": "4806186"
+      },
+      "server_elapsed_ns": 1436791656050,
+      "server_loop_exit": {
+        "configured_lifetime_ns": 1800000000000,
+        "elapsed_ns": 1436790911893,
+        "lifetime_reached_before_shutdown": false,
+        "reason": "stop_requested",
+        "stop_requested_before_shutdown": true
+      },
+      "source_kind": "prospective-merge",
+      "successful_test_summary_elapsed_ns": 2853871604928,
+      "sync_error": null,
+      "sync_exit_elapsed_from_test_start_ns": 2853863525342,
+      "sync_progress": [
+        {
+          "elapsed_ns": 1583970321047,
+          "height": 500,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 1753580385410,
+          "height": 1000,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 1923876742721,
+          "height": 1500,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 2095964367429,
+          "height": 2000,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 2269083878888,
+          "height": 2500,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 2441867745424,
+          "height": 3000,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 2615170299561,
+          "height": 3500,
+          "kind": "independent-native-fullsync-progress"
+        },
+        {
+          "elapsed_ns": 2789076495284,
+          "height": 4000,
+          "kind": "independent-native-fullsync-progress"
+        }
+      ],
+      "tree": "3f321d412ab7eb1f5c03f18ba21201e96a3db144",
+      "zip_sha256": "8bee86bba1e6cb4ef538746b4b6da55ae8ef7cd8d2407d14fe5191a38b1fabeb"
+    }
+  ],
+  "run_id": 42693804647,
+  "schema": "m14-history-cross-architecture-readback-v1",
+  "scope": "four finite observations, two architectures and head/merge commit identities with identical tree; no stability or WAN qualification",
+  "tree": "3f321d412ab7eb1f5c03f18ba21201e96a3db144"
+}

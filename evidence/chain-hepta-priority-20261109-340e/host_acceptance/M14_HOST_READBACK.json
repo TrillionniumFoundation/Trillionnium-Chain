@@ -1,0 +1,609 @@
+{
+  "archives": {
+    "campaign": {
+      "actual_files": 1766,
+      "manifest_entries_verified": 1765,
+      "post_inventory_files": [],
+      "zip_sha256": "7996763ffc628f025f2d8e47bf3a6f184805a4b5b24dd13b273ee508903b1f78"
+    },
+    "f0": {
+      "actual_files": 444,
+      "manifest_entries_verified": 443,
+      "post_inventory_files": [],
+      "zip_sha256": "8185871bcc22c9c3d67a99620ccafc9b5457fab24a4924c629ac5d5ddba2e238"
+    }
+  },
+  "campaign_run_id": 42693805359,
+  "campaigns": [
+    {
+      "exit_code": 101,
+      "number": 1,
+      "phases": [
+        {
+          "accepted_full_work": 14,
+          "client_import_wall_ns": [
+            2293720196,
+            1885043031,
+            1796716630,
+            1880261390,
+            1797511219,
+            1885917115,
+            6686671966,
+            1909116782,
+            1880577618,
+            1889472030,
+            1704500422
+          ],
+          "client_stages": {
+            "account_graph": {
+              "calls": 81,
+              "cpu_ns": 4391639277,
+              "wall_ns": 18959047942
+            },
+            "activation": {
+              "calls": 1,
+              "cpu_ns": 1128692190,
+              "wall_ns": 4809346537
+            },
+            "admission": {
+              "calls": 11,
+              "cpu_ns": 4218059264,
+              "wall_ns": 18182456585
+            },
+            "verify_state": {
+              "calls": 111,
+              "cpu_ns": 4497167827,
+              "wall_ns": 19447311785
+            }
+          },
+          "confirmed_inside_30_second_window": 1,
+          "failed_full_work": 0,
+          "history_fetch_wall_ns": [
+            11815139,
+            11530358,
+            11225318,
+            12158439,
+            12130858,
+            11028422,
+            11733297,
+            76642886,
+            10621847,
+            12215715,
+            11450129
+          ],
+          "mode": "baseline",
+          "observed_rounds": 2,
+          "passed": false,
+          "planned_confirmations": 3,
+          "receiver_client_state_equal": false,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "accepted_full_work": 7,
+          "client_import_wall_ns": [
+            4078723762,
+            3592271771,
+            3608233755,
+            3596111336,
+            3504675639,
+            3603974745,
+            4096973659
+          ],
+          "client_stages": {
+            "account_graph": {
+              "calls": 37,
+              "cpu_ns": 2467543055,
+              "wall_ns": 18124665638
+            },
+            "activation": {
+              "calls": 1,
+              "cpu_ns": 89593253,
+              "wall_ns": 693832105
+            },
+            "admission": {
+              "calls": 7,
+              "cpu_ns": 2976217600,
+              "wall_ns": 22031527347
+            },
+            "verify_state": {
+              "calls": 57,
+              "cpu_ns": 2529645647,
+              "wall_ns": 18710831324
+            }
+          },
+          "confirmed_inside_30_second_window": 0,
+          "failed_full_work": 3026,
+          "history_fetch_wall_ns": [
+            13788181,
+            14648752,
+            96662033,
+            101444940,
+            92822718,
+            101703016,
+            88534644
+          ],
+          "mode": "from-zero",
+          "observed_rounds": 1,
+          "passed": false,
+          "planned_confirmations": 3,
+          "receiver_client_state_equal": false,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "accepted_full_work": 7,
+          "client_import_wall_ns": [
+            4100934435,
+            3302408316,
+            3789057550,
+            3802696148,
+            3899506881,
+            3707382639,
+            3589303580
+          ],
+          "client_stages": {
+            "account_graph": {
+              "calls": 35,
+              "cpu_ns": 2420775427,
+              "wall_ns": 18862557161
+            },
+            "activation": {
+              "calls": 0,
+              "cpu_ns": 0,
+              "wall_ns": 0
+            },
+            "admission": {
+              "calls": 7,
+              "cpu_ns": 3004634020,
+              "wall_ns": 22910275782
+            },
+            "verify_state": {
+              "calls": 55,
+              "cpu_ns": 2477150855,
+              "wall_ns": 19175512049
+            }
+          },
+          "confirmed_inside_30_second_window": 0,
+          "failed_full_work": 2950,
+          "history_fetch_wall_ns": [
+            87872636,
+            97547159,
+            11757228,
+            94020468,
+            94168334,
+            15182121,
+            87338421
+          ],
+          "mode": "late-product",
+          "observed_rounds": 1,
+          "passed": false,
+          "planned_confirmations": 3,
+          "receiver_client_state_equal": false,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ]
+    },
+    {
+      "exit_code": 101,
+      "number": 2,
+      "phases": [
+        {
+          "accepted_full_work": 14,
+          "client_import_wall_ns": [
+            2285223621,
+            1794094179,
+            1877717032,
+            1802248854,
+            1792433770,
+            1883434357,
+            6480487849,
+            1804524863,
+            1882705803,
+            1875151749,
+            1707410277,
+            485183551
+          ],
+          "client_stages": {
+            "account_graph": {
+              "calls": 84,
+              "cpu_ns": 4348791903,
+              "wall_ns": 18689562445
+            },
+            "activation": {
+              "calls": 1,
+              "cpu_ns": 1081830695,
+              "wall_ns": 4686683157
+            },
+            "admission": {
+              "calls": 12,
+              "cpu_ns": 4231375910,
+              "wall_ns": 18046746676
+            },
+            "verify_state": {
+              "calls": 117,
+              "cpu_ns": 4460474213,
+              "wall_ns": 19032019457
+            }
+          },
+          "confirmed_inside_30_second_window": 1,
+          "failed_full_work": 0,
+          "history_fetch_wall_ns": [
+            11865043,
+            10911397,
+            10542789,
+            11699917,
+            11376979,
+            11613922,
+            11216717,
+            11852940,
+            11451903,
+            12078870,
+            11992355,
+            11425983
+          ],
+          "mode": "baseline",
+          "observed_rounds": 2,
+          "passed": false,
+          "planned_confirmations": 3,
+          "receiver_client_state_equal": false,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "accepted_full_work": 7,
+          "client_import_wall_ns": [
+            3800647181,
+            3399082544,
+            3390581697,
+            3407769010,
+            3393600159,
+            3510782637,
+            5202076809
+          ],
+          "client_stages": {
+            "account_graph": {
+              "calls": 42,
+              "cpu_ns": 2568126020,
+              "wall_ns": 18426630729
+            },
+            "activation": {
+              "calls": 1,
+              "cpu_ns": 272659511,
+              "wall_ns": 1989992047
+            },
+            "admission": {
+              "calls": 7,
+              "cpu_ns": 2900415941,
+              "wall_ns": 21024469060
+            },
+            "verify_state": {
+              "calls": 63,
+              "cpu_ns": 2634463693,
+              "wall_ns": 19270296808
+            }
+          },
+          "confirmed_inside_30_second_window": 0,
+          "failed_full_work": 3033,
+          "history_fetch_wall_ns": [
+            89590654,
+            99199991,
+            12636183,
+            96215545,
+            98554428,
+            93812547,
+            90252963
+          ],
+          "mode": "from-zero",
+          "observed_rounds": 1,
+          "passed": false,
+          "planned_confirmations": 3,
+          "receiver_client_state_equal": false,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "accepted_full_work": 7,
+          "client_import_wall_ns": [
+            3989432192,
+            3591578411,
+            3509073984,
+            3594017194,
+            3600285768,
+            3497078871,
+            4397621872
+          ],
+          "client_stages": {
+            "account_graph": {
+              "calls": 37,
+              "cpu_ns": 2432640978,
+              "wall_ns": 18412454707
+            },
+            "activation": {
+              "calls": 1,
+              "cpu_ns": 86313698,
+              "wall_ns": 606252189
+            },
+            "admission": {
+              "calls": 7,
+              "cpu_ns": 2929127911,
+              "wall_ns": 22302543158
+            },
+            "verify_state": {
+              "calls": 57,
+              "cpu_ns": 2492479338,
+              "wall_ns": 19252666744
+            }
+          },
+          "confirmed_inside_30_second_window": 0,
+          "failed_full_work": 3097,
+          "history_fetch_wall_ns": [
+            14013884,
+            104645171,
+            91674155,
+            96395611,
+            12971628,
+            100211412,
+            98366540
+          ],
+          "mode": "late-product",
+          "observed_rounds": 1,
+          "passed": false,
+          "planned_confirmations": 3,
+          "receiver_client_state_equal": false,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ]
+    },
+    {
+      "exit_code": 101,
+      "number": 3,
+      "phases": [
+        {
+          "accepted_full_work": 14,
+          "client_import_wall_ns": [
+            2195002849,
+            1887062320,
+            1869497029,
+            1803783012,
+            1879719043,
+            1898575304,
+            6388125359,
+            1897030578,
+            1798632246,
+            1875536356,
+            1792245594,
+            279847125
+          ],
+          "client_stages": {
+            "account_graph": {
+              "calls": 84,
+              "cpu_ns": 4319758305,
+              "wall_ns": 18589749872
+            },
+            "activation": {
+              "calls": 1,
+              "cpu_ns": 1080247461,
+              "wall_ns": 4606151486
+            },
+            "admission": {
+              "calls": 12,
+              "cpu_ns": 4206933573,
+              "wall_ns": 18033483425
+            },
+            "verify_state": {
+              "calls": 117,
+              "cpu_ns": 4429215377,
+              "wall_ns": 18928369281
+            }
+          },
+          "confirmed_inside_30_second_window": 1,
+          "failed_full_work": 0,
+          "history_fetch_wall_ns": [
+            11905879,
+            11255997,
+            11778967,
+            11313834,
+            12090848,
+            11798696,
+            10720167,
+            11849764,
+            10857355,
+            10939518,
+            11861511,
+            10458111
+          ],
+          "mode": "baseline",
+          "observed_rounds": 2,
+          "passed": false,
+          "planned_confirmations": 3,
+          "receiver_client_state_equal": false,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "accepted_full_work": 7,
+          "client_import_wall_ns": [
+            3800705773,
+            3500910517,
+            3412875329,
+            3598371723,
+            3506680265,
+            3605086880,
+            4607331462
+          ],
+          "client_stages": {
+            "account_graph": {
+              "calls": 39,
+              "cpu_ns": 2488095274,
+              "wall_ns": 18327589957
+            },
+            "activation": {
+              "calls": 1,
+              "cpu_ns": 148217984,
+              "wall_ns": 1098668990
+            },
+            "admission": {
+              "calls": 7,
+              "cpu_ns": 2948565431,
+              "wall_ns": 21933194810
+            },
+            "verify_state": {
+              "calls": 60,
+              "cpu_ns": 2551507278,
+              "wall_ns": 18825437726
+            }
+          },
+          "confirmed_inside_30_second_window": 0,
+          "failed_full_work": 3089,
+          "history_fetch_wall_ns": [
+            90740232,
+            96099825,
+            93733257,
+            98203596,
+            94537071,
+            97487964,
+            89993139
+          ],
+          "mode": "from-zero",
+          "observed_rounds": 1,
+          "passed": false,
+          "planned_confirmations": 3,
+          "receiver_client_state_equal": false,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        },
+        {
+          "accepted_full_work": 7,
+          "client_import_wall_ns": [
+            4196466368,
+            3605478897,
+            3602662688,
+            3791973124,
+            3696069745,
+            3804402230,
+            3308833997
+          ],
+          "client_stages": {
+            "account_graph": {
+              "calls": 34,
+              "cpu_ns": 2406745939,
+              "wall_ns": 18505196794
+            },
+            "activation": {
+              "calls": 0,
+              "cpu_ns": 0,
+              "wall_ns": 0
+            },
+            "admission": {
+              "calls": 7,
+              "cpu_ns": 2974033002,
+              "wall_ns": 22805662168
+            },
+            "verify_state": {
+              "calls": 51,
+              "cpu_ns": 2461417044,
+              "wall_ns": 18902950443
+            }
+          },
+          "confirmed_inside_30_second_window": 0,
+          "failed_full_work": 2983,
+          "history_fetch_wall_ns": [
+            90615582,
+            93833626,
+            94067715,
+            14097746,
+            102736292,
+            99050594,
+            88084329
+          ],
+          "mode": "late-product",
+          "observed_rounds": 1,
+          "passed": false,
+          "planned_confirmations": 3,
+          "receiver_client_state_equal": false,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ]
+        }
+      ]
+    }
+  ],
+  "f0": {
+    "all_services_known_empty": true,
+    "controller_resources_complete": true,
+    "four_second_slo_successes": 0,
+    "native_failure": "NATIVE_F0_FAILED",
+    "planned_confirmations": 6,
+    "report_validation_failure": "BASELINE_MUST_PASS",
+    "rounds": [
+      {
+        "confirmed_inside_original_window": true,
+        "elapsed_from_scheduled_ns": 27216107238,
+        "four_second_slo_met": false,
+        "phase": "baseline",
+        "round": 0
+      },
+      {
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": 25001987212,
+        "four_second_slo_met": false,
+        "phase": "baseline",
+        "round": 1
+      },
+      {
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "four_second_slo_met": false,
+        "phase": "baseline",
+        "round": 2
+      },
+      {
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": 29051532558,
+        "four_second_slo_met": false,
+        "phase": "valid-work-root",
+        "round": 0
+      },
+      {
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "four_second_slo_met": false,
+        "phase": "valid-work-root",
+        "round": 1
+      },
+      {
+        "confirmed_inside_original_window": false,
+        "elapsed_from_scheduled_ns": null,
+        "four_second_slo_met": false,
+        "phase": "valid-work-root",
+        "round": 2
+      }
+    ],
+    "services_observed_empty": [
+      true,
+      true,
+      true
+    ]
+  },
+  "f0_run_id": 42693805049,
+  "head": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+  "history_comparison_sha256": "fe97ad9fe2ab619f521239dbf45ceeee5f2f639c97f778a5c27ab0372975d8cc",
+  "independent_wan_qualified": false,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "schema": "m14-original-host-readback-v1",
+  "scope": "offline audit of already executed hosted observations; no new native run",
+  "stage_intervals_are_nested_not_additive": true,
+  "tree": "3f321d412ab7eb1f5c03f18ba21201e96a3db144"
+}

@@ -30,6 +30,11 @@ PROFILE = 'trnm-w1-risc0-3.0.6-poseidon2-join-v2'
 NATIVE_PROFILE = 'pon-nakamoto-v1-pq-research-native-pnw1'
 MAPPING = 'config/pon/w1-qrom-implementation-current-v2.json'
 MAX_BYTES = 2 * 1024 * 1024
+AUDIT_HELPERS = frozenset({
+    'scripts/w1_control_tree_audit.py',
+    'scripts/w1_profile_source_map.py',
+    'scripts/w1_fri_transcript_audit.py',
+})
 OBLIGATIONS = frozenset({
     'latest_theorem_version_equivalence', 'complete_relation_and_compiler',
     'all_27_recursion_program_semantics',
@@ -166,6 +171,15 @@ def validate_declarations(binding, mapping, system):
     obligations = mapping.get('proof_obligations')
     require(type(obligations) is list and len(obligations) == len(OBLIGATIONS)
             and set(obligations) == OBLIGATIONS, 'selected proof obligations differ')
+    helpers = mapping.get('audit_helpers')
+    require(type(helpers) is list and len(helpers) == len(AUDIT_HELPERS),
+            'selected audit helper roster differs')
+    helper_paths = []
+    for row in helpers:
+        fields(row, 'path bytes sha256', 'audit helper source pin')
+        helper_paths.append(lifetime.relative_path(row['path'], 'audit helper source pin'))
+    require(len(set(helper_paths)) == len(helper_paths)
+            and set(helper_paths) == AUDIT_HELPERS, 'selected audit helper roster differs')
     flags = mapping.get('qualification')
     fields(flags, 'post_quantum_soundness_qualified complete_w1_soundness_qualified '
            'quantum_work_qualified pq_signature_qualification_inferred production_qualified '
@@ -235,6 +249,11 @@ def inspect(root, manifest=DEFAULT_MANIFEST, expected_profile_descriptor_sha256=
         for row in rows:
             require(row['path'] not in inputs, 'duplicate selected input path')
             inputs[row['path']] = pinned(root, row, observations)
+    # The descriptor already commits to these pins through the mapping hash.
+    # Check their actual bytes as declared inputs, without executing the helpers
+    # or changing the selected proof/guest identity into an audit attestation.
+    for row in mapping['audit_helpers']:
+        pinned(root, row, observations)
     upstream_raw = pinned(root, mapping['upstream_snapshot'], observations)
     entry = 'formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs'
     image_path = 'formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs'

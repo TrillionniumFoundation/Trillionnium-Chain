@@ -1,0 +1,52 @@
+{
+  "source_base": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+  "scope": "Exact materialized profile-inspector input subset; not a full repository checkout or repository preflight pass.",
+  "commands": [
+    {
+      "name": "new-controls-on-baseline",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-c",
+        "import runpy,sys;sys.path.insert(0,'baseline/scripts/ci');sys.argv=['test_pq_proof_profile_binding.py','-v','ProofProfileBindingTests.test_declared_audit_helpers_are_observed_without_changing_profile_identity','ProofProfileBindingTests.test_missing_declared_audit_helper_has_no_fallback','ProofProfileBindingTests.test_changed_declared_audit_helper_is_refused','ProofProfileBindingTests.test_incomplete_or_duplicate_audit_helper_roster_is_refused'];runpy.run_path('patched/scripts/ci/test_pq_proof_profile_binding.py',run_name='__main__')"
+      ],
+      "exit_code": 1,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "cd46ed8c04a6158a1dc537ab1f86cab59af46371bd4bf01cfddfc5e2df8e6298"
+    },
+    {
+      "name": "patched-full-suite",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "patched/scripts/ci/test_pq_proof_profile_binding.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "b4a6c12d1db915fe2e52aa0d665efe5c487464ea874469676b7a4789c9bcf682"
+    },
+    {
+      "name": "patched-inspector",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "patched/scripts/ci/pq_proof_profile_binding.py",
+        "--expected-profile-descriptor-sha256",
+        "5cb35b39dda38d096620e70909bea0cc380464ac2166eddfed83469537deb031"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "8b9b27f86ebe666d705658d87d65f51bdea0bf77213c559822f24df69e900257",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "materialized_subset_preflight_observation": {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ],
+    "cwd": "/workspace/scratch/340e122efd14/pq_profile/baseline",
+    "exit_code": 128,
+    "provenance": "Copied verbatim from exec_command tool output; input subset has no Git repository. This is not a full repository preflight result.",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "c4dfc721cc7f91d3ec67d99446d3c46f79c764fc96d6f9ba52e69cc669d686c1"
+  }
+}

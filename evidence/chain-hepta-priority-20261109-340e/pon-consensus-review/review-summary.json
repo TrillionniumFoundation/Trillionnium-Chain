@@ -1,0 +1,20 @@
+{
+  "reviewed_integration_commit": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+  "public_main_commit": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "independent_cost_frontier_commit": "99c55cbaa5eac18420d401172a0a0a1c1aa28715",
+  "independent_joint_qualification_commit": "0ff81958a611d2c0be54d2ca839b955ae7cb2772",
+  "proposal": "Conditional sum-over-time-bins reduction; no new runtime or checker",
+  "qualification": "HOLD_NO_GO",
+  "actual_w1_cost_lower_bound_proved": false,
+  "native_common_prefix_qualified": false,
+  "production_activation": false,
+  "baseline_sha256": "aeaf1d009f123d5525d502cb079b4efd806569b3639501ab0da5f240b2d3e6f9",
+  "proposed_sha256": "60e5e1d53defbe30b25bfcb9a8b705520ba685490471b4ea12e8a75f6d6293a5",
+  "patch_sha256": "ae619169aa9a55b63f4de8f2d338861e7f633a90983699ca4ab9a2ab3a4b0dcd",
+  "actual_cost_points": 16,
+  "actual_cost_points_with_bounds": 0,
+  "initial_potential_bound": null,
+  "repo_preflight": "not run: proposal prepared outside repository; root must run before applying",
+  "independent_mathematical_review": "lemma_review verified inclusion, probability bound, countable horizon and maturity margin; suggested conditional Ville applied",
+  "baseline_git_blob": "42ec28c4bf6fb6f3723d6844360e4a550848e495"
+}

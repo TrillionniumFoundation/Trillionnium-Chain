@@ -1,0 +1,19 @@
+{
+  "baseline": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+  "replacements": {
+    "scripts/ci/pq_proof_profile_binding.py": {
+      "old": "e810c13b4abcf889c493f8d7530dd3518abb8481",
+      "new": "0599a634538e7d17b58e990f7e90e7b778777055",
+      "sha256": "a45cdeebc16f2da2d3be3380aec954f80f83ee530623d02f57478a3b4ef37c38"
+    },
+    "scripts/ci/test_pq_proof_profile_binding.py": {
+      "old": "57f769a061d880a5da848a0f4ec1fe8dd176948a",
+      "new": "d55ac0c6c889c8758451540f9530e980eedcd257",
+      "sha256": "4b17a60211cbc0a087a34bcecd751a666bb8fc719c9e610d32b6f99fe16562c0"
+    }
+  },
+  "pinned_blob_count": 1074,
+  "required_path_count": 982,
+  "required_paths_unchanged": true,
+  "other_fields_unchanged": true
+}

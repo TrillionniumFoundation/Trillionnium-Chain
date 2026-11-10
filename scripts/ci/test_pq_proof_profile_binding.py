@@ -24,7 +24,7 @@ class ProofProfileBindingTests(unittest.TestCase):
         cls.system = json.loads((ROOT / binding.lifetime.DEFAULT_MANIFEST).read_bytes())
         cls.paths = {binding.DEFAULT_MANIFEST, binding.MAPPING,
                      binding.lifetime.DEFAULT_MANIFEST}
-        cls.paths.update(row['path'] for group in ('project_files', 'saved_v2_files')
+        cls.paths.update(row['path'] for group in ('project_files', 'saved_v2_files', 'audit_helpers')
                          for row in cls.mapping[group])
         cls.paths.add(cls.mapping['upstream_snapshot']['path'])
         cls.paths.update(row['source']['path'] for row in cls.contract['excluded_profile_sources'])
@@ -84,6 +84,43 @@ class ProofProfileBindingTests(unittest.TestCase):
         self.assertIs(register['source_revision_bound'], False)
         self.assertEqual(result['unregistered_selected_primitive_identities'],
                          ['risc0-3.0.6/Poseidon2/BabyBear'])
+
+    def test_declared_audit_helpers_are_observed_without_changing_profile_identity(self):
+        result = binding.inspect(ROOT, expected_profile_descriptor_sha256=
+                                 '5cb35b39dda38d096620e70909bea0cc380464ac2166eddfed83469537deb031')
+        for row in self.mapping['audit_helpers']:
+            self.assertEqual(result['source_files_sha256'][row['path']], row['sha256'])
+        self.assertEqual(result['selected_input_observation_count'], len(self.paths))
+        self.assertIs(result['native_proof_verification_performed'], False)
+        self.assertIsNone(result['actual_lifetime_failure_bound'])
+
+    def test_missing_declared_audit_helper_has_no_fallback(self):
+        for row in self.mapping['audit_helpers']:
+            with self.subTest(path=row['path']):
+                root = self.checkout()
+                (root / row['path']).unlink()
+                with self.assertRaisesRegex(binding.SourceReadError, 'missing source'):
+                    binding.inspect(root)
+
+    def test_changed_declared_audit_helper_is_refused(self):
+        for row in self.mapping['audit_helpers']:
+            with self.subTest(path=row['path']):
+                root = self.checkout()
+                path = root / row['path']
+                raw = path.read_bytes()
+                path.write_bytes(bytes([raw[0] ^ 1]) + raw[1:])
+                with self.assertRaisesRegex(binding.ProfileError, 'source pin differs'):
+                    binding.inspect(root)
+
+    def test_incomplete_or_duplicate_audit_helper_roster_is_refused(self):
+        omitted = copy.deepcopy(self.mapping)
+        omitted['audit_helpers'].pop()
+        duplicated = copy.deepcopy(self.mapping)
+        duplicated['audit_helpers'][-1] = duplicated['audit_helpers'][0]
+        for changed in (omitted, duplicated):
+            with self.subTest(paths=[row['path'] for row in changed['audit_helpers']]), \
+                    self.assertRaisesRegex(binding.ProfileError, 'audit helper roster differs'):
+                self.declarations(mapping=changed)
 
     def test_p3_goldilocks_and_tagged_sha3_remain_distinct_exclusions(self):
         result = binding.inspect(ROOT)

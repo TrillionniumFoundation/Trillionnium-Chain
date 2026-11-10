@@ -1,0 +1,98 @@
+test_declared_audit_helpers_are_observed_without_changing_profile_identity (__main__.ProofProfileBindingTests.test_declared_audit_helpers_are_observed_without_changing_profile_identity) ... ERROR
+test_missing_declared_audit_helper_has_no_fallback (__main__.ProofProfileBindingTests.test_missing_declared_audit_helper_has_no_fallback) ... 
+  test_missing_declared_audit_helper_has_no_fallback (__main__.ProofProfileBindingTests.test_missing_declared_audit_helper_has_no_fallback) (path='scripts/w1_control_tree_audit.py') ... FAIL
+  test_missing_declared_audit_helper_has_no_fallback (__main__.ProofProfileBindingTests.test_missing_declared_audit_helper_has_no_fallback) (path='scripts/w1_profile_source_map.py') ... FAIL
+  test_missing_declared_audit_helper_has_no_fallback (__main__.ProofProfileBindingTests.test_missing_declared_audit_helper_has_no_fallback) (path='scripts/w1_fri_transcript_audit.py') ... FAIL
+test_changed_declared_audit_helper_is_refused (__main__.ProofProfileBindingTests.test_changed_declared_audit_helper_is_refused) ... 
+  test_changed_declared_audit_helper_is_refused (__main__.ProofProfileBindingTests.test_changed_declared_audit_helper_is_refused) (path='scripts/w1_control_tree_audit.py') ... FAIL
+  test_changed_declared_audit_helper_is_refused (__main__.ProofProfileBindingTests.test_changed_declared_audit_helper_is_refused) (path='scripts/w1_profile_source_map.py') ... FAIL
+  test_changed_declared_audit_helper_is_refused (__main__.ProofProfileBindingTests.test_changed_declared_audit_helper_is_refused) (path='scripts/w1_fri_transcript_audit.py') ... FAIL
+test_incomplete_or_duplicate_audit_helper_roster_is_refused (__main__.ProofProfileBindingTests.test_incomplete_or_duplicate_audit_helper_roster_is_refused) ... 
+  test_incomplete_or_duplicate_audit_helper_roster_is_refused (__main__.ProofProfileBindingTests.test_incomplete_or_duplicate_audit_helper_roster_is_refused) (paths=['scripts/w1_control_tree_audit.py', 'scripts/w1_profile_source_map.py']) ... FAIL
+  test_incomplete_or_duplicate_audit_helper_roster_is_refused (__main__.ProofProfileBindingTests.test_incomplete_or_duplicate_audit_helper_roster_is_refused) (paths=['scripts/w1_control_tree_audit.py', 'scripts/w1_profile_source_map.py', 'scripts/w1_control_tree_audit.py']) ... FAIL
+
+======================================================================
+ERROR: test_declared_audit_helpers_are_observed_without_changing_profile_identity (__main__.ProofProfileBindingTests.test_declared_audit_helpers_are_observed_without_changing_profile_identity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "patched/scripts/ci/test_pq_proof_profile_binding.py", line 92, in test_declared_audit_helpers_are_observed_without_changing_profile_identity
+    self.assertEqual(result['source_files_sha256'][row['path']], row['sha256'])
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'scripts/w1_control_tree_audit.py'
+
+======================================================================
+FAIL: test_missing_declared_audit_helper_has_no_fallback (__main__.ProofProfileBindingTests.test_missing_declared_audit_helper_has_no_fallback) (path='scripts/w1_control_tree_audit.py')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "patched/scripts/ci/test_pq_proof_profile_binding.py", line 102, in test_missing_declared_audit_helper_has_no_fallback
+    with self.assertRaisesRegex(binding.SourceReadError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: SourceReadError not raised
+
+======================================================================
+FAIL: test_missing_declared_audit_helper_has_no_fallback (__main__.ProofProfileBindingTests.test_missing_declared_audit_helper_has_no_fallback) (path='scripts/w1_profile_source_map.py')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "patched/scripts/ci/test_pq_proof_profile_binding.py", line 102, in test_missing_declared_audit_helper_has_no_fallback
+    with self.assertRaisesRegex(binding.SourceReadError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: SourceReadError not raised
+
+======================================================================
+FAIL: test_missing_declared_audit_helper_has_no_fallback (__main__.ProofProfileBindingTests.test_missing_declared_audit_helper_has_no_fallback) (path='scripts/w1_fri_transcript_audit.py')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "patched/scripts/ci/test_pq_proof_profile_binding.py", line 102, in test_missing_declared_audit_helper_has_no_fallback
+    with self.assertRaisesRegex(binding.SourceReadError, 'missing source'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: SourceReadError not raised
+
+======================================================================
+FAIL: test_changed_declared_audit_helper_is_refused (__main__.ProofProfileBindingTests.test_changed_declared_audit_helper_is_refused) (path='scripts/w1_control_tree_audit.py')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "patched/scripts/ci/test_pq_proof_profile_binding.py", line 112, in test_changed_declared_audit_helper_is_refused
+    with self.assertRaisesRegex(binding.ProfileError, 'source pin differs'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ProfileError not raised
+
+======================================================================
+FAIL: test_changed_declared_audit_helper_is_refused (__main__.ProofProfileBindingTests.test_changed_declared_audit_helper_is_refused) (path='scripts/w1_profile_source_map.py')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "patched/scripts/ci/test_pq_proof_profile_binding.py", line 112, in test_changed_declared_audit_helper_is_refused
+    with self.assertRaisesRegex(binding.ProfileError, 'source pin differs'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ProfileError not raised
+
+======================================================================
+FAIL: test_changed_declared_audit_helper_is_refused (__main__.ProofProfileBindingTests.test_changed_declared_audit_helper_is_refused) (path='scripts/w1_fri_transcript_audit.py')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "patched/scripts/ci/test_pq_proof_profile_binding.py", line 112, in test_changed_declared_audit_helper_is_refused
+    with self.assertRaisesRegex(binding.ProfileError, 'source pin differs'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ProfileError not raised
+
+======================================================================
+FAIL: test_incomplete_or_duplicate_audit_helper_roster_is_refused (__main__.ProofProfileBindingTests.test_incomplete_or_duplicate_audit_helper_roster_is_refused) (paths=['scripts/w1_control_tree_audit.py', 'scripts/w1_profile_source_map.py'])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "patched/scripts/ci/test_pq_proof_profile_binding.py", line 122, in test_incomplete_or_duplicate_audit_helper_roster_is_refused
+    self.assertRaisesRegex(binding.ProfileError, 'audit helper roster differs'):
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ProfileError not raised
+
+======================================================================
+FAIL: test_incomplete_or_duplicate_audit_helper_roster_is_refused (__main__.ProofProfileBindingTests.test_incomplete_or_duplicate_audit_helper_roster_is_refused) (paths=['scripts/w1_control_tree_audit.py', 'scripts/w1_profile_source_map.py', 'scripts/w1_control_tree_audit.py'])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "patched/scripts/ci/test_pq_proof_profile_binding.py", line 122, in test_incomplete_or_duplicate_audit_helper_roster_is_refused
+    self.assertRaisesRegex(binding.ProfileError, 'audit helper roster differs'):
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ProfileError not raised
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.118s
+
+FAILED (failures=8, errors=1)

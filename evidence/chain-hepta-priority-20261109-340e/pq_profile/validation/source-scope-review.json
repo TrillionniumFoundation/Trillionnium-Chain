@@ -1,0 +1,39 @@
+{
+  "source_base": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+  "patch_paths": [
+    "scripts/ci/pq_proof_profile_binding.py",
+    "scripts/ci/test_pq_proof_profile_binding.py",
+    "config/pon/pq-cross-branch-corpus-v1.json"
+  ],
+  "unchanged_scopes": [
+    "config/portability-inventory-v1.json",
+    "config/pon/pq128-source-lock-v1.json",
+    "config/pon/pq-authority-effects-v1.json",
+    "config/pon/pq-root-dependency-register-v3.json",
+    "config/pon/w1-qrom-implementation-current-v2.json",
+    "config/pon/pq-proof-profile-binding-v1.json"
+  ],
+  "unchanged_named_rosters": [
+    "config/pon/w1-qrom-required-tests-v1.json",
+    "config/pon/w1-qrom-closure-required-tests-v1.json",
+    "evidence/pon-w1-qrom-proof-chain-20261108/required-tests.json"
+  ],
+  "reason_named_rosters_unchanged": "The modified profile suite is separate and absent from all three named rosters. The closure candidate workflow discovers it with unittest and has no fixed 26-method count.",
+  "unchanged_profile_descriptor_sha256": "5cb35b39dda38d096620e70909bea0cc380464ac2166eddfed83469537deb031",
+  "profile_methods_before": 26,
+  "profile_methods_after": 30,
+  "current_report_changes": {
+    "selected_input_observation_count": [
+      29,
+      32
+    ],
+    "source_files_sha256_added": [
+      "scripts/w1_control_tree_audit.py",
+      "scripts/w1_fri_transcript_audit.py",
+      "scripts/w1_profile_source_map.py"
+    ]
+  },
+  "historical_evidence_modified": false,
+  "full_repository_validation_completed": false,
+  "combined_patch_sha256": "5c43a51b5e0bf9aca913702c7d7b626e714cf31473470d8242009db78efc7129"
+}

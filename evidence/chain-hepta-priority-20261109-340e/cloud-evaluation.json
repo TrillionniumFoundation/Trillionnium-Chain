@@ -1,0 +1,159 @@
+{
+  "controller": "HeptaRuntime Mac",
+  "host": "rog",
+  "job_id": "1a1c3308640-e62c-37b",
+  "idempotency_key": "chain-hepta-integration-20261109-compute-eval-340e",
+  "executable": "/home/qian-qi/.local/bin/hepta-compute",
+  "args": [
+    "evaluate",
+    "--accelerator",
+    "T4",
+    "--timeout",
+    "120",
+    "--json"
+  ],
+  "observation": {
+    "ok": true,
+    "result": {
+      "automatic_account_rotation": false,
+      "candidates": [
+        {
+          "account": "qiqian",
+          "account_identity_sha256": "4fcb4f97b7d29803f8581df82e872f7673990776ba71a151fff8a0a6897c6325",
+          "authenticated": true,
+          "blockers": [
+            "NOTEBOOK_LIST_SCOPE"
+          ],
+          "completed_at": "2026-11-10T02:02:00.011064+00:00",
+          "notebook_scope_ready": false,
+          "observed_at": "2026-11-10T02:01:54.896034+00:00",
+          "provider": "kaggle",
+          "ready": false,
+          "resource": {
+            "accelerator": "T4",
+            "eligible": true,
+            "remaining_seconds": 107724.144
+          }
+        },
+        {
+          "account": "sunfo",
+          "account_identity_sha256": "29cbb855e5aff1a8c9bf65afad57fcdce16ba713a5a1ca5dbec58bedf8902686",
+          "authenticated": true,
+          "blockers": [
+            "NOTEBOOK_LIST_SCOPE"
+          ],
+          "completed_at": "2026-11-10T02:02:00.018992+00:00",
+          "notebook_scope_ready": false,
+          "observed_at": "2026-11-10T02:01:54.896268+00:00",
+          "provider": "kaggle",
+          "ready": false,
+          "resource": {
+            "accelerator": "T4",
+            "eligible": true,
+            "remaining_seconds": 108000
+          }
+        },
+        {
+          "account": "tomas",
+          "account_identity_sha256": "4c5172e4338ee225a4a654f1a6b60f49f9390be37e04680826f9017b727a7682",
+          "authenticated": true,
+          "blockers": [
+            "NOTEBOOK_LIST_SCOPE"
+          ],
+          "completed_at": "2026-11-10T02:02:00.016882+00:00",
+          "notebook_scope_ready": false,
+          "observed_at": "2026-11-10T02:01:54.896364+00:00",
+          "provider": "kaggle",
+          "ready": false,
+          "resource": {
+            "accelerator": "T4",
+            "eligible": true,
+            "remaining_seconds": 108000
+          }
+        },
+        {
+          "account": "qiqian",
+          "account_identity_sha256": "ad812df8ce0e1564a43d5ce91cb722553bf080b4934e844cecbb7d5a0adfef01",
+          "active_runtime_count": 0,
+          "allocation_blockers": [
+            {
+              "error_code": "ALLOCATION_NOT_OBSERVED_NO_RESUBMIT",
+              "key": "ndu-portfolio-frozen-20261109-eb02e89-v1",
+              "phase": "allocation_unknown"
+            }
+          ],
+          "authenticated": true,
+          "blockers": [
+            "ALLOCATION_LEDGER_BLOCKED"
+          ],
+          "completed_at": "2026-11-10T02:02:06.407160+00:00",
+          "observed_at": "2026-11-10T02:01:54.896512+00:00",
+          "profile_binding_ready": true,
+          "provider": "colab",
+          "ready": false,
+          "resource": {
+            "accelerator": "T4",
+            "eligibility_evidence": "public_runtime_specs_eligible_true",
+            "eligible": true
+          }
+        },
+        {
+          "account": "sunfo",
+          "account_identity_sha256": "1fd6411625081413fdab90518e3636ba9e9a830c41208aa895d13a3167f42ca9",
+          "active_runtime_count": 0,
+          "allocation_blockers": [
+            {
+              "error_code": "ALLOCATION_NOT_OBSERVED_NO_RESUBMIT",
+              "key": "hc-8fa336a3fdbe42207b0ee4a5c164ff228ee6309b",
+              "phase": "allocation_unknown"
+            }
+          ],
+          "authenticated": true,
+          "blockers": [
+            "ALLOCATION_LEDGER_BLOCKED",
+            "ACCOUNT_RESERVED"
+          ],
+          "completed_at": "2026-11-10T02:02:06.413175+00:00",
+          "observed_at": "2026-11-10T02:01:54.896808+00:00",
+          "profile_binding_ready": true,
+          "provider": "colab",
+          "ready": false,
+          "reservation": {
+            "account": "sunfo",
+            "provider": "colab",
+            "request_id": "colab-v5-one-gpu-smoke-20261109-01",
+            "state": "RECONCILIATION_REQUIRED"
+          },
+          "resource": {
+            "accelerator": "T4",
+            "eligibility_evidence": "public_runtime_specs_eligible_true",
+            "eligible": true
+          }
+        },
+        {
+          "account": "tomas",
+          "account_identity_sha256": "b79925d6457bbc4938c59afd736e8dd44b42955006f4dfa8a974f974f2f45cc0",
+          "active_runtime_count": 0,
+          "allocation_blockers": [],
+          "authenticated": true,
+          "blockers": [],
+          "completed_at": "2026-11-10T02:02:06.382936+00:00",
+          "observed_at": "2026-11-10T02:01:54.897480+00:00",
+          "profile_binding_ready": true,
+          "provider": "colab",
+          "ready": true,
+          "resource": {
+            "accelerator": "T4",
+            "eligibility_evidence": "public_runtime_specs_eligible_true",
+            "eligible": true
+          }
+        }
+      ],
+      "elapsed_seconds": 11.519,
+      "observed_at": "2026-11-10T02:02:06.414816+00:00",
+      "quota_is_allocation_guarantee": false,
+      "schema": "hepta-compute-evaluation-v1"
+    }
+  },
+  "scope": "Resource evaluation only; no allocation, submission, GPU compute or release performed."
+}
