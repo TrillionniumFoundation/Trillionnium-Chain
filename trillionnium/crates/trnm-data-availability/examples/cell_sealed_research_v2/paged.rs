@@ -325,14 +325,18 @@ fn restore_inner(
             }
         }
     }
+    // Cache V4 charges each 32-byte CAS key in addition to its row payload.
+    let staging_keys = slots.checked_mul(64).ok_or("paged staging key overflow")?;
     let staging_logical = input
         .checked_add(staging_metadata)
+        .and_then(|bytes| bytes.checked_add(staging_keys))
         .ok_or("paged staging logical overflow")?;
     check(
         staging_logical <= SNAPSHOT_BOUND,
         "paged staging original storage bound",
     )?;
     report["staging_manifest_bytes"] = json!(staging_metadata);
+    report["staging_key_bytes"] = json!(staging_keys);
     report["staging_logical_bytes"] = json!(staging_logical);
     let staging = CellStoreV1::open(
         &staging_path,

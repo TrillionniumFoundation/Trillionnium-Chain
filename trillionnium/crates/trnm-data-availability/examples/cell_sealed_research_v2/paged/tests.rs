@@ -323,9 +323,10 @@ fn paged_research_restores_two_pages_from_four_reopened_targets() {
     assert_eq!(observed["potential"]["input_bytes"], provider_wire * 6);
     let metadata = observed["staging_manifest_bytes"].as_u64().unwrap();
     assert!(metadata > 0);
+    assert_eq!(observed["staging_key_bytes"], 66 * 6 * 64);
     assert_eq!(
         observed["staging_logical_bytes"],
-        provider_wire * 6 + metadata
+        provider_wire * 6 + metadata + 66 * 6 * 64
     );
     assert!(observed["staging_logical_bytes"].as_u64().unwrap() <= SNAPSHOT_BOUND);
     assert_eq!(observed["page_count"], 2);

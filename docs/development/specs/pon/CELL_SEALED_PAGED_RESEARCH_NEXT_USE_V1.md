@@ -73,3 +73,5 @@ settlement, ordinary FinalUse and production remain **HOLD**.
 Provider storage capacity sums one 4096-byte-aligned extent per shard obligation. Wire input and reconstruction reservations remain byte-exact and are reported separately; storage alignment does not enlarge the original transfer or execution budgets.
 
 Staging cache logical occupancy includes the exact encoded shard manifests as well as wire payloads. Both are summed from the committed plan within the original clock, checked against the unchanged 512 MiB bound, and reported separately from transport input usage.
+
+The staging logical total also reserves both 32-byte CAS row keys per slot under Cache V4 accounting. The payload transfer reservations do not include or refund this separately recorded metadata storage.
