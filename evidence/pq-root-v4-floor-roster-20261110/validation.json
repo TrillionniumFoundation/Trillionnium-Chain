@@ -1,0 +1,28 @@
+{
+  "actual_lifetime_failure_bound": null,
+  "after": {
+    "exact_names_equal": true,
+    "frozen_runner_required_cases": 9,
+    "native_rust_cases_in_source": 9,
+    "python_runner_tests_passed": 4
+  },
+  "base_commit": "a8825e9f5b1bf8e3dd6cab8bb1d7f6d7179bbdf2",
+  "local_rust_execution_this_change": false,
+  "original_budget_changed": false,
+  "original_failed_run": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42897622361/job/130152726523",
+  "original_observation": {
+    "frozen_runner_expected_cases_before": 8,
+    "native_cases": 9,
+    "native_recovery_floor_exit_code": 0,
+    "runner_error": "required Rust tests missing, failed, measured or ignored"
+  },
+  "original_retained_artifact": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42897622361/artifacts/13807084244",
+  "production_activation": false,
+  "real_external_custody_verified": false,
+  "real_external_freshness_verified": false,
+  "schema": "pq-root-v4-floor-ninth-native-test-required-roster-v1",
+  "source_test_sha256": "3616d905976853c2a6a8d7b7b98db156b653d056f9f170f77454ce3b66602fe1",
+  "status": "HOLD",
+  "whole_chain_pq_qualified": false,
+  "window_changed": false
+}
