@@ -12,6 +12,8 @@ on:
       - scripts/pon_public_v3_policy_read.py
       - scripts/ci/test_pon_public_v3_policy_read.py
       - scripts/ci/test_pon_public_v3_phase_read.py
+      - scripts/ci/inspect_native_campaign_failure.py
+      - scripts/ci/test_inspect_native_campaign_failure.py
       - scripts/project-preflight.sh
       - scripts/ci/verify_ci_source.py
       - scripts/ci/run_native_phase_host.py
@@ -70,6 +72,7 @@ jobs:
           validate_build_environment(os.environ)
           PY
           python3 -m unittest discover -s scripts/ci -p 'test_pon_public_v3*.py' -v 2>&1 | tee "$OUT/policy-reader-controls.log"
+          python3 -m unittest discover -s scripts/ci -p 'test_inspect_native_campaign_failure.py' -v 2>&1 | tee "$OUT/native-failure-diagnostic-controls.log"
       - name: Install the source-pinned compiler and fetch locked dependencies
         id: toolchain
         shell: bash
@@ -358,6 +361,12 @@ jobs:
             /usr/bin/python3 "$OUT/run-native-campaign.py" \
             "$GITHUB_WORKSPACE" "$OUT" "$CARGO_TARGET_DIR" "$cargo_path" \
             "$EXPECTED_HEAD" "$EXPECTED_TREE" 2>&1 | tee "$OUT/systemd-run.log"
+      - name: Diagnose original partial and failed campaigns without changing the verdict
+        if: always() && steps.source.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/inspect_native_campaign_failure.py --root "$OUT" --output "$OUT/native-failure-diagnostics.json"
       - name: Preserve final source verification and all partial artifact hashes
         if: always()
         shell: bash
