@@ -10940,3 +10940,8 @@ independent future-task net benefit, or an all-legal-coalition lifecycle resourc
 bound. All four proposition flags and production authorities remain false;
 unproved all-algorithm bounds and unknown GPU costs remain null. No activation,
 new payment, adoption or FinalUse is authorized by this engineering composition.
+
+
+## Exact native legal/History CI rosters, 2026-11-10 — HOLD
+
+Continue exact #873 head 617b6ee. Its hosted legal examples now contain thirteen controls (eight retained plus five observed-search), factorial examples eleven (six retained plus five observed-search), and History thirty-three passes plus the unchanged one ignored subprocess fixture. Repair stale exact counts and bind the full frozen named rosters; reject omissions, substitutions, duplicates, ignored-identity changes and unsuccessful summaries. Preserve all original native commands, named kernel/deadline/codec controls, fixed resources, raw failures and separate service/History business gates. This CI repair supplies no demand, utility, physical work lower bound, independent WAN or lifecycle theorem qualification; all authority/proven flags stay false and universal cost bounds null.
