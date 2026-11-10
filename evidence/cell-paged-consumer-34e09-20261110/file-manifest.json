@@ -1,9 +1,9 @@
 {
   "files": [
     {
-      "bytes": 2229,
+      "bytes": 2625,
       "path": "README.md",
-      "sha256": "44af75063ed3122c3a02dc930d051b5c78e0af7e88d20f102e8d07fd35f040a0"
+      "sha256": "8fc07b116cb9e708090ffde7161f88265a1ec1122fbbc2bf4e2051ad6809561c"
     },
     {
       "bytes": 1851,
@@ -196,6 +196,101 @@
       "sha256": "058f6d00f32bf5f873cc18da3f55d96bb0fb689f7dbea7c184e01b2dd669e6f0"
     },
     {
+      "bytes": 486,
+      "path": "c2-source/exact-source-end-observation.json",
+      "sha256": "316003ab2084114c034f229e66d281e816a3947d20198182bff00fefabf0df40"
+    },
+    {
+      "bytes": 414,
+      "path": "c2-source/exact-source-end-start.json",
+      "sha256": "4d6bd1bd2983db3bc5895ae388ee974765b3e9f81f0ab872adc1347e635f4e75"
+    },
+    {
+      "bytes": 423,
+      "path": "c2-source/exact-source-end.log",
+      "sha256": "32fb89e0d95ba5c2c02e1f03e430c6e6e0dc91818acc912ff90fe211c3629d66"
+    },
+    {
+      "bytes": 483,
+      "path": "c2-source/exact-source-observation.json",
+      "sha256": "49c5e8f1646a1f6e3cb19e4b190ac0fcc0dadf4e7e63a88cecd9a1727ef53f33"
+    },
+    {
+      "bytes": 414,
+      "path": "c2-source/exact-source-start.json",
+      "sha256": "a8a5d7f921859163c5524cb3d724fb4a7c19cebd125683de4401a4c7f1c5984c"
+    },
+    {
+      "bytes": 423,
+      "path": "c2-source/exact-source.log",
+      "sha256": "32fb89e0d95ba5c2c02e1f03e430c6e6e0dc91818acc912ff90fe211c3629d66"
+    },
+    {
+      "bytes": 3024,
+      "path": "c2-source/observation.json",
+      "sha256": "bff900583488c004a1956adb21dd72ac014df8d848ff31639f26cb4516be3810"
+    },
+    {
+      "bytes": 371,
+      "path": "c2-source/preflight-observation.json",
+      "sha256": "96091bad3d3d88477fab94f27b24c9912913e19cdfbdcfb61a5807a56f49a711"
+    },
+    {
+      "bytes": 303,
+      "path": "c2-source/preflight-start.json",
+      "sha256": "54f3bf7c39942daeed5a79574faa8935486ffa23a614eb1d781206fcbabcd21e"
+    },
+    {
+      "bytes": 175,
+      "path": "c2-source/preflight.log",
+      "sha256": "36c8637ff55ce54add2460834c3dbe765fad6b123aeca60500a1a7ecf687454a"
+    },
+    {
+      "bytes": 393,
+      "path": "c2-source/repository-and-links-observation.json",
+      "sha256": "1b5df8637907e5f181757b7455364c87622afd97785a5b25534fac18bb8ca8ea"
+    },
+    {
+      "bytes": 317,
+      "path": "c2-source/repository-and-links-start.json",
+      "sha256": "98ebb0d02cc4860c22daa0b56ead5eb6bc22c579f44e38b9be536be4637e6db1"
+    },
+    {
+      "bytes": 307,
+      "path": "c2-source/repository-and-links.log",
+      "sha256": "1fc5253bd8c85db2ff8b5e64690093fa17a8a5b2634a110e06141c640c406e00"
+    },
+    {
+      "bytes": 408,
+      "path": "c2-source/source-integrity-negatives-observation.json",
+      "sha256": "8d4a68cdf8903c47047a789b2eb772bfa08ce1372896d8cf8a9b15bedc75f2c1"
+    },
+    {
+      "bytes": 325,
+      "path": "c2-source/source-integrity-negatives-start.json",
+      "sha256": "33fa8525990b4ecaf5a94ddd8e4307af331b49eca5725d22f836138a7e534ce2"
+    },
+    {
+      "bytes": 7288,
+      "path": "c2-source/source-integrity-negatives.log",
+      "sha256": "d850c74be4dc5229b312fa6708ba6c825392665d34bb15a53ec17bef782804f9"
+    },
+    {
+      "bytes": 449188,
+      "path": "c2-source/sources-end.json",
+      "sha256": "f7b170e8d9b620f1c6c411d6982d6405ef920c00908f15da85bdcbba4caf8149"
+    },
+    {
+      "bytes": 449188,
+      "path": "c2-source/sources-start.json",
+      "sha256": "f7b170e8d9b620f1c6c411d6982d6405ef920c00908f15da85bdcbba4caf8149"
+    },
+    {
+      "bytes": 1742,
+      "path": "c2-source/start.json",
+      "sha256": "01eea2454cef1a83d671b0a5f9b78d0242eff714a04a58bbe96b5a006783eaa7"
+    },
+    {
       "bytes": 2330,
       "path": "index.json",
       "sha256": "237f064816d40bca8025744d589f3aadb2a6c31ea589653f6360cd460d116a78"
@@ -204,6 +299,11 @@
       "bytes": 51986,
       "path": "initial.patch",
       "sha256": "8fc2b32a9948c9f4bcf5fdc8b35c9801c684576eae44b4f0994b819587dadc27"
+    },
+    {
+      "bytes": 401,
+      "path": "packaging-observation.json",
+      "sha256": "2586df14344e6b7467df8976b0cd9fa4b07afa88a128ff205b8b57d26f3bce60"
     },
     {
       "bytes": 835,

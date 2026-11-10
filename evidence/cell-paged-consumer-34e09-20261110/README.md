@@ -36,3 +36,9 @@ The initial patch and staged pre-resume state are preserved. No completed
 validation attempt existed before the C1 commit; they are not recorded as
 failed runtime tests. [Manifest](file-manifest.json) excludes itself and records
 every other committed evidence file's exact size and SHA-256.
+
+The first evidence publication commit omitted ignored raw .log files. The
+tracked-artifact audit refused publication; [packaging observation](packaging-observation.json)
+preserves that failure. The continuation explicitly retains every original log.
+The [C2 documentation-source audit](c2-source/observation.json) also remains
+attributed to its own exact source; runtime observations remain C1.
