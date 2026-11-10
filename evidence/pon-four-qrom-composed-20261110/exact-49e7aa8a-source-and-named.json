@@ -1,0 +1,62 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "49e7aa8a1c4021e073090b13278bf2fc38fed523",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "49e7aa8a1c4021e073090b13278bf2fc38fed523",
+    "tested_tree": "5254a29d1245f5fbb7d62f8fe75f2039a3f8b437",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2540418272,
+    "tracked_entries": 26592,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess,json,sys,pathlib; root=pathlib.Path(\"/home/qq/work/chain-four-qrom-composed-20261110-checks\"); impl=root/\"current-implementation\"; closure=root/\"current-closure\"; impl.mkdir(); closure.mkdir(); cmds=[[\"python3\",\"scripts/ci/test_ci_source_integrity.py\",\"-v\"],[\"python3\",\"scripts/ci/check_repository.py\"],[\"python3\",\"scripts/ci/w1_qrom_current_ci.py\",\"named\",\"--repo-root\",str(pathlib.Path.cwd()),\"--out\",str(impl)],[\"python3\",\"scripts/ci/w1_qrom_current_ci.py\",\"drift\",\"--repo-root\",str(pathlib.Path.cwd()),\"--out\",str(impl)],[\"python3\",\"scripts/ci/w1_qrom_closure_current_controls.py\",\"run\",\"--roster-sha256\",\"f5292042233ba22fad6af1b7d89c0b57298038e9b98558d360b8feae50ecdfed\",\"--output\",str(closure)],[\"python3\",\"scripts/ci/w1_qrom_closure_current_controls.py\",\"check\",\"--roster-sha256\",\"f5292042233ba22fad6af1b7d89c0b57298038e9b98558d360b8feae50ecdfed\",\"--output\",str(closure)]]; results=[]\nfor cmd in cmds:\n print(\"EXECUTING \"+json.dumps(cmd),flush=True); r=subprocess.run(cmd,timeout=300); results.append({\"argv\":cmd,\"exit_code\":r.returncode}); print(\"COMMAND_RESULT \"+json.dumps(results[-1]),flush=True)\nprint(\"EXACT_SOURCE_COMMAND_RESULTS \"+json.dumps(results),flush=True); sys.exit(int(any(x[\"exit_code\"] for x in results)))"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "49e7aa8a1c4021e073090b13278bf2fc38fed523",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "49e7aa8a1c4021e073090b13278bf2fc38fed523",
+    "tested_tree": "5254a29d1245f5fbb7d62f8fe75f2039a3f8b437",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2540418272,
+    "tracked_entries": 26592,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/home/qq/work/chain-four-qrom-composed-20261110",
+  "elapsed_ns": 26347849443,
+  "environment": {
+    "CARGO_BUILD_JOBS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": null,
+    "CARGO_TARGET_DIR": null,
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 0,
+  "log_bytes": 46809,
+  "log_file": "exact-49e7aa8a-source-and-named.log",
+  "log_sha256": "d7a4cb588d79c57a4a1121836c6203982ca13bfd245efcd7a6458a65d5b21c1a",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-10T10:05:54.905269+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}
