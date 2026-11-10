@@ -70,6 +70,18 @@ DKTZ also includes constructions over other field characteristics in Theorem
 fixed routes; the characteristic-two exclusion above does not determine its
 applicability.
 
+The continuation re-read the formal Theorem 5.22 on printed page 50 through
+the full Revision 1 document reader. Its domain is `B=F_(b^(2n))` or an
+`F_b`-hyperplane; with `h` in `{0,1}` and `2<=t<=n-h`, its size
+`N=b^(2n-h)` is divisible by the characteristic. The fixed odd-characteristic
+multiplicative two-adic domains instead have size `2^ell`, coprime to that
+characteristic. The [route certificate](../../../security/W1_STARK_ROUTE_INSTANCE_AUDIT_V1.md)
+records only this necessary direct-domain obstruction. Restricting or padding
+the construction, other theorem families and affirmative FRI soundness remain
+open. This is a reviewed premise transcription and elementary arithmetic,
+not independent verification of the full theorem proof or a fresh PDF digest.
+The original literature manifest retains its historical observation scope.
+
 ## 3. Small-base-field limitations remain relevant
 
 Fenzi and Sanso's

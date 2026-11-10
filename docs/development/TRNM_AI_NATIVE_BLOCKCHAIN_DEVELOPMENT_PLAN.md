@@ -10744,3 +10744,24 @@ actual relations and extractors, justify the joint oracle and FRI/list-size
 premises, account for enlarged recursive and lifetime query domains, and obtain
 same-source independent resource and production acceptance. No source mapping
 or conditional estimator grants consensus or production authority.
+
+### 2026-11-10 — Recovered direct-domain and conditional sampler continuation
+
+Continue #849 in an isolated candidate. Retain the known original-P3 compressor
+and tagged-transcript model limitations in machine-readable route records.
+Check DKTZ Revision 1 Theorem 5.22's direct-domain cardinality premise separately
+from its binary-field results; padding, restriction, other proximity results
+and complete FRI/list-size review remain open.
+
+Add exact four-draw sampler arithmetic under explicit iid uniform-draw and
+independent-query-block hypotheses. Preserve the ordinary replay, historical
+test roster and unknown actual Poseidon2/QROM distribution. Require the new
+finite-counting controls and conditional report once in repository-truth.
+
+Earlier unpushed local commits `e616c6ffd741af9d7e76b7741fb09bffc8b286ce` and
+`b85cfe89673a9f6a56c658281ba98f1df427afc4` became unavailable when the scratch
+workspace was cleared. This reconstruction has a new source identity and new
+validation; their reported results are not transferred to it. All actual
+security/lifetime bounds, eight implementation interfaces and production gates
+remain open. Native execution, formatting, dependency graphs and strict Clippy
+must be reported by their actual new-source observations, not inherited passes.

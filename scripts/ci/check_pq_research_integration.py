@@ -67,6 +67,8 @@ NATIVE_REQUIRED_PATHS = frozenset((
     "scripts/w1_stark_route_audit.py",
     "scripts/ci/test_w1_stark_field_certificates.py",
     "scripts/ci/test_w1_stark_route_audit.py",
+    "scripts/w1_fri_query_replay.py",
+    "scripts/ci/test_w1_fri_ideal_sampler.py",
     "docs/security/W1_STARK_ROUTE_INSTANCE_AUDIT_V1.md",
     "docs/protocol/pon-nakamoto-v1/details/STARK_THREE_ROUTE_LITERATURE_20261109.md",
     "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",

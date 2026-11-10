@@ -78,6 +78,14 @@ profile's finite classical MMCS reduction similarly do not supply a quantum
 extractor or a complete PCS/Fiat-Shamir result. The registry records the
 reduction's conflict and common-context hypotheses.
 
+The route records also retain known primitive and transcript-model limitations.
+The original P3 contract refutes unrestricted compressor collision resistance
+and an independent leaf/branch function model; actual pruned-MMCS binding remains
+open. Its conditional estimator input is not a raw-compressor bound. Tagged
+SHA3's role framing does not prove transcript-history injectivity: its inherited
+challenger omits observe-call boundaries and consumed output-byte counts before
+a new observation. Actual fixed-schedule knowledge soundness remains open.
+
 All three routes retain unknown complete non-interactive, quantum and
 lifetime security bits. Production, consensus admission, quantum extraction,
 concrete primitive qualification and recursive composition remain false.
@@ -99,6 +107,35 @@ selected binary additive-domain results. It does not exclude other
 Reed-Solomon results or establish soundness. In particular, the small-base-field
 extension-code/list-size obligation remains explicitly open for every route.
 
+The direct-domain certificate for DKTZ Revision 1 Theorem 5.22 (printed page 50)
+handles its nonbinary statement separately. Its full-field or hyperplane domain
+has size `N=b^(2n-h)`, with `b=p^a`, `h` in `{0,1}` and `2<=t<=n-h`.
+Thus `2n-h>=4` and `p` divides `N`. The fixed routes' multiplicative two-adic
+subgroups or cosets have size `2^ell` in certified odd characteristic, hence
+cardinality coprime to `p`. This excludes only that direct-domain hypothesis;
+restriction, padding, other results and complete FRI soundness remain open.
+Checking algebraic two-adic capacity does not prove reachable trace sizes.
+
+## Conditional query-sampler arithmetic
+
+The separate `--ideal-sampler-law` mode in the
+[query replay](../../scripts/w1_fri_query_replay.py) checks frozen sampler and
+FRI sources without replaying a receipt. Assuming four independent uniform
+normal-form base draws, first-nonzero selection followed by masking to `b` bits
+has law `(1-p^-4)U_(2^b)+p^-4 delta_0` whenever `2^b` divides `p-1`.
+Here `p-1=15*2^27`; the single-query TV is exactly `p^-4(1-2^-b)`.
+Assuming independent query blocks additionally, product TV is at most
+`1-(1-p^-4)^k <= k*p^-4`, an upper bound rather than an exact product TV.
+The report uses reduced rational numbers for the saved `b=20` slice, the
+declared generic maximum `b=26`, and `k=50`. It does not prove all declared
+trace sizes reachable or accepted.
+
+Independent exhaustive small-alphabet counts and a dependent-draw example
+check this lemma and show that uniform marginals alone do not suffice. Actual
+Poseidon2 independence, adversarial or quantum conditioning, joint-oracle
+soundness, extraction and lifecycle bounds remain unproved. No complete
+security obligation is closed and no actual security bits are assigned.
+
 ## Required execution
 
 The original `repository-truth` lane runs these checks exactly once, after
@@ -111,6 +148,8 @@ python3 scripts/ci/test_w1_stark_field_certificates.py
 python3 scripts/w1_stark_field_certificates.py
 python3 scripts/ci/test_w1_stark_route_audit.py
 python3 scripts/w1_stark_route_audit.py
+python3 scripts/ci/test_w1_fri_ideal_sampler.py
+python3 scripts/w1_fri_query_replay.py --ideal-sampler-law
 ```
 
 The field reader accepts `--repo-root` and an optional create-only `--output`;
