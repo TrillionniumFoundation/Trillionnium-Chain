@@ -416,6 +416,7 @@ PROTOCOL_CONTRACT_BLOCK = PQ_MIGRATION_CONFORMANCE_PREFIX + '''    python3 scrip
     python3 formal/pon-nakamoto-v1/test_model_task_windows_oracle.py -v
     python3 formal/pon-nakamoto-v1/test_work_utility.py
     python3 formal/pon-nakamoto-v1/test_four_propositions_v1.py -v
+    python3 formal/pon-nakamoto-v1/test_four_propositions_w1_v2.py -v
     python3 formal/pon-nakamoto-v1/test_shared_cell_operator_v1.py
     python3 scripts/ci/test_shared_material_cost_v2.py
     python3 scripts/ci/test_shared_material_security_v1.py
@@ -1689,7 +1690,8 @@ def validate(root: Path = ROOT) -> dict:
                  'test_useful_cell_multimodal_execution_v3.py',
                  'test_useful_cell_multimodal_relation_v3.py',
                  'test_lifecycle_cost_v1.py', 'test_cell_lottery_cost_audit_v1.py',
-                 'test_service_work_settlement_v1.py', 'test_four_propositions_v1.py'):
+                 'test_service_work_settlement_v1.py', 'test_four_propositions_v1.py',
+                 'test_four_propositions_w1_v2.py'):
         source = root / 'formal/pon-nakamoto-v1' / name
         require(source.is_file() and not source.is_symlink(),
                 'required useful Cell test source is missing: ' + name)

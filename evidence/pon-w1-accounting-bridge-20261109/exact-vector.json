@@ -1,0 +1,36 @@
+{
+  "challenge_bytes": [
+    1,
+    2
+  ],
+  "expected": [
+    {
+      "derived_binding": {
+        "inputs": "a86210e188f3175935c0889abe476264ad0e7d4b3c0719931279a78915e1fd97",
+        "output_content": "22dc7e05e41d8ee1e49c57e06add5df37e971276c894618e31b30a973e4ed811",
+        "output_spec": "fa5b3a1cec58999d95236a982eb55524b38e10b2e7735d2f1800e58273e305fc",
+        "qualified_work": "a195a4e643f9a34f8f68dcc0358a85f7c049e2b918974b6fd13035ccd8edb595",
+        "task_content": "7c2ae2ba8c038735be49e31a2f9d1017dfdcfef35b71004bab73963cec989c85",
+        "work_profile": "pon-matmul-transcript-64-v1"
+      },
+      "unique_output_key": "b33d660478a3c0e0951880943955e7aff610c3f02c2d83ff92b2364775ba3e64"
+    },
+    {
+      "derived_binding": {
+        "inputs": "a86210e188f3175935c0889abe476264ad0e7d4b3c0719931279a78915e1fd97",
+        "output_content": "22dc7e05e41d8ee1e49c57e06add5df37e971276c894618e31b30a973e4ed811",
+        "output_spec": "fa5b3a1cec58999d95236a982eb55524b38e10b2e7735d2f1800e58273e305fc",
+        "qualified_work": "3d41a72c89f7b54680150d1446b02458a2fb2dc83bb5f956d124f61f3e99c7f2",
+        "task_content": "7c2ae2ba8c038735be49e31a2f9d1017dfdcfef35b71004bab73963cec989c85",
+        "work_profile": "pon-matmul-transcript-64-v1"
+      },
+      "unique_output_key": "b33d660478a3c0e0951880943955e7aff610c3f02c2d83ff92b2364775ba3e64"
+    }
+  ],
+  "fixture": "synthetic A=I; B[i]=17*i+3; 64x64 row-major; Q=4294967291; product=B",
+  "native_run": false,
+  "production_activation": false,
+  "real_customer": false,
+  "schema": "pon-w1-accounting-exact-vector-v2",
+  "target_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+}
