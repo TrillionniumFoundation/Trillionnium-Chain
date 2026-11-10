@@ -16,6 +16,11 @@ RUNS = 3
 PHASES = (("baseline", 0), ("from-zero", 24), ("late-product", 24))
 SCHEMA = "native-public-v3-separate-process-campaign-v2"
 MAX_REPORT_BYTES = 128 * 1024 * 1024
+PACKET_PHASES = (
+    "context_owner_wait", "context", "work", "admission_owner_wait",
+    "admission", "admission_prepare", "execution", "commit_owner_wait",
+    "commit", "history_import",
+)
 
 
 def _sum_observed(rows: list, *keys: str) -> dict:
@@ -28,7 +33,7 @@ def _sum_observed(rows: list, *keys: str) -> dict:
         if type(value) is int and value >= 0:
             values.append(value)
     return {"records": len(rows), "observed": len(values),
-            "total": sum(values) if len(values) == len(rows) else None}
+            "total": sum(values) if rows and len(values) == len(rows) else None}
 
 
 def _checkpoint_calls(history: list) -> dict:
@@ -40,6 +45,35 @@ def _checkpoint_calls(history: list) -> dict:
         matching = [stage for stage in stages if isinstance(stage, dict) and stage.get("phase") == "checkpoint"] if isinstance(stages, list) else []
         rows.append(matching[0] if len(matching) == 1 else {})
     return _sum_observed(rows, "calls_accepted")
+
+
+def _packet_stage_observations(history: list) -> dict:
+    """Keep per-native-packet phase spans distinct; nested intervals overlap."""
+    observed = {name: [] for name in PACKET_PHASES}
+    missing_lists = 0
+    count = 0
+    for item in history:
+        imported = item.get("client_import")
+        native = imported.get("native_import_observation") if isinstance(imported, dict) else None
+        packets = native.get("packets") if isinstance(native, dict) else None
+        if not isinstance(packets, list):
+            missing_lists += 1
+            continue
+        for packet in packets:
+            count += 1
+            entries = packet.get("phases") if isinstance(packet, dict) else None
+            for name in PACKET_PHASES:
+                matches = [entry for entry in entries if isinstance(entry, dict)
+                           and entry.get("phase") == name] if isinstance(entries, list) else []
+                observed[name].append(matches[0] if len(matches) == 1 else {})
+    return {
+        "history_calls_missing_packet_list": missing_lists,
+        "native_packet_instances": count,
+        "phases": {name: {"wall_ns": _sum_observed(rows, "wall_ns"),
+                          "thread_cpu_ns": _sum_observed(rows, "thread_cpu_ns")}
+                   for name, rows in observed.items()},
+        "non_additive": "admission contains its prepare/commit; history_import contains packets; no category totals should be summed together",
+    }
 
 
 def _phase(phase: dict, name: str, attackers: int) -> dict:
@@ -81,6 +115,7 @@ def _phase(phase: dict, name: str, attackers: int) -> dict:
         "history_import_wall_ns": _sum_observed(history, "client_import", "wall_ns"),
         "history_import_thread_cpu_ns": _sum_observed(history, "client_import", "thread_cpu_ns"),
         "history_checkpoint_host_calls": _checkpoint_calls(history),
+        "native_packet_stage_observations": _packet_stage_observations(history),
         "submit_client_wall_ns": _sum_observed(submissions, "elapsed_wall_ns"),
         "full_work_accepted": phase.get("full_work_accepted"),
         "full_work_failed": phase.get("full_work_failed"),
