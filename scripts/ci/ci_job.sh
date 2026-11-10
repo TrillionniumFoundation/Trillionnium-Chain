@@ -22,6 +22,11 @@ case "${1:?required job}" in
     python3 scripts/w1_stark_field_certificates.py
     python3 scripts/ci/test_w1_stark_route_audit.py
     python3 scripts/w1_stark_route_audit.py
+    # Named exceptional sets and ideal-sampler arithmetic do not qualify concrete security.
+    python3 scripts/ci/test_w1_risc0_deep_event_audit.py
+    python3 scripts/w1_risc0_deep_event_audit.py --repo-root .
+    python3 scripts/ci/test_w1_p3_sampling_audit.py
+    python3 scripts/w1_p3_sampling_audit.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
     python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v

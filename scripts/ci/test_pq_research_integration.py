@@ -136,6 +136,45 @@ class CorpusGateTests(unittest.TestCase):
         self.assertFalse(result["cryptographic_acceptance"])
         self.assertFalse(result["node_activated"])
 
+    def test_deep_event_and_sampler_inputs_cannot_omit_pins_or_change_bytes(self):
+        # Independent literals: neither helper declarations nor the checker's
+        # required roster supply this source-integrity regression inventory.
+        dependencies = (
+            "scripts/w1_risc0_deep_event_audit.py",
+            "scripts/w1_p3_sampling_audit.py",
+            "scripts/ci/test_w1_risc0_deep_event_audit.py",
+            "scripts/ci/test_w1_p3_sampling_audit.py",
+            "docs/security/W1_RISC0_DEEP_NAMED_EVENTS.md",
+            "docs/security/W1_P3_SAMPLING_CONDITIONAL_ACCOUNTING.md",
+            "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock",
+            "formal/pon-nakamoto-v1/w1_public_stark_research/security_model_audit/vendor_primary/p3-challenger-0.8.0.crate",
+            "formal/pon-nakamoto-v1/w1_public_stark_research/security_model_audit/vendor_primary/p3-fri-0.8.0.crate",
+        )
+        self.assertFalse(check(self.root)["cryptographic_acceptance"])
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+            self.manifest = copy.deepcopy(original)
+            self.save()
+            source = self.root / name
+            retained = source.read_bytes()
+            try:
+                source.write_bytes(retained + b"changed selected conditional-audit input")
+                with self.subTest(path=name, mutation="bytes"), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(retained)
+        self.assertFalse(check(self.root)["node_activated"])
+
     def test_changed_signature_or_source_refuses(self):
         self.put("formal/pon-nakamoto-v1/pq_cell_custody.py", b"altered")
         with self.assertRaisesRegex(IntegrityError, "changed source"):
