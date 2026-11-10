@@ -1,0 +1,222 @@
+{
+  "result": "STAGE_DIAGNOSTIC_COMPLETE",
+  "commands": [
+    {
+      "label": "preflight-before-branch",
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "branch",
+      "args": [
+        "git",
+        "checkout",
+        "-b",
+        "fix/chain-w1-stage-diag-20261110-1138-035f"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "preflight-before-edits",
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "lock",
+      "args": [
+        "/home/qq/.cargo/bin/cargo",
+        "+1.95.0",
+        "generate-lockfile",
+        "--offline",
+        "--manifest-path",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source/formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "format",
+      "args": [
+        "/home/qq/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source/formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml",
+        "--all"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "precommit-preflight",
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "stage",
+      "args": [
+        "git",
+        "add",
+        "--",
+        "formal/pon-nakamoto-v1/w1_node_adapter_research",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "commit",
+      "args": [
+        "git",
+        "-c",
+        "user.name=Codex",
+        "-c",
+        "user.email=codex@openai.com",
+        "commit",
+        "-m",
+        "research(w1): freeze public-table LDE and MMCS stage diagnostic"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "source-before",
+      "args": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "0512570ceeffa078522eb2009c92a0f18c67aa64",
+        "--output",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1138/records/source-before.json"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "prebuild-preflight",
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "build",
+      "args": [
+        "/home/qq/.cargo/bin/cargo",
+        "+1.95.0",
+        "build",
+        "--release",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source/formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "tests",
+      "args": [
+        "/home/qq/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--release",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source/formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "clippy",
+      "args": [
+        "/home/qq/.cargo/bin/cargo",
+        "+1.95.0",
+        "clippy",
+        "--release",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--all-features",
+        "--manifest-path",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source/formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "owner-init",
+      "args": [
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1138/target/release/w1-node-adapter-research",
+        "owner-init",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1138/records/policy.json",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1138/owner"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "stage-probe",
+      "args": [
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1138/target/release/w1-node-adapter-research",
+        "exercise",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1138/receiver",
+        "none",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1138/owner",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1138/records/policy.json"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "source-after",
+      "args": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "0512570ceeffa078522eb2009c92a0f18c67aa64",
+        "--output",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1138/records/source-after.json"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "formal_ABBA_samples": 0,
+  "new_complete_W1_proofs": 0,
+  "probe_replays_attempted": 1,
+  "qualification": "HOLD_NO_GO",
+  "crate_pins": {
+    "p3-uni-stark": "d0992185743e8e406eeb1dd8ca4704d1f5246ccf2790f9b521c5455585bfa479",
+    "p3-fri": "9571ee760e131fc7f63115ded567d3b3d0f6d587c35b16818e266c9d6bd3bc9d"
+  },
+  "source": "0512570ceeffa078522eb2009c92a0f18c67aa64",
+  "binary": {
+    "path": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1138/target/release/w1-node-adapter-research",
+    "bytes": 8402896,
+    "sha256": "a22f7ab62ebf1850cd33d849460633697a2550caa4e663e04cc790f0482949ef"
+  },
+  "stage_events": [
+    "W1_STAGE public_table 13 1837113",
+    "W1_STAGE lde [(32768, 139)] 12502113",
+    "W1_STAGE mmcs_commit [(32768, 139)] 101948035",
+    "W1_STAGE public_table 14 4117890",
+    "W1_STAGE lde [(65536, 180)] 26524660",
+    "W1_STAGE mmcs_commit [(65536, 180)] 259868835"
+  ],
+  "scope": "one instrumented replay; stage timers and logs alter time; no formal performance or service qualification"
+}

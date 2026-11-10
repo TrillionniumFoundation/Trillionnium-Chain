@@ -1,0 +1,57 @@
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 12 tests
+test a_valid_native_packet_with_false_public_arithmetic_never_reaches_node ... ok
+test archive_corruption_and_incomplete_commit_marker_are_refused ... ok
+test archive_limit_counts_interrupted_operations_without_resetting_them ... ok
+test complete_two_proofs_real_admission_duplicate_and_cold_reopen ... ok
+test current_node_genesis_is_rebound_after_proof_verification ... ok
+test failed_work_start_is_spent_and_cannot_refund_the_batch ... ok
+test independent_artifact_binding_is_cryptographically_checked ... ok
+test independently_changed_header_and_profile_fail_before_crypto ... ok
+test postcommit_cancellation_preserves_true_admission_without_activation ... ok
+test precommit_cancellation_keeps_native_store_empty_after_reopen ... ok
+test real_cli_refusal_and_early_cancel_never_open_node ... ok
+test reorg_observation_does_not_reuse_old_active_receipt ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.13s
+
+
+running 10 tests
+test a_reserved_permit_checks_context_before_any_crypto_checkpoint ... ok
+test an_open_owner_handle_refuses_replacement_at_the_same_path ... ok
+test cli_input_failure_consumes_a_slot_and_exhaustion_precedes_loading ... ok
+test cold_owner_reopen_cannot_refund_dropped_starts ... ok
+test concurrent_cli_processes_share_one_fixed_nonrefundable_quota ... ok
+test independently_changed_policy_cannot_enlarge_or_rebind_owner ... ok
+test interrupted_slot_writes_remain_spent_without_repair ... ok
+test links_unexpected_entries_and_loose_permissions_fail_closed ... ok
+test missing_or_interrupted_initialization_never_creates_a_fallback_owner ... ok
+test real_proofs_native_admission_and_cold_readback_charge_the_same_owner ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.04s
+
+
+running 5 tests
+test cancelled_proof_keeps_failed_phase_cost_and_does_not_open_node ... ok
+test native_cli_accepts_only_common_inputs_with_real_node_metrics ... ok
+test native_cli_never_overwrites_an_existing_output ... ok
+test native_cli_rejects_changed_independent_binding_before_node_open ... ok
+test proof_cli_reports_disjoint_cold_receiver_metrics_and_spent_owner ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.54s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
