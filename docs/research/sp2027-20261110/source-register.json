@@ -1,0 +1,312 @@
+{
+  "schema": "sp2027-chain-audit-sources-v1",
+  "audited_on": "2026-11-10",
+  "audit_kind": "read-only live GitHub inventory, selected primary artifact and critical-source inspection; no fresh runtime execution",
+  "main": {
+    "commit": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "tree": "4da766ac44bf30d5a330f1fb70a78beb6f3bb382",
+    "recursive_tree_entries": 1267,
+    "truncated": false
+  },
+  "source_snapshot": {
+    "pr": 876,
+    "commit": "e4abb172147e941b62483652b0ceabaae4317624",
+    "tracked_paths": 27884,
+    "rust_files": 1651,
+    "python_files": 1412,
+    "workflow_files": 31,
+    "evidence_paths": 22826,
+    "local_status_at_read": "clean",
+    "local_snapshot_verified_against_remote": true
+  },
+  "inventory": {
+    "open_pull_request_unique_count": 546,
+    "pages_nonempty": 6,
+    "subsequent_pages_empty": [
+      7,
+      8
+    ],
+    "atomic_snapshot": false,
+    "file": "open-pr-inventory.json"
+  },
+  "selected_refs": [
+    {
+      "pr": 876,
+      "head": "e4abb172147e941b62483652b0ceabaae4317624",
+      "ref": "fix/chain-pon-native-boundaries-20261110-02769a",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/876",
+      "title": "fix(pon): bind journal leases and align native consensus diagnostics"
+    },
+    {
+      "pr": 847,
+      "head": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+      "ref": "fix/chain-hepta-closure-candidate-20261109-481716",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/847",
+      "title": "Converge fixed Chain/Hepta closure source and evidence contracts"
+    },
+    {
+      "pr": 879,
+      "head": "30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6",
+      "ref": "fix/chain-cell-paged-release-34e09-20261110",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/879",
+      "title": "docs(cell): qualify bounded release-profile cold recovery and sealed next use"
+    },
+    {
+      "pr": 878,
+      "head": "391a92248f0268aa5238eb1e2763fc6849ce4016",
+      "ref": "audit/pq-root-common-restore-contrast-20261110-1200",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/878",
+      "title": "test(pq-root): preserve joint rollback acceptance and surviving-pin refusal (HOLD)"
+    },
+    {
+      "pr": 837,
+      "head": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+      "ref": "fix/chain-root-effects-v4-20261109-e12ecc",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/837",
+      "title": "security: recovery floors and native provider readback (HOLD)"
+    },
+    {
+      "pr": 873,
+      "head": "617b6ee73759429781f0b6ff073072ec1a16d724",
+      "ref": "fix/chain-four-qrom-composed-20261110",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/873",
+      "title": "Compose four-proposition accounting and current QROM observations"
+    },
+    {
+      "pr": 838,
+      "head": "99c55cbaa5eac18420d401172a0a0a1c1aa28715",
+      "ref": "fix/chain-all-strategy-cost-20261109-cf19",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/838",
+      "title": "Research: prove fixed-success query costs and account for virtual output checks"
+    },
+    {
+      "pr": 843,
+      "head": "0ff81958a611d2c0be54d2ca839b955ae7cb2772",
+      "ref": "fix/chain-joint-daa-qualification-20261109-b6ec",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/843",
+      "title": "research: bind joint DAA/time/credit qualification and dynamic participation"
+    },
+    {
+      "pr": 863,
+      "head": "341b7b6195a44d3f4a758c98f846457567ac1de3",
+      "ref": "fix/chain-joint-production-tail-20261110-8e76",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/863",
+      "title": "research: compose joint production tails and quantify credit distortion"
+    },
+    {
+      "pr": 871,
+      "head": "f2ad7e1389588a9913e308df8633277ae7c22f4d",
+      "ref": "fix/chain-w1-receiver-dft-20261110-035f-ai395",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/871",
+      "title": "research(w1): retain complete receiver DFT-sharing negative result"
+    },
+    {
+      "pr": 851,
+      "head": "229984815fe03c030e2388970967279c2ffc0d4e",
+      "ref": "fix/chain-pq-cell-reuse-20261109",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/851",
+      "title": "Reuse exact pinned Cell publisher public-key expansion"
+    },
+    {
+      "pr": 880,
+      "head": "bcc0d2369e81d85c001190ea4c8ee0b1778e178d",
+      "ref": "audit/pq-root-terminal-import-boundary-20261110",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/880",
+      "title": "audit(root): classify terminal History import deadlines from original 0/3 campaign (HOLD)"
+    },
+    {
+      "pr": 877,
+      "head": "cf8f9229bc480336e441691af9aa8a4e23baec7e",
+      "ref": "fix/pq-root-lifetime-native-inventory-20261110-f7be5b9",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/877",
+      "title": "fix(pq-root): bind lifetime V2 manifest into frozen native source inventory (HOLD)"
+    },
+    {
+      "pr": 864,
+      "head": "7b7826c5c9623a1310969d1cbb636b4c66c1bc6d",
+      "ref": "fix/chain-hash-content-review-20261110-fa42",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/864",
+      "title": "security: review exact content-to-use evidence and hash scope"
+    },
+    {
+      "pr": 860,
+      "head": "6ab14e5f3cb642e685196a52942d9235eff2f4a0",
+      "ref": "fix/chain-w1-relation-accounting-20261109",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/860",
+      "title": "Bind verified W1 matrix content to independent accounting evidence"
+    },
+    {
+      "pr": 841,
+      "head": "e96fff2f06e433932ed889676f2bf46e76e3eb3e",
+      "ref": "fix/chain-four-propositions-20261109-9bf819",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/841",
+      "title": "Separate PoN's four propositions and compose accounting evidence"
+    },
+    {
+      "pr": 867,
+      "head": "c213cace86ddf1874d6335ba74b8690d5c3a1599",
+      "ref": "fix/chain-stark-qrom-integrated-20261110-a1",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/867",
+      "title": "merge: compose STARK routes and current QROM audit workflows"
+    },
+    {
+      "pr": 872,
+      "head": "8dee97636e2b6932fb7a22b1b54f2cab09ae8406",
+      "ref": "fix/chain-cell-paged-model-34e09-20261110",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/872",
+      "title": "feat(cell): qualify explicit paged model route and retain bounded native failure"
+    },
+    {
+      "pr": 688,
+      "status": "not in open inventory; direct GET returned 404; no authority inferred from older memory"
+    }
+  ],
+  "module_registry": {
+    "path": "config/pon/module-maturity-v1.json",
+    "source": "e4abb172147e941b62483652b0ceabaae4317624",
+    "modules": 18,
+    "all_native_component": true,
+    "all_native_product_integrated": false,
+    "all_independent_accepted": false
+  },
+  "direct_source_readings": [
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "source": "e4abb172147e941b62483652b0ceabaae4317624",
+      "finding": "PreparedTask::new computes and retains A*B; product_bytes is explicitly not a verified-work capability; fresh prove path uses challenge-dependent replay. A new nonce is not evidence of a new useful mathematical result."
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "source": "e4abb172147e941b62483652b0ceabaae4317624",
+      "finding": "checked_proof_statement validates canonical fields, task and ticket; verify_with_kernel continues complete transcript/product replay. Passing cheap filter alone does not create VerifiedWork."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "source": "e4abb172147e941b62483652b0ceabaae4317624",
+      "finding": "Node::admit checks current admission context, begins original owner work, verifies full W1 then admits under owner permit."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "source": "e4abb172147e941b62483652b0ceabaae4317624",
+      "finding": "Legacy confirmation path visits ancestry to genesis and checks depth and required-work delta together. Output finalized=false and execution_authority=false. No finality/security-probability inference."
+    }
+  ],
+  "observations": [
+    {
+      "id": "native_service_failed",
+      "delivery": "e4abb172147e941b62483652b0ceabaae4317624",
+      "path": "evidence/pon-open-consensus-20261110-29db/summary.json",
+      "facts": {
+        "campaigns_accepted": 0,
+        "campaigns_total": 3,
+        "phases_accepted": 0,
+        "phases_total": 9,
+        "in_window_confirmations": 6,
+        "scheduled_confirmations": 27,
+        "recorded_confirmations": 15,
+        "unreached_confirmations": 12
+      },
+      "scope": "readback of original campaign at aaa3c539; not rerun on #876",
+      "diagnostic_continuation_source": "0c589e2212f7feeaac4ec12d076d27ab139bc52f",
+      "original_campaign_source": "aaa3c53965bf0cf472e52451e205e9a020e834ab",
+      "original_campaign_tree": "fe3ce4c61bc2e3d477ea328b7742d0b2598282b3",
+      "original_campaign_run": 42781760995,
+      "original_campaign_artifact": 13761459229,
+      "zip_sha256": "715587a56f595588c4eca4b36ba6e0a326b78e69078a4240cc878959e1f02cfe",
+      "readback_path": "evidence/pon-open-consensus-20261110-29db/original-service-readback-summary.md"
+    },
+    {
+      "id": "terminal_history_diagnosis",
+      "delivery": "bcc0d2369e81d85c001190ea4c8ee0b1778e178d",
+      "pr": 880,
+      "facts": {
+        "all_terminal_reads": 9,
+        "inner_error": "PUBLIC_REQUEST_DEADLINE",
+        "first_boundary_admission": 4,
+        "first_boundary_submit_result": 5
+      },
+      "scope": "different original campaign from aaa3c539/run42781760995; diagnostic only, does not establish fixed root cause or repair; do not combine denominators",
+      "original_campaign_source": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+      "original_campaign_run": 42793318645,
+      "original_campaign_artifact": 13762887011,
+      "zip_sha256": "7998dea9c8bd1e7f1b5e4f4cc795265983e6e6ac46718f19594b94b2767cecd4"
+    },
+    {
+      "id": "common_restore_counterexample",
+      "delivery": "391a92248f0268aa5238eb1e2763fc6849ce4016",
+      "path": "evidence/pq-root-co-restore-contrast-20261110/README.md",
+      "facts": "Joint restore of owner SQLite, anchor remembered head and equally old valid floor is accepted; externally surviving newer pin refuses before anchor transport or DB mutation.",
+      "native_tests": 9,
+      "scope": "native controlled test; no demonstrated independent custody/freshness or complete physical rollback defense"
+    },
+    {
+      "id": "root_recovery_v4",
+      "source": "0d99924005b70b1308bf3e62c53e9300fbb4aac4",
+      "delivery": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+      "path": "evidence/pq-root-continuation-v4-20261109/qualification-record.json",
+      "facts": "42/42 commands exit0; V4 26, V3 50, V2 native34, crypto175, release43 counts overlap; strict Clippy passed.",
+      "scope": "not whole protocol lane or workspace runtime test suite; original native campaign still0/3"
+    },
+    {
+      "id": "paged_model_cold_recovery",
+      "source": "8dee97636e2b6932fb7a22b1b54f2cab09ae8406",
+      "delivery": "30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6",
+      "path": "evidence/cell-paged-model-release-34e09-20261110/README.md",
+      "facts": {
+        "bytes": 280269602,
+        "manifests": 30,
+        "chunks": 95,
+        "target_publications": 570,
+        "verified_wire_reads": 380,
+        "logical_callbacks": 570,
+        "unavailable_callbacks": 190,
+        "wall_seconds": 36.047064473,
+        "budget_seconds": 300,
+        "max_rss_kib": 1421016,
+        "sealed_forwards": 2
+      },
+      "scope": "single-host six directories, not independent operators/WAN; runtime dependencies pinned locally rather than sealed transport; no ordinary Hepta FinalUse, paid lifecycle or statistical speedup claim"
+    },
+    {
+      "id": "dft_sharing_negative",
+      "source": "9c7da5551d48bac6e7e79d62e31fc8b6a6cc2e4a",
+      "baseline": "9133a2218890cfca837df34e7d6b892cec780868",
+      "delivery": "f2ad7e1389588a9913e308df8633277ae7c22f4d",
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/evidence/dft-sharing-20261110-ai395/README.md",
+      "facts": {
+        "baseline_wall_median_seconds": 0.515773328,
+        "candidate_wall_median_seconds": 0.527050337,
+        "baseline_cpu_median_seconds": 0.8741635,
+        "candidate_cpu_median_seconds": 0.8785715,
+        "payload_bytes": 4023864,
+        "independent_input_tasks": 1,
+        "new_complete_w1_proofs": 0,
+        "receiver_processes": 32
+      },
+      "scope": "retained proof replays, shared host, 2CPU not original0.25CPU contract; descriptive no established benefit, no TPS or whole-chain inference"
+    },
+    {
+      "id": "four_propositions_qrom",
+      "source": "a13c56ca050af1d6b98571c4ae41ade5e78dbec9",
+      "delivery": "617b6ee73759429781f0b6ff073072ec1a16d724",
+      "path": "evidence/pon-four-qrom-composed-20261110/native-a13-20261110",
+      "facts": "298 methods/34 harnesses passed on a13; strict Clippy, locked graphs and fmt passed; later evidence child separately checked.",
+      "scope": "not all runtime tests or original native service; all four proven flags false and all-algorithm cost bound null"
+    },
+    {
+      "id": "joint_resource_theory",
+      "delivery": "341b7b6195a44d3f4a758c98f846457567ac1de3",
+      "path": "evidence/pon-joint-production-tail-20261110/README.md",
+      "facts": "Finite exact joint coupling checks and ideal calibration-distortion lower bound max(kappa_C,kappa_Q)>=R^(1/4); first marginal example49/50 vs true joint11/10.",
+      "scope": "conditional finite/ideal theory; no universal W1 resource lower bound, native CP/CG/CQ, actual lifetime risk or native six-confirmation probability"
+    }
+  ],
+  "cautions": [
+    "No claim to have read every source line or independently reproduced archived native experiments.",
+    "Open-PR list is a sequential multi-call snapshot; remote heads may advance.",
+    "Counts of overlapping tests/controls are not summed; evidence descendants do not inherit implementation execution identity.",
+    "Source and content hash equality authenticate bytes, not execution provenance, operator independence, freshness or authority.",
+    "No system-wide PQ128, permissionless consensus security, quantum-work lower bound, sustained useful-work demand, model improvement or throughput conclusion.",
+    "Any proposed paper needs novelty review against established anti-rollback/trusted state, TUF/Uptane/in-toto/update metadata, content-addressed storage/erasure coding and PoUW/quantum Nakamoto research."
+  ]
+}

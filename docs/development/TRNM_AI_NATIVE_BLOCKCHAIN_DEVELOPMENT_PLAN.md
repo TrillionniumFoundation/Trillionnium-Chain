@@ -1,3 +1,43 @@
+## S&P 2027 publication continuation — 2026-11-10, HOLD
+
+Publication branch: `docs/chain-sp2027`, based on the current #876 delivery
+`e4abb172147e941b62483652b0ceabaae4317624` in the #847 integration lineage.
+This section is part of the sole development plan; the supporting
+[source audit](../research/SP2027_SOURCE_AUDIT_20261110.md) is an evidence record,
+not a second implementation plan. All existing production, resource and
+independent-acceptance gates remain authoritative.
+
+Research priorities are (1) complete receiving costs and honest-service
+availability, (2) legal producer reuse and resource/credit attribution, and
+(3) authority/currentness across reorganization, model use and correlated
+recovery. Confirmed goodput belongs to the receiving-cost evaluation unless it
+produces a separate result. PQ and storage components do not automatically
+constitute additional independent contributions.
+
+| Priority | Concrete work | Evidence required for the stated claim |
+| --- | --- | --- |
+| P0, now | Freeze per-claim implementation, profile, binary, dataset, original run and evidence-delivery identities; preserve the live PR inventory. | Rebuildable minimal research candidate; no aggregation of passes from different branches. |
+| P0, next 48 hours | Trace one complete native receiving-to-confirmation failure using healthy honest and matched transport controls; randomize paired order. | Stage-specific input/resource/effect evidence, retaining all failures and unreached requests. Separate 4-second Host and 30-second campaign criteria. |
+| P1 | Evaluate cold/warm/churn state, equal-budget identities, multiple receivers, cancellation and restart; compare simple rate limiting/cache baselines. | Confirmed unique business progress, tail latency, complete cost, bounded state and attack-stop recovery under a declared threat model. |
+| P1 | Connect an explicit legal reusable producer history to a concrete resource or credit assertion. | A new nontrivial result or meaningful native security consequence; one legal schedule is not a universal lower bound. |
+| P1 | Model joint rollback domains and real owner/effect authority; compare surviving-freshness and target-completion mechanisms. | Paired stale/current and retry/crash/reorg traces; Unknown remains unresolved without provider reconciliation. |
+| P2 | Extend model delivery/recovery-to-use and independent custody only to the extent claimed by the research. | Source/version/environment binding and revocation at actual use; independent WAN/paid lifecycle evidence only for corresponding claims. |
+
+The official Cycle 2 abstract deadline is 2026-11-10 AoE and the full-paper
+deadline 2026-11-17 AoE. Research not completed within that window belongs to
+later submissions; an extended work plan cannot retroactively qualify this
+cycle. Submission details are governed by the
+[official CFP](https://sp2027.ieee-security.org/cfpapers.html).
+
+Research-prototype publication and production acceptance are distinct. A scoped
+negative result may be publishable while the product remains HOLD, but source
+checks, test counts and evidence bookkeeping are not substitutes for novelty
+or the causal/cryptographic argument. This documentation continuation changes
+no runtime source, acceptance threshold, signing domain or activation flag.
+Historical runs remain attributed to their own exact sources.
+
+---
+
 **System-boundary readback continuation, 2026-11-09 America/New_York — HOLD:**
 
 Continue the existing #847 candidate from M14
