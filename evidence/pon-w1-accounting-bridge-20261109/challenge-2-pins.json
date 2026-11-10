@@ -1,0 +1,18 @@
+{
+  "accounting_pins": {
+    "binding_sha256": "cb67573563c7cf259000027fb67800e55a20505bb47cd5700fff6a84c65fca2c",
+    "demand": null,
+    "input_sha256": "cacec513bfb9463d40d52398e09e083eca720efde5d0cf432eae51e09395fe12",
+    "schema": "pon-four-propositions-review-pins-v1",
+    "source_commit": "e96fff2f06e433932ed889676f2bf46e76e3eb3e",
+    "upgrade": null
+  },
+  "input_sha256": "3e28db357102bace891ec511649ac7a2f96867d06c2bfe782604d2897f469391",
+  "proof_sha256": "8cdbd07b7aa1776e4d51e525dbaab72ec186379235272924e132855b5187af4c",
+  "schema": "pon-four-propositions-w1-review-pins-v2",
+  "statement": {
+    "challenge": "0202020202020202020202020202020202020202020202020202020202020202",
+    "target": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "task": "a86210e188f3175935c0889abe476264ad0e7d4b3c0719931279a78915e1fd97"
+  }
+}

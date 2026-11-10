@@ -10782,3 +10782,27 @@ The original engineering gates remain HOLD. Genuine external demand and data
 rights, independently measured full-cost usefulness, the universal legal-strategy
 resource bound and current-source native/release qualification remain distinct
 open obligations. This continuation grants no production or FinalUse authority.
+
+
+### 2026-11-09 — Bind fixed W1 verification to exact-content accounting
+
+Continue the four-proposition evidence view with the
+[W1 accounting bridge V2](../research/PON_W1_ACCOUNTING_BRIDGE_V2.md).
+Run the pinned scalar verifier on the complete supplied transcript and product,
+then derive and require six exact bindings: inputs, work profile, task content,
+output specification, output content and qualified work. Use fresh V2 content
+roots for new records; preserve the original V1 reader, signatures and records.
+
+Within the same context and fixed profile, challenge changes over identical
+A/B keep one exact-content result key while retaining each qualified-work
+identity and every reported attempt cost. Distinct inputs with an equal product
+retain distinct task identities. This narrow byte mapping does not certify
+global semantic equivalence, physical execution or native Node admission.
+
+Register the V2 controls once after the V1 suite in the original CI lane and
+extend its existing mutation and source-presence controls. Preserve unknown
+costs, original NoUpdate outcomes and independent review pins. Update only
+changed current-source corpus entries. All four original proposition flags
+remain unproved, all authority stays false, and demand, independent full-cost
+benefit and all-legal-strategy hardness remain open. Existing acceptance
+contracts and production activation are unchanged.
