@@ -37,3 +37,7 @@ evidence/pon-client-confirmation-v1/**/*.log -text -whitespace
 
 # Preserve byte-exact successful and failed proof-chain observations.
 /evidence/pon-w1-qrom-proof-chain-20261108/*.log -text -whitespace
+
+# Preserve the new exact hosted doctest and staged review transcripts.
+/tests/fixtures/ci/cell-current-api-readback-v3-81f89b0.log -text -whitespace
+/evidence/pq-cell-retained-key-20261110/**/*.log -text -whitespace

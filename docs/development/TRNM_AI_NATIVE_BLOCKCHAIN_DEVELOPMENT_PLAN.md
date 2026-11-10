@@ -11343,3 +11343,17 @@ and actual provider identity. This does not import #839's root timing samples
 as Cell performance or migrate main's classical profiles. Key custody,
 replacement, ordinary effect integration and full PQ lifetime/QROM qualification
 remain open, with activation false and unproved bounds null.
+
+Exact `81f89b01` hosted head and prospective-merge runtime/quality shards
+completed successfully. The head DA library executed all 720 tests, including
+the five new retained-key cases; the NPQ CLI recorded four passes and its one
+original ignored export experiment. These observations do not execute the
+signed sealed example's `main`. The dedicated PQ workflow failed on two source
+registrations: the legacy fifteen-path lifetime lock still selected the old
+`cell/pq.rs`, and its doctest reader required line 364 although the actual
+E0308 boundary passed at line 423. Preserve both original refusals, rebind the
+explicit fifteen-path mapping to actual `81f89b01` Git blobs, and register the
+exact new doctest with an additional actual fixture while retaining the old
+fixture unchanged. Add a recorded invocation of the signed sealed example to
+the same native workflow. No timing threshold, native budget, signature rule,
+historical result or qualification flag changes.

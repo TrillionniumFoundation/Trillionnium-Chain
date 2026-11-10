@@ -1,0 +1,11 @@
+{
+  "execution_identity": "staged source rebind over 81f89b01b1fe0bb23cb8b885a30bb8fcb11a8455; not a new committed execution",
+  "argv": [
+    "python3",
+    "scripts/ci/pq_lifetime_budget.py"
+  ],
+  "exit_code": 0,
+  "elapsed_ns": 66223329,
+  "stdout_sha256": "08d7ac76dbbd8d31b4ee1ecf9697df6bd11203253a45ae88991a159828d1bbb9",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

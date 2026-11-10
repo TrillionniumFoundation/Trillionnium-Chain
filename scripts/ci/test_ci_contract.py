@@ -2802,23 +2802,33 @@ class MergedQualificationLaneTests(unittest.TestCase):
 
 
 class CellCurrentApiReadbackTests(unittest.TestCase):
-    """Exercise the actual workflow predicate using an unchanged CI observation."""
+    """Exercise the exact current predicate while preserving historical observations."""
 
     WORKFLOW = Path(".github/workflows/pon-pq-system-continuation.yml")
-    FIXTURE = Path("tests/fixtures/ci/cell-current-api-readback-v2-66b7064.log")
-    OBSERVATION = Path("tests/fixtures/ci/cell-current-api-readback-v2-66b7064.json")
+    HISTORICAL_FIXTURE = Path("tests/fixtures/ci/cell-current-api-readback-v2-66b7064.log")
+    HISTORICAL_OBSERVATION = Path("tests/fixtures/ci/cell-current-api-readback-v2-66b7064.json")
     ORIGINAL_SHA256 = "43059fa21c3542eff4f0c4aeb3552207847a8b483d214ce1e1514f79a4c09553"
+    FIXTURE = Path("tests/fixtures/ci/cell-current-api-readback-v3-81f89b0.log")
+    OBSERVATION = Path("tests/fixtures/ci/cell-current-api-readback-v3-81f89b0.json")
+    CURRENT_SHA256 = "e5e18bd4a6acc39700ca5d85b4e1ec60c9c424f97405fd71ecc9dfde7d388721"
+    HISTORICAL_CASE = ("test crates/trnm-data-availability/src/cell/pq.rs - "
+                       "cell::pq::VerifiedCellPqReleaseV2 (line 364) - compile fail ... ok")
     EXACT_CASE = ("test crates/trnm-data-availability/src/cell/pq.rs - "
-                  "cell::pq::VerifiedCellPqReleaseV2 (line 364) - compile fail ... ok")
+                  "cell::pq::VerifiedCellPqReleaseV2 (line 423) - compile fail ... ok")
     SUMMARY = ("test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; "
                "15 filtered out; finished in 0.04s")
 
     @classmethod
     def setUpClass(cls):
         cls.root = Path(__file__).resolve().parents[2]
-        raw = (cls.root / cls.FIXTURE).read_bytes()
-        if hashlib.sha256(raw).hexdigest() != cls.ORIGINAL_SHA256:
+        historical = (cls.root / cls.HISTORICAL_FIXTURE).read_bytes()
+        if hashlib.sha256(historical).hexdigest() != cls.ORIGINAL_SHA256:
             raise AssertionError("original compile-fail observation changed")
+        cls.historical_observed = historical.decode("utf-8")
+        cls.historical_observation = json.loads((cls.root / cls.HISTORICAL_OBSERVATION).read_bytes())
+        raw = (cls.root / cls.FIXTURE).read_bytes()
+        if hashlib.sha256(raw).hexdigest() != cls.CURRENT_SHA256:
+            raise AssertionError("current compile-fail observation changed")
         cls.observed = raw.decode("utf-8")
         cls.observation = json.loads((cls.root / cls.OBSERVATION).read_bytes())
         prefix = "python3 -c '"
@@ -2857,9 +2867,12 @@ class CellCurrentApiReadbackTests(unittest.TestCase):
         })
 
     def test_old_or_wrong_exact_case_identity_is_refused(self):
+        self.assert_refused(self.historical_observed)
         for replacement in (
-            self.EXACT_CASE.replace("(line 364)", "(line 359)"),
-            self.EXACT_CASE.replace("(line 364)", "(line 365)"),
+            self.EXACT_CASE.replace("(line 423)", "(line 364)"),
+            self.EXACT_CASE.replace("(line 423)", "(line 422)"),
+            self.EXACT_CASE.replace("(line 423)", "(line 424)"),
+            self.EXACT_CASE.replace("(line 423)", "(line 359)"),
             self.EXACT_CASE.replace("VerifiedCellPqReleaseV2", "VerifiedCellPqReleaseV1"),
             self.EXACT_CASE.replace("src/cell/pq.rs", "src/cell/other.rs"),
             self.EXACT_CASE.replace(" ... ok", " ... ignored"),
@@ -2908,18 +2921,45 @@ class CellCurrentApiReadbackTests(unittest.TestCase):
                 self.assert_refused(changed)
 
     def test_fixture_keeps_original_source_and_failed_job_provenance(self):
-        self.assertEqual(self.observation["source_commit"],
+        self.assertEqual(self.historical_observation["source_commit"],
                          "66b7064be597039ce871b5b12ad5568850a2dd46")
-        self.assertEqual(self.observation["source_tree"],
+        self.assertEqual(self.historical_observation["source_tree"],
                          "75ac72605e3647de5a09557bfd7012dc99b0dec6")
+        self.assertEqual(self.historical_observation["original_doctest_exit_code"], 0)
+        self.assertEqual(self.historical_observation["original_readback_exit_code"], 1)
+        self.assertEqual(self.historical_observation["original_job_conclusion"], "failure")
+        self.assertEqual(self.historical_observation["log_sha256"], self.ORIGINAL_SHA256)
+        self.assertEqual(self.historical_observation["log_bytes"], 1159)
+        self.assertEqual(self.historical_observation["source_file_sha256"],
+                         "7326da0ad2c31fe599300d928fde84129ce83de0b072ef3bb46799d424aca3eb")
+        self.assertIn("(line 364)", self.HISTORICAL_CASE)
+        self.assertEqual(self.historical_observed.count(self.HISTORICAL_CASE), 1)
+
+    def test_current_fixture_keeps_exact_source_and_failed_job_artifact_provenance(self):
+        self.assertEqual(self.observation["source_commit"],
+                         "81f89b01b1fe0bb23cb8b885a30bb8fcb11a8455")
+        self.assertEqual(self.observation["source_tree"],
+                         "a3899186dc25721f3bc04d1e043b3ce979119de8")
+        self.assertEqual(self.observation["source_file_sha256"],
+                         "906e3c38a8f038a346e589c514b69dcb585f4d930bd7167d83aa6c495dd2ed33")
+        self.assertEqual(self.observation["artifact_id"], 13730219373)
+        self.assertEqual(self.observation["artifact_sha256"],
+                         "cac65af093d8e99caa215bb7e43b37c12de0251a706a3a7c4683ff9b3cdac480")
+        self.assertEqual(self.observation["artifact_url"],
+                         "https://github.com/TrillionniumFoundation/Trillionnium-Chain/"
+                         "actions/runs/42744039718/artifacts/13730219373")
+        self.assertEqual(self.observation["job_url"],
+                         "https://github.com/TrillionniumFoundation/Trillionnium-Chain/"
+                         "actions/runs/42744039718/job/129591752376")
+        self.assertEqual(self.observation["log_sha256"], self.CURRENT_SHA256)
+        self.assertEqual(self.observation["log_bytes"], 1159)
+        self.assertEqual(self.observation["actual_case_line"], 423)
+        self.assertEqual(self.observation["original_fixed_case_line"], 364)
         self.assertEqual(self.observation["original_doctest_exit_code"], 0)
         self.assertEqual(self.observation["original_readback_exit_code"], 1)
         self.assertEqual(self.observation["original_job_conclusion"], "failure")
-        self.assertEqual(self.observation["log_sha256"], self.ORIGINAL_SHA256)
-        self.assertEqual(self.observation["log_bytes"], 1159)
-        self.assertEqual(self.observation["source_file_sha256"],
-                         "7326da0ad2c31fe599300d928fde84129ce83de0b072ef3bb46799d424aca3eb")
-        self.assertIn("(line 364)", self.EXACT_CASE)
+        self.assertEqual(self.observation["original_readback_log_sha256"],
+                         "9b3335f681eaa44d0d2c33ae4c232074620d90837c93b1daf6aa35eb15676e56")
         self.assertEqual(self.observed.count(self.EXACT_CASE), 1)
 
 

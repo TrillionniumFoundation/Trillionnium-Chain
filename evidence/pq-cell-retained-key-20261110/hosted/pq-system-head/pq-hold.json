@@ -1,0 +1,61 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "81f89b01b1fe0bb23cb8b885a30bb8fcb11a8455",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "81f89b01b1fe0bb23cb8b885a30bb8fcb11a8455",
+    "tested_tree": "a3899186dc25721f3bc04d1e043b3ce979119de8",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2527824853,
+    "tracked_entries": 27655,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "python3",
+    "scripts/ci/pq_chain_claim_guard.py"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "81f89b01b1fe0bb23cb8b885a30bb8fcb11a8455",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "81f89b01b1fe0bb23cb8b885a30bb8fcb11a8455",
+    "tested_tree": "a3899186dc25721f3bc04d1e043b3ce979119de8",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2527824853,
+    "tracked_entries": 27655,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+  "elapsed_ns": 6586163982,
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/runner/work/_temp/pq-system-target",
+    "GITHUB_RUN_ATTEMPT": "1",
+    "GITHUB_RUN_ID": "42744039718",
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": "X64",
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": "1",
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 2,
+  "log_bytes": 192,
+  "log_file": "pq-hold.log",
+  "log_sha256": "ea1c329eeb81fb0537ea8ee7f04c26bf9e723d168042f66fafd5de01bde7ebdd",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-10T02:51:30.051799+00:00",
+  "status": "command_failed",
+  "whole_chain_quantum_security_qualified": false
+}

@@ -216,15 +216,30 @@ in both modes, and the actual lifetime failure bound remains null.
 
 ### Current composed-source mapping
 
-The current 15-path lock is independently reviewed against exact source
-`66b7064be597039ce871b5b12ad5568850a2dd46`. Its current lock-byte SHA-256 is
-`29ba9abdbb39d96bece885a0cd821fd9ad428413974cd530d26434f5a7daf84a`.
-The [current composition review](../../evidence/cell-storage-convergence-f2568-20261109/README.md)
+The current 15-path lock is reviewed against exact source
+`81f89b01b1fe0bb23cb8b885a30bb8fcb11a8455`. Its current lock-byte SHA-256 is
+`7e205b3dd7d329e4dfc244fe9f8b1b715e9e3127139d37b983bb5c3729fe3642`.
+This explicit mapping follows the retained-key publisher implementation in
+[PR #851](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/851).
+The preceding lock correctly refused that implementation because it still
+named the old `cell/pq.rs` bytes. The new review checks all 15 actual regular
+Git blobs at the named revision and compares each with its working file.
+Fourteen fingerprints are unchanged; only `cell/pq.rs` changes, from
+`7326da0ad2c31fe599300d928fde84129ce83de0b072ef3bb46799d424aca3eb`
+to `906e3c38a8f038a346e589c514b69dcb585f4d930bd7167d83aa6c495dd2ed33`.
+The manifest changes only at `experiment.source_revision`; the lock keeps the
+same 15-path set and schema. The separate CPV3/CPV4 source files remain outside
+this explicitly incomplete scope. This review does not expand it into complete
+dependency coverage, deployed-executable identity or a security theorem.
+
+The preceding mapping named `66b7064be597039ce871b5b12ad5568850a2dd46`, with
+lock-byte SHA-256 `29ba9abdbb39d96bece885a0cd821fd9ad428413974cd530d26434f5a7daf84a`.
+Its [composition review](../../evidence/cell-storage-convergence-f2568-20261109/README.md)
 and its [source-maintenance inventory](../../evidence/cell-storage-convergence-f2568-20261109/ci-source-maintenance19.members.json)
 preserve the prior files, the original refusal, all 15 Git regular-blob and
 working-file comparisons, and isolated original Python controls.
-Only the `cell/pq.rs` fingerprint and the declaration revision change;
-the manifest differs only at `experiment.source_revision`.
+Only the `cell/pq.rs` fingerprint and the declaration revision changed in that
+earlier mapping; its manifest differed only at `experiment.source_revision`.
 
 The preceding mapping named `0f0592ace4b08a1d39e1ffad31beee76ddc4fd66`
 and lock SHA-256 `8771ac5c7bfff29266a89e7b65bf1d57a021fd38a0461b7cc937db58c34557b0`.

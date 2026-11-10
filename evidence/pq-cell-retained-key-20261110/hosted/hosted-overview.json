@@ -1,0 +1,603 @@
+{
+  "source": "81f89b01b1fe0bb23cb8b885a30bb8fcb11a8455",
+  "tree": "a3899186dc25721f3bc04d1e043b3ce979119de8",
+  "workflow_runs": [
+    {
+      "id": 42744040026,
+      "name": "CPQ1 complete content bindings",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744040026"
+    },
+    {
+      "id": 42744039718,
+      "name": "PoN PQ network and rollback witness",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718"
+    },
+    {
+      "id": 42744039754,
+      "name": "PoN next architecture exact-source observations",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039754"
+    },
+    {
+      "id": 42744040017,
+      "name": "CodeQL exact-source analysis export",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744040017"
+    },
+    {
+      "id": 42744039983,
+      "name": "PoN original workspace test-profile CPU acceptance",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039983"
+    },
+    {
+      "id": 42744039935,
+      "name": "trnm-required-baseline",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935"
+    },
+    {
+      "id": 42744039739,
+      "name": "PoN W1 QROM implementation observations",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039739"
+    },
+    {
+      "id": 42744039748,
+      "name": "PoN four-axis throughput evidence controls",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039748"
+    },
+    {
+      "id": 42744039733,
+      "name": "PoN W1 QROM closure observations",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039733"
+    },
+    {
+      "id": 42744039859,
+      "name": "PoN work and time contract V1",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039859"
+    },
+    {
+      "id": 42744039980,
+      "name": "PoN W1 transparent candidate observations",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039980"
+    },
+    {
+      "id": 42744039982,
+      "name": "PoN W1 work security observations",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039982"
+    },
+    {
+      "id": 42744039918,
+      "name": "PoN priority acceptance",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039918"
+    },
+    {
+      "id": 42744039825,
+      "name": "PoN original large-state CPU acceptance",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039825"
+    },
+    {
+      "id": 42744039693,
+      "name": "Chain Hepta closure evidence contracts",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039693"
+    },
+    {
+      "id": 42744039929,
+      "name": "PoN native full relation and path controls",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039929"
+    },
+    {
+      "id": 42744039767,
+      "name": "PoN original native campaign",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039767"
+    },
+    {
+      "id": 42744039694,
+      "name": "PoN baseline diagnostic readback",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039694"
+    }
+  ],
+  "selected_jobs": [
+    {
+      "run": 42744039718,
+      "id": 129591751993,
+      "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718/job/129591751993",
+      "failed_steps": [
+        "Require retained source and claim controls"
+      ]
+    },
+    {
+      "run": 42744039718,
+      "id": 129591752261,
+      "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718/job/129591752261",
+      "failed_steps": [
+        "Require retained source and claim controls"
+      ]
+    },
+    {
+      "run": 42744039718,
+      "id": 129591752268,
+      "name": "CPQ1 complete candidate observations (ubuntu-24.04, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718/job/129591752268",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039718,
+      "id": 129591752289,
+      "name": "CPQ1 complete candidate observations (ubuntu-24.04-arm, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718/job/129591752289",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039718,
+      "id": 129591752342,
+      "name": "ML-DSA independent C implementation (ubuntu-24.04, prospective-merge)",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718/job/129591752342",
+      "failed_steps": [
+        "Run independent primitives on the exact candidate"
+      ]
+    },
+    {
+      "run": 42744039718,
+      "id": 129591752354,
+      "name": "TAP21 actual SDK interoperability (ubuntu-24.04-arm, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718/job/129591752354",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039718,
+      "id": 129591752366,
+      "name": "PQ network and witness (ubuntu-24.04-arm, head)",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718/job/129591752366",
+      "failed_steps": [
+        "Require retained source and claim controls"
+      ]
+    },
+    {
+      "run": 42744039718,
+      "id": 129591752376,
+      "name": "ML-DSA independent C implementation (ubuntu-24.04, head)",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718/job/129591752376",
+      "failed_steps": [
+        "Run independent primitives on the exact candidate"
+      ]
+    },
+    {
+      "run": 42744039718,
+      "id": 129591752377,
+      "name": "CPQ1 complete candidate observations (ubuntu-24.04, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718/job/129591752377",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039718,
+      "id": 129591752379,
+      "name": "PQ network and witness (ubuntu-24.04, head)",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718/job/129591752379",
+      "failed_steps": [
+        "Require retained source and claim controls"
+      ]
+    },
+    {
+      "run": 42744039718,
+      "id": 129591752397,
+      "name": "ML-DSA independent C implementation (ubuntu-24.04-arm, head)",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718/job/129591752397",
+      "failed_steps": [
+        "Run independent primitives on the exact candidate"
+      ]
+    },
+    {
+      "run": 42744039718,
+      "id": 129591752399,
+      "name": "TAP21 actual SDK interoperability (ubuntu-24.04, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718/job/129591752399",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039718,
+      "id": 129591752444,
+      "name": "CPQ1 complete candidate observations (ubuntu-24.04-arm, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718/job/129591752444",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039718,
+      "id": 129591752450,
+      "name": "TAP21 actual SDK interoperability (ubuntu-24.04, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718/job/129591752450",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039718,
+      "id": 129591752468,
+      "name": "ML-DSA independent C implementation (ubuntu-24.04-arm, prospective-merge)",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718/job/129591752468",
+      "failed_steps": [
+        "Run independent primitives on the exact candidate"
+      ]
+    },
+    {
+      "run": 42744039718,
+      "id": 129591752548,
+      "name": "TAP21 actual SDK interoperability (ubuntu-24.04-arm, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718/job/129591752548",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039935,
+      "id": 129591756477,
+      "name": "external-evidence-contract",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129591756477",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039935,
+      "id": 129591756635,
+      "name": "W1 actual reuse V3 (x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129591756635",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039935,
+      "id": 129591756719,
+      "name": "fuzz-smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129591756719",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039935,
+      "id": 129591756745,
+      "name": "prospective-merge (fuzz-smoke)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129591756745",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039935,
+      "id": 129591756758,
+      "name": "cross-arch-cost (x64)",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129591756758",
+      "failed_steps": [
+        "Execute exact native from-zero service controls"
+      ]
+    },
+    {
+      "run": 42744039935,
+      "id": 129591756807,
+      "name": "rust-baseline shard (quality)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129591756807",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039935,
+      "id": 129591756831,
+      "name": "prospective-merge (external-evidence-contract)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129591756831",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039935,
+      "id": 129591756833,
+      "name": "W1 actual reuse V3 (x64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129591756833",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039935,
+      "id": 129591756845,
+      "name": "prospective-merge (protocol-contract)",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129591756845",
+      "failed_steps": [
+        "Execute the same lane on the prospective merge"
+      ]
+    },
+    {
+      "run": 42744039935,
+      "id": 129591756853,
+      "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129591756853",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039935,
+      "id": 129591756856,
+      "name": "W1 actual reuse V3 (arm64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129591756856",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039935,
+      "id": 129591756861,
+      "name": "prospective Rust shard (quality)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129591756861",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039935,
+      "id": 129591756878,
+      "name": "rust-baseline shard (runtime)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129591756878",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039935,
+      "id": 129591756887,
+      "name": "cross-arch-cost (arm64)",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129591756887",
+      "failed_steps": [
+        "Execute exact native from-zero service controls"
+      ]
+    },
+    {
+      "run": 42744039935,
+      "id": 129591756898,
+      "name": "prospective-merge (repository-truth)",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129591756898",
+      "failed_steps": [
+        "Execute the same lane on the prospective merge"
+      ]
+    },
+    {
+      "run": 42744039935,
+      "id": 129591756905,
+      "name": "prospective Rust shard (runtime)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129591756905",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039935,
+      "id": 129591756990,
+      "name": "repository-truth",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129591756990",
+      "failed_steps": [
+        "Run actual repository-truth checks"
+      ]
+    },
+    {
+      "run": 42744039935,
+      "id": 129591756996,
+      "name": "protocol-contract",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129591756996",
+      "failed_steps": [
+        "Run actual protocol-contract checks"
+      ]
+    },
+    {
+      "run": 42744039935,
+      "id": 129597445635,
+      "name": "cross-arch-cost-consistency",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129597445635",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039935,
+      "id": 129642549193,
+      "name": "rust-baseline",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129642549193",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039935,
+      "id": 129644890645,
+      "name": "prospective-merge (rust-baseline)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039935/job/129644890645",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039983,
+      "id": 129591756301,
+      "name": "original workspace test CPU (ubuntu-24.04-arm, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039983/job/129591756301",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039983,
+      "id": 129591756539,
+      "name": "original workspace test CPU (ubuntu-24.04, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039983/job/129591756539",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039983,
+      "id": 129591756561,
+      "name": "original workspace test CPU (ubuntu-24.04, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039983/job/129591756561",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039983,
+      "id": 129591756603,
+      "name": "original workspace test CPU (ubuntu-24.04-arm, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039983/job/129591756603",
+      "failed_steps": []
+    },
+    {
+      "run": 42744040026,
+      "id": 129591755943,
+      "name": "native-components (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744040026/job/129591755943",
+      "failed_steps": []
+    },
+    {
+      "run": 42744040026,
+      "id": 129591756328,
+      "name": "native-components (ubuntu-24.04-arm)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744040026/job/129591756328",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039693,
+      "id": 129591751666,
+      "name": "contracts (proof-profile, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039693/job/129591751666",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039693,
+      "id": 129591751985,
+      "name": "contracts (proof-profile, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039693/job/129591751985",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039693,
+      "id": 129591752058,
+      "name": "contracts (scope, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039693/job/129591752058",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039693,
+      "id": 129591752068,
+      "name": "contracts (campaign-reader, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039693/job/129591752068",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039693,
+      "id": 129591752149,
+      "name": "contracts (scope, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039693/job/129591752149",
+      "failed_steps": []
+    },
+    {
+      "run": 42744039693,
+      "id": 129591752168,
+      "name": "contracts (campaign-reader, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039693/job/129591752168",
+      "failed_steps": []
+    }
+  ]
+}

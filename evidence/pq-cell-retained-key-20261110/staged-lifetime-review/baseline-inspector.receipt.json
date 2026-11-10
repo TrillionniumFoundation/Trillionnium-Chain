@@ -1,0 +1,9 @@
+{
+  "source": "81f89b01b1fe0bb23cb8b885a30bb8fcb11a8455",
+  "argv": [
+    "python3",
+    "scripts/ci/pq_lifetime_budget.py"
+  ],
+  "exit_code": 2,
+  "elapsed_ns": 38721008
+}

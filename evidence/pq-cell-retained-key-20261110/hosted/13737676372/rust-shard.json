@@ -1,0 +1,37 @@
+{
+  "schema": "trnm-rust-baseline-shard-v1",
+  "shard": "quality",
+  "status": "passed",
+  "exit_code": 0,
+  "command_sha256": "5f46e68f4d31ddd3b4a5ead0217bcad2faae3b7acd457ee3ed5f8e8b57968f7a",
+  "run": {
+    "GITHUB_RUN_ID": "42744039935",
+    "GITHUB_RUN_ATTEMPT": "1"
+  },
+  "before": {
+    "schema": "trnm-ci-source-v1",
+    "kind": "prospective-merge",
+    "tested_commit": "8d57aa4add724ba8d70e4c96717911869aa4680c",
+    "tested_tree": "a3899186dc25721f3bc04d1e043b3ce979119de8",
+    "candidate": "81f89b01b1fe0bb23cb8b885a30bb8fcb11a8455",
+    "base": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+    "prospective_merge": "8d57aa4add724ba8d70e4c96717911869aa4680c",
+    "tracked_worktree_verified": true,
+    "tracked_entries": 27655,
+    "tracked_bytes": 2527824853,
+    "tests_executed_by_identity_check": false
+  },
+  "after": {
+    "schema": "trnm-ci-source-v1",
+    "kind": "prospective-merge",
+    "tested_commit": "8d57aa4add724ba8d70e4c96717911869aa4680c",
+    "tested_tree": "a3899186dc25721f3bc04d1e043b3ce979119de8",
+    "candidate": "81f89b01b1fe0bb23cb8b885a30bb8fcb11a8455",
+    "base": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+    "prospective_merge": "8d57aa4add724ba8d70e4c96717911869aa4680c",
+    "tracked_worktree_verified": true,
+    "tracked_entries": 27655,
+    "tracked_bytes": 2527824853,
+    "tests_executed_by_identity_check": false
+  }
+}

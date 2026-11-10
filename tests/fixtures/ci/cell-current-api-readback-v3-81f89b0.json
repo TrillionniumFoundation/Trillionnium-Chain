@@ -1,0 +1,21 @@
+{
+  "actual_case_line": 423,
+  "artifact_id": 13730219373,
+  "artifact_sha256": "cac65af093d8e99caa215bb7e43b37c12de0251a706a3a7c4683ff9b3cdac480",
+  "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718/artifacts/13730219373",
+  "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42744039718/job/129591752376",
+  "log_bytes": 1159,
+  "log_member": "cell-current-api.log",
+  "log_sha256": "e5e18bd4a6acc39700ca5d85b4e1ec60c9c424f97405fd71ecc9dfde7d388721",
+  "original_doctest_exit_code": 0,
+  "original_fixed_case_line": 364,
+  "original_job_conclusion": "failure",
+  "original_readback_exit_code": 1,
+  "original_readback_log_sha256": "9b3335f681eaa44d0d2c33ae4c232074620d90837c93b1daf6aa35eb15676e56",
+  "schema": "cell-current-api-ci-observation-v1",
+  "scope": "Unchanged actual doctest output from the failed exact 81f89b0 head CI job; no later source qualification and no independent C execution are claimed.",
+  "source_commit": "81f89b01b1fe0bb23cb8b885a30bb8fcb11a8455",
+  "source_file": "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
+  "source_file_sha256": "906e3c38a8f038a346e589c514b69dcb585f4d930bd7167d83aa6c495dd2ed33",
+  "source_tree": "a3899186dc25721f3bc04d1e043b3ce979119de8"
+}
