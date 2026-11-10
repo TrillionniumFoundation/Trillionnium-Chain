@@ -144,3 +144,15 @@ bounds via nonnegative supermartingales*, Probability Surveys 17 (2020),
 17 December 2025: https://arxiv.org/html/1808.03204v8 . Its Ville argument is
 standard background; the killed good-law specialization above is proved here
 and is not presented as an existing native security theorem.
+
+## Executed identity and retained checks
+
+Seven methods and the exact control completed on evidence source
+`85905b41943cd872fbaedbcfe19ea753839847ef`, tree
+`949f5972d2b2d766cd2f229c680a83e66412b521`. Full tracked-source verification,
+repository/link and CI-contract readers passed there. Qualification consistency
+returned 0 while promotion correctly refused with exit 3. These are local
+research checks, not Rust/native execution. This follow-up retains their raw
+streams and source receipt without reassigning execution to its later head.
+The retained snapshot of preceding head 3a4b46d has twenty queued/pending
+workflows and no conclusions; original failed ROG r1 is not resubmitted.
