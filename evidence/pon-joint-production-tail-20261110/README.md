@@ -84,3 +84,7 @@ original streams, archive bytes, member hashes and controller receipts are
 retained. This adds no native gate pass or probability qualification. All prior
 UNKNOWN/timeouts remain retained; all thirteen actual joint obligations remain
 open and HOLD_NO_GO remains.
+
+[Exact committed recovery-source validation](r1-terminal-validation/README.md)
+retains the four successful local evidence checks and the explicit local/public
+commit mapping for their identical tree. These checks add no Rust execution.
