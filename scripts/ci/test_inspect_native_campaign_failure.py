@@ -260,6 +260,40 @@ class TerminalBoundaryIntegrityTests(unittest.TestCase):
         stages[0].update(accepted=False, error_code="PUBLIC_REQUEST_DEADLINE")
         self.assertEqual(_terminal_import_boundary(history)["boundary_status"], "unknown")
 
+    def test_claimed_success_with_unexecuted_terminal_stage_is_unknown(self):
+        from inspect_native_campaign_failure import _terminal_import_boundary
+        history = self.history()
+        row = history[0]["client_import"]
+        row.update(succeeded=True, error=None)
+        stages = row["native_import_observation"]["packets"][0]["phases"]
+        for stage in stages:
+            stage.update(started=False, completed=False, accepted=None, error_code=None)
+        result = _terminal_import_boundary(history)
+        self.assertEqual(result["boundary_status"], "unknown")
+        self.assertIsNone(result["boundary_stage"])
+
+    def test_claimed_success_with_network_failure_is_unknown(self):
+        from inspect_native_campaign_failure import _terminal_import_boundary
+        history = self.history()
+        row = history[0]["client_import"]
+        row.update(succeeded=True, error=None)
+        for stage in row["native_import_observation"]["packets"][0]["phases"]:
+            stage.update(accepted=True, error_code=None)
+        history[0].update(status="error", error="PUBLIC_REQUEST_DEADLINE")
+        result = _terminal_import_boundary(history)
+        self.assertEqual(result["boundary_status"], "unknown")
+        self.assertIsNone(result["boundary_stage"])
+
+    def test_success_with_transport_error_and_ok_status_remains_unknown(self):
+        from inspect_native_campaign_failure import _terminal_import_boundary
+        history = self.history()
+        imported = history[0]["client_import"]
+        imported.update(succeeded=True, error=None)
+        for stage in imported["native_import_observation"]["packets"][0]["phases"]:
+            stage.update(accepted=True, error_code=None)
+        history[0].update(status="ok", error="transport-lost")
+        self.assertEqual(_terminal_import_boundary(history)["boundary_status"], "unknown")
+
     def test_unreturned_or_unstarted_stage_cannot_be_a_deadline_boundary(self):
         from inspect_native_campaign_failure import _terminal_import_boundary
         for key in ("started", "completed"):

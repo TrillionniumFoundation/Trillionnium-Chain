@@ -160,9 +160,14 @@ def _terminal_import_boundary(history: list) -> dict:
     if type(imported.get("succeeded")) is not bool:
         return record
     if imported.get("succeeded") is True:
-        if (imported.get("error") is None
-                and not any(stage["accepted"] is False
-                            for stage in record["stage_observations"].values())):
+        # A report's claimed success cannot turn absent/unentered native stages
+        # or a failed outer transport into an affirmative clean import.
+        # Evidence for every named terminal stage must be returned and accepted.
+        if (last.get("status") == "ok" and last.get("error") is None
+                and imported.get("error") is None
+                and all(stage["started"] is True and stage["completed"] is True
+                        and stage["accepted"] is True
+                        for stage in record["stage_observations"].values())):
             record["boundary_status"] = "no_terminal_import_failure"
         return record
     if imported.get("error") != "PUBLIC_REQUEST_DEADLINE":
