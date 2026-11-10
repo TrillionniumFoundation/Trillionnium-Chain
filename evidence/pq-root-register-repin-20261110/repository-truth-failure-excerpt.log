@@ -1,0 +1,23 @@
+2026-11-10T16:45:00.6760271Z ----------------------------------------------------------------------
+2026-11-10T16:45:00.6760819Z Traceback (most recent call last):
+2026-11-10T16:45:00.6762329Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/test_pq_root_dependency_register.py", line 432, in test_all_declared_actual_bytes_match_without_security_or_commit_attestation
+2026-11-10T16:45:00.6763541Z     report = register.inspect(self.root)
+2026-11-10T16:45:00.6763944Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-10T16:45:00.6764744Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/pq_root_dependency_register.py", line 396, in inspect
+2026-11-10T16:45:00.6765666Z     require(digest == data["source_files_sha256"][path],
+2026-11-10T16:45:00.6766962Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/pq_root_dependency_register.py", line 75, in require
+2026-11-10T16:45:00.6767845Z     raise RegisterError(message)
+2026-11-10T16:45:00.6768723Z pq_root_dependency_register.RegisterError: source hash mismatch: trillionnium/crates/trnm-pon-node/tests/recovery_floor_v4_native.rs
+2026-11-10T16:45:00.6769456Z 
+2026-11-10T16:45:00.6769822Z ======================================================================
+2026-11-10T16:45:00.6770823Z FAIL: test_cli_exit_zero_is_hold_and_bad_input_has_structured_refusal (__main__.ReviewedSourceTests.test_cli_exit_zero_is_hold_and_bad_input_has_structured_refusal)
+2026-11-10T16:45:00.6772025Z ----------------------------------------------------------------------
+2026-11-10T16:45:00.6772546Z Traceback (most recent call last):
+2026-11-10T16:45:00.6773708Z   File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/test_pq_root_dependency_register.py", line 517, in test_cli_exit_zero_is_hold_and_bad_input_has_structured_refusal
+2026-11-10T16:45:00.6775007Z     self.assertEqual(result.returncode, 0, result.stderr)
+2026-11-10T16:45:00.6776353Z AssertionError: 2 != 0 : {"reason": "source hash mismatch: trillionnium/crates/trnm-pon-node/tests/recovery_floor_v4_native.rs", "schema": "trnm-pq-root-dependency-register-result-v3", "status": "REFUSE"}
+2026-11-10T16:45:00.6777458Z 
+2026-11-10T16:45:00.6777476Z 
+2026-11-10T16:45:00.6777709Z ----------------------------------------------------------------------
+2026-11-10T16:45:00.6778198Z Ran 42 tests in 0.205s
+2026-11-10T16:45:00.6778406Z 
