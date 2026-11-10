@@ -10745,3 +10745,22 @@ binary hashes and are reported separately. All 27 native adapter tests passed
 in each run. [Full receiver results and raw evidence](../../formal/pon-nakamoto-v1/w1_node_adapter_research/evidence/receiver-cost-20261109/README.md)
 identify preprocessing as the main measured cost, retain zero new complete
 proofs, and leave production replacement, service and whole-chain gates HOLD.
+
+### 2026-11-10 — Reconstruct request-local DFT-sharing experiment (HOLD)
+
+Continue #842 at `9133a2218890cfca837df34e7d6b892cec780868` with the
+[DFT-sharing experiment](../../formal/pon-nakamoto-v1/w1_node_adapter_research/DFT_SHARING_EXPERIMENT.md).
+Share only request-local transform tables while keeping fresh component
+challengers, both complete independent preprocessing computations and PCS checks,
+durable proof-start charging and original native admission. Different transform
+shapes may provide no useful cache hit. Check four-row/eight-row small proof byte
+equivalence, retain original controls, and measure complete baseline/candidate
+receivers before asserting any improvement.
+
+The previous transient workspace reset before publication. Reconstruct the
+candidate on the fixed base, persist it on the original authorized host, and run
+new exact-source validation. Missing local executables and logs cannot support
+reused historical pass counts. Retain all new failed or incomplete observations,
+including missing resource readback; do not relax the original service contract.
+Production proof replacement, WAN/ACK benefit and concrete cryptographic
+qualification remain open. Qualification remains HOLD_NO_GO.
