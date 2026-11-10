@@ -260,6 +260,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/pq-root-custody-review-v2.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/pq-root-custody-review-v2.json"
+        )),
+    ),
+    (
         "config/pon/pq-root-dependency-register-v3.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

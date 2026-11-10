@@ -1,0 +1,50 @@
+{
+  "name": "complete",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/pon_w1_lifecycle_cost_v4.py",
+    "/workspace/scratch/23345083847a/pon-legal-cost-evidence/native-v4-historical-replay/extracted-originals/final-native/v4-observation/complete.jsonl",
+    "--process-exit-code",
+    "0"
+  ],
+  "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+  "exit_code": 0,
+  "original_native_process_exit_code": 0,
+  "original_reader_exit_code": 0,
+  "reader_wall_elapsed_ns": 3679757505,
+  "stdout_bytes": 903,
+  "stdout_sha256": "ee171af7e4d1cbb548c8ae9a36810d412722e5c552ed7043f1eeb4c009f4e0e6",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "matches_original_readback_object": true,
+  "matches_original_readback_bytes": true,
+  "readback": {
+    "all_legal_work_cost_lower_bound_proved": false,
+    "complete_records": 23069,
+    "consensus_credit_added": 0,
+    "failure": null,
+    "full_relation_replayed_by_reader": false,
+    "generation_records_with_unknown_cpu": 0,
+    "last_phase": "complete",
+    "native_process_exit_code": 0,
+    "observed_counts": {
+      "attempts": 3848,
+      "candidates": 288,
+      "cohorts": 936,
+      "searches": 1888,
+      "verified_searches": 1888,
+      "verifiers": 3776
+    },
+    "observed_generation_cpu_subtotal_ns": 1876108995,
+    "production_qualified": false,
+    "raw_sha256": "2ae1c73382b3d4bede8412c9ff725d6e51bf37ea50ff6810a84617c4c8ec6f04",
+    "schema": "pon-w1-lifecycle-readback-v4",
+    "source_binary_resource_identity_authenticated_by_reader": false,
+    "status": "COMPLETE_DECLARED_OBSERVATION",
+    "trailing_partial_bytes": 0,
+    "unfinished_cohort": null,
+    "unfinished_resource_cost": null,
+    "unfinished_search": null
+  },
+  "native_executed_this_review": false
+}

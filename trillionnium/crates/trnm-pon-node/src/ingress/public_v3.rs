@@ -4458,10 +4458,18 @@ mod tests {
         wait_metric(&metrics, |m| {
             m.tasks_enqueued == 4 && m.tasks_dequeued == 3 && m.mutation_cpu_reservations == 2
         });
+        // Observe cancellation of the queued request before releasing either
+        // dispatched worker. The owner lock blocks native work, but cancelled
+        // workers can still return and dequeue another task while the reactor
+        // is observing the remaining socket shutdowns. Without this ordering,
+        // the third request may legitimately reserve and settle CPU before its
+        // cancellation is observed, changing the intended two-dispatched/one-
+        // queued test case without starting any native work.
+        sockets[2].shutdown(std::net::Shutdown::Both).unwrap();
+        wait_metric(&metrics, |m| m.disconnected_await_requests == 1);
+        assert_eq!(metrics.lock().unwrap().mutation_cpu_reservations, 2);
         sockets[0].shutdown(std::net::Shutdown::Write).unwrap();
-        for socket in &sockets[1..] {
-            socket.shutdown(std::net::Shutdown::Both).unwrap();
-        }
+        sockets[1].shutdown(std::net::Shutdown::Both).unwrap();
         wait_metric(&metrics, |m| m.disconnected_await_requests == 3);
         // Keep the first caller's read half open: it receives EOF because the
         // server explicitly cancels R2 write-half-closed requests.

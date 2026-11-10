@@ -1,0 +1,115 @@
+{
+  "schema": "pon-cost-regression-source-pins-v1",
+  "base_commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "scope": "Exact files used by reader and log-gate replay; not a whole-checkout or native-execution qualification",
+  "files": [
+    {
+      "path": ".github/workflows/pon-w1-work-security.yml",
+      "bytes": 48008,
+      "sha256": "d6bfeef7f57e311fa904d6fd55fb77474e887c443d52a1ef858bd611111c49b7"
+    },
+    {
+      "path": "scripts/pon_w1_lifecycle_cost_v4.py",
+      "bytes": 25902,
+      "sha256": "1d0fb8a0b0d0d3ba9be398801488e90feea7364c6adf5d805e06aa2c1811381b"
+    },
+    {
+      "path": "scripts/pon_w1_cost_matrix_reader.py",
+      "bytes": 35800,
+      "sha256": "6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa"
+    },
+    {
+      "path": "scripts/ci/test_w1_lifecycle_cost_v4.py",
+      "bytes": 15637,
+      "sha256": "61ae4d948ade903b55c9fd150d4454a4b092c20e274c93dcdf22831d979d6cde"
+    },
+    {
+      "path": "scripts/ci/test_w1_factorial_native_gate.py",
+      "bytes": 9313,
+      "sha256": "0bd5c2e38518f2f6b0100d31a3cd22d1931d23f96bdefc2c7ddee9666dd7a0dc"
+    },
+    {
+      "path": "scripts/ci/test_pon_w1_cost_matrix_reader.py",
+      "bytes": 30280,
+      "sha256": "240d7ac7285d740bd87dcebc05fc17f29a27403e0fc61cdb0ea01c6a9869ba8b"
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "bytes": 187244,
+      "sha256": "76e5920df203e218445aa0f19ffccd6ea1334f1abf2b80c58e0726f72f923328"
+    },
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "bytes": 155031,
+      "sha256": "3ca90075304bbf5ca11bee495cb3d33171050992cfe761a0b0132403a5924cea"
+    },
+    {
+      "path": "scripts/ci/check_cross_arch_cost.py",
+      "bytes": 41098,
+      "sha256": "f8f0f99c1f4a48d16d51f9257472645532626fc5202faa08c1453eaab9f4984f"
+    },
+    {
+      "path": "scripts/ci/report_current_implementation.py",
+      "bytes": 6556,
+      "sha256": "07332fe871f501a0e0ba71ab0bc8474b89d4208244589dfb8d356afa38320c24"
+    },
+    {
+      "path": "config/pon/work-security-acceptance-v1.json",
+      "bytes": 673,
+      "sha256": "4ca674c305112d51672efcab6c0f886e477a5397191addb806d209a08266165f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs",
+      "bytes": 24418,
+      "sha256": "e029837d050952046c9c4fa694a8191470a8733cd96a3dc81e98cc46af59a0a3"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt/low_rank.rs",
+      "bytes": 13599,
+      "sha256": "b167b51b07a6fbf186a1485c1f742de3df1007cb9794c364c7421d77e0afacb4"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs",
+      "bytes": 7114,
+      "sha256": "ca6196f9067ea3ac86a2d743c13de9c9cac0715e4ae652654cdd6592a6d0cf9a"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/pon_w1_legal_strategy_v1.rs",
+      "bytes": 23280,
+      "sha256": "6f95f053557c17d90011236eb0e2d079787844aba6065655331fe41c19c08776"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/pon_w1_legal_strategy_v3.rs",
+      "bytes": 22075,
+      "sha256": "fd22b893e8459b4eb374aedc774b8a267f56c194642b5ed29d2555ee2b3388c3"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/pon_w1_lifecycle_cost_v4.rs",
+      "bytes": 19072,
+      "sha256": "04423d9609bdda68646940328c1fca9b7e94cb2f6c84522f4cd1ea4bd13875d5"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/w1_cost_producers.rs",
+      "bytes": 14345,
+      "sha256": "9dad341b103836badc53bec50774114b97ae08db061f7a3e9d9b9c4a37c80f5f"
+    }
+  ],
+  "before_fix_files": [
+    {
+      "source_commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+      "repository_path": "scripts/pon_w1_lifecycle_cost_v4.py",
+      "bundle_path": "before-fix-source/scripts/pon_w1_lifecycle_cost_v4.py",
+      "git_blob": "06d92b853c8a7b0766b1152104c834109243d308",
+      "bytes": 25288,
+      "sha256": "da6b94cccafc0d32518afc2ffeb3fac5d4f3bb91c6b6b646590cd3e4d85bf6ba"
+    },
+    {
+      "source_commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+      "repository_path": ".github/workflows/pon-w1-work-security.yml",
+      "bundle_path": "before-fix-source/.github/workflows/pon-w1-work-security.yml",
+      "git_blob": "c9ab642e0f23194b32a7b283107d215deb534c7a",
+      "bytes": 43822,
+      "sha256": "739854d721f5be0f2055bf211a9ebf929b64e8a3a5047a777fea4ab4166b3490"
+    }
+  ]
+}

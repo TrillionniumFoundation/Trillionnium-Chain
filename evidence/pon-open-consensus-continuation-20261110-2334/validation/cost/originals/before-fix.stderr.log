@@ -1,0 +1,1409 @@
+test_attempt_error_preserves_unknown_and_unfinished_search (test_w1_lifecycle_cost_v4.Readback.test_attempt_error_preserves_unknown_and_unfinished_search) ... ok
+test_consistent_material_relabelling_and_changed_recipe_are_refused (test_w1_lifecycle_cost_v4.Readback.test_consistent_material_relabelling_and_changed_recipe_are_refused) ... 
+  test_consistent_material_relabelling_and_changed_recipe_are_refused (test_w1_lifecycle_cost_v4.Readback.test_consistent_material_relabelling_and_changed_recipe_are_refused) (relabelled_as='full-rank-field') ... FAIL
+  test_consistent_material_relabelling_and_changed_recipe_are_refused (test_w1_lifecycle_cost_v4.Readback.test_consistent_material_relabelling_and_changed_recipe_are_refused) (relabelled_as='rank-one') ... FAIL
+test_consistent_material_relabelling_and_changed_recipe_are_refused (test_w1_lifecycle_cost_v4.Readback.test_consistent_material_relabelling_and_changed_recipe_are_refused) ... FAIL
+test_duplicate_json_key_and_boolean_sequence_are_rejected (test_w1_lifecycle_cost_v4.Readback.test_duplicate_json_key_and_boolean_sequence_are_rejected) ... ok
+test_equal_winner_cannot_hide_a_changed_losing_trial (test_w1_lifecycle_cost_v4.Readback.test_equal_winner_cannot_hide_a_changed_losing_trial) ... ok
+test_every_complete_line_prefix_remains_incomplete_and_unknown (test_w1_lifecycle_cost_v4.Readback.test_every_complete_line_prefix_remains_incomplete_and_unknown) ... ok
+test_fixed_material_recipes_accept_without_claiming_native_execution (test_w1_lifecycle_cost_v4.Readback.test_fixed_material_recipes_accept_without_claiming_native_execution) ... ok
+test_half_written_attempt_is_retained_as_partial_not_zero_cost (test_w1_lifecycle_cost_v4.Readback.test_half_written_attempt_is_retained_as_partial_not_zero_cost) ... ok
+test_injected_end_cannot_close_unfinished_native_work (test_w1_lifecycle_cost_v4.Readback.test_injected_end_cannot_close_unfinished_native_work) ... ok
+test_losing_trial_digest_must_bind_complete_fixed_proof_bytes (test_w1_lifecycle_cost_v4.Readback.test_losing_trial_digest_must_bind_complete_fixed_proof_bytes) ... FAIL
+test_material_provenance_label_is_frozen (test_w1_lifecycle_cost_v4.Readback.test_material_provenance_label_is_frozen) ... ok
+test_measured_scope_text_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_measured_scope_text_cannot_be_relabelled) ... ok
+test_missing_start_deletion_and_duplicate_sequence_are_refused (test_w1_lifecycle_cost_v4.Readback.test_missing_start_deletion_and_duplicate_sequence_are_refused) ... ok
+test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) ... 
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='scalar-original') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='prepared-generic') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='prepared-structured') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='tiled-classical') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='tiled-strassen-one-level') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='paired-product') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='blocked-zero') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='blocked-zero-integer-paired') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='blocked-one-zero-rank-one') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='maintenance-periodic') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='maintenance-integer-paired') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='maintenance-prefix') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='maintenance-limb') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='scalar-original') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='prepared-generic') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='prepared-structured') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='tiled-classical') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='tiled-strassen-one-level') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='paired-product') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='blocked-zero') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='blocked-zero-integer-paired') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='blocked-one-zero-rank-one') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='maintenance-periodic') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='maintenance-integer-paired') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='maintenance-prefix') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='maintenance-limb') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='scalar-original') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='prepared-generic') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='prepared-structured') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='tiled-classical') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='tiled-strassen-one-level') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='paired-product') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='blocked-zero') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='blocked-zero-integer-paired') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='blocked-one-zero-rank-one') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='maintenance-periodic') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='maintenance-integer-paired') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='maintenance-prefix') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='maintenance-limb') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='scalar-original') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='prepared-generic') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='prepared-structured') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='tiled-classical') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='tiled-strassen-one-level') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='paired-product') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='blocked-zero') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='blocked-zero-integer-paired') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='blocked-one-zero-rank-one') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='maintenance-periodic') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='maintenance-integer-paired') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='maintenance-prefix') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='maintenance-limb') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='scalar-original') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='prepared-generic') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='prepared-structured') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='tiled-classical') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='tiled-strassen-one-level') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='paired-product') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='blocked-zero') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='blocked-zero-integer-paired') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='blocked-one-zero-rank-one') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='maintenance-periodic') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='maintenance-integer-paired') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='maintenance-prefix') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='maintenance-limb') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='scalar-original') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='prepared-generic') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='prepared-structured') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='tiled-classical') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='tiled-strassen-one-level') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='paired-product') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='blocked-zero') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='blocked-zero-integer-paired') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='blocked-one-zero-rank-one') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='maintenance-periodic') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='maintenance-integer-paired') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='maintenance-prefix') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='maintenance-limb') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='scalar-original') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='prepared-generic') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='prepared-structured') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='tiled-classical') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='tiled-strassen-one-level') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='paired-product') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='blocked-zero') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='blocked-zero-integer-paired') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='blocked-one-zero-rank-one') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='maintenance-periodic') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='maintenance-integer-paired') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='maintenance-prefix') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='maintenance-limb') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='scalar-original') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='prepared-generic') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='prepared-structured') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='tiled-classical') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='tiled-strassen-one-level') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='paired-product') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='blocked-zero') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='blocked-zero-integer-paired') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='blocked-one-zero-rank-one') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='maintenance-periodic') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='maintenance-integer-paired') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='maintenance-prefix') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='maintenance-limb') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='scalar-original') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='prepared-generic') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='prepared-structured') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='tiled-classical') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='tiled-strassen-one-level') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='paired-product') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='blocked-zero') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='blocked-zero-integer-paired') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='blocked-one-zero-rank-one') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='maintenance-periodic') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='maintenance-integer-paired') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='maintenance-prefix') ... FAIL
+  test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='maintenance-limb') ... FAIL
+test_no_more_records_can_follow_failure (test_w1_lifecycle_cost_v4.Readback.test_no_more_records_can_follow_failure) ... ok
+test_wrong_challenge_or_extra_credit_authority_is_refused (test_w1_lifecycle_cost_v4.Readback.test_wrong_challenge_or_extra_credit_authority_is_refused) ... ok
+
+======================================================================
+FAIL: test_consistent_material_relabelling_and_changed_recipe_are_refused (test_w1_lifecycle_cost_v4.Readback.test_consistent_material_relabelling_and_changed_recipe_are_refused) (relabelled_as='full-rank-field')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 197, in test_consistent_material_relabelling_and_changed_recipe_are_refused
+    with self.assertRaisesRegex(ValueError, "MATERIAL_RECIPE"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_consistent_material_relabelling_and_changed_recipe_are_refused (test_w1_lifecycle_cost_v4.Readback.test_consistent_material_relabelling_and_changed_recipe_are_refused) (relabelled_as='rank-one')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 197, in test_consistent_material_relabelling_and_changed_recipe_are_refused
+    with self.assertRaisesRegex(ValueError, "MATERIAL_RECIPE"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_consistent_material_relabelling_and_changed_recipe_are_refused (test_w1_lifecycle_cost_v4.Readback.test_consistent_material_relabelling_and_changed_recipe_are_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 204, in test_consistent_material_relabelling_and_changed_recipe_are_refused
+    with self.assertRaisesRegex(ValueError, "MATERIAL_RECIPE"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_losing_trial_digest_must_bind_complete_fixed_proof_bytes (test_w1_lifecycle_cost_v4.Readback.test_losing_trial_digest_must_bind_complete_fixed_proof_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 251, in test_losing_trial_digest_must_bind_complete_fixed_proof_bytes
+    with self.assertRaisesRegex(ValueError, "TRIAL_PROOF_BINDING"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='scalar-original')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='prepared-generic')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='prepared-structured')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='tiled-classical')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='tiled-strassen-one-level')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='paired-product')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='blocked-zero')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='blocked-zero-integer-paired')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='blocked-one-zero-rank-one')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='maintenance-periodic')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='maintenance-integer-paired')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='maintenance-prefix')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='periodic-dense-fixture', arm='maintenance-limb')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='scalar-original')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='prepared-generic')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='prepared-structured')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='tiled-classical')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='tiled-strassen-one-level')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='paired-product')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='blocked-zero')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='blocked-zero-integer-paired')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='blocked-one-zero-rank-one')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='maintenance-periodic')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='maintenance-integer-paired')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='maintenance-prefix')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='full-rank-field', arm='maintenance-limb')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='scalar-original')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='prepared-generic')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='prepared-structured')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='tiled-classical')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='tiled-strassen-one-level')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='paired-product')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='blocked-zero')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='blocked-zero-integer-paired')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='blocked-one-zero-rank-one')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='maintenance-periodic')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='maintenance-integer-paired')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='maintenance-prefix')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='zero', arm='maintenance-limb')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='scalar-original')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='prepared-generic')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='prepared-structured')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='tiled-classical')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='tiled-strassen-one-level')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='paired-product')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='blocked-zero')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='blocked-zero-integer-paired')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='blocked-one-zero-rank-one')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='maintenance-periodic')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='maintenance-integer-paired')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='maintenance-prefix')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='identity', arm='maintenance-limb')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='scalar-original')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='prepared-generic')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='prepared-structured')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='tiled-classical')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='tiled-strassen-one-level')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='paired-product')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='blocked-zero')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='blocked-zero-integer-paired')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='blocked-one-zero-rank-one')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='maintenance-periodic')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='maintenance-integer-paired')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='maintenance-prefix')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='rank-one', arm='maintenance-limb')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='scalar-original')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='prepared-generic')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='prepared-structured')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='tiled-classical')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='tiled-strassen-one-level')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='paired-product')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='blocked-zero')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='blocked-zero-integer-paired')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='blocked-one-zero-rank-one')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='maintenance-periodic')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='maintenance-integer-paired')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='maintenance-prefix')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='sparse-diagonal', arm='maintenance-limb')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='scalar-original')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='prepared-generic')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='prepared-structured')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='tiled-classical')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='tiled-strassen-one-level')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='paired-product')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='blocked-zero')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='blocked-zero-integer-paired')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='blocked-one-zero-rank-one')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='maintenance-periodic')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='maintenance-integer-paired')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='maintenance-prefix')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='continuity-maintenance-v1', arm='maintenance-limb')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='scalar-original')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='prepared-generic')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='prepared-structured')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='tiled-classical')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='tiled-strassen-one-level')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='paired-product')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='blocked-zero')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='blocked-zero-integer-paired')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='blocked-one-zero-rank-one')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='maintenance-periodic')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='maintenance-integer-paired')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='maintenance-prefix')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-left-rank-one', arm='maintenance-limb')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='scalar-original')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='prepared-generic')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='prepared-structured')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='tiled-classical')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='tiled-strassen-one-level')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='paired-product')
+----------------------------------------------------------------------
+ValueError: MANDATORY_PRODUCER_SUPPORT
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "PRODUCER_SUPPORT_MATRIX" does not match "MANDATORY_PRODUCER_SUPPORT"
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='blocked-zero')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='blocked-zero-integer-paired')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='blocked-one-zero-rank-one')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='maintenance-periodic')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='maintenance-integer-paired')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='maintenance-prefix')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_native_support_matrix_is_complete_and_cannot_be_relabelled (test_w1_lifecycle_cost_v4.Readback.test_native_support_matrix_is_complete_and_cannot_be_relabelled) (name='one-zero-right-rank-one', arm='maintenance-limb')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/23345083847a/Trillionnium-Chain/scripts/ci/test_w1_lifecycle_cost_v4.py", line 235, in test_native_support_matrix_is_complete_and_cannot_be_relabelled
+    with self.assertRaisesRegex(ValueError, "PRODUCER_SUPPORT_MATRIX"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 15 tests in 1.242s
+
+FAILED (failures=121)

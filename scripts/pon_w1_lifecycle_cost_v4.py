@@ -14,6 +14,8 @@ from pathlib import Path
 import struct
 import sys
 
+import pon_w1_cost_matrix_reader as fixed_material
+
 SCHEMA = "pon-w1-lifecycle-cost-v4"
 SELECTOR = "--actual-lifecycle-v4"
 TARGET = "7f" + "ff" * 31
@@ -89,6 +91,7 @@ class Reader:
         self.sequence = 0
         self.phase = "start"
         self.materials = {}
+        self.proof_prefix_hashes = {}
         self.cohorts = set()
         self.active = None
         self.search = None
@@ -210,7 +213,11 @@ class Reader:
             need(all(x[0] < Q for x in struct.iter_unpack("<I", a + b)), "MATERIAL_FIELD")
             task = digest(b"task", a, b).hex()
             need(row.get("task") == task, "MATERIAL_TASK")
+            expected_a, expected_b, expected_task, proof_prefix = fixed_material.material(name)
+            need((a, b, task) == (expected_a, expected_b, expected_task.hex()),
+                 "MATERIAL_RECIPE")
             self.materials[name] = task
+            self.proof_prefix_hashes[name] = hashlib.sha256(proof_prefix)
         elif kind == "cohort-start":
             need(self.phase == "idle", "COHORT_OVERLAP")
             name = row.get("class")
@@ -241,8 +248,8 @@ class Reader:
                 need(type(row.get("reason")) is str and bool(row["reason"]), "PREPARATION_ERROR")
                 self.phase = "await-failure"
                 return
-            if self.active["arm"] in (ARMS[0], ARMS[1], ARMS[3], ARMS[4], ARMS[5]):
-                need(status == "supported", "MANDATORY_PRODUCER_SUPPORT")
+            expected_supported = fixed_material.supported(self.active["arm"], self.active["class"])
+            need((status == "supported") == expected_supported, "PRODUCER_SUPPORT_MATRIX")
             self.active["supported"] = status == "supported"
             self.counts["cohorts"] += 1
             self.phase = "search-start" if status == "supported" else "cohort-finish"
@@ -289,6 +296,9 @@ class Reader:
             need(trial["ticket"] == ticket and type(trial["target_hit"]) is bool
                  and trial["target_hit"] == (ticket <= TARGET), "TRIAL_TICKET")
             hex_bytes(trial["proof_sha256"], 32, "TRIAL_PROOF_DIGEST")
+            proof_hash = self.proof_prefix_hashes[self.active["class"]].copy()
+            proof_hash.update(trace)
+            need(trial["proof_sha256"] == proof_hash.hexdigest(), "TRIAL_PROOF_BINDING")
             # Bind every completed trial, including all losing attempts.
             # Timings differ across producers and are intentionally excluded.
             self.search_hasher.update(json.dumps(

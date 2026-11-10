@@ -1,6 +1,6 @@
 //! Explicit development acceptance threshold for fully replayed native evidence.
 //! This is neither a BFT certificate nor a claim of independently controlled keys.
-use super::{check, digest, n, records_digest, Reveal};
+use super::{check, digest, n, records_digest, records_digest_with_conflicts, Reveal};
 use crate::pon_executor::{Config, Result};
 use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};
@@ -164,14 +164,20 @@ struct Count {
 }
 
 fn count(evaluation: &Value, current_disqualified: &BTreeSet<String>) -> Result<Count> {
-    // Bind the complete frozen roster and threshold as well as the generation
-    // context before closing or consuming a retained evaluation.
-    super::validate_reveals(evaluation)?;
     let roster = keys(&evaluation["plan"]["roster"])?;
     let mut excluded = disqualified(evaluation)?;
     if !super::pq_storage::enabled(evaluation) {
         excluded.extend(roster.intersection(current_disqualified).cloned());
     }
+    count_excluding(evaluation, excluded)
+}
+
+fn count_excluding(evaluation: &Value, excluded: BTreeSet<String>) -> Result<Count> {
+    // The frozen threshold and reveal commitments are required for both the
+    // current adoption count and the separately retained historical count.
+    super::validate_reveals(evaluation)?;
+    let roster = keys(&evaluation["plan"]["roster"])?;
+    check(excluded.is_subset(&roster), "PUBLIC_EVAL_CLOSED_BINDING")?;
     let reveals = evaluation["reveals"]
         .as_object()
         .ok_or("PUBLIC_EVAL_STATE")?;
@@ -220,6 +226,87 @@ fn count(evaluation: &Value, current_disqualified: &BTreeSet<String>) -> Result<
     })
 }
 
+/// Recount the immutable closure using its historical exclusion set, never
+/// later conflicts. State-root/ancestry validation remains the authority for
+/// the historical occurrence of cross-candidate exclusions and closure time.
+pub(super) fn validate_closure(evaluation: &Value) -> Result<()> {
+    let closed = &evaluation["closed"];
+    if closed.is_null() {
+        return Ok(());
+    }
+    validate_plan(&evaluation["plan"])?;
+    let excluded = keys(&closed["disqualified_signers_before_close"])?;
+    let frozen = keys(&evaluation["plan"]["disqualified_at_freeze"])?;
+    check(frozen.is_subset(&excluded), "PUBLIC_EVAL_CLOSED_BINDING")?;
+    let current = disqualified(evaluation)?;
+    let conflicts = evaluation["conflicts"]
+        .as_object()
+        .ok_or("PUBLIC_EVAL_STATE")?;
+    let before = n(closed, "conflict_count_before_close")?;
+    // All conflicts present at closure must have named a then-excluded key.
+    // Classic cross-candidate exclusions can legitimately have no local row.
+    let compatible = conflicts
+        .values()
+        .filter(|row| {
+            row["signer"]
+                .as_str()
+                .is_some_and(|key| excluded.contains(key))
+        })
+        .count();
+    check(before <= compatible as u64, "PUBLIC_EVAL_CLOSED_BINDING")?;
+    if super::pq_storage::enabled(evaluation) {
+        // PQ exclusions are strictly round-local: no global or frozen ban may
+        // explain a historical disqualification without retained evidence.
+        check(
+            excluded.is_subset(&current) && excluded.len() as u64 <= before,
+            "PUBLIC_EVAL_CLOSED_BINDING",
+        )?;
+    }
+    let counted = count_excluding(evaluation, excluded)?;
+    check(
+        closed.as_object().is_some_and(|value| value.len() == 20)
+            && closed["schema"] == "pon-native-closed-evaluation-v3"
+            && closed["round"] == evaluation["round"]
+            && closed["candidate"] == evaluation["plan"]["candidate"]
+            && closed["generation_context"] == evaluation["plan"]["generation_context"]
+            && closed["quorum"] == evaluation["plan"]["quorum"]
+            && n(closed, "closed_height")? > n(&evaluation["plan"], "reveal_end")?
+            && closed["status"]
+                == if counted.score.is_some() {
+                    "complete-scored"
+                } else {
+                    "aborted"
+                }
+            && closed["score"] == json!(counted.score)
+            && closed["evidence"] == json!(counted.evidence.map(hex::encode))
+            && closed["eligible_reveal_count"] == json!(counted.revealed)
+            && closed["matching_reveal_count"] == json!(counted.matching)
+            && closed["missing_reveal_count"] == json!(counted.missing)
+            && closed["disqualified_count_before_close"] == json!(counted.disqualified.len())
+            && closed["objective_model_quality"] == false
+            && closed["independent_governance_accepted"] == false
+            && closed["execution_authority"] == false
+            && closed["consensus_finality"] == false,
+        "PUBLIC_EVAL_CLOSED_BINDING",
+    )?;
+    let retained = digest(closed, "records_digest")?;
+    if before == 0 {
+        check(
+            retained == records_digest_with_conflicts(evaluation, &json!({}))?,
+            "PUBLIC_EVAL_CLOSED_BINDING",
+        )?;
+    } else if before == conflicts.len() as u64 {
+        check(
+            retained == records_digest(evaluation)?,
+            "PUBLIC_EVAL_CLOSED_BINDING",
+        )?;
+    }
+    // The existing schema has no conflict insertion heights. When later rows
+    // exist, it cannot always reconstruct the old nonempty subset or authenticate
+    // its digest in isolation. Do not invent that subset or rewrite the closure.
+    Ok(())
+}
+
 pub(super) fn close(
     evaluation: &mut Value,
     height: u64,
@@ -265,9 +352,11 @@ pub fn adoption_allowed(
             && evaluation["closed"]["candidate"] == evaluation["plan"]["candidate"]
             && evaluation["closed"]["quorum"] == evaluation["plan"]["quorum"]
             && evaluation["closed"]["generation_context"]
-                == evaluation["plan"]["generation_context"],
+                == evaluation["plan"]["generation_context"]
+            && height >= n(&evaluation["closed"], "closed_height")?,
         "PUBLIC_EVAL_ADOPTION",
     )?;
+    validate_closure(evaluation)?;
     let score = n(&evaluation["closed"], "score")?;
     let counted = count(evaluation, current_disqualified)?;
     check(

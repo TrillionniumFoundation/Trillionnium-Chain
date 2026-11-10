@@ -576,3 +576,121 @@ fn classic_retained_closure_preserves_legal_appeals_and_late_conflicts() {
     assert_eq!(evaluation::closed_digest(&early), Ok(result));
     assert!(evaluation::adoption_allowed(&early, 56).is_err());
 }
+
+fn closed_quorum(index: usize) -> (Value, Config, Hash) {
+    let input = input();
+    let context = &input["context"];
+    let row = &input["cases"][index];
+    let cfg = configure(context, evaluation::QUORUM_PROFILE);
+    let candidate = digest(&context["candidate"]);
+    let mut e =
+        evaluation::hydrate(&frozen(&cfg, context, row), candidate, &BTreeMap::new()).unwrap();
+    let start = row["generation"].as_u64().unwrap() * 128;
+    for raw in row["commits"].as_array().unwrap() {
+        let tx = transaction(raw, &cfg);
+        evaluation::commit(
+            &mut e,
+            &hex::encode(tx.sender),
+            tx.payload[32..64].try_into().unwrap(),
+            tx.payload[64..96].try_into().unwrap(),
+            start + 16,
+        )
+        .unwrap();
+    }
+    for raw in row["reveals"].as_array().unwrap() {
+        evaluation::reveal(&mut e, reveal(&transaction(raw, &cfg)), start + 32).unwrap();
+    }
+    conflicts(&mut e, &cfg, candidate, &row["conflicts_before"]);
+    evaluation::close_with_disqualified(&mut e, start + 48, &excluded(&row["global_before"]))
+        .unwrap();
+    assert_eq!(e["closed"], row["expected_closed"]);
+    (e, cfg, candidate)
+}
+
+#[test]
+fn quorum_retained_closure_cannot_authorize_adoption_before_its_height() {
+    let (mut e, _, candidate) = closed_quorum(3);
+    assert!(evaluation::adoption_allowed(&e, 56).is_ok());
+    e["closed"]["closed_height"] = json!(57);
+    // Restoration has no current-height authority. Consumption must still
+    // refuse a semantically valid closure that is later than the caller.
+    assert!(restore(&e, candidate).is_ok());
+    assert_eq!(
+        evaluation::adoption_allowed(&e, 56),
+        Err("PUBLIC_EVAL_ADOPTION")
+    );
+    assert!(evaluation::adoption_allowed(&e, 57).is_ok());
+}
+
+#[test]
+fn quorum_retained_closure_rejects_substituted_summary_at_use_and_restore() {
+    let (e, _, candidate) = closed_quorum(3);
+    assert!(evaluation::adoption_allowed(&e, 56).is_ok());
+    for (field, replacement) in [
+        ("records_digest", json!(hex::encode([91; 32]))),
+        ("schema", json!("pon-native-closed-evaluation-v2")),
+        ("round", json!(hex::encode([91; 32]))),
+        ("candidate", json!(hex::encode([91; 32]))),
+        ("generation_context", json!(hex::encode([91; 32]))),
+        ("quorum", json!(3)),
+        ("status", json!("aborted")),
+        ("score", json!(18)),
+        ("score", Value::Null),
+        ("evidence", json!(hex::encode([91; 32]))),
+        ("closed_height", json!(47)),
+        ("eligible_reveal_count", json!(3)),
+        ("matching_reveal_count", json!(3)),
+        ("missing_reveal_count", json!(0)),
+        ("disqualified_count_before_close", json!(1)),
+        (
+            "disqualified_signers_before_close",
+            json!([hex::encode(public(1))]),
+        ),
+        ("conflict_count_before_close", json!(1)),
+        ("objective_model_quality", json!(true)),
+        ("independent_governance_accepted", json!(true)),
+        ("execution_authority", json!(true)),
+        ("consensus_finality", json!(true)),
+        ("unknown_authority", json!(true)),
+    ] {
+        let mut changed = e.clone();
+        changed["closed"][field] = replacement;
+        assert!(
+            evaluation::adoption_allowed(&changed, 56).is_err(),
+            "{field}: substituted summary must not authorize adoption"
+        );
+        assert!(
+            restore(&changed, candidate).is_err(),
+            "{field}: substituted summary must not be restored"
+        );
+    }
+    for field in e["closed"].as_object().unwrap().keys() {
+        let mut missing = e.clone();
+        missing["closed"].as_object_mut().unwrap().remove(field);
+        assert!(
+            evaluation::adoption_allowed(&missing, 56).is_err(),
+            "missing {field}"
+        );
+        assert!(restore(&missing, candidate).is_err(), "missing {field}");
+    }
+}
+
+#[test]
+fn quorum_retained_closure_preserves_nonempty_history_after_more_conflicts() {
+    let (mut e, cfg, candidate) = closed_quorum(9);
+    let original = e["closed"].clone();
+    let result = evaluation::closed_digest(&e).unwrap();
+    assert_eq!(original["conflict_count_before_close"], json!(1));
+    assert!(evaluation::adoption_allowed(&e, 56).is_ok());
+    conflicts(
+        &mut e,
+        &cfg,
+        candidate,
+        &input()["cases"][12]["conflicts_after"],
+    );
+    assert_eq!(e["conflicts"].as_object().unwrap().len(), 2);
+    assert_eq!(e["closed"], original);
+    assert!(restore(&e, candidate).is_ok());
+    assert_eq!(evaluation::closed_digest(&e), Ok(result));
+    assert!(evaluation::adoption_allowed(&e, 56).is_err());
+}

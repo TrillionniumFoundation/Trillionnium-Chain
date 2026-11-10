@@ -287,9 +287,28 @@ jobs:
           from pathlib import Path
           import re, sys
           text = Path(sys.argv[1]).read_text()
-          rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; 0 ignored;', text, re.M)
-          if rows != ['8']:
-              raise SystemExit('four retained legal, two versioned legal and two shared material controls did not execute')
+          expected = {
+              'tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments',
+              'tests::versions_keep_exact_namespaces_and_eight_new_sample_streams',
+              'tests::v2_final_sample_keeps_both_legal_producers_and_complete_negative_verification',
+              'tests::public_dispatch_keeps_complete_bytes_and_all_misses',
+              'tests::last_product_mutation_wraps_canonically_and_changes_only_that_word',
+              'tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity',
+              'w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values',
+              'w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks',
+              'w1_cost_producers::observed_search_tests::observer_begin_refusal_precedes_native_generation',
+              'w1_cost_producers::observed_search_tests::native_failure_retains_completed_attempt_and_failed_begin',
+              'w1_cost_producers::observed_search_tests::malformed_generated_proof_has_started_and_failed_record',
+              'w1_cost_producers::observed_search_tests::completion_observer_failure_never_starts_another_attempt',
+              'w1_cost_producers::observed_search_tests::complete_observed_stream_matches_retained_wrapper_byte_for_byte',
+          }
+          rows = re.findall(r'^test result: (\S+)\. ([0-9]+) passed; ([0-9]+) failed; ([0-9]+) ignored; ([0-9]+) measured; ([0-9]+) filtered out;', text, re.M)
+          if rows != [('ok', str(len(expected)), '0', '0', '0', '0')]:
+              raise SystemExit('legal-native-controls: complete unfiltered native summary required once')
+          names = re.findall(r'^test (\S+) \.\.\. (.+)$', text, re.M)
+          if (len(names) != len(expected) or {name for name, _ in names} != expected
+                  or any(outcome != 'ok' for _, outcome in names)):
+              raise SystemExit('legal-native-controls: retained, versioned, material and observer controls must each pass once')
           PY
           cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- -D warnings 2>&1 | tee "$OUT/legal-clippy.log"
       - name: Execute all thirty original-budget legal strategy shards
@@ -414,16 +433,37 @@ jobs:
           from pathlib import Path
           import re, sys
           root = Path(sys.argv[1])
+          example_expected = {
+              'tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments',
+              'tests::factorial_search_keeps_every_miss_and_identical_complete_winners',
+              'tests::last_product_mutation_wraps_canonically_and_changes_only_that_word',
+              'tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity',
+              'w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values',
+              'w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks',
+              'w1_cost_producers::observed_search_tests::observer_begin_refusal_precedes_native_generation',
+              'w1_cost_producers::observed_search_tests::native_failure_retains_completed_attempt_and_failed_begin',
+              'w1_cost_producers::observed_search_tests::malformed_generated_proof_has_started_and_failed_record',
+              'w1_cost_producers::observed_search_tests::completion_observer_failure_never_starts_another_attempt',
+              'w1_cost_producers::observed_search_tests::complete_observed_stream_matches_retained_wrapper_byte_for_byte',
+          }
           # The one ignored History entry is the existing subprocess fixture;
           # its parent control selects real SIGKILL cuts. It is not a skipped gate.
-          expected = {"factorial-kernel-tests": (14, 0), "factorial-example-tests": (6, 0),
+          expected = {"factorial-kernel-tests": (14, 0), "factorial-example-tests": (len(example_expected), 0),
               "header-binding-tests": (1, 0), "history-w1-tests": (5, 0),
-              "history-import-tests": (28, 1), "cpu-completion-tests": (11, 0)}
+              "history-import-tests": (33, 1), "cpu-completion-tests": (11, 0)}
           for name, counts in expected.items():
               text = (root / (name + ".log")).read_text()
-              rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', text, re.M)
-              if rows != [tuple(map(str, counts))]:
+              rows = re.findall(r'^test result: (\S+)\. ([0-9]+) passed; ([0-9]+) failed; ([0-9]+) ignored;', text, re.M)
+              if rows != [('ok', str(counts[0]), '0', str(counts[1]))]:
                   raise SystemExit(name + ': exact native controls did not execute')
+          example = (root / 'factorial-example-tests.log').read_text()
+          example_summaries = re.findall(r'^test result: (\S+)\. ([0-9]+) passed; ([0-9]+) failed; ([0-9]+) ignored; ([0-9]+) measured; ([0-9]+) filtered out;', example, re.M)
+          example_rows = re.findall(r'^test (\S+) \.\.\. (.+)$', example, re.M)
+          if (example_summaries != [('ok', str(len(example_expected)), '0', '0', '0', '0')]
+                  or len(example_rows) != len(example_expected)
+                  or {name for name, _ in example_rows} != example_expected
+                  or any(outcome != 'ok' for _, outcome in example_rows)):
+              raise SystemExit('factorial-example-tests: retained, material and observer controls must each pass once')
           kernel = (root / 'factorial-kernel-tests.log').read_text()
           kernel_expected = {
               'pon_work::legal_attempt::low_rank::tests::bounded_factorization_reconstructs_exact_full_field_rank_and_pivot_orders',
@@ -448,6 +488,11 @@ jobs:
           for name in (
               'final_resource_completion_preserves_error_priority_and_original_deadline',
               'final_resource_expiry_keeps_committed_history_and_settled_cpu',
+              'history_control_keeps_original_timely_single_resource_observation',
+              'history_control_preexpired_does_not_invoke_resource',
+              'history_control_resource_expiry_refuses_late_success',
+              'history_control_resource_expiry_keeps_original_resource_error',
+              'history_owner_resource_expiry_never_invokes_exclusive_or_shared_action',
           ):
               selector = 'ingress::history_import::tests::deadline_controls::' + name
               rows = re.findall(r'^test ' + re.escape(selector) + r' \.\.\. ok$', history, re.M)
