@@ -281,3 +281,31 @@ cannot be supplied as acceptance fields in this schema. Actual integration,
 fresh authorization, recovery, external effects and whole-chain security remain
 separate obligations; `native_tests_executed`, `call_graph_proved` and
 `runtime_reachability_proved` all remain false in the checker result.
+
+## Reviewed source binding to code checkpoint `8d8c0e64e7a301fc111a6720721a14816639e5aa`
+
+This is a selected-source consistency review. All named regular Git blobs were read with
+`git show 8d8c0e64e7a301fc111a6720721a14816639e5aa:<path>` and matched against the working files.
+The code checkpoint is `8d8c0e64e7a301fc111a6720721a14816639e5aa`, tree `7c003a3d183ad33ff4f3349cbcce61564f73a2ba`.
+The later binding, reader, test and documentation edits are not claimed to exist in that
+checkpoint. The final executed candidate and binary require their own observations.
+
+All 44 curated paths retain their roster. Forty-three source hashes are unchanged; only
+`trillionnium/crates/trnm-pon-node/src/store.rs` changes:
+
+```text
+prior:    108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554
+reviewed: e43ba6ea4775b5256a95781fcc3dbb1dd9c359900fc91263f3e8cd2844cf43bd
+```
+
+The prior active revision `893738947a50dc42819b56e632192de4f9f24fa0` and its canonical table digest
+`a3c5483479d5217c13946e173e4103316069eb42b43c335c6f7b44e783b73f1c` remain historical records. The new canonical table digest is
+`a9d7e7b47585626c7eeb1cfc33007623ca1fedf83e30200dee6e78c1be128774`. The independent positive revision is updated, and the prior
+revision is added to the existing stale-context refusal control. No test is removed.
+
+The seven routes, exact effect scopes and all false qualification fields are unchanged.
+The old reader's actual source-lock refusal is retained separately before rebinding;
+the new Python checks and their outcomes belong to this mapping and cannot relabel an
+earlier failure or native run. Neither these pins nor the checks establish complete
+dependency coverage, call-graph reachability, provenance authentication, native behavior,
+external-effect acceptance or production activation.

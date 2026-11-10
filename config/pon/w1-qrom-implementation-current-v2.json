@@ -1,7 +1,7 @@
 {
   "schema": "TRNM-W1-QROM-IMPLEMENTATION-CONTRACT2",
   "scope": "Offline research mapping only. Does not authorize consensus or production admission.",
-  "source_base_commit": "189b9b5959d836ef6ae96e14fb285948e4920aa9",
+  "source_base_commit": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
   "profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
   "project_source_scope": "Selected entry, relation, framing, native work and locked dependency files; not all transitive source or compiled feature semantics.",
   "project_files": [
@@ -388,6 +388,11 @@
         "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_cost.rs",
         "bytes": 1722,
         "sha256": "a6a7d58f5d3bbfabb63f4c0a9e9a14cc183f02d820b55999f376624180460cae"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_fresh_rejection_cost.rs",
+        "bytes": 13862,
+        "sha256": "4c9917a3e97347a0afe74c3155432fdc25758b36937efd61fd5f6ed58d4705b6"
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_maintenance_cost.rs",
@@ -936,6 +941,7 @@
     "funded_service_wire": "Tags 2 and 5 also decode exact FundedServiceReservationV1 and FundedServiceDecisionV1; full local path-crate sources and literal includes are pinned. This is no theorem about all new wire behaviors.",
     "grouped_factored_producer": "Expanded local closure includes the reviewed #824 exact B(Ax) preparation/execution and separate example selector. These two files do not call or change W1; no verifier/protocol/manifest/lock/include changes relative to #827 were observed. This inventory establishes no cost lower bound or consensus credit.",
     "root_storage_integration_20261109": "Reviewed merge 44e96b1a841a50613d0b93484c5e576caec9f81f retains all 16 selected project files, saved fixtures, parameters and unresolved obligations. The local closure adds the three pq_root_v3 Rust source/test files and rebinds only the crypto module export and workspace lock among the prior 134 inputs. Optional root exports, the release OpenSSL dependency edge and the storage getrandom edge do not establish native execution, external dependency closure, a new proof or any security qualification.",
-    "sqlite_dependency_security_20261109": "Reviewed dependency checkpoint 189b9b5959d836ef6ae96e14fb285948e4920aa9 rebinds only trillionnium/Cargo.lock within the existing 137 local-closure files. The fixed package graph upgrades bundled rusqlite/libsqlite3-sys to 0.41.0/0.39.0 with their required hashlink/hashbrown resolution. All 16 selected project files, saved proof materials, historical reader/contract, helpers, proof parameters and 15 unresolved obligations are unchanged. This mapping supplies no native execution, third-party dependency closure or security qualification."
+    "sqlite_dependency_security_20261109": "Reviewed dependency checkpoint 189b9b5959d836ef6ae96e14fb285948e4920aa9 rebinds only trillionnium/Cargo.lock within the existing 137 local-closure files. The fixed package graph upgrades bundled rusqlite/libsqlite3-sys to 0.41.0/0.39.0 with their required hashlink/hashbrown resolution. All 16 selected project files, saved proof materials, historical reader/contract, helpers, proof parameters and 15 unresolved obligations are unchanged. This mapping supplies no native execution, third-party dependency closure or security qualification.",
+    "fresh_rejection_probe_20261110": "Reviewed code checkpoint 8d8c0e64e7a301fc111a6720721a14816639e5aa adds only trillionnium/crates/trnm-crypto-primitives/examples/pon_fresh_rejection_cost.rs to the six-crate local closure. All previous 137 closure inputs, all 16 selected project files, existing proof materials, historical V1 reader/contract, helpers, proof parameters and 15 unresolved obligations retain their exact bytes. The old 189b9b5 descriptor, auditor, fourteen-test source and mapping document are preserved separately with their original Git blobs; the old auditor's actual inventory refusal on this checkpoint is retained. This is a source mapping, not a new native execution, proof verification, work-cost bound or security qualification."
   }
 }

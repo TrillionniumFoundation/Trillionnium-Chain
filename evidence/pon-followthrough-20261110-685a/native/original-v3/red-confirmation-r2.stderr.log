@@ -1,0 +1,68 @@
+   Compiling typenum v1.20.1
+   Compiling zeroize v1.9.1
+   Compiling sha2-asm v0.6.4
+   Compiling cmov v0.5.4
+   Compiling ctutils v0.4.6
+   Compiling serde_core v1.0.228
+   Compiling generic-array v0.14.7
+   Compiling hybrid-array v0.4.15
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling autocfg v1.5.1
+   Compiling libc v0.2.184
+   Compiling num-traits v0.2.19
+   Compiling crypto-common v0.2.2
+   Compiling serde v1.0.228
+   Compiling curve25519-dalek v4.1.3
+   Compiling digest v0.11.3
+   Compiling serde_derive v1.0.228
+   Compiling thiserror v1.0.69
+   Compiling serde_json v1.0.149
+   Compiling ed25519-dalek v2.2.0
+   Compiling thiserror-impl v1.0.69
+   Compiling keccak v0.2.2
+   Compiling anyhow v1.0.103
+   Compiling sponge-cursor v0.1.0
+   Compiling rusqlite v0.41.0
+   Compiling shake v0.1.0
+   Compiling module-lattice v0.2.3
+   Compiling signature v3.0.0
+   Compiling hex v0.4.3
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-protocol)
+   Compiling ml-dsa v0.1.1
+   Compiling rustix v1.1.4
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-crypto-primitives)
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling nix v0.30.1
+   Compiling getrandom v0.4.2
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-task-kernel)
+   Compiling fs2 v0.4.3
+   Compiling getrandom v0.2.17
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-verification-profiles)
+   Compiling tempfile v3.27.0
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-release-bundle v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-release-bundle)
+   Compiling trnm-mempool v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-transport)
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11m 30s
+     Running unittests src/lib.rs (/home/qian-qi/chain-pon-followthrough-20261110-685a-target/debug/deps/trnm_pon_node-4b16683c307f94b0)
+
+thread 'store::confirmation_chainwork_tests::final_callback_foreign_commit_cannot_return_a_stale_confirmation' (437919) panicked at crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs:148:14:
+called `Result::unwrap_err()` on an `Ok` value: ConfirmationBatch { observations: [Observation { transaction: "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711", genesis: "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6", policy: "installed-depth-and-required-work", required_work_delta: "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c", network: "a567a600cd8730adc5dba6c29846aa6f16cbdf8e986999a7a528b3c29c8580b2", parameters: "55550d1449accdacacbcdde75db1982de6448fff3f864bcf6b61aa9a7e5d4095", included_block: "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554", observed_tip: "4534e2a4d9664f141359c6742654a2f54a7a7da3d7b794f0784928fc7bd65e82", included_height: 1, observed_height: 8, depth: Some(7), work_delta: Some("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e"), active_generation: 8, observed_now: 1000, confirmed: true, reorged: false, finalized: false, execution_authority: false }], ancestry_checked: 8, distinct_bodies_checked: 1 }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'store::confirmation_chainwork_tests::final_callback_same_connection_write_cannot_return_a_stale_confirmation' (437920) panicked at crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs:148:14:
+called `Result::unwrap_err()` on an `Ok` value: ConfirmationBatch { observations: [Observation { transaction: "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711", genesis: "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6", policy: "installed-depth-and-required-work", required_work_delta: "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c", network: "a567a600cd8730adc5dba6c29846aa6f16cbdf8e986999a7a528b3c29c8580b2", parameters: "55550d1449accdacacbcdde75db1982de6448fff3f864bcf6b61aa9a7e5d4095", included_block: "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554", observed_tip: "4534e2a4d9664f141359c6742654a2f54a7a7da3d7b794f0784928fc7bd65e82", included_height: 1, observed_height: 8, depth: Some(7), work_delta: Some("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e"), active_generation: 8, observed_now: 1000, confirmed: true, reorged: false, finalized: false, execution_authority: false }], ancestry_checked: 8, distinct_bodies_checked: 1 }
+
+thread 'store::confirmation_chainwork_tests::full_width_retained_work_corruption_refuses_tip_inclusion_and_middle' (437921) panicked at crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs:103:71:
+called `Result::unwrap_err()` on an `Ok` value: Observation { transaction: "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711", genesis: "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6", policy: "installed-depth-and-required-work", required_work_delta: "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c", network: "a567a600cd8730adc5dba6c29846aa6f16cbdf8e986999a7a528b3c29c8580b2", parameters: "55550d1449accdacacbcdde75db1982de6448fff3f864bcf6b61aa9a7e5d4095", included_block: "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554", observed_tip: "4534e2a4d9664f141359c6742654a2f54a7a7da3d7b794f0784928fc7bd65e82", included_height: 1, observed_height: 8, depth: Some(7), work_delta: Some("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f"), active_generation: 8, observed_now: 1000, confirmed: true, reorged: false, finalized: false, execution_authority: false }
+
+thread 'store::confirmation_chainwork_tests::a_common_work_offset_cannot_replace_the_zero_work_genesis_anchor' (437918) panicked at crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs:126:67:
+called `Result::unwrap_err()` on an `Ok` value: Observation { transaction: "1d6cfa1871503e2956bf9517f0f9b775e721da6565c01f1031328bb703968711", genesis: "b903759c2b1e448772c891712526988294b524d93dbefe2ffa0e429310cb30b6", policy: "installed-depth-and-required-work", required_work_delta: "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c", network: "a567a600cd8730adc5dba6c29846aa6f16cbdf8e986999a7a528b3c29c8580b2", parameters: "55550d1449accdacacbcdde75db1982de6448fff3f864bcf6b61aa9a7e5d4095", included_block: "3d93c273e97f896f166bb6f9235d936be610b0c2e755e774659c307d3c01d554", observed_tip: "4534e2a4d9664f141359c6742654a2f54a7a7da3d7b794f0784928fc7bd65e82", included_height: 1, observed_height: 8, depth: Some(7), work_delta: Some("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e"), active_generation: 8, observed_now: 1000, confirmed: true, reorged: false, finalized: false, execution_authority: false }
+error: test failed, to rerun pass `-p trnm-pon-node --lib`

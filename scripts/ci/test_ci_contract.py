@@ -2709,7 +2709,16 @@ class MergedQualificationLaneTests(unittest.TestCase):
         'qrom_current_source': ('repository-truth', '    python3 scripts/ci/test_pq_chain_claim_guard.py\n    # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.\n', (
             '    python3 scripts/ci/test_w1_qrom_current_implementation_audit.py\n',
             '    python3 scripts/w1_qrom_current_implementation_audit.py\n',
+            '    python3 scripts/ci/test_w1_qrom_current_ci.py\n',
         ), "    python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v\n"),
+        'native_observation_guards': ('repository-truth',
+            '    python3 scripts/ci/test_run_legacy_reorg_root_abba.py\n', (
+                '    python3 -B scripts/ci/test_w1_factorial_native_gate.py\n',
+                '    python3 -B scripts/ci/test_prepare_artifact_upload.py\n',
+                '    python3 -B scripts/ci/test_cell_storage_convergence_ci.py\n',
+                '    python3 -B scripts/ci/test_fresh_rejection_report.py\n',
+            ), '    # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.\n'
+            '    python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54\n'),
         'fixed_probability': ('repository-truth',
                               "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v\n", (
             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_probability_contract.py' -v\n",
@@ -2779,6 +2788,9 @@ class MergedQualificationLaneTests(unittest.TestCase):
 
     def test_current_mapping_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('qrom_current_source')
+
+    def test_native_observation_guard_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('native_observation_guards')
 
     def test_fixed_probability_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('fixed_probability')

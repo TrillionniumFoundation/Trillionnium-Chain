@@ -1,0 +1,8 @@
+
+running 3 tests
+test tests::claim_encoding_never_computes_the_dense_product ... ok
+test tests::exhausted_search_retains_failed_attempts_and_has_no_receiver_success ... ok
+test tests::no_honest_proof_is_needed_for_same_target_full_rejection ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+

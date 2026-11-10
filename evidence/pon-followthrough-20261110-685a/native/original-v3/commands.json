@@ -1,0 +1,978 @@
+[
+  {
+    "argv": [
+      "git",
+      "branch",
+      "-m",
+      "fix/chain-pon-followthrough-20261110-685a"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794296710166567577,
+    "exit_code": 0,
+    "label": "correct-owned-branch-name",
+    "start_unix_ns": 1794296710158701704,
+    "stderr": {
+      "bytes": 0,
+      "file": "correct-owned-branch-name.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "correct-owned-branch-name.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794296712132540593,
+    "exit_code": 0,
+    "label": "base-preflight",
+    "start_unix_ns": 1794296712040807218,
+    "stderr": {
+      "bytes": 0,
+      "file": "base-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 172,
+      "file": "base-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1",
+      "--no-deps"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794296712208948802,
+    "exit_code": 0,
+    "label": "base-locked-graph",
+    "start_unix_ns": 1794296712133480528,
+    "stderr": {
+      "bytes": 0,
+      "file": "base-locked-graph.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 184807,
+      "file": "base-locked-graph.stdout.log",
+      "sha256": "d00b04e08cc2e43cf46db9041ed34dc900f838ffd29698215bb4aa0c52192b8f"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/red.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794296712219841019,
+    "exit_code": 0,
+    "label": "red-apply",
+    "start_unix_ns": 1794296712212332313,
+    "stderr": {
+      "bytes": 0,
+      "file": "red-apply.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "red-apply.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794296712342901330,
+    "exit_code": 0,
+    "label": "red-preflight",
+    "start_unix_ns": 1794296712253741962,
+    "stderr": {
+      "bytes": 0,
+      "file": "red-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 172,
+      "file": "red-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-service-settlement",
+      "--lib",
+      "readback_rejects",
+      "--",
+      "--nocapture"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794296712588535736,
+    "exit_code": 101,
+    "label": "red-settlement",
+    "start_unix_ns": 1794296712344015156,
+    "stderr": {
+      "bytes": 129,
+      "file": "red-settlement.stderr.log",
+      "sha256": "5e1b82c8441478db9189bf14ec5fd7dc5a41794804e59733da237b4ea2f032a8"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "red-settlement.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794297275095855500,
+    "exit_code": 0,
+    "label": "red-resume-preflight",
+    "start_unix_ns": 1794297274992846408,
+    "stderr": {
+      "bytes": 0,
+      "file": "red-resume-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 172,
+      "file": "red-resume-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "fetch",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794297288034288152,
+    "exit_code": 0,
+    "label": "locked-dependency-fetch",
+    "start_unix_ns": 1794297275096721897,
+    "stderr": {
+      "bytes": 90,
+      "file": "locked-dependency-fetch.stderr.log",
+      "sha256": "ae8bf8ca741845c10fd02c3134cf0aff13565890be7242e72fc7d551ba3e7488"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "locked-dependency-fetch.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-service-settlement",
+      "--lib",
+      "readback_rejects",
+      "--",
+      "--nocapture"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794297327107378365,
+    "exit_code": 101,
+    "label": "red-settlement-r2",
+    "start_unix_ns": 1794297288035579221,
+    "stderr": {
+      "bytes": 4428,
+      "file": "red-settlement-r2.stderr.log",
+      "sha256": "25706e34a712fafd47e67bdfec893c4d2a8bce9bbafedf219c0295d12717a018"
+    },
+    "stdout": {
+      "bytes": 1750,
+      "file": "red-settlement-r2.stdout.log",
+      "sha256": "3d47778c15b1b34988b12181f94752bdce7c48b2e0f1ff0597ed24c87fd2368a"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "confirmation_chainwork_tests",
+      "--",
+      "--nocapture"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794298017747728587,
+    "exit_code": 101,
+    "label": "red-confirmation-r2",
+    "start_unix_ns": 1794297327109686471,
+    "stderr": {
+      "bytes": 8420,
+      "file": "red-confirmation-r2.stderr.log",
+      "sha256": "b417777f55586bd3928362b7fc493da7f0e7a8dcdf4cfce5ff101a93bc69a16c"
+    },
+    "stdout": {
+      "bytes": 1060,
+      "file": "red-confirmation-r2.stdout.log",
+      "sha256": "a953369c9485fb592cfdd91fb304d1ada13c3fd1cc69af445976242effcd4600"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/green.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794298017762896260,
+    "exit_code": 0,
+    "label": "green-apply",
+    "start_unix_ns": 1794298017749491683,
+    "stderr": {
+      "bytes": 0,
+      "file": "green-apply.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "green-apply.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/fresh.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794298017774094861,
+    "exit_code": 0,
+    "label": "fresh-probe-apply",
+    "start_unix_ns": 1794298017764415507,
+    "stderr": {
+      "bytes": 0,
+      "file": "fresh-probe-apply.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "fresh-probe-apply.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794298038708159980,
+    "exit_code": 0,
+    "label": "format-candidate",
+    "start_unix_ns": 1794298017775626916,
+    "stderr": {
+      "bytes": 0,
+      "file": "format-candidate.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "format-candidate.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794298038800512215,
+    "exit_code": 0,
+    "label": "green-preflight",
+    "start_unix_ns": 1794298038710128738,
+    "stderr": {
+      "bytes": 0,
+      "file": "green-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 172,
+      "file": "green-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794298038848360300,
+    "exit_code": 0,
+    "label": "diff-check",
+    "start_unix_ns": 1794298038801937823,
+    "stderr": {
+      "bytes": 0,
+      "file": "diff-check.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "diff-check.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "add",
+      "--",
+      "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs",
+      "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+      "trillionnium/crates/trnm-service-settlement/src/native_budget/tests.rs",
+      "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs",
+      "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs",
+      "trillionnium/crates/trnm-crypto-primitives/examples/pon_fresh_rejection_cost.rs",
+      "scripts/pon_fresh_rejection_report.py",
+      "scripts/ci/test_fresh_rejection_report.py",
+      "docs/research/PON_FRESH_REJECTION_COST_V1.md"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794298039414760189,
+    "exit_code": 0,
+    "label": "stage-source",
+    "start_unix_ns": 1794298039323433703,
+    "stderr": {
+      "bytes": 0,
+      "file": "stage-source.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "stage-source.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "commit",
+      "-m",
+      "fix(pon): fence retained chainwork and payment readbacks; measure fresh rejection"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794298039644457538,
+    "exit_code": 0,
+    "label": "source-commit",
+    "start_unix_ns": 1794298039416009051,
+    "stderr": {
+      "bytes": 0,
+      "file": "source-commit.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 572,
+      "file": "source-commit.stdout.log",
+      "sha256": "253fa76c2d52307e1f605cbe45467fc2b009caddfba3b2cd0899b1197a5ee40c"
+    }
+  },
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794298039827043391,
+    "exit_code": 0,
+    "label": "committed-preflight",
+    "start_unix_ns": 1794298039739452072,
+    "stderr": {
+      "bytes": 0,
+      "file": "committed-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 172,
+      "file": "committed-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-service-settlement",
+      "--lib",
+      "readback_rejects",
+      "--",
+      "--nocapture"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794298043254422283,
+    "exit_code": 0,
+    "label": "green-settlement",
+    "start_unix_ns": 1794298039828244671,
+    "stderr": {
+      "bytes": 362,
+      "file": "green-settlement.stderr.log",
+      "sha256": "92d00c52092c507005f88adbf1dcd10a76a47cca3877764664e27e1568c4b122"
+    },
+    "stdout": {
+      "bytes": 1053,
+      "file": "green-settlement.stdout.log",
+      "sha256": "fe5302aca30e71e8b19a9128a011fd8cf3334a5af147ebef9e30fbdd46781cf5"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "confirmation_chainwork_tests",
+      "--",
+      "--nocapture"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794298438035757093,
+    "exit_code": 101,
+    "label": "green-confirmation",
+    "start_unix_ns": 1794298043256441331,
+    "stderr": {
+      "bytes": 906,
+      "file": "green-confirmation.stderr.log",
+      "sha256": "bbf834f2b1a5969c17135b11d5a49423bbe48808810f18539038f7c83411d053"
+    },
+    "stdout": {
+      "bytes": 723,
+      "file": "green-confirmation.stdout.log",
+      "sha256": "6dc4a76571c6cbb779f02c05752e6110fcac90d15e923bff27e6aa595b52674c"
+    }
+  },
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794300754630675704,
+    "exit_code": 0,
+    "label": "v3-preflight",
+    "start_unix_ns": 1794300754535404654,
+    "stderr": {
+      "bytes": 0,
+      "file": "v3-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 172,
+      "file": "v3-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/confirmation-test-exact-code.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794300754636783487,
+    "exit_code": 0,
+    "label": "v3-apply-exact-test-diagnostic",
+    "start_unix_ns": 1794300754632979836,
+    "stderr": {
+      "bytes": 0,
+      "file": "v3-apply-exact-test-diagnostic.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "v3-apply-exact-test-diagnostic.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/fresh-reader-after-native-v2.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794300754643490894,
+    "exit_code": 0,
+    "label": "v3-apply-verified-reference-reader",
+    "start_unix_ns": 1794300754638744644,
+    "stderr": {
+      "bytes": 0,
+      "file": "v3-apply-verified-reference-reader.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "v3-apply-verified-reference-reader.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794300776578764390,
+    "exit_code": 0,
+    "label": "v3-format-candidate",
+    "start_unix_ns": 1794300754645402397,
+    "stderr": {
+      "bytes": 0,
+      "file": "v3-format-candidate.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "v3-format-candidate.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "confirmation_chainwork_tests",
+      "--",
+      "--nocapture"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794301489441012416,
+    "exit_code": 101,
+    "label": "red-confirmation-v3",
+    "start_unix_ns": 1794300776828847627,
+    "stderr": {
+      "bytes": 9744,
+      "file": "red-confirmation-v3.stderr.log",
+      "sha256": "d9b34acda4ec01bccc4ff3eab9e5c9ce8b94bb5bc027ef9d75ce3ff6f9bb6dda"
+    },
+    "stdout": {
+      "bytes": 1060,
+      "file": "red-confirmation-v3.stdout.log",
+      "sha256": "d3596d318df4bd2a592995d21747fd6f0ae25bf571c308a70f56c7591a961261"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794301489541952047,
+    "exit_code": 0,
+    "label": "v3-diff-check",
+    "start_unix_ns": 1794301489519379892,
+    "stderr": {
+      "bytes": 0,
+      "file": "v3-diff-check.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "v3-diff-check.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794301489634409752,
+    "exit_code": 0,
+    "label": "v3-precommit-preflight",
+    "start_unix_ns": 1794301489543393956,
+    "stderr": {
+      "bytes": 0,
+      "file": "v3-precommit-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 172,
+      "file": "v3-precommit-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "add",
+      "--",
+      "trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs",
+      "scripts/pon_fresh_rejection_report.py"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794301489696572370,
+    "exit_code": 0,
+    "label": "v3-stage-source",
+    "start_unix_ns": 1794301489637205510,
+    "stderr": {
+      "bytes": 0,
+      "file": "v3-stage-source.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "v3-stage-source.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "commit",
+      "-m",
+      "test(pon): preserve the authenticated tip refusal and bind reference execution"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794301489902200920,
+    "exit_code": 0,
+    "label": "v3-source-commit",
+    "start_unix_ns": 1794301489698979910,
+    "stderr": {
+      "bytes": 0,
+      "file": "v3-source-commit.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 186,
+      "file": "v3-source-commit.stdout.log",
+      "sha256": "14461d6a82f86f279df35febf07b8145625665335a44bceef28be5f7fff1debc"
+    }
+  },
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794301490405835798,
+    "exit_code": 0,
+    "label": "v3-committed-preflight",
+    "start_unix_ns": 1794301490314800270,
+    "stderr": {
+      "bytes": 0,
+      "file": "v3-committed-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 172,
+      "file": "v3-committed-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    }
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+      "--output",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/source-before-v3.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794301512893009395,
+    "exit_code": 0,
+    "label": "v3-source-before",
+    "start_unix_ns": 1794301490408470996,
+    "stderr": {
+      "bytes": 0,
+      "file": "v3-source-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 423,
+      "file": "v3-source-before.stdout.log",
+      "sha256": "81581c539d39f3531c8a42919ffa29ad895a041ebe7afdb850f0b9ef41a4782a"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794301513213305725,
+    "exit_code": 0,
+    "label": "v3-locked-graph",
+    "start_unix_ns": 1794301512895646832,
+    "stderr": {
+      "bytes": 0,
+      "file": "v3-locked-graph.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 852263,
+      "file": "v3-locked-graph.stdout.log",
+      "sha256": "80b5555ee496f800fc97c0592d2022d1efabeeb7cd8bf22dcfda0710102fc483"
+    }
+  },
+  {
+    "argv": [
+      "rustc",
+      "-Vv"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794301513295767020,
+    "exit_code": 0,
+    "label": "v3-rustc",
+    "start_unix_ns": 1794301513227894163,
+    "stderr": {
+      "bytes": 0,
+      "file": "v3-rustc.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 196,
+      "file": "v3-rustc.stdout.log",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "-V"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794301513344805791,
+    "exit_code": 0,
+    "label": "v3-cargo",
+    "start_unix_ns": 1794301513298509964,
+    "stderr": {
+      "bytes": 0,
+      "file": "v3-cargo.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 36,
+      "file": "v3-cargo.stdout.log",
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "confirmation_chainwork_tests",
+      "--",
+      "--nocapture"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794301860326971670,
+    "exit_code": 0,
+    "label": "green-confirmation-v3",
+    "start_unix_ns": 1794301513347450177,
+    "stderr": {
+      "bytes": 333,
+      "file": "green-confirmation-v3.stderr.log",
+      "sha256": "88dcbfec0abc6f388c201661566593a775c967376223aa7ad6f46299e146f33e"
+    },
+    "stdout": {
+      "bytes": 583,
+      "file": "green-confirmation-v3.stdout.log",
+      "sha256": "7532a306553a302baacdebff828701a50c3475cd8f402b83b829a56a1496b0e1"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-service-settlement",
+      "--lib",
+      "readback_rejects",
+      "--",
+      "--nocapture"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794301882201424365,
+    "exit_code": 0,
+    "label": "green-settlement-v3",
+    "start_unix_ns": 1794301860329854637,
+    "stderr": {
+      "bytes": 1021,
+      "file": "green-settlement-v3.stderr.log",
+      "sha256": "09922996df22751201628b2348ca28d3e0012b6b731561dabe52906674007bac"
+    },
+    "stdout": {
+      "bytes": 1053,
+      "file": "green-settlement-v3.stdout.log",
+      "sha256": "2dc9aa04bd333db7a6e4ff448a75b75dae0f8f74b851c4ee5726a8d6ed9772cc"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-service-settlement",
+      "--all-features"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794301890650562796,
+    "exit_code": 0,
+    "label": "settlement-all-features-v3",
+    "start_unix_ns": 1794301882204393047,
+    "stderr": {
+      "bytes": 399,
+      "file": "settlement-all-features-v3.stderr.log",
+      "sha256": "4294618ffd34b0ff5d3c08c94aadc0a03e7fec78175c7d01063b20e6271174ba"
+    },
+    "stdout": {
+      "bytes": 8579,
+      "file": "settlement-all-features-v3.stdout.log",
+      "sha256": "61e9a7ed8e97385c9f79347725d400cf820a096952d780cf677932f5f7f241f7"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-crypto-primitives",
+      "--lib"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794301981237104800,
+    "exit_code": 0,
+    "label": "crypto-library-v3",
+    "start_unix_ns": 1794301890652495926,
+    "stderr": {
+      "bytes": 780,
+      "file": "crypto-library-v3.stderr.log",
+      "sha256": "ed0966bd0469bfe40089a08d6ab05f8c491a659433b02a3ecf8ffd6cc9f974ea"
+    },
+    "stdout": {
+      "bytes": 20946,
+      "file": "crypto-library-v3.stdout.log",
+      "sha256": "f47cb58dccd9744802753739f24a6ddb92933a47e5c2849f85a91642b2450ba8"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794304160420810895,
+    "exit_code": 101,
+    "label": "node-library-v3",
+    "start_unix_ns": 1794301981239984159,
+    "stderr": {
+      "bytes": 269,
+      "file": "node-library-v3.stderr.log",
+      "sha256": "e7e8593b3fcacb02f3134a657913ebea93389c3c8a7afb563a03737f5d98cc7c"
+    },
+    "stdout": {
+      "bytes": 203044,
+      "file": "node-library-v3.stdout.log",
+      "sha256": "022eabf9dba4c26fda5ab75d9d9b53df76f209e19b2af9b3f4ce256ebf4f0b6b"
+    }
+  }
+]

@@ -260,6 +260,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/pq-root-custody-review-v2.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/pq-root-custody-review-v2.json"
+        )),
+    ),
+    (
         "config/pon/pq-root-dependency-register-v3.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -362,6 +369,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../config/pon/w1-qrom-closure-required-tests-v1.json"
+        )),
+    ),
+    (
+        "config/pon/w1-qrom-current-required-tests-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/w1-qrom-current-required-tests-v1.json"
         )),
     ),
     (
@@ -607,6 +621,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_cost.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_fresh_rejection_cost.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_fresh_rejection_cost.rs"
         )),
     ),
     (
@@ -6578,6 +6599,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store/capacity_observation.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs"
         )),
     ),
     (

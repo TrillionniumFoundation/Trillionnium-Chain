@@ -278,19 +278,13 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/ci/test_pon_w1_legal_strategy_reader_v1.py 2>&1 | tee "$OUT/legal-reader-controls.log"
+          python3 -B scripts/ci/test_w1_factorial_native_gate.py 2>&1 | tee "$OUT/native-completion-gate-controls.log"
           python3 scripts/ci/test_pon_w1_legal_strategy_reader_v2.py 2>&1 | tee "$OUT/legal-reader-v2-controls.log"
           python3 scripts/ci/test_run_w1_false_trace_reuse_v1.py 2>&1 | tee "$OUT/runner-controls.log"
           cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1 > "$OUT/cargo-graph.json"
           cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/format.log"
           cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- --test-threads=1 2>&1 | tee "$OUT/legal-native-controls.log"
-          python3 - "$OUT/legal-native-controls.log" <<'PY'
-          from pathlib import Path
-          import re, sys
-          text = Path(sys.argv[1]).read_text()
-          rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; 0 ignored;', text, re.M)
-          if rows != ['8']:
-              raise SystemExit('four retained legal, two versioned legal and two shared material controls did not execute')
-          PY
+          python3 -B scripts/ci/w1_native_controls.py --group legal --logs "$OUT" --output "$OUT/legal-native-controls-completion.json"
           cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- -D warnings 2>&1 | tee "$OUT/legal-clippy.log"
       - name: Execute all thirty original-budget legal strategy shards
         if: always() && steps.source.outcome == 'success'
@@ -410,55 +404,7 @@ jobs:
           cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib history_w1_ -- --test-threads=1 --nocapture 2>&1 | tee "$OUT/history-w1-tests.log"
           cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::history_import::tests:: -- --test-threads=1 --nocapture 2>&1 | tee "$OUT/history-import-tests.log"
           cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::public_v3::scalar_cpu::completion_tests:: -- --test-threads=1 --nocapture 2>&1 | tee "$OUT/cpu-completion-tests.log"
-          python3 - "$OUT" <<'PYTEST'
-          from pathlib import Path
-          import re, sys
-          root = Path(sys.argv[1])
-          # The one ignored History entry is the existing subprocess fixture;
-          # its parent control selects real SIGKILL cuts. It is not a skipped gate.
-          expected = {"factorial-kernel-tests": (14, 0), "factorial-example-tests": (6, 0),
-              "header-binding-tests": (1, 0), "history-w1-tests": (5, 0),
-              "history-import-tests": (28, 1), "cpu-completion-tests": (11, 0)}
-          for name, counts in expected.items():
-              text = (root / (name + ".log")).read_text()
-              rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', text, re.M)
-              if rows != [tuple(map(str, counts))]:
-                  raise SystemExit(name + ': exact native controls did not execute')
-          kernel = (root / 'factorial-kernel-tests.log').read_text()
-          kernel_expected = {
-              'pon_work::legal_attempt::low_rank::tests::bounded_factorization_reconstructs_exact_full_field_rank_and_pivot_orders',
-              'pon_work::legal_attempt::low_rank::tests::exact_rank_limit_chooses_left_then_right_and_explicit_paid_dense_fallback',
-              'pon_work::legal_attempt::low_rank::tests::both_inputs_are_fully_validated_before_zero_or_high_rank_shortcuts',
-              'pon_work::legal_attempt::low_rank::tests::low_rank_complete_proofs_equal_both_original_kernels_and_verifiers',
-              'pon_work::legal_attempt::low_rank::tests::misses_still_replay_all_tiles_and_cancelled_retries_preserve_the_same_task',
-              'pon_work::legal_attempt::tests::boundary_target_is_inclusive_and_zero_target_refuses_before_work',
-              'pon_work::legal_attempt::tests::changed_challenge_and_task_never_gain_acceptance_from_cached_product',
-              'pon_work::legal_attempt::tests::every_stage_cancellation_returns_no_attempt_and_does_not_poison_retry',
-              'pon_work::legal_attempt::tests::factorial_kernels_match_independent_reference_for_full_and_structured_fields',
-              'pon_work::legal_attempt::tests::losing_attempt_still_replays_every_transcript_tile_without_lazy_serialization',
-              'pon_work::legal_attempt::tests::preparation_never_reduces_noncanonical_fields_or_wrong_shapes',
-              'pon_work::legal_attempt::tests::sparse_preparation_matches_dense_and_independent_full_field_proofs',
-              'pon_work::legal_attempt::tests::sparse_preparation_rejects_hidden_noncanonical_words_and_wrong_lengths',
-              'pon_work::legal_attempt::tests::sparse_setup_keeps_complete_misses_callbacks_and_cancelled_retry',
-          }
-          kernel_rows = re.findall(r'^test (pon_work::legal_attempt::\S+) \.\.\. ok$', kernel, re.M)
-          if len(kernel_rows) != len(kernel_expected) or set(kernel_rows) != kernel_expected:
-              raise SystemExit('factorial-kernel-tests: exact named kernel controls did not execute once')
-          history = (root / 'history-import-tests.log').read_text()
-          for name in (
-              'final_resource_completion_preserves_error_priority_and_original_deadline',
-              'final_resource_expiry_keeps_committed_history_and_settled_cpu',
-          ):
-              selector = 'ingress::history_import::tests::deadline_controls::' + name
-              rows = re.findall(r'^test ' + re.escape(selector) + r' \.\.\. ok$', history, re.M)
-              if len(rows) != 1:
-                  raise SystemExit(selector + ': exact deadline control did not execute once')
-          codec_selector = ('ingress::history_import::tests::'
-              'history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors')
-          codec_rows = re.findall(r'^test ' + re.escape(codec_selector) + r' \.\.\. ok$', history, re.M)
-          if len(codec_rows) != 1:
-              raise SystemExit(codec_selector + ': exact codec control did not execute once')
-          PYTEST
+          python3 -B scripts/ci/w1_native_controls.py --group factorial --logs "$OUT" --output "$OUT/factorial-native-controls-completion.json"
       - name: Prepare pinned provider required by native all-feature controls
         shell: bash
         run: bash scripts/ci/prepare_pq_provider.sh

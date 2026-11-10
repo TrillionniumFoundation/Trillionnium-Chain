@@ -126,3 +126,29 @@ after a further ENOSPC refusal. This is not an independent executor. No native R
 test or new native executable was produced by this continuation. Applying the
 patch to another combined candidate requires checking all fixed inputs again;
 another branch's passing record cannot substitute for that execution.
+
+
+## Reviewed follow-through source binding to `8d8c0e64e7a301fc111a6720721a14816639e5aa`
+
+The sections above retain their original historical source attribution. The active
+V2 descriptor now describes code checkpoint `8d8c0e64e7a301fc111a6720721a14816639e5aa`, tree `7c003a3d183ad33ff4f3349cbcce61564f73a2ba`.
+The data schema and proof profile are unchanged. Its six-crate local closure
+contains **138** inputs: all preceding **137** files retain their exact bytes,
+and the only additional Rust input is `trillionnium/crates/trnm-crypto-primitives/examples/pon_fresh_rejection_cost.rs` (13862 bytes,
+SHA-256 `4c9917a3e97347a0afe74c3155432fdc25758b36937efd61fd5f6ed58d4705b6`). Every `src`, `tests`, `examples` and `benches` Rust
+file remains subject to the complete inventory check; no directory is exempted.
+
+The active descriptor SHA-256 is `4e3b208ddd2aa1a77168fc9ab95e63e906a46094c0e68f6e2c064155e3f705e4`.
+The [independent successor material](../../evidence/pon-w1-qrom-current-20261110-685a/README.md) retains the
+original `189b9b5` descriptor, auditor, fourteen-test source and this document,
+their exact Git blob identities, and the old auditor's actual inventory refusal
+on the new source. Existing evidence directories are unchanged. The new report
+is a separate mapping run in the later binding child; it is not a relabeled old
+receipt or a claim that the mapping tools existed at the code checkpoint.
+
+All sixteen selected project files, saved proof materials, historical V1
+reader/contract, helpers, proof parameters and fifteen unresolved obligations
+remain unchanged. Every qualification stays false, every unknown lifetime
+quantity stays null, and the status remains **HOLD**. This source review neither
+executes a native binary nor establishes fresh proof verification, minimum work
+cost, QROM soundness, open-consensus security or production admission.

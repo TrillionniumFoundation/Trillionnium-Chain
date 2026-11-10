@@ -175,6 +175,7 @@ jobs:
           bash "$OUT/run-command.sh" version-retention-vector python3 -B scripts/cell_version_retention_v3_vector.py --check || status=1
           bash "$OUT/run-command.sh" storage-descriptor-vector python3 -B scripts/cell_storage_descriptor_reference.py --check || status=1
           bash "$OUT/run-command.sh" storage-convergence-workflow-controls python3 -B scripts/ci/test_cell_storage_convergence_ci.py || status=1
+          bash "$OUT/run-command.sh" artifact-map-controls python3 -B scripts/ci/test_prepare_artifact_upload.py || status=1
           exit "$status"
       - name: Verify locked graph and unchanged all-source formatting
         id: graph_format
@@ -389,11 +390,18 @@ jobs:
           if not storage_components_passed or not sealed_python_passed:
               raise SystemExit("required storage convergence component stages did not succeed")
           PY
+      - name: Map every observation to a safe upload path
+        id: artifact_map
+        if: ${{ always() && steps.reserve.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/prepare_artifact_upload.py --source "$OUT" --output "$OUT-upload"
       - name: Retain logs and failed or partial observations
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: next-architecture-${{ matrix.runner }}-${{ matrix.source }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/next-architecture-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}/
+          path: ${{ runner.temp }}/next-architecture-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}-upload/
           if-no-files-found: error
           retention-days: 30

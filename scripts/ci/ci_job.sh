@@ -30,6 +30,7 @@ case "${1:?required job}" in
     # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.
     python3 scripts/ci/test_w1_qrom_current_implementation_audit.py
     python3 scripts/w1_qrom_current_implementation_audit.py
+    python3 scripts/ci/test_w1_qrom_current_ci.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
     python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
@@ -139,6 +140,10 @@ PY
     python3 scripts/ci/test_pon_w1_rank_batch_reader_v5.py
     python3 scripts/ci/test_run_w1_rank_batch_v5.py
     python3 scripts/ci/test_run_legacy_reorg_root_abba.py
+    python3 -B scripts/ci/test_w1_factorial_native_gate.py
+    python3 -B scripts/ci/test_prepare_artifact_upload.py
+    python3 -B scripts/ci/test_cell_storage_convergence_ci.py
+    python3 -B scripts/ci/test_fresh_rejection_report.py
     # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.
     python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54
     python3 scripts/ci/test_pon_public_v3_phase_read.py

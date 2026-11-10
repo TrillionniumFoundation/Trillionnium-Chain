@@ -1,0 +1,89 @@
+   Compiling proc-macro2 v1.0.106
+   Compiling version_check v0.9.5
+   Compiling generic-array v0.14.7
+   Compiling quote v1.0.45
+   Compiling unicode-ident v1.0.24
+   Compiling typenum v1.20.1
+   Compiling syn v2.0.117
+   Compiling cfg-if v1.0.4
+   Compiling semver v1.0.27
+   Compiling winnow v1.0.4
+   Compiling hashbrown v0.16.1
+   Compiling find-msvc-tools v0.1.9
+   Compiling equivalent v1.0.2
+   Compiling shlex v1.3.0
+   Compiling cc v1.2.59
+   Compiling indexmap v2.13.1
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling rustc_version v0.4.1
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling vcpkg v0.2.15
+   Compiling pkg-config v0.3.32
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling libsqlite3-sys v0.39.0
+   Compiling digest v0.10.7
+   Compiling curve25519-dalek v4.1.3
+   Compiling foldhash v0.2.0
+   Compiling cfg_aliases v0.2.2
+   Compiling cpufeatures v0.2.17
+   Compiling bitflags v2.11.0
+   Compiling libc v0.2.184
+   Compiling borsh v1.8.0
+   Compiling hashbrown v0.17.1
+   Compiling proc-macro-crate v3.5.0
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling zeroize v1.9.1
+   Compiling once_cell v1.21.4
+   Compiling getrandom v0.4.2
+   Compiling signature v2.2.0
+   Compiling zmij v1.0.21
+   Compiling rustix v1.1.4
+   Compiling serde_core v1.0.228
+   Compiling subtle v2.6.1
+   Compiling ed25519 v2.2.3
+   Compiling borsh-derive v1.8.0
+   Compiling hashlink v0.12.2
+   Compiling sha2 v0.10.9
+   Compiling fallible-iterator v0.3.0
+   Compiling serde_json v1.0.149
+   Compiling smallvec v1.15.1
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling linux-raw-sys v0.12.1
+   Compiling rusqlite v0.41.0
+   Compiling ed25519-dalek v2.2.0
+   Compiling memchr v2.8.0
+   Compiling itoa v1.0.18
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-service-settlement)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 38.91s
+     Running unittests src/lib.rs (/home/qian-qi/chain-pon-followthrough-20261110-685a-target/debug/deps/trnm_service_settlement-8a5f869b0934b28e)
+
+thread 'native_budget::tests::native_payment_readback_rejects_same_generation_append_from_second_connection' (400894) panicked at crates/trnm-service-settlement/src/native_budget/tests.rs:1997:5:
+assertion failed: matches!(result,
+    Err(NativeBudgetErrorV1::Invalid("BUDGET_NATIVE_READBACK_JOURNAL_CHANGED")))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'native_budget::tests::completed_effect_readback_rejects_new_generation_append_and_preserves_unknown' (400890) panicked at crates/trnm-service-settlement/src/native_budget/tests.rs:1997:5:
+assertion failed: matches!(result,
+    Err(NativeBudgetErrorV1::Invalid("BUDGET_NATIVE_READBACK_JOURNAL_CHANGED")))
+
+thread 'native_budget::tests::completed_effect_readback_rejects_same_generation_append_from_second_connection' (400891) panicked at crates/trnm-service-settlement/src/native_budget/tests.rs:1997:5:
+assertion failed: matches!(result,
+    Err(NativeBudgetErrorV1::Invalid("BUDGET_NATIVE_READBACK_JOURNAL_CHANGED")))
+
+thread 'native_budget::tests::native_payment_readback_rejects_new_generation_append_and_preserves_unknown' (400893) panicked at crates/trnm-service-settlement/src/native_budget/tests.rs:1997:5:
+assertion failed: matches!(result,
+    Err(NativeBudgetErrorV1::Invalid("BUDGET_NATIVE_READBACK_JOURNAL_CHANGED")))
+
+thread 'native_generation_budget_v2::tests::payment_readback_rejects_same_generation_append_from_second_connection' (400896) panicked at crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs:616:5:
+assertion failed: matches!(result,
+    Err(NativeBudgetErrorV1::Invalid("GENERATION_PAYMENT_JOURNAL_CHANGED")))
+
+thread 'native_generation_budget_v2::tests::payment_readback_rejects_new_generation_append_and_retains_unknown_after_reopen' (400895) panicked at crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs:616:5:
+assertion failed: matches!(result,
+    Err(NativeBudgetErrorV1::Invalid("GENERATION_PAYMENT_JOURNAL_CHANGED")))
+error: test failed, to rerun pass `-p trnm-service-settlement --lib`

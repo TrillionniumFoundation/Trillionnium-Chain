@@ -72,10 +72,20 @@ class CurrentImplementationTests(unittest.TestCase):
         self.assertEqual(historical['reader_sha256'], current.LEGACY_READER_SHA256)
         with self.assertRaisesRegex(self.audit.AuditError, 'input exceeds bound'):
             self.audit.build_report(current.ROOT)
+        for relative, expected in (
+            ('evidence/pon-w1-qrom-current-20261110-685a/historical/current-v2.json', '846efa5cedfb811ae8255a5b3d5c0223e6e89180a89c9670e7bcb9204cbbed30'),
+            ('evidence/pon-w1-qrom-current-20261110-685a/historical/current-auditor.py', '42f55e68fef753d4c63ca1749a2031d5b80e4184f9e4e316c7dd267dcdaa095f'),
+            ('evidence/pon-w1-qrom-current-20261110-685a/historical/current-tests.py', '9e87e202e839e498008f4b8178379de2553bfc7bb8da0ca91df853e6a8886909'),
+            ('evidence/pon-w1-qrom-current-20261110-685a/historical/current-mapping.md.txt', 'b072b80b628c83d501e9289f04a7c7287f5a35e98a56c6adc398e7667154b299'),
+        ):
+            self.assertEqual(hashlib.sha256((current.ROOT / relative).read_bytes()).hexdigest(), expected)
+        prior = json.loads((current.ROOT / 'evidence/pon-w1-qrom-current-20261110-685a/historical/current-v2.json').read_bytes())
+        self.assertEqual(prior['source_base_commit'], '189b9b5959d836ef6ae96e14fb285948e4920aa9')
+        self.assertEqual(len(prior['local_path_closure']['files']), 137)
 
     def test_all_six_local_crates_and_literal_inputs_are_bound(self):
         result = self.report['local_path_closure']
-        self.assertEqual(result['source_files_checked'], 137)
+        self.assertEqual(result['source_files_checked'], 138)
         self.assertTrue(result['source_before_after_equal'])
         manifests = set(self.contract['local_path_closure']['entry_manifests'])
         manifests.update(row['target'] for row in result['path_edges'])
@@ -84,6 +94,8 @@ class CurrentImplementationTests(unittest.TestCase):
         self.assertIn('trillionnium/crates/trnm-protocol/src/funded_service_task_v1.rs', names)
         self.assertIn('trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs', names)
         self.assertIn('config/pon/work-profile-v1.json', names)
+        self.assertIn('trillionnium/crates/trnm-crypto-primitives/examples/pon_fresh_rejection_cost.rs', names)
+        self.assertEqual(self.report['source_base_commit'], '8d8c0e64e7a301fc111a6720721a14816639e5aa')
         for path in ('src/pq_root_v3.rs', 'src/pq_root_v3/tests.rs', 'tests/pq_root_v3_native.rs'):
             self.assertIn('trillionnium/crates/trnm-crypto-primitives/' + path, names)
         self.assertEqual(len(result['literal_include_files']), 8)
@@ -94,13 +106,26 @@ class CurrentImplementationTests(unittest.TestCase):
         path.write_text('// additional ordinary module requires review\n')
         with self.assertRaisesRegex(current.AuditError, 'Rust source inventory differs'):
             current.build_report(self.root)
+        path.unlink()
+        # Omitting the reviewed example from a caller-supplied closure
+        # still fails the complete inventory check independently of the
+        # descriptor digest check; no examples directory is exempt.
+        omitted = json.loads(self.contract_raw)
+        omitted['local_path_closure']['files'] = [
+            row for row in omitted['local_path_closure']['files']
+            if row['path'] != 'trillionnium/crates/trnm-crypto-primitives/examples/pon_fresh_rejection_cost.rs']
+        with self.assertRaisesRegex(current.AuditError, 'local Rust source inventory differs'):
+            current.local_closure(self.root, omitted)
 
     def test_missing_funded_source_is_refused(self):
         self.copy_inputs()
-        path = self.root / 'trillionnium/crates/trnm-protocol/src/funded_service_task_v1.rs'
-        path.unlink()
-        with self.assertRaises(OSError):
-            current.build_report(self.root)
+        for relative in ('trillionnium/crates/trnm-protocol/src/funded_service_task_v1.rs',
+                         'trillionnium/crates/trnm-crypto-primitives/examples/pon_fresh_rejection_cost.rs'):
+            with self.subTest(missing_source=relative):
+                self.copy_inputs()
+                (self.root / relative).unlink()
+                with self.assertRaises(OSError):
+                    current.build_report(self.root)
 
     def test_local_path_manifest_change_requires_review(self):
         self.copy_inputs()
@@ -129,10 +154,12 @@ class CurrentImplementationTests(unittest.TestCase):
         self.copy_inputs()
         path = self.root / current.CONTRACT
         value = json.loads(path.read_bytes())
-        value['source_base_commit'] = '0' * 40
-        path.write_text(json.dumps(value))
-        with self.assertRaisesRegex(current.AuditError, 'unreviewed current implementation contract'):
-            current.build_report(self.root)
+        for revision in ('0' * 40, '189b9b5959d836ef6ae96e14fb285948e4920aa9'):
+            with self.subTest(stale_source=revision):
+                value['source_base_commit'] = revision
+                path.write_text(json.dumps(value))
+                with self.assertRaisesRegex(current.AuditError, 'unreviewed current implementation contract'):
+                    current.build_report(self.root)
 
     def test_historical_reader_bytes_are_preserved(self):
         self.copy_inputs()

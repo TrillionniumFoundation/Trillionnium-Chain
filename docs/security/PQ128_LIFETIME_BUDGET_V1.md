@@ -358,3 +358,31 @@ the lifetime, advice and adversary resource model; discharge the nonprobabilisti
 implementation/environment obligations; then compare the complete derived sum
 with its declared target. Any future attestation needs a separately reviewed
 schema. This V1 research checker deliberately has no promotion switch.
+
+## Reviewed source binding to code checkpoint `8d8c0e64e7a301fc111a6720721a14816639e5aa`
+
+This is a selected-source consistency review. All named regular Git blobs were read with
+`git show 8d8c0e64e7a301fc111a6720721a14816639e5aa:<path>` and matched against the working files.
+The code checkpoint is `8d8c0e64e7a301fc111a6720721a14816639e5aa`, tree `7c003a3d183ad33ff4f3349cbcce61564f73a2ba`.
+The later binding, reader, test and documentation edits are not claimed to exist in that
+checkpoint. The final executed candidate and binary require their own observations.
+
+All 15 declared event paths retain their roster. Thirteen source hashes are unchanged.
+The two changed source pins are:
+
+| Source | Prior SHA-256 | Reviewed SHA-256 |
+| --- | --- | --- |
+| `trillionnium/crates/trnm-pon-node/src/store.rs` | `108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554` | `e43ba6ea4775b5256a95781fcc3dbb1dd9c359900fc91263f3e8cd2844cf43bd` |
+| `trillionnium/crates/trnm-service-settlement/src/native_budget.rs` | `1fd964a4bfb3dec372c04a32853d9b08a3b80773d3182099d80705ab916ace38` | `75be11d65dfc681fa3997d3653ceacb0616ddb37d1520551e6d5169cfe73922e` |
+
+The prior mapping remains `66b7064be597039ce871b5b12ad5568850a2dd46`, with lock-byte SHA-256
+`29ba9abdbb39d96bece885a0cd821fd9ad428413974cd530d26434f5a7daf84a`. The new lock-byte SHA-256 is
+`cc1ed0c7516c308127467b1be6b0f82e28fe6dfd44ca1e6fbd6782548028a781`. The research manifest changes only
+`experiment.source_revision`; no source is added to an event or removed from one.
+
+All eight unknown event terms, four unknown shared-primitive query budgets, allocations,
+assumptions, null actual lifetime failure bound and false qualification/activation
+fields are preserved. The prior guard's source-lock refusal remains a failed observation.
+This reviewed mapping and its separate Python controls do not replace native execution,
+complete reduction/coverage work, cryptographic provenance or an instantiated PQ128 bound.
+Earlier reports and evidence remain unchanged and retain their original source attribution.
