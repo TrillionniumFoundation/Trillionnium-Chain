@@ -1,3 +1,56 @@
+## Native grouped-shard continuation — explicit V3 candidate
+
+Status: **V3 implementation under validation; no same-operation real-model pass**.
+Production qualification remains **HOLD**. The compiled direct-source
+precursor's seven-control attempt remains **6 passed / 1 failed**, with the
+original `LIMIT` refusal preserved. The unchanged native ledger permits at
+most 256 pending tasks. Its proposed 293-source synthetic and 791-source
+real-model rosters exceed that limit; sixteen expirations per height solve
+a separate limit. No production threshold is raised.
+
+Original Task/M12 V1 remains indivisible: its one claim reserves the whole
+Task amount, so sharing one V1 budget across sixteen positive claims is not a
+valid fix. The authorised new V3 route instead uses one original M12 parent
+claim per canonical group and a separately persisted V3 child journal. Every
+child retains its own operation, effect, service window and target receipt.
+For each storage or cold-repair phase, every parent request is checked against
+the actual existing M12 journal and every original hold is installed before
+that phase starts provider work. A parent becomes Done only after every child
+and complete current group readback succeed.
+Pending/Done retries cannot replay initial writes or replace child history.
+
+For the original 30-manifest / 95-chunk input, the planned grouping is 31
+direct root/member sources, 36 storage-group sources and 12 repair-group
+sources: **79 original M12 claims and 760 independent V3 child intents**.
+The 791 logical items must not be reported as 791 original M12 claims.
+Groups contain at most sixteen canonical same-provider children with exact
+monetary/resource sums; sources/budgets are unique between groups. No Task
+is cancelled, paid early or assigned a false future-retention Positive outcome
+to obtain this reduction.
+
+The intended data path retains the original BT/TCV1/TCV2/CTS1 pins and absolute
+deadline, complete CRR2/CRG2 coverage, deliberate loss of the TCA3 payload and
+provider slots 4/5, anchored cold reopen, grouped native repair, four-original-
+slot consumer reconstruction and the original sealed-worker forwards.
+The [research contract](specs/pon/CELL_NATIVE_SHARD_RESEARCH_V2.md) defines the
+new grouped boundary, commands, original limits and required raw records.
+
+The research delivery cache has a separate explicit 768-wire-manifest
+metadata admission. Input and consumer caches retain 128 manifests, and wire
+chunk rows, logical bytes, original wall/memory/thread limits remain fixed.
+The preceding 128-wire-manifest attempt failed with
+`CELL_CACHE_QUOTA_EXHAUSTED`; that original temporary-cache gate did not pass.
+
+The separate eighteen authority-register controls previously passed with
+`HOLD`; they establish their source-consistency scope only. New V3 code needs
+its own exact-source build, complete controls, strict Clippy, source/graph/link
+checks and fresh real-model operation. Preserve the failed precursor and
+the prior complete-copy observation without upgrading either. Development
+coins and six local provider labels establish neither real-money economics
+nor independent custody. Continuous paid retention, WAN, ordinary Hepta
+FinalUse, model efficacy and production activation remain HOLD.
+
+
 **Complete model capacity continuation — HOLD:**
 
 The [explicit V2 capacity profiles](specs/pon/CELL_STORAGE_CAPACITY_V2.md)
