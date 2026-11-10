@@ -66,6 +66,30 @@ class FailureInspectionTests(unittest.TestCase):
         self.assertEqual(baseline["history_checkpoint_host_calls"]["total"], 11)
         self.assertIn("no_verifier_errors", baseline["unmet_flags"])
 
+    def test_native_admission_and_commit_intervals_are_nested_not_added(self):
+        data = fixture()
+        observation = data["phases"][0]["history"][0]["client_import"]["native_import_observation"]
+        observation["packets"] = [{"phases": [
+            {"phase": "admission", "wall_ns": 30, "thread_cpu_ns": 12},
+            {"phase": "admission_prepare", "wall_ns": 10, "thread_cpu_ns": 5},
+            {"phase": "commit", "wall_ns": 18, "thread_cpu_ns": 7},
+        ]}]
+        self.put(1, data)
+        phases = inspect(self.root)["runs"][0]["phases"][0]["native_packet_stage_observations"]
+        self.assertEqual(phases["native_packet_instances"], 1)
+        self.assertEqual(phases["phases"]["admission"]["wall_ns"]["total"], 30)
+        self.assertEqual(phases["phases"]["admission_prepare"]["wall_ns"]["total"], 10)
+        self.assertEqual(phases["phases"]["commit"]["wall_ns"]["total"], 18)
+        self.assertIsNone(phases["phases"]["work"]["wall_ns"]["total"])
+        self.assertIn("no category totals should be summed", phases["non_additive"])
+
+    def test_missing_native_packet_stage_list_is_not_zero_work(self):
+        self.put(1, fixture())
+        phases = inspect(self.root)["runs"][0]["phases"][0]["native_packet_stage_observations"]
+        self.assertEqual(phases["history_calls_missing_packet_list"], 1)
+        self.assertEqual(phases["native_packet_instances"], 0)
+        self.assertIsNone(phases["phases"]["commit"]["wall_ns"]["total"])
+
     def test_changed_workload_is_detected_without_inheriting_reported_success(self):
         altered = fixture()
         altered["phases"][1]["attacker_processes_requested"] = 1
