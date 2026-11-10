@@ -1,0 +1,38 @@
+{
+  "inherited_build_settings": {
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": null,
+    "LD_LIBRARY_PATH": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_INCLUDE_DIR": null,
+    "OPENSSL_LIB_DIR": null,
+    "OPENSSL_NO_VENDOR": null,
+    "OPENSSL_STATIC": null,
+    "PKG_CONFIG_PATH": null,
+    "RISC0_SKIP_BUILD": null,
+    "RISC0_USE_DOCKER": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUSTUP_HOME": null
+  },
+  "logical_cpu_count": 32,
+  "original_host_service_profile_exercised": false,
+  "overrides": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_HOME": "/home/qian-qi/chain-joint-tail-native-20261110-8e76/cargo-home",
+    "CARGO_NET_OFFLINE": "true",
+    "CARGO_TARGET_DIR": "/home/qian-qi/chain-joint-tail-native-20261110-8e76/target",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "RUSTUP_TOOLCHAIN": "1.95.0"
+  },
+  "python": "3.14.4 (main, Aug 20 2026, 10:41:58) [GCC 15.2.0]",
+  "uname": [
+    "Linux",
+    "qian-qi-ROG-Flow-Z13-GZ302EA-GZ302EA",
+    "7.0.0-42-generic",
+    "#42-Ubuntu SMP PREEMPT_DYNAMIC Thu Oct 15 08:06:44 UTC 2026",
+    "x86_64"
+  ]
+}

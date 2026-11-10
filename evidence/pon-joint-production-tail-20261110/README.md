@@ -73,3 +73,14 @@ not a rerun of the prior 299-method suite or a native qualification. Existing
 formal checker semantics and CI commands are unchanged. The original ROG r1
 exact recovery again timed out; its state remains UNKNOWN. Current source-job
 readback still has 18 queued jobs and no conclusions. No workflow was rerun.
+
+## Later original r1 terminal recovery
+
+The [complete original r1 terminal packet](r1-terminal/README.md) resolves the
+previous UNKNOWN observation to FAILED / exit 2: the unchanged 6 GiB free-space
+guard refused before setup, and the original command list is empty. The same
+request returned reused=true; no replacement native job was launched. Full
+original streams, archive bytes, member hashes and controller receipts are
+retained. This adds no native gate pass or probability qualification. All prior
+UNKNOWN/timeouts remain retained; all thirteen actual joint obligations remain
+open and HOLD_NO_GO remains.

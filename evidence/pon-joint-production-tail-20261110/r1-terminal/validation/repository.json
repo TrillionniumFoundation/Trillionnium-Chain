@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "elapsed_seconds": 15.64399339100055,
+  "executed_source_parent": "a782b1b501c9030d9f9f6fecd27b5858a702c9a8",
+  "exit_code": 0,
+  "scope": "new evidence packet with unchanged native source; working tree before evidence commit",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 307,
+  "stdout_sha256": "c357a3c31d9593093f079a32655e33aac2e2247b4c5ea76667e46fed46227d1c"
+}
