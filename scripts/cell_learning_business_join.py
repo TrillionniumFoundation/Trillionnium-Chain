@@ -18,7 +18,7 @@ import cell_learning_iteration_join as iteration
 import cell_learning_business_economics as economics
 
 BINDINGS_SCHEMA = "trnm-cell-learning-business-bindings-v1"
-REPORT_SCHEMA = "trnm-cell-learning-business-review-v1"
+REPORT_SCHEMA = "trnm-cell-learning-business-review-v2"
 MAX_BINDINGS = 256 * 1024
 MATERIAL_NAMES = ("selection", "completed", "readback", "freeze", "expected")
 REQUEST_DOMAIN = b"trnm.cell.learning.business-request.v1\0"
@@ -195,6 +195,16 @@ def review_business_iteration(materials, *, bindings_raw, expected_bindings_sha2
     native.fields(bindings["consumer"], "principal_id agent_id cell_id", "BUSINESS_CONSUMER_FIELDS")
     native.require(bindings["consumer"] == {k: final["state_partition"][k]
                    for k in ("principal_id", "agent_id", "cell_id")}, "BUSINESS_CONSUMER_BINDING")
+    source_actor = {k: request[k] for k in ("principal_id", "agent_id", "cell_id", "source_run_id")}
+    next_use_actor = {k: final["state_partition"][k]
+                      for k in ("principal_id", "agent_id", "cell_id", "run_id")}
+    actor_relation = dict(same_principal=source_actor["principal_id"] == next_use_actor["principal_id"],
+                          same_agent=source_actor["agent_id"] == next_use_actor["agent_id"],
+                          same_cell=source_actor["cell_id"] == next_use_actor["cell_id"],
+                          distinct_run=source_actor["source_run_id"] != next_use_actor["run_id"])
+    # The original reader requires this actor/run relation. It does not attest
+    # an independent consumer, even when the bindings label this actor consumer.
+    native.require(all(actor_relation.values()), "BUSINESS_NEXT_USE_ACTOR_RELATION")
     request_digest = funded_request_digest(bindings, snapshot)
     result_digest = funded_result_digest(request_digest, review)
     entries = bindings["economics"]
@@ -240,6 +250,14 @@ def review_business_iteration(materials, *, bindings_raw, expected_bindings_sha2
         selected_bundle_digest=observed["selected_bundle"], complete_version_descriptor=selected,
         complete_version_custody_verified=False, physical_installation_accepted=False,
         consumer=bindings["consumer"], independent_consumer_verified=False,
+        next_use_provenance=dict(
+            status="SAME_ORIGINAL_ACTOR_DISTINCT_RUN_ONLY",
+            scope="decoded-checkpoint-actor-and-run-identifiers-only",
+            completed_checkpoint_sha256=native.sha(materials["completed"]),
+            source_actor=source_actor, next_use_actor=next_use_actor,
+            **actor_relation, authenticated=False),
+        independent_consumer_gate=dict(
+            status="MISSING_ORIGINAL_INDEPENDENT_CONSUMER_RECEIPT", verified=False),
         next_task_digest=observed["next_task_digest"], acknowledged_next_use_observed=True,
         funded_request_digest=request_digest, funded_result_digest=result_digest,
         funded_mapping_observed=any(entry is not None for entry in entries), funded_mapping_authenticated=False,

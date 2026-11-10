@@ -94,6 +94,7 @@ class BusinessJoinTests(unittest.TestCase):
         for phase, decision, count in (("adopt-v1", "Selection", 7), ("no-update-v9", "NoUpdate", 6)):
             with self.subTest(phase=phase):
                 result = run_review(*original_case(phase))
+                self.assertEqual(result["schema"], "trnm-cell-learning-business-review-v2")
                 self.assertEqual((result["decision"], result["receipt_count"]), (decision, count))
                 self.assertEqual(result["checkpoint_codec"], "HEPLCP02")
                 self.assertEqual(result["authority"], "DENY_ALL")
@@ -116,6 +117,65 @@ class BusinessJoinTests(unittest.TestCase):
         self.assertIsNone(result["economic_categories"]["service_fee"]["actual_external_amount"])
         self.assertFalse(result["economic_categories"]["improvement_reward"]["no_update_eligible"])
         self.assertIsNone(result["economic_categories"]["consensus_credit"]["actual_qualified_credit"])
+
+    def test_original_actor_next_run_projection_preserves_both_archived_decisions(self):
+        for phase, decision in (("adopt-v1", "Selection"), ("no-update-v9", "NoUpdate")):
+            with self.subTest(phase=phase):
+                materials, bindings = original_case(phase)
+                snapshot, _ = iteration.decode_native_learning_checkpoint(materials["completed"])
+                original = json.loads((RECORDED / phase / "stdout.json").read_bytes())
+                request = snapshot["request"]
+                result = run_review(materials, bindings)
+                projection = result["next_use_provenance"]
+                self.assertEqual(result["decision"], decision)
+                self.assertEqual(projection["completed_checkpoint_sha256"],
+                                 native.sha(materials["completed"]))
+                self.assertEqual(projection["source_actor"], {name: request[name] for name in
+                    ("principal_id", "agent_id", "cell_id", "source_run_id")})
+                self.assertEqual(projection["next_use_actor"],
+                                 original["final_observation"]["state_partition"])
+                self.assertEqual(projection["status"], "SAME_ORIGINAL_ACTOR_DISTINCT_RUN_ONLY")
+                self.assertEqual(projection["scope"], "decoded-checkpoint-actor-and-run-identifiers-only")
+                for name in ("same_principal", "same_agent", "same_cell", "distinct_run"):
+                    self.assertIs(projection[name], True, name)
+                self.assertNotEqual(projection["source_actor"]["source_run_id"],
+                                    projection["next_use_actor"]["run_id"])
+                self.assertIs(projection["authenticated"], False)
+                self.assertEqual(result["independent_consumer_gate"], dict(
+                    status="MISSING_ORIGINAL_INDEPENDENT_CONSUMER_RECEIPT", verified=False))
+                self.assertEqual(result["completion_review"], original)
+                self.assertEqual((result["authority"], result["current_permission"], result["qualification"]),
+                                 ("DENY_ALL", "NOT_EXPORTED", "HOLD_NO_GO"))
+                for name in ("independent_consumer_verified", "source_execution_authenticated",
+                             "hepta_final_use_accepted", "settlement_verified", "production_activation"):
+                    self.assertIs(result[name], False, name)
+
+    def test_source_declarations_cannot_replace_decoded_actor_provenance(self):
+        for phase in ("adopt-v1", "no-update-v9"):
+            with self.subTest(phase=phase):
+                materials, bindings = original_case(phase)
+                original = run_review(materials, bindings)
+                bindings["capture_basis"] = "original-owner-export"
+                bindings["source_pair"]["hepta"]["commit"] = "ab" * 20
+                for pin in bindings["materials"].values():
+                    pin["source_pair"] = copy.deepcopy(bindings["source_pair"])
+                result = run_review(materials, bindings)
+                self.assertEqual(result["next_use_provenance"], original["next_use_provenance"])
+                self.assertEqual(result["independent_consumer_gate"], original["independent_consumer_gate"])
+                self.assertIs(result["source_execution_authenticated"], False)
+                self.assertIs(result["independent_consumer_verified"], False)
+
+    def test_actor_projection_and_independence_claims_are_not_manifest_inputs(self):
+        materials, original = original_case()
+        report = run_review(materials, original)
+        claims = dict(next_use_provenance=report["next_use_provenance"],
+                      independent_consumer_gate=dict(status="VERIFIED", verified=True),
+                      independent_consumer_verified=True)
+        for name, claim in claims.items():
+            bindings = copy.deepcopy(original)
+            bindings[name] = claim
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, "BUSINESS_BINDINGS_FIELDS"):
+                run_review(materials, bindings)
 
     def test_source_declaration_does_not_authenticate_historical_execution(self):
         materials, bindings = original_case()
@@ -173,10 +233,12 @@ class BusinessJoinTests(unittest.TestCase):
             bindings["learning"][field] = "different" if field.endswith("run_id") else "ab" * 32
             with self.subTest(field=field), self.assertRaisesRegex(ValueError, "BUSINESS_LEARNING_BINDINGS"):
                 run_review(materials, bindings)
-        bindings = copy.deepcopy(original)
-        bindings["consumer"]["principal_id"] = "ab" * 32
-        with self.assertRaisesRegex(ValueError, "BUSINESS_CONSUMER_BINDING"):
-            run_review(materials, bindings)
+        for field, replacement in (("principal_id", "ab" * 32), ("agent_id", "different-agent"),
+                                   ("cell_id", "different-cell")):
+            bindings = copy.deepcopy(original)
+            bindings["consumer"][field] = replacement
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "BUSINESS_CONSUMER_BINDING"):
+                run_review(materials, bindings)
 
     def test_no_update_synthetic_contract_service_fee_is_not_improvement_or_consensus_credit(self):
         materials, bindings = original_case("no-update-v9")

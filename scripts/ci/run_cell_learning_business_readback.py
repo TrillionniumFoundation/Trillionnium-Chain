@@ -23,7 +23,7 @@ TESTS = (
     ("iteration-controls", "scripts/test_cell_learning_iteration_join.py", 25, ()),
     ("completion-controls", "scripts/test_cell_learning_completion_join.py", 13, ()),
     ("economics-controls", "scripts/test_cell_learning_business_economics.py", 29, ()),
-    ("business-controls", "scripts/test_cell_learning_business_join.py", 21, ()),
+    ("business-controls", "scripts/test_cell_learning_business_join.py", 24, ()),
     ("ci-contract-controls", "scripts/ci/test_ci_contract.py", 10,
      ("MergedQualificationLaneTests",)),
 )
@@ -79,6 +79,8 @@ def replay_command(case):
 
 def check_replay(raw, case, directory):
     report = json.loads(raw)
+    if report.get("schema") != "trnm-cell-learning-business-review-v2":
+        raise ValueError("business report schema differs")
     if (report.get("authority"), report.get("current_permission"), report.get("qualification")) != (
             "DENY_ALL", "NOT_EXPORTED", "HOLD_NO_GO"):
         raise ValueError("readback authority or qualification changed")
@@ -92,6 +94,24 @@ def check_replay(raw, case, directory):
     if (report.get("decision"), report.get("receipt_count")) != (
             ("Selection", 7) if case == "adopt-v1" else ("NoUpdate", 6)):
         raise ValueError("original decision or receipt count changed")
+    provenance = report["next_use_provenance"]
+    if (provenance.get("status") != "SAME_ORIGINAL_ACTOR_DISTINCT_RUN_ONLY" or
+            provenance.get("scope") != "decoded-checkpoint-actor-and-run-identifiers-only" or
+            provenance.get("authenticated") is not False or
+            any(provenance.get(name) is not True for name in
+                ("same_principal", "same_agent", "same_cell", "distinct_run"))):
+        raise ValueError("original actor/run provenance changed")
+    source_actor, next_actor = provenance["source_actor"], provenance["next_use_actor"]
+    if (any(source_actor[name] != next_actor[name] for name in
+            ("principal_id", "agent_id", "cell_id")) or
+            source_actor["source_run_id"] == next_actor["run_id"] or
+            next_actor != report["completion_review"]["final_observation"]["state_partition"] or
+            provenance["completed_checkpoint_sha256"] != digest(
+                ROOT / ORIGINAL / case / "completed.bin")["sha256"]):
+        raise ValueError("original actor/run identifiers or checkpoint bytes differ")
+    if report.get("independent_consumer_gate") != dict(
+            status="MISSING_ORIGINAL_INDEPENDENT_CONSUMER_RECEIPT", verified=False):
+        raise ValueError("missing independent consumer receipt was promoted")
     completion = encoded(report["completion_review"])
     (directory / "completion-review.json").write_bytes(completion)
     archived = (ROOT / ORIGINAL / case / "stdout.json").read_bytes()
