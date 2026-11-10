@@ -7,9 +7,11 @@ its failed workflow results or its unknown cryptographic obligations.
 
 ## Reviewed source change
 
-The reviewed source is Chain
-`189b9b5959d836ef6ae96e14fb285948e4920aa9`. The retained V1 implementation
-contract is based on `cb114b13bf848a77634e40a08b31b30c7c758e7b`.
+The current reviewed source is Chain
+`39336622c63df1ae746d83a76bb53202cd01ba17`. The preceding dependency mapping
+reviewed `189b9b5959d836ef6ae96e14fb285948e4920aa9`; its observations remain
+historical. The retained V1 implementation contract is based on
+`cb114b13bf848a77634e40a08b31b30c7c758e7b`.
 Comparing its entire project-file roster with the current source gives two
 changed files:
 
@@ -62,10 +64,36 @@ unresolved obligations retain their exact bytes. The other upgraded application
 manifests and locks are outside this selected mapping and require their own
 complete dependency and native checks.
 
-The active current contract SHA-256 is
-`846efa5cedfb811ae8255a5b3d5c0223e6e89180a89c9670e7bcb9204cbbed30`. This source rebinding
-supplies no native execution or new security conclusion. Earlier native records
-remain bound to their original dependency graphs.
+That dependency continuation used contract SHA-256
+`846efa5cedfb811ae8255a5b3d5c0223e6e89180a89c9670e7bcb9204cbbed30`.
+
+The 2026-11-10 continuation preserves all **137** existing closure records and
+adds exactly `trnm-crypto-primitives/examples/pon_from_zero_filter_cost_v1.rs`,
+for **138** inputs. Its 15,343 bytes have SHA-256
+`78665546a09da49bc100da9357743781eae282379a6eae40f0e286d7cbbc8cde`,
+read from source `39336622c63df1ae746d83a76bb53202cd01ba17`, tree
+`42fbd7d5a7f00b75000cb4aa242e578a8f941d59`. The example measures finite existing
+native PNW1 components. It does not change the selected RISC Zero proof relation.
+All 16 selected project records, saved proof materials, helper scripts, historical
+reader/contract, parameters, eight literal includes and 15 unresolved obligations
+retain their bytes. The original 14 control methods remain; their existing
+closure-count assertion now includes the added example.
+
+The 138-input count retains the original crate-root and literal-data inventory
+scope. This reader does not enumerate Rust `#[path]` imports outside those roots.
+The new example, like the older expensive-verifier example, imports
+`trnm-pon-node/examples/support/w1_from_zero.rs`; that helper remains outside this
+selected inventory. The separate native experiment guards the whole tracked
+source. This mapping does not establish a complete Rust include/build graph.
+
+The actual pre-update current reader on evidence child
+`42d6ab45598cbba3d476a3c558b7fce562f13877` exited 2 with
+`local Rust source inventory differs`. Retain that failure independently of the
+historical V1 refusal. The active current contract SHA-256 is now
+`272275f202b896b74b7f7499695fa3f50b28a36465806c60b8c369e2e76db5b9`.
+This source rebinding supplies no native execution or new security conclusion.
+Native observations on `39336622` retain that identity; the binding successor
+requires its own consistency checks and inherits no execution qualification.
 
 The current checker verifies the local Cargo path graph,
 exact Rust-file inventory, literal include set and declared absence of build

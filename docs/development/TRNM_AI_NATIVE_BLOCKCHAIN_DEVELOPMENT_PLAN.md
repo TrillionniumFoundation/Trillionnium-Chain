@@ -11390,3 +11390,22 @@ Active sidecar content checking against noncooperating same-inode writers also
 requires a separate design and cost review; do not add quadratic prefix rescans
 inside this bounded-input repair. Source and finite test success grant no
 production admission. `HOLD_NO_GO` and all activation refusals remain in force.
+
+### 2026-11-10 current binding follow-up
+
+Actual guarded inspectors on evidence child
+`42d6ab45598cbba3d476a3c558b7fce562f13877` exposed two introduced refusals:
+the PQ corpus still pinned the preceding plan/source-inventory blobs, and the
+current QROM local roster omitted the new cost example. Preserve both failures.
+Bind the existing current mapping to reviewed source
+`39336622c63df1ae746d83a76bb53202cd01ba17`, retaining all 137 prior closure
+records and adding only that example for 138 inputs. Keep all 16 selected
+project records, 14 existing mapping control methods, proof fixtures, historical
+reader/contract, parameters, eight literal includes and 15 unresolved obligations.
+Synchronize the current mapping digest, selected-profile declaration and workflow
+descriptor, then refresh only changed already-covered corpus pins while retaining
+its 1,079 pinned paths and 987 required paths. Freeze and run the actual current
+mapping, profile binding, corpus and authority inspectors with their retained
+controls; mechanism-test counts alone cannot substitute for those commands.
+The prior native execution remains bound to `39336622`; a binding successor gains
+no new native or hosted execution claim. Keep all HOLD flags and unknown bounds.
