@@ -503,5 +503,237 @@ class SourceInspectionTests(ContractCase):
         self.assertIn("input manifest differs", report["error"])
 
 
+class QueryTailSemanticsTests(ContractCase):
+    """A bounded-query game leaves the resource-overrun event to be paid.
+
+    All finite spaces and query counts here are invented arithmetic examples.
+    They neither measure nor constrain the project's adversary.
+    """
+
+    def example(self, **values):
+        data = composition.default_query_tail_arithmetic()
+        data["purpose"] = "arithmetic-example"
+        data["query_budget"] = {"maximum": "16", "unit": "synthetic-oracle-query"}
+        for name in composition.QUERY_TAIL_LEAVES:
+            data["inputs"][name].update({
+                "query_budget": deepcopy(data["query_budget"]),
+                "status": "declared-model-bound", "bound": ratio(values.get(name, 0)),
+                "theorem": {
+                    "reference": "Synthetic finite space; no project theorem",
+                    "locator": "Query-tail arithmetic fixture only",
+                    "applicability": "Assumed bound in this invented common lifetime experiment; project applicability remains unproved.",
+                },
+            })
+        return data
+
+    def refuse(self, data):
+        with self.assertRaises((composition.CompositionError, composition.legacy.BudgetError)):
+            composition.review_query_tail_arithmetic(data)
+
+    def remains_unqualified(self, report):
+        super().remains_unqualified(report)
+        for key in ("composition_coverage_proved", "whole_chain_hash_query_scope_closed",
+                    "theorem_applicability_verified", "resource_random_variable_defined_for_project",
+                    "bounded_game_to_project_reduction_proved"):
+            self.assertIs(report[key], False, key)
+
+    def test_all_bad_and_overrun_events_in_weighted_finite_space_satisfy_bound(self):
+        # Q takes values 0 and 17, so O={Q>16} may have any correlation with Bad.
+        weights = (Fraction(1, 2), Fraction(1, 4), Fraction(1, 8), Fraction(1, 8))
+        subsets = [frozenset(i for i in range(4) if mask & (1 << i)) for mask in range(16)]
+
+        def mass(event):
+            return sum((weights[i] for i in event), Fraction())
+
+        for bad, overrun in itertools.product(subsets, repeat=2):
+            data = self.example(bounded_query_failure=mass(bad - overrun),
+                                query_budget_overrun=mass(overrun))
+            report = composition.review_query_tail_arithmetic(data)
+            self.assertLessEqual(mass(bad), decode(report["conditional_lifetime_declared_bound"]))
+        self.remains_unqualified(report)
+
+    def test_all_unknown_inputs_keep_complete_bound_unknown(self):
+        report = composition.review_query_tail_arithmetic(composition.default_query_tail_arithmetic())
+        self.assertEqual(set(report["unknown_inputs"]), set(composition.QUERY_TAIL_LEAVES))
+        self.assertIsNone(report["uncapped_declared_sum"])
+        self.assertIsNone(report["conditional_lifetime_declared_bound"])
+        self.remains_unqualified(report)
+
+    def test_unknown_overrun_is_not_zero_even_at_exact_bounded_game_target(self):
+        data = self.example(bounded_query_failure=TARGET)
+        data["inputs"]["query_budget_overrun"].update(status="unknown", bound=None, theorem=None)
+        report = composition.review_query_tail_arithmetic(data)
+        self.assertEqual(decode(report["known_declared_subtotal"]), TARGET)
+        self.assertEqual(report["unknown_inputs"], ["query_budget_overrun"])
+        self.assertIsNone(report["uncapped_declared_sum"])
+        self.assertIsNone(report["conditional_lifetime_declared_bound"])
+        self.remains_unqualified(report)
+
+    def test_each_required_unknown_input_propagates(self):
+        for name in composition.QUERY_TAIL_LEAVES:
+            with self.subTest(name=name):
+                data = self.example()
+                data["inputs"][name].update(status="unknown", bound=None, theorem=None)
+                report = composition.review_query_tail_arithmetic(data)
+                self.assertIn(name, report["unknown_inputs"])
+                self.assertIsNone(report["conditional_lifetime_declared_bound"])
+                self.remains_unqualified(report)
+
+    def test_tiny_positive_overrun_exceeds_exhausted_target_without_rounding(self):
+        tail = Fraction(1, 1 << 512)
+        report = composition.review_query_tail_arithmetic(self.example(
+            bounded_query_failure=TARGET, query_budget_overrun=tail))
+        self.assertEqual(decode(report["conditional_lifetime_declared_bound"]), TARGET + tail)
+        self.assertEqual(decode(report["known_declared_subtotal"]), TARGET + tail)
+        self.assertIs(report["declared_target_exceeded_by_known_inputs"], True)
+        self.remains_unqualified(report)
+
+    def test_reduction_loss_is_additive_and_cannot_hide_in_overrun(self):
+        report = composition.review_query_tail_arithmetic(self.example(
+            bounded_query_failure=Fraction(1, 16), query_budget_overrun=Fraction(1, 32),
+            bounded_game_reduction_loss=Fraction(1, 64)))
+        self.assertEqual(decode(report["conditional_lifetime_declared_bound"]), Fraction(7, 64))
+        self.remains_unqualified(report)
+
+    def test_cap_retains_uncapped_three_term_sum(self):
+        report = composition.review_query_tail_arithmetic(self.example(
+            **{name: 1 for name in composition.QUERY_TAIL_LEAVES}))
+        self.assertEqual(decode(report["uncapped_declared_sum"]), 3)
+        self.assertEqual(decode(report["conditional_lifetime_declared_bound"]), 1)
+        self.remains_unqualified(report)
+
+    def test_declared_zero_requires_all_explicit_inputs_and_never_promotes(self):
+        report = composition.review_query_tail_arithmetic(self.example())
+        self.assertEqual(decode(report["conditional_lifetime_declared_bound"]), 0)
+        self.assertEqual(report["unknown_inputs"], [])
+        self.remains_unqualified(report)
+
+    def test_unknown_loss_does_not_erase_known_target_excess(self):
+        data = self.example(bounded_query_failure=TARGET,
+                            query_budget_overrun=Fraction(1, 1 << 512))
+        data["inputs"]["bounded_game_reduction_loss"].update(status="unknown", bound=None, theorem=None)
+        report = composition.review_query_tail_arithmetic(data)
+        self.assertIsNone(report["conditional_lifetime_declared_bound"])
+        self.assertIs(report["declared_target_exceeded_by_known_inputs"], True)
+        self.remains_unqualified(report)
+
+    def test_query_count_and_unit_must_agree_for_every_leaf(self):
+        for name in composition.QUERY_TAIL_LEAVES:
+            for key, value in (("maximum", "17"), ("unit", "other-query-interface")):
+                with self.subTest(name=name, key=key):
+                    data = self.example()
+                    data["inputs"][name]["query_budget"][key] = value
+                    self.refuse(data)
+
+    def test_coverage_cannot_drop_external_or_prior_work_channels(self):
+        for label in ("online", "offline", "preprocessing", "failed", "unpublished",
+                      "recursive", "shared-uses", "initial-state", "classical-advice",
+                      "quantum-advice", "all-keys", "all-epochs"):
+            with self.subTest(label=label):
+                data = self.example()
+                data["coverage_labels"].remove(label)
+                self.refuse(data)
+
+    def test_node_limits_or_epoch_resets_cannot_supply_a_global_cap(self):
+        for key in ("node_limits_bound_external_queries", "reset_at_key_epoch_role_recovery"):
+            data = self.example()
+            data[key] = True
+            self.refuse(data)
+
+    def test_foreign_experiment_game_model_scope_and_query_definition_refused(self):
+        for key, value in (("experiment_id", "different-lifetime"),
+                           ("game_id", "single-invocation-game"),
+                           ("model", "classical-ROM"),
+                           ("scope", "current-key-only"),
+                           ("query_count_definition", "observed-online-node-queries")):
+            data = self.example()
+            data[key] = value
+            self.refuse(data)
+
+    def test_omitted_input_is_not_an_implicit_zero(self):
+        for name in composition.QUERY_TAIL_LEAVES:
+            data = self.example()
+            del data["inputs"][name]
+            self.refuse(data)
+
+    def test_unsupported_fields_and_self_certification_are_refused(self):
+        mutations = (
+            lambda d: d.update(verified=True),
+            lambda d: d.update(independent=True),
+            lambda d: d.update(actual_lifetime_failure_bound=ratio(0)),
+            lambda d: d["inputs"]["query_budget_overrun"].update(verified=True),
+            lambda d: d["inputs"]["query_budget_overrun"].update(status="proved"),
+            lambda d: d["inputs"]["query_budget_overrun"]["theorem"].update(verified=True),
+        )
+        for mutate in mutations:
+            data = self.example()
+            mutate(data)
+            self.refuse(data)
+
+    def test_invalid_query_budget_types_and_partial_budget_are_refused(self):
+        for budget in ({"maximum": 16, "unit": "synthetic-oracle-query"},
+                       {"maximum": True, "unit": "synthetic-oracle-query"},
+                       {"maximum": "16", "unit": 1},
+                       {"maximum": "-1", "unit": "synthetic-oracle-query"},
+                       {"maximum": "01", "unit": "synthetic-oracle-query"},
+                       {"maximum": None, "unit": "synthetic-oracle-query"},
+                       {"maximum": "16", "unit": None}):
+            data = self.example()
+            data["query_budget"] = deepcopy(budget)
+            for row in data["inputs"].values():
+                row["query_budget"] = deepcopy(budget)
+            self.refuse(data)
+
+    def test_unknown_input_cannot_carry_a_number_or_theorem(self):
+        for key, value in (("bound", ratio(0)), ("theorem", {"reference": "invented"})):
+            data = composition.default_query_tail_arithmetic()
+            data["inputs"]["query_budget_overrun"][key] = value
+            self.refuse(data)
+
+    def test_invalid_probability_types_ranges_and_missing_theorem_refused(self):
+        for bound in (None, {"numerator": "-1", "denominator": "1"},
+                      {"numerator": "2", "denominator": "1"},
+                      {"numerator": "1", "denominator": "0"},
+                      {"numerator": 1, "denominator": "16"}):
+            data = self.example()
+            data["inputs"]["query_budget_overrun"]["bound"] = bound
+            self.refuse(data)
+        data = self.example()
+        del data["inputs"]["query_budget_overrun"]["theorem"]["applicability"]
+        self.refuse(data)
+
+    def test_numeric_declarations_cannot_use_an_unknown_query_count(self):
+        data = self.example()
+        data["query_budget"] = {"maximum": None, "unit": None}
+        for row in data["inputs"].values():
+            row["query_budget"] = deepcopy(data["query_budget"])
+        self.refuse(data)
+
+    def test_target_headroom_is_exact_and_signed_without_hiding_excess(self):
+        for failure, tail in ((Fraction(0), Fraction(0)),
+                              (TARGET, Fraction(0)),
+                              (TARGET, Fraction(1, 1 << 512))):
+            with self.subTest(failure=failure, tail=tail):
+                report = composition.review_query_tail_arithmetic(self.example(
+                    bounded_query_failure=failure, query_budget_overrun=tail))
+                self.assertEqual(decode(report["remaining_target_after_known_inputs"]),
+                                 TARGET - failure - tail)
+                self.assertIs(report["declared_target_exceeded_by_known_inputs"],
+                              failure + tail > TARGET)
+                self.assertIs(report["declared_target_met"], failure + tail <= TARGET)
+                self.remains_unqualified(report)
+
+    def test_real_inspector_embeds_unknown_tail_without_changing_qualification(self):
+        report = composition.inspect(ROOT)
+        tail = report["conditional_query_tail_arithmetic"]
+        self.assertEqual(set(tail["unknown_inputs"]), set(composition.QUERY_TAIL_LEAVES))
+        self.assertEqual(tail["query_budget"], {"maximum": None, "unit": None})
+        self.assertIsNone(tail["conditional_lifetime_declared_bound"])
+        self.assertIsNone(tail["uncapped_declared_sum"])
+        self.assertIsNone(tail["declared_target_met"])
+        self.remains_unqualified(tail)
+        ContractCase.remains_unqualified(self, report)
+
+
 if __name__ == "__main__":
     unittest.main()

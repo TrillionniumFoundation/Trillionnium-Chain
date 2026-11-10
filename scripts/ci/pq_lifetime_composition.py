@@ -266,6 +266,112 @@ Even a numeric zero must be an explicit declaration, not an omitted loss.
     }
 
 
+QUERY_TAIL_LEAVES = (
+    "bounded_query_failure", "query_budget_overrun", "bounded_game_reduction_loss",
+)
+
+
+def default_query_tail_arithmetic():
+    """Separate declarations for a bounded game, resource tail and game lift.
+
+    This does not instantiate a query counter or a global attacker cap. The
+    event bound is on Bad intersect {Q <= q}, not a per-invocation estimate.
+    A theorem about a truncated algorithm needs a justified lift to that event.
+    """
+    budget = {"maximum": None, "unit": None}
+    return {
+        "schema": "trnm-pq128-lifetime-query-tail-arithmetic-v1",
+        "purpose": "research-model", "experiment_id": EXPERIMENT_ID,
+        "game_id": "uninstantiated-lifetime-query-tail-game-v1",
+        "model": legacy.MODEL,
+        "scope": "all-keys-all-epochs-including-retired-authority",
+        "query_count_definition": "total-lifetime-including-prior-work",
+        "bounded_event": "Bad intersection {Q<=q}",
+        "overrun_event": "{Q>q}",
+        "coverage_labels": list(COVERAGE) + ["initial-state", "classical-advice", "quantum-advice"],
+        "coverage_labels_are_disjoint_buckets": False,
+        "node_limits_bound_external_queries": False,
+        "reset_at_key_epoch_role_recovery": False,
+        "query_budget": budget,
+        "target": legacy.rational(Fraction(1, 1 << 128)),
+        "inputs": {
+            name: {"query_budget": copy.deepcopy(budget), "status": "unknown",
+                   "bound": None, "theorem": None} for name in QUERY_TAIL_LEAVES
+        },
+    }
+
+
+def review_query_tail_arithmetic(data):
+    """Evaluate epsilon + P(Q>q) + delta on explicit unverified declarations.
+
+    Whenever Q is a well-defined lifetime resource variable, partition Bad into
+    {Q<=q} and {Q>q}. No independence is needed. Applicability of a bounded-game
+    theorem, initial advice, resource transformations and the tail bound remain
+    separate project obligations. A node timeout never supplies a zero tail.
+    """
+    expected = default_query_tail_arithmetic()
+    fields(data, " ".join(expected), "query-tail arithmetic")
+    for key in expected:
+        if key not in ("purpose", "query_budget", "inputs"):
+            exact(data[key], expected[key], "query-tail." + key)
+    require(data["purpose"] in ("research-model", "arithmetic-example"),
+            "unsupported query-tail arithmetic purpose")
+    budget = data["query_budget"]
+    fields(budget, "maximum unit", "query-tail.query_budget")
+    if budget["maximum"] is None:
+        require(budget["unit"] is None, "unknown query maximum requires unknown unit")
+    else:
+        legacy.natural(budget["maximum"], "query-tail.query_budget.maximum")
+        legacy.string(budget["unit"], "query-tail.query_budget.unit")
+    fields(data["inputs"], " ".join(QUERY_TAIL_LEAVES), "query-tail.inputs")
+    values = {}
+    for name in QUERY_TAIL_LEAVES:
+        row = data["inputs"][name]
+        fields(row, "query_budget status bound theorem", "query-tail." + name)
+        exact(row["query_budget"], budget, "query-tail." + name + ".query_budget")
+        require(row["status"] in ("unknown", "declared-model-bound"),
+                "query-tail declaration cannot self-certify")
+        if row["status"] == "unknown":
+            require(row["bound"] is None and row["theorem"] is None,
+                    "unknown query-tail input requires null bound and theorem")
+            values[name] = None
+        else:
+            require(budget["maximum"] is not None,
+                    "declared query-tail bounds require explicit query maximum and unit")
+            fields(row["theorem"], "reference locator applicability", name + ".theorem")
+            for key, value in row["theorem"].items():
+                legacy.string(value, name + ".theorem." + key)
+            values[name] = legacy.probability(row["bound"], name + ".bound")
+    known = legacy.bounded_sum([v for v in values.values() if v is not None],
+                               "known query-tail subtotal")
+    total = maybe_sum(list(values.values()))
+    target = legacy.probability(data["target"], "query-tail.target")
+    return {
+        "schema": "trnm-pq128-lifetime-query-tail-arithmetic-result-v1", "status": "HOLD",
+        "arithmetic_contract_satisfied": True,
+        "query_budget": copy.deepcopy(budget),
+        "declared_input_bounds": {name: legacy.rational(v) for name, v in values.items()},
+        "unknown_inputs": [name for name in QUERY_TAIL_LEAVES if values[name] is None],
+        "known_declared_subtotal": legacy.rational(known),
+        "uncapped_declared_sum": legacy.rational(total),
+        "conditional_lifetime_declared_bound": legacy.rational(
+            None if total is None else min(Fraction(1), total)),
+        "target": legacy.rational(target),
+        "remaining_target_after_known_inputs": legacy.rational(target - known),
+        "declared_target_exceeded_by_known_inputs": known > target,
+        "declared_target_met": None if total is None else total <= target,
+        "target_comparison_is_arithmetic_only": True,
+        "resource_random_variable_defined_for_project": False,
+        "bounded_game_to_project_reduction_proved": False,
+        "theorem_applicability_verified": False,
+        "composition_coverage_proved": False,
+        "whole_chain_hash_query_scope_closed": False,
+        "actual_lifetime_failure_bound": None,
+        "whole_chain_pq_qualified": False, "production_activation": False,
+        "note": "Separate conditional accounting only. Matching counts, units and coverage labels do not define the project's resource variable, prove a tail bound, authenticate advice, or connect a bounded-game theorem to the project. This result is not substituted for or added to either existing register.",
+    }
+
+
 def merge_source_maps(legacy_files, root_files):
     """Do not let one reviewed source silently overwrite another."""
     merged = dict(legacy_files)
@@ -319,6 +425,7 @@ def validate_manifest(data):
         "source_revision_bound": False, "deployment_identity_proved": False,
         "transitive_dependency_closure_proved": False,
         "conditional_root_arithmetic": review_arithmetic(data["conditional_root_arithmetic"]),
+        "conditional_query_tail_arithmetic": review_query_tail_arithmetic(default_query_tail_arithmetic()),
         "scope_mappings": copy.deepcopy(data["scope_mappings"]),
         "resource_instances": copy.deepcopy(data["resource_instances"]),
         "shared_substrates": copy.deepcopy(data["shared_substrates"]),

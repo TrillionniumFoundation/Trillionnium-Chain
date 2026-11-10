@@ -173,6 +173,76 @@ receipts cannot bound work on an adversary's external machines. Those limits
 remain useful operational controls, but the total adversary resource bound
 requires a separate justified model or explicitly stated external assumption.
 
+### 5.1 Bounded-query theorems require a resource-tail term
+
+The separate `default_query_tail_arithmetic()` and
+`review_query_tail_arithmetic(data)` API now records three mandatory terms.
+The normal inspector includes its unknown default report under
+`conditional_query_tail_arithmetic`. It does not change either input manifest,
+transfer a component estimate, or supply a numeric query maximum.
+
+Suppose a complete experiment defines a total lifetime resource random variable
+`Q`, a fixed threshold `q`, and a protected failure event `Bad`. Set
+`O = {Q > q}`. The disjoint event partition gives
+
+\[
+\Pr[Bad] = \Pr[Bad \cap O^c] + \Pr[Bad \cap O]
+\leq \Pr[Bad \cap \{Q\leq q\}] + \Pr[Q>q].
+\]
+
+If an applicable bounded-game argument and its project reduction give
+`Pr[Bad intersection {Q<=q}] <= epsilon + delta`, the resulting conditional
+accounting rule is
+
+\[
+\Pr[Bad]\leq\min(1,\epsilon+\Pr[Q>q]+\delta).
+\]
+
+No event independence is needed. These hypotheses are not established for the
+project. In particular, a theorem about an algorithm truncated at `q` queries
+is not by itself a bound on the original experiment's joint event. Its lift
+must be justified in the stated quantum access, advice and resource model.
+No observation or measurement of a quantum state is added by this arithmetic.
+The underlying experiment must first define the resource variable and show
+that its event partition and bounded-game comparison apply.
+
+| Required input | Meaning |
+| --- | --- |
+| `bounded_query_failure` | Declared bounded-game contribution to the joint event `Bad intersection {Q<=q}` |
+| `query_budget_overrun` | Declared bound on `Pr[Q>q]` over the same full lifetime |
+| `bounded_game_reduction_loss` | Separate loss connecting that bounded game to the project event |
+
+Each input repeats the same explicit maximum and query unit. Numeric inputs
+require both; missing inputs, conflicting units/maxima, incomplete theorem
+declarations, unsupported fields and self-verified claims are refused. A zero
+tail or zero reduction loss requires an explicit unverified declaration.
+Unknown terms keep the complete conditional result null. A known subtotal and
+signed remaining target are reported separately, so known charges exceeding
+the target remain visible even when another term is unknown. A negative
+remaining target means these declarations exceed the arithmetic allocation;
+it is not a measured failure probability or evidence of an attack.
+
+The fixed coverage checklist retains prior preprocessing, online/offline work,
+failed/cancelled/rejected/unpublished work, helpers, recursion, shared uses,
+all keys/epochs, authority surviving retirement and initial classical/quantum
+advice. Overlapping labels are not additive query bins. Matching labels and
+units do not prove complete coverage, authenticate initial advice, convert
+interface calls to substrate queries, or bound external machines. Node limits
+and key/epoch/recovery resets cannot establish the global tail bound.
+
+With a bounded-game contribution exactly `2^-128`, any positive tail or loss
+outside that contribution exceeds that target. The tests retain a `2^-512`
+tail exactly rather than rounding it away. This is a conditional arithmetic
+example; no project term has acquired that value. The new report is not added
+to, or substituted into, the root or legacy eight-domain results.
+
+`resource_random_variable_defined_for_project`,
+`bounded_game_to_project_reduction_proved`, `theorem_applicability_verified`,
+`composition_coverage_proved` and `whole_chain_hash_query_scope_closed` remain
+false. `actual_lifetime_failure_bound` remains null, and whole-chain PQ and
+production activation remain false for every declaration, including all-zero
+arithmetic examples.
+
 ## 6. Eight target allocations do not become a joint bound
 
 The legacy register still allocates eight times `2^-131`, exactly `2^-128`.

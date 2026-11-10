@@ -8697,3 +8697,27 @@ but the additional-loss placement remains unproved. Qualification remains HOLD,
 flags false, and `joint_bound_derived=false`. This is defensive research
 accounting and scope review; it does not change Rust, signatures, wire formats,
 deployed keys, services or production authorization.
+
+
+### 2026-11-10 lifetime query-tail accounting continuation
+
+Continue the reviewed #844 source `f0b9c984ea8e9b8d0139a63495d9c41bc70b60e9`.
+Keep its original 36 composition tests, V1/V3 manifests, 51 declared source
+paths, all native gates and earlier failed evidence. Add a separate conditional
+resource-tail review to the existing mandatory composition inspector and suite:
+bounded-query failure plus full-lifetime query overrun plus bounded-game
+reduction loss. Missing terms remain unknown; matching maxima, units and
+coverage labels do not prove a resource model or a global cap. Require initial
+advice, prior/offline/failed/unpublished/helper/recursive/shared work and all
+keys/epochs/retired authority in the declared scope. Node budgets cannot bound
+external queries and epochs/recovery cannot restart lifetime accounting.
+
+Preserve exact positive charges beyond an exhausted target and show known
+subtotal excess even when another term is unknown. Keep the new conditional
+report separate from both existing registers: no replacement, addition, product
+rule or qualification is inferred. Defining the actual lifetime resource
+variable, proving the bounded-game lift, establishing the external tail bound,
+complete event coverage and shared-oracle composition remain open. All actual
+bounds, qualification and activation fields retain their prior null/false
+values. This continuation changes research Python accounting and documentation;
+no signature, wire, key, native owner or deployment is changed.
