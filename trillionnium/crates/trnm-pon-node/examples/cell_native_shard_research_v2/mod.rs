@@ -92,8 +92,16 @@ fn wire_cache<'a>(
             }
         }
     }
-    let logical = chunk_union.values().try_fold(0_u64, |sum, size| {
+    let logical = manifest_union.values().try_fold(0_u64, |sum, manifest| {
+        let bytes = u64::try_from(manifest.encode().len())
+            .map_err(|_| "wire-cache manifest-byte overflow")?;
+        sum.checked_add(bytes)
+            .and_then(|value| value.checked_add(32))
+            .ok_or("wire-cache logical-byte overflow")
+    })?;
+    let logical = chunk_union.values().try_fold(logical, |sum, size| {
         sum.checked_add(u64::from(*size))
+            .and_then(|value| value.checked_add(32))
             .ok_or("wire-cache logical-byte overflow")
     })?;
     let max_manifests = 6 * MAX_CHUNKS as u64;
