@@ -1,3 +1,30 @@
+**Original campaign diagnosis and source-scoped QROM observation, 2026-11-09 America/New_York — HOLD:**
+Continue the complete #835 integration source `e2a02f9271b49f146e70806c8a66e161b5973971`.
+The failed-campaign ZIP reader verifies the complete declared archive, source,
+binary, log and raw-report identities before deriving phase observations. It
+reuses the original positive reader's source/resource/step contracts and the
+original phase reader; a successfully read failure remains a failed campaign.
+For Actions 42575267109, 42579873262 and 42591962205, each of the three original
+attempts confirms one of three baseline business rounds and none in either
+pressure phase. Missing rounds remain unobserved; independent resets and nested
+CPU/wall measurements cannot be summed into qualified goodput.
+
+The existing History observer gains a separately named bounded attribution of
+actual Host checkpoint calls to the already-open native owner phase. Original
+Host calls, current kernel observations, typed failures, cancellation, budgets,
+transaction scopes and acceptance criteria remain unchanged. Unknown phase
+context remains explicit; worker Host CPU is not relabelled as owner-phase CPU.
+These additional measurements require new exact-source native execution; they
+are not a throughput repair or retrospective attribution of old artifacts.
+
+The W1 implementation workflow separates the unchanged historical V1 roster on
+fixed source `0c830e0be8939ce80c8443c9ad68021b87343a00` from the current V2 map
+and exact current head/prospective-merge roster. It also retains the real original
+V1-on-current rejection and exact changed input identities. Historical byte/SHA
+pins are not raised or rewritten. All unresolved cryptographic obligations,
+null lifetime bounds, native campaign failures and production refusal remain.
+Source-scoped CI observation is not cryptographic or public-service qualification.
+
 **Joint PoN resource-contract continuation, 2026-11-08 America/New_York — HOLD:**
 Continue the complete #821 source `e798d7125724d4b9f98c24d00cc80031f2eab4a9`,
 which already contains the #811 work-cost and #812 integration lineage.
@@ -10806,3 +10833,110 @@ changed current-source corpus entries. All four original proposition flags
 remain unproved, all authority stays false, and demand, independent full-cost
 benefit and all-legal-strategy hardness remain open. Existing acceptance
 contracts and production activation are unchanged.
+
+### 2026-11-09 — Separate STARK instances and certify fixed field algebra
+
+Continue the exact #835 source with the
+[three-route instance audit](../security/W1_STARK_ROUTE_INSTANCE_AUDIT_V1.md).
+Keep the RISC Zero/Poseidon2 v2, Goldilocks/Poseidon2 W1 and Goldilocks/tagged
+SHA3 profiles separate. Derive the route records from retained source bytes,
+profile identities and locks, rather than trusting a self-declared manifest.
+Preserve all original cryptographic sources, receipt formats and admission rules.
+
+Use exact Lucas and Rabin certificates for the two base fields and extension
+polynomials, and check all retained base-field roots and BabyBear inverse roots.
+This closes the fixed finite-algebra subproblem only. It neither proves every
+compiled field operation nor all reachable traces, FRI/RBR soundness, quantum
+extraction, shared-oracle composition, recursion or concrete security bits.
+
+Preserve the 15 historical obligation IDs and the later disposition: one
+fixed manuscript-version correspondence sub-obligation is closed, 14 other
+historical obligations remain, no complete security obligation is discharged,
+and the eight implementation interfaces remain open. The
+[literature mapping](../protocol/pon-nakamoto-v1/details/STARK_THREE_ROUTE_LITERATURE_20261109.md)
+keeps binary additive-domain hypotheses separate from small-base-field and
+odd-prime near-capacity results; excluding one theorem family grants no safety.
+
+Run field and route controls exactly once in the original required CI lane.
+Retain source refusals, unknown lifetime budgets, all native/service acceptance
+gates and historical failures. Before a profile can leave HOLD, instantiate its
+actual relations and extractors, justify the joint oracle and FRI/list-size
+premises, account for enlarged recursive and lifetime query domains, and obtain
+same-source independent resource and production acceptance. No source mapping
+or conditional estimator grants consensus or production authority.
+
+### 2026-11-10 — Recovered direct-domain and conditional sampler continuation
+
+Continue #849 in an isolated candidate. Retain the known original-P3 compressor
+and tagged-transcript model limitations in machine-readable route records.
+Check DKTZ Revision 1 Theorem 5.22's direct-domain cardinality premise separately
+from its binary-field results; padding, restriction, other proximity results
+and complete FRI/list-size review remain open.
+
+Add exact four-draw sampler arithmetic under explicit iid uniform-draw and
+independent-query-block hypotheses. Preserve the ordinary replay, historical
+test roster and unknown actual Poseidon2/QROM distribution. Require the new
+finite-counting controls and conditional report once in repository-truth.
+
+Earlier unpushed local commits `e616c6ffd741af9d7e76b7741fb09bffc8b286ce` and
+`b85cfe89673a9f6a56c658281ba98f1df427afc4` became unavailable when the scratch
+workspace was cleared. This reconstruction has a new source identity and new
+validation; their reported results are not transferred to it. All actual
+security/lifetime bounds, eight implementation interfaces and production gates
+remain open. Native execution, formatting, dependency graphs and strict Clippy
+must be reported by their actual new-source observations, not inherited passes.
+
+### 2026-11-10 — Separate lifetime closure's historical and current sources
+
+Continue exact #850 source with the
+[current lifetime observation](../security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md).
+Keep the historical ledger, source pins, 105-name closure roster and saved
+reports unchanged, and run their positive reproduction on the fixed original
+closure source. Current head and ordered prospective merge instead use an
+explicit current 20-path source contract and distinct observation schema,
+retaining the actual V1 source-identity refusal and all unknown lifetime inputs.
+
+Require current named completion, all five unaffected report comparisons,
+an explicitly frozen comparison of the single semantics lock-provenance delta,
+source-before/after equality and final stage outcomes. Keep historical and
+current rosters separate, register the new source observer and controls in the
+original repository lane, and preserve original failures. This repairs source
+scope correspondence; it establishes neither a complete QROM theorem nor a
+lifetime failure bound, native resource acceptance, production admission or
+independent cryptographic qualification.
+
+### 2026-11-10 — Compose STARK route and current QROM observation sources
+
+Integrate exact #859 `eb272801e18112e90506fe5016e4dfc4660ad736` as first
+parent and #857 `06c3d24cc4fc05011e04951d30f066c057394836` as second
+parent over the real common ancestor `e2a02f9271b49f146e70806c8a66e161b5973971`.
+Preserve the original historical readers, 105-name closure and 69-name
+proof-chain rosters, fixed proof/profile bytes and all source refusals.
+
+Keep the separately versioned current implementation and lifetime workflows
+in the same source as the three-route field/domain and conditional sampler
+readers. Retain every required command exactly once and check the combined
+source, corpus pins, generated inventory, named completions and actual current
+workflow stages again on its own committed identity. Earlier source passes
+and the two inherited #857 QROM workflow failures remain their own observations.
+
+This composition establishes no new STARK/QROM theorem, actual iid transcript
+law, quantum extractor, recursive/lifetime bound or native resource acceptance.
+The 15 historical IDs, eight open interfaces, unknown security inputs and false
+production/consensus qualification remain unchanged. Independent hosted head
+and prospective-merge acceptance must be observed separately.
+
+### 2026-11-10 — Compose four-proposition accounting with current QROM observations
+
+Integrate exact #860 `6ab14e5f3cb642e685196a52942d9235eff2f4a0` as first
+parent and #867 `c213cace86ddf1874d6335ba74b8690d5c3a1599` as second
+parent. Retain both historical source refusals, the original ENOSPC and native
+0/3 observations, fixed accounting reader inputs and all current-source controls.
+Run the merged candidate on its own source identity; ancestor results are not
+new-candidate executions. Only changed current-source inventory pins are updated.
+
+This composition does not establish genuine customers, budgets or data rights,
+independent future-task net benefit, or an all-legal-coalition lifecycle resource
+bound. All four proposition flags and production authorities remain false;
+unproved all-algorithm bounds and unknown GPU costs remain null. No activation,
+new payment, adoption or FinalUse is authorized by this engineering composition.

@@ -1,0 +1,62 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "a13c56ca050af1d6b98571c4ae41ade5e78dbec9",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "a13c56ca050af1d6b98571c4ae41ade5e78dbec9",
+    "tested_tree": "ec3dcf4e85ae1413df572328744729bc56b99aea",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2540856237,
+    "tracked_entries": 26605,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess,json,pathlib,sys,hashlib;out=pathlib.Path(\"/home/qq/work/chain-four-qrom-composed-20261110-checks\"); tracked=subprocess.check_output([\"git\",\"ls-files\",\"-z\"]).decode().split(\"\\0\"); fuzz=[p for p in tracked if p.endswith(\"Cargo.toml\") and \"fuzz\" in pathlib.PurePosixPath(p).parts]; print(\"TRACKED_FUZZ_MANIFESTS \"+json.dumps(fuzz),flush=True);assert fuzz; cmds=[[\"cargo\",\"metadata\",\"--manifest-path\",p,\"--locked\",\"--offline\",\"--format-version\",\"1\"] for p in fuzz]+[[\"cargo\",\"test\",\"--locked\",\"--offline\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"-p\",\"trnm-crypto-primitives\",\"-p\",\"trnm-checkpoint-types\",\"-p\",\"trnm-verification-profiles\",\"--all-targets\",\"--all-features\"],[\"cargo\",\"clippy\",\"--locked\",\"--offline\",\"--manifest-path\",\"trillionnium/Cargo.toml\",\"--workspace\",\"--all-targets\",\"--all-features\",\"--\",\"-D\",\"warnings\"]]; results=[]\nfor i,cmd in enumerate(cmds):\n print(\"EXECUTING \"+json.dumps(cmd),flush=True)\n try:\n  if cmd[1]==\"metadata\":\n   r=subprocess.run(cmd,capture_output=True,timeout=120); raw=r.stdout; name=\"a13-native-1130-\"+str(i)+\".stdout\";(out/name).write_bytes(raw);print(r.stderr.decode(errors=\"replace\"),flush=True);print(\"METADATA_OUTPUT \"+json.dumps({\"file\":name,\"bytes\":len(raw),\"sha256\":hashlib.sha256(raw).hexdigest()}),flush=True);code=r.returncode\n  else:code=subprocess.run(cmd,timeout=600).returncode\n except subprocess.TimeoutExpired:code=124\n results.append({\"argv\":cmd,\"exit_code\":code});print(\"RESULT \"+json.dumps(results[-1]),flush=True)\nprint(\"COMMAND_RESULTS \"+json.dumps(results),flush=True);sys.exit(int(any(r[\"exit_code\"] for r in results)))"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "a13c56ca050af1d6b98571c4ae41ade5e78dbec9",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "a13c56ca050af1d6b98571c4ae41ade5e78dbec9",
+    "tested_tree": "ec3dcf4e85ae1413df572328744729bc56b99aea",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2540856237,
+    "tracked_entries": 26605,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/home/qq/work/chain-four-qrom-composed-20261110",
+  "elapsed_ns": 112381293487,
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target",
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 0,
+  "log_bytes": 49394,
+  "log_file": "a13-native-original-commands-1130.log",
+  "log_sha256": "7fc6d0143b6cdaad164a71032dc677aeb3fe725a3cf024770ca704ce2bd8a1b0",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-10T11:26:53.323063+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}

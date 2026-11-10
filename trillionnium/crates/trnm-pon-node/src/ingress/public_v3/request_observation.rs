@@ -4,7 +4,7 @@ use super::work_rejection::PublicRejectionWorkObservation;
 use serde::{ser::SerializeStruct, Serialize};
 use std::fmt::{self, Write};
 use std::sync::{
-    atomic::{AtomicBool, AtomicU64, Ordering},
+    atomic::{AtomicBool, AtomicU32, AtomicU64, Ordering},
     Arc, Mutex, OnceLock,
 };
 use std::thread::{self, ThreadId};
@@ -195,7 +195,7 @@ pub enum SubmitPhase {
     RootCommitment,
 }
 impl SubmitPhase {
-    const ALL: [Self; 19] = [
+    pub(in crate::ingress) const ALL: [Self; 19] = [
         Self::Decode,
         Self::ContextOwnerWait,
         Self::Context,
@@ -894,6 +894,13 @@ impl TaskObservation {
     pub(in crate::ingress) fn phase(&self, phase: SubmitPhase) -> SubmitPhaseGuard<'_> {
         self.phases.phase(phase)
     }
+    /// Sample the already-open owner spans for diagnostic attribution only.
+    /// One atomic mask is a coherent sample; it never waits for a row mutex or
+    /// relies on a clock value being available. An ambiguous overlap stays
+    /// unknown instead of guessing a stage or changing a native result.
+    pub(in crate::ingress) fn active_phase(&self) -> std::result::Result<Option<SubmitPhase>, ()> {
+        self.phases.active_phase()
+    }
     fn update_task(&self, change: impl FnOnce(&mut TaskProgress)) {
         if let Some(network) = &self.network {
             network.update_task(change);
@@ -974,6 +981,7 @@ struct PhaseRecorder(Arc<PhaseRecorderInner>);
 struct PhaseRecorderInner {
     epoch: Instant,
     rows: Mutex<[SubmitPhaseObservation; 19]>,
+    active: AtomicU32,
     failures: AtomicU64,
 }
 impl PhaseRecorder {
@@ -981,6 +989,7 @@ impl PhaseRecorder {
         Self(Arc::new(PhaseRecorderInner {
             epoch,
             rows: Mutex::new(submit_phases()),
+            active: AtomicU32::new(0),
             failures: AtomicU64::new(0),
         }))
     }
@@ -1012,6 +1021,37 @@ impl PhaseRecorder {
         };
         (rows, self.failures())
     }
+    fn active_phase(&self) -> std::result::Result<Option<SubmitPhase>, ()> {
+        if self.failures() != 0 {
+            return Err(());
+        }
+        let active = self.0.active.load(Ordering::Acquire);
+        if active == 0 {
+            return Ok(None);
+        }
+        for phase in SubmitPhase::ALL {
+            if active & (1 << phase as u32) == 0 {
+                continue;
+            }
+            // HistoryImport is the enclosing local invocation. All other
+            // containment comes from the existing declared parent links.
+            // Never choose by timestamp or guess across live sibling spans.
+            let mut lineage = 0u32;
+            let mut current = Some(phase);
+            while let Some(parent) = current {
+                lineage |= 1 << parent as u32;
+                current = if parent == SubmitPhase::HistoryImport {
+                    None
+                } else {
+                    parent.parent().or(Some(SubmitPhase::HistoryImport))
+                };
+            }
+            if active & !lineage == 0 {
+                return Ok(Some(phase));
+            }
+        }
+        Err(())
+    }
     fn phase(&self, phase: SubmitPhase) -> SubmitPhaseGuard<'_> {
         let started = Instant::now();
         let started_ns = started
@@ -1030,6 +1070,9 @@ impl PhaseRecorder {
                 recordable = true;
             }
         });
+        if recordable {
+            self.0.active.fetch_or(1 << phase as u32, Ordering::Release);
+        }
         SubmitPhaseGuard {
             observation: self,
             phase,
@@ -1071,6 +1114,10 @@ impl Drop for SubmitPhaseGuard<'_> {
         if !self.recordable {
             return;
         }
+        self.observation
+            .0
+            .active
+            .fetch_and(!(1 << self.phase as u32), Ordering::Release);
         let ended = Instant::now();
         let wall = ended
             .checked_duration_since(self.started)
@@ -1157,6 +1204,59 @@ fn thread_cpu_ns() -> Option<u64> {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn active_phase_context_is_lock_free_and_uses_declared_nested_spans() {
+        let observation = TaskObservation::local(Instant::now());
+        let outer = observation.phase(SubmitPhase::HistoryImport);
+        let admission = observation.phase(SubmitPhase::Admission);
+        let execution = observation.phase(SubmitPhase::Execution);
+        let root = observation.phase(SubmitPhase::RootCommitment);
+        let rows = observation.phases.0.rows.lock().unwrap();
+        assert_eq!(
+            observation.active_phase(),
+            Ok(Some(SubmitPhase::RootCommitment))
+        );
+        drop(rows);
+        root.finish(true);
+        assert_eq!(observation.active_phase(), Ok(Some(SubmitPhase::Execution)));
+        execution.finish(true);
+        assert_eq!(observation.active_phase(), Ok(Some(SubmitPhase::Admission)));
+        admission.finish(true);
+        assert_eq!(
+            observation.active_phase(),
+            Ok(Some(SubmitPhase::HistoryImport))
+        );
+        outer.finish(true);
+        assert_eq!(observation.active_phase(), Ok(None));
+        assert_eq!(observation.phase_snapshot().1, 0);
+    }
+
+    #[test]
+    fn active_phase_context_keeps_sibling_overlap_and_unwind_explicit() {
+        let observation = TaskObservation::local(Instant::now());
+        let work = observation.phase(SubmitPhase::Work);
+        // Different depths are not evidence of valid nesting. Work is not an
+        // ancestor of execution, so no stage may be guessed for this overlap.
+        let execution = observation.phase(SubmitPhase::Execution);
+        assert_eq!(observation.active_phase(), Err(()));
+        execution.finish(false);
+        work.finish(false);
+        assert_eq!(observation.active_phase(), Ok(None));
+        let unwind = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let _phase = observation.phase(SubmitPhase::Commit);
+            assert_eq!(observation.active_phase(), Ok(Some(SubmitPhase::Commit)));
+            panic!("preserve native unwind");
+        }));
+        assert!(unwind.is_err());
+        assert_eq!(observation.active_phase(), Ok(None));
+        let (phases, failures) = observation.phase_snapshot();
+        assert_eq!(failures, 0);
+        let commit = phases[SubmitPhase::Commit as usize];
+        assert!(commit.started);
+        assert!(!commit.completed);
+        assert_eq!(commit.accepted, None);
+    }
+
     use super::*;
     use std::sync::Barrier;
 

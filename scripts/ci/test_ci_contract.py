@@ -2596,7 +2596,28 @@ class MergedQualificationLaneTests(unittest.TestCase):
         'qrom_current_source': ('repository-truth', '    python3 scripts/ci/test_pq_chain_claim_guard.py\n    # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.\n', (
             '    python3 scripts/ci/test_w1_qrom_current_implementation_audit.py\n',
             '    python3 scripts/w1_qrom_current_implementation_audit.py\n',
+            '    python3 scripts/ci/test_w1_qrom_current_ci.py\n',
+        ), '    # Exact field/source correspondence does not discharge STARK/QROM obligations.\n    python3 scripts/ci/test_w1_stark_field_certificates.py\n'),
+        'stark_routes_and_fields': ('repository-truth', '    python3 scripts/ci/test_w1_qrom_current_ci.py\n    # Exact field/source correspondence does not discharge STARK/QROM obligations.\n', (
+            '    python3 scripts/ci/test_w1_stark_field_certificates.py\n',
+            '    python3 scripts/w1_stark_field_certificates.py\n',
+            '    python3 scripts/ci/test_w1_stark_route_audit.py\n',
+            '    python3 scripts/w1_stark_route_audit.py\n',
+        ), '    # Conditional iid counting does not establish the actual transcript distribution.\n    python3 scripts/ci/test_w1_fri_ideal_sampler.py\n'),
+        'conditional_sampler': ('repository-truth', '    python3 scripts/w1_stark_route_audit.py\n    # Conditional iid counting does not establish the actual transcript distribution.\n', (
+            '    python3 scripts/ci/test_w1_fri_ideal_sampler.py\n',
+            '    python3 scripts/w1_fri_query_replay.py --ideal-sampler-law\n',
+        ), '    # Current lifetime source observation is separate from historical positive replay.\n    python3 scripts/ci/test_w1_lifetime_current_observation.py\n'),
+        'lifetime_current_source': ('repository-truth', '    python3 scripts/w1_fri_query_replay.py --ideal-sampler-law\n    # Current lifetime source observation is separate from historical positive replay.\n', (
+            '    python3 scripts/ci/test_w1_lifetime_current_observation.py\n',
+            '    python3 scripts/w1_lifetime_current_observation.py\n',
+            '    python3 scripts/ci/test_w1_qrom_closure_current_controls.py\n',
         ), "    python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v\n"),
+        'failed_campaign_diagnostics': ('repository-truth',
+            '    python3 scripts/ci/test_run_pon_w1_native_campaign.py\n', (
+                '    python3 scripts/ci/test_read_validated_business_goodput.py\n',
+                '    python3 scripts/ci/test_read_failed_native_campaign_zip.py\n',
+            ), '    python3 scripts/ci/test_pon_w1_cost_matrix_reader.py\n'),
         'fixed_probability': ('repository-truth',
                               "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v\n", (
             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_probability_contract.py' -v\n",
@@ -2666,6 +2687,15 @@ class MergedQualificationLaneTests(unittest.TestCase):
 
     def test_current_mapping_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('qrom_current_source')
+
+    def test_stark_route_field_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('stark_routes_and_fields')
+
+    def test_conditional_sampler_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('conditional_sampler')
+
+    def test_current_lifetime_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('lifetime_current_source')
 
     def test_fixed_probability_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('fixed_probability')

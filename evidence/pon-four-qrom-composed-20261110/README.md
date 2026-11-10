@@ -1,0 +1,11 @@
+# Four-proposition and current-QROM source composition
+
+Executed merge `49e7aa8a1c4021e073090b13278bf2fc38fed523` retains ordered parents #860 `6ab14e5f` and #867 `c213cace`. Both source recorders observed identical before/after source: 26,592 entries / 2,540,418,272 bytes. The 17 V1 dependency blobs and three V2 dependency blobs remain unchanged. Only the two append-only plan/source-inventory conflicts were resolved; merged CI commands and negative controls remain required.
+
+The first recorder is **exit1**, retained unchanged. Its two failures were driver-selected nonexistent filenames, not successful tests. Actual V2 17, V1 21, demand29, utility15, upgrade23 and CI169 controls passed, as did current implementation14/CI13, lifetime14/closure31, field16/route28/sampler7/replay13 and their reported observers. The corrected original source-integrity43 and repository/link checks passed in the second **exit0** recorder. That second execution also completed the current implementation75 and closure110 named rosters, preserving the historical V1-on-current refusal. These runs overlap and must not be summed or described as a single all-green campaign.
+
+The original whitespace check also failed on three inherited raw hosted logs. They were verified byte-identical to #867 and retained, including their whitespace; all other staged files passed the whitespace check. `precommit-whitespace-original.log` preserves that failure. No historical evidence was repaired or relabeled.
+
+These are local Python/source observations, not hosted head or prospective-merge acceptance. Native Cargo graph/build/test/Clippy/format were not run on this candidate; ai395 has no Rust tools in PATH. Ancestor native 0/3, source refusals, ENOSPC and independent evidence-head records remain tied to their own commits.
+
+All four propositions remain unproved. Real independent customers, funded budgets, data rights, future-task full-cost net benefit and an all-legal-coalition lifecycle probability/resource theorem require separate evidence. Reference FLOPs, signatures and computation proofs do not establish them. Cached/low-rank/sparse/shared-base/batched strategies remain allowed, unknown GPU costs remain unknown, all-algorithm bounds remain null and every authority remains false.

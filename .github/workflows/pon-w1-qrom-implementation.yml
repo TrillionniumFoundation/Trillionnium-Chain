@@ -24,31 +24,29 @@ env:
   CI: "true"
   PYTHONDONTWRITEBYTECODE: "1"
 jobs:
-  qrom-implementation:
-    name: W1 QROM implementation (${{ matrix.source }}, x64)
+  qrom-historical-implementation:
+    name: W1 QROM historical V1 (fixed 0c830e0, x64)
     runs-on: ubuntu-24.04
     timeout-minutes: 20
-    strategy:
-      fail-fast: false
-      matrix:
-        source: [head, prospective-merge]
     env:
-      SOURCE_KIND: ${{ matrix.source }}
-      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
-      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
-      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      # V1 pins historical bytes. Its positive replay must execute that source;
+      # the current candidate and its V1 refusal are required in the companion job.
+      SOURCE_KIND: head
+      EXPECTED_SOURCE: 0c830e0be8939ce80c8443c9ad68021b87343a00
+      EXPECTED_HEAD: 0c830e0be8939ce80c8443c9ad68021b87343a00
+      EXPECTED_BASE: 1e4bffc371bcdc53aabc621b6b6cb2485ab36f53
     steps:
       - name: Reserve source-specific observations
         id: observations
         shell: bash
         run: |
           set -euo pipefail
-          w1_qrom_out="$RUNNER_TEMP/pon-w1-qrom-implementation-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          w1_qrom_out="$RUNNER_TEMP/pon-w1-qrom-historical-v1-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           mkdir "$w1_qrom_out"
           printf 'W1_QROM_OUT=%s\n' "$w1_qrom_out" >> "$GITHUB_ENV"
-          printf 'Offline construction mapping, saved-fixture consistency and hypothetical component arithmetic only. No new proof verification, QROM instantiation, quantum-work qualification or consensus admission is established.\n' > "$w1_qrom_out/SCOPE.txt"
+          printf 'Fixed historical source 0c830e0be8939ce80c8443c9ad68021b87343a00 and original 81-name V1 roster only. This result does not validate the current candidate. Current V2 mapping and V1-on-current source drift are separate required jobs. No new proof verification, QROM instantiation, quantum-work qualification or consensus admission is established.\n' > "$w1_qrom_out/SCOPE.txt"
           python3 --version > "$w1_qrom_out/python-version.txt" 2>&1
-      - name: Checkout exact candidate without persistent credentials
+      - name: Checkout immutable historical V1 source without persistent credentials
         id: checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -516,7 +514,7 @@ jobs:
           W1_QROM_STEP_RESULTS: ${{ toJSON(steps) }}
         run: |
           set -euo pipefail
-          w1_qrom_out="$RUNNER_TEMP/pon-w1-qrom-implementation-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          w1_qrom_out="$RUNNER_TEMP/pon-w1-qrom-historical-v1-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           mkdir -p "$w1_qrom_out"
           python3 - "$w1_qrom_out" <<'PY' 2>&1 | tee "$w1_qrom_out/ci-status.log"
           from collections import Counter
@@ -679,7 +677,108 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: w1-qrom-implementation-${{ matrix.source }}-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/pon-w1-qrom-implementation-${{ matrix.source }}-x64-${{ github.run_id }}-${{ github.run_attempt }}/
+          name: w1-qrom-historical-v1-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pon-w1-qrom-historical-v1-head-x64-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30
+
+  qrom-current-implementation:
+    name: W1 QROM current V2 (${{ matrix.source }}, x64)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [head, prospective-merge]
+    env:
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - name: Reserve current-source observations
+        id: observations
+        shell: bash
+        run: |
+          set -euo pipefail
+          w1_qrom_current_out="$RUNNER_TEMP/pon-w1-qrom-current-v2-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$w1_qrom_current_out"
+          printf 'W1_QROM_CURRENT_OUT=%s\n' "$w1_qrom_current_out" >> "$GITHUB_ENV"
+          printf 'Current V2 source mapping and original V1 source-pin refusal. Historical V1 positive replay is a separate fixed-source job. All cryptographic, native-execution and production qualifications remain false.\n' > "$w1_qrom_current_out/SCOPE.txt"
+          python3 --version > "$w1_qrom_current_out/python-version.txt" 2>&1
+      - name: Checkout exact current candidate without persistent credentials
+        id: checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify complete current source before observations
+        id: source_before
+        if: always() && steps.observations.outcome == 'success' && steps.checkout.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_QROM_CURRENT_OUT/source-before.json" 2>&1 | tee "$W1_QROM_CURRENT_OUT/source-before.log"
+      - name: Audit the current project boundary
+        id: preflight
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$W1_QROM_CURRENT_OUT/preflight.log"
+      - name: Execute all fixed current-source named controls
+        id: named_tests
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/w1_qrom_current_ci.py named --repo-root "$GITHUB_WORKSPACE" --out "$W1_QROM_CURRENT_OUT" 2>&1 | tee "$W1_QROM_CURRENT_OUT/named-tests.log"
+      - name: Retain original V1 refusal and exact current source differences
+        id: historical_drift
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/w1_qrom_current_ci.py drift --repo-root "$GITHUB_WORKSPACE" --out "$W1_QROM_CURRENT_OUT" 2>&1 | tee "$W1_QROM_CURRENT_OUT/historical-drift.log"
+      - name: Reproduce the explicit current V2 mapping
+        id: implementation
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/w1_qrom_current_implementation_audit.py --repo-root "$GITHUB_WORKSPACE" --output "$W1_QROM_CURRENT_OUT/implementation.json" 2>&1 | tee "$W1_QROM_CURRENT_OUT/implementation.log"
+      - name: Verify complete current source after observations
+        id: source_after
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_QROM_CURRENT_OUT/source-after.json" 2>&1 | tee "$W1_QROM_CURRENT_OUT/source-after.log"
+      - name: Require all current stages and original historical rejection
+        id: status
+        if: always()
+        shell: bash
+        env:
+          W1_QROM_CURRENT_STEP_RESULTS: ${{ toJSON(steps) }}
+        run: |
+          set -euo pipefail
+          w1_qrom_current_out="$RUNNER_TEMP/pon-w1-qrom-current-v2-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir -p "$w1_qrom_current_out"
+          python3 scripts/ci/w1_qrom_current_ci.py verify --repo-root "$GITHUB_WORKSPACE" --out "$w1_qrom_current_out" --kind "$SOURCE_KIND" --expected-source "$EXPECTED_SOURCE" --expected-head "$EXPECTED_HEAD" --expected-base "$EXPECTED_BASE" 2>&1 | tee "$w1_qrom_current_out/current-ci-status.log"
+      - name: Retain complete current-source observations and failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w1-qrom-current-v2-${{ matrix.source }}-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pon-w1-qrom-current-v2-${{ matrix.source }}-x64-${{ github.run_id }}-${{ github.run_attempt }}/
           if-no-files-found: error
           retention-days: 30
