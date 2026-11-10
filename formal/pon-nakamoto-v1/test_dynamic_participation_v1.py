@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import copy
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -340,6 +341,79 @@ class RefusalAndUnknownTests(unittest.TestCase):
         report = json.loads(result.stdout)
         self.assertTrue(report["declared_contract_holds"])
         self.assertEqual(report["qualification"], "HOLD_NO_GO")
+
+
+class BoundedCliInputTests(unittest.TestCase):
+    def run_cli(self, path):
+        result = subprocess.run(
+            [sys.executable, str(HERE / "dynamic_participation_v1.py"),
+             "--check", str(path)],
+            capture_output=True, text=True, check=False, timeout=5,
+        )
+        self.assertEqual(result.stderr, "")
+        return result.returncode, json.loads(result.stdout)
+
+    def assert_refused(self, path, reason):
+        code, report = self.run_cli(path)
+        self.assertEqual(code, 2)
+        self.assertEqual(report["check"], "REFUSED")
+        self.assertIn(reason, report["reason"])
+        self.assertEqual(report["qualification"], "HOLD_NO_GO")
+        self.assertIsNone(report["native_six_successor_risk_bound"])
+
+    def test_regular_cli_retains_the_original_finite_report(self):
+        doc = document(joined_events())
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "declared.json"
+            path.write_text(json.dumps(doc), encoding="utf-8")
+            code, report = self.run_cli(path)
+        self.assertEqual(code, 0)
+        self.assertEqual(report, dynamic.audit_dynamic_participation(doc))
+
+    def test_exact_byte_ceiling_passes_and_one_excess_byte_refuses(self):
+        doc = document(joined_events())
+        encoded = json.dumps(doc).encode("utf-8")
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "declared.json"
+            path.write_bytes(encoded + b" " * (dynamic.MAX_INPUT_BYTES - len(encoded)))
+            code, report = self.run_cli(path)
+            self.assertEqual(code, 0)
+            self.assertEqual(report, dynamic.audit_dynamic_participation(doc))
+            with path.open("ab") as stream:
+                stream.write(b" ")
+            self.assert_refused(path, "nonregular/oversize source")
+
+    def test_fifo_without_a_writer_is_refused_without_blocking(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "declared.fifo"
+            os.mkfifo(path)
+            self.assert_refused(path, "nonregular/oversize source")
+
+    def test_leaf_and_parent_symlink_aliases_are_refused(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            real = root / "real"
+            real.mkdir()
+            path = real / "declared.json"
+            path.write_text(json.dumps(document(joined_events())), encoding="utf-8")
+            leaf = root / "linked.json"
+            leaf.symlink_to(path)
+            parent = root / "linked-directory"
+            parent.symlink_to(real, target_is_directory=True)
+            self.assert_refused(leaf, "symlink source refused")
+            self.assert_refused(parent / path.name, "symlink source refused")
+
+    def test_directory_and_missing_inputs_are_structured_refusals(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.assert_refused(root, "nonregular/oversize source")
+            self.assert_refused(root / "absent.json", "missing source")
+
+    def test_invalid_utf8_remains_a_structured_refusal(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "invalid.json"
+            path.write_bytes(b"\xff")
+            self.assert_refused(path, "utf-8")
 
 
 if __name__ == "__main__":
