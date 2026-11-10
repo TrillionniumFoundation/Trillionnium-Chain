@@ -18,6 +18,14 @@ case "${1:?required job}" in
     python3 scripts/ci/test_w1_qrom_current_implementation_audit.py
     python3 scripts/w1_qrom_current_implementation_audit.py
     python3 scripts/ci/test_w1_qrom_current_ci.py
+    # Exact field/source correspondence does not discharge STARK/QROM obligations.
+    python3 scripts/ci/test_w1_stark_field_certificates.py
+    python3 scripts/w1_stark_field_certificates.py
+    python3 scripts/ci/test_w1_stark_route_audit.py
+    python3 scripts/w1_stark_route_audit.py
+    # Conditional iid counting does not establish the actual transcript distribution.
+    python3 scripts/ci/test_w1_fri_ideal_sampler.py
+    python3 scripts/w1_fri_query_replay.py --ideal-sampler-law
     # Current lifetime source observation is separate from historical positive replay.
     python3 scripts/ci/test_w1_lifetime_current_observation.py
     python3 scripts/w1_lifetime_current_observation.py

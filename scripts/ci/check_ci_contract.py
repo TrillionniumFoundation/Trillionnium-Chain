@@ -634,6 +634,14 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_w1_qrom_current_implementation_audit.py
     python3 scripts/w1_qrom_current_implementation_audit.py
     python3 scripts/ci/test_w1_qrom_current_ci.py
+    # Exact field/source correspondence does not discharge STARK/QROM obligations.
+    python3 scripts/ci/test_w1_stark_field_certificates.py
+    python3 scripts/w1_stark_field_certificates.py
+    python3 scripts/ci/test_w1_stark_route_audit.py
+    python3 scripts/w1_stark_route_audit.py
+    # Conditional iid counting does not establish the actual transcript distribution.
+    python3 scripts/ci/test_w1_fri_ideal_sampler.py
+    python3 scripts/w1_fri_query_replay.py --ideal-sampler-law
     # Current lifetime source observation is separate from historical positive replay.
     python3 scripts/ci/test_w1_lifetime_current_observation.py
     python3 scripts/w1_lifetime_current_observation.py
@@ -1404,6 +1412,15 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'current W1 source mapping controls must execute exactly once in repository-truth')
+    for command in ('python3 scripts/ci/test_w1_stark_field_certificates.py',
+                    'python3 scripts/w1_stark_field_certificates.py',
+                    'python3 scripts/ci/test_w1_stark_route_audit.py',
+                    'python3 scripts/w1_stark_route_audit.py',
+                    'python3 scripts/ci/test_w1_fri_ideal_sampler.py',
+                    'python3 scripts/w1_fri_query_replay.py --ideal-sampler-law'):
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'STARK route and field controls must execute exactly once in repository-truth')
     # Preserve the preceding specific refusal diagnostics when an unrelated
     # required command is moved into this prefix.
     require(code_lines(lanes['repository-truth'])[:3] == code_lines(CREDIT_MODEL_PREFIX),
