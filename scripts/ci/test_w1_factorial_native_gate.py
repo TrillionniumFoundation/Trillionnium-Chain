@@ -27,6 +27,11 @@ HISTORY = [
     "deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline",
     "deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu",
     "history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors",
+    "deadline_controls::history_control_keeps_original_timely_single_resource_observation",
+    "deadline_controls::history_control_preexpired_does_not_invoke_resource",
+    "deadline_controls::history_control_resource_expiry_refuses_late_success",
+    "deadline_controls::history_control_resource_expiry_keeps_original_resource_error",
+    "deadline_controls::history_owner_resource_expiry_never_invokes_exclusive_or_shared_action",
 ]
 
 
@@ -47,10 +52,24 @@ def source_names(path, prefix):
     return {prefix + name for name in names}
 
 
+def example_names(version):
+    return sorted(source_names(NODE + f"examples/pon_w1_legal_strategy_{version}.rs", "tests::")
+                  | source_names(NODE + "examples/support/w1_cost_producers.rs",
+                                 "w1_cost_producers::observed_search_tests::")
+                  | source_names(CRYPTO + "examples/support/w1_material.rs", "w1_material::tests::"))
+
+
+def summary(passed, ignored=0):
+    return (f"test result: ok. {passed} passed; 0 failed; {ignored} ignored; "
+            "0 measured; 0 filtered out; finished in 0.01s\n")
+
+
 class NativeGateTests(unittest.TestCase):
     def setUp(self):
         self.logs = {name: fixture(name) for name in COUNTS}
         self.names = SUITES["factorial-kernel-tests"]["passed"]
+        self.example_names = example_names("v3")
+        self.assertEqual(len(self.example_names), 11)
 
     def run_gate(self, group="factorial"):
         with tempfile.TemporaryDirectory() as directory:
@@ -119,6 +138,7 @@ class NativeGateTests(unittest.TestCase):
                 original.replace("0 failed;", "1 failed;", 1),
                 original.replace(" ignored;", "0 ignored;", 1),
                 original + summary + "\n", "",
+                original + summary.replace("ok.", "FAILED.", 1) + "\n",
                 original.replace(summary, ""),
                 original.replace("running ", "running 0", 1),
                 original + original.splitlines()[0] + "\n",
@@ -186,6 +206,34 @@ class NativeGateTests(unittest.TestCase):
                                     ("history-import-tests", 28, 33)):
             self.rejects(suite, self.logs[suite].replace(f"{current} passed;", f"{old} passed;"))
 
+    def test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control(self):
+        original = self.logs['factorial-example-tests']
+        for name in self.example_names:
+            line = f'test {name} ... ok\n'
+            for mutant in [original.replace(line, ''), original + line,
+                           original.replace(name, 'tests::unexpected'),
+                           original.replace(line, line.replace('... ok', '... FAILED')),
+                           original.replace(line, line.replace('... ok', '... ignored'))]:
+                with self.subTest(control=name):
+                    self.logs['factorial-example-tests'] = mutant
+                    self.assertNotEqual(self.run_gate(), 0)
+        self.logs['factorial-example-tests'] = original
+
+    def test_factorial_example_does_not_accept_filtered_or_measured_tests(self):
+        original = self.logs['factorial-example-tests']
+        for field in ('measured', 'filtered out'):
+            self.logs['factorial-example-tests'] = original.replace(f'0 {field};', f'1 {field};')
+            self.assertNotEqual(self.run_gate(), 0)
+        self.logs['factorial-example-tests'] = original
+
+    def test_selected_native_suites_keep_nonzero_filtered_observations(self):
+        for suite in ("factorial-kernel-tests", "history-w1-tests",
+                      "history-import-tests", "cpu-completion-tests"):
+            with self.subTest(suite=suite):
+                original = self.logs[suite]
+                filtered = original.replace("0 filtered out;", "1325 filtered out;")
+                self.assertEqual(validate_log(suite, filtered), validate_log(suite, original))
+
     def test_actual_workflow_uses_both_strict_gates_without_changing_native_selectors(self):
         workflow = WORKFLOW.read_text()
         for group, report in (("legal", "legal-native-controls"), ("factorial", "factorial-native-controls")):
@@ -224,6 +272,72 @@ class NativeGateTests(unittest.TestCase):
             path.symlink_to("valid.log")
             self.assertEqual(subprocess.run(command, capture_output=True, timeout=2).returncode, 2)
             self.assertFalse((root / "completion.json").exists())
+
+
+class LegalGateTests(unittest.TestCase):
+    def setUp(self):
+        workflow = WORKFLOW.read_text()
+        command = ('python3 -B scripts/ci/w1_native_controls.py --group legal --logs "$OUT" '
+                   '--output "$OUT/legal-native-controls-completion.json"')
+        self.assertEqual(workflow.count(command), 1)
+        self.names = example_names('v1')
+        self.assertEqual(len(self.names), 13)
+        self.assertEqual(set(self.names), set(SUITES['legal-native-controls']['passed']))
+        self.log = (f'running {len(self.names)} tests\n'
+                    + ''.join(f'test {name} ... ok\n' for name in self.names)
+                    + summary(len(self.names)))
+
+    def run_gate(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / 'legal-native-controls.log'
+            path.write_text(self.log)
+            output = root / 'completion.json'
+            result = subprocess.run(
+                [sys.executable, '-B', str(GATE), '--group', 'legal', '--logs', directory,
+                 '--output', str(output)], capture_output=True, timeout=5,
+            )
+            if result.returncode == 0:
+                report = json.loads(output.read_text())
+                self.assertEqual([row['suite'] for row in report['suites']], ['legal-native-controls'])
+                row = report['suites'][0]
+                self.assertEqual(row['passed'], sorted(self.names))
+                self.assertEqual(row['bytes'], len(self.log.encode()))
+                self.assertEqual(row['sha256'], hashlib.sha256(self.log.encode()).hexdigest())
+            else:
+                self.assertFalse(output.exists())
+            return result.returncode
+
+    def test_complete_current_native_roster_passes(self):
+        self.assertEqual(self.run_gate(), 0)
+
+    def test_every_retained_versioned_material_and_observer_control_executes_once(self):
+        original = self.log
+        for name in self.names:
+            line = f'test {name} ... ok\n'
+            for mutant in [original.replace(line, ''), original + line,
+                           original.replace(name, 'tests::unexpected'),
+                           original.replace(line, line.replace('... ok', '... FAILED')),
+                           original.replace(line, line.replace('... ok', '... ignored'))]:
+                with self.subTest(control=name):
+                    self.log = mutant
+                    self.assertNotEqual(self.run_gate(), 0)
+        self.log = original
+
+    def test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused(self):
+        original = self.log
+        mutants = [summary(13), original.replace('13 passed;', '8 passed;'),
+                   original.replace('0 failed;', '1 failed;'),
+                   original.replace('0 ignored;', '1 ignored;'),
+                   original.replace('0 measured;', '1 measured;'),
+                   original.replace('0 filtered out;', '1 filtered out;'),
+                   original + summary(13),
+                   original + summary(13).replace('ok.', 'FAILED.'), '']
+        for mutant in mutants:
+            with self.subTest(mutant=mutant):
+                self.log = mutant
+                self.assertNotEqual(self.run_gate(), 0)
+        self.log = original
 
 
 if __name__ == "__main__":

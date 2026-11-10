@@ -1,0 +1,28 @@
+{
+  "all_legal_work_cost_lower_bound_proved": false,
+  "complete_records": 23069,
+  "consensus_credit_added": 0,
+  "failure": null,
+  "full_relation_replayed_by_reader": false,
+  "generation_records_with_unknown_cpu": 0,
+  "last_phase": "complete",
+  "native_process_exit_code": 0,
+  "observed_counts": {
+    "attempts": 3848,
+    "candidates": 288,
+    "cohorts": 936,
+    "searches": 1888,
+    "verified_searches": 1888,
+    "verifiers": 3776
+  },
+  "observed_generation_cpu_subtotal_ns": 1876108995,
+  "production_qualified": false,
+  "raw_sha256": "2ae1c73382b3d4bede8412c9ff725d6e51bf37ea50ff6810a84617c4c8ec6f04",
+  "schema": "pon-w1-lifecycle-readback-v4",
+  "source_binary_resource_identity_authenticated_by_reader": false,
+  "status": "COMPLETE_DECLARED_OBSERVATION",
+  "trailing_partial_bytes": 0,
+  "unfinished_cohort": null,
+  "unfinished_resource_cost": null,
+  "unfinished_search": null
+}

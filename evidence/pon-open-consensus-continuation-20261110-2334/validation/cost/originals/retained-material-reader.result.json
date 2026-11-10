@@ -1,0 +1,8 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/test_pon_w1_cost_matrix_reader.py",
+    "-v"
+  ],
+  "exit_code": 0
+}

@@ -1,0 +1,24 @@
+{
+  "scope": "Current stricter reader replay of byte-identical published historical complete and SIGTERM journals; no native execution",
+  "status": "PASS",
+  "source_reader_before": {
+    "scripts/pon_w1_lifecycle_cost_v4.py": "1d0fb8a0b0d0d3ba9be398801488e90feea7364c6adf5d805e06aa2c1811381b",
+    "scripts/pon_w1_cost_matrix_reader.py": "6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa"
+  },
+  "source_reader_after": {
+    "scripts/pon_w1_lifecycle_cost_v4.py": "1d0fb8a0b0d0d3ba9be398801488e90feea7364c6adf5d805e06aa2c1811381b",
+    "scripts/pon_w1_cost_matrix_reader.py": "6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa"
+  },
+  "reader_source_unchanged_during_replay": true,
+  "evidence_commit": "c2297ad53fef1d9b552e657cfd205d583c91980d",
+  "native_source_commit": "11791e2da79b69322271be2cffe03725165151d1",
+  "native_source_tree": "162552848110fda532504b78865a16930bc6d9bb",
+  "complete_result": "complete-current-reader.result.json",
+  "terminated_result": "terminated-current-reader.result.json",
+  "native_executed_this_review": false,
+  "full_relation_replayed": false,
+  "all_legal_work_cost_lower_bound_proved": false,
+  "public_resource_qualified": false,
+  "consensus_credit_added": 0,
+  "production_qualified": false
+}

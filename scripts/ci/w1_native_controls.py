@@ -126,12 +126,15 @@ GROUPS = {
         "history-w1-tests", "history-import-tests", "cpu-completion-tests",
     ),
 }
+# These two example invocations have no native test selector. Preserve
+# the upstream requirement that their complete rosters are unfiltered.
+UNFILTERED_SUITES = frozenset(("legal-native-controls", "factorial-example-tests"))
 NUMBER = r"(?:0|[1-9][0-9]*)"
 HEADER = re.compile(r"running (" + NUMBER + r") tests?")
 SUMMARY = re.compile(
     r"test result: ok\. (" + NUMBER + r") passed; 0 failed; (" + NUMBER
-    + r") ignored; 0 measured; " + NUMBER
-    + r" filtered out; finished in " + NUMBER + r"(?:\.[0-9]+)?s"
+    + r") ignored; 0 measured; (" + NUMBER
+    + r") filtered out; finished in " + NUMBER + r"(?:\.[0-9]+)?s"
 )
 START = re.compile(r"test (\S+) \.\.\. (.*)")
 
@@ -169,6 +172,8 @@ def validate_log(suite: str, raw: str) -> dict:
             if match is None or header is None or summary is not None or pending is not None:
                 refuse("failed, unfinished, malformed or repeated harness completion")
             summary = (int(match[1]), int(match[2]))
+            if suite in UNFILTERED_SUITES and int(match[3]) != 0:
+                refuse("unfiltered example reports filtered controls")
         elif line.startswith("test "):
             match = START.fullmatch(line)
             if match is None or header is None or summary is not None or pending is not None:

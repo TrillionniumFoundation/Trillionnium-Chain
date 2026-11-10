@@ -6,9 +6,13 @@ import hashlib
 import io
 import json
 from pathlib import Path
+import sys
 import unittest
 
 PATH = Path(__file__).resolve().parents[1] / "pon_w1_lifecycle_cost_v4.py"
+sys.path.insert(0, str(PATH.parent))
+import pon_w1_cost_matrix_reader as cost
+
 SPEC = importlib.util.spec_from_file_location("lifecycle_v4", PATH)
 v4 = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(v4)
@@ -61,6 +65,36 @@ def prefix():
         dict(search, kind="attempt-start", nonce=0,
              challenge=v4.challenge(task, 0, 0, 0)),
     ]
+
+
+def prepared_prefix(name, arm, supported):
+    """A synthetic grammar prefix, never a native cost observation."""
+    a, b, task, _ = cost.material(name)
+    rows = prefix()[:7]
+    rows[3] = dict(kind="material", **{"class": name},
+                   source=("hash-generated-rank-checked" if name == "full-rank-field"
+                           else "synthetic-fixture"),
+                   task=task.hex(), a_hex=a.hex(), b_hex=b.hex())
+    for row in rows[4:]:
+        row.update({"class": name}, arm=arm, invocation_order=v4.ARMS.index(arm),
+                   task=task.hex())
+    rows[-1]["status"] = "supported" if supported else "unsupported"
+    return rows
+
+
+def trial(task, nonce, hit):
+    """Bind synthetic hash-only trials to full fixed proof bytes, not W1 replay."""
+    context = v4.challenge(task, 0, 0, nonce)
+    proof_prefix = cost.material("zero")[3]
+    for counter in range(10000):
+        trace = hashlib.sha256(str(counter).encode()).digest()
+        ticket = v4.digest(b"ticket", bytes.fromhex(context), trace).hex()
+        if (ticket <= v4.TARGET) == hit:
+            return dict(nonce=nonce, challenge=context, trace=trace.hex(),
+                        ticket=ticket,
+                        proof_sha256=hashlib.sha256(proof_prefix + trace).hexdigest(),
+                        target_hit=hit)
+    raise AssertionError("failed to construct bounded hash-only parser control")
 
 
 class Readback(unittest.TestCase):
@@ -143,6 +177,80 @@ class Readback(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "MATERIAL_SOURCE"):
             v4.read_stream(io.BytesIO(encoded(rows)))
 
+    def test_fixed_material_recipes_accept_without_claiming_native_execution(self):
+        for name in v4.CLASSES:
+            with self.subTest(name=name):
+                rows = prepared_prefix(name, "scalar-original", True)[:4]
+                result = v4.read_stream(io.BytesIO(encoded(rows)), process_exit_code=0)
+                self.assertEqual(result["status"], "INCOMPLETE")
+                self.assertFalse(result["source_binary_resource_identity_authenticated_by_reader"])
+                self.assertFalse(result["full_relation_replayed_by_reader"])
+                self.assertEqual(result["consensus_credit_added"], 0)
+
+    def test_consistent_material_relabelling_and_changed_recipe_are_refused(self):
+        for name in ("full-rank-field", "rank-one"):
+            with self.subTest(relabelled_as=name):
+                rows = prefix()[:4]
+                rows[3]["class"] = name
+                rows[3]["source"] = ("hash-generated-rank-checked" if name == "full-rank-field"
+                                      else "synthetic-fixture")
+                with self.assertRaisesRegex(ValueError, "MATERIAL_RECIPE"):
+                    v4.read_stream(io.BytesIO(encoded(rows)))
+        rows = prepared_prefix("full-rank-field", "scalar-original", True)[:4]
+        a = bytearray.fromhex(rows[3]["a_hex"])
+        a[:4] = ((int.from_bytes(a[:4], "little") + 1) % v4.Q).to_bytes(4, "little")
+        b = bytes.fromhex(rows[3]["b_hex"])
+        rows[3].update(a_hex=a.hex(), task=v4.digest(b"task", a, b).hex())
+        with self.assertRaisesRegex(ValueError, "MATERIAL_RECIPE"):
+            v4.read_stream(io.BytesIO(encoded(rows)))
+
+    def test_native_support_matrix_is_complete_and_cannot_be_relabelled(self):
+        # Explicit native-constructor expectations, independent of the helper
+        # used by the reader: five generic arms and fourteen specialized pairs.
+        generic = {"scalar-original", "prepared-generic", "tiled-classical",
+                   "tiled-strassen-one-level", "paired-product"}
+        specialized = {
+            "prepared-structured": {"zero", "identity", "rank-one", "sparse-diagonal",
+                                    "one-zero-left-rank-one", "one-zero-right-rank-one"},
+            "blocked-zero": {"zero"},
+            "blocked-zero-integer-paired": {"zero"},
+            "blocked-one-zero-rank-one": {"one-zero-left-rank-one", "one-zero-right-rank-one"},
+            "maintenance-periodic": {"continuity-maintenance-v1"},
+            "maintenance-integer-paired": {"continuity-maintenance-v1"},
+            "maintenance-prefix": {"continuity-maintenance-v1"},
+            "maintenance-limb": {"continuity-maintenance-v1"},
+        }
+        supported_pairs = 0
+        for name in v4.CLASSES:
+            for arm in v4.ARMS:
+                supported = arm in generic or name in specialized.get(arm, set())
+                supported_pairs += supported
+                with self.subTest(name=name, arm=arm):
+                    rows = prepared_prefix(name, arm, supported)
+                    result = v4.read_stream(io.BytesIO(encoded(rows)))
+                    self.assertEqual(result["last_phase"],
+                                     "search-start" if supported else "cohort-finish")
+                    self.assertEqual(result["status"], "INCOMPLETE")
+                    rows[-1]["status"] = "unsupported" if supported else "supported"
+                    with self.assertRaises(ValueError):
+                        v4.read_stream(io.BytesIO(encoded(rows)))
+        self.assertEqual(supported_pairs, 59)
+        self.assertEqual(supported_pairs * v4.SAMPLES * v4.SEARCHES, 1888)
+
+    def test_losing_trial_digest_must_bind_complete_fixed_proof_bytes(self):
+        rows = prefix()
+        key = {key: rows[-1][key] for key in v4.KEYS | {"search_index"}}
+        losing = trial(key["task"], 0, False)
+        rows.append(dict(key, kind="attempt-finish", trial=losing,
+                         timing=dict(cpu_ns=1, wall_ns=1), accepted_work=False))
+        result = v4.read_stream(io.BytesIO(encoded(rows)), process_exit_code=-15)
+        self.assertEqual(result["observed_counts"]["attempts"], 1)
+        self.assertEqual(result["status"], "INCOMPLETE")
+        self.assertIsNone(result["unfinished_resource_cost"])
+        losing["proof_sha256"] = "11" * 32
+        with self.assertRaisesRegex(ValueError, "TRIAL_PROOF_BINDING"):
+            v4.read_stream(io.BytesIO(encoded(rows)), process_exit_code=-15)
+
     def test_equal_winner_cannot_hide_a_changed_losing_trial(self):
         reader = v4.Reader()
         rows = prefix()
@@ -153,18 +261,8 @@ class Readback(unittest.TestCase):
         def feed(row):
             reader.consume(dict(row, schema=v4.SCHEMA, sequence=reader.sequence))
 
-        def trial(nonce, hit, proof):
-            context = v4.challenge(key["task"], 0, 0, nonce)
-            for counter in range(10000):
-                trace = hashlib.sha256(str(counter).encode()).digest()
-                ticket = v4.digest(b"ticket", bytes.fromhex(context), trace).hex()
-                if (ticket <= v4.TARGET) == hit:
-                    return dict(nonce=nonce, challenge=context, trace=trace.hex(),
-                                ticket=ticket, proof_sha256=proof, target_hit=hit)
-            self.fail("failed to construct bounded hash-only parser control")
-
-        losing = trial(0, False, "11" * 32)
-        winning = trial(1, True, "22" * 32)
+        losing = trial(key["task"], 0, False)
+        winning = trial(key["task"], 1, True)
         feed(dict(key, kind="attempt-finish", trial=losing,
                   timing=dict(cpu_ns=1, wall_ns=1), accepted_work=False))
         feed(dict(key, kind="attempt-start", nonce=1, challenge=winning["challenge"]))

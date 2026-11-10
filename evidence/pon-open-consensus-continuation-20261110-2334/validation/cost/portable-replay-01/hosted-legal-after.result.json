@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "-c",
+    "from pathlib import Path\nimport re, sys\ntext = Path(sys.argv[1]).read_text()\nexpected = {\n    'tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments',\n    'tests::versions_keep_exact_namespaces_and_eight_new_sample_streams',\n    'tests::v2_final_sample_keeps_both_legal_producers_and_complete_negative_verification',\n    'tests::public_dispatch_keeps_complete_bytes_and_all_misses',\n    'tests::last_product_mutation_wraps_canonically_and_changes_only_that_word',\n    'tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity',\n    'w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values',\n    'w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks',\n    'w1_cost_producers::observed_search_tests::observer_begin_refusal_precedes_native_generation',\n    'w1_cost_producers::observed_search_tests::native_failure_retains_completed_attempt_and_failed_begin',\n    'w1_cost_producers::observed_search_tests::malformed_generated_proof_has_started_and_failed_record',\n    'w1_cost_producers::observed_search_tests::completion_observer_failure_never_starts_another_attempt',\n    'w1_cost_producers::observed_search_tests::complete_observed_stream_matches_retained_wrapper_byte_for_byte',\n}\nrows = re.findall(r'^test result: (\\S+)\\. ([0-9]+) passed; ([0-9]+) failed; ([0-9]+) ignored; ([0-9]+) measured; ([0-9]+) filtered out;', text, re.M)\nif rows != [('ok', str(len(expected)), '0', '0', '0', '0')]:\n    raise SystemExit('legal-native-controls: complete unfiltered native summary required once')\nnames = re.findall(r'^test (\\S+) \\.\\.\\. (.+)$', text, re.M)\nif (len(names) != len(expected) or {name for name, _ in names} != expected\n        or any(outcome != 'ok' for _, outcome in names)):\n    raise SystemExit('legal-native-controls: retained, versioned, material and observer controls must each pass once')\n",
+    "/workspace/scratch/23345083847a/Trillionnium-Chain/evidence/pon-open-consensus-continuation-20261110-2334/validation/cost/portable-replay-01/hosted-spans/legal-native-controls.log"
+  ],
+  "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "name": "hosted-legal-after",
+  "native_executed": false,
+  "reader_or_control_wall_ns": 51104847,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

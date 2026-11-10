@@ -1,0 +1,95 @@
+# Historical native V4 journal replay
+
+Status: **PASS for historical-observation compatibility**. No native process was
+executed during this review. This is current Python-reader replay of retained
+published original bytes, not a current-source native cost measurement.
+
+## Original source and archive
+
+The package is retained in evidence publication commit
+`c2297ad53fef1d9b552e657cfd205d583c91980d` at:
+
+`evidence/pon-joint-resource-contract-20261109/archives/117-local-validation.tar.xz`
+
+That evidence directory is not present in the current checkout HEAD
+`da1374a200022bc14dc2bd325cc9ba29dbcd24ab`. It was recovered read-only from the
+existing historical Git objects; checkout source files were not modified.
+
+The exact original archive is retained here under `published-originals/archives/`:
+976,596 bytes, SHA-256
+`eeaa11ad8a6f565f989edf035d6cb5f59d45ed2956276c824b4daac7064ea8f6`,
+Git blob `059549dfa206b04382322fb476db231ae49f1f55`.
+All 105 file members, totaling 43,916,967 uncompressed bytes, matched the
+published per-member size/SHA-256 inventory. The source documents and archive
+also matched the original SHA256SUMS index. See `archive-validation.json`.
+
+Source-before and source-after are byte-identical and bind historical native
+source commit `11791e2da79b69322271be2cffe03725165151d1` and tree
+`162552848110fda532504b78865a16930bc6d9bb`. The Git commit/tree relation and
+26,124 tree entries were independently checked. The full historical checkout
+was not recreated; its 2,485,379,627-byte worktree verification remains the
+retained original recorder observation. The native V4 example, shared producer,
+material constructor, and V2 fixed-material reader remain byte-identical between
+that historical source and the current checkout. The current V4 reader is the
+stricter revised file. See `source-and-process-validation.json`.
+
+The retained gzip binary decompresses to 903,328 bytes with SHA-256
+`bd74dea5a8b1ddc57e86f1d181c3cdb287321dc0b9651e03b6f21adfcfe2f45a`,
+matching the before, loaded-executable, and after identities in both original
+process receipts. Original journal/stderr hashes and native exits also match
+those receipts. This checks retained bindings; it is not independent execution
+authentication of the original machine.
+
+## Complete journal
+
+Archive member and extracted path:
+`extracted-originals/final-native/v4-observation/complete.jsonl`.
+
+- Bytes: 40,704,359.
+- SHA-256: `2ae1c73382b3d4bede8412c9ff725d6e51bf37ea50ff6810a84617c4c8ec6f04`.
+- Original native exit: 0; current reader exit: 0.
+- Status: `COMPLETE_DECLARED_OBSERVATION`.
+- Records: 23,069; cohorts: 936; searches: 1,888; completed attempts: 3,848.
+- Verified searches: 1,888; full verifier calls: 3,776; canonical candidates: 288.
+
+`complete-current-reader.stdout.json` matches the published historical readback
+**byte for byte**, SHA-256
+`ee171af7e4d1cbb548c8ae9a36810d412722e5c552ed7043f1eeb4c009f4e0e6`.
+Exact argv, exits, reader wall time, and stdout/stderr hashes are recorded in
+`complete-current-reader.result.json`. Reader wall time is not native work cost.
+
+## Terminated journal
+
+Archive member and extracted path:
+`extracted-originals/final-native/v4-observation/terminated.jsonl`.
+
+- Bytes: 69,094.
+- SHA-256: `aa2bf4bddff47a234c36941091409a34013243555f2a254854695dea92430073`.
+- Original native exit: -15; current reader exit: 3.
+- Status: `INCOMPLETE`; nine records, one started cohort, zero completed attempts.
+- The original unfinished attempt remains visible and unfinished cost is null.
+
+`terminated-current-reader.stdout.json` also matches the original readback byte
+for byte, SHA-256
+`a2b39be706216e9e1a5b6fdf7fde33250e2aefc1bef1b0b90780b4f19e0c543a`.
+No zero cost is inferred from the zero completed-attempt count.
+
+## Current reader identity and scope
+
+The reader and its fixed-material helper hashes were checked before and after
+both replays and did not change:
+
+- V4 reader: `1d0fb8a0b0d0d3ba9be398801488e90feea7364c6adf5d805e06aa2c1811381b`.
+- V2 helper: `6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa`.
+
+`replay-summary.json` is the concise machine-readable result. The result closes
+the concrete compatibility risk that the stricter frozen recipes, support matrix,
+and losing-proof digest checks reject this existing complete native campaign.
+It does not replay the challenge-dependent W1 relation, produce a new native run,
+authenticate actual resource use, prove a cheapest-legal-work lower bound, or
+qualify public service. All qualification flags remain false and added consensus
+credit remains zero.
+
+The extracted originals are convenience copies. The complete original compressed
+archive plus its inventory retain the exact raw bytes without requiring a second
+publication of the 40 MB uncompressed journal.

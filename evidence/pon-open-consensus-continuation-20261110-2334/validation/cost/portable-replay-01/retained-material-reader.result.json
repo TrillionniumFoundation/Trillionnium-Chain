@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "scripts/ci/test_pon_w1_cost_matrix_reader.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/23345083847a/Trillionnium-Chain",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "expected_test_methods": 32,
+  "name": "retained-material-reader",
+  "native_executed": false,
+  "observed_test_methods": [
+    32
+  ],
+  "reader_or_control_wall_ns": 28120455135,
+  "stderr_bytes": 5048,
+  "stderr_sha256": "0cfbd86255fc681fd5974dca99b29454317d35021947d3713b58f21d9876c635",
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
