@@ -1,0 +1,51 @@
+test_cancellation_unit_controls_retain_original_module_names (__main__.NativeSelectorTests.test_cancellation_unit_controls_retain_original_module_names) ... ERROR
+test_duplicate_v3_inventory_is_still_rejected (__main__.NativeSelectorTests.test_duplicate_v3_inventory_is_still_rejected) ... ok
+test_multiple_names_matching_pinned_v3_owner_are_rejected (__main__.NativeSelectorTests.test_multiple_names_matching_pinned_v3_owner_are_rejected) ... ok
+test_v2_and_v3_share_function_name_but_only_v3_is_selected (__main__.NativeSelectorTests.test_v2_and_v3_share_function_name_but_only_v3_is_selected) ... ERROR
+test_v2_cannot_substitute_for_missing_v3_owner (__main__.NativeSelectorTests.test_v2_cannot_substitute_for_missing_v3_owner) ... FAIL
+
+======================================================================
+ERROR: test_cancellation_unit_controls_retain_original_module_names (__main__.NativeSelectorTests.test_cancellation_unit_controls_retain_original_module_names)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/48c53a24c6b4/review846/formal/throughput-v1/test_component_observations.py", line 50, in test_cancellation_unit_controls_retain_original_module_names
+    selected = self.select(names + [V2_TCP_NAME, TCP_NAME],
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/48c53a24c6b4/review846/formal/throughput-v1/test_component_observations.py", line 26, in select
+    return runner.selectors(
+           ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/48c53a24c6b4/review846/formal/throughput-v1/run_component_observations.py", line 192, in selectors
+    require(len(matches) == 1, f"native test inventory requires exactly one {suffix}")
+  File "/workspace/scratch/48c53a24c6b4/review846/formal/throughput-v1/run_component_observations.py", line 48, in require
+    raise ValueError(message)
+ValueError: native test inventory requires exactly one write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work
+
+======================================================================
+ERROR: test_v2_and_v3_share_function_name_but_only_v3_is_selected (__main__.NativeSelectorTests.test_v2_and_v3_share_function_name_but_only_v3_is_selected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/48c53a24c6b4/review846/formal/throughput-v1/test_component_observations.py", line 32, in test_v2_and_v3_share_function_name_but_only_v3_is_selected
+    selected = self.select([V2_TCP_NAME, TCP_NAME])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/48c53a24c6b4/review846/formal/throughput-v1/test_component_observations.py", line 26, in select
+    return runner.selectors(
+           ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/48c53a24c6b4/review846/formal/throughput-v1/run_component_observations.py", line 192, in selectors
+    require(len(matches) == 1, f"native test inventory requires exactly one {suffix}")
+  File "/workspace/scratch/48c53a24c6b4/review846/formal/throughput-v1/run_component_observations.py", line 48, in require
+    raise ValueError(message)
+ValueError: native test inventory requires exactly one write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work
+
+======================================================================
+FAIL: test_v2_cannot_substitute_for_missing_v3_owner (__main__.NativeSelectorTests.test_v2_cannot_substitute_for_missing_v3_owner)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/48c53a24c6b4/review846/formal/throughput-v1/test_component_observations.py", line 36, in test_v2_cannot_substitute_for_missing_v3_owner
+    with self.assertRaisesRegex(ValueError, "requires exactly one"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.003s
+
+FAILED (failures=1, errors=2)

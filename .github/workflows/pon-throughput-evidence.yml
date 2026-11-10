@@ -52,6 +52,7 @@ jobs:
           python3 formal/throughput-v1/test_cell_model_metrics.py -v
           python3 formal/throughput-v1/test_useful_task_metrics.py -v
           python3 formal/throughput-v1/test_whole_block_cost_metrics.py -v
+          python3 formal/throughput-v1/test_component_observations.py -v
           python3 formal/throughput-v1/test_reproduce_reports.py -v
           python3 formal/throughput-v1/test_execution_report.py -v
           python3 formal/throughput-v1/test_sqlite_syscall_profile.py -v

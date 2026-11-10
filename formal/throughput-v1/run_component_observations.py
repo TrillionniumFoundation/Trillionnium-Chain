@@ -38,7 +38,9 @@ UNIT_SUFFIXES = (
     "cancellation_duplicate_worker_entry_preserves_first_owner_and_marks_capture_failed",
     "cancellation_live_snapshots_keep_signal_census_and_worker_creation_consistent",
 )
-TCP_SUFFIX = "write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work"
+# V2 retains the same function name; only V3 emits the required observation.
+TCP_SUFFIX = ("ingress::public_v3::tests::"
+              "write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work")
 SNAPSHOT_MARKER = "TRNM_PUBLIC_CANCELLATION_SNAPSHOT "
 MAX_OUTPUT_BYTES = 16 * 1024 * 1024
 
