@@ -1,4 +1,4 @@
-**Paged selected-version consumer restoration — NOT YET RUN; qualification HOLD:**
+**Paged selected-version consumer restoration — local validation PASS; qualification HOLD:**
 
 The V2 capacity continuation adds `restore_cell_paged_version_to_cache_v2`
 to reconstruct one independently pinned complete version from its original
@@ -14,8 +14,7 @@ complete current page/catalog check. The consumer path grants no provider
 repair, funding, settlement or execution authority. Eleven added local tests
 cover 129 synthetic chunks across two pages, actual local provider targets,
 a parity-bearing four-slot subset, pin/page/catalog refusals, late quorum failure,
-original cumulative limits and final same-inode page corruption. These new tests
-are **NOT YET RUN**; prior C2 results remain scoped to their original source.
+original cumulative limits and final same-inode page corruption. On committed source `c8214f7e41f8c8f1d885bf990dba6b7ddf829ea2`, these tests passed 11/11; the complete DA crate passed 823 cases and Node storage passed 44. Strict Clippy, formatting, Cargo graph and source/link checks also passed. [Original C1 evidence](../../evidence/cell-paged-consumer-34e09-20261110/README.md) retains exact source and raw logs; prior #848 C2 results remain scoped to their original source.
 The [capacity contract](specs/pon/CELL_STORAGE_CAPACITY_V2.md) retains the real-model
 native paged reconstruction, independent domains/WAN, paid retention lifecycle,
 ordinary Hepta FinalUse and production qualification as **HOLD**.

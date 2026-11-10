@@ -165,7 +165,7 @@ receipt replaces complete native custody readback, repairs a provider, changes
 original funding/operation/Unknown responsibilities, settles a lease or grants
 loader/Hepta FinalUse authority.
 
-Current new test status: **NOT YET RUN**. Eleven cases exercise 129 synthetic
+Current local test status: **11/11 passed** on committed C1 `c8214f7e41f8c8f1d885bf990dba6b7ddf829ea2`. [Original evidence](../../../../evidence/cell-paged-consumer-34e09-20261110/README.md) also records complete DA (823) and Node storage (44) checks. Eleven cases exercise 129 synthetic
 chunks across two pages (128 actual 16 KiB model chunks plus a 20-byte runtime
 fixture), real local provider payloads, four-slot parity reconstruction,
 source/staging-cache removal and unavailable catalog payload, independent pin
