@@ -10713,3 +10713,73 @@ its own exact source, original operation and receipts. Separate branch logs
 cannot establish a same-iteration production loop. This composition does not
 automatically include #822, #823, #826, #828, #829 or #830. All seven original
 gates remain HOLD; production activation and FinalUse qualification stay false.
+
+### 2026-11-09 — Separate STARK instances and certify fixed field algebra
+
+Continue the exact #835 source with the
+[three-route instance audit](../security/W1_STARK_ROUTE_INSTANCE_AUDIT_V1.md).
+Keep the RISC Zero/Poseidon2 v2, Goldilocks/Poseidon2 W1 and Goldilocks/tagged
+SHA3 profiles separate. Derive the route records from retained source bytes,
+profile identities and locks, rather than trusting a self-declared manifest.
+Preserve all original cryptographic sources, receipt formats and admission rules.
+
+Use exact Lucas and Rabin certificates for the two base fields and extension
+polynomials, and check all retained base-field roots and BabyBear inverse roots.
+This closes the fixed finite-algebra subproblem only. It neither proves every
+compiled field operation nor all reachable traces, FRI/RBR soundness, quantum
+extraction, shared-oracle composition, recursion or concrete security bits.
+
+Preserve the 15 historical obligation IDs and the later disposition: one
+fixed manuscript-version correspondence sub-obligation is closed, 14 other
+historical obligations remain, no complete security obligation is discharged,
+and the eight implementation interfaces remain open. The
+[literature mapping](../protocol/pon-nakamoto-v1/details/STARK_THREE_ROUTE_LITERATURE_20261109.md)
+keeps binary additive-domain hypotheses separate from small-base-field and
+odd-prime near-capacity results; excluding one theorem family grants no safety.
+
+Run field and route controls exactly once in the original required CI lane.
+Retain source refusals, unknown lifetime budgets, all native/service acceptance
+gates and historical failures. Before a profile can leave HOLD, instantiate its
+actual relations and extractors, justify the joint oracle and FRI/list-size
+premises, account for enlarged recursive and lifetime query domains, and obtain
+same-source independent resource and production acceptance. No source mapping
+or conditional estimator grants consensus or production authority.
+
+
+### 2026-11-09 — Count named DEEP events and conditional sampler distributions
+
+Continue the separate fixed STARK route and finite-field audits with the
+[RISC Zero named-event calculation](../security/W1_RISC0_DEEP_NAMED_EVENTS.md)
+and [Plonky3 conditional sampling accounting](../security/W1_P3_SAMPLING_CONDITIONAL_ACCOUNTING.md).
+Preserve all cryptographic implementations, original four field/route commands,
+proof formats, original acceptance budgets and admission decisions.
+
+For the pinned RISC Zero SDK denominator expressions, let the abstract extension
+field have size `p^4`, the trace size be `N`, and the base-field evaluation
+subgroup have size `4N`. The global rational-pole set has `16N` elements; the
+separate trace-zerofier coset has `N` elements and is disjoint for the displayed
+fixed parser logs, giving a two-named-event union of `17N`. Record the exact
+conditional probabilities only under uniform extension-field sampling given the
+prior transcript. These events neither exhaust all bad events nor establish an
+actual verification failure, and the parser-log table does not prove reachable
+recursive traces. Keep the project guest/control/profile identity, compiled
+arithmetic equivalence and actual shared-Poseidon2 distribution outside this
+helper's verified scope.
+
+For the pinned Plonky3 adapters, distinguish tagged SHA3 byte-stream rejection
+sampling and raw query-index masks from the legacy Goldilocks field-element
+mask. Compute exact preimage counts, total variation, rejected-candidate cost
+and with-replacement duplicate probabilities under their explicitly ideal input
+streams. Sixty-four draws do not guarantee sixty-four distinct query indices.
+A duplicate probability is not a FRI failure probability; a conditional adapter
+calculation does not prove the concrete shared hash stream is ideal, or cover
+adaptive statements and quantum oracle programming.
+
+Run the four new helper/test commands once, in order, immediately after the
+unchanged field/route controls in the required repository-truth lane. The
+independent CI literals must reject omission, duplication, reordering, relocation,
+conditional execution and suppressed failures. Retain the 15 historical
+obligation IDs, version-progress accounting, eight open implementation interfaces,
+unknown lifetime bounds and HOLD_NO_GO disposition. Full relation refinement,
+RBR/FRI/PCS bounds, joint-oracle Fiat-Shamir, quantum extraction, recursion and
+lifetime composition, and complete same-source service acceptance remain gates.

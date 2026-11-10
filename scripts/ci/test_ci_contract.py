@@ -2594,6 +2594,18 @@ class MergedQualificationLaneTests(unittest.TestCase):
         'qrom_current_source': ('repository-truth', '    python3 scripts/ci/test_pq_chain_claim_guard.py\n    # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.\n', (
             '    python3 scripts/ci/test_w1_qrom_current_implementation_audit.py\n',
             '    python3 scripts/w1_qrom_current_implementation_audit.py\n',
+        ), '    # Exact field/source correspondence does not discharge STARK/QROM obligations.\n    python3 scripts/ci/test_w1_stark_field_certificates.py\n'),
+        'stark_routes_and_fields': ('repository-truth', '    python3 scripts/w1_qrom_current_implementation_audit.py\n    # Exact field/source correspondence does not discharge STARK/QROM obligations.\n', (
+            '    python3 scripts/ci/test_w1_stark_field_certificates.py\n',
+            '    python3 scripts/w1_stark_field_certificates.py\n',
+            '    python3 scripts/ci/test_w1_stark_route_audit.py\n',
+            '    python3 scripts/w1_stark_route_audit.py\n',
+        ), '    # Named exceptional sets and ideal-sampler arithmetic do not qualify concrete security.\n    python3 scripts/ci/test_w1_risc0_deep_event_audit.py\n'),
+        'deep_events_and_sampling': ('repository-truth', '    python3 scripts/w1_stark_route_audit.py\n    # Named exceptional sets and ideal-sampler arithmetic do not qualify concrete security.\n', (
+            '    python3 scripts/ci/test_w1_risc0_deep_event_audit.py\n',
+            '    python3 scripts/w1_risc0_deep_event_audit.py --repo-root .\n',
+            '    python3 scripts/ci/test_w1_p3_sampling_audit.py\n',
+            '    python3 scripts/w1_p3_sampling_audit.py\n',
         ), "    python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v\n"),
         'fixed_probability': ('repository-truth',
                               "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v\n", (
@@ -2664,6 +2676,12 @@ class MergedQualificationLaneTests(unittest.TestCase):
 
     def test_current_mapping_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('qrom_current_source')
+
+    def test_stark_route_field_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('stark_routes_and_fields')
+
+    def test_deep_event_sampling_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('deep_events_and_sampling')
 
     def test_fixed_probability_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('fixed_probability')
