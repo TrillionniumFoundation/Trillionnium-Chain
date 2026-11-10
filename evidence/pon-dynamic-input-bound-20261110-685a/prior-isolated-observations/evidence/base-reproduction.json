@@ -1,0 +1,19 @@
+[
+  {
+    "case": "ordinary",
+    "exit": 0,
+    "declared_contract_holds": true,
+    "reason": null
+  },
+  {
+    "case": "symlink",
+    "exit": 0,
+    "declared_contract_holds": true,
+    "reason": null
+  },
+  {
+    "case": "fifo",
+    "result": "TIMEOUT_AFTER_2_SECONDS",
+    "process_killed_and_reaped_by_subprocess_run": true
+  }
+]

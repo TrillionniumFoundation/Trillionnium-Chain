@@ -1,0 +1,43 @@
+{
+  "schema": "trnm-dynamic-input-bound-publication-v1",
+  "source_commit": "8d4c915939f2ae7659e254ec3475d2dadb919f2a",
+  "source_tree": "9ed7a23f58cb427fe45b23bf01bf07bf4fca4fbf",
+  "base_commit": "0ff81958a611d2c0be54d2ca839b955ae7cb2772",
+  "branch": "fix/chain-dynamic-input-bound-20261110-685a",
+  "observations": [
+    {
+      "label": "dynamic-tests",
+      "recorder_exit_code": 0
+    },
+    {
+      "label": "fifo-real-control",
+      "recorder_exit_code": 0
+    },
+    {
+      "label": "source-integrity-tests",
+      "recorder_exit_code": 0
+    },
+    {
+      "label": "repository-check",
+      "recorder_exit_code": 0
+    },
+    {
+      "label": "ci-contract-check",
+      "recorder_exit_code": 0
+    },
+    {
+      "label": "cargo-graph",
+      "recorder_exit_code": 0
+    },
+    {
+      "label": "cargo-format",
+      "recorder_exit_code": 0
+    },
+    {
+      "label": "strict-clippy",
+      "recorder_exit_code": 124
+    }
+  ],
+  "whole_chain_qualified": false,
+  "production_activation": false
+}
