@@ -10739,3 +10739,22 @@ repository-truth with independent omission, duplication and relocation controls.
 Preserve original evidence and report the new exact source and actual commands.
 No native target, time, work score, confirmation threshold, signed domain,
 stored schema, production activation or FinalUse authority changes here.
+
+## Joint time, target and credit: conditional production continuation (2026-11-10)
+
+Stacked on #843 at `0ff81958a611d2c0be54d2ca839b955ae7cb2772`; this does not
+assert that M14 integrated that independent track. The
+[joint-tail interface](../protocol/pon-nakamoto-v1/details/JOINT_PRODUCTION_TAIL_V1.md)
+composes ready credit, entry debt and globally paced honest progress without an
+independence assumption. Its finite scalar checker retains residual potential,
+checks every declared action and independently maximizes first-crossing risk.
+The [calibration result](../protocol/pon-nakamoto-v1/details/CREDIT_CALIBRATION_DISTORTION_V1.md)
+quantifies ideal scoring distortion; its mathematical witness is not a proposed
+credit-policy change. Existing unknowns, source pins, native CP/CG/CQ and
+six-successor bounds remain unchanged. Complete legal-policy and initial-state
+coverage, physical cost, native reduction, actual production tails, quantitative
+clock/service/churn bounds and lifetime composition remain open. The new tests
+run exactly once in repository-truth under the existing omission, movement,
+multiplicity and failure-policy controls. The native consensus, thresholds,
+signed domains, stored schema and production activation remain unchanged.
+[Evidence and recovery boundary](../../evidence/pon-joint-production-tail-20261110/README.md).
