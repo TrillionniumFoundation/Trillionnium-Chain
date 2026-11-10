@@ -1,0 +1,51 @@
+{
+  "all_four_roots_equal": true,
+  "cohorts": [
+    {
+      "candidate_faster_pairs": 4,
+      "candidate_wall_change_percent": 16.48998680576701,
+      "candidate_wall_median_ns": 5669891.5,
+      "per_arm_cpu_ns": null,
+      "reference_wall_median_ns": 4867278.0,
+      "retained_pairs": 12,
+      "senders": 2
+    },
+    {
+      "candidate_faster_pairs": 8,
+      "candidate_wall_change_percent": -4.226836666640354,
+      "candidate_wall_median_ns": 7399924.0,
+      "per_arm_cpu_ns": null,
+      "reference_wall_median_ns": 7726511.0,
+      "retained_pairs": 12,
+      "senders": 64
+    },
+    {
+      "candidate_faster_pairs": 12,
+      "candidate_wall_change_percent": -2.9584670564363202,
+      "candidate_wall_median_ns": 10379787.5,
+      "per_arm_cpu_ns": null,
+      "reference_wall_median_ns": 10696232.0,
+      "retained_pairs": 12,
+      "senders": 256
+    }
+  ],
+  "confirmed_business_tps": null,
+  "native_tests_started_by_recheck": 0,
+  "original_archive_sha256": "a21332e0ff41d47d133bada5048face5142ea9e3bd458ea543404aab6649cd84",
+  "original_artifact_id": 13684603519,
+  "original_component_observations_complete": false,
+  "original_head": "24bd150a2683b5a375171d062af8256852db5321",
+  "original_run_id": 42634668898,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "repaired_inventory_selectors": {
+    "cancellation_and_worker_clocks_do_not_wait_for_diagnostic_row_locks": "ingress::public_v3::request_observation::tests::cancellation_and_worker_clocks_do_not_wait_for_diagnostic_row_locks",
+    "cancellation_does_not_reconstruct_an_earlier_unobserved_signal": "ingress::public_v3::request_observation::tests::cancellation_does_not_reconstruct_an_earlier_unobserved_signal",
+    "cancellation_duplicate_worker_entry_preserves_first_owner_and_marks_capture_failed": "ingress::public_v3::request_observation::tests::cancellation_duplicate_worker_entry_preserves_first_owner_and_marks_capture_failed",
+    "cancellation_keeps_first_flag_transition_and_separates_worker_from_resource_close": "ingress::public_v3::request_observation::tests::cancellation_keeps_first_flag_transition_and_separates_worker_from_resource_close",
+    "cancellation_live_snapshots_keep_signal_census_and_worker_creation_consistent": "ingress::public_v3::request_observation::tests::cancellation_live_snapshots_keep_signal_census_and_worker_creation_consistent",
+    "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work": "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work"
+  },
+  "schema": "trnm-throughput-selector-original-ci-recheck-v1",
+  "scope": "byte-bound historical readback and repaired inventory resolution; no new native execution or execution authentication"
+}

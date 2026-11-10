@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/scripts/ci/check_ci_contract.py", line 888, in <module>
+    print(json.dumps(validate(), sort_keys=True))
+                     ~~~~~~~~^^
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/scripts/ci/check_ci_contract.py", line 636, in validate
+    inline_source_pins = check_inline_source_pins(root)
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/scripts/ci/check_ci_contract.py", line 614, in check_inline_source_pins
+    require(source.is_file() and not source.is_symlink(),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            'missing regular inline source: ' + context)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/scripts/ci/check_ci_contract.py", line 451, in require
+    raise ValueError('CI contract: ' + message)
+ValueError: CI contract: missing regular inline source: .github/workflows/pon-branch-encoding-acceptance.yml:55
