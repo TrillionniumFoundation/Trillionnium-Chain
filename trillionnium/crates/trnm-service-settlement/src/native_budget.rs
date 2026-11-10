@@ -1132,7 +1132,7 @@ impl NativeBudgetStoreV1 {
         window: Option<(u64, u64)>,
         target_receipt: NativeBudgetHashV1,
     ) -> NativeBudgetResultV1<NativeBudgetAnchorV1> {
-        let (mut state, _, _) = load_snapshot(&self.connection, &self.configuration)?;
+        let (mut state, sequence, root) = load_snapshot(&self.connection, &self.configuration)?;
         let record = state.claim(claim)?;
         require(
             record.effect.as_ref()
@@ -1149,7 +1149,24 @@ impl NativeBudgetStoreV1 {
         let observed = owner.observe_funding(source)?;
         require(observed.source == source, "BUDGET_NATIVE_SOURCE_BINDING")?;
         state.observe_anchor(observed.anchor, &self.configuration)?;
+        self.check_native_readback_head(sequence, root)?;
         Ok(observed.anchor)
+    }
+
+    fn check_native_readback_head(
+        &self,
+        sequence: u64,
+        root: NativeBudgetHashV1,
+    ) -> NativeBudgetResultV1<()> {
+        // The callback runs after the first read transaction has ended. A fresh
+        // snapshot must observe every committed concurrent append, including
+        // one that preserves the same native anchor but changes local liability.
+        let (_, current_sequence, current_root) =
+            load_snapshot(&self.connection, &self.configuration)?;
+        require(
+            (current_sequence, current_root) == (sequence, root),
+            "BUDGET_NATIVE_READBACK_JOURNAL_CHANGED",
+        )
     }
 
     /// Actual resources come from the worker/storage owner after join/readback.
@@ -1236,7 +1253,7 @@ impl NativeBudgetStoreV1 {
         owner: &mut impl NativeFundingOwnerV1,
         claim: NativeBudgetHashV1,
     ) -> NativeBudgetResultV1<NativePaymentReadbackV1> {
-        let (mut state, _, _) = load_snapshot(&self.connection, &self.configuration)?;
+        let (mut state, sequence, root) = load_snapshot(&self.connection, &self.configuration)?;
         let record = state.claim(claim)?;
         let historical = record.payment.clone().ok_or(NativeBudgetErrorV1::Invalid(
             "BUDGET_NATIVE_PAYMENT_UNRECORDED",
@@ -1261,6 +1278,7 @@ impl NativeBudgetStoreV1 {
                 && observed.beneficiary_credit == historical.beneficiary_credit,
             "BUDGET_NATIVE_PAYMENT_READBACK_BINDING",
         )?;
+        self.check_native_readback_head(sequence, root)?;
         Ok(NativePaymentReadbackV1 {
             historical,
             observed,

@@ -798,11 +798,14 @@ impl NativeGenerationStoreV2 {
         Ok(store)
     }
     fn snapshot(&self) -> Result<State> {
+        self.snapshot_with_head().map(|(state, _, _)| state)
+    }
+    fn snapshot_with_head(&self) -> Result<(State, u64, Hash)> {
         let tx = self.connection.unchecked_transaction()?;
         let (s, sequence, root) = load(&tx, &self.configuration, self.journal_identity, None)?;
         self.check_recovery_expected_v3(sequence, root)?;
         tx.commit()?;
-        Ok(s)
+        Ok((s, sequence, root))
     }
     fn update<T>(&mut self, make: impl FnOnce(&State) -> Result<Update<T>>) -> Result<T> {
         let expected = self.recovery_expected_v3;
@@ -1099,7 +1102,7 @@ impl NativeGenerationStoreV2 {
         owner: &mut impl NativeFundingOwnerV1,
         id: Hash,
     ) -> Result<NativePaymentObservationV1> {
-        let mut state = self.snapshot()?;
+        let (mut state, sequence, root) = self.snapshot_with_head()?;
         let r = state.record(id)?.clone();
         let original = r.payment.as_ref().ok_or(NativeBudgetErrorV1::Invalid(
             "GENERATION_PAYMENT_UNRECORDED",
@@ -1117,6 +1120,15 @@ impl NativeGenerationStoreV2 {
         require(
             observed.operation == original.operation,
             "GENERATION_PAYMENT_REOBSERVATION",
+        )?;
+        // The owner callback may overlap an append through another connection.
+        // Read a new SQLite snapshot after leaving the original one: even an
+        // append at the same native generation makes this observation stale.
+        // This is a readback fence, not a durable anchor update or a new payment.
+        let (_, current_sequence, current_root) = self.snapshot_with_head()?;
+        require(
+            (current_sequence, current_root) == (sequence, root),
+            "GENERATION_PAYMENT_JOURNAL_CHANGED",
         )?;
         Ok(observed)
     }

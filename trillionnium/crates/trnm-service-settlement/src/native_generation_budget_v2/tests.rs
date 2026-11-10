@@ -541,3 +541,127 @@ fn restored_fixed_size_blobs_refuse_before_owner_callbacks_and_cold_reopen() {
         }
     }
 }
+
+/// The callback uses a second real SQLite connection. The owner declarations
+/// remain synthetic; these controls test local readback freshness only.
+struct PaymentWithAppend<'a, F> {
+    owner: &'a mut MockOwner,
+    append: F,
+}
+impl<F: FnMut() -> Result<()>> NativeFundingOwnerV1 for PaymentWithAppend<'_, F> {
+    fn observe_funding(
+        &mut self,
+        source: NativeFundingSourceV1,
+    ) -> Result<NativeFundingObservationV1> {
+        self.owner.observe_funding(source)
+    }
+
+    fn observe_payment(
+        &mut self,
+        query: &NativePaymentQueryV1,
+    ) -> Result<NativePaymentObservationV1> {
+        let observed = self.owner.observe_payment(query)?;
+        (self.append)()?;
+        Ok(observed)
+    }
+}
+
+fn payment_readback_during_append(advance_generation: bool) {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("generation.sqlite");
+    let original = statement();
+    let mut owner = MockOwner::new(&original);
+    let (mut store, id) = started(&path, &original, &mut owner);
+    store.verify(&mut owner, id, &evidence()).unwrap();
+    owner.receipt(&original);
+    store
+        .prepare_settlement(&mut owner, id, b"original wire".to_vec())
+        .unwrap();
+    owner.paid = true;
+    store.record_payment(&mut owner, id).unwrap();
+    let historical = store.readback(id).unwrap();
+    let (_, before_sequence, before_root) =
+        load(&store.connection, &cfg(), store.journal_identity(), None).unwrap();
+
+    let mut next = original.clone();
+    next.task = [44; 32];
+    next.provider_operation = [45; 32];
+    next.request_digest = [46; 32];
+    let next_id = next.id().unwrap();
+    let mut next_owner = MockOwner::new(&next);
+    next_owner.anchor = owner.anchor;
+    if advance_generation {
+        next_owner.anchor.generation += 1;
+        next_owner.anchor.height += 1;
+        next_owner.anchor.block[0] += 1;
+    }
+    let mut writer = NativeGenerationStoreV2::open(&path, cfg()).unwrap();
+    let result = store.reobserve_payment(
+        &mut PaymentWithAppend {
+            owner: &mut owner,
+            append: || {
+                writer.prepare(&mut next_owner, next.clone())?;
+                writer.begin(&mut next_owner, next_id)?;
+                writer.fail(
+                    next_id,
+                    FailureV2 {
+                        kind: FailureKindV2::Unknown,
+                        evidence_digest: [47; 32],
+                        consumed: None,
+                    },
+                )?;
+                Ok(())
+            },
+        },
+        id,
+    );
+    assert!(matches!(
+        result,
+        Err(NativeBudgetErrorV1::Invalid(
+            "GENERATION_PAYMENT_JOURNAL_CHANGED"
+        ))
+    ));
+    let (_, after_sequence, after_root) =
+        load(&store.connection, &cfg(), store.journal_identity(), None).unwrap();
+    assert_eq!(after_sequence, before_sequence + 3);
+    assert_ne!(after_root, before_root);
+    assert_eq!(store.readback(id).unwrap(), historical);
+    let unknown = store.readback(next_id).unwrap();
+    assert_eq!(unknown.resource_charge, next.resource_cap);
+    assert_eq!(
+        unknown.failure.as_ref().unwrap().kind,
+        FailureKindV2::Unknown
+    );
+
+    owner.anchor = next_owner.anchor;
+    let observed = store.reobserve_payment(&mut owner, id).unwrap();
+    assert_eq!(observed.anchor, next_owner.anchor);
+    let (_, final_sequence, final_root) =
+        load(&store.connection, &cfg(), store.journal_identity(), None).unwrap();
+    assert_eq!((final_sequence, final_root), (after_sequence, after_root));
+    drop(writer);
+    drop(store);
+    let mut reopened = NativeGenerationStoreV2::open(&path, cfg()).unwrap();
+    assert_eq!(reopened.readback(id).unwrap(), historical);
+    assert_eq!(reopened.readback(next_id).unwrap(), unknown);
+    assert!(matches!(
+        reopened.begin(&mut next_owner, next_id).unwrap(),
+        DispatchDecisionV2::Done
+    ));
+    assert!(matches!(
+        reopened
+            .prepare_settlement(&mut owner, id, b"original wire".to_vec())
+            .unwrap(),
+        DispatchDecisionV2::Done
+    ));
+}
+
+#[test]
+fn payment_readback_rejects_same_generation_append_from_second_connection() {
+    payment_readback_during_append(false);
+}
+
+#[test]
+fn payment_readback_rejects_new_generation_append_and_retains_unknown_after_reopen() {
+    payment_readback_during_append(true);
+}
