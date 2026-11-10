@@ -1,0 +1,85 @@
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-paged-model-34e09-20261110/trillionnium/crates/trnm-data-availability)
+    Finished `release` profile [optimized] target(s) in 47.48s
+     Running unittests src/lib.rs (/home/qq/work/chain-cell-paged-model-34e09-20261110-target/release/deps/trnm_data_availability-005cca701b2d81ac)
+
+running 11 tests
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_catalog_change_cannot_be_hidden_by_a_readable_selected_version ... ok
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_cold_targets_share_the_original_cumulative_allowance ... ok
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_corrupt_committed_shard_cannot_be_hidden_by_available_peers ... ok
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_crosses_128_from_four_actual_targets_without_copy_fallback ... ok
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_global_short_budget_refuses_before_callback ... ok
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_late_missing_quorum_spends_one_original_attempt ... ok
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_missing_last_page_refuses_before_reads_or_cache_writes ... ok
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_rechecks_earlier_page_bytes_after_last_provider_read ... ok
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_requires_the_original_retained_root_operation ... ok
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_uses_parity_when_two_systematic_targets_are_unavailable ... ok
+test cell::erasure::retained_plan::paged::restore::tests::paged_consumer_restore_wrong_content_pin_refuses_even_when_shards_are_available ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 762 filtered out; finished in 10.73s
+
+     Running unittests src/bin/trnm-cell.rs (/home/qq/work/chain-cell-paged-model-34e09-20261110-target/release/deps/trnm_cell-ea003aa4561b7e72)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/trnm-cell-discovery.rs (/home/qq/work/chain-cell-paged-model-34e09-20261110-target/release/deps/trnm_cell_discovery-1c1a4b1be69e5808)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cell_cache_wal_cli.rs (/home/qq/work/chain-cell-paged-model-34e09-20261110-target/release/deps/cell_cache_wal_cli-2b68b96423705d79)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/cell_closure_cli.rs (/home/qq/work/chain-cell-paged-model-34e09-20261110-target/release/deps/cell_closure_cli-862321df03ef3167)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/cell_discovery_cli.rs (/home/qq/work/chain-cell-paged-model-34e09-20261110-target/release/deps/cell_discovery_cli-0ce3396339a8a68c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/cell_fetch_deadline_cli.rs (/home/qq/work/chain-cell-paged-model-34e09-20261110-target/release/deps/cell_fetch_deadline_cli-d835b9e919067acf)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/cell_persistent_cli.rs (/home/qq/work/chain-cell-paged-model-34e09-20261110-target/release/deps/cell_persistent_cli-f3377dd996b7fb46)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/cell_provider_ready_cli.rs (/home/qq/work/chain-cell-paged-model-34e09-20261110-target/release/deps/cell_provider_ready_cli-dc1ccfa7f173acd6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/cell_release_cli.rs (/home/qq/work/chain-cell-paged-model-34e09-20261110-target/release/deps/cell_release_cli-ffffa49dba5fc49d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/cell_tensor_cli.rs (/home/qq/work/chain-cell-paged-model-34e09-20261110-target/release/deps/cell_tensor_cli-0feadea145bfb942)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/pq_cell_cli.rs (/home/qq/work/chain-cell-paged-model-34e09-20261110-target/release/deps/pq_cell_cli-30fbc1d39314c1a7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+

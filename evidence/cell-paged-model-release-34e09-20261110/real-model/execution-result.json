@@ -1,0 +1,117 @@
+{
+  "child_max_rss_kib": 1421016,
+  "child_system_cpu_seconds": 6.988784,
+  "child_user_cpu_seconds": 26.020225,
+  "elapsed_seconds": 36.04706447315402,
+  "exit_code": 0,
+  "identity": {
+    "commit": "8dee97636e2b6932fb7a22b1b54f2cab09ae8406",
+    "status": "",
+    "tree": "237a733df7d91c4eb2206014e0f5408e34565e12"
+  },
+  "native_error": null,
+  "native_passed": true,
+  "native_result_sha256": "195954d3f7b158443a719f2e79ced11c918afbd6a334e7e3513032fa49be92a3",
+  "native_stage": "complete research next-use",
+  "paged_custody": {
+    "actual_provider_read_attempts": 380,
+    "callback_attempts": 570,
+    "catalog_anchor": "435641330000000000000002475c50a2b8fc5698b619a00d262ad1777fb2c822f1c6ec726d80231be061657f",
+    "catalog_payload_unavailable": true,
+    "catalog_zero_bytes": 536870912,
+    "catalog_zero_bytes_reserved": 536870912,
+    "chunk_count": 95,
+    "codec_budget": {
+      "attempts_committed": 95,
+      "cache_bytes_committed": 560539204,
+      "input_bytes_committed": 280300416,
+      "reconstruction_bytes_committed": 700720226
+    },
+    "consumer_chunks": 95,
+    "current_slot": {
+      "chunk_in_page": 30,
+      "operation": "6f5c3875d97604d9c8869602eb36b64d409a3b9a1b2c05e1e2bc195cd4a54cb0",
+      "outcome": "original_target_readback_observed",
+      "page": 1,
+      "slot": 5
+    },
+    "custody_completion_granted": false,
+    "custody_elapsed_ms": 16208,
+    "elapsed_ms": 22681,
+    "elapsed_ms_scope": "whole operation including earlier stages",
+    "execution_granted": false,
+    "independent_failure_domains": false,
+    "m12_funding_admitted": false,
+    "missing_shards": 190,
+    "obtained_wire_bytes": 280300416,
+    "operation_elapsed_ms": 22681,
+    "page_count": 2,
+    "passed": true,
+    "payload_bytes": 280269602,
+    "plan": "b720c67431e89af510d0e1215160f66df3b36192f546392a08c6f0ce11a3e067",
+    "potential": {
+      "cache_bytes": 560539204,
+      "input_bytes": 420450624,
+      "provider_reads": 570,
+      "readback_chunks": 95,
+      "readback_payload_bytes": 280269602,
+      "reconstruction_bytes": 700720226
+    },
+    "profile": "676b97beb87759572fbc68cb7e490a552a7dea7df2e82ef2e9b25c6c123dd8d4",
+    "provider_capacity_bytes": 70414336,
+    "provider_reads": 570,
+    "provider_reads_are_logical_callback_attempts": true,
+    "provider_repair_dispatched": false,
+    "provider_root": "/home/qq/work/chain-cell-paged-model-34e09-20261110-operation-02/paged-shard-providers",
+    "provider_slots": [
+      0,
+      2,
+      4,
+      5
+    ],
+    "provider_wire_bytes": 70075104,
+    "published_slots": 570,
+    "quarantine_requested_slots": [
+      1,
+      3
+    ],
+    "quarantined_slots": [
+      1,
+      3
+    ],
+    "readback_budget": {
+      "attempted_scans": 1,
+      "reserved_chunks": 95,
+      "reserved_payload_bytes": 280269602
+    },
+    "received_cache_absent": true,
+    "rejected_shards": 0,
+    "restore_budget": {
+      "attempts_committed": 1,
+      "cache_bytes_committed": 560539204,
+      "chunks_committed": 95,
+      "input_bytes_committed": 420450624,
+      "provider_reads_committed": 570,
+      "readback_chunks_committed": 95,
+      "readback_payload_bytes_committed": 280269602,
+      "reconstruction_bytes_committed": 700720226
+    },
+    "retention_heights_are_research_terms": true,
+    "schema": "trnm.cell-sealed-paged-custody-observation.v1",
+    "source_cache_absent": true,
+    "stage": "complete actual selected-version readback from four providers",
+    "staged_chunks": 95,
+    "staging_cache_absent": true,
+    "staging_key_bytes": 36480,
+    "staging_logical_bytes": 420642144,
+    "staging_manifest_bytes": 155040,
+    "staging_path": "/home/qq/work/chain-cell-paged-model-34e09-20261110-operation-02/paged-shard-staging.sqlite",
+    "unavailable_callbacks": 190,
+    "verified_shards": 380
+  },
+  "scope": "Original native process wait4 with joined descendants; compilation retained separately; no deadline credit or refund.",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "85474e28e5c5b0d54be1b77d66454879e9a5cc9107f56bb89942eae8565c4c7e",
+  "wait_status": 0,
+  "watchdog_terminated": false
+}
