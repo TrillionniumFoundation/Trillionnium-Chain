@@ -10804,3 +10804,13 @@ uses a separate target. Logging changes timing; no formal receiver sample or
 benefit follows. This diagnostic path patch and offline-generated lock belong
 to this source only; published #871, its locks, original reader and completed
 ABBA are untouched. Qualification remains HOLD_NO_GO.
+
+
+### 2026-11-10 — Isolated preprocessing stage diagnostic
+
+Continue the cache diagnosis with exact-crate copies of uni-stark and FRI.
+Time public-table construction, PCS LDE/materialization and MMCS commitment
+separately, preserving both independent setup/PCS and native replay. The MMCS
+scope includes allocation and tree construction, not pure hash instructions.
+Logging and timers make this a diagnostic, never an ABBA performance sample.
+Original #871 remains unchanged. Qualification stays HOLD_NO_GO.

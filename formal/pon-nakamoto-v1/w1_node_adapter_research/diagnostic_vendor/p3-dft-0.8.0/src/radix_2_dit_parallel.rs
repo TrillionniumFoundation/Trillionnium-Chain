@@ -50,9 +50,9 @@ where
     F: TwoAdicField + Ord,
 {
     fn get_or_compute_twiddles(&self, log_h: usize) -> Arc<VectorPair<F>> {
-        std::eprintln!("W1_DIAG_DFT_REQUEST forward {:?}", log_h);
+
         self.twiddles.get_or_compute(log_h, || {
-            std::eprintln!("W1_DIAG_DFT_MISS forward {:?}", log_h);
+
             let half_h = (1 << log_h) >> 1;
             let root = F::two_adic_generator(log_h);
             let twiddles = root.powers().collect_n(half_h);
@@ -67,9 +67,9 @@ where
     }
 
     fn get_or_compute_coset_twiddles(&self, (log_h, shift): (usize, F)) -> Arc<[Vec<F>]> {
-        std::eprintln!("W1_DIAG_DFT_REQUEST coset {:?}", (log_h, shift));
+
         self.coset_twiddles.get_or_compute((log_h, shift), || {
-            std::eprintln!("W1_DIAG_DFT_MISS coset {:?}", (log_h, shift));
+
             let mid = log_h.div_ceil(2);
             let h = 1 << log_h;
             let root = F::two_adic_generator(log_h);
@@ -93,9 +93,9 @@ where
     }
 
     fn get_or_compute_inverse_twiddles(&self, log_h: usize) -> Arc<VectorPair<F>> {
-        std::eprintln!("W1_DIAG_DFT_REQUEST inverse {:?}", log_h);
+
         self.inverse_twiddles.get_or_compute(log_h, || {
-            std::eprintln!("W1_DIAG_DFT_MISS inverse {:?}", log_h);
+
             let half_h = (1 << log_h) >> 1;
             let root_inv = F::two_adic_generator(log_h).inverse();
             let twiddles = root_inv.powers().collect_n(half_h);
