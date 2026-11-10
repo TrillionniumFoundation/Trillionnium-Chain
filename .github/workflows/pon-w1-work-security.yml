@@ -288,9 +288,11 @@ jobs:
           import re, sys
           text = Path(sys.argv[1]).read_text()
           rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; 0 ignored;', text, re.M)
-          if rows != ['8']:
-              raise SystemExit('four retained legal, two versioned legal and two shared material controls did not execute')
+          if rows != ['13']:
+              raise SystemExit('eight retained legal/material and five observed-search controls did not execute')
           PY
+          python3 scripts/ci/test_w1_native_roster.py
+          python3 scripts/ci/check_w1_native_roster.py --profile legal-example "$OUT/legal-native-controls.log"
           cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- -D warnings 2>&1 | tee "$OUT/legal-clippy.log"
       - name: Execute all thirty original-budget legal strategy shards
         if: always() && steps.source.outcome == 'success'
@@ -416,9 +418,9 @@ jobs:
           root = Path(sys.argv[1])
           # The one ignored History entry is the existing subprocess fixture;
           # its parent control selects real SIGKILL cuts. It is not a skipped gate.
-          expected = {"factorial-kernel-tests": (14, 0), "factorial-example-tests": (6, 0),
+          expected = {"factorial-kernel-tests": (14, 0), "factorial-example-tests": (11, 0),
               "header-binding-tests": (1, 0), "history-w1-tests": (5, 0),
-              "history-import-tests": (28, 1), "cpu-completion-tests": (11, 0)}
+              "history-import-tests": (33, 1), "cpu-completion-tests": (11, 0)}
           for name, counts in expected.items():
               text = (root / (name + ".log")).read_text()
               rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', text, re.M)
@@ -459,6 +461,9 @@ jobs:
           if len(codec_rows) != 1:
               raise SystemExit(codec_selector + ': exact codec control did not execute once')
           PYTEST
+          python3 scripts/ci/test_w1_native_roster.py
+          python3 scripts/ci/check_w1_native_roster.py --profile factorial-example "$OUT/factorial-example-tests.log"
+          python3 scripts/ci/check_w1_native_roster.py --profile history-import "$OUT/history-import-tests.log"
       - name: Prepare pinned provider required by native all-feature controls
         shell: bash
         run: bash scripts/ci/prepare_pq_provider.sh

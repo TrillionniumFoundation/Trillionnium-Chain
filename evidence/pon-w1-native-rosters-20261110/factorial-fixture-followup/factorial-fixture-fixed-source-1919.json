@@ -1,0 +1,62 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "1e9574c9a452a811408e5143615d80fa458681de",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "1e9574c9a452a811408e5143615d80fa458681de",
+    "tested_tree": "1788c62b2f190b3460904abc95e29a12a02b7a11",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2544116868,
+    "tracked_entries": 26630,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "/bin/bash",
+    "-ec",
+    "\nbash scripts/project-preflight.sh\npython3 scripts/ci/test_w1_factorial_native_gate.py\npython3 scripts/ci/test_w1_native_roster.py\npython3 scripts/ci/check_ci_contract.py\npython3 scripts/ci/test_ci_contract.py\npython3 scripts/ci/test_ci_source_integrity.py\npython3 scripts/ci/check_repository.py\ncargo metadata --locked --offline --manifest-path trillionnium/Cargo.toml --format-version 1 > /home/qq/work/chain-w1-native-rosters-20261110-checks/factorial-fixed-workspace-metadata.json\ncargo metadata --locked --offline --manifest-path tests/fuzz/Cargo.toml --format-version 1 > /home/qq/work/chain-w1-native-rosters-20261110-checks/factorial-fixed-fuzz-metadata.json\ncargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check\ncargo clippy --locked --offline --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings\n"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "1e9574c9a452a811408e5143615d80fa458681de",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "1e9574c9a452a811408e5143615d80fa458681de",
+    "tested_tree": "1788c62b2f190b3460904abc95e29a12a02b7a11",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2544116868,
+    "tracked_entries": 26630,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/home/qq/work/chain-w1-native-rosters-20261110",
+  "elapsed_ns": 41830558947,
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/qq/work/chain-four-qrom-composed-20261110-checks/native-target",
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 0,
+  "log_bytes": 37747,
+  "log_file": "factorial-fixture-fixed-source-1919.log",
+  "log_sha256": "d59f2492663d9d9c80d7708c922113d833d2bb398f66cd84a2a730ed74e21efb",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-10T19:17:53.461869+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}

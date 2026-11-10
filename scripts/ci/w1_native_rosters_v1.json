@@ -1,0 +1,77 @@
+{
+  "legal-example": {
+    "names": [
+      "tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments",
+      "tests::last_product_mutation_wraps_canonically_and_changes_only_that_word",
+      "tests::public_dispatch_keeps_complete_bytes_and_all_misses",
+      "tests::v2_final_sample_keeps_both_legal_producers_and_complete_negative_verification",
+      "tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity",
+      "tests::versions_keep_exact_namespaces_and_eight_new_sample_streams",
+      "w1_cost_producers::observed_search_tests::complete_observed_stream_matches_retained_wrapper_byte_for_byte",
+      "w1_cost_producers::observed_search_tests::completion_observer_failure_never_starts_another_attempt",
+      "w1_cost_producers::observed_search_tests::malformed_generated_proof_has_started_and_failed_record",
+      "w1_cost_producers::observed_search_tests::native_failure_retains_completed_attempt_and_failed_begin",
+      "w1_cost_producers::observed_search_tests::observer_begin_refusal_precedes_native_generation",
+      "w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks",
+      "w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values"
+    ],
+    "ignored": []
+  },
+  "factorial-example": {
+    "names": [
+      "tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments",
+      "tests::factorial_search_keeps_every_miss_and_identical_complete_winners",
+      "tests::last_product_mutation_wraps_canonically_and_changes_only_that_word",
+      "tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity",
+      "w1_cost_producers::observed_search_tests::complete_observed_stream_matches_retained_wrapper_byte_for_byte",
+      "w1_cost_producers::observed_search_tests::completion_observer_failure_never_starts_another_attempt",
+      "w1_cost_producers::observed_search_tests::malformed_generated_proof_has_started_and_failed_record",
+      "w1_cost_producers::observed_search_tests::native_failure_retains_completed_attempt_and_failed_begin",
+      "w1_cost_producers::observed_search_tests::observer_begin_refusal_precedes_native_generation",
+      "w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks",
+      "w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values"
+    ],
+    "ignored": []
+  },
+  "history-import": {
+    "names": [
+      "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+      "ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation",
+      "ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account",
+      "ingress::history_import::tests::deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline",
+      "ingress::history_import::tests::deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu",
+      "ingress::history_import::tests::deadline_controls::history_control_keeps_original_timely_single_resource_observation",
+      "ingress::history_import::tests::deadline_controls::history_control_preexpired_does_not_invoke_resource",
+      "ingress::history_import::tests::deadline_controls::history_control_resource_expiry_keeps_original_resource_error",
+      "ingress::history_import::tests::deadline_controls::history_control_resource_expiry_refuses_late_success",
+      "ingress::history_import::tests::deadline_controls::history_owner_resource_expiry_never_invokes_exclusive_or_shared_action",
+      "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+      "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+      "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen",
+      "ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account",
+      "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart",
+      "ingress::history_import::tests::history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors",
+      "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
+      "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
+      "ingress::history_import::tests::history_kill_cut_child",
+      "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+      "ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary",
+      "ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account",
+      "ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries",
+      "ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work",
+      "ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null",
+      "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation",
+      "ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch",
+      "ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1",
+      "ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one",
+      "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1",
+      "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+      "ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit",
+      "ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer",
+      "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer"
+    ],
+    "ignored": [
+      "ingress::history_import::tests::history_kill_cut_child"
+    ]
+  }
+}
