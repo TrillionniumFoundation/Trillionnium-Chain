@@ -393,6 +393,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/w1-stark-literature-evidence-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/w1-stark-literature-evidence-v1.json"
+        )),
+    ),
+    (
+        "config/pon/w1-stark-route-registry-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/w1-stark-route-registry-v1.json"
+        )),
+    ),
+    (
         "config/pon/work-profile-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

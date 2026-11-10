@@ -10741,6 +10741,58 @@ cannot establish a same-iteration production loop. This composition does not
 automatically include #822, #823, #826, #828, #829 or #830. All seven original
 gates remain HOLD; production activation and FinalUse qualification stay false.
 
+### 2026-11-09 — Separate STARK instances and certify fixed field algebra
+
+Continue the exact #835 source with the
+[three-route instance audit](../security/W1_STARK_ROUTE_INSTANCE_AUDIT_V1.md).
+Keep the RISC Zero/Poseidon2 v2, Goldilocks/Poseidon2 W1 and Goldilocks/tagged
+SHA3 profiles separate. Derive the route records from retained source bytes,
+profile identities and locks, rather than trusting a self-declared manifest.
+Preserve all original cryptographic sources, receipt formats and admission rules.
+
+Use exact Lucas and Rabin certificates for the two base fields and extension
+polynomials, and check all retained base-field roots and BabyBear inverse roots.
+This closes the fixed finite-algebra subproblem only. It neither proves every
+compiled field operation nor all reachable traces, FRI/RBR soundness, quantum
+extraction, shared-oracle composition, recursion or concrete security bits.
+
+Preserve the 15 historical obligation IDs and the later disposition: one
+fixed manuscript-version correspondence sub-obligation is closed, 14 other
+historical obligations remain, no complete security obligation is discharged,
+and the eight implementation interfaces remain open. The
+[literature mapping](../protocol/pon-nakamoto-v1/details/STARK_THREE_ROUTE_LITERATURE_20261109.md)
+keeps binary additive-domain hypotheses separate from small-base-field and
+odd-prime near-capacity results; excluding one theorem family grants no safety.
+
+Run field and route controls exactly once in the original required CI lane.
+Retain source refusals, unknown lifetime budgets, all native/service acceptance
+gates and historical failures. Before a profile can leave HOLD, instantiate its
+actual relations and extractors, justify the joint oracle and FRI/list-size
+premises, account for enlarged recursive and lifetime query domains, and obtain
+same-source independent resource and production acceptance. No source mapping
+or conditional estimator grants consensus or production authority.
+
+### 2026-11-10 — Recovered direct-domain and conditional sampler continuation
+
+Continue #849 in an isolated candidate. Retain the known original-P3 compressor
+and tagged-transcript model limitations in machine-readable route records.
+Check DKTZ Revision 1 Theorem 5.22's direct-domain cardinality premise separately
+from its binary-field results; padding, restriction, other proximity results
+and complete FRI/list-size review remain open.
+
+Add exact four-draw sampler arithmetic under explicit iid uniform-draw and
+independent-query-block hypotheses. Preserve the ordinary replay, historical
+test roster and unknown actual Poseidon2/QROM distribution. Require the new
+finite-counting controls and conditional report once in repository-truth.
+
+Earlier unpushed local commits `e616c6ffd741af9d7e76b7741fb09bffc8b286ce` and
+`b85cfe89673a9f6a56c658281ba98f1df427afc4` became unavailable when the scratch
+workspace was cleared. This reconstruction has a new source identity and new
+validation; their reported results are not transferred to it. All actual
+security/lifetime bounds, eight implementation interfaces and production gates
+remain open. Native execution, formatting, dependency graphs and strict Clippy
+must be reported by their actual new-source observations, not inherited passes.
+
 ### 2026-11-10 — Separate lifetime closure's historical and current sources
 
 Continue exact #850 source with the
@@ -10759,3 +10811,24 @@ original repository lane, and preserve original failures. This repairs source
 scope correspondence; it establishes neither a complete QROM theorem nor a
 lifetime failure bound, native resource acceptance, production admission or
 independent cryptographic qualification.
+
+### 2026-11-10 — Compose STARK route and current QROM observation sources
+
+Integrate exact #859 `eb272801e18112e90506fe5016e4dfc4660ad736` as first
+parent and #857 `06c3d24cc4fc05011e04951d30f066c057394836` as second
+parent over the real common ancestor `e2a02f9271b49f146e70806c8a66e161b5973971`.
+Preserve the original historical readers, 105-name closure and 69-name
+proof-chain rosters, fixed proof/profile bytes and all source refusals.
+
+Keep the separately versioned current implementation and lifetime workflows
+in the same source as the three-route field/domain and conditional sampler
+readers. Retain every required command exactly once and check the combined
+source, corpus pins, generated inventory, named completions and actual current
+workflow stages again on its own committed identity. Earlier source passes
+and the two inherited #857 QROM workflow failures remain their own observations.
+
+This composition establishes no new STARK/QROM theorem, actual iid transcript
+law, quantum extractor, recursive/lifetime bound or native resource acceptance.
+The 15 historical IDs, eight open interfaces, unknown security inputs and false
+production/consensus qualification remain unchanged. Independent hosted head
+and prospective-merge acceptance must be observed separately.

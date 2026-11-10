@@ -1,0 +1,63 @@
+{
+  "all_required_observations_passed": true,
+  "completion_or_identity_error": null,
+  "expected_base": "eb272801e18112e90506fe5016e4dfc4660ad736",
+  "expected_head": "784274926d97207e9ee94cf76eef22e1006d84e1",
+  "expected_source": "784274926d97207e9ee94cf76eef22e1006d84e1",
+  "failed_or_skipped_stages": [],
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "consensus_admission": false,
+    "post_quantum_soundness_qualified": false,
+    "pq_signature_qualification_inferred": false,
+    "production_qualified": false,
+    "quantum_work_qualified": false,
+    "unconditional_project_security_bits": null
+  },
+  "required_stages": [
+    "observations",
+    "checkout",
+    "source_before",
+    "preflight",
+    "named_controls",
+    "historical_refusal",
+    "reproduce",
+    "source_after"
+  ],
+  "schema": "TRNM-W1-QROM-CLOSURE-CURRENT-CI2",
+  "source_kind": "head",
+  "steps": {
+    "checkout": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "historical_refusal": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "named_controls": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "observations": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "preflight": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "reproduce": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "source_after": {
+      "conclusion": "success",
+      "outcome": "success"
+    },
+    "source_before": {
+      "conclusion": "success",
+      "outcome": "success"
+    }
+  }
+}
