@@ -191,3 +191,34 @@ fn cpv3_withdrawal_expiry_and_legacy_profile_have_no_fallback() {
         crate::cell::pq::CellPqReleaseAuthorizationV2::decode(&auth.encode().unwrap()).is_err()
     );
 }
+
+#[test]
+fn cpv3_retained_verifier_rechecks_signature_and_complete_authority_pin() {
+    let (_dir, _store, version) = fixture();
+    let (key, pin) = key();
+    let keys = CellPqKeyPinsV2::new(vec![pin.clone()]).unwrap();
+    let model = owner(version.model().closure(), CellFileRoleV1::Base);
+    let environment = owner(version.environment(), CellFileRoleV1::Configuration);
+    let current = expected(&version, &pin, &model, &environment);
+    let authorization = auth(&version, &key);
+    let proof = authorization
+        .verify_at_with_pins(&version, &current, &keys)
+        .unwrap();
+    assert_eq!(proof.version_at(&current).unwrap(), &version);
+    let mut bad = authorization.clone();
+    bad.signature[0] ^= 1;
+    assert!(bad.verify_at_with_pins(&version, &current, &keys).is_err());
+    let mut changed = pin.clone();
+    changed.revoked_at = Some(800);
+    let changed_view = expected(&version, &changed, &model, &environment);
+    assert!(authorization.verify_at(&version, &changed_view).is_ok());
+    assert!(authorization
+        .verify_at_with_pins(&version, &changed_view, &keys)
+        .is_err());
+    let mut next = expected(&version, &pin, &model, &environment);
+    next.authority.sequence += 1;
+    assert!(proof.version_at(&next).is_err());
+    assert!(authorization
+        .verify_at_with_pins(&version, &current, &keys.clone())
+        .is_ok());
+}

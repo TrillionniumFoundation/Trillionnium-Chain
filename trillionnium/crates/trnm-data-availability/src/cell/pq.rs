@@ -165,6 +165,17 @@ impl CellPqKeyPinsV2 {
     pub fn digest(&self) -> CellDigestV1 {
         self.digest
     }
+    fn verifier_for(&self, expected: &CellPqKeyPinV2) -> CellResultV1<&PqNativeVerifier> {
+        let (pin, verifier) = self
+            .keys
+            .get(&expected.key_id)
+            .ok_or(CellErrorV1::Invalid("PQ Cell unknown key"))?;
+        // A matching key ID alone must not restore stale authority metadata.
+        // Compare every SPKI byte, generation, lifetime and revocation field
+        // before reusing only the immutable expanded public key.
+        require(pin == expected, "PQ Cell retained key pin changed")?;
+        Ok(verifier)
+    }
     pub(super) fn verify(
         &self,
         key_id: CellDigestV1,
@@ -184,6 +195,32 @@ impl CellPqKeyPinsV2 {
             .map_err(|_| CellErrorV1::Invalid("PQ Cell signature"))?;
         Ok(pin.expires_at.min(pin.revoked_at.unwrap_or(u64::MAX)))
     }
+}
+
+fn verify_publisher_message(
+    pin: &CellPqKeyPinV2,
+    pins: Option<&CellPqKeyPinsV2>,
+    message: &[u8],
+    signature: &[u8],
+    key_error: &'static str,
+    signature_error: &'static str,
+) -> CellResultV1<()> {
+    let fresh;
+    let verifier = match pins {
+        Some(pins) => pins.verifier_for(pin),
+        None => {
+            fresh = PqNativeVerifier::from_pinned_spki(&pin.spki, pin.key_id)
+                .map_err(|_| CellErrorV1::Invalid(key_error))?;
+            Ok(&fresh)
+        }
+    }
+    .map_err(|_| CellErrorV1::Invalid(key_error))?;
+    // Signature acceptance is never retained: every call verifies the exact
+    // current message, including after an earlier successful observation.
+    verifier
+        .verify_exact_message(message, signature)
+        .map_err(|_| CellErrorV1::Invalid(signature_error))?;
+    Ok(())
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -314,6 +351,25 @@ impl CellPqReleaseAuthorizationV2 {
         release: &'a CellReleaseManifestV1,
         expected: &CellPqReleaseExpectationV2<'_>,
     ) -> CellResultV1<VerifiedCellPqReleaseV2<'a>> {
+        self.verify_with_key_source(release, expected, None)
+    }
+    /// Reuses an independently supplied immutable roster's expanded public key.
+    /// The complete expected pin must match; current authority and signatures
+    /// are checked on every call exactly as in `verify_at`.
+    pub fn verify_at_with_pins<'a>(
+        &self,
+        release: &'a CellReleaseManifestV1,
+        expected: &CellPqReleaseExpectationV2<'_>,
+        pins: &CellPqKeyPinsV2,
+    ) -> CellResultV1<VerifiedCellPqReleaseV2<'a>> {
+        self.verify_with_key_source(release, expected, Some(pins))
+    }
+    fn verify_with_key_source<'a>(
+        &self,
+        release: &'a CellReleaseManifestV1,
+        expected: &CellPqReleaseExpectationV2<'_>,
+        pins: Option<&CellPqKeyPinsV2>,
+    ) -> CellResultV1<VerifiedCellPqReleaseV2<'a>> {
         release.validate()?;
         expected.key.validate()?;
         expected.key.live_at(expected.now)?;
@@ -333,11 +389,14 @@ impl CellPqReleaseAuthorizationV2 {
             "PQ Cell release expired/future",
         )?;
         let message = release_message(s)?;
-        let verifier = PqNativeVerifier::from_pinned_spki(&expected.key.spki, expected.key.key_id)
-            .map_err(|_| CellErrorV1::Invalid("PQ Cell release key"))?;
-        verifier
-            .verify_exact_message(&message, &self.signature)
-            .map_err(|_| CellErrorV1::Invalid("PQ Cell release signature"))?;
+        verify_publisher_message(
+            expected.key,
+            pins,
+            &message,
+            &self.signature,
+            "PQ Cell release key",
+            "PQ Cell release signature",
+        )?;
         require(!s.withdrawn, "PQ Cell release withdrawn")?;
         Ok(VerifiedCellPqReleaseV2 {
             release,

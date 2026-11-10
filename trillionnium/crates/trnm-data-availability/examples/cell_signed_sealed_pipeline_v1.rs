@@ -37,7 +37,7 @@ mod linux {
         fetch_cell_bep52_with_content,
         pq::{
             CellPqContentAuthorizationV4, CellPqContentExpectationV4, CellPqContentStatementV4,
-            CellPqKeyPinV2, CellPqReleaseExpectationV2,
+            CellPqKeyPinV2, CellPqKeyPinsV2, CellPqReleaseExpectationV2,
         },
         CellBep52BindingV1, CellBep52PeerLimitsV1, CellBep52PeerSessionV1, CellBep52PeerUsageV1,
         CellBep52SeedV1, CellCacheConfigV4, CellClosureFileV1, CellContentReadSessionV2,
@@ -392,6 +392,7 @@ mod linux {
             expires_at: timestamp + 300,
             revoked_at: None,
         };
+        let publisher_keys = CellPqKeyPinsV2::new(vec![key_pin.clone()])?;
         let signed = CellPqContentAuthorizationV4::sign(
             CellPqContentStatementV4 {
                 network: [8; 32],
@@ -434,12 +435,14 @@ mod linux {
         let mut read_session = content_session(deadline)?;
         let mut corrupted = signed_wire;
         *corrupted.last_mut().ok_or("empty CPV4 encoding")? ^= 1;
-        let rejected = CellPqContentAuthorizationV4::decode(&corrupted)?.verify_cached_at(
-            &received_content,
-            &consumer,
-            &expected,
-            &mut read_session,
-        );
+        let rejected = CellPqContentAuthorizationV4::decode(&corrupted)?
+            .verify_cached_at_with_pins(
+                &received_content,
+                &consumer,
+                &expected,
+                &mut read_session,
+                &publisher_keys,
+            );
         check(
             matches!(
                 rejected.as_ref(),
@@ -476,11 +479,12 @@ mod linux {
 
         evidence["stage"] = json!("CPV4 and full consumer-cache byte verification");
         expected.authority.now = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
-        let verified = received_authorization.verify_cached_at(
+        let verified = received_authorization.verify_cached_at_with_pins(
             &received_content,
             &consumer,
             &expected,
             &mut read_session,
+            &publisher_keys,
         )?;
         let usage = verified.usage();
         check(

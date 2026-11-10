@@ -11330,3 +11330,16 @@ support this cause; they are not a captured dynamic statement/close trace.
 Freeze the repaired source and exact affected bindings before rerunning the
 complete DA harness, retained/direct-owner libraries and original remaining
 gates. M12's successful node run does not qualify that successor source.
+
+### Cell publisher key expansion continuation
+
+Continue from fixed M14 `ac8501a85a770ba34f34e1bed507ca747e5c3f8d` with
+optional retained-roster verification for CPR2, CPV3 and CPV4. Reuse only the
+expanded ML-DSA-65 key after complete expected-pin equality; retain every
+signature, current-authority, lifetime, sequence and full-content/deadline gate.
+Preserve the old APIs and wire the signed sealed pipeline to the new entry.
+Freeze exact source and corpus pins before native validation, retaining failures
+and actual provider identity. This does not import #839's root timing samples
+as Cell performance or migrate main's classical profiles. Key custody,
+replacement, ordinary effect integration and full PQ lifetime/QROM qualification
+remain open, with activation false and unproved bounds null.

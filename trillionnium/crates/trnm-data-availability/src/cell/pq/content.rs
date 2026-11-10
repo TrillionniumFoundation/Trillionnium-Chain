@@ -5,8 +5,8 @@
 use sha2::{Digest, Sha512};
 
 use super::{
-    CellPqKeyPinV2, CellPqReleaseExpectationV2, PqInput, PqNativeSigningKey, PqNativeVerifier,
-    ML_DSA_65_SIGNATURE_BYTES,
+    verify_publisher_message, CellPqKeyPinV2, CellPqKeyPinsV2, CellPqReleaseExpectationV2, PqInput,
+    PqNativeSigningKey, ML_DSA_65_SIGNATURE_BYTES,
 };
 use crate::cell::{
     require, CellContentDigestV2, CellContentReadSessionV2, CellContentReadUsageV2, CellDigestV1,
@@ -151,6 +151,29 @@ impl CellPqContentAuthorizationV4 {
         expected: &CellPqContentExpectationV4<'_>,
         session: &mut CellContentReadSessionV2,
     ) -> CellResultV1<VerifiedCellPqContentV4<'a>> {
+        self.verify_cached_with_key_source(content, store, expected, session, None)
+    }
+    /// Reuses the roster's expanded public key after full expected-pin equality.
+    /// Every call still verifies the CPV4 signature and actual content bytes
+    /// under the same read session and its original deadline and allowances.
+    pub fn verify_cached_at_with_pins<'a>(
+        &self,
+        content: &'a CellVersionContentV2,
+        store: &CellStoreV1,
+        expected: &CellPqContentExpectationV4<'_>,
+        session: &mut CellContentReadSessionV2,
+        pins: &CellPqKeyPinsV2,
+    ) -> CellResultV1<VerifiedCellPqContentV4<'a>> {
+        self.verify_cached_with_key_source(content, store, expected, session, Some(pins))
+    }
+    fn verify_cached_with_key_source<'a>(
+        &self,
+        content: &'a CellVersionContentV2,
+        store: &CellStoreV1,
+        expected: &CellPqContentExpectationV4<'_>,
+        session: &mut CellContentReadSessionV2,
+        pins: Option<&CellPqKeyPinsV2>,
+    ) -> CellResultV1<VerifiedCellPqContentV4<'a>> {
         require(
             std::time::Instant::now() < session.deadline(),
             "PQ content original deadline",
@@ -170,11 +193,14 @@ impl CellPqContentAuthorizationV4 {
             s.issued_at <= a.now && a.now < s.expires_at,
             "PQ content lifetime",
         )?;
-        let verifier = PqNativeVerifier::from_pinned_spki(&a.key.spki, a.key.key_id)
-            .map_err(|_| CellErrorV1::Invalid("PQ content key"))?;
-        verifier
-            .verify_exact_message(&s.message()?, &self.signature)
-            .map_err(|_| CellErrorV1::Invalid("PQ content signature"))?;
+        verify_publisher_message(
+            a.key,
+            pins,
+            &s.message()?,
+            &self.signature,
+            "PQ content key",
+            "PQ content signature",
+        )?;
         require(!s.withdrawn, "PQ content withdrawn")?;
         let observed = content.verify_cached(store, &expected.loader, expected.content, session)?;
         Ok(VerifiedCellPqContentV4 {

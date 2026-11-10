@@ -93,6 +93,28 @@ The owner must maintain the actual fresh monotone view; passing an old copy does
 not prove current authorization. This API does not consume a production nonce,
 change CURRENT or grant FinalUse.
 
+## Retained publisher public-key expansion
+
+The optional `verify_at_with_pins` entries for CPR2/CPV3 and
+`verify_cached_at_with_pins` for CPV4 reuse the immutable `CellPqKeyPinsV2`
+roster's expanded ML-DSA-65 public key. The caller supplies the roster from its
+own authority policy. The complete expected pin must equal the retained pin:
+full SPKI bytes, key ID, generation, not-before, expiry and revocation time.
+Changing any field requires a corresponding new roster. Clones share only the
+expanded public keys.
+
+Every call still verifies its exact message and signature and checks current
+authority, sequence, time and withdrawal. CPV4 retains the full-SPKI SHA-512
+commitment, original read-session deadline and complete actual-content readback.
+The original entrypoints remain available and construct a fresh verifier.
+The signed sealed pipeline example uses one roster for its rejected and accepted
+content checks; an earlier acceptance never substitutes for a later signature.
+
+Root quorum verification is separate from these publisher checks and from
+`release_at`, `version_at` and `content_at`. This component change supplies no
+Cell latency measurement, root-owner installation, key custody, migration,
+whole-chain lifetime bound or production qualification.
+
 ## One cumulative original read reservation
 
 `CellContentReadSessionV2` holds one absolute deadline, attempted-scan limit and
