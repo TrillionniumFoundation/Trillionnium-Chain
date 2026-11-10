@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/w1_lifetime_ledger.py",
+    "--input",
+    "evidence/pon-w1-lifetime-current-20261110-685a/project-input.json"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794311077352588248,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "w1-lifetime-report",
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794311077237543538,
+  "stderr": {
+    "bytes": 0,
+    "file": "w1-lifetime-report.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 31311,
+    "file": "w1-lifetime-report.stdout.log",
+    "sha256": "10038c7b28384995e9bca883b010a1699b89d7d757067fbeeca409f30a197537"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

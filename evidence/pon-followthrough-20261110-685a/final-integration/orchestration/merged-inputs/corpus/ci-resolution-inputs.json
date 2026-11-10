@@ -1,0 +1,81 @@
+{
+  "common_base": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "files": [
+    {
+      "after": {
+        "bytes": 19669,
+        "git_blob": "63fb1d15fbc9fa52f880fca3c66dd300b907cb17",
+        "sha256": "e6f5a02dcf735fb0b9fed1543ce89c85ee3ecb6e60911f2a1f2e38982e997662"
+      },
+      "before": {
+        "bytes": 19304,
+        "git_blob": "afe6bd671352ab92518ebd94ee4c6b2a832f2a5f",
+        "sha256": "162d7abe33195312f895e63cb082c6bd11cd16787d5213b55297dd20b60f105d"
+      },
+      "changed_from_frozen_c3_input": true,
+      "path": "scripts/ci/w1_native_controls.py"
+    },
+    {
+      "after": {
+        "bytes": 18452,
+        "git_blob": "02c78134f2bacd9ddd6df68dfdd878f02f5a8e1c",
+        "sha256": "ffb64f1941eb929842d7a5ec9df02c5264efec3433fcd315b5d7590cbba53340"
+      },
+      "before": {
+        "bytes": 12293,
+        "git_blob": "8e95f890e9e40415aa5ada408ee9dedae964abdd",
+        "sha256": "018dec7e8e4af91b1b86ef1067ffcd0d9a27584a041363fb5a7254dc5b9560bf"
+      },
+      "changed_from_frozen_c3_input": true,
+      "path": "scripts/ci/test_w1_factorial_native_gate.py"
+    },
+    {
+      "after": {
+        "bytes": 39763,
+        "git_blob": "08d044a5f4c69ac6022446e7fd03965f0d35da90",
+        "sha256": "010ed1e5466c7f226724da591a51d1f8c2feab3898bfa26cdae9c8038a04a616"
+      },
+      "before": {
+        "bytes": 39763,
+        "git_blob": "08d044a5f4c69ac6022446e7fd03965f0d35da90",
+        "sha256": "010ed1e5466c7f226724da591a51d1f8c2feab3898bfa26cdae9c8038a04a616"
+      },
+      "changed_from_frozen_c3_input": false,
+      "path": ".github/workflows/pon-w1-work-security.yml"
+    }
+  ],
+  "frozen_v1_directory_unchanged": true,
+  "frozen_v1_manifest_sha256": "0584249bd96e33e2c6a2521cb1230b3cd3165e47d8e661bdb00cbdbbd478abb7",
+  "git_merge_attempted": false,
+  "native_executed": false,
+  "patch": {
+    "bytes": 9591,
+    "git_blob": "d7b4c43d45b0eeeceb123ca77046c15480cd4ff2",
+    "sha256": "7c7580e37c28e4656ae4f1452274d3d1e206ce27ce51879522873c82e650f06c"
+  },
+  "prepared_from": "/workspace/scratch/685a0c6d6aa4/ci-fixes/candidate",
+  "production_qualified": false,
+  "project_preflight_passed": false,
+  "retained_test_roster": {
+    "bytes": 4359,
+    "git_blob": "60077837fc429315b885b29db121715605436542",
+    "sha256": "639c5bffe04bd821cac05754d36e0f7e2ce91ea865b3c804f535a845dfe18230"
+  },
+  "schema": "pon-upstream-ci-union-preparation-v2",
+  "scope": "Independent successor source preparation; no frozen checkout or owner file changed",
+  "static_source_checks": {
+    "all_c3_12_names_retained": true,
+    "all_upstream_9_class_names_retained": true,
+    "frozen_suite_and_group_values_identical": true,
+    "original_c3_11_test_bodies_ast_identical": true,
+    "prepared_named_tests": 18,
+    "python_ast_parse": true,
+    "remaining_c3_test_keeps_original_matrix_and_adds_upstream_failed_summary": true,
+    "shared_4_names_not_duplicated": true,
+    "upstream_5_unique_method_bodies_ast_identical": true,
+    "upstream_example_name_sets_equal": true,
+    "upstream_history_list_equal": true
+  },
+  "tests_executed": false,
+  "upstream": "df927b6ffaecff293b9e9428e3ba516f47cd101a"
+}

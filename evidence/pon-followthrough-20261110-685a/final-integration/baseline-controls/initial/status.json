@@ -1,0 +1,10 @@
+{
+  "baseline_commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "current_head": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "last_exit": 2,
+  "phase": "guard-failed",
+  "recorded_unix_ns": 1794304992218141472,
+  "security_status": "HOLD",
+  "stage": "create-isolated-worktree",
+  "start_unix_ns": null
+}

@@ -1,0 +1,93 @@
+# Receipts to preserve after actual v2 integration
+
+This is a publication input contract, not a publication or success record. The
+controller itself does not push or open a PR. A subsequent publisher must use
+actual successful C3 integration and final Clippy receipts while continuing to
+mark the original C2 full native suite failed and the publication draft-only.
+
+## Fixed identities and flags
+
+C2 is `8d8c0e64e7a301fc111a6720721a14816639e5aa`, tree
+`7c003a3d183ad33ff4f3349cbcce61564f73a2ba`. Its original full node result is
+1285 passed, 2 failed and 39 retained ignored, exit 101. The v4 followup has
+exactly two selected-test exits of 101 and twelve exits of zero. These facts
+remain false as full-suite success claims in every later summary and PR.
+
+The controller's final summary schema is
+`pon-followthrough-controller-summary-v2`. It must have
+`requested_phase_complete: true`, `integration_complete: true`, `state:
+validated`, an actual C3 commit/tree, and the flags
+`native_observation_complete: true`, `native_full_suite_passed: false`,
+`draft_only: true`, qualification/activation false and security HOLD.
+
+The state retains both `native_validation` and `native_followup` directory paths.
+`OUT/native-preflight.json` contains the canonical derived observation index
+also committed as `native-observations.json`. The selected-history record must
+retain the actual global shallow state and the narrower verified BASE/C1/C2
+chain. It must not be rewritten to imply complete older history.
+
+## Original observations already committed in C3
+
+The C3 evidence prefix is `evidence/pon-followthrough-20261110-685a/`.
+`native/original-v3/` holds the complete original flat directory, preserving the
+initial missing offline dependencies, original red failures, C1 failed fixture
+expectation, corrected counterfactual and failed full node suite. It contains no
+manufactured `summary-v3.json` or `source-after-v3.json`.
+
+`native/followup-v4/` holds the distinct actual followup directory, including the
+two retained exact failures and the successful remaining gates. Its source
+before/after bytes equal the original v3 source-before bytes. The native member
+manifest must be checked against every raw committed member, not merely copied
+without its ignored log files.
+
+A baseline two-test control has its own source identity and before/after
+bracket. Its actual outcome is large-parent 1/0 (both internal backends pass)
+and inactive-page 0/1, exit 101, with `PUBLIC_MUTATION_CPU_BUDGET`; the latter
+differs from the C2 full-suite diagnostic error. Preserve the actual build,
+environment and refill receipts without attributing the difference to one
+unestablished cause. Neither result substitutes for either C2 observation. The
+initial recorder's extra shallow-history refusal is also retained as an initial
+orchestration observation, not a native test failure.
+
+## Additions for an evidence-only C4
+
+The later publisher should place new receipts only below
+`evidence/pon-followthrough-20261110-685a/final-integration/`, leaving every C3
+tree entry and every C2/previous evidence byte unchanged. Preserve:
+
+- Complete controller OUT: all stage command records, raw stdout/stderr, status,
+  final summary, state, corpus plan/update receipts, selected-history and native
+  preflight index, helper review and prior-refusal outputs, validation planned
+  roster and source brackets, and actual native-source-delta review.
+- Complete final C3 native-check OUT: all six original commands and streams,
+  source and environment records, source-before/source-after, summary and status.
+  This is the unchanged strict Clippy/graph/source scope, not a repeated full
+  native suite.
+- The exact v2 controller, nine fixed inputs, test and documentation files in
+  the 14-member frozen bundle; its original manifest and SHA256; the actual new
+  driver script and the unchanged final native runner script.
+- The new driver's real status, commands and completion summary, plus
+  `observed-native-followup-summary.json`, copied from the original v4 summary
+  bytes. Do not synthesize a missing successful v3 summary.
+- Old driver 01's real failed status/logs and its original 14-member bundle,
+  controller and driver scripts in a distinctly labeled historical orchestration
+  subdirectory. Their original contracts and failure observations remain intact.
+
+The publisher owns the detailed final member manifest, explicit `git add -f`
+and per-member committed blob verification. Check that every old C3 entry's mode
+and object ID is identical in C4 and every new entry belongs to the precise new
+manifest. Raw archive files containing original Markdown should retain bytes
+under a non-active-document suffix when moving them would break relative links.
+
+## Publication boundary
+
+After actual source/repository checks, use the verified ProfHepta identity and
+the canonical repository. Any push is the exact C4 SHA to the selected branch
+using an ordinary fast-forward update. The PR is draft-only and its body must
+state the native failure denominator, unchanged assertions/budgets/ignored
+tests, successful scoped checks and open security obligations.
+
+A timed-out push or PR response is unknown until the same destination is read
+back. Pending recovery must reconcile the existing exact branch/PR state rather
+than blindly replaying a push or POST. No original CI requirement or failure is
+silently waived by this external draft publication process.

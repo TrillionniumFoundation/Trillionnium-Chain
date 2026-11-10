@@ -1,0 +1,355 @@
+[
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794309332337000820,
+    "exit_code": 0,
+    "label": "project-preflight",
+    "launch_error": null,
+    "start_unix_ns": 1794309332243803209,
+    "stderr": {
+      "bytes": 0,
+      "file": "project-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 172,
+      "file": "project-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794309332344450605,
+    "exit_code": 0,
+    "label": "before-head",
+    "launch_error": null,
+    "start_unix_ns": 1794309332341525284,
+    "stderr": {
+      "bytes": 0,
+      "file": "before-head.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "file": "before-head.stdout.log",
+      "sha256": "ea051a112ec2b52cc89910082a50c4f75947a50d9f71e2fe3cae2f09ecac6e22"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "write-tree"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794309332363027116,
+    "exit_code": 0,
+    "label": "before-tree",
+    "launch_error": null,
+    "start_unix_ns": 1794309332348515478,
+    "stderr": {
+      "bytes": 0,
+      "file": "before-tree.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "file": "before-tree.stdout.log",
+      "sha256": "6304ff280669087314745d672cdaa3052145df807669c8fd22b1e0d8dc2c0166"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794309332460850271,
+    "exit_code": 0,
+    "label": "before-status",
+    "launch_error": null,
+    "start_unix_ns": 1794309332367014951,
+    "stderr": {
+      "bytes": 0,
+      "file": "before-status.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "before-status.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "ls-files",
+      "-v",
+      "-z"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794309332501053942,
+    "exit_code": 0,
+    "label": "before-index-flags",
+    "launch_error": null,
+    "start_unix_ns": 1794309332477362785,
+    "stderr": {
+      "bytes": 0,
+      "file": "before-index-flags.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 2785792,
+      "file": "before-index-flags.stdout.log",
+      "sha256": "6cc2fea6429b65f58054c59696e9ab7bd10baf1f2a447312b3f3b45d91b5330b"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "--is-shallow-repository"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794309332532004793,
+    "exit_code": 0,
+    "label": "before-shallow",
+    "launch_error": null,
+    "start_unix_ns": 1794309332528270203,
+    "stderr": {
+      "bytes": 0,
+      "file": "before-shallow.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 5,
+      "file": "before-shallow.stdout.log",
+      "sha256": "a17fcf0a2f50e2d495e4f90ce263410edc183add6c62699a2facbccf60410f74"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "--no-replace-objects",
+      "cat-file",
+      "commit",
+      "7ddfe2bfa480d1ebd91c07d03d56a963fff038c5"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794309332565158209,
+    "exit_code": 0,
+    "label": "historical-commit",
+    "launch_error": null,
+    "start_unix_ns": 1794309332560291708,
+    "stderr": {
+      "bytes": 0,
+      "file": "historical-commit.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 563,
+      "file": "historical-commit.stdout.log",
+      "sha256": "5d2f38675a527851d44927e7a0b2eb68ad1557a82604a532246f2e72bfc2ea90"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "--no-replace-objects",
+      "rev-parse",
+      "7ddfe2bfa480d1ebd91c07d03d56a963fff038c5:trillionnium/Cargo.lock"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794309332574475110,
+    "exit_code": 0,
+    "label": "historical-path-identity",
+    "launch_error": null,
+    "start_unix_ns": 1794309332569963831,
+    "stderr": {
+      "bytes": 0,
+      "file": "historical-path-identity.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "file": "historical-path-identity.stdout.log",
+      "sha256": "af72f75945bbf7822b03f9291f572c3a6d11f8adbcdbdce195ddd0e09d892478"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "hash-object",
+      "-w",
+      "--stdin"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794309332584269613,
+    "exit_code": 0,
+    "label": "materialize-exact-blob",
+    "launch_error": null,
+    "start_unix_ns": 1794309332579006810,
+    "stderr": {
+      "bytes": 0,
+      "file": "materialize-exact-blob.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdin": {
+      "bytes": 40365,
+      "sha256": "f9e57d73899c5d9fabd4f5b4fedf45256b8db4efb448d15680d070bbcfcb30bd"
+    },
+    "stdout": {
+      "bytes": 41,
+      "file": "materialize-exact-blob.stdout.log",
+      "sha256": "af72f75945bbf7822b03f9291f572c3a6d11f8adbcdbdce195ddd0e09d892478"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "--no-replace-objects",
+      "show",
+      "7ddfe2bfa480d1ebd91c07d03d56a963fff038c5:trillionnium/Cargo.lock"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794309332594712450,
+    "exit_code": 0,
+    "label": "original-historical-read",
+    "launch_error": null,
+    "start_unix_ns": 1794309332589497372,
+    "stderr": {
+      "bytes": 0,
+      "file": "original-historical-read.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 40365,
+      "file": "original-historical-read.stdout.log",
+      "sha256": "f9e57d73899c5d9fabd4f5b4fedf45256b8db4efb448d15680d070bbcfcb30bd"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794309332602534446,
+    "exit_code": 0,
+    "label": "after-head",
+    "launch_error": null,
+    "start_unix_ns": 1794309332599565306,
+    "stderr": {
+      "bytes": 0,
+      "file": "after-head.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "file": "after-head.stdout.log",
+      "sha256": "ea051a112ec2b52cc89910082a50c4f75947a50d9f71e2fe3cae2f09ecac6e22"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "write-tree"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794309332621412754,
+    "exit_code": 0,
+    "label": "after-tree",
+    "launch_error": null,
+    "start_unix_ns": 1794309332607069171,
+    "stderr": {
+      "bytes": 0,
+      "file": "after-tree.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "file": "after-tree.stdout.log",
+      "sha256": "6304ff280669087314745d672cdaa3052145df807669c8fd22b1e0d8dc2c0166"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794309332714908997,
+    "exit_code": 0,
+    "label": "after-status",
+    "launch_error": null,
+    "start_unix_ns": 1794309332626321514,
+    "stderr": {
+      "bytes": 0,
+      "file": "after-status.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "after-status.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "ls-files",
+      "-v",
+      "-z"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794309332755464351,
+    "exit_code": 0,
+    "label": "after-index-flags",
+    "launch_error": null,
+    "start_unix_ns": 1794309332731950998,
+    "stderr": {
+      "bytes": 0,
+      "file": "after-index-flags.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 2785792,
+      "file": "after-index-flags.stdout.log",
+      "sha256": "6cc2fea6429b65f58054c59696e9ab7bd10baf1f2a447312b3f3b45d91b5330b"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "--is-shallow-repository"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794309332785658646,
+    "exit_code": 0,
+    "label": "after-shallow",
+    "launch_error": null,
+    "start_unix_ns": 1794309332781595104,
+    "stderr": {
+      "bytes": 0,
+      "file": "after-shallow.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 5,
+      "file": "after-shallow.stdout.log",
+      "sha256": "a17fcf0a2f50e2d495e4f90ce263410edc183add6c62699a2facbccf60410f74"
+    }
+  }
+]

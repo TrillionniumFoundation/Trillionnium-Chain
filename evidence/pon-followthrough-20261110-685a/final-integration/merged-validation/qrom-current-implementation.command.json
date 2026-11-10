@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/w1_qrom_current_implementation_audit.py",
+    "--repo-root",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "--output",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-validation-01/qrom-current/implementation.json"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794311076187723752,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "qrom-current-implementation",
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794311075470661902,
+  "stderr": {
+    "bytes": 0,
+    "file": "qrom-current-implementation.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 0,
+    "file": "qrom-current-implementation.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

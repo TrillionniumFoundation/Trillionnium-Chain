@@ -1,0 +1,94 @@
+{
+  "actual_merge": {
+    "commit": "8ab052065ae8307b1ab2c9d42b0dca229a5a3b9d",
+    "parents": [
+      "a715b2c8e89732ce356ebae67f978ef232156c04",
+      "df927b6ffaecff293b9e9428e3ba516f47cd101a"
+    ],
+    "raw_commit_sha256": "2da91b1ef29f843835b16d78f350e057a9f0cd151d1ade498294d6439352d095",
+    "tree": "218f49c3a4b1495f90c0d885433c0ec9ad51fb3c"
+  },
+  "actual_parent_order": [
+    "a715b2c8e89732ce356ebae67f978ef232156c04",
+    "df927b6ffaecff293b9e9428e3ba516f47cd101a"
+  ],
+  "authority_pq128_w1_qrom_checkpoint_bindings_unchanged": true,
+  "merge_acceptance_claimed": false,
+  "native_executed": false,
+  "native_full_suite_passed": false,
+  "pinned_blobs": 1103,
+  "prepared_receipt_sha256": "fb8c5282deb8ed65837de2be9e10b4f1eaca68ba5003cb251ba4a6262707aee6",
+  "production_activation": false,
+  "project_tests_executed": false,
+  "required_paths": 1011,
+  "schema": "pon-upstream-corpus-actual-merge-verification-v1",
+  "security_status": "HOLD",
+  "selected_commits": [
+    {
+      "commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+      "parents": [
+        "ac8501a85a770ba34f34e1bed507ca747e5c3f8d"
+      ],
+      "raw_commit_sha256": "515b321d646f3c8ae9ac9a06063f78da75dac5c85a286003d409306e57531dd5",
+      "selected_role": "base",
+      "tree": "00479a98dabc6b1fd91a0ceef82ffbdbffb78067"
+    },
+    {
+      "commit": "11c9562252d3cf56b423c7756569be0c669d9606",
+      "parents": [
+        "da1374a200022bc14dc2bd325cc9ba29dbcd24ab"
+      ],
+      "raw_commit_sha256": "440cf1c4ca465f343e8a07ffe91e7035c59e65c305284c689611990531f8cbbd",
+      "selected_role": "checkpoint-c1",
+      "tree": "94e1b4f1718dec1b88bccd7e1996ba83ca29ff8a"
+    },
+    {
+      "commit": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+      "parents": [
+        "11c9562252d3cf56b423c7756569be0c669d9606"
+      ],
+      "raw_commit_sha256": "50135708367a05ab7a5418ddbac1340ea87139738e412b662286fc0aca81055b",
+      "selected_role": "checkpoint-c2",
+      "tree": "7c003a3d183ad33ff4f3349cbcce61564f73a2ba"
+    },
+    {
+      "commit": "a715b2c8e89732ce356ebae67f978ef232156c04",
+      "parents": [
+        "8d8c0e64e7a301fc111a6720721a14816639e5aa"
+      ],
+      "raw_commit_sha256": "28774dcea533b305afcf5815f4e84deb08eeaf1733a36cb6d5ff240b12ccdbd3",
+      "selected_role": "binding-child-c3",
+      "tree": "cc44e4c526d9b52d04697169a9b1d3eeb5079451"
+    },
+    {
+      "commit": "a715b2c8e89732ce356ebae67f978ef232156c04",
+      "parents": [
+        "8d8c0e64e7a301fc111a6720721a14816639e5aa"
+      ],
+      "raw_commit_sha256": "28774dcea533b305afcf5815f4e84deb08eeaf1733a36cb6d5ff240b12ccdbd3",
+      "selected_role": "ours-merge-parent",
+      "tree": "cc44e4c526d9b52d04697169a9b1d3eeb5079451"
+    },
+    {
+      "commit": "fcc3c86631c4fb5a1be59ba6da49d9d98d560761",
+      "parents": [
+        "da1374a200022bc14dc2bd325cc9ba29dbcd24ab"
+      ],
+      "raw_commit_sha256": "c6a384672326da9249e27bfe02764a8ac7ecf2b997bc5be68304884f1387ae02",
+      "selected_role": "upstream-middle",
+      "tree": "dcbeaec3ae9cf300c10223f12ae9890e05285b22"
+    },
+    {
+      "commit": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+      "parents": [
+        "fcc3c86631c4fb5a1be59ba6da49d9d98d560761"
+      ],
+      "raw_commit_sha256": "277d25e0dec58482e034803d64b13d493d2779a06aa3db0b2cccde246e2fd490",
+      "selected_role": "theirs-merge-parent",
+      "tree": "a883a05b590fb8b0113b3715f4294eee7a00275b"
+    }
+  ],
+  "source_binding_verified": true,
+  "unchanged_ours_evidence": true,
+  "unchanged_theirs_evidence": true
+}

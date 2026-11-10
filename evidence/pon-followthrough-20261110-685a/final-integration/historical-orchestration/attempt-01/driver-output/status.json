@@ -1,0 +1,8 @@
+{
+  "details": "AssertionError(\"native checkpoint actual failed gate: [('node-library-v3', 101)]\")",
+  "exit_code": 2,
+  "phase": "failed",
+  "recorded_unix_ns": 1794304168332576208,
+  "security_status": "HOLD",
+  "stage": "driver"
+}

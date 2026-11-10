@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/w1_qrom_current_ci.py",
+    "drift",
+    "--repo-root",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "--out",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-validation-01/qrom-current"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794311075204269564,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "qrom-historical-drift",
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794311074938262206,
+  "stderr": {
+    "bytes": 0,
+    "file": "qrom-historical-drift.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 96,
+    "file": "qrom-historical-drift.stdout.log",
+    "sha256": "ed3674ccd377d7922269eb138265ab6becd9b22c89b7ccbd1f47593487b71cea"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

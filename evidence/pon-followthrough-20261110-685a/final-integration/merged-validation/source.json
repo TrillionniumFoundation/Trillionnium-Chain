@@ -1,0 +1,113 @@
+{
+  "cargo_inputs_unchanged_from_first_parent": true,
+  "common_base": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "complete_global_history_claimed": false,
+  "explicit_environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_NET_OFFLINE": "true",
+    "CARGO_TARGET_DIR": "/home/qian-qi/chain-pon-followthrough-20261110-685a-target",
+    "CARGO_TERM_COLOR": "never",
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_NO_REPLACE_OBJECTS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "first_parent": {
+    "commit": "a715b2c8e89732ce356ebae67f978ef232156c04",
+    "parents": [
+      "8d8c0e64e7a301fc111a6720721a14816639e5aa"
+    ],
+    "tree": "cc44e4c526d9b52d04697169a9b1d3eeb5079451"
+  },
+  "first_parent_tests_inherited": false,
+  "full_node_suite_executed": false,
+  "git_history_shallow": true,
+  "historical_lock": {
+    "bytes": 40365,
+    "git_blob": "2ff1e1c42dfa7061f4a77620c0bb65b656d158a5",
+    "path": "trillionnium/Cargo.lock",
+    "revision": "7ddfe2bfa480d1ebd91c07d03d56a963fff038c5",
+    "sha256": "f9e57d73899c5d9fabd4f5b4fedf45256b8db4efb448d15680d070bbcfcb30bd"
+  },
+  "historical_rust_archive_provenance": {
+    "evidence/pon-open-consensus-continuation-20261110-2334/validation/cost/historical-v4/historical-source/trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs": {
+      "entry": {
+        "git_blob": "83ab348459f3e5cae409d4dcffba359ef90aaf64",
+        "kind": "blob",
+        "mode": "100644"
+      },
+      "native_execution_credit": false,
+      "source_parent": "df927b6ffaecff293b9e9428e3ba516f47cd101a"
+    },
+    "evidence/pon-open-consensus-continuation-20261110-2334/validation/cost/historical-v4/historical-source/trillionnium/crates/trnm-pon-node/examples/pon_w1_lifecycle_cost_v4.rs": {
+      "entry": {
+        "git_blob": "e1870e82a3ddfb9e117d6c0e232acb23ca9c4008",
+        "kind": "blob",
+        "mode": "100644"
+      },
+      "native_execution_credit": false,
+      "source_parent": "df927b6ffaecff293b9e9428e3ba516f47cd101a"
+    },
+    "evidence/pon-open-consensus-continuation-20261110-2334/validation/cost/historical-v4/historical-source/trillionnium/crates/trnm-pon-node/examples/support/w1_cost_producers.rs": {
+      "entry": {
+        "git_blob": "7109064c900422e23f3ad2c2769e6d3a7386e8c8",
+        "kind": "blob",
+        "mode": "100644"
+      },
+      "native_execution_credit": false,
+      "source_parent": "df927b6ffaecff293b9e9428e3ba516f47cd101a"
+    }
+  },
+  "history_fetched_or_rewritten": false,
+  "merge": {
+    "commit": "8ab052065ae8307b1ab2c9d42b0dca229a5a3b9d",
+    "parents": [
+      "a715b2c8e89732ce356ebae67f978ef232156c04",
+      "df927b6ffaecff293b9e9428e3ba516f47cd101a"
+    ],
+    "tree": "218f49c3a4b1495f90c0d885433c0ec9ad51fb3c"
+  },
+  "merge_receipt_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-merge-01/summary.json",
+  "merge_source_only_summary_sha256": "34d1553565881c298c47c5c3576b4757d8701a43f99e629cab72ebdd1c7b6b26",
+  "native_changed_from_first_parent": [
+    "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs",
+    "trillionnium/crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+  ],
+  "native_full_suite_passed": false,
+  "open_consensus_qualified": false,
+  "original_evidence_blobs_and_modes_preserved": true,
+  "other_rust_environment": {
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null
+  },
+  "parent_test_results_reused": false,
+  "production_activation": false,
+  "recorder_sha256": "825fd284f1a995b3c66753d9338b6ea794afcb5b0c759b701a3831eb63b1ed84",
+  "retained_evidence_count": 22943,
+  "reviewed_ci_union_blobs": {
+    ".github/workflows/pon-recent-batch-acceptance.yml": "89171c7274109594c3b5d82df8664d66eda710f8",
+    ".github/workflows/pon-w1-work-security.yml": "08d044a5f4c69ac6022446e7fd03965f0d35da90",
+    "scripts/ci/test_w1_factorial_native_gate.py": "02c78134f2bacd9ddd6df68dfdd878f02f5a8e1c",
+    "scripts/ci/w1_native_controls.py": "63fb1d15fbc9fa52f880fca3c66dd300b907cb17"
+  },
+  "reviewed_upstream_native_blobs": {
+    "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs": "662ec394bffc84f568bca0f117456aa13f03e8b5",
+    "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs": "e0c9345b649d138bc239b9c698c27ce124bd1572",
+    "trillionnium/crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs": "45dc4d2a8d88c61af6e978034b29792c91d10b65",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "af04938d292dd28bb52d75a22fed2e45dff8e78c"
+  },
+  "schema": "pon-upstream-union-source-v1",
+  "second_parent": {
+    "commit": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+    "parents": [
+      "fcc3c86631c4fb5a1be59ba6da49d9d98d560761"
+    ],
+    "tree": "a883a05b590fb8b0113b3715f4294eee7a00275b"
+  },
+  "second_parent_tests_inherited": false,
+  "security_status": "HOLD",
+  "source_mutations_performed": false
+}

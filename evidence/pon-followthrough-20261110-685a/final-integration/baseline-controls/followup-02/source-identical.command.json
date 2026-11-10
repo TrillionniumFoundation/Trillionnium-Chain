@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "cmp",
+    "/home/qian-qi/chain-pon-baseline-control-20261110-685a-output-02/source-before.json",
+    "/home/qian-qi/chain-pon-baseline-control-20261110-685a-output-02/source-after.json"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-baseline-control-20261110-685a",
+  "end_unix_ns": 1794305929648773559,
+  "exit_code": 0,
+  "label": "source-identical",
+  "start_unix_ns": 1794305929637927867,
+  "stderr": {
+    "bytes": 0,
+    "file": "source-identical.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 0,
+    "file": "source-identical.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

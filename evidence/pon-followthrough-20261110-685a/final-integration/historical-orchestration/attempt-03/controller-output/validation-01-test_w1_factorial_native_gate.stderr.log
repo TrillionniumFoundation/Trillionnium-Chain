@@ -1,0 +1,17 @@
+test_actual_workflow_uses_both_strict_gates_without_changing_native_selectors (__main__.NativeGateTests.test_actual_workflow_uses_both_strict_gates_without_changing_native_selectors) ... ok
+test_cli_failure_never_writes_success_report (__main__.NativeGateTests.test_cli_failure_never_writes_success_report) ... ok
+test_cli_fifo_and_symlink_log_refuse_without_waiting (__main__.NativeGateTests.test_cli_fifo_and_symlink_log_refuse_without_waiting) ... ok
+test_complete_roster_passes (__main__.NativeGateTests.test_complete_roster_passes) ... ok
+test_every_named_control_requires_one_successful_terminal (__main__.NativeGateTests.test_every_named_control_requires_one_successful_terminal) ... ok
+test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary (__main__.NativeGateTests.test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary) ... ok
+test_frozen_names_equal_current_native_source_and_retained_counts (__main__.NativeGateTests.test_frozen_names_equal_current_native_source_and_retained_counts) ... ok
+test_history_named_controls_remain_required_once (__main__.NativeGateTests.test_history_named_controls_remain_required_once) ... ok
+test_ignored_child_is_exact_and_parent_still_must_pass (__main__.NativeGateTests.test_ignored_child_is_exact_and_parent_still_must_pass) ... ok
+test_kernel_rejects_missing_duplicate_or_replaced_named_control (__main__.NativeGateTests.test_kernel_rejects_missing_duplicate_or_replaced_named_control) ... ok
+test_nocapture_retains_name_until_its_serial_success_terminal (__main__.NativeGateTests.test_nocapture_retains_name_until_its_serial_success_terminal) ... ok
+test_original_old_counts_cannot_certify_the_current_roster (__main__.NativeGateTests.test_original_old_counts_cannot_certify_the_current_roster) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.388s
+
+OK

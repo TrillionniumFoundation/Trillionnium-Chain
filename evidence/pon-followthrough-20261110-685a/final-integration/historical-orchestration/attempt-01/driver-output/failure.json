@@ -1,0 +1,8 @@
+{
+  "complete": false,
+  "no_automatic_rollback": true,
+  "published": false,
+  "reason": "AssertionError(\"native checkpoint actual failed gate: [('node-library-v3', 101)]\")",
+  "recorded_unix_ns": 1794304168317238060,
+  "security_status": "HOLD"
+}

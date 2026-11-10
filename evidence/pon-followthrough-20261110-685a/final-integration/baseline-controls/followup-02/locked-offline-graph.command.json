@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "cargo",
+    "metadata",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "--format-version",
+    "1"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-baseline-control-20261110-685a",
+  "end_unix_ns": 1794305211751800505,
+  "exit_code": 0,
+  "label": "locked-offline-graph",
+  "start_unix_ns": 1794305211335392920,
+  "stderr": {
+    "bytes": 0,
+    "file": "locked-offline-graph.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 853930,
+    "file": "locked-offline-graph.stdout.log",
+    "sha256": "d889b4d0dc9662c2d800cba1949690e66eaa244165f5f16162459b5bc6bf6ac9"
+  }
+}

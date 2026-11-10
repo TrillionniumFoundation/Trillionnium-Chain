@@ -1,0 +1,65 @@
+{
+  "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+    "--",
+    "--exact",
+    "--test-threads=1"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794311970907181704,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "cancel-exact",
+  "native_observation": {
+    "all_reported_harness_summaries": [
+      {
+        "failed": 0,
+        "filtered": 1325,
+        "ignored": 0,
+        "measured": 0,
+        "outcome": "ok",
+        "passed": 1
+      }
+    ],
+    "command_exit_code": 0,
+    "expected_names": [
+      "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work"
+    ],
+    "observed_selected_names": [
+      "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work"
+    ],
+    "successful_selected_target_observed": true,
+    "terminal_harness": {
+      "failed": 0,
+      "filtered": 1325,
+      "ignored": 0,
+      "measured": 0,
+      "outcome": "ok",
+      "passed": 1
+    }
+  },
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794311360364529643,
+  "stderr": {
+    "bytes": 456,
+    "file": "cancel-exact.stderr.log",
+    "sha256": "b615f994685524bec060695a17da81ab2c0d79c845cee301779e55aa1ee88a3f"
+  },
+  "stdout": {
+    "bytes": 239,
+    "file": "cancel-exact.stdout.log",
+    "sha256": "bf21dc312ebeb6139df3d55a3b5958ce620b62407b42d9d9a9b08490c4434c6d"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

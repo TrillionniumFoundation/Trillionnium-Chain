@@ -1,0 +1,1467 @@
+[
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310619604941069,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "preflight",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794310619489591047,
+    "stderr": {
+      "bytes": 0,
+      "file": "preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 172,
+      "file": "preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "8ab052065ae8307b1ab2c9d42b0dca229a5a3b9d",
+      "--output",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-validation-01/source-before.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310625756729163,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "source-before",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794310619624816068,
+    "stderr": {
+      "bytes": 0,
+      "file": "source-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 423,
+      "file": "source-before.stdout.log",
+      "sha256": "410f65105cfcfe45438e228fe44b11c7eaabb9a1b2d1f93d03bfdb3cca4198c0"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310626287951783,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "locked-offline-graph",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794310626022283615,
+    "stderr": {
+      "bytes": 0,
+      "file": "locked-offline-graph.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 852263,
+      "file": "locked-offline-graph.stdout.log",
+      "sha256": "80b5555ee496f800fc97c0592d2022d1efabeeb7cd8bf22dcfda0710102fc483"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "rustc",
+      "-Vv"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310626641093431,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "rustc-version",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794310626575893694,
+    "stderr": {
+      "bytes": 0,
+      "file": "rustc-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 196,
+      "file": "rustc-version.stdout.log",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "cargo",
+      "-V"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310626971795417,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "cargo-version",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794310626906611086,
+    "stderr": {
+      "bytes": 0,
+      "file": "cargo-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 36,
+      "file": "cargo-version.stdout.log",
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/test_pq_research_integration.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310948728366562,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "test_pq_research_integration",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794310627232453005,
+    "stderr": {
+      "bytes": 8425,
+      "file": "test_pq_research_integration.stderr.log",
+      "sha256": "acab8914ca0bfa9577f2f836e62fda53a45ebb51788f1f8e525c2d12374dceb0"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "test_pq_research_integration.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 3600
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/test_ci_source_integrity.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310953542138486,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "test_ci_source_integrity",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794310948965227607,
+    "stderr": {
+      "bytes": 6414,
+      "file": "test_ci_source_integrity.stderr.log",
+      "sha256": "aafc2146b0c8fad3b2404fd0f8708608dba3f23dd47005cc0db268faa7d6c848"
+    },
+    "stdout": {
+      "bytes": 484,
+      "file": "test_ci_source_integrity.stdout.log",
+      "sha256": "7270ea5b8655460c3136e4e13eb50f3440c6283d1fb6645eb20e08a08631fbda"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/test_ci_contract.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311028397766400,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "test_ci_contract",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794310953799102021,
+    "stderr": {
+      "bytes": 30565,
+      "file": "test_ci_contract.stderr.log",
+      "sha256": "5d74a9967a48735a71aaf858fac101e937fb9473df07d8519b0340e230e8ab13"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "test_ci_contract.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/test_w1_factorial_native_gate.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311037545775421,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "test_w1_factorial_native_gate",
+    "process_exit_code": 0,
+    "python_named_observation": {
+      "command_exit_code": 0,
+      "expected_names": [
+        "LegalGateTests.test_complete_current_native_roster_passes",
+        "LegalGateTests.test_every_retained_versioned_material_and_observer_control_executes_once",
+        "LegalGateTests.test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused",
+        "NativeGateTests.test_actual_workflow_uses_both_strict_gates_without_changing_native_selectors",
+        "NativeGateTests.test_cli_failure_never_writes_success_report",
+        "NativeGateTests.test_cli_fifo_and_symlink_log_refuse_without_waiting",
+        "NativeGateTests.test_complete_roster_passes",
+        "NativeGateTests.test_every_named_control_requires_one_successful_terminal",
+        "NativeGateTests.test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary",
+        "NativeGateTests.test_factorial_example_does_not_accept_filtered_or_measured_tests",
+        "NativeGateTests.test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control",
+        "NativeGateTests.test_frozen_names_equal_current_native_source_and_retained_counts",
+        "NativeGateTests.test_history_named_controls_remain_required_once",
+        "NativeGateTests.test_ignored_child_is_exact_and_parent_still_must_pass",
+        "NativeGateTests.test_kernel_rejects_missing_duplicate_or_replaced_named_control",
+        "NativeGateTests.test_nocapture_retains_name_until_its_serial_success_terminal",
+        "NativeGateTests.test_original_old_counts_cannot_certify_the_current_roster",
+        "NativeGateTests.test_selected_native_suites_keep_nonzero_filtered_observations"
+      ],
+      "observed_tests": [
+        {
+          "name": "LegalGateTests.test_complete_current_native_roster_passes",
+          "outcome": "ok"
+        },
+        {
+          "name": "LegalGateTests.test_every_retained_versioned_material_and_observer_control_executes_once",
+          "outcome": "ok"
+        },
+        {
+          "name": "LegalGateTests.test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_actual_workflow_uses_both_strict_gates_without_changing_native_selectors",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_cli_failure_never_writes_success_report",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_cli_fifo_and_symlink_log_refuse_without_waiting",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_complete_roster_passes",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_every_named_control_requires_one_successful_terminal",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_factorial_example_does_not_accept_filtered_or_measured_tests",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_frozen_names_equal_current_native_source_and_retained_counts",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_history_named_controls_remain_required_once",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_ignored_child_is_exact_and_parent_still_must_pass",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_kernel_rejects_missing_duplicate_or_replaced_named_control",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_nocapture_retains_name_until_its_serial_success_terminal",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_original_old_counts_cannot_certify_the_current_roster",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_selected_native_suites_keep_nonzero_filtered_observations",
+          "outcome": "ok"
+        }
+      ],
+      "reported_summary_counts": [
+        18
+      ],
+      "successful_named_suite_observed": true
+    },
+    "recorder_error": null,
+    "start_unix_ns": 1794311028658243595,
+    "stderr": {
+      "bytes": 2898,
+      "file": "test_w1_factorial_native_gate.stderr.log",
+      "sha256": "fda56a007479e9d31854d2baeb4e0976ecc0bd129dbe65d387c76eb8b929a354"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "test_w1_factorial_native_gate.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/test_prepare_artifact_upload.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311038276767891,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "test_prepare_artifact_upload",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311037810106726,
+    "stderr": {
+      "bytes": 1406,
+      "file": "test_prepare_artifact_upload.stderr.log",
+      "sha256": "8c5c17a8af19e05d3cecd71fdca00237ec041e51bfa7358a2e0f39dc7b5c98c6"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "test_prepare_artifact_upload.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/test_cell_storage_convergence_ci.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311038810128908,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "test_cell_storage_convergence_ci",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311038544275699,
+    "stderr": {
+      "bytes": 3839,
+      "file": "test_cell_storage_convergence_ci.stderr.log",
+      "sha256": "cd80bb0aa5689c728c05b3118b2b587d494c8406cf4c2871000276044d4766f4"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "test_cell_storage_convergence_ci.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/test_cell_discovery_v3_ci.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311039251373219,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "test_cell_discovery_v3_ci",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311039085885252,
+    "stderr": {
+      "bytes": 880,
+      "file": "test_cell_discovery_v3_ci.stderr.log",
+      "sha256": "72dccc61becf9b6386962f2d8055585509bce15c37a4534e6797d50c14f63c3b"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "test_cell_discovery_v3_ci.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/test_fresh_rejection_report.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311060995181859,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "test_fresh_rejection_report",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311039522574332,
+    "stderr": {
+      "bytes": 4122,
+      "file": "test_fresh_rejection_report.stderr.log",
+      "sha256": "2779e39c3762ab4d7e8bddfcf5987ffc41ca8c43505600d6409da5ccb78720ce"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "test_fresh_rejection_report.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/test_w1_qrom_current_ci.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311062486368974,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "test_w1_qrom_current_ci",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311061268239333,
+    "stderr": {
+      "bytes": 2078,
+      "file": "test_w1_qrom_current_ci.stderr.log",
+      "sha256": "ab4b0c3fe2a5d8fbcac01f88e4da0b427d03b31ba3d296872a797c0fe2305276"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "test_w1_qrom_current_ci.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/test_pq_authority_effect_register.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311063783577709,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "test_pq_authority_effect_register",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311062766038986,
+    "stderr": {
+      "bytes": 3019,
+      "file": "test_pq_authority_effect_register.stderr.log",
+      "sha256": "481ef378eee2aa46392fb8621674baf17084cddc053faa39230b2df083788b08"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "test_pq_authority_effect_register.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/test_pq_lifetime_budget.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311064479299324,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "test_pq_lifetime_budget",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311064063045145,
+    "stderr": {
+      "bytes": 9494,
+      "file": "test_pq_lifetime_budget.stderr.log",
+      "sha256": "1f71b12741ef8b3b85f96418ea33b4fcafdb636060d029912360f8c224f6bb0b"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "test_pq_lifetime_budget.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/test_w1_lifetime_ledger.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311065116186324,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "test_w1_lifetime_ledger",
+    "process_exit_code": 0,
+    "python_named_observation": {
+      "command_exit_code": 0,
+      "expected_names": [
+        "LifetimeLedgerTests.test_bound_domain_cannot_be_extrapolated_to_larger_lifetime_queries",
+        "LifetimeLedgerTests.test_cli_rejects_malformed_input_without_emitting_a_report",
+        "LifetimeLedgerTests.test_complete_relation_event_count_cannot_drop_failed_attempts",
+        "LifetimeLedgerTests.test_conditional_union_is_exact_and_does_not_require_independence",
+        "LifetimeLedgerTests.test_exact_lottery_rounding_and_weight_cost_counterexample",
+        "LifetimeLedgerTests.test_lifetime_reset_and_per_event_target_counterexamples",
+        "LifetimeLedgerTests.test_marginal_or_accepted_only_error_bound_is_refused",
+        "LifetimeLedgerTests.test_mass_and_reduction_overheads_are_independent_inputs",
+        "LifetimeLedgerTests.test_missing_phase_group_or_unknown_field_is_not_a_free_zero",
+        "LifetimeLedgerTests.test_native_permutation_count_cannot_be_the_query_unit",
+        "LifetimeLedgerTests.test_nonexact_numbers_duplicate_json_and_qualification_injection_are_refused",
+        "LifetimeLedgerTests.test_numeric_inputs_need_explicit_unverified_references",
+        "LifetimeLedgerTests.test_offline_adaptive_delegated_and_unclassified_queries_accumulate",
+        "LifetimeLedgerTests.test_processors_failed_roots_and_recursive_nodes_are_all_charged",
+        "LifetimeLedgerTests.test_project_unknowns_do_not_produce_a_target_or_qualification",
+        "LifetimeLedgerTests.test_scope_cannot_reset_by_identity_upgrade_or_reorganization",
+        "LifetimeLedgerTests.test_source_lines_remain_independent_of_existing_qualification_labels",
+        "LifetimeLedgerTests.test_source_mutation_missing_source_and_symlink_are_refused",
+        "LifetimeLedgerTests.test_unknown_factor_survives_known_zero"
+      ],
+      "observed_tests": [
+        {
+          "name": "LifetimeLedgerTests.test_bound_domain_cannot_be_extrapolated_to_larger_lifetime_queries",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_cli_rejects_malformed_input_without_emitting_a_report",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_complete_relation_event_count_cannot_drop_failed_attempts",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_conditional_union_is_exact_and_does_not_require_independence",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_exact_lottery_rounding_and_weight_cost_counterexample",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_lifetime_reset_and_per_event_target_counterexamples",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_marginal_or_accepted_only_error_bound_is_refused",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_mass_and_reduction_overheads_are_independent_inputs",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_missing_phase_group_or_unknown_field_is_not_a_free_zero",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_native_permutation_count_cannot_be_the_query_unit",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_nonexact_numbers_duplicate_json_and_qualification_injection_are_refused",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_numeric_inputs_need_explicit_unverified_references",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_offline_adaptive_delegated_and_unclassified_queries_accumulate",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_processors_failed_roots_and_recursive_nodes_are_all_charged",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_project_unknowns_do_not_produce_a_target_or_qualification",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_scope_cannot_reset_by_identity_upgrade_or_reorganization",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_source_lines_remain_independent_of_existing_qualification_labels",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_source_mutation_missing_source_and_symlink_are_refused",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_unknown_factor_survives_known_zero",
+          "outcome": "ok"
+        }
+      ],
+      "reported_summary_counts": [
+        19
+      ],
+      "successful_named_suite_observed": true
+    },
+    "recorder_error": null,
+    "start_unix_ns": 1794311064750625157,
+    "stderr": {
+      "bytes": 3141,
+      "file": "test_w1_lifetime_ledger.stderr.log",
+      "sha256": "e8182fb057f90f09c6cea906254d85f1dacb8038c171512bb1118a2028c2b053"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "test_w1_lifetime_ledger.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/test_w1_lifecycle_cost_v4.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311067258652815,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "test_w1_lifecycle_cost_v4",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311065388731269,
+    "stderr": {
+      "bytes": 2226,
+      "file": "test_w1_lifecycle_cost_v4.stderr.log",
+      "sha256": "054476fea27cb6bfcdc4636fdb04b470aa6a01300c58adf9a95e7d18865e29f5"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "test_w1_lifecycle_cost_v4.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311068484257860,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "corpus",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311067516431113,
+    "stderr": {
+      "bytes": 0,
+      "file": "corpus.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 558,
+      "file": "corpus.stdout.log",
+      "sha256": "0485d6cfa5b0d38536751f0a1db46ec851cc349d38fb706639aeeea375e41e32"
+    },
+    "timed_out": false,
+    "timeout_seconds": 3600
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311068978336991,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "ci-contract",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311068763329764,
+    "stderr": {
+      "bytes": 0,
+      "file": "ci-contract.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 431,
+      "file": "ci-contract.stdout.log",
+      "sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/w1_qrom_current_ci.py",
+      "named",
+      "--repo-root",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+      "--out",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-validation-01/qrom-current"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311074668438454,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "qrom-current-named",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311069239117711,
+    "stderr": {
+      "bytes": 13414,
+      "file": "qrom-current-named.stderr.log",
+      "sha256": "2b583c634cf86b5f8d88cb7e079d780cfddb55eee8b8b35b495f8d44cae9a5c2"
+    },
+    "stdout": {
+      "bytes": 96,
+      "file": "qrom-current-named.stdout.log",
+      "sha256": "ed3674ccd377d7922269eb138265ab6becd9b22c89b7ccbd1f47593487b71cea"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/w1_qrom_current_ci.py",
+      "drift",
+      "--repo-root",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+      "--out",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-validation-01/qrom-current"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311075204269564,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "qrom-historical-drift",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311074938262206,
+    "stderr": {
+      "bytes": 0,
+      "file": "qrom-historical-drift.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 96,
+      "file": "qrom-historical-drift.stdout.log",
+      "sha256": "ed3674ccd377d7922269eb138265ab6becd9b22c89b7ccbd1f47593487b71cea"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/w1_qrom_current_implementation_audit.py",
+      "--repo-root",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+      "--output",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-validation-01/qrom-current/implementation.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311076187723752,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "qrom-current-implementation",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311075470661902,
+    "stderr": {
+      "bytes": 0,
+      "file": "qrom-current-implementation.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "qrom-current-implementation.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/pq_authority_effect_register.py"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311076569111304,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "authority-register",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311076453715724,
+    "stderr": {
+      "bytes": 0,
+      "file": "authority-register.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 13223,
+      "file": "authority-register.stdout.log",
+      "sha256": "b2193f3318f3ada8896d14081e44916c64e91bca0c5d96fb67d22b866acb5ad4"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/pq_lifetime_budget.py"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311076959202857,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "pq128-lifetime",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311076843821061,
+    "stderr": {
+      "bytes": 0,
+      "file": "pq128-lifetime.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 12824,
+      "file": "pq128-lifetime.stdout.log",
+      "sha256": "19927acdc66216b824653f4776f530164156b85d18eb4ed6039ac6ad6975b7ad"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/w1_lifetime_ledger.py",
+      "--input",
+      "evidence/pon-w1-lifetime-current-20261110-685a/project-input.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311077352588248,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "w1-lifetime-report",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311077237543538,
+    "stderr": {
+      "bytes": 0,
+      "file": "w1-lifetime-report.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 31311,
+      "file": "w1-lifetime-report.stdout.log",
+      "sha256": "10038c7b28384995e9bca883b010a1699b89d7d757067fbeeca409f30a197537"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "cmp",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-validation-01/w1-lifetime-report.stdout.log",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a/evidence/pon-w1-lifetime-current-20261110-685a/project-report.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311077631985457,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "w1-lifetime-report-identical",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311077627387420,
+    "stderr": {
+      "bytes": 0,
+      "file": "w1-lifetime-report-identical.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "w1-lifetime-report-identical.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311078022229713,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "distributed-inventory",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311077907020285,
+    "stderr": {
+      "bytes": 0,
+      "file": "distributed-inventory.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 35,
+      "file": "distributed-inventory.stdout.log",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/check_repository.py"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311104862447433,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "repository-and-markdown-links",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311078295984806,
+    "stderr": {
+      "bytes": 0,
+      "file": "repository-and-markdown-links.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 307,
+      "file": "repository-and-markdown-links.stdout.log",
+      "sha256": "c97747e38361161816b337c96f44d845b0aecb0109bed6ed32ce688bf4986fd0"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--check",
+      "a715b2c8e89732ce356ebae67f978ef232156c04",
+      "8ab052065ae8307b1ab2c9d42b0dca229a5a3b9d",
+      "--",
+      ".",
+      ":(exclude)evidence/**"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311105489889582,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "source-diff-whitespace",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311105425194133,
+    "stderr": {
+      "bytes": 0,
+      "file": "source-diff-whitespace.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "source-diff-whitespace.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311125954568124,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "format",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311105946761465,
+    "stderr": {
+      "bytes": 0,
+      "file": "format.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "format.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-mvcc-fee",
+      "--lib",
+      "--",
+      "--test-threads=1"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311318208504385,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "mvcc-library",
+    "native_observation": {
+      "all_reported_harness_summaries": [
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 9,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 153
+        }
+      ],
+      "command_exit_code": 0,
+      "successful_selected_target_observed": true,
+      "terminal_harness": {
+        "failed": 0,
+        "filtered": 0,
+        "ignored": 9,
+        "measured": 0,
+        "outcome": "ok",
+        "passed": 153
+      }
+    },
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311126232420911,
+    "stderr": {
+      "bytes": 816,
+      "file": "mvcc-library.stderr.log",
+      "sha256": "4336da3db4eecce733b42ea4cee43f862df289d28e7c20655e32aaab0b9a17f0"
+    },
+    "stdout": {
+      "bytes": 19288,
+      "file": "mvcc-library.stdout.log",
+      "sha256": "3adbda1cfe6323d5591ee136a0025f8233268929ec34dcf114e9fe34ce7648d6"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-mvcc-fee",
+      "--test",
+      "evaluation_quorum_v2",
+      "--",
+      "--test-threads=1"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311360097666067,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "evaluation-quorum-v2",
+    "native_observation": {
+      "all_reported_harness_summaries": [
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 9
+        }
+      ],
+      "command_exit_code": 0,
+      "expected_names": [
+        "classic_retained_closure_preserves_legal_appeals_and_late_conflicts",
+        "classic_retained_closure_recounts_aborts_and_accepts_complete_zero_score",
+        "classic_retained_closure_rejects_substituted_summary_at_use_and_restore",
+        "fresh_profile_refuses_attested_models_and_cross_version_replay",
+        "independent_reference_vectors_match_native_domains_counts_and_records",
+        "quorum_retained_closure_cannot_authorize_adoption_before_its_height",
+        "quorum_retained_closure_preserves_nonempty_history_after_more_conflicts",
+        "quorum_retained_closure_rejects_substituted_summary_at_use_and_restore",
+        "retained_reveals_recheck_commitments_at_restore_close_and_adoption"
+      ],
+      "observed_selected_names": [
+        "classic_retained_closure_preserves_legal_appeals_and_late_conflicts",
+        "classic_retained_closure_recounts_aborts_and_accepts_complete_zero_score",
+        "classic_retained_closure_rejects_substituted_summary_at_use_and_restore",
+        "fresh_profile_refuses_attested_models_and_cross_version_replay",
+        "independent_reference_vectors_match_native_domains_counts_and_records",
+        "quorum_retained_closure_cannot_authorize_adoption_before_its_height",
+        "quorum_retained_closure_preserves_nonempty_history_after_more_conflicts",
+        "quorum_retained_closure_rejects_substituted_summary_at_use_and_restore",
+        "retained_reveals_recheck_commitments_at_restore_close_and_adoption"
+      ],
+      "successful_selected_target_observed": true,
+      "terminal_harness": {
+        "failed": 0,
+        "filtered": 0,
+        "ignored": 0,
+        "measured": 0,
+        "outcome": "ok",
+        "passed": 9
+      }
+    },
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311318466191729,
+    "stderr": {
+      "bytes": 349,
+      "file": "evaluation-quorum-v2.stderr.log",
+      "sha256": "03dafd9f70bd63e9154087e3bb6674487115f89c5925a805197e9732a6258c0b"
+    },
+    "stdout": {
+      "bytes": 845,
+      "file": "evaluation-quorum-v2.stdout.log",
+      "sha256": "1482928379d8a4c8ce794535dc18df1cad0833f6a0ddbb5fa4eedce6808cccb5"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+      "--",
+      "--exact",
+      "--test-threads=1"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311970907181704,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "cancel-exact",
+    "native_observation": {
+      "all_reported_harness_summaries": [
+        {
+          "failed": 0,
+          "filtered": 1325,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 1
+        }
+      ],
+      "command_exit_code": 0,
+      "expected_names": [
+        "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work"
+      ],
+      "observed_selected_names": [
+        "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work"
+      ],
+      "successful_selected_target_observed": true,
+      "terminal_harness": {
+        "failed": 0,
+        "filtered": 1325,
+        "ignored": 0,
+        "measured": 0,
+        "outcome": "ok",
+        "passed": 1
+      }
+    },
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311360364529643,
+    "stderr": {
+      "bytes": 456,
+      "file": "cancel-exact.stderr.log",
+      "sha256": "b615f994685524bec060695a17da81ab2c0d79c845cee301779e55aa1ee88a3f"
+    },
+    "stdout": {
+      "bytes": 239,
+      "file": "cancel-exact.stdout.log",
+      "sha256": "bf21dc312ebeb6139df3d55a3b5958ce620b62407b42d9d9a9b08490c4434c6d"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "confirmation_chainwork_tests",
+      "--",
+      "--test-threads=1"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794311975657378008,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "confirmation-four",
+    "native_observation": {
+      "all_reported_harness_summaries": [
+        {
+          "failed": 0,
+          "filtered": 1322,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 4
+        }
+      ],
+      "command_exit_code": 0,
+      "expected_names": [
+        "store::confirmation_chainwork_tests::a_common_work_offset_cannot_replace_the_zero_work_genesis_anchor",
+        "store::confirmation_chainwork_tests::final_callback_foreign_commit_cannot_return_a_stale_confirmation",
+        "store::confirmation_chainwork_tests::final_callback_same_connection_write_cannot_return_a_stale_confirmation",
+        "store::confirmation_chainwork_tests::full_width_retained_work_corruption_refuses_tip_inclusion_and_middle"
+      ],
+      "observed_selected_names": [
+        "store::confirmation_chainwork_tests::a_common_work_offset_cannot_replace_the_zero_work_genesis_anchor",
+        "store::confirmation_chainwork_tests::final_callback_foreign_commit_cannot_return_a_stale_confirmation",
+        "store::confirmation_chainwork_tests::final_callback_same_connection_write_cannot_return_a_stale_confirmation",
+        "store::confirmation_chainwork_tests::full_width_retained_work_corruption_refuses_tip_inclusion_and_middle"
+      ],
+      "successful_selected_target_observed": true,
+      "terminal_harness": {
+        "failed": 0,
+        "filtered": 1322,
+        "ignored": 0,
+        "measured": 0,
+        "outcome": "ok",
+        "passed": 4
+      }
+    },
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311971181056266,
+    "stderr": {
+      "bytes": 210,
+      "file": "confirmation-four.stderr.log",
+      "sha256": "c555bc24570bf7653191a179230e29a3e70bb6b5dc17c5026770d37b92382ce0"
+    },
+    "stdout": {
+      "bytes": 583,
+      "file": "confirmation-four.stdout.log",
+      "sha256": "c2d76ba273ab68ea829a1b49842764b73bc4f6c0e90d7e95e3c3b6818f0da725"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-mvcc-fee",
+      "-p",
+      "trnm-pon-node",
+      "-p",
+      "trnm-service-settlement",
+      "-p",
+      "trnm-crypto-primitives",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794312079624241244,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "four-owner-strict-clippy",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794311975921543606,
+    "stderr": {
+      "bytes": 1216,
+      "file": "four-owner-strict-clippy.stderr.log",
+      "sha256": "5d2aaa495c131b5590c1874512dd7bf6aa6f74c84decfd837ad0d1ad354cd15d"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "four-owner-strict-clippy.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "8ab052065ae8307b1ab2c9d42b0dca229a5a3b9d",
+      "--output",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-validation-01/source-after.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794312092452482233,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "source-after",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794312079652145231,
+    "stderr": {
+      "bytes": 0,
+      "file": "source-after.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 423,
+      "file": "source-after.stdout.log",
+      "sha256": "410f65105cfcfe45438e228fe44b11c7eaabb9a1b2d1f93d03bfdb3cca4198c0"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  },
+  {
+    "argv": [
+      "cmp",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-validation-01/source-before.json",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-validation-01/source-after.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794312092481805052,
+    "exit_code": 0,
+    "interrupted": false,
+    "label": "source-identical",
+    "process_exit_code": 0,
+    "recorder_error": null,
+    "start_unix_ns": 1794312092477075432,
+    "stderr": {
+      "bytes": 0,
+      "file": "source-identical.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "source-identical.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 1800
+  }
+]

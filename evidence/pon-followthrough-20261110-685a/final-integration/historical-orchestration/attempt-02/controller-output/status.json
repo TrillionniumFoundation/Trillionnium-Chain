@@ -1,0 +1,9 @@
+{
+  "current_head": null,
+  "end_unix_ns": 1794306701456211868,
+  "last_exit": 2,
+  "phase": "failed",
+  "security_status": "HOLD",
+  "stage": "preflight",
+  "started_unix_ns": 1794306701456211868
+}

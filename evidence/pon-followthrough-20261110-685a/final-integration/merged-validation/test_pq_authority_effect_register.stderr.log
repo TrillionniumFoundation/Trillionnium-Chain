@@ -1,0 +1,23 @@
+test_changed_source_refuses_and_rehashing_manifest_is_not_provenance (__main__.AuthorityEffectTests.test_changed_source_refuses_and_rehashing_manifest_is_not_provenance) ... ok
+test_cli_hold_and_fifo_refusal_have_machine_readable_exit_status (__main__.AuthorityEffectTests.test_cli_hold_and_fifo_refusal_have_machine_readable_exit_status) ... ok
+test_duplicate_json_fields_refuse_at_manifest_route_and_hash_levels (__main__.AuthorityEffectTests.test_duplicate_json_fields_refuse_at_manifest_route_and_hash_levels) ... ok
+test_every_actual_source_file_is_required_even_when_its_pin_remains (__main__.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains) ... ok
+test_every_nonempty_route_source_category_is_required (__main__.AuthorityEffectTests.test_every_nonempty_route_source_category_is_required) ... ok
+test_false_claims_must_be_boolean_false_not_zero (__main__.AuthorityEffectTests.test_false_claims_must_be_boolean_false_not_zero) ... ok
+test_json_syntax_numbers_unicode_and_size_are_bounded (__main__.AuthorityEffectTests.test_json_syntax_numbers_unicode_and_size_are_bounded) ... ok
+test_manifest_source_and_directory_symlinks_refuse (__main__.AuthorityEffectTests.test_manifest_source_and_directory_symlinks_refuse) ... ok
+test_other_real_settlement_module_is_not_this_bilateral_owner (__main__.AuthorityEffectTests.test_other_real_settlement_module_is_not_this_bilateral_owner) ... ok
+test_oversize_source_and_unsafe_manifest_path_refuse (__main__.AuthorityEffectTests.test_oversize_source_and_unsafe_manifest_path_refuse) ... ok
+test_real_locked_files_have_exact_scopes_and_never_qualify (__main__.AuthorityEffectTests.test_real_locked_files_have_exact_scopes_and_never_qualify) ... ok
+test_removing_both_real_native_path_and_pin_cannot_hide_it (__main__.AuthorityEffectTests.test_removing_both_real_native_path_and_pin_cannot_hide_it) ... ok
+test_reordered_rows_paths_and_hash_map_do_not_change_the_contract (__main__.AuthorityEffectTests.test_reordered_rows_paths_and_hash_map_do_not_change_the_contract) ... ok
+test_scope_promotion_of_validator_comparator_cache_or_finality_refuses (__main__.AuthorityEffectTests.test_scope_promotion_of_validator_comparator_cache_or_finality_refuses) ... ok
+test_source_lock_missing_extra_invalid_and_changed_hashes_refuse (__main__.AuthorityEffectTests.test_source_lock_missing_extra_invalid_and_changed_hashes_refuse) ... ok
+test_source_revision_schema_purpose_and_route_context_drift_refuse (__main__.AuthorityEffectTests.test_source_revision_schema_purpose_and_route_context_drift_refuse) ... ok
+test_unknown_missing_duplicate_and_malformed_route_fields_refuse (__main__.AuthorityEffectTests.test_unknown_missing_duplicate_and_malformed_route_fields_refuse) ... ok
+test_unreviewed_files_do_not_make_the_partial_register_complete (__main__.AuthorityEffectTests.test_unreviewed_files_do_not_make_the_partial_register_complete) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.856s
+
+OK

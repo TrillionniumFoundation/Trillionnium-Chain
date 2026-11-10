@@ -1,0 +1,34 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-02/integration/integrate_candidate_v2.py",
+    "--phase",
+    "all",
+    "--root",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "--inputs",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-02",
+    "--native-validation",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation",
+    "--native-followup",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04",
+    "--output",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-02"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794306701470850951,
+  "exit_code": 2,
+  "label": "integrate",
+  "start_unix_ns": 1794306701315173308,
+  "stderr": {
+    "bytes": 261,
+    "file": "integrate.stderr.log",
+    "sha256": "b618c2c6b60bd32920ea2c052e2d77008d3c4f72f8b9871e19ab669ded2c7854"
+  },
+  "stdout": {
+    "bytes": 0,
+    "file": "integrate.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

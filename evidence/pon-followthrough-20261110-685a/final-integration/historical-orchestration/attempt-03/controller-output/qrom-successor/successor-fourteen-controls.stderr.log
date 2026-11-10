@@ -1,0 +1,19 @@
+test_all_lifetime_and_cryptographic_obligations_remain_unknown (__main__.CurrentImplementationTests.test_all_lifetime_and_cryptographic_obligations_remain_unknown) ... ok
+test_all_six_local_crates_and_literal_inputs_are_bound (__main__.CurrentImplementationTests.test_all_six_local_crates_and_literal_inputs_are_bound) ... ok
+test_cli_report_is_created_once_and_never_replaces_prior_evidence (__main__.CurrentImplementationTests.test_cli_report_is_created_once_and_never_replaces_prior_evidence) ... ok
+test_contract_edit_cannot_relabel_unreviewed_source (__main__.CurrentImplementationTests.test_contract_edit_cannot_relabel_unreviewed_source) ... ok
+test_current_mapping_reaches_the_original_complete_saved_fixture (__main__.CurrentImplementationTests.test_current_mapping_reaches_the_original_complete_saved_fixture) ... ok
+test_fixed_parameters_and_fri_mapping_are_preserved (__main__.CurrentImplementationTests.test_fixed_parameters_and_fri_mapping_are_preserved) ... ok
+test_historical_reader_bytes_are_preserved (__main__.CurrentImplementationTests.test_historical_reader_bytes_are_preserved) ... ok
+test_included_work_profile_change_requires_review (__main__.CurrentImplementationTests.test_included_work_profile_change_requires_review) ... ok
+test_local_path_manifest_change_requires_review (__main__.CurrentImplementationTests.test_local_path_manifest_change_requires_review) ... ok
+test_missing_funded_source_is_refused (__main__.CurrentImplementationTests.test_missing_funded_source_is_refused) ... ok
+test_new_local_build_script_requires_review (__main__.CurrentImplementationTests.test_new_local_build_script_requires_review) ... ok
+test_old_contract_and_its_failure_remain_visible (__main__.CurrentImplementationTests.test_old_contract_and_its_failure_remain_visible) ... ok
+test_project_input_digests_are_the_reviewed_values (__main__.CurrentImplementationTests.test_project_input_digests_are_the_reviewed_values) ... ok
+test_unlisted_rust_file_is_not_silently_accepted (__main__.CurrentImplementationTests.test_unlisted_rust_file_is_not_silently_accepted) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 2.382s
+
+OK

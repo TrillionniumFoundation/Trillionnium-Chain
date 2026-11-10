@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794311078022229713,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "distributed-inventory",
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794311077907020285,
+  "stderr": {
+    "bytes": 0,
+    "file": "distributed-inventory.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 35,
+    "file": "distributed-inventory.stdout.log",
+    "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

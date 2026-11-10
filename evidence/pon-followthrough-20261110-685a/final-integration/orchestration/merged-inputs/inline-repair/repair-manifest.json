@@ -1,0 +1,39 @@
+{
+  "after": {
+    "bytes": 36087,
+    "git_blob": "89171c7274109594c3b5d82df8664d66eda710f8",
+    "sha256": "598f24ce01ecfffc3e2e8225c3bc6456dd2ec94702597b6da56e0d34472dc3e4"
+  },
+  "baseline": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "before": {
+    "bytes": 36087,
+    "git_blob": "4f863aa86694735aceac19542c2cc825010e36f8",
+    "sha256": "54e38ac1ae9cd0ef30c6a0539e287bcb6d98c6491f6db96b5cae53cbc42fe923"
+  },
+  "c3_corpus_receipt_sha256": "99335f72efb749357a143b42afb0b325e11257f0da8a98ad67915e034a863e7e",
+  "c3_workflow_raw_sha256": "54e38ac1ae9cd0ef30c6a0539e287bcb6d98c6491f6db96b5cae53cbc42fe923",
+  "checker_modified": false,
+  "patch": {
+    "bytes": 1255,
+    "git_blob": "580f9a47e54c929f7ad85410f031e29cddfcae92",
+    "sha256": "1015327d23d479c3536594c7fe3be097ed10012991252f8e70c68c8457d70e49"
+  },
+  "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+  "preflight_exit_code": 128,
+  "preflight_reason": "retained partial baseline is not a Git checkout",
+  "remote_modified": false,
+  "replacements": [
+    {
+      "line": 80,
+      "new_git_blob": "62f0a44f37d6258c32eee5f8977a99a51d89c284",
+      "old_git_blob": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+      "source": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "source_evidence": "actual C3 checker refusal plus independently read C3 corpus-receipt.json"
+    }
+  ],
+  "schema": "pon-inline-source-pin-repair-v1",
+  "scope": "single literal source-binding repair; no checker/test/owner/remote edits",
+  "static_checked_workflow_count": 31,
+  "static_inline_guard_count": 26,
+  "tests_executed": false
+}

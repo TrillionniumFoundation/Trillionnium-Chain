@@ -1,0 +1,1146 @@
+#!/usr/bin/env python3
+"""Draft-only integration after complete observations of the retained native failures.
+
+External orchestration only.  This file is not installed in the repository.
+Phases: prepare (stage), commit (one child), validate (actual checks), or all.
+No network, push, PR, activation, native rerun, or historical evidence rewrite.
+"""
+from __future__ import annotations
+
+import argparse
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import stat
+import subprocess
+import sys
+import time
+import uuid
+
+
+BASE = "da1374a200022bc14dc2bd325cc9ba29dbcd24ab"
+BASE_TREE = "00479a98dabc6b1fd91a0ceef82ffbdbffb78067"
+C1 = "11c9562252d3cf56b423c7756569be0c669d9606"
+C1_TREE = "94e1b4f1718dec1b88bccd7e1996ba83ca29ff8a"
+C2 = "8d8c0e64e7a301fc111a6720721a14816639e5aa"
+C2_TREE = "7c003a3d183ad33ff4f3349cbcce61564f73a2ba"
+ORIGINAL_COMMANDS_SHA256 = "bfb1cca4ee885685f4063104f809b4bcc857d3f7ddf7f4a72385f3529ad46a64"
+ORIGINAL_NODE_STDOUT_SHA256 = "022eabf9dba4c26fda5ab75d9d9b53df76f209e19b2af9b3f4ce256ebf4f0b6b"
+FOLLOWUP_SUMMARY_SHA256 = "f6693ac2f41c9906f0a01a013e89a00200b844c4a9a78f24decdcb3fc93b0271"
+FOLLOWUP_RECORDER_SHA256 = "13e84ec60d17cd039b0452b34d557305dd7fbb655c87efab6909bb53c24eced5"
+EVIDENCE = "evidence/pon-followthrough-20261110-685a"
+LEDGER_EVIDENCE = "evidence/pon-w1-lifetime-current-20261110-685a"
+PLAN = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+PLAN_MARKER = "## 2026-11-10: PoN native checkpoint and binding follow-through"
+CORPUS = "config/pon/pq-cross-branch-corpus-v1.json"
+INVENTORY = "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+VERIFY_SOURCE = "scripts/ci/verify_ci_source.py"
+NODE_TEST = "trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs"
+READER = "scripts/pon_fresh_rejection_report.py"
+INPUT_SHA256 = {
+    "ci-fixes/ci-native-evidence-fixes.patch": "3af253fa2c6828f3aa61e44554402a60e26172530f9cf16d07af40a3985f013b",
+    "qrom-port/qrom-current-ci.patch": "db3fcd65c427d297f308568ebb6889344b00b86e3e343a840fe4384152ceb7c0",
+    "qrom-port/additional-ci-registrations.patch": "73cd46b5b29ff24f1d1d6fbc0acf9a31576a2840a5a8841475097a1a00f50da8",
+    "qrom-port/fresh-rejection-ci-registration.patch": "2afcdfa4cb5321f8c5eeeaff2992214f65ce0e18b5d51a484d20d8721f475c94",
+    "binding-update-v2/required-paths.patch": "aafae62ab0f5f7920af757b0c2645b70348b0dda3486207f22182d7771aaa8a1",
+    "binding-update-v2/update_corpus.py": "1e80cad195fb03a18f57387575b4b89e4ef7eb4be697c0887263ee682fb9a6d9",
+    "binding-tool/prepare_authority_pq128_binding_v2.py": "6e6ec55cba1d603f3cf543c6bbc46517cf297455fb3dcedc50c70797ee915de4",
+    "integration/update_w1_ledger_binding_v2.py": "80ef5112d151ff9bea7d69ada914fd800a0297d4d06acf0981284906809b9a3d",
+    "qrom-successor/prepare_qrom_successor_binding_v2.py": "63d6ff47288618ffd7b037d06ab54e33b32abbd55c18412419fa7f18b6ea0de0",
+}
+PATCHES = tuple(path for path in INPUT_SHA256 if path.endswith(".patch"))
+AUTHORITY_TARGETS = (
+    "config/pon/pq-authority-effects-v1.json",
+    "scripts/ci/pq_authority_effect_register.py",
+    "scripts/ci/test_pq_authority_effect_register.py",
+    "config/pon/pq128-source-lock-v1.json",
+    "config/pon/pq128-lifetime-budget-v1.json",
+    "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+    "docs/security/PQ128_LIFETIME_BUDGET_V1.md",
+)
+LEDGER_TARGETS = (
+    "scripts/w1_lifetime_ledger.py",
+    "scripts/ci/test_w1_lifetime_ledger.py",
+    ".github/workflows/pon-w1-qrom-closure.yml",
+    LEDGER_EVIDENCE + "/README.md",
+    LEDGER_EVIDENCE + "/project-input.json",
+    LEDGER_EVIDENCE + "/project-report.json",
+)
+QROM_EVIDENCE = "evidence/pon-w1-qrom-current-20261110-685a"
+QROM_TARGETS = (
+    "config/pon/w1-qrom-implementation-current-v2.json",
+    "scripts/w1_qrom_current_implementation_audit.py",
+    "scripts/ci/test_w1_qrom_current_implementation_audit.py",
+    "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+    *(QROM_EVIDENCE + "/" + name for name in (
+        "README.md", "source-binding.json", "current-report.json",
+        "prior-v2-on-c2.command.json", "prior-v2-on-c2.stdout.log", "prior-v2-on-c2.stderr.log",
+        "historical/current-v2.json", "historical/current-auditor.py", "historical/current-tests.py",
+        "historical/current-mapping.md.txt",
+    )),
+)
+NATIVE_OWNERS = tuple("trillionnium/crates/" + name + "/" for name in
+                      ("trnm-pon-node", "trnm-service-settlement", "trnm-crypto-primitives"))
+NATIVE_PATHS = {
+    "trillionnium/crates/trnm-pon-node/src/store.rs", NODE_TEST,
+    "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+    "trillionnium/crates/trnm-service-settlement/src/native_budget/tests.rs",
+    "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs",
+    "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_fresh_rejection_cost.rs",
+    READER, "scripts/ci/test_fresh_rejection_report.py",
+    "docs/research/PON_FRESH_REJECTION_COST_V1.md",
+}
+MAX_FILE = 64 * 1024 * 1024
+MAX_NATIVE_TOTAL = 512 * 1024 * 1024
+ENV = dict(os.environ, PYTHONDONTWRITEBYTECODE="1", GIT_NO_LAZY_FETCH="1",
+           GIT_NO_REPLACE_OBJECTS="1", CARGO_TERM_COLOR="never", CARGO_NET_OFFLINE="true")
+
+
+class Refusal(ValueError):
+    pass
+
+
+def require(value, reason):
+    if not value:
+        raise Refusal(reason)
+
+
+def sha(raw):
+    return hashlib.sha256(raw).hexdigest()
+
+
+def blob_id(raw):
+    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw,
+                        usedforsecurity=False).hexdigest()
+
+
+def encoded(value):
+    return (json.dumps(value, indent=2, sort_keys=True, allow_nan=False) + "\n").encode()
+
+
+def strict_json(raw):
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            require(key not in result, "duplicate JSON key: " + key)
+            result[key] = value
+        return result
+    return json.loads(raw, object_pairs_hook=unique,
+                      parse_constant=lambda value: (_ for _ in ()).throw(Refusal("nonfinite JSON: " + value)))
+
+
+def safe_relative(value):
+    require(type(value) is str and "\\" not in value and "\0" not in value,
+            "unsafe relative path")
+    parts = value.split("/")
+    require(all(part not in ("", ".", "..") for part in parts)
+            and not Path(value).is_absolute(), "unsafe relative path: " + value)
+    return value
+
+
+def whitespace_paths(raw_members):
+    """Exclude only enumerated original streams/patches, never a directory glob."""
+    paths = sorted(raw_members)
+    require(len(paths) == len(set(paths)), "duplicate raw whitespace exemption")
+    require(all(safe_relative(path).startswith(EVIDENCE + "/native/") and path.endswith((".log", ".patch"))
+                for path in paths), "whitespace exemption is not an original native stream or patch")
+    return [".", *(":(exclude,literal)" + path for path in paths)]
+
+
+def directory(path, *, exists=True):
+    require(path.is_absolute() and str(path) == os.path.normpath(path), "absolute normalized path required")
+    for item in reversed((path, *path.parents)):
+        if not item.exists():
+            require(not exists and item == path, "missing directory ancestor: " + str(item))
+            require(not item.is_symlink(), "symlink directory: " + str(item))
+            continue
+        require(not item.is_symlink() and item.is_dir(), "nonregular directory ancestry: " + str(item))
+    return path
+
+
+def read_regular(path, limit=MAX_FILE):
+    """Open each component without following links; never block on a FIFO."""
+    require(path.is_absolute(), "absolute file path required")
+    parts = path.parts[1:]
+    require(parts and all(part not in ("", ".", "..") for part in parts), "unsafe file path")
+    parent = os.open("/", os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    descriptor = None
+    try:
+        for part in parts[:-1]:
+            child = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=parent)
+            os.close(parent)
+            parent = child
+        descriptor = os.open(parts[-1], os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW, dir_fd=parent)
+        before = os.fstat(descriptor)
+        require(stat.S_ISREG(before.st_mode) and before.st_size <= limit, "nonregular or oversized file: " + str(path))
+        chunks, count = [], 0
+        while count <= limit:
+            chunk = os.read(descriptor, min(65536, limit + 1 - count))
+            if not chunk:
+                break
+            chunks.append(chunk)
+            count += len(chunk)
+        after = os.fstat(descriptor)
+        current = os.stat(parts[-1], dir_fd=parent, follow_symlinks=False)
+        identity = lambda value: (value.st_dev, value.st_ino, value.st_mode, value.st_size,
+                                  value.st_mtime_ns, value.st_ctime_ns)
+        require(count == before.st_size and count <= limit and identity(before) == identity(after) == identity(current),
+                "file changed while reading: " + str(path))
+        return b"".join(chunks), stat.S_IMODE(before.st_mode)
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+        os.close(parent)
+
+
+def fingerprint(path):
+    raw, mode = read_regular(path)
+    return {"bytes": len(raw), "sha256": sha(raw), "git_blob": blob_id(raw),
+            "git_mode": "100755" if mode & 0o111 else "100644"}
+
+
+def make_parents(path):
+    if not path.exists():
+        make_parents(path.parent)
+        path.mkdir(mode=0o755)
+    directory(path)
+
+
+def write_new(path, raw, mode=0o644):
+    make_parents(path.parent)
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, mode)
+    with os.fdopen(fd, "wb") as stream:
+        stream.write(raw)
+        stream.flush()
+        os.fsync(stream.fileno())
+
+
+def replace_expected(path, before, after):
+    current, mode = read_regular(path)
+    require(current == before, "independent edit before replacement: " + str(path))
+    temporary = path.parent / (".pon-integrate-" + uuid.uuid4().hex)
+    write_new(temporary, after, mode)
+    try:
+        require(read_regular(path)[0] == before, "independent edit while staging: " + str(path))
+        os.replace(temporary, path)
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+
+
+def atomic_json(path, value):
+    raw = encoded(value)
+    if path.exists():
+        replace_expected(path, read_regular(path)[0], raw)
+    else:
+        write_new(path, raw)
+
+
+def git(root, *args, env_extra=None):
+    result = subprocess.run(["git", "--no-replace-objects", *args], cwd=root, env=dict(ENV, **(env_extra or {})),
+                            capture_output=True, timeout=90, check=False)
+    require(result.returncode == 0, "git " + " ".join(args) + " refused: " + result.stderr.decode(errors="replace")[-2000:])
+    return result.stdout
+
+
+def git_text(root, *args, env_extra=None):
+    return git(root, *args, env_extra=env_extra).decode().strip()
+
+
+def tree_entries(root, revision):
+    result = {}
+    for row in git(root, "ls-tree", "-r", "-z", revision).split(b"\0"):
+        if not row:
+            continue
+        metadata, path = row.split(b"\t", 1)
+        mode, kind, oid = metadata.decode().split()
+        result[path.decode()] = {"mode": mode, "kind": kind, "blob": oid}
+    return result
+
+
+def patch_paths(raw):
+    paths = []
+    for line in raw.decode().splitlines():
+        if line.startswith("+++ b/"):
+            paths.append(safe_relative(line[6:]))
+        require(line != "+++ /dev/null", "patch deletes a path")
+    require(paths and len(set(paths)) == len(paths), "empty or duplicate patch path set")
+    return paths
+
+
+def native_snapshot(native):
+    directory(native)
+    files, total = {}, 0
+    for path in sorted(native.iterdir()):
+        name = safe_relative(path.name)
+        require(re.fullmatch(r"[A-Za-z0-9_.-]+", name) is not None
+                and name.endswith((".json", ".log", ".patch")),
+                "unreviewed native output member: " + name)
+        raw, mode = read_regular(path)
+        total += len(raw)
+        require(total <= MAX_NATIVE_TOTAL, "native output exceeds reviewed total bound")
+        files[name] = {"raw": raw, "source": path,
+                       "record": {"bytes": len(raw), "sha256": sha(raw), "git_blob": blob_id(raw),
+                                  "original_mode": oct(mode)}}
+    return files
+
+
+def combined_native_snapshot(native, followup):
+    result = {}
+    for prefix, path in (("original-v3", native), ("followup-v4", followup)):
+        result.update({prefix + "/" + name: item for name, item in native_snapshot(path).items()})
+    require(sum(item["record"]["bytes"] for item in result.values()) <= MAX_NATIVE_TOTAL,
+            "combined native observations exceed reviewed total bound")
+    return result
+
+
+def native_rows(files, root):
+    require("commands.json" in files, "native command records missing")
+    commands = strict_json(files["commands.json"]["raw"])
+    require(type(commands) is list and commands, "native command array is empty or malformed")
+    rows = {}
+    for row in commands:
+        require(type(row) is dict and type(row.get("label")) is str and row["label"] not in rows,
+                "missing or duplicate native command label")
+        label = row["label"]
+        require(re.fullmatch(r"[A-Za-z0-9_.-]+", label) is not None, "unsafe native command label")
+        require(type(row.get("argv")) is list and all(type(arg) is str for arg in row["argv"])
+                and type(row.get("exit_code")) is int and row.get("cwd") == str(root),
+                "malformed native command or unexpected source directory: " + label)
+        require(type(row.get("start_unix_ns")) is int and type(row.get("end_unix_ns")) is int
+                and 0 < row["start_unix_ns"] <= row["end_unix_ns"], "invalid native command interval: " + label)
+        for stream in ("stdout", "stderr"):
+            report = row.get(stream, {})
+            name = label + "." + stream + ".log"
+            require(report.get("file") == name and name in files, "missing original native stream: " + name)
+            require(type(report.get("bytes")) is int and report["bytes"] == files[name]["record"]["bytes"]
+                    and report.get("sha256") == files[name]["record"]["sha256"], "native stream digest differs: " + name)
+        rows[label] = row
+    return commands, rows
+
+
+def rust_results(files, label):
+    text = files[label + ".stdout.log"]["raw"].decode(errors="replace")
+    return [tuple(map(int, fields)) for fields in re.findall(
+        r"^test result: (?:ok|FAILED)\. (\d+) passed; (\d+) failed; (\d+) ignored;", text, re.M)]
+
+
+def original_node_harness(raw):
+    """Retain the reviewed interleaved subprocess output separately from its main harness.
+
+    The caller already binds all raw bytes to ORIGINAL_NODE_STDOUT_SHA256.
+    Running announcements are not paired as a stack: concurrent subprocesses
+    can interleave and some announcements have no terminal summary in stdout.
+    """
+    lines = raw.decode("utf-8").splitlines()
+    summary_pattern = re.compile(r"^test result: (ok|FAILED)\. (\d+) passed; (\d+) failed; (\d+) ignored; (\d+) measured; (\d+) filtered out; finished in ([0-9]+(?:\.[0-9]+)?)s$")
+    status_pattern = re.compile(r"^test (\S+) \.\.\. (ok|FAILED|ignored)(?:,.*)?$")
+    summaries = [(index, match) for index, line in enumerate(lines)
+                 if (match := summary_pattern.fullmatch(line))]
+    wanted = [("ok", 1, 0, 0, 0, 1325)] * 3 + [("FAILED", 1285, 2, 39, 0, 0)]
+    actual = [(match[1], *map(int, match.group(2, 3, 4, 5, 6))) for _, match in summaries]
+    require(actual == wanted, "original node nested/main harness summary sequence differs")
+    running = [(index, int(match[1])) for index, line in enumerate(lines)
+               if (match := re.fullmatch(r"running (\d+) tests?", line))]
+    require(len(running) == 14 and running[0][1] == 1326
+            and all(count == 1 for _, count in running[1:])
+            and running[0][0] == next(index for index, line in enumerate(lines) if line.strip()),
+            "original node main/nested running announcements differ")
+    require(summaries[-1][0] == max(index for index, line in enumerate(lines) if line.strip()),
+            "original node terminal main summary is not the final nonempty line")
+    child_names = ["operator_task_policy::file_tests::held_file_substitution_child",
+                   "store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open",
+                   "store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open"]
+    child_status_lines, nested = set(), []
+    for (index, match), name in zip(summaries[:-1], child_names):
+        previous = max(line for line in range(index) if lines[line].strip())
+        status = status_pattern.fullmatch(lines[previous])
+        require(status is not None and status[1] == name and status[2] == "ok",
+                "original node child summary has a different completed test row")
+        child_status_lines.add(previous)
+        nested.append({"summary_line": index + 1, "status_line": previous + 1,
+                       "test": name, "result": match[1], "passed": 1, "failed": 0, "ignored": 0,
+                       "measured": 0, "filtered_out": 1325, "elapsed_seconds_text": match[7]})
+    rows = [(index, match[1], match[2]) for index, line in enumerate(lines)
+            if (match := status_pattern.fullmatch(line))]
+    main_rows = [(name, status) for index, name, status in rows if index not in child_status_lines]
+    require(len(rows) == 1329 and len(main_rows) == 1326 and len({name for name, _ in main_rows}) == 1326,
+            "original node main test roster is incomplete or duplicated")
+    counts = {status: sum(actual_status == status for _, actual_status in main_rows)
+              for status in ("ok", "FAILED", "ignored")}
+    failures = sorted(name for name, status in main_rows if status == "FAILED")
+    require(counts == {"ok": 1285, "FAILED": 2, "ignored": 39} and failures == [
+        "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation"],
+        "original node main status rows differ from the failed terminal denominator")
+    return {"schema": "pon-original-node-interleaved-harness-v1", "raw_sha256": sha(raw),
+            "main_announced_tests": 1326, "main_status_counts": counts, "main_failed_names": failures,
+            "main_unique_names": 1326, "main_ignored_tests_executed_claimed": False,
+            "main_status_rows_sha256": sha(encoded(main_rows)), "main_summary_line": summaries[-1][0] + 1,
+            "main_elapsed_seconds_text": summaries[-1][1][7], "main_result": "FAILED",
+            "nested_running_announcements": [{"line": index + 1, "tests": count} for index, count in running[1:]],
+            "nested_completed_summaries": nested, "raw_status_rows": len(rows),
+            "announcement_to_summary_pairing_claimed": False, "nested_successes_added_to_main": False}
+
+
+def validate_native(native, followup, root):
+    original, later = native_snapshot(native), native_snapshot(followup)
+    required = {"commands.json", "commands-before-v3.json", "source.json", "source-v3.json",
+                "source-before-v3.json", "red-source.patch", "red-v3-source.json"}
+    require(required <= original.keys(), "original failed native cohort is incomplete: " + repr(sorted(required - original.keys())))
+    require(not ({"summary-v3.json", "source-after-v3.json"} & original.keys()),
+            "failed original native cohort must not acquire a fabricated v3 completion or source-after record")
+    required_later = {"commands.json", "source.json", "summary.json", "status.json", "source-before.json", "source-after.json",
+                      "fresh-profile-before.json", "fresh-profile-after.json"}
+    require(required_later <= later.keys(), "native followup is incomplete: " + repr(sorted(required_later - later.keys())))
+    source, old_source = strict_json(original["source-v3.json"]["raw"]), strict_json(original["source.json"]["raw"])
+    summary, later_source = strict_json(later["summary.json"]["raw"]), strict_json(later["source.json"]["raw"])
+    require(summary.get("observation_complete") is True and summary.get("all_followup_checks_passed") is False
+            and summary.get("original_full_node_suite_passed") is False and summary.get("full_suite_repeated") is False
+            and summary.get("open_consensus_qualified") is False and summary.get("production_activation") is False
+            and summary.get("security_status") == "HOLD", "followup is incomplete or relabels a retained failure")
+    require(later["summary.json"]["record"]["sha256"] == FOLLOWUP_SUMMARY_SHA256,
+            "reviewed actual followup summary bytes changed")
+    require(source.get("baseline") == BASE and source.get("prior_code_commit") == C1 and source.get("clean") is True
+            and source.get("commit") == C2 and source.get("tree") == C2_TREE,
+            "original C2 source identities do not match")
+    require(source.get("changed_from_c1") == [NODE_TEST, READER], "unexpected C2 source delta")
+    require(old_source.get("commit") == C1 and old_source.get("tree") == C1_TREE
+            and old_source.get("baseline") == BASE and old_source.get("clean") is True
+            and set(old_source.get("changed_paths", [])) == NATIVE_PATHS, "C1 source identity or path scope differs")
+    require(summary.get("schema") == "pon-native-failure-followup-v1"
+            and summary.get("source") == later_source.get("source") == C2
+            and summary.get("tree") == later_source.get("tree") == C2_TREE
+            and summary.get("recorder_sha256") == later_source.get("recorder_sha256") == FOLLOWUP_RECORDER_SHA256
+            and all(summary.get(key) == value for key, value in later_source.items())
+            and later_source.get("source_mutations_performed") is False
+            and later_source.get("all_prior_observations_retained") is True,
+            "followup source or original observation binding differs")
+    require(later["source-before.json"]["raw"] == later["source-after.json"]["raw"] == original["source-before-v3.json"]["raw"],
+            "followup does not close the original C2 source bracket")
+    bracket = strict_json(original["source-before-v3.json"]["raw"])
+    require(bracket.get("schema") == "trnm-ci-source-v1" and bracket.get("kind") == "head"
+            and bracket.get("tested_commit") == bracket.get("candidate") == C2
+            and bracket.get("tested_tree") == C2_TREE and bracket.get("base") is None
+            and bracket.get("prospective_merge") is None and bracket.get("tracked_worktree_verified") is True
+            and bracket.get("tests_executed_by_identity_check") is False
+            and type(bracket.get("tracked_entries")) is int and bracket["tracked_entries"] == 27665
+            and type(bracket.get("tracked_bytes")) is int and bracket["tracked_bytes"] > 0,
+            "original source verifier identity is incomplete")
+    commands, rows = native_rows(original, root)
+    require(len(commands) == 39 and original["commands.json"]["record"]["sha256"] == ORIGINAL_COMMANDS_SHA256,
+            "original stopped native command cohort changed")
+    require(summary.get("prior_commands_sha256") == ORIGINAL_COMMANDS_SHA256
+            and summary.get("prior_full_suite_sha256") == ORIGINAL_NODE_STDOUT_SHA256
+            and original.get("node-library-v3.stdout.log", {}).get("record", {}).get("sha256") == ORIGINAL_NODE_STDOUT_SHA256,
+            "followup replaced original failure bytes")
+    require(summary.get("prior_full_suite") == {"passed": 1285, "failed": 2, "ignored": 39, "exit_code": 101},
+            "original full suite denominator changed")
+    prior = strict_json(original["commands-before-v3.json"]["raw"])
+    require(type(prior) is list and len(prior) == 20 and commands[:len(prior)] == prior
+            and prior[-1]["label"] == "green-confirmation" and prior[-1]["exit_code"] == 101,
+            "C1 failed observations were replaced or truncated")
+    failures = {"red-settlement", "red-settlement-r2", "red-confirmation-r2", "green-confirmation", "red-confirmation-v3", "node-library-v3"}
+    require({name for name, row in rows.items() if row["exit_code"] != 0} == failures
+            and all(rows[name]["exit_code"] == 101 for name in failures), "unexpected original native failure set")
+    require(commands[-1]["label"] == "node-library-v3" and commands[-1]["exit_code"] == 101,
+            "original full suite is not the retained stopping failure")
+    require("test result:" not in original["red-settlement.stdout.log"]["raw"].decode(errors="replace")
+            and "--offline" in rows["red-settlement"]["argv"], "initial offline observation scope differs")
+    offline_error = original["red-settlement.stderr.log"]["raw"].decode(errors="replace").lower()
+    require("offline" in offline_error and any(reason in offline_error for reason in
+            ("no matching package", "failed to download", "attempting to make an http request")),
+            "initial failure is not the retained offline dependency observation")
+    cargo = ["cargo", "test", "--manifest-path", "trillionnium/Cargo.toml", "--locked", "--offline"]
+    expected_original = {
+        "green-confirmation-v3": cargo + ["-p", "trnm-pon-node", "--lib", "confirmation_chainwork_tests", "--", "--nocapture"],
+        "green-settlement-v3": cargo + ["-p", "trnm-service-settlement", "--lib", "readback_rejects", "--", "--nocapture"],
+        "settlement-all-features-v3": cargo + ["-p", "trnm-service-settlement", "--all-features"],
+        "crypto-library-v3": cargo + ["-p", "trnm-crypto-primitives", "--lib"],
+        "node-library-v3": cargo + ["-p", "trnm-pon-node", "--lib"],
+    }
+    for label, argv in expected_original.items():
+        require(label in rows and rows[label]["exit_code"] == (101 if label == "node-library-v3" else 0)
+                and rows[label]["argv"] == argv, "original native gate differs: " + label)
+    require(all(label in rows and rows[label]["exit_code"] == 0 for label in
+                ("v3-committed-preflight", "v3-source-before", "v3-locked-graph", "v3-rustc", "v3-cargo")),
+            "original native source/toolchain/graph preconditions are incomplete")
+    corrected = strict_json(original["red-v3-source.json"]["raw"])
+    require(corrected.get("dependency_checkpoint") == C1 and corrected.get("node_production_base") == BASE
+            and corrected.get("complete_baseline_checkout_claimed") is False
+            and corrected.get("production_activation") is False, "v3 counterfactual scope changed")
+    expected_counts = {"red-settlement-r2": [(2, 6, 0)], "red-confirmation-r2": [(0, 4, 0)],
+                       "green-settlement": [(8, 0, 0)], "green-confirmation": [(3, 1, 0)],
+                       "red-confirmation-v3": [(0, 4, 0)], "green-confirmation-v3": [(4, 0, 0)],
+                       "green-settlement-v3": [(8, 0, 0)], "settlement-all-features-v3": [(77, 0, 0), (2, 0, 0)],
+                       "crypto-library-v3": [(196, 0, 0)], "node-library-v3": [(1285, 2, 39)]}
+    for label, wanted in expected_counts.items():
+        if label == "node-library-v3":
+            node_harness = original_node_harness(original[label + ".stdout.log"]["raw"])
+        else:
+            require(rust_results(original, label) == wanted, "original native denominator differs: " + label)
+
+    later_commands, later_rows = native_rows(later, root)
+    binary = summary.get("binary", {})
+    require(type(binary) is dict and binary.get("exit_code") == 0
+            and type(binary.get("path")) is str and Path(binary["path"]).is_absolute()
+            and re.fullmatch(r"[0-9a-f]{64}", binary.get("sha256", "")) is not None,
+            "actual followup release binary receipt missing")
+    verify = ["python3", "-B", VERIFY_SOURCE, "--kind", "head", "--expected-head", C2, "--output"]
+    isolated = {
+        "isolated-large-parent": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "isolated-inactive-page": "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+    }
+    expected_later = {
+        "preflight": ["bash", "scripts/project-preflight.sh"],
+        "source-before": verify + [str(followup / "source-before.json")],
+        "prior-source-identical": ["cmp", str(native / "source-before-v3.json"), str(followup / "source-before.json")],
+        **{label: cargo + ["-p", "trnm-pon-node", "--lib", name, "--", "--exact", "--nocapture"] for label, name in isolated.items()},
+        "fresh-probe-tests": cargo + ["--release", "-p", "trnm-crypto-primitives", "--example", "pon_fresh_rejection_cost"],
+        "changed-owner-clippy": ["cargo", "clippy", "--manifest-path", "trillionnium/Cargo.toml", "--locked", "--offline", "-p", "trnm-pon-node", "-p", "trnm-service-settlement", "-p", "trnm-crypto-primitives", "--all-targets", "--", "-D", "warnings"],
+        "format-check": ["cargo", "fmt", "--manifest-path", "trillionnium/Cargo.toml", "--all", "--", "--check"],
+        "fresh-probe-build": ["cargo", "build", "--manifest-path", "trillionnium/Cargo.toml", "--locked", "--offline", "--release", "-p", "trnm-crypto-primitives", "--example", "pon_fresh_rejection_cost"],
+        "fresh-probe-native": [binary["path"]],
+        "fresh-probe-reader": ["python3", "-B", READER, str(followup / "fresh-probe-native.stdout.log"), "--raw-sha256",
+                               later.get("fresh-probe-native.stdout.log", {}).get("record", {}).get("sha256")],
+        "fresh-reader-tests": ["python3", "-B", "scripts/ci/test_fresh_rejection_report.py", "-v"],
+        "source-after": verify + [str(followup / "source-after.json")],
+        "source-identical": ["cmp", str(followup / "source-before.json"), str(followup / "source-after.json")],
+    }
+    require(list(later_rows) == list(expected_later) and len(later_commands) == 14,
+            "followup command roster/order differs from the actual fourteen observations")
+    require(summary.get("commands") == [{"label": row["label"], "exit_code": row["exit_code"]} for row in later_commands],
+            "followup summary omitted or relabeled commands")
+    require({name: row["exit_code"] for name, row in later_rows.items() if row["exit_code"] != 0}
+            == {name: 101 for name in isolated}, "unexpected followup failure set")
+    for label, argv in expected_later.items():
+        require(later_rows[label]["argv"] == argv, "followup native argv differs: " + label)
+    for label, name in isolated.items():
+        raw = later[label + ".stdout.log"]["raw"]
+        require(rust_results(later, label) == [(0, 1, 0)] and b"running 1 test\n" in raw
+                and re.search(rb"^[ \t]*(?:test )?" + re.escape(name.encode()) + rb"(?: \.\.\. FAILED)?$", raw, re.M) is not None,
+                "original exact failure was not actually observed: " + label)
+    require(rust_results(later, "fresh-probe-tests") == [(3, 0, 0)], "release probe test denominator differs")
+    reader_log = later["fresh-reader-tests.stderr.log"]["raw"]
+    require(re.search(rb"^Ran 26 tests in ", reader_log, re.M) is not None
+            and re.search(rb"^OK$", reader_log, re.M) is not None, "followup reader 26-test gate differs")
+    later_status = strict_json(later["status.json"]["raw"])
+    require(later_status.get("stage") == "complete-observation" and later_status.get("phase") == "finished"
+            and later_status.get("exit_code") == 0 and later_status.get("source") == C2
+            and later_status.get("original_full_node_suite_passed") is False,
+            "followup status is not a completed failed-suite observation")
+    files = {**{"original-v3/" + name: item for name, item in original.items()},
+             **{"followup-v4/" + name: item for name, item in later.items()}}
+    require(sum(item["record"]["bytes"] for item in files.values()) <= MAX_NATIVE_TOTAL,
+            "combined native observations exceed reviewed total bound")
+    observations = {"schema": "pon-followthrough-native-observations-v2", "code_checkpoint": source,
+                    "prior_code_checkpoint": old_source, "original_results": expected_counts,
+                    "original_node_harness": node_harness,
+                    "original_command_count": len(commands), "followup_command_count": len(later_commands),
+                    "original_failure_labels": sorted(failures), "followup_failure_labels": list(isolated),
+                    "full_node_suite": {"passed": 1285, "failed": 2, "ignored": 39, "exit_code": 101},
+                    "followup_exact_results": {name: {"passed": 0, "failed": 1, "ignored": 0, "exit_code": 101} for name in isolated},
+                    "raw_member_count": len(files), "binary_sha256": binary["sha256"],
+                    "native_observation_complete": True, "native_full_suite_passed": False, "draft_only": True,
+                    "original_v3_completed": False, "original_source_after_v3_created": False,
+                    "source_bracket_closed_by_followup": True, "binding_child_tests_recorded_here": False,
+                    "open_consensus_qualified": False, "production_activation": False, "security_status": "HOLD",
+                    "counterfactual": corrected, "baseline_two_test_control_included_here": False}
+    return files, observations
+
+
+def selected_history(root):
+    """Verify selected actual objects without pretending the older history is complete."""
+    shallow = git_text(root, "rev-parse", "--is-shallow-repository")
+    require(shallow in ("true", "false"), "unreadable Git shallow-history state")
+    objects = set()
+    selected = []
+    for commit, tree, parents in ((BASE, BASE_TREE, None), (C1, C1_TREE, [BASE]), (C2, C2_TREE, [C1])):
+        raw = git(root, "cat-file", "commit", commit)
+        require(hashlib.sha1(b"commit " + str(len(raw)).encode() + b"\0" + raw, usedforsecurity=False).hexdigest() == commit,
+                "selected commit raw bytes differ")
+        header = raw.split(b"\n\n", 1)[0].decode().splitlines()
+        actual_tree = [line[5:] for line in header if line.startswith("tree ")]
+        actual_parents = [line[7:] for line in header if line.startswith("parent ")]
+        require(actual_tree == [tree] and git_text(root, "rev-parse", commit + "^{tree}") == tree,
+                "selected commit tree differs")
+        if parents is not None:
+            require(actual_parents == parents and git_text(root, "rev-list", "--parents", "-n", "1", commit).split() == [commit, *parents],
+                    "selected parent chain is absent, shallow-cut or different")
+        entries = tree_entries(root, commit)
+        require(entries and all(entry["kind"] == "blob" and entry["mode"] in ("100644", "100755", "120000")
+                                for entry in entries.values()), "selected tree has missing or unsupported source entries")
+        objects.update(entry["blob"] for entry in entries.values())
+        selected.append({"commit": commit, "tree": tree, "raw_parents": actual_parents, "tracked_entries": len(entries)})
+    ordered = sorted(objects)
+    result = subprocess.run(["git", "--no-replace-objects", "cat-file", "--batch-check=%(objectname) %(objecttype) %(objectsize)"],
+                            input=("\n".join(ordered) + "\n").encode(), cwd=root, env=ENV,
+                            capture_output=True, timeout=90, check=False)
+    lines = result.stdout.decode().splitlines()
+    require(result.returncode == 0 and len(lines) == len(ordered), "selected source object inventory is incomplete")
+    for oid, line in zip(ordered, lines):
+        parts = line.split()
+        require(len(parts) == 3 and parts[0] == oid and parts[1] == "blob" and parts[2].isdigit(),
+                "selected source blob is unavailable: " + oid)
+    git(root, "merge-base", "--is-ancestor", BASE, C1)
+    git(root, "merge-base", "--is-ancestor", C1, C2)
+    git(root, "merge-base", "--is-ancestor", C2, "HEAD")
+    return {"schema": "pon-selected-native-history-v2", "selected_commits": selected,
+            "selected_blob_objects_available": len(ordered), "selected_parent_chain_complete": True,
+            "selected_chain_scope": "BASE to C1 to C2 only; older BASE ancestors are not traversed",
+            "selected_c2_is_ancestor_of_current_head": True, "global_history_shallow": shallow == "true",
+            "complete_global_history_claimed": False, "history_fetched_or_rewritten": False}
+
+
+class Controller:
+    def __init__(self, args):
+        self.owns_output = False
+        self.args = args
+        self.controller_sha256 = sha(read_regular(Path(__file__).absolute())[0])
+        self.root, self.inputs, self.native, self.followup, self.out = args.root, args.inputs, args.native_validation, args.native_followup, args.output
+        for path in (self.root, self.inputs, self.native, self.followup):
+            directory(path)
+        require(not any(os.environ.get(name) for name in
+                        ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_COMMON_DIR", "GIT_OBJECT_DIRECTORY",
+                         "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_CONFIG_COUNT")),
+                "external Git repository/index/config environment override refused")
+        require(not self.inputs.is_relative_to(self.root) and not self.native.is_relative_to(self.root)
+                and not self.followup.is_relative_to(self.root) and self.native != self.followup
+                and not self.out.is_relative_to(self.root), "inputs, native output and controller receipts must be outside ROOT")
+        directory(self.out, exists=args.phase not in ("prepare", "all"))
+        self.check_inputs()
+        self.native_files, self.observations = validate_native(self.native, self.followup, self.root)
+        self.c2 = self.observations["code_checkpoint"]["commit"]
+        self.c2_tree = self.observations["code_checkpoint"]["tree"]
+        require(git_text(self.root, "rev-parse", "--show-toplevel") == str(self.root), "ROOT is not the full worktree root")
+        self.history = selected_history(self.root)
+        sparse = subprocess.run(["git", "config", "--bool", "core.sparseCheckout"], cwd=self.root,
+                                env=ENV, capture_output=True, timeout=60)
+        require(sparse.returncode in (0, 1) and sparse.stdout.strip() in (b"", b"false"), "sparse checkout refused")
+        require(all(not line or line.startswith(b"H ") for line in git(self.root, "ls-files", "-v", "-z").split(b"\0")),
+                "hidden, sparse or nonordinary index entries refused")
+        require(git_text(self.root, "rev-parse", BASE + "^{tree}") == BASE_TREE
+                and git_text(self.root, "rev-parse", C1 + "^{tree}") == C1_TREE
+                and git_text(self.root, "rev-parse", self.c2 + "^{tree}") == self.c2_tree, "actual Git checkpoint tree differs")
+        require(git_text(self.root, "rev-list", "--parents", "-n", "1", self.c2).split() == [self.c2, C1],
+                "C2 is not the recorded single child of C1")
+        git(self.root, "merge-base", "--is-ancestor", BASE, C1)
+        require(set(git_text(self.root, "diff", "--name-only", C1, self.c2).splitlines()) == {NODE_TEST, READER}, "actual C2 path delta differs")
+        require(set(git_text(self.root, "diff", "--name-only", BASE, self.c2).splitlines()) == NATIVE_PATHS, "actual native source scope differs")
+        require(git(self.root, "show", BASE + ":" + VERIFY_SOURCE) == git(self.root, "show", self.c2 + ":" + VERIFY_SOURCE),
+                "original source verifier changed before integration")
+        if args.phase in ("prepare", "all"):
+            require(not self.out.exists(), "output already exists; inspect it or use the exact next phase")
+            require(git_text(self.root, "rev-parse", "HEAD") == self.c2 and not git(self.root, "status", "--porcelain"),
+                    "prepare requires the actual failed-observation C2 HEAD and a clean checkout")
+            self.out.mkdir(mode=0o755)
+            self.owns_output = True
+            self.commands = []
+            self.state = {"schema": "pon-followthrough-controller-state-v2", "phase": "starting", "root": str(self.root),
+                          "inputs": str(self.inputs), "native_validation": str(self.native), "native_followup": str(self.followup), "source_c2": self.c2,
+                          "source_c2_tree": self.c2_tree, "expected_head": self.c2, "expected_index": self.c2_tree,
+                          "expected_files": {}, "input_sha256": INPUT_SHA256,
+                          "controller_sha256": self.controller_sha256,
+                          "native_members": {name: value["record"] for name, value in self.native_files.items()},
+                          "selected_history": self.history, "native_observation_complete": True,
+                          "native_full_suite_passed": False, "draft_only": True,
+                          "open_consensus_qualified": False, "production_activation": False, "security_status": "HOLD"}
+            self.save()
+            write_new(self.out / "input-manifest.json", encoded(INPUT_SHA256))
+            write_new(self.out / "native-preflight.json", encoded(self.observations))
+            write_new(self.out / "selected-history.json", encoded(self.history))
+        else:
+            self.state = strict_json(read_regular(self.out / "state.json")[0])
+            self.commands = strict_json(read_regular(self.out / "commands.json")[0])
+            require(self.state.get("schema") == "pon-followthrough-controller-state-v2"
+                    and self.state.get("source_c2") == self.c2 and self.state.get("input_sha256") == INPUT_SHA256
+                    and self.state.get("controller_sha256") == self.controller_sha256
+                    and self.state.get("root") == str(self.root) and self.state.get("inputs") == str(self.inputs)
+                    and self.state.get("native_validation") == str(self.native)
+                    and self.state.get("native_followup") == str(self.followup)
+                    and self.state.get("selected_history") == self.history
+                    and self.state.get("native_observation_complete") is True
+                    and self.state.get("native_full_suite_passed") is False
+                    and self.state.get("draft_only") is True, "controller resume identity differs")
+            require(self.state["native_members"] == {name: value["record"] for name, value in self.native_files.items()},
+                    "native evidence changed between phases")
+        self.lock = os.open(self.out / "controller.lock", os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o644)
+        fcntl.flock(self.lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        self.owns_output = True
+        self.guard()
+        self.phase_started = time.time_ns()
+        self.status("preflight", "finished", started=self.phase_started, exit_code=0)
+
+    def check_inputs(self):
+        for relative, expected in INPUT_SHA256.items():
+            require(sha(read_regular(self.inputs / relative)[0]) == expected, "reviewed integration input changed: " + relative)
+
+    def save(self):
+        atomic_json(self.out / "state.json", self.state)
+        atomic_json(self.out / "commands.json", self.commands)
+
+    def status(self, stage, phase, *, started=None, exit_code=None):
+        now = time.time_ns()
+        try:
+            head = git_text(self.root, "rev-parse", "HEAD")
+        except (OSError, Refusal, subprocess.SubprocessError):
+            head = None
+        value = {"schema": "pon-followthrough-controller-status-v2", "stage": stage, "phase": phase,
+                 "requested_phase": self.args.phase, "started_unix_ns": started or now,
+                 "end_unix_ns": None if phase == "running" else now, "last_exit": exit_code,
+                 "current_head": head, "code_checkpoint_c2": self.c2,
+                 "binding_child_c3": self.state.get("source_c3"), "security_status": "HOLD",
+                 "native_observation_complete": self.state.get("native_observation_complete"),
+                 "native_full_suite_passed": self.state.get("native_full_suite_passed"), "draft_only": True}
+        atomic_json(self.out / "status.json", value)
+
+    def run(self, label, argv, *, required=True, timeout=900, env_extra=None):
+        require(not any(row["label"] == label for row in self.commands), "command label already recorded: " + label)
+        require(re.fullmatch(r"[A-Za-z0-9_.-]+", label) is not None, "unsafe controller command label")
+        stdout, stderr = self.out / (label + ".stdout.log"), self.out / (label + ".stderr.log")
+        start = time.time_ns()
+        self.status(label, "running", started=start)
+        print("START", label, flush=True)
+        launch_error = None
+        with stdout.open("xb") as out, stderr.open("xb") as err:
+            try:
+                result = subprocess.run(argv, cwd=self.root, env=dict(ENV, **(env_extra or {})), stdout=out, stderr=err,
+                                        timeout=timeout, check=False)
+                code = result.returncode
+            except (OSError, subprocess.TimeoutExpired) as error:
+                launch_error = str(error)
+                err.write(("controller execution failure: " + launch_error + "\n").encode())
+                code = 124 if isinstance(error, subprocess.TimeoutExpired) else 127
+        row = {"label": label, "argv": [str(arg) for arg in argv], "cwd": str(self.root), "exit_code": code,
+               "explicit_environment": env_extra or {},
+               "start_unix_ns": start, "end_unix_ns": time.time_ns(), "launch_error": launch_error,
+               "stdout": {"file": stdout.name, **fingerprint(stdout)}, "stderr": {"file": stderr.name, **fingerprint(stderr)}}
+        self.commands.append(row)
+        self.save()
+        self.status(label, "finished" if code == 0 else "failed", started=start, exit_code=code)
+        print("END", label, code, flush=True)
+        require(not required or code == 0, "command failed; original logs retained: " + label)
+        return row
+
+    def changed(self):
+        tracked = git(self.root, "diff", "--name-only", "--no-renames", "-z", "HEAD", "--")
+        untracked = git(self.root, "ls-files", "--others", "--exclude-standard", "-z")
+        return {safe_relative(item.decode()) for item in (tracked + untracked).split(b"\0") if item}
+
+    def guard(self):
+        self.check_inputs()
+        require(all(not row or row.startswith(b"H ") for row in git(self.root, "ls-files", "-v", "-z").split(b"\0")),
+                "hidden, sparse or nonordinary index flag changed; no flag repair is performed")
+        require(git_text(self.root, "rev-parse", "HEAD") == self.state["expected_head"], "HEAD changed outside the controller")
+        require(git_text(self.root, "write-tree") == self.state["expected_index"], "index changed outside the controller")
+        require(self.changed() <= self.state["expected_files"].keys(), "unreviewed working-tree or untracked change")
+        for path, expected in self.state["expected_files"].items():
+            require(fingerprint(self.root / path) == expected, "independent file change: " + path)
+
+    def accept(self, allowed, *, index_changed=False):
+        require(git_text(self.root, "rev-parse", "HEAD") == self.state["expected_head"], "HEAD changed during operation")
+        allowed = set(allowed)
+        prior = self.state["expected_files"]
+        require(self.changed() <= prior.keys() | allowed, "operation changed an unreviewed path")
+        for path, expected in prior.items():
+            if path not in allowed:
+                require(fingerprint(self.root / path) == expected, "operation or external writer changed an unrelated path: " + path)
+        for path in allowed:
+            prior[path] = fingerprint(self.root / path)
+        index = git_text(self.root, "write-tree")
+        require(index_changed or index == self.state["expected_index"], "operation unexpectedly staged changes")
+        self.state["expected_index"] = index
+        self.save()
+
+    def mutate(self, label, argv, allowed, *, expected_entries=None):
+        self.guard()
+        self.run(label, argv)
+        if expected_entries is not None:
+            for path, expected in expected_entries.items():
+                actual = fingerprint(self.root / path)
+                require(expected == {"mode": actual["git_mode"], "kind": "blob", "blob": actual["git_blob"]},
+                        "applied patch differs from independently staged prediction: " + path)
+        self.accept(allowed)
+
+    def preview_patches(self):
+        """Predict exact patch bytes in an external index, without touching ours."""
+        environment = {"GIT_INDEX_FILE": str(self.out / "patch-preview.index")}
+        self.run("preview-index-from-c2", ["git", "read-tree", self.c2], env_extra=environment)
+        previous = tree_entries(self.root, self.c2)
+        predictions = []
+        for number, relative in enumerate(PATCHES, 1):
+            paths = patch_paths(read_regular(self.inputs / relative)[0])
+            self.run(f"preview-patch-{number}", ["git", "apply", "--cached", str(self.inputs / relative)], env_extra=environment)
+            predicted_tree = git_text(self.root, "write-tree", env_extra=environment)
+            predicted = tree_entries(self.root, predicted_tree)
+            delta = {path for path in previous.keys() | predicted.keys() if previous.get(path) != predicted.get(path)}
+            require(delta == set(paths), "preview patch changed an unexpected path set")
+            predictions.append({path: predicted[path] for path in paths})
+            previous = predicted
+        self.guard()
+        write_new(self.out / "patch-predictions.json", encoded(predictions))
+        return predictions
+
+    def verify_evidence_tree(self, revision):
+        entries = tree_entries(self.root, revision)
+        for path in self.state["evidence_paths"]:
+            expected = self.state["expected_files"][path]
+            require(entries.get(path) == {"mode": expected["git_mode"], "kind": "blob", "blob": expected["git_blob"]},
+                    "evidence was omitted/filtered from Git: " + path)
+            require(sha(git(self.root, "show", revision + ":" + path)) == expected["sha256"], "Git evidence bytes differ: " + path)
+
+    def review_native_delta(self, candidate_tree):
+        candidate_tree = git_text(self.root, "rev-parse", candidate_tree + "^{tree}")
+        before, after = tree_entries(self.root, self.c2), tree_entries(self.root, candidate_tree)
+        changed = sorted(path for path in before.keys() | after.keys() if before.get(path) != after.get(path))
+        rust = [path for path in changed if path.endswith(".rs")]
+        cargo = [path for path in changed if Path(path).name in
+                 ("Cargo.toml", "Cargo.lock", "rust-toolchain", "rust-toolchain.toml") or ".cargo" in Path(path).parts]
+        owner = [path for path in changed if path.startswith(NATIVE_OWNERS) and path != INVENTORY]
+        require(set(rust) <= {INVENTORY}, "C2-to-child Rust delta exceeds the generated inventory: " + repr(rust))
+        require(not cargo and not owner, "C2-to-child Cargo graph or owner inputs changed: " + repr(cargo + owner))
+        return {"schema": "pon-followthrough-native-source-delta-v1", "code_checkpoint_c2": self.c2,
+                "code_tree_c2": self.c2_tree, "candidate_tree": candidate_tree,
+                "rust_changed_paths": rust, "cargo_input_changed_paths": cargo,
+                "other_three_owner_changed_paths": owner, "three_owner_scopes": list(NATIVE_OWNERS),
+                "all_cargo_inputs_and_other_owner_git_entries_equal": True,
+                "final_native_policy": "Root runs the original three-crate --all-targets strict Clippy plus locked offline graph and actual C3 source bracket; no 4/8/3 or full library suite repeat is credited.",
+                "native_executed_by_this_review": False, "production_activation": False}
+
+    def copy_native_evidence(self):
+        self.guard()
+        stage_started = time.time_ns()
+        self.status("copy-native-evidence", "running", started=stage_started)
+        destination = self.root / EVIDENCE
+        require(not destination.exists() and not destination.is_symlink(), "new follow-through evidence directory already exists")
+        directory(destination.parent)
+        destination.mkdir()
+        (destination / "native").mkdir()
+        members, paths = [], []
+        for name, item in self.native_files.items():
+            relative = EVIDENCE + "/native/" + name
+            require(fingerprint(item["source"])["sha256"] == item["record"]["sha256"], "native source changed before copying: " + name)
+            write_new(self.root / relative, item["raw"])
+            members.append({"path": "native/" + name, **item["record"]})
+            paths.append(relative)
+        latest = combined_native_snapshot(self.native, self.followup)
+        require({name: item["record"] for name, item in latest.items()} == self.state["native_members"], "native output changed while copying")
+        manifest = {"schema": "pon-followthrough-native-members-v2", "selected_code_commit": self.c2,
+                    "selected_code_tree": self.c2_tree,
+                    "original_directories": {"original-v3": str(self.native), "followup-v4": str(self.followup)}, "members": members,
+                    "all_original_stdout_stderr_retained": True, "binary_or_target_copied": False,
+                    "binding_child_validated": False, "native_observation_complete": True,
+                    "native_full_suite_passed": False, "draft_only": True, "production_activation": False}
+        for name, value in (("native-members.json", manifest), ("native-observations.json", self.observations)):
+            relative = EVIDENCE + "/" + name
+            write_new(self.root / relative, encoded(value))
+            paths.append(relative)
+        readme = f"""# PoN native follow-through observations, 2026-11-10
+
+Status: **draft only; complete native failure observations; security HOLD**.
+
+The actual C2 source is [`{self.c2}`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/{self.c2}), tree `{self.c2_tree}`. The [39 original command records](native/original-v3/commands.json) end with the node library's actual exit **101**, **1285 passed / 2 failed / 39 retained ignored**. V3 did not finish and has no completion summary or source-after record. The later [14-command followup](native/followup-v4/commands.json) and its [observation summary](native/followup-v4/summary.json) retain both independently selected original test failures, each **0 passed / 1 failed**, exit **101**. The other twelve followup commands succeeded. Neither the original suite nor the entire followup is relabeled as passing.
+
+The followup's actual [source before](native/followup-v4/source-before.json) and [source after](native/followup-v4/source-after.json) are byte-identical to the original [v3 source before](native/original-v3/source-before-v3.json), closing this unchanged C2 observation interval. Each original stdout/stderr member is included in Git with bytes, SHA256 and Git blob in the [member manifest](native-members.json). These are observations from the stated environment, without an independent hardware-cost or lower-bound claim.
+
+## Retained failures and counterfactual scope
+
+The first offline `red-settlement` attempt ended before executing its test suite because dependencies were unavailable; its original stdout/stderr and the later dependency-fetch command are retained. The initial C1 checkpoint `{C1}` observed node red **0 passed / 4 failed**, then green **3 passed / 1 failed**. The green failure was a test expecting `STORAGE_PACKET` where the authenticated tip already returns `NATIVE_STATE_PARENT`; it is not relabeled as a successful initial run. Settlement red observed **2 passed / 6 failed**, then green **8 passed / 0 failed**.
+
+The corrected v3 node counterfactual keeps C1 dependencies, uses the old node production file plus the test-module declaration, and executes the four corrected tests. It is **not a complete baseline-checkout rerun**; [its source record](native/original-v3/red-v3-source.json) and the [earlier red patch](native/original-v3/red-source.patch) retain that boundary. V3 observed node red **0/4**, C2 node green **4/0**, and C2 settlement green **8/0**. C2 settlement completed **77 library plus 2 documentation tests**, and the cryptography library completed **196 tests**. The node full-suite failure remains open. The followup separately completed the original strict Clippy, format check, release probe tests **3/0**, release build/probe, independent reader and **26 reader tests**. The [derived observation index](native-observations.json) indexes those retained records.
+
+A separately collected exact-BASE control ran only the two selected original tests: the large-parent test passed **1/0** with both internal backends; the inactive-page test failed **0/1**, exit **101**, with `PUBLIC_MUTATION_CPU_BUDGET`. The latter is a different observed error from C2 full-suite's diagnostic `OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH`. The baseline's code/build path, environment observations and time-based refill receipts are separate evidence; this mixed outcome establishes neither full-suite success nor one exclusive cause for the C2 failures. Its raw records are not duplicated in this native directory.
+
+## Code checkpoint and binding child
+
+The CI fixes, authority/PQ128/W1 source bindings, refreshed corpus and generated distributed source inventory are added in the later child commit containing this directory. They did not exist in C2. Actual checks of that child are separate controller receipts with the child's commit/tree and original source-verifier bracket. Creating this directory asserts no child-check success. C2's partial successes and full-suite failure remain attributed to C2. The only permitted native source delta is the generated inventory; final child Clippy and source/locked-graph checks require their own actual receipts.
+
+The selected BASE to C1 to C2 chain and all selected source objects are checked directly. The repository's global shallow-history state is separately retained in the controller's selected-history receipt; completeness of older history is not claimed. No Git history is fetched or rewritten by this controller.
+
+No historical evidence, qualification result, protocol parent/status field or acceptance condition is upgraded. Cheapest legal work cost, worst-case rejection/service liveness, QROM closure, public-prefix/liveness/chain-quality bounds, confirmation failure probabilities, model benefit and production activation remain unproved or disabled as before. The original failed hosted CI observations are not imported or represented as repaired hosted runs by this recorder.
+"""
+        write_new(destination / "README.md", readme.encode())
+        paths.append(EVIDENCE + "/README.md")
+        self.accept(paths)
+        self.status("copy-native-evidence", "finished", started=stage_started, exit_code=0)
+        return paths
+
+    def prepare(self):
+        require(self.state["phase"] == "starting", "prepare cannot overwrite a prior run")
+        phase_started = time.time_ns()
+        self.status("prepare", "running", started=phase_started)
+        self.run("prepare-preflight", ["bash", "scripts/project-preflight.sh"])
+        self.run("prepare-source-byte-check", [sys.executable, "-B", VERIFY_SOURCE, "--kind", "head",
+                 "--expected-head", self.c2, "--output", str(self.out / "prepare-source.json")])
+        require(read_regular(self.out / "prepare-source.json")[0] == read_regular(self.followup / "source-after.json")[0],
+                "current C2 bytes differ from the closed native observation bracket")
+        self.guard()
+        baseline = tree_entries(self.root, BASE)
+        predictions = self.preview_patches()
+        for number, relative in enumerate(PATCHES, 1):
+            raw = read_regular(self.inputs / relative)[0]
+            paths = patch_paths(raw)
+            self.run(f"patch-{number}-check", ["git", "apply", "--check", str(self.inputs / relative)])
+            self.mutate(f"patch-{number}-apply", ["git", "apply", str(self.inputs / relative)], paths,
+                        expected_entries=predictions[number - 1])
+        self.mutate("authority-pq128-bindings", [sys.executable, "-B", str(self.inputs / "binding-tool/prepare_authority_pq128_binding_v2.py"),
+                    "--root", str(self.root), "--checkpoint", self.c2, "--output", str(self.out / "authority-pq128"),
+                    "--apply", "--defer-validation"], AUTHORITY_TARGETS)
+        self.mutate("w1-ledger-binding", [sys.executable, "-B", str(self.inputs / "integration/update_w1_ledger_binding_v2.py"),
+                    "--root", str(self.root), "--source", self.c2, "--receipt", str(self.out / "w1-ledger-receipt.json")], LEDGER_TARGETS)
+        self.mutate("qrom-successor-binding", [sys.executable, "-B", str(self.inputs / "qrom-successor/prepare_qrom_successor_binding_v2.py"),
+                    "--root", str(self.root), "--checkpoint", self.c2, "--output", str(self.out / "qrom-successor"), "--apply"], QROM_TARGETS)
+        evidence_paths = self.copy_native_evidence() + [path for path in (*LEDGER_TARGETS, *QROM_TARGETS) if path.startswith("evidence/")]
+        self.guard()
+        old_plan = read_regular(self.root / PLAN)[0]
+        require(old_plan == git(self.root, "show", self.c2 + ":" + PLAN), "development plan differs from C2 before append")
+        require(PLAN_MARKER.encode() not in old_plan, "follow-through plan entry already exists")
+        appendix = f"""\n\n{PLAN_MARKER}
+
+Status: **HOLD; draft only; native full suite failed**. Native checkpoint `{self.c2}` (tree `{self.c2_tree}`) retains the node full-suite result **1285 passed / 2 failed / 39 retained ignored**, exit **101**. The later two exact original tests each failed **0/1**, exit **101**. The unchanged-source followup closes the original source bracket and completes the remaining strict Clippy, format, three release-probe tests, release build/probe, independent reader and 26 reader tests; it does not turn either native failure into a pass. V3 has no fabricated completion summary or source-after file.
+
+C1 `{C1}` keeps its initial node green failure (3 passed / 1 failed) and initial offline dependency failure. The corrected node counterfactual changes only the old node owner plus its test declaration over C1 dependencies: red 0 passed / 4 failed, C2 green 4 passed / 0 failed. Settlement red remains 2 passed / 6 failed and C2 green 8 passed / 0 failed; C2 settlement completed 77 library plus 2 documentation tests and crypto completed 196 library tests. Exact commands, environments and all original streams are in the [native evidence](../../{EVIDENCE}/README.md). The separately collected exact-BASE two-test control observed large-parent 1/0 (both backends) and inactive-page 0/1 with `PUBLIC_MUTATION_CPU_BUDGET`. Its different build/environment and refill observations do not establish a single cause for the C2 failures or replace the failed full suite.
+
+The child integrates the exact CI roster/artifact/QROM-current registrations, preserves the historical QROM lane, rebinds selected source surveys to C2, retains every previous corpus dependency and adds the new implementation inputs. Its actual source/corpus/ledger/CI/repository/Markdown/format checks are separate controller receipts on the eventual child commit; this entry does not assert those checks or hosted CI passed. All false/null qualification fields, existing historical evidence and open work-cost/service/consensus/model-benefit obligations remain unchanged. No activation is authorized by this observation.
+""".encode()
+        replace_expected(self.root / PLAN, old_plan, old_plan + appendix)
+        self.accept([PLAN])
+        self.mutate("refresh-distributed-source-inventory", [sys.executable, "-B", "scripts/refresh_distributed_source_inventory.py"], [INVENTORY])
+        self.state["evidence_paths"] = sorted(evidence_paths)
+        self.state["raw_whitespace_exclusions"] = sorted(EVIDENCE + "/native/" + name for name in self.native_files
+                                                        if name.endswith((".log", ".patch")))
+        write_new(self.out / "raw-whitespace-exclusions.json", encoded({"paths": self.state["raw_whitespace_exclusions"],
+                  "scope": "only original manifested native streams/patch; every JSON, document and source remains checked"}))
+        self.save()
+        self.guard()
+        source_paths = sorted(set(self.state["expected_files"]) - set(evidence_paths))
+        self.run("stage-explicit-source", ["git", "add", "--", *source_paths])
+        self.accept([], index_changed=True)
+        self.guard()
+        self.run("stage-explicit-evidence-including-ignored-logs", ["git", "add", "-f", "--", *sorted(evidence_paths)])
+        self.accept([], index_changed=True)
+        candidate = self.state["expected_index"]
+        self.verify_evidence_tree(candidate)
+        args = ["--repo-root", str(self.root), "--checkpoint", self.c2, "--checkpoint-tree", self.c2_tree,
+                "--candidate-tree", candidate, "--plan", str(self.out / "corpus-path-plan.json")]
+        helper = str(self.inputs / "binding-update-v2/update_corpus.py")
+        self.guard()
+        self.run("corpus-path-inventory", [sys.executable, "-B", helper, "inventory", *args])
+        self.guard()
+        self.run("corpus-refresh-output", [sys.executable, "-B", helper, "update", *args,
+                 "--output", str(self.out / "refreshed-corpus.json"), "--receipt", str(self.out / "corpus-receipt.json")])
+        self.guard()
+        original = git(self.root, "show", BASE + ":" + CORPUS)
+        replacement = read_regular(self.out / "refreshed-corpus.json")[0]
+        replace_expected(self.root / CORPUS, original, replacement)
+        self.accept([CORPUS])
+        self.run("stage-corpus", ["git", "add", "--", CORPUS])
+        self.accept([], index_changed=True)
+        final = tree_entries(self.root, self.state["expected_index"])
+        require(baseline.keys() <= final.keys(), "candidate deleted an existing tracked path")
+        require(all(final[path] == entry for path, entry in baseline.items() if path.startswith(("evidence/", "qualification/"))),
+                "candidate changed historical evidence or qualification")
+        self.verify_evidence_tree(self.state["expected_index"])
+        self.run("prepared-source-diff-check", ["git", "diff", "--cached", "--check", "--",
+                                               *whitespace_paths(self.state["raw_whitespace_exclusions"])])
+        self.guard()
+        require(not git(self.root, "diff", "--name-only"), "unstaged changes remain after prepare")
+        self.state["phase"] = "prepared"
+        self.state["candidate_index_tree_before_corpus"] = candidate
+        self.state["prepared_tree"] = self.state["expected_index"]
+        self.state["native_source_delta"] = self.review_native_delta(self.state["prepared_tree"])
+        write_new(self.out / "native-source-delta-prepared.json", encoded(self.state["native_source_delta"]))
+        self.save()
+        self.status("prepare", "finished", started=phase_started, exit_code=0)
+        print("PREPARED", self.state["prepared_tree"], "SECURITY_HOLD", flush=True)
+
+    def commit(self):
+        require(self.state["phase"] == "prepared", "commit needs the exact prepared candidate")
+        phase_started = time.time_ns()
+        self.status("commit", "running", started=phase_started)
+        attempt = self.state.get("commit_attempts", 0) + 1
+        self.state["commit_attempts"] = attempt
+        self.save()
+        label = f"commit-{attempt:02}"
+        self.guard()
+        self.verify_evidence_tree(self.state["prepared_tree"])
+        self.run(label + "-preflight", ["bash", "scripts/project-preflight.sh"])
+        self.guard()
+        self.run(label + "-binding-child", ["git", "commit", "-m", "fix(pon): bind reviewed source and retain native failure observations"])
+        c3 = git_text(self.root, "rev-parse", "HEAD")
+        require(git_text(self.root, "rev-list", "--parents", "-n", "1", c3).split() == [c3, self.c2], "binding commit has unexpected parent")
+        require(git_text(self.root, "rev-parse", c3 + "^{tree}") == self.state["prepared_tree"]
+                and not git(self.root, "status", "--porcelain"), "committed tree differs or checkout is dirty")
+        self.state.update(phase="committed", expected_head=c3, expected_index=self.state["prepared_tree"], source_c3=c3)
+        self.save()
+        self.verify_evidence_tree(c3)
+        self.guard()
+        delta = self.review_native_delta(c3)
+        require(delta == self.state["native_source_delta"],
+                "committed native dependency delta differs from the prepared review")
+        delta.update(binding_child_c3=c3, binding_child_tree=self.state["prepared_tree"])
+        write_new(self.out / "native-source-delta.json", encoded(delta))
+        write_new(self.out / "committed-source.json", encoded({"code_checkpoint_c2": self.c2, "binding_child_c3": c3,
+                  "tree": self.state["prepared_tree"], "native_execution_source": self.c2, "child_checks_complete": False,
+                  "open_consensus_qualified": False, "production_activation": False, "security_status": "HOLD"}))
+        self.status("commit", "finished", started=phase_started, exit_code=0)
+        print("COMMITTED", c3, "SECURITY_HOLD", flush=True)
+
+    def validate(self):
+        require(self.state["phase"] in ("committed", "validated", "validation_failed"), "validate needs the committed binding child")
+        phase_started = time.time_ns()
+        self.status("validate", "running", started=phase_started)
+        self.guard()
+        require(not git(self.root, "status", "--porcelain"), "validation requires a clean committed child")
+        require(git(self.root, "show", BASE + ":" + VERIFY_SOURCE) == read_regular(self.root / VERIFY_SOURCE)[0],
+                "the original source verifier was modified")
+        c3 = self.state["source_c3"]
+        index = len(self.state.get("validation_runs", [])) + 1
+        prefix = f"validation-{index:02}"
+        attempt = {"summary": prefix + "-summary.json", "complete": False,
+                   "started_unix_ns": phase_started, "state": "running"}
+        self.state.setdefault("validation_runs", []).append(attempt)
+        self.save()
+        before, after = self.out / (prefix + "-source-before.json"), self.out / (prefix + "-source-after.json")
+        qrom = self.out / (prefix + "-qrom-current")
+        qrom.mkdir(mode=0o755)
+        source = [sys.executable, "-B", VERIFY_SOURCE, "--kind", "head", "--expected-head", c3, "--output"]
+        first = len(self.commands)
+        self.run(prefix + "-source-before", source + [str(before)])
+        suites = (
+            "scripts/ci/test_pq_research_integration.py", "scripts/ci/test_ci_source_integrity.py",
+            "scripts/ci/test_ci_contract.py", "scripts/ci/test_w1_factorial_native_gate.py",
+            "scripts/ci/test_prepare_artifact_upload.py", "scripts/ci/test_cell_storage_convergence_ci.py",
+            "scripts/ci/test_cell_discovery_v3_ci.py", "scripts/ci/test_fresh_rejection_report.py",
+            "scripts/ci/test_w1_qrom_current_ci.py", "scripts/ci/test_pq_authority_effect_register.py",
+            "scripts/ci/test_pq_lifetime_budget.py", "scripts/ci/test_w1_lifetime_ledger.py",
+        )
+        checks = [("preflight", ["bash", "scripts/project-preflight.sh"])]
+        checks += [(Path(path).stem, [sys.executable, "-B", path, "-v"]) for path in suites]
+        checks += [("corpus", [sys.executable, "-B", "scripts/ci/check_pq_research_integration.py"]),
+                   ("ci-contract", [sys.executable, "-B", "scripts/ci/check_ci_contract.py"]),
+                   ("qrom-current-named", [sys.executable, "-B", "scripts/ci/w1_qrom_current_ci.py", "named",
+                                           "--repo-root", str(self.root), "--out", str(qrom)]),
+                   ("qrom-historical-drift", [sys.executable, "-B", "scripts/ci/w1_qrom_current_ci.py", "drift",
+                                              "--repo-root", str(self.root), "--out", str(qrom)]),
+                   ("qrom-current-implementation", [sys.executable, "-B", "scripts/w1_qrom_current_implementation_audit.py",
+                                                    "--repo-root", str(self.root), "--output", str(qrom / "implementation.json")]),
+                   ("authority-register", [sys.executable, "-B", "scripts/ci/pq_authority_effect_register.py"]),
+                   ("pq128-lifetime", [sys.executable, "-B", "scripts/ci/pq_lifetime_budget.py"]),
+                   ("w1-lifetime-report", [sys.executable, "-B", "scripts/w1_lifetime_ledger.py", "--input", LEDGER_EVIDENCE + "/project-input.json"]),
+                   ("w1-lifetime-report-identical", ["cmp", str(self.out / (prefix + "-w1-lifetime-report.stdout.log")),
+                                                    str(self.root / LEDGER_EVIDENCE / "project-report.json")]),
+                   ("distributed-inventory", [sys.executable, "-B", "scripts/refresh_distributed_source_inventory.py", "--check"]),
+                   ("repository-and-markdown-links", [sys.executable, "-B", "scripts/ci/check_repository.py"]),
+                   ("source-diff-whitespace", ["git", "diff", "--check", self.c2, c3, "--",
+                                               *whitespace_paths(self.state["raw_whitespace_exclusions"])]),
+                   ("format", ["cargo", "fmt", "--manifest-path", "trillionnium/Cargo.toml", "--all", "--", "--check"])]
+        write_new(self.out / (prefix + "-planned-checks.json"), encoded({"source": c3, "checks": checks,
+                  "native_full_suites_repeated": False, "checks_already_passed": False}))
+        for label, argv in checks:
+            self.guard()
+            self.run(prefix + "-" + label, argv, required=False)
+        self.run(prefix + "-source-after", source + [str(after)], required=False)
+        self.run(prefix + "-source-identical", ["cmp", str(before), str(after)], required=False)
+        self.guard()
+        self.verify_evidence_tree(c3)
+        require(not git(self.root, "status", "--porcelain"), "checks changed the committed checkout")
+        actual = self.commands[first:]
+        before_source = strict_json(read_regular(before)[0])
+        after_source = strict_json(read_regular(after)[0])
+        source_valid = (before_source == after_source and before_source.get("schema") == "trnm-ci-source-v1"
+                        and before_source.get("kind") == "head" and before_source.get("tested_commit") == c3
+                        and before_source.get("candidate") == c3 and before_source.get("tested_tree") == self.state["prepared_tree"]
+                        and before_source.get("tracked_worktree_verified") is True
+                        and before_source.get("tests_executed_by_identity_check") is False)
+        complete = all(row["exit_code"] == 0 for row in actual) and source_valid
+        result = {"schema": "pon-followthrough-binding-child-checks-v2", "code_checkpoint_c2": self.c2,
+                  "binding_child_c3": c3, "binding_child_tree": self.state["prepared_tree"], "source_bracket_identical":
+                  actual[-1]["exit_code"] == 0 and source_valid, "complete": complete,
+                  "commands": [{"label": row["label"], "exit_code": row["exit_code"]} for row in actual],
+                  "native_execution_source": self.c2, "native_full_suites_repeated": False,
+                  "native_observation_complete": True, "native_full_suite_passed": False, "draft_only": True,
+                  "remaining_native_child_checks": self.state["native_source_delta"]["final_native_policy"],
+                  "hosted_ci_observed_complete": False, "open_consensus_qualified": False,
+                  "production_activation": False, "security_status": "HOLD"}
+        write_new(self.out / (prefix + "-summary.json"), encoded(result))
+        attempt.update(complete=complete, state="finished", end_unix_ns=time.time_ns())
+        self.state["phase"] = "validated" if complete else "validation_failed"
+        self.save()
+        self.status("validate", "finished" if complete else "failed", started=phase_started,
+                    exit_code=0 if complete else 2)
+        print("VALIDATION", json.dumps(result, sort_keys=True), flush=True)
+        require(complete, "one or more actual C3 checks failed; no push or qualification performed")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--phase", choices=("prepare", "commit", "validate", "all"), required=True)
+    parser.add_argument("--root", type=Path, required=True, help="complete real C2 checkout; never a partial staging directory")
+    parser.add_argument("--inputs", type=Path, required=True, help="external bundle with the nine exact relative paths in INPUT_SHA256")
+    parser.add_argument("--native-validation", type=Path, required=True, help="original stable native OUT ending in node-library-v3 exit 101")
+    parser.add_argument("--native-followup", type=Path, required=True, help="actual unchanged C2 followup OUT with the fourteen completed observations")
+    parser.add_argument("--output", type=Path, required=True, help="fresh external receipts directory for prepare/all; same directory for later phases")
+    args = parser.parse_args()
+    controller = None
+    try:
+        controller = Controller.__new__(Controller)
+        controller.__init__(args)
+        if args.phase in ("prepare", "all"):
+            controller.prepare()
+        if args.phase in ("commit", "all"):
+            controller.commit()
+        if args.phase in ("validate", "all"):
+            controller.validate()
+        atomic_json(controller.out / "summary.json", {"schema": "pon-followthrough-controller-summary-v2",
+                    "recorded_unix_ns": time.time_ns(), "requested_phase": args.phase,
+                    "requested_phase_complete": True, "state": controller.state["phase"],
+                    "integration_complete": controller.state["phase"] == "validated",
+                    "code_checkpoint_c2": controller.c2, "code_tree_c2": controller.c2_tree,
+                    "binding_child_c3": controller.state.get("source_c3"),
+                    "binding_child_tree": controller.state.get("prepared_tree"),
+                    "commands_recorded": len(controller.commands), "validation_runs": controller.state.get("validation_runs", []),
+                    "native_full_suites_repeated": False, "hosted_ci_observed_complete": False,
+                    "native_observation_complete": True, "native_full_suite_passed": False, "draft_only": True,
+                    "selected_history": controller.history,
+                    "open_consensus_qualified": False, "production_activation": False, "security_status": "HOLD"})
+    except (Refusal, OSError, ValueError, KeyError, IndexError, TypeError, AttributeError, subprocess.SubprocessError) as error:
+        message = {"status": "REFUSE_OR_ACTUAL_FAILURE", "reason": str(error), "security_status": "HOLD",
+                   "recorded_unix_ns": time.time_ns(), "requested_phase": args.phase,
+                   "no_automatic_rollback": True, "no_push_or_activation": True}
+        if controller is not None and getattr(controller, "owns_output", False):
+            if args.phase in ("all", "validate") and controller.state.get("validation_runs"):
+                attempt = controller.state["validation_runs"][-1]
+                if attempt.get("state") == "running":
+                    attempt.update(state="interrupted_or_failed", complete=False, reason=str(error),
+                                   end_unix_ns=message["recorded_unix_ns"])
+                    controller.state["phase"] = "validation_failed"
+                    controller.save()
+            failure = controller.out / ("failure-" + str(time.time_ns()) + ".json")
+            write_new(failure, encoded(message))
+            atomic_json(controller.out / "failure.json", message)
+            controller.status(args.phase, "failed", started=getattr(controller, "phase_started", message["recorded_unix_ns"]), exit_code=2)
+        elif args.phase in ("prepare", "all") and not args.output.exists():
+            # A refused preflight still leaves the known small failure file, but
+            # never overwrites a directory from another or an earlier run.
+            try:
+                directory(args.output, exists=False)
+                require(not args.output.is_relative_to(args.root), "receipt path is inside ROOT")
+                args.output.mkdir(mode=0o755)
+                write_new(args.output / "failure.json", encoded(message))
+                write_new(args.output / "status.json", encoded({"stage": "preflight", "phase": "failed", "last_exit": 2,
+                          "started_unix_ns": message["recorded_unix_ns"], "end_unix_ns": message["recorded_unix_ns"],
+                          "current_head": None, "security_status": "HOLD"}))
+            except (OSError, Refusal):
+                pass
+        print(json.dumps(message, sort_keys=True), file=sys.stderr)
+        return 2
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

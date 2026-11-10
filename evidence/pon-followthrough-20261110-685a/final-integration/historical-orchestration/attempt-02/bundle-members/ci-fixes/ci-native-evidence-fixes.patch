@@ -1,0 +1,1069 @@
+diff --git a/.github/workflows/pon-w1-work-security.yml b/.github/workflows/pon-w1-work-security.yml
+--- a/.github/workflows/pon-w1-work-security.yml
++++ b/.github/workflows/pon-w1-work-security.yml
+@@ -278,19 +278,13 @@
+         run: |
+           set -euo pipefail
+           python3 scripts/ci/test_pon_w1_legal_strategy_reader_v1.py 2>&1 | tee "$OUT/legal-reader-controls.log"
++          python3 -B scripts/ci/test_w1_factorial_native_gate.py 2>&1 | tee "$OUT/native-completion-gate-controls.log"
+           python3 scripts/ci/test_pon_w1_legal_strategy_reader_v2.py 2>&1 | tee "$OUT/legal-reader-v2-controls.log"
+           python3 scripts/ci/test_run_w1_false_trace_reuse_v1.py 2>&1 | tee "$OUT/runner-controls.log"
+           cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1 > "$OUT/cargo-graph.json"
+           cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/format.log"
+           cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- --test-threads=1 2>&1 | tee "$OUT/legal-native-controls.log"
+-          python3 - "$OUT/legal-native-controls.log" <<'PY'
+-          from pathlib import Path
+-          import re, sys
+-          text = Path(sys.argv[1]).read_text()
+-          rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; 0 ignored;', text, re.M)
+-          if rows != ['8']:
+-              raise SystemExit('four retained legal, two versioned legal and two shared material controls did not execute')
+-          PY
++          python3 -B scripts/ci/w1_native_controls.py --group legal --logs "$OUT" --output "$OUT/legal-native-controls-completion.json"
+           cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- -D warnings 2>&1 | tee "$OUT/legal-clippy.log"
+       - name: Execute all thirty original-budget legal strategy shards
+         if: always() && steps.source.outcome == 'success'
+@@ -410,55 +404,7 @@
+           cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib history_w1_ -- --test-threads=1 --nocapture 2>&1 | tee "$OUT/history-w1-tests.log"
+           cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::history_import::tests:: -- --test-threads=1 --nocapture 2>&1 | tee "$OUT/history-import-tests.log"
+           cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::public_v3::scalar_cpu::completion_tests:: -- --test-threads=1 --nocapture 2>&1 | tee "$OUT/cpu-completion-tests.log"
+-          python3 - "$OUT" <<'PYTEST'
+-          from pathlib import Path
+-          import re, sys
+-          root = Path(sys.argv[1])
+-          # The one ignored History entry is the existing subprocess fixture;
+-          # its parent control selects real SIGKILL cuts. It is not a skipped gate.
+-          expected = {"factorial-kernel-tests": (14, 0), "factorial-example-tests": (6, 0),
+-              "header-binding-tests": (1, 0), "history-w1-tests": (5, 0),
+-              "history-import-tests": (28, 1), "cpu-completion-tests": (11, 0)}
+-          for name, counts in expected.items():
+-              text = (root / (name + ".log")).read_text()
+-              rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', text, re.M)
+-              if rows != [tuple(map(str, counts))]:
+-                  raise SystemExit(name + ': exact native controls did not execute')
+-          kernel = (root / 'factorial-kernel-tests.log').read_text()
+-          kernel_expected = {
+-              'pon_work::legal_attempt::low_rank::tests::bounded_factorization_reconstructs_exact_full_field_rank_and_pivot_orders',
+-              'pon_work::legal_attempt::low_rank::tests::exact_rank_limit_chooses_left_then_right_and_explicit_paid_dense_fallback',
+-              'pon_work::legal_attempt::low_rank::tests::both_inputs_are_fully_validated_before_zero_or_high_rank_shortcuts',
+-              'pon_work::legal_attempt::low_rank::tests::low_rank_complete_proofs_equal_both_original_kernels_and_verifiers',
+-              'pon_work::legal_attempt::low_rank::tests::misses_still_replay_all_tiles_and_cancelled_retries_preserve_the_same_task',
+-              'pon_work::legal_attempt::tests::boundary_target_is_inclusive_and_zero_target_refuses_before_work',
+-              'pon_work::legal_attempt::tests::changed_challenge_and_task_never_gain_acceptance_from_cached_product',
+-              'pon_work::legal_attempt::tests::every_stage_cancellation_returns_no_attempt_and_does_not_poison_retry',
+-              'pon_work::legal_attempt::tests::factorial_kernels_match_independent_reference_for_full_and_structured_fields',
+-              'pon_work::legal_attempt::tests::losing_attempt_still_replays_every_transcript_tile_without_lazy_serialization',
+-              'pon_work::legal_attempt::tests::preparation_never_reduces_noncanonical_fields_or_wrong_shapes',
+-              'pon_work::legal_attempt::tests::sparse_preparation_matches_dense_and_independent_full_field_proofs',
+-              'pon_work::legal_attempt::tests::sparse_preparation_rejects_hidden_noncanonical_words_and_wrong_lengths',
+-              'pon_work::legal_attempt::tests::sparse_setup_keeps_complete_misses_callbacks_and_cancelled_retry',
+-          }
+-          kernel_rows = re.findall(r'^test (pon_work::legal_attempt::\S+) \.\.\. ok$', kernel, re.M)
+-          if len(kernel_rows) != len(kernel_expected) or set(kernel_rows) != kernel_expected:
+-              raise SystemExit('factorial-kernel-tests: exact named kernel controls did not execute once')
+-          history = (root / 'history-import-tests.log').read_text()
+-          for name in (
+-              'final_resource_completion_preserves_error_priority_and_original_deadline',
+-              'final_resource_expiry_keeps_committed_history_and_settled_cpu',
+-          ):
+-              selector = 'ingress::history_import::tests::deadline_controls::' + name
+-              rows = re.findall(r'^test ' + re.escape(selector) + r' \.\.\. ok$', history, re.M)
+-              if len(rows) != 1:
+-                  raise SystemExit(selector + ': exact deadline control did not execute once')
+-          codec_selector = ('ingress::history_import::tests::'
+-              'history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors')
+-          codec_rows = re.findall(r'^test ' + re.escape(codec_selector) + r' \.\.\. ok$', history, re.M)
+-          if len(codec_rows) != 1:
+-              raise SystemExit(codec_selector + ': exact codec control did not execute once')
+-          PYTEST
++          python3 -B scripts/ci/w1_native_controls.py --group factorial --logs "$OUT" --output "$OUT/factorial-native-controls-completion.json"
+       - name: Prepare pinned provider required by native all-feature controls
+         shell: bash
+         run: bash scripts/ci/prepare_pq_provider.sh
+diff --git a/.github/workflows/pon-next-architecture-security.yml b/.github/workflows/pon-next-architecture-security.yml
+--- a/.github/workflows/pon-next-architecture-security.yml
++++ b/.github/workflows/pon-next-architecture-security.yml
+@@ -175,6 +175,7 @@
+           bash "$OUT/run-command.sh" version-retention-vector python3 -B scripts/cell_version_retention_v3_vector.py --check || status=1
+           bash "$OUT/run-command.sh" storage-descriptor-vector python3 -B scripts/cell_storage_descriptor_reference.py --check || status=1
+           bash "$OUT/run-command.sh" storage-convergence-workflow-controls python3 -B scripts/ci/test_cell_storage_convergence_ci.py || status=1
++          bash "$OUT/run-command.sh" artifact-map-controls python3 -B scripts/ci/test_prepare_artifact_upload.py || status=1
+           exit "$status"
+       - name: Verify locked graph and unchanged all-source formatting
+         id: graph_format
+@@ -389,11 +390,18 @@
+           if not storage_components_passed or not sealed_python_passed:
+               raise SystemExit("required storage convergence component stages did not succeed")
+           PY
++      - name: Map every observation to a safe upload path
++        id: artifact_map
++        if: ${{ always() && steps.reserve.outcome == 'success' }}
++        shell: bash
++        run: |
++          set -euo pipefail
++          python3 -B scripts/ci/prepare_artifact_upload.py --source "$OUT" --output "$OUT-upload"
+       - name: Retain logs and failed or partial observations
+         if: always()
+         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+         with:
+           name: next-architecture-${{ matrix.runner }}-${{ matrix.source }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+-          path: ${{ runner.temp }}/next-architecture-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}/
++          path: ${{ runner.temp }}/next-architecture-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}-upload/
+           if-no-files-found: error
+           retention-days: 30
+diff --git a/scripts/ci/w1_native_controls.py b/scripts/ci/w1_native_controls.py
+new file mode 100644
+--- /dev/null
++++ b/scripts/ci/w1_native_controls.py
+@@ -0,0 +1,243 @@
++#!/usr/bin/env python3
++"""Require every frozen W1 native control and its one successful completion.
++
++The named roster is independent of counts printed by the Rust test harness.
++Logs remain execution observations, not proof of work-cost or security claims.
++"""
++from __future__ import annotations
++
++import argparse
++from collections import Counter
++import hashlib
++import json
++from pathlib import Path
++import re
++import sys
++
++from pq_source_reader import SourceReadError, read_regular
++
++MAX_LOG_BYTES = 16 * 1024 * 1024
++# Current native roster: retains the original controls and names all additions.
++# The sole ignored entry is the retained child fixture executed by its SIGKILL
++# parent control, not an exemption for an unexecuted required control.
++SUITES = {'legal-native-controls': {'passed': ['tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments',
++                                      'tests::last_product_mutation_wraps_canonically_and_changes_only_that_word',
++                                      'tests::public_dispatch_keeps_complete_bytes_and_all_misses',
++                                      'tests::v2_final_sample_keeps_both_legal_producers_and_complete_negative_verification',
++                                      'tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity',
++                                      'tests::versions_keep_exact_namespaces_and_eight_new_sample_streams',
++                                      'w1_cost_producers::observed_search_tests::complete_observed_stream_matches_retained_wrapper_byte_for_byte',
++                                      'w1_cost_producers::observed_search_tests::completion_observer_failure_never_starts_another_attempt',
++                                      'w1_cost_producers::observed_search_tests::malformed_generated_proof_has_started_and_failed_record',
++                                      'w1_cost_producers::observed_search_tests::native_failure_retains_completed_attempt_and_failed_begin',
++                                      'w1_cost_producers::observed_search_tests::observer_begin_refusal_precedes_native_generation',
++                                      'w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks',
++                                      'w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values'],
++                           'ignored': {}},
++ 'factorial-kernel-tests': {'passed': ['pon_work::legal_attempt::low_rank::tests::both_inputs_are_fully_validated_before_zero_or_high_rank_shortcuts',
++                                       'pon_work::legal_attempt::low_rank::tests::bounded_factorization_reconstructs_exact_full_field_rank_and_pivot_orders',
++                                       'pon_work::legal_attempt::low_rank::tests::exact_rank_limit_chooses_left_then_right_and_explicit_paid_dense_fallback',
++                                       'pon_work::legal_attempt::low_rank::tests::low_rank_complete_proofs_equal_both_original_kernels_and_verifiers',
++                                       'pon_work::legal_attempt::low_rank::tests::misses_still_replay_all_tiles_and_cancelled_retries_preserve_the_same_task',
++                                       'pon_work::legal_attempt::tests::boundary_target_is_inclusive_and_zero_target_refuses_before_work',
++                                       'pon_work::legal_attempt::tests::changed_challenge_and_task_never_gain_acceptance_from_cached_product',
++                                       'pon_work::legal_attempt::tests::every_stage_cancellation_returns_no_attempt_and_does_not_poison_retry',
++                                       'pon_work::legal_attempt::tests::factorial_kernels_match_independent_reference_for_full_and_structured_fields',
++                                       'pon_work::legal_attempt::tests::losing_attempt_still_replays_every_transcript_tile_without_lazy_serialization',
++                                       'pon_work::legal_attempt::tests::preparation_never_reduces_noncanonical_fields_or_wrong_shapes',
++                                       'pon_work::legal_attempt::tests::sparse_preparation_matches_dense_and_independent_full_field_proofs',
++                                       'pon_work::legal_attempt::tests::sparse_preparation_rejects_hidden_noncanonical_words_and_wrong_lengths',
++                                       'pon_work::legal_attempt::tests::sparse_setup_keeps_complete_misses_callbacks_and_cancelled_retry'],
++                            'ignored': {}},
++ 'factorial-example-tests': {'passed': ['tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments',
++                                        'tests::factorial_search_keeps_every_miss_and_identical_complete_winners',
++                                        'tests::last_product_mutation_wraps_canonically_and_changes_only_that_word',
++                                        'tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity',
++                                        'w1_cost_producers::observed_search_tests::complete_observed_stream_matches_retained_wrapper_byte_for_byte',
++                                        'w1_cost_producers::observed_search_tests::completion_observer_failure_never_starts_another_attempt',
++                                        'w1_cost_producers::observed_search_tests::malformed_generated_proof_has_started_and_failed_record',
++                                        'w1_cost_producers::observed_search_tests::native_failure_retains_completed_attempt_and_failed_begin',
++                                        'w1_cost_producers::observed_search_tests::observer_begin_refusal_precedes_native_generation',
++                                        'w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks',
++                                        'w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values'],
++                             'ignored': {}},
++ 'header-binding-tests': {'passed': ['complete_w1_proofs_cannot_move_between_header_fields_or_growth_domains'],
++                          'ignored': {}},
++ 'history-w1-tests': {'passed': ['ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill',
++                                 'ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary',
++                                 'ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account',
++                                 'ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries',
++                                 'ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work'],
++                      'ignored': {}},
++ 'history-import-tests': {'passed': ['ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced',
++                                     'ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation',
++                                     'ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account',
++                                     'ingress::history_import::tests::deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline',
++                                     'ingress::history_import::tests::deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu',
++                                     'ingress::history_import::tests::deadline_controls::history_control_keeps_original_timely_single_resource_observation',
++                                     'ingress::history_import::tests::deadline_controls::history_control_preexpired_does_not_invoke_resource',
++                                     'ingress::history_import::tests::deadline_controls::history_control_resource_expiry_keeps_original_resource_error',
++                                     'ingress::history_import::tests::deadline_controls::history_control_resource_expiry_refuses_late_success',
++                                     'ingress::history_import::tests::deadline_controls::history_owner_resource_expiry_never_invokes_exclusive_or_shared_action',
++                                     'ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry',
++                                     'ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account',
++                                     'ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen',
++                                     'ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account',
++                                     'ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart',
++                                     'ingress::history_import::tests::history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors',
++                                     'ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline',
++                                     'ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account',
++                                     'ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill',
++                                     'ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary',
++                                     'ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account',
++                                     'ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries',
++                                     'ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work',
++                                     'ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null',
++                                     'ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation',
++                                     'ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch',
++                                     'ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1',
++                                     'ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one',
++                                     'ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1',
++                                     'ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks',
++                                     'ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit',
++                                     'ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer',
++                                     'ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer'],
++                          'ignored': {'ingress::history_import::tests::history_kill_cut_child': 'subprocess '
++                                                                                                'fixture: parent '
++                                                                                                'selects a real '
++                                                                                                'SIGKILL cut'}},
++ 'cpu-completion-tests': {'passed': ['ingress::public_v3::scalar_cpu::completion_tests::actual_w1_cpu_completion_waits_for_original_refill_and_preserves_balance_identity',
++                                     'ingress::public_v3::scalar_cpu::completion_tests::already_running_probe_cannot_spend_beyond_its_original_quantum_during_completion',
++                                     'ingress::public_v3::scalar_cpu::completion_tests::complete_actual_w1_blocks_new_probes_without_new_credit_and_releases_once',
++                                     'ingress::public_v3::scalar_cpu::completion_tests::completion_identity_survives_cancel_and_unknown_without_invalidating_retry',
++                                     'ingress::public_v3::scalar_cpu::completion_tests::completion_keeps_original_cancellation_deadline_and_unknown_clock_fences',
++                                     'ingress::public_v3::scalar_cpu::completion_tests::completion_work_claim_is_atomic_across_real_verifiers_and_domain_clones',
++                                     'ingress::public_v3::scalar_cpu::completion_tests::exclusive_history_refill_observes_original_resource_cancellation_without_new_credit',
++                                     'ingress::public_v3::scalar_cpu::completion_tests::full_completion_registry_keeps_all_markers_and_allows_real_native_admission',
++                                     'ingress::public_v3::scalar_cpu::completion_tests::only_fresh_successful_native_w1_promotes_not_false_product_or_existing_packet',
++                                     'ingress::public_v3::scalar_cpu::completion_tests::same_valid_w1_native_invalid_packet_cannot_reacquire_completion_priority',
++                                     'ingress::public_v3::scalar_cpu::completion_tests::same_verified_w1_with_changed_transaction_body_is_rejected_before_promotion'],
++                          'ignored': {}}}
++
++GROUPS = {
++    "legal": ("legal-native-controls",),
++    "factorial": (
++        "factorial-kernel-tests", "factorial-example-tests", "header-binding-tests",
++        "history-w1-tests", "history-import-tests", "cpu-completion-tests",
++    ),
++}
++NUMBER = r"(?:0|[1-9][0-9]*)"
++HEADER = re.compile(r"running (" + NUMBER + r") tests?")
++SUMMARY = re.compile(
++    r"test result: ok\. (" + NUMBER + r") passed; 0 failed; (" + NUMBER
++    + r") ignored; 0 measured; " + NUMBER
++    + r" filtered out; finished in " + NUMBER + r"(?:\.[0-9]+)?s"
++)
++START = re.compile(r"test (\S+) \.\.\. (.*)")
++
++
++class NativeControlError(ValueError):
++    pass
++
++
++def validate_log(suite: str, raw: str) -> dict:
++    """Check one serial Rust harness, including --nocapture completion lines."""
++    roster = SUITES[suite]
++    required = roster["passed"]
++    ignored = roster["ignored"]
++    expected = set(required) | set(ignored)
++    if len(required) != len(set(required)) or set(required) & set(ignored):
++        raise NativeControlError(suite + ": invalid required roster")
++    started = []
++    passed = []
++    observed_ignored = {}
++    pending = None
++    header = None
++    summary = None
++
++    def refuse(reason):
++        raise NativeControlError(suite + ": " + reason)
++
++    for line in raw.splitlines():
++        if line.startswith("running "):
++            match = HEADER.fullmatch(line)
++            if match is None or header is not None or summary is not None:
++                refuse("missing, malformed or repeated harness start")
++            header = int(match[1])
++        elif line.startswith("test result:"):
++            match = SUMMARY.fullmatch(line)
++            if match is None or header is None or summary is not None or pending is not None:
++                refuse("failed, unfinished, malformed or repeated harness completion")
++            summary = (int(match[1]), int(match[2]))
++        elif line.startswith("test "):
++            match = START.fullmatch(line)
++            if match is None or header is None or summary is not None or pending is not None:
++                refuse("test outside a serial active harness")
++            name, status = match.groups()
++            if name not in expected or name in started:
++                refuse("unexpected or duplicate control: " + name)
++            started.append(name)
++            if name in ignored:
++                if status != "ignored, " + ignored[name]:
++                    refuse("retained subprocess fixture status changed: " + name)
++                observed_ignored[name] = ignored[name]
++            elif status == "ok":
++                passed.append(name)
++            elif status == "FAILED" or status.startswith("ignored"):
++                refuse("required control did not pass: " + name)
++            else:
++                # --test-threads=1 keeps this name open across its retained
++                # --nocapture output until the harness emits its own terminal.
++                pending = name
++        elif line == "ok":
++            if pending is None or summary is not None:
++                refuse("orphan or duplicate success terminal")
++            passed.append(pending)
++            pending = None
++        elif line == "FAILED" or line.startswith("ignored"):
++            refuse("unsuccessful control terminal")
++
++    if header != len(expected) or summary != (len(required), len(ignored)):
++        refuse("exact native count or final summary differs")
++    if (pending is not None or Counter(started) != Counter(expected)
++            or Counter(passed) != Counter(required) or observed_ignored != ignored):
++        refuse("exact started and successfully completed names differ")
++    return {
++        "suite": suite, "started": sorted(started), "passed": sorted(passed),
++        "ignored_subprocess_fixtures": observed_ignored,
++        "passed_count": len(passed), "ignored_count": len(observed_ignored),
++    }
++
++
++def check_group(group: str, logs: Path) -> dict:
++    observations = []
++    for suite in GROUPS[group]:
++        raw = read_regular(logs, suite + ".log", MAX_LOG_BYTES)
++        observation = validate_log(suite, raw.decode("utf-8", errors="strict"))
++        observation.update({"bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest()})
++        observations.append(observation)
++    return {
++        "schema": "trnm-w1-native-control-completion-v1", "group": group,
++        "all_required_native_controls_completed": True, "suites": observations,
++        "scope": "named serial native harness completion; no cost or security qualification",
++    }
++
++
++def main(argv=None) -> int:
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--group", choices=tuple(GROUPS), required=True)
++    parser.add_argument("--logs", type=Path, required=True)
++    parser.add_argument("--output", type=Path, required=True)
++    args = parser.parse_args(argv)
++    try:
++        report = check_group(args.group, args.logs)
++        with args.output.open("x", encoding="utf-8") as stream:
++            stream.write(json.dumps(report, sort_keys=True, indent=2) + "\n")
++    except (NativeControlError, SourceReadError, UnicodeError, OSError) as error:
++        print(str(error), file=sys.stderr)
++        return 2
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/scripts/ci/test_w1_factorial_native_gate.py b/scripts/ci/test_w1_factorial_native_gate.py
+--- a/scripts/ci/test_w1_factorial_native_gate.py
++++ b/scripts/ci/test_w1_factorial_native_gate.py
+@@ -1,86 +1,230 @@
+ #!/usr/bin/env python3
+-"""Exercise the actual workflow gate, including false-success log mutations."""
++"""Check W1's actual completion gate against source names and false successes."""
++import hashlib
++import json
++import os
++from pathlib import Path
+ import re
+ import subprocess
+ import sys
+ import tempfile
+-import textwrap
+ import unittest
+-from pathlib import Path
++
++from w1_native_controls import GROUPS, NativeControlError, SUITES, validate_log
+ 
+ ROOT = Path(__file__).resolve().parents[2]
+-WORKFLOW = ROOT / '.github/workflows/pon-w1-work-security.yml'
+-SOURCE = ROOT / 'trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs'
+-RANK_SOURCE = SOURCE.parent / 'legal_attempt/low_rank.rs'
+-COUNTS = {'factorial-kernel-tests': (14, 0), 'factorial-example-tests': (6, 0),
+-          'header-binding-tests': (1, 0), 'history-w1-tests': (5, 0),
+-          'history-import-tests': (28, 1), 'cpu-completion-tests': (11, 0)}
++WORKFLOW = ROOT / ".github/workflows/pon-w1-work-security.yml"
++GATE = ROOT / "scripts/ci/w1_native_controls.py"
++CRYPTO = "trillionnium/crates/trnm-crypto-primitives/"
++NODE = "trillionnium/crates/trnm-pon-node/"
++COUNTS = {
++    "legal-native-controls": (13, 0),
++    "factorial-kernel-tests": (14, 0), "factorial-example-tests": (11, 0),
++    "header-binding-tests": (1, 0), "history-w1-tests": (5, 0),
++    "history-import-tests": (33, 1), "cpu-completion-tests": (11, 0),
++}
+ HISTORY = [
+-    'deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline',
+-    'deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu',
+-    'history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors',
++    "deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline",
++    "deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu",
++    "history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors",
+ ]
++
++
++def fixture(suite):
++    passed, ignored = COUNTS[suite]
++    rows = [f"running {passed + ignored} tests"]
++    rows.extend(f"test {name} ... ok" for name in SUITES[suite]["passed"])
++    rows.extend(f"test {name} ... ignored, {reason}"
++                for name, reason in SUITES[suite]["ignored"].items())
++    rows.append(f"test result: ok. {passed} passed; 0 failed; {ignored} ignored; "
++                "0 measured; 0 filtered out; finished in 0.01s")
++    return "\n".join(rows) + "\n"
++
++
++def source_names(path, prefix):
++    names = re.findall(r"#\[test\]\s*(?:#\[[^\]]*\]\s*)*fn (\w+)",
++                       (ROOT / path).read_text())
++    return {prefix + name for name in names}
+ 
+ 
+ class NativeGateTests(unittest.TestCase):
+     def setUp(self):
+-        workflow = WORKFLOW.read_text()
+-        self.code = textwrap.dedent(workflow.split("<<'PYTEST'\n", 1)[1].split('          PYTEST', 1)[0])
+-        self.names = ['pon_work::legal_attempt::tests::' + n for n in
+-                      re.findall(r'#\[test\]\s+fn (\w+)', SOURCE.read_text())]
+-        self.assertEqual(len(self.names), 9)
+-        rank_names = ['pon_work::legal_attempt::low_rank::tests::' + n for n in
+-                      re.findall(r'#\[test\]\s+fn (\w+)', RANK_SOURCE.read_text())]
+-        self.assertEqual(len(rank_names), 5)
+-        self.names += rank_names
+-        self.logs = {name: f'test result: ok. {passed} passed; 0 failed; {ignored} ignored;\n'
+-                     for name, (passed, ignored) in COUNTS.items()}
+-        self.logs['factorial-kernel-tests'] += ''.join(f'test {n} ... ok\n' for n in self.names)
+-        self.logs['history-import-tests'] += ''.join(
+-            f'test ingress::history_import::tests::{n} ... ok\n' for n in HISTORY)
+-
+-    def run_gate(self):
++        self.logs = {name: fixture(name) for name in COUNTS}
++        self.names = SUITES["factorial-kernel-tests"]["passed"]
++
++    def run_gate(self, group="factorial"):
+         with tempfile.TemporaryDirectory() as directory:
++            root = Path(directory)
+             for name, content in self.logs.items():
+-                (Path(directory) / (name + '.log')).write_text(content)
+-            return subprocess.run([sys.executable, '-c', self.code, directory], capture_output=True).returncode
++                (root / (name + ".log")).write_text(content)
++            result = subprocess.run(
++                [sys.executable, "-B", str(GATE), "--group", group, "--logs", directory,
++                 "--output", str(root / "completion.json")], capture_output=True, timeout=5,
++            )
++            if result.returncode == 0:
++                report = json.loads((root / "completion.json").read_text())
++                self.assertEqual([x["suite"] for x in report["suites"]], list(GROUPS[group]))
++                for row in report["suites"]:
++                    raw = self.logs[row["suite"]].encode()
++                    self.assertEqual(row["sha256"], hashlib.sha256(raw).hexdigest())
++                    self.assertEqual(row["bytes"], len(raw))
++            else:
++                self.assertFalse((root / "completion.json").exists())
++            return result.returncode
++
++    def rejects(self, suite, raw):
++        with self.assertRaises(NativeControlError):
++            validate_log(suite, raw)
+ 
+     def test_complete_roster_passes(self):
+         self.assertEqual(self.run_gate(), 0)
++        self.assertEqual(self.run_gate("legal"), 0)
++
++    def test_frozen_names_equal_current_native_source_and_retained_counts(self):
++        shared = source_names(NODE + "examples/support/w1_cost_producers.rs",
++                              "w1_cost_producers::observed_search_tests::")
++        shared |= source_names(CRYPTO + "examples/support/w1_material.rs", "w1_material::tests::")
++        history = source_names(NODE + "src/ingress/history_import_tests.rs",
++                               "ingress::history_import::tests::")
++        deadline = source_names(NODE + "src/ingress/history_import_deadline_tests.rs",
++                                "ingress::history_import::tests::deadline_controls::")
++        expected = {
++            "legal-native-controls": shared | source_names(
++                NODE + "examples/pon_w1_legal_strategy_v1.rs", "tests::"),
++            "factorial-example-tests": shared | source_names(
++                NODE + "examples/pon_w1_legal_strategy_v3.rs", "tests::"),
++            "factorial-kernel-tests": source_names(CRYPTO + "src/pon_work/legal_attempt.rs",
++                                                    "pon_work::legal_attempt::tests::")
++            | source_names(CRYPTO + "src/pon_work/legal_attempt/low_rank.rs",
++                           "pon_work::legal_attempt::low_rank::tests::"),
++            "header-binding-tests": source_names(NODE + "tests/work_header_binding.rs", ""),
++            "history-w1-tests": {name for name in history if name.split("::")[-1].startswith("history_w1_")},
++            "history-import-tests": history | deadline,
++            "cpu-completion-tests": source_names(
++                NODE + "src/ingress/public_v3/scalar_cpu_completion_tests.rs",
++                "ingress::public_v3::scalar_cpu::completion_tests::"),
++        }
++        self.assertEqual(set(SUITES), set(COUNTS))
++        for suite, names in expected.items():
++            with self.subTest(suite=suite):
++                roster = SUITES[suite]
++                self.assertEqual((len(roster["passed"]), len(roster["ignored"])), COUNTS[suite])
++                self.assertEqual(set(roster["passed"]) | set(roster["ignored"]), names)
+ 
+     def test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary(self):
+-        for name in COUNTS:
+-            original = self.logs[name]
+-            mutations = [original.replace(' passed;', '0 passed;', 1),
+-                         original.replace('0 failed;', '1 failed;', 1),
+-                         original.replace(' ignored;', '0 ignored;', 1),
+-                         original + original.splitlines()[0] + '\n', '']
++        for name, original in self.logs.items():
++            summary = original.splitlines()[-1]
++            mutations = [
++                original.replace(summary, summary.replace(" passed;", "0 passed;", 1)),
++                original.replace("0 failed;", "1 failed;", 1),
++                original.replace(" ignored;", "0 ignored;", 1),
++                original + summary + "\n", "",
++                original.replace(summary, ""),
++                original.replace("running ", "running 0", 1),
++                original + original.splitlines()[0] + "\n",
++            ]
+             for mutant in mutations:
+-                with self.subTest(suite=name, mutant=mutant):
+-                    self.logs[name] = mutant
+-                    self.assertNotEqual(self.run_gate(), 0)
+-            self.logs[name] = original
++                with self.subTest(suite=name, mutant=mutant[:80]):
++                    self.rejects(name, mutant)
+ 
+     def test_kernel_rejects_missing_duplicate_or_replaced_named_control(self):
+-        original = self.logs['factorial-kernel-tests']
++        original = self.logs["factorial-kernel-tests"]
+         for name in self.names:
+-            line = f'test {name} ... ok\n'
+-            for mutant in [original.replace(line, ''), original + line,
+-                           original.replace(name, 'pon_work::legal_attempt::tests::unexpected')]:
++            line = f"test {name} ... ok\n"
++            for mutant in (original.replace(line, ""), original + line,
++                           original.replace(name, "pon_work::legal_attempt::tests::unexpected")):
+                 with self.subTest(control=name):
+-                    self.logs['factorial-kernel-tests'] = mutant
+-                    self.assertNotEqual(self.run_gate(), 0)
+-        self.logs['factorial-kernel-tests'] = original
++                    self.rejects("factorial-kernel-tests", mutant)
+ 
+     def test_history_named_controls_remain_required_once(self):
+-        original = self.logs['history-import-tests']
++        original = self.logs["history-import-tests"]
+         for name in HISTORY:
+-            line = f'test ingress::history_import::tests::{name} ... ok\n'
+-            for mutant in [original.replace(line, ''), original + line]:
+-                self.logs['history-import-tests'] = mutant
+-                self.assertNotEqual(self.run_gate(), 0)
+-        self.logs['history-import-tests'] = original
+-
+-
+-if __name__ == '__main__':
++            line = f"test ingress::history_import::tests::{name} ... ok\n"
++            for mutant in (original.replace(line, ""), original + line):
++                self.rejects("history-import-tests", mutant)
++
++    def test_every_named_control_requires_one_successful_terminal(self):
++        for suite, original in self.logs.items():
++            for name in SUITES[suite]["passed"]:
++                line = f"test {name} ... ok\n"
++                mutations = [original.replace(line, ""), original + line,
++                             original.replace(name, "unexpected::substitute"),
++                             original.replace(line, f"test {name} ... FAILED\n"),
++                             original.replace(line, f"test {name} ... ignored\n")]
++                for mutant in mutations:
++                    with self.subTest(suite=suite, name=name):
++                        self.rejects(suite, mutant)
++
++    def test_nocapture_retains_name_until_its_serial_success_terminal(self):
++        for suite, original in self.logs.items():
++            name = SUITES[suite]["passed"][0]
++            line = f"test {name} ... ok\n"
++            split = f"test {name} ... {{\"original_observation\":true}}\nmore observation\nok\n"
++            valid = original.replace(line, split)
++            self.assertIn(name, validate_log(suite, valid)["passed"])
++            for mutant in (valid.replace("\nok\n", "\n", 1),
++                           valid.replace("\nok\n", "\nFAILED\n", 1),
++                           valid.replace("\nok\n", "\nok\nok\n", 1),
++                           "ok\n" + valid):
++                self.rejects(suite, mutant)
++
++    def test_ignored_child_is_exact_and_parent_still_must_pass(self):
++        suite = "history-import-tests"
++        original = self.logs[suite]
++        child, reason = next(iter(SUITES[suite]["ignored"].items()))
++        line = f"test {child} ... ignored, {reason}\n"
++        for mutant in (original.replace(line, ""), original + line,
++                       original.replace(line, f"test {child} ... ok\n"),
++                       original.replace(reason, "different skip reason"),
++                       original.replace("real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks ... ok",
++                                        "real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks ... ignored")):
++            self.rejects(suite, mutant)
++
++    def test_original_old_counts_cannot_certify_the_current_roster(self):
++        for suite, old, current in (("legal-native-controls", 8, 13),
++                                    ("factorial-example-tests", 6, 11),
++                                    ("history-import-tests", 28, 33)):
++            self.rejects(suite, self.logs[suite].replace(f"{current} passed;", f"{old} passed;"))
++
++    def test_actual_workflow_uses_both_strict_gates_without_changing_native_selectors(self):
++        workflow = WORKFLOW.read_text()
++        for group, report in (("legal", "legal-native-controls"), ("factorial", "factorial-native-controls")):
++            command = ('          python3 -B scripts/ci/w1_native_controls.py --group ' + group
++                       + ' --logs "$OUT" --output "$OUT/' + report + '-completion.json"')
++            self.assertEqual(workflow.splitlines().count(command), 1)
++        commands = (
++            "-p trnm-pon-node --example pon_w1_legal_strategy_v1 -- --test-threads=1",
++            "-p trnm-crypto-primitives --lib pon_work::legal_attempt:: -- --test-threads=1",
++            "-p trnm-pon-node --example pon_w1_legal_strategy_v3 -- --test-threads=1",
++            "-p trnm-pon-node --test work_header_binding -- --test-threads=1",
++            "-p trnm-pon-node --lib history_w1_ -- --test-threads=1 --nocapture",
++            "-p trnm-pon-node --lib ingress::history_import::tests:: -- --test-threads=1 --nocapture",
++            "-p trnm-pon-node --lib ingress::public_v3::scalar_cpu::completion_tests:: -- --test-threads=1 --nocapture",
++        )
++        for command in commands:
++            self.assertIn("cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml "
++                          + command + " 2>&1 | tee ", workflow)
++        self.assertEqual(workflow.count("python3 -B scripts/ci/test_w1_factorial_native_gate.py"), 1)
++        self.assertEqual(workflow.count("python3 scripts/ci/test_w1_factorial_native_gate.py"), 1)
++
++    def test_cli_failure_never_writes_success_report(self):
++        self.logs["legal-native-controls"] = ""
++        self.assertNotEqual(self.run_gate("legal"), 0)
++
++    def test_cli_fifo_and_symlink_log_refuse_without_waiting(self):
++        with tempfile.TemporaryDirectory() as directory:
++            root = Path(directory)
++            path = root / "legal-native-controls.log"
++            command = [sys.executable, "-B", str(GATE), "--group", "legal", "--logs", directory,
++                       "--output", str(root / "completion.json")]
++            os.mkfifo(path)
++            self.assertEqual(subprocess.run(command, capture_output=True, timeout=2).returncode, 2)
++            path.unlink()
++            (root / "valid.log").write_text(self.logs["legal-native-controls"])
++            path.symlink_to("valid.log")
++            self.assertEqual(subprocess.run(command, capture_output=True, timeout=2).returncode, 2)
++            self.assertFalse((root / "completion.json").exists())
++
++
++if __name__ == "__main__":
+     unittest.main()
+diff --git a/scripts/ci/prepare_artifact_upload.py b/scripts/ci/prepare_artifact_upload.py
+new file mode 100644
+--- /dev/null
++++ b/scripts/ci/prepare_artifact_upload.py
+@@ -0,0 +1,178 @@
++#!/usr/bin/env python3
++"""Copy an entire observation tree to safe names with a lossless path manifest.
++
++Original files and all of their bytes stay unchanged. This packaging step does
++not turn failed or partial execution evidence into a passing observation.
++"""
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++import os
++from pathlib import Path
++import shutil
++import stat
++import sys
++
++FLAGS = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC
++DIRECTORY_FLAGS = FLAGS | os.O_DIRECTORY
++CHUNK_BYTES = 1024 * 1024
++
++
++class ArtifactMapError(ValueError):
++    pass
++
++
++def _identity(metadata):
++    return (metadata.st_dev, metadata.st_ino, metadata.st_mode, metadata.st_size,
++            metadata.st_mtime_ns, metadata.st_ctime_ns)
++
++
++def _open_directory(path):
++    path = Path(path).absolute()
++    if path.anchor != "/" or ".." in path.parts:
++        raise ArtifactMapError("unsafe directory path")
++    fd = os.open("/", DIRECTORY_FLAGS)
++    try:
++        for component in path.parts[1:]:
++            next_fd = os.open(component, DIRECTORY_FLAGS, dir_fd=fd)
++            os.close(fd)
++            fd = next_fd
++        return fd
++    except BaseException:
++        os.close(fd)
++        raise
++
++
++def _snapshot(root_fd):
++    rows = {"": _identity(os.fstat(root_fd))}
++
++    def visit(directory_fd, prefix):
++        for name in sorted(os.listdir(directory_fd), key=os.fsencode):
++            relative = prefix + name
++            metadata = os.stat(name, dir_fd=directory_fd, follow_symlinks=False)
++            rows[relative] = _identity(metadata)
++            if stat.S_ISDIR(metadata.st_mode):
++                child = os.open(name, DIRECTORY_FLAGS, dir_fd=directory_fd)
++                try:
++                    if _identity(os.fstat(child)) != rows[relative]:
++                        raise ArtifactMapError("changing directory: " + relative)
++                    visit(child, relative + "/")
++                finally:
++                    os.close(child)
++            elif not stat.S_ISREG(metadata.st_mode):
++                raise ArtifactMapError("symlink or special artifact refused: " + relative)
++
++    visit(root_fd, "")
++    return rows
++
++
++def _copy_regular(root_fd, relative, snapshot, destination):
++    """Stream the frozen observed size through no-follow, nonblocking fds."""
++    descriptors = []
++    parent = root_fd
++    try:
++        parts = relative.split("/")
++        for index, component in enumerate(parts[:-1]):
++            parent = os.open(component, DIRECTORY_FLAGS, dir_fd=parent)
++            descriptors.append(parent)
++            if _identity(os.fstat(parent)) != snapshot["/".join(parts[:index + 1])]:
++                raise ArtifactMapError("changing artifact ancestor: " + relative)
++        fd = os.open(parts[-1], FLAGS, dir_fd=parent)
++        descriptors.append(fd)
++        expected = snapshot[relative]
++        if _identity(os.fstat(fd)) != expected or not stat.S_ISREG(expected[2]):
++            raise ArtifactMapError("changing or nonregular artifact: " + relative)
++        remaining = expected[3]
++        digest = hashlib.sha256()
++        with destination.open("xb") as output:
++            while remaining:
++                chunk = os.read(fd, min(remaining, CHUNK_BYTES))
++                if not chunk:
++                    raise ArtifactMapError("truncated artifact: " + relative)
++                output.write(chunk)
++                digest.update(chunk)
++                remaining -= len(chunk)
++            if os.read(fd, 1):
++                raise ArtifactMapError("growing artifact: " + relative)
++        if (_identity(os.fstat(fd)) != expected
++                or _identity(os.stat(parts[-1], dir_fd=parent, follow_symlinks=False)) != expected):
++            raise ArtifactMapError("changed artifact: " + relative)
++        return {"original_path": relative, "bytes": expected[3],
++                "sha256": digest.hexdigest(), "original_mode": stat.S_IMODE(expected[2])}
++    finally:
++        for fd in reversed(descriptors):
++            os.close(fd)
++
++
++def prepare_upload(source, output):
++    source, output = Path(source).absolute(), Path(output).absolute()
++    if output == source or source in output.parents:
++        raise ArtifactMapError("upload output must be outside the original observation tree")
++    source_fd = _open_directory(source)
++    created = False
++    try:
++        before = _snapshot(source_fd)
++        files = sorted((name for name, identity in before.items()
++                        if stat.S_ISREG(identity[2])), key=os.fsencode)
++        if not files:
++            raise ArtifactMapError("no regular artifact files")
++        # Check ancestors before mkdir; an existing output, even an empty one,
++        # is refused rather than merged with possibly stale observations.
++        parent_fd = _open_directory(output.parent)
++        try:
++            os.mkdir(output.name, mode=0o700, dir_fd=parent_fd)
++        finally:
++            os.close(parent_fd)
++        created = True
++        (output / "files").mkdir(mode=0o700)
++        records = []
++        for index, relative in enumerate(files):
++            mapped = f"files/{index:08d}.bin"
++            record = _copy_regular(source_fd, relative, before, output / mapped)
++            record["mapped_path"] = mapped
++            records.append(record)
++        if _snapshot(source_fd) != before:
++            raise ArtifactMapError("observation tree changed while packaging")
++        named_fd = _open_directory(source)
++        try:
++            if _identity(os.fstat(named_fd)) != before[""]:
++                raise ArtifactMapError("original observation directory changed")
++        finally:
++            os.close(named_fd)
++        manifest = {
++            "schema": "trnm-artifact-path-map-v1",
++            "scope": "lossless relative-path mapping; original execution outcomes remain unchanged",
++            "file_count": len(records), "total_bytes": sum(row["bytes"] for row in records),
++            "files": records,
++        }
++        with (output / "artifact-path-map-v1.json").open("x", encoding="utf-8") as stream:
++            json.dump(manifest, stream, ensure_ascii=True, sort_keys=True, indent=2)
++            stream.write("\n")
++        return manifest
++    except BaseException:
++        if created:
++            shutil.rmtree(output)
++        raise
++    finally:
++        os.close(source_fd)
++
++
++def main(argv=None):
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--source", type=Path, required=True)
++    parser.add_argument("--output", type=Path, required=True)
++    args = parser.parse_args(argv)
++    try:
++        manifest = prepare_upload(args.source, args.output)
++    except (ArtifactMapError, OSError) as error:
++        print(str(error), file=sys.stderr)
++        return 2
++    print(json.dumps({"schema": manifest["schema"], "file_count": manifest["file_count"],
++                      "total_bytes": manifest["total_bytes"]}, sort_keys=True))
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/scripts/ci/test_prepare_artifact_upload.py b/scripts/ci/test_prepare_artifact_upload.py
+new file mode 100644
+--- /dev/null
++++ b/scripts/ci/test_prepare_artifact_upload.py
+@@ -0,0 +1,163 @@
++#!/usr/bin/env python3
++"""Lossless evidence mapping and real filesystem refusal controls."""
++import hashlib
++import json
++import os
++from pathlib import Path
++import re
++import subprocess
++import sys
++import tempfile
++import unittest
++from unittest.mock import patch
++
++import prepare_artifact_upload as mapper
++
++SCRIPT = Path(mapper.__file__).resolve()
++ACTUAL_REFUSED_NAME = (
++    "native-storage-component-cell::host_handoff::tests::research_fds::"
++    "research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte.exit"
++)
++
++
++class ArtifactUploadTests(unittest.TestCase):
++    def setUp(self):
++        self.temporary = tempfile.TemporaryDirectory()
++        self.addCleanup(self.temporary.cleanup)
++        self.root = Path(self.temporary.name)
++        self.source = self.root / "source"
++        self.source.mkdir()
++        self.output = self.root / "upload"
++
++    def put(self, name, content):
++        path = self.source / name
++        path.parent.mkdir(parents=True, exist_ok=True)
++        path.write_bytes(content)
++
++    def command(self):
++        return [sys.executable, "-B", str(SCRIPT), "--source", str(self.source),
++                "--output", str(self.output)]
++
++    def verify(self, original):
++        manifest = json.loads((self.output / "artifact-path-map-v1.json").read_text())
++        rows = manifest["files"]
++        self.assertEqual(manifest["file_count"], len(original))
++        self.assertEqual(manifest["total_bytes"], sum(map(len, original.values())))
++        self.assertEqual({row["original_path"] for row in rows}, set(original))
++        self.assertEqual(len({row["mapped_path"] for row in rows}), len(original))
++        actual = {path.relative_to(self.output).as_posix() for path in self.output.rglob("*") if path.is_file()}
++        self.assertEqual(actual, {row["mapped_path"] for row in rows} | {"artifact-path-map-v1.json"})
++        for row in rows:
++            self.assertRegex(row["mapped_path"], r"\Afiles/[0-9]{8}\.bin\Z")
++            content = original[row["original_path"]]
++            self.assertEqual((self.source / row["original_path"]).read_bytes(), content)
++            self.assertEqual((self.output / row["mapped_path"]).read_bytes(), content)
++            self.assertEqual(row["bytes"], len(content))
++            self.assertEqual(row["sha256"], hashlib.sha256(content).hexdigest())
++        return manifest
++
++    def test_actual_colon_log_and_nested_hidden_empty_binary_files_are_lossless(self):
++        original = {
++            ACTUAL_REFUSED_NAME: b"0\n", "same:name.log": b"raw failure\x00\xff\n",
++            "same?name.log": b"different failure\n", "sameNAME.log": b"different case\n",
++            "nested?/child::stdout.log": b"nested original\n", ".hidden/.zero": b"",
++            "unicode-\u6d4b\u8bd5\nline.log": b"unaltered observations\n",
++        }
++        for name, content in original.items():
++            self.put(name, content)
++        result = subprocess.run(self.command(), capture_output=True, timeout=5)
++        self.assertEqual(result.returncode, 0, result.stderr)
++        self.verify(original)
++
++    def test_mapping_is_deterministic_and_identical_bytes_do_not_merge_paths(self):
++        original = {"a:b": b"same bytes", "a?b": b"same bytes", "nested/item": b"third"}
++        for name, content in reversed(tuple(original.items())):
++            self.put(name, content)
++        mapper.prepare_upload(self.source, self.output)
++        self.verify(original)
++        second = self.root / "second"
++        mapper.prepare_upload(self.source, second)
++        self.assertEqual((self.output / "artifact-path-map-v1.json").read_bytes(),
++                         (second / "artifact-path-map-v1.json").read_bytes())
++
++    def test_existing_output_is_refused_without_merging_or_overwriting(self):
++        self.put("original.log", b"original")
++        self.output.mkdir()
++        (self.output / "marker").write_bytes(b"retained")
++        with self.assertRaises(FileExistsError):
++            mapper.prepare_upload(self.source, self.output)
++        self.assertEqual((self.output / "marker").read_bytes(), b"retained")
++        self.assertEqual(list(self.output.iterdir()), [self.output / "marker"])
++
++    def test_output_inside_source_and_empty_source_refuse(self):
++        with self.assertRaises(mapper.ArtifactMapError):
++            mapper.prepare_upload(self.source, self.output)
++        self.assertFalse(self.output.exists())
++        self.put("original.log", b"original")
++        for output in (self.source, self.source / "nested-upload"):
++            with self.assertRaises(mapper.ArtifactMapError):
++                mapper.prepare_upload(self.source, output)
++        self.assertEqual({p.name for p in self.source.iterdir()}, {"original.log"})
++
++    def test_real_fifo_and_symlinks_refuse_without_waiting_or_success_manifest(self):
++        target = self.root / "target"
++        target.write_bytes(b"outside bytes")
++        for kind in ("fifo", "file-link", "directory-link"):
++            path = self.source / "special"
++            if kind == "fifo":
++                os.mkfifo(path)
++            else:
++                path.symlink_to(target if kind == "file-link" else self.root, target_is_directory=kind == "directory-link")
++            result = subprocess.run(self.command(), capture_output=True, timeout=2)
++            self.assertEqual(result.returncode, 2, kind)
++            self.assertFalse(self.output.exists())
++            path.unlink()
++
++    def test_symlink_root_or_ancestor_is_not_followed(self):
++        self.put("original.log", b"original")
++        linked = self.root / "linked"
++        linked.symlink_to(self.source, target_is_directory=True)
++        for source in (linked, self.root / "parent-link" / "source"):
++            if "parent-link" in source.parts:
++                (self.root / "parent-link").symlink_to(self.root, target_is_directory=True)
++            with self.assertRaises(OSError):
++                mapper.prepare_upload(source, self.output)
++            self.assertFalse(self.output.exists())
++
++    def test_added_removed_changed_or_replaced_source_prevents_publication(self):
++        self.put("a.log", b"first")
++        self.put("z.log", b"last")
++        original_copy = mapper._copy_regular
++        for mutation in ("add", "remove", "change", "replace"):
++            def copy_and_mutate(root_fd, relative, snapshot, destination):
++                record = original_copy(root_fd, relative, snapshot, destination)
++                if relative == "z.log":
++                    if mutation == "add":
++                        self.put("extra.log", b"new")
++                    elif mutation == "remove":
++                        (self.source / "a.log").unlink()
++                    elif mutation == "change":
++                        self.put("a.log", b"other")
++                    else:
++                        temporary = self.source / "replacement"
++                        temporary.write_bytes(b"first")
++                        temporary.replace(self.source / "a.log")
++                return record
++            with self.subTest(mutation=mutation), patch.object(mapper, "_copy_regular", side_effect=copy_and_mutate):
++                with self.assertRaises(mapper.ArtifactMapError):
++                    mapper.prepare_upload(self.source, self.output)
++            self.assertFalse(self.output.exists())
++            self.put("a.log", b"first")
++            (self.source / "extra.log").unlink(missing_ok=True)
++
++    def test_copy_failure_keeps_originals_and_leaves_no_partial_success(self):
++        self.put("original.log", b"retained failure")
++        with patch.object(mapper, "_copy_regular", side_effect=OSError("copy refused")):
++            with self.assertRaises(OSError):
++                mapper.prepare_upload(self.source, self.output)
++        self.assertFalse(self.output.exists())
++        self.assertEqual((self.source / "original.log").read_bytes(), b"retained failure")
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/scripts/ci/test_cell_storage_convergence_ci.py b/scripts/ci/test_cell_storage_convergence_ci.py
+--- a/scripts/ci/test_cell_storage_convergence_ci.py
++++ b/scripts/ci/test_cell_storage_convergence_ci.py
+@@ -14,6 +14,7 @@
+ SOURCE_BEFORE_STEP = "Verify exact source and ordered prospective merge"
+ SOURCE_AFTER_STEP = "Reverify the complete measured source after all attempts"
+ OUTCOMES_STEP = "Retain stage outcomes and artifact digests"
++MAPPING_STEP = "Map every observation to a safe upload path"
+ UPLOAD_STEP = "Retain logs and failed or partial observations"
+ PYTHON_GUARD = "        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' }}"
+ NATIVE_GUARD = "        if: ${{ always() && steps.source.outcome == 'success' && steps.preflight.outcome == 'success' && steps.toolchain.outcome == 'success' }}"
+@@ -29,6 +30,7 @@
+           bash "$OUT/run-command.sh" version-retention-vector python3 -B scripts/cell_version_retention_v3_vector.py --check || status=1
+           bash "$OUT/run-command.sh" storage-descriptor-vector python3 -B scripts/cell_storage_descriptor_reference.py --check || status=1
+           bash "$OUT/run-command.sh" storage-convergence-workflow-controls python3 -B scripts/ci/test_cell_storage_convergence_ci.py || status=1
++          bash "$OUT/run-command.sh" artifact-map-controls python3 -B scripts/ci/test_prepare_artifact_upload.py || status=1
+           exit "$status"
+ """
+ NODE_RUN_BODY = """\
+@@ -269,8 +271,23 @@
+     require(outcomes.index("          if not storage_components_passed or not sealed_python_passed:")
+             > outcomes.index('          (root / "sha256sums.txt").write_text'),
+             "new stage failures must retain summaries and hashes before rejection")
++    mapping = step(text, MAPPING_STEP)
++    expected_mapping = (
++        "        id: artifact_map\n"
++        "        if: ${{ always() && steps.reserve.outcome == 'success' }}\n"
++        "        shell: bash\n"
++        "        run: |\n"
++        "          set -euo pipefail\n"
++        '          python3 -B scripts/ci/prepare_artifact_upload.py --source "$OUT" --output "$OUT-upload"\n'
++    )
++    require(mapping == expected_mapping, "lossless mapping and its failure propagation changed")
++    require(text.index("      - name: " + OUTCOMES_STEP)
++            < text.index("      - name: " + MAPPING_STEP)
++            < text.index("      - name: " + UPLOAD_STEP),
++            "map all final observations before upload")
+     upload = step(text, UPLOAD_STEP)
+     exact_line(upload, "        if: always()")
++    exact_line(upload, "          path: ${{ runner.temp }}/next-architecture-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}-upload/")
+     exact_line(upload, "          if-no-files-found: error")
+     exact_line(upload, "          retention-days: 30")
+ 
+@@ -343,6 +360,23 @@
+     def test_current_source_preserves_complete_runtime_and_failure_seams(self) -> None:
+         validate(self.text)
+ 
++    def test_lossless_mapping_cannot_skip_failures_or_upload_unsafe_original_names(self) -> None:
++        mapping = step(self.text, MAPPING_STEP)
++        mutations = (
++            mapping.replace("always()", "success()"),
++            mapping.replace("set -euo pipefail", "set +e"),
++            mapping.replace('--output "$OUT-upload"', '--output "$OUT"'),
++            mapping.replace(' --source "$OUT"', ' --source "$OUT/subset"'),
++            mapping.replace(' --output "$OUT-upload"', ' --output "$OUT-upload" || true'),
++        )
++        for changed in mutations:
++            self.rejected(self.text.replace(mapping, changed, 1))
++        self.rejected(self.text.replace("      - name: " + MAPPING_STEP + "\n" + mapping, "", 1))
++        self.rejected(self.text.replace("${{ github.run_attempt }}-upload/", "${{ github.run_attempt }}/", 1))
++        control = ('          bash "$OUT/run-command.sh" artifact-map-controls python3 -B '
++                   'scripts/ci/test_prepare_artifact_upload.py || status=1\n')
++        self.rejected(self.text.replace(control, "", 1))
++
+     def test_new_commands_cannot_be_omitted_moved_duplicated_or_stubbed(self) -> None:
+         blocks = (step(self.text, PYTHON_STEP), step(self.text, NODE_STEP))
+         lines = [line + "\n" for block in blocks for line in block.splitlines()

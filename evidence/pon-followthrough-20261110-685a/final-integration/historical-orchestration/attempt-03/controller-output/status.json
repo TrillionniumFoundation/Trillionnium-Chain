@@ -1,0 +1,16 @@
+{
+  "binding_child_c3": "a715b2c8e89732ce356ebae67f978ef232156c04",
+  "code_checkpoint_c2": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+  "current_head": "a715b2c8e89732ce356ebae67f978ef232156c04",
+  "draft_only": true,
+  "end_unix_ns": 1794308588542015727,
+  "last_exit": 2,
+  "native_full_suite_passed": false,
+  "native_observation_complete": true,
+  "phase": "failed",
+  "requested_phase": "all",
+  "schema": "pon-followthrough-controller-status-v2",
+  "security_status": "HOLD",
+  "stage": "all",
+  "started_unix_ns": 1794308068249266662
+}

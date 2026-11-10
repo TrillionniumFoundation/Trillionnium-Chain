@@ -1,0 +1,5 @@
+{"changed_files": 7, "output": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/authority-pq128", "status": "APPLIED_VALIDATION_DEFERRED"}
+/usr/bin/python3 -B /home/qian-qi/chain-pon-followthrough-20261110-685a/scripts/ci/test_pq_authority_effect_register.py
+/usr/bin/python3 -B /home/qian-qi/chain-pon-followthrough-20261110-685a/scripts/ci/pq_authority_effect_register.py
+/usr/bin/python3 -B /home/qian-qi/chain-pon-followthrough-20261110-685a/scripts/ci/test_pq_lifetime_budget.py
+/usr/bin/python3 -B /home/qian-qi/chain-pon-followthrough-20261110-685a/scripts/ci/pq_lifetime_budget.py

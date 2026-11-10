@@ -1,0 +1,12 @@
+{
+  "code_checkpoint": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+  "controller_bytes": 81870,
+  "controller_sha256": "1075c69186b95bb8e3423693fbb931f375d5afa93dd6fc023a02715945d9e920",
+  "followup_directory": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04",
+  "native_full_suite_passed": false,
+  "original_directory": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation",
+  "production_activation": false,
+  "recorder_sha256": "79d1397d97ad8fce27eb861b1ee70a30b22574a190059766f660259267885e46",
+  "scope": "read-only actual receipt parser; no Controller construction, project mutation, native test, or C3 commit",
+  "tree": "7c003a3d183ad33ff4f3349cbcce61564f73a2ba"
+}
