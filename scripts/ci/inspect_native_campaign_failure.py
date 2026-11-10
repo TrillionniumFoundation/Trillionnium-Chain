@@ -34,8 +34,10 @@ def _sum_observed(rows: list, *keys: str) -> dict:
 def _checkpoint_calls(history: list) -> dict:
     rows = []
     for item in history:
-        stages = item.get("client_import", {}).get("native_import_observation", {}).get("host_checks", [])
-        matching = [stage for stage in stages if stage.get("phase") == "checkpoint"]
+        imported = item.get("client_import")
+        native = imported.get("native_import_observation") if isinstance(imported, dict) else None
+        stages = native.get("host_checks") if isinstance(native, dict) else None
+        matching = [stage for stage in stages if isinstance(stage, dict) and stage.get("phase") == "checkpoint"] if isinstance(stages, list) else []
         rows.append(matching[0] if len(matching) == 1 else {})
     return _sum_observed(rows, "calls_accepted")
 
@@ -44,7 +46,8 @@ def _phase(phase: dict, name: str, attackers: int) -> dict:
     history = phase.get("history", [])
     submissions = phase.get("submissions", [])
     confirmations = phase.get("confirmations", [])
-    if not all(isinstance(value, list) for value in (history, submissions, confirmations)):
+    if not all(isinstance(value, list) and all(isinstance(row, dict) for row in value)
+               for value in (history, submissions, confirmations)):
         raise ValueError("history, submissions and confirmations must be arrays")
     errors = phase.get("verifier_errors", [])
     if not isinstance(errors, list):
@@ -108,9 +111,12 @@ def inspect(root: Path) -> dict:
             record["report_sha256"] = digest
             stages = report.get("phases")
             if (report.get("schema") != SCHEMA or report.get("state_backend") != "authenticated-v1"
-                    or not isinstance(stages, list) or len(stages) != len(PHASES)):
+                    or not isinstance(stages, list) or len(stages) != len(PHASES)
+                    or any(not isinstance(stage, dict) for stage in stages)):
                 raise ValueError("unexpected native campaign schema/backend/phase denominator")
             prep = report.get("preparation", {})
+            if not isinstance(prep, dict):
+                raise ValueError("preparation must be an object")
             if (prep.get("actual_signed_seed_transfers") != 1024
                     or prep.get("seed_blocks") != 4 or prep.get("business_blocks") != 21):
                 raise ValueError("original honest workload denominator changed")
