@@ -1,0 +1,46 @@
+{
+  "source": "8079efb7bbc121688f15c4327b2bc286e26845c3",
+  "records": [
+    {
+      "label": "ci-contract",
+      "recorder_exit": 0
+    },
+    {
+      "label": "lifetime-tests",
+      "recorder_exit": 0
+    },
+    {
+      "label": "source-controls",
+      "recorder_exit": 0
+    },
+    {
+      "label": "pq-source-controls",
+      "recorder_exit": 0
+    },
+    {
+      "label": "claim-controls",
+      "recorder_exit": 0
+    },
+    {
+      "label": "lifetime-inspector",
+      "recorder_exit": 0
+    },
+    {
+      "label": "pq-corpus",
+      "recorder_exit": 0
+    },
+    {
+      "label": "claim-inspector",
+      "recorder_exit": 0
+    },
+    {
+      "label": "inventory",
+      "recorder_exit": 0
+    },
+    {
+      "label": "repository",
+      "recorder_exit": 0
+    }
+  ],
+  "complete": true
+}

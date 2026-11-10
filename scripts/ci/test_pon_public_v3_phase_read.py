@@ -113,6 +113,15 @@ def attribution_call(body_digest):
             'response': {'value': {'error': 'SYNTHETIC_CONTROL'}}, 'error': None}
 
 
+def confirmation_round(index):
+    """Synthetic shape of the original six-depth verifier observation."""
+    started = 1_000_000_000 + index * 4_000_000_000
+    return dict(round=index, started_ns=started, ended_ns=started + 1,
+                confirmed_inside_pressure_window=True,
+                observation=dict(confirmed=True, finalized=False,
+                                 execution_authority=False, depth=6))
+
+
 def observed_history_call():
     """Synthetic failed import sharing the existing History validator fixture."""
     from test_run_from_zero_native import simulated_import_observation
@@ -1184,6 +1193,83 @@ class ReaderTests(unittest.TestCase):
         phase['confirmations'].pop()
         with self.assertRaisesRegex(ValueError, 'aggregate'):
             reader.phase_summary(phase)
+
+    def test_confirmed_round_requires_the_original_six_depth_observation(self):
+        phase = attribution_phase([], [], [], [])
+        phase['confirmations'] = [confirmation_round(0)]
+        for observation in (None, {}, {'confirmed': True},
+                            dict(confirmed=False, finalized=False,
+                                 execution_authority=False, depth=6),
+                            dict(confirmed=True, finalized=True,
+                                 execution_authority=False, depth=6),
+                            dict(confirmed=True, finalized=False,
+                                 execution_authority=True, depth=6),
+                            dict(confirmed=True, finalized=False,
+                                 execution_authority=False, depth=5),
+                            dict(confirmed=1, finalized=0,
+                                 execution_authority=0, depth=6),
+                            dict(confirmed=True, finalized=False,
+                                 execution_authority=False, depth=6.0)):
+            with self.subTest(observation=observation):
+                phase['confirmations'][0]['observation'] = observation
+                with self.assertRaisesRegex(ValueError, 'six-depth observation'):
+                    reader.phase_summary(phase)
+
+    def test_confirmed_round_requires_known_ordered_clocks_inside_original_window(self):
+        for changes in ({'started_ns': None}, {'ended_ns': None},
+                        {'started_ns': True}, {'ended_ns': 1.0},
+                        {'started_ns': -1}, {'ended_ns': 0},
+                        {'ended_ns': 30_000_000_000}, {'ended_ns': 30_000_000_001}):
+            with self.subTest(changes=changes):
+                phase = attribution_phase([], [], [], [])
+                phase['confirmations'] = [confirmation_round(0) | changes]
+                with self.assertRaises(ValueError):
+                    reader.phase_summary(phase)
+
+    def test_unknown_failed_round_clocks_keep_the_original_denominator(self):
+        phase = attribution_phase([], [], [], [])
+        phase['confirmations'] = [dict(round=0, started_ns=None, ended_ns=None,
+            confirmed_inside_pressure_window=False, observation=None)]
+        value = reader.phase_summary(phase)
+        self.assertEqual(value['scheduled_confirmation_rounds'], 3)
+        self.assertEqual(value['observed_confirmation_rounds'], 1)
+        self.assertEqual(value['confirmed_rounds'], 0)
+        self.assertEqual(value['unobserved_scheduled_rounds'], 2)
+        self.assertIsNone(value['confirmation_rounds'][0]['ended_ns'])
+        self.assertFalse(value['native_phase_criteria_met'])
+
+    def test_round_success_flag_must_be_a_boolean(self):
+        for flag in (None, 0, 1, 'true', []):
+            with self.subTest(flag=flag):
+                phase = attribution_phase([], [], [], [])
+                phase['confirmations'] = [confirmation_round(0) |
+                    {'confirmed_inside_pressure_window': flag}]
+                with self.assertRaisesRegex(ValueError, 'boolean confirmation'):
+                    reader.phase_summary(phase)
+
+    def test_native_phase_success_cannot_contradict_missing_confirmations(self):
+        for count in (0, 1, 2):
+            with self.subTest(count=count):
+                phase = attribution_phase([], [], [], [])
+                phase.update(finite_phase_criteria_met=True,
+                    confirmations=[confirmation_round(n) for n in range(count)])
+                with self.assertRaisesRegex(ValueError, 'all three original confirmations'):
+                    reader.phase_summary(phase)
+        with self.assertRaisesRegex(ValueError, 'all three original confirmations'):
+            reader.phase_summary(dict(mode='baseline', finite_phase_criteria_met=True,
+                startup_or_campaign_error='preserved startup failure'))
+
+    def test_three_consistent_confirmations_keep_the_original_read_only_scope(self):
+        report = arithmetic_report()
+        for phase in report['phases']:
+            phase.update(confirmations=[confirmation_round(n) for n in range(3)],
+                         all_signed_rounds_confirmed_in_window=True,
+                         finite_phase_criteria_met=True)
+        value = reader.analyze(report)
+        self.assertEqual([p['confirmed_rounds'] for p in value['phases']], [3, 3, 3])
+        self.assertFalse(value['scope']['production_qualification'])
+        self.assertFalse(value['scope']['host_or_source_authentication_performed'])
+        self.assertIsNone(value['scope']['business_tps_capacity'])
 
     def test_duplicate_nested_observation_cannot_overwrite_failure_or_missing_duration(self):
         # A correct byte hash cannot make an ambiguous document authoritative.

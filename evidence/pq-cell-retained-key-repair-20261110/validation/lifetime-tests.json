@@ -1,0 +1,61 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "8079efb7bbc121688f15c4327b2bc286e26845c3",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "8079efb7bbc121688f15c4327b2bc286e26845c3",
+    "tested_tree": "68182c8bcac37fe8e6493bf350f0ec0f1bae5f3d",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2528482268,
+    "tracked_entries": 27716,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "python3",
+    "scripts/ci/test_pq_lifetime_budget.py"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "8079efb7bbc121688f15c4327b2bc286e26845c3",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "8079efb7bbc121688f15c4327b2bc286e26845c3",
+    "tested_tree": "68182c8bcac37fe8e6493bf350f0ec0f1bae5f3d",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2528482268,
+    "tracked_entries": 27716,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/workspace/scratch/e52be1cc2d9e/chain-pq",
+  "elapsed_ns": 5166415449,
+  "environment": {
+    "CARGO_BUILD_JOBS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": null,
+    "CARGO_TARGET_DIR": null,
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 0,
+  "log_bytes": 157,
+  "log_file": "lifetime-tests.log",
+  "log_sha256": "34eeb4c3cea3a15370d77fa296e1f04f57ba4c93113bbaccfcd6eb737cc15365",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-10T07:05:15.151654+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}

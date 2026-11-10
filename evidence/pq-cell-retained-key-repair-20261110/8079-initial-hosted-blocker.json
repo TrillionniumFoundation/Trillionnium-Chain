@@ -1,0 +1,12 @@
+{
+  "head": "8079efb7bbc121688f15c4327b2bc286e26845c3",
+  "pr": 851,
+  "observed_pr_mergeable": false,
+  "observed_pr_mergeable_state": "dirty",
+  "pr_payload_base_sha": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+  "live_base_ref_sha": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "exact_head_runs": 0,
+  "exact_head_check_runs": 0,
+  "no_native_outcome_claimed": true,
+  "inference": "Current base ref advanced concurrently; conflicting pull request suppresses fresh PR workflow execution. No retry or mutation by observer."
+}

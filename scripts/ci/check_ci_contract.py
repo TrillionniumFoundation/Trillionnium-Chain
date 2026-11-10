@@ -357,6 +357,8 @@ ROOT_RECOVERY_STRUCTURE_BLOCK = """    python3 -m unittest discover -s formal/po
     python3 scripts/ci/test_run_pq_root_native_v3.py
     python3 scripts/ci/test_pq_root_custody_review_v1.py
     python3 scripts/ci/pq_root_custody_review_v1.py
+    python3 scripts/ci/test_pq_root_custody_review_v2.py
+    python3 scripts/ci/pq_root_custody_review_v2.py
     python3 scripts/ci/test_pq_root_migration_review_v1.py
     python3 scripts/ci/pq_root_migration_review_v1.py
     python3 scripts/ci/test_run_pq_root_continuation_v4.py
@@ -393,6 +395,8 @@ ROOT_RECOVERY_TEST_FILES = (
     'scripts/ci/test_authenticated_suite_count.py',
     'scripts/ci/test_pq_root_custody_review_v1.py',
     'scripts/ci/pq_root_custody_review_v1.py',
+    'scripts/ci/test_pq_root_custody_review_v2.py',
+    'scripts/ci/pq_root_custody_review_v2.py',
     'scripts/ci/test_pq_root_migration_review_v1.py',
     'scripts/ci/pq_root_migration_review_v1.py',
     'trillionnium/crates/trnm-pon-node/tests/recovery_floor_v4_native.rs',
@@ -692,6 +696,8 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_run_pq_root_native_v3.py
     python3 scripts/ci/test_pq_root_custody_review_v1.py
     python3 scripts/ci/pq_root_custody_review_v1.py
+    python3 scripts/ci/test_pq_root_custody_review_v2.py
+    python3 scripts/ci/pq_root_custody_review_v2.py
     python3 scripts/ci/test_pq_root_migration_review_v1.py
     python3 scripts/ci/pq_root_migration_review_v1.py
     python3 scripts/ci/test_run_pq_root_continuation_v4.py

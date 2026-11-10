@@ -1,0 +1,126 @@
+{
+  "repository_full_name": "TrillionniumFoundation/Trillionnium-Chain",
+  "base": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+  "head": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "status": "ahead",
+  "ahead_by": 1,
+  "behind_by": 0,
+  "total_commits": 1,
+  "too_large": null,
+  "base_commit": {
+    "sha": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/ac8501a85a770ba34f34e1bed507ca747e5c3f8d"
+  },
+  "merge_base_commit": {
+    "sha": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits/ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/ac8501a85a770ba34f34e1bed507ca747e5c3f8d"
+  },
+  "files": [
+    {
+      "filename": "config/pon/pq-cross-branch-corpus-v1.json",
+      "status": "modified",
+      "additions": 17,
+      "deletions": 7,
+      "changes": 24,
+      "previous_filename": null
+    },
+    {
+      "filename": "config/pon/pq-root-custody-review-v2.json",
+      "status": "added",
+      "additions": 49,
+      "deletions": 0,
+      "changes": 49,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "status": "modified",
+      "additions": 22,
+      "deletions": 0,
+      "changes": 22,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/security/PQ_ROOT_CUSTODY_REVIEW_V2.md",
+      "status": "added",
+      "additions": 112,
+      "deletions": 0,
+      "changes": 112,
+      "previous_filename": null
+    },
+    {
+      "filename": "docs/security/SYSTEM_BOUNDARY_QUALIFICATION_20261109.md",
+      "status": "added",
+      "additions": 147,
+      "deletions": 0,
+      "changes": 147,
+      "previous_filename": null
+    },
+    {
+      "filename": "scripts/ci/check_ci_contract.py",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 0,
+      "changes": 6,
+      "previous_filename": null
+    },
+    {
+      "filename": "scripts/ci/check_pq_research_integration.py",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 0,
+      "changes": 5,
+      "previous_filename": null
+    },
+    {
+      "filename": "scripts/ci/ci_job.sh",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 0,
+      "changes": 2,
+      "previous_filename": null
+    },
+    {
+      "filename": "scripts/ci/pq_root_custody_review_v2.py",
+      "status": "added",
+      "additions": 237,
+      "deletions": 0,
+      "changes": 237,
+      "previous_filename": null
+    },
+    {
+      "filename": "scripts/ci/test_ci_contract.py",
+      "status": "modified",
+      "additions": 15,
+      "deletions": 0,
+      "changes": 15,
+      "previous_filename": null
+    },
+    {
+      "filename": "scripts/ci/test_pon_public_v3_phase_read.py",
+      "status": "modified",
+      "additions": 86,
+      "deletions": 0,
+      "changes": 86,
+      "previous_filename": null
+    },
+    {
+      "filename": "scripts/ci/test_pq_root_custody_review_v2.py",
+      "status": "added",
+      "additions": 295,
+      "deletions": 0,
+      "changes": 295,
+      "previous_filename": null
+    },
+    {
+      "filename": "scripts/pon_public_v3_phase_read.py",
+      "status": "modified",
+      "additions": 26,
+      "deletions": 0,
+      "changes": 26,
+      "previous_filename": null
+    }
+  ]
+}

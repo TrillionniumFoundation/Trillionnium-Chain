@@ -1,0 +1,15 @@
+{
+  "source": "8079efb7bbc121688f15c4327b2bc286e26845c3",
+  "command_count": 10,
+  "all_commands_exit_zero": true,
+  "suite_counts": {
+    "ci-contract": 177,
+    "lifetime-tests": 58,
+    "source-controls": 43,
+    "pq-source-controls": 59,
+    "claim-controls": 55
+  },
+  "native_rust_rerun": false,
+  "whole_chain_pq_qualified": false,
+  "production_activation": false
+}

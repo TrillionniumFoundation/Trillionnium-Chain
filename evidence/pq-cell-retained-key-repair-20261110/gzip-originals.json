@@ -1,0 +1,62 @@
+[
+  {
+    "compressed_path": "validation/ci-contract.log.gz",
+    "original_name": "ci-contract.log",
+    "original_bytes": 30334,
+    "original_sha256": "1447aab589605db83d5fe88faa6d799ef1d8ee80b768a3a139db456f94884ac2"
+  },
+  {
+    "compressed_path": "validation/claim-controls.log.gz",
+    "original_name": "claim-controls.log",
+    "original_bytes": 154,
+    "original_sha256": "66543946440046f6184f4788c4484998437c5983f3faa922420b3f23e6602cff"
+  },
+  {
+    "compressed_path": "validation/claim-inspector.log.gz",
+    "original_name": "claim-inspector.log",
+    "original_bytes": 4835,
+    "original_sha256": "623bb3cadb0ab38069aa6812927e2f663f2cbbcaa795be9a0c836b4036ffc2b4"
+  },
+  {
+    "compressed_path": "validation/inventory.log.gz",
+    "original_name": "inventory.log",
+    "original_bytes": 35,
+    "original_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+  },
+  {
+    "compressed_path": "validation/lifetime-inspector.log.gz",
+    "original_name": "lifetime-inspector.log",
+    "original_bytes": 12824,
+    "original_sha256": "08d7ac76dbbd8d31b4ee1ecf9697df6bd11203253a45ae88991a159828d1bbb9"
+  },
+  {
+    "compressed_path": "validation/lifetime-tests.log.gz",
+    "original_name": "lifetime-tests.log",
+    "original_bytes": 157,
+    "original_sha256": "34eeb4c3cea3a15370d77fa296e1f04f57ba4c93113bbaccfcd6eb737cc15365"
+  },
+  {
+    "compressed_path": "validation/pq-corpus.log.gz",
+    "original_name": "pq-corpus.log",
+    "original_bytes": 558,
+    "original_sha256": "08ccc00054721ceb1b36779cd2a51449b9d076653d1433c7184e1390853f4b3f"
+  },
+  {
+    "compressed_path": "validation/pq-source-controls.log.gz",
+    "original_name": "pq-source-controls.log",
+    "original_bytes": 160,
+    "original_sha256": "674899b4ed3183118349b5cdf2804a5f1c5ad9fdbc65c812dd07eee7f28f2876"
+  },
+  {
+    "compressed_path": "validation/repository.log.gz",
+    "original_name": "repository.log",
+    "original_bytes": 307,
+    "original_sha256": "8326e56d44b5b41177cde63909f70c088e0046721326bfac8e01aa0fa813e6a8"
+  },
+  {
+    "compressed_path": "validation/source-controls.log.gz",
+    "original_name": "source-controls.log",
+    "original_bytes": 6898,
+    "original_sha256": "a3e39a8e4a25f49156b5e6c2ad345324fc90d3ddd9178bf3611497b0c9e470ba"
+  }
+]

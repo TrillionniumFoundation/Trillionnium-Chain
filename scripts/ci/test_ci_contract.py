@@ -325,6 +325,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                      'run_pq_root_continuation_v4.py', 'test_run_pq_root_continuation_v4.py',
                      'test_authenticated_suite_count.py',
                      'test_pq_root_custody_review_v1.py', 'pq_root_custody_review_v1.py',
+                     'test_pq_root_custody_review_v2.py', 'pq_root_custody_review_v2.py',
                      'test_pq_root_migration_review_v1.py', 'pq_root_migration_review_v1.py'):
             command = '    python3 scripts/ci/' + file + '\n'
             self.assertEqual(self.script.count(command), 1)
@@ -334,6 +335,18 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             for changed in changes:
                 with self.subTest(file=file, changed=changed), self.assertRaises(ValueError):
                     check_independent_conformance(self.script.replace(command, changed), self.lanes)
+
+    def test_custody_v2_reviewers_cannot_move_to_another_lane_or_run_in_background(self):
+        for file in ('test_pq_root_custody_review_v2.py', 'pq_root_custody_review_v2.py'):
+            command = '    python3 scripts/ci/' + file + '\n'
+            for lane in ('protocol-contract', 'external-evidence-contract'):
+                changed = self.script.replace(command, '').replace(
+                    '  ' + lane + ')\n', '  ' + lane + ')\n' + command)
+                with self.subTest(file=file, lane=lane), self.assertRaises(ValueError):
+                    check_independent_conformance(changed, self.lanes)
+            backgrounded = self.script.replace(command, command.rstrip() + ' &\n')
+            with self.subTest(file=file, backgrounded=True), self.assertRaises(ValueError):
+                check_independent_conformance(backgrounded, self.lanes)
 
     def test_root_recovery_suites_cannot_disappear_move_or_swallow_failures(self):
         # Independent filenames: deleting an entry from the checker must not
@@ -2686,6 +2699,8 @@ class MergedQualificationLaneTests(unittest.TestCase):
             '    python3 scripts/ci/test_run_pq_root_native_v3.py\n',
             '    python3 scripts/ci/test_pq_root_custody_review_v1.py\n',
             '    python3 scripts/ci/pq_root_custody_review_v1.py\n',
+            '    python3 scripts/ci/test_pq_root_custody_review_v2.py\n',
+            '    python3 scripts/ci/pq_root_custody_review_v2.py\n',
             '    python3 scripts/ci/test_pq_root_migration_review_v1.py\n',
             '    python3 scripts/ci/pq_root_migration_review_v1.py\n',
             '    python3 scripts/ci/test_run_pq_root_continuation_v4.py\n',

@@ -1,0 +1,119 @@
+{
+  "actual_lifetime_failure_bound": null,
+  "archive_selected_members_verified": 55,
+  "composition_coverage_proved": false,
+  "current_fixture_matches_actual_retained_log": true,
+  "evidence_manifest_listed_files": 58,
+  "evidence_manifest_sha256": "d5cad7edb5f0d5b632e0df0031ea5fa47b8ab40cdb8bc8534846f9c2a3d43051",
+  "evidence_total_files": 59,
+  "gzip_originals_verified": 16,
+  "harness_summary_counts_aggregated": false,
+  "historical_fixtures": [
+    {
+      "path": "tests/fixtures/ci/cell-current-api-readback-v2-66b7064.log",
+      "sha256": "43059fa21c3542eff4f0c4aeb3552207847a8b483d214ce1e1514f79a4c09553",
+      "unchanged_from_implementation": true
+    },
+    {
+      "path": "tests/fixtures/ci/cell-current-api-readback-v2-66b7064.json",
+      "sha256": "d4576c31378caf413a8aa6104697d9c5251d696f14475275447f0cd1241ca250",
+      "unchanged_from_implementation": true
+    }
+  ],
+  "independent_execution_authentication": false,
+  "original_download_archives_verified": [
+    {
+      "members_verified": 872,
+      "name": "13735114981.zip",
+      "sha256": "f67915eec6e4f3b3ce001969b8725dc5d55b025acffa4e14e446385925933d0d"
+    },
+    {
+      "members_verified": 2,
+      "name": "13735539478.zip",
+      "sha256": "6a63426d46440f8cea54f701a07e2e750c96eec5d1c18c2713ba84d665a60eb6"
+    },
+    {
+      "members_verified": 2,
+      "name": "13736460191.zip",
+      "sha256": "f051991c3c4081433f12dca6fbd3fa7da39b6d2b99c6afb521faff5ff2917a2f"
+    },
+    {
+      "members_verified": 2,
+      "name": "13737136810.zip",
+      "sha256": "5ca11249fe89d0faad768af0b0e8a6764915bd43fbaf4f2e93a8d080151cbce6"
+    },
+    {
+      "members_verified": 2,
+      "name": "13737676372.zip",
+      "sha256": "ae77cd55956a476aa6c3e5d79e66a04983dbc3994c22d08d77f45bc1fa8232fe"
+    },
+    {
+      "members_verified": 12,
+      "name": "mldsa-head.zip",
+      "sha256": "cac65af093d8e99caa215bb7e43b37c12de0251a706a3a7c4683ff9b3cdac480"
+    },
+    {
+      "members_verified": 16,
+      "name": "pq-system-head.zip",
+      "sha256": "1f124c73307cb571cb58066fcbcf92fd55f4d94533f682091cc0ed3a876181f9"
+    }
+  ],
+  "original_downloads_checked": true,
+  "original_executed_source": "81f89b01b1fe0bb23cb8b885a30bb8fcb11a8455",
+  "original_executed_tree": "a3899186dc25721f3bc04d1e043b3ce979119de8",
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "result": "PASS",
+  "reviewed_candidate": "8079efb7bbc121688f15c4327b2bc286e26845c3",
+  "runtime_current_working_bytes_verified": false,
+  "runtime_git_subtree": "a0e91db1266bde87c1cb087d337018e954f7bb19",
+  "runtime_git_subtree_unchanged": true,
+  "rust_shards": [
+    {
+      "artifact": "13735539478",
+      "command_sha256": "c2369d386856e03a4e6566b4232ccdfb43f2672ca49d2a7070ebd2bfe7d0e9ae",
+      "exit_code": 0,
+      "shard": "runtime",
+      "source_endpoints_equal": true,
+      "source_kind": "prospective-merge",
+      "status": "passed",
+      "tested_commit": "8d57aa4add724ba8d70e4c96717911869aa4680c"
+    },
+    {
+      "artifact": "13736460191",
+      "command_sha256": "c2369d386856e03a4e6566b4232ccdfb43f2672ca49d2a7070ebd2bfe7d0e9ae",
+      "exit_code": 0,
+      "shard": "runtime",
+      "source_endpoints_equal": true,
+      "source_kind": "head",
+      "status": "passed",
+      "tested_commit": "81f89b01b1fe0bb23cb8b885a30bb8fcb11a8455"
+    },
+    {
+      "artifact": "13737136810",
+      "command_sha256": "5f46e68f4d31ddd3b4a5ead0217bcad2faae3b7acd457ee3ed5f8e8b57968f7a",
+      "exit_code": 0,
+      "shard": "quality",
+      "source_endpoints_equal": true,
+      "source_kind": "head",
+      "status": "passed",
+      "tested_commit": "81f89b01b1fe0bb23cb8b885a30bb8fcb11a8455"
+    },
+    {
+      "artifact": "13737676372",
+      "command_sha256": "5f46e68f4d31ddd3b4a5ead0217bcad2faae3b7acd457ee3ed5f8e8b57968f7a",
+      "exit_code": 0,
+      "shard": "quality",
+      "source_endpoints_equal": true,
+      "source_kind": "prospective-merge",
+      "status": "passed",
+      "tested_commit": "8d57aa4add724ba8d70e4c96717911869aa4680c"
+    }
+  ],
+  "schema": "trnm-pq-cell-evidence-independent-verification-v1",
+  "scope": "retained-byte integrity and recorded source consistency only",
+  "self_excluded_manifest_files": 1,
+  "verified_utc": "2026-11-10T07:08:39.942589+00:00",
+  "whole_chain_pq_qualified": false,
+  "whole_workspace_test_total": null
+}

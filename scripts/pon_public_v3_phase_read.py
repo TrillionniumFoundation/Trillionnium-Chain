@@ -863,6 +863,8 @@ def phase_summary(phase, *, interval_outcomes=True):
                 'arithmetic campaign requires authenticated-v1')
         base['work_profile'] = ARITHMETIC_PROFILE
     if base['startup_or_campaign_error'] is not None:
+        require(base['native_phase_criteria_met'] is not True,
+                'native phase success requires all three original confirmations')
         base.update(observations_available=False, confirmed_rounds=None)
         if interval_outcomes:
             base.update(observed_confirmation_rounds=0, unobserved_scheduled_rounds=ROUNDS,
@@ -898,6 +900,30 @@ def phase_summary(phase, *, interval_outcomes=True):
     confirmed = sum(row['confirmed_inside_pressure_window'] is True for row in rounds)
     require(phase['all_signed_rounds_confirmed_in_window'] is (confirmed == ROUNDS),
             'native confirmation aggregate does not match retained rounds')
+    for row in rounds:
+        require(type(row['confirmed_inside_pressure_window']) is bool,
+                'boolean confirmation outcome required')
+        started, ended = row.get('started_ns'), row.get('ended_ns')
+        for clock in (started, ended):
+            if clock is not None:
+                integer(clock)
+        require(started is None or ended is None or started <= ended,
+                'ordered confirmation clocks required')
+        if row['confirmed_inside_pressure_window']:
+            # The native producer checks this exact six-depth observation and
+            # the original phase deadline. This is report consistency only;
+            # the reader does not authenticate execution or grant finality.
+            require(started is not None and ended is not None
+                    and ended < 30_000_000_000,
+                    'confirmed round requires clocks inside the original window')
+            observed = row.get('observation')
+            require(type(observed) is dict and observed.get('confirmed') is True
+                    and observed.get('finalized') is False
+                    and observed.get('execution_authority') is False
+                    and type(observed.get('depth')) is int and observed['depth'] == 6,
+                    'confirmed round requires the original six-depth observation')
+    require(phase.get('finite_phase_criteria_met') is not True or confirmed == ROUNDS,
+            'native phase success requires all three original confirmations')
     submissions, history = phase['submissions'], phase['history']
     client_imports = client_history_import_observations(history)
     if client_imports is not None:
