@@ -95,6 +95,68 @@ def _packet_stage_observations(history: list) -> dict:
     }
 
 
+TERMINAL_STAGES = ("admission", "commit", "submit_result", "history_import")
+
+
+def _terminal_import_boundary(history: list) -> dict:
+    """Observe the *last* History import; this is diagnostic, not causal proof.
+
+    Outer HTTP read status can be ok while native import fails. Nested admission
+    and commit may propagate one deadline; classify only the earliest observed
+    failing stage. Missing/duplicate packet-stage evidence is unknown, not a
+    silent success or zero duration.
+    """
+    record = {"last_history_present": bool(history), "network_status": None,
+              "network_error": None, "client_import_succeeded": None,
+              "client_import_error": None, "boundary_stage": None,
+              "boundary_status": "unknown", "native_packet_count": None,
+              "stage_observations": {},
+              "warning": "diagnostic only; not proof of cause, atomic commit, or qualification"}
+    if not history or not isinstance(history[-1], dict):
+        return record
+    last = history[-1]
+    record["network_status"] = last.get("status")
+    record["network_error"] = last.get("error")
+    imported = last.get("client_import")
+    if not isinstance(imported, dict):
+        return record
+    record["client_import_succeeded"] = imported.get("succeeded")
+    record["client_import_error"] = imported.get("error")
+    native = imported.get("native_import_observation")
+    packets = native.get("packets") if isinstance(native, dict) else None
+    if not isinstance(packets, list):
+        return record
+    record["native_packet_count"] = len(packets)
+    if len(packets) != 1 or not isinstance(packets[0], dict):
+        return record
+    spans = packets[0].get("phases")
+    if not isinstance(spans, list):
+        return record
+    for name in TERMINAL_STAGES:
+        matching = [s for s in spans if isinstance(s, dict) and s.get("phase") == name]
+        if len(matching) != 1:
+            record["stage_observations"][name] = {"ambiguous_or_absent": True}
+            return record
+        s = matching[0]
+        record["stage_observations"][name] = {
+            "started": s.get("started"), "completed": s.get("completed"),
+            "accepted": s.get("accepted"), "error_code": s.get("error_code"),
+        }
+    if imported.get("succeeded") is True:
+        record["boundary_status"] = "no_terminal_import_failure"
+        return record
+    if imported.get("error") != "PUBLIC_REQUEST_DEADLINE":
+        return record
+    for name in TERMINAL_STAGES:
+        stage = record["stage_observations"][name]
+        if (stage["completed"] is True and stage["accepted"] is False
+                and stage["error_code"] == "PUBLIC_REQUEST_DEADLINE"):
+            record["boundary_stage"] = name
+            record["boundary_status"] = "observed_deadline_at_stage"
+            break
+    return record
+
+
 def _phase(phase: dict, name: str, attackers: int) -> dict:
     history = phase.get("history", [])
     submissions = phase.get("submissions", [])
@@ -143,6 +205,7 @@ def _phase(phase: dict, name: str, attackers: int) -> dict:
             "membership and five fresh limits; CPU nested in import, not an avoidable-cost claim"
         ),
         "native_packet_stage_observations": _packet_stage_observations(history),
+        "terminal_history_import_boundary": _terminal_import_boundary(history),
         "submit_client_wall_ns": _sum_observed(submissions, "elapsed_wall_ns"),
         "full_work_accepted": phase.get("full_work_accepted"),
         "full_work_failed": phase.get("full_work_failed"),
