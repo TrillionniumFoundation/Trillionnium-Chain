@@ -1,0 +1,63 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "8d4c915939f2ae7659e254ec3475d2dadb919f2a",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "8d4c915939f2ae7659e254ec3475d2dadb919f2a",
+    "tested_tree": "9ed7a23f58cb427fe45b23bf01bf07bf4fca4fbf",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2502284586,
+    "tracked_entries": 26218,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "python3",
+    "-B",
+    "-c",
+    "import json,os,pathlib,subprocess,sys,tempfile,time\nroot=pathlib.Path.cwd()\nbase='0ff81958a611d2c0be54d2ca839b955ae7cb2772'\nwith tempfile.TemporaryDirectory(prefix='trnm-fifo-control-') as td:\n d=pathlib.Path(td);fifo=d/'input.fifo';os.mkfifo(fifo)\n old=d/'baseline_dynamic.py'\n old.write_bytes(subprocess.check_output(['git','show',base+':formal/pon-nakamoto-v1/dynamic_participation_v1.py']))\n records=[]\n for label,path in [('baseline',old),('candidate',root/'formal/pon-nakamoto-v1/dynamic_participation_v1.py')]:\n  start=time.monotonic_ns()\n  try:\n   p=subprocess.run([sys.executable,'-B',str(path),'--check',str(fifo)],capture_output=True,timeout=1)\n   rec={'label':label,'timed_out':False,'exit_code':p.returncode,'stdout':p.stdout.decode(),'stderr':p.stderr.decode()}\n  except subprocess.TimeoutExpired as e:\n   rec={'label':label,'timed_out':True,'exit_code':None,'stdout':(e.stdout or b'').decode(),'stderr':(e.stderr or b'').decode()}\n  rec['elapsed_ns']=time.monotonic_ns()-start;records.append(rec)\n print(json.dumps({'baseline_commit':base,'candidate_commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'observations':records,'native_consensus_qualified':False},sort_keys=True))\n assert records[0]['timed_out']\n assert records[1]['exit_code']==2 and not records[1]['timed_out']\n report=json.loads(records[1]['stdout'])\n assert report['check']=='REFUSED' and report['qualification']=='HOLD_NO_GO'\n assert report['native_six_successor_risk_bound'] is None\n"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "8d4c915939f2ae7659e254ec3475d2dadb919f2a",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "8d4c915939f2ae7659e254ec3475d2dadb919f2a",
+    "tested_tree": "9ed7a23f58cb427fe45b23bf01bf07bf4fca4fbf",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2502284586,
+    "tracked_entries": 26218,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/home/qian-qi/chain-dynamic-input-bound-20261110-685a",
+  "elapsed_ns": 12729334693,
+  "environment": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": null,
+    "CARGO_TARGET_DIR": "/home/qian-qi/.local/state/chain-dynamic-input-bound-20261110-685a/cargo-target",
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 0,
+  "log_bytes": 571,
+  "log_file": "fifo-real-control.log",
+  "log_sha256": "9f92f4f085f8db2e01061995ebb69bbbf3d4e2ad655642536d468f3f5f621730",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-10T07:53:04.579453+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}

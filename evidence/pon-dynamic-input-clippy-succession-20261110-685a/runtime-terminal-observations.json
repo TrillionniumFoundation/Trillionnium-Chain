@@ -1,0 +1,53 @@
+{
+  "external_attestation": false,
+  "host": "desktop",
+  "observations": [
+    {
+      "at_unix_ms": 1794303926546,
+      "cancelled": true,
+      "exit_code": -15,
+      "job_id": "1a1c4caab7a-cf39-444",
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "cancelled",
+      "terminal_publication_confirmed": true,
+      "timed_out": false
+    },
+    {
+      "at_unix_ms": 1794303808210,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1c4d44aa5-cf39-460",
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "timed_out": false
+    },
+    {
+      "at_unix_ms": 1794304351635,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1c4da71bb-cf39-481",
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "timed_out": false
+    }
+  ],
+  "schema": "trnm-runtime-terminal-observations-v1",
+  "source_tool": "HeptaRuntime h_process_status"
+}

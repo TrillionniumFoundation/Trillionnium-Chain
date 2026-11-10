@@ -1,0 +1,37 @@
+{
+  "members": [
+    {
+      "decompressed_bytes_equal_original": true,
+      "encoding": "gzip",
+      "gzip_embedded_filename": "",
+      "gzip_mtime": 0,
+      "logical_original_path": "pinned-provider-run/ci-observations/pq-provider/build-and-smoke.log",
+      "original_command_fields_rewritten": false,
+      "original_operator_path": "/home/qian-qi/.local/state/chain-dynamic-input-bound-20261110-685a/strict-clippy-local-provider-07/ci-observations/pq-provider/build-and-smoke.log",
+      "original_raw_file_retained_in_operator_state": true,
+      "raw_bytes": 1520758,
+      "raw_sha256": "14e8cc6c5726810e6d8a822fbf9b2f14bf70448dc052bf1653a44250a796ee48",
+      "stored_bytes": 38375,
+      "stored_path": "pinned-provider-run/ci-observations/pq-provider/build-and-smoke.log.gz",
+      "stored_sha256": "511a0494f9838c414692897c635cf55168acd44beebe5434462aef6ed0746d1c"
+    },
+    {
+      "decompressed_bytes_equal_original": true,
+      "encoding": "gzip",
+      "gzip_embedded_filename": "",
+      "gzip_mtime": 0,
+      "logical_original_path": "publication-history/whitespace-rejection-08/staged-whitespace.stdout.log",
+      "original_command_fields_rewritten": false,
+      "original_operator_path": "/home/qian-qi/.local/state/chain-dynamic-input-bound-20261110-685a/publication-clippy-succession-08/staged-whitespace.stdout.log",
+      "original_raw_file_retained_in_operator_state": true,
+      "raw_bytes": 1092,
+      "raw_sha256": "be8ebe342d857d305ced48d0b0a014d4f9649cabed3c4f42804134608a563b4b",
+      "stored_bytes": 334,
+      "stored_path": "publication-history/whitespace-rejection-08/staged-whitespace.stdout.log.gz",
+      "stored_sha256": "efaf27c04c547ea413611ec131b7cfbdda29291afee1f0b038e580df5cb42d8a"
+    }
+  ],
+  "original_command_records_unchanged": true,
+  "reason": "Five literal trailing-space lines in upstream build output are retained without modifying the bytes or whitespace gate.",
+  "schema": "trnm-lossless-raw-log-transport-v1"
+}

@@ -1,0 +1,27 @@
+{
+  "cargo_argv_unchanged": [
+    "cargo",
+    "clippy",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cargo_build_jobs": 2,
+  "new_timeout_seconds": 1800,
+  "original_failure_preserved": true,
+  "previous_exit_code": 124,
+  "previous_source_commit": "8d4c915939f2ae7659e254ec3475d2dadb919f2a",
+  "previous_timeout_seconds": 120,
+  "production_activation": false,
+  "schema": "trnm-strict-clippy-succession-v1",
+  "tested_commit": "da002c3227e92d625a73b26706420fab32cdf2d8",
+  "tested_tree": "4e205ea8d4a1a9f30f7bcaa81272b33c42dbaca9",
+  "whole_chain_qualified": false
+}

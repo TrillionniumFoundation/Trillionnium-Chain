@@ -1,0 +1,387 @@
+[
+  {
+    "case": "ordinary",
+    "exit": 0,
+    "report": {
+      "admissions": 1,
+      "all_resource_charges_known": true,
+      "credit_debts": [],
+      "credit_partition_exact": true,
+      "declared_contract_holds": true,
+      "departures": 0,
+      "eligible_unpaced_credit": 0,
+      "empty_cohort_intervals": [],
+      "entry_or_carryover_credit_debt": 0,
+      "events_checked": 10,
+      "final_active_nodes": [
+        "h0",
+        "h1"
+      ],
+      "final_score_floor": 12,
+      "finite_trace_well_formed": true,
+      "floor_updates": [
+        {
+          "active_nodes": [
+            "h0",
+            "h1"
+          ],
+          "resolved_after_seq": 6,
+          "score_floor": 9,
+          "task": "p0",
+          "time": 5
+        },
+        {
+          "active_nodes": [
+            "h0",
+            "h1"
+          ],
+          "resolved_after_seq": 10,
+          "score_floor": 12,
+          "task": "p1",
+          "time": 9
+        }
+      ],
+      "input_sha256": "79855f4a2bad6b85de055a63fbe757d81d8da1efa026600c8ccdf3d302ed6f97",
+      "known_resource_units": 12,
+      "native_chain_growth_bound": null,
+      "native_chain_growth_qualified": false,
+      "native_chain_quality_bound": null,
+      "native_chain_quality_qualified": false,
+      "native_common_prefix_failure_bound": null,
+      "native_common_prefix_qualified": false,
+      "native_six_successor_risk_bound": null,
+      "paced_progress_credit": 5,
+      "pacers": [
+        {
+          "completion_score": 9,
+          "deadline": 5,
+          "required_score": 9,
+          "seq": 2,
+          "task": "p0",
+          "time": 4,
+          "weight": 2
+        },
+        {
+          "completion_score": 12,
+          "deadline": 9,
+          "required_score": 12,
+          "seq": 8,
+          "task": "p1",
+          "time": 8,
+          "weight": 3
+        }
+      ],
+      "physical_resource_cost_authenticated": false,
+      "production_activation": false,
+      "qualification": "HOLD_NO_GO",
+      "qualification_refusals": [
+        "DECLARED_RECORDS_ARE_NOT_NATIVE_ATTESTATIONS",
+        "FULL_VIEW_AND_WORK_VALIDITY_NOT_REPLAYED",
+        "ALL_BRANCH_TASK_AND_RESIDUAL_STATE_COVERAGE_UNPROVED",
+        "CLOCK_DELIVERY_AND_RESOURCE_TRUTH_UNPROVED",
+        "QUALIFIED_PRODUCTION_AND_ENTRY_DEBT_TAILS_UNPROVED",
+        "NATIVE_DYNAMIC_FORK_REDUCTION_UNPROVED"
+      ],
+      "schema": "pon-dynamic-participation-audit-v1",
+      "scope": "finite_declared_score_and_lifecycle_model_only",
+      "source_commit_as_declared": "e2a02f9271b49f146e70806c8a66e161b5973971",
+      "startup_honest_credit_debt": 0,
+      "task_accounts": {
+        "p0": {
+          "all_resource_charges_known": true,
+          "cancel_requested": false,
+          "carry_in": false,
+          "failed": false,
+          "generation": 1,
+          "known_resource_units": 5,
+          "node": "h0",
+          "qualified_at_binding": true,
+          "ready": true
+        },
+        "p1": {
+          "all_resource_charges_known": true,
+          "cancel_requested": false,
+          "carry_in": false,
+          "failed": false,
+          "generation": 1,
+          "known_resource_units": 6,
+          "node": "h1",
+          "qualified_at_binding": true,
+          "ready": true
+        }
+      },
+      "total_ready_credit": 5,
+      "unclassified_ready_credit": 0,
+      "uncompleted_tasks": [],
+      "unknowns": [],
+      "violations": []
+    },
+    "source": "base"
+  },
+  {
+    "case": "symlink",
+    "exit": 0,
+    "report": {
+      "admissions": 1,
+      "all_resource_charges_known": true,
+      "credit_debts": [],
+      "credit_partition_exact": true,
+      "declared_contract_holds": true,
+      "departures": 0,
+      "eligible_unpaced_credit": 0,
+      "empty_cohort_intervals": [],
+      "entry_or_carryover_credit_debt": 0,
+      "events_checked": 10,
+      "final_active_nodes": [
+        "h0",
+        "h1"
+      ],
+      "final_score_floor": 12,
+      "finite_trace_well_formed": true,
+      "floor_updates": [
+        {
+          "active_nodes": [
+            "h0",
+            "h1"
+          ],
+          "resolved_after_seq": 6,
+          "score_floor": 9,
+          "task": "p0",
+          "time": 5
+        },
+        {
+          "active_nodes": [
+            "h0",
+            "h1"
+          ],
+          "resolved_after_seq": 10,
+          "score_floor": 12,
+          "task": "p1",
+          "time": 9
+        }
+      ],
+      "input_sha256": "79855f4a2bad6b85de055a63fbe757d81d8da1efa026600c8ccdf3d302ed6f97",
+      "known_resource_units": 12,
+      "native_chain_growth_bound": null,
+      "native_chain_growth_qualified": false,
+      "native_chain_quality_bound": null,
+      "native_chain_quality_qualified": false,
+      "native_common_prefix_failure_bound": null,
+      "native_common_prefix_qualified": false,
+      "native_six_successor_risk_bound": null,
+      "paced_progress_credit": 5,
+      "pacers": [
+        {
+          "completion_score": 9,
+          "deadline": 5,
+          "required_score": 9,
+          "seq": 2,
+          "task": "p0",
+          "time": 4,
+          "weight": 2
+        },
+        {
+          "completion_score": 12,
+          "deadline": 9,
+          "required_score": 12,
+          "seq": 8,
+          "task": "p1",
+          "time": 8,
+          "weight": 3
+        }
+      ],
+      "physical_resource_cost_authenticated": false,
+      "production_activation": false,
+      "qualification": "HOLD_NO_GO",
+      "qualification_refusals": [
+        "DECLARED_RECORDS_ARE_NOT_NATIVE_ATTESTATIONS",
+        "FULL_VIEW_AND_WORK_VALIDITY_NOT_REPLAYED",
+        "ALL_BRANCH_TASK_AND_RESIDUAL_STATE_COVERAGE_UNPROVED",
+        "CLOCK_DELIVERY_AND_RESOURCE_TRUTH_UNPROVED",
+        "QUALIFIED_PRODUCTION_AND_ENTRY_DEBT_TAILS_UNPROVED",
+        "NATIVE_DYNAMIC_FORK_REDUCTION_UNPROVED"
+      ],
+      "schema": "pon-dynamic-participation-audit-v1",
+      "scope": "finite_declared_score_and_lifecycle_model_only",
+      "source_commit_as_declared": "e2a02f9271b49f146e70806c8a66e161b5973971",
+      "startup_honest_credit_debt": 0,
+      "task_accounts": {
+        "p0": {
+          "all_resource_charges_known": true,
+          "cancel_requested": false,
+          "carry_in": false,
+          "failed": false,
+          "generation": 1,
+          "known_resource_units": 5,
+          "node": "h0",
+          "qualified_at_binding": true,
+          "ready": true
+        },
+        "p1": {
+          "all_resource_charges_known": true,
+          "cancel_requested": false,
+          "carry_in": false,
+          "failed": false,
+          "generation": 1,
+          "known_resource_units": 6,
+          "node": "h1",
+          "qualified_at_binding": true,
+          "ready": true
+        }
+      },
+      "total_ready_credit": 5,
+      "unclassified_ready_credit": 0,
+      "uncompleted_tasks": [],
+      "unknowns": [],
+      "violations": []
+    },
+    "source": "base"
+  },
+  {
+    "case": "fifo",
+    "process_killed_and_reaped_by_subprocess_run": true,
+    "result": "TIMEOUT_AFTER_2_SECONDS",
+    "source": "base"
+  },
+  {
+    "case": "ordinary",
+    "exit": 0,
+    "report": {
+      "admissions": 1,
+      "all_resource_charges_known": true,
+      "credit_debts": [],
+      "credit_partition_exact": true,
+      "declared_contract_holds": true,
+      "departures": 0,
+      "eligible_unpaced_credit": 0,
+      "empty_cohort_intervals": [],
+      "entry_or_carryover_credit_debt": 0,
+      "events_checked": 10,
+      "final_active_nodes": [
+        "h0",
+        "h1"
+      ],
+      "final_score_floor": 12,
+      "finite_trace_well_formed": true,
+      "floor_updates": [
+        {
+          "active_nodes": [
+            "h0",
+            "h1"
+          ],
+          "resolved_after_seq": 6,
+          "score_floor": 9,
+          "task": "p0",
+          "time": 5
+        },
+        {
+          "active_nodes": [
+            "h0",
+            "h1"
+          ],
+          "resolved_after_seq": 10,
+          "score_floor": 12,
+          "task": "p1",
+          "time": 9
+        }
+      ],
+      "input_sha256": "79855f4a2bad6b85de055a63fbe757d81d8da1efa026600c8ccdf3d302ed6f97",
+      "known_resource_units": 12,
+      "native_chain_growth_bound": null,
+      "native_chain_growth_qualified": false,
+      "native_chain_quality_bound": null,
+      "native_chain_quality_qualified": false,
+      "native_common_prefix_failure_bound": null,
+      "native_common_prefix_qualified": false,
+      "native_six_successor_risk_bound": null,
+      "paced_progress_credit": 5,
+      "pacers": [
+        {
+          "completion_score": 9,
+          "deadline": 5,
+          "required_score": 9,
+          "seq": 2,
+          "task": "p0",
+          "time": 4,
+          "weight": 2
+        },
+        {
+          "completion_score": 12,
+          "deadline": 9,
+          "required_score": 12,
+          "seq": 8,
+          "task": "p1",
+          "time": 8,
+          "weight": 3
+        }
+      ],
+      "physical_resource_cost_authenticated": false,
+      "production_activation": false,
+      "qualification": "HOLD_NO_GO",
+      "qualification_refusals": [
+        "DECLARED_RECORDS_ARE_NOT_NATIVE_ATTESTATIONS",
+        "FULL_VIEW_AND_WORK_VALIDITY_NOT_REPLAYED",
+        "ALL_BRANCH_TASK_AND_RESIDUAL_STATE_COVERAGE_UNPROVED",
+        "CLOCK_DELIVERY_AND_RESOURCE_TRUTH_UNPROVED",
+        "QUALIFIED_PRODUCTION_AND_ENTRY_DEBT_TAILS_UNPROVED",
+        "NATIVE_DYNAMIC_FORK_REDUCTION_UNPROVED"
+      ],
+      "schema": "pon-dynamic-participation-audit-v1",
+      "scope": "finite_declared_score_and_lifecycle_model_only",
+      "source_commit_as_declared": "e2a02f9271b49f146e70806c8a66e161b5973971",
+      "startup_honest_credit_debt": 0,
+      "task_accounts": {
+        "p0": {
+          "all_resource_charges_known": true,
+          "cancel_requested": false,
+          "carry_in": false,
+          "failed": false,
+          "generation": 1,
+          "known_resource_units": 5,
+          "node": "h0",
+          "qualified_at_binding": true,
+          "ready": true
+        },
+        "p1": {
+          "all_resource_charges_known": true,
+          "cancel_requested": false,
+          "carry_in": false,
+          "failed": false,
+          "generation": 1,
+          "known_resource_units": 6,
+          "node": "h1",
+          "qualified_at_binding": true,
+          "ready": true
+        }
+      },
+      "total_ready_credit": 5,
+      "unclassified_ready_credit": 0,
+      "uncompleted_tasks": [],
+      "unknowns": [],
+      "violations": []
+    },
+    "source": "candidate"
+  },
+  {
+    "case": "symlink",
+    "exit": 2,
+    "report": {
+      "check": "REFUSED",
+      "native_six_successor_risk_bound": null,
+      "qualification": "HOLD_NO_GO",
+      "reason": "symlink source refused: linked.json"
+    },
+    "source": "candidate"
+  },
+  {
+    "case": "fifo",
+    "exit": 2,
+    "report": {
+      "check": "REFUSED",
+      "native_six_successor_risk_bound": null,
+      "qualification": "HOLD_NO_GO",
+      "reason": "nonregular/oversize source: fifo"
+    },
+    "source": "candidate"
+  }
+]

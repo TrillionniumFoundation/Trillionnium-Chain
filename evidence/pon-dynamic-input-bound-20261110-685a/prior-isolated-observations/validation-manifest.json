@@ -1,0 +1,90 @@
+{
+  "base_commit": "0ff81958a611d2c0be54d2ca839b955ae7cb2772",
+  "base_suite": {
+    "exit": 0,
+    "passed": 28
+  },
+  "candidate_suite": {
+    "exit": 0,
+    "new_cli_test_methods": 6,
+    "passed": 34
+  },
+  "files": {
+    "base/formal/pon-nakamoto-v1/dynamic_participation_v1.py": {
+      "bytes": 24628,
+      "git_blob": "fce6e7a36a626d30e98b3e7b2c043bedcf8c2493",
+      "sha256": "e0a9e614432963c401dbfc8364a5c0ac78ae54a179fd482ba864759a93822cc8"
+    },
+    "base/formal/pon-nakamoto-v1/test_dynamic_participation_v1.py": {
+      "bytes": 18311,
+      "git_blob": "5d0af9b6efc93e64742dab6628ce58bf39c7c1dc",
+      "sha256": "c27e30bd30d0dff16d8b859065b7378a72dc947edfa480f83925c0324b16ac34"
+    },
+    "base/scripts/ci/pq_source_reader.py": {
+      "bytes": 5569,
+      "git_blob": "a35092e9d3d4457d8e9a9f30b73ca65a34359546",
+      "sha256": "b3eb3f23b42c012dc1a5a07daa479db5e2982b2a20006f047552c9f13e1a65cb"
+    },
+    "candidate/formal/pon-nakamoto-v1/dynamic_participation_v1.py": {
+      "bytes": 25229,
+      "git_blob": "f391d3ce90a90c770b2a08e23c80e50a88ef0f73",
+      "sha256": "ae72e36594267501b9b308198dafdc9f9acf80ce2f35f9e14ad56b48a4483bc9"
+    },
+    "candidate/formal/pon-nakamoto-v1/test_dynamic_participation_v1.py": {
+      "bytes": 21693,
+      "git_blob": "a61a633231786c8b7fa33ec1e6d60fddbde85804",
+      "sha256": "13c8e962d194bf95da56b7d4b905542146e07087b14b135f75188df7e5129abe"
+    },
+    "candidate/scripts/ci/pq_source_reader.py": {
+      "bytes": 5569,
+      "git_blob": "a35092e9d3d4457d8e9a9f30b73ca65a34359546",
+      "sha256": "b3eb3f23b42c012dc1a5a07daa479db5e2982b2a20006f047552c9f13e1a65cb"
+    },
+    "evidence/base-exact-tests.stderr.log": {
+      "bytes": 4855,
+      "sha256": "1168f90cbcb4508bbd2f207122b8fce32165433063496630297b100629ad99b5"
+    },
+    "evidence/base-exact-tests.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/base-preflight.stderr.log": {
+      "bytes": 139,
+      "sha256": "c4dfc721cc7f91d3ec67d99446d3c46f79c764fc96d6f9ba52e69cc669d686c1"
+    },
+    "evidence/base-preflight.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/base-reproduction.json": {
+      "bytes": 336,
+      "sha256": "13eacc97cd598796d649c4cea27342919fbf5d341ae668db6774ab0b6acc8824"
+    },
+    "evidence/candidate-exact-tests.stderr.log": {
+      "bytes": 5855,
+      "sha256": "a37c72009a392804ab8bcd52f129cb81e2a07b61385c797f72711d7e4a4081a2"
+    },
+    "evidence/candidate-exact-tests.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/candidate-tests.stderr.log": {
+      "bytes": 5855,
+      "sha256": "9109e707e7a1715e9af4a5f6e7c006ccc0c19a0f0c430a41f718e27dcb06bdd5"
+    },
+    "evidence/candidate-tests.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/exact-source-cli-reproduction.json": {
+      "bytes": 11064,
+      "sha256": "34790dbe517ae717f57d655bebc7fb6e74a7f7360d7d0f286e6b1c7565b44057"
+    }
+  },
+  "native_cargo_clippy": "not_run; cargo and rustc unavailable in this executor",
+  "project_preflight": {
+    "exit": 128,
+    "reason": "partial read-only source snapshot is not a Git repository"
+  },
+  "scope": "exact selected input blobs, not a complete repository checkout or native qualification"
+}

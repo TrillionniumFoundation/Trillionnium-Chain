@@ -1,0 +1,5 @@
+{
+  "error": "RuntimeError('update-pr-body exited 1')",
+  "stage": "verified_complete_remote_tree",
+  "traceback": "Traceback (most recent call last):\n  File \"<stdin>\", line 231, in <module>\n  File \"<stdin>\", line 50, in run\nRuntimeError: update-pr-body exited 1\n"
+}

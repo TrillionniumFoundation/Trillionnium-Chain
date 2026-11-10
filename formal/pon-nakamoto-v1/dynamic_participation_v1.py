@@ -13,7 +13,12 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import sys
 from typing import Any
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "scripts/ci"))
+from pq_source_reader import SourceReadError, read_regular
 
 
 SCHEMA = "pon-dynamic-participation-v1"
@@ -465,12 +470,19 @@ def main() -> int:
     parser.add_argument("--require-native-qualification", action="store_true")
     args = parser.parse_args()
     try:
-        require(args.check.stat().st_size <= MAX_INPUT_BYTES, "INPUT_SIZE")
-        document = strict_json(args.check.read_text(encoding="utf-8"))
+        # Keep the same finite JSON contract, but bind the bytes to a bounded
+        # ordinary-file read. A pathname stat followed by read_text could block
+        # on a FIFO or read beyond the size checked before opening the file.
+        # The shared reader rejects aliases and changing entries, uses a
+        # nonblocking no-follow fd, and reads at most the ceiling plus one byte.
+        path = args.check.absolute()
+        document = strict_json(read_regular(path.parent, path.name, MAX_INPUT_BYTES)
+                               .decode("utf-8"))
         result = audit_dynamic_participation(document)
         print(json.dumps(result, sort_keys=True, indent=2, allow_nan=False))
         return 2 if args.require_native_qualification or not result["declared_contract_holds"] else 0
-    except (ParticipationError, OSError, UnicodeError, json.JSONDecodeError, RecursionError) as error:
+    except (ParticipationError, SourceReadError, OSError, UnicodeError,
+            json.JSONDecodeError, RecursionError) as error:
         print(json.dumps({"check": "REFUSED", "reason": str(error), "qualification": "HOLD_NO_GO",
                           "native_six_successor_risk_bound": None}))
         return 2

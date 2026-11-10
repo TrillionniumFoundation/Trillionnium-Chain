@@ -1,0 +1,7 @@
+OPENSSL_DIR=/home/qian-qi/.local/state/chain-dynamic-input-bound-20261110-685a/strict-clippy-local-provider-07/runner-temp/trnm-pq-provider-3.5.9.vK3PH1dg/install
+OPENSSL_STATIC=1
+TRNM_PQ_OPENSSL=/home/qian-qi/.local/state/chain-dynamic-input-bound-20261110-685a/strict-clippy-local-provider-07/runner-temp/trnm-pq-provider-3.5.9.vK3PH1dg/install/bin/openssl
+TRNM_PQ_OPENSSL_SHA256=4f934463aa8ca9bde9116baa4ff37eceebcad5f802f3256311441e046c43f027
+TRNM_PQ_OPENSSL_VERSION=3.5.9
+OPENSSL_CONF=/dev/null
+OPENSSL_MODULES=/home/qian-qi/.local/state/chain-dynamic-input-bound-20261110-685a/strict-clippy-local-provider-07/runner-temp/trnm-pq-provider-3.5.9.vK3PH1dg/install/lib/ossl-modules

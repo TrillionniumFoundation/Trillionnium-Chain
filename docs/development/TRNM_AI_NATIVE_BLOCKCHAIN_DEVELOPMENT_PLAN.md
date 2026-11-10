@@ -10739,3 +10739,22 @@ repository-truth with independent omission, duplication and relocation controls.
 Preserve original evidence and report the new exact source and actual commands.
 No native target, time, work score, confirmation threshold, signed domain,
 stored schema, production activation or FinalUse authority changes here.
+
+
+## 2026-11-10: bound dynamic-participation CLI input reads
+
+Continuation of the joint-consensus research candidate at
+`0ff81958a611d2c0be54d2ca839b955ae7cb2772`. The CLI previously checked a
+pathname size and then called `read_text`; a FIFO without a writer could block
+before the finite model was evaluated, and the checked path did not bind the
+bytes read. It now uses the existing no-follow, nonblocking, bounded regular-file
+reader. The finite JSON/event semantics and qualification refusal are unchanged.
+
+Six new CLI regressions retain the original 28 tests and cover the exact input
+byte ceiling plus one, FIFO nonblocking refusal, leaf/ancestor symlinks,
+directory/missing paths, invalid UTF-8 and unchanged regular-file output.
+This is a research input-admission repair, not a native consensus or service
+liveness qualification. CP/CG/CQ, six-confirmation risk, actual W1/MU1 costs and
+production activation remain unestablished. The bounded evidence packet is
+`evidence/pon-dynamic-input-bound-20261110-685a/`; original partial-checkout
+failures and old observations retain their own provenance.

@@ -1,0 +1,127 @@
+--- a/formal/pon-nakamoto-v1/dynamic_participation_v1.py
++++ b/formal/pon-nakamoto-v1/dynamic_participation_v1.py
+@@ -13,7 +13,12 @@
+ import json
+ from pathlib import Path
+ import re
++import sys
+ from typing import Any
++
++ROOT = Path(__file__).resolve().parents[2]
++sys.path.insert(0, str(ROOT / "scripts/ci"))
++from pq_source_reader import SourceReadError, read_regular
+ 
+ 
+ SCHEMA = "pon-dynamic-participation-v1"
+@@ -465,12 +470,19 @@
+     parser.add_argument("--require-native-qualification", action="store_true")
+     args = parser.parse_args()
+     try:
+-        require(args.check.stat().st_size <= MAX_INPUT_BYTES, "INPUT_SIZE")
+-        document = strict_json(args.check.read_text(encoding="utf-8"))
++        # Keep the same finite JSON contract, but bind the bytes to a bounded
++        # ordinary-file read. A pathname stat followed by read_text could block
++        # on a FIFO or read beyond the size checked before opening the file.
++        # The shared reader rejects aliases and changing entries, uses a
++        # nonblocking no-follow fd, and reads at most the ceiling plus one byte.
++        path = args.check.absolute()
++        document = strict_json(read_regular(path.parent, path.name, MAX_INPUT_BYTES)
++                               .decode("utf-8"))
+         result = audit_dynamic_participation(document)
+         print(json.dumps(result, sort_keys=True, indent=2, allow_nan=False))
+         return 2 if args.require_native_qualification or not result["declared_contract_holds"] else 0
+-    except (ParticipationError, OSError, UnicodeError, json.JSONDecodeError, RecursionError) as error:
++    except (ParticipationError, SourceReadError, OSError, UnicodeError,
++            json.JSONDecodeError, RecursionError) as error:
+         print(json.dumps({"check": "REFUSED", "reason": str(error), "qualification": "HOLD_NO_GO",
+                           "native_six_successor_risk_bound": None}))
+         return 2
+--- a/formal/pon-nakamoto-v1/test_dynamic_participation_v1.py
++++ b/formal/pon-nakamoto-v1/test_dynamic_participation_v1.py
+@@ -6,6 +6,7 @@
+ 
+ import copy
+ import json
++import os
+ from pathlib import Path
+ import subprocess
+ import sys
+@@ -342,5 +343,78 @@
+         self.assertEqual(report["qualification"], "HOLD_NO_GO")
+ 
+ 
++class BoundedCliInputTests(unittest.TestCase):
++    def run_cli(self, path):
++        result = subprocess.run(
++            [sys.executable, str(HERE / "dynamic_participation_v1.py"),
++             "--check", str(path)],
++            capture_output=True, text=True, check=False, timeout=5,
++        )
++        self.assertEqual(result.stderr, "")
++        return result.returncode, json.loads(result.stdout)
++
++    def assert_refused(self, path, reason):
++        code, report = self.run_cli(path)
++        self.assertEqual(code, 2)
++        self.assertEqual(report["check"], "REFUSED")
++        self.assertIn(reason, report["reason"])
++        self.assertEqual(report["qualification"], "HOLD_NO_GO")
++        self.assertIsNone(report["native_six_successor_risk_bound"])
++
++    def test_regular_cli_retains_the_original_finite_report(self):
++        doc = document(joined_events())
++        with tempfile.TemporaryDirectory() as directory:
++            path = Path(directory) / "declared.json"
++            path.write_text(json.dumps(doc), encoding="utf-8")
++            code, report = self.run_cli(path)
++        self.assertEqual(code, 0)
++        self.assertEqual(report, dynamic.audit_dynamic_participation(doc))
++
++    def test_exact_byte_ceiling_passes_and_one_excess_byte_refuses(self):
++        doc = document(joined_events())
++        encoded = json.dumps(doc).encode("utf-8")
++        with tempfile.TemporaryDirectory() as directory:
++            path = Path(directory) / "declared.json"
++            path.write_bytes(encoded + b" " * (dynamic.MAX_INPUT_BYTES - len(encoded)))
++            code, report = self.run_cli(path)
++            self.assertEqual(code, 0)
++            self.assertEqual(report, dynamic.audit_dynamic_participation(doc))
++            with path.open("ab") as stream:
++                stream.write(b" ")
++            self.assert_refused(path, "nonregular/oversize source")
++
++    def test_fifo_without_a_writer_is_refused_without_blocking(self):
++        with tempfile.TemporaryDirectory() as directory:
++            path = Path(directory) / "declared.fifo"
++            os.mkfifo(path)
++            self.assert_refused(path, "nonregular/oversize source")
++
++    def test_leaf_and_parent_symlink_aliases_are_refused(self):
++        with tempfile.TemporaryDirectory() as directory:
++            root = Path(directory)
++            real = root / "real"
++            real.mkdir()
++            path = real / "declared.json"
++            path.write_text(json.dumps(document(joined_events())), encoding="utf-8")
++            leaf = root / "linked.json"
++            leaf.symlink_to(path)
++            parent = root / "linked-directory"
++            parent.symlink_to(real, target_is_directory=True)
++            self.assert_refused(leaf, "symlink source refused")
++            self.assert_refused(parent / path.name, "symlink source refused")
++
++    def test_directory_and_missing_inputs_are_structured_refusals(self):
++        with tempfile.TemporaryDirectory() as directory:
++            root = Path(directory)
++            self.assert_refused(root, "nonregular/oversize source")
++            self.assert_refused(root / "absent.json", "missing source")
++
++    def test_invalid_utf8_remains_a_structured_refusal(self):
++        with tempfile.TemporaryDirectory() as directory:
++            path = Path(directory) / "invalid.json"
++            path.write_bytes(b"\xff")
++            self.assert_refused(path, "utf-8")
++
++
+ if __name__ == "__main__":
+     unittest.main()
