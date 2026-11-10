@@ -1,0 +1,111 @@
+{
+  "disk_free_bytes_before": 168045666304,
+  "missing_committed_bytes": 500852393,
+  "missing_committed_entries": [
+    {
+      "blob": "3bd377dca2f040d33b09ab5d61443958813b72cf",
+      "bytes": 19663320,
+      "mode": "100644",
+      "path": "evidence/chain-six-full-20261108/archives/github-native-campaign-original-text-f3.tar.xz"
+    },
+    {
+      "blob": "6966abeb62f9111130ad4c0dd7601706a53439ed",
+      "bytes": 61183946,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587313298.zip"
+    },
+    {
+      "blob": "e286af8969c120ffdd3cfd79704bb882e56b36ba",
+      "bytes": 61216668,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587353281.zip"
+    },
+    {
+      "blob": "e0848c003c08db3744fb51369ce935fcba9e1103",
+      "bytes": 56937244,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587604654.zip"
+    },
+    {
+      "blob": "5ba4f22b1f43cd002566fcd84fd98096cbcf3157",
+      "bytes": 53531740,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13588091577.zip"
+    },
+    {
+      "blob": "73012f32ba8e37c0e4debe1d5c9d0c085f5cc444",
+      "bytes": 22385347,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-head/history-native/long-history/confirmer/native.sqlite.gz"
+    },
+    {
+      "blob": "b32248b830eb79a1212422377c21e71a9351346e",
+      "bytes": 22393525,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-head/history-native/long-history/validator/native.sqlite.gz"
+    },
+    {
+      "blob": "395e803bd62bbaa173a9c01c859cbe351b334a20",
+      "bytes": 22372352,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-merge/history-native/long-history/confirmer/native.sqlite.gz"
+    },
+    {
+      "blob": "15102f46f749e85ffcceb3b31beac427ba718e8b",
+      "bytes": 22377472,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-merge/history-native/long-history/validator/native.sqlite.gz"
+    },
+    {
+      "blob": "faaa696e366ca1a54941d83c90422af79290a271",
+      "bytes": 21147039,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-head/history-native/long-history/confirmer/native.sqlite.gz"
+    },
+    {
+      "blob": "57298142faf62901802e1bd270da0b9423418062",
+      "bytes": 22371209,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-head/history-native/long-history/validator/native.sqlite.gz"
+    },
+    {
+      "blob": "677beeb7d6e6c17bd94bcee1ac9ce6a90c69a174",
+      "bytes": 21159512,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-merge/history-native/long-history/confirmer/native.sqlite.gz"
+    },
+    {
+      "blob": "cd8fffe413f0cdc2e4963d158a83b95d26dac1ac",
+      "bytes": 22390593,
+      "mode": "100644",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-merge/history-native/long-history/validator/native.sqlite.gz"
+    },
+    {
+      "blob": "88f7833357720ad7ada74911b9ef508d2456ff4f",
+      "bytes": 71722426,
+      "mode": "100644",
+      "path": "evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/native-campaign-artifact-13610289272/original-artifact-13610289272.zip"
+    }
+  ],
+  "original_flags": {
+    "evidence/chain-six-full-20261108/archives/github-native-campaign-original-text-f3.tar.xz": "S",
+    "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587313298.zip": "S",
+    "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587353281.zip": "S",
+    "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587604654.zip": "S",
+    "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13588091577.zip": "S",
+    "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-head/history-native/long-history/confirmer/native.sqlite.gz": "S",
+    "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-head/history-native/long-history/validator/native.sqlite.gz": "S",
+    "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-merge/history-native/long-history/confirmer/native.sqlite.gz": "S",
+    "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-merge/history-native/long-history/validator/native.sqlite.gz": "S",
+    "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-head/history-native/long-history/confirmer/native.sqlite.gz": "S",
+    "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-head/history-native/long-history/validator/native.sqlite.gz": "S",
+    "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-merge/history-native/long-history/confirmer/native.sqlite.gz": "S",
+    "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-merge/history-native/long-history/validator/native.sqlite.gz": "S",
+    "evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/native-campaign-artifact-13610289272/original-artifact-13610289272.zip": "S"
+  },
+  "other_worktrees_modified": false,
+  "prior_refusal": "index hides tracked worktree entries",
+  "schema": "trnm-owned-worktree-materialization-v1",
+  "source_files_edited": false,
+  "tested_commit": "da002c3227e92d625a73b26706420fab32cdf2d8"
+}

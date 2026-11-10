@@ -1,0 +1,16 @@
+{
+  "at_unix_ms": 1794304902216,
+  "cancelled": false,
+  "commit_and_push_not_reached": true,
+  "exit_code": 1,
+  "external_attestation": false,
+  "host": "desktop",
+  "job_id": "1a1c4e7c6c8-cf39-4ed",
+  "output_complete": true,
+  "output_durable": true,
+  "schema": "trnm-runtime-terminal-observation-v1",
+  "source_tool": "HeptaRuntime h_process_status",
+  "state": "failed",
+  "terminal_publication_confirmed": true,
+  "timed_out": false
+}

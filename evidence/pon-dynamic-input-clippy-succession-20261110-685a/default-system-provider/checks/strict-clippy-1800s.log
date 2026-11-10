@@ -1,0 +1,376 @@
+    Checking trnm-pon-node v0.1.0 (/home/qian-qi/chain-dynamic-input-bound-20261110-685a/trillionnium/crates/trnm-pon-node)
+    Checking trnm-types v0.1.0 (/home/qian-qi/chain-dynamic-input-bound-20261110-685a/trillionnium/crates/trnm-types)
+    Checking trnm-peer-lease v0.1.0 (/home/qian-qi/chain-dynamic-input-bound-20261110-685a/trillionnium/crates/trnm-peer-lease)
+    Checking utf8parse v0.2.2
+    Checking anstyle-parse v1.0.0
+    Checking colorchoice v1.0.5
+    Checking anstyle v1.0.14
+    Checking is_terminal_polyfill v1.70.2
+    Checking anstyle-query v1.1.5
+    Checking anstream v1.0.0
+    Checking trnm-checkpoint-types v0.1.0 (/home/qian-qi/chain-dynamic-input-bound-20261110-685a/trillionnium/crates/trnm-checkpoint-types)
+    Checking clap_lex v1.1.0
+    Checking strsim v0.11.1
+   Compiling heck v0.5.0
+   Compiling clap_derive v4.6.0
+    Checking clap_builder v4.6.0
+    Checking clap v4.6.0
+    Checking trnm-checkpoint-store v0.1.0 (/home/qian-qi/chain-dynamic-input-bound-20261110-685a/trillionnium/crates/trnm-checkpoint-store)
+    Checking wait-timeout v0.2.1
+    Checking shlex v1.3.0
+    Checking shell-escape v0.1.5
+    Checking trnm-audit-events v0.1.0 (/home/qian-qi/chain-dynamic-input-bound-20261110-685a/trillionnium/crates/trnm-audit-events)
+    Checking trnm-executor v0.1.0 (/home/qian-qi/chain-dynamic-input-bound-20261110-685a/trillionnium/crates/trnm-executor)
+    Checking trnm-research-protocol v0.1.0 (/home/qian-qi/chain-dynamic-input-bound-20261110-685a/trillionnium/crates/trnm-research-protocol)
+    Checking trnm-bench v0.1.0 (/home/qian-qi/chain-dynamic-input-bound-20261110-685a/trillionnium/crates/trnm-bench)
+    Checking trnm-escrow-vault v0.1.0 (/home/qian-qi/chain-dynamic-input-bound-20261110-685a/trillionnium/crates/trnm-escrow-vault)
+    Checking trnm-governance-guard v0.1.0 (/home/qian-qi/chain-dynamic-input-bound-20261110-685a/trillionnium/crates/trnm-governance-guard)
+    Checking trnm-worker-agent v0.1.0 (/home/qian-qi/chain-dynamic-input-bound-20261110-685a/trillionnium/crates/trnm-worker-agent)
+error[E0599]: no function or associated item named `private_key_from_seed` found for struct `openssl::pkey::PKey<_>` in the current scope
+   --> crates/trnm-pon-node/src/ingress/pq_network/tls/fixtures.rs:133:11
+    |
+133 |     PKey::private_key_from_seed(None, KeyType::ML_DSA_65, None, &[seed; 32]).unwrap()
+    |           ^^^^^^^^^^^^^^^^^^^^^ function or associated item not found in `openssl::pkey::PKey<_>`
+    |
+note: if you're trying to build a new `openssl::pkey::PKey<_>` consider using one of the following associated functions:
+      openssl::pkey::PKey::<T>::from_rsa
+      openssl::pkey::PKey::<T>::from_dsa
+      openssl::pkey::PKey::<T>::from_dh
+      openssl::pkey::PKey::<T>::from_dhx
+      and 23 others
+   --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:514:5
+    |
+514 |     pub fn from_rsa(rsa: Rsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+527 |     pub fn from_dsa(dsa: Dsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+539 |     pub fn from_dh(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+550 |     pub fn from_dhx(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: there is an associated function `private_key_from_der` with a similar name
+   --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/macros.rs:108:9
+    |
+108 |           pub fn $n(der: &[u8]) -> Result<$t, crate::error::ErrorStack> {
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+   ::: /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:766:5
+    |
+766 | /     from_der! {
+767 | |         /// Decodes a DER-encoded private key.
+768 | |         ///
+769 | |         /// This function will attempt to automatically detect the underlying key format, and
+...   |
+775 | |         ffi::d2i_AutoPrivateKey
+776 | |     }
+    | |_____- in this macro invocation
+    = note: this error originates in the macro `from_der` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: no function or associated item named `private_key_from_seed` found for struct `openssl::pkey::PKey<_>` in the current scope
+   --> crates/trnm-pon-node/src/ingress/pq_network/tests.rs:16:21
+    |
+ 16 |     let key = PKey::private_key_from_seed(None, KeyType::ML_DSA_65, None, &[seed; 32]).unwrap();
+    |                     ^^^^^^^^^^^^^^^^^^^^^ function or associated item not found in `openssl::pkey::PKey<_>`
+    |
+note: if you're trying to build a new `openssl::pkey::PKey<_>` consider using one of the following associated functions:
+      openssl::pkey::PKey::<T>::from_rsa
+      openssl::pkey::PKey::<T>::from_dsa
+      openssl::pkey::PKey::<T>::from_dh
+      openssl::pkey::PKey::<T>::from_dhx
+      and 23 others
+   --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:514:5
+    |
+514 |     pub fn from_rsa(rsa: Rsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+527 |     pub fn from_dsa(dsa: Dsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+539 |     pub fn from_dh(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+550 |     pub fn from_dhx(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: there is an associated function `private_key_from_der` with a similar name
+   --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/macros.rs:108:9
+    |
+108 |           pub fn $n(der: &[u8]) -> Result<$t, crate::error::ErrorStack> {
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+   ::: /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:766:5
+    |
+766 | /     from_der! {
+767 | |         /// Decodes a DER-encoded private key.
+768 | |         ///
+769 | |         /// This function will attempt to automatically detect the underlying key format, and
+...   |
+775 | |         ffi::d2i_AutoPrivateKey
+776 | |     }
+    | |_____- in this macro invocation
+    = note: this error originates in the macro `from_der` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: no function or associated item named `private_key_from_seed` found for struct `openssl::pkey::PKey<_>` in the current scope
+    --> crates/trnm-pon-node/src/ingress/public_v2.rs:1685:29
+     |
+1685 |                 spki: PKey::private_key_from_seed(None, KeyType::ML_DSA_65, None, &[n; 32])
+     |                             ^^^^^^^^^^^^^^^^^^^^^ function or associated item not found in `openssl::pkey::PKey<_>`
+     |
+note: if you're trying to build a new `openssl::pkey::PKey<_>` consider using one of the following associated functions:
+      openssl::pkey::PKey::<T>::from_rsa
+      openssl::pkey::PKey::<T>::from_dsa
+      openssl::pkey::PKey::<T>::from_dh
+      openssl::pkey::PKey::<T>::from_dhx
+      and 23 others
+    --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:514:5
+     |
+ 514 |     pub fn from_rsa(rsa: Rsa<T>) -> Result<PKey<T>, ErrorStack> {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+ 527 |     pub fn from_dsa(dsa: Dsa<T>) -> Result<PKey<T>, ErrorStack> {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+ 539 |     pub fn from_dh(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+ 550 |     pub fn from_dhx(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: there is an associated function `private_key_from_der` with a similar name
+    --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/macros.rs:108:9
+     |
+ 108 |           pub fn $n(der: &[u8]) -> Result<$t, crate::error::ErrorStack> {
+     |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+    ::: /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:766:5
+     |
+ 766 | /     from_der! {
+ 767 | |         /// Decodes a DER-encoded private key.
+ 768 | |         ///
+ 769 | |         /// This function will attempt to automatically detect the underlying key format, and
+...    |
+ 775 | |         ffi::d2i_AutoPrivateKey
+ 776 | |     }
+     | |_____- in this macro invocation
+     = note: this error originates in the macro `from_der` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: no function or associated item named `private_key_from_seed` found for struct `openssl::pkey::PKey<_>` in the current scope
+   --> crates/trnm-pon-node/src/public_submit/pq/context_tests.rs:10:21
+    |
+ 10 |     let key = PKey::private_key_from_seed(None, KeyType::ML_DSA_65, None, &[seed; 32]).unwrap();
+    |                     ^^^^^^^^^^^^^^^^^^^^^ function or associated item not found in `openssl::pkey::PKey<_>`
+    |
+note: if you're trying to build a new `openssl::pkey::PKey<_>` consider using one of the following associated functions:
+      openssl::pkey::PKey::<T>::from_rsa
+      openssl::pkey::PKey::<T>::from_dsa
+      openssl::pkey::PKey::<T>::from_dh
+      openssl::pkey::PKey::<T>::from_dhx
+      and 23 others
+   --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:514:5
+    |
+514 |     pub fn from_rsa(rsa: Rsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+527 |     pub fn from_dsa(dsa: Dsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+539 |     pub fn from_dh(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+550 |     pub fn from_dhx(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: there is an associated function `private_key_from_der` with a similar name
+   --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/macros.rs:108:9
+    |
+108 |           pub fn $n(der: &[u8]) -> Result<$t, crate::error::ErrorStack> {
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+   ::: /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:766:5
+    |
+766 | /     from_der! {
+767 | |         /// Decodes a DER-encoded private key.
+768 | |         ///
+769 | |         /// This function will attempt to automatically detect the underlying key format, and
+...   |
+775 | |         ffi::d2i_AutoPrivateKey
+776 | |     }
+    | |_____- in this macro invocation
+    = note: this error originates in the macro `from_der` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: no function or associated item named `private_key_from_seed` found for struct `openssl::pkey::PKey<_>` in the current scope
+   --> crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:23:21
+    |
+ 23 |     let key = PKey::private_key_from_seed(None, KeyType::ML_DSA_65, None, &[seed; 32]).unwrap();
+    |                     ^^^^^^^^^^^^^^^^^^^^^ function or associated item not found in `openssl::pkey::PKey<_>`
+    |
+note: if you're trying to build a new `openssl::pkey::PKey<_>` consider using one of the following associated functions:
+      openssl::pkey::PKey::<T>::from_rsa
+      openssl::pkey::PKey::<T>::from_dsa
+      openssl::pkey::PKey::<T>::from_dh
+      openssl::pkey::PKey::<T>::from_dhx
+      and 23 others
+   --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:514:5
+    |
+514 |     pub fn from_rsa(rsa: Rsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+527 |     pub fn from_dsa(dsa: Dsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+539 |     pub fn from_dh(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+550 |     pub fn from_dhx(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: there is an associated function `private_key_from_der` with a similar name
+   --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/macros.rs:108:9
+    |
+108 |           pub fn $n(der: &[u8]) -> Result<$t, crate::error::ErrorStack> {
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+   ::: /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:766:5
+    |
+766 | /     from_der! {
+767 | |         /// Decodes a DER-encoded private key.
+768 | |         ///
+769 | |         /// This function will attempt to automatically detect the underlying key format, and
+...   |
+775 | |         ffi::d2i_AutoPrivateKey
+776 | |     }
+    | |_____- in this macro invocation
+    = note: this error originates in the macro `from_der` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: no function or associated item named `private_key_from_seed` found for struct `openssl::pkey::PKey<_>` in the current scope
+   --> crates/trnm-pon-node/tests/../../trnm-mvcc-fee/tests/pq_account_owner.rs:119:19
+    |
+119 |             PKey::private_key_from_seed(None, KeyType::ML_DSA_65, None, &[*seed; 32]).unwrap()
+    |                   ^^^^^^^^^^^^^^^^^^^^^ function or associated item not found in `openssl::pkey::PKey<_>`
+    |
+note: if you're trying to build a new `openssl::pkey::PKey<_>` consider using one of the following associated functions:
+      openssl::pkey::PKey::<T>::from_rsa
+      openssl::pkey::PKey::<T>::from_dsa
+      openssl::pkey::PKey::<T>::from_dh
+      openssl::pkey::PKey::<T>::from_dhx
+      and 23 others
+   --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:514:5
+    |
+514 |     pub fn from_rsa(rsa: Rsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+527 |     pub fn from_dsa(dsa: Dsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+539 |     pub fn from_dh(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+550 |     pub fn from_dhx(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: there is an associated function `private_key_from_der` with a similar name
+   --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/macros.rs:108:9
+    |
+108 |           pub fn $n(der: &[u8]) -> Result<$t, crate::error::ErrorStack> {
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+   ::: /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:766:5
+    |
+766 | /     from_der! {
+767 | |         /// Decodes a DER-encoded private key.
+768 | |         ///
+769 | |         /// This function will attempt to automatically detect the underlying key format, and
+...   |
+775 | |         ffi::d2i_AutoPrivateKey
+776 | |     }
+    | |_____- in this macro invocation
+    = note: this error originates in the macro `from_der` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: no function or associated item named `private_key_from_seed` found for struct `openssl::pkey::PKey<_>` in the current scope
+   --> crates/trnm-pon-node/tests/pq_account_native.rs:28:21
+    |
+ 28 |     let key = PKey::private_key_from_seed(None, KeyType::ML_DSA_65, None, &[seed; 32]).unwrap();
+    |                     ^^^^^^^^^^^^^^^^^^^^^ function or associated item not found in `openssl::pkey::PKey<_>`
+    |
+note: if you're trying to build a new `openssl::pkey::PKey<_>` consider using one of the following associated functions:
+      openssl::pkey::PKey::<T>::from_rsa
+      openssl::pkey::PKey::<T>::from_dsa
+      openssl::pkey::PKey::<T>::from_dh
+      openssl::pkey::PKey::<T>::from_dhx
+      and 23 others
+   --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:514:5
+    |
+514 |     pub fn from_rsa(rsa: Rsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+527 |     pub fn from_dsa(dsa: Dsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+539 |     pub fn from_dh(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+550 |     pub fn from_dhx(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: there is an associated function `private_key_from_der` with a similar name
+   --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/macros.rs:108:9
+    |
+108 |           pub fn $n(der: &[u8]) -> Result<$t, crate::error::ErrorStack> {
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+   ::: /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:766:5
+    |
+766 | /     from_der! {
+767 | |         /// Decodes a DER-encoded private key.
+768 | |         ///
+769 | |         /// This function will attempt to automatically detect the underlying key format, and
+...   |
+775 | |         ffi::d2i_AutoPrivateKey
+776 | |     }
+    | |_____- in this macro invocation
+    = note: this error originates in the macro `from_der` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `trnm-pon-node` (test "pq_account_native") due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...
+error[E0599]: no function or associated item named `private_key_from_seed` found for struct `openssl::pkey::PKey<_>` in the current scope
+   --> crates/trnm-pon-node/src/store/pq_existing_owner_tests.rs:9:15
+    |
+  9 |         PKey::private_key_from_seed(None, KeyType::ML_DSA_65, None, &[seed; 32])
+    |               ^^^^^^^^^^^^^^^^^^^^^ function or associated item not found in `openssl::pkey::PKey<_>`
+    |
+note: if you're trying to build a new `openssl::pkey::PKey<_>` consider using one of the following associated functions:
+      openssl::pkey::PKey::<T>::from_rsa
+      openssl::pkey::PKey::<T>::from_dsa
+      openssl::pkey::PKey::<T>::from_dh
+      openssl::pkey::PKey::<T>::from_dhx
+      and 23 others
+   --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:514:5
+    |
+514 |     pub fn from_rsa(rsa: Rsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+527 |     pub fn from_dsa(dsa: Dsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+539 |     pub fn from_dh(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+550 |     pub fn from_dhx(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: there is an associated function `private_key_from_der` with a similar name
+   --> /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/macros.rs:108:9
+    |
+108 |           pub fn $n(der: &[u8]) -> Result<$t, crate::error::ErrorStack> {
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+   ::: /home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:766:5
+    |
+766 | /     from_der! {
+767 | |         /// Decodes a DER-encoded private key.
+768 | |         ///
+769 | |         /// This function will attempt to automatically detect the underlying key format, and
+...   |
+775 | |         ffi::d2i_AutoPrivateKey
+776 | |     }
+    | |_____- in this macro invocation
+    = note: this error originates in the macro `from_der` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: could not compile `trnm-pon-node` (lib test) due to 6 previous errors

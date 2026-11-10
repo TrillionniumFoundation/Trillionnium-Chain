@@ -1,0 +1,7 @@
+{
+  "cargo_build_jobs": 2,
+  "rust_cargo_identity_count": 1638,
+  "stage": "running_strict_clippy",
+  "tested_commit": "da002c3227e92d625a73b26706420fab32cdf2d8",
+  "timeout_seconds": 1800
+}

@@ -1,0 +1,16 @@
+{
+  "all_rust_cargo_source_objects_unchanged": true,
+  "exit_code": 101,
+  "original_124_preserved": true,
+  "previous_exit_code": 124,
+  "previous_source_commit": "8d4c915939f2ae7659e254ec3475d2dadb919f2a",
+  "production_activation": false,
+  "recorder_status": "command_failed",
+  "rust_cargo_identity_count": 1638,
+  "schema": "trnm-strict-clippy-followup-result-v1",
+  "source_raw_bytes_verified_before_and_after": true,
+  "strict_clippy_passed": false,
+  "tested_commit": "da002c3227e92d625a73b26706420fab32cdf2d8",
+  "tested_tree": "4e205ea8d4a1a9f30f7bcaa81272b33c42dbaca9",
+  "whole_chain_qualified": false
+}

@@ -1,0 +1,4 @@
+{
+  "error": "RuntimeError('staged-whitespace exited 2')",
+  "traceback": "Traceback (most recent call last):\n  File \"<stdin>\", line 229, in <module>\n  File \"<stdin>\", line 35, in run\nRuntimeError: staged-whitespace exited 2\n"
+}

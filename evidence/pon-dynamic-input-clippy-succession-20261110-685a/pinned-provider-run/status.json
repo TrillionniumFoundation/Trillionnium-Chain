@@ -1,0 +1,20 @@
+{
+  "all_rust_cargo_objects_unchanged": true,
+  "clippy_started": true,
+  "default_provider_101_preserved": true,
+  "original_124_preserved": true,
+  "previous_source_commit": "8d4c915939f2ae7659e254ec3475d2dadb919f2a",
+  "production_activation": false,
+  "provider_cli_sha256": "4f934463aa8ca9bde9116baa4ff37eceebcad5f802f3256311441e046c43f027",
+  "provider_preparation_passed": true,
+  "provider_version": "3.5.9",
+  "rust_cargo_identity_count": 1638,
+  "schema": "trnm-pinned-provider-clippy-followup-v1",
+  "source_raw_bytes_verified_before_and_after": true,
+  "stage": "completed",
+  "strict_clippy_exit_code": 0,
+  "strict_clippy_passed": true,
+  "tested_commit": "da002c3227e92d625a73b26706420fab32cdf2d8",
+  "tested_tree": "4e205ea8d4a1a9f30f7bcaa81272b33c42dbaca9",
+  "whole_chain_qualified": false
+}

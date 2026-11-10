@@ -1,0 +1,1226 @@
+[
+  {
+    "bytes": 1048576,
+    "content_range": [
+      0,
+      1048575,
+      53279637
+    ],
+    "elapsed_ns": 13129064356,
+    "end": 1048575,
+    "exit_code": 0,
+    "header_sha256": "c72c9c7c55447d8f38b3087e7438b0d365e229a3fc520c17c877f8041b89bc0c",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 0,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "f7b20be44d874390b1532610e710c52b0306933ecaa090c87537599f48e13328",
+    "start": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      1048576,
+      2097151,
+      53279637
+    ],
+    "elapsed_ns": 12158443782,
+    "end": 2097151,
+    "exit_code": 0,
+    "header_sha256": "15a09a28c899326ed0261f1ee77966ae8e27ea9337fd9652a7110bd6e57dc273",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 1,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "bab87f60d3e72d4d7b9d79f42c5e7f696d93dc026fe99e7f9a7378d3bb9b59cc",
+    "start": 1048576,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      2097152,
+      3145727,
+      53279637
+    ],
+    "elapsed_ns": 10719641199,
+    "end": 3145727,
+    "exit_code": 0,
+    "header_sha256": "b240cdb9dde5e3c696dd753520585fe4e8bb44fdf65f286ed9b5df69774e934e",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 2,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "01dc1c69288768d830a0b1994ab7a68e4426693a98228a121a01628934cd5397",
+    "start": 2097152,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      3145728,
+      4194303,
+      53279637
+    ],
+    "elapsed_ns": 10664347264,
+    "end": 4194303,
+    "exit_code": 0,
+    "header_sha256": "872d4dfbe3d45b914a8a327fb17afee3a6f0ea48ca511ed429a15599ae0e857a",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 3,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "cfaeefb047e392604d2e269f4c43ed7c6f446a65227533eb29c297077aae004e",
+    "start": 3145728,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      4194304,
+      5242879,
+      53279637
+    ],
+    "elapsed_ns": 8848739976,
+    "end": 5242879,
+    "exit_code": 0,
+    "header_sha256": "c9f61020c74d9a78c21e03266704dfd5d40b1cef5ca4d470b21520d1a880d965",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 4,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "3cb3f80d52cd864b3f2319002555b7800af1c944284b5fe7f53913e97ae8c8df",
+    "start": 4194304,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      5242880,
+      6291455,
+      53279637
+    ],
+    "elapsed_ns": 12970620494,
+    "end": 6291455,
+    "exit_code": 0,
+    "header_sha256": "01eaddd55327938fb80f66a9cdc1e371661c2fce594ef6f70ca203b80eec3388",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 5,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "705a9759e8dac9a4772fb42ba68531af031ce9046fa3483ad2abda7e3debbf29",
+    "start": 5242880,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      6291456,
+      7340031,
+      53279637
+    ],
+    "elapsed_ns": 20096650693,
+    "end": 7340031,
+    "exit_code": 0,
+    "header_sha256": "af6b8dceb9d270ab6a749169cd5ea860c6a515e2a8ac6a2a4125c296f874484d",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 6,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "00a28b3cce879e1c42e7b5aca0221c3cdd10025d67d2e509a9919f3f249e59c5",
+    "start": 6291456,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      7340032,
+      8388607,
+      53279637
+    ],
+    "elapsed_ns": 11609081276,
+    "end": 8388607,
+    "exit_code": 0,
+    "header_sha256": "e0951c80c5e8f3ec46ecd99d539d526aa07cf3e77ce856e076cac6bb1db138a5",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 7,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "750093155e9425b6ae9e8f5145ca79b0ce5acba7febf1f864a13d1078429910b",
+    "start": 7340032,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      8388608,
+      9437183,
+      53279637
+    ],
+    "elapsed_ns": 14657340430,
+    "end": 9437183,
+    "exit_code": 0,
+    "header_sha256": "d1df89b8740d41264adbbfcc1b1778f66277995b604ad26ded027b1194837c88",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 8,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "744850622e24ae96500e379563d6ebee766ad9f1f0d14a918f66490bcb6e8e01",
+    "start": 8388608,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      9437184,
+      10485759,
+      53279637
+    ],
+    "elapsed_ns": 13646200310,
+    "end": 10485759,
+    "exit_code": 0,
+    "header_sha256": "87358d1f43f94fc835775c8a65bfd0af56efd2b0fbaeb97075b47291422283eb",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 9,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "40e1bfe411c717577038b334d3899e0d350062b4f7340b4b02eda96a9a32c8fd",
+    "start": 9437184,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      10485760,
+      11534335,
+      53279637
+    ],
+    "elapsed_ns": 10501755501,
+    "end": 11534335,
+    "exit_code": 0,
+    "header_sha256": "79621eef81c3c540a2c05b143338a54f5e612818875403b503659632c03b55c3",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 10,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "16f92d8fc83a41fbdd07d819939d98d509e84b7cd5c9808988b2c715b3f7ec26",
+    "start": 10485760,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      11534336,
+      12582911,
+      53279637
+    ],
+    "elapsed_ns": 8146173481,
+    "end": 12582911,
+    "exit_code": 0,
+    "header_sha256": "0b6dce2bd114077fed6ecf1ce700e5eeb234531a533b51b1d674e47b987ee14d",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 11,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "f6dd9ed7c2ce2bc053048f193a85aad7b6f76ef6b0b5714188d282df92065e09",
+    "start": 11534336,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      12582912,
+      13631487,
+      53279637
+    ],
+    "elapsed_ns": 13821498226,
+    "end": 13631487,
+    "exit_code": 0,
+    "header_sha256": "051e0bcbc5dedac997be99aaef3105f4d5a7bdeac5a525dd76e4cdc0df60f3b4",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 12,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "a9ff859f98b323807c3aa81b31892d6ae6d27908157c611aa10d794bd29c6372",
+    "start": 12582912,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      13631488,
+      14680063,
+      53279637
+    ],
+    "elapsed_ns": 13808100101,
+    "end": 14680063,
+    "exit_code": 0,
+    "header_sha256": "b024a4bab9076a91bd6fceb8402fff365efde7050158c5dd5a37fcad144a5621",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 13,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "20d4b179c395f3faa3b041814d03f0ed8f8caa93e4dbe27679184dc07df82219",
+    "start": 13631488,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      14680064,
+      15728639,
+      53279637
+    ],
+    "elapsed_ns": 13198585364,
+    "end": 15728639,
+    "exit_code": 0,
+    "header_sha256": "b9ce13cbdd0db0154051a6e0292b3c7bdb9e34180ad43ff3ee1c4a8835fbb277",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 14,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "28833531dcec3fcce5c851194b6ca33a0450d004589f58d4319b0ef54161a888",
+    "start": 14680064,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      15728640,
+      16777215,
+      53279637
+    ],
+    "elapsed_ns": 16768976724,
+    "end": 16777215,
+    "exit_code": 0,
+    "header_sha256": "c02953b556e1e57ef21a4f02e75d7320bc8e7c35fa32182197642f21af4c872d",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 15,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "920a28de85622458b05d4544a18f3baa11f35dcffad49a4d181c0744d15d5a26",
+    "start": 15728640,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      16777216,
+      17825791,
+      53279637
+    ],
+    "elapsed_ns": 13923672710,
+    "end": 17825791,
+    "exit_code": 0,
+    "header_sha256": "279ac0d10bbfad906ee088a4774258c2c9e7b31233267cf1ae8e77b09cb9a888",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 16,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "a93a6936d7e8258ed6eba1c1703a279009007627dbd3d952bb6f0297d1f43f99",
+    "start": 16777216,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      17825792,
+      18874367,
+      53279637
+    ],
+    "elapsed_ns": 11853926488,
+    "end": 18874367,
+    "exit_code": 0,
+    "header_sha256": "e0283f43125ad66b1c89dfc9e0532fd514e243714f8d001020db92793909f20d",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 17,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "b178d502eed119c76bbc6a54eeb7929da188b282e30f807e95c46bc09cbae242",
+    "start": 17825792,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      18874368,
+      19922943,
+      53279637
+    ],
+    "elapsed_ns": 13013074790,
+    "end": 19922943,
+    "exit_code": 0,
+    "header_sha256": "7f0479faac7ce6d2b3cf3bdbc19e5be18b224296dbd1c07dd68df121d75f79b7",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 18,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "e763d21d68ad184d48ad84684c968c697d92c5293d1ca6cb62b6fccdc9d74ffa",
+    "start": 18874368,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      19922944,
+      20971519,
+      53279637
+    ],
+    "elapsed_ns": 12822956993,
+    "end": 20971519,
+    "exit_code": 0,
+    "header_sha256": "7d009997eaf7d101e87bef54c815965b5891778c661bfbc03894d54f85bd9c10",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 19,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "ab0776336dc445729e440c2eb29820ef8773f8b2f8f8f0db285de27c54efb189",
+    "start": 19922944,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      20971520,
+      22020095,
+      53279637
+    ],
+    "elapsed_ns": 13493329614,
+    "end": 22020095,
+    "exit_code": 0,
+    "header_sha256": "7cdaa8ed145a138347d3c961834aeecbe0cb13aad7dedf90b6ce44ba9a24b358",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 20,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "246d8d457485ff9f3481b27a386ab8ec369fb923dd4c50f5a1b5f5f29e203370",
+    "start": 20971520,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      22020096,
+      23068671,
+      53279637
+    ],
+    "elapsed_ns": 14951517759,
+    "end": 23068671,
+    "exit_code": 0,
+    "header_sha256": "bba12070ae77d56215ec3880ba43f3b083ad34be40e814ef9b9bcd1859d628f0",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 21,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "4dafa51e27ac19c1dbffee0c4b3fbecd0b847ffccb15c74abb9c2415688313e8",
+    "start": 22020096,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      23068672,
+      24117247,
+      53279637
+    ],
+    "elapsed_ns": 11978476191,
+    "end": 24117247,
+    "exit_code": 0,
+    "header_sha256": "3165d06dd50cfe8a28d2ee30d1a2ed8a4a87edfe26770df36c2e74d23266221f",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 22,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "6e59de54a2de063a07c2cd7ce8d1ca3844871da6af59688e9d29380a30097550",
+    "start": 23068672,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      24117248,
+      25165823,
+      53279637
+    ],
+    "elapsed_ns": 31026816212,
+    "end": 25165823,
+    "exit_code": 0,
+    "header_sha256": "91164b56c3ddf63f01be21a41fa9b190165b39a6066c03a7eb177bacbb3a386f",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 23,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "739904f59a4fdefffb57c791055150995b476a46c39c7c3025a8d58e97c56d5a",
+    "start": 24117248,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      25165824,
+      26214399,
+      53279637
+    ],
+    "elapsed_ns": 19771541243,
+    "end": 26214399,
+    "exit_code": 0,
+    "header_sha256": "88902a4883947ac4ffe0abf397beed67800a3b0776f4dce470f9d450324e6648",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 24,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "8e4c63b8a7b1427c920da558e514fa097e4c76e988f586dfa5449feb2d3b7463",
+    "start": 25165824,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      26214400,
+      27262975,
+      53279637
+    ],
+    "elapsed_ns": 20378535861,
+    "end": 27262975,
+    "exit_code": 0,
+    "header_sha256": "909aa8a9257f3048a80bf7e598753f4ca99bfdcae4310accc275385a40b2e3f7",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 25,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "e77606e6d81e3382dbbc3007603542ef993b80ec0d6d20cf00e43893932e55d4",
+    "start": 26214400,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      27262976,
+      28311551,
+      53279637
+    ],
+    "elapsed_ns": 26142480330,
+    "end": 28311551,
+    "exit_code": 0,
+    "header_sha256": "4edb6423878a6957aa809558c306b9c979f5be146b34bd36463d1b699108f0ab",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 26,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "83959fa9d465a5c28b54b7cc7d97003d024d290af27f567fbdb137205e6f726d",
+    "start": 27262976,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      28311552,
+      29360127,
+      53279637
+    ],
+    "elapsed_ns": 11039872202,
+    "end": 29360127,
+    "exit_code": 0,
+    "header_sha256": "647cf6c6360055f62a6c9d642e59efa56861153bc2660ca566c4416510449221",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 27,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "fbb365c0e37b5dc2a3c04c8ef08c8cae762faae7a82069e51866fd13bdb10ba5",
+    "start": 28311552,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      29360128,
+      30408703,
+      53279637
+    ],
+    "elapsed_ns": 30411853416,
+    "end": 30408703,
+    "exit_code": 0,
+    "header_sha256": "38ee04309e47b0057dfa8fa3770ef295e7e236055aa268a7fe6535b88b32c633",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 28,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "37962ddccf83befd591c10f418e03a32e7efded7ba47e634c39af748288e5fb0",
+    "start": 29360128,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      30408704,
+      31457279,
+      53279637
+    ],
+    "elapsed_ns": 8812456674,
+    "end": 31457279,
+    "exit_code": 0,
+    "header_sha256": "505a433be20333e5c6734b30e48ea2a495cd8b3969d1706b3893f60a827f686b",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 29,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "088117b87cbd56bb8375767e8629e7baa54da34fc1bcdb3eb425bda0008701d7",
+    "start": 30408704,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      31457280,
+      32505855,
+      53279637
+    ],
+    "elapsed_ns": 8874577527,
+    "end": 32505855,
+    "exit_code": 0,
+    "header_sha256": "087e736b618337f3722f30478f53747c0ddc3fd1929c76bcccdd0d0d196350c6",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 30,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "403a0c648af0012f62324e504dfc6bedcc3e82ecc8416aa613b4933b0b2f6d04",
+    "start": 31457280,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      32505856,
+      33554431,
+      53279637
+    ],
+    "elapsed_ns": 13806570084,
+    "end": 33554431,
+    "exit_code": 0,
+    "header_sha256": "caf901ea93c9c392efc48de9ba51af0084faa2a2e0ea76f215a2c8dc9d362591",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 31,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "2a4f52ff9fd33903258f851004e0300edbf1c61796597bd89c1803c10832f276",
+    "start": 32505856,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      33554432,
+      34603007,
+      53279637
+    ],
+    "elapsed_ns": 12655894119,
+    "end": 34603007,
+    "exit_code": 0,
+    "header_sha256": "4aa94cb87874e1e9ab5e5c84bfcb82b3e86f1b90d75e7c5540dbee21714f6f4d",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 32,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "187a9e67640caa00a86bc857f9cc39f6144f19753cc557a2725a3d7f5772c149",
+    "start": 33554432,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      34603008,
+      35651583,
+      53279637
+    ],
+    "elapsed_ns": 10372977939,
+    "end": 35651583,
+    "exit_code": 0,
+    "header_sha256": "11ecee52d952f7c4a9626d6607c61ee5ca45b1ab80160fbcbf841fe4d75a7eb3",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 33,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "500dad47c0efdccf378b305aeea5048578b513a39431f6bb92201c098b091c7e",
+    "start": 34603008,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      35651584,
+      36700159,
+      53279637
+    ],
+    "elapsed_ns": 13972240901,
+    "end": 36700159,
+    "exit_code": 0,
+    "header_sha256": "1b7b3f039a3b1ddd866e065b4e4c6444b17e4ea328d2e9bd8b14eba858101a7c",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 34,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "d68ef0577cf6b8e4f240b4197f0fe7a367c6d1112588c48c3059ce3e7870deb6",
+    "start": 35651584,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      36700160,
+      37748735,
+      53279637
+    ],
+    "elapsed_ns": 14181011325,
+    "end": 37748735,
+    "exit_code": 0,
+    "header_sha256": "53ef574bc3b3dc5a34c7272c473785998fcf60f7476653eeaa0ad9890409dfc7",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 35,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "c15b97143c246d9c6c50e8b27c0ce486fab0873e26ca8989ec6f389571f51dc0",
+    "start": 36700160,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      37748736,
+      38797311,
+      53279637
+    ],
+    "elapsed_ns": 14815847466,
+    "end": 38797311,
+    "exit_code": 0,
+    "header_sha256": "f34693bcd8ef7d09468671aa7288d7ee838119a4b21ed6fea791e712a7fdc906",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 36,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "096e10f27dbef9a974ceaaa2fc3b21adf6bd5a00ac8ceb92263f28dc5afbbc85",
+    "start": 37748736,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      38797312,
+      39845887,
+      53279637
+    ],
+    "elapsed_ns": 16006131013,
+    "end": 39845887,
+    "exit_code": 0,
+    "header_sha256": "0903d58a15ab9ae49c61dd29a5801f39bbc9ab7c72ce7099a106b82ba42cfdf3",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 37,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "76741e70078777e79a6665434614f5ca557d58248499b6fca97a475f2db25da1",
+    "start": 38797312,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      39845888,
+      40894463,
+      53279637
+    ],
+    "elapsed_ns": 10254199641,
+    "end": 40894463,
+    "exit_code": 0,
+    "header_sha256": "d83d2ca498a41f8f5a97b2312c1243a8635174521567aa3ebab29ed4a1ca085b",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 38,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "b4fa14046c78c08e3e83d730aaff6ff8c83fbb8a35bc9d2c5d8a38679b1ccf42",
+    "start": 39845888,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      40894464,
+      41943039,
+      53279637
+    ],
+    "elapsed_ns": 19669519279,
+    "end": 41943039,
+    "exit_code": 0,
+    "header_sha256": "e62a8e8e7b123fc83f5fe915596f0d68cb819cc067128fa3c7401fdde1b48ad7",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 39,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "7e2c1d5c456dbd3896346e1ef95ed168a8cb5c703c8e9f946583e7afd969648f",
+    "start": 40894464,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      41943040,
+      42991615,
+      53279637
+    ],
+    "elapsed_ns": 14533141709,
+    "end": 42991615,
+    "exit_code": 0,
+    "header_sha256": "d2a0741b162c42e6400f64ba0e80413f095dafcc3b3b2086007344b8375acd21",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 40,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "667dd815e354073f63c9f42aff5683f58425962ce539eef70af07c8e06bb7da1",
+    "start": 41943040,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      42991616,
+      44040191,
+      53279637
+    ],
+    "elapsed_ns": 11532853307,
+    "end": 44040191,
+    "exit_code": 0,
+    "header_sha256": "c8eb0ab3d4e15fc2fe14241253f7787da8bb30fb2fe11fb51de6d76205be7685",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 41,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "3adc7af5563e6a3106915d209e0d64a1f91423fcbfbb50d736b7ba9cf7814469",
+    "start": 42991616,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      44040192,
+      45088767,
+      53279637
+    ],
+    "elapsed_ns": 17564224413,
+    "end": 45088767,
+    "exit_code": 0,
+    "header_sha256": "b7335581acb0a8d2e2af3b274d2df700c00b921f5fd351bf1039e174a3b33101",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 42,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "cd47c60c3ffb29fde18591e77f34050232a4ae6640d34e90d7c5ccdd87e559a8",
+    "start": 44040192,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      45088768,
+      46137343,
+      53279637
+    ],
+    "elapsed_ns": 10923262272,
+    "end": 46137343,
+    "exit_code": 0,
+    "header_sha256": "4bcffc7682483826875bd505f18dfca9dd40b0658c38b3a4a690c2ec77a7c524",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 43,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "bf48295f06dd778279789d0304e8119f62bb3a9239161c3c4ace2fefd9d6fba0",
+    "start": 45088768,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      46137344,
+      47185919,
+      53279637
+    ],
+    "elapsed_ns": 23438512276,
+    "end": 47185919,
+    "exit_code": 0,
+    "header_sha256": "8cfc05c7b6505ec776b73d86d49bb1d61114aade60bae58a9431bf9425d0f58d",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 44,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "90d88c349a313300b86a1cd92d5d0b0b415e9c75830ea248b2a88f004961f337",
+    "start": 46137344,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      47185920,
+      48234495,
+      53279637
+    ],
+    "elapsed_ns": 16679283872,
+    "end": 48234495,
+    "exit_code": 0,
+    "header_sha256": "308931d1f0ad547be68b05c263a8f04f4bea25a09b5e4ddc518bdfc079d67323",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 45,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "061380872226f1b0881d0bbddf840a8c8d4261f50c6e9b1d75095d771caa45be",
+    "start": 47185920,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      48234496,
+      49283071,
+      53279637
+    ],
+    "elapsed_ns": 25467983861,
+    "end": 49283071,
+    "exit_code": 0,
+    "header_sha256": "22f7f3b17a54a2aac721fdd6a235ebd57be8d722b703be79569a91a60cac80f5",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 46,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "44f3f8f65376333b4b16342ec53cf11c44c2c43d1a2b82d01ffd2b704ccf95ec",
+    "start": 48234496,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      49283072,
+      50331647,
+      53279637
+    ],
+    "elapsed_ns": 11551510033,
+    "end": 50331647,
+    "exit_code": 0,
+    "header_sha256": "b2c77da2c912489e0e006b05ea014a4167f4a16e7399074034a8da9875665558",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 47,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "bc1b324bfc1d4ca2410707b45ae2c46a9be9180802ca64b849cb2274ec5bcc87",
+    "start": 49283072,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      50331648,
+      51380223,
+      53279637
+    ],
+    "elapsed_ns": 11906729748,
+    "end": 51380223,
+    "exit_code": 0,
+    "header_sha256": "667a95fdc37bd61aea8d188dfdf0f9e94d527bcc5bb4e696a7ee4b154be6ef85",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 48,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "12a7021b63c2941ae03406652c09a379b848b3810f62c4c4acbede676b0fca36",
+    "start": 50331648,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 1048576,
+    "content_range": [
+      51380224,
+      52428799,
+      53279637
+    ],
+    "elapsed_ns": 9565447451,
+    "end": 52428799,
+    "exit_code": 0,
+    "header_sha256": "1074be2cf59b2d8bad4f7fd8c430f46ed0605774ba5a15bf27c274c9a7da8009",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 49,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "22d0d00a09444dbfcbf2fbe377b766d6753f2da9d1157963762e2bf3bc3edbd2",
+    "start": 51380224,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  },
+  {
+    "bytes": 850837,
+    "content_range": [
+      52428800,
+      53279636,
+      53279637
+    ],
+    "elapsed_ns": 8383427844,
+    "end": 53279636,
+    "exit_code": 0,
+    "header_sha256": "98bc4fa069e40cc957cec465afa7f5c785829bfc110d4c64748d8176aa09c637",
+    "headers_retained_locally_with_public_asset_redirect_tokens": true,
+    "part": 50,
+    "response_codes": [
+      302,
+      206
+    ],
+    "sha256": "f8ddc35e822977b95ecc2d6405828cda274d19b3aba61f9ef918e770a6885a37",
+    "start": 52428800,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "valid": true
+  }
+]

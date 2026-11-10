@@ -1,0 +1,22 @@
+{
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_TARGET_DIR": "/home/qian-qi/.local/state/chain-dynamic-input-bound-20261110-685a/cargo-target",
+    "GITHUB_ENV": "/home/qian-qi/.local/state/chain-dynamic-input-bound-20261110-685a/strict-clippy-local-provider-07/provider-environment.txt",
+    "RUNNER_TEMP": "/home/qian-qi/.local/state/chain-dynamic-input-bound-20261110-685a/strict-clippy-local-provider-07/runner-temp",
+    "TRNM_CI_RECEIPT_DIR": "/home/qian-qi/.local/state/chain-dynamic-input-bound-20261110-685a/strict-clippy-local-provider-07/ci-observations",
+    "TRNM_PQ_SOURCE_ARCHIVE": "/home/qian-qi/.local/state/chain-dynamic-input-bound-20261110-685a/pinned-source-acquisition-06/openssl-3.5.9.tar.gz"
+  },
+  "original_124_preserved": true,
+  "previous_101_preserved": true,
+  "previous_clippy_exit_code": 101,
+  "previous_selected_system_openssl": "3.0.13",
+  "production_activation": false,
+  "schema": "trnm-pinned-provider-preparation-inputs-v1",
+  "script_git_blob": "0ce5ac9563282db998a66402a74bdafa2cf7a051",
+  "script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+  "source_archive_sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+  "tested_commit": "da002c3227e92d625a73b26706420fab32cdf2d8",
+  "version": "3.5.9",
+  "whole_chain_qualified": false
+}

@@ -1,0 +1,96 @@
+{
+  "schema": "trnm-owned-worktree-index-diagnosis-v1",
+  "head": {
+    "exit_code": 0,
+    "stdout": "da002c3227e92d625a73b26706420fab32cdf2d8\n",
+    "stderr": ""
+  },
+  "index_path": {
+    "exit_code": 0,
+    "stdout": "/home/qian-qi/chain-throughput-engineering-20261108-86a09d93/.git/worktrees/chain-dynamic-input-bound-20261110-685a/index\n",
+    "stderr": ""
+  },
+  "status": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "hidden_count": 14,
+  "hidden_entries": [
+    {
+      "flag": "S",
+      "path": "evidence/chain-six-full-20261108/archives/github-native-campaign-original-text-f3.tar.xz",
+      "exists": false
+    },
+    {
+      "flag": "S",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587313298.zip",
+      "exists": false
+    },
+    {
+      "flag": "S",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587353281.zip",
+      "exists": false
+    },
+    {
+      "flag": "S",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13587604654.zip",
+      "exists": false
+    },
+    {
+      "flag": "S",
+      "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13588091577.zip",
+      "exists": false
+    },
+    {
+      "flag": "S",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-head/history-native/long-history/confirmer/native.sqlite.gz",
+      "exists": false
+    },
+    {
+      "flag": "S",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-head/history-native/long-history/validator/native.sqlite.gz",
+      "exists": false
+    },
+    {
+      "flag": "S",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-merge/history-native/long-history/confirmer/native.sqlite.gz",
+      "exists": false
+    },
+    {
+      "flag": "S",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/arm64-merge/history-native/long-history/validator/native.sqlite.gz",
+      "exists": false
+    },
+    {
+      "flag": "S",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-head/history-native/long-history/confirmer/native.sqlite.gz",
+      "exists": false
+    },
+    {
+      "flag": "S",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-head/history-native/long-history/validator/native.sqlite.gz",
+      "exists": false
+    },
+    {
+      "flag": "S",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-merge/history-native/long-history/confirmer/native.sqlite.gz",
+      "exists": false
+    },
+    {
+      "flag": "S",
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-merge/history-native/long-history/validator/native.sqlite.gz",
+      "exists": false
+    },
+    {
+      "flag": "S",
+      "path": "evidence/pq-authority-preflight-20261108-9d315/hosted-ci-native-triage-01/native-campaign-artifact-13610289272/original-artifact-13610289272.zip",
+      "exists": false
+    }
+  ],
+  "relevant_config": {
+    "exit_code": 0,
+    "stdout": "file:/home/qian-qi/chain-throughput-engineering-20261108-86a09d93/.git/config\textensions.worktreeconfig true\nfile:/home/qian-qi/chain-throughput-engineering-20261108-86a09d93/.git/worktrees/chain-dynamic-input-bound-20261110-685a/config.worktree\tcore.sparsecheckout true\n",
+    "stderr": ""
+  }
+}

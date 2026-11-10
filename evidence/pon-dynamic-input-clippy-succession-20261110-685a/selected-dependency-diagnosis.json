@@ -1,0 +1,52 @@
+{
+  "openssl_sys_outputs": [
+    {
+      "cfg_lines": [
+        "cargo:rustc-cfg=osslconf=\"OPENSSL_NO_IDEA\"",
+        "cargo:rustc-cfg=osslconf=\"OPENSSL_NO_SSL3_METHOD\"",
+        "cargo:rustc-cfg=openssl",
+        "cargo:rustc-cfg=ossl101",
+        "cargo:rustc-cfg=ossl102",
+        "cargo:rustc-cfg=ossl102f",
+        "cargo:rustc-cfg=ossl102h",
+        "cargo:rustc-cfg=ossl110",
+        "cargo:rustc-cfg=ossl110f",
+        "cargo:rustc-cfg=ossl110g",
+        "cargo:rustc-cfg=ossl110h",
+        "cargo:rustc-cfg=ossl111",
+        "cargo:rustc-cfg=ossl111b",
+        "cargo:rustc-cfg=ossl111c",
+        "cargo:rustc-cfg=ossl111d",
+        "cargo:rustc-cfg=ossl300",
+        "cargo:version_number=300000d0",
+        "cargo:include=/usr/include"
+      ],
+      "path": "/home/qian-qi/.local/state/chain-dynamic-input-bound-20261110-685a/cargo-target/debug/build/openssl-sys-be5042f97574949f/output"
+    }
+  ],
+  "original_search_observation_retained_in_operator_state": true,
+  "permission_error_count": 500,
+  "pkgconfig_version": {
+    "argv": [
+      "pkg-config",
+      "--modversion",
+      "openssl"
+    ],
+    "exit_code": 0,
+    "stderr": "",
+    "stdout": "3.0.13\n"
+  },
+  "schema": "trnm-selected-openssl-diagnosis-v1",
+  "standard_location_search_completed": false,
+  "system_version": {
+    "argv": [
+      "openssl",
+      "version",
+      "-a"
+    ],
+    "exit_code": 0,
+    "stderr": "",
+    "stdout": "OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)\nbuilt on: Wed Sep 16 18:47:02 2026 UTC\nplatform: debian-amd64\noptions:  bn(64,64)\ncompiler: gcc -fPIC -pthread -m64 -Wa,--noexecstack -Wall -fzero-call-used-regs=used-gpr -DOPENSSL_TLS_SECURITY_LEVEL=2 -Wa,--noexecstack -g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/build/openssl-yMWwKu/openssl-3.0.13=. -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/build/openssl-yMWwKu/openssl-3.0.13=/usr/src/openssl-3.0.13-0ubuntu3.16 -DOPENSSL_USE_NODELETE -DL_ENDIAN -DOPENSSL_PIC -DOPENSSL_BUILDING_OPENSSL -DNDEBUG -Wdate-time -D_FORTIFY_SOURCE=3\nOPENSSLDIR: \"/usr/lib/ssl\"\nENGINESDIR: \"/usr/lib/x86_64-linux-gnu/engines-3\"\nMODULESDIR: \"/usr/lib/x86_64-linux-gnu/ossl-modules\"\nSeeding source: os-specific\nCPUINFO: OPENSSL_ia32cap=0x7ffef3ffffebffff:0x37ab\n"
+  },
+  "unrelated_directory_names_not_published": true
+}

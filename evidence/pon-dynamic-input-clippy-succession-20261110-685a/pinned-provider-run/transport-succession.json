@@ -1,0 +1,18 @@
+{
+  "fresh_digest_build_and_smoke_required": true,
+  "new_original_script_input": "TRNM_PQ_SOURCE_ARCHIVE",
+  "original_authoritative_terminal": "cancelled",
+  "original_cancelled": true,
+  "original_download_stage_observed_before_cancel": true,
+  "original_exit_code": -15,
+  "original_job_id": "1a1c4caab7a-cf39-444",
+  "original_preparation_not_qualified": true,
+  "original_records_retained_without_relabeling": true,
+  "original_terminal_observed_unix_ms": 1794303926546,
+  "production_activation": false,
+  "schema": "trnm-provider-transport-succession-v1",
+  "source_acquisition_exit_code": 0,
+  "source_acquisition_full_archive_bytes": 53279637,
+  "source_acquisition_job_id": "1a1c4d44aa5-cf39-460",
+  "whole_chain_qualified": false
+}
