@@ -60,6 +60,13 @@ COMPLETE_OWNER_SOURCE_DIRS = frozenset((
 # are not recreated by claiming their historical Git object identity. The
 # transport slice remains mandatory and separately bounded from whole-chain PQ.
 NATIVE_REQUIRED_PATHS = frozenset((
+    "config/pon/w1-lifetime-current-source-v2.json",
+    "config/pon/w1-qrom-closure-current-required-tests-v2.json",
+    "scripts/w1_lifetime_current_observation.py",
+    "scripts/ci/test_w1_lifetime_current_observation.py",
+    "scripts/ci/w1_qrom_closure_current_controls.py",
+    "scripts/ci/test_w1_qrom_closure_current_controls.py",
+    "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
     "scripts/ci/pq_source_reader.py",
     "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
     "trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs",

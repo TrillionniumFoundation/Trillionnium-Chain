@@ -2595,6 +2595,11 @@ class MergedQualificationLaneTests(unittest.TestCase):
             '    python3 scripts/ci/test_w1_qrom_current_implementation_audit.py\n',
             '    python3 scripts/w1_qrom_current_implementation_audit.py\n',
             '    python3 scripts/ci/test_w1_qrom_current_ci.py\n',
+        ), '    # Current lifetime source observation is separate from historical positive replay.\n    python3 scripts/ci/test_w1_lifetime_current_observation.py\n'),
+        'lifetime_current_source': ('repository-truth', '    python3 scripts/ci/test_w1_qrom_current_ci.py\n    # Current lifetime source observation is separate from historical positive replay.\n', (
+            '    python3 scripts/ci/test_w1_lifetime_current_observation.py\n',
+            '    python3 scripts/w1_lifetime_current_observation.py\n',
+            '    python3 scripts/ci/test_w1_qrom_closure_current_controls.py\n',
         ), "    python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v\n"),
         'failed_campaign_diagnostics': ('repository-truth',
             '    python3 scripts/ci/test_run_pon_w1_native_campaign.py\n', (
@@ -2670,6 +2675,9 @@ class MergedQualificationLaneTests(unittest.TestCase):
 
     def test_current_mapping_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('qrom_current_source')
+
+    def test_current_lifetime_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('lifetime_current_source')
 
     def test_fixed_probability_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('fixed_probability')

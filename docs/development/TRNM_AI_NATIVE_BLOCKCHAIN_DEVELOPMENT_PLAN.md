@@ -10740,3 +10740,21 @@ its own exact source, original operation and receipts. Separate branch logs
 cannot establish a same-iteration production loop. This composition does not
 automatically include #822, #823, #826, #828, #829 or #830. All seven original
 gates remain HOLD; production activation and FinalUse qualification stay false.
+
+### 2026-11-10 — Separate lifetime closure's historical and current sources
+
+Continue exact #850 source with the
+[current lifetime observation](../security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md).
+Keep the historical ledger, source pins, 105-name closure roster and saved
+reports unchanged, and run their positive reproduction on the fixed original
+closure source. Current head and ordered prospective merge instead use an
+explicit current 20-path source contract and distinct observation schema,
+retaining the actual V1 source-identity refusal and all unknown lifetime inputs.
+
+Require current named completion, all six unaffected report comparisons,
+source-before/after equality and final stage outcomes. Keep historical and
+current rosters separate, register the new source observer and controls in the
+original repository lane, and preserve original failures. This repairs source
+scope correspondence; it establishes neither a complete QROM theorem nor a
+lifetime failure bound, native resource acceptance, production admission or
+independent cryptographic qualification.

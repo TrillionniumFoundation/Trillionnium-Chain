@@ -25,29 +25,25 @@ env:
   PYTHONDONTWRITEBYTECODE: "1"
   W1_CLOSURE_ROSTER_SHA256: ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f
 jobs:
-  closure:
-    name: W1 QROM closure (${{ matrix.source }}, x64)
+  closure-historical:
+    name: W1 QROM historical closure (fixed 1a14f7d, x64)
     runs-on: ubuntu-24.04
     timeout-minutes: 20
-    strategy:
-      fail-fast: false
-      matrix:
-        source: [head, prospective-merge]
     env:
-      SOURCE_KIND: ${{ matrix.source }}
-      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
-      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
-      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      SOURCE_KIND: head
+      EXPECTED_SOURCE: 1a14f7d4826363daefac9ec10131c66d7e70ece7
+      EXPECTED_HEAD: 1a14f7d4826363daefac9ec10131c66d7e70ece7
+      EXPECTED_BASE: cb114b13bf848a77634e40a08b31b30c7c758e7b
     steps:
       - name: Reserve fresh observations
         id: observations
         shell: bash
         run: |
           set -euo pipefail
-          out="$RUNNER_TEMP/w1-qrom-closure-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          out="$RUNNER_TEMP/w1-qrom-historical-closure-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           mkdir "$out"
           printf 'W1_CLOSURE_OUT=%s\n' "$out" >> "$GITHUB_ENV"
-          printf 'Named controls, fixed image/AIR reconstruction, and explicit conditional arithmetic only. No complete QROM theorem, real quantum budget, PQ authorization or chain-weight qualification is granted. The full ZKR archive trial is separately retained.\n' > "$out/SCOPE.txt"
+          printf 'Immutable historical 1a14 source, original 105-name roster and seven byte-identical reports only. This does not validate current candidate sources or establish cryptographic qualification.\n' > "$out/SCOPE.txt"
       - name: Checkout exact candidate without persistent credentials
         id: checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -174,6 +170,203 @@ jobs:
         if: always() && steps.observations.outcome == 'success'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: w1-qrom-closure-${{ matrix.source }}-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          name: w1-qrom-historical-closure-fixed-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ env.W1_CLOSURE_OUT }}/
+          if-no-files-found: error
+  closure:
+    name: W1 QROM current closure (${{ matrix.source }}, x64)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [head, prospective-merge]
+    env:
+      W1_CLOSURE_ROSTER_SHA256: 1fe96c129c5417a86082c5adef28f43988e08b05352b5b17dfc103184bad6380
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - name: Reserve fresh observations
+        id: observations
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/w1-qrom-current-closure-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$out"
+          printf 'W1_CLOSURE_OUT=%s\n' "$out" >> "$GITHUB_ENV"
+          printf 'Current selected-source lifetime observation, explicit V1 refusal and separate current named roster only. Original historical positives execute in their own fixed checkout. No complete QROM theorem, adversary budget or qualification is granted.\n' > "$out/SCOPE.txt"
+      - name: Checkout exact candidate without persistent credentials
+        id: checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify complete ordered source before execution
+        id: source_before
+        if: always() && steps.observations.outcome == 'success' && steps.checkout.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_CLOSURE_OUT/source-before.json" 2>&1 | tee "$W1_CLOSURE_OUT/source-before.log"
+      - name: Audit project boundary
+        id: preflight
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$W1_CLOSURE_OUT/preflight.log"
+      - name: Execute the complete fixed named roster
+        id: named_controls
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/w1_qrom_closure_current_controls.py run --roster-sha256 "$W1_CLOSURE_ROSTER_SHA256" --output "$W1_CLOSURE_OUT" 2>&1 | tee "$W1_CLOSURE_OUT/named-controls.log"
+          python3 scripts/ci/w1_qrom_closure_current_controls.py check --roster-sha256 "$W1_CLOSURE_ROSTER_SHA256" --output "$W1_CLOSURE_OUT" 2>&1 | tee "$W1_CLOSURE_OUT/named-controls-check.log"
+      - name: Retain actual historical ledger refusal on current source
+        id: historical_refusal
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          python3 scripts/w1_lifetime_ledger.py --input evidence/pon-w1-lifetime-20261107/project-input.json > "$W1_CLOSURE_OUT/historical-reader.stdout" 2> "$W1_CLOSURE_OUT/historical-reader.stderr"
+          code=$?
+          set -e
+          test "$code" -eq 2
+          python3 - "$code" <<'PY'
+          import json, os
+          from pathlib import Path
+          import sys
+          sys.path.insert(0, 'scripts/ci')
+          import w1_qrom_closure_current_controls as controls
+          out = Path(os.environ['W1_CLOSURE_OUT'])
+          controls.require((out / 'historical-reader.stdout').read_bytes() == b'', 'historical refusal emitted a success report')
+          refusal = controls.strict_json((out / 'historical-reader.stderr').read_bytes())
+          controls.require(set(refusal) == {'status', 'error'} and refusal['status'] == 'REFUSED'
+                           and refusal['error'].startswith('source identity mismatch: '), 'unexpected historical refusal')
+          record = {'schema': 'TRNM-W1-LIFETIME-HISTORICAL-CURRENT-REFUSAL2',
+                    'expected_source': os.environ['EXPECTED_SOURCE'], 'exit_code': int(sys.argv[1]),
+                    'historical_refusal': refusal, 'historical_pins_relaxed': False}
+          with (out / 'historical-refusal.json').open('x') as stream:
+              json.dump(record, stream, indent=2, sort_keys=True)
+              stream.write('\n')
+          PY
+      - name: Reproduce pinned observations and unknown project inputs
+        id: reproduce
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/w1_qrom_semantics_audit.py --out "$W1_CLOSURE_OUT/semantics.json"
+          python3 scripts/w1_lifetime_current_observation.py --input evidence/pon-w1-lifetime-20261107/project-input.json > "$W1_CLOSURE_OUT/lifetime-current.json"
+          python3 scripts/w1_qrom_composition_budget.py > "$W1_CLOSURE_OUT/composition-unknown.json"
+          python3 scripts/w1_qrom_composition_budget.py --example > "$W1_CLOSURE_OUT/composition-example.json"
+          python3 scripts/w1_qrom_joint_oracle_diagnostic.py > "$W1_CLOSURE_OUT/joint-oracle-unknown.json"
+          python3 scripts/w1_qrom_joint_oracle_diagnostic.py --example alias > "$W1_CLOSURE_OUT/joint-oracle-alias.json"
+          python3 scripts/w1_qrom_joint_oracle_diagnostic.py --example separated > "$W1_CLOSURE_OUT/joint-oracle-separated.json"
+          cmp evidence/pon-w1-qrom-semantics-20261107/report.json "$W1_CLOSURE_OUT/semantics.json"
+          for name in composition-unknown composition-example joint-oracle-unknown joint-oracle-alias joint-oracle-separated; do
+            cmp "evidence/pon-w1-qrom-formal-bridge-20261107/$name.json" "$W1_CLOSURE_OUT/$name.json"
+          done
+      - name: Verify complete ordered source after execution
+        id: source_after
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_CLOSURE_OUT/source-after.json" 2>&1 | tee "$W1_CLOSURE_OUT/source-after.log"
+      - name: Validate named completion and every required stage independently
+        id: completion
+        if: always() && steps.observations.outcome == 'success' && steps.checkout.outcome == 'success'
+        shell: bash
+        env:
+          W1_CLOSURE_STEPS: ${{ toJSON(steps) }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY' 2>&1 | tee "$W1_CLOSURE_OUT/completion.log"
+          import json
+          import os
+          from pathlib import Path
+          import sys
+          sys.path.insert(0, 'scripts/ci')
+          import w1_qrom_closure_current_controls as controls
+          out = Path(os.environ['W1_CLOSURE_OUT'])
+          required = ('observations', 'checkout', 'source_before', 'preflight',
+                      'named_controls', 'historical_refusal', 'reproduce', 'source_after')
+          steps = controls.strict_json(os.environ['W1_CLOSURE_STEPS'])
+          failed = [name for name in required if type(steps.get(name)) is not dict
+                    or steps[name].get('outcome') != 'success'
+                    or steps[name].get('conclusion') != 'success']
+          error = None
+          try:
+              controls.check(Path.cwd(), out, os.environ['W1_CLOSURE_ROSTER_SHA256'])
+              observed = controls.strict_json((out / 'lifetime-current.json').read_bytes())
+              controls.require(observed['schema'] == 'TRNM-W1-LIFETIME-CURRENT-OBSERVATION2'
+                               and observed['status'] == 'CURRENT_SELECTED_SOURCE_OBSERVED_SECURITY_HOLD', 'current lifetime scope differs')
+              expected_qualification = {'production_activation': False, 'consensus_admission': False,
+                    'whole_chain_post_quantum_qualified': False, 'actual_lifetime_failure_bound': None,
+                    'coverage_exhaustiveness_proved': False, 'composition_theorem_instantiated': False}
+              controls.require(type(observed['qualification']) is dict
+                               and set(observed['qualification']) == set(expected_qualification)
+                               and all(observed['qualification'][k] is v for k, v in expected_qualification.items()), 'current lifetime qualification differs')
+              refusal = controls.strict_json((out / 'historical-refusal.json').read_bytes())
+              controls.require(refusal['schema'] == 'TRNM-W1-LIFETIME-HISTORICAL-CURRENT-REFUSAL2'
+                               and refusal['expected_source'] == os.environ['EXPECTED_SOURCE']
+                               and type(refusal['exit_code']) is int and refusal['exit_code'] == 2
+                               and refusal['historical_pins_relaxed'] is False
+                               and refusal['historical_refusal']['status'] == 'REFUSED'
+                               and refusal['historical_refusal']['error'].startswith('source identity mismatch: '), 'historical refusal record differs')
+              before = controls.strict_json((out / 'source-before.json').read_bytes())
+              after = controls.strict_json((out / 'source-after.json').read_bytes())
+              controls.require(before == after, 'source observations differ')
+              controls.require(before['schema'] == 'trnm-ci-source-v1', 'source schema differs')
+              controls.require(before['tracked_worktree_verified'] is True, 'tracked source is unverified')
+              controls.require(type(before['tracked_entries']) is int and before['tracked_entries'] > 0,
+                               'tracked source count differs')
+              controls.require(before['kind'] == os.environ['SOURCE_KIND'], 'source kind differs')
+              controls.require(before['tested_commit'] == os.environ['EXPECTED_SOURCE'], 'source commit differs')
+              controls.require(before['candidate'] == os.environ['EXPECTED_HEAD'], 'candidate differs')
+              if os.environ['SOURCE_KIND'] == 'prospective-merge':
+                  controls.require(before['base'] == os.environ['EXPECTED_BASE'], 'base differs')
+                  controls.require(before['prospective_merge'] == os.environ['EXPECTED_SOURCE'], 'merge differs')
+              else:
+                  controls.require(before['base'] is None and before['prospective_merge'] is None,
+                                   'head observation has merge fields')
+          except (Exception, SystemExit) as caught:
+              error = type(caught).__name__ + ': ' + str(caught)
+          passed = not failed and error is None
+          status = {'schema': 'TRNM-W1-QROM-CLOSURE-CURRENT-CI2',
+                    'expected_source': os.environ['EXPECTED_SOURCE'],
+                    'expected_head': os.environ['EXPECTED_HEAD'],
+                    'expected_base': os.environ['EXPECTED_BASE'],
+                    'source_kind': os.environ['SOURCE_KIND'],
+                    'required_stages': list(required), 'steps': steps,
+                    'failed_or_skipped_stages': failed, 'completion_or_identity_error': error,
+                    'all_required_observations_passed': passed,
+                    'qualification': controls.QUALIFICATION}
+          with (out / 'ci-status.json').open('x') as stream:
+              json.dump(status, stream, indent=2, sort_keys=True, allow_nan=False)
+              stream.write('\n')
+          if not passed:
+              raise SystemExit('required QROM continuation observations did not all complete')
+          print('All fixed named observations completed; complete QROM and chain qualification remain false.')
+          PY
+      - name: Retain exact observations including failures
+        if: always() && steps.observations.outcome == 'success'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w1-qrom-current-closure-${{ matrix.source }}-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
           path: ${{ env.W1_CLOSURE_OUT }}/
           if-no-files-found: error
