@@ -1,0 +1,66 @@
+[
+  {
+    "stage": "journal",
+    "returncode": 0,
+    "command": [
+      "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--jobs",
+      "2",
+      "-p",
+      "trnm-pon-node",
+      "--features",
+      "pq-native-openssl",
+      "--lib",
+      "group_child_journal",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ]
+  },
+  {
+    "stage": "strict_clippy",
+    "returncode": 101,
+    "command": [
+      "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "clippy",
+      "--locked",
+      "--offline",
+      "--jobs",
+      "2",
+      "--all-targets",
+      "-p",
+      "trnm-data-availability",
+      "-p",
+      "trnm-pon-node",
+      "--features",
+      "trnm-pon-node/pq-native-openssl",
+      "--",
+      "-D",
+      "warnings"
+    ]
+  },
+  {
+    "stage": "example_tests",
+    "returncode": 101,
+    "command": [
+      "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--jobs",
+      "2",
+      "-p",
+      "trnm-pon-node",
+      "--features",
+      "pq-native-openssl",
+      "--example",
+      "cell_native_shard_research_next_use_v2",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ]
+  }
+]

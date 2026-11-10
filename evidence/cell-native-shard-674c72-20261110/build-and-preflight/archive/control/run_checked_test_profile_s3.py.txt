@@ -1,0 +1,106 @@
+#!/usr/bin/env python3
+"""Authorized build/freeze only; never invokes the model."""
+import ast,shlex,shutil,stat,tomllib
+control='/home/qq/work/chain-cell-native-shard-674c72-20261110-control/run_native_checks.py'
+text=open(control).read();module=ast.parse(text)
+boundary=next(s.lineno for s in module.body if isinstance(s,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='prior' for t in s.targets))
+exec(compile('\n'.join(text.splitlines()[:boundary-1])+'\n',control,'exec'),globals())
+assert head=='b6f39277b39e0b41e552ec4d32c5f8d354c8255b' and tree=='6a0f38318b3cfb021240cda7f3d266c28aa76e78'
+assert label=='checked-test-profile-s3'
+assert sha(REPO/'trillionnium/Cargo.toml')=='48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b'
+assert sha(PROVIDER/'bin/openssl')==PROVIDER_SHA
+for k,v in env.items():
+ assert not (v and ('RUSTFLAGS' in k or k.startswith('CARGO_PROFILE_') or k in ('RUSTC_WRAPPER','RUSTC_WORKSPACE_WRAPPER','RUSTC_BOOTSTRAP','CARGO_BUILD_RUSTC_WRAPPER','CARGO_BUILD_RUSTC_WORKSPACE_WRAPPER'))),'compiler override: '+k
+configs={}
+for parent in [REPO/'trillionnium',*list((REPO/'trillionnium').parents),Path(env['CARGO_HOME'])]:
+ for leaf in ('config','config.toml'):
+  p=parent/'.cargo'/leaf if parent!=Path(env['CARGO_HOME']) else parent/leaf
+  if not p.is_file() or str(p) in configs:continue
+  value=tomllib.loads(p.read_text());configs[str(p)]=sha(p)
+  def inspect(x,scope=''):
+   if isinstance(x,dict):
+    for key,item in x.items():
+     assert not (key in ('rustflags','rustc-wrapper','rustc-workspace-wrapper') and item),'Cargo config compiler override '+scope+key
+     assert not (key=='profile' and item),'Cargo config profile override'
+     inspect(item,scope+key+'.')
+  inspect(value)
+def run(label,argv,cwd):
+ start=time.monotonic()
+ with (destination/(label+'.stdout')).open('x') as out,(destination/(label+'.stderr')).open('x') as err:
+  result=subprocess.run(argv,cwd=cwd,env=env,stdout=out,stderr=err)
+ record={'stage':label,'argv':argv,'returncode':result.returncode,'elapsed_seconds':time.monotonic()-start}
+ save(destination/(label+'.result.json'),record);print(json.dumps(record),flush=True)
+ assert result.returncode==0,label+' failed'
+def freeze(source,name,expected=None):
+ assert source.is_file() and not source.is_symlink()
+ before=source.stat();digest=sha(source)
+ assert expected is None or digest==expected,'binary source SHA mismatch'
+ target=destination/'binaries'/(name+'-'+digest+'.elf')
+ with source.open('rb') as incoming,target.open('xb') as output:
+  shutil.copyfileobj(incoming,output,1048576);output.flush();os.fsync(output.fileno());os.fchmod(output.fileno(),0o500)
+ after=source.stat()
+ assert (before.st_dev,before.st_ino,before.st_size,before.st_mtime_ns)==(after.st_dev,after.st_ino,after.st_size,after.st_mtime_ns)
+ assert sha(target)==digest
+ with target.open('rb') as f:assert f.read(4)==b'\x7fELF'
+ return {'source':str(source),'frozen':str(target),'sha256':digest,'bytes':target.stat().st_size}
+(destination/'binaries').mkdir(mode=0o700)
+name='cell_native_shard_research_next_use_v2';cargo=str(RUST/'cargo')
+source_command=['python3','scripts/ci/verify_ci_source.py','--kind','head','--expected-head',head]
+before=ident()
+save(destination/'start.json',{'identity':before,'workspace_profile_sha256':sha(REPO/'trillionnium/Cargo.toml'),'controller_sha256':sha(Path(control)),'configs':configs,'environment':{k:env[k] for k in ('RUSTC','RUSTDOC','CARGO_HOME','CARGO_TARGET_DIR','CARGO_BUILD_JOBS','CARGO_INCREMENTAL','LD_LIBRARY_PATH','TMPDIR','OPENSSL_DIR','OPENSSL_STATIC','TRNM_PQ_OPENSSL_SHA256')},'model_executed':False,'limits_changed':False})
+save(destination/'toolchain.json',{'cargo_sha256':sha(RUST/'cargo'),'rustc_sha256':sha(RUST/'rustc'),'cargo_version':subprocess.check_output([str(RUST/'cargo'),'--version','--verbose'],env=env,text=True),'rustc_version':subprocess.check_output([str(RUST/'rustc'),'-vV'],env=env,text=True)})
+run('preflight',['bash','scripts/project-preflight.sh'],REPO)
+run('exact-source-before',source_command,REPO)
+debug=freeze(TARGET/'debug/examples'/name,'debug-unexecuted','f84afd9343d2e8cbdeab9668342016513526559968673f9945db02fd9d1ae9b5')
+save(destination/'debug-snapshot.json',debug)
+run('cargo-metadata',[cargo,'metadata','--locked','--offline','--format-version','1','--features','trnm-pon-node/pq-native-openssl'],REPO/'trillionnium')
+metadata=json.loads((destination/'cargo-metadata.stdout').read_text())
+node_manifest=str(REPO/'trillionnium/crates/trnm-pon-node/Cargo.toml')
+node=next(p for p in metadata['packages'] if p['manifest_path']==node_manifest)
+sha2ids={p['id'] for p in metadata['packages'] if p['name']=='sha2'}
+argv=[cargo,'build','--locked','--offline','--jobs','2','-p','trnm-pon-node','--features','pq-native-openssl','--profile','test','--example',name,'--message-format=json','-vv','--color','never']
+run('cargo-build',argv,REPO/'trillionnium')
+messages=[]
+for line in (destination/'cargo-build.stdout').read_text().splitlines():
+ if line.startswith('{'):messages.append(json.loads(line))
+assert [m for m in messages if m.get('reason')=='build-finished']==[{'reason':'build-finished','success':True}],'build-finished proof'
+artifacts=[m for m in messages if m.get('reason')=='compiler-artifact']
+matches=[m for m in artifacts if m['package_id']==node['id'] and m['manifest_path']==node_manifest and m['target']['kind']==['example'] and m['target']['name']==name]
+assert len(matches)==1,'unique example artifact'
+artifact=matches[0];profile=artifact['profile']
+def checks(m):
+ p=m['profile']
+ assert p['opt_level']=='3' and p['debug_assertions'] is True and p['overflow_checks'] is True and p['test'] is False,'checked opt3 profile mismatch'
+checks(artifact)
+assert artifact['target']['crate_types']==['bin'] and artifact['target']['test'] is False
+assert artifact['target']['src_path']==str(REPO/'trillionnium/crates/trnm-pon-node/examples'/(name+'.rs'))
+assert 'pq-native-openssl' in artifact['features'] and artifact['fresh'] is False,'main must be actually compiled'
+node_libraries=[m for m in artifacts if m['package_id']==node['id'] and m['target']['kind']==['lib']]
+sha2_libraries=[m for m in artifacts if m['package_id'] in sha2ids and m['target']['kind']==['lib']]
+assert node_libraries and sha2_libraries,'runtime profile artifacts absent'
+for m in node_libraries+sha2_libraries:checks(m)
+commands=[]
+for line in (destination/'cargo-build.stderr').read_text().splitlines():
+ if 'Running `' in line and line.rstrip().endswith('`'):
+  raw=line.split('Running `',1)[1].rstrip()[:-1]
+  try:tokens=shlex.split(raw)
+  except ValueError:continue
+  if '--crate-name' in tokens and tokens[tokens.index('--crate-name')+1]==name:commands.append({'raw':raw,'tokens':tokens})
+assert len(commands)==1,'fresh main rustc invocation missing or ambiguous'
+tokens=commands[0]['tokens'];assert str(RUST/'rustc') in tokens and '--test' not in tokens
+for i,token in enumerate(tokens):
+ assert not (token=='--cfg' and i+1<len(tokens) and tokens[i+1]=='test') and token!='--cfg=test','cfg(test) injection'
+cflags=[tokens[i+1] for i,t in enumerate(tokens[:-1]) if t=='-C']+[t[2:] for t in tokens if t.startswith('-C') and t!='-C']
+assert 'opt-level=3' in cflags
+assert all(not f.startswith('opt-level=') or f=='opt-level=3' for f in cflags),'conflicting optimization flags'
+for flag in cflags:
+ if flag.split('=',1)[0] in ('debug-assertions','overflow-checks'):
+  assert flag.split('=',1)[-1] in ('on','yes','true','1'),'checks lowered by rustc flags'
+binary=Path(artifact['executable']);assert binary.is_absolute() and binary.is_file() and os.access(binary,os.X_OK)
+assert binary.resolve().is_relative_to(TARGET.resolve()) and str(binary) in artifact['filenames']
+checked=freeze(binary,'checked-test-main')
+run('exact-source-end',source_command,REPO)
+assert ident()==before
+assert configs=={p:sha(Path(p)) for p in configs},'Cargo config changed'
+save(destination/'accepted-artifact.json',{'qualified_build':True,'source':before,'profile_command':'test','artifact':artifact,'node_libraries':node_libraries,'sha2_libraries':sha2_libraries,'rustc_invocation':commands[0],'frozen_binary':checked,'debug_snapshot':debug,'raw_stdout_sha256':sha(destination/'cargo-build.stdout'),'raw_stderr_sha256':sha(destination/'cargo-build.stderr'),'model_executed':False,'wall_seconds':300,'worker_rss_bytes':8589934592,'worker_threads':4,'native_limits_changed':False,'performance_comparison_with_c3_debug_270s':False})
+print(json.dumps({'qualified_build':True,'manifest':str(destination/'accepted-artifact.json'),'frozen_binary':checked,'model_executed':False}),flush=True)

@@ -1,0 +1,25 @@
+{
+  "binaries": [
+    {
+      "bytes": 270156976,
+      "current_stat_size_matches": true,
+      "hash_source": "Exact original accepted-artifact.json fields; no ELF payload read by collector",
+      "label": "checked_main",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/checked-test-profile-s3/binaries/checked-test-main-07b711687a223e670280e72c1397e628ef05e97183b60cb9decd66120631226e.elf",
+      "payload_copied": false,
+      "payload_rehashed_by_collector": false,
+      "sha256": "07b711687a223e670280e72c1397e628ef05e97183b60cb9decd66120631226e"
+    },
+    {
+      "bytes": 212347272,
+      "current_stat_size_matches": true,
+      "hash_source": "Exact original accepted-artifact.json fields; no ELF payload read by collector",
+      "label": "debug_unexecuted",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/checked-test-profile-s3/binaries/debug-unexecuted-f84afd9343d2e8cbdeab9668342016513526559968673f9945db02fd9d1ae9b5.elf",
+      "payload_copied": false,
+      "payload_rehashed_by_collector": false,
+      "sha256": "f84afd9343d2e8cbdeab9668342016513526559968673f9945db02fd9d1ae9b5"
+    }
+  ],
+  "schema": "trnm.closed-elf-references.v1"
+}

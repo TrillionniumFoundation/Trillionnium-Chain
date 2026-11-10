@@ -1,0 +1,122 @@
+{
+  "scope": "precommit failed V3 128-temporary-wire-manifest diagnostic; not S1 qualification",
+  "base_head": "06233be630f8eff6cea59cd5111e5941135a4aa5",
+  "failures": "v3-diagnostics-attempt01 strict_clippy.log and example_tests.log; component02 node_grouped.log",
+  "files": {
+    "scripts/ci/pq_authority_effect_register.py": {
+      "sha256": "770a5d3c72012af50fc3b5ab4ad278ba9ae629640845c0cb2f76d92341a7ec64",
+      "bytes": 10982,
+      "mode": 384
+    },
+    "scripts/ci/test_pq_authority_effect_register.py": {
+      "sha256": "a966bcddbba0692f60fbf3b02670ea9659842b5b4dab816d635048084877cc07",
+      "bytes": 13550,
+      "mode": 384
+    },
+    "trillionnium/Cargo.lock": {
+      "sha256": "9a09acd113a1db1918ff81922e9f3f9a91ddae94b873d75951bca2fd5f6868b3",
+      "bytes": 40374,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs": {
+      "sha256": "a3032e60636b8c30f10a41ce62ee787c5ec4996315871b0fab3b5932359485a6",
+      "bytes": 35388,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-pon-node/Cargo.toml": {
+      "sha256": "02a2f9f558ca0f215a9b6c2953ca8e714ebedad49f9d99b3a95d7f76c3fa2608",
+      "bytes": 2289,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_next_use_v2.rs": {
+      "sha256": "a3b56b022f17960220c781da8d4bf0911ddf907be0fdfe5bc4304bb7809e8b37",
+      "bytes": 959,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/funding.rs": {
+      "sha256": "c34feb23f683ab7e768f02a9a961fdb199dc23b01f50b69f0e9267ea9c075c7f",
+      "bytes": 11742,
+      "mode": 432
+    },
+    "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/groups_v3.rs": {
+      "sha256": "23eb3f58582fe04b0ab2c10c3b135108e06e45d640b8b610ebe272da12293d85",
+      "bytes": 14211,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs": {
+      "sha256": "8cf278e2afcc391884fe4768846ef48c161426c324e2e1683e0704ffe0984761",
+      "bytes": 22816,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/recovery.rs": {
+      "sha256": "517e27e7d514d0469deab4004bcb76b224938712e09208cee58e211d2cdafdb4",
+      "bytes": 16707,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/tests.rs": {
+      "sha256": "a8b0143013676b1973559c24cc8abb1c1dbbd4608b944ba2256b0722ead30ad4",
+      "bytes": 12041,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-pon-node/src/lib.rs": {
+      "sha256": "e9ac1f33e34b039a73384a2d1dfcb695c6d3bc59e059af1ab1833e225b1fd18a",
+      "bytes": 37582,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "sha256": "ae9602b648ceadbc6c8b786fae74048e172572d18bfce41ecceab65728f2bdac",
+      "bytes": 383503,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs": {
+      "sha256": "66a0006a069aa50ed5e63eb13d329c6588ea1b460ce869969234a3d313a94f14",
+      "bytes": 18462,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs": {
+      "sha256": "6d5ed788928927bce0aaad7a6292ea0fc74d3740c8eee96c445fbbfe4553726d",
+      "bytes": 14721,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs": {
+      "sha256": "9b2a8c33581acd7c7986e8a8546aef5acf6c771dcec49bd6bcab59e654de235b",
+      "bytes": 12559,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/engine.rs": {
+      "sha256": "3446f301ebc86edf9fab7b9ee68fabf53941f63b468b2bbd8e17fcdcffbe4f94",
+      "bytes": 23154,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/journal.rs": {
+      "sha256": "fb516f76d9bd64c035398044939a24c153e2ce881bb60ef168627496ab53fe42",
+      "bytes": 57325,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/mod.rs": {
+      "sha256": "20bbb56d3188ebca95cf79d94551378d5281f0c5bb98ce46b4d0f41c02c59c8d",
+      "bytes": 5752,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/recovery.rs": {
+      "sha256": "760695953656455ac87813ec3abeb51f121e88c0ef6e24e455c2d5b8302ea571",
+      "bytes": 29179,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/types.rs": {
+      "sha256": "f0f927daf81aff4326a555f78a23207a8d34cd63d46a936fc334ed63b45cbc40",
+      "bytes": 18260,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_grouped_shard_v3_tests.rs": {
+      "sha256": "04015f83338d9d9a46a270b7be44de7ee59d41abdb950ff79de1664c6fb5a448",
+      "bytes": 28194,
+      "mode": 384
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs": {
+      "sha256": "fb9af8c325f25aec3f4275b5f00419bdc1d9f9bb3005d16b9bcdb681ad34aac5",
+      "bytes": 22016,
+      "mode": 384
+    }
+  }
+}

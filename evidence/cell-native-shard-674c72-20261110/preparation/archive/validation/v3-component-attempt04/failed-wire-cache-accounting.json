@@ -1,0 +1,30 @@
+{
+  "stored_quota": {
+    "logical_bytes": 879138,
+    "chunk_rows": 216,
+    "manifest_rows": 216
+  },
+  "chunk_payload_bytes": 804186,
+  "manifest_wire_bytes": 61128,
+  "key_bytes": 13824,
+  "computed_logical_bytes": 879138,
+  "image_sha256": {
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/v3-component-attempt03/tmp/.tmpRW3NRG/native-shards/delivery.sqlite": "3f2a2d6ff7125c23a74d58340498b0adc18bd14d23eda9fa2937aaf17c98a8a6",
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/v3-component-attempt03/tmp/.tmpRW3NRG/native-shards/delivery.sqlite-wal": "167789170e92aed3636c6b2ebd1b94cd1c39b1bf082f00bcfd3c471390b95ad7"
+  },
+  "old_admission": {
+    "expected_chunk_rows": 216,
+    "expected_logical_bytes": 804186,
+    "expected_manifest_rows": 216,
+    "full_payload_profile_not_unconditionally_supported": true,
+    "input_and_consumer_max_manifest_rows": 128,
+    "max_chunk_rows": 2048,
+    "max_database_bytes": 1073741824,
+    "max_logical_bytes": 536870912,
+    "max_manifest_rows": 768,
+    "new_temporary_wire_metadata_grant": true,
+    "original_128_temporary_wire_gate_passed": false,
+    "original_absolute_deadline": true,
+    "profile": "native-grouped-temporary-wire-cache-v3"
+  }
+}

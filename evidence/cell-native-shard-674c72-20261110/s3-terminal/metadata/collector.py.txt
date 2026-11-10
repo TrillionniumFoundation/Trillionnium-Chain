@@ -1,0 +1,214 @@
+#!/usr/bin/env python3
+"""Copy an explicit closed-preparation allowlist; never write candidate source."""
+from __future__ import annotations
+import datetime as dt
+import hashlib
+import json
+import os
+from pathlib import Path
+import stat
+
+PREFIX = '/home/qq/work/chain-cell-native-shard-674c72-20261110'
+VALIDATION = Path(PREFIX + '-validation')
+CONTROL = Path(PREFIX + '-control')
+STAGE = VALIDATION / 'evidence-staging-s3-terminal-v1'
+SELECTION = CONTROL / 'collect-s3-terminal-v1.selection.json'
+INVENTORY = CONTROL / 'collect-s3-terminal-v1.top-inventory.json'
+TERMINALS = CONTROL / 'collect-s3-terminal-v1.terminal-inventory.jsonl'
+TEXT_SUFFIXES = {'.json', '.jsonl', '.log', '.txt', '.out', '.err', '.stdout',
+                 '.stderr', '.md', '.py', '.rs', '.toml', '.lock', '.sh', '.yml',
+                 '.yaml', '.csv', '.tsv', '.sha256', '.diff', '.patch'}
+TEXT_NAMES = {'stdout', 'stderr', 'Cargo.lock'}
+RENAME_SUFFIXES = {'.md', '.py', '.rs', '.toml', '.lock', '.sh', '.yml', '.yaml', '.log'}
+EXCLUDED_DIRS = {'tmp', 'target', '.git', 'node_modules', '__pycache__', 'cache',
+                 'wire-cache', 'consumer-cache', 'input-cache', 'arena', 'weights',
+                 'model-weights'}
+
+
+def sha(raw):
+    return hashlib.sha256(raw).hexdigest()
+
+
+def encode(value):
+    return (json.dumps(value, indent=2, sort_keys=True) + '\n').encode()
+
+
+def identity(s):
+    return dict(device=s.st_dev, inode=s.st_ino, bytes=s.st_size,
+                mtime_ns=s.st_mtime_ns, ctime_ns=s.st_ctime_ns,
+                mode=stat.S_IMODE(s.st_mode))
+
+
+def stable_read(path):
+    before = path.lstat()
+    if not stat.S_ISREG(before.st_mode):
+        raise RuntimeError('not an original regular file: ' + str(path))
+    fd = os.open(path, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0))
+    with os.fdopen(fd, 'rb') as stream:
+        opened = os.fstat(stream.fileno())
+        raw = stream.read()
+        after_fd = os.fstat(stream.fileno())
+    after = path.lstat()
+    values = [identity(s) for s in (before, opened, after_fd, after)]
+    if any(v != values[0] for v in values) or len(raw) != before.st_size:
+        raise RuntimeError('closed source changed during copy: ' + str(path))
+    return raw, values[0]
+
+
+def write_new(relative, raw):
+    target = STAGE / relative
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with target.open('xb') as stream:
+        stream.write(raw)
+    if target.read_bytes() != raw:
+        raise RuntimeError('destination readback mismatch: ' + relative)
+    return dict(archive_path=relative, bytes=len(raw), sha256=sha(raw))
+
+
+def main():
+    if STAGE.exists():
+        raise RuntimeError('refusing to overwrite closed-preparation packet')
+    plan = json.loads(SELECTION.read_bytes())
+    if set(plan['validation']) & set(plan['excluded_validation']):
+        raise RuntimeError('deferred validation selected')
+    if set(plan['control']) & set(plan['deferred_control'] + plan['unexecuted_prepared_controls']):
+        raise RuntimeError('active or unexecuted controller selected')
+    sources, excluded = [], []
+    for label, root, names in [('validation', VALIDATION, plan['validation']),
+                               ('control', CONTROL, plan['control'])]:
+        for name in names:
+            if '/' in name or name in ('.', '..'):
+                raise RuntimeError('selection must use explicit top-level names')
+            top = root / name
+            if top.is_symlink() or not top.exists():
+                raise RuntimeError('missing/symlinked selected original: ' + str(top))
+            if top.is_file():
+                sources.append((label, root, top))
+                continue
+            for base, dirs, files in os.walk(top, followlinks=False):
+                base = Path(base)
+                keep = []
+                for name in sorted(dirs):
+                    path = base / name
+                    if name in EXCLUDED_DIRS or path.is_symlink():
+                        excluded.append(dict(original_path=str(path), kind='directory',
+                                             reason='temporary/runtime payload or symlink; contents not read'))
+                    else:
+                        keep.append(name)
+                dirs[:] = keep
+                for name in sorted(files):
+                    path = base / name
+                    if path.is_symlink():
+                        excluded.append(dict(original_path=str(path), kind='symlink', reason='not followed'))
+                    elif path.suffix.lower() in TEXT_SUFFIXES or path.name in TEXT_NAMES:
+                        sources.append((label, root, path))
+                    else:
+                        excluded.append(dict(original_path=str(path), kind='file', bytes=path.stat().st_size,
+                                             reason='payload/database/binary outside text-metadata allowlist'))
+    observed_bytes = sum(path.stat().st_size for _, _, path in sources)
+    if len(sources) != plan['estimated_payload_files'] or observed_bytes != plan['estimated_payload_bytes']:
+        raise RuntimeError(json.dumps(dict(selection_inventory_changed=True,
+            expected_files=plan['estimated_payload_files'], observed_files=len(sources),
+            expected_bytes=plan['estimated_payload_bytes'], observed_bytes=observed_bytes), sort_keys=True))
+    for original, expected in plan.get('expected_original_sha256', {}).items():
+        raw, _ = stable_read(Path(original))
+        if sha(raw) != expected:
+            raise RuntimeError('pinned original identity mismatch: ' + original)
+    STAGE.mkdir()
+    for original, relative in [(Path(__file__), 'metadata/collector.py.txt'),
+        (SELECTION, 'metadata/selection.json'), (INVENTORY, 'metadata/top-inventory.json'),
+        (TERMINALS, 'metadata/terminal-inventory-summary.jsonl'),
+        (CONTROL / 'collect-s3-terminal-v1.native-process-status.json', 'metadata/native-s3-process-status.json'),
+        (CONTROL / 'collect-s3-terminal-v1.native-process-read.json', 'metadata/native-s3-process-read.json'),
+        (CONTROL / 'collect-s3-terminal-v1.source-process-status.json', 'metadata/source-s3-process-status.json'),
+        (CONTROL / 'collect-s3-terminal-v1.source-process-read.json', 'metadata/source-s3-process-read.json')]:
+        raw, _ = stable_read(original)
+        write_new(relative, raw)
+    index = []
+    for label, root, original in sorted(sources, key=lambda row: str(row[2])):
+        relative = original.relative_to(root)
+        archive = Path('archive') / label / relative
+        renamed = original.suffix.lower() in RENAME_SUFFIXES or original.name == 'Cargo.lock'
+        if renamed:
+            archive = archive.with_name(archive.name + '.txt')
+        raw, original_stat = stable_read(original)
+        expected = plan.get('expected_original_sha256', {}).get(str(original))
+        if expected is not None and sha(raw) != expected:
+            raise RuntimeError('source changed from frozen pin: ' + str(original))
+        record = write_new(str(archive), raw)
+        index.append(dict(original_path=str(original), original_root=str(root),
+            original_relative_path=str(relative), source_group=label, **record,
+            original_stat_before_and_after=original_stat, renamed_as_plain_text=renamed,
+            original_manifest_bytes_preserved=('manifest' in original.name.lower() and original.suffix.lower() == '.json'),
+            readback_verified=True, controller_text_is_not_execution_evidence=(label == 'control')))
+    if len({row['archive_path'] for row in index}) != len(index):
+        raise RuntimeError('archive path collision')
+    write_new('original-to-archive.json', encode(dict(
+        schema='trnm.original-artifact-archive-paths.v1',
+        scope='Original manifests and every copied artifact preserve complete bytes. Paths resolve through this outer map; original manifests are never rewritten.',
+        files=index)))
+    write_new('exclusions.json', encode(dict(schema='trnm.s3-terminal-exclusions.v1',
+        deferred_validation=plan['excluded_validation'], deferred_control=plan['deferred_control'],
+        unexecuted_prepared_controls=plan['unexecuted_prepared_controls'],
+        deferred_followup=plan['deferred_followup'],
+        source_files_outside_explicit_selection_not_traversed=True, selected_subtree_exclusions=excluded)))
+    errors = []
+    for row in index:
+        raw = (STAGE / row['archive_path']).read_bytes()
+        if len(raw) != row['bytes'] or sha(raw) != row['sha256']:
+            errors.append(row['archive_path'])
+    verification = dict(schema='trnm.s3-terminal-copy-verification.v1',
+        verified_files=len(index), errors=errors, payload_bytes=sum(row['bytes'] for row in index),
+        original_manifests_preserved=sum(row['original_manifest_bytes_preserved'] for row in index),
+        native_tests_executed_by_collector=False, source_modified=False, runtime_or_production_qualification=False)
+    write_new('verification.json', encode(verification))
+    if errors:
+        raise RuntimeError('archive readback failed')
+    source_runner = (STAGE / 'archive/control/run_source_checks.py.txt').read_bytes()
+    native_runner = (STAGE / 'archive/control/run_native_checks.py.txt').read_bytes()
+    source_start = json.loads((STAGE / 'archive/validation/source-qualified-s3/start.json').read_bytes())
+    source_observation = json.loads((STAGE / 'archive/validation/source-qualified-s3/observation.json').read_bytes())
+    native_start = json.loads((STAGE / 'archive/validation/native-qualified-s3/start.json').read_bytes())
+    native_observation = json.loads((STAGE / 'archive/validation/native-qualified-s3/observation.json').read_bytes())
+    controller_check = dict(schema='trnm.s3-controller-identity.v1',
+        source_sha256=sha(source_runner), native_sha256=sha(native_runner),
+        source_start_matches=source_start['runner_sha256'] == sha(source_runner),
+        source_observation_matches=source_observation['runner_sha256'] == sha(source_runner),
+        native_start_matches=native_start['runner_sha256'] == sha(native_runner),
+        source_observation_passed=source_observation['passed'] is True,
+        native_observation_passed=native_observation['passed'] is True,
+        actual_model_execution_observed=False, debug_executable_build_only=True)
+    if not all(controller_check[k] for k in ['source_start_matches','source_observation_matches',
+        'native_start_matches','source_observation_passed','native_observation_passed']):
+        raise RuntimeError('S3 original runner/start/observation identity mismatch')
+    write_new('controller-and-summary-identity.json', encode(controller_check))
+    summary = dict(schema='trnm.s3-terminal-staging.v1', result='COPIED_AND_READBACK_VERIFIED',
+        created_at_utc=dt.datetime.now(dt.timezone.utc).isoformat(), copy_only=True,
+        candidate_source_written=False, repository_evidence_written=False, native_tests_executed_by_collector=False,
+        source_native_s3_terminal_campaigns_collected=True, real_model_campaign_collected=False,
+        future_checked_profile_campaign_collected=False,
+        source_candidate_context=plan['source_candidate_context'],
+        selected_validation_top_items=len(plan['validation']), selected_control_files=len(plan['control']),
+        copied_files=len(index), copied_original_bytes=verification['payload_bytes'],
+        all_original_manifests_unchanged=True, original_manifest_count=verification['original_manifests_preserved'],
+        generated_inventory_is_summary_not_original_manifest=True,
+        campaign_and_controller_scope=plan['closed_preparation_scope_notes'],
+        append_policy='Keep this packet immutable. Collect root-confirmed later campaigns in separate sibling packets.',
+        path_mapping='original-to-archive.json', controller_identity_verification='controller-and-summary-identity.json')
+    write_new('summary.json', encode(summary))
+    rows = []
+    for path in sorted(STAGE.rglob('*')):
+        if path.is_file():
+            raw = path.read_bytes()
+            rows.append(dict(path=str(path.relative_to(STAGE)), bytes=len(raw), sha256=sha(raw)))
+    manifest = dict(schema='trnm.s3-terminal-file-manifest.v1', manifest_self_excluded=True,
+        files=rows, files_excluding_manifest=len(rows), bytes_excluding_manifest=sum(row['bytes'] for row in rows))
+    written = write_new('file-manifest.json', encode(manifest))
+    print(json.dumps(dict(output=str(STAGE), result=summary['result'], copied_original_files=len(index),
+        copied_original_bytes=summary['copied_original_bytes'], manifest=written,
+        summary_sha256=sha((STAGE/'summary.json').read_bytes()), files_excluding_manifest=len(rows),
+        bytes_excluding_manifest=manifest['bytes_excluding_manifest']), sort_keys=True))
+
+
+if __name__ == '__main__':
+    main()

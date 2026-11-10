@@ -1,0 +1,250 @@
+#!/usr/bin/env python3
+"""Seal only closed OP231 model metadata and wire records, never native SQLite."""
+from __future__ import annotations
+import datetime as dt
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import stat
+
+BASE = '/home/qq/work/chain-cell-native-shard-674c72-20261110'
+V = Path(BASE + '-validation')
+C = Path(BASE + '-control')
+NATIVE = V / 'real-native-23120317a3cc-attempt-02'
+WRAPPER = V / 'real-native-23120317a3cc-attempt-02-wrapper'
+OUT = V / 'evidence-staging-model-231-v1'
+OP = '23120317a3cc20853fbcf0de37924311788e251d59395afc1816b4f6b2b7bbdc'
+S3 = 'b6f39277b39e0b41e552ec4d32c5f8d354c8255b'
+TREE = '6a0f38318b3cfb021240cda7f3d266c28aa76e78'
+TEXT = {'.json', '.jsonl', '.log', '.txt', '.stdout', '.stderr', '.out', '.err', '.sha256'}
+WIRE = {'.cbm2', '.cbl2', '.tcv1', '.tcv2', '.cts1', '.tma1', '.cpv4', '.chb1', '.crr2', '.crg2', '.cva3'}
+RENAME = {'.md', '.log', '.py', '.rs', '.toml', '.lock', '.sh', '.yml', '.yaml'}
+PINS = {
+    str(NATIVE / 'native-result.json'): '83960ffeade28b32c3365e6486a646cd92f6d7dec78a19703f084c4c8036da13',
+    str(WRAPPER / 'observation.json'): '9a5825d35c9ffbe8f928d733fe90d787237c8da12c17556c491fb66380cdee83',
+    str(WRAPPER / 'start.json'): '1584091aed9f0fc44de363d554b75f9a6de138dc6d2cdeac884f16cf1cc97070',
+    str(C / 'run_model.py'): '120c70fb52909072eacf84251a44ff6c62f777479685db2cacf8cc1846a9e139',
+    str(C / 'model-config-attempt02-s3.json'): '111d10f2e6eea734ed016ae6ccdd3624b0394d6ef21357584e7b989b08fe832d',
+    str(V / 'source-inputs.native-v2.attempt02.json'): '83e4ab28cd84813c1a489c4c53222764b6437edf0eaad8924776c0777ff61835',
+    str(V / 'source-inputs.native-v2.attempt02.verification.json'): '7f350dda2f50b54272871734da5a10097d87ae81af614a7f799c8d9259cae8f4',
+    str(C / 'prepare_model_attempt02.py'): '16f3d1d892151e855b20681ef9e04a0766dc8f85de5dfda0573186bf75fb94ac',
+    str(C / 'prepare_model.py'): 'd1a044f8a645e634a7d6134113e139a1e6e72b9b357e9277466423b6b71f83a2',
+    str(C / 'probe_model_cgroup_v2.py'): '59bf3261a56150c470a7a57c60353ca8e9e92ba2fbad2f4f2e1cefbb9ebe449d',
+}
+
+
+def sha(raw):
+    return hashlib.sha256(raw).hexdigest()
+
+
+def encode(value):
+    return (json.dumps(value, indent=2, sort_keys=True) + '\n').encode()
+
+
+def ident(s):
+    return dict(device=s.st_dev, inode=s.st_ino, bytes=s.st_size, nlink=s.st_nlink,
+                mtime_ns=s.st_mtime_ns, ctime_ns=s.st_ctime_ns, mode=stat.S_IMODE(s.st_mode))
+
+
+def read_stable(path):
+    before = path.lstat()
+    if not stat.S_ISREG(before.st_mode) or before.st_nlink != 1:
+        raise RuntimeError('expected one-link regular closed artifact: ' + str(path))
+    fd = os.open(path, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0))
+    with os.fdopen(fd, 'rb') as stream:
+        opened = os.fstat(stream.fileno())
+        raw = stream.read()
+        ended = os.fstat(stream.fileno())
+    after = path.lstat()
+    values = [ident(s) for s in [before, opened, ended, after]]
+    if any(x != values[0] for x in values) or len(raw) != before.st_size:
+        raise RuntimeError('artifact changed during read: ' + str(path))
+    if str(path) in PINS and sha(raw) != PINS[str(path)]:
+        raise RuntimeError('original pinned SHA mismatch: ' + str(path))
+    return raw, values[0]
+
+
+def write_new(relative, raw):
+    rel = Path(relative)
+    if rel.is_absolute() or '..' in rel.parts:
+        raise RuntimeError('unsafe archive path')
+    target = OUT / rel
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with target.open('xb') as stream:
+        stream.write(raw)
+    if target.read_bytes() != raw:
+        raise RuntimeError('archive readback mismatch: ' + relative)
+    return dict(path=relative, bytes=len(raw), sha256=sha(raw))
+
+
+def renamed(relative):
+    p = Path(relative)
+    return str(p.with_name(p.name + '.txt')) if p.suffix.lower() in RENAME else str(p)
+
+
+def main():
+    if OUT.exists():
+        raise RuntimeError('refuse overwrite existing sealed model packet')
+    selected, excluded, inventory = [], [], []
+    native_count = native_bytes = 0
+    for root, prefix, kind in [(NATIVE, '', 'native-metadata'), (WRAPPER, 'wrapper', 'producer-wrapper')]:
+        for base, dirs, names in os.walk(root, followlinks=False):
+            for d in dirs:
+                if (Path(base) / d).is_symlink():
+                    raise RuntimeError('unexpected source directory symlink')
+            for name in sorted(names):
+                p = Path(base) / name
+                s = p.lstat()
+                rel = p.relative_to(root)
+                inventory.append(dict(original_path=str(p), bytes=s.st_size, stat_only=True))
+                if not stat.S_ISREG(s.st_mode):
+                    raise RuntimeError('nonregular original artifact')
+                suffix = p.suffix.lower()
+                descriptor = ('slot-descriptors-v1' in rel.parts and re.fullmatch(r'[0-9a-f]{64}', name)
+                              is not None and s.st_size == 1829)
+                allow = suffix in TEXT or suffix in WIRE or descriptor
+                if not allow:
+                    excluded.append(dict(original_path=str(p), bytes=s.st_size,
+                        reason='Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened'))
+                    continue
+                if s.st_size > 2 * 1024 * 1024:
+                    raise RuntimeError('unexpected oversized metadata/wire object')
+                archive = str(Path(prefix) / rel) if prefix else str(rel)
+                selected.append((p, renamed(archive), 'slot-descriptor-wire' if descriptor else kind))
+                if root == NATIVE:
+                    native_count += 1
+                    native_bytes += s.st_size
+    if native_count != 627 or native_bytes != 2783292:
+        raise RuntimeError('native metadata inventory differs from the independently read closed result')
+    config_raw, _ = read_stable(C / 'model-config-attempt02-s3.json')
+    config = json.loads(config_raw)
+    for name in ['run_model.py', 'model-config-attempt02-s3.json', 'prepare_model_attempt02.py',
+                 'prepare_model.py', 'probe_model_cgroup_v2.py']:
+        selected.append((C / name, renamed('control/' + name), 'closed-controller-or-preparation'))
+    for name in ['source-inputs.native-v2.attempt02.json', 'source-inputs.native-v2.attempt02.verification.json']:
+        selected.append((V / name, 'control/' + name, 'independently-pinned-model-inputs'))
+    expected_gate_names = {
+        'source-qualified-s3/observation.json', 'native-qualified-s3/observation.json',
+        'checked-test-profile-s3/accepted-artifact.json', 'checked-test-profile-s3/cargo-build.stdout',
+        'checked-test-profile-s3/cargo-build.stderr', 'model-prepare-s3-attempt02-input-pin-audit.json',
+        'model-cgroup-resource-probe-v2.json'}
+    gate_names = set()
+    for gate in config['gate_artifacts']:
+        source = Path(gate['path'])
+        relative = str(source.relative_to(V))
+        gate_names.add(relative)
+        PINS[str(source)] = gate['sha256']
+        selected.append((source, renamed('control/pre-fixed-gates/' + relative), 'original-prelaunch-gate-pin'))
+    if gate_names != expected_gate_names:
+        raise RuntimeError('unexpected pre-fixed gate artifact roster')
+    if len(selected) != 652 or sum(p.stat().st_size for p, _, _ in selected) != 3090953:
+        raise RuntimeError('closed model/wrapper/control inventory changed')
+    publication = C / 'final-doc-root-review.json'
+    if not publication.is_file():
+        raise RuntimeError('root-finalized doc review record missing')
+    selected.append((publication, 'control/publication-control/final-doc-root-review.json', 'publication-only-doc-review'))
+    if len({dest for _, dest, _ in selected}) != len(selected):
+        raise RuntimeError('archive name collision')
+    OUT.mkdir()
+    write_new('_archive/collector.py.txt', Path(__file__).read_bytes())
+    write_new('_archive/source-stat-inventory.json', encode(dict(
+        schema='trnm.model-source-stat-only-inventory.v1', files=inventory,
+        note='Excluded native SQLite/arena/cache/lock bytes were not opened.')))
+    index = []
+    for original, destination, kind in selected:
+        raw, identity = read_stable(original)
+        recorded = write_new(destination, raw)
+        row = dict(original_path=str(original), archive_path=destination, kind=kind,
+                   bytes=recorded['bytes'], sha256=recorded['sha256'],
+                   original_stat_before_and_after=identity, readback_verified=True)
+        if kind == 'slot-descriptor-wire' or original.suffix.lower() in WIRE:
+            row['wire_prefix_hex'] = raw[:8].hex()
+        index.append(row)
+    for source_name, destination in [
+        ('collect-model231-v1.producer-status.json', '_archive/producer-status.json'),
+        ('collect-model231-v1.producer-readback.json', '_archive/producer-readback.json')]:
+        raw, _ = read_stable(C / source_name)
+        write_new(destination, raw)
+    native_raw = (OUT / 'native-result.json').read_bytes()
+    native = json.loads(native_raw)
+    observation = json.loads((OUT / 'wrapper/observation.json').read_bytes())
+    start = json.loads((OUT / 'wrapper/start.json').read_bytes())
+    source = (OUT / 'control/source-inputs.native-v2.attempt02.json').read_bytes()
+    audit = (OUT / 'control/source-inputs.native-v2.attempt02.verification.json').read_bytes()
+    script = (OUT / 'control/run_model.py.txt').read_bytes()
+    archived_config = (OUT / 'control/model-config-attempt02-s3.json').read_bytes()
+    next_use = json.loads((OUT / 'next-use-result.json').read_bytes())
+    pins_audit = json.loads((OUT / 'control/pre-fixed-gates/model-prepare-s3-attempt02-input-pin-audit.json').read_bytes())
+    status = json.loads((OUT / '_archive/producer-status.json').read_bytes())
+    readback = json.loads((OUT / '_archive/producer-readback.json').read_bytes())
+    checks = {
+        'producer_passed': observation['passed'] is True,
+        'native_passed': native['passed'] is True,
+        'actual_native_started': observation['native_started'] is True,
+        'native_receipt_matches_wrapper_hash': sha(native_raw) == observation['native_result_sha256'],
+        'wrapper_start_and_end_script_pin': start['wrapper_sha256'] == sha(script) == observation['wrapper_sha256'],
+        'wrapper_start_and_end_config_pin': start['config_sha256'] == sha(archived_config) == observation['config_sha256'],
+        'source_pin': sha(source) == config['source_sha256'] == observation['source_sha256'] == native['source_input_sha256'],
+        'verification_pin': sha(audit) == config['audit_sha256'],
+        'fixed_operation': native['operation_pins']['operation'] == observation['operation'] == OP,
+        'start_s3_identity': start['start_identity']['head'] == S3 and start['start_identity']['tree'] == TREE,
+        'end_s3_identity': observation['end_identity']['head'] == S3 and observation['end_identity']['tree'] == TREE,
+        'original_limits': config['original_native_limits'] == dict(rss_bytes=8589934592,seconds=300,snapshot_bytes=536870912,threads=4),
+        'deadline': native['process']['original_seconds'] == 300 and native['process']['elapsed_ms'] < 300000 and observation['native_process']['elapsed_seconds'] < 300,
+        'cgroup_limits': observation['memory_start']['memory.max'] == '8589934592' and observation['memory_end']['memory.max'] == '8589934592' and observation['memory_end']['cpu.max'] == '400000 100000',
+        'independent_input_pins_31': len(pins_audit['inputs']) == 31,
+        'two_fresh_forwards': next_use['connector_complete'] is True and next_use['observations'] == 2 and next_use['failures'] == [],
+        'authority_not_promoted': native['hepta_final_use'] is False and native['installation_authorized'] is False and native['production_activation'] is False and native['independent_operators'] is False and observation['independent_real_money'] is False,
+        'producer_terminal': status['state'] == 'succeeded' and status['exit_code'] == 0 and status['output_complete'] is True,
+        'producer_complete_original_streams': readback['stdout']['eof'] and readback['stderr']['eof'],
+    }
+    if not all(checks.values()):
+        write_new('_archive/failed-checks.json', encode(checks))
+        raise RuntimeError('original model binding verification failed')
+    verification = dict(schema='trnm.closed-model-metadata-verification.v1', checks=checks,
+        model_native_internal_elapsed_ms=native['process']['elapsed_ms'],
+        producer_native_elapsed_seconds=observation['native_process']['elapsed_seconds'],
+        wrapper_total_elapsed_seconds=observation['wrapper_elapsed_seconds'],
+        whole_job_cgroup_peak_bytes=int(observation['memory_end']['memory.peak']),
+        memory_scope='Whole-job cgroup memory charge; not simultaneous process-tree RSS.',
+        old_source_failures_remain_historical=True, current_model_not_reexecuted=True,
+        original_native_sqlite_bytes_opened=False, payloads_copied=False,
+        model_efficacy_qualified=False, whole_system_qualified=False, production_activation=False)
+    write_new('_archive/binding-verification.json', encode(verification))
+    write_new('_archive/original-to-archive.json', encode(dict(
+        schema='trnm.model-artifact-paths.v1', original_manifests_never_rewritten=True, files=index)))
+    write_new('_archive/exclusions.json', encode(dict(
+        schema='trnm.model-payload-exclusions.v1', excluded_files=excluded,
+        audit_copied_metadata_sqlite_exception_not_used_in_this_packet=True,
+        native_payload_cache_arena_database_bytes_opened=False)))
+    summary = dict(schema='trnm.closed-real-model-curated-packet.v1', created_at_utc=dt.datetime.now(dt.timezone.utc).isoformat(),
+        result='COPIED_AND_READBACK_VERIFIED', runtime_source_commit=S3, runtime_source_tree=TREE,
+        operation=OP, copied_original_files=len(index), copied_original_bytes=sum(r['bytes'] for r in index),
+        native_relative_paths_preserved=True, wrapper_subdirectory='wrapper', control_subdirectory='control',
+        native_metadata_files=native_count, native_metadata_bytes=native_bytes,
+        excluded_native_files=len(excluded), excluded_native_bytes_stat_only=sum(r['bytes'] for r in excluded),
+        model_execution_rerun_by_collector=False, native_sqlite_opened=False,
+        candidate_written=False, evidence_scope='Curated original metadata/wire bytes only; payloads and full host dependencies are not included.',
+        model_efficacy_qualified=False, independence_qualified=False, production_status='HOLD', production_activation=False)
+    write_new('_archive/summary.json', encode(summary))
+    rows = []
+    for path in sorted(OUT.rglob('*')):
+        if path.is_symlink():
+            raise RuntimeError('symlink in new packet')
+        if path.is_file():
+            raw, _ = read_stable(path)
+            rows.append(dict(path=str(path.relative_to(OUT)), bytes=len(raw), sha256=sha(raw)))
+    manifest = dict(schema='trnm.model-curated-file-manifest.v1', manifest_self_excluded=True,
+        self_excluded=['_archive/file-manifest.json'], files=rows,
+        files_excluding_manifest=len(rows), bytes_excluding_manifest=sum(r['bytes'] for r in rows))
+    m = write_new('_archive/file-manifest.json', encode(manifest))
+    print(json.dumps(dict(result=summary['result'], output=str(OUT), manifest=m,
+        copied_original_files=len(index), copied_original_bytes=summary['copied_original_bytes'],
+        total_files=len(rows)+1, total_bytes=manifest['bytes_excluding_manifest']+m['bytes'],
+        native_result_sha256=sha(native_raw), summary_sha256=sha((OUT/'_archive/summary.json').read_bytes())), sort_keys=True))
+
+
+if __name__ == '__main__':
+    main()

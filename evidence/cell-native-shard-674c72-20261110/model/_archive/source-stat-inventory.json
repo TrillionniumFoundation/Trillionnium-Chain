@@ -1,0 +1,3346 @@
+{
+  "files": [
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52-received.sqlite-writer-lock-v4",
+      "stat_only": true
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/consumer.sqlite-writer-lock-v4",
+      "stat_only": true
+    },
+    {
+      "bytes": 3546,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/independent-execution-inputs.json",
+      "stat_only": true
+    },
+    {
+      "bytes": 85113,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-result.json",
+      "stat_only": true
+    },
+    {
+      "bytes": 2354,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/next-use-observations.json",
+      "stat_only": true
+    },
+    {
+      "bytes": 3534,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/next-use-result.json",
+      "stat_only": true
+    },
+    {
+      "bytes": 10295,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/original-source-inputs.json",
+      "stat_only": true
+    },
+    {
+      "bytes": 3573,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/owner-authorization.cpv4",
+      "stat_only": true
+    },
+    {
+      "bytes": 24479,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/owner-content.tcv2",
+      "stat_only": true
+    },
+    {
+      "bytes": 537,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/owner-handoff.chb1",
+      "stat_only": true
+    },
+    {
+      "bytes": 39018,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/owner-release-snapshot.cts1",
+      "stat_only": true
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/publisher.sqlite-writer-lock-v4",
+      "stat_only": true
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/supervisor.stderr",
+      "stat_only": true
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/supervisor.stdout",
+      "stat_only": true
+    },
+    {
+      "bytes": 147456,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/budgets.sqlite",
+      "stat_only": true
+    },
+    {
+      "bytes": 32,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/children-v3.owner-v3.lock",
+      "stat_only": true
+    },
+    {
+      "bytes": 5632000,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/children-v3.sqlite",
+      "stat_only": true
+    },
+    {
+      "bytes": 32768,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/children-v3.sqlite-shm",
+      "stat_only": true
+    },
+    {
+      "bytes": 4268352,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/children-v3.sqlite-wal",
+      "stat_only": true
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/delivery.sqlite-writer-lock-v4",
+      "stat_only": true
+    },
+    {
+      "bytes": 178951,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/funding.jsonl",
+      "stat_only": true
+    },
+    {
+      "bytes": 86226,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/native-current-funding.json",
+      "stat_only": true
+    },
+    {
+      "bytes": 112139,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/native-final.json",
+      "stat_only": true
+    },
+    {
+      "bytes": 47526,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/native-initial.json",
+      "stat_only": true
+    },
+    {
+      "bytes": 140468224,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/repair-delivery.sqlite",
+      "stat_only": true
+    },
+    {
+      "bytes": 32768,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/repair-delivery.sqlite-shm",
+      "stat_only": true
+    },
+    {
+      "bytes": 20632,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/repair-delivery.sqlite-wal",
+      "stat_only": true
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/repair-delivery.sqlite-writer-lock-v4",
+      "stat_only": true
+    },
+    {
+      "bytes": 527,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/repair-wire-cache-config.json",
+      "stat_only": true
+    },
+    {
+      "bytes": 527,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/storage-wire-cache-config.json",
+      "stat_only": true
+    },
+    {
+      "bytes": 585728,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/node/native.sqlite",
+      "stat_only": true
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/node/owner.lock",
+      "stat_only": true
+    },
+    {
+      "bytes": 70414336,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/payload.arena",
+      "stat_only": true
+    },
+    {
+      "bytes": 69632,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/retention.sqlite",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/01ae9814994a8122b67b774516e624ad384de9382151142b8eaa361f068ff24e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/04faed7cf2544e3e09da0248bc2e15a6332c143d72ad01ec72576c661edb0918",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/056174df2fd4ffe9944a5015f064304a46b922c36a640e23695d01baa4e71ead",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/0b3cddbc5aaebbbc88db36b20249dc53546bca20177ff63a9d9f7c6db75c184c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/10a5fef912db0692dad6be0009e03db8ce52a7c6918aaf0c7fadeddb05bfd408",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/10b28cb13a6d3e54f2ac2a160f4d0f8a90222c5c9e86365a4cd27e07038be344",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/11beae3da2569d48396735269bd91b6d262fff7c680c20e2fb5903cfa64b8b6d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/14162bfd30ce64ece40aabb3d5f6ad5c87b6864aa83f60c6b20219fa035fcf63",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/150a184c224ec228625b1544e288909a4553b36d6b175d66cf7e4342e1fee3c8",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/15f6f056a6c5da8b1a1303c48ac25f302f6e13eb9dda004d20acbce9a0e2fe68",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/17c693495e4a8190da69628fcb746acb0bdc3719c3e2addf4640b170d40990bf",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/190b0de675d00f643939659ecb2aeb62aaacfb129620c99efc8d935517272096",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/1a7ca6635d825bf8a3717b14bddc131d75dc87546ad4e9e072044556f9c1508a",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/1bf38929b3d4ab703e466cbb13687e6d0435c0917f2034c662e569b6662169eb",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/1ea9ec34cedea38cb316f97d574b35217380ddd963b26efd1c0f6475f54b5c57",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/2267296d6b09cdd8ba128330e19e0c853aba0168ea0ed1bfc0b12a1458ab5409",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/2b8b74bdc3a47aedf63c27c0420e4f35575f91776cd8fd0a803c77f5d930cdf3",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/2cfd18cae39591171bc4010b3c97c655384feaa99b8dae8900cc4becb69c6247",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/3838b58f1090ce06ef4418e60082de37631d5beef70a6f6ef79af54938b97364",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/38b527ff1ee849481748c3c89ed3a49f589e275afbfd03c35d8af3f9d81f40f0",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/39da84fdc3f4fbe10ccb7b5657764bf9eb335d4fe5c377c44feeb2ce5faa5dd3",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/3a861f9d7da24351ae130cdf9d1cd744501068ef60cdcacebda44aa7ee4771c2",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/3c8528e42309f86efbf68f470c08c9a47f61f502a8d9f359d882b0001c80cc71",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/3d5e8ba5b867a1522638b8fd5c6b8b0fba847b034dfb12fc1b9a34868060cbe6",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/3e88b0c4f4db2388f57de83185f100f59cd05a76c377e06c7970f50efec9ff3e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/42ca904d9fa423094a2e9fa67cb479daabafde7447d849402b6d2b0332080a5a",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/4608f7714632e9bd185e918369f7af2c8931341d922b0d5d2ef9ca4c08f3bd17",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/478804b94596fdc060de5c2d3ce3713ac3bd78343c559e1285c6a0d368435a90",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/48304010b39d97012ccfb513a330c40b769c7c85040958550c453ec6f3db5a32",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/4950e27522fa7b2fd27e4d75719dd4156377900ee2b57f9a317e67569d0e573a",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/4c01a68053f3a70f938261e203db800107f06120b34f954247e7bea457727de3",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/4d3028614720717dad00ba26720435c4b934b3a4278a2e4ef51636fc028a44d5",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/4ea75566c5f7a8b8831f73c90a416053258c19fcc3291e28a00e83563743a3d8",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/5326cb6c54db7d0971f97a91c1ab0527e21211c5f39736948a7ae42e30e61f64",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/58375174b514611c7c70bd6cf4a48f2cab337d665487831dc57f29f478647694",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/5bc7dce16160ce33f10751e9830790aecfd1a7c0bfa9abc3d6794ffea4afa635",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/60114d31fffacb189a3ccbaaf715410e1aa64ed5e11a4895ca5c06e9e2ba314c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/61e6c6bd45a6a70ee75ffc51899cad38f65ac53107642e3a944b0354a21b1b82",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/66a3738b3131372cb62ccab7f880de7351b952e134d42e1f6b913da6c5911993",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/68ca3d9c1d34d1ff401244a73226a36258f27ff316412bda5cfd39091c491ed0",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/6a619626757a2849682d992327b1e577baed2606e3a8f23855b43806753198a4",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/71546968a20b357e03a89ab14cc67f72cb2a334f35e7340f53974ff2c6fdcb6d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/71d8a9a5750e99cb1a72e80f9f1db7b71e19e2e247a5d2227d48238038048b65",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/72c459c5def9b540662263d61aeae11ba55f6562af8169c9252404f31527a535",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/76031f3d913f30024a35336d794e4a0aae069b6beda81401cb6a8b8fbde7ab0c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/7746d34849fddc00d6ce83eb70d296301bf9426cc0381af7b9871391d9517479",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/79e949dbfda4fcc2de8f1d7730ffb255b273c0a22966130d339e54594010dd23",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/7c5806364951df1619497c27001f6237de0688ef51fe5e8830d1c831704b6813",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/7cf268dc7244b013e1c8a751b076d565dfa09a1e349d035b07ca1faa70e89265",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/85178be3830aa0d7473272ae1d3e3be98ff8defc993da4376056f15f5b35a23b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/87ad69c6cd46b8644cd8f497752e698da90871660061a5dd2a9dca67a0ef857e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/9496e0897c3d1110ac3dda34653bcaba73cf63292fb81d48f10b9cd7948352cd",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/9514d4fb5307b9a53a2436e84b8b185dae9aa99fb579813ede342165e01deda7",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/9ba4129c296ac059d25764a916e820f27dd42e32465f0d35c7bba125fee58e08",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/a1407fcc08378744ee440fb8175e272b502d52656337c479734616886dccdd8b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/a28c88e6efa15356fa3c8e545b15461e448361d63227061fa3c1487c6e42549b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/a54675b7d1caf98dc0e4909e9e1ec9849522755418b4687c4a1187a29447302f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/a70fa70595bc66f6517b1b17d44fa03fbc41d2c4b8a1ff720127ea861505bac4",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/a8f2dcc6ec83c028c3e8f54d548259f59e4400c163d3bfd2a2356ddabfbdcbf1",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/ab3d9161c8da13787129b90fcb1d04286e41f5b5e7740fdc0d21ef316cee6bf7",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/af0230f27724b544ea48b82063a96e890e479f62e7dcaf838597fb4a97f9144e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/b03f366858ad5517aaf3e01a60b07c29e90685012ddd93e1942fbe049ce2cd82",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/b13dc87f3f7e394e57af5bb41eee475e801fa7821899b66a5af128369c7cb55f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/b15aec65ddd57987b1332acaa46bb22bf46ad0cfb67b22cd8de3c2bc6f6e4811",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/b3b228c9c01ddbb6b18db71ff410520a14fc4ad1f70f297be30acd42772cd6b7",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/b5e792ed0a90613b273fb0287badb7b83b1a9f7d8f68e7eac8b6d3cdd619119e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/c14f69a9e4f497e92356780dc91c94508f5bbb6197d83927750456614ba50d01",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/c207fb5a479a6677511eabb7785443752c486a6f2e1fbc7c08022d8c1a7e129f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/c343d4875d110c92e567c2760f4a6ae40cfaa546d1629166c3eeaed9cb8c9a65",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/c5dbc673325703608ce3a526205aa0f03e74ebc0938f07f9d96be6fcd49abd8c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/ca5dab7332135ccc2002bf9299a7612f0bfb0ccd8cf92f7e153be3bcb7f6f154",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/cd00986f0b897baad00867d232627d891c85e31352c6b80ec8e98d0ce5aa42ec",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/cf3b086304f12d2f7f3ed2e002304b2d8cf41cce92646afecb42f911da177c79",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/d110e91894fab38146f3412a225e510845e9aa0180875ee200f484d0a030fec5",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/d3eef6903d497f6de1d70f02535f6de2dd29c311a3effd617773b08bf27e3917",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/d517ed3ac325013548f24ff37f8a7f14283695f246476a2284a92344c092b085",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/d70a5c707a574205908055762bd15f9753cc17eec3565820d8490d3c4cfbd5e6",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/d7384fc2b6efe06e312c6a6b6d6aa25f13a82d657a027f441d284222d851ea61",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/d8d67e1b52222ff103e18006dc6bc30c11b5727a74eb57537e30156a502157d8",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/d995ee91a43b76c13c21cbad21820ab2397f09c921c9c2590b6541984696fa13",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/da3f8a69d405124352c0ee0500f054102c995b67547f42c5c6b0b7d703962c4b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/dc05fe0c8097eaab284f45c09e0af08bf380b7b609d610e363a57eff72ac1e2f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/e0c567168238cb0a47758614f4c0a9a756733e9653d0d7073546b53d31f2a2ce",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/e560c463142db897083fe67709a93342955695a894a955d2fcf1674b68e8b2d3",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/e99f520b2f98368a6a766f8733426ee6fe3d8d15ce946a2227ff134178ab7ca1",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/e9f59c322db7155829f9a03e49005780f6f569b0b0e2922ab5f1a7474052c4cb",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/eb61e943b02f737233c9abaa8797efccc08766af4221193959b6e57aa595387b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/eb64f657fa3d196077330fab67e1005c354d45b43bdb8133936648f1386091bb",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/eb71c72f59416e250846cf7649c61f69d7d2e1a767df5775a6636263aee131d8",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/eb95d65b4271bc156641e3d51c800690521744ab527f1183b85fc24c066e0a00",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/edc247482fa3b3e7e714ded99e0f3c2c9b9a0f85c6b9b3220d22ffd13f8ffb5b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/f1ef30e13b67843e81cbbf83231f1b162e4382fb94ebb2996214479705d10ba6",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/f4b04bc4069845d004bf84dba666db5e4727f46c1e53cfa771a28542b93fd013",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/f99b90fb81805d601d355aacf5a28300a074f5d8216a6d0c480fad7084d1aad3",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/slot-descriptors-v1/ff2987592a75d8c04ee381b47abc060c5d2ecaf4b0e1ade966620c698761bf3e",
+      "stat_only": true
+    },
+    {
+      "bytes": 70414336,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/payload.arena",
+      "stat_only": true
+    },
+    {
+      "bytes": 81920,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/retention.sqlite",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/0354f284ac5e92b8d5faf59529121b91f37ae2f7414c35687373e71c1a62e554",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/040350b22d552ae6bbeed864ac7d0f559cdd53454e1cbcff694ea9d4035290d6",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/05d4a9c11c931930853b15d5f2aaadb912e62a9d8ce4c5d07a2fbc50a4e917f5",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/079571ae5143292a0af0c54ad49a030fc72fde0429c5c75e176791fc0ff5965f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/0aee2caa273bff5e55735c157a5df87d3305983ba0f3c57a7173c3e810a07bed",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/0b9007fbb98dcdf6617dd160285a16d2e92fcec2c4fa35eed670a1f376998702",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/129974f6cc854f2efc87df97faad87853781a5dacba42b7067333ed9f66e4919",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/15c4cf8b7856d092c4ebbda47ba5cf789fb60ea0415f552b28fb902440737ca8",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/174f68be2c7bd36acce34c716ac0f6d29de5836ecbc36140ada015627617069e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/19689eb70dcffbaf118b6316c51eb0722cc404d50746ecb619adf3693859389c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/1dc50ca54270759090c2ae3a1e04c23a3d6e650e70cf230c56d171e0aa76531d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/1ee8429263c4d36bb919777bd83fefdbecd77eb6f593609b634ac7a9e067cfc3",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/205d3aee38e872a2b242f51bc7897dd68ace230ceacdf75cb338424c7bc4bcac",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/20c0ed73e75e3b8605681e30cea33915461729ab2331c185db930fa06aa6dde9",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/2223eecbdac8630c9b0968366e1caacfd9478352622d76bf2faa693c2cf550cd",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/24520b7eb8250fba949b78b558422c8b32a4db452be7b229f8dec071f9ae76be",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/258b9aa0c0e9bdddbf7ea882c199cfb27e67838514189d3f01ae2748c8b9a3d3",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/2bd061908f60e000dd85bda79ffd47557686f1fae5260fcf0a25fc1d51a6f7ec",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/2c9812a6aa384adfc44237eff2fe391d1ea31f0bf6b05e775f1c599f3e134c57",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/2f136f82ed07cb34c18992e6b249d79f22b7079da328b383cd5377cc6349f5af",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/30bd3a0813f8e95f674bddf716716ccfc07f4d040f4e5624b5a90ef51e0255ee",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/31969557710b24e257acf12095107e8abaeb59b35874bdf6b917586f03ffe765",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/3623876a99f5f0e6c3d162c4dac171ba131fed61d212e34b4e46fead9f7e111b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/383f3a9e866f576d216a18bdd6bd9bec83cb8d5bb7907f5f8e9a0c3d6221f7ed",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/38621f51aa4f58f0dc0e9fc36aa774add185ba005f7c52559294d17c26af52ec",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/3ac3738ad2aa9629895c472f570af904ee9127da63a5a9dd09b023baf7b73649",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/3c1734fcb9fcb4b02848531aded38def260aa98d78814b7adc2821fc4ed5d5cc",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/3d801e45e80069ef7ad107c1254dc7484c91d975a0f5ed32ea8840229dc254ad",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/489923edbf49cf637f0c27495f6a02a3dc34b8e6fc2c451fe447231a11e0d5a0",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/4c2dbcc6ee8f53a88b67a28617edb0f5a250e3cc8db025bbbefe6fa2ba4638f5",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/50ecfe0613ec39c72a1b7a6776f79ab3a169862617f3ca5b3d5218b133d9f121",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/513ed563e2fb0fbd9bd7e606c29e0f85c558ce873523c3ca06741423f9612c21",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/55e9cf0fbd6773271ea0693d85c602835888cab46425dd2d351b41179f9477d1",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/5b09fc207f0418821519d0b9d2b069d8a51a99eed62d023f7e0ea5c2661dc625",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/5cf7b1771299c62a91031e3ed1baacfbe073c436a69fbfa69c4b1623121123fd",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/604142ea90626ab46a6d5395de9051758409cdc869b5f1978e45a38dae278747",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/60a679520a5d3b87a69ba05e835739a0e7d80c1cfe809ebd810b8b6fbb380731",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/60a6e18a47f5e454d2822c698ef6fbe58aae9658e484c0e2a76b9691c11949f6",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/6119409c02a67dc9e17d8a17ae13ed1d4e5ca2725d768aa5adc94205ab3ab13c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/617c26b2478ccfaf83dab8472789396b6179c7d8a1ac202b4916e47e9a001c13",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/61a82d6a41605c12284ad49237729502edd84c6c23083bb3fe34bf743b95f594",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/65d032b78f2ebf45b8d0021057784201899ff4220cbee65a9cca710a30abfb2e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/677f3c94de0619ecd4071e7fecf34bdd96e1f55db651f7b47032c2027c1c7399",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/67c2e798f7d2cafa5d16ec7639d78ae5cd1151f3d9ccf82f5d17bdd67bf104f3",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/6c6c87f3e2f2ef2230639683240be736adb45048aab33c304641f88df55608e4",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/6d9820411c38dd756c68717a388e2809f64217062f1aaa758687d6b891c0c53c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/772cff56ac08101a9c1bc0d604d62316dc988e2bdf3acd1849ff80a433db8749",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/792bebca88c4e5ddb445e8a09086de057a1fe1777499fe52938349b296eaf76c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/7b3c3bf5744676ecee6672fcc310a29c3b8b148077cd70c42a5107ec60fb5837",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/7dfa2bd24b44a3cfb4420d25145def97ced306434cf5340e7597283e9d3bd189",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/7e62235930262dbfd88f9af85401005ddd6532ef095a5197338d7f14b8299d26",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/819ad6d54a9a40ba19b5352a07501ff266cd6900f98c43f869cfa26ca5a519e5",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/84f2f78225e2fdb3f46a17839e8f46d26beec03ab058f8911bfbc3c7f3761dd1",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/8a9bd14096dcc2c9f2026bc57de7b2e93d32bbd9e3a21a5b9dec7388f239eb26",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/8f69738c1415950cb69245540eeab25beff631c424239143875973546f2e1960",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/904dfc24559b300eb6dd2330b0a9ddb2f01c5db34c319e213a3d3fa9b2579faa",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/955a9b91ec29241c912e4000128f8f7ab903b1899392bd505cc7760a4cfef363",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/990be62201c09430c57f6718297d3c0117ee8e919989b67c295cb465e78ffc12",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/9999b86674c30241b63cad3c3310ba0ae826473cbc33ef51b8739e7332d4114a",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/9eca9c51c7dbe5f308741baf4938ad5e1f1f0a1e2f68e72d5daf226f8088a6ea",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/a520ac6a3258f0e852c16618a9f7206e92333d3039ddbf3097d8b0786e6f287e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/a7b8b2e471a4a52b7af507b8459e67d2b12945c5271cc13bc8ae0abfb1236e29",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/aa9a74fee72efec236c9d4c731120b2e3fab952f86892f79fda05f7c2fd65958",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/ad7dc11e86419a1b54367d4b965c054addcafd826f2431b2f8ed62ff6e31b438",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/b1040da5d44c75a34ad7b69fc51d46d9520257f6c2d056b389b0734d182c6ea7",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/bd40abbc8870a53663ca3f0b516fae04cc5ae270070fd07624205c94b36c3a3d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/c0400772e18799c887c81f9d723e643d66b90e2ef3a004283b6345cc7605d09c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/c15a4cfd44053c06834f2c5e18d166810edb5c09d2574ce8fb74b492d0fb9b87",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/c1ecb068ed1073dfc05f54332362d625f2de922470ac060ef539266c2e498fba",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/c3de8f73503801abc155d9facc353306fb55977fbbadd9271f7cb204335aa384",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/c5de7622002bc37ed308431b223066253fe2d4e7d8017ce32520d02c653f51e4",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/c64a3d29131076b76b781e68755aa7751a53c0c2ea1b654750548ba5198b46ce",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/c892099f1ee77f8d95a96e788d134d7d2a440aa9a2a9e0cfd8a2f16e424f440d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/cc4fa7db0335d10405a32afb1e99256ce368e86f28346e4da54e9530b1fc8356",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/cd2779a07fcec5012bb2e3d2c8d1f3d9ff7b575a30396eeb539f55f7e32724ee",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/d4d3d31b936aa8831c04df89d514dc5e8c12cb0a27e82ac6e33de4e3f13a4e57",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/d58baf4bf06b077b5ba1a679a4fb387abbeb99b1abf3db50710f1965f55876ac",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/d89da8825137b3e7866bcf2fc12dcf916ef65b48f058ace3185833d391162b4e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/da6905b6dfc6a6406ac33ebc020168f063857b2c35b5fb84a0f9743756a4e369",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/dbff96628347e119d2a6c2836eca21ad9e27aca991708c4946c52d0205afff28",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/dc443e98ea6071a8a890c73c6f7f2eed8a6cd069719ed9cfd390aa1e498ef925",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/dc65430ba414a0f1914d32e8a43684d6c47a30edecb5c3dd28a161a64bb6625c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/ddfc6ac802051c92057182ce06666c296e48b58738f15113869692d6e2627a7d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/de741832643051ca34da8062cc6c6861db9a0c6060d7dde55f0c5be74a359efc",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/e3ad990e41fad98363ca08e5eac7010b4e701d6be6d4f6c9f63582c2a9ab86d2",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/e55be4159f13ff191792b203ab8a44e670e5ee0bb523b4e0d56b023ae541b9e9",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/e56b4d1c8956a670b5db26033fd2c708f661f5123b0faf89218bbd5d9f170578",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/e5f753642f21f017dbabcd155480cbbc2ac112600d8cb29cba58c4d4bc9924b5",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/e7861d3b7cb93588c1a22fd0d13d9e667508dd25ea74c89360aae193a75706e6",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/eaf2379fcebc9a7d37b45c9a9ccf67bcba009f123703de897df8eaf7e2e6c8c8",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/edef2c1a6f2b33e39eb0a231cd0865f700c5f7a0dbad5ee4cb8ca178147ce326",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/ee848aa1cad8a253e6a90f8c122fc321403e32df809bc4d2b86f8e8f6cf4b895",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/f6a439295360f21f40b0265ea3a58a2b2a4138272cbf37a22dba2a5071269b2a",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/f8eb3abe16b3b060fa16061f8fbdade4f9b0ee372420d031eee21e784097dcd0",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/slot-descriptors-v1/fa11205f31e0fe2071a1bc9f867151f6144c3759b5b09f8df3c633bc2197e495",
+      "stat_only": true
+    },
+    {
+      "bytes": 122880,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/catalog/versions.sqlite",
+      "stat_only": true
+    },
+    {
+      "bytes": 536870912,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/catalog/objects/payload.arena",
+      "stat_only": true
+    },
+    {
+      "bytes": 45056,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/catalog/objects/retention.sqlite",
+      "stat_only": true
+    },
+    {
+      "bytes": 70414336,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/payload.arena",
+      "stat_only": true
+    },
+    {
+      "bytes": 69632,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/retention.sqlite",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/05f7a3dd43604efbfd2ba7e889cc4b9a5f6d30174e6e4c31c83af72d677d4e35",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/098158727632abd9fb28383cfdc853dd24a21df0371459d30a0d6bec4d95178e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/0ae8673cf74508382b124ac80c74d5d0977789e5b0a93231311b1fa2c8c133c8",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/0eba9e2b6785a908282732cb47e0439b210efc4acdbd7ea6b7be6f07d17e055d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/1475434de17ee6a32b511eb234e7683af5a99ac156ef544df0d54d04fb08b352",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/14d71fa824060c7b7e6d942a6a42ce007918e6f459635a6c34f830ef3da9da14",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/16c092614b6f61d9b669fe992ed841eec386871cbb1a09658c94cb08ae71ba27",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/1827f0f22d97401d6da248957a535000553a466621ccc3032ee3410d8871a76e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/198e8b2ddb37ead9a948b5e660c81abdc8a3d48035f34b36b3d493f35f591f13",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/1b92c3c6db08190170ed4132f9370e2dec51976a69ab9ea873c3b3ea0e14a387",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/1c447e79a39910c522c31ede1f0085c107a544ccc1d3d82bc4e5493301d92fd4",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/1c8e456c02b6b305ca5bd001c5391570508077a2dea53588489858ad5f0c3e3d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/1d1b068d7c46c8c1af972c1d2150554f58f45554c2a4b1ae32c85fa398827120",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/1d97a2d7c3e8a9c7288fea8328854de2f2e581124a5e2a5f06d66610245260ca",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/1ed08b97888f7aea3b5004f3fa06312639d625fa386a5bfba386d21305baadef",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/21507919c8338c49f45eddba9beab86854e674f4c964a12efae3ad8b944bb562",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/21b22fa0fe5a67e1b6a744e32aee709cc2c79a4551165b6a65bbf81a960edc8c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/2611de292706470ae118477f64e045f4ac12600d101941905f7c4e229a9e078c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/26a2f2fd550d92b028a84a189279e13d5d9d8f555aa03ad1b02d2c86f21c7e18",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/26f84a5f4555093359bd29ec78b17b3c3b9f778af3e056dd5017340746b33bff",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/2a5cf0a02ce915ed518389f3ba4344dcd210d1368c8cfc15075314e87faa5146",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/2fa5fdd8cb1913bbae246a744ece09d207b70fa20660c458a7d6f95ac4d92911",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/3394d14b89ef806aa130a572ee7cb002c3206a79e8902a1c43117e7813cb0218",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/377cb010c51a27a38a0fd239e34231866c47c08ffc49b655d1b4d16adf6da410",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/37da05108048171079da3fbd2c98a19499b9dc6e97385c8facf804cf75c61d06",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/3e99dae5812634e9638b7ffe8784c3ee42992d232f3628b0b3ff71a9ef42c504",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/41e356cdbd211c346712ea0454498a28570b9a2edd918d45b9e3d64fa1ac3417",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/41f7fda02c5e60bd3e977dfc4ac24db347a244c152c7cd355008b46628b0bc9b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/472f7ae99b6de3c760e3363f3e2bfb4157b80077d7f0516f9b289b05dce7e154",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/4aadcf64863de5cabd345ea9a1a0d5a349c3f43522daf8b4343e92b6e4a59880",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/4b0962eb5fa4522c9642d00b228665057f946b3acd68dd3d77d55dabd76a861e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/4b13a4182dad25dded0dc83d8d16909b3cf515f2321efd21c301f22137290144",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/4ce4aa0d794587d06c40a0542a3e7c28851df5dcbe21153379704482e18baa95",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/4e977d1cbafcf9c5bc837356cc79076a1190fc2fd73abaf67211fc1096ae74e3",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/507181460a15f3135b52e6201a850befba8d44c35361dc9f1ef4f120513e751a",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/548c0c02eddfeb247de1571f2edbd61957584d747082fea25ff14144399ccb1a",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/59132bb1d78fe8af43849483259e54bc3ea88915e196feb482ecb38a29c3056d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/5aedef155cbf38fd73d4ee559f1a2dbafd4e85711a4b559599d8f1a24c1e06e9",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/5cbf74b2f1bc32642c8a7501de0fbe21c240528af8c2a0d2844d5e0e169b4860",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/5f430ee979aa4062f340fa2b8b294a73dc41d8f8b5c04beba615176c72f0618b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/60048829568b0e5a94bae863bb4054f00dd97330fb78d89564f27d67ea7879d9",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/602318d05553cddeb641269fc028fd52c6945866c4c07b497702b19a6f2b8790",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/6450dac287043a32426181cc2ee9f5aab992b0353182d649ce06dcb1a35f79e4",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/64a2c954acfd590f3f2612d4592ed78639f3643deec715467d4fb4994616192a",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/64c640989c48ccf3e1265404d70eabfd581ec2dfc6caef9a9d57efdcb900f461",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/6509dd47c8dedfe72d9441211401bf1ea27fce00723d37d6d6cdc7cabb66adaf",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/67697d67e34514b8d23d446267b734553f2c5e7e6fde58d782a4221e45450486",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/686fc0ff88ce3550e493cb8f5f4e4fe252736d85ace500fca2a965dd8a4e8f56",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/6a81b9d24d2f9b4db6eb1ee8075fb560c5c9535bf3fa818937c56ff71f5bb35c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/6ac16bc517a39f9f07e5be3ccdd3d5d020460ecb656149ae6829e537ebcb76d2",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/708547c1d2446dd8b0f2d005a2fb80133071c111dc55dd99b4e9cc06f4934fbb",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/81bf328766057ccdc649f709969e7f9592e0863875d018d1242b15d8b6f71b44",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/857358ef2b9a3f56905059fb621ff707b7c7c0dc3ffb48c9d0933337d053d197",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/8738f5bcb024f1ba5ab34f097ca47dda3ebb5218c643d5e968a11878eb33b5ad",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/8779899c363f0ab01a978fe0f2ece4e0dee16c592def76bde76f0a03f1b5ee58",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/89b1f3e41ced29d011c24012897229296ad1570083d630f9f639753c42806862",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/8e0ccf77d19d017fac544a8c85a5fcd3486e73802d459d0ff74df40a36e2c4e2",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/91d5c7a07e9a80d1e348b516133c25a14b77abb3101e4e023d97f705104aa281",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/950151bc4cf94fda5d62790becbe9ab273ee329175c5a6a15b1905edb85a672c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/96230138fb5c3f73e23e982b6f6282ed7d811434b61262f9fbc1efac0c7aee02",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/96e06a93441564d3577ca8cf20ff9618f046d7b82b427ab03d1e24dff799d79b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/9c62a2e6540427c1b9760ed12866cb2e07250e7bde0b1f9c287a582b6c5bd004",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/a26416f29d77f0696e63e061339585c4a13248d12dcbd6f849f790e6cbf1fe88",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/a54fa38450e7a1bb86892991b95d2b07f2898cf23dfa1d9baf438f542132f8cf",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/a671531701f4f2f6153dc48429b4e34b6fc32bb8aceb11c2bb630d470781805f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/ac28962a9acc55d1e1a28b74e3c8d6e46b6e7c3382f3bc65dd3b7f25823b1631",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/adbf5696eb2e5e135e20782c7c33571070d1f42dee3b4136c0dbea8af0241717",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/add30a39a072fabf4cf971ec6059417f7f570e8630cbeeba0be83842f4d58498",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/b05e70f081c34cda8fe2c686a034afbfe42767f60831de8cef80480a2d70d0c3",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/b644741e662670268695130ad7ac4dc97e311df1fef818565e6dab760ab74eaa",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/ba66f396900f300e8decf9edfb89a6437ef8c3bd4576fd4ed4e74854a3f3f494",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/bb400ce6c7deabb402a70be5765e955f4833e841847bbb5afbe8f011a2839db7",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/bbb12e865705fec572c1ee631c76feb9a29b8f5b5093d7acb17ad184d2b6ec0c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/bca93ca4ff563d42bf0a128abe5f7a4e0cc2a362ce8bdad47bd96a905bdde328",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/be7ef143fbec4a4da900921510a72cb097b30626a47d1aca9ca1467758253886",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/c3d01850d2497139497a227d5bc44850a5c23e1c7436e95d176affe9f7b29d77",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/cb29080e7c30281624927749b7eb9263113a9dc3c0e107d2ad16ad787995d7e0",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/cb81073817276dd341adce9b6b3a85b1fea8b91163f9f20e5e5ef975aa20a2ea",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/cd9b4b43a173882576eb26fbfa2abb151b58ba4807e59f4b54792c40514f5c2b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/d0f695c4a1a21d8646b274de2755759baecb1d7a640be989e0cf3bf4621a38e6",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/d249e6d56daa5093f787cff2fc7fc5404d8c34d6abf258f1a40ce893d732240e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/d633a11aac62daeb271ac6bb9ec28e794a5753ff06cd6ebe88851d7eb0f31989",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/dff07b13c347714f33f67d87d87478d6c8a8a0531ee11c16d4a1ff0b249328d2",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/e2c03238a485d5763123a1472414b7bd5868b7fb0dd586a8eb7bfbb5a39e05dc",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/e890414f853baf7e6b1304db86128e060bd0af619696d08508742e8c4c324f51",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/e8dae60291fc2c4a33baf41ad8dea1e168760a8e25e234ea73841225c32f14d2",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/eb489eb7a3d0894bff656755cc2813215536517cedd862c2755b7f9fdf3a05b2",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/eec719b7022d2e5016aefc741cb9063966b5c1e95aff322c13d5a08b39b8ebb8",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/eefdc1f17347521572bcb6049c952160a3e6d4f7a71dfd4a81f4d995e130dc9c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/f3fc45daa84e451626932d647f3d28ba1353cf5feb39ece1694e19a2266fd74e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/f6276e5520bc1abd50c39a81a457228a8a5ad6615a4a30e3731ccdd5ccd7d191",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/f80033ca220a219974c93496c80433cb1ee4f0c3c2aac6923176d83a6a3dfb17",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/f8fb3807fcb22201622f7dbd9202360af15a77efeb71a1ed1b855b1ed443e26c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/fc690e23aadb9ceb621ff5a539e60a7ca067df26487920685acf879cc25735f9",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/slot-descriptors-v1/ffe759ee00911ca85cdc2c25209c75c92cf9d689fefa31bc208d95b7aa495f83",
+      "stat_only": true
+    },
+    {
+      "bytes": 70414336,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/payload.arena",
+      "stat_only": true
+    },
+    {
+      "bytes": 69632,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/retention.sqlite",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/035f50cebb319d42acca4475b6ef8d4aeed90a5c281f8f972fa7715548bc1b1b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/06817a37770122a14142282b7267a508100da27cde5e18c78d1152470cfe4a9b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/08bb178b1457229991fc32398fab46af6a44962c37937dd19a8405227cc23b60",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/0fd3c44beb7d6f9ee0e59d4285965ca967ed0ebcdeb002d54a7ace5276179c49",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/113037c2240cf1c1fa1a837ad43b6ab6d53292507545f15682f7cdaf231872f0",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/12ef900d692ba1a8dbc01d94e683ad4071f9d15458e4268ddaa98a3b5817a336",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/1807852cc2360c5c2bcf9b434c2dbe40521a986fe9716ed6116eb9cd6803e2ed",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/190d4f114ff6f8b0183b08360a98c4af051bce53eba6698e8955ff6757545808",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/1b740ed865e9322094fd6763fd73cb8d500cf87489d588e5697921aa34e0eceb",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/1f5040c5f1f1e06f0cdce768862dd60647ed3f565df633cb989d95f71ffc120a",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/20cc8b4ca540762551a4c2d309fec189ef6a86946cb75be48f26d0dcaf7e9578",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/2145250ba4ddf5197167911afdc869c1f1c40e2fbf3791122a8da56e3b702fa1",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/28ebccd7e5ef618d2fe52c402aad826762e9e03dc9774da231f2f1517c4cdf0c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/29223b94cdbeec4b8b9eab68dcedd4ee7c1563bc8ed02a1b1a19a9482e5e2236",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/2a551134f648e70cfeb40a9ddcd2b8fbedc3380b2dd7d5ba09d2d84ee23ff822",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/2c6712f06d223cda5621e21acb8a420da801caa8472c63789810e8555996822d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/37ecfbee62398cb9a74955d14026715db5b8f727127ef1f14cb7983832ee9649",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/388e61fd42150567937b61e839d2b4b0ac51df932d9e905b3d34a1e6071c6455",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/3901d53bad2b5bb4d36dfcf5f44b4bd17feb009cb06757ba5ed3a9b25c53a4f3",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/39fb75698e6617dc4e0ad0413a3895b667ee3441c6d500f5d260740f6b291b90",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/3a77997da3d145957656f02e65410e97da41e0c534cc8904e9ba914b1c3baee8",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/3b3a8f2f99d440689d41402745c2eac609d63981584f71dd692d19261c44ca61",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/3ee9f04acfeb763dd22e4e910aca3e95e3b8ee3dc8504d6b81ba9eda52893f58",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/41261bd904ef165d0407fb961d19bd3bca79c165787bcf92e541abbec868207f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/45341bece5b76696fd5e9aaf50a9bb378a902858eb03c5f5b129567178259e73",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/464dd5bddbbec4552ddc53c7aca709bb231fbc282bb832def1aa61e11447490a",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/47e91fe68dc138190f86f3f651e31c2b2cd2609ddb2b58f20e9f534607a1b596",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/4874c9a6bf84d204f18a177ac1e0984e81ec87f2dd2d623b6f929994e57ad3e3",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/4c28a51dc2b9428563f5acf8e8ad85de596bb603183e3a05977b5525f95ef1f1",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/4c4d61252e5318eec2fcaaa0e734f2bd36a7fa8ae66a16494a92b141fc740412",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/4e83789e0b6e311abe46f9069e03fe0a767418f73f3cf88af5f92bdcafee3885",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/4f92d4541c31a8ae34f291150da1874b4dd9ba470c769e07d0a926c88a199157",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/4fc3c35c7257cbf07c6fd6453916220945d46cf1729568c92646e8f888d6ffd1",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/52a32d98877b495da28298208d43b745216c35dd8c6ea6760bf2bc25061d6c75",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/571c8a26d3ae6acb3727223bcdeaa768da889a735a4133057c2f343ff1cff238",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/5c43b46184c28e844dcc93e0ae093f1ba474fca7c1600c31a8cbf6f2aef63941",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/608b333d18887df3131bff095a8cc3fe6297bef57bf079f2ce7ebfb07127525d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/62e508d1c8f3ca104891ccd847d446a5e2f6fba684e4bec6a06978d30e2a0349",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/67d49015369fcd993fbf33a9b80bf848e78afdc567ecd72b999440e0b890bcab",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/67fbe18d842a6d130319a4aa7f1c7a1822548f1687a2b4a0aee3dd7ee4415b27",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/68b401a6a6115de3f40ca7652fbd21fa0ffa5e6daade594a3ff443ed7ec55e0b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/68e2af26c3e3159c71753e864cb166888ec38c4eec8ee4d36cadd0604ea7277b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/6a34e80b4ff2a36121c4380d325b47382bec5c68b81519fbd931e4bd145301bf",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/6cb94eea78c45a8c4143adfd9e47b7b66de761039f7aa84978798187d1644e03",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/724c2a9688c97333811855431bb08b4f4890f7a4a31c74bf04694244d0e0a842",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/72cf2890f50c64b0cf72e1f03a117bf1f8d999e0eccb07a6b09f6bbd2227b039",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/76032c60fc3abb6ae35d6a7caf01ef5c63967d2679d13df298f71fc0825e332f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/761725ca84bd071f5f1d3c8b593fa74fc121eb198ccf119dc81108a7d601ef19",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/76d357384ee39d0c3d7566cc95f7a749aa0d94a79f042f5e965b54fc2e9cf2fe",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/785f888424a2a731bbe8d70034f3912a37197d2c47671adf2929ba555e35eb6f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/7945ce98f4dbce2e0320cbd29d32caefd48e0119462fa5202a65e21812e2c8f9",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/7a86dfe75eb60401a74db80304272c03b1e42daf4ea797be24eccbfba7498573",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/7c93c83a334e8eab8f3dc9e25c451c5f9820e89c0c2e8328a5026d3a7fada690",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/7cf16c4bf4e07090e6ab0819b5285bb4241fd0b2145d6e770d665bc581c692e7",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/8d2f7ed82df6b6e757fd99cd53c5b75accddfca951c1254e4f339f8e7ea80960",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/8f67160899651b607253e55928744ccec46a0e3ef346d8065aadfc06ce03ff21",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/9012ebc727a3d26e8954418a2db1a4378370395693324c329a4ec94c2f89fae2",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/981d0fd8dce029dc450c48899c9ff63cda400b1d25365c98ad7e6cd81ad0b8c2",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/990abd1b8c9eff400ccbaffea459af4a1d7a2d71f1ac36b8583c045adedd20b7",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/9c39bba8b493fa87cd0f35a5b45dacfe7c8a5297c1d1911d1b85f6dcddddd986",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/9c483df26b0f0d45b6a8b7589be2fbd583264257f77376217f5a4e016cd6b3c9",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/a043b67ab2b8032a95700c1bca597d1611d6d917e43f05ac50d8b71dc881848a",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/a1be9b5627d2c3f8396b475a76d1de337ad4e1461940271cb580db6beec8fda4",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/a4f50c50328c14de6d031a21d47361065f2e0c37ccc2f2af667832a1c15ee27c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/a6323fddd60955e208def794530bd3a0b1467679aa29ae673a26d924f2a52db2",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/a690aa28c4e3d8b853bb5c095b1c23e943ae5c5a8863d98e50da0bef3d3f5b13",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/a6c2ed38120c5db878202858953726a663ecb2b242a9fada0197ed408bf9cad5",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/abc6a243045587c9f65437385d86a6ac80e8a204c13644cb0ba8bd5aeb4e4803",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/ad05c6562c517b3c6afe3c9e50e069f90010cc32ab81683ba6ed42afae1e9743",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/af166e48adaff404ec7d28071db25acb14629698c0f8a0c45f06df7f3a32c016",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/b416e0368e5efbad20a0768e40ba4d9fde9d7b33faba046760473839f5232ce0",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/bb32e47d32c61ebf7e401347058b4f99a932e7a184eaf18484456443cdbf9180",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/bdd38c11e958ebe70634bb922549ebfc58bcf638a0f0dbec211111a4444ddc5c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/c733397c923c64795dc155436b2b22d9a05e25fd19e821d2b6a0525531b96f74",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/caa5ae594560a2ea36f9acbb89246aba89ba76cf0c1e846760930085193241b3",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/cbfe85da583a62c3e29221b3792f8012b13de89a4c44f2fafdac5fc3768e2e2f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/cdf32ff4d5c557be1cb48aff6f1d949d97ccaa53d9d324ce962e336a791ec3c9",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/cea3be78cc6c074e6fbf63c52308eaaa065772962a8a3b60b735bce3ba0d65e9",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/d63344c0392df74826a3b070f7317fbf4a16b041868787fbdf2ad2753942b91b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/d70a445a918d04016645f8db9469cc2098e7424a2ecd68cbdec3b88cc0f82a93",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/d792900ab70d9f221dd91967a3e1141093b481b12977fe9d976d2e732702b903",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/d8d3135094128452f129892d387b27a1538f46547add9cc3ed0e98c2b78280ff",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/da1cd1de932c64955e79391579a687566f2d93f6048fb35fe9ed3ac69a0e4968",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/db2c83ca09b4b519057edf69d94b1413d00a70193870b777771a420b871fa923",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/dc6b831e3ab16cbc203f08f6cd1e6c0ef1f4551acca0980f7259dd45de57d57b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/dc71e805084687030d8b681a7474f38c72fa9d3b3edc5bd916f4c05aa5c2c96d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/dd67cff63122edab1a56c72d0f41944b63b29c7d42c09c9771f4feec001f9892",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/e5e424069a1c9bca898c8f411b4811d43ad9f0239740cff10a2171245ccf5566",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/e6aad85c8d9d2c2e75d1f02a485c3d3f910c00036c6c2b2433dca45813499dde",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/e70fc65041abd7ee54d16afbfb5c43d7e81e4e9b0dcef8fdf7b7c3bcf63bdf6c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/e762824057a97bef0f30b878cad10e219dad00df23442cca28352ffb6c730e8c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/e8bc41bc2bb1e6df6db24376b6253924d26c4f2e8dd14e0464db92d120d813f5",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/e8ed0c24f9c3f55143fde1033aa4888c638767a5ed772afdef005a68d13e4e0a",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/ea25dffaa714755beecf7e3e3a6e5013e9caf6f98e0f39b4e9597f1553648cdb",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/slot-descriptors-v1/f6b12a35c40498e06af1eef259869280df7f37bfaa6ed0b42578da5ae354d6ea",
+      "stat_only": true
+    },
+    {
+      "bytes": 70414336,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/payload.arena",
+      "stat_only": true
+    },
+    {
+      "bytes": 69632,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/retention.sqlite",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/0082a4f42bbf043ee5e284518712653aa378649c91957efd8618049e8cf00167",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/01746e0f494b00ca744435198d2713ff8023affe3ef4852724f80ffc9771a983",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/06c575522e8e2831e4a19ed9f42460f619a718d10db44d9b4c0804571394fcc5",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/0b37a866a612dcfe5fa481d5c82422f1a409536ddbe9f05082d0cd4b787e1886",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/0d21b72652dbce8c786261344caf745d1e91c545b575a8ee4ad516e73ec2608c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/0ec1cb08c0430122620a5b761430d3a434dea6a13f74026fe2e52fc90859532e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/0f9373c583765a2b58db38d1db61d21da383d815373e1321be43ae201cf82bef",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/139e270a6a92821f89f13051f7f89fdd06ef6d37cf26984f3bb120e73008853f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/1989f6ad135db3de0f48b93f7fef6282f95fc954dba533ead3da4c531431edcd",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/1c8218bf85a7d7b87e6490a6f44979276999ddb50a61f1fa5d3ddc234f649445",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/1d40e83cc76eb776fa9c9d648c549d51e50059d269af88e1896ba0a80ca2de3c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/21adc199e2b4b12793cbf63bb1b7bd1710b10044c7ca1b731035dae8d8df0297",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/22a75bb27bb7d8ebf7751d6df1d272c80a60e616b4cd7c8ca82a2b4fae3ac55b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/243fa09236341b2b5fda23eb0e3d6eb4bed7603551fc64992377613d2754fdd5",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/28611ca15e2946efa9732c7069dc2850f0f64321372cd3c409c75169989cf485",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/29990f396946d0163d56ee84399f47dfb7c6c912ca45dd7f2261ade2edbab892",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/2f9df8406873a1f3528c4aa3579d202554d7baa404da1ce12f685fe94398ac4c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/33f6f630c1d4081e819bc100616fb340dd75bfb0771b209a50277f35678f8633",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/34f966e74ec19093fa4d512288b19ca337892a0270d5a9c3c8b9726d92767b72",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/3c9e9b971356c286782ff0804e93034d753b71893ca464ab815d23ebc36fd250",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/4134b9ee7a8b51d3974e433d873210b149da63178b856fb09fd6015d9b7e98e6",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/417f86eb1650de31c14f3227f33f80e12e0f1b76ebe2130151260b1369c27917",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/4a7817247d163bc0384e8fe0bbba2e4512cbec500fa28ea5cdaed6bd6a52133c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/4bfacfc0d79e0a6a700a04691834844fcd0e3dad12d2a1c792d867ba3aff6379",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/4d5f53a5c371b4bd91bfc569a1e89e565f7fb71a6927d7114df193f86e55d36e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/4e167a73d3d088521fc3fd524d2af575afc6808dff0616edce9bf13d5b6ec2cb",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/4f2689dd30b9890e77e593c4b229022ecab5715911846e4f778e34d5957588a3",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/504f391fc51c39c3cb707e19d356731036c9aa219f3bdf3207d273cc94e411b4",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/50883e739673de1b45109afedc6173100cfb98c033d4c4ed6d76b0699e533b3f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/52efbd3a5520bf9e61b0e88dc9026bbcc38c3726b716b5dce707cc46797dbf1d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/5521078746717b8fd4a8c9b2a689d6e4cc0884480d9888026b1a949524e5f60b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/5823837891b20ceb9ab59de4a31474df39583cd16c0f57441778aa271baf0e09",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/59cbd163ac87e0d43b5470bcd7b6dcbd700dab80cc3f1823c1532c12c91b88b6",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/5a42ac5ba519509c44d4856b1dd21db7444354de32acfe74d49aa19d792861eb",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/5bc1e9b5ee290aee38f9577afff4a32b122aedcec2b1949b5b70156e736cee9a",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/5c106e1487b8d5994f9d6eaa2e3220540d8033d809db8a5bb0231b2ce6016ff5",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/5c4874d97ad085af341fcd91afe0a84cbfe1480e68364e3c01d02fe728a94205",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/63cbe5ce477bcb7f53851480610b0c342384bbf56da2259f96b609602816afa7",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/666e2dee4ecd10279b5f4325c3730308f9b2af13df9346ec6eaa72e609f5b536",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/6aa3b28895bbe0b5b1dd79471ecdcaa35afdb0bb5b4991dd5bdc382bbe863168",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/6b89515c0ad95a050bc061682fb16111a6f61a300f869478fd6d5a0de4a0e492",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/6df4869b82b3f88cd81f7c88fe5788b15688dfa2f94ccc66b97068378bf54040",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/6e257b11827bba59cfd08aba84b7c2aaf2063203e067ac9da65c313e03a9c0c3",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/7127fbb5a52bd38b884c2217ded881d845016f1a68017d6ab6efbebfbe8d7358",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/72cf73fae33d0ad302a022e7191b1c0f9f575584c9373048c5ff18242e213ed4",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/73b5ee11bf316d237f4d4bd182b780ecfaf39f7770a2fafb766de23b0e4df11c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/74a9f1f8aa744bd543b37d39658b8c4f2cb35295207e3f3d41a7d1b089dfcfe4",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/7fad2037c49da0c9a608ff40917e8228293e9bedfc48e6afbd40a8c4d59abc61",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/802027f4038894a8e7cc19aa0a7784809b98db7f306e5672a1daf7fbe7bd344f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/82446b3db44c0f2a656a70ec0a049292db89b3fe78f6c25ea1de4ca1cd8563fb",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/82ef31110138ae408f57f58cda5acfa87d7e9b11b7bb47d8774b78c3623a0eba",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/844c375880a71d34f9ee1c7db3f878e04ac5ae303130ed77d9dcd10696c2bb89",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/8554590a4e7b8402541d1da6f7507264b248b9297bd8e28208c295b1137126c8",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/8f6eb534c4090a3fc3c2c2c26a9f01161532455c81c5c8534958b6f7f5e37c66",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/905cb47f8ded4063c6cf007a9736f74c795c2c5475d15e0fbdf346d1f73895fc",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/96af802e6b5b92cd29a7e83b3bcea916d0110de7d9b04cfdd491aa076fec5ae7",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/9adeb8593fbb988e753e02c0a709804a4a1d36667ac27cfe4b9a4a87e3974ba0",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/9cd96a53c53f4b9f6c0f9a256de17d5413e0c9847a9ba0d01b2d9d5d1b4a221a",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/a0065c7e7a4b070db301fa663478f929a0b408f157c5054dbe9bf26a38114d89",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/a090cac5c537c35b36a164fc41fc7fea075f7e4113c347fd9b0184e443c9c968",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/a0e7aa529368cecfe68678559b1f9ffc94c089162f50a7e3231614b2f1ddae63",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/a24e1f8a3d5744edd66752335f4e743986146f80c959b431d5f0ee4d4c710715",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/a8fecc3e750465f95c7de42eba3b17c3fec22f026f60cd7e5ec2980a38929cd3",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/ac7445715e5665346b1226df6d95069233ce271af946eea64c8088ae1f96edae",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/b04b8250044793a1408d7f48cf818c52784d7d0266e7ca338720f500c7723cde",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/b38c9147d0758e43cd0176e73c9c0eb141b8e70e216e5d8fbf24720df2953312",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/b5776319419edcf1cd515abcfa9458c89a0f399168f86cf003d9efbbc110b23f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/b9c6f4f4a9cf453a2b974defbcfbe0cba86e4a519954a18c13b8ff6a4b82377d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/bc2ad726bd91a15fb6562d28aecc6df4fe3b28a74b413548c5ff8b74351857ca",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/bcd1cb0f896089ff2fc19c125e79a35b181c6bed24422c0e2efb858c697eba9d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/bf24a5c50f3febfb1e0a82f1aa25d1fd6a963e0dce4ae0634e1f1f4e6eeb4f89",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/c1b6803770cae6200ffb05e4fc42025ad5c7383492b40f9ec0a6e3951197d79b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/c537bbc724c5bac9f6cf2ebf1d9bedb305a79279d0e7b5a8ecac0d7fd421b372",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/c84991f511984e99c04191a8aa419c5def91dd7043b1619be8bdabd79943b209",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/ca66f3f6ff8053eb664d156f24d3889327f0f79302ba1803e4ced6f59f1eb27f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/ce6eb5751cd6284a09450dc72a2da9d998e09da9b25a133dc7d79fd1fa466640",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/ce8773fabce4333ceb017c9acb11a2e4d632a8da4254c926b43df05517f86952",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/cf97227cff675e7c7120fa972200d2844ca8c48b17b363f8f7e0f69060209308",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/d28097e676aa3a4380056080a2e45b68c1681ed9bd978435569e139c7ae7054b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/d49262f9fadeaee7c6e772c6d3a1505960b14d0ac31a3f2c26556be42498813f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/d66713246635bb78c73ee22411e36f53c7f1922bd732ab723bcc74cda829f80c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/d7091bab660916f75b09e815449dd151e5d36f0d17416a0470f80c5b3482ca5e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/d762eb91ae6829510caf42f9ee721396942c3dd11758925697b0fbc63722ecb7",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/d7bfc19d13267b3a6d1b1a41215f7e4e72839a9ade75c72c226f5b216c1d7f52",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/d954af183a7872f3d5a33745fbbb8d4f823d75f74f19935108cd1b97a5054341",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/e068fafe7b2ca9e8a7c1f59b71239fe32cda11cf9865aec9e0f3d593be42181b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/e136c91321ff4bddf4a315cae11f5ceae1d1c2a6fa5df25d6ad20c58011f59b9",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/e4826154c460161e0ddd8913cda1618c25f7a38b20156645c7ef0ee4c82dad5b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/f06802c20ab860342210c545dddba77f8f0293c0254c79d2781f48362d315dea",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/f12ba82b0b07e24ecfa5cd13fd480beb28d8a9f376c36ef1ae1302c82e0f2b1c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/f3ff28e722d015afb2ae0ec45cb736af411e84e6bb7bfa7ebd4bd4e9b21a0bdf",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/f749901723a1925fa9689aaa66b722a240550c9f2215890a53da9cb8b0270784",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/fa5c39b2ea481394494ba1c7f2eb15904e38f9f065dcc755f6c32a70d847c743",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/fbee59b55ee9ce1f261b35d611bb6ba5bd07c3f49fc3674dd8f0a11f25976338",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/slot-descriptors-v1/fc1dbbd9f421407ed9ce3edf70031b5fd8ed891e7a98c5792098ce704c515989",
+      "stat_only": true
+    },
+    {
+      "bytes": 70414336,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/payload.arena",
+      "stat_only": true
+    },
+    {
+      "bytes": 81920,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/retention.sqlite",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/063d8ea840179e55c2e9e8b1483d534e0000d8f3cc571635590b436456db7ebb",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/06a6728735beeecb83945e2dbcdd9d9061014173ec7d9b88099f84a6e899cd15",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/0d247e9401d20a7852a05319257ab5d4adcd5cf2d28f5ce4e560492d55ca3d1d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/0dedc3984941ae134b59cb3ab66b4abe4421e18269059d186ec0f19c019da39f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/0fd4083afa7cb1dfb86b1e7b1a5ce1c5b1eee7e06d424e99e40ec9be449736d0",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/1243c8694e6b38bf58ed22726031173236dbf81b586d779b3d334c36adb69238",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/1618ea75e4b9588364de9587ab813077bcdda7202e45688d47cdabbe6020f965",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/1b0fa12e52b40253f62ca81c752eef9290200c23b275aaf7141a6dcf8b924fbe",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/1b981a67b6b407473f89fc3c3494b5976c9a7e2a8ea6ff673343f0294160ef79",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/2036f18701c214d4c38daf77d2265c180e6aa28fbc4972a46e31355cde789760",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/20a6a1bb94d710abde606a20c96caaec22fd3769bff0f614601a8dfc9c14d8ab",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/221312c2eeff3aff9c282435df40b11fdd7c247027e43653575b0bc08d6308b6",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/2318c03d47759a7053bb0c0eba3640edffd7431cc4dbc6b8caab307cb6e2f440",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/26361257e3af65a563b3b2b7548703f45237cc52dfba4546a881d2ccf44fc73d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/289da4ca19855a5cf7490dbc78df28893d28628ac8ba3b9e721ada9462943a10",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/2b7d755ec16abd90a7fdfc43ae1a4d4b98ff4006ef1a8214ee7f65a44e45749b",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/2d84114cc219a107cf80797e8732de33a399a59be526d2d20c869b9047ad43b4",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/2de2cc3e4e3492cc1fcb14eeec8565ddf458c2865438688e1eeef53a4d830a40",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/2e2e00bd2c6f3313a07f1b355ec9287e30e31450ac1464474c4e10250ecace55",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/2f1ffe7d557ba44ea4d52a1eb7b3037b7143879b58c261f757ab9c4ecdc43589",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/32f4739c48dd8f0ceac446a3d781400d2e288a7695c8c0c75b889b3f5e6f9362",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/376aed09db78864d20b1a9d843bb016c2bf92f0c630a6adb75e8857f3dc7029d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/3d16df2c1b05420d32412f7a18604eb50c7837fa10dd78d38882298f4bcaf518",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/3e25b2104696e211b73617d23bb6735044a1abeb919640a2d77fdaca2a88177f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/420c73a441905c57d2fcc093be9e7113de194318029fd0633b172628107d4008",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/442c54bec229f09ecbabc3a49d72bf618038ddb4ba30087386ff7bed658548f1",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/443f55666795d36decdad036d67b905d5ea48ca2ff26e965a46a763f81694f2d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/44c0a2e567fbb7aa0dc09f29744c165fa45f6c32c4d44f3ebc49a41ee77fcadf",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/46544e26405d2641a13626b74513a88dba1800bbad087b1bb5b843b8dabfb3c6",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/486d2d87b0db6663d77a2ee2adbe78e8bfe228ee45b1e2832993a7070c7c0861",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/4926783f0124c4082a874de7065d55fdb11e860d2b8506cc63d3a1a3dd31afb5",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/4bdc074123b184991442c89ae8fe9460c4fd8ba8ccd318e426f8cc9077c0333d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/4fe543ece9dbe4a532472a7f8f01228f547d2d2ae70a74aeaa83a89cd6394095",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/50e3eb7caa8b6eb7c4c3b859f50ea5144f03b3dd6dbcbcc6a581b0e34272507e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/57b83074d9ac3f20059f3c8a4cb97be24c2832881a6ddb7d2d9bbd98367f0212",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/5c1553e2652401d0de18dd62c268ae75dcac8445909106ffe76f40e8de41fd9e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/605fc16fb903222475d1584def72e3da96b27ef9f719c5d75ed4cc620991770f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/66303e6d90da30c7f85a6f363bda7fb1f9a04cdcb3f6ce206b71ad61416dc9cd",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/687cf35614c2f8d4c0653eac76d83d21664eebfe3bc17b9882e81691cf6c373e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/68e23f28b16df89b3e0c052f188fe031efe44b94882bd0793d5ac9f555dc19f7",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/6cd4e683db831e8092954984b23a85c62dd4505fbcf1a2cc372facc3908b0027",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/6e1f890b2f0df362087522e5f3379afb27e35d3536163f5543b6f3fd4cec3a95",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/72bd45a59d950f0ee560e8b956ce6d55b09e38278f1e88fd822660c1cfc19b4f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/74ed7a8ed38c966b9ea59f00ec29b45a2bfdace350575fd5ad62531e733dd83e",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/770b6d2d1ab7fd3dd9b248d28a515425a2476ccbf76d626938a5d2e92f885ff1",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/7940aab013fd4ddbbd707ff7cc40f3fe91e737b6a196e31aa625052d7a04df9d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/7a41678c1061631ae95636e55e262d14cdc1bc6df56dce7e608df8b65179b054",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/7c8cc247c4a147c7998b652835a7fe01a90fee60c4ba47435a0e17249e4543fe",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/839a8eba2803365b817c3b5f59b9bd12bc8adc03f1701681824a557701a81815",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/84a1e226455f499f9e328c2196d8b32c7f2f3d66cbd27128e68bd262b1a3a270",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/85101aeae631746785f191ba1c2430a27d612ceb9e2ad4bf634785fe67de5f30",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/8520611f31518383cd7c44275d60aa42448a5f31db1fd1605f93caced37137f1",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/889c7b24768c69e33d8177cab4d452ad8c94313b5e6e91870f7cdd487e245915",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/8de56bb211a8c6f942851d9c3ea7571c1643891e57324b61b04897ab6968b88c",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/8f63e43fdb1d3f3759bfbfc8914b68e9bcba200bde1480805367f4de9e811772",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/8fe60bfacc1e8c8c4a268a3fdb51292bb001e5a241bac5a940802a88812c4197",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/90e47376683eaa223efbbf28f2c8bacc8409223f17b58a3cae3907be211d9afe",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/9cbf40d626e2e98ac2b1e75b27b01ca2a381c9340360485bf388c7f482c71c11",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/9d117ec62f2904dc998d4ee9d40a1671b71a23c3d69e00bf6c324f78f8f65ff5",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/9d18b9c1360069b831ea8cc584e0a4689b96df781d5e3f0339672011e77be5de",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/9ef2e43d698870795ee2d056c476e66fac06fd3c4af2f436792643c9e71096f2",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/9fa6c1614a661077030a10e8c70da2c02cbfaba0fb6537360c1645aff0efa6dc",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/a2c476fb1c2267516e660d3c01e6a13a34b03b8f66ae2eb0a179f491afaf3db4",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/a3560e83789baf99daba960228a5800a110dbe2dc906a4ec683c3f804c3028af",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/af847c8400dee3ccec8eebf429b9a00f8813edf2b2d07cd4429f8abc3c31b3f1",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/b08c7ae3c69aa214054ee834dbfd864f9c55edc4d73c4d1321ff3119ee896521",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/b0a0081fbbe260022a89a95f8395fe814f1644705e297ca16d5300f18f449152",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/b29c2f8db01a4c70bf4bc46d105b78eb57d13b5ae1c94a54ada6159f210f25e5",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/b4ec57d879c2970ab804cb8b28c6af17354030856eb7b39b32471c79cdfe6932",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/b8bcb0d3cbe86f43b4f710881cfdb8be7128f132498e15054f34db8050cc0eb3",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/b913a0c3c6e47f1bb0e050c2d08fcf9b84b5dfc0dbf81ee300bce37b4b236952",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/ba3070a52c8c6ef3371fcc98695988e1290c8a838d18e81a4aab1f3b83400f0a",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/bc5558562b9aa27a9355695661b85b92a78606350ac82c56427ce8041623c3ea",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/bcbe95b95f035361cdeafb37abecf7623b70ff956f27939c1f9eda939807dd89",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/bcc465af73c49dc28f851040e262e3c6190718267046d11430c7a97aeaefd046",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/be94e6fdfaa907817090c712b364e34bb4b0e3eadc3438e782da47c8f96a66ca",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/bea6a8695a2f1b019adb56c472454d46dda0c2fd218550895b80c56e02ed84b9",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/c483dfe87d19ce2e01156bf88d83095f152fef4512d1ac70f6e2fb839c4ecd97",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/c5df96dea38c017bae08a4ec349e2c58f9821a46c41a39366f466711b2e6b9d5",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/c6b9e2bc4a03db6ea3de6c56cccebec8f69fa81f481c36f755dcca949ee0c750",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/c7aaaf4ba27ef111c2ac0eb75983bae0dfe27b2be4bf301fb5223728b24cf410",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/cbf42bd3699b1ec8ffe56a7d45cab6dc6f4d77851221b5b1a61a8f75d6950854",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/cd29a072c141a732c3c773503561c4c2e79651e0a44a624c629c80d63ff8ce48",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/ce3fb01a9c0f6207bf394658fefbe0420dbcb3a770bcaef58ce8d7125c480f1d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/d235e94c8700ea049d94563b65c5b96c1baeaf86dcfc1300ddf613dd638ed796",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/d47e40f2b3de66561149f37dae746bba858550ed3d8d42f65b634fc643f0c279",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/d5cc0f0c06c3186d567bff9f331c7b865062f9d22ccdd81b4c2f0a9486d1376d",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/d7086160be5a3c1d5f0e0926b028de023cff84b64076d334f76670f1909c6329",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/dcea892af3188260bba6808490a62076558ce549b8d8ef29e5d5013c80f0d2b5",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/e14742ed8457aef4e959ef3c7a85f6b94f11ebc390238ef26ad65898b8136338",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/e7c026d384c24f6bbb8d4c6b1b288c7a2094a7e5221d11bb1ba1e46391393f6f",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/eb5fd89ac84d1aca0bb2acebf4dfbb5832d6bd323b611c89c19fe489e540ad53",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/ef9ff0512b9b630054129066e8d561b098ac6c5401f75b9e64b769be43d5b127",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/f50c5745c6eb022c14acc59008a3411f2c166673064d03d302d687d83e16c0d1",
+      "stat_only": true
+    },
+    {
+      "bytes": 1829,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/slot-descriptors-v1/f71564576b84c1f74d3a57a4f499fa9db984cb4709d800091ed3fe98cc6cba77",
+      "stat_only": true
+    },
+    {
+      "bytes": 359278,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/paged-plan/page-00000.crg2",
+      "stat_only": true
+    },
+    {
+      "bytes": 359278,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/paged-plan/page-00001.crg2",
+      "stat_only": true
+    },
+    {
+      "bytes": 348052,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/paged-plan/page-00002.crg2",
+      "stat_only": true
+    },
+    {
+      "bytes": 32582,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/paged-plan/root.crr2",
+      "stat_only": true
+    },
+    {
+      "bytes": 1428,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/worker/cost-events.jsonl",
+      "stat_only": true
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/worker/process.log",
+      "stat_only": true
+    },
+    {
+      "bytes": 4247,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/worker/ready.json",
+      "stat_only": true
+    },
+    {
+      "bytes": 2834,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/worker/supervisor.json",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0000-091387f48aa13a0dae4f19c4baabd8a98abfcf83af6748fbd0517ccb5b5bb058.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 116,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0001-0a5f2834077858bba5aa857bdc0eaa9b0c1d13a420043198ccf7c220026732ee.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0002-25a6052a0ea91fbe1770a244f00553e2747ca99dd4d7efaab138c22d296f618e.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0003-26790af07be2580ccbe3016f5749f0dba53f7557a71f4cf08f219bd6b79bed6f.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0004-28d43dc433fbf07d0d8e4f8a604382d6a277070f84f4053ec5d64bf6fe8b988f.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0005-294011cbca8e4cad47f15bd86d3bedfd1c6dd0e2941b73ed12fc8b68a238d9ea.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0006-2c3e6a5099f50cabe4edf0a73a1b8417157ba033a19939cb25a31bf0afc228f0.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0007-2d8790f7d0bd24e82896c6c2ee28282741e80b4e6200846b4686a42549a4cc51.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0008-2f24aa1cf8b40cc3a8d5c9f84f07b68d77fd6e63b731258f9551606aaccf1499.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0009-31206661aec1feb04301ea672a64c2a019c1cfba44b503502877e1695adf728a.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0010-355a628d64abe299107b47689e5a88e68fdae353817350ef7c85598a92d79bce.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0011-4378ec2596a5e7c4f199712ef0e1330fa4393f821891874635a4da71b78dd58e.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0012-491d9c726e12027ee14489f5772bd5bcd5904bbe7346749f720906722fee03d1.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0013-4a92aceadada919912d3d4716c2a8382d54443a53be1ba34e00740c9d46fdd7f.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0014-4cd6d68a13b16ed1241e78dcd21b3d5a3b32bb1903022debb8146fac55ef0ba7.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0015-4e051b281a38456937dc86a6f98994d7df0c8ee55bba5e28e4c2c74226ec89fb.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0016-4ec8c783a332ee6805b02b5c923d63fad4667086a7d8a490784e43834e5917f3.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0017-5fa838f51011dd31ad75c74ffa40b35fa7e95544e8487412c326cc155681f47d.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0018-690700d936547e62905358eb91507703953c9f32f545107c3243acd03fdf4ec9.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0019-7b1f0d023485a807e1b00452cf0a3bb78a708f135d7ca6d5ce64e26b5ed32776.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0020-aae475d2bbdcdb7b3a40ab416d80604fddceeab52ee0c1190f4182d11b0412a7.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0021-b870fe53b30cd8a0e765bbbd3ccf90995507ae20d26339b5653a76981790a6be.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 2132,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0022-baf6ddc9229b7cca64afd26dfaa5e8a66b15bc4d471384a75dfc950a3dfe7205.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0023-c102e4118261e977c6d06296734d55f2aa6d4d825b0f8cd3ec1e43471939e2a9.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0024-c464edbd210db63a41e77ae62352218791d6f4f9529a8428a6b0129e090a7432.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0025-cc42f141703f88453c93a37bf6d198aa9c1f2f83c358ca3fe35f34167b7731a3.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0026-dae07e5be9222335c673843cad7cec1877fb3286c161447fb292822dfcdca3a2.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0027-f4e7f401226427609005e7af8e1febd964ffa4824315e854542164b8a2aa3dfc.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0028-f511c48c1438f0dd309912f489cf2a107aa27e6a93341adde909c198eb95221d.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 84,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/0029-f9b47b4633df651ff208e6a7ab569c35d315ba22188112bda0826f17765fffd9.cbm2",
+      "stat_only": true
+    },
+    {
+      "bytes": 14729,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/owner-plan.json",
+      "stat_only": true
+    },
+    {
+      "bytes": 15389,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52/owner-version.tcv1",
+      "stat_only": true
+    },
+    {
+      "bytes": 423,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02-wrapper/exact-source-end.log",
+      "stat_only": true
+    },
+    {
+      "bytes": 423,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02-wrapper/exact-source.log",
+      "stat_only": true
+    },
+    {
+      "bytes": 8891,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02-wrapper/inputs-end.json",
+      "stat_only": true
+    },
+    {
+      "bytes": 8891,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02-wrapper/inputs-start.json",
+      "stat_only": true
+    },
+    {
+      "bytes": 459,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02-wrapper/native-started.json",
+      "stat_only": true
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02-wrapper/native.stderr",
+      "stat_only": true
+    },
+    {
+      "bytes": 61615,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02-wrapper/native.stdout",
+      "stat_only": true
+    },
+    {
+      "bytes": 3485,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02-wrapper/observation.json",
+      "stat_only": true
+    },
+    {
+      "bytes": 173,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02-wrapper/one-shot-claim.json",
+      "stat_only": true
+    },
+    {
+      "bytes": 174,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02-wrapper/preflight.log",
+      "stat_only": true
+    },
+    {
+      "bytes": 1363,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02-wrapper/start.json",
+      "stat_only": true
+    }
+  ],
+  "note": "Excluded native SQLite/arena/cache/lock bytes were not opened.",
+  "schema": "trnm.model-source-stat-only-inventory.v1"
+}

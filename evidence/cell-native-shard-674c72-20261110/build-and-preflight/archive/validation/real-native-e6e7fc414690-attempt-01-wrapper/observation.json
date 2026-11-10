@@ -1,0 +1,32 @@
+{
+  "completed_at": "2026-11-10T06:18:30.312021+00:00",
+  "config_sha256": "c7378a2516255aba7331a572862ff38894fbd2d74806543e0af5110de2418809",
+  "end_identity": {
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "status": "",
+    "tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78"
+  },
+  "error": "RuntimeError: original 8GiB whole-job cgroup required",
+  "independent_real_money": false,
+  "memory_end": {
+    "observation_error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1c41b9b4d-cf39-114.service/io.stat'"
+  },
+  "memory_start": {
+    "observation_error": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1c41b9b4d-cf39-114.service/io.stat'"
+  },
+  "native_seconds": 300,
+  "native_started": false,
+  "operation": "e6e7fc4146909c818f72a05f9eb93a7188853b268bcebbfbb92de502e15f2f18",
+  "passed": false,
+  "production_activation": false,
+  "schema": "trnm.native-paged-rs46-real-model-observation.v1",
+  "source_sha256": "d1a7fb64b7d00b4f370e75fd98feab887d6d11075a13234e54f51b5f7525e665",
+  "start_identity": {
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "status": "",
+    "tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78"
+  },
+  "started_at": "2026-11-10T06:18:26.736723+00:00",
+  "wrapper_elapsed_seconds": 3.57508126180619,
+  "wrapper_sha256": "91bd492aecdd2a2dca4d7b817aeefff6535b7fa4f2a64f0969db9c7c8789f80f"
+}

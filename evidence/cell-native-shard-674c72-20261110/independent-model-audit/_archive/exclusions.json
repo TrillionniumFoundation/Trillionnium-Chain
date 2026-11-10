@@ -1,0 +1,47 @@
+{
+  "active_physical_review_not_traversed": true,
+  "files": [
+    {
+      "content_read_by_collector": false,
+      "copied": false,
+      "current_stat_bytes": 14945,
+      "original_manifest_bytes": 14945,
+      "original_manifest_sha256": "7a877fce527531cc7c8652b00a460db7029fda9e0e763c88028f0de4dece7784",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/__pycache__/funding_audit.cpython-314.pyc",
+      "original_relative_path": "__pycache__/funding_audit.cpython-314.pyc",
+      "reason": "explicitly excluded generated Python bytecode cache"
+    },
+    {
+      "content_read_by_collector": false,
+      "copied": false,
+      "current_stat_bytes": 10892,
+      "original_manifest_bytes": 10892,
+      "original_manifest_sha256": "5d9169d19edb397aa73a3e9ea1e6c79086c4324f1cc09f1e4525d9f4092ac9dc",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/__pycache__/identity_audit.cpython-314.pyc",
+      "original_relative_path": "__pycache__/identity_audit.cpython-314.pyc",
+      "reason": "explicitly excluded generated Python bytecode cache"
+    },
+    {
+      "content_read_by_collector": false,
+      "copied": false,
+      "current_stat_bytes": 68358,
+      "original_manifest_bytes": 68358,
+      "original_manifest_sha256": "014863d0eceeba1c5591144774f2f90d118dc5f6df5aabe2ee53dade1616a49e",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/__pycache__/journal_audit.cpython-314.pyc",
+      "original_relative_path": "__pycache__/journal_audit.cpython-314.pyc",
+      "reason": "explicitly excluded generated Python bytecode cache"
+    },
+    {
+      "content_read_by_collector": false,
+      "copied": false,
+      "current_stat_bytes": 22028,
+      "original_manifest_bytes": 22028,
+      "original_manifest_sha256": "0d12228df0a620cf2694fbc743ae68561f430c586bb12792cea80614f6af2154",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/__pycache__/reports_audit.cpython-314.pyc",
+      "original_relative_path": "__pycache__/reports_audit.cpython-314.pyc",
+      "reason": "explicitly excluded generated Python bytecode cache"
+    }
+  ],
+  "schema": "trnm.independent-audit-exclusions.v1",
+  "unexpected_payloads_found": false
+}

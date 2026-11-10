@@ -1,0 +1,20 @@
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs b/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs
+index ffcd4db38..c2c4741bd 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs
+@@ -354,3 +354,15 @@ impl Node {
+             .map_err(owner_error)
+     }
+ }
++
++#[cfg(target_os = "linux")]
++pub use plan::{
++    native_cell_shard_parent_group_subject_v3, NativeCellGroupedChildCpuV3,
++    NativeCellGroupedShardPlanReadbackV3, NativeCellGroupedShardRecoveryBudgetV3,
++    NativeCellGroupedShardRecoveryFailureV3, NativeCellGroupedShardRecoveryReadbackV3,
++    NativeCellGroupedShardRepairRequestV3, NativeCellGroupedShardStorageRequestV3,
++    NativeCellShardGroupChildV3, NativeCellShardGroupJournalConfigV3,
++    NativeCellShardGroupJournalV3, NativeCellShardGroupKindV3,
++    NativeCellShardParentGroupReadbackV3, NativeCellShardParentGroupV3,
++    NATIVE_CELL_SHARD_PARENT_GROUP_WIDTH_V3,
++};

@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "-p",
+    "trnm-data-availability",
+    "--example",
+    "cell_sealed_research_next_use_v2",
+    "--",
+    "--test-threads=1"
+  ],
+  "elapsed_seconds": 0.11368809104897082,
+  "exit_code": 0,
+  "full_scope_observed": true,
+  "name": "original-da-example",
+  "stderr_sha256": "d194165aa9bfabe4d143e8727e030dbe624a3d205a88880d88c579ca6cd70469",
+  "stdout_sha256": "055b489da2514493d22e04864ca0483f1012f823ca6e7a7918ccdb1260833730",
+  "test_summaries": [
+    "ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s"
+  ]
+}

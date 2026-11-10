@@ -1,0 +1,26 @@
+{
+  "config_sha256": "111d10f2e6eea734ed016ae6ccdd3624b0394d6ef21357584e7b989b08fe832d",
+  "independent_real_money": false,
+  "memory_start": {
+    "cpu.max": "400000 100000",
+    "cpu.stat": "usage_usec 38331\nuser_usec 26226\nsystem_usec 12104\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "io.stat_unavailable": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1c420eb26-cf39-12d.service/io.stat'",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+    "memory.max": "8589934592",
+    "memory.peak": "18812928"
+  },
+  "native_seconds": 300,
+  "native_started": false,
+  "operation": "23120317a3cc20853fbcf0de37924311788e251d59395afc1816b4f6b2b7bbdc",
+  "passed": false,
+  "production_activation": false,
+  "schema": "trnm.native-paged-rs46-real-model-observation.v2",
+  "source_sha256": "83e4ab28cd84813c1a489c4c53222764b6437edf0eaad8924776c0777ff61835",
+  "start_identity": {
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "status": "",
+    "tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78"
+  },
+  "started_at": "2026-11-10T06:24:14.864576+00:00",
+  "wrapper_sha256": "120c70fb52909072eacf84251a44ff6c62f777479685db2cacf8cc1846a9e139"
+}

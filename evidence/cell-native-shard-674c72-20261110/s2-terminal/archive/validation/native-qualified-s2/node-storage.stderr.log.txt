@@ -1,0 +1,9 @@
+   Compiling openssl-sys v0.9.117
+   Compiling openssl v0.10.81
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-release-bundle v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-release-bundle)
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-pon-node v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4m 25s
+     Running unittests src/lib.rs (/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/trnm_pon_node-1c6acfc1d5eeef55)

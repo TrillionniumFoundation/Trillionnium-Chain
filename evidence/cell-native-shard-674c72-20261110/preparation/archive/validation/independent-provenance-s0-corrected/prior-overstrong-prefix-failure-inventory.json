@@ -1,0 +1,1129 @@
+{
+  "cause": "The first reviewer required complete byte-prefix equality for all five source files. S0 lib.rs inserts only new V3 exports before existing test modules; its original lines remain in order. The independent reviewer expectation was too strong, not a native execution result.",
+  "directory": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-provenance-s0",
+  "failed_summary_sha256": "1e70e7133f73b1184505267d3fc2df7d41e87d7ba376a0c9ed9895c6793fb831",
+  "files": [
+    {
+      "bytes": 6994,
+      "path": "failed-summary.json",
+      "sha256": "1e70e7133f73b1184505267d3fc2df7d41e87d7ba376a0c9ed9895c6793fb831"
+    },
+    {
+      "bytes": 0,
+      "path": "preflight-before-write.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 174,
+      "path": "preflight-before-write.stdout",
+      "sha256": "c27e73a9200cdd86e67a0a33ade2544ec59587c2867c275db30ca8839c1afda3"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/Cargo.lock.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 40353,
+      "path": "raw/blob/c3/trillionnium/Cargo.lock.stdout",
+      "sha256": "3db3a086971106994f9e824df0bc64e8fa99cae22dc7bb8bd800643ee573b1ef"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2204,
+      "path": "raw/blob/c3/trillionnium/Cargo.toml.stdout",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-audit-events/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 273,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-audit-events/Cargo.toml.stdout",
+      "sha256": "3b3ea395d825949d15125b2de9ebb3f3a1f737ea2fba1f6655123bfe0bc94b81"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-bench/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 325,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-bench/Cargo.toml.stdout",
+      "sha256": "6659a2800bf7ab244b4ed07f5a6c01eb3d4110686912f591898432a712b4b64a"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-checkpoint-store/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1057,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-checkpoint-store/Cargo.toml.stdout",
+      "sha256": "fdae031e687aaccd0a8b22bdd4ba916ee6c77cd61a90ee5d54d1a5533b416ab1"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-checkpoint-types/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 331,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-checkpoint-types/Cargo.toml.stdout",
+      "sha256": "fb881e814d9837952b0e291edbbb3bcfa498b8281e139321c556420cf313df15"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-control-plane/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 333,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-control-plane/Cargo.toml.stdout",
+      "sha256": "680461e37dc91dfac8c9eff9a3e713922fc117f88e0291f0e7fdf4cc735a9adf"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-crypto-primitives/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 924,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-crypto-primitives/Cargo.toml.stdout",
+      "sha256": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-data-availability/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1250,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-data-availability/Cargo.toml.stdout",
+      "sha256": "d1a23863a1ee4890528a7fa929a4f7b29e22d06ae5c997987a435ea805f01946"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 33019,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs.stdout",
+      "sha256": "bfa43839b352882a8e2ddad83f5b4b6af5149252d44e4cef69d72aed81d5094c"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-escrow-vault/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 347,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-escrow-vault/Cargo.toml.stdout",
+      "sha256": "d7d15fe56bffccf5035e99702fbff36f19cde68adb978cddcb99cc81c909283e"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-executor/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 168,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-executor/Cargo.toml.stdout",
+      "sha256": "a5e4d8f26d975149bd33019d28dabd650066370e8126aad11913c4c87d2a7899"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-governance-guard/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 351,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-governance-guard/Cargo.toml.stdout",
+      "sha256": "0beb309f98afc7188026936d9c670be343acc969371cfa552eeb6f3444f1a7bf"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-mempool/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 141,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-mempool/Cargo.toml.stdout",
+      "sha256": "b0fcd75b13e78b66d0b20e3a2176c9c0962dfbe1ca5e0670274198c963756c85"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-mvcc-fee/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 998,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-mvcc-fee/Cargo.toml.stdout",
+      "sha256": "9aa41333719fd478a784a57ffb2bf5afdae18359af815f30db03217440c36fff"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-oracle/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 235,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-oracle/Cargo.toml.stdout",
+      "sha256": "74d413acf566aac890f01a5062f0dc828c2220edde665aeb7500bf71bf08e759"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-peer-lease/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2011,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-peer-lease/Cargo.toml.stdout",
+      "sha256": "d330e720fdadff49d3a4566f0f6408e1fbbf914117ff89d6bd0ae4321e33b658"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2114,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/Cargo.toml.stdout",
+      "sha256": "91bc17c392f5a56cbebc92ca8d2954f5eefeb4294f50d2f5c99927543e70483a"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/lib.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 36955,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/lib.rs.stdout",
+      "sha256": "a6ec39ecbdd3e0ff0f54bd1615a0d03cb8b4347c337451a71b0288c533642c1c"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/cache_quota_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3411,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/cache_quota_tests.rs.stdout",
+      "sha256": "2c135db9fbadf25fe330c62f05c4729c47741269ffec933b8042bd741e844bfb"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 7499,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs.stdout",
+      "sha256": "0024d618e98db072b566a3a2921d891ed933d5d82e3e502d2fc4ec8dc21ce574"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 28806,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs.stdout",
+      "sha256": "ff16b9fefbb8ae63b4b6c2c78462d6896b0f8b6a0309a35e8b7fde8cc8ccd0e8"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/replay_owner_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 23044,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/replay_owner_tests.rs.stdout",
+      "sha256": "d6999c5c54b2492e8ce34d66883a27277aece0697c4b047d56fa963d4dd03271"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 11847,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs.stdout",
+      "sha256": "101f99ef4ee04a7785ae2270166112a76f2515f45c0f15f04cdb65453a36086c"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14095,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs.stdout",
+      "sha256": "22a85789d5ae8e2cdc38cff2b8be5b6911ccf9e66d77fc1f682c8e564b7451c8"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14451,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs.stdout",
+      "sha256": "c53280c69183ef36f2d22d2b10839dc73b15a5ba96e858d4a72654d5c0570a12"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 28147,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs.stdout",
+      "sha256": "5e295e1beed76ac833d43b87c1fc3a6f2476cd5ada73230d3fd561a119c4148d"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 21919,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs.stdout",
+      "sha256": "595aa302e46696e187b94a127a6406f77314569121f948b9f4c471d30375a6d1"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 16258,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs.stdout",
+      "sha256": "db2c42cb97067d1553a36fe6be4d67bdeea204a0132952ae1d62cddb97ec8db8"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 16392,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs.stdout",
+      "sha256": "d10e7a28a800344700ba21e936dc8421a16123c0ad7ad3809a03fae1b298670f"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 27480,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs.stdout",
+      "sha256": "258e21b0c13030f59a1b467bb6bde612f7a74fe1a1fb0731b05e5a6f7e961601"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 22044,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs.stdout",
+      "sha256": "21179b4f545c03b11db983714a57a912094a00797651e318eaf9f8778137da34"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 17835,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs.stdout",
+      "sha256": "6bd082d824ca4876b906ba484bc85eff4b2990f92d0bf26af95d00ef04e412e0"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 382866,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-pon-node/src/store.rs.stdout",
+      "sha256": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-protocol/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 684,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-protocol/Cargo.toml.stdout",
+      "sha256": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-release-bundle/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 523,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-release-bundle/Cargo.toml.stdout",
+      "sha256": "1253706cf981ca12a4d4da734ffd14412d13a6941fd8f6649dab34b488cf2c52"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-research-protocol/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 426,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-research-protocol/Cargo.toml.stdout",
+      "sha256": "d509ee983b0128ed70468ce224694f1edbab899ff0c4b0fa6b60e69cf5ce278b"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-service-settlement/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 630,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-service-settlement/Cargo.toml.stdout",
+      "sha256": "ef6d0d6b16ca5600808bbbed76b902f2004d427a29ebe4f5b5d6c78360cc517d"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 594,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml.stdout",
+      "sha256": "91f0c5dee1d02ff6ee62b276e11429c0f616eae7d7a8bd00d1315ac777c987e9"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-state-import/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 408,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-state-import/Cargo.toml.stdout",
+      "sha256": "fab1897088c6a5f81ef52c33de2cfae63854cd3ed435b3e70ce8054acfba0d9b"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-task-kernel/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 563,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-task-kernel/Cargo.toml.stdout",
+      "sha256": "d87cc43b8dbe3ba163886d25f1587c32ae3c562603102a5bf0645abcedef0063"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-transport/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 395,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-transport/Cargo.toml.stdout",
+      "sha256": "720d1ac4ca279d52da65eb63ecbbea94d9b880f2befc1d873ab2a9b654a71ed7"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-types/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 238,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-types/Cargo.toml.stdout",
+      "sha256": "ff83cf759d5233c0cbb5b642f81f7e43fb4578716de5f76ff9128810148e9814"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-verification-profiles/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 336,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-verification-profiles/Cargo.toml.stdout",
+      "sha256": "a834c59008c5f2ff6c131cba6ed73d7c7ef61ead7ad9eeb154eedae31dc21155"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-worker-agent/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 561,
+      "path": "raw/blob/c3/trillionnium/crates/trnm-worker-agent/Cargo.toml.stdout",
+      "sha256": "04bfc738e6b161237988e77304b0bf660d31583b3708e8499566b4b717ca9554"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/Cargo.lock.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 40374,
+      "path": "raw/blob/s0/trillionnium/Cargo.lock.stdout",
+      "sha256": "9a09acd113a1db1918ff81922e9f3f9a91ddae94b873d75951bca2fd5f6868b3"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2204,
+      "path": "raw/blob/s0/trillionnium/Cargo.toml.stdout",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-audit-events/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 273,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-audit-events/Cargo.toml.stdout",
+      "sha256": "3b3ea395d825949d15125b2de9ebb3f3a1f737ea2fba1f6655123bfe0bc94b81"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-bench/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 325,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-bench/Cargo.toml.stdout",
+      "sha256": "6659a2800bf7ab244b4ed07f5a6c01eb3d4110686912f591898432a712b4b64a"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-checkpoint-store/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1057,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-checkpoint-store/Cargo.toml.stdout",
+      "sha256": "fdae031e687aaccd0a8b22bdd4ba916ee6c77cd61a90ee5d54d1a5533b416ab1"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-checkpoint-types/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 331,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-checkpoint-types/Cargo.toml.stdout",
+      "sha256": "fb881e814d9837952b0e291edbbb3bcfa498b8281e139321c556420cf313df15"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-control-plane/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 333,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-control-plane/Cargo.toml.stdout",
+      "sha256": "680461e37dc91dfac8c9eff9a3e713922fc117f88e0291f0e7fdf4cc735a9adf"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-crypto-primitives/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 924,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-crypto-primitives/Cargo.toml.stdout",
+      "sha256": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-data-availability/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1250,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-data-availability/Cargo.toml.stdout",
+      "sha256": "d1a23863a1ee4890528a7fa929a4f7b29e22d06ae5c997987a435ea805f01946"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 35388,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs.stdout",
+      "sha256": "a3032e60636b8c30f10a41ce62ee787c5ec4996315871b0fab3b5932359485a6"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-escrow-vault/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 347,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-escrow-vault/Cargo.toml.stdout",
+      "sha256": "d7d15fe56bffccf5035e99702fbff36f19cde68adb978cddcb99cc81c909283e"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-executor/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 168,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-executor/Cargo.toml.stdout",
+      "sha256": "a5e4d8f26d975149bd33019d28dabd650066370e8126aad11913c4c87d2a7899"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-governance-guard/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 351,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-governance-guard/Cargo.toml.stdout",
+      "sha256": "0beb309f98afc7188026936d9c670be343acc969371cfa552eeb6f3444f1a7bf"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-mempool/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 141,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-mempool/Cargo.toml.stdout",
+      "sha256": "b0fcd75b13e78b66d0b20e3a2176c9c0962dfbe1ca5e0670274198c963756c85"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-mvcc-fee/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 998,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-mvcc-fee/Cargo.toml.stdout",
+      "sha256": "9aa41333719fd478a784a57ffb2bf5afdae18359af815f30db03217440c36fff"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-oracle/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 235,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-oracle/Cargo.toml.stdout",
+      "sha256": "74d413acf566aac890f01a5062f0dc828c2220edde665aeb7500bf71bf08e759"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-peer-lease/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2011,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-peer-lease/Cargo.toml.stdout",
+      "sha256": "d330e720fdadff49d3a4566f0f6408e1fbbf914117ff89d6bd0ae4321e33b658"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2288,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/Cargo.toml.stdout",
+      "sha256": "0f2de622c9ab032f666033da43a1b4fc6adabd1781d561703452bd9ba987fe14"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/lib.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 37582,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/lib.rs.stdout",
+      "sha256": "d8d5cd3f0e17f42589965f7de57575a2147277f0b34b5f1424d013f001fa0324"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/cache_quota_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3411,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/cache_quota_tests.rs.stdout",
+      "sha256": "2c135db9fbadf25fe330c62f05c4729c47741269ffec933b8042bd741e844bfb"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 7499,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs.stdout",
+      "sha256": "0024d618e98db072b566a3a2921d891ed933d5d82e3e502d2fc4ec8dc21ce574"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 28806,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs.stdout",
+      "sha256": "ff16b9fefbb8ae63b4b6c2c78462d6896b0f8b6a0309a35e8b7fde8cc8ccd0e8"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/replay_owner_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 23044,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/replay_owner_tests.rs.stdout",
+      "sha256": "d6999c5c54b2492e8ce34d66883a27277aece0697c4b047d56fa963d4dd03271"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 12559,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs.stdout",
+      "sha256": "9b2a8c33581acd7c7986e8a8546aef5acf6c771dcec49bd6bcab59e654de235b"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14721,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs.stdout",
+      "sha256": "6d5ed788928927bce0aaad7a6292ea0fc74d3740c8eee96c445fbbfe4553726d"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 14451,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard_tests.rs.stdout",
+      "sha256": "c53280c69183ef36f2d22d2b10839dc73b15a5ba96e858d4a72654d5c0570a12"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 28147,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs.stdout",
+      "sha256": "5e295e1beed76ac833d43b87c1fc3a6f2476cd5ada73230d3fd561a119c4148d"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 22016,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs.stdout",
+      "sha256": "fb9af8c325f25aec3f4275b5f00419bdc1d9f9bb3005d16b9bcdb681ad34aac5"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 16258,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs.stdout",
+      "sha256": "db2c42cb97067d1553a36fe6be4d67bdeea204a0132952ae1d62cddb97ec8db8"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 16392,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_plan_tests.rs.stdout",
+      "sha256": "d10e7a28a800344700ba21e936dc8421a16123c0ad7ad3809a03fae1b298670f"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 27480,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_shard_recovery_tests.rs.stdout",
+      "sha256": "258e21b0c13030f59a1b467bb6bde612f7a74fe1a1fb0731b05e5a6f7e961601"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 22044,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs.stdout",
+      "sha256": "21179b4f545c03b11db983714a57a912094a00797651e318eaf9f8778137da34"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 18462,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs.stdout",
+      "sha256": "66a0006a069aa50ed5e63eb13d329c6588ea1b460ce869969234a3d313a94f14"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 383503,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-pon-node/src/store.rs.stdout",
+      "sha256": "ae9602b648ceadbc6c8b786fae74048e172572d18bfce41ecceab65728f2bdac"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-protocol/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 684,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-protocol/Cargo.toml.stdout",
+      "sha256": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-release-bundle/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 523,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-release-bundle/Cargo.toml.stdout",
+      "sha256": "1253706cf981ca12a4d4da734ffd14412d13a6941fd8f6649dab34b488cf2c52"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-research-protocol/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 426,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-research-protocol/Cargo.toml.stdout",
+      "sha256": "d509ee983b0128ed70468ce224694f1edbab899ff0c4b0fa6b60e69cf5ce278b"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-service-settlement/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 630,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-service-settlement/Cargo.toml.stdout",
+      "sha256": "ef6d0d6b16ca5600808bbbed76b902f2004d427a29ebe4f5b5d6c78360cc517d"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 594,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml.stdout",
+      "sha256": "91f0c5dee1d02ff6ee62b276e11429c0f616eae7d7a8bd00d1315ac777c987e9"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-state-import/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 408,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-state-import/Cargo.toml.stdout",
+      "sha256": "fab1897088c6a5f81ef52c33de2cfae63854cd3ed435b3e70ce8054acfba0d9b"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-task-kernel/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 563,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-task-kernel/Cargo.toml.stdout",
+      "sha256": "d87cc43b8dbe3ba163886d25f1587c32ae3c562603102a5bf0645abcedef0063"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-transport/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 395,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-transport/Cargo.toml.stdout",
+      "sha256": "720d1ac4ca279d52da65eb63ecbbea94d9b880f2befc1d873ab2a9b654a71ed7"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-types/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 238,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-types/Cargo.toml.stdout",
+      "sha256": "ff83cf759d5233c0cbb5b642f81f7e43fb4578716de5f76ff9128810148e9814"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-verification-profiles/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 336,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-verification-profiles/Cargo.toml.stdout",
+      "sha256": "a834c59008c5f2ff6c131cba6ed73d7c7ef61ead7ad9eeb154eedae31dc21155"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-worker-agent/Cargo.toml.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 561,
+      "path": "raw/blob/s0/trillionnium/crates/trnm-worker-agent/Cargo.toml.stdout",
+      "sha256": "04bfc738e6b161237988e77304b0bf660d31583b3708e8499566b4b717ca9554"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/c3-ancestor-of-s0.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/c3-ancestor-of-s0.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/c3-identity.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 188,
+      "path": "raw/c3-identity.stdout",
+      "sha256": "9b5f495a1a3ef81898f818c2d204e92056f788177ca06147ab59585b28a86209"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/c3-native-paths.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 114935,
+      "path": "raw/c3-native-paths.stdout",
+      "sha256": "ce91b1f953a2a20c7297516008d412a2888f740ae40a88784f5b341a4d7f15a8"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/cargo-diff.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1009,
+      "path": "raw/cargo-diff.stdout",
+      "sha256": "b621794cffc287f063402c25eac59b30e3d68519993852121dc7f5fcee629845"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/diff-shared-research-owner.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 10362,
+      "path": "raw/diff-shared-research-owner.stdout",
+      "sha256": "476cebcb50f1bc641a8ae978bdd4fbb5e4039e78e35719c3e4482f91826bc857"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/lib.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1098,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/lib.rs.stdout",
+      "sha256": "c40001a996e32807d72200be0c9b713a6f6cc38031f1f58ad454ab2cf7e890ae"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1140,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs.stdout",
+      "sha256": "6dc5e6712d1c46c28cb8c45273abb1d1ae94decd9c259f9b8ca0770efa148b3e"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1053,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs.stdout",
+      "sha256": "8a5db5876a9c827c9fcd4980b918d422d569a05b26a823d7dc23cda22263a2cf"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1013,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs.stdout",
+      "sha256": "b039a6c3b42ec25233e33056dfe63416273f06a455efc0ee8a5f14cbad1184d6"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/store.rs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 971,
+      "path": "raw/diff-source/trillionnium/crates/trnm-pon-node/src/store.rs.stdout",
+      "sha256": "0764c94fa98dda674bd8fa9420616b205bad01109da2e7210509eae80a10699a"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/project-preflight-readonly.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 174,
+      "path": "raw/project-preflight-readonly.stdout",
+      "sha256": "c27e73a9200cdd86e67a0a33ade2544ec59587c2867c275db30ca8839c1afda3"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/s0-identity.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 181,
+      "path": "raw/s0-identity.stdout",
+      "sha256": "fc62a1cade75589b1ed70805475b32bebade4c233439f6a242956ea86aa31796"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/s0-native-paths.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 115990,
+      "path": "raw/s0-native-paths.stdout",
+      "sha256": "f2b0c669e0b963ef06acd9522ca9e980eca025830cd3e4cac13feb68b5738c9d"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/source-changed-name-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2091,
+      "path": "raw/source-changed-name-status.stdout",
+      "sha256": "94e250184e006266b19f7decd2c21dbda43f64678eff42ff65d9ae2e35529785"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/source-changed-numstat.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2187,
+      "path": "raw/source-changed-numstat.stdout",
+      "sha256": "1d0df5898308607944e31b6dfc9246d9253bb5be54fc7944a6263bc109a27d53"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/source-diff-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/source-diff-check.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/working-head-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "path": "raw/working-head-after.stdout",
+      "sha256": "c5a099478f8f193e3ac82015f0528e7fe5ce184b186d8b916453927ed087c1c9"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/working-head-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "path": "raw/working-head-before.stdout",
+      "sha256": "c5a099478f8f193e3ac82015f0528e7fe5ce184b186d8b916453927ed087c1c9"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/working-status-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 329,
+      "path": "raw/working-status-after.stdout",
+      "sha256": "c96c330de244c5411a1ff12ce8536de965f5ff886500320e9782f00e6f5debdc"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/working-status-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 329,
+      "path": "raw/working-status-before.stdout",
+      "sha256": "c96c330de244c5411a1ff12ce8536de965f5ff886500320e9782f00e6f5debdc"
+    },
+    {
+      "bytes": 12105,
+      "path": "runner.py",
+      "sha256": "6d2dd7c2db92b54589c9b0c99095db2cdb01baee9d55e58152beae1eaeaf9ce6"
+    }
+  ],
+  "outcome": "FAILURE_RETAINED",
+  "source_changed_by_correction": false
+}

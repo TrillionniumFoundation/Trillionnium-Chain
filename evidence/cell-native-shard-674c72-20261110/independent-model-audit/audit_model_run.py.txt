@@ -1,0 +1,243 @@
+#!/usr/bin/env python3
+"""Post-terminal evidence audit. Never starts a model or opens an original SQLite DB."""
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import stat
+import subprocess
+import sys
+from funding_audit import audit_funding, need
+from identity_audit import audit_identity
+from reports_audit import audit_transport, audit_native, audit_forwards, audit_holds
+
+SOURCE = "b6f39277b39e0b41e552ec4d32c5f8d354c8255b"
+ELF_SHA = "07b711687a223e670280e72c1397e628ef05e97183b60cb9decd66120631226e"
+
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def unique(pairs):
+    out = {}
+    for key, value in pairs:
+        need(key not in out, "duplicate JSON key: " + key)
+        out[key] = value
+    return out
+
+
+def decode(raw):
+    return json.loads(raw, object_pairs_hook=unique, parse_constant=lambda value: need(False, value))
+
+
+def read_file(path, maximum):
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+    with os.fdopen(fd, "rb") as source:
+        info = os.fstat(source.fileno())
+        need(stat.S_ISREG(info.st_mode) and 0 < info.st_size <= maximum, "bounded regular evidence: " + str(path))
+        data = source.read(maximum + 1)
+        need(len(data) == info.st_size, "unstable read: " + str(path))
+    return data
+
+
+class Evidence:
+    def __init__(self, root):
+        self.root, self.inventory, self.checks = root, {}, []
+
+    def raw(self, relative, maximum=8*1024**2):
+        # Names are fixed by this script or by the fixed canonical BT plan.
+        need(not Path(relative).is_absolute() and ".." not in Path(relative).parts, "evidence relative path")
+        data = read_file(self.root / relative, maximum)
+        self.inventory[str(relative)] = dict(bytes=len(data), sha256=sha(data))
+        return data
+
+    def json(self, relative):
+        return decode(self.raw(relative))
+
+    def check(self, name, action):
+        try:
+            detail = action()
+            self.checks.append(dict(check=name, passed=True, detail=detail))
+        except Exception as error:
+            self.checks.append(dict(check=name, passed=False, error=type(error).__name__ + ": " + str(error)))
+
+
+def stream_hash(path):
+    digest = hashlib.sha256()
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+    with os.fdopen(fd, "rb") as source:
+        need(stat.S_ISREG(os.fstat(source.fileno()).st_mode), "regular frozen executable")
+        for block in iter(lambda: source.read(1024*1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def build_record(path):
+    b = decode(read_file(path, 2*1024**2))
+    a, p = b["artifact"], b["artifact"]["profile"]
+    need(b["source"]["head"] == SOURCE and b["source"]["status"] == "", "exact S3 build source")
+    need(b["qualified_build"] is True and b["native_limits_changed"] is False, "accepted build")
+    need(a["target"]["kind"] == ["example"] and a["target"]["crate_types"] == ["bin"] and
+         a["target"]["name"] == "cell_native_shard_research_next_use_v2" and
+         a["target"]["test"] is False and p["test"] is False and a["fresh"] is False, "ordinary freshly linked main")
+    need(p["opt_level"] == "3" and p["debug_assertions"] is True and p["overflow_checks"] is True and
+         "pq-native-openssl" in a["features"], "checked original profile")
+    need((b["wall_seconds"], b["worker_rss_bytes"], b["worker_threads"]) == (300, 8*1024**3, 4), "original limits")
+    need(b["frozen_binary"]["sha256"] == ELF_SHA and stream_hash(Path(b["frozen_binary"]["frozen"])) == ELF_SHA, "frozen ELF SHA")
+    return dict(source=SOURCE, frozen_elf_sha256=ELF_SHA, main_profile=p,
+                cached_dependencies_not_claimed_fresh=True, performance_comparison_established=False)
+
+
+def catalog_zero(e, native):
+    path = e.root / "native-shards/catalog/objects/payload.arena"
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+    total, zero = 0, True
+    with os.fdopen(fd, "rb") as source:
+        info = os.fstat(source.fileno())
+        need(stat.S_ISREG(info.st_mode) and 0 < info.st_size <= 512*1024**2, "bounded original catalog arena")
+        for block in iter(lambda: source.read(1024*1024), b""):
+            total += len(block)
+            zero &= not any(block)
+    need(zero and total == native["cold_restore"]["source_catalog_arena_overwritten_bytes"], "TCA3 remains destroyed")
+    return dict(bytes_scanned=total, all_zero=True, payload_copied=False)
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--run-dir", type=Path, required=True)
+    p.add_argument("--audit-dir", type=Path, required=True)
+    p.add_argument("--repo", type=Path, required=True)
+    p.add_argument("--build-record", type=Path, required=True)
+    p.add_argument("--terminal-record", type=Path, required=True)
+    p.add_argument("--expected-job-id", required=True)
+    p.add_argument("--expected-operation", required=True)
+    p.add_argument("--expected-source-input-sha", required=True)
+    p.add_argument("--producer-closed", action="store_true", required=True,
+                   help="only after root verifies authoritative run termination and all producers closed")
+    args = p.parse_args()
+    for digest in (args.expected_operation, args.expected_source_input_sha):
+        need(len(digest) == 64 and bytes.fromhex(digest) != bytes(32), "external nonzero digest pin")
+    root, out, repo = args.run_dir.resolve(strict=True), args.audit_dir.resolve(), args.repo.resolve(strict=True)
+    need(root != out and root not in out.parents and repo != out and repo not in out.parents, "external audit destination")
+    out.mkdir(mode=0o700)
+    e, state = Evidence(root), {}
+    terminal = read_file(args.terminal_record, 2*1024**2)
+    terminal_sha = sha(terminal)
+    def terminal_check():
+        record = decode(terminal)
+        if "content" in record:
+            record = decode(record["content"][0]["text"])
+        need(record["state"] == "succeeded" and record["exit_code"] == 0 and record["output_complete"] is True,
+             "authoritative model job did not succeed with complete terminal output")
+        need(record["job_id"] == args.expected_job_id, "authoritative model job identity")
+        need(all(value is False for value in record["log_truncated"].values()), "terminal logs truncated")
+        return dict(sha256=terminal_sha, content=record,
+                    producer_closed_explicitly_confirmed_by_parent=True, model_not_reexecuted=True)
+    e.check("authoritative_terminal_record", terminal_check)
+    e.check("frozen_ordinary_main_build", lambda: build_record(args.build_record))
+
+    def source():
+        head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip()
+        status = subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=all"], cwd=repo, text=True)
+        need(head == SOURCE and status == "", "current S3 source changed")
+        return dict(head=head, clean=True, run_start_source_binding_owned_by_strict_runner=True)
+    e.check("source_still_exact", source)
+
+    def reports():
+        state["native"] = e.json("native-result.json")
+        state["initial"] = e.json("native-shards/native-initial.json")
+        state["final"] = e.json("native-shards/native-final.json")
+        need(state["native"]["passed"] is True, "preserved real run failure")
+        return dict(native_passed=True)
+    e.check("terminal_reports", reports)
+    if all(k in state for k in ("native", "initial", "final")):
+        n, initial, final = [state[k] for k in ("native", "initial", "final")]
+        def funding():
+            rows = [decode(line) for line in e.raw("native-shards/funding.jsonl", 2*1024**2).splitlines()]
+            current = e.json("native-shards/native-current-funding.json")
+            state["funding"] = audit_funding(rows, current, initial, final)
+            (out/"current-funding-rows.json").write_text(json.dumps(current, indent=2, sort_keys=True)+"\n")
+            (out/"funding-bindings.json").write_text(json.dumps(state["funding"], indent=2, sort_keys=True)+"\n")
+            need(n["native_shard_cycle"]["m12_parent_claims"] == 79 and
+                 n["native_shard_cycle"]["all_parent_tasks_currently_funded"] is True, "top-level final funding")
+            return {k:v for k,v in state["funding"].items() if k != "funding_by_source"}
+        def identity():
+            need(sha(e.raw("original-source-inputs.json")) == args.expected_source_input_sha ==
+                 n["source_input_sha256"], "external original source-input SHA")
+            need(n["operation_pins"]["operation"] == args.expected_operation, "external operation pin")
+            state["identity"] = audit_identity(e, n)
+            need(Path(state["identity"]["spec"]["output"]).resolve() == root, "exact output directory")
+            return {k:v for k,v in state["identity"].items() if k not in ("spec", "execution")}
+        def mechanism():
+            state["mechanism"] = audit_native(e, n, initial, final)
+            return {k:v for k,v in state["mechanism"].items() if k not in ("parent_receipts", "parent_receipt_records")}
+        e.check("79_signed_sources_initial_and_final_rows_and_m12", funding)
+        e.check("small_wire_identity_and_worker", identity)
+        e.check("30_actual_BT_members", lambda: audit_transport(e, n))
+        e.check("48_groups_760_children_95chunks_3pages", mechanism)
+        if "identity" in state:
+            e.check("two_actual_original_forwards", lambda: audit_forwards(e, n, state["identity"]))
+        e.check("all_qualifications_HOLD", lambda: audit_holds(n, final))
+        e.check("catalog_payload_currently_destroyed", lambda: catalog_zero(e, n))
+        if "funding" in state and "mechanism" in state:
+            def journal():
+                from journal_audit import audit_journal
+                expected = dict(state["mechanism"])
+                expected["repair_slots"] = [4, 5]
+                f = state["funding"]
+                need(all(key.startswith("task:") for key in f["funding_by_source"]), "original Task source keys")
+                expected["funding_by_source"] = {key[5:]:value for key,value in f["funding_by_source"].items()}
+                expected["context"] = {k:f["final_anchor"][k] for k in ("network", "parameters", "genesis")}
+                expected["context"].update(plan=expected["plan"], owner_generation=1)
+                result = audit_journal(root/"native-shards/children-v3.sqlite", out/"cgj3-snapshot", expected,
+                                       closed=True, terminal_record_sha256=terminal_sha)
+                groups = result["groups_records"]
+                source_set = {"task:" + g["source"] for g in groups}
+                all_sources = list(f["funding_by_source"])
+                need(len(source_set) == len(groups) == 48 and source_set == set(all_sources[31:]), "48 exact group sources")
+                need(not source_set.intersection(all_sources[:31]) and len(all_sources[:31]) == 31, "31 direct sources separate")
+                (out/"cgj3-readback.json").write_text(json.dumps(result, indent=2, sort_keys=True)+"\n")
+                import sqlite3
+                copied_db = Path(result["snapshot"]["snapshot_db"]).resolve(strict=True)
+                need((out/"cgj3-snapshot").resolve() in copied_db.parents, "history export opens only external copy")
+                connection = sqlite3.connect(copied_db.as_uri()+"?mode=ro", uri=True)
+                try:
+                    connection.execute("PRAGMA query_only=ON")
+                    connection.execute("BEGIN")
+                    count = 0
+                    with open(out/"cgj3-history.jsonl", "x") as history:
+                        for sequence, previous, payload, digest in connection.execute(
+                            "SELECT sequence,previous,payload,digest FROM events ORDER BY sequence"):
+                            history.write(json.dumps(dict(sequence=sequence, previous=previous.hex(),
+                                payload_utf8=payload.decode(), digest=digest.hex()), sort_keys=True)+"\n")
+                            count += 1
+                    need(count == 1568, "full 48 register + 760 begin + 760 complete history export")
+                    connection.rollback()
+                finally:
+                    connection.close()
+                return {k:v for k,v in result.items() if k != "groups_records"}
+            e.check("independent_CGJ3_copy_and_full_history", journal)
+    passed = all(c["passed"] for c in e.checks)
+    result = dict(schema="trnm.cell-native-shard-model-independent-audit.v1",
+        status="PASS-HOLD" if passed else "FAIL-HOLD", passed=passed, source=SOURCE,
+        expected_job_id=args.expected_job_id, expected_operation=args.expected_operation,
+        expected_source_input_sha256=args.expected_source_input_sha,
+        run_dir=str(root), checks=e.checks, small_artifact_inventory=e.inventory,
+        scope=dict(model_launched=False, repository_written=False, original_sqlite_opened=False,
+                   payload_archived=False, native_rows_source="original authenticated Node readback artifacts",
+                   second_ledger_query_performed=False, coherent_history_rollback_proof=False,
+                   os_thread_peak_independently_measured=False,
+                   independent_operators=False, independent_failure_domains=False, efficacy_qualified=False,
+                   future_retention_qualified=False, parent_settlement_qualified=False,
+                   native_task_payment_qualified=False, current_catalog_payload_integrity=False,
+                   final_use=False, production_activation=False))
+    (out/"audit.json").write_text(json.dumps(result, indent=2, sort_keys=True)+"\n")
+    print(json.dumps(dict(status=result["status"], failed=[c["check"] for c in e.checks if not c["passed"]],
+                         audit=str(out/"audit.json")), sort_keys=True))
+    return 0 if passed else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

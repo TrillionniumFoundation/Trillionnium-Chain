@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "build",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "-p",
+    "trnm-pon-node",
+    "--features",
+    "pq-native-openssl",
+    "--profile",
+    "test",
+    "--example",
+    "cell_native_shard_research_next_use_v2",
+    "--message-format=json",
+    "-vv",
+    "--color",
+    "never"
+  ],
+  "elapsed_seconds": 6.133160135010257,
+  "returncode": 0,
+  "stage": "cargo-build"
+}

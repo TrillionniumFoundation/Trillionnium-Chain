@@ -1,0 +1,103 @@
+{
+  "TMPDIR": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/source-qualified-s3/tmp",
+  "completed_at": "2026-11-10T06:06:10.744383+00:00",
+  "gates": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "elapsed_seconds": 0.031533947912976146,
+      "exit_code": 0,
+      "name": "preflight",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c27e73a9200cdd86e67a0a33ade2544ec59587c2867c275db30ca8839c1afda3"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "b6f39277b39e0b41e552ec4d32c5f8d354c8255b"
+      ],
+      "elapsed_seconds": 1.5156549960374832,
+      "exit_code": 0,
+      "name": "exact-source",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "afbd256304696db3b777ef8f93b24120e97c12042e9f3cefa6ebc326eba96e58"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "scripts/ci/test_pq_authority_effect_register.py"
+      ],
+      "elapsed_seconds": 0.26457678782753646,
+      "exit_code": 0,
+      "name": "authority-controls",
+      "stderr_sha256": "d060e8488aa957e785e1f5cee3136d0c7ba866391b918c42a45c653de71895d6",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/pq_authority_effect_register.py",
+        "--root",
+        "."
+      ],
+      "elapsed_seconds": 0.06400719308294356,
+      "exit_code": 0,
+      "name": "authority-reader",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "d12d4ee227c49d51465ea8a5a5e494045e08e58998e59a736cf625507bb0c397"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "elapsed_seconds": 1.9716978948563337,
+      "exit_code": 0,
+      "name": "source-integrity-negatives",
+      "stderr_sha256": "1637a4472143b783b237a02cc1b6a93931c91879dc9e57da9a2f77a6d11b4564",
+      "stdout_sha256": "48e4bb5e7f01f1a973bfcb06ceeb6599f1d83c6548aa298360af4e502812ed14"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "elapsed_seconds": 6.4721872981172055,
+      "exit_code": 0,
+      "name": "repository-and-links",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "f8fc9d4dde1bccbc14e7e5c386a83bc815dc7d4ecb92c4aff2dc80ca0c222876"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "b6f39277b39e0b41e552ec4d32c5f8d354c8255b"
+      ],
+      "elapsed_seconds": 1.5157353850081563,
+      "exit_code": 0,
+      "name": "exact-source-end",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "afbd256304696db3b777ef8f93b24120e97c12042e9f3cefa6ebc326eba96e58"
+    }
+  ],
+  "identity": {
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "status": "",
+    "tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78"
+  },
+  "passed": true,
+  "runner_sha256": "b8829eced75d362c085b0768e5085b5c5af1d2310aef77e268df46f71c0c814a",
+  "schema": "trnm.native-shard-source-checks.v2"
+}

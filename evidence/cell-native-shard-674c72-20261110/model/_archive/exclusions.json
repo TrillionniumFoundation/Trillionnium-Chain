@@ -1,0 +1,157 @@
+{
+  "audit_copied_metadata_sqlite_exception_not_used_in_this_packet": true,
+  "excluded_files": [
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/bep52-received.sqlite-writer-lock-v4",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/consumer.sqlite-writer-lock-v4",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/publisher.sqlite-writer-lock-v4",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 147456,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/budgets.sqlite",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 32,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/children-v3.owner-v3.lock",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 5632000,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/children-v3.sqlite",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 32768,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/children-v3.sqlite-shm",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 4268352,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/children-v3.sqlite-wal",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/delivery.sqlite-writer-lock-v4",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 140468224,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/repair-delivery.sqlite",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 32768,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/repair-delivery.sqlite-shm",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 20632,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/repair-delivery.sqlite-wal",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/repair-delivery.sqlite-writer-lock-v4",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 585728,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/node/native.sqlite",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 0,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/node/owner.lock",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 70414336,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/payload.arena",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 69632,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-2/retention.sqlite",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 70414336,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/payload.arena",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 81920,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-5/retention.sqlite",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 122880,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/catalog/versions.sqlite",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 536870912,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/catalog/objects/payload.arena",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 45056,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/catalog/objects/retention.sqlite",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 70414336,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/payload.arena",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 69632,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-3/retention.sqlite",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 70414336,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/payload.arena",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 69632,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-1/retention.sqlite",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 70414336,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/payload.arena",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 69632,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-0/retention.sqlite",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 70414336,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/payload.arena",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    },
+    {
+      "bytes": 81920,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/provider-4/retention.sqlite",
+      "reason": "Native original SQLite/WAL/SHM, arenas, cache payload or lock; bytes were not opened"
+    }
+  ],
+  "native_payload_cache_arena_database_bytes_opened": false,
+  "schema": "trnm.model-payload-exclusions.v1"
+}

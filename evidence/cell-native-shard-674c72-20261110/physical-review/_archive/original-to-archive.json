@@ -1,0 +1,251 @@
+{
+  "files": [
+    {
+      "archive_path": "assertions.json",
+      "bytes": 1408,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/assertions.json",
+      "original_relativepath": "assertions.json",
+      "sha256": "31b362284a5205bb00e82b288636e446470185046dcb7ff63cb9101ea3316df2"
+    },
+    {
+      "archive_path": "audit.py.txt",
+      "bytes": 18550,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/audit.py",
+      "original_relativepath": "audit.py",
+      "sha256": "a790136fdad01c63d8f5f56d2fe0287093a11ffaaeb5562e09ad9b2c3dd3d53c"
+    },
+    {
+      "archive_path": "job-record.json",
+      "bytes": 2005,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/job-record.json",
+      "original_relativepath": "job-record.json",
+      "sha256": "ab83ad10db3b910f53e4bf5e14fe232c21eaab5307368038944d553ebf21c83b"
+    },
+    {
+      "archive_path": "launch.json",
+      "bytes": 1041,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/launch.json",
+      "original_relativepath": "launch.json",
+      "sha256": "b125250e1d3624cad95085135d649db1a16ae000a5120585df96dbdb2bf97d0b"
+    },
+    {
+      "archive_path": "manifest.json",
+      "bytes": 15933,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/manifest.json",
+      "original_relativepath": "manifest.json",
+      "sha256": "88025fb7d0c613ff57954434ed62c2cfbebc4abd2a1fe8b1c016cac1b4da42a7"
+    },
+    {
+      "archive_path": "raw-inputs-after.json",
+      "bytes": 5342,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw-inputs-after.json",
+      "original_relativepath": "raw-inputs-after.json",
+      "sha256": "8858198eb813df9430c5e28fe49136af01f836fee3f3866e77186ca2680f0303"
+    },
+    {
+      "archive_path": "raw-inputs-before.json",
+      "bytes": 5342,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw-inputs-before.json",
+      "original_relativepath": "raw-inputs-before.json",
+      "sha256": "8858198eb813df9430c5e28fe49136af01f836fee3f3866e77186ca2680f0303"
+    },
+    {
+      "archive_path": "raw/checked-artifact.json",
+      "bytes": 18082,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw/checked-artifact.json",
+      "original_relativepath": "raw/checked-artifact.json",
+      "sha256": "f34056fa5ab8fd8e5360975350d615d140ba5b9fc26e9afcd47ac3c297dc7f3e"
+    },
+    {
+      "archive_path": "raw/checked-build-start.json",
+      "bytes": 1245,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw/checked-build-start.json",
+      "original_relativepath": "raw/checked-build-start.json",
+      "sha256": "292be91695df3bccaa3501dc315a9426cacc408fcab5e2454fb9135517cc98f9"
+    },
+    {
+      "archive_path": "raw/model-config.json",
+      "bytes": 2912,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw/model-config.json",
+      "original_relativepath": "raw/model-config.json",
+      "sha256": "111d10f2e6eea734ed016ae6ccdd3624b0394d6ef21357584e7b989b08fe832d"
+    },
+    {
+      "archive_path": "raw/native-final.json",
+      "bytes": 112139,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw/native-final.json",
+      "original_relativepath": "raw/native-final.json",
+      "sha256": "cf4060d5ae34c9d0b6b887f9d4266941671b1d95ab2e72594e2de2ae36d0e163"
+    },
+    {
+      "archive_path": "raw/native-initial.json",
+      "bytes": 47526,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw/native-initial.json",
+      "original_relativepath": "raw/native-initial.json",
+      "sha256": "d580ab0990713b21e40b0ea9df9cf9626e91d8fb8a60e93c63b6fd32b34528ad"
+    },
+    {
+      "archive_path": "raw/native-result.json",
+      "bytes": 85113,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw/native-result.json",
+      "original_relativepath": "raw/native-result.json",
+      "sha256": "83960ffeade28b32c3365e6486a646cd92f6d7dec78a19703f084c4c8036da13"
+    },
+    {
+      "archive_path": "raw/next-use-observations.json",
+      "bytes": 2354,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw/next-use-observations.json",
+      "original_relativepath": "raw/next-use-observations.json",
+      "sha256": "bf695b6729d12f6d36920529a3c8cf0501add0e84a1ea4aab2699221348843ff"
+    },
+    {
+      "archive_path": "raw/next-use-result.json",
+      "bytes": 3534,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw/next-use-result.json",
+      "original_relativepath": "raw/next-use-result.json",
+      "sha256": "07cccce717a13face716b4a8c02dd78b97bcb5ff15d2fd345c7f8c31eed5b643"
+    },
+    {
+      "archive_path": "raw/repair-wire-cache-config.json",
+      "bytes": 527,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw/repair-wire-cache-config.json",
+      "original_relativepath": "raw/repair-wire-cache-config.json",
+      "sha256": "75d1806048d924bea61b2c292509cefc9f1d0899c9ce652bd828f794f171b787"
+    },
+    {
+      "archive_path": "raw/source-spec.json",
+      "bytes": 10295,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw/source-spec.json",
+      "original_relativepath": "raw/source-spec.json",
+      "sha256": "83e4ab28cd84813c1a489c4c53222764b6437edf0eaad8924776c0777ff61835"
+    },
+    {
+      "archive_path": "raw/storage-wire-cache-config.json",
+      "bytes": 527,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw/storage-wire-cache-config.json",
+      "original_relativepath": "raw/storage-wire-cache-config.json",
+      "sha256": "992e47f1a9a8d6ef27c5a18f32ba2d4c0c57a33ebbf01638ee3be110add3edee"
+    },
+    {
+      "archive_path": "raw/worker-cost-events.jsonl",
+      "bytes": 1428,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw/worker-cost-events.jsonl",
+      "original_relativepath": "raw/worker-cost-events.jsonl",
+      "sha256": "956787a02994cae6e716624499d96bbdf28833124a13e8e1f20697f731f101d4"
+    },
+    {
+      "archive_path": "raw/worker-ready.json",
+      "bytes": 4247,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw/worker-ready.json",
+      "original_relativepath": "raw/worker-ready.json",
+      "sha256": "cf947d04aefc06a192b288e16d86b6992535fbdfe84151c643f883f08034036c"
+    },
+    {
+      "archive_path": "raw/worker-supervisor.json",
+      "bytes": 2834,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw/worker-supervisor.json",
+      "original_relativepath": "raw/worker-supervisor.json",
+      "sha256": "5a5bc5f26236265472fa210d57ee3f4ff44b11f364036102fc8f632d28968a59"
+    },
+    {
+      "archive_path": "raw/wrapper-native-started.json",
+      "bytes": 459,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw/wrapper-native-started.json",
+      "original_relativepath": "raw/wrapper-native-started.json",
+      "sha256": "71b6e804b43ac4b311f71afc607c3a5975df1fbe94201b3115c32cb753cf6162"
+    },
+    {
+      "archive_path": "raw/wrapper-observation.json",
+      "bytes": 3485,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw/wrapper-observation.json",
+      "original_relativepath": "raw/wrapper-observation.json",
+      "sha256": "9a5825d35c9ffbe8f928d733fe90d787237c8da12c17556c491fb66380cdee83"
+    },
+    {
+      "archive_path": "raw/wrapper-start.json",
+      "bytes": 1363,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/raw/wrapper-start.json",
+      "original_relativepath": "raw/wrapper-start.json",
+      "sha256": "1584091aed9f0fc44de363d554b75f9a6de138dc6d2cdeac884f16cf1cc97070"
+    },
+    {
+      "archive_path": "result.json",
+      "bytes": 557,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/result.json",
+      "original_relativepath": "result.json",
+      "sha256": "9138b9f208fbbf3a7190ae5ca3cedfed96577fcaea37872b22d9407fd87c22c5"
+    },
+    {
+      "archive_path": "source-references.json",
+      "bytes": 2849,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/source-references.json",
+      "original_relativepath": "source-references.json",
+      "sha256": "7607fe28a7f4b3a915fd06fdc9972ca9a4d28a85d2126a9ae49458fe478fff89"
+    },
+    {
+      "archive_path": "source/scripts/llm_cell_sealed_worker_v1.py.txt",
+      "bytes": 45100,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/source/scripts/llm_cell_sealed_worker_v1.py.txt",
+      "original_relativepath": "source/scripts/llm_cell_sealed_worker_v1.py.txt",
+      "sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+    },
+    {
+      "archive_path": "source/scripts/llm_runtime_pilot.py.txt",
+      "bytes": 125239,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/source/scripts/llm_runtime_pilot.py.txt",
+      "original_relativepath": "source/scripts/llm_runtime_pilot.py.txt",
+      "sha256": "d2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7"
+    },
+    {
+      "archive_path": "source/trillionnium/Cargo.toml.txt",
+      "bytes": 2204,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/source/trillionnium/Cargo.toml.txt",
+      "original_relativepath": "source/trillionnium/Cargo.toml.txt",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "archive_path": "source/trillionnium/crates/trnm-data-availability/src/cell/erasure/custody.rs.txt",
+      "bytes": 19368,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/source/trillionnium/crates/trnm-data-availability/src/cell/erasure/custody.rs.txt",
+      "original_relativepath": "source/trillionnium/crates/trnm-data-availability/src/cell/erasure/custody.rs.txt",
+      "sha256": "d61ce12d4d4a99e559c20ba465079ad3e57f888bf944acddcf1fcaf4d1101e7e"
+    },
+    {
+      "archive_path": "source/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs.txt",
+      "bytes": 28303,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/source/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs.txt",
+      "original_relativepath": "source/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs.txt",
+      "sha256": "6f6fb3397d6be92d851aa4ad631ea7ddba70247f80f5e6d1bf56311bf78e77b6"
+    },
+    {
+      "archive_path": "source/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/recovery.rs.txt",
+      "bytes": 16707,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/source/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/recovery.rs.txt",
+      "original_relativepath": "source/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/recovery.rs.txt",
+      "sha256": "517e27e7d514d0469deab4004bcb76b224938712e09208cee58e211d2cdafdb4"
+    },
+    {
+      "archive_path": "source/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs.txt",
+      "bytes": 18462,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/source/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs.txt",
+      "original_relativepath": "source/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs.txt",
+      "sha256": "66a0006a069aa50ed5e63eb13d329c6588ea1b460ce869969234a3d313a94f14"
+    },
+    {
+      "archive_path": "source/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/recovery.rs.txt",
+      "bytes": 29324,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/source/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/recovery.rs.txt",
+      "original_relativepath": "source/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/recovery.rs.txt",
+      "sha256": "937aea71f75fcedc5bded4cdd5b60d84cfef89ab8a755c5d5e13da8e372d92ed"
+    },
+    {
+      "archive_path": "summary.json",
+      "bytes": 20898,
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/summary.json",
+      "original_relativepath": "summary.json",
+      "sha256": "85330031fe216cac833dda4192fdfc43cf8e6ca14206246a34fc6ae1740c12e1"
+    }
+  ],
+  "original_manifest_unchanged": true,
+  "schema": "trnm.physical-review-path-mapping.v1"
+}

@@ -1,0 +1,154 @@
+#!/usr/bin/env python3
+"""Archive only a closed audit, with three authorized metadata SQLite copies."""
+import datetime as dt
+import hashlib
+import json
+import os
+from pathlib import Path
+import stat
+
+P = '/home/qq/work/chain-cell-native-shard-674c72-20261110'
+V, C = Path(P+'-validation'), Path(P+'-control')
+SOURCE = V/'independent-model-audit-23120317-attempt01'
+STAGE = V/'evidence-staging-independent-model-audit-v1'
+RUN_SHA = '749e76889a692997a2467cc8fa78afe5d912ddd6a526b35ae11ea671c7029e3c'
+AUDIT_SHA = 'dafdda4567e04327ecad53e2d6e1ddd85c48e5933438920b30d403f07bc15bef'
+RENAME = {'.md','.py','.rs','.toml','.lock','.sh','.yml','.yaml','.log'}
+SQL = {'evidence/cgj3-snapshot/children-v3.sqlite',
+       'evidence/cgj3-snapshot/children-v3.sqlite-wal',
+       'evidence/cgj3-snapshot/children-v3.sqlite-shm'}
+sha = lambda b: hashlib.sha256(b).hexdigest()
+enc = lambda x: (json.dumps(x,sort_keys=True,indent=2)+'\n').encode()
+
+
+def ident(s):
+    return dict(device=s.st_dev,inode=s.st_ino,bytes=s.st_size,mtime_ns=s.st_mtime_ns,
+                ctime_ns=s.st_ctime_ns,mode=stat.S_IMODE(s.st_mode))
+
+
+def stable(path):
+    before=path.lstat()
+    if not stat.S_ISREG(before.st_mode):
+        raise RuntimeError('not regular: '+str(path))
+    fd=os.open(path,os.O_RDONLY|getattr(os,'O_NOFOLLOW',0))
+    with os.fdopen(fd,'rb') as f:
+        opened=os.fstat(f.fileno());raw=f.read();afterfd=os.fstat(f.fileno())
+    values=[ident(s) for s in (before,opened,afterfd,path.lstat())]
+    if any(x!=values[0] for x in values) or len(raw)!=before.st_size:
+        raise RuntimeError('closed source changed: '+str(path))
+    return raw,values[0]
+
+
+def save(rel,raw):
+    p=STAGE/rel;p.parent.mkdir(parents=True,exist_ok=True)
+    with p.open('xb') as f:f.write(raw)
+    if p.read_bytes()!=raw:raise RuntimeError('readback mismatch: '+rel)
+    return dict(archive_path=rel,bytes=len(raw),sha256=sha(raw))
+
+
+def main():
+    if STAGE.exists():raise RuntimeError('refusing overwrite')
+    plan=json.loads((C/'collect-independent-model-audit-v1.selection.json').read_bytes())
+    runraw,_=stable(SOURCE/'run-manifest.json')
+    if sha(runraw)!=RUN_SHA:raise RuntimeError('run-manifest identity')
+    run=json.loads(runraw);expected=run['files']
+    actual=[]
+    for p in sorted(SOURCE.rglob('*')):
+        if p.is_symlink():raise RuntimeError('unexpected symlink')
+        if p.is_file():actual.append(str(p.relative_to(SOURCE)))
+    if set(actual)!=set(expected)|{'run-manifest.json'}:raise RuntimeError('closed roster changed')
+    excluded={x for x in actual if x.startswith('__pycache__/')}
+    if excluded!=set(plan['excluded_pycache']):raise RuntimeError('exclusion roster changed')
+    selected=sorted(set(actual)-excluded)
+    if len(selected)!=22:raise RuntimeError('expected 22 originals')
+    auditraw,_=stable(SOURCE/'evidence/audit.json')
+    if sha(auditraw)!=AUDIT_SHA:raise RuntimeError('audit identity')
+    audit=json.loads(auditraw)
+    if not (len(audit['checks'])==12 and all(x['passed'] is True for x in audit['checks'])
+            and audit['passed'] is True and audit['status']=='PASS-HOLD'):
+        raise RuntimeError('original twelve-check PASS-HOLD changed')
+    false_fields=['final_use','production_activation','independent_operators',
+        'independent_failure_domains','future_retention_qualified','efficacy_qualified',
+        'native_task_payment_qualified','parent_settlement_qualified','payload_archived',
+        'original_sqlite_opened','model_launched','repository_written']
+    if any(audit['scope'][k] is not False for k in false_fields):raise RuntimeError('scope promoted')
+    statusraw,_=stable(C/'collect-independent-model-audit-v1.job-status.json')
+    streamraw,_=stable(C/'collect-independent-model-audit-v1.job-read.json')
+    status,streams=json.loads(statusraw),json.loads(streamraw)
+    if not (status['job_id']=='1a1c428ada5-cf39-145' and status['state']=='succeeded'
+        and status['exit_code']==0 and status['output_complete'] and streams['stdout']['eof']
+        and streams['stderr']['eof']):raise RuntimeError('audit job incomplete')
+    STAGE.mkdir()
+    metadata=[(Path(__file__),'collector.py.txt'),
+        (C/'collect-independent-model-audit-v1.selection.json','selection.json'),
+        (C/'collect-independent-model-audit-v1.inventory.json','inventory.json'),
+        (C/'collect-independent-model-audit-v1.job-status.json','audit-job-status.json'),
+        (C/'collect-independent-model-audit-v1.job-read.json','audit-job-read.json')]
+    for path,name in metadata:
+        raw,_=stable(path);save('_archive/metadata/'+name,raw)
+    index=[];sql=[]
+    for name in selected:
+        path=SOURCE/name;is_sql='.sqlite' in path.name or path.suffix=='.db'
+        if is_sql and name not in SQL:raise RuntimeError('SQLite outside explicit exception')
+        raw,s=stable(path)
+        e=dict(bytes=len(runraw),sha256=RUN_SHA) if name=='run-manifest.json' else expected[name]
+        if len(raw)!=e['bytes'] or sha(raw)!=e['sha256']:raise RuntimeError('final manifest mismatch: '+name)
+        archive=Path(name);renamed=path.suffix.lower() in RENAME or path.name=='Cargo.lock'
+        if renamed:archive=archive.with_name(archive.name+'.txt')
+        row=save(str(archive),raw)
+        row.update(original_path=str(path),original_relative_path=name,
+            original_stat_before_and_after=s,renamed_as_plain_text=renamed,
+            authorized_sqlite_metadata_copy=is_sql,expected_identity_scope='final closed run-manifest',
+            readback_verified=True)
+        index.append(row)
+        if is_sql:sql.append(row)
+    if {x['original_relative_path'] for x in sql}!=SQL:raise RuntimeError('snapshot roster incomplete')
+    omissions=[]
+    for name in sorted(excluded):
+        omissions.append(dict(original_relative_path=name,original_path=str(SOURCE/name),
+            reason='explicitly excluded generated Python bytecode cache',copied=False,
+            content_read_by_collector=False,original_manifest_sha256=expected[name]['sha256'],
+            original_manifest_bytes=expected[name]['bytes'],current_stat_bytes=(SOURCE/name).lstat().st_size))
+    rb=json.loads((STAGE/'evidence/cgj3-readback.json').read_bytes())
+    before=rb['snapshot']['files_before_sqlite_copy_open'];comparisons=[]
+    for suffix,name in [('db','evidence/cgj3-snapshot/children-v3.sqlite'),
+        ('-wal','evidence/cgj3-snapshot/children-v3.sqlite-wal'),
+        ('-shm','evidence/cgj3-snapshot/children-v3.sqlite-shm')]:
+        comparisons.append(dict(original_relative_path=name,before_copy_open_record=before[suffix],
+            final_run_manifest_record=expected[name],
+            before_and_final_sha_equal=before[suffix]['sha256']==expected[name]['sha256']))
+    if any(rb[k] is not False for k in ['final_use_or_production_qualification',
+        'effect_dispatch_authority','physical_shard_payloads_verified_here','payment_or_positive_verdict']):
+        raise RuntimeError('CGJ3 boundary promoted')
+    save('_archive/original-to-archive.json',enc(dict(schema='trnm.independent-audit-original-path-map.v1',
+        files=index,relative_layout_preserved_except_safe_text_suffix=True,original_manifests_rewritten=False)))
+    save('_archive/exclusions.json',enc(dict(schema='trnm.independent-audit-exclusions.v1',files=omissions,
+        active_physical_review_not_traversed=True,unexpected_payloads_found=False)))
+    verification=dict(schema='trnm.independent-audit-copy-verification.v1',
+        original_run_manifest_sha256=RUN_SHA,original_audit_sha256=AUDIT_SHA,
+        copied_original_files=len(index),copied_original_bytes=sum(x['bytes'] for x in index),
+        copied_final_run_manifest_rows=len(index)-1,excluded_final_run_manifest_rows=len(omissions),
+        entire_original_run_manifest_bytes_preserved=True,original_audit_checks=12,
+        all_original_checks_passed=True,status='PASS-HOLD',original_hold_scope=audit['scope'],
+        copied_sqlite_metadata_files=3,copied_sqlite_metadata_bytes=sum(x['bytes'] for x in sql),
+        final_snapshot_vs_before_copy_open=comparisons,
+        snapshot_hash_rule='Use final closed run-manifest; preserve the distinct original before-copy-open SHM record unchanged.',
+        sqlite_connections_created=False,original_model_sqlite_accessed=False,
+        audit_snapshot_files_read_as_bytes=True,candidate_written=False,model_reexecuted=False,
+        active_physical_review_collected=False)
+    save('_archive/verification.json',enc(verification))
+    files=[]
+    for p in sorted(STAGE.rglob('*')):
+        if p.is_file():
+            raw=p.read_bytes();files.append(dict(path=str(p.relative_to(STAGE)),bytes=len(raw),sha256=sha(raw)))
+    manifest=dict(schema='trnm.independent-audit-archive-file-manifest.v1',manifest_self_excluded=True,
+        files=files,files_excluding_manifest=len(files),bytes_excluding_manifest=sum(x['bytes'] for x in files))
+    m=save('_archive/file-manifest.json',enc(manifest))
+    print(json.dumps(dict(result='COPIED_AND_READBACK_VERIFIED',output=str(STAGE),
+        copied_original_files=len(index),copied_original_bytes=verification['copied_original_bytes'],
+        files_excluding_manifest=len(files),bytes_excluding_manifest=manifest['bytes_excluding_manifest'],
+        manifest=m,audit_entry='evidence/audit.json',original_run_manifest_entry='run-manifest.json',
+        snapshot_metadata_bytes=verification['copied_sqlite_metadata_bytes'],status='PASS-HOLD'),sort_keys=True))
+
+
+if __name__=='__main__':main()

@@ -1,0 +1,2 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/trnm_pon_node-1c6acfc1d5eeef55)

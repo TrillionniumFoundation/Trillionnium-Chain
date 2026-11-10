@@ -1,0 +1,128 @@
+   Compiling shlex v1.3.0
+   Compiling find-msvc-tools v0.1.9
+   Compiling version_check v0.9.5
+   Compiling cc v1.2.59
+   Compiling generic-array v0.14.7
+   Compiling proc-macro2 v1.0.106
+    Checking typenum v1.20.1
+   Compiling quote v1.0.45
+   Compiling unicode-ident v1.0.24
+    Checking cfg-if v1.0.4
+   Compiling vcpkg v0.2.15
+   Compiling pkg-config v0.3.32
+   Compiling syn v2.0.117
+    Checking zeroize v1.9.1
+   Compiling libc v0.2.184
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+   Compiling sha2-asm v0.6.4
+    Checking cmov v0.5.4
+    Checking bitflags v2.11.0
+    Checking ctutils v0.4.6
+    Checking digest v0.10.7
+   Compiling semver v1.0.27
+   Compiling serde_core v1.0.228
+    Checking cpufeatures v0.2.17
+   Compiling rustc_version v0.4.1
+    Checking hybrid-array v0.4.15
+   Compiling cfg_aliases v0.2.2
+   Compiling curve25519-dalek v4.1.3
+    Checking sha2 v0.10.9
+   Compiling libsqlite3-sys v0.37.0
+   Compiling equivalent v1.0.2
+   Compiling hashbrown v0.16.1
+   Compiling winnow v1.0.4
+   Compiling zmij v1.0.21
+   Compiling autocfg v1.5.1
+   Compiling num-traits v0.2.19
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling indexmap v2.13.1
+    Checking crypto-common v0.2.2
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling openssl-sys v0.9.117
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+    Checking subtle v2.6.1
+   Compiling serde_json v1.0.149
+    Checking signature v2.2.0
+   Compiling serde v1.0.228
+    Checking foldhash v0.2.0
+    Checking ed25519 v2.2.3
+   Compiling toml_edit v0.25.13+spec-1.1.0
+    Checking digest v0.11.3
+   Compiling serde_derive v1.0.228
+    Checking itoa v1.0.18
+   Compiling thiserror v1.0.69
+    Checking memchr v2.8.0
+   Compiling proc-macro-crate v3.5.0
+    Checking ed25519-dalek v2.2.0
+    Checking hashlink v0.11.1
+   Compiling borsh v1.8.0
+   Compiling thiserror-impl v1.0.69
+    Checking keccak v0.2.2
+    Checking smallvec v1.15.1
+   Compiling anyhow v1.0.103
+    Checking fallible-iterator v0.3.0
+   Compiling once_cell v1.21.4
+    Checking fallible-streaming-iterator v0.1.9
+   Compiling openssl v0.10.81
+    Checking sponge-cursor v0.1.0
+    Checking foreign-types-shared v0.1.1
+    Checking shake v0.1.0
+    Checking foreign-types v0.3.2
+    Checking rusqlite v0.39.0
+   Compiling borsh-derive v1.8.0
+    Checking module-lattice v0.2.3
+    Checking signature v3.0.0
+   Compiling openssl-macros v0.1.1
+    Checking hex v0.4.3
+    Checking trnm-protocol v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-protocol)
+    Checking ml-dsa v0.1.1
+   Compiling rustix v1.1.4
+    Checking trnm-crypto-primitives v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-crypto-primitives)
+    Checking linux-raw-sys v0.12.1
+   Compiling getrandom v0.4.2
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling nix v0.30.1
+    Checking trnm-task-kernel v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-task-kernel)
+    Checking trnm-verification-profiles v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-verification-profiles)
+    Checking getrandom v0.2.17
+    Checking fs2 v0.4.3
+    Checking fastrand v2.3.0
+    Checking trnm-service-settlement v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-service-settlement)
+    Checking tempfile v3.27.0
+    Checking trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-data-availability)
+    Checking trnm-mvcc-fee v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-release-bundle v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-release-bundle)
+    Checking trnm-transport v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-transport)
+    Checking trnm-mempool v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-mempool)
+    Checking trnm-pon-node v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node)
+error[E0277]: `?` couldn't convert the error: `WireError: StdError` is not satisfied
+  --> crates/trnm-pon-node/examples/cell_native_shard_research_v2/funding.rs:81:93
+   |
+38 | ) -> Result<Vec<NativeFundingSourceV1>> {
+   |      ---------------------------------- required `WireError: StdError` because of this
+...
+81 |             transaction.signature = hex::decode(sign_hex(&key, &transaction.signing_digest()?))?
+   |                                                                             ----------------^ the trait `StdError` is not implemented for `WireError`
+   |                                                                             |
+   |                                                                             this has type `Result<_, WireError>`
+   |
+   = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+   = note: required for `Box<dyn StdError + std::marker::Send + Sync>` to implement `From<WireError>`
+
+error[E0277]: `?` couldn't convert the error: `WireError: StdError` is not satisfied
+  --> crates/trnm-pon-node/examples/cell_native_shard_research_v2/funding.rs:84:51
+   |
+38 | ) -> Result<Vec<NativeFundingSourceV1>> {
+   |      ---------------------------------- required `WireError: StdError` because of this
+...
+84 |             transactions.push(transaction.encode()?);
+   |                                           --------^ the trait `StdError` is not implemented for `WireError`
+   |                                           |
+   |                                           this has type `Result<_, WireError>`
+   |
+   = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+   = note: required for `Box<dyn StdError + std::marker::Send + Sync>` to implement `From<WireError>`
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `trnm-pon-node` (example "cell_native_shard_research_next_use_v2") due to 2 previous errors

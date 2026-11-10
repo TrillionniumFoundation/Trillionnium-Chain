@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "build",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "-p",
+    "trnm-pon-node",
+    "--features",
+    "pq-native-openssl",
+    "--example",
+    "cell_native_shard_research_next_use_v2"
+  ],
+  "elapsed_seconds": 0.11476887785829604,
+  "exit_code": 0,
+  "name": "actual-model-binary",
+  "stderr_sha256": "99f71393b9903dca098310bb446022a4bdee195ea9996f351a787195555210a6",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

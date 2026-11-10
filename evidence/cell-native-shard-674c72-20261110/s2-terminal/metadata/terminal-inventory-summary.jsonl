@@ -1,0 +1,4 @@
+{"kind":"generated_scope_note","source":"root terminal confirmation plus read-only Hepta job status","native_job":"1a1c404c640-cf39-c0","state":"succeeded","exit_code":0,"output_complete":true,"native_test_scopes":[60,7,5]}
+{"kind":"generated_scope_note","source":"root terminal confirmation","source_s2_outcome":"RETAINED_FAILURE","original_negative_roster":43,"passed":41,"failures":1,"errors":1,"inline_pin_refusal_retained":true}
+{"kind":"generated_scope_note","source":"controller-archive-provenance.json original copied separately","native_before_run_identity_verified":true,"source_before_run_hash_recorded":false,"source_reconstruction_only":true}
+{"kind":"generated_scope_note","source":"root","workflow_pin_review_count":26,"s3_active_excluded":true,"model_run_collected":false}

@@ -1,0 +1,425 @@
+{
+  "files": [
+    {
+      "archive_path": "README.md.txt",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 5251,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/README.md",
+      "original_relative_path": "README.md",
+      "original_stat_before_and_after": {
+        "bytes": 5251,
+        "ctime_ns": 1794292374861263438,
+        "device": 66306,
+        "inode": 95159056,
+        "mode": 384,
+        "mtime_ns": 1794292374861263438
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": true,
+      "sha256": "b18e0e7e4fdd42e724313980e7f5138598e63a4953a36d2edf4091c4f8e45c7b"
+    },
+    {
+      "archive_path": "audit.stderr.log.txt",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 0,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/audit.stderr.log",
+      "original_relative_path": "audit.stderr.log",
+      "original_stat_before_and_after": {
+        "bytes": 0,
+        "ctime_ns": 1794292374861360135,
+        "device": 66306,
+        "inode": 95159062,
+        "mode": 384,
+        "mtime_ns": 1794292374861360135
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_path": "audit.stdout.log.txt",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 178,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/audit.stdout.log",
+      "original_relative_path": "audit.stdout.log",
+      "original_stat_before_and_after": {
+        "bytes": 178,
+        "ctime_ns": 1794292376322974432,
+        "device": 66306,
+        "inode": 95159061,
+        "mode": 384,
+        "mtime_ns": 1794292376322974432
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": true,
+      "sha256": "732ce4adbc8b483109ef0f5de8db6329743ee29622e2845f2550c38876738475"
+    },
+    {
+      "archive_path": "audit_model_run.py.txt",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 13997,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/audit_model_run.py",
+      "original_relative_path": "audit_model_run.py",
+      "original_stat_before_and_after": {
+        "bytes": 13997,
+        "ctime_ns": 1794292374861139243,
+        "device": 66306,
+        "inode": 95159050,
+        "mode": 384,
+        "mtime_ns": 1794292374861139243
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": true,
+      "sha256": "e84827946b35b391fcf6b48d488dbedf34ba4dff44d6b5b0d72cf18ab75b4d12"
+    },
+    {
+      "archive_path": "evidence/audit.json",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 19958,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/evidence/audit.json",
+      "original_relative_path": "evidence/audit.json",
+      "original_stat_before_and_after": {
+        "bytes": 19958,
+        "ctime_ns": 1794292376322974432,
+        "device": 66306,
+        "inode": 95159077,
+        "mode": 384,
+        "mtime_ns": 1794292376322974432
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": false,
+      "sha256": "dafdda4567e04327ecad53e2d6e1ddd85c48e5933438920b30d403f07bc15bef"
+    },
+    {
+      "archive_path": "evidence/cgj3-history.jsonl",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 3943665,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/evidence/cgj3-history.jsonl",
+      "original_relative_path": "evidence/cgj3-history.jsonl",
+      "original_stat_before_and_after": {
+        "bytes": 3943665,
+        "ctime_ns": 1794292376321088984,
+        "device": 66306,
+        "inode": 95159076,
+        "mode": 384,
+        "mtime_ns": 1794292376321088984
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": false,
+      "sha256": "65bcafb655d2cdc8ba13aed79cf575b14d47b1caa3a6256f5221f2e5fdac9584"
+    },
+    {
+      "archive_path": "evidence/cgj3-readback.json",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 3380163,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/evidence/cgj3-readback.json",
+      "original_relative_path": "evidence/cgj3-readback.json",
+      "original_stat_before_and_after": {
+        "bytes": 3380163,
+        "ctime_ns": 1794292376313171691,
+        "device": 66306,
+        "inode": 95159075,
+        "mode": 384,
+        "mtime_ns": 1794292376313171691
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": false,
+      "sha256": "46e6898cc05a66b63936f2c539d8948ad12f19470ea4ed243f58c73c702925e7"
+    },
+    {
+      "archive_path": "evidence/cgj3-snapshot/children-v3.sqlite",
+      "authorized_sqlite_metadata_copy": true,
+      "bytes": 5632000,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/evidence/cgj3-snapshot/children-v3.sqlite",
+      "original_relative_path": "evidence/cgj3-snapshot/children-v3.sqlite",
+      "original_stat_before_and_after": {
+        "bytes": 5632000,
+        "ctime_ns": 1794292376201093339,
+        "device": 66306,
+        "inode": 95159072,
+        "mode": 384,
+        "mtime_ns": 1794292376201093339
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": false,
+      "sha256": "3f87276a87e0faf1d3461d1cb9f3062e4989ff065ce543cc0c27232911ce4001"
+    },
+    {
+      "archive_path": "evidence/cgj3-snapshot/children-v3.sqlite-shm",
+      "authorized_sqlite_metadata_copy": true,
+      "bytes": 32768,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/evidence/cgj3-snapshot/children-v3.sqlite-shm",
+      "original_relative_path": "evidence/cgj3-snapshot/children-v3.sqlite-shm",
+      "original_stat_before_and_after": {
+        "bytes": 32768,
+        "ctime_ns": 1794292376313963743,
+        "device": 66306,
+        "inode": 95159074,
+        "mode": 384,
+        "mtime_ns": 1794292376313963743
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": false,
+      "sha256": "10f41820dd58749857f4e111101a4b84208a1c62309a53a472c623f3e3510054"
+    },
+    {
+      "archive_path": "evidence/cgj3-snapshot/children-v3.sqlite-wal",
+      "authorized_sqlite_metadata_copy": true,
+      "bytes": 4268352,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/evidence/cgj3-snapshot/children-v3.sqlite-wal",
+      "original_relative_path": "evidence/cgj3-snapshot/children-v3.sqlite-wal",
+      "original_stat_before_and_after": {
+        "bytes": 4268352,
+        "ctime_ns": 1794292376208093085,
+        "device": 66306,
+        "inode": 95159073,
+        "mode": 384,
+        "mtime_ns": 1794292376208093085
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": false,
+      "sha256": "becb4c246fe7df0a8d4a3bf3283207361ca15106117eb3b24a2dc2ebc7bc3b59"
+    },
+    {
+      "archive_path": "evidence/current-funding-rows.json",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 86227,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/evidence/current-funding-rows.json",
+      "original_relative_path": "evidence/current-funding-rows.json",
+      "original_stat_before_and_after": {
+        "bytes": 86227,
+        "ctime_ns": 1794292375039182699,
+        "device": 66306,
+        "inode": 95159068,
+        "mode": 384,
+        "mtime_ns": 1794292375039182699
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": false,
+      "sha256": "d7f3388d543ee2ff2a5c3f6d360b74e842bb5aac722781d9bc3272306bc9e20e"
+    },
+    {
+      "archive_path": "evidence/funding-bindings.json",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 32850,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/evidence/funding-bindings.json",
+      "original_relative_path": "evidence/funding-bindings.json",
+      "original_stat_before_and_after": {
+        "bytes": 32850,
+        "ctime_ns": 1794292375039335354,
+        "device": 66306,
+        "inode": 95159069,
+        "mode": 384,
+        "mtime_ns": 1794292375039335354
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": false,
+      "sha256": "5ef9fd3a5c1fbd553b0e8d475afd796cd00c8c2e47849dc9f6a9092901e29bd5"
+    },
+    {
+      "archive_path": "funding_audit.py.txt",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 6951,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/funding_audit.py",
+      "original_relative_path": "funding_audit.py",
+      "original_stat_before_and_after": {
+        "bytes": 6951,
+        "ctime_ns": 1794292374861175691,
+        "device": 66306,
+        "inode": 95159051,
+        "mode": 384,
+        "mtime_ns": 1794292374861175691
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": true,
+      "sha256": "c18694206529ab811bbd3fdf10efa9b58e723f9b91852433b4e02d0b998d3919"
+    },
+    {
+      "archive_path": "identity_audit.py.txt",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 5954,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/identity_audit.py",
+      "original_relative_path": "identity_audit.py",
+      "original_stat_before_and_after": {
+        "bytes": 5954,
+        "ctime_ns": 1794292374861191851,
+        "device": 66306,
+        "inode": 95159052,
+        "mode": 384,
+        "mtime_ns": 1794292374861191851
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": true,
+      "sha256": "0d5a62aecc99123609a1ba031e41506fe444acabb83bdb646fecc48f6e339c03"
+    },
+    {
+      "archive_path": "invocation.json",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 1056,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/invocation.json",
+      "original_relative_path": "invocation.json",
+      "original_stat_before_and_after": {
+        "bytes": 1056,
+        "ctime_ns": 1794292374861360135,
+        "device": 66306,
+        "inode": 95159060,
+        "mode": 384,
+        "mtime_ns": 1794292374861360135
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": false,
+      "sha256": "a2da80fa28158d9c3b12f746bfc874448a941faf4678164a44fab917ce8f5744"
+    },
+    {
+      "archive_path": "journal_audit.py.txt",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 38009,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/journal_audit.py",
+      "original_relative_path": "journal_audit.py",
+      "original_stat_before_and_after": {
+        "bytes": 38009,
+        "ctime_ns": 1794292374861228540,
+        "device": 66306,
+        "inode": 95159054,
+        "mode": 384,
+        "mtime_ns": 1794292374861228540
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": true,
+      "sha256": "c85a6965960d39792702a06b59d8011733cc92e22cd074392c0875c3cad9c033"
+    },
+    {
+      "archive_path": "manifest.json",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 1399,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/manifest.json",
+      "original_relative_path": "manifest.json",
+      "original_stat_before_and_after": {
+        "bytes": 1399,
+        "ctime_ns": 1794292374861276948,
+        "device": 66306,
+        "inode": 95159057,
+        "mode": 384,
+        "mtime_ns": 1794292374861276948
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": false,
+      "sha256": "473456043504740974d0a7893406ef75fc901cac5d7db183d251efe4a7d8e577"
+    },
+    {
+      "archive_path": "raw-process-status.json",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 731,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/raw-process-status.json",
+      "original_relative_path": "raw-process-status.json",
+      "original_stat_before_and_after": {
+        "bytes": 731,
+        "ctime_ns": 1794292374861287667,
+        "device": 66306,
+        "inode": 95159058,
+        "mode": 384,
+        "mtime_ns": 1794292374861287667
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": false,
+      "sha256": "c01649e3df49b384c43b354a259f6e99d6eef9e72487542fa234ffc8a89c5f9b"
+    },
+    {
+      "archive_path": "raw-process-tool-envelope.json",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 953,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/raw-process-tool-envelope.json",
+      "original_relative_path": "raw-process-tool-envelope.json",
+      "original_stat_before_and_after": {
+        "bytes": 953,
+        "ctime_ns": 1794292374861317866,
+        "device": 66306,
+        "inode": 95159059,
+        "mode": 384,
+        "mtime_ns": 1794292374861317866
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": false,
+      "sha256": "3f52ffb62ae6d72da24ba77f2edf24be6f96bcd01fa56623ad828c43b29d6c7e"
+    },
+    {
+      "archive_path": "reports_audit.py.txt",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 10203,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/reports_audit.py",
+      "original_relative_path": "reports_audit.py",
+      "original_stat_before_and_after": {
+        "bytes": 10203,
+        "ctime_ns": 1794292374861207700,
+        "device": 66306,
+        "inode": 95159053,
+        "mode": 384,
+        "mtime_ns": 1794292374861207700
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": true,
+      "sha256": "52c5859a2034eb4b0160c2c8a3ce1b51fbcc7b128f2476d6064c2d0fa0edc7af"
+    },
+    {
+      "archive_path": "run-manifest.json",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 4158,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/run-manifest.json",
+      "original_relative_path": "run-manifest.json",
+      "original_stat_before_and_after": {
+        "bytes": 4158,
+        "ctime_ns": 1794292376343065446,
+        "device": 66306,
+        "inode": 95159078,
+        "mode": 384,
+        "mtime_ns": 1794292376343065446
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": false,
+      "sha256": "749e76889a692997a2467cc8fa78afe5d912ddd6a526b35ae11ea671c7029e3c"
+    },
+    {
+      "archive_path": "test_journal_audit.py.txt",
+      "authorized_sqlite_metadata_copy": false,
+      "bytes": 12848,
+      "expected_identity_scope": "final closed run-manifest",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/test_journal_audit.py",
+      "original_relative_path": "test_journal_audit.py",
+      "original_stat_before_and_after": {
+        "bytes": 12848,
+        "ctime_ns": 1794292374861248019,
+        "device": 66306,
+        "inode": 95159055,
+        "mode": 384,
+        "mtime_ns": 1794292374861248019
+      },
+      "readback_verified": true,
+      "renamed_as_plain_text": true,
+      "sha256": "334ac3fddb1dfefc7742ebdcf02edf70d7e474a9c300ba564caf15c49b39a09d"
+    }
+  ],
+  "original_manifests_rewritten": false,
+  "relative_layout_preserved_except_safe_text_suffix": true,
+  "schema": "trnm.independent-audit-original-path-map.v1"
+}

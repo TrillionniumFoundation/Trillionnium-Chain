@@ -1,0 +1,55 @@
+{
+  "schema": "trnm.s3-terminal-selection.v1",
+  "source_candidate_context": {
+    "commit": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78"
+  },
+  "validation": [
+    "source-qualified-s3",
+    "native-qualified-s3"
+  ],
+  "control": [
+    "run_source_checks.py",
+    "run_native_checks.py",
+    "source-checkpoint-s3.json"
+  ],
+  "excluded_validation": [
+    "tmp",
+    "future-checked-profile-build-active",
+    "future-real-model-active",
+    "evidence-staging-closed-preparation-v1",
+    "evidence-staging-s2-terminal-v1"
+  ],
+  "deferred_control": [
+    "run_model.py"
+  ],
+  "unexecuted_prepared_controls": [
+    "run-native-example-attempt03.py",
+    "run-v3-precheck-attempt01.py"
+  ],
+  "deferred_followup": [
+    "future checked-profile build",
+    "actual full-model operation"
+  ],
+  "estimated_payload_bytes": 940262,
+  "estimated_payload_files": 51,
+  "expected_original_sha256": {
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/source-qualified-s3/observation.json": "91b0e6ee640bc8eca733afb104d2eb6538822fa1c0a934255c6f08ea4f73b67e",
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/native-qualified-s3/observation.json": "2690516533c4619cc653d9811470dccc14d56a84c9e25b13cebd96eea5c11699",
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-control/run_source_checks.py": "b8829eced75d362c085b0768e5085b5c5af1d2310aef77e268df46f71c0c814a",
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-control/run_native_checks.py": "969e55a8c721200786ca7e913e8fc8f19487cbaacf9d80cd1a7bee3442ef8b9f",
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-control/source-checkpoint-s3.json": "68b71ca79eae9feeacbd331dad61ca9d9b3279780318c47496f118670c47fc72"
+  },
+  "expected_controller_sha256": {
+    "source": "b8829eced75d362c085b0768e5085b5c5af1d2310aef77e268df46f71c0c814a",
+    "native": "969e55a8c721200786ca7e913e8fc8f19487cbaacf9d80cd1a7bee3442ef8b9f"
+  },
+  "closed_preparation_scope_notes": {
+    "source_s3": "Closed succeeded0 with complete durable output. Original source-integrity controls pass 43/43 using task-owned ext4 TMPDIR without changing tests; repository/link validation passes 26 packages / 6224 links.",
+    "native_s3": "Closed succeeded0 with complete durable output. Selected original library 60 + grouped example 7 + original DA example 5 pass, with strict Clippy, formatting and actual debug binary build. Task-owned native TMPDIR is reused from S2; this is a distinct S3 source-bound run, not a cold-performance benchmark.",
+    "controllers": "Both original current controllers are now frozen and must independently match original runner SHA fields. Unlike S2's reconstructed source controller, S3 source has both before/start and observation runner hashes.",
+    "binary_scope": "The actual debug executable is BUILT ONLY. No real-model execution has occurred in this batch; its file hash cannot be used as a model PASS.",
+    "history": "The S2 source failure and prior synthetic LIMIT/cache failures remain in earlier immutable packets. This S3 pass does not relabel those observations.",
+    "artifact_rules": "Preserve complete original manifest and log bytes; source/runners/Cargo/YAML/logs/original Markdown get .txt, using only an outer original-to-archive map."
+  }
+}

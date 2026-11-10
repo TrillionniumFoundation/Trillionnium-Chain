@@ -1,0 +1,148 @@
+#!/usr/bin/env python3
+"""One reviewed workflow pin update. Default is read-only; --apply requires authorization."""
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import stat
+import subprocess
+
+HEAD = "f41d6e0ac2b40e49c1dff96110f6ed68445eaef7"
+C3 = "06233be630f8eff6cea59cd5111e5941135a4aa5"
+S0 = "d9c725f27b197f71208754b0a5ac0717798d3587"
+WORKFLOW = ".github/workflows/pon-recent-batch-acceptance.yml"
+SOURCE = "trillionnium/crates/trnm-pon-node/src/store.rs"
+OLD_PIN = "a8bd7b9c8d9b02617060bea955b3bb21d905129f"
+NEW_PIN = "eb5ac74b5563dfecfec99b371657672d31c7404f"
+BEFORE_SHA256 = "d1e361290cc6fc09edb00d5efb4dba3d95871d4f1b4462491f2130db4b71a807"
+AFTER_SHA256 = "c7cda37cae297baeba7cb317080bf0a7ca7dfaaa0e85cb892fcb5bac392caca3"
+APPEND_SHA256 = "23e17a858be0f91ff069a6eb3b22c2cab16b69e5ad274847505d3a4dabb46f03"
+PIN = re.compile(rb'^[ \t]*test "\$\(git hash-object ([^)\n"]+)\)" = ([0-9a-f]{40})[ \t]*$', re.M)
+
+
+def require(ok, message):
+    if not ok:
+        raise SystemExit(message)
+
+
+def git(repo, *args):
+    return subprocess.check_output(["git", *args], cwd=repo)
+
+
+def sha256(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def git_blob(data):
+    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
+
+
+def object_bytes(repo, revision, path):
+    data = git(repo, "cat-file", "blob", revision + ":" + path)
+    require(git_blob(data) == git(repo, "rev-parse", revision + ":" + path).decode().strip(),
+            "independent Git blob digest mismatch: " + path)
+    return data
+
+
+def verify_before(repo, review):
+    require(git(repo, "rev-parse", "HEAD").decode().strip() == HEAD, "HEAD lease changed")
+    require(not git(repo, "status", "--porcelain", "--untracked-files=all"),
+            "repository must remain completely clean before this one-file update")
+    target = repo / WORKFLOW
+    require(stat.S_ISREG(target.lstat().st_mode), "workflow is not an existing regular file")
+    before = target.read_bytes()
+    require(before == object_bytes(repo, HEAD, WORKFLOW), "workflow differs from committed Git bytes")
+    require(sha256(before) == BEFORE_SHA256, "workflow SHA lease changed")
+    old = object_bytes(repo, C3, SOURCE)
+    s0 = object_bytes(repo, S0, SOURCE)
+    current = object_bytes(repo, HEAD, SOURCE)
+    require(git_blob(old) == OLD_PIN and git_blob(current) == NEW_PIN,
+            "old/current store Git blob identity changed")
+    require(current == s0 and current.startswith(old), "reviewed append-only C3/S0/S2 relation changed")
+    require(len(current) - len(old) == 637 and sha256(current[len(old):]) == APPEND_SHA256,
+            "reviewed Linux V3 export append changed")
+    rows = []
+    paths = git(repo, "ls-files", "-z", "--", ".github/workflows").split(b"\0")
+    for raw in paths:
+        if not raw:
+            continue
+        workflow = raw.decode()
+        wire = object_bytes(repo, HEAD, workflow)
+        require((repo / workflow).read_bytes() == wire, "workflow working bytes changed")
+        for line in wire.splitlines():
+            require(b"git hash-object" not in line or PIN.fullmatch(line),
+                    "unparsed inline pin in " + workflow)
+        for match in PIN.finditer(wire):
+            path, expected = (value.decode() for value in match.groups())
+            data = object_bytes(repo, HEAD, path)
+            require((repo / path).read_bytes() == data, "pinned target working bytes changed")
+            actual = git_blob(data)
+            rows.append((workflow, path, expected, actual, sha256(data)))
+    expected_rows = [(row["workflow"], row["path"], row["expected_blob"],
+                      row["actual_blob"], row["sha256"]) for row in review["inline_pins"]]
+    require(rows == expected_rows and len(rows) == 26, "complete 26-inline-pin review lease changed")
+    mismatches = [row for row in rows if row[2] != row[3]]
+    require(mismatches == [(WORKFLOW, SOURCE, OLD_PIN, NEW_PIN,
+                           "ae9602b648ceadbc6c8b786fae74048e172572d18bfce41ecceab65728f2bdac")],
+            "one reviewed stale store pin must be the sole mismatch")
+    old_line = ('test "$(git hash-object ' + SOURCE + ')" = ' + OLD_PIN).encode()
+    new_line = ('test "$(git hash-object ' + SOURCE + ')" = ' + NEW_PIN).encode()
+    require(before.count(old_line) == 1, "expected one exact old pin line")
+    after = before.replace(old_line, new_line)
+    require(len(after) == len(before) and sha256(after) == AFTER_SHA256,
+            "proposed one-literal workflow digest mismatch")
+    require(git_blob(after) == "92920126581b48889802a4e08280697870c22ed6",
+            "proposed workflow Git blob mismatch")
+    return target, before, after
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--repo", type=Path, required=True)
+    parser.add_argument("--review", type=Path, default=Path(__file__).with_name("review.json"))
+    parser.add_argument("--apply", action="store_true",
+                        help="write only after root authorizes and all exact S2 gates have ended")
+    args = parser.parse_args()
+    repo = args.repo.resolve(strict=True)
+    review = json.loads(args.review.read_text())
+    require(review["reviewed_head"] == HEAD and review["inline_pin_count"] == 26,
+            "review identity changed")
+    target, before, after = verify_before(repo, review)
+    if not args.apply:
+        print(json.dumps({"status": "reviewed-draft-not-applied", "head": HEAD,
+                          "path": WORKFLOW, "before_sha256": BEFORE_SHA256,
+                          "after_sha256": AFTER_SHA256, "inline_pins": 26,
+                          "unchanged_matching_pins": 25}, sort_keys=True))
+        return
+    # AGENTS.md requires the normal preflight before any repository edit.
+    subprocess.check_call(["bash", "scripts/project-preflight.sh"], cwd=repo)
+    target, before, after = verify_before(repo, review)
+    fd = os.open(target, os.O_RDWR | os.O_NOFOLLOW)
+    try:
+        require(stat.S_ISREG(os.fstat(fd).st_mode), "workflow descriptor identity")
+        require(os.read(fd, len(before) + 1) == before, "workflow bytes changed before write")
+        os.lseek(fd, 0, os.SEEK_SET)
+        remaining = memoryview(after)
+        while remaining:
+            written = os.write(fd, remaining)
+            require(written > 0, "short workflow write")
+            remaining = remaining[written:]
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+    require(target.read_bytes() == after, "postwrite workflow readback mismatch")
+    require(git(repo, "diff", "--name-only").decode().splitlines() == [WORKFLOW],
+            "change scope is not exactly the reviewed workflow")
+    require(not git(repo, "diff", "--cached", "--name-only"), "unexpected staged mutation")
+    subprocess.check_call(["git", "diff", "--check"], cwd=repo)
+    print(json.dumps({"status": "applied-one-reviewed-pin", "head": HEAD,
+                      "path": WORKFLOW, "before_sha256": BEFORE_SHA256,
+                      "after_sha256": AFTER_SHA256, "commit_or_push": False,
+                      "native_execution_established": False, "security_proof": False}, sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()
+

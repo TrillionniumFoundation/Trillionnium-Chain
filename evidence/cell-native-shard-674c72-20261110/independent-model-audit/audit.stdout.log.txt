@@ -1,0 +1,1 @@
+{"audit": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01/evidence/audit.json", "failed": [], "status": "PASS-HOLD"}

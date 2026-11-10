@@ -1,0 +1,95 @@
+{
+  "task": "Continue Chain model capacity/release qualification; implement a real funded native shard path, test, commit and publish a draft PR through HeptaRuntime/ProfHepta.",
+  "current_base": {
+    "pr": 848,
+    "sha": "06233be630f8eff6cea59cd5111e5941135a4aa5",
+    "tree": "d60319b2c66b274bd982f5c2830d8bd41c414f06",
+    "branch": "fix/chain-cell-capacity-release-dc0357-20261109",
+    "target_pr_base": "fix/chain-cell-capacity-release-dc0357-20261109"
+  },
+  "ai395": {
+    "repo": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "branch": "fix/chain-cell-native-shard-674c72-20261110",
+    "control": "/home/qq/work/chain-cell-native-shard-674c72-20261110-control",
+    "validation": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation",
+    "root_pty": "dpty-f177db2c82490dd26ee52d729ad2404ba8c70b712f49e1650e0c4a78a3dbb6b1",
+    "root_offset": 43541,
+    "code_pty": "dpty-06c5cfd19c11cf69511cd05c64305192b99136e15ad804ade1228634c8950018"
+  },
+  "rog": {
+    "repo": "/home/qian-qi/work/chain-cell-native-shard-674c72-20261110-publish",
+    "head": "06233be630f8eff6cea59cd5111e5941135a4aa5",
+    "pty": "dpty-fab8ea54273d8842e80d0d7ae003500a02a4240da1994d02fee8aaa82d940184",
+    "offset": 22155,
+    "gh": "/home/linuxbrew/.linuxbrew/bin/gh",
+    "login": "ProfHepta",
+    "full_files_verified": 26827,
+    "skip_and_assume_flags": 0,
+    "push_permission": true,
+    "prepush_hook": false,
+    "common_config_unchanged": true
+  },
+  "actual": {
+    "authority_original_controls": 18,
+    "authority_result": "PASS source consistency / HOLD; all seven qualification fields false",
+    "precursor_attempt01": "Two WireError conversions failed; exact raw logs retained.",
+    "precursor_attempt02": "Compiled. 6/7 example controls pass, native full fixture LIMIT at 257 pending Tasks. Raw logs in native-example-attempt02. Not a V3 pass.",
+    "new_source_commit": null,
+    "pushed_new_branch": false,
+    "actual_model_started": false
+  },
+  "design": {
+    "pending_task_limit": 256,
+    "old_precursor_sources": {
+      "synthetic": 293,
+      "model": 791
+    },
+    "v1_task_indivisible": true,
+    "forbidden_shortcuts": [
+      "Do not raise existing ledger limits.",
+      "Do not cancel funding or invent future retention Positive/payment to make the full model pass.",
+      "Do not delete old source-alias checks or divide V1 Task claims."
+    ],
+    "chosen": "New V3 durable child journal. One original whole-Task M12 parent claim per <=16 same-provider children with exact checked monetary/resource sum. Reuse original complete snapshot check_effects for ALL parents; install all holds before provider effects. Fresh one-shot live grants only; cold Pending observe/reconcile, never replay initial writes. Parent Done only after all child Done and complete current readback. Missing/mismatching child journal with parent Pending/Done fails closed.",
+    "expected_model": {
+      "direct_root_member_m12": 31,
+      "storage_group_parent_m12": 36,
+      "repair_group_parent_m12": 12,
+      "total_original_m12_claims": 79,
+      "v3_children": 760,
+      "storage_children": 570,
+      "repair_children": 190
+    },
+    "settlement": "New group future Positive/payment/continuous paid custody remain HOLD. Production false."
+  },
+  "model": {
+    "spec": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/source-inputs.native-v2.json",
+    "spec_sha256": "d1a7fb64b7d00b4f370e75fd98feab887d6d11075a13234e54f51b5f7525e665",
+    "audit_sha256": "d4c47b01e91e39a08222f2c4b8beaece95c4e55d2ffd43e260683f20a0e94675",
+    "operation": "e6e7fc4146909c818f72a05f9eb93a7188853b268bcebbfbb92de502e15f2f18",
+    "output": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-e6e7fc414690-attempt-01",
+    "inputs": 31,
+    "bytes": 280269602,
+    "manifests": 30,
+    "chunks": 95,
+    "base_weight_bytes": 269060552,
+    "seconds": 300,
+    "payload_cap": 536870912,
+    "worker_rss": 8589934592,
+    "threads": 4,
+    "notes": "Same original independent input bytes; 17 missing old source paths migrated to the complete new checkout and hashes verified. No real model operation has started or claimed output yet."
+  },
+  "remaining": [
+    "Complete new V3 journal/Node integration via version_contract_audit; authority_lock_draft independently reviews. Root owns docs/authority/wrappers.",
+    "Retain exact failed precursor source snapshots and logs.",
+    "Build checks and controls. Freeze clean C1 commit, then run original Node storage controls + new controls, old DA example 5, strict Clippy/fmt/locked metadata, Python authority18/integrity43/repository links/full exact source.",
+    "Build actual non-test model main binary; create frozen model config with C1 head/tree/binary SHA/spec/audit/gate artifact pins.",
+    "Start run_model.py exactly once through h_process_start with memory_max_bytes=8589934592,cpu_quota_percent=400,timeout_seconds=450; retain authoritative terminal state and all failed results. Never raise original native300 silently.",
+    "Collect preparation/exact-C1/model evidence and precise current status into docs/sole plan. Commit C2 with only docs/evidence after native source frozen; assert executable source unchanged from C1.",
+    "Create git bundle C3..C2 on AI; pin SHA/size. Transfer <=1MiB through h_binary_read chunks 65535 (multiple3 base64 concatenation) then h_binary_write expected_version absent to ROG; larger use binary_upload.",
+    "ROG verify bundle/head/parent and fast-forward own worktree only. Preflight --push exact ref update, command-level gh credential helper push, gh pr create --draft --base #848 branch --body-file; no force/main bypass/merge.",
+    "Verify published PR via GitHub plugin and final concise truthful Chinese outcome with remaining HOLDs."
+  ],
+  "tools": "h_shell_start/process_start previously had slow MCP acknowledgements; preserve idempotency keys and reconcile unknown outcomes. Persistent PTY and h_text_editor are working. Local scratch was wiped between turns; authoritative work is remote.",
+  "user_authorization": "Proceed autonomously; push PRs through HeptaRuntime local GitHub as ProfHepta. No production activation."
+}

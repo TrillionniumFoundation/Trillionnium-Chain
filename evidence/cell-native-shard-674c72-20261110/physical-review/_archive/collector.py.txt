@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+"""Seal closed physical audit, publish seventh batch, then root byte manifest."""
+import datetime as dt
+import importlib.util,json,os
+from pathlib import Path
+BASE='/home/qq/work/chain-cell-native-shard-674c72-20261110'
+C=Path(BASE+'-control');V=Path(BASE+'-validation')
+HELPER=C/'final_packet_copy_v1.py'
+spec=importlib.util.spec_from_file_location('copy_helpers',HELPER)
+h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
+assert h.sha(h.read(HELPER))=='2d2fe0269dd41ede7c9d03b92c7bfc5fe1c8dac5bdd602cf2d2b7e8f5c3fea5f'
+SOURCE=V/'independent-physical-review-231'
+STAGE=V/'evidence-staging-physical-review-v1'
+PIN='88025fb7d0c613ff57954434ed62c2cfbebc4abd2a1fe8b1c016cac1b4da42a7'
+def archive_physical():
+ assert not STAGE.exists()
+ raw=h.read(SOURCE/'manifest.json');assert h.sha(raw)==PIN and len(raw)==15933
+ d=json.loads(raw);expected=d['files'];assert len(expected)==34
+ assert set(h.files(SOURCE))==set(expected)|{'manifest.json'}
+ assert sum(r['bytes'] for r in expected.values())==640769
+ for rel,row in expected.items():
+  b=h.read(SOURCE/rel);assert len(b)==row['bytes'] and h.sha(b)==row['sha256'],rel
+ STAGE.mkdir();mapping=[]
+ for rel in h.files(SOURCE):
+  dest=rel+'.txt' if Path(rel).suffix.lower() in {'.md','.py','.rs','.toml','.lock','.log','.yml','.yaml','.sh'} else rel
+  b=h.read(SOURCE/rel);h.new(STAGE/dest,b)
+  mapping.append(dict(original_path=str(SOURCE/rel),original_relativepath=rel,archive_path=dest,bytes=len(b),sha256=h.sha(b)))
+ h.new(STAGE/'_archive/collector.py.txt',h.read(Path(__file__)))
+ h.new(STAGE/'_archive/original-to-archive.json',h.encode(dict(schema='trnm.physical-review-path-mapping.v1',files=mapping,original_manifest_unchanged=True)))
+ h.new(STAGE/'_archive/summary.json',h.encode(dict(schema='trnm.closed-physical-review-curated-packet.v1',result='PASS-HOLD',original_source=str(SOURCE),original_manifest_sha256=PIN,original_files=35,original_bytes=656702,source_runtime_commit=h.S3,source_runtime_tree=h.TREE,operation=h.OP,source_bytes_and_exact_membership_verified=True,model_build_not_rerun=True,original_model_sqlite_not_opened=True,production_activation=False)))
+ rs=h.rows(STAGE);mp='_archive/file-manifest.json'
+ m=dict(schema='trnm.physical-review-curated-file-manifest.v1',files=rs,files_excluding_manifest=len(rs),bytes_excluding_manifest=sum(r['bytes'] for r in rs),manifest_self_excluded=True,self_excluded=[mp])
+ mraw=h.encode(m);h.new(STAGE/mp,mraw)
+ verified=h.verify(STAGE,mp,h.sha(mraw))
+ h.new(V/'evidence-staging-physical-review-v1.readback.json',h.encode(dict(result='PASS',stage=str(STAGE),original_manifest_sha256=PIN,**verified)))
+ return mp,h.sha(mraw)
+def main():
+ before=h.fence();assert not (h.D/'file-manifest.json').exists()
+ six_receipt=json.loads(h.read(C/'final-publication-copy-six-v1.receipt.json'));assert six_receipt['result']=='PASS'
+ reports=[]
+ for prefix,name,mp,pin in h.BATCHES:
+  v=h.verify(h.D/prefix,mp,pin)
+  assert v==h.verify(V/name,mp,pin)
+  reports.append(dict(prefix=prefix,source=str(V/name),target=str(h.D/prefix),**v))
+ assert set(p.name for p in h.D.iterdir())=={'README.md'}|{r['prefix'] for r in reports}
+ mp,pin=archive_physical();temp=V/'final-publication-copy-physical-v1';assert not temp.exists();temp.mkdir()
+ verified=h.verify(STAGE,mp,pin)
+ for rel in h.files(STAGE):h.new(temp/rel,h.read(STAGE/rel))
+ assert h.verify(temp,mp,pin)==verified
+ h.fence();assert not (h.D/'physical-review').exists() and temp.stat().st_dev==h.D.stat().st_dev
+ os.rename(temp,h.D/'physical-review')
+ assert h.verify(h.D/'physical-review',mp,pin)==verified
+ reports.append(dict(prefix='physical-review',source=str(STAGE),target=str(h.D/'physical-review'),**verified))
+ # The doc-only receipt was created after the model packet sealed: a separate root prefix.
+ link=h.read(C/'final-doc-link-review.json');pubtemp=V/'final-publication-doc-control-v1';assert not pubtemp.exists()
+ h.new(pubtemp/'final-doc-link-review.json',link)
+ assert not (h.D/'publication-control').exists() and pubtemp.stat().st_dev==h.D.stat().st_dev
+ os.rename(pubtemp,h.D/'publication-control')
+ assert h.read(h.D/'publication-control/final-doc-link-review.json')==link
+ assert {p.name for p in h.D.iterdir()}=={'README.md','publication-control'}|{r['prefix'] for r in reports}
+ h.fence();rs=h.rows(h.D)
+ assert len(rs)==len({r['path'] for r in rs}) and all(r['path']!='file-manifest.json' for r in rs)
+ m=dict(schema='trnm.curated-model-evidence-file-manifest.v1',created_at_utc=dt.datetime.now(dt.timezone.utc).isoformat(),runtime_source_commit=h.S3,runtime_source_tree=h.TREE,operation=h.OP,scope='Curated packet bytes only. Model payloads and all host or provenance dependencies are not included.',production_status='HOLD',production_activation=False,model_efficacy_qualified=False,independent_real_money_qualified=False,whole_system_qualified=False,manifest_self_excluded=True,self_excluded=['file-manifest.json'],files_excluding_manifest=len(rs),bytes_excluding_manifest=sum(r['bytes'] for r in rs),files=rs,rootdigest_definition='sha256(compact sort_keys JSON of sorted relative path/bytes/sha256 row dictionaries; UTF-8; no trailing newline)',packet_rootdigest_sha256=h.digest(rs),batches=reports,publication_control=dict(path='publication-control/final-doc-link-review.json',bytes=len(link),sha256=h.sha(link)))
+ assert h.rows(h.D)==rs
+ raw=h.encode(m);h.new(h.D/'file-manifest.json',raw)
+ final=h.rows(h.D);selfrow=dict(path='file-manifest.json',bytes=len(raw),sha256=h.sha(raw))
+ assert final==sorted(rs+[selfrow],key=lambda r:r['path'])
+ for r in reports:
+  v=h.verify(h.D/r['prefix'],r['manifest_relativepath'],r['manifest_sha256']);assert all(v[k]==r[k] for k in v)
+ assert h.read(h.D/'file-manifest.json')==raw
+ end=h.fence()
+ receipt=dict(schema='trnm.final-curated-packet-completion-receipt.v1',result='PASS',completed_at_utc=dt.datetime.now(dt.timezone.utc).isoformat(),controller_path=str(Path(__file__)),controller_sha256=h.sha(h.read(Path(__file__))),helper_path=str(HELPER),helper_sha256=h.sha(h.read(HELPER)),execution_channel='HeptaRuntime ai395 own PTY; parent authorized; no commit/push/build/model',argv=['python3',str(Path(__file__))],before=before,end=end,batches=reports,root_manifest_path=str(h.D/'file-manifest.json'),root_manifest_sha256=h.sha(raw),root_manifest_bytes=len(raw),files_including_root_manifest=len(final),bytes_including_root_manifest=sum(r['bytes'] for r in final),packet_rootdigest_excluding_self=h.digest(rs),all_regular_nlink_one=True,exact_membership=True,all_sha_readbacks_verified=True,original_native_sqlite_opened=False,closed_audit_metadata_sqlite_bytes_only=True,source_runtime_unchanged=True,readme_sha256=h.README,production_status='HOLD',candidate_writes_complete=True)
+ h.new(C/'final-publication-root-manifest-v1.receipt.json',h.encode(receipt));print(json.dumps(receipt,sort_keys=True))
+if __name__=='__main__':main()

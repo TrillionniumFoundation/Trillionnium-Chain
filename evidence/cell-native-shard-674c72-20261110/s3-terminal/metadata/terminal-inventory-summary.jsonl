@@ -1,0 +1,4 @@
+{"kind":"generated_scope_note","source_job":"1a1c4100118-cf39-ee","native_job":"1a1c410737d-cf39-f0","status":"succeeded","exit_code":0,"complete_dual_streams":true}
+{"kind":"generated_scope_note","source_controls_passed":43,"source_controls_original_unchanged":true,"repository_packages":26,"repository_links":6224,"native_selected_scopes":[60,7,5]}
+{"kind":"generated_scope_note","source_runner_sha256":"b8829eced75d362c085b0768e5085b5c5af1d2310aef77e268df46f71c0c814a","native_runner_sha256":"969e55a8c721200786ca7e913e8fc8f19487cbaacf9d80cd1a7bee3442ef8b9f","hashes_must_match_original_start_records":true}
+{"kind":"generated_scope_note","actual_debug_binary_build_only":true,"actual_full_model_run_observed":false,"checked_profile_active_excluded":true}

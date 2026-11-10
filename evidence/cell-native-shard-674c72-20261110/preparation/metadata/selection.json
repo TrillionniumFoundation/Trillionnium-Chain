@@ -1,0 +1,94 @@
+{
+  "schema": "trnm.closed-preparation-selection.v1",
+  "source_candidate_context": {
+    "commit": "f41d6e0ac2b40e49c1dff96110f6ed68445eaef7",
+    "tree": "0e75a266b6582f3acb48cd3d41dcef7309e63dc7"
+  },
+  "scope": "Closed preparation and source-review observations only. Exact-source final native, source and real-model campaigns are excluded until the root explicitly confirms terminal results.",
+  "validation": [
+    "authority-s0-rebind-674c72",
+    "independent-provenance-s0",
+    "independent-provenance-s0-artifact-readback.json",
+    "independent-provenance-s0-corrected",
+    "native-example-attempt01",
+    "native-example-attempt02",
+    "precursor-limit-reconstruction",
+    "precursor-limit-source",
+    "s1-source-before-helper-repair.log",
+    "source-inputs.native-v2.json",
+    "source-inputs.native-v2.verification.json",
+    "v3-component-attempt01",
+    "v3-component-attempt02",
+    "v3-component-attempt03",
+    "v3-component-attempt04",
+    "v3-core-attempt01",
+    "v3-core-attempt02",
+    "v3-diagnostics-attempt01",
+    "v3-diagnostics-attempt01-source"
+  ],
+  "control": [
+    "add-native-funding-receipts-01.py",
+    "apply-authority.py",
+    "apply-doc-funding-v3.py",
+    "apply-doc-phase-v3.py",
+    "apply-doc-validating-v3.py",
+    "apply-doc-wire-v3.py",
+    "apply-docs-grouped-v3.py",
+    "apply-docs.py",
+    "apply-plan-validating-v3.py",
+    "apply-v3-component-attempt01.py",
+    "apply-v3-component-attempt02.py",
+    "apply-v3-component-attempt03.py",
+    "apply-v3-component-attempt04.py",
+    "apply-v3-core-attempt01.py",
+    "apply-v3-core-attempt02.py",
+    "archive-precursor-limit-01.py",
+    "freeze-source-s0.py",
+    "freeze-source-s1.py",
+    "freeze-source-s2.py",
+    "native-overlay-01.py",
+    "native-overlay-02-applied.json",
+    "native-overlay-02-preflight.log",
+    "native-overlay-02.py",
+    "native-overlay-preflight.log",
+    "prepare_model.py",
+    "resume-state-grouped-v3.json",
+    "run-native-example-attempt01.py",
+    "run-native-example-attempt02.py",
+    "run-v3-diagnostics-attempt01.py",
+    "source-checkpoint-s0.json",
+    "source-checkpoint-s1.json",
+    "source-checkpoint-s2.json"
+  ],
+  "excluded_validation": [
+    "native-qualified-s2",
+    "source-qualified-s2",
+    "tmp"
+  ],
+  "deferred_control": [
+    "run_model.py",
+    "run_native_checks.py",
+    "run_source_checks.py"
+  ],
+  "deferred_followup": [
+    "source-qualified-s2",
+    "native-qualified-s2",
+    "s2-tmp-inode-observation.json",
+    "real-model campaign after root confirmation"
+  ],
+  "archive_extension_policy": "Append .txt to source, Cargo manifests/locks, runners, .log and original Markdown; preserve every original byte and map original paths externally. Collector creates no README.",
+  "estimated_payload_bytes": 5620986,
+  "estimated_payload_files": 604,
+  "initial_inventory_utc": "2026-11-10T05:54:41.552363+00:00",
+  "unexecuted_prepared_controls": [
+    "run-native-example-attempt03.py",
+    "run-v3-precheck-attempt01.py"
+  ],
+  "closed_preparation_scope_notes": {
+    "limit_failure": "Synthetic harness native pending-Task admission refusal (6 of 7 tests passed), not a real-model operation.",
+    "wirecache_failure": "Synthetic example harness 128-record wire-manifest cache refusal (6 of 7 tests passed), not a real-model operation.",
+    "source_owner_report": "version_contract_audit independently confirmed the preparation paths terminal and reported no true-model launch by that agent.",
+    "original_manifests": "Preserve all original bytes, including the seven-file precursor source/reconstruction and diagnostics' 23-source precommit delta. No later source substitutes for failed source.",
+    "unexecuted_controls": "Excluded until independently confirmed; prepared controller text alone is never execution evidence."
+  }
+}

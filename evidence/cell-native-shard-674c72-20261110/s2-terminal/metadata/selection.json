@@ -1,0 +1,54 @@
+{
+  "schema": "trnm.s2-terminal-selection.v1",
+  "source_candidate_context": {
+    "commit": "f41d6e0ac2b40e49c1dff96110f6ed68445eaef7",
+    "tree": "0e75a266b6582f3acb48cd3d41dcef7309e63dc7"
+  },
+  "successor_context": {
+    "commit": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78",
+    "scope": "Root reports only the workflow inline pin differs. S3 campaigns are active and excluded; no S2 execution is relabelled as S3."
+  },
+  "scope": "Root-confirmed closed S2 source/native campaigns, workflow inline pin review and explicit controller provenance. No candidate/source/repository writes; no active S3 or real-model collection.",
+  "validation": [
+    "source-qualified-s2",
+    "native-qualified-s2",
+    "workflow-inline-pin-s2-to-s3",
+    "s2-tmp-inode-observation.json"
+  ],
+  "control": [
+    "run_native_checks.s2-used.py",
+    "run_source_checks.s2-reconstructed.py",
+    "controller-archive-provenance.json"
+  ],
+  "excluded_validation": [
+    "tmp",
+    "source-qualified-s3",
+    "native-qualified-s3",
+    "evidence-staging-closed-preparation-v1"
+  ],
+  "deferred_control": [
+    "run_model.py",
+    "run_native_checks.py",
+    "run_source_checks.py"
+  ],
+  "unexecuted_prepared_controls": [
+    "run-native-example-attempt03.py",
+    "run-v3-precheck-attempt01.py"
+  ],
+  "deferred_followup": [
+    "all active S3 source/native campaigns",
+    "future real-model operation"
+  ],
+  "estimated_payload_bytes": 1061650,
+  "estimated_payload_files": 63,
+  "closed_preparation_scope_notes": {
+    "native_s2": "The original native job 1a1c404c640-cf39-c0 is succeeded/exit0 with complete durable output. Root-confirmed selected scopes: 60 storage library controls, 7 grouped example controls and 5 original DA example controls; strict Clippy/fmt and actual debug binary build.",
+    "source_s2": "Terminal retained failure: original /tmp source-integrity controls 41 passed / 1 failure / 1 error of 43, and repository/workflow inline pin mismatch. No later pass upgrades this observation.",
+    "workflow_review": "Closed 26/26 inline pins reviewed before one store.rs Git blob binding changed. S3 exact campaigns remain separate.",
+    "tmp_observation": "Preserve the original s2-tmp-inode-observation.json, whose df -i shows 94 free /tmp inodes.",
+    "native_controller": "run_native_checks.s2-used.py sha256 82607f3f8502513674931e0307d960bfe34bee23736a21fce7d953e70550fa2f independently matches the native start record.",
+    "source_controller": "run_source_checks.s2-reconstructed.py sha256 c5983b81e83583fbd2ac0c4099151709ce4b610b5a914d59cbe2436b8d670fa9 is reconstructed by reversing the single recorded three-line TMPDIR patch. No before-run SHA was recorded; exact original executed controller bytes are not independently authenticated.",
+    "original_manifests": "Every original observation, start record, manifest and controller-provenance JSON is copied byte-identically. Original sources/runners/YAML/logs/Markdown get .txt with an outer path map."
+  }
+}

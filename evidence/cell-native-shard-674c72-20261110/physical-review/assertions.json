@@ -1,0 +1,68 @@
+{
+  "checks": [
+    {
+      "name": "closed successful raw model",
+      "passed": true
+    },
+    {
+      "name": "S3 raw source/config/build binding",
+      "passed": true
+    },
+    {
+      "name": "native-result raw SHA",
+      "passed": true
+    },
+    {
+      "name": "wire-cache full exact accounting",
+      "passed": true
+    },
+    {
+      "name": "128 input/768 wire distinct grants",
+      "passed": true
+    },
+    {
+      "name": "570 storage/190 repair/95 chunk readback",
+      "passed": true
+    },
+    {
+      "name": "initial two-pass codec equations",
+      "passed": true
+    },
+    {
+      "name": "recovery three-pass and plan reservation equations",
+      "passed": true
+    },
+    {
+      "name": "consumer write-plus-readback reservation",
+      "passed": true
+    },
+    {
+      "name": "global and nested child CPU scopes",
+      "passed": true
+    },
+    {
+      "name": "unchanged 300s/8GiB/four-CPU boundary",
+      "passed": true
+    },
+    {
+      "name": "one reconciled RSS gap preserved",
+      "passed": true
+    },
+    {
+      "name": "two real request intervals and seven worker stages",
+      "passed": true
+    },
+    {
+      "name": "all HOLD/TCA3 false fields preserved",
+      "passed": true
+    },
+    {
+      "name": "pinned S3 source semantics",
+      "passed": true
+    },
+    {
+      "name": "all original raw SHA unchanged",
+      "passed": true
+    }
+  ]
+}

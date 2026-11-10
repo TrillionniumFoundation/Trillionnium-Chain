@@ -1,0 +1,247 @@
+diff --git a/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs b/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs
+index bd12e9c7d..9fba5a55b 100644
+--- a/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs
++++ b/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs
+@@ -319,7 +319,120 @@ fn pack(
+     Ok((manifests, files))
+ }
+ 
+-fn observe(spec: &Spec, report: &mut Value) -> Result<()> {
++/// Research-only replacement for the retained-byte stage. It consumes this
++/// operation's two new caches, keeps the original absolute deadline and returns
++/// the cold consumer readback used by the unchanged CTS1 and sealed-worker path.
++/// This is not a production storage or execution capability.
++pub struct CellResearchRetentionInputsV2<'a> {
++    pub operation: [u8; 32],
++    pub output: &'a Path,
++    pub deadline: Instant,
++    pub version: &'a CellVersionManifestV1,
++    pub snapshot: &'a CellReleaseSnapshotV1,
++    pub content: &'a CellVersionContentV2,
++    pub model_owner: &'a CellLoaderContextV1,
++    pub environment_owner: &'a CellLoaderContextV1,
++    pub source: CellStoreV1,
++    pub source_path: &'a Path,
++    pub received: CellStoreV1,
++    pub received_path: &'a Path,
++}
++
++fn retain_complete_copy(
++    inputs: CellResearchRetentionInputsV2<'_>,
++    report: &mut Value,
++) -> Result<CellStoreV1> {
++    let CellResearchRetentionInputsV2 {
++        operation,
++        output,
++        deadline,
++        version,
++        snapshot: release_snapshot,
++        model_owner,
++        environment_owner,
++        source,
++        source_path,
++        received,
++        received_path,
++        content,
++    } = inputs;
++    let _ = content;
++    report["stage"] = json!("original TCA3 complete physical retention");
++    let config = CellVersionRetentionConfigV3 {
++        retention: CellRetentionConfigV1 {
++            store_id: id(&operation, b"store", &[]),
++            capacity_bytes: SNAPSHOT_BOUND,
++            maximum_obligations: 128,
++        },
++        maximum_versions: 16,
++        maximum_metadata_bytes: 64 << 20,
++    };
++    let contract = CellVersionRetentionContractV3 {
++        operation,
++        funding_operation: id(&operation, b"declared-local-funding", &[]),
++        responsible_owner: id(&operation, b"local-research-owner", &[]),
++        failure_domain: id(&operation, b"single-host-domain", &[]),
++        replica_index: 0,
++        required_replicas: 1,
++        retain_from_height: 1,
++        retain_until_height: 100,
++        repair_deadline_height: 90,
++        version: version.clone(),
++        model: CellVersionLoaderPinV3::from_context(model_owner),
++        environment: CellVersionLoaderPinV3::from_context(environment_owner),
++        tensor_model: Some(release_snapshot.tensors().clone()),
++        snapshot: None,
++        objects: version
++            .manifests()
++            .iter()
++            .map(|m| CellRetentionContractV1 {
++                operation: id(&operation, b"object", &m.id()),
++                funding_operation: id(&operation, b"object-funding", &m.id()),
++                manifest: m.clone(),
++                retain_from_height: 1,
++                retain_until_height: 100,
++                maximum_repair_bytes: m.size(),
++                successor: None,
++            })
++            .collect(),
++    };
++    let archive_path = output.join("retained");
++    let mut archive = CellVersionRetentionStoreV3::create(&archive_path, config.clone())?;
++    archive.reserve_version(contract, archive.anchor(deadline)?, deadline)?;
++    archive.acknowledge_version(operation, &received, deadline)?;
++    let anchor = archive.anchor(deadline)?;
++    write_new(
++        &output.join("independent-catalog-anchor.cva3"),
++        &anchor.encode(),
++    )?;
++    drop(archive);
++    drop(source);
++    drop(received);
++    remove_cache(source_path)?;
++    remove_cache(received_path)?;
++    report["stage"] = json!("reopen anchored owner and actual cold arena restore");
++    let mut archive = CellVersionRetentionStoreV3::open(&archive_path, config, anchor)?;
++    let consumer = cache(&output.join("consumer.sqlite"))?;
++    check(
++        consumer.cache_usage()?.chunk_rows == 0,
++        "consumer must be actually cold",
++    )?;
++    archive.populate_cache(operation, &consumer, deadline)?;
++    report["cold_restore"] = json!({"source_cache_absent": !source_path.exists(),
++        "bep52_cache_absent": !received_path.exists(),
++        "retained_from_bep52_received_cache": true,
++        "anchored_reopen": true, "actual_target_readback": true,
++        "consumer_chunks": consumer.cache_usage()?.chunk_rows,
++        "m12_funding_admitted": false, "retention_heights_are_research_terms": true});
++
++    Ok(consumer)
++}
++
++fn observe(
++    spec: &Spec,
++    report: &mut Value,
++    retention: impl FnOnce(CellResearchRetentionInputsV2<'_>, &mut Value) -> Result<CellStoreV1>,
++) -> Result<()> {
+     check(
+         (1..=300).contains(&spec.seconds),
+         "original bounded research duration",
+@@ -493,73 +606,23 @@ fn observe(spec: &Spec, report: &mut Value) -> Result<()> {
+         "cts1": hex::encode(release_snapshot.commitment()),
+         "bep52_plan": hex::encode(transport_plan),
+     });
+-    report["stage"] = json!("original TCA3 complete physical retention");
+-    let config = CellVersionRetentionConfigV3 {
+-        retention: CellRetentionConfigV1 {
+-            store_id: id(&operation, b"store", &[]),
+-            capacity_bytes: SNAPSHOT_BOUND,
+-            maximum_obligations: 128,
++    let consumer = retention(
++        CellResearchRetentionInputsV2 {
++            operation,
++            output: &spec.output,
++            deadline,
++            version: &version,
++            snapshot: &release_snapshot,
++            content: &content,
++            model_owner: &model_owner,
++            environment_owner: &environment_owner,
++            source,
++            source_path: &source_path,
++            received,
++            received_path: &received_path,
+         },
+-        maximum_versions: 16,
+-        maximum_metadata_bytes: 64 << 20,
+-    };
+-    let contract = CellVersionRetentionContractV3 {
+-        operation,
+-        funding_operation: id(&operation, b"declared-local-funding", &[]),
+-        responsible_owner: id(&operation, b"local-research-owner", &[]),
+-        failure_domain: id(&operation, b"single-host-domain", &[]),
+-        replica_index: 0,
+-        required_replicas: 1,
+-        retain_from_height: 1,
+-        retain_until_height: 100,
+-        repair_deadline_height: 90,
+-        version: version.clone(),
+-        model: CellVersionLoaderPinV3::from_context(&model_owner),
+-        environment: CellVersionLoaderPinV3::from_context(&environment_owner),
+-        tensor_model: Some(release_snapshot.tensors().clone()),
+-        snapshot: None,
+-        objects: version
+-            .manifests()
+-            .iter()
+-            .map(|m| CellRetentionContractV1 {
+-                operation: id(&operation, b"object", &m.id()),
+-                funding_operation: id(&operation, b"object-funding", &m.id()),
+-                manifest: m.clone(),
+-                retain_from_height: 1,
+-                retain_until_height: 100,
+-                maximum_repair_bytes: m.size(),
+-                successor: None,
+-            })
+-            .collect(),
+-    };
+-    let archive_path = spec.output.join("retained");
+-    let mut archive = CellVersionRetentionStoreV3::create(&archive_path, config.clone())?;
+-    archive.reserve_version(contract, archive.anchor(deadline)?, deadline)?;
+-    archive.acknowledge_version(operation, &received, deadline)?;
+-    let anchor = archive.anchor(deadline)?;
+-    write_new(
+-        &spec.output.join("independent-catalog-anchor.cva3"),
+-        &anchor.encode(),
+-    )?;
+-    drop(archive);
+-    drop(source);
+-    drop(received);
+-    remove_cache(&source_path)?;
+-    remove_cache(&received_path)?;
+-    report["stage"] = json!("reopen anchored owner and actual cold arena restore");
+-    let mut archive = CellVersionRetentionStoreV3::open(&archive_path, config, anchor)?;
+-    let consumer = cache(&spec.output.join("consumer.sqlite"))?;
+-    check(
+-        consumer.cache_usage()?.chunk_rows == 0,
+-        "consumer must be actually cold",
++        report,
+     )?;
+-    archive.populate_cache(operation, &consumer, deadline)?;
+-    report["cold_restore"] = json!({"source_cache_absent": !source_path.exists(),
+-        "bep52_cache_absent": !received_path.exists(),
+-        "retained_from_bep52_received_cache": true,
+-        "anchored_reopen": true, "actual_target_readback": true,
+-        "consumer_chunks": consumer.cache_usage()?.chunk_rows,
+-        "m12_funding_admitted": false, "retention_heights_are_research_terms": true});
+ 
+     report["stage"] = json!("actual CPV4 consumer verification and joint residency");
+     let timestamp = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
+@@ -831,7 +894,12 @@ fn observe(spec: &Spec, report: &mut Value) -> Result<()> {
+     Ok(())
+ }
+ 
+-pub fn run() -> Result<()> {
++/// Reuse the original independently pinned capture, TCP transfer, CTS1 admission
++/// and sealed-worker operation with an explicitly selected research retention
++/// owner. The callback cannot extend the original deadline or choose a new model.
++pub fn run_with_retention(
++    retention: impl FnOnce(CellResearchRetentionInputsV2<'_>, &mut Value) -> Result<CellStoreV1>,
++) -> Result<()> {
+     let arguments: Vec<_> = std::env::args().collect();
+     check(
+         arguments.len() == 3,
+@@ -859,7 +927,7 @@ pub fn run() -> Result<()> {
+         "loopback_only": true, "typed_snapshot_admitted": false,
+         "composition_worker_executed": false,
+         "actual_model_run": "not_started"});
+-    let result = observe(&spec, &mut report);
++    let result = observe(&spec, &mut report, retention);
+     report["passed"] = json!(result.is_ok());
+     if let Err(error) = &result {
+         report["error"] = json!(error.to_string());
+@@ -881,3 +949,8 @@ fn remove_cache(path: &Path) -> Result<()> {
+     }
+     Ok(())
+ }
++
++/// Preserve the original V2 complete-copy entry and every original bound.
++pub fn run() -> Result<()> {
++    run_with_retention(retain_complete_copy)
++}

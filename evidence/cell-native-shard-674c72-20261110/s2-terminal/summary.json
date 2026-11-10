@@ -1,0 +1,34 @@
+{
+  "all_original_manifests_unchanged": true,
+  "append_policy": "Keep this packet immutable. Collect root-confirmed later campaigns in separate sibling packets.",
+  "campaign_and_controller_scope": {
+    "native_controller": "run_native_checks.s2-used.py sha256 82607f3f8502513674931e0307d960bfe34bee23736a21fce7d953e70550fa2f independently matches the native start record.",
+    "native_s2": "The original native job 1a1c404c640-cf39-c0 is succeeded/exit0 with complete durable output. Root-confirmed selected scopes: 60 storage library controls, 7 grouped example controls and 5 original DA example controls; strict Clippy/fmt and actual debug binary build.",
+    "original_manifests": "Every original observation, start record, manifest and controller-provenance JSON is copied byte-identically. Original sources/runners/YAML/logs/Markdown get .txt with an outer path map.",
+    "source_controller": "run_source_checks.s2-reconstructed.py sha256 c5983b81e83583fbd2ac0c4099151709ce4b610b5a914d59cbe2436b8d670fa9 is reconstructed by reversing the single recorded three-line TMPDIR patch. No before-run SHA was recorded; exact original executed controller bytes are not independently authenticated.",
+    "source_s2": "Terminal retained failure: original /tmp source-integrity controls 41 passed / 1 failure / 1 error of 43, and repository/workflow inline pin mismatch. No later pass upgrades this observation.",
+    "tmp_observation": "Preserve the original s2-tmp-inode-observation.json, whose df -i shows 94 free /tmp inodes.",
+    "workflow_review": "Closed 26/26 inline pins reviewed before one store.rs Git blob binding changed. S3 exact campaigns remain separate."
+  },
+  "candidate_source_written": false,
+  "copied_files": 63,
+  "copied_original_bytes": 1061650,
+  "copy_only": true,
+  "created_at_utc": "2026-11-10T06:09:33.081951+00:00",
+  "generated_inventory_is_summary_not_original_manifest": true,
+  "native_tests_executed": false,
+  "original_manifest_count": 1,
+  "path_mapping": "original-to-archive.json",
+  "real_model_campaign_collected": false,
+  "repository_evidence_written": false,
+  "result": "COPIED_AND_READBACK_VERIFIED",
+  "schema": "trnm.s2-terminal-staging.v1",
+  "selected_control_files": 3,
+  "selected_validation_top_items": 4,
+  "source_candidate_context": {
+    "commit": "f41d6e0ac2b40e49c1dff96110f6ed68445eaef7",
+    "tree": "0e75a266b6582f3acb48cd3d41dcef7309e63dc7"
+  },
+  "source_native_s2_terminal_campaigns_collected": true,
+  "successor_s3_campaign_collected": false
+}

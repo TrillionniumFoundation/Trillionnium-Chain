@@ -1,0 +1,625 @@
+"""Independent CGJ3 terminal audit. Never opens the producer DB using SQLite.
+
+audit_journal(db, NEW_EXTERNAL_SNAPSHOT_DIR, expected, closed=True,
+              terminal_record_sha256=EXTERNALLY_VERIFIED_TERMINAL_RECORD_HASH)
+
+expected.context pins network/parameters/genesis/plan (hex32) and owner_generation.
+expected count keys: groups/storage_groups/repair_groups/children/storage_children/
+repair_children. Production values are 48/36/12/760/570/190. Also required:
+funding_by_source={Taskhex:{amount,provider,...}}, and parent_receipts={groupop:hash}.
+The caller independently audits native ledger/M12 and the closed-process witness.
+No payload data is returned. Coherent DB+external-anchor rollback is not proved.
+"""
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+from pathlib import Path
+import sqlite3
+import stat
+from typing import Any
+
+S3_COMMIT = "b6f39277b39e0b41e552ec4d32c5f8d354c8255b"
+SOURCE_PINS = {
+    "journal.rs": "fb516f76d9bd64c035398044939a24c153e2ce881bb60ef168627496ab53fe42",
+    "types.rs": "f0f927daf81aff4326a555f78a23207a8d34cd63d46a936fc334ed63b45cbc40",
+    "engine.rs": "3446f301ebc86edf9fab7b9ee68fabf53941f63b468b2bbd8e17fcdcffbe4f94",
+    "recovery.rs": "937aea71f75fcedc5bded4cdd5b60d84cfef89ab8a755c5d5e13da8e372d92ed",
+    "pon_wire.rs": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b",
+    "provider/contract.rs": "570d2b58daf370563713d6a7c236ff459baa9efb0db34bfdfddf29ee96a3bed2",
+}
+APP = 0x43474A33
+MAX_GROUPS, MAX_CHILDREN = 64, 1024
+MAX_DESCRIPTOR = 1024 * 1024
+MAX_EVENTS = MAX_GROUPS + 2 * MAX_CHILDREN
+MAX_EVENT_BYTES = 2 * MAX_DESCRIPTOR + 64 * 1024
+MAX_HISTORY_BYTES = MAX_GROUPS * MAX_EVENT_BYTES + 2 * MAX_CHILDREN * 4096
+MAX_SNAPSHOT_BYTES = 256 * 1024 * 1024
+I64_MAX, U64_MAX = (1 << 63) - 1, (1 << 64) - 1
+
+SCHEMA = {
+    "journal_context": "CREATE TABLE journal_context(singleton INTEGER PRIMARY KEY CHECK(singleton=1), context BLOB NOT NULL, sequence INTEGER NOT NULL CHECK(sequence>=0), root BLOB NOT NULL CHECK(typeof(root)='blob' AND length(root)=32))",
+    "groups": "CREATE TABLE groups(group_id BLOB PRIMARY KEY CHECK(typeof(group_id)='blob' AND length(group_id)=32), descriptor BLOB NOT NULL, descriptor_hash BLOB NOT NULL CHECK(typeof(descriptor_hash)='blob' AND length(descriptor_hash)=32), child_count INTEGER NOT NULL CHECK(child_count BETWEEN 1 AND 16))",
+    "children": "CREATE TABLE children(group_id BLOB NOT NULL REFERENCES groups(group_id), ordinal INTEGER NOT NULL CHECK(ordinal BETWEEN 0 AND 15), operation BLOB NOT NULL UNIQUE CHECK(typeof(operation)='blob' AND length(operation)=32), effect BLOB NOT NULL UNIQUE CHECK(typeof(effect)='blob' AND length(effect)=32), from_height INTEGER NOT NULL CHECK(from_height>=0), until_height INTEGER NOT NULL CHECK(until_height>from_height), state INTEGER NOT NULL CHECK(state BETWEEN 0 AND 2), receipt BLOB, PRIMARY KEY(group_id,ordinal), CHECK((state IN (0,1) AND receipt IS NULL) OR (state=2 AND typeof(receipt)='blob' AND length(receipt)=32)))",
+    "events": "CREATE TABLE events(sequence INTEGER PRIMARY KEY CHECK(sequence>0), previous BLOB NOT NULL CHECK(typeof(previous)='blob' AND length(previous)=32), payload BLOB NOT NULL, digest BLOB NOT NULL CHECK(typeof(digest)='blob' AND length(digest)=32))",
+}
+INDEXES = {"sqlite_autoindex_groups_1": "groups", "sqlite_autoindex_children_1": "children",
+           "sqlite_autoindex_children_2": "children", "sqlite_autoindex_children_3": "children"}
+
+
+class AuditError(ValueError):
+    """No partial pass is returned on a failed condition."""
+
+
+def need(condition: bool, reason: str) -> None:
+    if not condition:
+        raise AuditError(reason)
+
+
+def uint(value: Any, maximum: int = U64_MAX) -> int:
+    need(type(value) is int and 0 <= value <= maximum, "invalid unsigned integer")
+    return value
+
+
+def h32(value: Any, *, nonzero: bool = True) -> bytes:
+    if isinstance(value, str):
+        need(len(value) == 64 and value == value.lower(), "noncanonical hash hex")
+        try:
+            result = bytes.fromhex(value)
+        except ValueError as exc:
+            raise AuditError("invalid hash hex") from exc
+        need(result.hex() == value, "noncanonical hash hex")
+    elif isinstance(value, bytes):
+        result = value
+    elif isinstance(value, list):
+        need(len(value) == 32 and all(type(x) is int and 0 <= x <= 255 for x in value), "invalid hash array")
+        result = bytes(value)
+    else:
+        raise AuditError("invalid hash type")
+    need(len(result) == 32 and (not nonzero or result != bytes(32)), "invalid/zero hash")
+    return result
+
+
+def sha(domain: bytes, *parts: bytes) -> bytes:
+    result = hashlib.sha256(domain)
+    for part in parts:
+        result.update(part)
+    return result.digest()
+
+
+def pon_hash(tag: bytes, *parts: bytes) -> bytes:
+    need(len(tag) <= 65535 and all(len(p) <= 0xFFFFFFFF for p in parts), "PON framing overflow")
+    return sha(b"TRNM-PON1\0", len(tag).to_bytes(2, "little"), tag,
+               *(len(p).to_bytes(4, "little") + p for p in parts))
+
+
+def canonical_json(value: Any) -> bytes:
+    return json.dumps(value, ensure_ascii=False, allow_nan=False, separators=(",", ":")).encode()
+
+
+def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    value: dict[str, Any] = {}
+    for key, item in pairs:
+        need(key not in value, "duplicate JSON field")
+        value[key] = item
+    return value
+
+
+def parse_json(raw: bytes) -> Any:
+    try:
+        return json.loads(raw, object_pairs_hook=unique_object,
+                          parse_constant=lambda _: (_ for _ in ()).throw(AuditError("nonfinite JSON")))
+    except (UnicodeError, json.JSONDecodeError) as exc:
+        raise AuditError("invalid JSON payload") from exc
+
+
+def context_wire(config: dict[str, Any]) -> bytes:
+    need(set(config) == {"network", "parameters", "genesis", "plan", "owner_generation"}, "context fields")
+    value = {key: list(h32(config[key])) for key in ("network", "parameters", "genesis", "plan")}
+    value["owner_generation"] = uint(config["owner_generation"])
+    need(value["owner_generation"] > 0, "zero owner generation")
+    return b"CGJ3\0" + canonical_json(value)
+
+
+class Reader:
+    def __init__(self, data: bytes):
+        self.data, self.offset = data, 0
+
+    def take(self, count: int) -> bytes:
+        need(0 <= count <= len(self.data) - self.offset, "truncated descriptor")
+        result = self.data[self.offset:self.offset + count]
+        self.offset += count
+        return result
+
+    def integer(self, count: int) -> int:
+        return int.from_bytes(self.take(count), "big")
+
+    def hash(self) -> bytes:
+        return h32(self.take(32))
+
+    def end(self) -> None:
+        need(self.offset == len(self.data), "descriptor trailing bytes")
+
+
+def resources(reader: Reader) -> dict[str, Any]:
+    lane = reader.integer(1)
+    names = {1: ("retained_bytes", "retained_byte_blocks"),
+             2: ("cpu_ns", "download_bytes", "upload_bytes", "attempts")}
+    need(lane in names, "resource lane")
+    return {"lane": "Storage" if lane == 1 else "Repair",
+            **{name: reader.integer(8) for name in names[lane]}}
+
+
+def claim(reader: Reader, subject: bool) -> dict[str, Any]:
+    value = {"claim": reader.hash().hex(), "budget": reader.hash().hex()}
+    if subject:
+        value["subject"] = reader.hash().hex()
+    value.update(beneficiary=reader.hash().hex(), monetary_reservation=reader.integer(8),
+                 resource_reservation=resources(reader))
+    need(value["monetary_reservation"] > 0, "zero child/parent amount")
+    return value
+
+
+def manifest(wire: bytes) -> dict[str, Any]:
+    r = Reader(wire)
+    need(r.take(4) == b"TCM1", "physical manifest magic")
+    n = r.integer(1)
+    need(1 <= n <= 64, "manifest family length")
+    try:
+        family = r.take(n).decode()
+    except UnicodeError as exc:
+        raise AuditError("manifest family encoding") from exc
+    context = {"family": family, **{key: r.take(32).hex() for key in ("base", "parent", "tokenizer", "layout", "runtime")}}
+    size, payload = r.integer(8), r.hash().hex()
+    chunk_bytes, count = r.integer(4), r.integer(4)
+    need(chunk_bytes == 4 * 1024 * 1024 and count == 1, "physical one-chunk manifest profile")
+    chunk_size, chunk_sha256 = r.integer(4), r.hash().hex()
+    r.end()
+    need(0 < size <= chunk_bytes and chunk_size == size and chunk_sha256 == payload, "physical manifest payload/chunk consistency")
+    return {"id": sha(b"trnm.cell-manifest.v1\0", wire).hex(), "context": context,
+            "size": size, "payload_sha256": payload}
+
+
+def contract(wire: bytes) -> dict[str, Any]:
+    need(0 < len(wire) <= 4096, "CSP1 length")
+    r = Reader(wire)
+    need(r.take(4) == b"CSP1", "CSP1 magic")
+    value = {"original_operation": r.hash().hex(), "provider_store": r.hash().hex(),
+             "owner_generation": r.integer(8), "funding_operation": r.hash().hex(),
+             "from": r.integer(8), "until": r.integer(8), "maximum_repair_bytes": r.integer(8),
+             "slot": r.integer(1)}
+    need(value["owner_generation"] > 0 and value["slot"] < 6 and value["from"] < value["until"] <= I64_MAX, "CSP1 owner/window")
+    crc = r.take(268)
+    cr = Reader(crc)
+    need(cr.take(4) == b"CRC1", "CRC1 magic")
+    binding = {"manifest": cr.hash().hex(), "index": cr.integer(4), "source_bytes": cr.integer(4), "source_sha256": cr.hash().hex()}
+    shard_ids = [cr.hash().hex() for _ in range(6)]
+    cr.end()
+    need(0 < binding["source_bytes"] <= 4 * 1024 * 1024 and len(set(shard_ids)) == 6, "CRC1 original chunk/shard bounds")
+    placements = [{key: r.hash().hex() for key in ("provider_id", "responsible_owner", "administrator", "failure_domain", "domain_evidence", "repair_owner")} for _ in range(6)]
+    n = r.integer(4)
+    need(0 < n <= 512, "physical manifest length")
+    physical = manifest(r.take(n))
+    r.end()
+    operation = sha(b"trnm.cell-rs46-provider-slot.v1\0", wire)
+    retention = sha(b"trnm.cell-retention-contract.v1\0", bytes.fromhex(value["provider_store"]), operation,
+                    bytes.fromhex(value["funding_operation"]), bytes.fromhex(physical["id"]),
+                    value["from"].to_bytes(8, "big"), value["until"].to_bytes(8, "big"),
+                    value["maximum_repair_bytes"].to_bytes(8, "big"), b"\0")
+    value.update(operation=operation.hex(), codeword=sha(b"trnm.cell-rs46-codeword.v1\0", crc).hex(),
+                 binding=binding, shard_ids=shard_ids, selected_placement=placements[value["slot"]],
+                 manifest=physical, retention_subject=retention.hex(), wire_sha256=hashlib.sha256(wire).hexdigest())
+    return value
+
+
+def parse_descriptor(wire: bytes, group_id: bytes, plan: bytes) -> dict[str, Any]:
+    need(0 < len(wire) <= MAX_DESCRIPTOR, "CPG3 size")
+    r = Reader(wire)
+    need(r.take(4) == b"CPG3", "CPG3 magic")
+    tag = r.integer(1)
+    need(tag in (1, 2) and r.hash() == plan, "CPG3 kind/plan")
+    kind = "Storage" if tag == 1 else "Repair"
+    slot, first_chunk, operation = r.integer(1), r.integer(4), r.hash()
+    need(slot < 6 and first_chunk < 128 and first_chunk % 16 == 0 and operation == group_id, "CPG3 partition/operation")
+    budget = r.hash().hex()
+    need(r.take(4) == b"TASK", "CPG3 original Task source")
+    source = r.hash().hex()
+    money, deadline = r.integer(8), r.integer(8)
+    resource_cap, max_inflight = resources(r), r.integer(4)
+    parent = claim(r, False)
+    count = r.integer(2)
+    need(1 <= count <= 16 and first_chunk + count <= 128 and max_inflight == 1, "CPG3 count/inflight")
+    children = []
+    for index in range(count):
+        n = r.integer(4)
+        need(n <= 4096, "CPG3 contract bound")
+        target, child_claim = contract(r.take(n)), claim(r, True)
+        repair_tag = r.integer(1)
+        need(repair_tag in (0, 1), "CPG3 repair tag")
+        repair_operation = r.hash().hex() if repair_tag else None
+        need((kind == "Storage") == (repair_operation is None), "CPG3 child kind")
+        need(target["slot"] == slot and target["until"] <= deadline and child_claim["budget"] == budget,
+             "CPG3 child slot/window/budget")
+        logical = target["operation"] if kind == "Storage" else repair_operation
+        placement = target["selected_placement"]
+        payee = placement["responsible_owner" if kind == "Storage" else "repair_owner"]
+        subject = target["retention_subject"] if kind == "Storage" else pon_hash(
+            b"trnm.native-cell-shard-repair-subject.v1\0", bytes.fromhex(target["retention_subject"]),
+            bytes.fromhex(repair_operation), bytes.fromhex(child_claim["claim"])).hex()
+        need(parent["beneficiary"] == child_claim["beneficiary"] == payee and
+             child_claim["subject"] == subject, "CPG3 child subject/beneficiary")
+        reservation = child_claim["resource_reservation"]
+        wire_bytes = target["manifest"]["size"]
+        if kind == "Storage":
+            need(child_claim["claim"] == target["funding_operation"], "storage child funding-operation")
+            need(reservation == {"lane": "Storage", "retained_bytes": wire_bytes,
+                                  "retained_byte_blocks": wire_bytes * (target["until"] - target["from"])}, "storage exact resources")
+        else:
+            need(repair_operation not in (target["operation"], target["original_operation"], target["funding_operation"])
+                 and child_claim["claim"] != target["funding_operation"], "repair independent identity")
+            need(reservation["lane"] == "Repair" and reservation["cpu_ns"] > 0 and
+                 reservation["download_bytes"] == reservation["upload_bytes"] == wire_bytes and
+                 reservation["attempts"] == 1, "repair exact resources")
+        receipt = pon_hash(b"trnm.native-cell-group-child-" + kind.lower().encode() + b"-readback.v3\0",
+                           bytes.fromhex(subject)).hex()
+        children.append({"index": index, "chunk": first_chunk + index, "operation": logical,
+                         "effect": subject, "from": target["from"], "until": target["until"],
+                         "claim": child_claim, "contract": target, "repair_operation": repair_operation,
+                         "expected_receipt": receipt})
+    r.end()
+    need(len({(c["from"], c["until"]) for c in children}) == 1, "CPG3 common window")
+    need(resource_cap["lane"] == kind and parent["resource_reservation"]["lane"] == kind, "CPG3 parent lane")
+    summed = {"lane": kind}
+    for name in resource_cap:
+        if name != "lane":
+            summed[name] = sum(c["claim"]["resource_reservation"][name] for c in children)
+            uint(summed[name])
+    total_money = uint(sum(c["claim"]["monetary_reservation"] for c in children))
+    need(0 < money == parent["monetary_reservation"] == total_money and parent["budget"] == budget
+         and resource_cap == parent["resource_reservation"] == summed, "CPG3 exact aggregate budget")
+    subject = pon_hash(b"trnm.native-cell-shard-parent-group.v3\0", wire).hex()
+    parent["subject"] = subject
+    parent_wire = group_id + b"".join(bytes.fromhex(c["operation"]) + bytes.fromhex(c["expected_receipt"]) for c in children)
+    receipt = pon_hash(b"trnm.native-cell-parent-group-current-readback.v3\0", bytes.fromhex(subject), parent_wire).hex()
+    return {"operation": operation.hex(), "kind": kind, "slot": slot, "first_chunk": first_chunk,
+            "source": source, "budget": budget, "monetary_cap": money, "deadline": deadline,
+            "resource_cap": resource_cap, "max_inflight": max_inflight, "parent_claim": parent,
+            "children": children, "expected_parent_receipt": receipt,
+            "descriptor_sha256": hashlib.sha256(wire).hexdigest(),
+            "descriptor_commitment": sha(b"trnm.native-cell-group-child-descriptor.v3\0", wire).hex()}
+
+
+def _identity(st: os.stat_result) -> tuple[int, ...]:
+    return st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns, st.st_ctime_ns
+
+
+def _safe_path(path: Path) -> Path:
+    need(path.is_absolute() and path == path.resolve(strict=False), "absolute canonical path required")
+    return path
+
+
+def _source_manifest(db: Path) -> dict[str, dict[str, Any]]:
+    result = {}
+    for suffix in ("", "-wal", "-shm"):
+        try:
+            st = Path(str(db) + suffix).lstat()
+        except FileNotFoundError:
+            need(suffix != "", "producer DB absent")
+            continue
+        need(stat.S_ISREG(st.st_mode) and st.st_nlink == 1, "producer file symlink/hardlink/type")
+        need(st.st_size <= MAX_SNAPSHOT_BYTES, "snapshot file size")
+        result[suffix] = {"identity": _identity(st), "size": st.st_size}
+    need(sum(v["size"] for v in result.values()) <= MAX_SNAPSHOT_BYTES, "snapshot total size")
+    return result
+
+
+def _read_hash(path: Path, identity: tuple[int, ...], destination: Path | None = None) -> str:
+    fd = os.open(path, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK)
+    out = None
+    try:
+        need(_identity(os.fstat(fd)) == identity, "source changed before copy")
+        if destination is not None:
+            out = os.open(destination, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_CLOEXEC | os.O_NOFOLLOW, 0o600)
+        digest, total = hashlib.sha256(), 0
+        while data := os.read(fd, 1024 * 1024):
+            total += len(data)
+            need(total <= MAX_SNAPSHOT_BYTES, "source grew beyond bound")
+            digest.update(data)
+            if out is not None:
+                view = memoryview(data)
+                while view:
+                    written = os.write(out, view)
+                    need(written > 0, "snapshot write made no progress")
+                    view = view[written:]
+        need(total == identity[2] and _identity(os.fstat(fd)) == identity, "source changed during copy")
+        need(_identity(path.lstat()) == identity, "source path replaced")
+        if out is not None:
+            os.fsync(out)
+        return digest.hexdigest()
+    finally:
+        os.close(fd)
+        if out is not None:
+            os.close(out)
+
+
+def copy_closed_snapshot(source_db: Path, snapshot_dir: Path, *, closed: bool,
+                         terminal_record_sha256: str | None) -> tuple[Path, dict[str, Any]]:
+    """Byte copy only; no SQLite connection and no producer-owned lock writes."""
+    need(closed is True, "explicit external producer-closed witness required")
+    h32(terminal_record_sha256)
+    source_db, snapshot_dir = _safe_path(Path(source_db)), _safe_path(Path(snapshot_dir))
+    need(snapshot_dir != source_db.parent and source_db.parent not in snapshot_dir.parents,
+         "snapshot directory must be external to producer DB directory")
+    need(snapshot_dir.parent.is_dir(), "snapshot parent must already exist")
+    before = _source_manifest(source_db)
+    snapshot_dir.mkdir(mode=0o700, exist_ok=False)
+    copy_db = snapshot_dir / source_db.name
+    for suffix, item in before.items():
+        item["sha256"] = _read_hash(Path(str(source_db) + suffix), item["identity"], Path(str(copy_db) + suffix))
+    shape = {s: {k: v for k, v in item.items() if k != "sha256"} for s, item in before.items()}
+    need(_source_manifest(source_db) == shape, "source files changed while copying")
+    for suffix, item in before.items():
+        need(_read_hash(Path(str(source_db) + suffix), item["identity"]) == item["sha256"], "source bytes changed while copying")
+        target = Path(str(copy_db) + suffix)
+        need(_read_hash(target, _identity(target.lstat())) == item["sha256"], "snapshot hash mismatch")
+    return copy_db, {"files": before, "terminal_record_sha256": terminal_record_sha256,
+                     "source_db": str(source_db), "snapshot_db": str(copy_db)}
+
+
+def _schema(c: sqlite3.Connection) -> None:
+    need(c.execute("PRAGMA application_id").fetchone() == (APP,) and
+         c.execute("PRAGMA user_version").fetchone() == (3,), "CGJ3 namespace/version")
+    need(c.execute("PRAGMA journal_mode").fetchone() == ("wal",), "CGJ3 WAL profile")
+    need(c.execute("SELECT count(*) FROM sqlite_master").fetchone() == (8,), "CGJ3 schema count")
+    rows = c.execute("""SELECT
+        CASE WHEN typeof(type)='text' AND length(CAST(type AS BLOB))<=16 THEN type END,
+        CASE WHEN typeof(name)='text' AND length(CAST(name AS BLOB))<=128 THEN name END,
+        CASE WHEN typeof(tbl_name)='text' AND length(CAST(tbl_name AS BLOB))<=128 THEN tbl_name END,
+        CASE WHEN typeof(sql)='text' AND length(CAST(sql AS BLOB))<=4096 THEN sql END,
+        (sql IS NULL OR (typeof(sql)='text' AND length(CAST(sql AS BLOB))<=4096))
+        FROM sqlite_master""").fetchall()
+    seen = set()
+    for kind, name, table, sql, shape in rows:
+        need(shape == 1 and kind is not None and name is not None and table is not None and name not in seen,
+             "CGJ3 schema shape")
+        seen.add(name)
+        if name in INDEXES:
+            need(kind == "index" and table == INDEXES[name] and sql is None, "CGJ3 index schema")
+        else:
+            need(name in SCHEMA and kind == "table" and name == table and isinstance(sql, str) and
+                 " ".join(sql.strip().rstrip(";").split()) == " ".join(SCHEMA[name].split()), "CGJ3 table schema")
+    need(seen == set(SCHEMA) | set(INDEXES), "CGJ3 schema inventory")
+    need(c.execute("PRAGMA quick_check").fetchmany(2) == [("ok",)], "CGJ3 SQLite integrity")
+    need(c.execute("PRAGMA foreign_key_check").fetchone() is None, "CGJ3 foreign key integrity")
+
+
+def _event(raw: bytes) -> dict[str, Any]:
+    value = parse_json(raw)
+    need(isinstance(value, dict) and value.get("event") in ("register", "begin", "complete"), "CGJ3 event tag")
+    tag = value["event"]
+    keys = {"register": ("event", "group", "descriptor_hex", "children"),
+            "begin": ("event", "group", "index"), "complete": ("event", "group", "index", "receipt")}[tag]
+    need(set(value) == set(keys), "CGJ3 event fields")
+    value = {key: value[key] for key in keys}
+    need(isinstance(value["group"], list), "CGJ3 event hash must use Rust array encoding")
+    h32(value["group"])
+    if tag == "register":
+        text = value["descriptor_hex"]
+        need(isinstance(text, str) and 0 < len(text) <= 2 * MAX_DESCRIPTOR, "CGJ3 descriptor encoding bound")
+        try:
+            descriptor = bytes.fromhex(text)
+        except ValueError as exc:
+            raise AuditError("CGJ3 descriptor encoding") from exc
+        need(descriptor.hex() == text and isinstance(value["children"], list) and 1 <= len(value["children"]) <= 16,
+             "CGJ3 register roster")
+        bindings = []
+        for b in value["children"]:
+            need(isinstance(b, dict) and set(b) == {"operation", "effect", "from", "until"}, "CGJ3 binding fields")
+            need(isinstance(b["operation"], list) and isinstance(b["effect"], list), "CGJ3 binding hash array encoding")
+            h32(b["operation"])
+            h32(b["effect"])
+            need(uint(b["from"], I64_MAX) < uint(b["until"], I64_MAX), "CGJ3 binding window")
+            bindings.append({key: b[key] for key in ("operation", "effect", "from", "until")})
+        value["children"] = bindings
+    else:
+        uint(value["index"], 15)
+        if tag == "complete":
+            need(isinstance(value["receipt"], list), "CGJ3 receipt hash array encoding")
+            h32(value["receipt"])
+    need(canonical_json(value) == raw, "CGJ3 noncanonical event payload")
+    return value
+
+
+def _audit_copy(c: sqlite3.Connection, expected: dict[str, Any]) -> dict[str, Any]:
+    _schema(c)
+    context = context_wire(expected["context"])
+    context_hash = sha(b"trnm.native-cell-group-child-context.v3\0", context)
+    need(c.execute("SELECT count(*) FROM journal_context").fetchone() == (1,), "CGJ3 context count")
+    head = c.execute("""SELECT CASE WHEN typeof(context)='blob' AND length(context)<=2048 THEN context END,
+        sequence, CASE WHEN typeof(root)='blob' AND length(root)=32 THEN root END
+        FROM journal_context WHERE singleton=1""").fetchone()
+    need(head is not None and head[0] == context, "CGJ3 pinned context")
+    sequence, root = uint(head[1], MAX_EVENTS), h32(head[2], nonzero=False)
+    count, total, hashes = c.execute("SELECT count(*),coalesce(sum(length(payload)),0),coalesce(sum(length(previous)+length(digest)),0) FROM events").fetchone()
+    need(type(count) is int and 0 <= count <= MAX_EVENTS and count == sequence and
+         type(total) is int and 0 <= total <= MAX_HISTORY_BYTES and hashes == 64 * count, "CGJ3 history bounds/head")
+    groups: dict[bytes, dict[str, Any]] = {}
+    identities: set[bytes] = set()
+    effects: set[bytes] = set()
+    previous = sha(b"trnm.native-cell-group-child-genesis.v3\0", context)
+    events = c.execute("""SELECT sequence,
+        CASE WHEN typeof(previous)='blob' AND length(previous)=32 THEN previous END,
+        CASE WHEN typeof(payload)='blob' AND length(payload)<=? THEN payload END,
+        CASE WHEN typeof(digest)='blob' AND length(digest)=32 THEN digest END
+        FROM events ORDER BY sequence""", (MAX_EVENT_BYTES,))
+    for ordinal, (event_sequence, parent, payload, digest) in enumerate(events, 1):
+        need(type(event_sequence) is int and event_sequence == ordinal and isinstance(payload, bytes), "CGJ3 event sequence/payload")
+        actual = sha(b"trnm.native-cell-group-child-event.v3\0", context_hash,
+                     ordinal.to_bytes(8, "big"), previous, len(payload).to_bytes(8, "big"), payload)
+        need(parent == previous and digest == actual, "CGJ3 event hashchain")
+        event, group = _event(payload), None
+        group = h32(event["group"])
+        if event["event"] == "register":
+            need(group not in groups and group not in identities and len(groups) < MAX_GROUPS, "CGJ3 duplicate/aliased Register")
+            bindings = event["children"]
+            need(sum(len(g["states"]) for g in groups.values()) + len(bindings) <= MAX_CHILDREN, "CGJ3 total child bound")
+            identities.add(group)
+            for binding in bindings:
+                operation, effect = h32(binding["operation"]), h32(binding["effect"])
+                need(operation not in identities and effect not in effects, "CGJ3 child operation/effect alias")
+                identities.add(operation)
+                effects.add(effect)
+            groups[group] = {"descriptor": bytes.fromhex(event["descriptor_hex"]), "bindings": bindings,
+                             "states": [(0, None) for _ in bindings]}
+        else:
+            need(group in groups and event["index"] < len(groups[group]["states"]), "CGJ3 child absent")
+            index = event["index"]
+            state, _ = groups[group]["states"][index]
+            if event["event"] == "begin":
+                need(state == 0, "CGJ3 Begin requires Unstarted")
+                groups[group]["states"][index] = (1, None)
+            else:
+                need(state == 1, "CGJ3 Complete requires Pending")
+                groups[group]["states"][index] = (2, h32(event["receipt"]))
+        previous = actual
+    need(previous == root, "CGJ3 terminal chain root")
+    child_count = sum(len(g["states"]) for g in groups.values())
+    need(c.execute("SELECT count(*) FROM groups").fetchone() == (len(groups),) and
+         c.execute("SELECT count(*) FROM children").fetchone() == (child_count,), "CGJ3 materialized row counts")
+    records, all_identities, all_effects, all_sources = [], set(), set(), set()
+    for group, record in sorted(groups.items()):
+        descriptor = record["descriptor"]
+        row = c.execute("""SELECT CASE WHEN typeof(descriptor)='blob' AND length(descriptor)<=? THEN descriptor END,
+            CASE WHEN typeof(descriptor_hash)='blob' AND length(descriptor_hash)=32 THEN descriptor_hash END,
+            child_count FROM groups WHERE group_id=?""", (MAX_DESCRIPTOR, group)).fetchone()
+        need(row == (descriptor, sha(b"trnm.native-cell-group-child-descriptor.v3\0", descriptor), len(record["states"])), "CGJ3 materialized group mismatch")
+        actual_children = c.execute("""SELECT ordinal,
+            CASE WHEN typeof(operation)='blob' AND length(operation)=32 THEN operation END,
+            CASE WHEN typeof(effect)='blob' AND length(effect)=32 THEN effect END,
+            from_height,until_height,state,
+            CASE WHEN typeof(receipt)='blob' AND length(receipt)=32 THEN receipt END,
+            (receipt IS NULL OR (typeof(receipt)='blob' AND length(receipt)=32))
+            FROM children WHERE group_id=? ORDER BY ordinal""", (group,)).fetchall()
+        need(len(actual_children) == len(record["bindings"]), "CGJ3 materialized child count")
+        parsed = parse_descriptor(descriptor, group, h32(expected["context"]["plan"]))
+        need(len(parsed["children"]) == len(record["bindings"]), "CGJ3 descriptor/roster count")
+        for index, (binding, state, actual, child) in enumerate(zip(record["bindings"], record["states"], actual_children, parsed["children"])):
+            need(actual == (index, h32(binding["operation"]), h32(binding["effect"]), binding["from"], binding["until"], state[0], state[1], 1),
+                 "CGJ3 materialized child/history mismatch")
+            need(type(actual[0]) is int and all(type(actual[i]) is int for i in (3, 4, 5)), "CGJ3 child integer types")
+            need(h32(binding["operation"]).hex() == child["operation"] and h32(binding["effect"]).hex() == child["effect"] and
+                 (binding["from"], binding["until"]) == (child["from"], child["until"]), "CGJ3 descriptor/roster binding")
+            need(state == (2, bytes.fromhex(child["expected_receipt"])), "CGJ3 terminal child Done/receipt")
+            child["state"], child["receipt"] = "Done", state[1].hex()
+        need(parsed["source"] not in all_sources, "CPG3 cross-group Task alias")
+        all_sources.add(parsed["source"])
+        for identity in (parsed["source"], parsed["operation"], parsed["budget"], parsed["parent_claim"]["claim"],
+                         *(v for child in parsed["children"] for v in (child["operation"], child["claim"]["claim"]))):
+            need(identity not in all_identities, "CPG3 operation/claim/budget/source alias")
+            all_identities.add(identity)
+        for effect in (parsed["parent_claim"]["subject"], *(child["effect"] for child in parsed["children"])):
+            need(effect not in all_effects, "CPG3 parent/child subject alias")
+            all_effects.add(effect)
+        records.append(parsed)
+    counts = {"groups": len(records), "children": child_count,
+              "storage_groups": sum(g["kind"] == "Storage" for g in records),
+              "repair_groups": sum(g["kind"] == "Repair" for g in records),
+              "storage_children": sum(len(g["children"]) for g in records if g["kind"] == "Storage"),
+              "repair_children": sum(len(g["children"]) for g in records if g["kind"] == "Repair")}
+    for key, actual in counts.items():
+        need(key in expected and uint(expected[key], MAX_CHILDREN) == actual, "CGJ3 expected " + key)
+    need(sequence == counts["groups"] + 2 * counts["children"], "CGJ3 exact all-Done event denominator")
+    funding, parents = expected["funding_by_source"], expected["parent_receipts"]
+    need(isinstance(funding, dict) and isinstance(parents, dict), "external funding/parent maps")
+    for key in funding:
+        h32(key)
+    need(set(parents) == {g["operation"] for g in records}, "external M12 parent receipt coverage")
+    for group in records:
+        need(group["source"] in funding, "group source absent from external funding")
+        funded = funding[group["source"]]
+        need(uint(funded["amount"]) == group["monetary_cap"] and
+             h32(funded["provider"]).hex() == group["parent_claim"]["beneficiary"], "group funding amount/provider mismatch")
+        if "deadline" in funded:
+            need(uint(funded["deadline"]) >= group["deadline"], "group funding deadline too short")
+        need(h32(parents[group["operation"]]).hex() == group["expected_parent_receipt"], "original M12 parent receipt binding")
+    storage = {(g["slot"], child["chunk"]): child for g in records if g["kind"] == "Storage" for child in g["children"]}
+    repair = {(g["slot"], child["chunk"]): child for g in records if g["kind"] == "Repair" for child in g["children"]}
+    need(len(storage) == counts["storage_children"] and len(repair) == counts["repair_children"], "duplicate target coverage")
+    chunks = counts["storage_children"] // 6
+    need(counts["storage_children"] == 6 * chunks and 1 <= chunks <= 128 and
+         set(storage) == {(slot, chunk) for slot in range(6) for chunk in range(chunks)}, "complete six-provider storage coverage")
+    repair_slots = sorted({slot for slot, _ in repair})
+    need(1 <= len(repair_slots) <= 2 and set(repair) == {(slot, chunk) for slot in repair_slots for chunk in range(chunks)}, "complete repair coverage")
+    if "repair_slots" in expected:
+        need(repair_slots == expected["repair_slots"], "caller-pinned repair providers")
+    for target, repaired in repair.items():
+        need(repaired["contract"] == storage[target]["contract"], "repair changed original CSP1 contract")
+    canonical_chunks = []
+    for chunk in range(chunks):
+        first = storage[(0, chunk)]["contract"]
+        binding = first["binding"]
+        canonical_chunks.append((binding["manifest"], binding["index"]))
+        need(all(storage[(slot, chunk)]["contract"]["binding"] == binding and
+                 storage[(slot, chunk)]["contract"]["codeword"] == first["codeword"] and
+                 storage[(slot, chunk)]["contract"]["shard_ids"] == first["shard_ids"]
+                 for slot in range(6)), "original chunk/codeword differs between providers")
+    need(canonical_chunks == sorted(set(canonical_chunks)), "original chunk union is not canonical unique manifest/index order")
+    for slot in range(6):
+        configurations = {(storage[(slot, chunk)]["contract"]["provider_store"],
+                           storage[(slot, chunk)]["contract"]["owner_generation"],
+                           canonical_json(storage[(slot, chunk)]["contract"]["selected_placement"]))
+                          for chunk in range(chunks)}
+        need(len(configurations) == 1, "provider configuration changed across original chunks")
+    for kind in ("Storage", "Repair"):
+        slots = range(6) if kind == "Storage" else repair_slots
+        actual_groups = {(g["slot"], g["first_chunk"], len(g["children"])) for g in records if g["kind"] == kind}
+        need(actual_groups == {(slot, start, min(16, chunks - start)) for slot in slots for start in range(0, chunks, 16)}, "exact canonical group partition")
+    need(all(child["contract"]["owner_generation"] == expected["context"]["owner_generation"]
+             for (slot, _), child in storage.items() if slot == 0), "canonical provider owner_generation")
+    return {"schema": "trnm.external-cgj3-terminal-audit.v1", "source_commit": S3_COMMIT,
+            "source_pins": SOURCE_PINS, "context_sha256": context_hash.hex(),
+            "context": {**{key: h32(expected["context"][key]).hex() for key in ("network", "parameters", "genesis", "plan")},
+                        "owner_generation": expected["context"]["owner_generation"]},
+            **counts, "events": sequence, "history_payload_bytes": total, "root": root.hex(),
+            "all_children_done": True, "chain_replayed": True, "snapshot_matches_replay": True,
+            "original_parent_receipts_bound": True, "funding_source_membership": True,
+            "funding_amount_and_provider_bound": True, "native_funding_row_semantics_verified_here": False,
+            "physical_shard_payloads_verified_here": False, "repair_slots": repair_slots,
+            "effect_dispatch_authority": False, "payment_or_positive_verdict": False,
+            "final_use_or_production_qualification": False,
+            "rollback_boundary": "A coherent old journal plus rolled-back M12/ledger/external anchors is not freshness proof.",
+            "groups_records": records}
+
+
+def audit_journal(source_db: Path, snapshot_dir: Path, expected: dict[str, Any], *,
+                  closed: bool = False, terminal_record_sha256: str | None = None) -> dict[str, Any]:
+    """Copy then audit. Inputs are external pins, never inferred from this DB.
+
+    Retains only the bounded NEW snapshot. The caller may remove it after hashing
+    the audit result; never publish model payloads or large runtime databases.
+    """
+    copy_db, copied = copy_closed_snapshot(Path(source_db), Path(snapshot_dir), closed=closed,
+                                           terminal_record_sha256=terminal_record_sha256)
+    connection = sqlite3.connect(copy_db.as_uri() + "?mode=ro", uri=True, timeout=0)
+    try:
+        if hasattr(connection, "setlimit"):
+            connection.setlimit(sqlite3.SQLITE_LIMIT_LENGTH, MAX_EVENT_BYTES + 4096)
+        connection.execute("PRAGMA query_only=ON")
+        connection.execute("PRAGMA trusted_schema=OFF")
+        connection.execute("BEGIN")
+        result = _audit_copy(connection, expected)
+        connection.rollback()
+    except sqlite3.Error as exc:
+        raise AuditError("CGJ3 snapshot SQLite refusal: " + str(exc)) from exc
+    finally:
+        connection.close()
+    before = copied["files"]
+    now = _source_manifest(Path(source_db))
+    need(now == {suffix: {k: v for k, v in item.items() if k != "sha256"} for suffix, item in before.items()}, "source changed during copied audit")
+    for suffix, item in before.items():
+        need(_read_hash(Path(str(source_db) + suffix), item["identity"]) == item["sha256"], "source bytes changed during copied audit")
+    result["snapshot"] = {"source_db": copied["source_db"], "snapshot_db": copied["snapshot_db"],
+                          "terminal_record_sha256": terminal_record_sha256, "original_bytes_unchanged": True,
+                          "files_before_sqlite_copy_open": {suffix or "db": {"bytes": item["size"], "sha256": item["sha256"]} for suffix, item in before.items()}}
+    return result

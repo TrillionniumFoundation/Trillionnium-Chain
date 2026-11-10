@@ -1,0 +1,45 @@
+[package]
+name = "trnm-data-availability"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Trillionnium Contributors"]
+publish = false
+
+[package.metadata.trnm]
+module = "M09"
+role = "portable-component"
+profile = "portable-local-v2"
+production_activation = false
+consensus_authority = false
+
+[features]
+default = []
+
+[dependencies]
+borsh = { version = "1", features = ["derive"] }
+ed25519-dalek = "2"
+fs2 = "0.4"
+getrandom = "=0.2.17"
+libc = "0.2"
+rusqlite = { version = "=0.39.0", features = ["bundled", "fallible_uint"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+trnm-crypto-primitives = { version = "=0.1.0", path = "../trnm-crypto-primitives" }
+trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
+zeroize = "=1.9.1"
+
+[target.'cfg(unix)'.dependencies]
+rustix = { version = "=1.1.4", features = ["event", "fs", "net", "time"] }
+
+[dev-dependencies]
+serde_json = { version = "1", features = ["arbitrary_precision"] }
+ml-dsa = { version = "=0.1.1", default-features = false, features = ["alloc", "zeroize"] }
+hex = "0.4"
+rustix = { version = "1.1.4", features = ["time", "net", "process"] }
+tempfile = "3"
+
+[[bin]]
+name = "trnm-cell-discovery"
+path = "src/bin/trnm-cell-discovery.rs"

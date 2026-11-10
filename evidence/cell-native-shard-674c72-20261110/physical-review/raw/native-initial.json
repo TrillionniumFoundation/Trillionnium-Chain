@@ -1,0 +1,1676 @@
+{
+  "catalog_anchor": "435641330000000000000002f1518c03d69b282223e64a225cf0de18e7bf1c3e3f98384f23476f4037f62f4e",
+  "child_journal": {
+    "children": 570,
+    "context_sha256": "9b16756707bb938ae601aa2e3f7903f050e83865125a3e5227ce0c0ffaefde2d",
+    "done": 570,
+    "effect_dispatch_authority": false,
+    "events": 1176,
+    "groups": 36,
+    "payment_or_positive_verdict": false,
+    "pending": 0,
+    "root": "19a59f21085d61ae9da5bad4a5c9faf648ee976e3cb2eff783f48e099a9007d3",
+    "schema": "trnm.native-cell-group-child-journal.v3",
+    "unstarted": 0
+  },
+  "children": 570,
+  "codec": {
+    "attempts_committed": 190,
+    "cache_bytes_committed": 0,
+    "input_bytes_committed": 840901248,
+    "reconstruction_bytes_committed": 1401440452
+  },
+  "m12": {
+    "authorizes_native_payment": false,
+    "budgets": [
+      {
+        "budget": "032ab7d6515e656103dde35f2c0d56e6db9a4b93d4b3dc0f59fc911b04ad68ff",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          6867,
+          652365,
+          0,
+          0
+        ],
+        "resource_charge": [
+          6867,
+          652365,
+          0,
+          0
+        ],
+        "source": "task:3b93db4358f41bc0afc03f9f193e53e180831ab3bda152d8d3b389d60d4ecb1e",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "0cfa64f7faef2655998a67ac5ea19cde608564228b20be0098ecedbe9f989784",
+        "cap": 1500,
+        "closed": false,
+        "committed_units": 1500,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          7509389,
+          638298065,
+          0,
+          0
+        ],
+        "resource_charge": [
+          7509389,
+          638298065,
+          0,
+          0
+        ],
+        "source": "task:f3813f0f2381eb2725ed413c9ec11680b96a79b76e6c363e3247f5ff5367effc",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "0d97e811f5522dc5b5a2d9190f12bc6006bac2f0be064ad24623a206e06f936f",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          269060552,
+          25560752440,
+          0,
+          0
+        ],
+        "resource_charge": [
+          269060552,
+          25560752440,
+          0,
+          0
+        ],
+        "source": "task:520fba57205097150e8fea50c7f5863e51695f94890166b7b6fec0ee950760f1",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "0ee7694a22162a15ba4e2ba732eacd1770c734cb81b0c58d4c15a329a39a0fb3",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16320,
+          1550400,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16320,
+          1550400,
+          0,
+          0
+        ],
+        "source": "task:00e52c361aa10adedf1b684813c990266e65dd04f3b8d4912a33cb1c7d462b4a",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "0f68777db4e7d6888217f2a464b6e3daacb08c9b53dbea1e5744580b7b6b63c1",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          933664,
+          88698080,
+          0,
+          0
+        ],
+        "resource_charge": [
+          933664,
+          88698080,
+          0,
+          0
+        ],
+        "source": "task:903891b61abb331a93b55259a36c0febcf12866a3be76137edd6e9474f6b1fc6",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "0f9f2f5204e9b27dcbf220fdf7287842aa64740b5cffe5ece8efb9a25a248419",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          10405,
+          988475,
+          0,
+          0
+        ],
+        "resource_charge": [
+          10405,
+          988475,
+          0,
+          0
+        ],
+        "source": "task:a9b6de3a196d3a3bd2712f56b1ba74d973a889fb64dc219ab15059cd28731a8b",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "1364dc93009c46dcb786d5457a19c5b33769dfba9f308ca7b813457530c735f4",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          2719804,
+          231183340,
+          0,
+          0
+        ],
+        "resource_charge": [
+          2719804,
+          231183340,
+          0,
+          0
+        ],
+        "source": "task:cb57e016c7faf7dda631be6d84a76a74e825de5a3003d7e3f560c61ed1764ebd",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "14b26b8165373988e1024ad45dfa5c0f3cdbfed0ae73ba9b5f5c69c0bb1b4654",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          125239,
+          11897705,
+          0,
+          0
+        ],
+        "resource_charge": [
+          125239,
+          11897705,
+          0,
+          0
+        ],
+        "source": "task:230f2d37929fb184f6e431146ac86af3461f82e0babd17182d41ff1ea376ad4d",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "1b4b819c98fa91f55b123037133386f02ea08e4c36a67e2d67828daeae38c5d3",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          9510375,
+          808381875,
+          0,
+          0
+        ],
+        "resource_charge": [
+          9510375,
+          808381875,
+          0,
+          0
+        ],
+        "source": "task:4050f179190ad1cde6141522571fabae9e8113565320b7216b579c1375352812",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "210906c35af5aeb18f43d5dace0c97a03c1a20759f652e4a5a0b054fb0a78803",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          10742,
+          1020490,
+          0,
+          0
+        ],
+        "resource_charge": [
+          10742,
+          1020490,
+          0,
+          0
+        ],
+        "source": "task:dabaca61945f037d2047e48afce8f301e51d3c3d03a946c42e46b48b59b12ae3",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "22d92cfc140393dc8d676cc33d8a635f5150b5cfd01c82a458b8a95820d0930c",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "source": "task:fa418ae639f7b365d0a91e573633a28fd07fe5af71198ff1cb947e7e18333340",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "2802f76e573608faaf23b0ce4f2ca9cb454e23d768b180f74223401a613e94db",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          280269602,
+          26625612190,
+          0,
+          0
+        ],
+        "resource_charge": [
+          280269602,
+          26625612190,
+          0,
+          0
+        ],
+        "source": "task:183b1fb8163129a7cefc29bc6cf81852f388d04aee7f6b91916e460d50a79ab2",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "28998c23ac170c38aa0e8d9467c739c15fbc0dfc762549e19c3a776ef96f86c8",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          2719804,
+          231183340,
+          0,
+          0
+        ],
+        "resource_charge": [
+          2719804,
+          231183340,
+          0,
+          0
+        ],
+        "source": "task:03879218f39ca860d51658c6c4e6054796393503bedc2e8d52932205052d9cbe",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "3643fada4aae202385dd998c2b9082d7d737eb39ffad88b5c5742fa7770c2da3",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          2719804,
+          231183340,
+          0,
+          0
+        ],
+        "resource_charge": [
+          2719804,
+          231183340,
+          0,
+          0
+        ],
+        "source": "task:3eae6801cdade2d0dcc96b228d6ea37349a8e6b681e28bfcde4826246fd80e50",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "3d5733b0b57582c0a02339e6c3d0f37c78cd6609bffead96f4751a9a56dd1235",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          20962,
+          1991390,
+          0,
+          0
+        ],
+        "resource_charge": [
+          20962,
+          1991390,
+          0,
+          0
+        ],
+        "source": "task:adc3b53ea5f878615cd56cf8b293cba77805c40864addf6baf55f054775c9125",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "3e0156814ded5284c77c4984e0364f000bdb26ba99cc7f1d8d6e3883cf813489",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "source": "task:ef1786f459e7872080814b8791f8962f74e7cbc49e3891b807488df2f018e1ba",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "41dd9e760a24a0357964e1989b93b9db378737ee1218666221862deffd965f38",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          4640,
+          440800,
+          0,
+          0
+        ],
+        "resource_charge": [
+          4640,
+          440800,
+          0,
+          0
+        ],
+        "source": "task:dbea96d24a1ed126d6f026ccc0df511695f58bbf9583cee9d36599b98a19d484",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "4251e71ac96c7a8c81f4e4fa91cca2022cb86d73cbb942410ef5808f3c610e89",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          5293,
+          502835,
+          0,
+          0
+        ],
+        "resource_charge": [
+          5293,
+          502835,
+          0,
+          0
+        ],
+        "source": "task:9692ac0c5a8c384c2bf2eb0f9f42621c1f5bae47eb8bf19c50e331fffc2f584a",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "43762998c7bb47d60710c0ced9a4f4d9fd4efe58dd35eec40173ae2451a6f9e0",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "source": "task:35a4c02cf700743b16ffe47ac61ef89f8a72d26c0cb6e9f1bc24bb3d377d49c9",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "4f7ab0ad49674dfe7eedc56cf2f7062f401d7d8e7eabf802079ce1c07797facd",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          10739,
+          1020205,
+          0,
+          0
+        ],
+        "resource_charge": [
+          10739,
+          1020205,
+          0,
+          0
+        ],
+        "source": "task:e64e62662e551aa435b14163601c5981f5d4191e38d00f74092bc8297e70e1b3",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "51d13d03ef65701f8dd84f5aed3435cfe7c2bb9172581cfb2a7b6e205fc7c20b",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          1263,
+          119985,
+          0,
+          0
+        ],
+        "resource_charge": [
+          1263,
+          119985,
+          0,
+          0
+        ],
+        "source": "task:229abdac70ae129fd3b5862ad73e0ec08b6cb5e172f7c571b495a4e514edd4e4",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "52ba84b30bcaa14b9d549dbe1c2ac6b0beeacea1311e09044b42bc30848c6d90",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          861,
+          81795,
+          0,
+          0
+        ],
+        "resource_charge": [
+          861,
+          81795,
+          0,
+          0
+        ],
+        "source": "task:49357189f61899d4cb00b7aa4b254ce9711f29d3e65078c9facd1f7ce7c7df51",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "5381920b609e53801b4d07c3e55c9e80a9f7423b94f7c53478862005abe013a3",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          27789,
+          2639955,
+          0,
+          0
+        ],
+        "resource_charge": [
+          27789,
+          2639955,
+          0,
+          0
+        ],
+        "source": "task:1ad7be495c1329e517843b80afd44dd0d6d1928f04095b7e3955c07e4465e09f",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "53edbbf34c8b8c7356f9aa3d9ac8a6995258d2b4694b8bb339c47596c570a71f",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          9510375,
+          808381875,
+          0,
+          0
+        ],
+        "resource_charge": [
+          9510375,
+          808381875,
+          0,
+          0
+        ],
+        "source": "task:d893c6f2aa8a22f7d2970f19669ce5f5aa6c625a418569517942604c5fc4afc9",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "54aac66c58e7dae6e13bdc3817ea09b420fed168ab87f734f1a63a630b2dc8f4",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          9510375,
+          808381875,
+          0,
+          0
+        ],
+        "resource_charge": [
+          9510375,
+          808381875,
+          0,
+          0
+        ],
+        "source": "task:4eb5a8ae7e3f27d20a83b1e703eccadaf2473ecab3436e76144139fa33baf2c5",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "5dbbc0841bc22fd4706810228efb735b181e3100d2e338cf695cf89ceefe34c3",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "source": "task:9dc295ae7357ff57ddff8469320074e998b263b8ed4d339b10a943fea3d3b242",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "60ca9ecf1332586562cb42f337c17d312a1a8afe16d683b57b943794323836df",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          2719804,
+          231183340,
+          0,
+          0
+        ],
+        "resource_charge": [
+          2719804,
+          231183340,
+          0,
+          0
+        ],
+        "source": "task:c6a95ccd734bfc27c89992d27e52e3f7e33998c9cf20cb102e2399471063c8b9",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "6cdd0397ce47ec5e31dee8d9c542b123106dbdce26e40c2dd8ef1a4868882d61",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          2719804,
+          231183340,
+          0,
+          0
+        ],
+        "resource_charge": [
+          2719804,
+          231183340,
+          0,
+          0
+        ],
+        "source": "task:462bfe47ad679f27ee414aab736a45551e3733715f3fc498b7128038f44af9d0",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "6e6bae792b17f101240846b17ff2b3f2ed2b17c8cc4046dfac7ffdb8a0cc3465",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          3764,
+          357580,
+          0,
+          0
+        ],
+        "resource_charge": [
+          3764,
+          357580,
+          0,
+          0
+        ],
+        "source": "task:fc50f9f2fe404a0a83afdc2cf08a3c43e0c7569a43ba1397773d6c752e27f3ba",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "730bf4b083944eccfa8931f466b143db1a0b0cae97731aac79cb985a0b0df196",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          8041,
+          763895,
+          0,
+          0
+        ],
+        "resource_charge": [
+          8041,
+          763895,
+          0,
+          0
+        ],
+        "source": "task:7438a07977b3f8cd254e422eb5a62bb5edbb95601cdb778379fc9bce841d93b1",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "77a0a8cc192080005369f11ece4aaf4c885e297e70772b8ea004523c68938a61",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "source": "task:4859f5fb5a934b7077c9631de23c3cf528d4c7da6e01ae5ddad6d6a8c359ca05",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "783fd73c246d4b542ceb99c0abec8dd797d18ea95cc830a37938ab86567e43c4",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          1383,
+          131385,
+          0,
+          0
+        ],
+        "resource_charge": [
+          1383,
+          131385,
+          0,
+          0
+        ],
+        "source": "task:1ee576ce4227a23f340128252d99f4cb423f74297cbb45dd3664c17570ee73b1",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "7f890bb5f196ff5a5ebf7f73be1f9ac9cc801dc9cb0dde8d672f5b93121f4e76",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          132,
+          12540,
+          0,
+          0
+        ],
+        "resource_charge": [
+          132,
+          12540,
+          0,
+          0
+        ],
+        "source": "task:61ec60a298232f4572b0d2c96c5ae2c83f0dc87b3be77c9035bf021073f808d8",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "827d129fba936f2f62a5f1d8af30408e7128480664249ab50c2ec3d8ac7e8859",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "source": "task:0246451034002f0d9602f17d3bf9c39afec7a14fbbe6ad0355491b763a50bc1d",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "8651094781c0ae321787f4351f60d4ca0df3bb1b61358adc5174ee007bb5ba4a",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          1596,
+          151620,
+          0,
+          0
+        ],
+        "resource_charge": [
+          1596,
+          151620,
+          0,
+          0
+        ],
+        "source": "task:7eab2affb535a9d15d9c704bead2851fa3669ede2d529c79919e03114e680f20",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "8765b344142ffd99c24ce36e392756364c4f3483aaaac2e5d49989056bb4a311",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "source": "task:9b3e86420a6693c30cbbb9a66a33aa884f95701750ba16fce234527b1eb6e25e",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "8ba5de7d933c7d54efa30eee874ead27d93b055085c208797e7bb07e8c7ebcfc",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          7739511,
+          735253545,
+          0,
+          0
+        ],
+        "resource_charge": [
+          7739511,
+          735253545,
+          0,
+          0
+        ],
+        "source": "task:a16896f3ffbd3c6e160676336866ed524a4235008ebec3becb5b00069cebc337",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "92d35ae4068480ecb72ae307028e631581c36722fad846b3a49acd406b169453",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          8924,
+          847780,
+          0,
+          0
+        ],
+        "resource_charge": [
+          8924,
+          847780,
+          0,
+          0
+        ],
+        "source": "task:d0b612f6b41052bbe34aba53fa9b121f2467923c3a8fcaef8b38610a39bea27f",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "953f818df3e056db0718d691f4a65c498116a061773f3e6f2bac36486920a015",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          655,
+          62225,
+          0,
+          0
+        ],
+        "resource_charge": [
+          655,
+          62225,
+          0,
+          0
+        ],
+        "source": "task:55d8bdf49b467ca4ea747f13dc8b9e16ad697cf0336ec1a047758c14c179b4fa",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "96962f83c9d6136693608588778e1c14cc7a7d38a053c22f19658d904a50ae46",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "source": "task:b84c711e32cb64d2c019fe812661a219b8a5bc7b7332b903471dda338bb9f117",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "9ee0f2b8dab519b85f3e9cd448dbfaa5780415cc6de06822da21ae07de6cbc49",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "source": "task:ee88fd892eb83bfe994cd1fc2ee7666446366075fa1856f34baf505061e51ff0",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "9f5b186f09fd1506f9308e9e156bc196b2ec801ea21a6add07aa18c9aba7b845",
+        "cap": 1500,
+        "closed": false,
+        "committed_units": 1500,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          7509389,
+          638298065,
+          0,
+          0
+        ],
+        "resource_charge": [
+          7509389,
+          638298065,
+          0,
+          0
+        ],
+        "source": "task:5cdf0bc7987cd7a6bce7a3d4920e208c4efcb79f9ad928062217c711d7b495e4",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "a21d8a3ff871125b96e611f6c88b163e5114fa1d5756331956ffa3658972a38b",
+        "cap": 1500,
+        "closed": false,
+        "committed_units": 1500,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          7509389,
+          638298065,
+          0,
+          0
+        ],
+        "resource_charge": [
+          7509389,
+          638298065,
+          0,
+          0
+        ],
+        "source": "task:69c86d1ece3c1ea9af04b4c33db939ea91cb283a263f463f9e275207b384e733",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "ac41844e357eb79c4c634624d077ae65a70de5d9f6b4fd05389cc65d6db7bbf3",
+        "cap": 1500,
+        "closed": false,
+        "committed_units": 1500,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          7509389,
+          638298065,
+          0,
+          0
+        ],
+        "resource_charge": [
+          7509389,
+          638298065,
+          0,
+          0
+        ],
+        "source": "task:dc73be444f3bac39bb06623ec09d915ac61e5373d5e368320ed5185ec7fcdf34",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "ad78787fcb09e0f2a2a4e8e83d6473f0a4373d73c0cf3531548a26fd6758fc0c",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          45100,
+          4284500,
+          0,
+          0
+        ],
+        "resource_charge": [
+          45100,
+          4284500,
+          0,
+          0
+        ],
+        "source": "task:e1a0d49414049cb77b85dc2e94a2e2f3797bb7b82997b88ac0be00ff6528dcc3",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "af7c0376412bcbec093bdb2edf1ea4382681b82a4aa1ea41476e8e77e7694e2d",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "source": "task:680c5bd52b0cd8fcc1068bea8c5b310a41a158aab9318875580029cb90767df6",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "b292eb7e040b14c097a313783cc2e6a3c65219fc4cb59e194e75cb8d6f4e8016",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          1964,
+          186580,
+          0,
+          0
+        ],
+        "resource_charge": [
+          1964,
+          186580,
+          0,
+          0
+        ],
+        "source": "task:28d443c0d939d79c6159af83135c08b318df6a01557a3bd52e93fc1ce98bfac9",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "b6cab2fb1c2aefff0cb3839ce12853502af5e45dbe0be2312b151297bcd7719a",
+        "cap": 1500,
+        "closed": false,
+        "committed_units": 1500,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          7509389,
+          638298065,
+          0,
+          0
+        ],
+        "resource_charge": [
+          7509389,
+          638298065,
+          0,
+          0
+        ],
+        "source": "task:d93d3856186310667cdb165b6c2a623f5fce7819c11a1b45588ade89ab882754",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "bff16ea6a4aa1d6ec695b173f3a5f9ce43055c4ca5300d039b418f748eef9cdf",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          22751,
+          2161345,
+          0,
+          0
+        ],
+        "resource_charge": [
+          22751,
+          2161345,
+          0,
+          0
+        ],
+        "source": "task:1e0e8b0c982a63500ecbda3001e9ca409140e09e6780c5a8c7f57a7c39185774",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "c59115fd2887025ef838cc7f0dff17b80a30dcdbab7e755fde5ab26e8ba095eb",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "source": "task:bca8ea9ae4b685c0bfa9e5c79d2b3a266805a49c95c798fce4f9bcbdd523aa94",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "c9876a3edf6d077c519a6a1113a52a5aca0c256044ac9f8571b149570a15a60c",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          9510375,
+          808381875,
+          0,
+          0
+        ],
+        "resource_charge": [
+          9510375,
+          808381875,
+          0,
+          0
+        ],
+        "source": "task:50ee6abedf4662444de11c784ac28ed241c4a5976b5669bbb5262e24b2d375bf",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "c98efed51c6b3d52bcc7cb3c84ab6a860f72645e1ca996c7266b7412fcf5291c",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          6772,
+          643340,
+          0,
+          0
+        ],
+        "resource_charge": [
+          6772,
+          643340,
+          0,
+          0
+        ],
+        "source": "task:6c3a7902147379a40a19466f65603d5828b97bacf8370e2616559fc7ca15b94b",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "c9e1c8267d1188e43f88f4e867c08a16e3790ca4bf53b997534d2244499c9eaf",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "source": "task:c8c86ffce1c50de5f95ed81331d9ccbf6ef8f3efdc52cb4f73ee2b2942413f2e",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "d01c5a8ed8690cb0d0cabc7b5869cef4af6efa6e73dc9a7521208678fe278a76",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          24515,
+          2328925,
+          0,
+          0
+        ],
+        "resource_charge": [
+          24515,
+          2328925,
+          0,
+          0
+        ],
+        "source": "task:d44913e3cf2895604465321ec0431bdc6c974fdaebf011a40366deef9f16a377",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "dc69491e7119d181a421636a0831d6be1b2f934492c27b3c23fa0e44f4f2d6bf",
+        "cap": 1500,
+        "closed": false,
+        "committed_units": 1500,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          7509389,
+          638298065,
+          0,
+          0
+        ],
+        "resource_charge": [
+          7509389,
+          638298065,
+          0,
+          0
+        ],
+        "source": "task:9825e40927b2f8e4697fd3fbb29712cc1f7b9bd35eef76d618d6ee831b354d7f",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "df3792b62021ac399c905f0c85a0be8256982d7749a020dc3ecf9f83dcab2636",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          9510375,
+          808381875,
+          0,
+          0
+        ],
+        "resource_charge": [
+          9510375,
+          808381875,
+          0,
+          0
+        ],
+        "source": "task:663d250d437b7cfd016881af9c2ab4d1df97b7fd83688c8f73446fa7926659ba",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "e3497cabc1e5111142a5a4fa811a0f24d0dbd6903e4b595841b06772c6d9ffcb",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          2104556,
+          199932820,
+          0,
+          0
+        ],
+        "resource_charge": [
+          2104556,
+          199932820,
+          0,
+          0
+        ],
+        "source": "task:5b4ec5170590ed2653667738de56161c13c79a2e0f122ad5442db65edb7b97e9",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "e595ae8b0381345989c3297d37c3ee5994b3029d3098fc032f28488da53102f7",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "source": "task:16d1c4385f0972ce4e15acf370f63082e3f4206313bdf25b6707b7ce08bea029",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "e62e79edb4330f5337dcc3aa231e7cfd2e819aead9912a4a89c3dd57d5a514e0",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "source": "task:b580a3d73c30e27b6b1b09089e33b2e3e4e9c16a4e1f6dc88d69601169a1d41e",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "e6e1d71607ef977bdcd89dfc8d8fa062c03970fce42d502c17bbeebfa289fbdd",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "source": "task:f22165a27c1cad04fba787506121bdc0bc8989375e55654173bd4adba4eda29d",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "e790c8e0f020a9d16b154fe703e713339c671f657b8204625dbebb9b11966b6a",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          7793,
+          740335,
+          0,
+          0
+        ],
+        "resource_charge": [
+          7793,
+          740335,
+          0,
+          0
+        ],
+        "source": "task:41824a2a063df8d2accd54e0e47b9c78c901bfb25f9f4528aabfb71d259ed847",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "eab725a471034060ca779ca15fd9c225c30596c9fec64d94f486d32ebaba51a8",
+        "cap": 100,
+        "closed": false,
+        "committed_units": 100,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          56809,
+          5396855,
+          0,
+          0
+        ],
+        "resource_charge": [
+          56809,
+          5396855,
+          0,
+          0
+        ],
+        "source": "task:9a99192815917663f6c8f9402b689fea224d9359f438c5f5586eef018d76be67",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "eac7db10465dcfbfbbc1cb04a7474e5a33d518bafb0af1af457617116068187b",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          9510375,
+          808381875,
+          0,
+          0
+        ],
+        "resource_charge": [
+          9510375,
+          808381875,
+          0,
+          0
+        ],
+        "source": "task:0156fbb1a57dda8478b5f357f23e537c76924aedf2f36e8606dd2ff174d46d9e",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "f04c87084f40a08a939459061b47112a19fdd0bd166757aa6bb06dd3a85bdc58",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          2719804,
+          231183340,
+          0,
+          0
+        ],
+        "resource_charge": [
+          2719804,
+          231183340,
+          0,
+          0
+        ],
+        "source": "task:f706d28774112301c7bc35b853e1784dc958f8ac2ddc72c0ee0edac0c8fc9717",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "f067c58576e3fc340e0b9729e396b0ba6b7c13055d1a6dacc323a651096ba730",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "source": "task:260d77bc0ffb7578a2ac6624808d298f207c3b58d66e525dc39dfa0ac95d5aff",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "f8c15acbe802fcf41040d28026e4a53dbca6f5dbf535332b9d0c6f37ae9899a0",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "source": "task:d754f9f8de7cd79c711f1be9b0538bd6ecd7bb6682ebe6815c629b8fc675a203",
+        "unallocated_units": 0
+      },
+      {
+        "budget": "fae0d449d6370ae5a3c9c7ae2db82c04427a2943fcc21d4c7f6eab2cbf2c854f",
+        "cap": 1600,
+        "closed": false,
+        "committed_units": 1600,
+        "historically_observed_beneficiary_credit": 0,
+        "historically_observed_native_gross_debit": 0,
+        "lane": "Storage",
+        "pending_effects": 0,
+        "resource_cap": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "resource_charge": [
+          16778512,
+          1426173520,
+          0,
+          0
+        ],
+        "source": "task:000404c1ffc277f6777546709446027f0f1a4157ee946b21de1565cfb31ff53c",
+        "unallocated_units": 0
+      }
+    ],
+    "claim_count": 67,
+    "current_branch_payment_finality": false,
+    "journal_root": "82cd811bad02d67ac93c7d6379f0e9d1ef307a3d27b824b960ba48a715939b70",
+    "physical_capacity_verified_by_this_adapter": false,
+    "production_activation": false,
+    "schema": "pon-native-owner-six-lane-budget-v1",
+    "sequence": 268,
+    "source_count": 67
+  },
+  "m12_storage_parents": 36,
+  "members": 30,
+  "pages": 3,
+  "plan": "aceb60a977bc0f9ac69ee4e4c1928d27d365d3ddbcad6bfd46aba405e92609d7",
+  "root_effect": "2d9f290f60c34b75870bf6cb3b80375756c431d4503468aa2bb3229bc7e28e11",
+  "root_receipt": "33bfa760aa8792813a7a0d207077fb619f5fb90c4c2283b8673ce4e9485526fc",
+  "verification": {
+    "attempts_committed": 190,
+    "cache_bytes_committed": 0,
+    "input_bytes_committed": 840901248,
+    "reconstruction_bytes_committed": 1401440452
+  },
+  "wire_cache_actual": {
+    "chunk_rows": 570,
+    "logical_bytes": 420642144,
+    "manifest_rows": 570
+  },
+  "wire_cache_admission": {
+    "expected_chunk_rows": 570,
+    "expected_logical_bytes": 420642144,
+    "expected_manifest_rows": 570,
+    "full_payload_profile_not_unconditionally_supported": true,
+    "input_and_consumer_max_manifest_rows": 128,
+    "max_chunk_rows": 2048,
+    "max_database_bytes": 1073741824,
+    "max_logical_bytes": 536870912,
+    "max_manifest_rows": 768,
+    "new_temporary_wire_metadata_grant": true,
+    "original_128_temporary_wire_gate_passed": false,
+    "original_absolute_deadline": true,
+    "profile": "native-grouped-temporary-wire-cache-v3"
+  }
+}

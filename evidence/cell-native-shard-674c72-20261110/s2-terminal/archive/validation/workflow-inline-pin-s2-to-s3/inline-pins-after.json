@@ -1,0 +1,236 @@
+[
+  {
+    "actual_blob": "3ac7b48c55ed48f125dbab3ec2b23c0507ab3c13",
+    "expected_blob": "3ac7b48c55ed48f125dbab3ec2b23c0507ab3c13",
+    "line": 55,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+    "sha256": "73a8dceef766adc49bd3b56c70d7909f964e2f5073dc6993f4013d24db5a54e1",
+    "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml"
+  },
+  {
+    "actual_blob": "2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf",
+    "expected_blob": "2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf",
+    "line": 56,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs",
+    "sha256": "8b71ad7b9e627f84426bfa84ec3aa1a2527466c1086f8419fc23bf7ecfd414e7",
+    "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml"
+  },
+  {
+    "actual_blob": "ddc4e1d317ce962e453a1f08db7f608e43a8e152",
+    "expected_blob": "ddc4e1d317ce962e453a1f08db7f608e43a8e152",
+    "line": 57,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+    "sha256": "74812ed3a1197a1f2a0907890858481b7d4bc2d8fc8f5cab8eca6b17d5665ec2",
+    "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml"
+  },
+  {
+    "actual_blob": "95d0dc21b1154aa89990a7b81f35dccffc5f05c1",
+    "expected_blob": "95d0dc21b1154aa89990a7b81f35dccffc5f05c1",
+    "line": 58,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs",
+    "sha256": "c9533dc8a42b320fa2547c3372490366f2eb01e4cf494d992f2147db708fe080",
+    "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml"
+  },
+  {
+    "actual_blob": "9202edd5d62220f097ca4f7b87e4cbd2a130f8c4",
+    "expected_blob": "9202edd5d62220f097ca4f7b87e4cbd2a130f8c4",
+    "line": 59,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs",
+    "sha256": "93db686c615d86035484c64321095105ea8dc97e3fc6c51491f45b3b0f0f1700",
+    "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml"
+  },
+  {
+    "actual_blob": "a92d02b7e1edd316aba52cb1b2ff8b546e65c03d",
+    "expected_blob": "a92d02b7e1edd316aba52cb1b2ff8b546e65c03d",
+    "line": 79,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+    "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b",
+    "workflow": ".github/workflows/pon-branch-encoding-acceptance.yml"
+  },
+  {
+    "actual_blob": "44acbb5d854a8e0a7c4979b4715bd9949b656cd5",
+    "expected_blob": "44acbb5d854a8e0a7c4979b4715bd9949b656cd5",
+    "line": 75,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+    "sha256": "8f4c5c579547b21841ad1dbefb854d41305972265ea39f40f2c1ff3386985aa0",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "a6eb85aa2c2e3ad17244890128ef86975d71ecc9",
+    "expected_blob": "a6eb85aa2c2e3ad17244890128ef86975d71ecc9",
+    "line": 76,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+    "sha256": "10a435cf83dbf1a7bc8596eaf858046526b55ed69f3c476309e752a7d457fb53",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "6119f98bb45fda6399d2528db9f61a69751e397f",
+    "expected_blob": "6119f98bb45fda6399d2528db9f61a69751e397f",
+    "line": 77,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner_tests.rs",
+    "sha256": "74c380513503b8395859f566eb55d93631729547adebb6e4e770ff47a3e622a0",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "eb5ac74b5563dfecfec99b371657672d31c7404f",
+    "expected_blob": "eb5ac74b5563dfecfec99b371657672d31c7404f",
+    "line": 80,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "sha256": "ae9602b648ceadbc6c8b786fae74048e172572d18bfce41ecceab65728f2bdac",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9",
+    "expected_blob": "abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9",
+    "line": 81,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/store/history_page.rs",
+    "sha256": "43c2f10765dd16c5f8b51ec9f667667866180b9963b10da7304095bea3ed3e16",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "c98c5333ab3609b30b11fd0a700917ce7f2a8999",
+    "expected_blob": "c98c5333ab3609b30b11fd0a700917ce7f2a8999",
+    "line": 82,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs",
+    "sha256": "ae673ce5027eb5a1780ff85680d151a4a599ccd60a4c4bfdb184a59544c80f2e",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "e99453b1abe6ce589f003be199b5553241cba398",
+    "expected_blob": "e99453b1abe6ce589f003be199b5553241cba398",
+    "line": 83,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+    "sha256": "92bfaca74ad0b7e5f9c7559d05a13a5535420b7df536a474de4035191e7a838f",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "9f830268d71fcea84ceca7dc2469b9861f654d86",
+    "expected_blob": "9f830268d71fcea84ceca7dc2469b9861f654d86",
+    "line": 84,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/store/task_observation.rs",
+    "sha256": "2182999c12807831eb1f89c777e330dd46edd6c5ddff11144b20aaf552662a33",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "5e3769d3186026a7bac012be534f0d6cad5e362a",
+    "expected_blob": "5e3769d3186026a7bac012be534f0d6cad5e362a",
+    "line": 85,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs",
+    "sha256": "052a55f00b7978e26b4aa461dfdf1b29bc78fe077bfa105a0dd845ad4f67b4ad",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "7301aeb3033913f080b23767bfca52a2bf76d45b",
+    "expected_blob": "7301aeb3033913f080b23767bfca52a2bf76d45b",
+    "line": 86,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs",
+    "sha256": "bf20c645991250ee811434817cbefaf63374adbbe0c3ca014d586949028895f7",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "e3ec8bf4bdd510f3fe718e63a4df595d342c61c6",
+    "expected_blob": "e3ec8bf4bdd510f3fe718e63a4df595d342c61c6",
+    "line": 87,
+    "matches": true,
+    "path": "formal/pon-nakamoto-v1/work_query_bound.py",
+    "sha256": "d6b5c3b25f6cd8287de5b927f271d0436ffe736470eb914d02a8a17497ea0909",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "526f155f2215184aa607da6d453423ca6930ded2",
+    "expected_blob": "526f155f2215184aa607da6d453423ca6930ded2",
+    "line": 88,
+    "matches": true,
+    "path": "formal/pon-nakamoto-v1/test_work_query_bound.py",
+    "sha256": "9a27846bac2a80f82c1f4399e1c3bc2334d9dafe3d5da3212764c362cb403b2a",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "c8567475a36cf449d9fd2b33363a545fbd4704ab",
+    "expected_blob": "c8567475a36cf449d9fd2b33363a545fbd4704ab",
+    "line": 89,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs",
+    "sha256": "95b60a3fdc3992a6efc03b01a1882088b0ef1c828c0ed22d88fd0d76c6cb9ddf",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "79a7c0ab6812d5a536f551241cee9a12ebdfb494",
+    "expected_blob": "79a7c0ab6812d5a536f551241cee9a12ebdfb494",
+    "line": 90,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+    "sha256": "f39f1d5e30c7ca81c5c373ffdd981c6070e8f497bffe93710101203e4ae795ac",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "3fcbc873fcc89de208922e6ffd74361442797bed",
+    "expected_blob": "3fcbc873fcc89de208922e6ffd74361442797bed",
+    "line": 91,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
+    "sha256": "f160aca6fe2824621056ad02c8c282293db40f4914da9564bbeda3d301177cbf",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "74af81e2e181f6639dd1719a65d91c0ba5323c9b",
+    "expected_blob": "74af81e2e181f6639dd1719a65d91c0ba5323c9b",
+    "line": 92,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+    "sha256": "e91b5f6fbdefff92d02d670b8d04ca9d4c7b3d2fdc598e450324fe89b513f6ec",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "0f611459c4c1c37488861ba36c82ba8302e40c4c",
+    "expected_blob": "0f611459c4c1c37488861ba36c82ba8302e40c4c",
+    "line": 93,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+    "sha256": "210461095842347918bdc34aad0b8f0531dee11735e23848d6c4867240df3bcd",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "6540d88dc33064ab504607bfa9b7340d42a3c585",
+    "expected_blob": "6540d88dc33064ab504607bfa9b7340d42a3c585",
+    "line": 94,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+    "sha256": "8de3fc5f217f38c87d37f0b41bda580b593b00b601af254e2e75b6326b8e1e18",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "27b6342619ee051c57944de88b4bbab33ff4627c",
+    "expected_blob": "27b6342619ee051c57944de88b4bbab33ff4627c",
+    "line": 95,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+    "sha256": "819a67f4346289d7ae72608dc3975ed6105a6845e39e3084c7734ecedd679916",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  },
+  {
+    "actual_blob": "ec6420becaba837f22d45c917d15554a8e653275",
+    "expected_blob": "ec6420becaba837f22d45c917d15554a8e653275",
+    "line": 98,
+    "matches": true,
+    "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+    "sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf",
+    "workflow": ".github/workflows/pon-recent-batch-acceptance.yml"
+  }
+]
