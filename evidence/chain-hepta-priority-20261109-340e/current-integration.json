@@ -1,0 +1,25 @@
+{
+  "m14": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+  "correction_commit": "bafd47420a34204d5373fc69d2fc5c533a367878",
+  "merged_current_source": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "corpus_pin_count": 1079,
+  "required_path_count": 987,
+  "pin_updates": [
+    {
+      "path": "scripts/ci/pq_proof_profile_binding.py",
+      "before": "e810c13b4abcf889c493f8d7530dd3518abb8481",
+      "after": "0599a634538e7d17b58e990f7e90e7b778777055"
+    },
+    {
+      "path": "scripts/ci/test_pq_proof_profile_binding.py",
+      "before": "57f769a061d880a5da848a0f4ec1fe8dd176948a",
+      "after": "d55ac0c6c889c8758451540f9530e980eedcd257"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "before": "9e95a0870c3ab8af6871a62d8ad8bc4edc189ab8",
+      "after": "f41eced48f55e35fd9264d19d4050dbd25fff1b0"
+    }
+  ],
+  "qualification": "HOLD_NO_GO"
+}

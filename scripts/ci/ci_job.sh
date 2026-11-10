@@ -20,6 +20,8 @@ case "${1:?required job}" in
     python3 scripts/ci/test_run_pq_root_native_v3.py
     python3 scripts/ci/test_pq_root_custody_review_v1.py
     python3 scripts/ci/pq_root_custody_review_v1.py
+    python3 scripts/ci/test_pq_root_custody_review_v2.py
+    python3 scripts/ci/pq_root_custody_review_v2.py
     python3 scripts/ci/test_pq_root_migration_review_v1.py
     python3 scripts/ci/pq_root_migration_review_v1.py
     python3 scripts/ci/test_run_pq_root_continuation_v4.py

@@ -1,0 +1,492 @@
+{
+  "base_commit": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d",
+  "worktree": "/home/qian-qi/chain-hepta-review-340e",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--show-toplevel"
+      ],
+      "returncode": 0,
+      "stdout": "/home/qian-qi/chain-hepta-review-340e\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "stdout": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "returncode": 0,
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-hepta-profile-20261109-340e\", \"remote_policy_mutated\": false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--check",
+        "--",
+        "/home/qian-qi/chain-hepta-review-340e-staging/pq_profile/audit-helper-complete.patch",
+        "/home/qian-qi/chain-hepta-review-340e-staging/pon-consensus-review/time-bin-tail-bridge.patch"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--",
+        "/home/qian-qi/chain-hepta-review-340e-staging/pq_profile/audit-helper-complete.patch",
+        "/home/qian-qi/chain-hepta-review-340e-staging/pon-consensus-review/time-bin-tail-bridge.patch"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--name-only",
+        "-z",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "stdout": "config/pon/pq-cross-branch-corpus-v1.json\u0000docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\u0000formal/pon-nakamoto-v1/NATIVE_FORK_MAPPING_V1.md\u0000scripts/ci/pq_proof_profile_binding.py\u0000scripts/ci/test_pq_proof_profile_binding.py\u0000",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "hash-object",
+        "--no-filters",
+        "--",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+      ],
+      "returncode": 0,
+      "stdout": "999b993349ec34419c4015ed9186f8f54f8c538b\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "hash-object",
+        "--no-filters",
+        "--",
+        "scripts/ci/pq_proof_profile_binding.py"
+      ],
+      "returncode": 0,
+      "stdout": "0599a634538e7d17b58e990f7e90e7b778777055\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "hash-object",
+        "--no-filters",
+        "--",
+        "scripts/ci/test_pq_proof_profile_binding.py"
+      ],
+      "returncode": 0,
+      "stdout": "d55ac0c6c889c8758451540f9530e980eedcd257\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "returncode": 0,
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-hepta-profile-20261109-340e\", \"remote_policy_mutated\": false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "stdout": "ac8501a85a770ba34f34e1bed507ca747e5c3f8d\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "ls-files",
+        "scripts/ci",
+        ".github/workflows"
+      ],
+      "returncode": 0,
+      "stdout": ".github/workflows/chain-hepta-closure-candidate.yml\n.github/workflows/codeql-analysis-export.yml\n.github/workflows/codeql-real-exact-source.yml\n.github/workflows/cpq1-full-content.yml\n.github/workflows/pon-baseline-diagnostic-readback.yml\n.github/workflows/pon-branch-encoding-acceptance.yml\n.github/workflows/pon-cloud-build-inputs.yml\n.github/workflows/pon-credit-envelope.yml\n.github/workflows/pon-fixed-host-root-f0.yml\n.github/workflows/pon-history-stage-diagnostic.yml\n.github/workflows/pon-legacy-reorg-cost-20261104.yml\n.github/workflows/pon-model-parent-acceptance.yml\n.github/workflows/pon-native-campaign-qualification.yml\n.github/workflows/pon-native-fullpath.yml\n.github/workflows/pon-next-architecture-security.yml\n.github/workflows/pon-original-large-state-cpu.yml\n.github/workflows/pon-original-workspace-large-state-cpu.yml\n.github/workflows/pon-owned-process-cleanup.yml\n.github/workflows/pon-pq-system-continuation.yml\n.github/workflows/pon-priority-acceptance.yml\n.github/workflows/pon-recent-batch-acceptance.yml\n.github/workflows/pon-smollm-hosted-once.yml\n.github/workflows/pon-throughput-evidence.yml\n.github/workflows/pon-w1-qrom-closure.yml\n.github/workflows/pon-w1-qrom-implementation.yml\n.github/workflows/pon-w1-qrom-proof-chain.yml\n.github/workflows/pon-w1-transparent-profile.yml\n.github/workflows/pon-w1-work-security.yml\n.github/workflows/pon-work-time-contract-v1.yml\n.github/workflows/release-finality-reference.yml\n.github/workflows/trnm-required-baseline.yml\nscripts/ci/analyze_zero_paired_cost.py\nscripts/ci/audit_native_campaign_outcomes.py\nscripts/ci/capture_chain_hepta_identity.py\nscripts/ci/chain_hepta_qualification.py\nscripts/ci/check_applicability.py\nscripts/ci/check_canonical_development_plan.sh\nscripts/ci/check_ci_contract.py\nscripts/ci/check_client_confirmation_evidence.py\nscripts/ci/check_completion_evidence.py\nscripts/ci/check_content_commitment_vectors.py\nscripts/ci/check_cpq1_parameter_observation.py\nscripts/ci/check_cross_arch_cost.py\nscripts/ci/check_detailed_contracts.py\nscripts/ci/check_evaluation_bundle_evidence.py\nscripts/ci/check_four_priority_evidence.py\nscripts/ci/check_growth_scale_observation.py\nscripts/ci/check_invariant_evidence.py\nscripts/ci/check_invariants.py\nscripts/ci/check_maintenance_cost.py\nscripts/ci/check_native_constants_roster.py\nscripts/ci/check_native_node_supplements.py\nscripts/ci/check_one_zero_locality_cost.py\nscripts/ci/check_pon_evidence.py\nscripts/ci/check_pq_research_integration.py\nscripts/ci/check_public_readiness_evidence.py\nscripts/ci/check_public_v3_service_campaign.py\nscripts/ci/check_repository.py\nscripts/ci/check_required_native_test.py\nscripts/ci/check_sqlite_build_requalification.py\nscripts/ci/check_zero_locality_cost.py\nscripts/ci/ci_job.sh\nscripts/ci/ci_observation.py\nscripts/ci/finalize_fixed_root_f0.py\nscripts/ci/fixed_root_f0_ownership.py\nscripts/ci/fixed_root_f0_resources.py\nscripts/ci/fixtures/fixed_root_f0_legacy_resource_counterexample.json\nscripts/ci/historical_evidence.py\nscripts/ci/install_ci_tools.sh\nscripts/ci/integration_push_source.py\nscripts/ci/llm_hosted_once.py\nscripts/ci/model-runtime-cpu-requirements.txt\nscripts/ci/pinned_native_process.py\nscripts/ci/pq_authority_effect_register.py\nscripts/ci/pq_authority_surface_scan.py\nscripts/ci/pq_chain_claim_guard.py\nscripts/ci/pq_external_rollback_oracle.py\nscripts/ci/pq_lifetime_budget.py\nscripts/ci/pq_proof_profile_binding.py\nscripts/ci/pq_quantum_daa_scenarios.py\nscripts/ci/pq_root_custody_review_v1.py\nscripts/ci/pq_root_dependency_register.py\nscripts/ci/pq_root_migration_review_v1.py\nscripts/ci/pq_source_reader.py\nscripts/ci/prepare_evidence_sources.py\nscripts/ci/prepare_pq_provider.sh\nscripts/ci/project_boundary.py\nscripts/ci/public_fixture_host_lease.py\nscripts/ci/public_host_ci_observation.py\nscripts/ci/read_native_cache_observation.py\nscripts/ci/record_pq_native_command.py\nscripts/ci/replay_pinned_native.py\nscripts/ci/report_current_implementation.py\nscripts/ci/report_module_evidence.py\nscripts/ci/run_account_archive_conformance.py\nscripts/ci/run_account_execution_conformance.py\nscripts/ci/run_credit_envelope_checks.py\nscripts/ci/run_cross_arch_cost.py\nscripts/ci/run_fixed_root_phase_host.py\nscripts/ci/run_from_zero_host.py\nscripts/ci/run_from_zero_native.py\nscripts/ci/run_fuzz_smoke.py\nscripts/ci/run_history_diagnostic.py\nscripts/ci/run_history_native.py\nscripts/ci/run_legacy_reorg_root_abba.py\nscripts/ci/run_llm_cell_installed_host_controls.sh\nscripts/ci/run_native_phase_host.py\nscripts/ci/run_pq_root_continuation_v4.py\nscripts/ci/run_pq_root_native_v3.py\nscripts/ci/run_public_fixture_native.py\nscripts/ci/run_shared_material_campaign_v2.py\nscripts/ci/run_shared_material_security_v1.py\nscripts/ci/run_supply_chain.py\nscripts/ci/run_w1_false_trace_reuse_v1.py\nscripts/ci/run_w1_fresh_service_v1.py\nscripts/ci/run_w1_rank_batch_v5.py\nscripts/ci/run_w1_reused_cost_v3.py\nscripts/ci/run_work_expensive_campaign_v1.py\nscripts/ci/run_work_expensive_verifier_v1.py\nscripts/ci/run_work_time_contract_v1.py\nscripts/ci/runtime-release-requirements.txt\nscripts/ci/rust_baseline_shards.py\nscripts/ci/shared_material_cost_v2.py\nscripts/ci/test_account_archive_conformance.py\nscripts/ci/test_applicability.py\nscripts/ci/test_architecture_host_ci.py\nscripts/ci/test_audit_native_campaign_outcomes.py\nscripts/ci/test_authenticated_suite_count.py\nscripts/ci/test_branch_migration_count.py\nscripts/ci/test_capture_chain_hepta_identity.py\nscripts/ci/test_cell_discovery_v3_ci.py\nscripts/ci/test_cell_storage_convergence_ci.py\nscripts/ci/test_chain_hepta_command_binding.py\nscripts/ci/test_chain_hepta_qualification.py\nscripts/ci/test_ci_contract.py\nscripts/ci/test_ci_execution.py\nscripts/ci/test_ci_observation_process.py\nscripts/ci/test_ci_source_integrity.py\nscripts/ci/test_client_confirmation_evidence.py\nscripts/ci/test_codeql_retention.py\nscripts/ci/test_completion_evidence.py\nscripts/ci/test_cpq1_parameter_observation.py\nscripts/ci/test_cross_arch_cost.py\nscripts/ci/test_evaluation_bundle_evidence.py\nscripts/ci/test_evidence_sources.py\nscripts/ci/test_finality_profile.py\nscripts/ci/test_fixed_root_f0.py\nscripts/ci/test_fixed_root_phase_host.py\nscripts/ci/test_fixed_root_preflight.py\nscripts/ci/test_fixed_root_resources.py\nscripts/ci/test_four_priority_evidence.py\nscripts/ci/test_from_zero_host_ci.py\nscripts/ci/test_growth_scale_observation.py\nscripts/ci/test_history_stage_diagnostic.py\nscripts/ci/test_integration_push_source.py\nscripts/ci/test_invariant_evidence.py\nscripts/ci/test_invariants_registry.py\nscripts/ci/test_llm_cell_handoff_deadline.py\nscripts/ci/test_llm_cell_host_handoff.py\nscripts/ci/test_llm_cell_installed_host.py\nscripts/ci/test_llm_cell_provider_ready.py\nscripts/ci/test_llm_hosted_once.py\nscripts/ci/test_maintenance_cost.py\nscripts/ci/test_native_constants_roster.py\nscripts/ci/test_native_node_supplements.py\nscripts/ci/test_native_phase_host.py\nscripts/ci/test_native_session_evidence.py\nscripts/ci/test_one_zero_locality_cost.py\nscripts/ci/test_pon_accepted_block.py\nscripts/ci/test_pon_branch_work_schedule_reader.py\nscripts/ci/test_pon_daa_head_binding.py\nscripts/ci/test_pon_daa_schedule_reader.py\nscripts/ci/test_pon_evidence.py\nscripts/ci/test_pon_joint_daa_reader.py\nscripts/ci/test_pon_proof_latency.py\nscripts/ci/test_pon_public_v3_phase_read.py\nscripts/ci/test_pon_public_v3_policy_read.py\nscripts/ci/test_pon_v3_cookie_cpu_study.py\nscripts/ci/test_pon_w1_budget_readers.py\nscripts/ci/test_pon_w1_cost_matrix_reader.py\nscripts/ci/test_pon_w1_false_trace_reuse_reader_v1.py\nscripts/ci/test_pon_w1_legal_strategy_reader_v1.py\nscripts/ci/test_pon_w1_legal_strategy_reader_v2.py\nscripts/ci/test_pon_w1_legal_strategy_reader_v3.py\nscripts/ci/test_pon_w1_preparation_strategy_reader_v4.py\nscripts/ci/test_pon_w1_rank_batch_reader_v5.py\nscripts/ci/test_pon_w1_reused_cost_reader_v3.py\nscripts/ci/test_pon_wan_evidence.py\nscripts/ci/test_pon_work_expensive_reader_v1.py\nscripts/ci/test_pq_authority_effect_register.py\nscripts/ci/test_pq_authority_surface_scan.py\nscripts/ci/test_pq_chain_claim_guard.py\nscripts/ci/test_pq_external_rollback_oracle.py\nscripts/ci/test_pq_lifetime_budget.py\nscripts/ci/test_pq_proof_profile_binding.py\nscripts/ci/test_pq_provider_ci.py\nscripts/ci/test_pq_quantum_daa_scenarios.py\nscripts/ci/test_pq_research_integration.py\nscripts/ci/test_pq_root_custody_review_v1.py\nscripts/ci/test_pq_root_dependency_register.py\nscripts/ci/test_pq_root_migration_review_v1.py\nscripts/ci/test_project_boundary.py\nscripts/ci/test_public_fixture_lease.py\nscripts/ci/test_public_fixture_process.py\nscripts/ci/test_public_readiness_evidence.py\nscripts/ci/test_public_v3_service_campaign.py\nscripts/ci/test_read_native_cache_observation.py\nscripts/ci/test_read_original_native_campaign.py\nscripts/ci/test_read_validated_business_goodput.py\nscripts/ci/test_recent_batch_suite_count.py\nscripts/ci/test_record_pq_native_command.py\nscripts/ci/test_replay_pinned_native.py\nscripts/ci/test_repository.py\nscripts/ci/test_responsibility_evidence.py\nscripts/ci/test_run_account_execution_conformance.py\nscripts/ci/test_run_from_zero_native.py\nscripts/ci/test_run_legacy_reorg_root_abba.py\nscripts/ci/test_run_pon_root_supplement.py\nscripts/ci/test_run_pon_w1_native_campaign.py\nscripts/ci/test_run_pq_root_continuation_v4.py\nscripts/ci/test_run_pq_root_native_v3.py\nscripts/ci/test_run_w1_false_trace_reuse_v1.py\nscripts/ci/test_run_w1_fresh_service_v1.py\nscripts/ci/test_run_w1_rank_batch_v5.py\nscripts/ci/test_run_w1_reused_cost_v3.py\nscripts/ci/test_rust_baseline_shards.py\nscripts/ci/test_shared_material_campaign_v2.py\nscripts/ci/test_shared_material_cost_v2.py\nscripts/ci/test_shared_material_security_v1.py\nscripts/ci/test_six_workpackage_native_rosters.py\nscripts/ci/test_smollm_command_receipts.py\nscripts/ci/test_w1_cancellation_handoff.py\nscripts/ci/test_w1_control_tree_audit.py\nscripts/ci/test_w1_coordinator_contract.py\nscripts/ci/test_w1_current_source_observation.py\nscripts/ci/test_w1_deployment_comparison_audit.py\nscripts/ci/test_w1_deployment_evidence_binding.py\nscripts/ci/test_w1_factorial_native_gate.py\nscripts/ci/test_w1_fri_query_replay.py\nscripts/ci/test_w1_fri_transcript_audit.py\nscripts/ci/test_w1_full_v2_disposition.py\nscripts/ci/test_w1_kaggle_source_builder.py\nscripts/ci/test_w1_kaggle_worker_contract.py\nscripts/ci/test_w1_lifecycle_cost_v4.py\nscripts/ci/test_w1_lifetime_ledger.py\nscripts/ci/test_w1_postwin_identity.py\nscripts/ci/test_w1_profile_source_map.py\nscripts/ci/test_w1_proof_latency_readback.py\nscripts/ci/test_w1_qrom_bcs_budget.py\nscripts/ci/test_w1_qrom_closure_controls.py\nscripts/ci/test_w1_qrom_composition_budget.py\nscripts/ci/test_w1_qrom_conditional_budget.py\nscripts/ci/test_w1_qrom_current_implementation_audit.py\nscripts/ci/test_w1_qrom_implementation_audit.py\nscripts/ci/test_w1_qrom_joint_oracle_diagnostic.py\nscripts/ci/test_w1_qrom_proof_chain_controls.py\nscripts/ci/test_w1_qrom_semantics_audit.py\nscripts/ci/test_w1_qrom_workflow_gate.py\nscripts/ci/test_w1_query_expression_feasibility.py\nscripts/ci/test_w1_receiver_real.py\nscripts/ci/test_w1_security_budget.py\nscripts/ci/test_w1_staged_observer.py\nscripts/ci/test_w1_transparent_compare.py\nscripts/ci/test_w1_v2_controls_gate.py\nscripts/ci/test_w1_v2_current_stage_gate.py\nscripts/ci/test_w1_zkr_artifact_audit.py\nscripts/ci/test_w1_zkr_control_id_audit.py\nscripts/ci/test_work_cost_report.py\nscripts/ci/test_work_expensive_verifier_v1.py\nscripts/ci/test_work_rejection_report.py\nscripts/ci/test_zero_locality_cost.py\nscripts/ci/test_zero_paired_cost.py\nscripts/ci/tool-versions.env\nscripts/ci/verify_ci_source.py\nscripts/ci/w1_qrom_closure_controls.py\nscripts/ci/w1_qrom_proof_chain_controls.py\nscripts/ci/w1_v2_controls_gate.py\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "returncode": 0,
+      "stdout": " M config/pon/pq-cross-branch-corpus-v1.json\n M docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\n M formal/pon-nakamoto-v1/NATIVE_FORK_MAPPING_V1.md\n M scripts/ci/pq_proof_profile_binding.py\n M scripts/ci/test_pq_proof_profile_binding.py\n?? evidence/chain-hepta-priority-20261109-340e/\n",
+      "stderr": ""
+    }
+  ],
+  "archives": [
+    {
+      "path": "/home/qian-qi/chain-hepta-review-340e-inputs.tar.gz",
+      "sha256": "68a8d90c467d3160629cf6f3ac8737331ab2840fb177f63f1139d1ba362ca35c",
+      "bytes": 35562,
+      "evidence_name": "review-inputs.tar.gz"
+    },
+    {
+      "path": "/home/qian-qi/chain-hepta-review-340e-extra.tar.gz",
+      "sha256": "5813d70a4d11209e1bf5377180abac3749f80bec567fe972f27fd019ecdb87ba",
+      "bytes": 10063,
+      "evidence_name": "review-extra.tar.gz"
+    }
+  ],
+  "corpus_pin_updates": [
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "baseline": "c3a2b3ad037eddedbdf0769a5cdab3a7440232c8",
+      "before_final_rebind": "c3a2b3ad037eddedbdf0769a5cdab3a7440232c8",
+      "actual": "999b993349ec34419c4015ed9186f8f54f8c538b"
+    },
+    {
+      "path": "scripts/ci/pq_proof_profile_binding.py",
+      "baseline": "e810c13b4abcf889c493f8d7530dd3518abb8481",
+      "before_final_rebind": "0599a634538e7d17b58e990f7e90e7b778777055",
+      "actual": "0599a634538e7d17b58e990f7e90e7b778777055"
+    },
+    {
+      "path": "scripts/ci/test_pq_proof_profile_binding.py",
+      "baseline": "57f769a061d880a5da848a0f4ec1fe8dd176948a",
+      "before_final_rebind": "d55ac0c6c889c8758451540f9530e980eedcd257",
+      "actual": "d55ac0c6c889c8758451540f9530e980eedcd257"
+    }
+  ],
+  "qualification": "HOLD_NO_GO",
+  "native_execution_performed": false,
+  "commit_performed": false,
+  "push_performed": false,
+  "git_index_staged": false,
+  "historical_passes_transferred": false,
+  "completed": true,
+  "source_manifest_entries_verified": 22,
+  "extracted_files": {
+    "daemon-learning-review/RESUME_IMPLEMENTATION_DESIGN.md": {
+      "bytes": 9033,
+      "sha256": "42a76a25a3c7823d08e0cf8d054c3e726a3bae0e921e6a76bcb8cbcf50a2a35e"
+    },
+    "delivery/REVIEW.md": {
+      "bytes": 5847,
+      "sha256": "52ac44103032a0ba5d181c1dfcd9a45359fcaa8a8732bbea65809fd88443174f"
+    },
+    "delivery/cloud-evaluation.json": {
+      "bytes": 5445,
+      "sha256": "3205cdc657eb4a848d0aae81d94dcfb1683eeed253a207e097e3c65df56b7c4a"
+    },
+    "host_acceptance/M14_HISTORY_COMPARISON.json": {
+      "bytes": 60381,
+      "sha256": "fe97ad9fe2ab619f521239dbf45ceeee5f2f639c97f778a5c27ab0372975d8cc"
+    },
+    "host_acceptance/M14_HOST_READBACK.json": {
+      "bytes": 16352,
+      "sha256": "d079e3f5aea6bc822c0df97dfc7061433865f351a599d95d47e3891617211ad2"
+    },
+    "host_acceptance/README_M14_HOST_READBACK.md": {
+      "bytes": 6646,
+      "sha256": "31ff5d464321bfaedf1cc6fc0ff55e6abb634ceff8cf9457a742810fd3b6ba53"
+    },
+    "host_acceptance/recompute.stdout.log": {
+      "bytes": 265,
+      "sha256": "5ea6b5f2b94a66853bb0b1c056178a936301e5b4b02e5151a99772c587b9a2bb"
+    },
+    "host_acceptance/recompute_m14.py": {
+      "bytes": 12267,
+      "sha256": "1c8393d064073d1fbfa76efc87e0e0d294a4d603f43da0689ac22dbc958aa935"
+    },
+    "pon-consensus-review/review-summary.json": {
+      "bytes": 1259,
+      "sha256": "bc31714db163178cb8381f5631a554ef9f032ecd868cb3aa0082112f3a66c792"
+    },
+    "pon-consensus-review/time-bin-tail-bridge.patch": {
+      "bytes": 6021,
+      "sha256": "ae619169aa9a55b63f4de8f2d338861e7f633a90983699ca4ab9a2ab3a4b0dcd"
+    },
+    "pq_profile/audit-helper-complete.patch": {
+      "bytes": 7128,
+      "sha256": "5c43a51b5e0bf9aca913702c7d7b626e714cf31473470d8242009db78efc7129"
+    },
+    "pq_profile/audit-helper-corpus-pins.patch": {
+      "bytes": 1624,
+      "sha256": "49faabddd461abe5594a51efdcf63a07e4983930e9ca7d3c10be28423f3391fb"
+    },
+    "pq_profile/audit-helper-pins.patch": {
+      "bytes": 5504,
+      "sha256": "5ea72b6906c80c70e85280a80dd83c1bd0ddecdb62ea516b4f7083a4baa3de85"
+    },
+    "pq_profile/validation/corpus-pin-review.json": {
+      "bytes": 723,
+      "sha256": "009e3c02c3330ec1ab7ba81cf9bf4c94bd6c799086901d321fc217d14f083bc8"
+    },
+    "pq_profile/validation/current-profile-methods.json": {
+      "bytes": 3820,
+      "sha256": "98a12f8afc3b882d4d086661f989d2e3d31dd3379091189142817b995274d86e"
+    },
+    "pq_profile/validation/materialized-subset-preflight.stderr.log": {
+      "bytes": 139,
+      "sha256": "c4dfc721cc7f91d3ec67d99446d3c46f79c764fc96d6f9ba52e69cc669d686c1"
+    },
+    "pq_profile/validation/materialized-subset-preflight.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pq_profile/validation/new-controls-on-baseline.stderr.log": {
+      "bytes": 8729,
+      "sha256": "cd46ed8c04a6158a1dc537ab1f86cab59af46371bd4bf01cfddfc5e2df8e6298"
+    },
+    "pq_profile/validation/new-controls-on-baseline.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pq_profile/validation/patched-full-suite.stderr.log": {
+      "bytes": 4629,
+      "sha256": "b4a6c12d1db915fe2e52aa0d665efe5c487464ea874469676b7a4789c9bcf682"
+    },
+    "pq_profile/validation/patched-full-suite.stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pq_profile/validation/patched-inspector.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pq_profile/validation/patched-inspector.stdout.log": {
+      "bytes": 8586,
+      "sha256": "8b9b27f86ebe666d705658d87d65f51bdea0bf77213c559822f24df69e900257"
+    },
+    "pq_profile/validation/profile-report-diff.json": {
+      "bytes": 8038,
+      "sha256": "2b0a723ff3d491488ca776e0343d581fdfbd5d89033acaab330808559e2de569"
+    },
+    "pq_profile/validation/source-scope-review.json": {
+      "bytes": 1607,
+      "sha256": "b890c01878d3be559d4b7092114cfb0f5a06d416936c98156a234b6b66421760"
+    },
+    "pq_profile/validation/summary.json": {
+      "bytes": 2681,
+      "sha256": "791c71612b8fc2e931b50e0b10f4c3dad63d410ecfa66dc659e93cb10a43cd38"
+    },
+    "source-manifest.json": {
+      "bytes": 3495,
+      "sha256": "229352eaa29627dc51be1cc590c6449f0d97808d44d66bb15b8ff8f85feccaac"
+    },
+    "storage-audit/audit_original_848_v2.py": {
+      "bytes": 3562,
+      "sha256": "232224b601bc8c441df239350d058115048c77039615efbe6835a519d1e9d169"
+    },
+    "storage-audit/independent-original-audit.json": {
+      "bytes": 6354,
+      "sha256": "b0feace0c216e87bd2bc5b0323b793597ae9a5ccfaf1785577e20c468ba617b6"
+    }
+  },
+  "evidence_files": [
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/daemon-learning-review/RESUME_IMPLEMENTATION_DESIGN.md",
+      "sha256": "42a76a25a3c7823d08e0cf8d054c3e726a3bae0e921e6a76bcb8cbcf50a2a35e",
+      "bytes": 9033
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/README.md",
+      "sha256": "a5ceb3c63f0437c6daa1d03d6cd6277f99ccca95a9d12ff4ed9590c1af354b38",
+      "bytes": 5924
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/cloud-evaluation.json",
+      "sha256": "3205cdc657eb4a848d0aae81d94dcfb1683eeed253a207e097e3c65df56b7c4a",
+      "bytes": 5445
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/host_acceptance/M14_HISTORY_COMPARISON.json",
+      "sha256": "fe97ad9fe2ab619f521239dbf45ceeee5f2f639c97f778a5c27ab0372975d8cc",
+      "bytes": 60381
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/host_acceptance/M14_HOST_READBACK.json",
+      "sha256": "d079e3f5aea6bc822c0df97dfc7061433865f351a599d95d47e3891617211ad2",
+      "bytes": 16352
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/host_acceptance/README_M14_HOST_READBACK.md",
+      "sha256": "31ff5d464321bfaedf1cc6fc0ff55e6abb634ceff8cf9457a742810fd3b6ba53",
+      "bytes": 6646
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/host_acceptance/recompute.stdout.log",
+      "sha256": "5ea6b5f2b94a66853bb0b1c056178a936301e5b4b02e5151a99772c587b9a2bb",
+      "bytes": 265
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/host_acceptance/recompute_m14.py",
+      "sha256": "1c8393d064073d1fbfa76efc87e0e0d294a4d603f43da0689ac22dbc958aa935",
+      "bytes": 12267
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/pon-consensus-review/review-summary.json",
+      "sha256": "bc31714db163178cb8381f5631a554ef9f032ecd868cb3aa0082112f3a66c792",
+      "bytes": 1259
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/pq_profile/validation/corpus-pin-review.json",
+      "sha256": "009e3c02c3330ec1ab7ba81cf9bf4c94bd6c799086901d321fc217d14f083bc8",
+      "bytes": 723
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/pq_profile/validation/current-profile-methods.json",
+      "sha256": "98a12f8afc3b882d4d086661f989d2e3d31dd3379091189142817b995274d86e",
+      "bytes": 3820
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/pq_profile/validation/materialized-subset-preflight.stderr.log",
+      "sha256": "c4dfc721cc7f91d3ec67d99446d3c46f79c764fc96d6f9ba52e69cc669d686c1",
+      "bytes": 139
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/pq_profile/validation/materialized-subset-preflight.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/pq_profile/validation/new-controls-on-baseline.stderr.log",
+      "sha256": "cd46ed8c04a6158a1dc537ab1f86cab59af46371bd4bf01cfddfc5e2df8e6298",
+      "bytes": 8729
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/pq_profile/validation/new-controls-on-baseline.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/pq_profile/validation/patched-full-suite.stderr.log",
+      "sha256": "b4a6c12d1db915fe2e52aa0d665efe5c487464ea874469676b7a4789c9bcf682",
+      "bytes": 4629
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/pq_profile/validation/patched-full-suite.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/pq_profile/validation/patched-inspector.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/pq_profile/validation/patched-inspector.stdout.log",
+      "sha256": "8b9b27f86ebe666d705658d87d65f51bdea0bf77213c559822f24df69e900257",
+      "bytes": 8586
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/pq_profile/validation/profile-report-diff.json",
+      "sha256": "2b0a723ff3d491488ca776e0343d581fdfbd5d89033acaab330808559e2de569",
+      "bytes": 8038
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/pq_profile/validation/source-scope-review.json",
+      "sha256": "b890c01878d3be559d4b7092114cfb0f5a06d416936c98156a234b6b66421760",
+      "bytes": 1607
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/pq_profile/validation/summary.json",
+      "sha256": "791c71612b8fc2e931b50e0b10f4c3dad63d410ecfa66dc659e93cb10a43cd38",
+      "bytes": 2681
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/source-manifest.json",
+      "sha256": "229352eaa29627dc51be1cc590c6449f0d97808d44d66bb15b8ff8f85feccaac",
+      "bytes": 3495
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/storage-audit/audit_original_848_v2.py",
+      "sha256": "232224b601bc8c441df239350d058115048c77039615efbe6835a519d1e9d169",
+      "bytes": 3562
+    },
+    {
+      "path": "evidence/chain-hepta-priority-20261109-340e/storage-audit/independent-original-audit.json",
+      "sha256": "b0feace0c216e87bd2bc5b0323b793597ae9a5ccfaf1785577e20c468ba617b6",
+      "bytes": 6354
+    }
+  ],
+  "corpus_pin_count": 1074,
+  "corpus_required_path_count": 982,
+  "available_check_paths": {
+    "corpus_checkers": [],
+    "inventory_checkers": [],
+    "closure_workflows": [
+      ".github/workflows/chain-hepta-closure-candidate.yml",
+      ".github/workflows/pon-w1-qrom-closure.yml"
+    ]
+  },
+  "worktree_status": " M config/pon/pq-cross-branch-corpus-v1.json\n M docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\n M formal/pon-nakamoto-v1/NATIVE_FORK_MAPPING_V1.md\n M scripts/ci/pq_proof_profile_binding.py\n M scripts/ci/test_pq_proof_profile_binding.py\n?? evidence/chain-hepta-priority-20261109-340e/\n"
+}

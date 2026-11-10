@@ -1,0 +1,37 @@
+{
+  "commands": [
+    {
+      "name": "preflight-before",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.025795022025704384,
+      "stdout_sha256": "e1d909adf2a7971324fabfc5f10a5ed6236ee0b19582d17ea3c31ae64b761cb8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "stage",
+      "argv": [
+        "git",
+        "add",
+        "--",
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "formal/pon-nakamoto-v1/NATIVE_FORK_MAPPING_V1.md",
+        "scripts/ci/pq_proof_profile_binding.py",
+        "scripts/ci/test_pq_proof_profile_binding.py",
+        "evidence/chain-hepta-priority-20261109-340e"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 0.013284406042657793,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "25f96d561739b72c16208284e7620aa14d2c68326dbacc6afca6f662d7e76216"
+    }
+  ],
+  "native_execution_performed": false,
+  "qualification": "HOLD_NO_GO",
+  "error": "stage failed",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/qian-qi/chain-hepta-validate-review-340e.py\", line 36, in <module>\n    run('stage',['git','add','--',*expected]);run('preflight-staged',['bash','scripts/project-preflight.sh','--staged'])\n    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/qian-qi/chain-hepta-validate-review-340e.py\", line 15, in run\n    if p.returncode:raise RuntimeError(name+' failed')\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: stage failed\n"
+}

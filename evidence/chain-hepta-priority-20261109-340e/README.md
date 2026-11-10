@@ -1,5 +1,7 @@
 # Chain/Hepta priority continuation
 
+Current integration source also includes da1374a200022bc14dc2bd325cc9ba29dbcd24ab from #847. Its 1,079 corpus pins and 987 required paths are retained. The M14 preparation records below keep their original 1,074/982 scope. This child changes the checker, test and development-plan pins relative to that current source. Learning design notes audit Hepta #5566 at 2bb02f144c9405791281c2cbfa5e7fd39a591b05 and do not qualify the declared counterpart.
+
 This continuation reviews fixed Chain M14 `ac8501a85a770ba34f34e1bed507ca747e5c3f8d`
 (tree `3f321d412ab7eb1f5c03f18ba21201e96a3db144`) and its declared Hepta
 counterpart `71738345326b98d88b738250d2b84ecbcb466eb8`. Public main is not this

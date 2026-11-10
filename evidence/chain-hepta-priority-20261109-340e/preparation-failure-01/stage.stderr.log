@@ -1,0 +1,37 @@
+The following paths and/or pathspecs matched paths that exist
+outside of your sparse-checkout definition, so will not be
+updated in the index:
+config/pon/pq-cross-branch-corpus-v1.json
+docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+formal/pon-nakamoto-v1/NATIVE_FORK_MAPPING_V1.md
+scripts/ci/pq_proof_profile_binding.py
+scripts/ci/test_pq_proof_profile_binding.py
+hint: If you intend to update such entries, try one of the following:
+hint: * Use the --sparse option.
+hint: * Disable or modify the sparsity rules.
+hint: Disable this message with "git config set advice.updateSparsePath false"
+The following paths and/or pathspecs matched paths that exist
+outside of your sparse-checkout definition, so will not be
+updated in the index:
+evidence/chain-hepta-priority-20261109-340e/README.md
+evidence/chain-hepta-priority-20261109-340e/cloud-evaluation.json
+evidence/chain-hepta-priority-20261109-340e/daemon-learning-review/RESUME_IMPLEMENTATION_DESIGN.md
+evidence/chain-hepta-priority-20261109-340e/host_acceptance/M14_HISTORY_COMPARISON.json
+evidence/chain-hepta-priority-20261109-340e/host_acceptance/M14_HOST_READBACK.json
+evidence/chain-hepta-priority-20261109-340e/host_acceptance/README_M14_HOST_READBACK.md
+evidence/chain-hepta-priority-20261109-340e/host_acceptance/recompute_m14.py
+evidence/chain-hepta-priority-20261109-340e/pon-consensus-review/review-summary.json
+evidence/chain-hepta-priority-20261109-340e/pq_profile/validation/corpus-pin-review.json
+evidence/chain-hepta-priority-20261109-340e/pq_profile/validation/current-profile-methods.json
+evidence/chain-hepta-priority-20261109-340e/pq_profile/validation/profile-report-diff.json
+evidence/chain-hepta-priority-20261109-340e/pq_profile/validation/source-scope-review.json
+evidence/chain-hepta-priority-20261109-340e/pq_profile/validation/summary.json
+evidence/chain-hepta-priority-20261109-340e/review-extra.tar.gz
+evidence/chain-hepta-priority-20261109-340e/review-inputs.tar.gz
+evidence/chain-hepta-priority-20261109-340e/source-manifest.json
+evidence/chain-hepta-priority-20261109-340e/storage-audit/audit_original_848_v2.py
+evidence/chain-hepta-priority-20261109-340e/storage-audit/independent-original-audit.json
+hint: If you intend to update such entries, try one of the following:
+hint: * Use the --sparse option.
+hint: * Disable or modify the sparsity rules.
+hint: Disable this message with "git config set advice.updateSparsePath false"
