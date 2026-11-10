@@ -128,6 +128,55 @@ again. Its CPU receipt covers admitted execution and final readback; it does
 not include metadata/funding preflight CPU. The latter still uses the original
 wall deadline. This distinction must remain in cost reports.
 
+## Selected-version consumer reconstruction
+
+`restore_cell_paged_version_to_cache_v2` adds an explicit consumer path from
+the original CRR2/CRG2 contracts to the selected version's bounded CAS. It
+accepts the complete plan file and current catalog, original root operation,
+independent loader context, TCV2 content record/pin and target cache. Complete
+current pages/catalog and exact version membership are checked before provider
+callbacks or cache publication. Other protected versions remain covered by
+root/catalog integrity checks; this receipt observes delivery of the selected
+complete version only.
+
+One non-cloneable `CellPagedShardRestoreBudgetV2` holds the original absolute
+deadline, first admitted plan/root/content scope and cumulative whole-attempt
+reservations. Those reservations cover every selected chunk, six potential
+provider reads per chunk, full possible shard-wire input, reconstruction,
+cache publication/readback and final complete ordered content readback. An
+admitted failed attempt keeps its full reservation. A later page, retry or
+new consumer cache does not replenish that owner. These are conservative
+logical reservations, not physical traffic, CPU or payment measurements.
+
+Each callback receives its original committed shard contract and the same
+deadline. `None` records an unavailable slot; callback errors abort the
+attempt. Returned wires are bounded before codec admission. The existing
+codeword primitive validates original shard identities and recovered bytes,
+including the pinned TCV2 SHA-512 chunk value, before cache publication.
+Four verified obtainable shards are required. Recovery has no payload fallback
+to the publisher, a delivery cache or the catalog arena. Callback transport
+and allocation remain the callback owner's responsibility.
+
+Final success requires a complete ordered target-cache readback under TCV1
+and the independently pinned TCV2, then rechecks every current plan page and
+the complete catalog. An earlier page changed during processing must refuse
+completion. Valid partial cache entries may remain after failure. No consumer
+receipt replaces complete native custody readback, repairs a provider, changes
+original funding/operation/Unknown responsibilities, settles a lease or grants
+loader/Hepta FinalUse authority.
+
+Current new test status: **NOT YET RUN**. Eleven cases exercise 129 synthetic
+chunks across two pages (128 actual 16 KiB model chunks plus a 20-byte runtime
+fixture), real local provider payloads, four-slot parity reconstruction,
+source/staging-cache removal and unavailable catalog payload, independent pin
+and original-root refusals, missing/changed pages, current catalog drift,
+late insufficient quorum, exact retained reservations and two cold consumers
+sharing the same original allowance. Six local provider directories remain
+one operator's local fixture. These cases do not establish an actual model's
+native funded paged RS46 cycle, independent failure domains/WAN, continuous
+paid retention, ordinary Hepta FinalUse or production qualification; those
+remain **HOLD**.
+
 ## Immutable typed release snapshot
 
 The [CTS1 release snapshot](CELL_RELEASE_SNAPSHOT_V1.md) combines TCV1,
