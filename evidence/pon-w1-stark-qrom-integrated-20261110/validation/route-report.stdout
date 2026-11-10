@@ -1,0 +1,529 @@
+{
+  "field_certificate_sha256": "4b1a0a5870b8755d9a3db6a423cbcdbb4bedc71966bff5bbb19044b69aee65b0",
+  "field_certificate_status": "FIXED_FIELD_ALGEBRA_CERTIFIED_SECURITY_HOLD",
+  "full_dependency_closure_reproduced": false,
+  "literature_review": {
+    "fresh_pdf_bytes_or_pdf_hashes_established": false,
+    "full_proofs_or_fixed_profile_instantiations_verified": false,
+    "historical_cdhz_pdf_identity": {
+      "bytes": 927435,
+      "pages": 102,
+      "path": "evidence/pon-w1-qrom-proof-chain-20261108/manuscript-pdf-manifest.json",
+      "provenance": "Recorded in the repository manifest at repository_baseline; not a new byte retrieval or hash computation.",
+      "sha256": "2cfb88c76732d9f39f4b1943b4aabc0390dd3d17830d91d910c38e16e4bb5a30",
+      "version_id": "20260302:160701"
+    },
+    "historical_obligation_accounting": {
+      "full_security_obligations_discharged": 0,
+      "implementation_contract": "config/pon/w1-qrom-implementation-current-v2.json",
+      "implementation_contract_roster_count": 15,
+      "interpretation": "The closed pinned-version sub-obligation is real progress. It neither deletes a historical roster entry nor certifies the associated cryptographic implementation obligation.",
+      "later_disposition": "evidence/pon-w1-qrom-proof-chain-20261108/proof-chain-status.json",
+      "later_disposition_roster_count": 15,
+      "other_historical_obligations_remaining": 14,
+      "pinned_version_subobligations_closed": 1
+    },
+    "manifest_path": "config/pon/w1-stark-literature-evidence-v1.json",
+    "manifest_sha256": "6f056ea71cc00f41d8e4ea665888ca9372f0a50ee57b4cadd6cc45d21b0753b1",
+    "observation_date": "2026-11-09",
+    "provenance": "new review record; cryptographic and historical source_base_commit remains separate",
+    "qualification": {
+      "complete_w1_soundness_qualified": false,
+      "consensus_admission": false,
+      "post_quantum_soundness_qualified": false,
+      "production_qualified": false,
+      "qrom_theorem_instantiated": false,
+      "unconditional_project_security_bits": null,
+      "whole_lifetime_failure_bound": null
+    },
+    "small_base_field_and_nonbinary_proximity_obligations_open": true,
+    "source_ids": [
+      "cdhz_2025_2166",
+      "dktz_tr26_237_revision_1",
+      "fenzi_sanso_cic_20261026",
+      "kkh_eprint_2026_782"
+    ]
+  },
+  "native_proofs_generated_or_verified": false,
+  "qualification": {
+    "complete_noninteractive_security_bits": null,
+    "concrete_primitive_security_qualified": false,
+    "consensus_admission": false,
+    "fiat_shamir_knowledge_soundness_qualified": false,
+    "lifecycle_security_bits": null,
+    "lifetime_adversary_budget_established": false,
+    "production_qualified": false,
+    "quantum_extractor_qualified": false,
+    "quantum_security_bits": null,
+    "recursive_composition_qualified": false,
+    "status": "HOLD_NO_GO"
+  },
+  "registry_sha256": "0d645b31e62143c5dcf5d2606b6a48d8f271190caf92154ca332275f7ec82a16",
+  "route_count": 3,
+  "route_fingerprints": {
+    "plonky3_poseidon2_w1_r1": "1e950010f0055cbd1e9d3ca564df5d7064af5e44f1ae01784e4bec78945315e4",
+    "plonky3_tagged_sha3_512_w1_r1": "de2409a170c509d45557397318c424a4453665b5af1a5a7a80308da5ca1ec717",
+    "risc0_poseidon2_fixed_v2": "f4021ed1bee67fbeef4c6b50ccb16c4ce9e283e11ced0a3fa2d058fb6c1c42a3"
+  },
+  "routes": [
+    {
+      "additional_open_obligations": [
+        "small_base_field_extension_domain_and_list_size_applicability"
+      ],
+      "backend": {
+        "name": "RISC Zero",
+        "version": "3.0.6"
+      },
+      "field": {
+        "base_two_adicity": "27",
+        "characteristic": "2013265921",
+        "extension_degree": "4",
+        "extension_polynomial_low_to_high": [
+          "11",
+          "0",
+          "0",
+          "0",
+          "1"
+        ]
+      },
+      "fri": {
+        "fold_log2": 4,
+        "inverse_rate": 4,
+        "minimum_degree": 256,
+        "queries": 50,
+        "reachable_recursive_trace_sizes_proved": false,
+        "upstream_trace_log2_max": 24,
+        "upstream_trace_log2_min": 13
+      },
+      "historical_obligation_roster": [
+        "latest_theorem_version_equivalence",
+        "complete_relation_and_compiler",
+        "all_27_recursion_program_semantics",
+        "control_padding_and_recursive_trace_size_reachability",
+        "relaxed_rbr_knowledge_soundness",
+        "committed_relation_monotonicity",
+        "merkle_multi_extractability",
+        "sponge_and_domain_separation_mapping",
+        "fiat_shamir_challenge_and_salt_mapping",
+        "finite_field_sampling_and_challenge_length",
+        "sequential_adaptive_composition",
+        "lifetime_global_quantum_budget",
+        "concrete_enabled_features_and_debug_exclusion",
+        "quantum_work_and_chainweight",
+        "pq_signature_owner_authorization"
+      ],
+      "primitive_model": {
+        "independent_role_oracles_qualified": false,
+        "name": "poseidon2"
+      },
+      "profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+      "proximity_scope": {
+        "all_proximity_gap_results_excluded": false,
+        "characteristic_two_additive_hypothesis_matched": false,
+        "dktz_theorem_5_22_direct_domain": {
+          "all_proximity_gap_results_excluded": false,
+          "candidate_domain": "multiplicative_two_adic_subgroup_or_coset",
+          "certified_characteristic": "2013265921",
+          "coprimality_witness": {
+            "all_checked_power_of_two_residues_nonzero": true,
+            "checked_evaluation_log2_max": 27,
+            "checked_evaluation_log2_min": 0,
+            "gcd_characteristic_two": 1,
+            "scope": "base_field_algebraic_capacity_not_proved_reachable_trace_or_evaluation_sizes"
+          },
+          "direct_domain_hypothesis_matched": false,
+          "fixed_tagged_evaluation_log2": null,
+          "fri_soundness_inferred": false,
+          "necessary_theorem_hypotheses": {
+            "base_field_size": "b=p^a",
+            "cardinality_divisible_by_characteristic": true,
+            "domain_cardinality": "b^d",
+            "domain_exponent": "d=2n-h>=4",
+            "evaluation_domain": "B_or_Fb_hyperplane",
+            "extension_degree": "m=2n",
+            "h": [
+              0,
+              1
+            ],
+            "parameter_range": "2<=t<=n-h"
+          },
+          "obstruction": "theorem_cardinality_divisible_by_characteristic_but_candidate_cardinality_coprime",
+          "padding_restriction_or_other_result_applicability": "OPEN",
+          "printed_page": 50,
+          "source_id": "dktz_tr26_237_revision_1",
+          "theorem": "5.22"
+        },
+        "evaluation_domain_kind": "multiplicative_two_adic",
+        "fri_soundness_inferred_from_field_algebra": false,
+        "small_base_field_and_list_size_review": "OPEN"
+      },
+      "qualification": {
+        "complete_noninteractive_security_bits": null,
+        "concrete_primitive_security_qualified": false,
+        "consensus_admission": false,
+        "fiat_shamir_knowledge_soundness_qualified": false,
+        "lifecycle_security_bits": null,
+        "lifetime_adversary_budget_established": false,
+        "production_qualified": false,
+        "quantum_extractor_qualified": false,
+        "quantum_security_bits": null,
+        "recursive_composition_qualified": false,
+        "status": "HOLD_NO_GO"
+      },
+      "retained_obligation_progress": {
+        "eight_interfaces_closed": {
+          "actual_semantics": false,
+          "fiat_shamir": false,
+          "lifetime": false,
+          "quantum_state_restoration": false,
+          "recursion": false,
+          "round_by_round_knowledge": false,
+          "shared_hash": false,
+          "vector_commitments": false
+        },
+        "evidence": "evidence/pon-w1-qrom-proof-chain-20261108/proof-chain-status.json",
+        "full_security_obligation_count_discharged": 0,
+        "historical_obligation_count": 15,
+        "other_historical_obligations_remaining": 14,
+        "pinned_revision_subobligations_closed": 1,
+        "scope": "readback_of_pinned_prior_observation_not_a_new_PDF_comparison_or_security_proof"
+      },
+      "route_id": "risc0_poseidon2_fixed_v2",
+      "source_closure_is_a_security_theorem": false,
+      "statement_identity": {
+        "allowed_control_ids": [
+          "0d79bc33b4760b4783cbb96fdc87724c7e0c463eb0ba1b2705d39f43c698bd2d",
+          "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+          "96cdf605f755f175a5661812810f2d491507c05f2ea4a83e4c3cad693d26651e",
+          "f74a894ff593584f65847630ead1a23af78c5f5fed2b61090866e01fa5767f12",
+          "411fa636f2d364648f035174d3778d6340d9ae1dd648fc35657c173f01e27e5f",
+          "1ca3ca03030719064ba61b3125bdd326fc57f74e799ef860bdea6f3227381e16",
+          "c32b3627d2b3d60c64adf523a98bd16c0ff607471f3d6630d1f26d5e9406d841",
+          "c9b08054994f542a6310b00d9b6fc6528ed7bb6f4ca5476a686847127cdfdc5b",
+          "e7934a23ddce1423b425cf32aa23be29f48cd40e0b6ff9376dce6f3bf9d0bc35",
+          "8c2fdd36ede09a4b9d316a43c51f1160cbd8876659c5f35810c3a119c60d3843",
+          "34530b42028fb631c90e1226bb0e750d4b9b593840d45216f75dca449dac7734",
+          "fd84d83092a1e1244d423a26d89c892ab098b467c6d82229912deb26e37d2562",
+          "9d9dbf33535ab11f52a93839dfd23b352b7626009e81d9459fd04e488898ec6a",
+          "c6972402cc81bc6c1122e65aa7cf463f3ac3f477c7dd860582ca7420fc7b8b02",
+          "2f6ea1104bdd5955faa135611e8f803e7b4461703b937e704da70955ec115467",
+          "a7b55654228123448cd67c400d9bf80b4e54eb3997ee92103e900903b6578862",
+          "2adab2445391035b21f255606a1ba060a7d5a64db5cdf13d9fda7f22a2853270",
+          "58b27422240db834c08b8e6c12000c093efce8613263f05825c380009c41da48",
+          "26c84437d3e26875b259880d0f29da47ed5ca869133637701d33fb15a83dce4b",
+          "177fde1441dc735dbd6a58245d82b2036623ac41547dc345f1fd7c486ac51462",
+          "eac3fb487080a62e6ff85d331dd72a4706e50e55c9cb842dea48d71e3e119a04",
+          "0344cd54d62d2a1b6538b674d5aa141250ff4c5be08c6e3d16cb5e1de632252d",
+          "53a7b23d07f99e5d5685e85874f5181e8486aa267a0ae607ffe9ba47c8bdda4a",
+          "20ac6e29b1806a143b508414140e2e15e461f93e04e3830af39cca362b8f005d",
+          "ba1d7275d5840e4f998e2c5120810c0eb197e90219696e2a64dec7662aa3cb06",
+          "7771415b778fea1923440e2eb22c4a1e1d7ada2d42cbe03d13402743c0988a31",
+          "1688f04cca489638862dba455c1d5c561513f975c885a3491f0fe12df761c847"
+        ],
+        "allowed_control_root": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
+        "allowed_program_semantics_proved": false,
+        "control_merkle_depth": 8,
+        "final_control_id": "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+        "guest_image_u32": [
+          1958252411,
+          3287394615,
+          1805488136,
+          1516578702,
+          78549041,
+          790278610,
+          301018785,
+          4279049364
+        ],
+        "verifier_parameters_digest": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013"
+      }
+    },
+    {
+      "backend": {
+        "name": "Plonky3",
+        "version": "0.8.0"
+      },
+      "component_domains": {
+        "carry": 3,
+        "packed_carry": 4,
+        "public_schedule_sha": 5,
+        "quotient_remainder": 2,
+        "sha": 1
+      },
+      "conditional_estimator": {
+        "assumed_hash_collision_bits": 128,
+        "assumed_hash_strength_proved": false,
+        "complete_noninteractive_or_quantum_bound": false,
+        "modulus_bits_floor": 127
+      },
+      "field": {
+        "base_two_adicity": "32",
+        "characteristic": "18446744069414584321",
+        "extension_degree": "2",
+        "extension_polynomial_low_to_high": [
+          "18446744069414584314",
+          "0",
+          "1"
+        ]
+      },
+      "fri": {
+        "all_grinding_bits": 0,
+        "log_blowup": 2,
+        "log_final_poly_len": 0,
+        "max_log_arity": 1,
+        "queries": 64,
+        "zero_knowledge": false
+      },
+      "open_obligations": [
+        "full_relation_and_compiler_refinement",
+        "concrete_round_by_round_knowledge_soundness",
+        "actual_mmcs_quantum_commitment_extraction",
+        "pcs_fri_deep_soundness_and_list_size",
+        "fiat_shamir_in_the_actual_joint_shared_oracle_model",
+        "quantum_state_restoration_and_initial_advice",
+        "recursive_programs_and_composition_loss",
+        "lifetime_adversary_query_budget",
+        "complete_resource_and_service_qualification",
+        "production_ingress_and_admission",
+        "small_base_field_extension_domain_and_list_size_applicability"
+      ],
+      "primitive_model": {
+        "challenger": "DuplexChallenger<Goldilocks,Poseidon2Goldilocks<8>,8,4>",
+        "digest_field_elements": 4,
+        "independent_role_oracles_qualified": false,
+        "leaf_rate_elements": 4,
+        "mmcs_arity": 2,
+        "mmcs_cap_height": 0,
+        "name": "Goldilocks Poseidon2",
+        "width": 8
+      },
+      "primitive_premises": {
+        "actual_pruned_mmcs_binding": "OPEN",
+        "concrete_restricted_tree_binding_bits": null,
+        "conditional_estimator_is_raw_compressor_bound": false,
+        "evidence": [
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/SECURITY_CONTRACT.md",
+          "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs"
+        ],
+        "false_w1_proof_inferred": false,
+        "fixed_w1_conflicting_opening_inferred": false,
+        "independent_leaf_branch_function_model": "REFUTED",
+        "scope": "retained_source_findings_not_new_native_execution_or_security_proof",
+        "unrestricted_compressor_collision_resistance": "REFUTED"
+      },
+      "profile_id": "TRNM-W1-FULL-PUBLIC-STARK-RESEARCH-P3-0.8.0-R1",
+      "proximity_scope": {
+        "all_proximity_gap_results_excluded": false,
+        "characteristic_two_additive_hypothesis_matched": false,
+        "dktz_theorem_5_22_direct_domain": {
+          "all_proximity_gap_results_excluded": false,
+          "candidate_domain": "multiplicative_two_adic_subgroup_or_coset",
+          "certified_characteristic": "18446744069414584321",
+          "coprimality_witness": {
+            "all_checked_power_of_two_residues_nonzero": true,
+            "checked_evaluation_log2_max": 32,
+            "checked_evaluation_log2_min": 0,
+            "gcd_characteristic_two": 1,
+            "scope": "base_field_algebraic_capacity_not_proved_reachable_trace_or_evaluation_sizes"
+          },
+          "direct_domain_hypothesis_matched": false,
+          "fixed_tagged_evaluation_log2": null,
+          "fri_soundness_inferred": false,
+          "necessary_theorem_hypotheses": {
+            "base_field_size": "b=p^a",
+            "cardinality_divisible_by_characteristic": true,
+            "domain_cardinality": "b^d",
+            "domain_exponent": "d=2n-h>=4",
+            "evaluation_domain": "B_or_Fb_hyperplane",
+            "extension_degree": "m=2n",
+            "h": [
+              0,
+              1
+            ],
+            "parameter_range": "2<=t<=n-h"
+          },
+          "obstruction": "theorem_cardinality_divisible_by_characteristic_but_candidate_cardinality_coprime",
+          "padding_restriction_or_other_result_applicability": "OPEN",
+          "printed_page": 50,
+          "source_id": "dktz_tr26_237_revision_1",
+          "theorem": "5.22"
+        },
+        "evaluation_domain_kind": "multiplicative_two_adic",
+        "fri_soundness_inferred_from_field_algebra": false,
+        "small_base_field_and_list_size_review": "OPEN"
+      },
+      "qualification": {
+        "complete_noninteractive_security_bits": null,
+        "concrete_primitive_security_qualified": false,
+        "consensus_admission": false,
+        "fiat_shamir_knowledge_soundness_qualified": false,
+        "lifecycle_security_bits": null,
+        "lifetime_adversary_budget_established": false,
+        "production_qualified": false,
+        "quantum_extractor_qualified": false,
+        "quantum_security_bits": null,
+        "recursive_composition_qualified": false,
+        "status": "HOLD_NO_GO"
+      },
+      "route_id": "plonky3_poseidon2_w1_r1",
+      "transcript_domain_hex": "54524e4d2d57312d46554c4c2d5055424c49432d535441524b2d52455345415243482d50332d302e382e302d523100"
+    },
+    {
+      "backend": {
+        "name": "Plonky3",
+        "version": "0.8.0"
+      },
+      "descriptor": "p3=0.8.0;sha3=512;r=576;c=1024;F=18446744069414584321;E=X^2-7;binary;cap=0;log_blowup=2;log_final_poly=0;max_log_arity=1;queries=64;pow=0;zk=0;sha=d13,w7728,p27,q2,next1;carry=d14,w370,p180,q1,next0",
+      "field": {
+        "base_two_adicity": "32",
+        "characteristic": "18446744069414584321",
+        "extension_degree": "2",
+        "extension_polynomial_low_to_high": [
+          "18446744069414584314",
+          "0",
+          "1"
+        ]
+      },
+      "frame_magic_hex": "54524e4d2d57312d5348415245442d4841534800",
+      "fri": {
+        "all_grinding_bits": 0,
+        "log_blowup": 2,
+        "log_final_poly_len": 0,
+        "max_log_arity": 1,
+        "queries": 64,
+        "zero_knowledge": false
+      },
+      "full_w1_fixed_components": [
+        {
+          "evaluation_log2": 15,
+          "main_width": 7728,
+          "name": "sha",
+          "preprocessed_width": 27,
+          "proof_magic_hex": "5731533353483031",
+          "trace_log2": 13
+        },
+        {
+          "evaluation_log2": 16,
+          "main_width": 370,
+          "name": "packed_carry",
+          "preprocessed_width": 180,
+          "proof_magic_hex": "5731533350433031",
+          "trace_log2": 14
+        }
+      ],
+      "open_obligations": [
+        "full_relation_and_compiler_refinement",
+        "concrete_round_by_round_knowledge_soundness",
+        "actual_mmcs_quantum_commitment_extraction",
+        "pcs_fri_deep_soundness_and_list_size",
+        "fiat_shamir_in_the_actual_joint_shared_oracle_model",
+        "quantum_state_restoration_and_initial_advice",
+        "recursive_programs_and_composition_loss",
+        "lifetime_adversary_query_budget",
+        "complete_resource_and_service_qualification",
+        "production_ingress_and_admission",
+        "small_base_field_extension_domain_and_list_size_applicability"
+      ],
+      "primitive_model": {
+        "capacity_bits": 1024,
+        "challenger": "SerializingChallenger64<Goldilocks,HashChallenger<u8,TranscriptHasher,64>>",
+        "digest_bytes": 64,
+        "digest_encoding": "eight_raw_u64le_words_without_field_reduction",
+        "implementation": "RustCrypto sha3 0.10.9",
+        "independent_role_oracles_qualified": false,
+        "mmcs_arity": 2,
+        "mmcs_cap_height": 0,
+        "name": "SHA3-512",
+        "parameter_source_scope": "fixed Rust descriptor and Sha3_512 type selection; implementation equivalence is not proved here",
+        "rate_bits": 576
+      },
+      "profile_id": "TRNM-W1-P3-SHA3-512-TAGGED-R1",
+      "proximity_scope": {
+        "all_proximity_gap_results_excluded": false,
+        "characteristic_two_additive_hypothesis_matched": false,
+        "dktz_theorem_5_22_direct_domain": {
+          "all_proximity_gap_results_excluded": false,
+          "candidate_domain": "multiplicative_two_adic_subgroup_or_coset",
+          "certified_characteristic": "18446744069414584321",
+          "coprimality_witness": {
+            "all_checked_power_of_two_residues_nonzero": true,
+            "checked_evaluation_log2_max": 32,
+            "checked_evaluation_log2_min": 0,
+            "gcd_characteristic_two": 1,
+            "scope": "base_field_algebraic_capacity_not_proved_reachable_trace_or_evaluation_sizes"
+          },
+          "direct_domain_hypothesis_matched": false,
+          "fixed_tagged_evaluation_log2": [
+            15,
+            16
+          ],
+          "fri_soundness_inferred": false,
+          "necessary_theorem_hypotheses": {
+            "base_field_size": "b=p^a",
+            "cardinality_divisible_by_characteristic": true,
+            "domain_cardinality": "b^d",
+            "domain_exponent": "d=2n-h>=4",
+            "evaluation_domain": "B_or_Fb_hyperplane",
+            "extension_degree": "m=2n",
+            "h": [
+              0,
+              1
+            ],
+            "parameter_range": "2<=t<=n-h"
+          },
+          "obstruction": "theorem_cardinality_divisible_by_characteristic_but_candidate_cardinality_coprime",
+          "padding_restriction_or_other_result_applicability": "OPEN",
+          "printed_page": 50,
+          "source_id": "dktz_tr26_237_revision_1",
+          "theorem": "5.22"
+        },
+        "evaluation_domain_kind": "multiplicative_two_adic",
+        "fri_soundness_inferred_from_field_algebra": false,
+        "small_base_field_and_list_size_review": "OPEN"
+      },
+      "qualification": {
+        "complete_noninteractive_security_bits": null,
+        "concrete_primitive_security_qualified": false,
+        "consensus_admission": false,
+        "fiat_shamir_knowledge_soundness_qualified": false,
+        "lifecycle_security_bits": null,
+        "lifetime_adversary_budget_established": false,
+        "production_qualified": false,
+        "quantum_extractor_qualified": false,
+        "quantum_security_bits": null,
+        "recursive_composition_qualified": false,
+        "status": "HOLD_NO_GO"
+      },
+      "route_id": "plonky3_tagged_sha3_512_w1_r1",
+      "structural_mmcs_result": {
+        "complete_pcs_or_fiat_shamir_result": false,
+        "geometry": "binary_cap_zero_fixed_ordered_power_of_two_matrix_heights",
+        "quantum_commitment_extractor": false,
+        "scope": "two_existing_accepted_conflicting_classical_openings_to_a_framed_hash_collision",
+        "shared_context": "same profile, component, statement context, ordered dimensions and root; conflicting values at one shared matrix-row coordinate"
+      },
+      "trace_shape_scope": "fixed_tagged_full_W1_profile_not_arbitrary_AIR_or_all_P3_variants",
+      "transcript_model": {
+        "actual_schedule_knowledge_soundness": "OPEN",
+        "consumed_output_byte_count_encoded_before_observe": false,
+        "evidence": "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3.rs",
+        "fixed_p3_observation_schedule": "UNCHANGED",
+        "fixed_w1_forgery_inferred": false,
+        "generic_transcript_history_injectivity_claimed": false,
+        "input_role_framing_is_transcript_history_proof": false,
+        "observe_call_boundaries_encoded": false,
+        "per_message_semantic_tags": false,
+        "scope": "retained_source_metadata_not_new_native_execution_or_security_proof"
+      }
+    }
+  ],
+  "schema": "TRNM-W1-STARK-ROUTE-AUDIT1",
+  "security_bits_transferred_between_routes": false,
+  "source_base_commit": "e2a02f9271b49f146e70806c8a66e161b5973971",
+  "source_base_commit_scope": "implementation and historical records; new literature observation is separately identified",
+  "source_input_count": 18,
+  "source_mapping_reproduced": true,
+  "source_scope": "selected_route_inputs_not_full_repository_or_dependency_closure",
+  "source_set_sha256": "6b3a1654c722ecf1ce858feb2b5428b9736180138ee5bb4f5e3a01e96f47e583",
+  "source_to_binary_refinement_proved": false,
+  "status": "ROUTE_MAPPING_REPRODUCED_SECURITY_HOLD"
+}
