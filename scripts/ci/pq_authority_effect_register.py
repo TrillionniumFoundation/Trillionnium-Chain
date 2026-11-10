@@ -20,12 +20,12 @@ from pq_source_reader import SourceReadError, read_regular
 SCHEMA = 'trnm-pq-authority-effects-v1'
 RESULT_SCHEMA = 'trnm-pq-authority-effects-result-v1'
 DEFAULT_MANIFEST = 'config/pon/pq-authority-effects-v1.json'
-SOURCE_REVISION = '06233be630f8eff6cea59cd5111e5941135a4aa5'
+SOURCE_REVISION = 'd9c725f27b197f71208754b0a5ac0717798d3587'
 PURPOSE = 'curated-source-consistency-only'
 MAX_BYTES = 1024 * 1024
 # SHA-256 of canonical {"source_revision": SOURCE_REVISION, "files": ...}.
 # Generated from exact Git object bytes at the reviewed revision, not current-tree hashes.
-REVIEWED_SOURCE_LOCK_SHA256 = '51f4b646d552b1a1a95372f954b003c82fcbc74a1c9fac78c6ed8c36be9b8ed6'
+REVIEWED_SOURCE_LOCK_SHA256 = 'ae9f867bc033569731f77de22045cb00e31c1b9c0df6b53e01f9a6dcc026e3fc'
 
 CRATES = 'trillionnium/crates/'
 TRANSFER = CRATES + 'trnm-types/src/transfer.rs'
