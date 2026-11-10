@@ -1,0 +1,9 @@
+{
+  "hosted_actions_executed": false,
+  "job_results": {
+    "closure": true,
+    "implementation": true
+  },
+  "native_or_security_qualification_inferred": false,
+  "source_commit": "784274926d97207e9ee94cf76eef22e1006d84e1"
+}

@@ -330,10 +330,31 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/w1-lifetime-current-source-v2.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/w1-lifetime-current-source-v2.json"
+        )),
+    ),
+    (
+        "config/pon/w1-qrom-closure-current-required-tests-v2.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/w1-qrom-closure-current-required-tests-v2.json"
+        )),
+    ),
+    (
         "config/pon/w1-qrom-closure-required-tests-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../config/pon/w1-qrom-closure-required-tests-v1.json"
+        )),
+    ),
+    (
+        "config/pon/w1-qrom-current-required-tests-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/w1-qrom-current-required-tests-v1.json"
         )),
     ),
     (
@@ -369,6 +390,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../config/pon/w1-retained-disposition-v1.json"
+        )),
+    ),
+    (
+        "config/pon/w1-stark-literature-evidence-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/w1-stark-literature-evidence-v1.json"
+        )),
+    ),
+    (
+        "config/pon/w1-stark-route-registry-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/w1-stark-route-registry-v1.json"
         )),
     ),
     (

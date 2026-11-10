@@ -1,0 +1,821 @@
+{
+  "fields": {
+    "plonky3_goldilocks_fp2": {
+      "base_two_adicity": "32",
+      "characteristic": "18446744069414584321",
+      "characteristic_two_additive_domain_hypothesis_matches": false,
+      "extension_degree": "2",
+      "extension_polynomial_low_to_high": [
+        "18446744069414584314",
+        "0",
+        "1"
+      ],
+      "irreducibility": {
+        "bezout_coefficient_for_polynomial": [
+          "15811494916641072275"
+        ],
+        "bezout_coefficient_for_probe": [
+          "0",
+          "17129119493027828298"
+        ],
+        "bezout_identity": "A(X)*f(X) + B(X)*(X^(p^(n/2))-X mod f(X)) = 1 in F_p[X]",
+        "criterion": "Rabin irreducibility criterion for degrees two and four",
+        "degree": "2",
+        "degree_prime_divisors": [
+          "2"
+        ],
+        "extension_irreducible_certified": true,
+        "frobenius_residues": [
+          {
+            "power_of_characteristic": "0",
+            "residue_low_to_high": [
+              "0",
+              "1"
+            ]
+          },
+          {
+            "power_of_characteristic": "1",
+            "residue_low_to_high": [
+              "0",
+              "18446744069414584320"
+            ]
+          },
+          {
+            "power_of_characteristic": "2",
+            "residue_low_to_high": [
+              "0",
+              "1"
+            ]
+          }
+        ],
+        "gcd_low_to_high": [
+          "1"
+        ],
+        "gcd_probe_low_to_high": [
+          "0",
+          "18446744069414584319"
+        ],
+        "gcd_probe_power": "1",
+        "polynomial_low_to_high": [
+          "18446744069414584314",
+          "0",
+          "1"
+        ]
+      },
+      "multiplicative_domains": {
+        "all_source_entries_have_exact_order": true,
+        "domain_family": "multiplicative two-adic subgroups; nonzero shifts give same-size cosets",
+        "entries": [
+          {
+            "full_power_residue": "1",
+            "half_power_residue": null,
+            "log_order": "0",
+            "order": "1",
+            "root": "1"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "1",
+            "order": "2",
+            "root": "18446744069414584320"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "2",
+            "order": "4",
+            "root": "281474976710656"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "3",
+            "order": "8",
+            "root": "18446744069397807105"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "4",
+            "order": "16",
+            "root": "17293822564807737345"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "5",
+            "order": "32",
+            "root": "70368744161280"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "6",
+            "order": "64",
+            "root": "549755813888"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "7",
+            "order": "128",
+            "root": "17870292113338400769"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "8",
+            "order": "256",
+            "root": "13797081185216407910"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "9",
+            "order": "512",
+            "root": "1803076106186727246"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "10",
+            "order": "1024",
+            "root": "11353340290879379826"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "11",
+            "order": "2048",
+            "root": "455906449640507599"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "12",
+            "order": "4096",
+            "root": "17492915097719143606"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "13",
+            "order": "8192",
+            "root": "1532612707718625687"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "14",
+            "order": "16384",
+            "root": "16207902636198568418"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "15",
+            "order": "32768",
+            "root": "17776499369601055404"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "16",
+            "order": "65536",
+            "root": "6115771955107415310"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "17",
+            "order": "131072",
+            "root": "12380578893860276750"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "18",
+            "order": "262144",
+            "root": "9306717745644682924"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "19",
+            "order": "524288",
+            "root": "18146160046829613826"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "20",
+            "order": "1048576",
+            "root": "3511170319078647661"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "21",
+            "order": "2097152",
+            "root": "17654865857378133588"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "22",
+            "order": "4194304",
+            "root": "5416168637041100469"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "23",
+            "order": "8388608",
+            "root": "16905767614792059275"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "24",
+            "order": "16777216",
+            "root": "9713644485405565297"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "25",
+            "order": "33554432",
+            "root": "5456943929260765144"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "26",
+            "order": "67108864",
+            "root": "17096174751763063430"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "27",
+            "order": "134217728",
+            "root": "1213594585890690845"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "28",
+            "order": "268435456",
+            "root": "6414415596519834757"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "29",
+            "order": "536870912",
+            "root": "16116352524544190054"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "30",
+            "order": "1073741824",
+            "root": "9123114210336311365"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "31",
+            "order": "2147483648",
+            "root": "4614640910117430873"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "18446744069414584320",
+            "log_order": "32",
+            "order": "4294967296",
+            "root": "1753635133440165772"
+          }
+        ],
+        "inverse_source_entries_verified": false,
+        "max_log_order": "32"
+      },
+      "primality": {
+        "criterion": "complete-factorization Lucas primality criterion",
+        "factor_product": "18446744069414584320",
+        "factorization": [
+          {
+            "exponent": "32",
+            "factor_primality": "exact trial division through floor(sqrt(prime))",
+            "gcd_residue_minus_one_with_modulus": "1",
+            "prime": "2",
+            "residue": "18446744069414584320"
+          },
+          {
+            "exponent": "1",
+            "factor_primality": "exact trial division through floor(sqrt(prime))",
+            "gcd_residue_minus_one_with_modulus": "1",
+            "prime": "3",
+            "residue": "18446744065119617025"
+          },
+          {
+            "exponent": "1",
+            "factor_primality": "exact trial division through floor(sqrt(prime))",
+            "gcd_residue_minus_one_with_modulus": "1",
+            "prime": "5",
+            "residue": "1373043270956696022"
+          },
+          {
+            "exponent": "1",
+            "factor_primality": "exact trial division through floor(sqrt(prime))",
+            "gcd_residue_minus_one_with_modulus": "1",
+            "prime": "17",
+            "residue": "16301593560560007290"
+          },
+          {
+            "exponent": "1",
+            "factor_primality": "exact trial division through floor(sqrt(prime))",
+            "gcd_residue_minus_one_with_modulus": "1",
+            "prime": "257",
+            "residue": "995085315851368103"
+          },
+          {
+            "exponent": "1",
+            "factor_primality": "exact trial division through floor(sqrt(prime))",
+            "gcd_residue_minus_one_with_modulus": "1",
+            "prime": "65537",
+            "residue": "8478886009461009681"
+          }
+        ],
+        "full_exponent_residue": "1",
+        "modulus": "18446744069414584321",
+        "prime_modulus_certified": true,
+        "witness": "7"
+      },
+      "profile_domain_scope": {
+        "base_domain_capacity_is_not_a_trace_reachability_proof": true,
+        "ordinary_poseidon2_all_accepted_trace_bounds_proved": false,
+        "tagged_fixed_components": [
+          {
+            "component": "sha",
+            "evaluation_log": "15",
+            "trace_log": "13"
+          },
+          {
+            "component": "packed_carry",
+            "evaluation_log": "16",
+            "trace_log": "14"
+          }
+        ]
+      },
+      "this_mismatch_proves_fri_soundness": false
+    },
+    "risc0_babybear_fp4": {
+      "base_two_adicity": "27",
+      "characteristic": "2013265921",
+      "characteristic_two_additive_domain_hypothesis_matches": false,
+      "extension_degree": "4",
+      "extension_polynomial_low_to_high": [
+        "11",
+        "0",
+        "0",
+        "0",
+        "1"
+      ],
+      "irreducibility": {
+        "bezout_coefficient_for_polynomial": [
+          "549072524"
+        ],
+        "bezout_coefficient_for_probe": [
+          "0",
+          "0",
+          "0",
+          "274536262"
+        ],
+        "bezout_identity": "A(X)*f(X) + B(X)*(X^(p^(n/2))-X mod f(X)) = 1 in F_p[X]",
+        "criterion": "Rabin irreducibility criterion for degrees two and four",
+        "degree": "4",
+        "degree_prime_divisors": [
+          "2"
+        ],
+        "extension_irreducible_certified": true,
+        "frobenius_residues": [
+          {
+            "power_of_characteristic": "0",
+            "residue_low_to_high": [
+              "0",
+              "1"
+            ]
+          },
+          {
+            "power_of_characteristic": "1",
+            "residue_low_to_high": [
+              "0",
+              "1728404513"
+            ]
+          },
+          {
+            "power_of_characteristic": "2",
+            "residue_low_to_high": [
+              "0",
+              "2013265920"
+            ]
+          },
+          {
+            "power_of_characteristic": "3",
+            "residue_low_to_high": [
+              "0",
+              "284861408"
+            ]
+          },
+          {
+            "power_of_characteristic": "4",
+            "residue_low_to_high": [
+              "0",
+              "1"
+            ]
+          }
+        ],
+        "gcd_low_to_high": [
+          "1"
+        ],
+        "gcd_probe_low_to_high": [
+          "0",
+          "2013265919"
+        ],
+        "gcd_probe_power": "2",
+        "polynomial_low_to_high": [
+          "11",
+          "0",
+          "0",
+          "0",
+          "1"
+        ]
+      },
+      "multiplicative_domains": {
+        "all_source_entries_have_exact_order": true,
+        "domain_family": "multiplicative two-adic subgroups; nonzero shifts give same-size cosets",
+        "entries": [
+          {
+            "full_power_residue": "1",
+            "half_power_residue": null,
+            "log_order": "0",
+            "order": "1",
+            "root": "1"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "1",
+            "order": "2",
+            "root": "2013265920"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "2",
+            "order": "4",
+            "root": "284861408"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "3",
+            "order": "8",
+            "root": "1801542727"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "4",
+            "order": "16",
+            "root": "567209306"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "5",
+            "order": "32",
+            "root": "740045640"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "6",
+            "order": "64",
+            "root": "918899846"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "7",
+            "order": "128",
+            "root": "1881002012"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "8",
+            "order": "256",
+            "root": "1453957774"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "9",
+            "order": "512",
+            "root": "65325759"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "10",
+            "order": "1024",
+            "root": "1538055801"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "11",
+            "order": "2048",
+            "root": "515192888"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "12",
+            "order": "4096",
+            "root": "483885487"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "13",
+            "order": "8192",
+            "root": "157393079"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "14",
+            "order": "16384",
+            "root": "1695124103"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "15",
+            "order": "32768",
+            "root": "2005211659"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "16",
+            "order": "65536",
+            "root": "1540072241"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "17",
+            "order": "131072",
+            "root": "88064245"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "18",
+            "order": "262144",
+            "root": "1542985445"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "19",
+            "order": "524288",
+            "root": "1269900459"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "20",
+            "order": "1048576",
+            "root": "1461624142"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "21",
+            "order": "2097152",
+            "root": "825701067"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "22",
+            "order": "4194304",
+            "root": "682402162"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "23",
+            "order": "8388608",
+            "root": "1311873874"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "24",
+            "order": "16777216",
+            "root": "1164520853"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "25",
+            "order": "33554432",
+            "root": "352275361"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "26",
+            "order": "67108864",
+            "root": "18769"
+          },
+          {
+            "full_power_residue": "1",
+            "half_power_residue": "2013265920",
+            "log_order": "27",
+            "order": "134217728",
+            "root": "137"
+          }
+        ],
+        "inverse_source_entries_verified": true,
+        "max_log_order": "27"
+      },
+      "primality": {
+        "criterion": "complete-factorization Lucas primality criterion",
+        "factor_product": "2013265920",
+        "factorization": [
+          {
+            "exponent": "27",
+            "factor_primality": "exact trial division through floor(sqrt(prime))",
+            "gcd_residue_minus_one_with_modulus": "1",
+            "prime": "2",
+            "residue": "2013265920"
+          },
+          {
+            "exponent": "1",
+            "factor_primality": "exact trial division through floor(sqrt(prime))",
+            "gcd_residue_minus_one_with_modulus": "1",
+            "prime": "3",
+            "residue": "1314723123"
+          },
+          {
+            "exponent": "1",
+            "factor_primality": "exact trial division through floor(sqrt(prime))",
+            "gcd_residue_minus_one_with_modulus": "1",
+            "prime": "5",
+            "residue": "645581151"
+          }
+        ],
+        "full_exponent_residue": "1",
+        "modulus": "2013265921",
+        "prime_modulus_certified": true,
+        "witness": "31"
+      },
+      "profile_domain_scope": {
+        "all_parser_trace_sizes_reachable_proved": false,
+        "generic_parser_max_domain_has_exact_order": true,
+        "generic_parser_max_domain_log": "26",
+        "generic_parser_max_trace_log": "24",
+        "inverse_rate": "4"
+      },
+      "this_mismatch_proves_fri_soundness": false
+    }
+  },
+  "limits": [
+    "A theorem requiring characteristic two cannot be applied directly to these odd-characteristic instances.",
+    "That mismatch is no positive FRI theorem; odd-characteristic and small-base-field/extension results require separate mapping.",
+    "A field certificate transfers no Poseidon2/SHA3 assumptions, query entropy, compiler semantics, extractor or recursion bound between profiles.",
+    "Root availability verifies algebraic domain order, not all reachable AIR/VM traces or the entire allowed statement set."
+  ],
+  "qualification": {
+    "compiled_field_arithmetic_equivalence_proved": false,
+    "complete_build_source_closure_verified": false,
+    "consensus_admission": false,
+    "extension_irreducibility_certified": true,
+    "fri_soundness_qualified": false,
+    "native_binary_executed": false,
+    "post_quantum_soundness_qualified": false,
+    "prime_moduli_certified": true,
+    "production_qualified": false,
+    "quantum_extractor_qualified": false,
+    "rbr_knowledge_soundness_qualified": false,
+    "recursive_composition_qualified": false,
+    "security_bits_quantum": null,
+    "source_root_table_orders_certified": true,
+    "whole_lifetime_failure_bound": null
+  },
+  "schema": "TRNM-W1-STARK-FIELD-CERTIFICATES1",
+  "source_base_commit": "e2a02f9271b49f146e70806c8a66e161b5973971",
+  "source_binding": {
+    "p3_archive_declared_upstream_commit": "a21e3ed42905040ad49c519e402f018381c12d0c",
+    "p3_archive_matches_current_lockfile": true,
+    "p3_profiles": [
+      {
+        "extension_degree": "2",
+        "log_blowup": "2",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs"
+      },
+      {
+        "extension_degree": "2",
+        "log_blowup": "2",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3.rs"
+      }
+    ],
+    "risc_upstream_commit": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9",
+    "scope": "fixed source parameter declarations and finite algebra only; no upstream code execution",
+    "selected_input_bytes_verified_before_and_after": true,
+    "selected_members": [
+      {
+        "bytes": "28372",
+        "container": "evidence/pon-w1-qrom-implementation-20261107/upstream-sources.json.gz",
+        "git_blob_sha1": "989a827f26e34bfd81f670dc51db4a5ddfa7c6d7",
+        "path": "risc0/core/src/field/baby_bear.rs",
+        "sha256": "df3e77d606dd74d78fb6b6f3dbbe72455c5ed5b091f7a74de8c049e85b857ff3"
+      },
+      {
+        "bytes": "1762",
+        "container": "evidence/pon-w1-qrom-implementation-20261107/upstream-sources.json.gz",
+        "git_blob_sha1": "de0ffeb566be8ec5a85ef9e68b9376cdd8e85907",
+        "path": "risc0/zkp/src/lib.rs",
+        "sha256": "107521d2426442fbc9358b7b9ae5650be92d670ea85e9a34aec7b9e9cc27dc6d"
+      },
+      {
+        "bytes": "21753",
+        "container": "evidence/pon-w1-qrom-implementation-20261107/upstream-sources.json.gz",
+        "git_blob_sha1": "e7ddb1a285d85c1bb74e45540cf5f827eb89faff",
+        "path": "risc0/zkp/src/verify/mod.rs",
+        "sha256": "003a67af89a7cfaeac9ff23808225cdc4d81c41d64956f20243574531b166c4f"
+      },
+      {
+        "bytes": "5802",
+        "container": "evidence/pon-w1-qrom-implementation-20261107/upstream-sources.json.gz",
+        "git_blob_sha1": "2eefff59b74e92586b1e0a314dbf4f2930d675e5",
+        "path": "risc0/zkp/src/verify/fri.rs",
+        "sha256": "a601cfad5d01b294f934d697d6d832c57662e4778eac20ac549b1da53d11e377"
+      },
+      {
+        "bytes": "54383",
+        "container": "formal/pon-nakamoto-v1/w1_public_stark_research/security_model_audit/vendor_primary/p3-goldilocks-0.8.0.crate",
+        "path": "p3-goldilocks-0.8.0/src/goldilocks.rs",
+        "sha256": "bd59bea02d51616979a1bf10eb7ff70526dd68f5ba1288bf929fcdd0b86b165b"
+      },
+      {
+        "bytes": "11563",
+        "container": "formal/pon-nakamoto-v1/w1_public_stark_research/security_model_audit/vendor_primary/p3-goldilocks-0.8.0.crate",
+        "path": "p3-goldilocks-0.8.0/src/extension.rs",
+        "sha256": "64bc5d9797b8eb71e22a6bfd97f3612b35d124ae7a334e66c07770111334ce95"
+      },
+      {
+        "bytes": "104",
+        "container": "formal/pon-nakamoto-v1/w1_public_stark_research/security_model_audit/vendor_primary/p3-goldilocks-0.8.0.crate",
+        "path": "p3-goldilocks-0.8.0/.cargo_vcs_info.json",
+        "sha256": "56784aea050040522cbfbc4a034911e0af3e921019ab1599f9647dde55068ca2"
+      }
+    ],
+    "sources": [
+      {
+        "bytes": "69332",
+        "path": "evidence/pon-w1-qrom-implementation-20261107/upstream-sources.json.gz",
+        "sha256": "f6be3667106df6843f5f29c0954cdce8e2617da36c9c91a7a5198665675e0253"
+      },
+      {
+        "bytes": "163750",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/security_model_audit/vendor_primary/p3-goldilocks-0.8.0.crate",
+        "sha256": "325a854e1232dd1ce270245d9c978b71897c286f072d2fa31740956a800e70c5"
+      },
+      {
+        "bytes": "18270",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock",
+        "sha256": "24f146fc5d5ba89f6070725a4453fbfe160fae0a81fb2449932f420fd2b7f281"
+      },
+      {
+        "bytes": "13329",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs",
+        "sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf"
+      },
+      {
+        "bytes": "11732",
+        "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3.rs",
+        "sha256": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847"
+      }
+    ]
+  },
+  "status": "FIXED_FIELD_ALGEBRA_CERTIFIED_SECURITY_HOLD"
+}

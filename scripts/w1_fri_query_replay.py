@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+from fractions import Fraction
 import gzip
 import hashlib
 import io
@@ -547,6 +548,119 @@ class ReplayEngine:
         }
 
 
+def ideal_four_draw_index_law(modulus, bits):
+    """Finite counting, conditional on four iid uniform integer draws.
+
+    No field or hash property is proved here. If m=2**bits divides modulus-1,
+    each residue has the same number of nonzero representatives. Each selected
+    nonzero x has probability sum(modulus**(-j), j=1..4). The all-zero tuple
+    has mass modulus**(-4), giving (1-eps)U_m + eps*delta_0 after masking.
+    """
+    require(type(modulus) is int and modulus >= 3, 'ideal sampler alphabet size')
+    require(type(bits) is int and 0 < bits <= 27, 'ideal sampler bit width')
+    size = 1 << bits
+    require((modulus - 1) % size == 0, 'ideal sampler nonzero residue counts unequal')
+    epsilon = Fraction(1, modulus ** 4)
+    uniform = Fraction(1, size)
+    other = (1 - epsilon) * uniform
+    zero = other + epsilon
+    return {
+        'modulus': modulus, 'bits': bits, 'index_count': size,
+        'nonzero_values_per_residue': (modulus - 1) // size,
+        'all_zero_draw_probability': epsilon,
+        'uniform_mixture_weight': 1 - epsilon,
+        'zero_point_mixture_weight': epsilon,
+        'zero_index_probability': zero,
+        'each_nonzero_index_probability': other,
+        'maximum_index_probability': zero,
+        'single_query_total_variation': epsilon * (1 - uniform),
+    }
+
+
+def ideal_sampler_product_tv_bounds(modulus, query_count):
+    """Upper bounds conditional also on independence of four-draw blocks.
+
+    Couple a mixture draw to uniform unless its delta_0 branch is selected.
+    The chance that any branch is selected is 1-(1-modulus**(-4))**k, at most
+    k*modulus**(-4). This does not assert exact product total variation.
+    """
+    require(type(modulus) is int and modulus >= 3, 'ideal sampler alphabet size')
+    require(type(query_count) is int and query_count >= 0, 'ideal sampler query count')
+    epsilon = Fraction(1, modulus ** 4)
+    return {
+        'independent_query_blocks': query_count,
+        'coupling_total_variation_upper_bound': 1 - (1 - epsilon) ** query_count,
+        'union_total_variation_upper_bound': query_count * epsilon,
+    }
+
+
+def exact_probability_json(value):
+    """Serialize reduced rationals without floating point or security bits."""
+    if isinstance(value, Fraction):
+        return {'numerator': str(value.numerator), 'denominator': str(value.denominator)}
+    if isinstance(value, dict):
+        return {key: exact_probability_json(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [exact_probability_json(item) for item in value]
+    return value
+
+
+def build_ideal_sampler_report(root=ROOT):
+    """Check frozen sampler correspondence and an assumed law, not a seal."""
+    sources = load_snapshot(root)
+    modules, helpers = load_helpers(root)
+    geometry = modules['w1_fri_transcript_audit']
+    records = geometry._verify_sources(sources)
+    params = geometry._parameters(sources)
+    require((params['field_modulus'], params['inverse_rate'], params['queries']) == (P, 4, 50),
+            'ideal sampler fixed-source parameters')
+    fixed_po2 = geometry.FIXED_PO2
+    require(fixed_po2 == 18 and params['explicit_generic_po2_max'] == 24,
+            'ideal sampler fixed-source size declarations')
+    laws = [ideal_four_draw_index_law(P, bits) for bits in (fixed_po2 + 2, 24 + 2)]
+    return exact_probability_json({
+        'schema': 'TRNM-W1-CONDITIONAL-IID-QUERY-SAMPLER1',
+        'result': 'CONDITIONAL_IID_SAMPLER_ARITHMETIC_REPRODUCED_SECURITY_HOLD',
+        'hypotheses': {
+            'single_query': 'All four normal-form base-field draws are mutually independent and uniform in [0,p).',
+            'multiple_queries': 'All four-draw blocks are also independent, conditional on the fixed prequery context.',
+            'hypotheses_established_for_actual_poseidon2_transcript': False,
+            'uniform_marginals_alone_suffice': False,
+        },
+        'profile_id': PROFILE, 'upstream_commit': UPSTREAM,
+        'source_snapshot': {'path': SNAPSHOT_PATH, 'bytes': SNAPSHOT_BYTES, 'sha256': SNAPSHOT_SHA256},
+        'source_files': records, 'helper_execution': helpers,
+        'source_correspondence': {
+            'sampler_source': RNG_SOURCE, 'query_source': FRI_SOURCE,
+            'sampler': 'consume four normal-form values; select first nonzero or zero; mask low bits',
+            'modulus_minus_one': P - 1, 'factorization': '15 * 2^27',
+            'fixed_saved_profile_po2': fixed_po2,
+            'declared_generic_max_po2': params['explicit_generic_po2_max'],
+            'inverse_rate': 4, 'queries': 50,
+            'all_declared_trace_sizes_reachable_or_accepted_proved': False,
+            'receipt_bytes_read_or_verified': False,
+        },
+        'conditional_index_laws': laws,
+        'conditional_independent_query_bounds': ideal_sampler_product_tv_bounds(P, 50),
+        'proof': [
+            'Each selected nonzero value has probability sum(p^(-j), j=1..4); the all-zero tuple has mass p^-4.',
+            'Since 2^b divides p-1, every masked residue has the same number of nonzero representatives.',
+            'Thus the index law is (1-p^-4)U_(2^b)+p^-4 delta_0; TV is p^-4(1-2^-b).',
+            'For independent blocks couple to uniform unless any delta branch is selected; the product TV bound need not be exact.',
+        ],
+        'qualification': {
+            'actual_transcript_iid_uniformity_proved': False,
+            'adversarial_or_quantum_conditioning_proved': False,
+            'qrom_instantiated': False, 'quantum_extractor_qualified': False,
+            'complete_w1_soundness_qualified': False, 'production_qualified': False,
+            'consensus_admission': False, 'security_bits_quantum': None,
+            'actual_lifetime_failure_bound': None,
+        },
+        'scope': 'Conditional finite counting only; actual joint-oracle, FRI, Fiat-Shamir and quantum extraction arguments remain open.',
+        'generator_sha256': sha(Path(__file__).read_bytes()),
+    })
+
+
 def build_report(root=ROOT):
     sources = load_snapshot(root)
     receipt = bounded_file(root, RECEIPT_PATH, RECEIPT_BYTES)
@@ -556,11 +670,14 @@ def build_report(root=ROOT):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--repo-root', type=Path, default=ROOT)
+    parser.add_argument('--ideal-sampler-law', action='store_true',
+                        help='Separate conditional iid arithmetic report, without receipt replay or actual randomness qualification')
     parser.add_argument('--output', type=Path,
                         help='Create a new report; never overwrite an existing evidence file')
     args = parser.parse_args()
     try:
-        report = build_report(args.repo_root)
+        report = (build_ideal_sampler_report(args.repo_root) if args.ideal_sampler_law
+                  else build_report(args.repo_root))
         encoded = json.dumps(report, indent=2, sort_keys=True, allow_nan=False) + '\n'
         if args.output is None:
             print(encoded, end='')
