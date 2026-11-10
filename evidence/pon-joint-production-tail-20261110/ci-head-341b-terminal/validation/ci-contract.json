@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/check_ci_contract.py"
+  ],
+  "exit_code": 0,
+  "base_head": "341b7b6195a44d3f4a758c98f846457567ac1de3",
+  "scope": "evidence-only working tree validation; not fresh native qualification",
+  "stdout": {
+    "bytes": 431,
+    "sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

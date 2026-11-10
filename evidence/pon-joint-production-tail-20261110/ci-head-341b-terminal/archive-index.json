@@ -1,0 +1,289 @@
+[
+  {
+    "id": 13772381773,
+    "path": "13772381773.zip",
+    "api": "work-time-artifacts.json",
+    "bytes": 1812663,
+    "sha256": "b219f24375e0572622ad575924b84a9c5062e03eea9e8a252d8c1fd4c2c145f7",
+    "members": [
+      {
+        "path": "work-time-source-before.json",
+        "bytes": 423,
+        "sha256": "8fa1ea8ad9808689e81ef969e8aa712808a51d1c6ea5121f7d1e45eaa4b6ca55"
+      },
+      {
+        "path": "work-time-contract/catalog-generate.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "work-time-source-after.json",
+        "bytes": 423,
+        "sha256": "8fa1ea8ad9808689e81ef969e8aa712808a51d1c6ea5121f7d1e45eaa4b6ca55"
+      },
+      {
+        "path": "work-time-contract/catalog-generate.stdout",
+        "bytes": 668,
+        "sha256": "47bc2056fef8172a71f97b295a538b97f0a136e6f213e18f58b63f3263f88c41"
+      },
+      {
+        "path": "work-time-contract/catalog-replay.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "work-time-contract/catalog.json",
+        "bytes": 2453476,
+        "sha256": "47b3927ad4bbdfea11dd669d48e66aa91227a7093b3e7b625303018da4132834"
+      },
+      {
+        "path": "work-time-contract/catalog-replay.stdout",
+        "bytes": 668,
+        "sha256": "51b9b6c1b3c253f1784a9d8635d123cd01a5883ff098bae3efc5244e2752c6b7"
+      },
+      {
+        "path": "work-time-contract/catalog.json.partial.jsonl",
+        "bytes": 2447933,
+        "sha256": "ac727cde107ee82a0f09e7f24939f16fb22a8a1264c898ec67590f77f4416443"
+      },
+      {
+        "path": "work-time-contract/contract-after.json",
+        "bytes": 1339,
+        "sha256": "c6a1af3460551b36895c68a53114014bc06167ab808bda44ac5c2c67233d7247"
+      },
+      {
+        "path": "work-time-contract/contract-before.json",
+        "bytes": 1339,
+        "sha256": "c6a1af3460551b36895c68a53114014bc06167ab808bda44ac5c2c67233d7247"
+      },
+      {
+        "path": "work-time-contract/cost-envelope-counterexample.json",
+        "bytes": 4607,
+        "sha256": "578f61de20ebe3f330349964b8ef8b51c8898ac7b72f07693926530c87055799"
+      },
+      {
+        "path": "work-time-contract/cost-envelope-current-hold.json",
+        "bytes": 4008,
+        "sha256": "6dfd09f543cee38ab12d840dd21d3cf5b16b60e8197b8f2c40786d0bf9b7b854"
+      },
+      {
+        "path": "work-time-contract/execution.json",
+        "bytes": 5707,
+        "sha256": "082728aedd46061e3f55b49cdece37dd77f36bbd837dfb7af8a29e45b0940697"
+      },
+      {
+        "path": "work-time-contract/named-controls.json",
+        "bytes": 47372,
+        "sha256": "a2f000c903c080118dd2c27cd404cd1b6d1f600720865ec2e84a4320924263f3"
+      },
+      {
+        "path": "work-time-contract/reference-controls.json",
+        "bytes": 4880,
+        "sha256": "229e746ab791dc813a901bfc528f1930a9524275e55c2b22e8c0f2ea80c20f06"
+      },
+      {
+        "path": "work-time-contract/reference-tests.log",
+        "bytes": 2324,
+        "sha256": "04aab2bf07d5ff76fe572605bfd48f20dc8dcfefe513ce1d7ede7240e4f2fed3"
+      },
+      {
+        "path": "work-time-contract/research-source-after.json",
+        "bytes": 423,
+        "sha256": "59cfd00a25b858ea00f97b860eef2706ac822de51bbde702241b9bc93beb11e2"
+      },
+      {
+        "path": "work-time-contract/research-source-before.json",
+        "bytes": 423,
+        "sha256": "59cfd00a25b858ea00f97b860eef2706ac822de51bbde702241b9bc93beb11e2"
+      },
+      {
+        "path": "work-time-contract/tests.log",
+        "bytes": 18215,
+        "sha256": "32eca8067405fa9288f626dcabce194579d0e775dc2122cf896d4d95e8104d9d"
+      }
+    ]
+  },
+  {
+    "id": 13772825234,
+    "path": "13772825234.zip",
+    "api": "work-time-artifacts.json",
+    "bytes": 1812805,
+    "sha256": "ac9d2f524915bcafb19cd86e4115bd96437c74f0d3991ff43d40c3e39e0d4c07",
+    "members": [
+      {
+        "path": "work-time-source-before.json",
+        "bytes": 512,
+        "sha256": "f2bbef3e1006fda28ccaf46567712fadce71edd8d461a77e50ecd68a84a40579"
+      },
+      {
+        "path": "work-time-contract/catalog-generate.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "work-time-source-after.json",
+        "bytes": 512,
+        "sha256": "f2bbef3e1006fda28ccaf46567712fadce71edd8d461a77e50ecd68a84a40579"
+      },
+      {
+        "path": "work-time-contract/catalog-generate.stdout",
+        "bytes": 668,
+        "sha256": "e75c53a217fe96d399a4ef8a810f89ee4d9b716db81b1ebe5b5147a268a87aef"
+      },
+      {
+        "path": "work-time-contract/catalog-replay.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "work-time-contract/catalog-replay.stdout",
+        "bytes": 668,
+        "sha256": "d9f1f4898de61a9cf9afc9e3b6383a5ce00e3429e78c5afa76ccb4954ab8fd36"
+      },
+      {
+        "path": "work-time-contract/catalog.json",
+        "bytes": 2453506,
+        "sha256": "4fd14facc39f463da9c05852d06f8ef0c8b15269b37659fe4bc9a98c54e4d109"
+      },
+      {
+        "path": "work-time-contract/catalog.json.partial.jsonl",
+        "bytes": 2447955,
+        "sha256": "12b9db37814b5e58791b3043e45236883c327516ccef9d3270bb86623e535d72"
+      },
+      {
+        "path": "work-time-contract/contract-after.json",
+        "bytes": 1339,
+        "sha256": "c6a1af3460551b36895c68a53114014bc06167ab808bda44ac5c2c67233d7247"
+      },
+      {
+        "path": "work-time-contract/contract-before.json",
+        "bytes": 1339,
+        "sha256": "c6a1af3460551b36895c68a53114014bc06167ab808bda44ac5c2c67233d7247"
+      },
+      {
+        "path": "work-time-contract/cost-envelope-counterexample.json",
+        "bytes": 4607,
+        "sha256": "578f61de20ebe3f330349964b8ef8b51c8898ac7b72f07693926530c87055799"
+      },
+      {
+        "path": "work-time-contract/cost-envelope-current-hold.json",
+        "bytes": 4008,
+        "sha256": "6dfd09f543cee38ab12d840dd21d3cf5b16b60e8197b8f2c40786d0bf9b7b854"
+      },
+      {
+        "path": "work-time-contract/execution.json",
+        "bytes": 5707,
+        "sha256": "f46debef876f1fbde03e03445b8639995884981dd82a0227c1a65b818b51c9f5"
+      },
+      {
+        "path": "work-time-contract/named-controls.json",
+        "bytes": 47372,
+        "sha256": "65fe1e4cce6bbd2e6769ffd117917286bb275685b8509bf6103c1486f4bfdc50"
+      },
+      {
+        "path": "work-time-contract/reference-controls.json",
+        "bytes": 4880,
+        "sha256": "229e746ab791dc813a901bfc528f1930a9524275e55c2b22e8c0f2ea80c20f06"
+      },
+      {
+        "path": "work-time-contract/reference-tests.log",
+        "bytes": 2324,
+        "sha256": "81b2b8218c2abef4ba5f7bc58933bf5c36496487d4d4c07a38aca25427c67eaf"
+      },
+      {
+        "path": "work-time-contract/research-source-after.json",
+        "bytes": 423,
+        "sha256": "54b9f162798eb2949eab42316b78de7c2b838ec8c68574dd75b4b555baa2a50f"
+      },
+      {
+        "path": "work-time-contract/research-source-before.json",
+        "bytes": 423,
+        "sha256": "54b9f162798eb2949eab42316b78de7c2b838ec8c68574dd75b4b555baa2a50f"
+      },
+      {
+        "path": "work-time-contract/tests.log",
+        "bytes": 18215,
+        "sha256": "cc47a822f2063a78dad1775dd31d7729bfb8c7e7bbf038cfa6242c9d1b74e162"
+      }
+    ]
+  },
+  {
+    "id": 13773101574,
+    "path": "13773101574.zip",
+    "api": "pq-artifacts.json",
+    "bytes": 12619,
+    "sha256": "54ea720df8dd57202e173ac4f6c7ba0eb969d0138388722f79654207bf429327",
+    "members": [
+      {
+        "path": "pq-source.json",
+        "bytes": 1998,
+        "sha256": "d37e4f7c67250a5108347e66283b5dbf55045e4cb5a2414fb24f0fd3fc14c0cf"
+      },
+      {
+        "path": "run-command.sh",
+        "bytes": 743,
+        "sha256": "9d4b907f0ddc9d9b9d6e78bf7fb86a34a005372f0b9ff98b923c4129abaa53e1"
+      },
+      {
+        "path": "pq-source.log",
+        "bytes": 60,
+        "sha256": "7d2aec21cb999d4b065d864231f9cae51e1cfc98790d021aa387401442ad0135"
+      },
+      {
+        "path": "source.json",
+        "bytes": 423,
+        "sha256": "8fa1ea8ad9808689e81ef969e8aa712808a51d1c6ea5121f7d1e45eaa4b6ca55"
+      },
+      {
+        "path": "test_ci_source_integrity.json",
+        "bytes": 2092,
+        "sha256": "3f0cc04d4903f3ad866d7037166719f0fa09590f509b571e496d1133601f1a63"
+      },
+      {
+        "path": "test_ci_source_integrity.log",
+        "bytes": 7586,
+        "sha256": "f7696aa43b84e84e35b2660ab683a53521ab4d86941cbee968a1f8c827498709"
+      },
+      {
+        "path": "test_pq_authority_surface_scan.json",
+        "bytes": 2104,
+        "sha256": "c823a9de6c82313e7ef4a20d75fca79ab7331c879906957ecb9f833aacf39fa0"
+      },
+      {
+        "path": "test_pq_authority_surface_scan.log",
+        "bytes": 2784,
+        "sha256": "7409d64d4a8ec6a0bb98a167b222d0ed37a655de903e881ede15d0ed83817ff6"
+      },
+      {
+        "path": "test_pq_chain_claim_guard.json",
+        "bytes": 2094,
+        "sha256": "4ac8266bd267eb39e8a665b1d4b85325f50546df025c5ea5ae626203999e7843"
+      },
+      {
+        "path": "test_pq_chain_claim_guard.log",
+        "bytes": 7989,
+        "sha256": "43e050ca1476b0b1dab39bdc79b0d49d440275737707422cd4cb3b370ce3c12b"
+      },
+      {
+        "path": "test_pq_research_integration.json",
+        "bytes": 2102,
+        "sha256": "7521972ee649741c5d07756345c92dbed5959f640cc3ae8f55e8a9f74b54128d"
+      },
+      {
+        "path": "test_pq_research_integration.log",
+        "bytes": 9225,
+        "sha256": "40fefdfbe29fb552a012fbacadd4aa2b432422331a1b9147a26de3e7d678096e"
+      },
+      {
+        "path": "test_record_pq_native_command.json",
+        "bytes": 2102,
+        "sha256": "0577799535870e2103ff32ab77f4686aaf84b5a7835a47e4c5fe9b828a326f6a"
+      },
+      {
+        "path": "test_record_pq_native_command.log",
+        "bytes": 2678,
+        "sha256": "ce28fa068ddc16fd6fecfa7349401d427db4919e7132367810bc31e6f6297c9e"
+      }
+    ]
+  }
+]

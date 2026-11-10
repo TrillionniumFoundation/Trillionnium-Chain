@@ -1,0 +1,200 @@
+{
+  "schema": "pon-evidence-manifest-v1",
+  "files": [
+    {
+      "path": "13772381773.zip",
+      "bytes": 1812663,
+      "sha256": "b219f24375e0572622ad575924b84a9c5062e03eea9e8a252d8c1fd4c2c145f7"
+    },
+    {
+      "path": "13772825234.zip",
+      "bytes": 1812805,
+      "sha256": "ac9d2f524915bcafb19cd86e4115bd96437c74f0d3991ff43d40c3e39e0d4c07"
+    },
+    {
+      "path": "13773101574.zip",
+      "bytes": 12619,
+      "sha256": "54ea720df8dd57202e173ac4f6c7ba0eb969d0138388722f79654207bf429327"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4682,
+      "sha256": "6032169838b60e4538ea9a04f799be4dc012529325c778c39c3013ef918d2b6c"
+    },
+    {
+      "path": "RESULT.json",
+      "bytes": 2177,
+      "sha256": "4da08555d9ed46f267a957e41258b596ed74080c2d8a02f451685b7f942f0d8f"
+    },
+    {
+      "path": "archive-index.json",
+      "bytes": 10063,
+      "sha256": "69f927893dd05f7edded4ee963ec2bd04a58887df09717bc04fd748356c5778d"
+    },
+    {
+      "path": "cleanup-jobs.json",
+      "bytes": 27475,
+      "sha256": "413eeb21e8ffa114ba873225b113c31e7c0980ca04b34d97a5425836ceade2e4"
+    },
+    {
+      "path": "head-workflows.json",
+      "bytes": 354995,
+      "sha256": "c8d4fdfcfd12ab6c06b93c5706a4d2f37a2226afdb0d25f058ba2c3203d22d35"
+    },
+    {
+      "path": "job-129827162083.log.gz",
+      "bytes": 30402,
+      "sha256": "c001c92cd17cfe8cd999c72626d94a2b574ccac669eba0ed15d9d047c0b2ee4b"
+    },
+    {
+      "path": "job-129827163245.log.gz",
+      "bytes": 28079,
+      "sha256": "e04f85f4a9579f4ed946bba762431f7e11eab90e12e62f7c1f8082e94e3edb41"
+    },
+    {
+      "path": "job-129827165862.log.gz",
+      "bytes": 26739,
+      "sha256": "a118295242f875dc16cbae0b1597fc0729caa6da97473cff10d076f7f72a565e"
+    },
+    {
+      "path": "logs-index.json",
+      "bytes": 1317,
+      "sha256": "d1fd8b5782c6a7d78c795ec70af38b660409938a975a0a412198d5627bc8fd8d"
+    },
+    {
+      "path": "original-final-jobs.json",
+      "bytes": 100609,
+      "sha256": "e68f9b62d96e6f38b0e168b7a7b5d801d26ea5c5089654cf3d62f8673678a1a0"
+    },
+    {
+      "path": "original-final-run.json",
+      "bytes": 16752,
+      "sha256": "fd6bc59e300ac54e5e0d4bf760fe42c1a9f5b03972b2977280f1beb6f871bf74"
+    },
+    {
+      "path": "parent-model-jobs.json",
+      "bytes": 15181,
+      "sha256": "ee8e95cf691d777e39448e493e9b76ff434b1131af8fcaca8020432a1c65a6b0"
+    },
+    {
+      "path": "pq-artifacts.json",
+      "bytes": 15985,
+      "sha256": "753ae3ac81c85854ec6f046e0ecb5c53b90952c9ccf4978cfc0bfdc773456f28"
+    },
+    {
+      "path": "pq-jobs.json",
+      "bytes": 75524,
+      "sha256": "837a7b4c03f6189197180055926076950562bdf5b131a0caeb2807b6e8066748"
+    },
+    {
+      "path": "pr-snapshot.json",
+      "bytes": 31908,
+      "sha256": "78ff15acb1c90b34b329c7630970dcec6cb5118ac926f466a3e9e530c8e7d0a9"
+    },
+    {
+      "path": "preview-commit.json",
+      "bytes": 3015,
+      "sha256": "20974f3b5a830a65dece020557c404c8639ebda559b58335f8a2f5cd2703b650"
+    },
+    {
+      "path": "publication-control.json",
+      "bytes": 2907,
+      "sha256": "ab2c3d82e19d62385b1bb1a5924fb573cde48adde89d8dcdc8487609c8e5a64f"
+    },
+    {
+      "path": "validation/ci-contract.json",
+      "bytes": 468,
+      "sha256": "b2b1671a9e0de8bbfe526bc71fdc87559d99ca15dce6ae7d5ee805cc1ad0a35e"
+    },
+    {
+      "path": "validation/ci-contract.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "validation/ci-contract.stdout",
+      "bytes": 431,
+      "sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb"
+    },
+    {
+      "path": "validation/diff.json",
+      "bytes": 450,
+      "sha256": "b33257ceaefe6110a3b73b327b47570cef532a85b0aaf9653a53d649e164598f"
+    },
+    {
+      "path": "validation/diff.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "validation/diff.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "validation/packet.json",
+      "bytes": 512,
+      "sha256": "84d9ffc17dc404e585c49a8aa9191d020758e264f7b6837327fd78a52c2a5b4b"
+    },
+    {
+      "path": "validation/packet.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "validation/packet.stdout",
+      "bytes": 253,
+      "sha256": "c3cd1d61cce89aae815a929ffad1c7d84f90e08dc7a748225b7874182e012935"
+    },
+    {
+      "path": "validation/preflight.json",
+      "bytes": 462,
+      "sha256": "96949ec73378702b2633a98b2bce105efae24ac2b4f00ae0752d7bf20fd84f64"
+    },
+    {
+      "path": "validation/preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "validation/preflight.stdout",
+      "bytes": 176,
+      "sha256": "ec1af41e091359fe11862d78759e947167d0a66909331e3ce06d8908a69da442"
+    },
+    {
+      "path": "validation/repository.json",
+      "bytes": 467,
+      "sha256": "e27e18552a6e4a4445d5359baa68c8d8a98de719f45bb8a5f5b788d55d0630ab"
+    },
+    {
+      "path": "validation/repository.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "validation/repository.stdout",
+      "bytes": 307,
+      "sha256": "0d9483770ab934c5a354ca0fc58ca2910f7c558dd1ec2bd1a28aca26d68b405d"
+    },
+    {
+      "path": "verify.py",
+      "bytes": 5900,
+      "sha256": "23f47b2f73aff1bae22cb542013970ebbb4626e79a7e7abc17473cca83ab8eb5"
+    },
+    {
+      "path": "work-security-jobs.json",
+      "bytes": 57581,
+      "sha256": "0097b778e52000e5a56d4e803c0310b71a8fee7f24ecbcc4f7276644bf1e9228"
+    },
+    {
+      "path": "work-time-artifacts.json",
+      "bytes": 2021,
+      "sha256": "44116b596f2fca73d62fa4b172fbefb432f9e610963039da0ca08cbc28747513"
+    },
+    {
+      "path": "work-time-jobs.json",
+      "bytes": 7920,
+      "sha256": "bb48255e581261e6065bd34a43388551684fa12df4329d202902f0e279533930"
+    }
+  ]
+}
