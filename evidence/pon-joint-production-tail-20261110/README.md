@@ -62,3 +62,14 @@ contains all 18 jobs: queued, no steps, no assigned runner and no conclusion.
 This is an observation snapshot, not a claim about later workflow state, a
 root-cause diagnosis or a substitute for Rust/native results. No workflow was
 dispatched or rerun for this readback.
+
+## Conditional marginal coupling continuation
+
+The [rearrangement evidence](marginal-coupling/README.md) specializes the
+classical sharp product bound to the same-history residual-potential interface.
+Seven new standalone controls pass, including independent assignment and
+2-by-2 transportation oracles. These are additional research-artifact controls,
+not a rerun of the prior 299-method suite or a native qualification. Existing
+formal checker semantics and CI commands are unchanged. The original ROG r1
+exact recovery again timed out; its state remains UNKNOWN. Current source-job
+readback still has 18 queued jobs and no conclusions. No workflow was rerun.
