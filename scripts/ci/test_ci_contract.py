@@ -2846,23 +2846,52 @@ class CellCurrentApiReadbackTests(unittest.TestCase):
             raise AssertionError("current compile-fail observation changed")
         cls.observed = raw.decode("utf-8")
         cls.observation = json.loads((cls.root / cls.OBSERVATION).read_bytes())
-        prefix = "python3 -c '"
-        suffix = "' \"$out/cell-current-api.log\""
-        commands = [line.strip() for line in (cls.root / cls.WORKFLOW).read_text().splitlines()
-                    if line.strip().startswith(prefix) and line.strip().endswith(suffix)]
-        if len(commands) != 1:
+        workflow = (cls.root / cls.WORKFLOW).read_text()
+        command = 'python3 scripts/ci/check_cell_current_api_readback.py "$out/cell-current-api.log"'
+        if workflow.count(command) != 1:
             raise AssertionError("exactly one actual workflow readback command is required")
-        cls.program = commands[0][len(prefix):-len(suffix)]
+        if "      - scripts/ci/check_cell_current_api_readback.py\n" not in workflow:
+            raise AssertionError("readback changes must trigger the workflow")
+        cls.source = (cls.root / "trillionnium/crates/trnm-data-availability/src/cell/pq.rs").read_text()
+        # A source-only relocation is not a new historical execution. Fixture line
+        # 423 is checked against a minimal reconstruction of its exact example.
+        import check_cell_current_api_readback as checker
+        cls.example = checker.EXAMPLE
+        cls.bound = checker.EXAMPLE + checker.TYPE
+        cls.fixture_source = "\n" * 422 + cls.bound
 
-    def observe(self, text):
+    def observe(self, text, source=None):
         with tempfile.TemporaryDirectory(prefix="trnm-cell-api-readback-") as directory:
             path = Path(directory) / "observation.log"
             path.write_text(text)
+            source_path = Path(directory) / "source.rs"
+            source_path.write_text(self.fixture_source if source is None else source)
             result = subprocess.run(
-                [sys.executable, "-I", "-S", "-B", "-c", self.program, str(path)],
+                [sys.executable, "-I", "-S", "-B",
+                 str(self.root / "scripts/ci/check_cell_current_api_readback.py"),
+                 str(path), "--source", str(source_path)],
                 capture_output=True, text=True, check=False, timeout=5)
         self.assertEqual(result.stderr, "")
         return result.returncode, json.loads(result.stdout)
+
+    def test_current_source_and_matching_relocation(self):
+        current_line = self.source[:self.source.index(self.bound)].count("\n") + 1
+        current = self.observed.replace("(line 423)", f"(line {current_line})")
+        self.assertEqual(self.observe(current, self.source)[0], 0)
+        self.assertEqual(self.observe(current, "\n" + self.source)[0], 1)
+        relocated = current.replace(f"(line {current_line})", f"(line {current_line + 1})")
+        self.assertEqual(self.observe(relocated, "\n" + self.source)[0], 0)
+        for source in (self.source + self.example,
+                       self.source.replace("pub struct VerifiedCellPqReleaseV2", "pub struct Wrong"),
+                       self.source.replace("release_at(300)", "release_at(301)")):
+            self.assertEqual(self.observe(current, source)[0], 1)
+
+    def test_appended_failure_and_extra_case_are_refused(self):
+        for extra in ("test another ... FAILED\n", "test another ... ok\n",
+                      "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out;\n",
+                      "test result: malformed\n", "error: additional failure\n",
+                      "error[unknown]: additional failure\n"):
+            self.assert_refused(self.observed + extra)
 
     def assert_refused(self, text):
         status, report = self.observe(text)
