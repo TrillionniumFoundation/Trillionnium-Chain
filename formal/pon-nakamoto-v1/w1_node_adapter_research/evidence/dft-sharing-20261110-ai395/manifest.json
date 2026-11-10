@@ -1,0 +1,13 @@
+{
+  "schema": "trnm-w1-dft-evidence-summary-v1",
+  "retained_files": 634,
+  "unique_objects": 287,
+  "archive_bytes": 1370330,
+  "archive_sha256": "3aca567efab17e47a3100e5108c60f4bb21f7d2f70fdc6eff2a07270060d33de",
+  "index_bytes": 210237,
+  "index_sha256": "8b8047a11c93bbd8b69dd6b07e2bbad4ef51fc0d1bd9dbb49ecb1fb94f2b8963",
+  "qualified_improvement": null,
+  "end_to_end_benefit": "NOT_ESTABLISHED",
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO"
+}

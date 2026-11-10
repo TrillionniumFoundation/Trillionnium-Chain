@@ -20,7 +20,7 @@ use sha2::{Digest, Sha256};
 use trnm_pon_node::{Node, Packet};
 use w1_full_public_stark_research::arith_carry_air::Dot8PackedCarryAir;
 use w1_full_public_stark_research::proof_config::{
-    PACKED_CARRY_COMPONENT, SCHEDULE_SHA_COMPONENT, W1Proof, config,
+    Dft, PACKED_CARRY_COMPONENT, SCHEDULE_SHA_COMPONENT, W1Proof, config_with_dft,
 };
 use w1_full_public_stark_research::proof_wire::{Component, limits, scan_proof};
 use w1_full_public_stark_research::public::{Expected, PUBLIC_BYTES, PublicStatement};
@@ -384,7 +384,10 @@ pub fn verify_bundle<'a>(
     });
     progress(Stage::BeforeShaSetup)?;
     let start = Instant::now();
-    let sha_config = config(SCHEDULE_SHA_COMPONENT);
+    // Share only transform-shape twiddle tables within this request. Both
+    // component transcripts and complete public preprocessing stay independent.
+    let dft = Dft::default();
+    let sha_config = config_with_dft(SCHEDULE_SHA_COMPONENT, dft.clone());
     let (pp, vk) = setup_preprocessed(&sha_config, &sha, 13)
         .map_err(|e| format!("{e:?}"))?
         .ok_or("missing SHA preprocessing")?;
@@ -403,7 +406,7 @@ pub fn verify_bundle<'a>(
     });
     progress(Stage::BeforeArithmeticSetup)?;
     let start = Instant::now();
-    let arithmetic_config = config(PACKED_CARRY_COMPONENT);
+    let arithmetic_config = config_with_dft(PACKED_CARRY_COMPONENT, dft);
     let (pp, vk) = setup_preprocessed(&arithmetic_config, &arithmetic, 14)
         .map_err(|e| format!("{e:?}"))?
         .ok_or("missing arithmetic preprocessing")?;

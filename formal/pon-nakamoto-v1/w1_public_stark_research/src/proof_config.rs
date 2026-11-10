@@ -78,6 +78,15 @@ fn fri_regime() -> FriRegime {
 /// components are admitted; component selection changes domain separation,
 /// never the field, hash, query count, blowup, or grinding settings.
 pub fn config(component: u32) -> Config {
+    config_with_dft(component, Dft::default())
+}
+
+/// Construct a fresh component transcript while optionally sharing only DFT
+/// twiddle tables with another configuration. Cloned DFTs share tables keyed by
+/// transform shape; no public trace, commitment, verifier key or challenger is
+/// reused. Different transform shapes need their own tables, so sharing alone
+/// does not establish a preprocessing or complete-receiver cost reduction.
+pub fn config_with_dft(component: u32, dft: Dft) -> Config {
     assert!(matches!(
         component,
         SHA_COMPONENT
@@ -101,7 +110,7 @@ pub fn config(component: u32) -> Config {
         query_proof_of_work_bits: 0,
         mmcs: challenge_mmcs,
     };
-    let pcs = Pcs::new(Dft::default(), val_mmcs, fri_params);
+    let pcs = Pcs::new(dft, val_mmcs, fri_params);
     let mut challenger = Challenger::new(perm);
     // One canonical base-field element per byte; fixed length prefix and
     // fixed-width component prevent ambiguity at this application boundary.
