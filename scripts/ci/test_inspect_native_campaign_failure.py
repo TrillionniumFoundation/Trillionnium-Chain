@@ -217,6 +217,48 @@ class FailureInspectionTests(unittest.TestCase):
         self.assertIsNone(second["boundary_stage"])
 
 
+class PostwindowNativeConfirmationTests(unittest.TestCase):
+    def test_actual_native_depth_six_observation_after_deadline_is_not_a_pass(self):
+        from inspect_native_campaign_failure import _phase
+        data = fixture()["phases"][1]
+        data["verifier_errors"] = []
+        data["history"][-1]["client_import"]["succeeded"] = True
+        data["confirmations"] = [{"round": 0, "ended_ns": 30_192_354_000,
+            "confirmed_inside_pressure_window": False,
+            "observation": {"confirmed": True, "finalized": False,
+                            "execution_authority": False, "depth": 6}}]
+        result = _phase(data, "from-zero", 24)
+        details = result["reported_native_confirmation_timing"]
+        self.assertEqual(details["native_confirmation_reported"], 1)
+        self.assertEqual(details["native_confirmation_reported_after_deadline"], 1)
+        self.assertEqual(details["after_deadline_rounds"][0]["over_deadline_ns"], 192_354_000)
+        self.assertEqual(result["confirmed_round_observations"], 0)
+        self.assertFalse(result["flags"]["signed_rounds_confirmed"])
+        self.assertFalse(result["flags"]["reported_finite_phase_criteria_met"])
+
+    def test_unknown_or_conflicting_clock_cannot_be_promoted_to_late_success(self):
+        from inspect_native_campaign_failure import _phase
+        data = fixture()["phases"][0]
+        data["confirmations"] = [
+            {"ended_ns": "30192354000", "confirmed_inside_pressure_window": False,
+             "observation": {"confirmed": True, "finalized": False,
+                             "execution_authority": False, "depth": 6}},
+            {"ended_ns": 30_192_354_000, "confirmed_inside_pressure_window": True,
+             "observation": {"confirmed": True, "finalized": False,
+                             "execution_authority": False, "depth": 6}},
+            {"ended_ns": 30_192_354_000, "confirmed_inside_pressure_window": False,
+             "observation": {"confirmed": True, "finalized": False,
+                             "execution_authority": True, "depth": 6}},
+        ]
+        result = _phase(data, "baseline", 0)
+        details = result["reported_native_confirmation_timing"]
+        self.assertEqual(details["native_confirmation_reported"], 2)
+        self.assertEqual(details["native_confirmation_reported_after_deadline"], 0)
+        self.assertEqual(details["qualifying_observations_with_unknown_timing"], 1)
+        self.assertEqual(details["deadline_conflicts"], 1)
+        self.assertFalse(result["flags"]["reported_finite_phase_criteria_met"])
+
+
 class TerminalBoundaryIntegrityTests(unittest.TestCase):
     @staticmethod
     def history():
