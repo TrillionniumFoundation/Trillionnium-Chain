@@ -637,6 +637,9 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 scripts/w1_stark_field_certificates.py
     python3 scripts/ci/test_w1_stark_route_audit.py
     python3 scripts/w1_stark_route_audit.py
+    # Conditional iid counting does not establish the actual transcript distribution.
+    python3 scripts/ci/test_w1_fri_ideal_sampler.py
+    python3 scripts/w1_fri_query_replay.py --ideal-sampler-law
     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
     python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
@@ -1401,7 +1404,9 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     for command in ('python3 scripts/ci/test_w1_stark_field_certificates.py',
                     'python3 scripts/w1_stark_field_certificates.py',
                     'python3 scripts/ci/test_w1_stark_route_audit.py',
-                    'python3 scripts/w1_stark_route_audit.py'):
+                    'python3 scripts/w1_stark_route_audit.py',
+                    'python3 scripts/ci/test_w1_fri_ideal_sampler.py',
+                    'python3 scripts/w1_fri_query_replay.py --ideal-sampler-law'):
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'STARK route and field controls must execute exactly once in repository-truth')

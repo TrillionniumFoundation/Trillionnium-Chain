@@ -109,6 +109,39 @@
       "proximity_scope": {
         "all_proximity_gap_results_excluded": false,
         "characteristic_two_additive_hypothesis_matched": false,
+        "dktz_theorem_5_22_direct_domain": {
+          "all_proximity_gap_results_excluded": false,
+          "candidate_domain": "multiplicative_two_adic_subgroup_or_coset",
+          "certified_characteristic": "2013265921",
+          "coprimality_witness": {
+            "all_checked_power_of_two_residues_nonzero": true,
+            "checked_evaluation_log2_max": 27,
+            "checked_evaluation_log2_min": 0,
+            "gcd_characteristic_two": 1,
+            "scope": "base_field_algebraic_capacity_not_proved_reachable_trace_or_evaluation_sizes"
+          },
+          "direct_domain_hypothesis_matched": false,
+          "fixed_tagged_evaluation_log2": null,
+          "fri_soundness_inferred": false,
+          "necessary_theorem_hypotheses": {
+            "base_field_size": "b=p^a",
+            "cardinality_divisible_by_characteristic": true,
+            "domain_cardinality": "b^d",
+            "domain_exponent": "d=2n-h>=4",
+            "evaluation_domain": "B_or_Fb_hyperplane",
+            "extension_degree": "m=2n",
+            "h": [
+              0,
+              1
+            ],
+            "parameter_range": "2<=t<=n-h"
+          },
+          "obstruction": "theorem_cardinality_divisible_by_characteristic_but_candidate_cardinality_coprime",
+          "padding_restriction_or_other_result_applicability": "OPEN",
+          "printed_page": 50,
+          "source_id": "dktz_tr26_237_revision_1",
+          "theorem": "5.22"
+        },
         "evaluation_domain_kind": "multiplicative_two_adic",
         "fri_soundness_inferred_from_field_algebra": false,
         "small_base_field_and_list_size_review": "OPEN"
@@ -252,10 +285,57 @@
         "name": "Goldilocks Poseidon2",
         "width": 8
       },
+      "primitive_premises": {
+        "actual_pruned_mmcs_binding": "OPEN",
+        "concrete_restricted_tree_binding_bits": null,
+        "conditional_estimator_is_raw_compressor_bound": false,
+        "evidence": [
+          "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/SECURITY_CONTRACT.md",
+          "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs"
+        ],
+        "false_w1_proof_inferred": false,
+        "fixed_w1_conflicting_opening_inferred": false,
+        "independent_leaf_branch_function_model": "REFUTED",
+        "scope": "retained_source_findings_not_new_native_execution_or_security_proof",
+        "unrestricted_compressor_collision_resistance": "REFUTED"
+      },
       "profile_id": "TRNM-W1-FULL-PUBLIC-STARK-RESEARCH-P3-0.8.0-R1",
       "proximity_scope": {
         "all_proximity_gap_results_excluded": false,
         "characteristic_two_additive_hypothesis_matched": false,
+        "dktz_theorem_5_22_direct_domain": {
+          "all_proximity_gap_results_excluded": false,
+          "candidate_domain": "multiplicative_two_adic_subgroup_or_coset",
+          "certified_characteristic": "18446744069414584321",
+          "coprimality_witness": {
+            "all_checked_power_of_two_residues_nonzero": true,
+            "checked_evaluation_log2_max": 32,
+            "checked_evaluation_log2_min": 0,
+            "gcd_characteristic_two": 1,
+            "scope": "base_field_algebraic_capacity_not_proved_reachable_trace_or_evaluation_sizes"
+          },
+          "direct_domain_hypothesis_matched": false,
+          "fixed_tagged_evaluation_log2": null,
+          "fri_soundness_inferred": false,
+          "necessary_theorem_hypotheses": {
+            "base_field_size": "b=p^a",
+            "cardinality_divisible_by_characteristic": true,
+            "domain_cardinality": "b^d",
+            "domain_exponent": "d=2n-h>=4",
+            "evaluation_domain": "B_or_Fb_hyperplane",
+            "extension_degree": "m=2n",
+            "h": [
+              0,
+              1
+            ],
+            "parameter_range": "2<=t<=n-h"
+          },
+          "obstruction": "theorem_cardinality_divisible_by_characteristic_but_candidate_cardinality_coprime",
+          "padding_restriction_or_other_result_applicability": "OPEN",
+          "printed_page": 50,
+          "source_id": "dktz_tr26_237_revision_1",
+          "theorem": "5.22"
+        },
         "evaluation_domain_kind": "multiplicative_two_adic",
         "fri_soundness_inferred_from_field_algebra": false,
         "small_base_field_and_list_size_review": "OPEN"
@@ -349,6 +429,42 @@
       "proximity_scope": {
         "all_proximity_gap_results_excluded": false,
         "characteristic_two_additive_hypothesis_matched": false,
+        "dktz_theorem_5_22_direct_domain": {
+          "all_proximity_gap_results_excluded": false,
+          "candidate_domain": "multiplicative_two_adic_subgroup_or_coset",
+          "certified_characteristic": "18446744069414584321",
+          "coprimality_witness": {
+            "all_checked_power_of_two_residues_nonzero": true,
+            "checked_evaluation_log2_max": 32,
+            "checked_evaluation_log2_min": 0,
+            "gcd_characteristic_two": 1,
+            "scope": "base_field_algebraic_capacity_not_proved_reachable_trace_or_evaluation_sizes"
+          },
+          "direct_domain_hypothesis_matched": false,
+          "fixed_tagged_evaluation_log2": [
+            15,
+            16
+          ],
+          "fri_soundness_inferred": false,
+          "necessary_theorem_hypotheses": {
+            "base_field_size": "b=p^a",
+            "cardinality_divisible_by_characteristic": true,
+            "domain_cardinality": "b^d",
+            "domain_exponent": "d=2n-h>=4",
+            "evaluation_domain": "B_or_Fb_hyperplane",
+            "extension_degree": "m=2n",
+            "h": [
+              0,
+              1
+            ],
+            "parameter_range": "2<=t<=n-h"
+          },
+          "obstruction": "theorem_cardinality_divisible_by_characteristic_but_candidate_cardinality_coprime",
+          "padding_restriction_or_other_result_applicability": "OPEN",
+          "printed_page": 50,
+          "source_id": "dktz_tr26_237_revision_1",
+          "theorem": "5.22"
+        },
         "evaluation_domain_kind": "multiplicative_two_adic",
         "fri_soundness_inferred_from_field_algebra": false,
         "small_base_field_and_list_size_review": "OPEN"
@@ -374,7 +490,19 @@
         "scope": "two_existing_accepted_conflicting_classical_openings_to_a_framed_hash_collision",
         "shared_context": "same profile, component, statement context, ordered dimensions and root; conflicting values at one shared matrix-row coordinate"
       },
-      "trace_shape_scope": "fixed_tagged_full_W1_profile_not_arbitrary_AIR_or_all_P3_variants"
+      "trace_shape_scope": "fixed_tagged_full_W1_profile_not_arbitrary_AIR_or_all_P3_variants",
+      "transcript_model": {
+        "actual_schedule_knowledge_soundness": "OPEN",
+        "consumed_output_byte_count_encoded_before_observe": false,
+        "evidence": "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3.rs",
+        "fixed_p3_observation_schedule": "UNCHANGED",
+        "fixed_w1_forgery_inferred": false,
+        "generic_transcript_history_injectivity_claimed": false,
+        "input_role_framing_is_transcript_history_proof": false,
+        "observe_call_boundaries_encoded": false,
+        "per_message_semantic_tags": false,
+        "scope": "retained_source_metadata_not_new_native_execution_or_security_proof"
+      }
     }
   ],
   "schema": "TRNM-W1-STARK-ROUTE-REGISTRY1",

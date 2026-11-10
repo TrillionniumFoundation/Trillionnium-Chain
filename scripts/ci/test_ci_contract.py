@@ -2600,6 +2600,10 @@ class MergedQualificationLaneTests(unittest.TestCase):
             '    python3 scripts/w1_stark_field_certificates.py\n',
             '    python3 scripts/ci/test_w1_stark_route_audit.py\n',
             '    python3 scripts/w1_stark_route_audit.py\n',
+        ), '    # Conditional iid counting does not establish the actual transcript distribution.\n    python3 scripts/ci/test_w1_fri_ideal_sampler.py\n'),
+        'conditional_sampler': ('repository-truth', '    python3 scripts/w1_stark_route_audit.py\n    # Conditional iid counting does not establish the actual transcript distribution.\n', (
+            '    python3 scripts/ci/test_w1_fri_ideal_sampler.py\n',
+            '    python3 scripts/w1_fri_query_replay.py --ideal-sampler-law\n',
         ), "    python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v\n"),
         'fixed_probability': ('repository-truth',
                               "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v\n", (
@@ -2673,6 +2677,9 @@ class MergedQualificationLaneTests(unittest.TestCase):
 
     def test_stark_route_field_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('stark_routes_and_fields')
+
+    def test_conditional_sampler_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('conditional_sampler')
 
     def test_fixed_probability_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('fixed_probability')

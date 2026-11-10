@@ -14,6 +14,7 @@ import gzip
 import hashlib
 import io
 import json
+import math
 from pathlib import Path, PurePosixPath
 import re
 import sys
@@ -25,6 +26,7 @@ REPORT_SCHEMA = "TRNM-W1-STARK-ROUTE-AUDIT1"
 BASE_COMMIT = "e2a02f9271b49f146e70806c8a66e161b5973971"
 REGISTRY_PATH = "config/pon/w1-stark-route-registry-v1.json"
 P3 = "formal/pon-nakamoto-v1/w1_public_stark_research"
+P3_PRIMITIVE_CONTRACT = "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/SECURITY_CONTRACT.md"
 QROM_MAPPING = "config/pon/w1-qrom-implementation-current-v2.json"
 RISC_SNAPSHOT = "evidence/pon-w1-qrom-implementation-20261107/upstream-sources.json.gz"
 HARDENED = "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs"
@@ -191,13 +193,106 @@ def field_parameters(certificate: dict[str, Any]) -> dict[str, Any]:
     )}
 
 
-def proximity_scope() -> dict[str, Any]:
+def dktz_direct_domain_cardinality(characteristic: int, base_two_adicity: int,
+                                  fixed_evaluation_log2: list[int] | None = None) -> dict[str, Any]:
+    """Check a necessary direct-domain hypothesis using a separately certified prime.
+
+    The theorem's full-field or hyperplane cardinality is divisible by its
+    characteristic. An odd-characteristic multiplicative two-adic domain is
+    coprime to it. This says nothing about restrictions, padding or other results.
+    """
+    require(type(characteristic) is int and characteristic > 2 and characteristic % 2 == 1,
+            "direct-domain check requires the certified odd characteristic")
+    require(type(base_two_adicity) is int and 0 <= base_two_adicity <= 64,
+            "invalid certified two-adicity")
+    require(fixed_evaluation_log2 is None or
+            (type(fixed_evaluation_log2) is list and bool(fixed_evaluation_log2)
+             and all(type(value) is int and 0 <= value <= base_two_adicity
+                     for value in fixed_evaluation_log2)
+             and len(set(fixed_evaluation_log2)) == len(fixed_evaluation_log2)),
+            "invalid fixed evaluation domain exponents")
+    coprime = math.gcd(characteristic, 2)
+    nonzero = all(pow(2, exponent, characteristic) != 0
+                  for exponent in range(base_two_adicity + 1))
+    require(coprime == 1 and nonzero, "two-adic direct-domain obstruction did not reproduce")
+    return {
+        "source_id": "dktz_tr26_237_revision_1", "theorem": "5.22", "printed_page": 50,
+        "necessary_theorem_hypotheses": {
+            "base_field_size": "b=p^a", "extension_degree": "m=2n",
+            "evaluation_domain": "B_or_Fb_hyperplane", "h": [0, 1],
+            "parameter_range": "2<=t<=n-h", "domain_exponent": "d=2n-h>=4",
+            "domain_cardinality": "b^d", "cardinality_divisible_by_characteristic": True,
+        },
+        "candidate_domain": "multiplicative_two_adic_subgroup_or_coset",
+        "certified_characteristic": str(characteristic),
+        "coprimality_witness": {
+            "gcd_characteristic_two": coprime,
+            "checked_evaluation_log2_min": 0,
+            "checked_evaluation_log2_max": base_two_adicity,
+            "all_checked_power_of_two_residues_nonzero": nonzero,
+            "scope": "base_field_algebraic_capacity_not_proved_reachable_trace_or_evaluation_sizes",
+        },
+        "fixed_tagged_evaluation_log2": fixed_evaluation_log2,
+        "direct_domain_hypothesis_matched": False,
+        "obstruction": "theorem_cardinality_divisible_by_characteristic_but_candidate_cardinality_coprime",
+        "padding_restriction_or_other_result_applicability": "OPEN",
+        "all_proximity_gap_results_excluded": False,
+        "fri_soundness_inferred": False,
+    }
+
+
+def proximity_scope(field: dict[str, Any],
+                    fixed_evaluation_log2: list[int] | None = None) -> dict[str, Any]:
     return {
         "evaluation_domain_kind": "multiplicative_two_adic",
         "characteristic_two_additive_hypothesis_matched": False,
         "small_base_field_and_list_size_review": "OPEN",
         "all_proximity_gap_results_excluded": False,
         "fri_soundness_inferred_from_field_algebra": False,
+        "dktz_theorem_5_22_direct_domain": dktz_direct_domain_cardinality(
+            int(field["characteristic"]), int(field["base_two_adicity"]), fixed_evaluation_log2),
+    }
+
+
+def poseidon_primitive_premises(source: str, contract: str) -> dict[str, Any]:
+    """Retain the existing limited negative result, without inferring a W1 attack."""
+    contains(contract,
+             "failures of an *unrestricted compressor collision-resistance*",
+             "an *independent leaf/branch function* model.",
+             "They do not establish\ntwo accepted conflicting W1 openings, a valid false W1 proof",
+             "does not cover\nquantum queries, a fixed concrete Poseidon2, actual P3 pruned multi-openings")
+    contains(source,
+             '"hash_collision_bits_assumption_scope": "conditional_estimator_input_only_not_raw_compressor_security"',
+             '"concrete_shared_permutation_restricted_tree_binding_bits": Value::Null')
+    return {
+        "evidence": [P3_PRIMITIVE_CONTRACT, P3 + "/src/proof_config.rs"],
+        "scope": "retained_source_findings_not_new_native_execution_or_security_proof",
+        "unrestricted_compressor_collision_resistance": "REFUTED",
+        "independent_leaf_branch_function_model": "REFUTED",
+        "actual_pruned_mmcs_binding": "OPEN",
+        "concrete_restricted_tree_binding_bits": None,
+        "conditional_estimator_is_raw_compressor_bound": False,
+        "fixed_w1_conflicting_opening_inferred": False,
+        "false_w1_proof_inferred": False,
+    }
+
+
+def tagged_transcript_premises(source: str) -> dict[str, Any]:
+    """Distinguish input-role framing from the inherited challenger history."""
+    contains(source,
+             '"p3_message_schedule":"unchanged frozen P3 transcript order; no new per-message semantic tags"',
+             '"inherited_state_alias":"HashChallenger does not encode observe-call boundaries or count of bytes already popped within an output block before a new observation; generic transcript-history injectivity is not claimed"')
+    return {
+        "evidence": P3 + "/src/tagged_sha3.rs",
+        "scope": "retained_source_metadata_not_new_native_execution_or_security_proof",
+        "fixed_p3_observation_schedule": "UNCHANGED",
+        "per_message_semantic_tags": False,
+        "observe_call_boundaries_encoded": False,
+        "consumed_output_byte_count_encoded_before_observe": False,
+        "generic_transcript_history_injectivity_claimed": False,
+        "input_role_framing_is_transcript_history_proof": False,
+        "actual_schedule_knowledge_soundness": "OPEN",
+        "fixed_w1_forgery_inferred": False,
     }
 
 
@@ -343,7 +438,7 @@ def derive_routes(root: Path, inputs: dict[str, bytes]) -> tuple[list[dict[str, 
                                "allowed_program_semantics_proved": False,
                                "verifier_parameters_digest": string(profile, "PARAMETERS"),
                                "control_merkle_depth": uint(profile, "CONTROL_MERKLE_DEPTH")},
-        "proximity_scope": proximity_scope(),
+        "proximity_scope": proximity_scope(fields["risc0_babybear_fp4"]),
         "historical_obligation_roster": mapping["proof_obligations"],
         "retained_obligation_progress": retained_progress(inputs, mapping),
         "additional_open_obligations": [SMALL_FIELD_OBLIGATION],
@@ -394,7 +489,10 @@ def derive_routes(root: Path, inputs: dict[str, bytes]) -> tuple[list[dict[str, 
                                   "assumed_hash_collision_bits": uint(old, "ASSUMED_HASH_COLLISION_BITS"),
                                   "assumed_hash_strength_proved": False,
                                   "complete_noninteractive_or_quantum_bound": False},
-        "proximity_scope": proximity_scope(), "open_obligations": list(P3_OPEN),
+        "primitive_premises": poseidon_primitive_premises(
+            old, inputs[P3_PRIMITIVE_CONTRACT].decode()),
+        "proximity_scope": proximity_scope(fields["plonky3_goldilocks_fp2"]),
+        "open_obligations": list(P3_OPEN),
         "qualification": qualification(),
     }
     contains(new, "Sha3_512::new()", "HashChallenger::new(", "TranscriptHasher::new(component, context)",
@@ -434,12 +532,15 @@ def derive_routes(root: Path, inputs: dict[str, bytes]) -> tuple[list[dict[str, 
                             "independent_role_oracles_qualified": False},
         "descriptor": descriptor, "frame_magic_hex": byte_string(new, "FRAME_MAGIC").hex(),
         "full_w1_fixed_components": components,
+        "transcript_model": tagged_transcript_premises(new),
         "trace_shape_scope": "fixed_tagged_full_W1_profile_not_arbitrary_AIR_or_all_P3_variants",
         "structural_mmcs_result": {"scope": "two_existing_accepted_conflicting_classical_openings_to_a_framed_hash_collision",
                                    "geometry": "binary_cap_zero_fixed_ordered_power_of_two_matrix_heights",
                                    "shared_context": "same profile, component, statement context, ordered dimensions and root; conflicting values at one shared matrix-row coordinate",
                                    "quantum_commitment_extractor": False, "complete_pcs_or_fiat_shamir_result": False},
-        "proximity_scope": proximity_scope(), "open_obligations": list(P3_OPEN), "qualification": qualification(),
+        "proximity_scope": proximity_scope(fields["plonky3_goldilocks_fp2"],
+                                             [row["evaluation_log2"] for row in components]),
+        "open_obligations": list(P3_OPEN), "qualification": qualification(),
     }
     require(len({r["profile_id"] for r in (risc, p3_old, p3_new)}) == 3, "profile identities alias")
     return [risc, p3_old, p3_new], algebra
