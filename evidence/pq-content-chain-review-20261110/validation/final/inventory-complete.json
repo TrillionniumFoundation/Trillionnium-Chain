@@ -1,0 +1,62 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "f9a8bf3c0773c6ef60476b252ee81862cf665b05",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "f9a8bf3c0773c6ef60476b252ee81862cf665b05",
+    "tested_tree": "9a1c0d83ae3bb12012328b5edccd77e2da9c3272",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2527990241,
+    "tracked_entries": 27673,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "python3",
+    "-B",
+    "/workspace/scratch/fa42f61e046c/run_final.py"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "f9a8bf3c0773c6ef60476b252ee81862cf665b05",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "f9a8bf3c0773c6ef60476b252ee81862cf665b05",
+    "tested_tree": "9a1c0d83ae3bb12012328b5edccd77e2da9c3272",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2527990241,
+    "tracked_entries": 27673,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/workspace/scratch/fa42f61e046c/chain",
+  "elapsed_ns": 20222802451,
+  "environment": {
+    "CARGO_BUILD_JOBS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": null,
+    "CARGO_TARGET_DIR": null,
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 0,
+  "log_bytes": 7467,
+  "log_file": "inventory-complete.log",
+  "log_sha256": "3a7a599c65508837e7c109ed8735bbab7b12a02b2aa4bc5103c532a93a2c19b6",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-10T07:25:10.873936+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}

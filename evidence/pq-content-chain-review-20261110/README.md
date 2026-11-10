@@ -31,3 +31,18 @@ entry and rebinds its actual corpus blob. Original rules and assertions remain.
 No Cargo/rustc exists in this cloud workspace; native build, strict Clippy,
 Cargo formatting and native/model execution are NOT_RUN. The generated Rust
 include-list repair requires its own hosted native validation.
+
+## Inventory-complete successor
+
+Source `f9a8bf3c0773c6ef60476b252ee81862cf665b05`, tree
+`9a1c0d83ae3bb12012328b5edccd77e2da9c3272` passed its complete six-command
+rerun: all 20 reader methods, the independent reader, CI contract inspector,
+1,088-blob corpus inspector, full repository/link check and generated inventory
+check. Full tracked bytes matched before/after. The earlier 178/43/59 suites
+remain observations of 712a6d469, not reruns on this successor.
+
+[Final original receipt](validation/final/inventory-complete.json) ·
+[Final original log](validation/final/inventory-complete.log).
+
+The later publication commit only retains this raw evidence and its manifest;
+its changed evidence bytes do not become new runtime/native observations.
