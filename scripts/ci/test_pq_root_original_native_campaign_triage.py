@@ -119,5 +119,20 @@ class NativeTriageTests(unittest.TestCase):
             reader.summarize_phase(p)
 
 
+    def test_tip_parity_is_weaker_than_full_state_parity(self):
+        p = phase("baseline")
+        p["final_client_tip"] = p["final_receiver_tip"]
+        result = reader.summarize_phase(p)
+        self.assertTrue(result["receiver_client_tip_equal"])
+        self.assertFalse(result["receiver_client_state_equal_reported"])
+        self.assertIn("receiver_client_state_mismatch", result["failed_prerequisites_observable"])
+
+    def test_original_30_second_window_cannot_be_replaced(self):
+        p = phase("baseline")
+        p["duration_seconds"] = 31
+        with self.assertRaisesRegex(ValueError, "30 seconds"):
+            reader.summarize_phase(p)
+
+
 if __name__ == "__main__":
     unittest.main()
