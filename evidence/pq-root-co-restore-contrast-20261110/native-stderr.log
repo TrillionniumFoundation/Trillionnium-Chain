@@ -1,0 +1,3 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qq/trnm-v4-e12ecc-recovery/repo/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.74s
+     Running tests/recovery_floor_v4_native.rs (/home/qq/trnm-v4-e12ecc-recovery/tmp/pq-root-co-restore-target-20261110/debug/deps/recovery_floor_v4_native-2ecacc7911f339d4)
