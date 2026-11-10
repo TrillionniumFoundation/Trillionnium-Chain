@@ -47,7 +47,7 @@ def phase(mode):
     }
 
 
-def make_zip(path, mismatch=False, change_mode=False):
+def make_zip(path, mismatch=False, change_mode=False, result_padding_bytes=0):
     with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
         for i in range(1, 4):
             p = [phase(mode) for mode in reader.MODES]
@@ -65,6 +65,8 @@ def make_zip(path, mismatch=False, change_mode=False):
                 "report_validation_failure": None,
                 "phase_startup_errors": [],
             }
+            if result_padding_bytes and i == 2:
+                result["unused_padding"] = "x" * result_padding_bytes
             z.writestr(f"run-{i}-result.json", json.dumps(result))
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -91,6 +93,15 @@ class NativeTriageTests(unittest.TestCase):
             make_zip(path)
             with self.assertRaisesRegex(ValueError, "ZIP SHA-256"):
                 reader.triage_zip(path, "f" * 64, 17, "head")
+
+    def test_large_compressed_runner_result_fails_closed(self):
+        # A tiny compressed member can expand beyond the reader's result cap.
+        # Preserve the original 30-second campaign report and SHA binding.
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d, "oversized-result.zip")
+            digest = make_zip(path, result_padding_bytes=reader.MAX_RESULT_BYTES)
+            with self.assertRaisesRegex(ValueError, "runner result exceeds parser bound"):
+                reader.triage_zip(path, digest, 17, "head")
 
     def test_report_checksum_mismatch_fails_closed(self):
         with tempfile.TemporaryDirectory() as d:

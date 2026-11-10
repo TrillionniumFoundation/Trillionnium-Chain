@@ -1,0 +1,34 @@
+{
+  "base_commit": "41ce1f436ad929134c8d3b5c12089b58f05c3724",
+  "files": [
+    {
+      "after_bytes": 8306,
+      "after_sha256": "e60b329e601520acec73db39057ad4dec1ebb767803e0a1bf9c2cb50f113e3f3",
+      "before_bytes": 8064,
+      "before_sha256": "736c0f540e9fe9a34e1592e0348c546e216f7282924a9688be2ac8c0e6db21e6",
+      "path": "scripts/ci/pq_root_original_native_campaign_triage.py"
+    },
+    {
+      "after_bytes": 6588,
+      "after_sha256": "48aea2f0c5751caac9cbf1b69d12d13cea4bbfeabd757aef77116431db8b862b",
+      "before_bytes": 5895,
+      "before_sha256": "2d2b424f01b0f7f1aeb8308532f06868aa08a82375f283c68b1d3be6b15dc6f0",
+      "path": "scripts/ci/test_pq_root_original_native_campaign_triage.py"
+    }
+  ],
+  "original_campaign_workload_modified": false,
+  "parser_member_limit_bytes": 2000000,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "schema": "pq-root-artifact-result-size-guard-v1",
+  "unit-test.stderr": {
+    "bytes": 107,
+    "sha256": "eab4281419f49474c6773f172eab4705e82da9e9196e5418e92a366609bcb99e"
+  },
+  "unit-test.stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "unit_test_command": "python3 scripts/ci/test_pq_root_original_native_campaign_triage.py",
+  "unit_test_exit_code": 0
+}

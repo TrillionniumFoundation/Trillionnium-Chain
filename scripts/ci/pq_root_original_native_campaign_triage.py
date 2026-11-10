@@ -11,6 +11,8 @@ import zipfile
 
 MODES = ("baseline", "from-zero", "late-product")
 MAX_REPORT_BYTES = 40_000_000
+# Bound the tiny runner-result control JSON before ZIP decompression too.
+MAX_RESULT_BYTES = 2_000_000
 
 
 def sha256(data):
@@ -115,6 +117,8 @@ def triage_zip(archive, expected_digest, run_id, source_head):
                 raise ValueError("missing or duplicate original run member")
             if z.getinfo(raw_path).file_size > MAX_REPORT_BYTES:
                 raise ValueError("report exceeds parser bound")
+            if z.getinfo(result_path).file_size > MAX_RESULT_BYTES:
+                raise ValueError("runner result exceeds parser bound")
             raw = z.read(raw_path)
             outcome = json.loads(z.read(result_path))
             if sha256(raw) != outcome["report_sha256"]:
