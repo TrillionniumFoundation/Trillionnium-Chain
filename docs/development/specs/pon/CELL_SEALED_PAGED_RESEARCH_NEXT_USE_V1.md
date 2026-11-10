@@ -71,3 +71,5 @@ Independent domains/WAN, continuous paid custody, real-model native M12
 settlement, ordinary FinalUse and production remain **HOLD**.
 
 Provider storage capacity sums one 4096-byte-aligned extent per shard obligation. Wire input and reconstruction reservations remain byte-exact and are reported separately; storage alignment does not enlarge the original transfer or execution budgets.
+
+Staging cache logical occupancy includes the exact encoded shard manifests as well as wire payloads. Both are summed from the committed plan within the original clock, checked against the unchanged 512 MiB bound, and reported separately from transport input usage.

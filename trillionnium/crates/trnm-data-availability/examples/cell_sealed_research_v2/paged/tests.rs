@@ -297,7 +297,7 @@ fn paged_research_restores_two_pages_from_four_reopened_targets() {
         &profile(),
         &mut report,
     )
-    .unwrap();
+    .unwrap_or_else(|error| panic!("restore failed: {error:?}; retained observation: {report}"));
     assert!(!fixture.source_path.exists());
     assert!(!fixture.received_path.exists());
     for member in fixture.version.manifests() {
@@ -321,6 +321,13 @@ fn paged_research_restores_two_pages_from_four_reopened_targets() {
     assert_eq!(provider_capacity % 4096, 0);
     assert!(provider_capacity > provider_wire);
     assert_eq!(observed["potential"]["input_bytes"], provider_wire * 6);
+    let metadata = observed["staging_manifest_bytes"].as_u64().unwrap();
+    assert!(metadata > 0);
+    assert_eq!(
+        observed["staging_logical_bytes"],
+        provider_wire * 6 + metadata
+    );
+    assert!(observed["staging_logical_bytes"].as_u64().unwrap() <= SNAPSHOT_BOUND);
     assert_eq!(observed["page_count"], 2);
     assert_eq!(observed["quarantined_slots"], json!([1, 3]));
     assert_eq!(observed["verified_shards"], 264);

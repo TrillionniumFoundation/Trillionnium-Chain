@@ -313,11 +313,32 @@ fn restore_inner(
             "six_declared_local_slots_are_independent_operators": false,
         }))?,
     )?;
+    let mut staging_metadata = 0_u64;
+    for page_index in 0..plan.plan().page_count() {
+        controlled(deadline, cancelled)?;
+        let page = plan.read_page(page_index, deadline)?;
+        for chunk in page.chunks() {
+            for duty in chunk.slots() {
+                staging_metadata = staging_metadata
+                    .checked_add(duty.manifest().encode().len() as u64)
+                    .ok_or("paged staging metadata overflow")?;
+            }
+        }
+    }
+    let staging_logical = input
+        .checked_add(staging_metadata)
+        .ok_or("paged staging logical overflow")?;
+    check(
+        staging_logical <= SNAPSHOT_BOUND,
+        "paged staging original storage bound",
+    )?;
+    report["staging_manifest_bytes"] = json!(staging_metadata);
+    report["staging_logical_bytes"] = json!(staging_logical);
     let staging = CellStoreV1::open(
         &staging_path,
         CellCacheConfigV4 {
             max_database_bytes: 1024 * 1024 * 1024,
-            max_logical_bytes: input,
+            max_logical_bytes: staging_logical,
             max_chunk_rows: slots,
             max_manifest_rows: slots,
         },
