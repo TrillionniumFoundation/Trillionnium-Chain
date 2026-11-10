@@ -1,3 +1,25 @@
+**System-boundary readback continuation, 2026-11-09 America/New_York — HOLD:**
+
+Continue the existing #847 candidate from M14
+`ac8501a85a770ba34f34e1bed507ca747e5c3f8d`. The
+[common-source review](../security/SYSTEM_BOUNDARY_QUALIFICATION_20261109.md)
+keeps source presence, mechanism tests, same-operation observation and
+qualification separate. Research-side #838/#843 and Hepta learning-side
+receipts cannot be imported as this descendant's execution evidence.
+The campaign reader now rejects a claimed timely confirmation without the
+original six-depth observation and ordered integer clocks strictly inside the
+original thirty-second phase. Unknown clocks remain unknown, and phase success
+still requires all three original confirmation rounds. This is consistency
+checking, not authentication of execution or honest-service qualification.
+The [custody V2 review](../security/PQ_ROOT_CUSTODY_REVIEW_V2.md) adds declared
+network/power availability and cross-axis common-control factors. Network and
+power do not grant key access. Listed-factor minima, labels and checked file
+bytes do not certify independence, freshness, actual attack cost or exclusion
+of a joint old-backup restore. Keep V1, exact-source controls, all previous
+failures, the four-second Host and separate thirty-second campaign unchanged.
+All production, FinalUse, independent-custody and security qualifications remain
+false or unknown; this descendant requires its own committed-source checks.
+
 **Chain/Hepta fixed-candidate continuation, 2026-11-09 — HOLD:**
 
 Continue the actual #835/#836/#837 merge lineage in
