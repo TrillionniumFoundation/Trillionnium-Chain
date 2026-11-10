@@ -7809,3 +7809,28 @@ bound, independent custody, complete History/capacity/churn, physical loading,
 actual adoption, cryptographic closure or production activation. These gates
 remain HOLD until the corresponding original owners and complete campaigns
 supply source-bound evidence.
+
+### 2026-11-09 business identity and component selection continuation
+
+The exact-head [four-axis CI attempt](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42634668898)
+on `24bd150a2683b5a375171d062af8256852db5321` completed with failure.
+The native build and strict component Clippy completed, but the component runner
+found both V2 and V3 TCP tests with the same function suffix and refused the
+ambiguous selector. The cancellation unit and TCP processes did not run.
+The continuation pins the full V3 owner path, preserves the unique-match guard,
+and tests both the actual dual-owner inventory and missing/duplicate owners.
+
+The [execution reader](../../formal/throughput-v1/execution_report.py) also retains
+an independently versioned transaction-identity observation. Repeated timely
+confirmation rounds for the same native transaction hash count once in that
+diagnostic, including across phases/runs. Unknown rounds or missing positive
+identities withhold an exact total; the known identity count remains a lower
+bound. Original acceptance round counts and strict deadlines remain unchanged.
+Neither this diagnostic nor completed component calls establishes independent
+business demand, a complete service census or transactions per second.
+
+Confirmed unique business TPS, independently accepted useful tasks with full
+costs, complete cold/hot version service and actual model-service net value
+still require their original source-bound observations. Missing physical
+network bytes, full lock/queue coverage, recovery and original service results
+remain unknown. No production activation or resource-profile promotion follows.

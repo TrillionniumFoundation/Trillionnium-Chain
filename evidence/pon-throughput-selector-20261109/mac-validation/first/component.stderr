@@ -1,0 +1,29 @@
+test_component_observations (unittest.loader._FailedTest.test_component_observations) ... ERROR
+
+======================================================================
+ERROR: test_component_observations (unittest.loader._FailedTest.test_component_observations)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_component_observations
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/formal/throughput-v1/test_component_observations.py", line 7, in <module>
+    import run_component_observations as runner
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/formal/throughput-v1/run_component_observations.py", line 28, in <module>
+    import execution_report  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/formal/throughput-v1/execution_report.py", line 24, in <module>
+    import read_original_native_campaign as original_campaign  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/qianqi/work/chain-throughput-continue-20261109-48c53a/scripts/read_original_native_campaign.py", line 28, in <module>
+    from contract_wire import H, header_decode, header_encode
+ModuleNotFoundError: No module named 'contract_wire'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

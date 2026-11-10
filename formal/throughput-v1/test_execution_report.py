@@ -158,6 +158,72 @@ def campaign_result():
 
 
 class ReportTests(unittest.TestCase):
+    def test_repeated_confirmed_transaction_does_not_become_three_unique_transactions(self):
+        slots = [reader.round_slot(index, positive_round(index)) for index in reader.ROUNDS]
+        self.assertEqual(reader.round_counts(slots)["observed_supported_timely"], 3)
+        value = reader.transaction_identity_observations(slots)
+        self.assertEqual(value["timely_rounds_with_transaction_identity"], 3)
+        self.assertEqual(value["repeated_timely_transaction_observations"], 2)
+        self.assertEqual(value["distinct_timely_transaction_identities"], 1)
+        self.assertEqual(value["distinct_timely_transaction_identities_lower_bound"], 1)
+        self.assertTrue(value["complete_within_planned_round_slots"])
+        self.assertIsNone(value["unique_business_transactions"])
+        self.assertIsNone(value["transactions_per_second"])
+
+    def test_distinct_timely_transaction_hashes_remain_separate_observations(self):
+        slots = []
+        for index in reader.ROUNDS:
+            raw = positive_round(index)
+            transaction = f"{index + 1:064x}"
+            raw["transaction"] = raw["observation"]["transaction"] = transaction
+            slots.append(reader.round_slot(index, raw))
+        value = reader.transaction_identity_observations(slots)
+        self.assertEqual(value["distinct_timely_transaction_identities"], 3)
+        self.assertEqual(value["repeated_timely_transaction_observations"], 0)
+        self.assertIsNone(value["transactions_per_second"])
+
+    def test_missing_round_or_positive_identity_keeps_unique_total_unknown(self):
+        positive = reader.round_slot(0, positive_round(0))
+        missing_identity = dict(positive, round=1, transaction=None)
+        value = reader.transaction_identity_observations([positive, missing_identity, reader.round_slot(2)])
+        self.assertEqual(value["distinct_timely_transaction_identities_lower_bound"], 1)
+        self.assertEqual(value["unknown_timeliness_round_slots"], 1)
+        self.assertEqual(value["timely_rounds_missing_transaction_identity"], 1)
+        self.assertFalse(value["complete_within_planned_round_slots"])
+        self.assertIsNone(value["distinct_timely_transaction_identities"])
+        self.assertIsNone(value["unique_business_transactions"])
+        self.assertIsNone(value["transactions_per_second"])
+
+    def test_missing_campaign_preserves_unique_identity_unknown_denominator(self):
+        campaign = reader.missing_campaign()
+        value = campaign["transaction_identity_observation"]
+        self.assertEqual(value["planned_round_slots"], 27)
+        self.assertEqual(value["unknown_timeliness_round_slots"], 27)
+        self.assertEqual(value["distinct_timely_transaction_identities_lower_bound"], 0)
+        self.assertIsNone(value["distinct_timely_transaction_identities"])
+        for run in campaign["runs"]:
+            for phase in run["phases"]:
+                self.assertEqual(phase["transaction_identity_observation"]["unknown_timeliness_round_slots"], 3)
+
+    def test_campaign_deduplicates_same_transaction_across_all_phases_and_runs(self):
+        report = campaign_report()
+        for phase in report["phases"]:
+            phase["confirmations"] = [positive_round(index) for index in reader.ROUNDS]
+            phase["all_signed_rounds_confirmed_in_window"] = True
+        value = self.read(self.bundle({number: report for number in reader.RUNS}))
+        self.assertEqual(value["confirmation_denominator"]["total_timely"], 27)
+        identities = value["transaction_identity_observation"]
+        self.assertEqual(identities["schema"], "trnm-campaign-transaction-identity-observation-v1")
+        self.assertEqual(identities["planned_round_slots"], 27)
+        self.assertEqual(identities["distinct_timely_transaction_identities"], 1)
+        self.assertEqual(identities["repeated_timely_transaction_observations"], 26)
+        self.assertIsNone(identities["unique_business_transactions"])
+        self.assertIsNone(identities["transactions_per_second"])
+        for run in value["runs"]:
+            for phase in run["phases"]:
+                self.assertEqual(phase["transaction_identity_observation"]
+                                 ["distinct_timely_transaction_identities"], 1)
+
     def test_cancellation_report_exposes_bounds_without_replacing_original_unknown_stop(self):
         value = reader.request_metrics(native_observer([cancellation_record()]))["cancellation"]
         self.assertIsNone(value["signal_to_stop_latency_ns"])

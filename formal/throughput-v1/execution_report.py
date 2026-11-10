@@ -187,6 +187,45 @@ def round_counts(slots):
             "status_counts": dict(Counter(row["status"] for row in slots))}
 
 
+def transaction_identity_observations(slots):
+    """Deduplicate timely transaction hashes without relabeling round counts.
+
+    A retained round is not necessarily a new transaction or a business task.
+    Unknown rounds and missing positive identities prevent an exact total, while
+    the distinct retained positive hashes remain an observational lower bound.
+    """
+    labels = []
+    unknown_rounds = missing_identity = 0
+    for row in slots:
+        timely = optional_boolean(row["supported_in_window"])
+        if timely is None:
+            unknown_rounds += 1
+        elif timely is True:
+            transaction = row.get("transaction")
+            if transaction is None:
+                missing_identity += 1
+            else:
+                original_campaign.exact_digest(transaction)
+                labels.append(transaction)
+    distinct = len(set(labels))
+    complete = unknown_rounds == 0 and missing_identity == 0
+    return {
+        "schema": "trnm-campaign-transaction-identity-observation-v1",
+        "planned_round_slots": len(slots),
+        "timely_rounds_with_transaction_identity": len(labels),
+        "repeated_timely_transaction_observations": len(labels) - distinct,
+        "unknown_timeliness_round_slots": unknown_rounds,
+        "timely_rounds_missing_transaction_identity": missing_identity,
+        "distinct_timely_transaction_identities_lower_bound": distinct,
+        "distinct_timely_transaction_identities": distinct if complete else None,
+        "complete_within_planned_round_slots": complete,
+        "unique_business_transactions": None,
+        "transactions_per_second": None,
+        "scope": "deduplicated native transaction-hash observations in the original planned rounds; "
+                 "neither independent business demand, a complete service transaction census nor sustainable throughput",
+    }
+
+
 def call_census(rows, *, planned=None):
     require(type(rows) is list and len(rows) <= MAX_ROWS, "bounded calls required")
     statuses = Counter()
@@ -517,8 +556,10 @@ def read_host(path, expected_sha256):
 
 
 def missing_phase(mode):
+    rounds = [round_slot(index) for index in ROUNDS]
     return {"mode": mode, "record_present": False, "status": "not_observed",
-            "rounds": [round_slot(index) for index in ROUNDS],
+            "rounds": rounds,
+            "transaction_identity_observation": transaction_identity_observations(rounds),
             "metrics": unknown_metrics(), "original_phase_readback": None}
 
 
@@ -527,6 +568,8 @@ def missing_campaign():
              "phases": [missing_phase(mode) for mode in phases.MODES]} for number in RUNS]
     return {"contract": CAMPAIGN_CONTRACT, "input_status": "not_supplied", "runs": runs,
             "confirmation_denominator": round_counts([slot for run in runs
+                for phase in run["phases"] for slot in phase["rounds"]]),
+            "transaction_identity_observation": transaction_identity_observations([slot for run in runs
                 for phase in run["phases"] for slot in phase["rounds"]]),
             "strict_original_acceptance_reader_executed": False}
 
@@ -556,6 +599,7 @@ def project_phase(raw, original):
         require(index in ROUNDS and index not in mapped, "duplicate or unplanned round")
         mapped[index] = row
     target["rounds"] = [round_slot(index, mapped.get(index)) for index in ROUNDS]
+    target["transaction_identity_observation"] = transaction_identity_observations(target["rounds"])
     children = raw["children"]
     require(type(children) is list and len(children) <= expected_attackers, "unplanned attacker children")
     attacks = [row for child in children for row in ((child.get("report") or {}).get("result") or {}).get("calls", [])]
@@ -658,6 +702,8 @@ def read_campaign(root, manifest_sha256, expected_head, expected_tree, *, retain
                        preparation_wall_ns=derived["honest_preparation_wall_ns"],
                        phases=[project_phase(raw, projected) for raw, projected in zip(report["phases"], derived["phases"])])
         out["confirmation_denominator"] = round_counts([slot for run in out["runs"]
+            for phase in run["phases"] for slot in phase["rounds"]])
+        out["transaction_identity_observation"] = transaction_identity_observations([slot for run in out["runs"]
             for phase in run["phases"] for slot in phase["rounds"]])
         out["scope"] = {"reads_failed_attempts": True, "reader_executes_native_test": False,
                         "hash_consistency_is_not_execution_or_custody_authentication": True,
