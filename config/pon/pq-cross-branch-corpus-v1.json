@@ -641,7 +641,7 @@
     "tests/fixtures/cpq1-content-v1/vectors.json": "b0efdbebad32de3b5081096a2b624a11605ff557",
     "tests/fixtures/llm_material_runtime_bridge_v1/historical_plan.json": "bf170fbf14bb7357889e3cab59bb8f92d5a93df7",
     "tests/fixtures/llm_material_runtime_bridge_v1/historical_target.json": "2f3c2aed7ff8e546c7cd2569f3b27bdeb9d30d30",
-    "tests/fuzz/Cargo.lock": "30408ee702c2a31525286b2d4f14c9c461db8803",
+    "tests/fuzz/Cargo.lock": "2820597c0c82faa646dcb9f1e94316e69b2f3740",
     "tests/fuzz/Cargo.toml": "a55d73741e6971601f1f3df6dec9b19a924d9a8e",
     "trillionnium/Cargo.lock": "f3f53a76db2867c8906f0aea49ad83a6954d3ef4",
     "trillionnium/Cargo.toml": "44df8f8d5eec880d10da42c12a903c03658cfc65",
