@@ -1,5 +1,7 @@
 //! M07/M08 native branch persistence and recovery using the existing M06 executor.
 #[cfg(test)]
+mod account_profile_scope_tests;
+#[cfg(test)]
 mod admission_header_tests;
 #[cfg(test)]
 mod append_readback_tests;
@@ -1647,6 +1649,9 @@ impl Node {
         workers: usize,
         inputs: crate::operator_task_policy::RestrictedNodeInputs,
     ) -> Result<Self> {
+        // This wrapper can create its policy journal and namespace marker before
+        // reaching the common opener. Refuse an invalid account scope first.
+        settings.app.check_account_profile()?;
         let policy = crate::operator_task_policy::authenticate(
             &inputs.raw_policy,
             &inputs.authority,
@@ -1804,6 +1809,9 @@ impl Node {
         state_backend: StateBackend,
         selection: SelectedOpen,
     ) -> Result<Self> {
+        // Every backend shares the M06 scope and account-profile decision before
+        // creating, initializing or recovering any native namespace files.
+        settings.app.check_account_profile()?;
         let (observation_only, existing_owner_only) = match selection {
             SelectedOpen::InitializeOrRecover { observation_only } => (observation_only, false),
             SelectedOpen::ExistingPqOwner => (false, true),
@@ -2895,6 +2903,13 @@ impl Node {
         ))
     }
     fn namespace(&self) -> Result<()> {
+        // Recheck the current Settings even when an owner or State cache is warm.
+        // This is the already opened owner's local configuration, not a peer's
+        // diagnostic or an untrusted startup request.
+        self.settings
+            .app
+            .check_account_profile()
+            .map_err(|error| Error::from(error).local_integrity())?;
         if let Some(snapshot) = &self.growth_observer_snapshot {
             snapshot.check()?;
         }
@@ -6142,6 +6157,10 @@ impl Node {
         termination_cpu: Option<&crate::ingress::public_v3::ServiceMutationCpuCheckpoint>,
     ) -> Result<Hash> {
         progress()?;
+        self.settings
+            .app
+            .check_account_profile()
+            .map_err(|error| Error::from(error).local_integrity())?;
         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
             ensure(hook.is_none(), "GROWTH_USE_PROGRESS_HOOK")?;
             let progress = RefCell::new(progress);
@@ -6610,6 +6629,10 @@ impl Node {
         bytes32(best)
     }
     pub fn recover(&mut self) -> Result<Hash> {
+        self.settings
+            .app
+            .check_account_profile()
+            .map_err(|error| Error::from(error).local_integrity())?;
         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
             return self.growth_recover();
         }

@@ -1,3 +1,19 @@
+**Account authorization development boundary, 2026-11-10 America/New_York — HOLD:**
+
+Continue the existing #847 integration candidate from
+`df927b6ffaecff293b9e9428e3ba516f47cd101a`. The
+[account authorization boundary](../security/ACCOUNT_AUTHORIZATION_DEVELOPMENT_BOUNDARY_20261110.md)
+records the real classical development debit, credit, nonce and fee effects.
+An explicit PQ failure still does not retry as an Ed25519 transaction.
+The shared M06/Node check now requires the exact existing development scope,
+rejects orphan PQ declarations, and rechecks initialization, execution, state
+commitment and warm-owner recovery. Local owner damage carries local stop
+authority; startup and remote diagnostics do not. No signed grammar or stored
+schema changes. Production admission remains empty. Migration authority,
+independent recovery and whole-chain PQ claims retain their existing HOLDs.
+New transfer, empty-block, cold-open and warm-owner controls require their own
+committed-source execution receipts; prior runs cannot certify this increment.
+
 **System-boundary readback continuation, 2026-11-09 America/New_York — HOLD:**
 
 Continue the existing #847 candidate from M14

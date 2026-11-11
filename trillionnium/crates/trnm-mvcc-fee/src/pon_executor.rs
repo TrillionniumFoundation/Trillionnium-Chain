@@ -491,6 +491,7 @@ mod root_arithmetic_tests;
 /// Consensus-profile selected root. The historical root function and every old
 /// profile retain their complete grammar, error order and 65,536-key boundary.
 pub fn root_for_config(state: &State, cfg: &Config) -> Result<Hash> {
+    cfg.check_account_profile()?;
     pq_accounts_v2::validate_state(state, cfg)?;
     if crate::growth_profile_v2::enabled(cfg) {
         Ok(crate::growth_profile_v2::commitment(state, cfg)?.id())
@@ -1135,7 +1136,23 @@ impl Config {
         }
         false
     }
-    fn check_account_profile(&self) -> Result<()> {
+    /// Recheck the current application's authorization owner and research scope.
+    /// Every implemented profile is a valueless development profile; changing
+    /// public configuration fields cannot activate production or select a PQ
+    /// owner. Existing signed domains, parameter identities and State bytes stay
+    /// unchanged. Callers must still authenticate their actual Settings owner.
+    pub fn check_account_profile(&self) -> Result<()> {
+        let params = self
+            .params
+            .as_object()
+            .ok_or("ACCOUNT_DEVELOPMENT_SCOPE_REQUIRED")?;
+        require(
+            params.get("production_activation").and_then(Value::as_bool) == Some(false)
+                && params.get("not_mainnet").and_then(Value::as_bool) == Some(true)
+                && params.get("coin_atomic_unit").and_then(Value::as_str)
+                    == Some("test-unit-no-market-value"),
+            "ACCOUNT_DEVELOPMENT_SCOPE_REQUIRED",
+        )?;
         if pq_accounts_v2::enabled(self) {
             return pq_accounts_v2::check_config(self);
         }
@@ -1143,8 +1160,12 @@ impl Config {
         if let Some(policy) = &self.pq_accounts {
             return policy.check_config(self);
         }
+        // A partial, null or unknown PQ selection is never a classical profile.
+        // Reserve the whole existing native_pq_ parameter namespace, including
+        // retained descriptor/anchor fields whose selector may have been lost.
         require(
-            self.params["account_authorization_profile"].is_null(),
+            !params.contains_key("account_authorization_profile")
+                && !params.keys().any(|key| key.starts_with("native_pq_")),
             "PQ_ACCOUNT_PROFILE_UNAVAILABLE",
         )
     }
@@ -1464,6 +1485,7 @@ struct Prepared {
 /// Read-only native admission check for exact PNX1 canonical context, selected tag,
 /// expiry and strict main signature. This grants no nonce, funds or execution fact.
 pub fn validate_main_envelope(raw: &[u8], height: u64, cfg: &Config) -> Result<Envelope> {
+    cfg.check_account_profile()?;
     require(
         !cfg.is_pq_account_profile(),
         "PQ_ACCOUNT_NATIVE_API_REQUIRED",
