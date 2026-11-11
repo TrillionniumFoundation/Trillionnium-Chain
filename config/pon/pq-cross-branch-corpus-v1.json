@@ -425,7 +425,7 @@
     "trillionnium/crates/trnm-checkpoint-store/src/live_journal_v2.rs": "566c2a94f11ea4949cace063f8b2e6dab57e0397",
     "trillionnium/crates/trnm-checkpoint-store/src/main.rs": "d7d098f7249a1fc80ab84c34eb309e4f094de889",
     "trillionnium/crates/trnm-checkpoint-store/src/node_commit_ledger_v1.rs": "3fab900e20dee7ca4bd34f3e46294bf011d7f9c6",
-    "trillionnium/crates/trnm-checkpoint-store/src/socket_owner_v1.rs": "e11768412c987143ab797382a1d47b74b5fb6080",
+    "trillionnium/crates/trnm-checkpoint-store/src/socket_owner_v1.rs": "8ac28831bef1b8ff011eabbf8006ed0b62e3a1bb",
     "trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs": "b236ce047843a68cf371e02d6bb480fea6fc71ff",
     "trillionnium/crates/trnm-checkpoint-store/tests/cross_process.rs": "979f18cd43bee5480ad9b540130fd09abadd49fa",
     "trillionnium/crates/trnm-checkpoint-store/tests/socket_ownership.rs": "623013c6d93589d120b9b6eec58698f60156294c",
