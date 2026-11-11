@@ -1809,3 +1809,131 @@ fn repair_post_commit_zero_byte_reconciliation_keeps_exact_identity() {
 fn repair_post_commit_completion_refusal_reopens_without_copy_or_charge() {
     repair_post_commit_refusal(RepairPostCommitCase::Completion);
 }
+
+#[test]
+fn retention_population_batch_boundaries_preserve_complete_cold_bytes_and_duty() {
+    for count in [8_usize, 9, 17] {
+        let dir = tempfile::tempdir().unwrap();
+        let (source, manifest, bytes) = material(dir.path(), count * 16_384);
+        assert_eq!(manifest.chunks().len(), count);
+        let capacity = (bytes.len() as u64).div_ceil(4096) * 4096;
+        let mut retention =
+            CellRetentionStoreV1::create(&dir.path().join("retained"), config(1, capacity))
+                .unwrap();
+        retention.reserve(contract(1, &manifest)).unwrap();
+        let original = retention.acknowledge([1; 32], &source, deadline()).unwrap();
+        let target_path = dir.path().join("target.sqlite");
+        let target = CellStoreV1::open(&target_path, cache_config()).unwrap();
+        assert_eq!(
+            retention
+                .populate_cache([1; 32], &target, deadline())
+                .unwrap(),
+            original
+        );
+        drop(target);
+        let cold = CellStoreV1::open_read_only(&target_path).unwrap();
+        cold.verify_complete(&manifest).unwrap();
+        for (chunk, expected) in manifest.chunks().iter().zip(bytes.chunks(16_384)) {
+            let actual = cold.chunk(chunk.sha256).unwrap().unwrap();
+            assert_eq!(actual.as_slice(), expected);
+        }
+        assert_eq!(retention.verify([1; 32], deadline()).unwrap(), original);
+    }
+}
+
+#[test]
+fn retention_population_tail_quota_rolls_back_current_batch_and_keeps_cold_prefix() {
+    let dir = tempfile::tempdir().unwrap();
+    let (source, manifest, bytes) = material(dir.path(), 10 * 16_384);
+    assert_eq!(manifest.chunks().len(), 10);
+    assert_eq!(
+        manifest
+            .chunks()
+            .iter()
+            .map(|chunk| chunk.sha256)
+            .collect::<BTreeSet<_>>()
+            .len(),
+        10
+    );
+    let capacity = (bytes.len() as u64).div_ceil(4096) * 4096;
+    let mut retention =
+        CellRetentionStoreV1::create(&dir.path().join("retained"), config(1, capacity)).unwrap();
+    retention.reserve(contract(1, &manifest)).unwrap();
+    let original = retention.acknowledge([1; 32], &source, deadline()).unwrap();
+    let target_path = dir.path().join("limited.sqlite");
+    let mut limited = cache_config();
+    limited.max_chunk_rows = 9;
+    let target = CellStoreV1::open(&target_path, limited).unwrap();
+    assert!(matches!(
+        retention.populate_cache([1; 32], &target, deadline()),
+        Err(CellErrorV1::CacheQuotaExceeded)
+    ));
+    assert_eq!(target.cache_usage().unwrap().manifest_rows, 1);
+    assert_eq!(target.cache_usage().unwrap().chunk_rows, 8);
+    assert!(target.verify_complete(&manifest).is_err());
+    drop(target);
+    let cold = CellStoreV1::open_read_only(&target_path).unwrap();
+    assert_eq!(
+        cold.manifest(manifest.id()).unwrap(),
+        Some(manifest.clone())
+    );
+    for (index, (chunk, expected)) in manifest
+        .chunks()
+        .iter()
+        .zip(bytes.chunks(16_384))
+        .enumerate()
+    {
+        let actual = cold.chunk(chunk.sha256).unwrap();
+        if index < 8 {
+            assert_eq!(actual.as_deref(), Some(expected));
+        } else {
+            assert!(actual.is_none(), "failed tail member {index} was committed");
+        }
+    }
+    drop(cold);
+    let retry = CellStoreV1::open(&target_path, limited).unwrap();
+    assert!(matches!(
+        retention.populate_cache([1; 32], &retry, deadline()),
+        Err(CellErrorV1::CacheQuotaExceeded)
+    ));
+    assert_eq!(retry.cache_usage().unwrap().chunk_rows, 8);
+    assert_eq!(retention.verify([1; 32], deadline()).unwrap(), original);
+}
+
+#[test]
+fn retention_population_expiry_or_late_arena_corruption_keeps_cache_empty() {
+    for corrupt in [false, true] {
+        let dir = tempfile::tempdir().unwrap();
+        let (source, manifest, bytes) = material(dir.path(), 10 * 16_384);
+        let capacity = (bytes.len() as u64).div_ceil(4096) * 4096;
+        let mut retention =
+            CellRetentionStoreV1::create(&dir.path().join("retained"), config(1, capacity))
+                .unwrap();
+        let duty = contract(1, &manifest);
+        retention.reserve(duty.clone()).unwrap();
+        let original = retention.acknowledge([1; 32], &source, deadline()).unwrap();
+        if corrupt {
+            let offset = retention.required_row([1; 32]).unwrap().offset;
+            retention
+                .arena
+                .seek(SeekFrom::Start(offset + manifest.size() - 1))
+                .unwrap();
+            retention.arena.write_all(&[0xff]).unwrap();
+            retention.arena.sync_all().unwrap();
+        }
+        let target = CellStoreV1::open(&dir.path().join("empty.sqlite"), cache_config()).unwrap();
+        let before = target.cache_usage().unwrap();
+        let end = if corrupt {
+            deadline()
+        } else {
+            Instant::now() - Duration::from_millis(1)
+        };
+        assert!(retention.populate_cache([1; 32], &target, end).is_err());
+        assert_eq!(target.cache_usage().unwrap(), before);
+        let row = retention.required_row([1; 32]).unwrap();
+        assert_eq!(row.contract, duty);
+        assert_eq!(row.status, 1);
+        assert_eq!(row.initial_bytes, original.initial_copy_bytes_committed);
+        assert_eq!(row.repair_bytes, original.repair_bytes_committed);
+    }
+}

@@ -35,13 +35,23 @@ impl CellRs46CodewordV1 {
         binding: &CellRs46ChunkBindingV1,
         bytes: &[u8],
     ) -> CellResultV1<Self> {
+        let (codeword, _) = Self::from_verified_chunk_with_shards(binding, bytes)?;
+        Ok(codeword)
+    }
+
+    /// Return the exact six shards used to derive this codeword.
+    /// Original length/hash checks stay inside encode_chunk; no caller supplies IDs.
+    pub(super) fn from_verified_chunk_with_shards(
+        binding: &CellRs46ChunkBindingV1,
+        bytes: &[u8],
+    ) -> CellResultV1<(Self, [CellRs46ShardV1; CELL_RS46_TOTAL_SHARDS_V1])> {
         let shards = binding.encode_chunk(bytes)?;
         let value = Self {
             binding: binding.clone(),
             shards: shards.each_ref().map(CellRs46ShardV1::id),
         };
         value.validate_ids()?;
-        Ok(value)
+        Ok((value, shards))
     }
 
     pub fn shard_ids(&self) -> &[CellDigestV1; CELL_RS46_TOTAL_SHARDS_V1] {

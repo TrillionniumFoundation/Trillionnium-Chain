@@ -873,11 +873,27 @@ impl CellRetentionStoreV1 {
             Some(deadline),
         )?;
         self.arena.seek(SeekFrom::Start(row.offset))?;
-        for chunk in row.contract.manifest.chunks() {
-            check_deadline(deadline)?;
-            let mut bytes = vec![0; chunk.size as usize];
-            self.arena.read_exact(&mut bytes)?;
-            cache.put_chunk_with_deadline(chunk, &bytes, Some(deadline))?;
+        // Keep at most the existing eight-chunk/32 MiB payload batch in memory.
+        // Cache batches committed before a later error are not rolled back.
+        for chunks in row
+            .contract
+            .manifest
+            .chunks()
+            .chunks(super::store::MAX_CHUNK_COMMIT_BATCH)
+        {
+            let mut payloads = Vec::with_capacity(chunks.len());
+            for chunk in chunks {
+                check_deadline(deadline)?;
+                let mut bytes = vec![0; chunk.size as usize];
+                self.arena.read_exact(&mut bytes)?;
+                payloads.push(bytes);
+            }
+            let batch: Vec<_> = chunks
+                .iter()
+                .zip(&payloads)
+                .map(|(chunk, bytes)| (chunk, bytes.as_slice()))
+                .collect();
+            cache.put_chunk_batch_with_deadline(&batch, Some(deadline))?;
         }
         cache.verify_complete_until(&row.contract.manifest, deadline)?;
         self.readback(&row)

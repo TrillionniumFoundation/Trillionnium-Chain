@@ -11929,3 +11929,83 @@ fixtures. Existing historical-reader CI refusals keep their original status.
 This continuation records a reviewed engineering repair and pending successor
 validation. It does not qualify mining hardness, independent model benefit,
 provider independence, production activation, legitimate adoption or FinalUse.
+
+### 2026-11-11 — Reduce repeated retained-source work and keep exact current CI bindings
+
+Preserve the complete failed observations on
+`c84162378f34b9284e90587df4c466dfee3e193b`: the DA library returned
+745/747 and its integration tests 44/45. The capacity, retained TCP and CLI
+failures remain observations of that source. Do not replace them with results
+from a diagnostic or a later implementation.
+
+The separate logging-only D2 source
+`603a887ebff8489a4addadf784a118dce6d61921` (tree
+`5508d34d9e6489fe29291eccfb747c64e9eb8b15`) ran the three original failing
+selectors once each with their original inputs, assertions and budgets. All
+three completed successfully with stable source and executable observations.
+The capacity trace, emitted only after the original complete create/read-current
+path, reported the following single-run phase observations:
+
+| Source chunks | Complete create | Original-source populate | Six-slot cache staging | Second encoding plus wire construction |
+| --- | --- | --- | --- | --- |
+| 65 | 3.968012 s | 1.739049 s | 1.883529 s | 16.814022 ms |
+| 128 | 4.999989 s | 2.071112 s | 2.229748 s | 37.487435 ms |
+
+The diagnostic summary SHA-256 is
+`3c9c4afe9b2f05f08cb229d1580f0e145f0563d07bb411310748e67116304eac`;
+the original capacity stderr SHA-256 is
+`39ff9890e4ea8515893ccbd2491554adf1d59173fd68c6e324e78c17ab51eeb7`.
+These timings include diagnostic overhead and are not a throughput guarantee,
+an unavoidable work-cost bound or a measured before/after speedup. D2 did not
+reproduce the earlier CLI/TCP errors, so their earlier causes remain unresolved.
+
+Reuse the six actual shards returned by the same original verified-chunk
+encoding that constructs the codeword. Keep the public constructor signature,
+its original input verification and error order, all CRC1/CRS1/CSP1 bytes and
+the distinct domain-separated shard IDs and plain payload hashes. The private
+helper accepts the original binding and actual bytes; it cannot accept arbitrary
+claimed IDs. Preserve all later contract, pin, cache and deadline checks, the
+independent CRC1/placement golden and existing rejection controls. Add complete
+wire/slot equivalence controls across padding and supported size boundaries,
+plus direct wrong-length and same-length wrong-hash refusals.
+
+For original-source cache population, reuse the existing at-most-eight-chunk,
+32 MiB payload batch helper. Preserve complete arena verification before the
+separate manifest transaction, each actual chunk read and hash validation, the
+original absolute deadline and five-second writer cap, physical database/WAL/SHM
+limits, FULL synchronization, quota triggers and complete final CAS verification.
+The additional buffered payload is bounded by the existing eight-chunk limit.
+A pre-COMMIT refusal rolls back only the current group; the manifest and earlier
+groups can remain durable, and a post-COMMIT observation can return an error
+after the complete current group has become durable. Input collection can change
+error priority within a group. Population does not undo the pre-existing physical
+ACK or initial/repair debit, nor does a cache result authorize a new duty.
+Add boundary/cold-readback, real tail-row-quota rollback, expired-deadline and
+late-arena-corruption controls while preserving the original writer-contention
+control. The expected DA library roster becomes 752, subject to actual discovery
+and execution on the frozen production successor.
+
+Keep the original consensus CI suite and update its exact count to the actual
+eleven retained tests. Package next-architecture evidence into a separate PAX
+archive with a member identity map and complete readback, preserving raw names,
+original outcome checks and failure retention. Pin the current observation-only
+account implementation body that contains the existing account-profile check;
+retain a single exact current fingerprint, and extend the original readiness
+test to reject deletion of that complete 205-byte check. Historical evidence
+retains its own original source/checker meaning and gains no current acceptance.
+
+Freeze these implementation, CI and readiness changes together with this plan
+and only their ten changed corpus blobs in one normal commit. Refresh the
+official embedded source inventory; existing paths imply no inventory text
+change, but changed DA/corpus bytes still affect compiler inputs. Keep the
+unchanged 44-input authority register, reader and independent positive
+expectation on `4b653a74302a17264d5b9b60c67b348f6eb15551`; preserve PQ128,
+lifetime, QROM inputs, historical fixtures and every false qualification flag.
+Execute the original 38-command 620-control sequence on the frozen successor,
+then record the original 19 storage-workflow controls, 71 readiness controls and
+historical readiness reader separately. Native rosters, exact Cargo graphs,
+strict Clippy, formatting and source-before/after observations require their own
+actual final results. This entry records the reviewed implementation decision;
+those final results remain pending at this source freeze and belong in separate
+source-bound evidence. No mining-hardness, independent model-benefit, production,
+legitimate-adoption or ordinary FinalUse qualification is granted.

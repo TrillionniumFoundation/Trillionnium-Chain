@@ -312,7 +312,8 @@ impl CellRetainedShardPlanV1 {
                 let bytes = cache
                     .chunk_with_deadline(chunk.sha256, Some(deadline))?
                     .ok_or(CellErrorV1::Unavailable)?;
-                let codeword = CellRs46CodewordV1::from_verified_chunk(&binding, &bytes)?;
+                let (codeword, shards) =
+                    CellRs46CodewordV1::from_verified_chunk_with_shards(&binding, &bytes)?;
                 let placement = CellRs46PlacementPolicyV1 {
                     codeword: codeword.id(),
                     placements: std::array::from_fn(|slot| {
@@ -320,7 +321,7 @@ impl CellRetainedShardPlanV1 {
                     }),
                 };
                 let placement_id = placement.id()?;
-                let wires = binding.encode_chunk(&bytes)?.map(|shard| shard.encode());
+                let wires = shards.map(|shard| shard.encode());
                 let mut slots = Vec::with_capacity(6);
                 for (slot, wire) in wires.iter().enumerate() {
                     check(deadline)?;

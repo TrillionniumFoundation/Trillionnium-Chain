@@ -1300,6 +1300,17 @@ class NativeDurableSchemaTests(unittest.TestCase):
                 self.extract(self.historical_backend()+marker)
 
     def test_existing_owner_split_requires_the_reviewed_executable_contract(self):
+        self.extract(self.current)
+        # Deleting the complete guard block restores the formerly reviewed body.
+        # A current-source opener must not fall back to that pre-scope contract.
+        account_scope = (
+            '        // Every backend shares the M06 scope and account-profile decision before\n'
+            '        // creating, initializing or recovering any native namespace files.\n'
+            '        settings.app.check_account_profile()?;\n'
+        )
+        with self.assertRaisesRegex(ValueError, 'durable backend selected implementation'):
+            self.extract(self.replace_once(self.current,account_scope,''))
+
         boundary = '        };\n        ensure(\n            !existing_owner_only'
         redirect = ('\n        if matches!(state_backend, StateBackend::Legacy) {\n'
                     '            return Self::open_with_authenticated_state(path, settings, workers);\n'
