@@ -182,6 +182,52 @@ def _terminal_import_boundary(history: list) -> dict:
     return record
 
 
+def _reported_native_confirmation_timing(confirmations: list, window_seconds: int) -> dict:
+    """Preserve *reported* native success after the original deadline.
+
+    A reported depth-six observation after 30 s is not an in-window
+    confirmation. Missing or inconsistent clocks remain unknown rather than
+    being silently classified as an on-time or late success. This does not
+    independently verify signatures or grant a PASS.
+    """
+    window_ns = window_seconds * 1_000_000_000
+    observed = 0
+    late = []
+    unknown_timing = 0
+    conflicts = 0
+    for index, row in enumerate(confirmations):
+        value = row.get("observation")
+        if not isinstance(value, dict):
+            continue
+        qualifies = (value.get("confirmed") is True
+                     and value.get("finalized") is False
+                     and value.get("execution_authority") is False
+                     and type(value.get("depth")) is int
+                     and value["depth"] == 6)
+        if not qualifies:
+            continue
+        observed += 1
+        ended = row.get("ended_ns")
+        reported_on_time = row.get("confirmed_inside_pressure_window")
+        if type(ended) is not int or ended < 0 or type(reported_on_time) is not bool:
+            unknown_timing += 1
+            continue
+        if ended >= window_ns and reported_on_time is False:
+            late.append({"round_index": index, "ended_ns": ended,
+                         "over_deadline_ns": ended - window_ns})
+        elif ended >= window_ns and reported_on_time is True:
+            # Source reports conflicting signed-window evidence: not a pass.
+            conflicts += 1
+    return {
+        "native_confirmation_reported": observed,
+        "native_confirmation_reported_after_deadline": len(late),
+        "after_deadline_rounds": late,
+        "qualifying_observations_with_unknown_timing": unknown_timing,
+        "deadline_conflicts": conflicts,
+        "scope": "reported original native confirmation depth=6 only; not signature re-verification, in-window success, causal proof or qualification",
+    }
+
+
 def _phase(phase: dict, name: str, attackers: int) -> dict:
     history = phase.get("history", [])
     submissions = phase.get("submissions", [])
@@ -218,6 +264,8 @@ def _phase(phase: dict, name: str, attackers: int) -> dict:
         "confirmed_round_observations": sum(row.get("confirmed_inside_pressure_window") is True
                                             for row in confirmations if isinstance(row, dict)),
         "round_observations": len(confirmations),
+        "reported_native_confirmation_timing": _reported_native_confirmation_timing(
+            confirmations, 30),
         "history_calls": len(history),
         "history_network_wall_ns": _sum_observed(history, "elapsed_wall_ns"),
         "history_import_wall_ns": _sum_observed(history, "client_import", "wall_ns"),
