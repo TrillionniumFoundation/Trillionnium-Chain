@@ -1,4 +1,4 @@
-# C4: scoped PQ runtime fixes and retained qualification evidence
+# C5: lossless evidence storage within the retained source-reader limit
 
 > **Whole-chain qualification: HOLD. Production activation: false.**
 >
@@ -7,6 +7,15 @@
 > The original strict Clippy and seven-observation supply-chain checks passed
 > on S3. These are scoped observations, with their actual source identities
 > and failed controls retained; they do not establish whole-chain PQ security.
+
+**C4 completed with overall FAIL: corpus-source exit 1 and native-batch exit 1.**
+Its 5,906,836-byte campaign archive exceeds the unchanged 4,194,304-byte
+per-file source-reader cap. Its actual native batch passed 63 of 64 named
+controls; strict Clippy returned 0. C5 changes the archive storage representation
+to two ordered raw byte parts and an explicit manifest. That storage change
+does not repair or relabel the separate native failure. No original result,
+reader limit or qualification predicate changes. The successor still requires
+its own committed-source checks.
 
 This evidence update binds two scoped runtime fixes, dependency/source
 maintenance and retained observations to their actual sources. It does not
@@ -30,19 +39,101 @@ and supply-chain observations; their source labels are not rewritten.
 | S2 maintenance and earlier hosted observations | `3c98e08e92094bb79ac811b682192d7252a7c325`; tree `34f4288927ec5e08430f7b2516db909859fab075` | Source maintenance, the earlier supply-chain observation, and the original hosted campaign failure described below. Its observations remain labeled S2. |
 | S3 final maintenance source | `454ae116159867ff6cddd91b964523df7f7e16f0`; tree `3117250c4db0f2ae681d51ed6ee5e6a2fa7555a9` | Public source identity for the fresh positive run, strict checks and supply-chain run. It has S2 as its parent. Runtime `src`, Cargo manifests, both lockfiles and the original supply policy/helper/recorder are unchanged from S2; the reviewed Rust maintenance delta is the generated distributed source inventory. |
 | N, isolated negative-control child | `f7c51532cc6657360b97226d9f396158253cea78`; tree `628f0d54ad9127471cc3902b50b915c4df2dcad7` | Committed child of S3, changing only the two identified behavior files back to the guard/witness behavior from `6c35f94d9387fac41c1547f05742d70150320b2e` while retaining the new tests. Preserve its exact lineage record; do not label its binary or failures as S3. |
+| C4 evidence and Root-maintenance parent | `35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8`; tree `15fd9e7a2f4121dce861e9e96b78d8196d3892fb` | The actual committed source passed its full physical-source check: 28,315 tracked entries and 2,578,250,705 bytes. Its final 23-command run remained FAILED: corpus-source and focused-native-batch each returned 1; the other 21 commands returned 0, including strict Clippy. The native batch passed 63/64. The failed preparation and post-commit observer outcomes remain retained. |
+| C5 storage successor | Identified by its actual final committed-source records and the PR execution ledger | Replaces the current-tree monolithic archive with two complete byte parts and their ordered manifest. Final successor outcomes are not assigned from S3, N or C4. |
 
 The S3 commit name alone is insufficient to assign a result. The final records
 must establish the actual physical source before and after the command, the
 real compiled artifact and the actual terminal outcome.
 
-| Final observation | Required source and scope | Actual terminal result | Evidence location |
+| Retained observation | Required source and scope | Actual terminal result | Evidence location |
 | --- | --- | --- | --- |
 | Fresh positive **64** named native controls | S3; original 52 + supplemental 7 + five unique focused extras | **PASS: 64/64 named native tests; 52 retained + 7 supplemental + 5 unique extras; no skips or timeouts** | `positive64-summary.json`, `positive64-batch-summary.json`; complete command/source receipts, actual ELF identity and per-test logs inside `native-controls-s3-and-negative.tar.xz` |
 | Isolated negative **7** named native controls | N, exact child of S3; original behavior restored only in the two reviewed files | **Observed: 5 actual native failures, each exit 101, and 2 passes; all 7 expected outcomes matched. Native batch remains exit 1 / command_failed; component validation remains false.** | `negative7-summary.json`, `negative7-batch-summary.json`, `negative-source-lineage.json`; complete real failures, source bundle and logs inside `native-controls-s3-and-negative.tar.xz` |
 | Strict Clippy | S3; original required command, features and warning policy | **PASS: original recorder and launcher exited 0** | `s3-strict-clippy.json` and `strict-clippy-s3.tar.gz`; original 1800-second command, source-before/after identity, complete log and launch record |
 | Original supply-chain policy and both locked graphs | S3; pinned cargo-deny 0.20.2, original helper/policy, archived actual advisory database | **PASS: all seven original observations exited 0; no timeouts; exact physical source verified before and after** | `source-records-desktop-s3.tar.gz`: S3 supply-chain manifest, complete observations and advisory snapshot; manifest SHA256 `ddc83487afd3d9841634ce6bda62c249a47a3cf3cc83351c3ff415afc76b099d` |
-| Final candidate checks | Exact final committed source, original contracts and retained rosters | Not reported by this archive; consult the final-head CI and PR execution ledger for actual committed-source results | [Draft PR #908](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/908) and its exact-source checks |
+| C4 corpus-source gate | C4; original per-file source-reader bound | **FAIL: 5,906,836-byte file exceeds the original 4,194,304-byte cap.** This is the correct refusal. | [Complete C4 observation archive](c4-final-output-evidence.tar.xz): original `corpus-source.log` and source-bound command receipt. |
+| Complete C4 execution | Actual committed C4; original 23-command record | **FAIL: outer exit 1, no outer timeout, complete terminal output.** Of 23 commands, 21 returned 0; `corpus-source` and `focused-native-batch` each returned 1. Source/provider/helper/final evidence guards all remained true. | [Complete C4 observation archive](c4-final-output-evidence.tar.xz); actual terminal summary is 41,868 bytes, SHA256 `1d894e92944e32cf5f2a883b8d3a1d747bb68669734efba7b0a0c52dd7e028d1`. |
+| C4 native batch | C4; same retained 52 + supplemental 7 + five unique extras | **FAIL: 63/64 named controls passed: 51/52 retained, 7/7 supplemental and 5/5 extras; batch exit 1.** Retained control `pnq2-42` exited 101 with ConnectionReset on its exact replay; fixture cleanup completed. The inventory is not an additional control. | [Complete C4 observation archive](c4-final-output-evidence.tar.xz); native batch summary is 8,427 bytes, SHA256 `8346f4629b38f08b46240ec40ecf15b2a25f9d6e0afa4a5ba5fb7fecb25de7cb`. |
+| C4 strict Clippy | C4; original workspace/all-targets/all-features command and warning policy | **PASS: source-recorded command and launcher returned 0.** This result does not make the native batch or overall C4 suite pass. | [Complete C4 observation archive](c4-final-output-evidence.tar.xz); original command receipt SHA256 `49b712d9468eee3608b68fe9aa5ce32c3cd7ac91a1992d22ddbc0269b5a4f37e`. |
+| Final C5 candidate checks | Exact successor commit, original contracts and all current source files | **Requires the successor's own committed-source checks.** Their actual final results belong in the PR execution ledger; this evidence document does not assign a C5 PASS. | [Draft PR #908](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/908) and its exact-source execution ledger. |
 | Hosted observations, including exact-source CodeQL export | S3 head or each actually observed prospective merge | At 2026-11-11 16:18:15 UTC: 18 workflows succeeded, 5 failed, 1 remained in progress. S3 API export failed closed on HTTP 503; successful local SARIF is a separate observation. | `s3-ci-status-snapshot.tar.gz`; all original responses, annotations and complete retained logs |
+
+### C4 failure and the storage successor
+
+C4's complete physical-source identity is distinct from the bounded corpus
+reader's acceptance. The full checkout check succeeded for the source listed
+above; the separate corpus-source gate refused the 5,906,836-byte archive
+because its original single-file cap is 4 MiB. Preserve that real failure and
+its command output. A successful byte reassembly or local reader exercise does
+not turn the C4 final suite into PASS.
+
+The actual C4 terminal summary finished at 2026-11-11 17:50:45 UTC and records
+all 23 commands. Twenty-one returned 0. The two failures are `corpus-source`
+(exit 1) and `focused-native-batch` (exit 1); the native batch passed 63 of 64
+named controls. Strict Clippy returned 0. The original corpus controls, all
+43 Root controls on committed C4, the original report reader/reproduction and
+byte comparison, claim controls and formatting also returned 0. Keep the
+committed Root result distinct from the earlier applied/uncommitted
+43-control observation.
+
+The C4 Node lib build returned 0. It used the existing completed S3 target
+directory, with actual Cargo `fresh=false` and `fresh_target_claimed=false`;
+this is not labeled a fresh-target run. The recorded build interval was
+641.971872953 seconds. Its actual compiled ELF SHA256 is
+`486632abadaeb612945ecc51ac2364b682f85c892356a5527b7955311da0f1f2`.
+The original source-before/final records agree, all 23 source receipts were
+revalidated, and the provider, helper and historical evidence checks remained
+true. These identity checks do not convert a failed native control into PASS.
+
+The failed retained control is `pnq2-42`:
+
+```text
+store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart
+```
+
+Its actual native process returned **101**, with no owner timeout; the test
+harness reported **6.55 seconds**, zero passed and one failed. The original
+panic is at `combined_tests.rs:637:6`: `Result::unwrap()` received a transport
+error, `Connection reset by peer (os error 104)` / `ConnectionReset`. The held
+ELF was observed as `PINNED_AND_OBSERVED`. The first legitimate Submit and its
+block assertions had already succeeded; this panic occurred on the second
+`sender.send`, the exact replay. The subsequent independent-process restart
+steps had not executed. The other retained controls passed, as did all seven
+supplemental account/witness controls and all five extras.
+
+The original parent phase diagnostic records `PQ_WITNESS_DEADLINE` for the
+client CAS under the existing 250 ms request deadline. The enclosing mutation
+commit did not attempt or finish its local commit. These observations identify
+the failed phase; they do not establish the complete underlying cross-process
+cause. Process-local operation identifiers are not treated as cross-process
+correlation identifiers.
+
+The original cleanup record reports `primary_error_preserved=true`,
+`cleanup_complete=true`, `worker_join_observed=true`,
+`child_exit_observed=true` and `child_exit_success=true`. Both worker and child
+cleanup errors are null. Cleanup completion remains a successful observation
+alongside the failed test. The earlier #901 cleanup-phase failure retains its
+own diagnostics and unresolved root cause. No deadline, resource budget, selector or acceptance criterion
+is changed to make it pass.
+
+The complete 31,504-byte `c4-final-validation/batch/pnq2-42.log` has SHA256
+`df7ff178df67e358a59e7c71458a08696646c9b74c03d09563341e864b3b845d`.
+Its 2,370-byte native receipt has SHA256
+`663cf0cf73323aae0d4a4ac8e036c56371329b21b44a41f6720b36b9db3ba916`.
+Both are preserved inside the [complete C4 archive](c4-final-output-evidence.tar.xz).
+The [C4 native batch summary](c4-native-batch-summary.json) records the actual
+51/52 + 7/7 + 5/5 counts. The earlier S3 64/64 result remains a separate
+source-bound observation.
+
+The successor retains every original archive byte, the original member
+manifest, verification, file list and transfer observations. Both parts and the
+ordered manifest are explicit current-tree source files with their own corpus
+requirements/pins and artifact-manifest identities. Only the oversized
+monolithic current-tree entry is replaced; its full original identity remains
+in the parts manifest and immutable C4 history. No current evidence file is
+excluded from source coverage, and neither the source reader nor its limits is
+changed. The successor still requires its own final source-bound checks.
 
 Do not substitute a successful local CodeQL extraction/grid, diagnostic reader
 or unrelated source analysis for a missing eligible exact head/merge analysis.
@@ -244,7 +335,7 @@ three-run campaign.
 
 ### Complete counterexample retention
 
-[native-campaign-failure-evidence.tar.xz](native-campaign-failure-evidence.tar.xz)
+[The complete original campaign archive in C4 history](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8/evidence/pq-live-retry-20261111-fa62381e/native-campaign-failure-evidence.tar.xz)
 contains **100 verified members**, including **86 original artifact members**:
 all three full raw reports, economics/preparation records, stderr/stdout,
 phase readback, original source/resource/build/Host records and the original
@@ -254,7 +345,7 @@ and hashed after compression.
 
 | File | Bytes | SHA256 |
 | --- | ---: | --- |
-| `native-campaign-failure-evidence.tar.xz` | 5,906,836 | `6c8a6fa91659283a7d7ad85795a82dfc7ea8f3f64cfb39d5a0c2a20465a7757b` |
+| `native-campaign-failure-evidence.tar.xz` (reconstructed / C4 historical archive) | 5,906,836 | `6c8a6fa91659283a7d7ad85795a82dfc7ea8f3f64cfb39d5a0c2a20465a7757b` |
 | `native-campaign-failure-evidence.manifest.json` | 48,584 | `357bc091c19faa009c385503acc3e8927c2c91ac32c9c3c158c869dc2e8a4522` |
 | `native-campaign-failure-evidence.verification.json` | 18,181 | `1ed7f162248fb00ea222449127b57039c211883c828e8251a19f65ca1ce8950a` |
 | `native-campaign-failure-evidence.filelist.tsv` | 15,142 | `f9cc0676c69ddb01642fa9dca4812c6b0d571d4cda6a7a24b87eba7e9963cb9f` |
@@ -276,9 +367,92 @@ is retained. This one-byte presentation correction preserves the whitespace
 check and changes no analysis, original report, native outcome or business
 criterion.
 
+The next commit attempt did create C4 successfully: its normal `git commit`
+returned 0, its original full physical-source check returned 0, and post-commit
+clean/source checks completed. The outer observation then failed with exit 1
+when its final summary attempted to create `commit.json`, a name already used
+by the successful commit command receipt. The original receipt was preserved;
+this observer filename collision does not mean that no commit occurred.
+The independent reconciliation and complete C4 observation package retain both
+states without another commit or an overwritten receipt.
+The original [source reconciliation](c4-source-reconciliation.json) is
+3,113 bytes, SHA256
+`4297e7bcef207b9c5f2f67a5460d7c063571aa5bb72a4c1c0f29d1be2c2f89dc`.
+It records the actual successful commit and physical-source command while
+preserving the original outer exit 1; it did not replay the commit or overwrite
+any original receipt. The complete observation archive below includes the
+original command receipts, logs and the independent reconciliation.
 
-The manifest maps each archived member to its original ZIP member or derived
-analysis, with size and SHA256. The raw report hashes remain:
+
+### Complete C4 outcomes retained without changing their verdicts
+
+The [C4 observation archive](c4-final-output-evidence.tar.xz) is **243,888
+bytes**, below the unchanged 4 MiB source-reader limit. It contains **317
+members: 316 payload members plus its manifest**. The collector completed with
+exit 0 and full compressed-stream/member readback. That successful collection
+retains the original C4 run's overall **FAIL / exit 1**, its two failed command
+labels, and the native **63/64** result.
+
+The archive preserves the complete C4 command and owner logs, all 23 source-bound
+command receipts, native transcripts and executable identity metadata, frozen
+observer/helper source, and the original commit-observer failure and successful
+source reconciliation. It does not contain the compiled ELF, private keys or
+private transport requests. [The archive member manifest](c4-final-output-evidence.manifest.json)
+and [independent readback verification](c4-final-output-evidence.verification.json)
+identify the exact retained bytes; [the failed-command summary](c4-failed-command-summary.json)
+keeps both actual nonzero commands explicit. These eight current-tree files
+are individually included in the artifact manifest and corpus source pins.
+
+| Retained C4 file | Bytes | SHA256 |
+| --- | ---: | --- |
+| [c4-final-output-evidence.tar.xz](c4-final-output-evidence.tar.xz) | 243,888 | `9cd12948d25bc1a08f9c86eb79c3b03555a223671cea3a67aef90c95c9798176` |
+| [c4-final-output-evidence.manifest.json](c4-final-output-evidence.manifest.json) | 106,949 | `bec0f8183313300be9bf3725f9c6b453aa9923ff66ce083058b887d67756feab` |
+| [c4-final-output-evidence.verification.json](c4-final-output-evidence.verification.json) | 36,887 | `dff3c28f4a80af0e1c194c08fef702c5d852ded05baaafce3329af8b846fc9c5` |
+| [c4-final-output-evidence.archive.json](c4-final-output-evidence.archive.json) | 1,091 | `10f0594746a548c2c325148c9bbc518f304403d0fb54b1ca5d250f146737943c` |
+| [c4-final-summary.json](c4-final-summary.json) | 41,868 | `1d894e92944e32cf5f2a883b8d3a1d747bb68669734efba7b0a0c52dd7e028d1` |
+| [c4-native-batch-summary.json](c4-native-batch-summary.json) | 8,427 | `8346f4629b38f08b46240ec40ecf15b2a25f9d6e0afa4a5ba5fb7fecb25de7cb` |
+| [c4-source-reconciliation.json](c4-source-reconciliation.json) | 3,113 | `4297e7bcef207b9c5f2f67a5460d7c063571aa5bb72a4c1c0f29d1be2c2f89dc` |
+| [c4-failed-command-summary.json](c4-failed-command-summary.json) | 1,053 | `ce978cd9b4aab97303d02e3e91d3009da9e6cf258ee438cfb2a1e327fcb10895` |
+
+### Original campaign archive storage
+
+The complete original S2 campaign archive remains in [C4 history](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8/evidence/pq-live-retry-20261111-fa62381e/native-campaign-failure-evidence.tar.xz); the [immutable full-download URL](https://raw.githubusercontent.com/TrillionniumFoundation/Trillionnium-Chain/35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8/evidence/pq-live-retry-20261111-fa62381e/native-campaign-failure-evidence.tar.xz) identifies that same C4 object. The current tree stores its exact bytes as two ordered parts so that each pinned file fits the original 4,194,304-byte source-reader limit. The checker and reader are unchanged. [The ordered parts manifest](native-campaign-failure-evidence.parts.json) binds both part sizes and hashes, their order and offsets, and the complete original archive identity.
+
+| Ordered part | Bytes | SHA256 |
+| --- | ---: | --- |
+| [Part 000](native-campaign-failure-evidence.tar.xz.part-000) | 4,194,304 | `f52587354338163d3e52046049bb4646cbecf4365c69735b866f7089644d54ab` |
+| [Part 001](native-campaign-failure-evidence.tar.xz.part-001) | 1,712,532 | `8154c24e6ac7b57887c4f93bfa6016abb60d63cebbdeaa38f6cc0bd18542f638` |
+
+From this evidence directory, concatenate the two parts into a new temporary directory outside the checkout. Require the complete original byte count and SHA256 before using the result:
+
+```sh
+(
+  set -eu
+  reassembly_dir=$(mktemp -d "${TMPDIR:-/tmp}/trnm-campaign-reassembly.XXXXXX")
+  cat native-campaign-failure-evidence.tar.xz.part-000 \
+      native-campaign-failure-evidence.tar.xz.part-001 \
+      > "$reassembly_dir/native-campaign-failure-evidence.tar.xz"
+  test "$(wc -c < "$reassembly_dir/native-campaign-failure-evidence.tar.xz")" -eq 5906836
+  printf '%s  %s\n' \
+      '6c8a6fa91659283a7d7ad85795a82dfc7ea8f3f64cfb39d5a0c2a20465a7757b' \
+      "$reassembly_dir/native-campaign-failure-evidence.tar.xz" \
+      | sha256sum --check -
+)
+```
+
+The expected size is **5,906,836 bytes**. The original archive member manifest, file list, verification report and transfer observations retain their existing bytes and historical identities. Reassembly does not rerun the original campaign, change its failures, or grant any security or production qualification.
+
+The ordered manifest itself has **2,162 bytes**, SHA256
+`9fb7fe38c0f01019bf29d7fc844005697652bff93d4db9e28fa75a2360fe49e8`.
+The raw byte parts have offsets 0 and 4,194,304; their listed sizes sum to the
+original 5,906,836 bytes. The first part equals the existing limit and the
+second is smaller. The complete original archive has Git blob identity
+`9b29a146004222acfc73404f69b7a66704e543cc`.
+
+
+The original [archive member manifest](native-campaign-failure-evidence.manifest.json)
+maps each archived member to its original ZIP member or derived analysis, with
+size and SHA256. The raw report hashes remain:
 
 | Original member | Bytes | SHA256 |
 | --- | ---: | --- |
@@ -457,17 +631,22 @@ These are collection observations, not native execution outcomes.
 
 [The delivery manifest](evidence-artifact-manifest.json) records each retained
 file's actual size and SHA256. It excludes itself from its own hash list. The
-corpus binds the explicitly reviewed new files and changed source records;
-old required paths, historical pins, unknowns and refusal contracts remain.
+corpus binds the explicitly reviewed current files and source records. The
+successor replaces exactly the oversized archive's current-tree requirement/pin
+with requirements/pins for both raw parts and their ordered manifest. All
+unrelated prior required paths, pins, unknowns and refusal contracts remain;
+the complete monolithic bytes and their historical pin remain in C4 history.
+Every current evidence file remains covered.
 
 | Evidence | Contents and scope |
 | --- | --- |
+| [Complete C4 outcomes](c4-final-output-evidence.tar.xz), [C4 summary](c4-final-summary.json), [failed commands](c4-failed-command-summary.json) | Original C4 overall FAIL, 23 source receipts, actual 63/64 native result, strict Clippy exit 0, complete failure/cleanup logs and preserved commit-observer reconciliation. |
 | [Native observations](native-controls-s3-and-negative.tar.xz) | Complete S3 positive64 and N negative7 logs, exact source/ELF receipts, actual observer scripts, release decisions, isolated source bundle, original preparation failure and separately labeled synthetic controls. |
 | [Positive summary](positive64-summary.json), [negative summary](negative7-summary.json), [negative lineage](negative-source-lineage.json) | Original readable bytes copied from the actual observations; not rewritten for the evidence commit. |
 | [Strict Clippy](strict-clippy-s3.tar.gz) | S3 original command, source-bound receipt, complete log, provider launch and completed-native prerequisite guard. |
 | [Desktop source records](source-records-desktop-s3.tar.gz) | S2/S3 supply-chain raw checks and advisory snapshots, prior source refusals, historical-object restoration, QROM/current-source maintenance and original report comparisons. |
 | [Controller source records](source-records-controller.tar.gz) | The original #901 failing quality artifact and advisory/source review. |
-| [Original S2 campaign](native-campaign-failure-evidence.tar.xz) | Complete selected raw reports, worker output and original criteria; full ZIP identity and collection observations remain recorded. |
+| [Original S2 campaign storage](native-campaign-failure-evidence.parts.json) | Two ordered raw byte parts reconstruct the complete original archive; the immutable C4 copy, full raw reports, original criteria, ZIP identity and collection observations remain preserved. |
 | [Root register review](root-register-c4-review.tar.gz), [maintenance observation](root-register-maintenance-observations.tar.gz) | The complete 41-file review, prior map and original 43-control failure; then the distinct applied-candidate 43-pass observation and HOLD report. |
 | [S3 hosted control logs](s3-hosted-controls.tar.gz) | Original complete logs establishing the actual 105-control closure, current14 and four-axis source stages. |
 | [S2 public CI records](public-ci-observations.tar.gz), [S3 CI snapshot](s3-ci-status-snapshot.tar.gz) | Dated official responses, failures, cancellations and annotations with actual source labels. |
@@ -477,8 +656,8 @@ old required paths, historical pins, unknowns and refusal contracts remain.
 
 The final committed candidate must retain its own original source-bound
 checks and any subsequent failures. The S3/N evidence here supplies no result
-for a different commit by inheritance. This evidence and register-maintenance child changes no Rust source, Cargo
-manifest, lockfile, cryptographic domain or business budget. Its source-file
+for a different commit by inheritance. The storage successor changes no Rust source, Cargo
+manifest, lockfile, source-reader limit, cryptographic domain or business budget. Its source-file
 inventory is generated by the original tool and checked separately.
 
 **Whole-chain post-quantum qualification and production activation remain

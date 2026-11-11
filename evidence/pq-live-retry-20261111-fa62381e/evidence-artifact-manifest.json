@@ -1,6 +1,48 @@
 {
+  "c4_committed_source_observation": {
+    "actual_terminal_command_count": 23,
+    "all_requested_gates_passed": false,
+    "clippy_passed": true,
+    "clippy_status": "passed",
+    "containing_successor_commit_is_not_an_execution_source_alias": true,
+    "failed_commands": [
+      {
+        "exit_code": 1,
+        "label": "corpus-source",
+        "owner_exit_code": 1,
+        "owner_timed_out": false,
+        "source_receipt_identity": {
+          "bytes": 2231,
+          "sha256": "fb3340d264a0bea66263c2a23437e6b49a507bd7c20b50abab29b74f2d74d442"
+        }
+      },
+      {
+        "exit_code": 1,
+        "label": "focused-native-batch",
+        "owner_exit_code": 1,
+        "owner_timed_out": false,
+        "source_receipt_identity": {
+          "bytes": 2601,
+          "sha256": "f249c8705225b16cfbdca418fa3dba028367ac290fecd4c6dc2b96c5e810855a"
+        }
+      }
+    ],
+    "fresh_target_claimed": false,
+    "native_passed": false,
+    "native_status": "failed",
+    "production_activation": false,
+    "source": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+    "status": "failed",
+    "summary": {
+      "bytes": 41868,
+      "path": "c4-final-summary.json",
+      "sha256": "1d894e92944e32cf5f2a883b8d3a1d747bb68669734efba7b0a0c52dd7e028d1"
+    },
+    "tree": "15fd9e7a2f4121dce861e9e96b78d8196d3892fb",
+    "whole_chain_quantum_security_qualified": false
+  },
   "containing_commit_is_not_an_execution_source_alias": true,
-  "file_count": 32,
+  "file_count": 42,
   "files": [
     {
       "bytes": 10959,
@@ -8,9 +50,9 @@
       "sha256": "fd960b4cad68a046b207496ed4089e89a1c3ee6a2a821fd6b6191e9b2bc8b0b0"
     },
     {
-      "bytes": 43857,
+      "bytes": 58732,
       "path": "README.md",
-      "sha256": "88fb98e72452a887477dfa8c335e8a35224afef6eea4958790a812c98223fdf2"
+      "sha256": "d1407189ff35dbf71a5d2520b58423007ed7f77e13ee760cda69d6b4c9f30535"
     },
     {
       "bytes": 6107,
@@ -33,9 +75,19 @@
       "sha256": "357bc091c19faa009c385503acc3e8927c2c91ac32c9c3c158c869dc2e8a4522"
     },
     {
-      "bytes": 5906836,
-      "path": "native-campaign-failure-evidence.tar.xz",
-      "sha256": "6c8a6fa91659283a7d7ad85795a82dfc7ea8f3f64cfb39d5a0c2a20465a7757b"
+      "bytes": 4194304,
+      "path": "native-campaign-failure-evidence.tar.xz.part-000",
+      "sha256": "f52587354338163d3e52046049bb4646cbecf4365c69735b866f7089644d54ab"
+    },
+    {
+      "bytes": 1712532,
+      "path": "native-campaign-failure-evidence.tar.xz.part-001",
+      "sha256": "8154c24e6ac7b57887c4f93bfa6016abb60d63cebbdeaa38f6cc0bd18542f638"
+    },
+    {
+      "bytes": 2162,
+      "path": "native-campaign-failure-evidence.parts.json",
+      "sha256": "9fb7fe38c0f01019bf29d7fc844005697652bff93d4db9e28fa75a2360fe49e8"
     },
     {
       "bytes": 106,
@@ -161,6 +213,46 @@
       "bytes": 23852,
       "path": "transfer-observations.json",
       "sha256": "4ae6597ab6a1a23b96e984302227f430633ca758892e85da251271698f2e04bd"
+    },
+    {
+      "bytes": 243888,
+      "path": "c4-final-output-evidence.tar.xz",
+      "sha256": "9cd12948d25bc1a08f9c86eb79c3b03555a223671cea3a67aef90c95c9798176"
+    },
+    {
+      "bytes": 106949,
+      "path": "c4-final-output-evidence.manifest.json",
+      "sha256": "bec0f8183313300be9bf3725f9c6b453aa9923ff66ce083058b887d67756feab"
+    },
+    {
+      "bytes": 36887,
+      "path": "c4-final-output-evidence.verification.json",
+      "sha256": "dff3c28f4a80af0e1c194c08fef702c5d852ded05baaafce3329af8b846fc9c5"
+    },
+    {
+      "bytes": 1091,
+      "path": "c4-final-output-evidence.archive.json",
+      "sha256": "10f0594746a548c2c325148c9bbc518f304403d0fb54b1ca5d250f146737943c"
+    },
+    {
+      "bytes": 41868,
+      "path": "c4-final-summary.json",
+      "sha256": "1d894e92944e32cf5f2a883b8d3a1d747bb68669734efba7b0a0c52dd7e028d1"
+    },
+    {
+      "bytes": 8427,
+      "path": "c4-native-batch-summary.json",
+      "sha256": "8346f4629b38f08b46240ec40ecf15b2a25f9d6e0afa4a5ba5fb7fecb25de7cb"
+    },
+    {
+      "bytes": 3113,
+      "path": "c4-source-reconciliation.json",
+      "sha256": "4297e7bcef207b9c5f2f67a5460d7c063571aa5bb72a4c1c0f29d1be2c2f89dc"
+    },
+    {
+      "bytes": 1053,
+      "path": "c4-failed-command-summary.json",
+      "sha256": "ce978cd9b4aab97303d02e3e91d3009da9e6cf258ee438cfb2a1e327fcb10895"
     }
   ],
   "negative_actual_batch_exit_code": 1,
@@ -220,10 +312,48 @@
     "whole_chain_quantum_security_qualified": false
   },
   "production_activation": false,
+  "representation_successor_observation": {
+    "new_native_execution": false,
+    "ordered_reassembly_byte_equal_to_original": true,
+    "original_archive_member_sidecars_and_transfer_records_unchanged": true,
+    "original_monolithic_bytes_retained_in_predecessor_history": true,
+    "per_file_source_read_limit_bytes": 4194304,
+    "predecessor_commit": "35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8",
+    "predecessor_tree": "15fd9e7a2f4121dce861e9e96b78d8196d3892fb",
+    "removed_current_file": {
+      "bytes": 5906836,
+      "git_blob_sha1": "9b29a146004222acfc73404f69b7a66704e543cc",
+      "path": "native-campaign-failure-evidence.tar.xz",
+      "sha256": "6c8a6fa91659283a7d7ad85795a82dfc7ea8f3f64cfb39d5a0c2a20465a7757b"
+    },
+    "replacement_current_files": [
+      {
+        "bytes": 4194304,
+        "git_blob_sha1": "6b082698b2af0b23410c02b80e4bfadfa445b18e",
+        "path": "native-campaign-failure-evidence.tar.xz.part-000",
+        "sha256": "f52587354338163d3e52046049bb4646cbecf4365c69735b866f7089644d54ab"
+      },
+      {
+        "bytes": 1712532,
+        "git_blob_sha1": "abb8a9d3061d4a8e8bc8cb5f82e186f3284e88d8",
+        "path": "native-campaign-failure-evidence.tar.xz.part-001",
+        "sha256": "8154c24e6ac7b57887c4f93bfa6016abb60d63cebbdeaa38f6cc0bd18542f638"
+      },
+      {
+        "bytes": 2162,
+        "git_blob_sha1": "697cb6bb9ff94545fc92f4141920768029c33871",
+        "path": "native-campaign-failure-evidence.parts.json",
+        "sha256": "9fb7fe38c0f01019bf29d7fc844005697652bff93d4db9e28fa75a2360fe49e8"
+      }
+    ],
+    "schema": "trnm-evidence-representation-successor-v1",
+    "source_checker_reader_and_limit_changed": false,
+    "successor_committed_source_validation_still_required": true
+  },
   "root_register_preliminary_controls_passed": 43,
   "root_register_preliminary_scope": "uncommitted-C4-reviewed-register-maintenance",
   "schema": "trnm-pq-live-retry-evidence-delivery-v1",
   "self_manifest_excluded_from_own_entries": true,
-  "total_bytes_excluding_manifest": 10821660,
+  "total_bytes_excluding_manifest": 11281973,
   "whole_chain_quantum_security_qualified": false
 }

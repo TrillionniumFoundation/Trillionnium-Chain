@@ -1,3 +1,74 @@
+**C5 lossless evidence storage after C4 source refusal, 2026-11-11 UTC — HOLD:**
+
+Continue draft PR #908 above #901. The committed C4 evidence/Root-maintenance
+source is `35b7c47f65ad0442cf1c459f5b16c9e9bcca0ed8`, tree
+`15fd9e7a2f4121dce861e9e96b78d8196d3892fb`. Its full physical-source check
+covered 28,315 tracked entries and 2,578,250,705 bytes. The separate original
+corpus-source gate correctly failed: the complete 5,906,836-byte campaign
+archive exceeds the existing 4,194,304-byte per-file reader cap. Preserve the
+actual C4 failure, original command output and complete final observation set.
+
+C5 stores the exact archive bytes as two ordered raw parts of 4,194,304 and
+1,712,532 bytes, with a 2,162-byte ordered manifest. The part sizes, offsets,
+SHA256/Git blob identities and full reconstructed archive identity are explicit
+in [the parts manifest](../../evidence/pq-live-retry-20261111-fa62381e/native-campaign-failure-evidence.parts.json).
+Both parts and the manifest require complete current-tree corpus coverage.
+Replace only the oversized monolithic current-tree requirement/pin; preserve
+all unrelated required paths and pins. Keep the original reader and all limits
+unchanged. The full original archive remains in immutable C4 history, and
+ordered concatenation reconstructs its same 5,906,836 bytes and SHA256
+`6c8a6fa91659283a7d7ad85795a82dfc7ea8f3f64cfb39d5a0c2a20465a7757b`.
+Original archive sidecars, transfer observations and native failures retain
+their original bytes and sources.
+
+The earlier EOF whitespace gate failed with exit 2 before commit, with outer
+exit 1. Its one-byte presentation correction keeps the original FINDINGS bytes
+inside the frozen archive. A later normal commit and full source check each
+returned 0, then the observation failed with outer exit 1 because a final
+summary reused the existing command-receipt name. Preserve the original
+failure and successful commit/guard receipts alongside the independent
+reconciliation; do not replay the commit or overwrite any prior receipt.
+
+The complete C4 run finished with outer exit 1, no outer timeout and complete
+terminal output: 21 of 23 commands returned 0, while corpus-source and
+focused-native-batch each returned 1. The actual native result is 63/64 named
+controls passed; strict Clippy returned 0. Corpus-controls, committed C4
+Root43, the original report reader/reproduction and byte comparison, claim
+controls and formatting passed. The build returned 0 using the existing target,
+with actual Cargo fresh=false and no fresh-target claim. All final source,
+provider/helper and recorded-evidence guards remained true. Keep the earlier
+precommit Root43 and S3/N native observations as separate source scopes.
+The failed retained control, pnq2-42,
+`guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart`,
+returned native exit 101 without owner timeout. The first legitimate Submit and
+block assertions succeeded; the failure occurred on the second exact replay
+before the later independent-process restart. Its panic at
+`combined_tests.rs:637:6` reports Transport/ConnectionReset104. The parent
+diagnostic records PQ_WITNESS_DEADLINE under the original 250 ms client-CAS
+cap, without a local-commit attempt. The fixture preserved the primary error,
+completed worker/child cleanup and observed successful child exit with no
+cleanup error. The deeper cause is not established. The earlier #901 cleanup-phase failure
+retains its own diagnostics and unresolved root cause. Counts remain 51/52 original, 7/7 supplemental and 5/5 extra.
+
+The [complete C4 archive](../../evidence/pq-live-retry-20261111-fa62381e/c4-final-output-evidence.tar.xz)
+is 243,888 bytes / SHA256
+`9cd12948d25bc1a08f9c86eb79c3b03555a223671cea3a67aef90c95c9798176`,
+with 317 members and full readback. Its seven accompanying metadata/readable
+files retain the original 23-command outcome, full native failure, source
+reconciliation and original observer errors. Collection succeeded with exit 0;
+C4's actual overall exit 1 and native batch failure remain unchanged.
+
+The C5 successor requires its own exact source-bound checks; record their real
+results in the final PR execution ledger, without assigning a C5 PASS here. Earlier S3 positive64, strict Clippy and supply results,
+and the isolated N five real failures/two passes, retain their distinct source
+identities. They do not assign a terminal result to C4 or C5. Preserve the
+original S2/S3 campaign failures and S3 CodeQL export HTTP 503 observation.
+
+The [execution record](../../evidence/pq-live-retry-20261111-fa62381e/README.md)
+keeps these boundaries explicit. A passing storage/reader check is not native
+acceptance, a quantum-mining proof or a lifetime composition theorem. Whole-chain PQ qualification remains HOLD; production activation and unproved
+security bounds remain false or unknown.
+
 **S3 native execution and C4 source-register maintenance, 2026-11-11 UTC — HOLD:**
 
 Continue the existing [draft PR #908](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/908)
