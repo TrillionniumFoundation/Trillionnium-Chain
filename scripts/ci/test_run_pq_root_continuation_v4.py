@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Synthetic runner controls; no native execution is implied by these tests."""
 import unittest
+import re
+from pathlib import Path
 from unittest.mock import patch
 
 import run_pq_root_continuation_v4 as runner
@@ -20,6 +22,18 @@ class ContinuationRunnerControls(unittest.TestCase):
             self.assertNotIn("--ignored", argv)
             self.assertTrue(required)
 
+    def test_all_rosters_cover_every_native_rust_test_in_source(self):
+        root = Path(__file__).resolve().parents[2]
+        for name, argv, required in runner.suites():
+            with self.subTest(suite=name):
+                selector = argv[argv.index("--test") + 1]
+                source = (root / "trillionnium/crates/trnm-pon-node/tests" /
+                          (selector + ".rs")).read_text()
+                rust_tests = re.findall(r"(?m)^#\[test\]\s*\nfn ([A-Za-z_]\w*)\s*\(", source)
+                self.assertTrue(rust_tests)
+                self.assertEqual(len(rust_tests), len(set(rust_tests)))
+                self.assertEqual(set(rust_tests), set(required))
+
     def test_empty_or_duplicate_test_inventories_fail_before_execution(self):
         for name in ("FLOOR", "PROVIDER", "CALLBACK_BUDGET"):
             for value in ((), ("same", "same")):
@@ -33,6 +47,8 @@ class ContinuationRunnerControls(unittest.TestCase):
                    "".join(f"test {name} ... ok\n" for name in names) +
                    f"test result: ok. {len(names)} passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1s\n")
             self.assertEqual(runner.checked_result(raw, names, 0)["passed"], len(names))
+            with self.assertRaises(ValueError):
+                runner.checked_result(raw, names[:-1], 0)
             for changed, code in ((raw.replace(names[0], "wrong_name"), 0),
                                   (raw.replace(" ... ok", " ... ignored", 1), 0),
                                   (raw, 101), (raw, -9), (raw, 124),

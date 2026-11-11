@@ -561,6 +561,16 @@ struct Replay {
     records: usize,
     chain: DigestV3,
 }
+
+/// The held session's exact last accepted journal head. This is deliberately
+/// volatile: it detects history replacement while this owner remains alive,
+/// not a rollback that also restores the process or precedes a cold open.
+#[derive(Clone, Copy, Eq, PartialEq)]
+struct SessionHeadV4 {
+    bytes: u64,
+    records: usize,
+    chain: DigestV3,
+}
 impl Replay {
     fn initial(enrollment: &ProviderEnrollmentV4) -> RootOwnerResultV3<Self> {
         Ok(Self {
@@ -693,6 +703,7 @@ pub struct ProviderEvidenceJournalV4 {
     parent: PathBuf,
     process: u32,
     enrollment: ProviderEnrollmentV4,
+    session_head: Option<SessionHeadV4>,
     fenced: bool,
 }
 impl ProviderEvidenceJournalV4 {
@@ -707,7 +718,12 @@ impl ProviderEvidenceJournalV4 {
         value.file.write_all(&header)?;
         value.file.sync_all()?;
         value.directory.sync_all()?;
-        value.check(budget)?;
+        value.session_head = Some(SessionHeadV4 {
+            bytes: header.len() as u64,
+            records: 0,
+            chain: value.enrollment.commitment()?,
+        });
+        value.replay(budget)?;
         Ok(value)
     }
     pub fn open_existing(
@@ -763,6 +779,7 @@ impl ProviderEvidenceJournalV4 {
             parent: parent.to_path_buf(),
             process: std::process::id(),
             enrollment,
+            session_head: None,
             fenced: false,
         };
         value.check(budget)?;
@@ -801,6 +818,11 @@ impl ProviderEvidenceJournalV4 {
         let mut bytes = Vec::new();
         (&self.file).take(MAX_FILE + 1).read_to_end(&mut bytes)?;
         require(bytes.len() as u64 <= MAX_FILE, "ROOT_PROVIDER_FILE_BOUND")?;
+        require(
+            self.session_head
+                .is_none_or(|head| head.bytes == bytes.len() as u64),
+            "ROOT_PROVIDER_SESSION_HISTORY_CHANGED",
+        )?;
         let mut reader = Reader::new(&bytes);
         reader.domain(FILE)?;
         require(
@@ -817,6 +839,18 @@ impl ProviderEvidenceJournalV4 {
             )?;
         }
         self.check(budget)?;
+        let observed = SessionHeadV4 {
+            bytes: bytes.len() as u64,
+            records: state.records,
+            chain: state.chain,
+        };
+        require(
+            self.session_head.is_none_or(|head| head == observed),
+            "ROOT_PROVIDER_SESSION_HISTORY_CHANGED",
+        )?;
+        // Only the first verified replay on a new owner adopts existing bytes.
+        // Later advances happen solely after this owner's durable append.
+        self.session_head = Some(observed);
         Ok(state)
     }
     fn append(
@@ -831,6 +865,10 @@ impl ProviderEvidenceJournalV4 {
         frame.extend(state.chain);
         let length = self.file.metadata()?.len();
         require(
+            self.session_head.is_some_and(|head| head.bytes == length),
+            "ROOT_PROVIDER_SESSION_HISTORY_CHANGED",
+        )?;
+        require(
             length
                 .checked_add(frame.len() as u64)
                 .is_some_and(|n| n <= MAX_FILE),
@@ -842,6 +880,16 @@ impl ProviderEvidenceJournalV4 {
         self.file.sync_all()?;
         self.directory.sync_all()?;
         self.check(budget)?;
+        let expected_length = length + frame.len() as u64;
+        require(
+            self.file.metadata()?.len() == expected_length,
+            "ROOT_PROVIDER_SESSION_HISTORY_CHANGED",
+        )?;
+        self.session_head = Some(SessionHeadV4 {
+            bytes: expected_length,
+            records: state.records,
+            chain: state.chain,
+        });
         Ok(state.evidence)
     }
     pub fn evidence(
@@ -878,6 +926,7 @@ impl ProviderEvidenceJournalV4 {
         budget: &mut OwnerBudgetV3,
     ) -> RootOwnerResultV3<ProviderEvidenceV4> {
         let result = (|| {
+            self.check(budget)?;
             let original = budget.identity.clone();
             root.refresh_provider_enrollment(&self.enrollment, budget)?;
             let state = self.replay(budget)?;

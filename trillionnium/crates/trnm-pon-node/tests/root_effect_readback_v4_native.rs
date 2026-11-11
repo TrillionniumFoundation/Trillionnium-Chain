@@ -631,3 +631,81 @@ fn native_provider_v4_oversized_journal_refuses_before_lookup() {
     )
     .is_err());
 }
+
+#[test]
+fn native_provider_v4_live_session_refuses_complete_record_rollback() {
+    let mut ready = Ready::new(55);
+    let mut journal = ready.journal();
+    let initial_bytes = fs::read(&ready.path).unwrap();
+    journal
+        .observe_orphan_epoch(10, &mut owner_budget())
+        .unwrap();
+    // Preserve the file inode and a complete, valid prior record boundary.
+    // Length/parser checks alone do not retain the already observed liability.
+    let observed_bytes = fs::read(&ready.path).unwrap();
+    fs::write(&ready.path, &initial_bytes).unwrap();
+    let mut transport = Transport::new(&ready.path);
+    let error = journal
+        .reconcile(&mut ready.root, &mut transport, &mut owner_budget())
+        .err()
+        .expect("an open session must reject a valid-prefix rollback");
+    assert!(error
+        .to_string()
+        .contains("ROOT_PROVIDER_SESSION_HISTORY_CHANGED"));
+    assert_eq!(transport.calls, 0);
+    assert_eq!(fs::read(&ready.path).unwrap(), initial_bytes);
+    fs::write(&ready.path, &observed_bytes).unwrap();
+    assert!(journal
+        .evidence(&mut owner_budget())
+        .unwrap_err()
+        .to_string()
+        .contains("ROOT_PROVIDER_SESSION_FENCED"));
+    fs::write(&ready.path, &initial_bytes).unwrap();
+    drop(journal);
+
+    // An in-memory observation cannot survive a common cold restore. The
+    // unpinned reopen remains a negative control, not independent freshness.
+    let cold = ready.reopen().evidence(&mut owner_budget()).unwrap();
+    assert_eq!(cold.orphaned_at, None);
+    assert!(!cold.authorization_granted());
+    assert!(!cold.redispatch_permitted());
+}
+
+#[test]
+fn native_provider_v4_live_session_refuses_same_length_history_substitution() {
+    let ready = Ready::new(56);
+    let mut journal = ready.journal();
+    journal
+        .observe_orphan_epoch(10, &mut owner_budget())
+        .unwrap();
+    let observed_bytes = fs::read(&ready.path).unwrap();
+    let alternative_path = ready.h.directory.path().join("alternative.evidence");
+    let mut alternative = ProviderEvidenceJournalV4::create(
+        &alternative_path,
+        ready.enrollment.clone(),
+        &mut owner_budget(),
+    )
+    .unwrap();
+    alternative
+        .observe_orphan_epoch(11, &mut owner_budget())
+        .unwrap();
+    let alternative_bytes = fs::read(&alternative_path).unwrap();
+    assert_eq!(alternative_bytes.len(), observed_bytes.len());
+    assert_ne!(alternative_bytes, observed_bytes);
+    fs::write(&ready.path, &alternative_bytes).unwrap();
+    let error = journal
+        .evidence(&mut owner_budget())
+        .err()
+        .expect("length equality cannot replace the session's exact history");
+    assert!(error
+        .to_string()
+        .contains("ROOT_PROVIDER_SESSION_HISTORY_CHANGED"));
+    assert_eq!(fs::read(&ready.path).unwrap(), alternative_bytes);
+    fs::write(&ready.path, &observed_bytes).unwrap();
+    assert!(journal
+        .observe_orphan_epoch(12, &mut owner_budget())
+        .unwrap_err()
+        .to_string()
+        .contains("ROOT_PROVIDER_SESSION_FENCED"));
+    assert_eq!(fs::read(&ready.path).unwrap(), observed_bytes);
+}

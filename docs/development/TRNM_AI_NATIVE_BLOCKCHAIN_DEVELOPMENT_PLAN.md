@@ -11534,3 +11534,61 @@ CP/CG/CQ or confirmation tails, real independent demand, model net benefit,
 evaluator independence, cross-host resource responsibility or target-side
 external-effect reconciliation. Do not change `HOLD_NO_GO`, production activation
 or a null cost/security bound merely because these controls pass.
+
+
+### 2026-11-10 complete authority bindings without promoting whole-chain qualification
+
+Continue the exact combined candidate `e4abb172147e941b62483652b0ceabaae4317624`.
+Preserve a separate tests-only checkpoint for pre-fix executions and keep each
+native observation bound to its actually tested commit and complete worktree.
+This continuation closes three specific implementation boundaries:
+
+- Distinguish an absent `account_authorization_profile` from an explicitly
+  configured but invalid value, including JSON null. An explicit selector must
+  not reach classical state effects or classical-only funded-service setup when
+  its actual PQ owner is unavailable. Preserve real classical development
+  transactions when the selector is absent, and preserve the independent NPQ
+  owner's checks. This is the public M06 configuration API boundary, not evidence
+  of a valid explicit PQ CLI failure silently falling back to Ed25519.
+- After the legacy network key-id lookup, compare the complete independently
+  pinned canonical ML-DSA SPKI in the ordinary PQ client constructor, both local
+  TLS roles and both peer admission directions. Require the three new controls
+  through the actual native registry and execution reader: TLS library 16, CLI
+  4 and feature-off 1. Conditional private-policy alias injection is not a
+  constructed SHA-256 collision, a remote exploit, or WAN qualification.
+- Retain a live provider-evidence owner's accepted file length, record count and
+  existing SHA-512 history-chain head. Only its own durable append advances
+  this volatile head. Refuse complete-record rollback or equal-length valid
+  history substitution and latch the existing fence, including after original
+  bytes are restored. Preserve all signed domains, on-disk V4 records and
+  original resource budgets. Arbitrary concurrent same-UID writes and common
+  cold restoration remain outside this narrow live-session guarantee.
+
+Integrate the already published joint-cold-restore counterexample from
+`cc26a451737c1474aa46b81fb276c86cb119319a` without changing its exact Rust bytes.
+The V4 mandatory inventories are recovery-floor 9, provider-readback 14 and
+callback-budget 6; require each inventory to equal the corresponding complete
+Rust test set. The old common-restore acceptance and surviving newer-pin refusal
+must both remain visible after the live-session repair.
+
+Review the changed source maps explicitly. Rebind the lifetime V1 register's
+15 declared event paths to a real current runtime checkpoint, retaining prior
+mapping history and the original stale-consensus-pin failure. This path mapping
+is not complete dependency or deployment identity. Update the reviewed Root
+source digest, generated native inventory and existing corpus bindings only
+after the exact changes are reviewed; do not regenerate security bounds from
+successful local tests.
+
+Run pre-fix and post-fix native controls with the same selected build settings,
+then complete affected suites, exact locked dependency graphs, formatting,
+strict Clippy and source-integrity/roster controls on the frozen candidate.
+Retain raw failures and any incomplete build separately; no evidence-child or
+prospective merge inherits an earlier source's execution identity.
+
+The whole-chain qualification remains HOLD: deployed account/profile migration,
+independent custody and non-co-restored freshness, ordinary/public/WAN/recovery
+transport coverage, old commitment migration, joint quantum work/DAA/chainwork
+security, and applicable lifetime reductions/query bounds remain unclosed.
+The fixed-context complete reversible W1 oracle exists; it is not a quantum
+mining safety proof. All actual lifetime bounds remain null and production
+activation and whole-chain PQ qualification remain false.

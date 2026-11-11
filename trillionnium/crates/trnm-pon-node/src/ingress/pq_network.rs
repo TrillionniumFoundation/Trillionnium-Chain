@@ -568,7 +568,10 @@ pub struct PqClient {
 impl PqClient {
     pub fn new(policy: Arc<PqNetworkPolicy>, signer: PqNativeSigningKey) -> Result<Self> {
         ensure(
-            policy.peers.contains_key(&signer.public_key_id()),
+            policy
+                .peers
+                .get(&signer.public_key_id())
+                .is_some_and(|pinned| pinned.public_spki() == signer.public_spki()),
             "PQ_NETWORK_UNKNOWN_PEER",
         )?;
         Ok(Self {

@@ -35,6 +35,132 @@ fn finish(stop: Arc<AtomicBool>, handle: thread::JoinHandle<PqNetworkMetrics>) -
 }
 
 #[test]
+fn tls_local_identity_requires_complete_key_pin_for_both_roles() {
+    let fixture = Fixture::new();
+    for server in [false, true] {
+        let mut policy = fixture.policy_for_server_name("localhost");
+        let identity = if server {
+            &fixture.server
+        } else {
+            &fixture.peer
+        };
+        let local_id = identity.signer().public_key_id();
+        let substitute = fixture.other.signer();
+        let verifier = PqNativeVerifier::from_pinned_spki(
+            substitute.public_spki(),
+            substitute.public_key_id(),
+        )
+        .unwrap();
+        // Deliberately model an identity-index alias without claiming to have
+        // found a hash collision or changing any certificate/signature bytes.
+        let owner = Arc::get_mut(&mut policy).unwrap();
+        if server {
+            owner.server = verifier;
+        } else {
+            owner.peers.insert(local_id, verifier);
+        }
+        let result = context::TlsContext::new(policy, local_id, identity.tls(&fixture.ca), server);
+        let error = match result {
+            Ok(_) => panic!("TLS local key admission used only the identity index"),
+            Err(error) => error,
+        };
+        assert_eq!(error.to_string(), "PQ_TLS_LOCAL_PIN");
+    }
+}
+
+#[test]
+fn actual_tls_peer_identity_alias_refuses_before_application_dispatch_in_both_directions() {
+    for client_checks_server in [false, true] {
+        let fixture = Fixture::new();
+        let mut selected = fixture.policy_for_server_name("localhost");
+        let substitute = fixture.other.signer();
+        let verifier = PqNativeVerifier::from_pinned_spki(
+            substitute.public_spki(),
+            substitute.public_key_id(),
+        )
+        .unwrap();
+        // The real TLS exchange below uses valid ML-DSA certificates, mutual
+        // authentication and the pinned CA. This private mutation supplies the
+        // conditional identity alias; it is not an observed SHA-256 collision.
+        let owner = Arc::get_mut(&mut selected).unwrap();
+        if client_checks_server {
+            owner.server = verifier;
+        } else {
+            owner
+                .peers
+                .insert(fixture.peer.signer().public_key_id(), verifier);
+        }
+        let (client, server) = if client_checks_server {
+            (
+                PqTlsClient::new(
+                    selected,
+                    fixture.peer.signer(),
+                    fixture.peer.tls(&fixture.ca),
+                )
+                .unwrap(),
+                fixture.server(),
+            )
+        } else {
+            (
+                fixture.client(),
+                PqTlsServer::new(
+                    selected,
+                    fixture.server.signer(),
+                    fixture.server.tls(&fixture.ca),
+                )
+                .unwrap(),
+            )
+        };
+        let directory = tempfile::tempdir().unwrap();
+        let node = Node::open_with_pq_network(
+            directory.path(),
+            fixture.settings.clone(),
+            1,
+            &fixture.policy,
+        )
+        .unwrap();
+        let prepared = client
+            .prepare(1, crate::ingress::now().unwrap() + 30, Request::Head)
+            .unwrap();
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        listener.set_nonblocking(true).unwrap();
+        let address = listener.local_addr().unwrap();
+        let deadline = Instant::now() + Duration::from_secs(5);
+        let worker = thread::spawn(move || {
+            let owner = Mutex::new(node);
+            // A client that expires before connecting must not leave join()
+            // waiting on an unbounded accept. Accept and handshake consume
+            // the same original interval, including every WouldBlock retry.
+            let stream = (|| -> Result<TcpStream> {
+                loop {
+                    check_live_request(deadline, None)?;
+                    match listener.accept() {
+                        Ok((stream, _)) => return Ok(stream),
+                        Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                            thread::sleep(Duration::from_millis(2));
+                        }
+                        Err(error) => return Err(error.into()),
+                    }
+                }
+            })();
+            let result = stream.and_then(|stream| server.connection(stream, &owner, deadline));
+            (result, owner.into_inner().unwrap())
+        });
+        let client_result = client.exchange(address, prepared.wire(), deadline);
+        let (server_result, node) = worker.join().unwrap();
+        let error = if client_checks_server {
+            client_result.expect_err("TLS client must reject an aliased server key")
+        } else {
+            server_result.expect_err("TLS server must reject an aliased client key")
+        };
+        assert_eq!(error.to_string(), "PQ_TLS_PEER_PIN");
+        let status = node.pq_network_status(&fixture.policy).unwrap();
+        assert_eq!(status["records"], 0);
+        assert_eq!(status["inbound_signature_attempts"], 0);
+    }
+}
+
+#[test]
 fn real_tls_node_submit_lost_ack_exact_receipt_and_cold_reopen() {
     let fixture = Fixture::new();
     let directory = tempfile::tempdir().unwrap();

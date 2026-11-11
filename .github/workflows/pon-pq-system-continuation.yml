@@ -532,7 +532,7 @@ jobs:
           import json, re, sys
           from pathlib import Path
           manifest = json.loads(Path(sys.argv[1]).read_text())
-          counts = {'lib': 13, 'cli': 4, 'feature-off': 1}
+          counts = {'lib': 16, 'cli': 4, 'feature-off': 1}
           if (not isinstance(manifest, dict)
                   or manifest.get('schema') != 'trnm-pq-native-tls-required-tests-v1'
                   or not isinstance(manifest.get('expected_controls'), dict)

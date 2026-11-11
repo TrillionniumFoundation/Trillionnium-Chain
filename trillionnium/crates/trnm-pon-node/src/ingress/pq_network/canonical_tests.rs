@@ -42,6 +42,26 @@ pub(crate) fn setup() -> (Settings, Arc<PqNetworkPolicy>) {
 }
 
 #[test]
+fn pq_client_requires_complete_key_pin_after_identity_lookup() {
+    let (_, mut policy) = setup();
+    assert!(PqClient::new(policy.clone(), key(72)).is_ok());
+    let substituted = key(73);
+    // Conditional alias control, not a constructed SHA-256 collision: retain
+    // the selected identity index but place a different real ML-DSA verifier
+    // behind it. Membership alone must not replace the independent full pin.
+    Arc::get_mut(&mut policy).unwrap().peers.insert(
+        key(72).public_key_id(),
+        PqNativeVerifier::from_pinned_spki(substituted.public_spki(), substituted.public_key_id())
+            .unwrap(),
+    );
+    let error = match PqClient::new(policy, key(72)) {
+        Ok(_) => panic!("an identity index cannot replace the complete client key pin"),
+        Err(error) => error,
+    };
+    assert_eq!(error.to_string(), "PQ_NETWORK_UNKNOWN_PEER");
+}
+
+#[test]
 fn shared_legacy_pnq2_contract_retains_exact_limits_domains_and_hash_vectors() {
     use trnm_protocol::pq_legacy_profile::RESPONSE_BYTES_DOMAIN;
 

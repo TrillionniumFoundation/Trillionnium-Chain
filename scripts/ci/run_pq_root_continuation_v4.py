@@ -27,6 +27,7 @@ FLOOR = (
     'native_floor_v4_pending_bytes_do_not_become_authority_from_head_match',
     'native_floor_v4_fresh_anchor_authentication_remains_required',
     'native_floor_v4_invalid_pin_shapes_are_refused',
+    'native_floor_v4_common_restore_contrast_stale_pin_accepts_surviving_pin_rejects',
 )
 PROVIDER = (
     'native_provider_v4_real_declaration_reopens_without_effect_authority',
@@ -41,6 +42,8 @@ PROVIDER = (
     'native_provider_v4_foreign_replaced_linked_and_truncated_journals_refuse',
     'native_provider_v4_unresolved_orphan_is_not_replaced_by_new_epoch',
     'native_provider_v4_oversized_journal_refuses_before_lookup',
+    'native_provider_v4_live_session_refuses_complete_record_rollback',
+    'native_provider_v4_live_session_refuses_same_length_history_substitution',
 )
 
 

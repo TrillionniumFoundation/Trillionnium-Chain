@@ -119,8 +119,11 @@ impl TlsContext {
             ml_dsa_65_key_id_from_spki(&local_spki).map_err(crypto)? == local_id
                 && if server {
                     local_id == policy.server_id
+                        && policy.server.public_spki().as_slice() == local_spki.as_slice()
                 } else {
-                    policy.peers.contains_key(&local_id)
+                    policy.peers.get(&local_id).is_some_and(|pinned| {
+                        pinned.public_spki().as_slice() == local_spki.as_slice()
+                    })
                 },
             "PQ_TLS_LOCAL_PIN",
         )?;
@@ -211,13 +214,20 @@ impl TlsContext {
         )?;
         let public = certificate.public_key().map_err(crypto)?;
         ensure(public.is_a(KeyType::ML_DSA_65), "PQ_TLS_PEER_KEY")?;
-        let peer = ml_dsa_65_key_id_from_spki(&public.public_key_to_der().map_err(crypto)?)
-            .map_err(crypto)?;
+        let spki = public.public_key_to_der().map_err(crypto)?;
+        let peer = ml_dsa_65_key_id_from_spki(&spki).map_err(crypto)?;
+        // The legacy SHA-256 identity only locates the independent full key
+        // pin. Even an identifier alias must not substitute different TLS key
+        // material before application bytes enter the encrypted channel.
         ensure(
             if self.server {
-                self.policy.peers.contains_key(&peer)
+                self.policy
+                    .peers
+                    .get(&peer)
+                    .is_some_and(|pinned| pinned.public_spki().as_slice() == spki.as_slice())
             } else {
                 peer == self.policy.server_id
+                    && self.policy.server.public_spki().as_slice() == spki.as_slice()
             },
             "PQ_TLS_PEER_PIN",
         )?;

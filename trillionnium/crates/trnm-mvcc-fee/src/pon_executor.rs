@@ -1125,8 +1125,13 @@ impl Config {
             .as_str()
             .unwrap_or(LEGACY_TASK_PROFILE)
     }
+    /// A configured selector is sufficient to exclude the classical path, even
+    /// when its value is malformed or its native owner is unavailable. This is
+    /// a routing boundary, not proof that the selected PQ configuration is valid.
     pub fn is_pq_account_profile(&self) -> bool {
-        if pq_accounts_v2::enabled(self) {
+        if self.params.get("account_authorization_profile").is_some()
+            || pq_accounts_v2::enabled(self)
+        {
             return true;
         }
         #[cfg(feature = "pq-native-openssl")]
@@ -1144,7 +1149,7 @@ impl Config {
             return policy.check_config(self);
         }
         require(
-            self.params["account_authorization_profile"].is_null(),
+            self.params.get("account_authorization_profile").is_none(),
             "PQ_ACCOUNT_PROFILE_UNAVAILABLE",
         )
     }
