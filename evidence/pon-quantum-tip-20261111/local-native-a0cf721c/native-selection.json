@@ -1,0 +1,36 @@
+{
+  "actual_passed_test_names": [
+    "public_growth_v1_control_output_reserve_serves_head_but_not_paid_operations",
+    "public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work",
+    "public_growth_v1_raw_new_ops_are_refused_by_legacy_and_arithmetic_listeners",
+    "public_growth_v1_real_listener_lost_ack_exact_query_reorg_and_cold_reopen",
+    "public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation",
+    "public_growth_v1_wire_profile_namespace_and_free_lane_cannot_be_confused"
+  ],
+  "expected_test_names": [
+    "public_growth_v1_control_output_reserve_serves_head_but_not_paid_operations",
+    "public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work",
+    "public_growth_v1_raw_new_ops_are_refused_by_legacy_and_arithmetic_listeners",
+    "public_growth_v1_real_listener_lost_ack_exact_query_reorg_and_cold_reopen",
+    "public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation",
+    "public_growth_v1_wire_profile_namespace_and_free_lane_cannot_be_confused"
+  ],
+  "library_targets": [
+    "     Running unittests src/lib.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/trnm_pon_node-044c531ce0fa8453)"
+  ],
+  "passed": true,
+  "required_test_names": [
+    "public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work",
+    "public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation"
+  ],
+  "summaries": [
+    [
+      "6",
+      "0",
+      "0",
+      "0",
+      "1326",
+      "4.35"
+    ]
+  ]
+}

@@ -1,0 +1,572 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.35s
+     Running unittests src/lib.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/trnm_pon_node-4b16683c307f94b0)
+
+running 1 test
+test ingress::public_v3::growth::tests::public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1331 filtered out; finished in 0.89s
+
+     Running unittests src/main.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/trnm_pon_node-7afd46357262b2e5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.00s
+
+     Running tests/accepted_task_observation.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/accepted_task_observation-7322db465d400c48)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/account_archive_execution.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/account_archive_execution-a2d8322fbc8a4b41)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+     Running tests/account_archive_projection.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/account_archive_projection-7b9d44d14bfa6efa)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/account_archive_prototype.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/account_archive_prototype-f8216dc6d6accd12)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/account_obligation_ranges.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/account_obligation_ranges-27c12f46ea70d8c0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/ancestry_long_sync.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/ancestry_long_sync-6d4f8fc3a8fc6640)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/architecture_delivery_compare.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/architecture_delivery_compare-0c53d60fdf32699f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+     Running tests/authenticated_storage_cli.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/authenticated_storage_cli-f58ae5e18cebef27)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/cell_native_v1.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/cell_native_v1-86192c9c9909cada)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+     Running tests/checkpoint_tile_operator.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/checkpoint_tile_operator-63ad4e4df196aa3c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/cli_secret_canary.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/cli_secret_canary-24048b3a1ef6aa41)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/continuity_authenticated.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/continuity_authenticated-bc05222b096b806e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/continuity_cli.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/continuity_cli-97d37cf21f00fe95)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/daa_adversarial_schedule.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/daa_adversarial_schedule-216dd11f0abe0b1f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/daa_joint_consensus.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/daa_joint_consensus-e3183aae16acaaa3)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/derived_commitment.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/derived_commitment-878e0b50f1ba1191)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/distributed_roles.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/distributed_roles-06d7099f8d2b1a99)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/evaluation_observation.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/evaluation_observation-7f98653af87ff6b0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/evaluation_observation_cli.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/evaluation_observation_cli-0e8d4fada7160016)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/evaluation_quorum_cli.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/evaluation_quorum_cli-0a5f7ae5d06018c6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/evaluation_round_observation.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/evaluation_round_observation-00d9054ec839f5d2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/evaluation_round_observation_cli.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/evaluation_round_observation_cli-149c410697118bd7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/evaluation_sync_observation.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/evaluation_sync_observation-5cd1a8c8b27987c6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/evolution_cli.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/evolution_cli-8b48503ec0feaaa7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/funded_service_contract.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/funded_service_contract-7a4c1fd96bc8e1a5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/grouped_fresh_admission_v0.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/grouped_fresh_admission_v0-4df13f83b8d0d086)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.00s
+
+     Running tests/grouped_verification_authority_v0.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/grouped_verification_authority_v0-c6a0ace8ecabe032)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.00s
+
+     Running tests/growth_persistence_cancellation.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/growth_persistence_cancellation-ee19f7177e8c1986)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/history_stage_diagnostic.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/history_stage_diagnostic-2d3dc6a360f590ca)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/integer_factor_candidate_v2.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/integer_factor_candidate_v2-a2db36e08634b07b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/local_mempool.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/local_mempool-2651405863b2e3cb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 15 filtered out; finished in 0.00s
+
+     Running tests/maintenance_paired_conformance.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/maintenance_paired_conformance-a2a63ad697c94a0c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/mining_service_budget.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/mining_service_budget-b7a7e81881a65a62)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/model_composition_v4.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/model_composition_v4-6cdb1f8da91d8c0c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/model_evidence_v3.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/model_evidence_v3-9e7c1b50fc9b3390)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/native_active_anchor.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/native_active_anchor-d370e268a59ac187)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/native_compact_execution.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/native_compact_execution-8caf3164ceba9844)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/native_demand_evidence.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/native_demand_evidence-6aed0a9c3601776b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/native_full_relation_context.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/native_full_relation_context-5011c9a36bf3d0f2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/native_growth_cli.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/native_growth_cli-b0d5a01cbc494218)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/native_growth_public_cli.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/native_growth_public_cli-b612545c4710c94c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/native_node.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/native_node-483f4dcb2df313bf)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 31 filtered out; finished in 0.00s
+
+     Running tests/native_owner_journal.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/native_owner_journal-510cf37bd84dde8f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 17 filtered out; finished in 0.00s
+
+     Running tests/native_owner_observation.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/native_owner_observation-93aa406c126dfbae)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/native_packet_observer.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/native_packet_observer-232649de3946a25a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/native_risk_ledger.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/native_risk_ledger-2f839056f537bc34)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.00s
+
+     Running tests/native_task_operation_v2.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/native_task_operation_v2-5771e085f4de83b9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/no_gain_fees.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/no_gain_fees-83082d7f840016ef)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/nonce_speculation_cost.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/nonce_speculation_cost-87fd68326d808bf6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/one_zero_task_preparation_lifecycle.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/one_zero_task_preparation_lifecycle-4e40e457203f3b61)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/operation_local_parent.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/operation_local_parent-bcb017e7c7db2fba)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/operator_actors.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/operator_actors-14a06613d8d9fe2d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+     Running tests/pinned_peer_polling.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/pinned_peer_polling-c41ac0174881d807)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/pool_mining.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/pool_mining-e9fbf9a1f7935895)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/pq_account_native.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/pq_account_native-77a3f93d730e2196)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pq_application_local_cli.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/pq_application_local_cli-c2552a559feb459b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pq_application_local_feature_off.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/pq_application_local_feature_off-95975e872d5d63c1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/pq_application_migration_v6.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/pq_application_migration_v6-67690158d5731e10)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/pq_migration_inventory.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/pq_migration_inventory-e9bdce4d26dffe2c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/pq_parent_cli.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/pq_parent_cli-cc3bc7fcdc7efd54)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pq_parent_cli_feature_required.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/pq_parent_cli_feature_required-f081ed617253062d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/pq_parent_npq6_cli.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/pq_parent_npq6_cli-5663c74c06e9feed)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pq_tls_cli.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/pq_tls_cli-44b8387110920715)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/pq_tls_feature_gate.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/pq_tls_feature_gate-471cfae9aeccba11)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/pq_tls_witness_cli.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/pq_tls_witness_cli-8c80e35beae93115)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/protected_ingress.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/protected_ingress-7fdba68dcca3a934)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+     Running tests/public_cache_modes.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/public_cache_modes-f505365501cae4e1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/public_cli.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/public_cli-9f65a6fa29f4ed9d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/public_evaluation.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/public_evaluation-fc5038df93d6df06)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/public_intake_v2.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/public_intake_v2-57532cb339309f79)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/public_pool_cli.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/public_pool_cli-1767b15bb723d1f6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/public_pool_v3.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/public_pool_v3-2388c2c93b68947c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/public_submit_recovery.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/public_submit_recovery-bd7514d1f0035f65)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 25 filtered out; finished in 0.00s
+
+     Running tests/public_v3_from_zero.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/public_v3_from_zero-09cc28eef79be2dd)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/public_v3_multiprocess.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/public_v3_multiprocess-f6f5410cb3a3c447)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 25 filtered out; finished in 0.00s
+
+     Running tests/public_v3_observation_cli.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/public_v3_observation_cli-c9f15f2a1b2925bc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/public_v3_observer.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/public_v3_observer-6ee65570fae2a176)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/public_v3_request_accounting.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/public_v3_request_accounting-33fdc2c29a270878)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/public_v3_service_campaign.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/public_v3_service_campaign-65934374bbb17dbf)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/qualified_tasks.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/qualified_tasks-7fa26091fff011af)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/recovery_floor_v4_native.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/recovery_floor_v4_native-7bf8195d4a7b0ada)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/release_finality_v2.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/release_finality_v2-e1c9e9c7320e1a65)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/research_work_schedule.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/research_work_schedule-cb8c658f36e9b408)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+     Running tests/root_budget_v4_native.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/root_budget_v4_native-33e97ee63626dee2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/root_effect_readback_v4_native.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/root_effect_readback_v4_native-e0f253a006490b8d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/root_recovery_v3_native.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/root_recovery_v3_native-26f369d5add5d40d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/task_lifecycle.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/task_lifecycle-543b8d85e4c7598f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/task_lifecycle_v3.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/task_lifecycle_v3-11317a306529972b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/task_lifecycle_v4.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/task_lifecycle_v4-b5aadea0a98cd2bc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/task_output_root_parity.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/task_output_root_parity-a24e8797a8792d7b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/work_fuzz_semantics.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/work_fuzz_semantics-72fa30baebbc5e35)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/work_header_binding.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/work_header_binding-3b9b4ebb298123f9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/zero_task_preparation_lifecycle.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/zero_task_preparation_lifecycle-b30c92c206f9d744)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+

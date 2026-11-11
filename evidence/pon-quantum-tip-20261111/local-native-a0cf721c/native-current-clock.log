@@ -1,0 +1,25 @@
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111/trillionnium/crates/trnm-protocol)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111/trillionnium/crates/trnm-verification-profiles)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-release-bundle v0.1.0 (/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111/trillionnium/crates/trnm-release-bundle)
+   Compiling trnm-transport v0.1.0 (/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111/trillionnium/crates/trnm-transport)
+   Compiling trnm-mempool v0.1.0 (/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111/trillionnium/crates/trnm-mempool)
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12m 08s
+     Running unittests src/lib.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/trnm_pon_node-044c531ce0fa8453)
+
+running 6 tests
+test ingress::public_v3::growth::tests::public_growth_v1_control_output_reserve_serves_head_but_not_paid_operations ... ok
+test ingress::public_v3::growth::tests::public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work ... ok
+test ingress::public_v3::growth::tests::public_growth_v1_raw_new_ops_are_refused_by_legacy_and_arithmetic_listeners ... ok
+test ingress::public_v3::growth::tests::public_growth_v1_real_listener_lost_ack_exact_query_reorg_and_cold_reopen ... ok
+test ingress::public_v3::growth::tests::public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation ... ok
+test ingress::public_v3::growth::tests::public_growth_v1_wire_profile_namespace_and_free_lane_cannot_be_confused ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 1326 filtered out; finished in 4.35s
+

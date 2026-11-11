@@ -1,0 +1,568 @@
+{
+  "schema": "trnm-quantum-tip-final-actions-observation-v1",
+  "source": {
+    "tested_commit": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+    "tested_tree": "0fee4598d69db92beea2845c6d939f059f2d14a3"
+  },
+  "workflow_run": 42942301962,
+  "workflow_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42942301962",
+  "jobs": [
+    {
+      "id": 130266749995,
+      "name": "quantum-tip-paired",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 42942301962,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Initialize external raw observations",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Verify immutable source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Create local development branch and run project preflight",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Check candidate source inventory and corpus pins",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Run complete quantum network regression suite",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Run complete quantum adversarial regression suite",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Run complete quantum resource-clock regression suite",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Check joint consensus qualification contract",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Run joint qualification refusal regressions",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Run dynamic participation regressions",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Require the explicit unproved-joint-consensus refusal",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Verify the reviewed lifetime source mapping and refusal controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Verify current W1 lifetime survey and retained refusal controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        },
+        {
+          "name": "Verify portable native evidence names and retained exact selections",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16
+        },
+        {
+          "name": "Verify discovery controls on the shared native evidence workflow",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17
+        },
+        {
+          "name": "Check retained CI contract",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18
+        },
+        {
+          "name": "Run CI contract mutation regressions",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19
+        },
+        {
+          "name": "Execute all 72 paired policy observations",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20
+        },
+        {
+          "name": "Replay every paired trace on the same exact source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21
+        },
+        {
+          "name": "Require 72 complete horizons and exact source binding",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22
+        },
+        {
+          "name": "Install pinned native compiler and formatting tools",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 23
+        },
+        {
+          "name": "Run retained and new native library current-clock tests",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 24
+        },
+        {
+          "name": "Reject an empty native test selection",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 25
+        },
+        {
+          "name": "Check native workspace formatting",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 26
+        },
+        {
+          "name": "Verify source remained unchanged",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27
+        },
+        {
+          "name": "Bind raw observations and step outcomes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28
+        },
+        {
+          "name": "Retain exact-head observations including failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29
+        },
+        {
+          "name": "Post Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 58
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 59
+        }
+      ]
+    },
+    {
+      "id": 130266750385,
+      "name": "native-current-clock",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 42942301962,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Initialize external raw observations",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Verify immutable source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Create local development branch and run project preflight",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Check candidate source inventory and corpus pins",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6
+        },
+        {
+          "name": "Run complete quantum network regression suite",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7
+        },
+        {
+          "name": "Run complete quantum adversarial regression suite",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8
+        },
+        {
+          "name": "Run complete quantum resource-clock regression suite",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9
+        },
+        {
+          "name": "Check joint consensus qualification contract",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10
+        },
+        {
+          "name": "Run joint qualification refusal regressions",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11
+        },
+        {
+          "name": "Run dynamic participation regressions",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 12
+        },
+        {
+          "name": "Require the explicit unproved-joint-consensus refusal",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13
+        },
+        {
+          "name": "Verify the reviewed lifetime source mapping and refusal controls",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 14
+        },
+        {
+          "name": "Verify current W1 lifetime survey and retained refusal controls",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 15
+        },
+        {
+          "name": "Verify portable native evidence names and retained exact selections",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 16
+        },
+        {
+          "name": "Verify discovery controls on the shared native evidence workflow",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 17
+        },
+        {
+          "name": "Check retained CI contract",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 18
+        },
+        {
+          "name": "Run CI contract mutation regressions",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 19
+        },
+        {
+          "name": "Execute all 72 paired policy observations",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 20
+        },
+        {
+          "name": "Replay every paired trace on the same exact source",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 21
+        },
+        {
+          "name": "Require 72 complete horizons and exact source binding",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 22
+        },
+        {
+          "name": "Install pinned native compiler and formatting tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23
+        },
+        {
+          "name": "Run retained and new native library current-clock tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24
+        },
+        {
+          "name": "Reject an empty native test selection",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25
+        },
+        {
+          "name": "Check native workspace formatting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26
+        },
+        {
+          "name": "Verify source remained unchanged",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27
+        },
+        {
+          "name": "Bind raw observations and step outcomes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28
+        },
+        {
+          "name": "Retain exact-head observations including failures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29
+        },
+        {
+          "name": "Post Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 58
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 59
+        }
+      ]
+    }
+  ],
+  "quantum": {
+    "job_id": 130266749995,
+    "status": "completed",
+    "conclusion": "success",
+    "raw_log": {
+      "path": "quantum-tip-paired.log",
+      "bytes": 281461,
+      "sha256": "2b9ae257652d29178b43790c38c37f1cfb4b97c9f89e07299a1f60cd10b3a44b"
+    },
+    "test_suites": [
+      {
+        "name": "quantum-network",
+        "passed": 58
+      },
+      {
+        "name": "quantum-adversarial",
+        "passed": 12
+      },
+      {
+        "name": "quantum-resource-clock",
+        "passed": 18
+      },
+      {
+        "name": "joint-qualification",
+        "passed": 34
+      },
+      {
+        "name": "dynamic-participation",
+        "passed": 28
+      },
+      {
+        "name": "pq-lifetime",
+        "passed": 58
+      },
+      {
+        "name": "w1-lifetime",
+        "passed": 19
+      },
+      {
+        "name": "cell-storage-ci",
+        "passed": 19
+      },
+      {
+        "name": "discovery-ci",
+        "passed": 5
+      },
+      {
+        "name": "ci-contract-mutations",
+        "passed": 180
+      }
+    ],
+    "python_tests_passed": 431,
+    "python_ok_footers": 10,
+    "qualification_check": "contract-consistency-only",
+    "require_qualified_expected_exit": 3,
+    "require_qualified_observed_exit": 3,
+    "qualification_request": "REFUSED_UNPROVED_JOINT_CONSENSUS",
+    "campaign": {
+      "runs": 72,
+      "pairs": 36,
+      "complete_horizon_runs": 72,
+      "replayed_runs": 72,
+      "tip_measurement_requests": 1844
+    },
+    "source_before": {
+      "base": null,
+      "candidate": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+      "tested_tree": "0fee4598d69db92beea2845c6d939f059f2d14a3",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2555806765,
+      "tracked_entries": 27930,
+      "tracked_worktree_verified": true
+    },
+    "source_after": {
+      "base": null,
+      "candidate": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+      "tested_tree": "0fee4598d69db92beea2845c6d939f059f2d14a3",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2555806765,
+      "tracked_entries": 27930,
+      "tracked_worktree_verified": true
+    },
+    "artifact": {
+      "id": 13822344917,
+      "bytes": 1210326,
+      "sha256": "37487dd267d1efadd9f15cff9748ceebf61233a7f3516ca3d2eccd258c739145",
+      "external_retention": true
+    }
+  },
+  "native": {
+    "job_id": 130266750385,
+    "status": "completed",
+    "conclusion": "success",
+    "raw_log": {
+      "path": "native-current-clock.log",
+      "bytes": 192872,
+      "sha256": "b0d7ad115001b5e56f537dd9cc0541a4c2e3dc048010e175915076da143a1972"
+    },
+    "selection": "cargo test --locked -p trnm-pon-node --lib public_growth_v1",
+    "passed": 6,
+    "failed": 0,
+    "ignored": 0,
+    "filtered_out": 1326,
+    "libtest_seconds": 1.11,
+    "required_regressions": [
+      "public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work",
+      "public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation"
+    ],
+    "empty_selection_rejection_passed": true,
+    "workspace_format_command": "cargo fmt --all -- --check",
+    "workspace_format_passed": true,
+    "source_before": {
+      "base": null,
+      "candidate": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+      "tested_tree": "0fee4598d69db92beea2845c6d939f059f2d14a3",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2555806765,
+      "tracked_entries": 27930,
+      "tracked_worktree_verified": true
+    },
+    "source_after": {
+      "base": null,
+      "candidate": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+      "tested_tree": "0fee4598d69db92beea2845c6d939f059f2d14a3",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2555806765,
+      "tracked_entries": 27930,
+      "tracked_worktree_verified": true
+    },
+    "artifact": {
+      "id": 13822329714,
+      "bytes": 14009,
+      "sha256": "62c10229c417e100b09b152405cac1ee14caf4778777dd761283062cb3b4282e",
+      "external_retention": true
+    }
+  },
+  "limits": {
+    "not_entire_required_baseline": true,
+    "not_a_consensus_proof": true,
+    "not_an_all_legal_quantum_algorithms_w1_bound": true,
+    "not_a_midflight_clock_rollback_injection": true,
+    "cp_cg_cq_proved": false,
+    "native_w1_quantum_verified": false,
+    "production_consensus_activation": false,
+    "release_ready": false,
+    "qualification": "HOLD_NO_GO",
+    "raw_archive_scope": "The original two complete UTF-8 job logs and this derived summary are retained here. CI ZIP archives remain separately subject to Actions retention; the independently executed desktop 72-trace archive is retained elsewhere on this evidence branch.",
+    "simulation_reproducibility": "Independent executions of seeded cases confirm replay and source behavior; they are not additional statistically independent seeds or physical quantum experiments."
+  }
+}

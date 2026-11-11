@@ -1,0 +1,211 @@
+diff --git a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs
+index ee4c3f5adf..25b9222aac 100644
+--- a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs
++++ b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs
+@@ -1,5 +1,6 @@
+ //! Explicit PGH2/PNP2 development slice on the original protected-v3 transport.
+-//! No pool, history walker, automatic parent recovery or new supervisor.
++//! No pool, history-import service, automatic parent recovery or new supervisor.
++//! Current eligibility walks retained ancestor headers under the original budget.
+ use super::*;
+ use crate::store::growth::GrowthWorkCheckedPacket;
+ use crate::{GrowthPacket, GrowthProgress};
+@@ -136,13 +137,18 @@ pub(super) fn dispatch(
+         Request::GrowthSubmitV1 { packet: text } => {
+             let charge = measurement.ok_or("PUBLIC_GROWTH_ORIGINAL_CPU_REQUIRED")?;
+             let packet = packet(&text)?;
++            let parent = packet.header.ledger.parent;
+             {
+                 let mut owner = lock_owner(node, &mut wait)?;
+-                if let Some(id) = owner.precheck_growth_admission_with_progress(
+-                    &packet,
+-                    super::super::now()?,
+-                    &checkpoint,
+-                )? {
++                let clock = super::super::now()?;
++                let existing =
++                    owner.precheck_growth_admission_with_progress(&packet, clock, &checkpoint)?;
++                // A valid candidate timestamp does not cover nonmonotone
++                // ancestry. Refuse before W1 and before duplicate activation.
++                owner.check_observed_history_with_progress(parent, clock, &mut || {
++                    checkpoint(GrowthProgress::BeforeContext)
++                })?;
++                if let Some(id) = existing {
+                     // This existing exact packet gets no new W1 priority.
+                     return submit_result(&mut owner, id);
+                 }
+@@ -188,9 +194,15 @@ pub(super) fn dispatch(
+             let mut owner = lock_owner(node, &mut wait)?;
+             // Reacquired ORIGINAL owner. No cached State, clock or parent is
+             // supplied; the typed entry rebinds all current inputs before commit.
++            let clock = super::super::now()?;
++            // Recheck after unlocked W1 under the original owner, deadline
++            // and CPU reservation before any new durable admission.
++            owner.check_observed_history_with_progress(parent, clock, &mut || {
++                checkpoint(GrowthProgress::BeforeContext)
++            })?;
+             let id = owner.admit_growth_work_checked_with_worker_accounting(
+                 checked,
+-                super::super::now()?,
++                clock,
+                 &checkpoint,
+                 &charge.workers,
+             )?;
+diff --git a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs
+index 00b15fcd35..f199dba796 100644
+--- a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs
+@@ -486,36 +486,21 @@ fn public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation
+                 .unwrap(),
+             already_stored.then_some(id)
+         );
+-        let owner = Arc::new(Mutex::new(node));
+-        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+-        let server = PublicServer::new(identity(92), policy)
+-            .unwrap()
+-            .with_native_growth()
+-            .unwrap();
+-        let mut run = Running::start(directory, owner, settings, server);
++        // Exercise the original postcommit activation helper independently
++        // of the new pre-W1 public ancestry refusal. Local admission retains
++        // its historical-validity contract and has already durably completed.
++        if !already_stored {
++            assert_eq!(node.admit_growth(&packet, clock).unwrap(), id);
++        }
+         for _ in 0..2 {
+-            let reply = run.call(&Request::GrowthSubmitV1 {
+-                packet: hex::encode(packet.encode().unwrap()),
+-            });
+-            assert!(!reply.ok, "future ancestry activated: {}", reply.value);
+-            assert!(
+-                reply.value.to_string().contains("TIME_DEFERRED"),
+-                "{}",
+-                reply.value
+-            );
+-            let node = run.owner.as_ref().unwrap().lock().unwrap();
++            let error = submit_result(&mut node, id).unwrap_err().to_string();
++            assert!(error.contains("TIME_DEFERRED"), "{error}");
+             assert_eq!(node.active().unwrap(), before);
+             assert_eq!(
+                 node.growth_packet(id).unwrap().encode().unwrap(),
+                 packet.encode().unwrap()
+             );
+         }
+-        let metrics = run.finish();
+-        assert_eq!(metrics.work_started, u64::from(!already_stored));
+-        assert!(metrics.mutation_cpu_charged_ns > 0);
+-        assert_eq!(metrics.mutation_cpu_in_flight_after_shutdown, 0);
+-        assert_eq!(metrics.paid_body_reserved_bytes_after_shutdown, 0);
+-        assert_eq!(metrics.output_reserved_bytes_after_shutdown, 0);
+     }
+ }
+ 
+@@ -800,3 +785,95 @@ fn growth_signed_tcp_uses_paid_parallel_preparation_and_rejects_unknown_child_cp
+         }
+     }
+ }
++
++#[test]
++fn public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work() {
++    for existing in [false, true] {
++        let settings = settings("public-growth-future-ancestor");
++        let directory = tempfile::tempdir().unwrap();
++        let mut node =
++            Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone())
++                .unwrap();
++        let future =
++            crate::ingress::now().unwrap() + settings.limit("future_skew_seconds").unwrap() + 3600;
++        let mut parent = settings.genesis();
++        for timestamp in [11, 21, future, 22, 23] {
++            let packet = node
++                .make_growth_consensus_maintenance(
++                    parent,
++                    vec![],
++                    crate::development_public(3).unwrap(),
++                    timestamp,
++                    4096,
++                )
++                .unwrap();
++            parent = node.admit_growth(&packet, future).unwrap();
++        }
++        let packet = node
++            .make_growth_consensus_maintenance(
++                parent,
++                vec![],
++                crate::development_public(3).unwrap(),
++                24,
++                4096,
++            )
++            .unwrap();
++        let id = packet.id().unwrap();
++        if existing {
++            assert_eq!(node.admit_growth(&packet, future).unwrap(), id);
++        }
++        let active = node.active().unwrap();
++        let owner = Arc::new(Mutex::new(node));
++        let server = PublicServer::new(
++            identity(92),
++            PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
++        )
++        .unwrap()
++        .with_native_growth()
++        .unwrap();
++        let mut run = Running::start(directory, owner, settings.clone(), server);
++        let work_before = run.metrics.lock().unwrap().work_started;
++        let reply = run.call(&Request::GrowthSubmitV1 {
++            packet: hex::encode(packet.encode().unwrap()),
++        });
++        assert!(!reply.ok, "future ancestor reached public activation: existing={existing}, future={future}, expected_block={}, reply={}", hex::encode(id), reply.value);
++        assert!(
++            reply.value.to_string().contains("TIME_DEFERRED"),
++            "{}",
++            reply.value
++        );
++        assert_eq!(run.metrics.lock().unwrap().work_started, work_before);
++        {
++            let owner = run.owner.as_ref().unwrap().lock().unwrap();
++            assert_eq!(owner.active().unwrap(), active);
++            if existing {
++                assert_eq!(
++                    owner.growth_packet(id).unwrap().encode().unwrap(),
++                    packet.encode().unwrap()
++                );
++            } else {
++                assert!(owner.parent_height(id).is_err());
++            }
++        }
++        // A separate eligible branch still uses the real listener successfully.
++        let honest = {
++            let owner = run.owner.as_ref().unwrap().lock().unwrap();
++            owner
++                .make_growth_consensus_maintenance(
++                    settings.genesis(),
++                    vec![],
++                    crate::development_public(4).unwrap(),
++                    12,
++                    4096,
++                )
++                .unwrap()
++        };
++        assert_eq!(
++            run.submit(&honest)["active"],
++            hex::encode(honest.id().unwrap())
++        );
++        let metrics = run.finish();
++        assert_eq!(metrics.mutation_cpu_in_flight_after_shutdown, 0);
++        assert!(!metrics.mutation_cpu_unavailable_after_shutdown);
++    }
++}
+diff --git a/trillionnium/crates/trnm-pon-node/src/store.rs b/trillionnium/crates/trnm-pon-node/src/store.rs
+index a8bd7b9c8d..94b213360d 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store.rs
+@@ -6628,7 +6628,7 @@ impl Node {
+     pub fn check_observed_history(&self, tip: Hash, observed_now: u64) -> Result<()> {
+         self.check_observed_history_with_progress(tip, observed_now, &mut || Ok(()))
+     }
+-    fn check_observed_history_with_progress(
++    pub(crate) fn check_observed_history_with_progress(
+         &self,
+         tip: Hash,
+         observed_now: u64,

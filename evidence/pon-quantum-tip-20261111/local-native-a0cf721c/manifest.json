@@ -1,0 +1,58 @@
+{
+  "files": {
+    "cargo-version.log": {
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    "driver.py": {
+      "bytes": 9829,
+      "sha256": "0881ce25d49f6a8f440c426dd33eca6a6b5f01619097ad21a3407391eb5b3b37"
+    },
+    "native-current-clock.log": {
+      "bytes": 2757,
+      "sha256": "46e3c2ce80ea69e2a8fa5dc1472dcf340f4962f4da5e078cf656e25a44a9a7cf"
+    },
+    "native-format.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-selection.json": {
+      "bytes": 1547,
+      "sha256": "10f1efb71621d44054845d6cbcf35b4b3ae1ca27e2ad67e7adaa643188c1e423"
+    },
+    "project-preflight.log": {
+      "bytes": 176,
+      "sha256": "82b28f9698bb02a29c592ee942efca0245c1cc8d3b905ddaaac1097b1e5fedb8"
+    },
+    "receipt.json": {
+      "bytes": 10313,
+      "sha256": "34eb91f24fed9c94aa1492badfe41dca669b791615501bfdf96710a8fd3cee06"
+    },
+    "rustc-version.log": {
+      "bytes": 36,
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+    },
+    "rustfmt-version.log": {
+      "bytes": 45,
+      "sha256": "21e923568a260155c34a6f780f9513d3962c088aa3bbe8c91ab5385f470547d1"
+    },
+    "source-after.json": {
+      "bytes": 423,
+      "sha256": "bbf4c3be432d3440eff4ee91c279c9e134d2bc1b0d4e16521926f5b12490f9bb"
+    },
+    "source-after.log": {
+      "bytes": 423,
+      "sha256": "bbf4c3be432d3440eff4ee91c279c9e134d2bc1b0d4e16521926f5b12490f9bb"
+    },
+    "source-before.json": {
+      "bytes": 423,
+      "sha256": "bbf4c3be432d3440eff4ee91c279c9e134d2bc1b0d4e16521926f5b12490f9bb"
+    },
+    "source-before.log": {
+      "bytes": 423,
+      "sha256": "bbf4c3be432d3440eff4ee91c279c9e134d2bc1b0d4e16521926f5b12490f9bb"
+    }
+  },
+  "source_commit": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+  "source_tree": "0fee4598d69db92beea2845c6d939f059f2d14a3"
+}

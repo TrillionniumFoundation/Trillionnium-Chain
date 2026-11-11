@@ -1,0 +1,163 @@
+{
+  "after_patch": {
+    "cargo_lock_unchanged": true,
+    "cargo_manifest_unchanged": true,
+    "files": [
+      {
+        "bytes": 10354,
+        "git_blob_sha": "25b9222aace0a9842d914aa8243dcbc3cf27acc4",
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs",
+        "sha256": "1400abb0182be26003ec0af04c7eee42965a831b29ab608a3d35cded574b12a8"
+      },
+      {
+        "bytes": 382877,
+        "git_blob_sha": "94b213360db4c0de4fa81bbbedebd4fb5e47df4e",
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "sha256": "f3f67de052d2f33fb0e0060d7ba5cd1c9912a7eff64a837aa0e396cdb80808d1"
+      },
+      {
+        "bytes": 32874,
+        "git_blob_sha": "f199dba796548ded6050fe466a159df5c3a347d1",
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs",
+        "sha256": "62aa77cc70e4cc6665bd33bc072433d59992c07a0eb7a1ca9814e33f14c0be72"
+      }
+    ],
+    "git_diff_check_three_files_exit_code": 0,
+    "new_test_actual_result": "1 passed; both fresh and stored-duplicate iterations complete",
+    "public_growth_v1_actual_result": "6 passed; 0 failed; 0 ignored; 1326 filtered out",
+    "retained_postcommit_actual_result": "1 passed",
+    "rustfmt_three_files_exit_code": 0
+  },
+  "base_commit": "e4abb172147e941b62483652b0ceabaae4317624",
+  "baseline": {
+    "actual_test_summary": "0 passed; 1 failed; 0 ignored; 1331 filtered out",
+    "assertion": "assert_eq!(run.metrics.lock().unwrap().work_started, work_before);",
+    "compile_completed": true,
+    "exit_code": 101,
+    "interpretation": "The old implementation had already returned TIME_DEFERRED, but W1 work_started increased before rejection.",
+    "left_work_started": 1,
+    "not_observed": [
+      "Invalid activation was not observed.",
+      "The duplicate baseline iteration was not separately reached after the first failing fresh iteration."
+    ],
+    "observed_case": "first loop iteration, existing=false (fresh packet)",
+    "panic_location": "crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs:846:9",
+    "production_blobs": [
+      {
+        "bytes": 9541,
+        "git_blob_sha": "ee4c3f5adf425796da21a81337923d96a6062fac",
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs",
+        "sha256": "bab6e7213b968f6aed47e0e1172522dbaed95d0ab25648f67dfec171511464ed"
+      },
+      {
+        "bytes": 382866,
+        "git_blob_sha": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "sha256": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554"
+      }
+    ],
+    "right_work_before": 0,
+    "test_blob": {
+      "bytes": 32875,
+      "git_blob_sha": "5fa37ac120534d73debac5e3220e49f7dc95b58b",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs",
+      "sha256": "235515d51ee859f789c4933ef8c2b2eee93a304a24b431d3b366eb21a71c8fa3"
+    }
+  },
+  "comparison_with_a0cf721c_candidate": {
+    "candidate_commit": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+    "candidate_native_execution_result": "Not asserted by this historical archive; see its separate exact-source receipt and Actions results.",
+    "candidate_tests_blob": "7eceee3ec9a9bc3688ffb515dc7a8f55f1851d3f",
+    "historical_tests_blob": "f199dba796548ded6050fe466a159df5c3a347d1",
+    "only_test_delta": "One assert!(!reply.ok, ...) changes from one line to multiple lines; exact assertion text and logic are identical.",
+    "production_blobs_identical": true
+  },
+  "earlier_reporting": "Completion had not been read back during the h service outage; earlier UNKNOWN statements were accurate at that observation time. This recovery adds the original completion evidence.",
+  "historical_finished_unix": 1794359180.625352,
+  "historical_started_unix": 1794357127.799902,
+  "historical_status": "PASSED_WITH_BASELINE_BEHAVIORAL_COUNTEREXAMPLE",
+  "is_committed_source_validation": false,
+  "limitations": [
+    "Other agents may concurrently edit unrelated files; no full-tree clean assertion is made.",
+    "This validates native current-eligibility ordering and fixture behavior, not a quantum security theorem.",
+    "The retained postcommit test is independent of the new pre-W1 guard.",
+    "No fixture here directly forces wall-clock rollback during unlocked W1 and owner reacquisition."
+  ],
+  "raw_files": {
+    "01-preflight.json": {
+      "archive_path": "evidence/pon-quantum-tip-20261111/recovered-native-precommit-e4abb172/01-preflight.json",
+      "bytes": 3806,
+      "git_blob_sha": "863351a32bfd842136e9ee71cc882a5958452317",
+      "sha256": "bf01d8318c234ee6618f59cb19c82c4292114be72285d1be7869768b185934db"
+    },
+    "01-preflight.log": {
+      "archive_path": "evidence/pon-quantum-tip-20261111/recovered-native-precommit-e4abb172/01-preflight.log",
+      "bytes": 166,
+      "git_blob_sha": "2c711208edb376b13df587da214b5153c7f25c8d",
+      "sha256": "0cac1b6c7dcc683ed21da76ac15672e9173c0f85ae174c896b416d5343efdee8"
+    },
+    "02-driver.log": {
+      "archive_path": "evidence/pon-quantum-tip-20261111/recovered-native-precommit-e4abb172/02-driver.log",
+      "bytes": 1490,
+      "git_blob_sha": "37654194fb09205a523d237672b3c8b524291bc9",
+      "sha256": "0e0209297b7e4e6e28e690d3539eb9014a81ea0383bd737886f4743ff48b2dd6"
+    },
+    "02-native-run.json": {
+      "archive_path": "evidence/pon-quantum-tip-20261111/recovered-native-precommit-e4abb172/02-native-run.json",
+      "bytes": 11411,
+      "git_blob_sha": "51d9757cf6e6aadbe5c829858c248210786deb75",
+      "sha256": "097ce73b52cbc75c0e21f9bbc79c59997e9101cfaf2d080dd5ac90977b1ed074"
+    },
+    "02-run-native-regression.py": {
+      "archive_path": "evidence/pon-quantum-tip-20261111/recovered-native-precommit-e4abb172/02-run-native-regression.py",
+      "bytes": 10148,
+      "git_blob_sha": "62cb761708acf8b436ba5da223295311c3ce8610",
+      "sha256": "ee8f82cf696d53c4726f670f6be4c7a22e4692ffee3e668bdabc8031d0a98b5b"
+    },
+    "03-baseline-new-regression.log": {
+      "archive_path": "evidence/pon-quantum-tip-20261111/recovered-native-precommit-e4abb172/03-baseline-new-regression.log",
+      "bytes": 5111,
+      "git_blob_sha": "577e57e48606aa219c4dd50f8435d8791530550e",
+      "sha256": "e1e826c3dd9bedb4a2c4ff377763245f273cedc57eb487b0a35adbeee61a609a"
+    },
+    "04-rustfmt-three-files.log": {
+      "archive_path": "evidence/pon-quantum-tip-20261111/recovered-native-precommit-e4abb172/04-rustfmt-three-files.log",
+      "bytes": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "05-diff-check-three-files.log": {
+      "archive_path": "evidence/pon-quantum-tip-20261111/recovered-native-precommit-e4abb172/05-diff-check-three-files.log",
+      "bytes": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "06-after-new-regression.log": {
+      "archive_path": "evidence/pon-quantum-tip-20261111/recovered-native-precommit-e4abb172/06-after-new-regression.log",
+      "bytes": 26391,
+      "git_blob_sha": "4d8593183f3fb64f758d430542f521f785b7ea16",
+      "sha256": "5e7ca71719397f71789fa787bccbf1e8cdbc2cd3e31c5022ee00890b73455bb8"
+    },
+    "07-after-retained-postcommit.log": {
+      "archive_path": "evidence/pon-quantum-tip-20261111/recovered-native-precommit-e4abb172/07-after-retained-postcommit.log",
+      "bytes": 26275,
+      "git_blob_sha": "de61249d598f2f33807782e53a0d6dcf2f03e2d4",
+      "sha256": "b7e189b6dcc0b2371a6d36ec42c3871a7e3826cf0cb34bde14914430cc637384"
+    },
+    "08-after-public-growth-v1-subtree.log": {
+      "archive_path": "evidence/pon-quantum-tip-20261111/recovered-native-precommit-e4abb172/08-after-public-growth-v1-subtree.log",
+      "bytes": 26882,
+      "git_blob_sha": "1567dc7625df59eaa9884050e40fb24bd07cb6a1",
+      "sha256": "23c9b252e7813f47dbc7b47cbc78f8287fd1d862e8387169609b8f352689233e"
+    },
+    "native-three-files.diff": {
+      "archive_path": "evidence/pon-quantum-tip-20261111/recovered-native-precommit-e4abb172/native-three-files.diff",
+      "bytes": 9772,
+      "git_blob_sha": "f2c7b01b20f817f03234bb914d4be4106ac7100f",
+      "sha256": "aaeed74c1699e76ca5cd8c90445b8d036cca5b911e7345a130734e21298d832e"
+    }
+  },
+  "recovery_observed_at_utc": "2026-11-11T02:32:52Z",
+  "schema": "trnm-native-precommit-recovery-summary-v1",
+  "scope": "historical working-tree validation of three native files; unrelated files could change concurrently"
+}

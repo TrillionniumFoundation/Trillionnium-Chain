@@ -1,0 +1,277 @@
+{
+  "branch_before": "fix/chain-quantum-daa-final-20261111-a0cf721c",
+  "cargo_graph_after": [
+    {
+      "bytes": 2204,
+      "path": "trillionnium/Cargo.toml",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "bytes": 40597,
+      "path": "trillionnium/Cargo.lock",
+      "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f"
+    }
+  ],
+  "cargo_graph_before": [
+    {
+      "bytes": 2204,
+      "path": "trillionnium/Cargo.toml",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "bytes": 40597,
+      "path": "trillionnium/Cargo.lock",
+      "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f"
+    }
+  ],
+  "cargo_profiles_modified": false,
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+        "--output",
+        "/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111-evidence-native/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111",
+      "exit_code": 0,
+      "finished_unix": 1794364121.7515194,
+      "label": "source-before",
+      "log": "source-before.log",
+      "log_bytes": 423,
+      "log_sha256": "bbf4c3be432d3440eff4ee91c279c9e134d2bc1b0d4e16521926f5b12490f9bb",
+      "seconds": 19.034098148345947,
+      "started_unix": 1794364102.7174213
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111",
+      "exit_code": 0,
+      "finished_unix": 1794364121.8502424,
+      "label": "project-preflight",
+      "log": "project-preflight.log",
+      "log_bytes": 176,
+      "log_sha256": "82b28f9698bb02a29c592ee942efca0245c1cc8d3b905ddaaac1097b1e5fedb8",
+      "seconds": 0.09763193130493164,
+      "started_unix": 1794364121.7526104
+    },
+    {
+      "argv": [
+        "rustc",
+        "--version"
+      ],
+      "cwd": "/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111",
+      "exit_code": 0,
+      "finished_unix": 1794364121.874677,
+      "label": "rustc-version",
+      "log": "rustc-version.log",
+      "log_bytes": 36,
+      "log_sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148",
+      "seconds": 0.023670673370361328,
+      "started_unix": 1794364121.8510063
+    },
+    {
+      "argv": [
+        "cargo",
+        "--version"
+      ],
+      "cwd": "/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111",
+      "exit_code": 0,
+      "finished_unix": 1794364121.8951426,
+      "label": "cargo-version",
+      "log": "cargo-version.log",
+      "log_bytes": 36,
+      "log_sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "seconds": 0.019526958465576172,
+      "started_unix": 1794364121.8756156
+    },
+    {
+      "argv": [
+        "rustfmt",
+        "--version"
+      ],
+      "cwd": "/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111",
+      "exit_code": 0,
+      "finished_unix": 1794364121.917782,
+      "label": "rustfmt-version",
+      "log": "rustfmt-version.log",
+      "log_bytes": 45,
+      "log_sha256": "21e923568a260155c34a6f780f9513d3962c088aa3bbe8c91ab5385f470547d1",
+      "seconds": 0.021930694580078125,
+      "started_unix": 1794364121.8958514
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--lib",
+        "-p",
+        "trnm-pon-node",
+        "public_growth_v1",
+        "--",
+        "--nocapture"
+      ],
+      "cwd": "/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111/trillionnium",
+      "exit_code": 0,
+      "finished_unix": 1794364854.5657687,
+      "label": "native-current-clock",
+      "log": "native-current-clock.log",
+      "log_bytes": 2757,
+      "log_sha256": "46e3c2ce80ea69e2a8fa5dc1472dcf340f4962f4da5e078cf656e25a44a9a7cf",
+      "seconds": 732.6458051204681,
+      "started_unix": 1794364121.9199636
+    },
+    {
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111/trillionnium",
+      "exit_code": 0,
+      "finished_unix": 1794364876.9751859,
+      "label": "native-format",
+      "log": "native-format.log",
+      "log_bytes": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "seconds": 22.405755758285522,
+      "started_unix": 1794364854.56943
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+        "--output",
+        "/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111-evidence-native/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111",
+      "exit_code": 0,
+      "finished_unix": 1794364897.9303014,
+      "label": "source-after",
+      "log": "source-after.log",
+      "log_bytes": 423,
+      "log_sha256": "bbf4c3be432d3440eff4ee91c279c9e134d2bc1b0d4e16521926f5b12490f9bb",
+      "seconds": 20.950903177261353,
+      "started_unix": 1794364876.9793983
+    }
+  ],
+  "environment_overrides": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target",
+    "CARGO_TERM_COLOR": "never",
+    "PATH": "/home/qian-qi/.cargo/bin:/home/qian-qi/.elan/bin:/home/qian-qi/.local/bin:/home/qian-qi/.elan/bin:/home/qian-qi/.local/bin:/home/qian-qi/.elan/bin:/home/qian-qi/.cargo/bin:/home/qian-qi/.local/bin:/opt/gradle/current/bin:/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools:/opt/android-sdk/build-tools/35.0.1:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "RUSTUP_TOOLCHAIN": "1.95.0",
+    "RUST_TEST_THREADS": "1"
+  },
+  "evidence": "/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111-evidence-native",
+  "expected_commit": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+  "expected_tree": "0fee4598d69db92beea2845c6d939f059f2d14a3",
+  "failures": [],
+  "finished_unix": 1794364898.0279834,
+  "git_status_after": "",
+  "git_status_before": "",
+  "head_before": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+  "limitations": [
+    "No common-prefix, chain-growth, chain-quality or quantum-security proof is claimed.",
+    "The fixture does not directly inject a wall-clock rollback during unlocked W1 and owner reacquisition.",
+    "Historical precommit red/green observations remain separate from this exact-source run."
+  ],
+  "native_selection": {
+    "actual_passed_test_names": [
+      "public_growth_v1_control_output_reserve_serves_head_but_not_paid_operations",
+      "public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work",
+      "public_growth_v1_raw_new_ops_are_refused_by_legacy_and_arithmetic_listeners",
+      "public_growth_v1_real_listener_lost_ack_exact_query_reorg_and_cold_reopen",
+      "public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation",
+      "public_growth_v1_wire_profile_namespace_and_free_lane_cannot_be_confused"
+    ],
+    "expected_test_names": [
+      "public_growth_v1_control_output_reserve_serves_head_but_not_paid_operations",
+      "public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work",
+      "public_growth_v1_raw_new_ops_are_refused_by_legacy_and_arithmetic_listeners",
+      "public_growth_v1_real_listener_lost_ack_exact_query_reorg_and_cold_reopen",
+      "public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation",
+      "public_growth_v1_wire_profile_namespace_and_free_lane_cannot_be_confused"
+    ],
+    "library_targets": [
+      "     Running unittests src/lib.rs (/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target/debug/deps/trnm_pon_node-044c531ce0fa8453)"
+    ],
+    "passed": true,
+    "required_test_names": [
+      "public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work",
+      "public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation"
+    ],
+    "summaries": [
+      [
+        "6",
+        "0",
+        "0",
+        "0",
+        "1326",
+        "4.35"
+      ]
+    ]
+  },
+  "reused_target_owner": {
+    "base": "e4abb172147e941b62483652b0ceabaae4317624",
+    "created_unix": 1794357127.8148115,
+    "root": "/home/qian-qi/work/chain-quantum-daa-20261111-qdaa",
+    "task": "native-precommit-clock-guard"
+  },
+  "root": "/home/qian-qi/work/chain-quantum-daa-final-a0cf721c-20261111",
+  "schema": "trnm-native-current-clock-exact-source-local-v1",
+  "scope": "exact committed source; six native library current-clock tests and workspace formatting",
+  "source_after": {
+    "base": null,
+    "candidate": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+    "tested_tree": "0fee4598d69db92beea2845c6d939f059f2d14a3",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2555806765,
+    "tracked_entries": 27930,
+    "tracked_worktree_verified": true
+  },
+  "source_before": {
+    "base": null,
+    "candidate": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+    "tested_tree": "0fee4598d69db92beea2845c6d939f059f2d14a3",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2555806765,
+    "tracked_entries": 27930,
+    "tracked_worktree_verified": true
+  },
+  "source_identity_bytes_equal": true,
+  "started_unix": 1794364102.5473843,
+  "status": "PASSED",
+  "toolchain_versions": {
+    "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+    "rustfmt": "rustfmt 1.9.0-stable (59807616e1 2026-04-14)"
+  },
+  "tree_before": "0fee4598d69db92beea2845c6d939f059f2d14a3"
+}

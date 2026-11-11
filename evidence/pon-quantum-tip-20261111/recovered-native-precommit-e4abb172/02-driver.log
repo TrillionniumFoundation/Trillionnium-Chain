@@ -1,0 +1,13 @@
+NATIVE_PHASE_START 03-baseline-new-regression
+NATIVE_PHASE_END 03-baseline-new-regression exit=101
+NATIVE_PHASE_START 04-rustfmt-three-files
+NATIVE_PHASE_END 04-rustfmt-three-files exit=0
+NATIVE_PHASE_START 05-diff-check-three-files
+NATIVE_PHASE_END 05-diff-check-three-files exit=0
+NATIVE_PHASE_START 06-after-new-regression
+NATIVE_PHASE_END 06-after-new-regression exit=0
+NATIVE_PHASE_START 07-after-retained-postcommit
+NATIVE_PHASE_END 07-after-retained-postcommit exit=0
+NATIVE_PHASE_START 08-after-public-growth-v1-subtree
+NATIVE_PHASE_END 08-after-public-growth-v1-subtree exit=0
+NATIVE_VALIDATION_COMPLETE {"status": "PASSED_WITH_BASELINE_BEHAVIORAL_COUNTEREXAMPLE", "target": "/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target", "baseline_actual_exit_code": 101, "after_files": [{"path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs", "bytes": 10354, "sha256": "1400abb0182be26003ec0af04c7eee42965a831b29ab608a3d35cded574b12a8", "git_blob_sha": "25b9222aace0a9842d914aa8243dcbc3cf27acc4"}, {"path": "trillionnium/crates/trnm-pon-node/src/store.rs", "bytes": 382877, "sha256": "f3f67de052d2f33fb0e0060d7ba5cd1c9912a7eff64a837aa0e396cdb80808d1", "git_blob_sha": "94b213360db4c0de4fa81bbbedebd4fb5e47df4e"}, {"path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs", "bytes": 32874, "sha256": "62aa77cc70e4cc6665bd33bc072433d59992c07a0eb7a1ca9814e33f14c0be72", "git_blob_sha": "f199dba796548ded6050fe466a159df5c3a347d1"}]}

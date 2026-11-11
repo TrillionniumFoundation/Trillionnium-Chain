@@ -1,0 +1,108 @@
+{
+  "all_payloads_read_back_exactly": true,
+  "archive_payload_roundtrip_verified": true,
+  "files": [
+    {
+      "blob_sha": "27dc95ac7f2344665fbb81fe1db5eb7342587f95",
+      "bytes": 5655,
+      "path": "evidence/pon-quantum-tip-20261111/local-native-a0cf721c/archive-manifest.json",
+      "sha256": "e1a4ddd38dbc790ffdb10ac123d0aca9a3878787080546c2c25a3e6ee891dc2e"
+    },
+    {
+      "blob_sha": "7bd2e87f6aad3217bce2f274a01d37a3b4b4e74a",
+      "bytes": 36,
+      "path": "evidence/pon-quantum-tip-20261111/local-native-a0cf721c/cargo-version.log",
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    {
+      "blob_sha": "fdf4dfe0d38e9cad980f46a469e6f5f11d6a230e",
+      "bytes": 9829,
+      "path": "evidence/pon-quantum-tip-20261111/local-native-a0cf721c/driver.py",
+      "sha256": "0881ce25d49f6a8f440c426dd33eca6a6b5f01619097ad21a3407391eb5b3b37"
+    },
+    {
+      "blob_sha": "6777e1e18a3704f2e56ed7f3ef8808f7bbc89a97",
+      "bytes": 1929,
+      "path": "evidence/pon-quantum-tip-20261111/local-native-a0cf721c/manifest.json",
+      "sha256": "e95abeb978eb916a806a9d4493fec56dd6a7896f7815b5ef8b6141f7e8329a14"
+    },
+    {
+      "blob_sha": "9e5a45f208a964076cd99ac2a2abbb90540ae832",
+      "bytes": 2757,
+      "path": "evidence/pon-quantum-tip-20261111/local-native-a0cf721c/native-current-clock.log",
+      "sha256": "46e3c2ce80ea69e2a8fa5dc1472dcf340f4962f4da5e078cf656e25a44a9a7cf"
+    },
+    {
+      "blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "path": "evidence/pon-quantum-tip-20261111/local-native-a0cf721c/native-format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "blob_sha": "fe9781d2935aadf5a1885fc0b434b183c547d54c",
+      "bytes": 1547,
+      "path": "evidence/pon-quantum-tip-20261111/local-native-a0cf721c/native-selection.json",
+      "sha256": "10f1efb71621d44054845d6cbcf35b4b3ae1ca27e2ad67e7adaa643188c1e423"
+    },
+    {
+      "blob_sha": "618940e846ebe05ac6effba525d537d43f45750b",
+      "bytes": 176,
+      "path": "evidence/pon-quantum-tip-20261111/local-native-a0cf721c/project-preflight.log",
+      "sha256": "82b28f9698bb02a29c592ee942efca0245c1cc8d3b905ddaaac1097b1e5fedb8"
+    },
+    {
+      "blob_sha": "93cc9ed268f5385ea5e0196644db8969352f6374",
+      "bytes": 10313,
+      "path": "evidence/pon-quantum-tip-20261111/local-native-a0cf721c/receipt.json",
+      "sha256": "34eb91f24fed9c94aa1492badfe41dca669b791615501bfdf96710a8fd3cee06"
+    },
+    {
+      "blob_sha": "6a918f1ffa8e85538fc4c43679f0e746a349ba10",
+      "bytes": 36,
+      "path": "evidence/pon-quantum-tip-20261111/local-native-a0cf721c/rustc-version.log",
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+    },
+    {
+      "blob_sha": "7599ef6411ef16824aab29a38af7f58fb1b592c8",
+      "bytes": 45,
+      "path": "evidence/pon-quantum-tip-20261111/local-native-a0cf721c/rustfmt-version.log",
+      "sha256": "21e923568a260155c34a6f780f9513d3962c088aa3bbe8c91ab5385f470547d1"
+    },
+    {
+      "blob_sha": "c4f8fc7b42744068575a411e63a1e78bc94f1e87",
+      "bytes": 423,
+      "path": "evidence/pon-quantum-tip-20261111/local-native-a0cf721c/source-after.json",
+      "sha256": "bbf4c3be432d3440eff4ee91c279c9e134d2bc1b0d4e16521926f5b12490f9bb"
+    },
+    {
+      "blob_sha": "c4f8fc7b42744068575a411e63a1e78bc94f1e87",
+      "bytes": 423,
+      "path": "evidence/pon-quantum-tip-20261111/local-native-a0cf721c/source-after.log",
+      "sha256": "bbf4c3be432d3440eff4ee91c279c9e134d2bc1b0d4e16521926f5b12490f9bb"
+    },
+    {
+      "blob_sha": "c4f8fc7b42744068575a411e63a1e78bc94f1e87",
+      "bytes": 423,
+      "path": "evidence/pon-quantum-tip-20261111/local-native-a0cf721c/source-before.json",
+      "sha256": "bbf4c3be432d3440eff4ee91c279c9e134d2bc1b0d4e16521926f5b12490f9bb"
+    },
+    {
+      "blob_sha": "c4f8fc7b42744068575a411e63a1e78bc94f1e87",
+      "bytes": 423,
+      "path": "evidence/pon-quantum-tip-20261111/local-native-a0cf721c/source-before.log",
+      "sha256": "bbf4c3be432d3440eff4ee91c279c9e134d2bc1b0d4e16521926f5b12490f9bb"
+    },
+    {
+      "blob_sha": "73c3c3b47dcfc00fd97aba6584cc90055f5e74b9",
+      "bytes": 7539,
+      "path": "evidence/pon-quantum-tip-20261111/local-native-a0cf721c/native-evidence.tar.gz",
+      "sha256": "0b7b47fc51d7cc2d1f5643fef7c754ff493a08fead7ce62cf9de0a6ffaa0b00a"
+    }
+  ],
+  "github_login": "ProfHepta",
+  "prefix": "evidence/pon-quantum-tip-20261111/local-native-a0cf721c",
+  "schema": "trnm-native-exact-source-blob-map-v1",
+  "source_commit": "a0cf721c0a3fd5bc034e010119d2b09d148de8ec",
+  "source_tree": "0fee4598d69db92beea2845c6d939f059f2d14a3",
+  "transport": "HeptaRuntime desktop local gh channel"
+}
