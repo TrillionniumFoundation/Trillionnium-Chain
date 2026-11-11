@@ -4,7 +4,7 @@ Status: **research only; HOLD / NO-GO**. This contract is a budget-review aid,
 not a cryptographic proof, production activation, or an attestation that the
 chain has a failure probability of at most `2^-128`.
 
-The implementation baseline is PQ integration candidate
+The original implementation baseline is PQ integration candidate
 [`12e510b211110d93d9ead07e02c07a1eecc28ae9`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/12e510b211110d93d9ead07e02c07a1eecc28ae9).
 The [machine-readable register](../../config/pon/pq128-lifetime-budget-v1.json)
 and [budget checker](../../scripts/ci/pq_lifetime_budget.py) extend the existing
@@ -216,24 +216,51 @@ in both modes, and the actual lifetime failure bound remains null.
 
 ### Current composed-source mapping
 
-The current 15-path lock is independently reviewed against exact source
-`66b7064be597039ce871b5b12ad5568850a2dd46`. Its current lock-byte SHA-256 is
+The current 15-path lock is reviewed against the published runtime checkpoint
+[`ef6df12a042912664df64f2112c2b1c600dce9fa`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/ef6df12a042912664df64f2112c2b1c600dce9fa),
+whose Git tree is `5e89951169fe2d5ef7418c3dc23984babda172ce`.
+Its lock-byte SHA-256 is
+`84a7fb53e5ee99bb04cf32cb0392a7fed8c40c1f535dbae6f50ae0e2b0414cf2`.
+For every declared path, review checked the exact regular Git blob (mode
+`100644` or `100755`) and byte equality with the candidate regular file before
+rebinding. All 15 paths matched. Compared with the preceding lock, only the
+`consensus.rs` and `ingress/pq_network.rs` fingerprints change. The former adds
+test helper/vector coverage; the latter requires complete SPKI equality after
+the peer-identity lookup. The manifest differs only at
+`experiment.source_revision`.
+
+The revision identifies these 15 declared source blobs in the published
+runtime checkpoint. A subsequent metadata commit carries this reviewed
+mapping; its complete tree differs from the runtime checkpoint. The binding
+scope remains `declared-event-paths-only`, with the checker and its refusal
+rules unchanged.
+
+The original [repository-truth failure](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42830743518/job/129995452145)
+at `e4abb172147e941b62483652b0ceabaae4317624` remains evidence for that source:
+58 tests ran with one error, the stale `consensus.rs` source-lock hash.
+Post-rebind test results require a separately frozen candidate. The eight
+unknown event terms, four unknown shared-primitive query budgets, null actual
+lifetime bound and HOLD remain unchanged. Complete dependency coverage and
+cryptographic provenance remain unestablished; all qualification flags remain
+false. CI continues to verify the reviewed mapping and cannot silently
+regenerate it from arbitrary current bytes.
+
+### Preceding composed-source mappings
+
+The preceding 15-path lock was independently reviewed against exact source
+`66b7064be597039ce871b5b12ad5568850a2dd46`. Its lock-byte SHA-256 was
 `29ba9abdbb39d96bece885a0cd821fd9ad428413974cd530d26434f5a7daf84a`.
-The [current composition review](../../evidence/cell-storage-convergence-f2568-20261109/README.md)
+The [preceding composition review](../../evidence/cell-storage-convergence-f2568-20261109/README.md)
 and its [source-maintenance inventory](../../evidence/cell-storage-convergence-f2568-20261109/ci-source-maintenance19.members.json)
 preserve the prior files, the original refusal, all 15 Git regular-blob and
 working-file comparisons, and isolated original Python controls.
-Only the `cell/pq.rs` fingerprint and the declaration revision change;
-the manifest differs only at `experiment.source_revision`.
+At that review, only the `cell/pq.rs` fingerprint and the declaration revision
+changed; the manifest differed only at `experiment.source_revision`.
 
-The preceding mapping named `0f0592ace4b08a1d39e1ffad31beee76ddc4fd66`
+The earlier mapping named `0f0592ace4b08a1d39e1ffad31beee76ddc4fd66`
 and lock SHA-256 `8771ac5c7bfff29266a89e7b65bf1d57a021fd38a0461b7cc937db58c34557b0`.
 Its [earlier composition review](PQ_COMPOSITION_SOURCE_LOCK_REVIEW_20261108.md)
-remains unchanged. The eight unknown event terms, four unknown shared-primitive
-query budgets, null actual lifetime bound and HOLD remain unchanged.
-Complete dependency coverage and cryptographic provenance remain unestablished;
-all qualification flags remain false. CI continues to verify the reviewed
-mapping and cannot silently regenerate it from arbitrary current bytes.
+remains unchanged.
 
 ### Original source-lock generation record
 
@@ -250,8 +277,8 @@ new reviewed mapping; CI must not silently regenerate the lock from whatever
 bytes it is checking.
 
 The following historical command requires the original source/lock checkout.
-The current mapping has its own exact revision and per-path generation record
-in the composition review above. No command silently rewrites the lock:
+The current mapping uses the separate checkpoint and reviewed per-path digests
+stated above. No command silently rewrites the lock:
 
 ```sh
 python3 - <<'PY'

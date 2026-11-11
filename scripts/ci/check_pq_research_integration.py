@@ -171,6 +171,7 @@ NATIVE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
     "trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+    "trillionnium/crates/trnm-mvcc-fee/tests/account_profile_boundary.rs",
     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs",
     "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
     "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs",

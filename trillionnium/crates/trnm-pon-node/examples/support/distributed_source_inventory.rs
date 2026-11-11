@@ -4278,6 +4278,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-mvcc-fee/tests/account_profile_boundary.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/tests/account_profile_boundary.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-mvcc-fee/tests/capacity_progress.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
