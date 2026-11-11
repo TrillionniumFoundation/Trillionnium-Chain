@@ -27,7 +27,7 @@ MAX_DEPTH = 64
 # These are reviewed input identities, not cryptographic security assumptions.
 # Changing source or semantics requires a new review; inspect never regenerates.
 REVIEWED_SEMANTICS_SHA256 = "db44abb038d8e9e857c3d2ecc4a7189d398b8d8f851bc5813747a28cbb0b2dd7"
-REVIEWED_SOURCE_MAP_SHA256 = "d7fc971a8624cca857257a5d44ce2696e130182e40c8cc151869f8bdda457c2e"
+REVIEWED_SOURCE_MAP_SHA256 = "7d1a7623fd98cf7f1ed939b38a9c29dd392ec92a5e1901dff0a70310f1e76c17"
 
 USES = {
     "model-legacy-root": "model",
