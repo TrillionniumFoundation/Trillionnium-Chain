@@ -137,6 +137,66 @@ impl Fixture {
     }
 }
 
+#[test]
+fn provider_plan_cache_batch_checks_every_operation_and_wire_before_any_row() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("plan-batch.sqlite");
+    let target = cache(&path);
+    let fixture = Fixture::new();
+    let contracts: Vec<_> = (0..6).map(|slot| fixture.contract(slot, 7)).collect();
+    let good: Vec<_> = contracts
+        .iter()
+        .zip(&fixture.wires)
+        .map(|(contract, wire)| (contract, contract.operation(), wire.as_slice()))
+        .collect();
+    let before = target.cache_usage().unwrap();
+    let mut wrong_operation = good.clone();
+    wrong_operation[5].1[0] ^= 1;
+    assert!(CellRs46ShardProviderV1::cache_shards(&wrong_operation, &target, deadline(),).is_err());
+    assert_eq!(target.cache_usage().unwrap(), before);
+    let mut damaged = fixture.wires[5].clone();
+    let last = damaged.len() - 1;
+    damaged[last] ^= 1;
+    let mut wrong_wire = good.clone();
+    wrong_wire[5].2 = &damaged;
+    assert!(CellRs46ShardProviderV1::cache_shards(&wrong_wire, &target, deadline()).is_err());
+    assert_eq!(target.cache_usage().unwrap(), before);
+    let mut wrong_slot = good.clone();
+    wrong_slot[5].2 = &fixture.wires[0];
+    assert!(CellRs46ShardProviderV1::cache_shards(&wrong_slot, &target, deadline()).is_err());
+    assert_eq!(target.cache_usage().unwrap(), before);
+    let mut oversized = good.clone();
+    oversized.push(good[0]);
+    assert!(CellRs46ShardProviderV1::cache_shards(&oversized, &target, deadline()).is_err());
+    assert!(CellRs46ShardProviderV1::cache_shards(
+        &good,
+        &target,
+        Instant::now() - Duration::from_millis(1),
+    )
+    .is_err());
+    assert_eq!(target.cache_usage().unwrap(), before);
+    CellRs46ShardProviderV1::cache_shards(&good, &target, deadline()).unwrap();
+    let accepted = target.cache_usage().unwrap();
+    assert_eq!(accepted.chunk_rows, 6);
+    assert_eq!(accepted.manifest_rows, 6);
+    CellRs46ShardProviderV1::cache_shards(&good, &target, deadline()).unwrap();
+    assert_eq!(target.cache_usage().unwrap(), accepted);
+    drop(target);
+    let reopened = CellStoreV1::open_read_only(&path).unwrap();
+    for (contract, _, wire) in good {
+        assert_eq!(
+            reopened.manifest(contract.manifest().id()).unwrap(),
+            Some(contract.manifest().clone())
+        );
+        assert_eq!(
+            reopened
+                .chunk(contract.manifest().chunks()[0].sha256)
+                .unwrap(),
+            Some(wire.to_vec())
+        );
+    }
+}
+
 fn ledger(path: &Path, operation: CellDigestV1) -> Option<(u64, u64, u8)> {
     Connection::open_with_flags(
         path.join("retention.sqlite"),

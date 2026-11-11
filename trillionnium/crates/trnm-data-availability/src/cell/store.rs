@@ -17,6 +17,9 @@ use super::{
 static OUTPUT_SEQUENCE: AtomicU64 = AtomicU64::new(0);
 
 #[cfg(test)]
+#[path = "cache_manifest_chunk_batch_tests.rs"]
+mod manifest_chunk_batch_tests;
+#[cfg(test)]
 #[path = "cache_wal_tests.rs"]
 mod wal_tests;
 // One short FULL transaction retains at most 32 MiB of already received bytes.
@@ -296,6 +299,73 @@ impl CellStoreV1 {
             }
             // synchronous=FULL is unchanged. No network operation or wait occurs
             // inside this transaction; a failure rolls back this batch only.
+            Ok(())
+        })
+    }
+
+    /// Stage a bounded set of complete one-chunk manifests in one FULL
+    /// transaction. All bytes and independent manifest pins are checked before
+    /// taking the writer; the existing quota triggers account both row kinds.
+    pub(super) fn put_single_chunk_manifests_with_deadline(
+        &self,
+        entries: &[(CellDigestV1, &[u8], &[u8])],
+        deadline: Instant,
+    ) -> CellResultV1<()> {
+        check_data_deadline(Some(deadline))?;
+        require(
+            !entries.is_empty() && entries.len() <= MAX_CHUNK_COMMIT_BATCH,
+            "manifest/chunk commit batch bound",
+        )?;
+        let total_bytes = entries
+            .iter()
+            .try_fold(0_usize, |total, (_, wire, bytes)| {
+                total
+                    .checked_add(wire.len())
+                    .and_then(|total| total.checked_add(bytes.len()))
+                    .ok_or(CellErrorV1::Invalid("manifest/chunk commit byte overflow"))
+            })?;
+        // Include the manifest wires in the existing 32 MiB input allowance.
+        require(
+            total_bytes <= MAX_CHUNK_COMMIT_BATCH * MAX_CHUNK_BYTES as usize,
+            "manifest/chunk commit byte bound",
+        )?;
+        let mut chunks = Vec::with_capacity(entries.len());
+        for (pinned, wire, bytes) in entries {
+            check_data_deadline(Some(deadline))?;
+            let manifest = CellManifestV1::decode(wire)?;
+            require(manifest.id() == *pinned, "manifest digest")?;
+            require(
+                manifest.chunks().len() == 1
+                    && manifest.chunks()[0].sha256 == manifest.payload_sha256(),
+                "single-chunk manifest binding",
+            )?;
+            let chunk = &manifest.chunks()[0];
+            verify_chunk_with_deadline(chunk, bytes, Some(deadline))?;
+            chunks.push(chunk.clone());
+        }
+        self.write_with_deadline(Some(deadline), |transaction| {
+            let mut manifests = transaction.prepare_cached(
+                "INSERT INTO cell_manifests_v1(id, wire) VALUES (?1, ?2)
+                 ON CONFLICT(id) DO UPDATE SET wire = excluded.wire",
+            )?;
+            let mut payloads = transaction.prepare_cached(
+                "INSERT INTO cell_chunks_v1(hash, bytes) VALUES (?1, ?2)
+                 ON CONFLICT(hash) DO UPDATE SET bytes = excluded.bytes",
+            )?;
+            for ((pinned, wire, bytes), chunk) in entries.iter().zip(&chunks) {
+                check_data_deadline(Some(deadline))?;
+                require(
+                    manifests.execute(params![pinned.as_slice(), *wire])? == 1,
+                    "cache manifest write",
+                )?;
+                require(
+                    payloads.execute(params![chunk.sha256.as_slice(), *bytes])? == 1,
+                    "cache chunk write",
+                )?;
+            }
+            // The shared writer retains the original five-second cap, checks
+            // the caller's absolute deadline before COMMIT and does not wait
+            // for network or payload construction while holding the writer.
             Ok(())
         })
     }

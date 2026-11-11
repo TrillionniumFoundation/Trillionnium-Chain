@@ -11881,3 +11881,51 @@ Independent demand, cost/security bounds, ordinary learning/evaluation owners,
 actual future-task consumption and original public business acceptance remain
 open. No production, payment, consensus-rule, Root, node-code or FinalUse
 authority is granted by this composition.
+
+### 2026-11-11 — Bound retained shard-plan CAS staging within the original deadlines
+
+Retain the original failed full-DA observations on source
+`297bb40798ca1b4e4a987ef00582067282cda4e9`, including its quiet complete-suite
+failure; a successful isolated selector does not erase a complete-suite failure.
+The separate diagnostic source
+`6da35d3ae6737e31a06a4b32cde5cb553868c87d` retains the original test inputs,
+assertions and deadlines. Its failing 65-chunk case reaches the 47th source
+chunk, slot 1, then observes the caller's original ten-second deadline exceeded
+by 1.114 milliseconds after the zero-WAL checkpoint and before BEGIN. The
+diagnostic identifies that failure's deadline branch; it does not establish the
+cause of every earlier CacheWriterBusy result or measure the entire cost split.
+
+Stage each plan chunk's six original CRS1 manifest/payload pairs through one
+bounded cache transaction. Verify every operation pin, wire, independent
+manifest pin, single-chunk binding and actual payload hash before taking the
+writer. Limit the private provider batch to six entries and the store batch to
+eight entries with at most 32 MiB of combined manifest/payload input. Reuse the
+original writer, absolute caller deadline, five-second writer cap, physical
+database/WAL/SHM limits, FULL synchronization and quota triggers. Keep source
+rehydration and its complete pre/post verification unchanged, and preserve
+the public single-shard entry and existing encoding path.
+
+The atomic unit changes only disposable CAS failure residue: a refused current
+transaction rolls back its pairs, while already committed batches survive.
+A refusal observed after COMMIT may still leave that complete batch durable.
+Plan file creation remains after the complete build. Provider reservation,
+actual ACK, descriptor/readback and irreversible initial/repair debit ordering
+remain separate and unchanged; no cached pair confers retention or authority.
+
+Add six regression controls for malformed final members and independent pins,
+single-chunk coverage, the three logical/row quota limits, real SQLite FULL at
+the unchanged 262144-byte page cap, held-reader refusal, original deadlines,
+bounded inputs, cold reopen and idempotent actual-row accounting. Preserve the
+original 741 DA controls and their full failure records. The expected expanded
+roster is 747, subject to actual native discovery and execution on the frozen
+successor source. Formatting, locked source/dependency observations, strict
+Clippy, the original Node controls and all required Python/source-integrity
+gates still require their own exact-source results.
+
+Freeze the implementation and official embedded source inventory before changing
+the affected authority/corpus bindings. Rebind only reviewed changed inputs;
+retain unchanged PQ128, W1 lifetime, current/historical QROM source bases and
+fixtures. Existing historical-reader CI refusals keep their original status.
+This continuation records a reviewed engineering repair and pending successor
+validation. It does not qualify mining hardness, independent model benefit,
+provider independence, production activation, legitimate adoption or FinalUse.

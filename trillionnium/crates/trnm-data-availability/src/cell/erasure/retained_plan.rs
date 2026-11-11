@@ -322,7 +322,7 @@ impl CellRetainedShardPlanV1 {
                 let placement_id = placement.id()?;
                 let wires = binding.encode_chunk(&bytes)?.map(|shard| shard.encode());
                 let mut slots = Vec::with_capacity(6);
-                for (slot, wire) in wires.into_iter().enumerate() {
+                for (slot, wire) in wires.iter().enumerate() {
                     check(deadline)?;
                     let provider = &request.providers[slot];
                     let contract = CellRs46ShardContractV1::from_verified_shard(
@@ -346,16 +346,17 @@ impl CellRetainedShardPlanV1 {
                         &binding,
                         &codeword,
                         &placement,
-                        &wire,
-                    )?;
-                    CellRs46ShardProviderV1::cache_shard(
-                        &contract,
-                        contract.operation(),
-                        &wire,
-                        cache,
-                        deadline,
+                        wire,
                     )?;
                     slots.push(contract);
+                }
+                {
+                    let batch: Vec<_> = slots
+                        .iter()
+                        .zip(&wires)
+                        .map(|(contract, wire)| (contract, contract.operation(), wire.as_slice()))
+                        .collect();
+                    CellRs46ShardProviderV1::cache_shards(&batch, cache, deadline)?;
                 }
                 chunks.push(CellRetainedShardChunkV1 {
                     manifest: manifest.id(),

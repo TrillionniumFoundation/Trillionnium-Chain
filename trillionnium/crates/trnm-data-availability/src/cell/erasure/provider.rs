@@ -180,6 +180,35 @@ impl CellRs46ShardProviderV1 {
         check(deadline)
     }
 
+    /// Prepare at most one six-slot plan chunk. This stages disposable CAS
+    /// bytes only; it neither reserves a provider nor acknowledges retention.
+    pub(super) fn cache_shards(
+        shards: &[(&CellRs46ShardContractV1, CellDigestV1, &[u8])],
+        cache: &CellStoreV1,
+        deadline: Instant,
+    ) -> CellResultV1<()> {
+        check(deadline)?;
+        require(
+            !shards.is_empty() && shards.len() <= CELL_RS46_TOTAL_SHARDS_V1,
+            "RS46 provider cache batch bound",
+        )?;
+        let mut manifests = Vec::with_capacity(shards.len());
+        for (contract, expected, wire) in shards {
+            check(deadline)?;
+            contract.verify_pin(*expected)?;
+            contract.verify_wire(wire)?;
+            check(deadline)?;
+            manifests.push((contract.manifest().id(), contract.manifest().encode()));
+        }
+        let entries: Vec<_> = shards
+            .iter()
+            .zip(&manifests)
+            .map(|((_, _, wire), (pinned, manifest))| (*pinned, manifest.as_slice(), *wire))
+            .collect();
+        cache.put_single_chunk_manifests_with_deadline(&entries, deadline)?;
+        check(deadline)
+    }
+
     /// Persist full metadata, reserve real arena space, copy at most once, then
     /// read the actual target back. The arena's initial attempt is charged before
     /// its first write. A failed or lost result is unknown, never a refund.

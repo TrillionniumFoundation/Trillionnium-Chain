@@ -1366,6 +1366,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-data-availability/src/cell/cache_manifest_chunk_batch_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/cache_manifest_chunk_batch_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-data-availability/src/cell/cache_wal.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
