@@ -101,11 +101,12 @@ pub(super) fn remaining(deadline: Instant) -> CellResultV1<Duration> {
 }
 
 pub(super) fn configure(connection: &Connection) -> CellResultV1<()> {
-    // Pin the locked SQLite 3.51.3 backend, including its WAL-reset fix. Its
-    // walFrames, sector-size clamp and unixShmMap bodies retain the original
-    // frame/padding bound; another pager requires new source qualification.
+    // Pin the qualified bundled SQLite 3.54.1 backend (libsqlite3-sys 0.39.1).
+    // walFrames and the 64-KiB sector clamp retain the original frame bound.
+    // unixShmMap widens extent arithmetic to i64 without changing region rounding.
+    // Another pager still requires new source qualification.
     require(
-        rusqlite::version_number() == 3_051_003,
+        rusqlite::version_number() == 3_054_001,
         "cache WAL backend version",
     )?;
     require(
