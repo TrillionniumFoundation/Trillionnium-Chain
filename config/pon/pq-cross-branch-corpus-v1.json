@@ -523,7 +523,7 @@
     "scripts/ci/test_pon_w1_preparation_strategy_reader_v4.py": "eed2a0b664dfb727d87bff51e0a3b40511b5b2e9",
     "scripts/ci/test_pon_w1_rank_batch_reader_v5.py": "87fd96197bb19fff2d577dc8f1ef3bc40e8794c3",
     "scripts/ci/test_pon_w1_reused_cost_reader_v3.py": "049f44f1e5015968d60298aec8f7ef9483df4a1b",
-    "scripts/ci/test_pq_authority_effect_register.py": "88b1766137822a24316f700c4f851532f4dd863b",
+    "scripts/ci/test_pq_authority_effect_register.py": "d3759ef346689c22392c3ec94f1fbda36de3086c",
     "scripts/ci/test_pq_authority_surface_scan.py": "f9883291a2a844e7347d9cfd26d7c2f46288851b",
     "scripts/ci/test_pq_chain_claim_guard.py": "95d77463a35c690b188d5dbfcb16ebf499276cc6",
     "scripts/ci/test_pq_lifetime_budget.py": "fde7fa3f388db9ab9f9760b9229f928a7b2f2767",
