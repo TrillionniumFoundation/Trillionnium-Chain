@@ -1,0 +1,62 @@
+{
+  "schema": "trnm-native-current-clock-success-observation-v1",
+  "tested_commit": "67f78a87da0e6797c0262e69e95f367bc549be38",
+  "tested_tree": "a08f325997c6563f69c97cb70a1d6e272150db5a",
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42939340379",
+  "job_id": 130257153150,
+  "job_conclusion": "success",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--lib",
+    "-p",
+    "trnm-pon-node",
+    "public_growth_v1",
+    "--",
+    "--nocapture"
+  ],
+  "observed": {
+    "passed": 6,
+    "failed": 0,
+    "ignored": 0,
+    "measured": 0,
+    "filtered": 1326,
+    "seconds": 1.15,
+    "compile_duration_reported": "7m 58s",
+    "test_targets": 1,
+    "passed_tests": [
+      "ingress::public_v3::growth::tests::public_growth_v1_control_output_reserve_serves_head_but_not_paid_operations",
+      "ingress::public_v3::growth::tests::public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work",
+      "ingress::public_v3::growth::tests::public_growth_v1_raw_new_ops_are_refused_by_legacy_and_arithmetic_listeners",
+      "ingress::public_v3::growth::tests::public_growth_v1_real_listener_lost_ack_exact_query_reorg_and_cold_reopen",
+      "ingress::public_v3::growth::tests::public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation",
+      "ingress::public_v3::growth::tests::public_growth_v1_wire_profile_namespace_and_free_lane_cannot_be_confused"
+    ],
+    "required_name_and_nonempty_gate": "success",
+    "workspace_format_check": "success"
+  },
+  "source_verification": {
+    "before_equals_after": true,
+    "tracked_entries": 27918,
+    "tracked_bytes": 2554646454,
+    "tracked_worktree_verified": true
+  },
+  "original_log": {
+    "path": "native-current-clock.log",
+    "utf8_bytes": 192709,
+    "sha256": "395ab79bf50aaf20402a815f9d893692e1f4a20a96f674d584d33f61a386783b"
+  },
+  "artifact": {
+    "id": 13822040899,
+    "size_in_bytes": 14179,
+    "zip_sha256": "a7822eb5445c9fc0aaad192435cc03445fc0359551e1a9eda57d8dde8ae5e52e",
+    "expires_at": "2026-12-11T02:06:37Z"
+  },
+  "old_desktop_original_production_negative_baseline_result": "UNKNOWN",
+  "whole_native_test_roster_executed": false,
+  "native_w1_quantum_security_proved": false,
+  "cp_cg_cq_proved": false,
+  "production_qualified": false,
+  "scope": "actual selected library regression and workspace formatting observations at the named source; no later-source execution inferred"
+}
