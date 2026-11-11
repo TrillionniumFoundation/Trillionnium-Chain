@@ -99,6 +99,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/joint-consensus-qualification-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/joint-consensus-qualification-v1.json"
+        )),
+    ),
+    (
         "config/pon/ledger-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

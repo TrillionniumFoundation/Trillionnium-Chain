@@ -450,9 +450,11 @@ fn public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation
     for already_stored in [false, true] {
         let settings = settings("public-growth-current-activation-clock");
         let directory = tempfile::tempdir().unwrap();
-        let mut node =
-            Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone())
-                .unwrap();
+        let mut node = Node::open_with_permanent_account_growth_v2(
+            directory.path(),
+            settings.clone(),
+        )
+        .unwrap();
         let mut parent = settings.genesis();
         // The normal prefix makes a later low timestamp valid under the
         // original median-time rule, even after one future-dated ancestor.
@@ -786,15 +788,16 @@ fn growth_signed_tcp_uses_paid_parallel_preparation_and_rejects_unknown_child_cp
     }
 }
 
-
 #[test]
 fn public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work() {
     for existing in [false, true] {
         let settings = settings("public-growth-future-ancestor");
         let directory = tempfile::tempdir().unwrap();
-        let mut node =
-            Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone())
-                .unwrap();
+        let mut node = Node::open_with_permanent_account_growth_v2(
+            directory.path(),
+            settings.clone(),
+        )
+        .unwrap();
         let future =
             crate::ingress::now().unwrap() + settings.limit("future_skew_seconds").unwrap() + 3600;
         let mut parent = settings.genesis();
@@ -837,7 +840,12 @@ fn public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work() {
         let reply = run.call(&Request::GrowthSubmitV1 {
             packet: hex::encode(packet.encode().unwrap()),
         });
-        assert!(!reply.ok, "future ancestor reached public activation: existing={existing}, future={future}, expected_block={}, reply={}", hex::encode(id), reply.value);
+        assert!(
+            !reply.ok,
+            "future ancestor reached public activation: existing={existing}, future={future}, expected_block={}, reply={}",
+            hex::encode(id),
+            reply.value
+        );
         assert!(
             reply.value.to_string().contains("TIME_DEFERRED"),
             "{}",
