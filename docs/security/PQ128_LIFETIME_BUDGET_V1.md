@@ -217,14 +217,31 @@ in both modes, and the actual lifetime failure bound remains null.
 ### Current composed-source mapping
 
 The current 15-path lock is independently reviewed against exact source
-`66b7064be597039ce871b5b12ad5568850a2dd46`. Its current lock-byte SHA-256 is
+`b7e38fdc2e43c468692abc52aec03737f2df7f1b`, tree
+`b75d318fc7b7b027a810f4a70a9cd91e0b3930f8`. Its lock-byte SHA-256 is
+`af0ceb6ae756031305b9b73f1b6695664c830558fed7a13b6c2e7ff255592f92`.
+The [original-budget continuation review](../../evidence/chain-throughput-budget-20261110-065438/source-lock-review/README.md)
+and its [per-path comparisons](../../evidence/chain-throughput-budget-20261110-065438/source-lock-review/publication-reanchor.json)
+retain all 15 exact Git regular-blob and working-file comparisons. Thirteen
+fingerprints are unchanged. The `consensus.rs` change is the existing test-only
+integer-vector continuation that caused the original e4abb source-lock refusal;
+`store.rs` exposes the existing progress-aware state reader within the crate.
+The manifest differs only at `experiment.source_revision`. The original failed
+CI observation and the frozen-source pre-rebinding refusals remain retained.
+This maintenance does not claim that the updated declarations were already in
+the source checkpoint or that its native/business gates passed.
+
+### Retained composed-source mapping, 2026-11-09
+
+The preceding 15-path lock was independently reviewed against exact source
+`66b7064be597039ce871b5b12ad5568850a2dd46`. Its lock-byte SHA-256 was
 `29ba9abdbb39d96bece885a0cd821fd9ad428413974cd530d26434f5a7daf84a`.
-The [current composition review](../../evidence/cell-storage-convergence-f2568-20261109/README.md)
+The [retained composition review](../../evidence/cell-storage-convergence-f2568-20261109/README.md)
 and its [source-maintenance inventory](../../evidence/cell-storage-convergence-f2568-20261109/ci-source-maintenance19.members.json)
 preserve the prior files, the original refusal, all 15 Git regular-blob and
 working-file comparisons, and isolated original Python controls.
-Only the `cell/pq.rs` fingerprint and the declaration revision change;
-the manifest differs only at `experiment.source_revision`.
+In that mapping, only the `cell/pq.rs` fingerprint and declaration revision
+changed; the manifest differed only at `experiment.source_revision`.
 
 The preceding mapping named `0f0592ace4b08a1d39e1ffad31beee76ddc4fd66`
 and lock SHA-256 `8771ac5c7bfff29266a89e7b65bf1d57a021fd38a0461b7cc937db58c34557b0`.

@@ -31,7 +31,7 @@ they must not be presented as additional original hosted e4abb failures.
 
 ## Minimal History roster update
 
-`roster-result.json`, `roster-stdout.log`, and `roster-stderr.log` record the
+`roster-result.json`, `roster-stdout.txt`, and `roster-stderr.txt` record the
 existing `scripts/ci/test_w1_factorial_native_gate.py` after adding the three
 shared-detached-History test names to the existing workflow and fixture.
 All **nine test methods passed** in 30.812 seconds. The workflow and fixture

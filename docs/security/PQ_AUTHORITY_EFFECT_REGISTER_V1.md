@@ -4,7 +4,7 @@
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
 routes to the current reviewed source
-`893738947a50dc42819b56e632192de4f9f24fa0`. The
+`b7e38fdc2e43c468692abc52aec03737f2df7f1b`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -68,9 +68,41 @@ The portable consumption settlement store is separately scoped. Substituting
 for its bilateral authorization and durable state sources is refused by this
 register. Those additional owners still require their own qualification work.
 
-## Current cache close-policy mapping, 2026-11-09
+## Current original-budget continuation mapping, 2026-11-11
 
-The active source map uses the exact 44 regular-file blobs from checkpoint
+The active map binds the exact 44 regular-file blobs at source checkpoint
+`b7e38fdc2e43c468692abc52aec03737f2df7f1b`, tree
+`b75d318fc7b7b027a810f4a70a9cd91e0b3930f8`. The
+[continuation review](../../evidence/chain-throughput-budget-20261110-065438/source-lock-review/README.md)
+retains the old guard's refusal and
+[all 44 Git/source comparisons](../../evidence/chain-throughput-budget-20261110-065438/source-lock-review/publication-reanchor.json).
+Forty-two source fingerprints retain their preceding values. Two change:
+
+| Curated source | Reviewed change and retained boundary |
+| --- | --- |
+| `trnm-pon-node/src/ingress.rs` | Passes separate held and detached execution callbacks through the existing shared admission path. The detached callback is selected only after dropping the Node writer; original worker accounting, preparation, snapshot-capacity fallback, reacquisition and commit controls remain. No new account, reserve, deadline or authentication authority is created. |
+| `trnm-pon-node/src/store.rs` | Changes the existing `state_at_with_progress` method from private to `pub(crate)` so mining preparation can use the original cancellation callback while reading parent state. Its body and persistence semantics are unchanged. |
+
+The active canonical table digest, including this source revision, is:
+
+```text
+414662f49bd42d1026abb774a5d5862e8976a5faf1013142fab722acfe520f08
+```
+
+All seven routes, 44 paths, effect scopes, profile boundaries and false
+qualification fields remain unchanged. The positive revision assertion names
+this checkpoint; the existing stale-context control additionally refuses the
+preceding `8937389` and local pre-publication `9029f2a` labels. The History helper and mining source changes are
+reviewed in the implementation continuation and its source corpus/inventory;
+they are not silently added to this curated 44-path set. This map remains an
+incomplete dependency scope. It neither proves the original missed
+confirmation is repaired nor turns a source-consistency result into native,
+business, WAN or whole-chain acceptance. The updated map and reader are a
+follow-up to the named source checkpoint, not bytes claimed to pre-exist in it.
+
+## Retained cache close-policy mapping, 2026-11-09
+
+That source map used the exact 44 regular-file blobs from checkpoint
 `893738947a50dc42819b56e632192de4f9f24fa0`, tree
 `78945356aa750db9a85e96ffa5ee64249d38a1c2`. The checkpoint contains the two-file
 cache close-policy repair and the sole plan update. This binding follow-up
@@ -97,7 +129,7 @@ extracts `prevent_close_checkpoint` from the existing configuration sequence;
 the curated 44-path set. Its use does not make that set a complete dependency
 closure or change the discovery route's cache-only effect scope.
 
-The active canonical table digest, including the new checkpoint revision, is:
+The canonical table digest for that checkpoint was:
 
 ```text
 a3c5483479d5217c13946e173e4103316069eb42b43c335c6f7b44e783b73f1c

@@ -1,0 +1,35 @@
+{
+  "schema": "pon-budget-component-runner-local-review-v1",
+  "head_context": "b7e38fdc2e43c468692abc52aec03737f2df7f1b",
+  "committed_source_binding": false,
+  "files": {
+    ".github/workflows/pon-budget-controls.yml": {
+      "bytes": 3671,
+      "sha256": "568d78e7b6ec0f69ba47fecc991eece5748c3334a01889191d648741eabad3f1"
+    },
+    "scripts/ci/run_pon_budget_controls.py": {
+      "bytes": 24619,
+      "sha256": "ca675d324dc19c0bf178a4a8ceb8dba7779737ee7ab5167aaca5e22a3adc00ce"
+    },
+    "scripts/ci/test_pon_budget_controls.py": {
+      "bytes": 17017,
+      "sha256": "d11dcbaac5641e365d2020ff4146bb73a02c3ec0a3c2529d5134ed25eb4ca182"
+    }
+  },
+  "syntax_and_workflow_static_checks": "PASS",
+  "unit_test_exit_code": 0,
+  "unit_test_count": 14,
+  "logs": {
+    "runner-controls-final.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runner-controls-final.stderr": {
+      "bytes": 2315,
+      "sha256": "fe580251912cb4b0492830fad9b15b93cda85866bbacfbfa53a4bcd0a2284f23"
+    }
+  },
+  "native_tests_executed": false,
+  "native_campaign_executed": false,
+  "throughput_measured": false
+}
