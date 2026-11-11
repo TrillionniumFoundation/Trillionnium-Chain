@@ -1,3 +1,37 @@
+**Complete-path optimization continuation, 2026-11-11 America/New_York — HOLD:**
+
+Continue the exact one-pass packet candidate `53e1b98a7955898b9feff4778f7136c0fd0199c8`
+from #890. The [original campaign schedule readback](../../evidence/chain-fullpath-schedule-readback-20261111/README.md)
+verifies the original archive and retains all 27 planned slots: three validated
+baseline observations, nine unknown confirmations and fifteen unobserved rounds.
+The second baseline rounds were scheduled at five seconds but entered around
+28 seconds (22.90–23.21 seconds late). All three native attempts remain failed;
+all nine phases remain failed; missing observations keep definitive rates and
+confirmation p95/p99 unknown. Reset repetitions of the same transaction are not
+three unique business effects. Reader consistency does not certify execution.
+
+The M06 continuation retains a private immutable decoded PNX1 input and hashes
+its exact unsigned prefix and complete bytes under the original domains. This
+removes two repeated owned encodings after the unchanged complete decode, while
+retaining strict signature verification, profile checks, attempt counts,
+execution callbacks and original state ownership. Differential controls cover
+all 24 tags, variable payload boundaries, malformed inputs, signature error
+order and accounting. PQ preparation branches are unchanged. A hash-pair
+microbenchmark is only a component observation, never confirmed throughput.
+
+The [reviewed Root source repair](../../evidence/chain-fullpath-root-source-20261111/README.md)
+rebinds the original 37-path register after the exact rustix update; its scope
+excludes this M06 change. The complete combined candidate must have its own
+source-before/source-after records, locked graphs, native tests, strict Clippy,
+source negatives and original four-second plus three thirty-second gates.
+Retain the original shared public 0.25 CPU / 2 GiB domain, same-class attackers,
+all failures and independent confirmation requirements. No reserved honest
+identity, increased credit, relaxed deadline, block-interval change or DAG is
+introduced. History activation/state readback, distinct-valid-work fairness,
+model-update cost, verified model bytes, first usable Cell, confirmation tails
+and cold recovery remain separate open measurements; no production qualification
+or overall complete-path speedup is asserted.
+
 **System-boundary readback continuation, 2026-11-09 America/New_York — HOLD:**
 
 Continue the existing #847 candidate from M14
