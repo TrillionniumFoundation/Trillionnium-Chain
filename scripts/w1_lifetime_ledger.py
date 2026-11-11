@@ -40,7 +40,7 @@ OUTPUT_SCHEMA = "TRNM-W1-LIFETIME-LEDGER-REPORT1"
 # of the child commit containing this ledger and its successor report. This is
 # selected source identity only; it does not identify an executed binary or
 # establish any proof, lifetime, consensus, or production qualification.
-SOURCE_BASE = "189b9b5959d836ef6ae96e14fb285948e4920aa9"
+SOURCE_BASE = "077ac4f33206de00a178553d9a0c729a20685088"
 MAX_INPUT_BYTES = 262144
 MAX_INTEGER_BITS = 512
 PHASES = (
@@ -121,7 +121,7 @@ SOURCE_PINS = {
     "trillionnium/crates/trnm-protocol/src/crypto_profile.rs": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a",
     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs": "7c404502cbcc358b95cbf4f5ae88a1582e144562790913266eba599e5da8341d",
     "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs": "f8c65d541eeff28625f1028ab1ba1e9c8fa6dadc71cca39a1a7368da850b52cc",
-    "trillionnium/crates/trnm-pon-node/src/store.rs": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca",
     "trillionnium/crates/trnm-pon-node/src/consensus.rs": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62",
     "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
     "config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
