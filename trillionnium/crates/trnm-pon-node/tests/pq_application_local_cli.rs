@@ -45,16 +45,18 @@ fn ordinary_npq6_submit_and_cold_status_execute_current_task_and_evaluator_roles
         .iter()
         .flat_map(|packet| packet.transactions.iter())
         .find_map(|tx| {
-            let decoded = trnm_protocol::pq_native_accounts_v2::UnverifiedEnvelope::decode_for_profile(
-                tx,
-                trnm_protocol::pq_native_accounts_v2::AccountProfile::ApplicationV6,
-            )
-            .unwrap();
+            let decoded =
+                trnm_protocol::pq_native_accounts_v2::UnverifiedEnvelope::decode_for_profile(
+                    tx,
+                    trnm_protocol::pq_native_accounts_v2::AccountProfile::ApplicationV6,
+                )
+                .unwrap();
             let cost = decoded.verification_count();
             let repetitions =
                 trnm_protocol::pq_native_accounts_v2::APPLICATION_MAX_VERIFICATIONS / cost + 1;
             (cost > 1
-                && repetitions <= trnm_protocol::pq_native_accounts_v2::APPLICATION_MAX_TRANSACTIONS
+                && repetitions
+                    <= trnm_protocol::pq_native_accounts_v2::APPLICATION_MAX_TRANSACTIONS
                 && tx.len() * repetitions
                     <= trnm_protocol::pq_native_accounts_v2::MAX_TRANSACTION_BYTES)
                 .then_some((tx, repetitions))
