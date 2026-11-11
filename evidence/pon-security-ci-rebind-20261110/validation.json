@@ -1,0 +1,39 @@
+{
+  "schema": "trnm-pq-security-ci-source-rebind-v1",
+  "qualification": "HOLD_NO_GO",
+  "base_commit": "e4abb172147e941b62483652b0ceabaae4317624",
+  "base_tree": "016ebf3deeac88d6d7a782edf563f2291ebe17f5",
+  "source_path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+  "before_source_sha256": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62",
+  "after_source_sha256": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d",
+  "rebound_git_blob_sha256": {
+    "config/pon/pq128-source-lock-v1.json": "afbcf9e129cc9a9d7b928c95d0ab40c573e4a958",
+    ".github/workflows/pon-branch-encoding-acceptance.yml": "63e0b297b42d5994e0ac81075b48e453bcad7870"
+  },
+  "original_runs": [
+    42830743380,
+    42830743317
+  ],
+  "source_lock_reproduction": {
+    "tool": "scripts/ci/pq_lifetime_budget.py",
+    "baseline_exit_code": 2,
+    "after_exit_code": 0,
+    "source_revision_bound": true,
+    "source_binding_scope": "declared-event-paths-only"
+  },
+  "python_tests": {
+    "test_pq_lifetime_budget": 58,
+    "test_pq_chain_claim_guard": 55,
+    "test_pq_research_integration": 59
+  },
+  "patch_native_rust_tests_executed": false,
+  "full_hosted_ci_pass_observed": false,
+  "original_campaign_passes": 0,
+  "original_campaign_total": 3,
+  "independent_custody_verified": false,
+  "independent_freshness_verified": false,
+  "public_invalid_work_dos_qualified": false,
+  "actual_lifetime_failure_bound": null,
+  "whole_chain_pq_qualified": false,
+  "production_activation": false
+}
