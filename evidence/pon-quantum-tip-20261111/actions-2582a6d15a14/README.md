@@ -39,8 +39,18 @@ old desktop negative-baseline process, whose final state remains UNKNOWN.
   continuation's helper visibility change. The correction rebinds those two
   digests and the declaration revision, preserving all unknown bounds,
   false claims and historical source records.
+- The separate W1 closure reader rejected `store.rs` during lifetime-suite
+  setup: zero tests ran and one setup error was reported. Its later source
+  survey command independently returned `REFUSED` and exit 2. The full original
+  `w1-closure.log` and `w1-lifetime-source-failure.json` retain this observation.
+  Review of all twenty selected sources found eighteen unchanged and the same
+  two bounded differences above. The successor keeps the old survey report,
+  prepares a separately named current source fixture, and requires the retained
+  nineteen-test suite to recompute and compare it. Fixture preparation does
+  not claim a Python execution or a security qualification.
 
-The focused successor lane also runs the 58 lifetime controls. Its native
+The focused successor lane also runs the 58 lifetime controls and the separate
+19 W1 lifetime survey controls. Its native
 command explicitly selects `--lib`: the same six tests live in the library,
 and the original full-workspace baseline gates remain unchanged. The original
 source3 command and its results remain in the raw log.

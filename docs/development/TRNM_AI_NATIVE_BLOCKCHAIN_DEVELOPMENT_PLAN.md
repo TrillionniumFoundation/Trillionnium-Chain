@@ -9,6 +9,16 @@ The [original execution record](../../evidence/pon-quantum-tip-20261111/actions-
 retains the same run's failed inline source guard, two formatter hunks and
 stale lifetime-source declaration. Apply the reviewed pin, formatting and
 15-path declaration repairs, then execute the successor's own checks.
+A separate twenty-source W1 lifetime reader also refused the changed store
+identity. Preserve that failed execution and the earlier 2026-11-09 report;
+maintain the current selected survey only after reviewing all twenty sources.
+The [new current survey](../../evidence/pon-w1-lifetime-current-20261111-qdaa/README.md)
+changes two source identities and their observation digests, with eighteen
+sources unchanged. Its fixture is source data, not an execution receipt.
+Require the retained nineteen-test suite to independently recompute the whole
+report and verify the source bytes on the successor. The separate inherited
+fixed-verifier QROM implementation mismatch remains unresolved.
+
 The native test profile, consensus arithmetic, production flags and all
 unknown security bounds remain unchanged. The arm64 from-zero service
 failure remains separately unresolved until its child evidence or a successor

@@ -153,6 +153,10 @@ jobs:
         id: lifetime_tests
         if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}
         run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" lifetime-tests python3 scripts/ci/test_pq_lifetime_budget.py
+      - name: Verify current W1 lifetime survey and retained refusal controls
+        id: w1_lifetime_tests
+        if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" w1-lifetime-tests python3 scripts/ci/test_w1_lifetime_ledger.py
       - name: Check retained CI contract
         id: ci_contract
         if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}

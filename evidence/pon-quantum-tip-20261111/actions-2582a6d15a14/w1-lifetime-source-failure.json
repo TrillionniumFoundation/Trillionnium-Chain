@@ -1,0 +1,40 @@
+{
+  "schema": "trnm-w1-lifetime-source-failure-observation-v1",
+  "tested_commit": "2582a6d15a14d3929d3238d844e710f5a291b422",
+  "tested_tree": "472706bce99c94b47141ca5dd4c22e458e1deb4c",
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42935065451",
+  "job_id": 130242977473,
+  "original_artifact_id": 13818628214,
+  "original_log": {
+    "path": "w1-closure.log",
+    "git_blob": "f95046a44d3f7cf140f8cd77bcceebc3ddd733a7",
+    "sha256": "753585cc0fa420b42f24b8ed5e1508d512734daa0d2ad2eafb44aa5f9a5dd8d1"
+  },
+  "observed": {
+    "suite": "scripts/ci/test_w1_lifetime_ledger.py",
+    "error_phase": "LifetimeLedgerTests.setUpClass",
+    "tests_run": 0,
+    "errors": 1,
+    "error": "source identity mismatch: trillionnium/crates/trnm-pon-node/src/store.rs",
+    "separate_survey_command_status": "REFUSED",
+    "separate_survey_command_exit": 2
+  },
+  "successor_maintenance": {
+    "scope": "reviewed twenty-path current source survey; source data, not execution evidence",
+    "source_anchor": "2582a6d15a14d3929d3238d844e710f5a291b422",
+    "unchanged_sources": 18,
+    "reviewed_changed_sources": {
+      "trillionnium/crates/trnm-pon-node/src/consensus.rs": "inherited test-only arithmetic vectors; production prefix unchanged",
+      "trillionnium/crates/trnm-pon-node/src/store.rs": "existing helper visibility only; body unchanged"
+    },
+    "current_fixture": "evidence/pon-w1-lifetime-current-20261111-qdaa/project-report.json",
+    "old_fixture_preserved": "evidence/pon-w1-lifetime-current-20261109/project-report.json",
+    "retained_test_count": 19,
+    "execution_claimed_here": false
+  },
+  "fixed_verifier_qrom_implementation_mismatch_resolved": false,
+  "native_quantum_security_qualified": false,
+  "cp_cg_cq_proved": false,
+  "lifetime_qualified": false,
+  "production_qualified": false
+}
