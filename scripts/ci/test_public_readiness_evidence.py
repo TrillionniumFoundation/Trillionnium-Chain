@@ -1321,6 +1321,32 @@ class NativeDurableSchemaTests(unittest.TestCase):
             with self.subTest(label=label), self.assertRaisesRegex(ValueError,'durable backend selected'):
                 self.extract(self.replace_once(self.current,before,after))
 
+        # The current complete body includes the account-profile refusal before
+        # namespace effects. Rolling it back to the prior reviewed body must not
+        # authorize current source under a historical digest.
+        guard = ('        // Every backend shares the M06 scope and account-profile decision before\n'
+                 '        // creating, initializing or recovering any native namespace files.\n'
+                 '        settings.app.check_account_profile()?;\n')
+        for label, replacement in [
+            ('rolled-back-profile-guard', ''),
+            ('commented-profile-guard', guard.replace(
+                '        settings.app.check_account_profile()?;',
+                '        // settings.app.check_account_profile()?;')),
+            ('ignored-profile-refusal', guard.replace(
+                '        settings.app.check_account_profile()?;',
+                '        let _ = settings.app.check_account_profile();')),
+        ]:
+            with self.subTest(label=label), self.assertRaisesRegex(
+                    ValueError, 'durable backend selected implementation'):
+                self.extract(self.replace_once(self.current, guard, replacement))
+        late = self.replace_once(self.current, guard, '')
+        late = self.replace_once(late, '            fs::create_dir_all(path)?;',
+                                 '            fs::create_dir_all(path)?;\n'
+                                 '            settings.app.check_account_profile()?;')
+        with self.subTest(label='profile-refusal-after-namespace-effect'), self.assertRaisesRegex(
+                ValueError, 'durable backend selected implementation'):
+            self.extract(late)
+
     def test_selected_settings_cannot_be_mutated_through_fields_or_borrowed(self):
         header = 'fn open_selected(\n        path: &Path,\n        settings: Settings,'
         pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
