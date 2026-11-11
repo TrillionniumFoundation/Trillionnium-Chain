@@ -1,0 +1,116 @@
+{
+  "adapter_version": "sp27-02-collector-analysis-v2",
+  "code_and_contract": {
+    "CONTRACT_V2.md": {
+      "bytes": 7651,
+      "sha256": "2c1d65523652bb65c03f1b57f1356d0927cf5fabe8e9706b17775d8e05e1720f"
+    },
+    "consume_native_v2.py": {
+      "bytes": 15617,
+      "sha256": "36f9676ba963a88054f3ec7faa468251bf34f67e79ba81f830bce0ab74b2083f"
+    },
+    "native_reader_v2.py": {
+      "bytes": 15506,
+      "sha256": "e9d49be7d060d71c4b13ef43b32568028f26fdc6e737587fc47a78457a8c1a28"
+    },
+    "test_native_reader_v2.py": {
+      "bytes": 7741,
+      "sha256": "58e91d15ff4c202800bd33fcd45b2f5685f0e88d5efcc630029f95ba9b3ef85f"
+    }
+  },
+  "current_02_owner_semantics_accepted": true,
+  "field_mapping_document": "CONTRACT_V2.md",
+  "measurement_consumer_executed": true,
+  "minimal_actual_sample": {
+    "files": {
+      "CONSUMER_RECEIPT.json": {
+        "bytes": 4583,
+        "sha256": "e9481793ce0a116a936e4022fc7be82855095a6086cf35d6a3b0cd618719437e"
+      },
+      "consumer/operations.csv": {
+        "bytes": 1621,
+        "sha256": "dbc82382c4f1d95c7fd7c0206c65375e0179489f793444b1cad65c616a859234"
+      },
+      "consumer/summary.json": {
+        "bytes": 22952,
+        "sha256": "a8a24ee0766e42ea8700bcd47803510dd9ce61559318e64efbae937de1f58be3"
+      },
+      "contract.json": {
+        "bytes": 17073,
+        "sha256": "72452d71efaaba880a8e26b6246b55b5d7b47182c752b98b4dc00f3fccf77ddd"
+      },
+      "events.jsonl": {
+        "bytes": 65242,
+        "sha256": "4da1cc91ea6bffffaa2ca4eb944a95199a770d35f1db48dc3bf5d2ac54a93e12"
+      },
+      "schedule.jsonl": {
+        "bytes": 1280,
+        "sha256": "0b71697686a9da830bdc0e32ef77ebb3dc2de2ca23638d2251093f1c5e764a64"
+      }
+    },
+    "path": "results/ci_pair_43052900246"
+  },
+  "native_collector": {
+    "bytes": 79067,
+    "sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+    "source_commit": "8ebcdb01016946a131f9067ebe1ace39b9c4f260",
+    "source_path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+    "source_tree": "1b887f5fe57c6c3875ad28b8cc26bd83a8f77b83",
+    "zip_member": "from-zero-native/format-copy-source/tests/public_v3_from_zero.rs"
+  },
+  "native_pair_input": {
+    "artifact_id": 13871459353,
+    "binary_member": "from-zero-native/public_v3_from_zero",
+    "binary_sha256": "03d0dada775a2531876ce796192b59d27d78f86848e053de554ee70e281eb387",
+    "job_id": 130634539770,
+    "key": "ci-43052900246-13871459353",
+    "report_member": "from-zero-native/confirmation/report.json",
+    "report_sha256": "4a4ec5d92810f51df792a2f1f08e4af4c9cb47c107c5ed3e3a8e2ef71dae9a1d",
+    "run_id": 43052900246,
+    "source_commit": "8ebcdb01016946a131f9067ebe1ace39b9c4f260",
+    "source_tree": "1b887f5fe57c6c3875ad28b8cc26bd83a8f77b83",
+    "zip_bytes": 8297569,
+    "zip_sha256": "8b21d753e0ac85ffdca7bc3e0a5f953d4dfffb24c7a10cc9ae394dcfe6590307"
+  },
+  "new_native_experiments": 0,
+  "original_v1_preserved": true,
+  "portfolio_coordinator_acknowledgment": "NOT_OBSERVED",
+  "predicate": "positive bound native independent confirmation AND recorded endpoint < original T AND original final native gate is true",
+  "previous_Agent06_author_acknowledgment": "NOT_OBSERVED",
+  "reader_version": "sp27-02-native-reader-v2",
+  "schema": "sp27-02-collector-analysis-freeze-v2",
+  "upstream_files": [
+    {
+      "commit": "c49c769fb3b08ee8f60c993c8ca6be2a4600246f",
+      "git_blob": "3ee4d8073ef9a58d67d8bfb3d0c4b4d09550a167",
+      "local_path": "frozen/legacy_reader_v1.py",
+      "path": "research/sp2027/02_receiver_liveness/replay_native_evidence.py",
+      "repository": "TrillionniumFoundation/hepta-papers",
+      "sha256": "b62034432a144927fe570012aefc5c438bf364a31888047bac1bee1585310930"
+    },
+    {
+      "commit": "c49c769fb3b08ee8f60c993c8ca6be2a4600246f",
+      "git_blob": "0e9ac15cc85aa51044b07b53052161540335a192",
+      "local_path": "frozen/analyzer_06_v1.py",
+      "path": "research/sp2027/06_confirmed_goodput/analyzer.py",
+      "repository": "TrillionniumFoundation/hepta-papers",
+      "sha256": "9719f822394e6295a7787be0be2c8d394d25ab19e8d17be543e4145f6bae9acc"
+    },
+    {
+      "commit": "c49c769fb3b08ee8f60c993c8ca6be2a4600246f",
+      "git_blob": "8fe33e0a1be36843ebeae3c9322304e3b3e56b82",
+      "local_path": "frozen/exporter_06_v1.py",
+      "path": "research/sp2027/06_confirmed_goodput/export_archives.py",
+      "repository": "TrillionniumFoundation/hepta-papers",
+      "sha256": "9585e0bde16e0bc1776501c16a1f97ff646d3e2751d14e62a575f92b1c84fdc7"
+    },
+    {
+      "commit": "c49c769fb3b08ee8f60c993c8ca6be2a4600246f",
+      "git_blob": "6acd69fdd53490a79d3129be92be2362c9fdaf8c",
+      "local_path": "frozen/CONTRACT_06_V1.md",
+      "path": "research/sp2027/06_confirmed_goodput/CONTRACT.md",
+      "repository": "TrillionniumFoundation/hepta-papers",
+      "sha256": "12a9a23feb28c51d4171bbfac35a90c29f0899d5bba0c4f5b05edbfe3177b2d7"
+    }
+  ]
+}
