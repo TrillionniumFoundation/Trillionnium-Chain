@@ -18,9 +18,10 @@ pub use custody::{
     CELL_RS46_CODEWORD_WIRE_BYTES_V1,
 };
 pub use provider::{
-    CellRs46ShardContractV1, CellRs46ShardOwnerV1, CellRs46ShardProviderConfigV1,
-    CellRs46ShardProviderV1, CellRs46ShardRepairRequestV1, CellRs46StoredShardV1,
-    MAX_CELL_RS46_PROVIDER_DESCRIPTOR_BYTES_V1,
+    CellRs46ProviderPayloadFaultStageV2, CellRs46ProviderPayloadFaultV2,
+    CellRs46ProviderReadObservationV2, CellRs46ShardContractV1, CellRs46ShardOwnerV1,
+    CellRs46ShardProviderConfigV1, CellRs46ShardProviderV1, CellRs46ShardRepairRequestV1,
+    CellRs46StoredShardV1, MAX_CELL_RS46_PROVIDER_DESCRIPTOR_BYTES_V1,
 };
 pub use retained_plan::{
     restore_cell_paged_version_to_cache_v2, CellPagedRetainedShardPlanFileV2,

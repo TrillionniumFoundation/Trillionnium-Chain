@@ -22,8 +22,11 @@ use std::{
 };
 
 mod bep52;
+mod fault_run;
 mod paged;
 mod snapshot;
+
+pub use fault_run::run_payload_faults;
 
 use serde::Deserialize;
 use serde_json::{json, Value};
@@ -419,7 +422,7 @@ fn observe(spec: &Spec, report: &mut Value) -> Result<()> {
 fn observe_with_custody(
     spec: &Spec,
     report: &mut Value,
-    paged_route: Option<(&paged::Profile, &PagedExpected)>,
+    paged_route: Option<(&dyn paged::CustodyProfile, &PagedExpected)>,
 ) -> Result<()> {
     check(
         (1..=300).contains(&spec.seconds),

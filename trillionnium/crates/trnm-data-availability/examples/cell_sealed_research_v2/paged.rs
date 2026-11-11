@@ -3,6 +3,23 @@
 use super::*;
 use std::{fs::File, os::unix::fs::MetadataExt, sync::atomic::Ordering};
 
+mod fault_profile;
+pub(super) use fault_profile::FaultProfileV2;
+
+pub(super) trait CustodyProfile {
+    fn validate(&self) -> Result<()>;
+    fn commitment(&self) -> Result<[u8; 32]>;
+    fn available_slots(&self) -> &[u8];
+    fn chunks_per_page(&self) -> u16;
+    fn schema(&self) -> &str;
+    fn corrupt_slots(&self) -> &[u8] {
+        &[]
+    }
+    fn observed_payloads(&self) -> bool {
+        false
+    }
+}
+
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(super) struct Profile {
@@ -34,6 +51,24 @@ impl Profile {
         hash.update(self.chunks_per_page.to_be_bytes());
         hash.update(self.available_slots);
         Ok(hash.finalize().into())
+    }
+}
+
+impl CustodyProfile for Profile {
+    fn validate(&self) -> Result<()> {
+        Profile::validate(self)
+    }
+    fn commitment(&self) -> Result<[u8; 32]> {
+        Profile::commitment(self)
+    }
+    fn available_slots(&self) -> &[u8] {
+        &self.available_slots
+    }
+    fn chunks_per_page(&self) -> u16 {
+        self.chunks_per_page
+    }
+    fn schema(&self) -> &str {
+        &self.schema
     }
 }
 
@@ -106,13 +141,13 @@ fn record_budget(report: &mut Value, budget: &CellPagedShardRestoreBudgetV2) {
 
 pub(super) fn restore(
     context: Restore<'_, '_>,
-    profile: &Profile,
+    profile: &dyn CustodyProfile,
     report: &mut Value,
 ) -> Result<CellStoreV1> {
     let started = context.started;
     let custody_started = Instant::now();
     let mut observation = json!({
-        "schema": "trnm.cell-sealed-paged-custody-observation.v1",
+        "schema": if profile.schema()=="trnm.cell-sealed-paged-custody.v1" {"trnm.cell-sealed-paged-custody-observation.v1"} else {"trnm.sp27-05-payload-fault-custody-observation.v1"},
         "stage": "initial", "passed": false,
         "m12_funding_admitted": false, "provider_repair_dispatched": false,
         "custody_completion_granted": false, "execution_granted": false,
@@ -148,7 +183,7 @@ pub(super) fn restore(
 
 fn restore_inner(
     context: Restore<'_, '_>,
-    profile: &Profile,
+    profile: &dyn CustodyProfile,
     report: &mut Value,
 ) -> Result<CellStoreV1> {
     let Restore {
@@ -238,7 +273,9 @@ fn restore_inner(
         .checked_mul(2)
         .ok_or("paged cache allowance overflow")?;
     report["profile"] = json!(hex::encode(profile.commitment()?));
-    report["provider_slots"] = json!(profile.available_slots);
+    report["provider_slots"] = json!(profile.available_slots());
+    report["profile_schema"] = json!(profile.schema());
+    report["typed_payload_observation"] = json!(profile.observed_payloads());
     report["chunk_count"] = json!(chunks);
     report["payload_bytes"] = json!(payload);
     report["potential"] = json!({"provider_reads": slots, "input_bytes": input,
@@ -291,7 +328,7 @@ fn restore_inner(
                 })
                 .collect(),
             maximum_repairs_per_slot: 1,
-            chunks_per_page: profile.chunks_per_page,
+            chunks_per_page: profile.chunks_per_page(),
         },
         deadline,
     )?;
@@ -307,7 +344,7 @@ fn restore_inner(
             "operation": hex::encode(operation), "profile": hex::encode(profile.commitment()?),
             "plan": hex::encode(plan_pin), "catalog_anchor": hex::encode(anchor.encode()),
             "version": hex::encode(version.commitment()), "content": hex::encode(content.commitment()),
-            "available_slots": profile.available_slots,
+            "available_slots": profile.available_slots(),
             "provider_capacity_bytes": provider_capacity, "provider_wire_bytes": provider_payload,
             "provider_obligations": chunks,
             "six_declared_local_slots_are_independent_operators": false,
@@ -410,7 +447,7 @@ fn restore_inner(
     remove_cache(&staging_path)?;
     report["staging_cache_absent"] = json!(!staging_path.exists());
     let missing: Vec<u8> = (0..6)
-        .filter(|slot| !profile.available_slots.contains(slot))
+        .filter(|slot| !profile.available_slots().contains(slot))
         .collect();
     report["quarantine_requested_slots"] = json!(missing);
     let mut quarantined = Vec::new();
@@ -469,14 +506,22 @@ fn restore_inner(
     controlled(deadline, cancelled)?;
     report["catalog_payload_unavailable"] = json!(true);
 
-    report["stage"] = json!("reopen independently pinned root and four original providers");
+    fault_profile::inject_owned_payload_faults(
+        &provider_root,
+        profile.corrupt_slots(),
+        deadline,
+        cancelled,
+        report,
+    )?;
+
+    report["stage"] = json!("reopen independently pinned root and selected original providers");
     let plan = CellPagedRetainedShardPlanFileV2::open(&plan_path, plan_pin, deadline)?;
     let archive = CellVersionRetentionStoreV3::open(archive_path, config, anchor)?;
     let mut providers = configs
         .iter()
         .enumerate()
         .map(|(slot, config)| {
-            if profile.available_slots.contains(&(slot as u8)) {
+            if profile.available_slots().contains(&(slot as u8)) {
                 CellRs46ShardProviderV1::open(
                     &provider_root.join(format!("provider-{slot}")),
                     config.clone(),
@@ -504,11 +549,12 @@ fn restore_inner(
         maximum_readback_payload_bytes: payload,
         maximum_readback_chunks: chunks,
     })?;
-    report["stage"] = json!("reconstruct every original chunk from four reopened providers");
+    report["stage"] = json!("reconstruct every original chunk from selected reopened providers");
     let mut reads = 0_u64;
     let mut unavailable = 0_u64;
     let mut actual_reads = 0_u64;
     let mut obtained_wire_bytes = 0_u64;
+    let mut payload_faults = Vec::new();
     let result = restore_cell_paged_version_to_cache_v2(
         CellPagedShardRestoreRequestV2 {
             plan_file: &plan,
@@ -530,6 +576,31 @@ fn restore_inner(
                 return Ok(None);
             };
             actual_reads += 1;
+            if profile.observed_payloads() {
+                return match provider.read_observed_v2(
+                    duty,
+                    duty.operation(),
+                    original_deadline,
+                    &mut || controlled(original_deadline, cancelled),
+                )? {
+                    CellRs46ProviderReadObservationV2::Verified(actual) => {
+                        let wire = actual.shard().encode();
+                        obtained_wire_bytes += wire.len() as u64;
+                        Ok(Some(wire))
+                    }
+                    CellRs46ProviderReadObservationV2::Rejected(fault) => {
+                        payload_faults.push(json!({
+                            "slot":slot,"operation":hex::encode(fault.operation()),
+                            "provider_store":hex::encode(fault.provider_store()),
+                            "stage":format!("{:?}",fault.stage()),
+                            "original_error":format!("{:?}",fault.original_error()),
+                            "expected_bytes":fault.expected_bytes(),
+                            "provider_payload_read_byte_bounds":fault.read_bytes_bounds(),
+                        }));
+                        Ok(None)
+                    }
+                };
+            }
             let wire = provider
                 .read(
                     duty.binding(),
@@ -548,6 +619,7 @@ fn restore_inner(
     report["unavailable_callbacks"] = json!(unavailable);
     report["actual_provider_read_attempts"] = json!(actual_reads);
     report["obtained_wire_bytes"] = json!(obtained_wire_bytes);
+    report["typed_payload_faults"] = json!(payload_faults);
     record_budget(report, &budget);
     let observed = result?;
     report["verified_shards"] = json!(observed.verified_shards);
@@ -555,7 +627,7 @@ fn restore_inner(
     report["rejected_shards"] = json!(observed.rejected_shards);
     report["consumer_chunks"] = json!(consumer.cache_usage()?.chunk_rows);
     controlled(deadline, cancelled)?;
-    report["stage"] = json!("complete actual selected-version readback from four providers");
+    report["stage"] = json!("complete actual selected-version readback from selected providers");
     Ok(consumer)
 }
 

@@ -6,6 +6,8 @@ use crate::cell::*;
 use sha2::{Digest, Sha256};
 use std::{cell::RefCell, collections::BTreeMap, fs, time::Duration};
 
+mod fault_research;
+
 fn deadline() -> Instant {
     Instant::now() + Duration::from_secs(60)
 }
@@ -37,7 +39,7 @@ struct Fixture {
     plan: CellPagedRetainedShardPlanFileV2,
     contract: CellVersionRetentionContractV3,
     content: CellVersionContentV2,
-    providers: RefCell<[CellRs46ShardProviderV1; 6]>,
+    providers: RefCell<Vec<CellRs46ShardProviderV1>>,
     slots: BTreeMap<CellDigestV1, usize>,
 }
 
@@ -286,7 +288,7 @@ impl Fixture {
             plan,
             contract,
             content,
-            providers: RefCell::new(providers),
+            providers: RefCell::new(providers.into_iter().collect()),
             slots,
         }
     }

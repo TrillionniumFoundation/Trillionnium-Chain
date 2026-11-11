@@ -5,6 +5,9 @@
 mod catalog_inventory;
 mod payload_read;
 pub(crate) use catalog_inventory::CellRetentionCatalogObjectV1;
+pub(crate) use payload_read::{
+    CellRetentionPayloadFaultStageV2, CellRetentionPayloadObservationV2,
+};
 
 use std::{
     collections::BTreeSet,

@@ -5,6 +5,9 @@
 
 use super::*;
 
+mod observation;
+pub(crate) use observation::{CellRetentionPayloadFaultStageV2, CellRetentionPayloadObservationV2};
+
 impl CellRetentionStoreV1 {
     /// Read only one original, independently pinned TCM1 chunk from the actual
     /// acknowledged arena. The returned bytes are checked, and the original

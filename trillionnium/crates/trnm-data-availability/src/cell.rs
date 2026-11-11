@@ -97,9 +97,11 @@ pub use erasure::{
     CellPagedShardRestoreRequestV2, CellPagedShardRestoreUsageV2, CellRetainedShardChunkV1,
     CellRetainedShardPagePinV2, CellRetainedShardPageV2, CellRetainedShardPlanFileV1,
     CellRetainedShardPlanRequestV1, CellRetainedShardPlanV1, CellRetainedShardRootV1,
-    MAX_CELL_PAGED_RETAINED_CHUNKS_V2, MAX_CELL_RETAINED_SHARD_CHUNKS_V1,
-    MAX_CELL_RETAINED_SHARD_PAGES_V2, MAX_CELL_RETAINED_SHARD_PLAN_BYTES_V1,
-    MAX_CELL_RETAINED_SHARD_ROOTS_V1, MAX_CELL_RETAINED_SHARD_ROOT_BYTES_V2,
+    CellRs46ProviderPayloadFaultStageV2, CellRs46ProviderPayloadFaultV2,
+    CellRs46ProviderReadObservationV2, MAX_CELL_PAGED_RETAINED_CHUNKS_V2,
+    MAX_CELL_RETAINED_SHARD_CHUNKS_V1, MAX_CELL_RETAINED_SHARD_PAGES_V2,
+    MAX_CELL_RETAINED_SHARD_PLAN_BYTES_V1, MAX_CELL_RETAINED_SHARD_ROOTS_V1,
+    MAX_CELL_RETAINED_SHARD_ROOT_BYTES_V2,
 };
 pub use erasure::{
     CellRs46CacheTargetV1, CellRs46ChunkBindingV1, CellRs46CodewordV1, CellRs46ManifestBindingV1,

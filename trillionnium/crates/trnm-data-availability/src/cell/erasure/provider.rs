@@ -29,8 +29,13 @@ use crate::cell::{
 
 mod admission;
 mod contract;
+mod observation;
 pub use contract::{
     CellRs46ShardContractV1, CellRs46ShardOwnerV1, MAX_CELL_RS46_PROVIDER_DESCRIPTOR_BYTES_V1,
+};
+pub use observation::{
+    CellRs46ProviderPayloadFaultStageV2, CellRs46ProviderPayloadFaultV2,
+    CellRs46ProviderReadObservationV2,
 };
 
 const DESCRIPTORS: &str = "slot-descriptors-v1";
