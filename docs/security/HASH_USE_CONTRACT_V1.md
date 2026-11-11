@@ -31,8 +31,12 @@ their missing reductions with generic query exponents.
 
 ## Current composition scope
 
-The account, TLS and Root continuation preserves the 17-use / 26-path contract
-without changing those source bytes. The added V5 Root witness enrollment,
+The account, TLS and Root continuation retained the original 17-use / 26-path
+contract. The typed content/history continuation preserves those 17 use
+definitions and adds two explicitly scoped uses, giving 19 uses and 31 reviewed
+source paths. Its [TCG3 and CMH2 contract](CONTENT_GRAPH_AND_HISTORY_READBACK_V1.md)
+distinguishes declared typed-graph traversal and a bounded complete-State
+ancestry archive from live adoption and historical provenance. The added V5 Root witness enrollment,
 policy binding, request digest and receipt obligations are recorded separately
 by the [41-path Root dependency register](PQ_ROOT_DEPENDENCY_REGISTER_V3.md).
 Account development-scope checks restrict executable configurations without
@@ -98,6 +102,16 @@ disappear because new bytes have been hashed.
 The existing CMG1 adapter still treats embedded ancestry IDs as references;
 the existing TCC2 adapter covers its five declared direct dependencies, not
 every transitive dependency of those objects.
+
+TCG3 separately parses every reachable typed node only after that node's actual
+complete CCH1 readback, then follows all encoded edges. It does not discover
+undeclared loader dependencies or establish that an absent ancestor never
+existed. CMH2 separately reads actual genesis State/configuration and every
+Header/trace/State through its selected checkpoint, within the explicit
+32-block/32-MiB limits. Its Node adapter uses a single read snapshot. It does
+not commit transaction/proof/receipt bodies or external effect journals,
+reauthenticate lost history, reverify W1, authorize cutover or truncate a
+longer history. Complete new expectations must be pinned independently.
 
 ## Proof-system qualification remains separate
 

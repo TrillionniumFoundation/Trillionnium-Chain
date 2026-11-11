@@ -26,13 +26,14 @@ MAX_SOURCE_BYTES = 2 * 1024 * 1024
 MAX_DEPTH = 64
 # These are reviewed input identities, not cryptographic security assumptions.
 # Changing source or semantics requires a new review; inspect never regenerates.
-REVIEWED_SEMANTICS_SHA256 = "db44abb038d8e9e857c3d2ecc4a7189d398b8d8f851bc5813747a28cbb0b2dd7"
-REVIEWED_SOURCE_MAP_SHA256 = "d7fc971a8624cca857257a5d44ce2696e130182e40c8cc151869f8bdda457c2e"
+REVIEWED_SEMANTICS_SHA256 = "29189f8e96a255472577479d46204b2b403a1f8e27806da6aa616e417ced0b5b"
+REVIEWED_SOURCE_MAP_SHA256 = "e7675fafe1f17c92a49308fc4ebf704c0a79d00544da8afac1d4be3ca8bfecff"
 
 USES = {
     "model-legacy-root": "model",
     "model-full-payload": "model",
     "model-direct-dependencies": "model",
+    "model-declared-transitive-graph": "model",
     "transaction-root": "transaction",
     "state-root": "state",
     "history-block-anchor": "history",
@@ -42,6 +43,7 @@ USES = {
     "storage-cell-chunks": "storage",
     "storage-bep52-root": "storage",
     "migration-full-state": "migration",
+    "migration-bounded-state-history": "migration",
     "release-artifact": "release",
     "profile-byte-commitment": "profile",
     "work-threshold": "work",
@@ -112,6 +114,8 @@ MATERIAL_SCOPES = {
     "legacy-digest-wrapper": "literal-digest-only",
     "actual-full-content": "direct-encoded-content-only",
     "actual-declared-direct-objects": "declared-direct-object-set-only",
+    "actual-declared-transitive-objects": "declared-typed-graph-only",
+    "actual-genesis-state-history": "bounded-genesis-to-checkpoint-state-bytes",
 }
 
 
@@ -202,7 +206,8 @@ old commitment, authenticate lost history, or establish transitive closure.
     require(type(material) is str and material in MATERIAL_SCOPES,
             "unsupported migration material")
     exact(data["claimed_scope"], MATERIAL_SCOPES[material], "migration.claimed_scope")
-    actual = material in ("actual-full-content", "actual-declared-direct-objects")
+    actual = material in ("actual-full-content", "actual-declared-direct-objects",
+                          "actual-declared-transitive-objects", "actual-genesis-state-history")
     exact(data["original_bytes_required"], actual, "migration.original_bytes_required")
     for key in ("old_commitment_strengthened", "historical_provenance_restored",
                 "transitive_dependency_closure_proved"):

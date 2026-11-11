@@ -76,8 +76,9 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs)" = d94f27a764a2788e90352881b52fc9017a32ab67
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner_tests.rs)" = 6119f98bb45fda6399d2528db9f61a69751e397f
           # The whole-file pin covers the opt-in owner census, integrated
-          # admission/readback refinements, and retained legacy replay-prefix cache.
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = a766d083bc1955041bf2fc537cb2731e2d4eb6c4
+          # admission/readback refinements, retained legacy replay-prefix cache,
+          # and the separate read-only CMH2 module export.
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 617aa575ddf52950d0e54af0bb3dae8f3b5d66b1
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = c98c5333ab3609b30b11fd0a700917ce7f2a8999
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = e99453b1abe6ce589f003be199b5553241cba398

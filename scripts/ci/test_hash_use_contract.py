@@ -55,8 +55,8 @@ class HashUseContractTests(unittest.TestCase):
     def test_actual_reviewed_source_inspection_preserves_hold(self):
         result = contract.inspect(ROOT)
         self.assertTrue(result["source_files_checked"])
-        self.assertEqual(result["declared_use_count"], 17)
-        self.assertEqual(result["declared_source_count"], 26)
+        self.assertEqual(result["declared_use_count"], 19)
+        self.assertEqual(result["declared_source_count"], 31)
         self.assertFalse(result["source_revision_authenticated"])
         self.assertFalse(result["whole_chain_hash_query_scope_closed"])
         self.assertFalse(result["whole_chain_pq_qualified"])
@@ -263,6 +263,41 @@ class HashUseContractTests(unittest.TestCase):
         self.assertFalse(result["prerequisites_fulfilled"])
         self.assertFalse(result["old_commitment_collision_risk_removed"])
         self.assertFalse(result["migration_authorized"])
+
+    def test_new_byte_readbacks_have_explicit_narrow_scopes(self):
+        expected = {
+            "model-declared-transitive-graph": "declared-typed-graph-only",
+            "migration-bounded-state-history": "bounded-genesis-to-checkpoint-state-bytes",
+        }
+        for name, scope in expected.items():
+            with self.subTest(name=name):
+                migration = self.data()["uses"][name]["migration"]
+                result = contract.review_migration(migration)
+                self.assertEqual(result["declared_scope"], scope)
+                self.assertTrue(result["full_content_recomputation_required"])
+                self.assertFalse(result["old_commitment_collision_risk_removed"])
+                self.assertFalse(result["migration_authorized"])
+                self.assertFalse(result["prerequisites_fulfilled"])
+
+    def test_typed_graph_and_history_cannot_promote_missing_authority(self):
+        for name in ("model-declared-transitive-graph", "migration-bounded-state-history"):
+            for field in ("old_commitment_strengthened", "historical_provenance_restored",
+                          "transitive_dependency_closure_proved"):
+                with self.subTest(name=name, field=field):
+                    migration = self.data()["uses"][name]["migration"]
+                    migration[field] = True
+                    with self.assertRaises(contract.ContractError):
+                        contract.review_migration(migration)
+
+    def test_finite_or_declared_readback_cannot_claim_whole_chain_scope(self):
+        for name in ("model-declared-transitive-graph", "migration-bounded-state-history"):
+            for scope in ("all-loader-dependencies", "all-historical-state-and-effects",
+                          "historical-provenance-restored"):
+                with self.subTest(name=name, scope=scope):
+                    migration = self.data()["uses"][name]["migration"]
+                    migration["claimed_scope"] = scope
+                    with self.assertRaises(contract.ContractError):
+                        contract.review_migration(migration)
 
     def test_missing_migration_prerequisite_and_unknown_material_refused(self):
         original = self.data()["uses"]["migration-full-state"]["migration"]

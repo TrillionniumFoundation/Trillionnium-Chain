@@ -29,6 +29,7 @@ mod legacy_reorg_observation_tests;
 #[cfg(test)]
 mod legacy_reorg_root_tests;
 pub mod mempool;
+pub mod migration_history_v2;
 pub(crate) mod native_authenticated;
 pub mod native_budget;
 pub mod native_owner_observation;

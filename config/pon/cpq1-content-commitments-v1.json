@@ -25,7 +25,9 @@
     "RAC1": "complete artifact entry and actual raw artifact bytes",
     "TCM2": "complete model metadata and strong payload claim; dependency aliases only",
     "TCC2": "TCM2 plus five role-bound complete dependency claims and full readback",
-    "CMG1": "complete header, state, configuration and actual precommitment public keys"
+    "CMG1": "complete header, state, configuration and actual precommitment public keys",
+    "TCG3": "typed declared transitive node/payload/dependency graph with complete actual CCH1 readback",
+    "CMH2": "bounded genesis-to-checkpoint full Header, trace, State and configuration bytes; no historical authority"
   },
   "hash_use_decisions": [
     {"use": "locator", "decision": "legacy IDs remain lookup aliases only"},

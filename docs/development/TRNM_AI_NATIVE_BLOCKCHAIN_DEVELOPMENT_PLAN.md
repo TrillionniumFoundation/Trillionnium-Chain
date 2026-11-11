@@ -1,3 +1,37 @@
+**Typed dependency and bounded State-history readback, 2026-11-11 America/New_York — HOLD:**
+
+Continue #908 at `6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d` in an isolated
+child. Preserve CCH1, TCM2/TCC2, CST1/CMG1, original Header/work/state grammars,
+all historical failures and every activation refusal. Review the stale selected
+proof-profile source pin against its actual bytes; the original 26-path
+inspection refusal remains evidence, not a cryptographic failure.
+
+Add TCG3 so a complete independent root pins typed nodes whose actual verified
+bytes supply all traversed edges. Full claims, fixed roles, identity uniqueness,
+shared read budgets, explicit finite graph limits and complete EOF checks must
+prevent shallow content, missing descendants or a shared-node depth shortcut
+from producing a complete graph readback. This is a declared-format closure;
+unknown loader and executable dependencies remain separate obligations.
+
+Add CMH2 over actual genesis State/configuration and every complete Header,
+trace and State through the selected tip. Reuse the existing bounded encoders
+and original root/parent checks. The native caller uses one read-only SQLite
+snapshot, actual retained packet/state readers, a bounded deadline and zero
+write checks. Refuse more than 32 non-genesis blocks or 32 MiB; never silently
+truncate a longer history. Complete transaction/proof/receipt bodies, external
+state references and effect/revocation journals are outside this new format.
+No new historical authentication, W1 execution replay, finality, source
+retirement or production migration authority follows from a new digest.
+
+The [format and owner contract](../security/CONTENT_GRAPH_AND_HISTORY_READBACK_V1.md)
+is part of the existing hash-purpose register. Retain all 17 original use
+definitions and add the two explicit scopes; keep unknown security/lifetime
+bounds and whole-chain PQ flags unchanged. Require native deep-substitution,
+identity/role/depth/EOF/budget controls and actual fork/cold-source corruption
+controls, independent framing vectors, locked graphs, strict Clippy/fmt,
+source-integrity negatives and repository links on the frozen source. Record
+real failures and actual test identities separately from metadata admission.
+
 **C5 lossless evidence storage after C4 source refusal, 2026-11-11 UTC — HOLD:**
 
 Continue draft PR #908 above #901. The committed C4 evidence/Root-maintenance

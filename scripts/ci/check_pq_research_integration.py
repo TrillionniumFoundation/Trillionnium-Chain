@@ -953,6 +953,21 @@ NATIVE_REQUIRED_PATHS |= frozenset((
     "trillionnium/crates/trnm-pon-node/tests/support/root_recovery_v3_fixture.rs",
 ))
 
+# Complete declared content graphs and finite genesis-to-checkpoint state
+# histories are separate readback formats. Their mandatory source presence is
+# not loader completeness, historical provenance or migration authorization.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "docs/security/CONTENT_GRAPH_AND_HISTORY_READBACK_V1.md",
+    "scripts/ci/check_cell_content_graph_vectors_v3.py",
+    "tests/fixtures/cell-content-graph-v3/vectors.json",
+    "trillionnium/crates/trnm-data-availability/src/cell/content_graph_v3.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/content_graph_v3/tests.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/content_commitment_v1/history_v2.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/content_commitment_v1/history_v2/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/migration_history_v2.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/migration_history_v2/tests.rs",
+))
+
 # These are bounded source contracts, not results of a cryptographic audit.
 # In particular, an always-compiled provider is not default chain activation.
 NATIVE_V2_EXPECTED = {

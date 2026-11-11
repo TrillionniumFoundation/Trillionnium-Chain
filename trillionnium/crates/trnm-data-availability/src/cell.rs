@@ -11,6 +11,7 @@ mod bep52_peer;
 mod cache_budget;
 mod cache_wal;
 mod closure;
+mod content_graph_v3;
 mod content_v2;
 mod custody;
 mod delta;
@@ -57,6 +58,14 @@ pub use cache_budget::{CellCacheConfigV4, CellCacheUsageV2};
 pub use closure::{
     CellClosureFileV1, CellFileRoleV1, CellLoaderContextV1, CellReleaseClosureV1,
     MAX_CELL_CLOSURE_BYTES_V1, MAX_CELL_CLOSURE_FILES_V1,
+};
+pub use content_graph_v3::{
+    verify_cell_content_graph_v3, CellContentGraphErrorV3, CellContentGraphLimitsV3,
+    CellContentGraphLinkKindV3, CellContentGraphLinkV3, CellContentGraphNodeObservationV3,
+    CellContentGraphNodeV3, CellContentGraphReadbackV3, CellContentGraphUsageV3,
+    MAX_CELL_CONTENT_GRAPH_DEPTH_V3, MAX_CELL_CONTENT_GRAPH_EDGES_V3,
+    MAX_CELL_CONTENT_GRAPH_NODES_V3, MAX_CELL_CONTENT_GRAPH_NODE_BYTES_V3,
+    MAX_CELL_CONTENT_GRAPH_OBJECTS_V3,
 };
 pub use content_v2::{
     CellContentClosureReadbackV2, CellContentClosureV2, CellContentDependencyV2,
