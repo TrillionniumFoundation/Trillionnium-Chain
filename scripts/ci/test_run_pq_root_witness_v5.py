@@ -10,6 +10,7 @@ import run_pq_root_witness_v5 as runner
 INVENTORIES = (
     ("WITNESS", "fresh-witness", "root_witness_v5_native", 17),
     ("DURABLE", "durable-witness", "root_witness_v5_durable_native", 12),
+    ("PROVIDER_READBACK", "provider-readback", "root_witness_provider_v5_native", 8),
 )
 
 

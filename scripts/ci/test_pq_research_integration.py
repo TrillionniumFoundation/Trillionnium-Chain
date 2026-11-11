@@ -444,6 +444,8 @@ class CorpusGateTests(unittest.TestCase):
             "scripts/ci/test_run_pq_root_witness_v5.py",
             "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs",
             "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/durable.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/provider_readback.rs",
+            "trillionnium/crates/trnm-pon-node/tests/root_witness_provider_v5_native.rs",
             "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_native.rs",
             "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_durable_native.rs",
         )

@@ -54,6 +54,17 @@ DURABLE = (
     'native_durable_witness_v5_root_lost_ack_cold_recovery_does_not_repeat_cas',
 )
 
+PROVIDER_READBACK = (
+    'native_witness_provider_v5_created_and_cold_owners_read_the_same_operation',
+    'native_witness_provider_v5_lost_read_reply_reopens_pending_without_redispatch',
+    'native_witness_provider_v5_unknown_does_not_erase_applied_or_grant_retry',
+    'native_witness_provider_v5_unavailable_or_regressed_witness_prevents_read',
+    'native_witness_provider_v5_regression_during_read_retains_exact_pending_request',
+    'native_witness_provider_v5_provider_roster_cannot_reuse_witness_keys',
+    'native_witness_provider_v5_callback_cannot_replace_budget_or_clear_cancellation',
+    'native_witness_provider_v5_historical_material_and_operation_are_exact',
+)
+
 
 def checked_result(raw: str, expected: tuple[str, ...], returncode: int) -> dict:
     result = _checked_result(raw, expected, returncode)
@@ -67,6 +78,7 @@ def suites():
     for name, target, required, count in (
         ("fresh-witness", "root_witness_v5_native", WITNESS, 17),
         ("durable-witness", "root_witness_v5_durable_native", DURABLE, 12),
+        ("provider-readback", "root_witness_provider_v5_native", PROVIDER_READBACK, 8),
     ):
         if len(required) != count or len(set(required)) != len(required):
             raise ValueError("complete reviewed native witness inventory required: " + name)

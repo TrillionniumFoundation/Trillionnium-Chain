@@ -5,6 +5,7 @@
 //! or retry authority. Its private directory requires trusted administration;
 //! restoring all retained files and all external currentness owners is outside
 //! its guarantee. Root recovery floors are caller pins, not custody evidence.
+use super::witnessed_v5::WitnessedRootOwnerV5;
 use super::{
     digest, map_error, rejected, require, JournalHeadV3, OwnerBudgetV3, RootOwnerResultV3,
     RootOwnerV3, StoreV3,
@@ -234,7 +235,7 @@ impl RootOwnerV3 {
         result
     }
 
-    fn refresh_provider_enrollment(
+    pub(super) fn refresh_provider_enrollment(
         &mut self,
         expected: &ProviderEnrollmentV4,
         budget: &mut OwnerBudgetV3,
@@ -925,10 +926,37 @@ impl ProviderEvidenceJournalV4 {
         transport: &mut impl RootProviderReadbackTransportV4,
         budget: &mut OwnerBudgetV3,
     ) -> RootOwnerResultV3<ProviderEvidenceV4> {
+        self.reconcile_checked(transport, budget, |enrollment, budget| {
+            root.refresh_provider_enrollment(enrollment, budget)
+        })
+    }
+
+    /// Read the same original operation through a required live V5 witness.
+    /// Both sides of the provider callback revalidate the witnessed Root owner;
+    /// no inner V3 owner, static-floor fallback or effect-dispatch API escapes.
+    /// The existing V4 journal and signatures remain declarations, not proof
+    /// that a real external action occurred or that it may be repeated.
+    pub fn reconcile_witnessed_v5(
+        &mut self,
+        root: &mut WitnessedRootOwnerV5,
+        transport: &mut impl RootProviderReadbackTransportV4,
+        budget: &mut OwnerBudgetV3,
+    ) -> RootOwnerResultV3<ProviderEvidenceV4> {
+        self.reconcile_checked(transport, budget, |enrollment, budget| {
+            root.refresh_provider_enrollment_v4(enrollment, budget)
+        })
+    }
+
+    fn reconcile_checked(
+        &mut self,
+        transport: &mut impl RootProviderReadbackTransportV4,
+        budget: &mut OwnerBudgetV3,
+        mut refresh_root: impl FnMut(&ProviderEnrollmentV4, &mut OwnerBudgetV3) -> RootOwnerResultV3<()>,
+    ) -> RootOwnerResultV3<ProviderEvidenceV4> {
         let result = (|| {
             self.check(budget)?;
             let original = budget.identity.clone();
-            root.refresh_provider_enrollment(&self.enrollment, budget)?;
+            refresh_root(&self.enrollment, budget)?;
             let state = self.replay(budget)?;
             // Reserve capacity for both request and response before calling out.
             require(
@@ -947,7 +975,7 @@ impl ProviderEvidenceJournalV4 {
             let response = transport.readback(&request, budget);
             budget.check_identity(&original)?;
             let signed = response?;
-            root.refresh_provider_enrollment(&self.enrollment, budget)?;
+            refresh_root(&self.enrollment, budget)?;
             self.check(budget)?;
             signed.verify(&self.enrollment, &request, budget)?;
             let mut event = vec![2];

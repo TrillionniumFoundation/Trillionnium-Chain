@@ -206,6 +206,48 @@ The live witness client also rejects a lower version or a different root at the
 same version after it has observed a head. That in-memory rule does not survive a
 complete process restart and cannot replace the external durable register.
 
+## Witnessed provider readback
+
+`WitnessedRootOwnerV5::provider_readback_enrollment_v4` and
+`ProviderEvidenceJournalV4::reconcile_witnessed_v5` connect the existing
+historical provider readback to the required live V5 owner. The owner remains
+opaque: no inner V3 owner or optional-witness route is exposed. This adds a
+read-only consumer, not M15 entry, FinalUse, payment or effect dispatch.
+
+Each enrollment lookup first queries the live witness and checks exact agreement
+with the fully replayed local history and original anchor. Only that observation
+can supply the internal recovery floor used by the V4 historical reader. After
+the anchor callback, the complete V5 context is checked again; a changed head or
+unavailable witness fences the owner. A retained static floor cannot replace
+these reads. Provider keys must be disjoint from both the existing retained
+Root/service key history and the provisioned witness roster.
+
+Reconciliation revalidates this witnessed enrollment before and after the
+provider callback under the same original budget. Its request and provider
+receipt retain the original V4 complete operation, material, provider and orphan
+epoch identity. The exact read request is durable before the callback. A lost
+reply, invalid receipt, cancelled/replaced budget or failed later witness check
+leaves that pending read for explicit recovery. The next lookup uses fresh
+challenge entropy for the same historical operation; it does not issue a new
+Root statement, change the original effect attempt or call an effect sink.
+`Unknown` does not erase a previous applied declaration or grant retry authority.
+
+The V4 signed domains and stored journal grammar are unchanged. Existing V4
+callers retain their separate V3-owner contract; the new named V5 entry requires
+V5 freshness throughout its own route. It does not authenticate the provider's
+claim against an actual payment/install system or prove independent physical
+witness custody. Restoring every authority and trust pin remains outside the
+guarantee. These are conditional readback observations, not proof that an
+external action was undone by a SQL rollback.
+
+The separate `root_witness_provider_v5_native` roster defines eight controls for
+created/cold owner readback, lost reply and same-operation recovery, retained
+`Unknown` semantics, pre-call witness unavailability/regression, regression
+during the provider callback, cross-role provider keys, callback budget identity
+and exact historical material. They use real Root SQLite/provider files and PQ
+signatures with an in-process witness fixture. Definitions do not constitute
+native execution evidence or an independent failure-domain deployment.
+
 ## Required evidence and retained limits
 
 The native suite `root_witness_v5_native` uses real PQ signatures for successful
@@ -234,6 +276,7 @@ Validation command on Linux (requires the repository-pinned OpenSSL PQ build):
 cargo test --offline --locked --manifest-path trillionnium/Cargo.toml \
   -p trnm-pon-node --features pq-root-v3 \
   --test root_witness_v5_native --test root_witness_v5_durable_native \
+  --test root_witness_provider_v5_native \
   -- --nocapture --test-threads=1
 ```
 

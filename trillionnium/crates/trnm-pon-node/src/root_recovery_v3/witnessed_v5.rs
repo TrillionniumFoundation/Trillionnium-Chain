@@ -23,6 +23,7 @@ use trnm_release_bundle::root_recovery_v3::{
 };
 
 pub mod durable;
+mod provider_readback;
 
 const ENROLLMENT: &[u8] = b"TRNM/RootWitness/Enrollment/v5\0";
 const BINDING: &[u8] = b"TRNM/RootWitness/Binding/v5\0";

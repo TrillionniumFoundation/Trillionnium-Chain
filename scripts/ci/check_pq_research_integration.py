@@ -891,6 +891,8 @@ NATIVE_REQUIRED_PATHS |= frozenset((
     "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_native.rs",
     "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_durable_native.rs",
     "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/durable.rs",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/provider_readback.rs",
+    "trillionnium/crates/trnm-pon-node/tests/root_witness_provider_v5_native.rs",
     "trillionnium/crates/trnm-pon-node/tests/public_v3_distinct_invalid_work.rs",
     "docs/security/ROOT_WITNESS_V5.md",
     "evidence/pon-w1-lifetime-current-20261111/README.md",

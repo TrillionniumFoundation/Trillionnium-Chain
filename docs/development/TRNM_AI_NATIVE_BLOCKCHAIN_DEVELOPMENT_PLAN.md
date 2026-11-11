@@ -1,3 +1,22 @@
+**V5 witnessed provider readback continuation, 2026-11-11 America/New_York — HOLD:**
+
+Continue #908 C5 `6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d` in an isolated
+candidate. Connect the existing V4 historical provider readback to the required
+live V5 owner without exposing its inner V3 owner. Recheck fresh witness/local
+history/anchor agreement around enrollment reads and on both sides of the
+provider callback; require provider/witness role separation and the same
+original budget. Retain the exact original operation/material identity,
+durable pending read, Unknown/liability semantics and no-redispatch boundary.
+
+The [V5 contract](../security/ROOT_WITNESS_V5.md) describes this bounded read-only
+route. Its eight new native controls are separate from the unchanged seventeen
+V5 and twelve durable-witness controls and from the fourteen V4 provider controls.
+Run exact-source native tests, locked graphs, strict Clippy, formatting and
+source/roster negatives; retain actual failures and do not report test definitions
+as completed runs. The witness fixture is in-process. No M15 effect admission,
+real external effect reconciliation, independent custody, daemon/wire service,
+whole-chain security or production activation is established by this bridge.
+
 **C5 lossless evidence storage after C4 source refusal, 2026-11-11 UTC — HOLD:**
 
 Continue draft PR #908 above #901. The committed C4 evidence/Root-maintenance
