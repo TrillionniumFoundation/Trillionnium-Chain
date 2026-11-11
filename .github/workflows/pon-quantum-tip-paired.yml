@@ -1,0 +1,288 @@
+name: Quantum tip policy and native current-clock observations
+on:
+  push:
+    branches: ['fix/chain-quantum-daa-*']
+  pull_request:
+    paths:
+      - '.github/workflows/pon-quantum-tip-paired.yml'
+      - 'formal/pon-nakamoto-v1/**'
+      - 'trillionnium/crates/trnm-pon-node/**'
+      - 'trillionnium/Cargo.toml'
+      - 'trillionnium/Cargo.lock'
+      - 'rust-toolchain.toml'
+      - 'config/pon/devnet-v1.json'
+      - 'config/pon/joint-consensus-qualification-v1.json'
+      - 'scripts/ci/check_ci_contract.py'
+      - 'scripts/ci/test_ci_contract.py'
+      - 'scripts/ci/ci_job.sh'
+      - 'scripts/ci/verify_ci_source.py'
+      - 'scripts/ci/project_boundary.py'
+      - 'scripts/project-preflight.sh'
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  CI: "true"
+  PYTHONDONTWRITEBYTECODE: "1"
+  CARGO_INCREMENTAL: "0"
+  CARGO_BUILD_JOBS: "2"
+  RUST_TEST_THREADS: "1"
+  CARGO_TERM_COLOR: never
+  RUSTUP_TOOLCHAIN: "1.95.0"
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+jobs:
+  exact-head-observations:
+    # A same-repository quantum continuation is already covered by its push.
+    # Forks and other PR heads still execute; required-baseline is unchanged.
+    if: >-
+      ${{ github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name != github.repository ||
+          !startsWith(github.event.pull_request.head.ref, 'fix/chain-quantum-daa-') }}
+    name: ${{ matrix.lane }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        lane: [quantum-tip-paired, native-current-clock]
+    steps:
+      - name: Initialize external raw observations
+        id: initialize
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/quantum-tip-evidence"
+          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
+          cat > "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" <<'SH'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          qtip_record_name="$1"
+          shift
+          [[ "$qtip_record_name" =~ ^[a-z][a-z0-9-]*$ ]]
+          trap 'qtip_status=$?; printf "%s\n" "$qtip_status" > "$RUNNER_TEMP/quantum-tip-evidence/$qtip_record_name.exit"; exit "$qtip_status"' EXIT
+          printf '%s\0' "$@" > "$RUNNER_TEMP/quantum-tip-evidence/$qtip_record_name.argv"
+          pwd -P > "$RUNNER_TEMP/quantum-tip-evidence/$qtip_record_name.cwd"
+          "$@" 2>&1 | tee "$RUNNER_TEMP/quantum-tip-evidence/$qtip_record_name.log"
+          SH
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          names = ("GITHUB_REPOSITORY", "GITHUB_EVENT_NAME", "GITHUB_SHA", "GITHUB_REF",
+                   "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT", "GITHUB_JOB",
+                   "GITHUB_WORKFLOW_REF", "GITHUB_WORKFLOW_SHA", "TRNM_EXPECTED_SOURCE_SHA")
+          out = Path(os.environ["RUNNER_TEMP"]) / "quantum-tip-evidence"
+          (out / "attempt.json").write_text(json.dumps({
+              "schema": "trnm-quantum-tip-actions-attempt-v1",
+              "environment": {name: os.environ.get(name) for name in names},
+              "scope": "workflow invocation observations; execution results are recorded separately",
+          }, sort_keys=True, indent=2) + "\n")
+          PY
+      - name: Checkout exact candidate
+        id: checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify immutable source identity
+        id: source
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" source-before python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/quantum-tip-evidence/source-before.json"
+      - name: Create local development branch and run project preflight
+        id: preflight
+        if: ${{ !cancelled() && steps.source.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" local-branch git switch -c "fix/chain-quantum-daa-ci-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$GITHUB_JOB" "$TRNM_EXPECTED_SOURCE_SHA"
+          bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" checkout-head git show --no-patch --format=fuller HEAD
+          bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" project-preflight bash scripts/project-preflight.sh
+      - name: Check candidate source inventory and corpus pins
+        id: inventory_and_pins
+        if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" source-inventory python3 scripts/refresh_distributed_source_inventory.py --check
+          bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" corpus-pins python3 scripts/ci/check_pq_research_integration.py
+      - name: Run complete quantum network regression suite
+        id: network_tests
+        if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" network-tests python3 formal/pon-nakamoto-v1/test_quantum_network_sim.py
+      - name: Run complete quantum adversarial regression suite
+        id: adversarial_tests
+        if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" adversarial-tests python3 formal/pon-nakamoto-v1/test_quantum_adversarial_search.py
+      - name: Run complete quantum resource-clock regression suite
+        id: resource_clock_tests
+        if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" resource-clock-tests python3 formal/pon-nakamoto-v1/test_quantum_resource_clock.py
+      - name: Check joint consensus qualification contract
+        id: joint_contract
+        if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" joint-contract python3 formal/pon-nakamoto-v1/joint_consensus_qualification.py --check
+      - name: Run joint qualification refusal regressions
+        id: joint_tests
+        if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" joint-tests python3 formal/pon-nakamoto-v1/test_joint_consensus_qualification.py
+      - name: Run dynamic participation regressions
+        id: participation_tests
+        if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" participation-tests python3 formal/pon-nakamoto-v1/test_dynamic_participation_v1.py
+      - name: Require the explicit unproved-joint-consensus refusal
+        id: qualification_refusal
+        if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" qualification-request python3 formal/pon-nakamoto-v1/joint_consensus_qualification.py --require-qualified
+          qtip_qualification_exit=$?
+          set -e
+          test "$qtip_qualification_exit" -eq 3
+          bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" qualification-refusal-check python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          out = Path(os.environ["RUNNER_TEMP"]) / "quantum-tip-evidence"
+          observed = json.loads((out / "qualification-request.log").read_text())
+          if observed.get("qualification_request") != "REFUSED_UNPROVED_JOINT_CONSENSUS":
+              raise SystemExit("expected explicit unproved-joint-consensus refusal")
+          print("Observed exit 3 and REFUSED_UNPROVED_JOINT_CONSENSUS")
+          PY
+      - name: Check retained CI contract
+        id: ci_contract
+        if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" ci-contract python3 scripts/ci/check_ci_contract.py
+      - name: Run CI contract mutation regressions
+        id: ci_contract_tests
+        if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" ci-contract-tests python3 scripts/ci/test_ci_contract.py
+      - name: Execute all 72 paired policy observations
+        id: paired
+        if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" paired-run python3 formal/pon-nakamoto-v1/quantum_tip_measurement_campaign.py --out "$RUNNER_TEMP/quantum-tip-evidence/paired"
+      - name: Replay every paired trace on the same exact source
+        id: replay
+        if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.paired.outcome == 'success' }}
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" paired-replay python3 formal/pon-nakamoto-v1/quantum_tip_measurement_campaign.py --verify "$RUNNER_TEMP/quantum-tip-evidence/paired"
+      - name: Require 72 complete horizons and exact source binding
+        id: panel_complete
+        if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.replay.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" panel-completeness python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          out = Path(os.environ["RUNNER_TEMP"]) / "quantum-tip-evidence"
+          generated = json.loads((out / "paired-run.log").read_text())
+          replayed = json.loads((out / "paired-replay.log").read_text())
+          report = json.loads((out / "paired/report.json").read_text())
+          identity = json.loads((out / "source-before.json").read_text())
+          observations = report["observations"]
+          complete = sum(row["summary"]["termination"] == "horizon"
+                         and row["summary"]["trace_limit_reached"] is False
+                         for row in observations)
+          if not (len(observations) == complete == 72
+                  and len(report["paired_comparisons"]) == 36
+                  and generated["runs"] == 72 and generated["pairs"] == 36
+                  and generated["complete_horizon_runs"] == 72
+                  and generated["panel_complete"] is True
+                  and replayed["replayed_runs"] == 72 and replayed["pairs"] == 36
+                  and generated["release_ready"] is False
+                  and replayed["release_ready"] is False
+                  and report["source"] == report["source_after"]
+                  and report["source"]["git_head"] == identity["tested_commit"] == os.environ["TRNM_EXPECTED_SOURCE_SHA"]
+                  and report["source"]["tree"] == identity["tested_tree"]
+                  and generated["tested_commit"] == identity["tested_commit"]
+                  and generated["tested_tree"] == identity["tested_tree"]):
+              raise SystemExit("incomplete panel or source binding mismatch")
+          print(json.dumps({"complete_horizon_runs": complete, "pairs": 36,
+                            "tested_commit": identity["tested_commit"],
+                            "tested_tree": identity["tested_tree"],
+                            "native_w1_verified": False, "cp_cg_cq_proved": False,
+                            "release_ready": False}, sort_keys=True))
+          PY
+      - name: Install pinned native compiler and formatting tools
+        id: native_tools
+        if: ${{ !cancelled() && matrix.lane == 'native-current-clock' && steps.preflight.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" rust-install rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" rust-version rustc --version --verbose
+          bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" cargo-version cargo --version
+      - name: Run retained and new native current-clock tests
+        id: native_tests
+        if: ${{ !cancelled() && matrix.lane == 'native-current-clock' && steps.native_tools.outcome == 'success' }}
+        working-directory: trillionnium
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" native-current-clock cargo test --locked -p trnm-pon-node public_growth_v1 -- --nocapture
+      - name: Reject an empty native test selection
+        id: native_selection
+        if: ${{ !cancelled() && matrix.lane == 'native-current-clock' && steps.native_tests.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" native-selection python3 - <<'PY'
+          import os, re
+          from pathlib import Path
+          raw = (Path(os.environ["RUNNER_TEMP"]) / "quantum-tip-evidence/native-current-clock.log").read_text()
+          passed = sum(map(int, re.findall(r"test result: ok\. ([0-9]+) passed;", raw)))
+          required = (
+              "public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work",
+              "public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation",
+          )
+          if passed < len(required):
+              raise SystemExit("native current-clock test selection is incomplete")
+          for name in required:
+              if re.search(r"(?m)^test [^\n]*::" + re.escape(name) + r" \.\.\. ok$", raw) is None:
+                  raise SystemExit("required native regression did not pass: " + name)
+          print("Observed native test passes:", passed, "including both required clock regressions")
+          PY
+      - name: Check native workspace formatting
+        id: native_format
+        if: ${{ !cancelled() && matrix.lane == 'native-current-clock' && steps.native_tools.outcome == 'success' }}
+        working-directory: trillionnium
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" native-format cargo fmt --all -- --check
+      - name: Verify source remained unchanged
+        id: source_after
+        if: always()
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" source-after python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/quantum-tip-evidence/source-after.json"
+      - name: Bind raw observations and step outcomes
+        if: always()
+        env:
+          TRNM_QTIP_STEPS: ${{ toJSON(steps) }}
+          TRNM_QTIP_LANE: ${{ matrix.lane }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          out = Path(os.environ["RUNNER_TEMP"]) / "quantum-tip-evidence"
+          out.mkdir(parents=True, exist_ok=True)
+          files = {}
+          for path in sorted(out.rglob("*")):
+              if path.is_file() and path.name != "execution-manifest.json":
+                  raw = path.read_bytes()
+                  files[path.relative_to(out).as_posix()] = {
+                      "bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest()}
+          manifest = {
+              "schema": "trnm-quantum-tip-actions-artifacts-v1",
+              "expected_head": os.environ["TRNM_EXPECTED_SOURCE_SHA"],
+              "lane": os.environ["TRNM_QTIP_LANE"],
+              "steps": json.loads(os.environ["TRNM_QTIP_STEPS"]),
+              "files": files,
+              "scope": "raw workflow observations; no native/quantum consensus qualification",
+          }
+          (out / "execution-manifest.json").write_text(json.dumps(
+              manifest, sort_keys=True, indent=2) + "\n")
+          PY
+      - name: Retain exact-head observations including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: quantum-tip-${{ matrix.lane }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/quantum-tip-evidence/
+          if-no-files-found: error
+          retention-days: 30
