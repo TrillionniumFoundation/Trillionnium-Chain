@@ -1065,7 +1065,7 @@
     "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/storage.rs": "2449be51c9a74b1e3f4eda3bd2c8adb44e80ee3646ff0d02cf9faae59a83a356",
     "trillionnium/crates/trnm-pon-node/tests/recovery_floor_v4_native.rs": "3616d905976853c2a6a8d7b7b98db156b653d056f9f170f77454ce3b66602fe1",
     "trillionnium/crates/trnm-pon-node/tests/root_budget_v4_native.rs": "adff3dee63a81b67256bf8d97ca92d8a470a0a741bb82a8b110206f2cdf0305a",
-    "trillionnium/crates/trnm-pon-node/tests/root_effect_readback_v4_native.rs": "c688290ca1f1e0df2963a7f43be7db9eb7b1028305d3bfc630bc2a500b2c150b",
+    "trillionnium/crates/trnm-pon-node/tests/root_effect_readback_v4_native.rs": "2a129af69dfc81e8e0a03973d0c4a76f151b4bb44c0be5e60a365c9680887ed9",
     "trillionnium/crates/trnm-pon-node/tests/root_recovery_v3_native.rs": "3e0cc6d167ba846193a1fd06b079333c104168529fc20a611468a6ac8c2e8cea",
     "trillionnium/crates/trnm-pon-node/tests/support/root_recovery_v3_fixture.rs": "6d0570da659dd93df86f6239814b67178c47afe4dc05f14f38209db582c9a400",
     "trillionnium/crates/trnm-protocol/Cargo.toml": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc",

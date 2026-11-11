@@ -59,7 +59,7 @@ class LifetimeLedgerTests(unittest.TestCase):
 
     def test_project_unknowns_do_not_produce_a_target_or_qualification(self):
         result = ledger.make_report(ledger.template(), ROOT)
-        fixture = ROOT / "evidence/pon-w1-lifetime-current-20261109/project-report.json"
+        fixture = ROOT / "evidence/pon-w1-lifetime-current-20261111/project-report.json"
         self.assertEqual((json.dumps(result, indent=2, sort_keys=True, allow_nan=False)
                           + "\n").encode(), fixture.read_bytes())
         budget = result["lifetime_ledger"]
@@ -268,6 +268,17 @@ class LifetimeLedgerTests(unittest.TestCase):
         with self.assertRaises(ledger.LedgerError) as refused:
             ledger.source_survey(sources)
         self.assertEqual(str(refused.exception), "source identity mismatch: " + lock)
+        # The former source survey remains historical evidence. Its real
+        # consensus bytes cannot stand in for the reviewed current checkpoint.
+        consensus = "trillionnium/crates/trnm-pon-node/src/consensus.rs"
+        historical_consensus = git_blob("189b9b5959d836ef6ae96e14fb285948e4920aa9", consensus)
+        self.assertEqual(hashlib.sha256(historical_consensus).hexdigest(),
+                         "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62")
+        sources = dict(self.sources)
+        sources[consensus] = historical_consensus
+        with self.assertRaises(ledger.LedgerError) as refused:
+            ledger.source_survey(sources)
+        self.assertEqual(str(refused.exception), "source identity mismatch: " + consensus)
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "trillionnium").symlink_to(ROOT / "trillionnium", target_is_directory=True)

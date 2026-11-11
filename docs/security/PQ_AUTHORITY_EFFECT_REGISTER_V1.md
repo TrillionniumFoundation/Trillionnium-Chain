@@ -4,7 +4,7 @@
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
 routes to the current reviewed source
-`893738947a50dc42819b56e632192de4f9f24fa0`. The
+`ef6df12a042912664df64f2112c2b1c600dce9fa`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -15,8 +15,8 @@ The original register closed a source-recording gap in the earlier
 [cryptographic surface inventory](PQ_AUTHORITY_SURFACE_AUDIT_20261031.md): a
 classic transfer type is not interchangeable with the native account owner, and
 a signature, context comparison, downloaded artifact or certificate observation
-must not be recorded as a different downstream permission. No newly established
-classical bypass of a PQ owner is claimed.
+must not be recorded as a different downstream permission. That original source
+inventory did not itself establish a classical bypass of a PQ owner.
 
 ## The seven bounded routes
 
@@ -68,9 +68,52 @@ The portable consumption settlement store is separately scoped. Substituting
 for its bilateral authorization and durable state sources is refused by this
 register. Those additional owners still require their own qualification work.
 
-## Current cache close-policy mapping, 2026-11-09
+## Current account-selector mapping, 2026-11-11
 
-The active source map uses the exact 44 regular-file blobs from checkpoint
+The active source map uses the exact 44 regular-file blobs from published
+runtime checkpoint `ef6df12a042912664df64f2112c2b1c600dce9fa`, tree
+`5e89951169fe2d5ef7418c3dc23984babda172ce`. Each of those 44 blobs is identical
+at the later metadata candidate `1f82449191360bd26313fd716de361f1d52bc813`.
+This binding follow-up does not claim its revised manifest, reader constants,
+tests or documentation were already present in the runtime checkpoint.
+
+Forty-three individual pins retain the prior cache close-policy values. The
+only changed curated source is
+[`pon_executor.rs`](../../trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs):
+
+```text
+prior:    e920bccd04d4ef884b9f870515534c036025b0294fce46ea546b40526238d72a
+reviewed: 11b3aa9238c71996c883232cb741a20c783912e852117462299edc28236fc718
+```
+
+The reviewed runtime now treats every present `account_authorization_profile`
+selector as excluding the classical route, and requires the selector to be
+absent when no native account owner is available. This source lock records
+that version; checking it does not execute native account tests. The active
+canonical table digest, including the runtime checkpoint revision, is:
+
+```text
+44da90841315a63b1c61602bbd67c0200589bbcccaa839e886aa8e94275db595
+```
+
+The unchanged prior register refused `pon_executor.rs` in the actual
+[repository-truth job](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42937708694/job/130251772234)
+on `1f82449191360bd26313fd716de361f1d52bc813`. Its 18-method suite reported
+28 failures and three errors while consuming the stale source lock; that
+failure remains a prior observation. The existing suite updates its independent
+positive revision assertion and rejects the prior `8937389` revision in the
+existing stale-context control. The checker logic and source reader are
+unchanged; only the reviewed revision and aggregate lock constants are rebound.
+
+The seven routes, 44-path roster, profile boundaries, effect scopes and false
+qualification fields remain unchanged. `ingress/pq_network.rs`, the TLS child
+modules, Root recovery sources and the new account-profile test file remain
+outside this curated source set. Their separate changes do not expand this
+register into complete authority coverage or runtime qualification.
+
+## Retained cache close-policy mapping, 2026-11-09
+
+That source map used the exact 44 regular-file blobs from checkpoint
 `893738947a50dc42819b56e632192de4f9f24fa0`, tree
 `78945356aa750db9a85e96ffa5ee64249d38a1c2`. The checkpoint contains the two-file
 cache close-policy repair and the sole plan update. This binding follow-up
@@ -97,7 +140,7 @@ extracts `prevent_close_checkpoint` from the existing configuration sequence;
 the curated 44-path set. Its use does not make that set a complete dependency
 closure or change the discovery route's cache-only effect scope.
 
-The active canonical table digest, including the new checkpoint revision, is:
+That canonical table digest, including its checkpoint revision, was:
 
 ```text
 a3c5483479d5217c13946e173e4103316069eb42b43c335c6f7b44e783b73f1c

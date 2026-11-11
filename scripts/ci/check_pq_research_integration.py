@@ -631,12 +631,22 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "evidence/pon-w1-lifetime-current-20261109/project-input.json",
     "evidence/pon-w1-lifetime-current-20261109/project-report.json",
     "evidence/pon-w1-lifetime-current-20261109/README.md",
+    "evidence/pon-w1-lifetime-current-20261111/project-input.json",
+    "evidence/pon-w1-lifetime-current-20261111/project-report.json",
+    "evidence/pon-w1-lifetime-current-20261111/README.md",
     "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
     "scripts/w1_qrom_semantics_audit.py",
     "scripts/ci/test_w1_qrom_semantics_audit.py",
     "evidence/pon-w1-qrom-semantics-20261107/report.json",
     "evidence/pon-w1-qrom-semantics-current-20261109/report.json",
     "evidence/pon-w1-qrom-semantics-current-20261109/README.md",
+))
+# Historical fixture controls must retain the original exact source contract.
+# Their success does not accept the current worktree as that historical source.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "scripts/w1_qrom_implementation_audit.py",
+    "scripts/ci/test_w1_qrom_implementation_audit.py",
+    "config/pon/w1-qrom-implementation-v1.json",
 ))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((

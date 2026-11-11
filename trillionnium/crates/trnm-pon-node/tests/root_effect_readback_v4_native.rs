@@ -647,8 +647,7 @@ fn native_provider_v4_live_session_refuses_complete_record_rollback() {
     let mut transport = Transport::new(&ready.path);
     let error = journal
         .reconcile(&mut ready.root, &mut transport, &mut owner_budget())
-        .err()
-        .expect("an open session must reject a valid-prefix rollback");
+        .expect_err("an open session must reject a valid-prefix rollback");
     assert!(error
         .to_string()
         .contains("ROOT_PROVIDER_SESSION_HISTORY_CHANGED"));
@@ -695,8 +694,7 @@ fn native_provider_v4_live_session_refuses_same_length_history_substitution() {
     fs::write(&ready.path, &alternative_bytes).unwrap();
     let error = journal
         .evidence(&mut owner_budget())
-        .err()
-        .expect("length equality cannot replace the session's exact history");
+        .expect_err("length equality cannot replace the session's exact history");
     assert!(error
         .to_string()
         .contains("ROOT_PROVIDER_SESSION_HISTORY_CHANGED"));

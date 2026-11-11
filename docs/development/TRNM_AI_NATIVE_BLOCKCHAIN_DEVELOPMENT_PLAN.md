@@ -11592,3 +11592,31 @@ security, and applicable lifetime reductions/query bounds remain unclosed.
 The fixed-context complete reversible W1 oracle exists; it is not a quantum
 mining safety proof. All actual lifetime bounds remain null and production
 activation and whole-chain PQ qualification remain false.
+
+### 2026-11-11 retain exact execution failures and repair stale source controls
+
+Preserve the published runtime checkpoint
+`ef6df12a042912664df64f2112c2b1c600dce9fa` and metadata checkpoint
+`1f82449191360bd26313fd716de361f1d52bc813` as distinct observation identities.
+The latter's fresh, empty-target account builds executed thirteen passing
+lane/test cases: the four selector controls in both default and all-features
+lanes, plus five existing account/service controls. Preserve the original
+two-pass/two-fail default-lane counterexample, interrupted Node builds and the
+copied-cache provenance limitation separately. A later child does not inherit
+these native execution identities.
+
+Repair the two strict-Clippy test-expression errors without changing Root
+runtime logic or refusing fewer histories. Rebind the authority-effect
+register's forty-four selected paths to the real runtime checkpoint after
+checking every old and new blob; only the account executor pin changes.
+Rebind the W1 lifetime survey's twenty selected paths after checking the
+test-only consensus change. Preserve the prior reports, original source-lock
+failures, numerical unknowns and closed qualification flags.
+
+Correct the historical W1 implementation tests to construct their positive
+fixture from the original contract's exact Git blobs. Missing objects, changed
+lengths and changed digests must fail; negative controls must identify the
+intended mutated path. Keep the historical contract and its 9,233-byte verifier
+source bound unchanged. The current tree's rejection by that historical
+contract and the corresponding hosted workflow blockage remain explicit;
+the separate current-v2 mapping does not make the old invocation pass.

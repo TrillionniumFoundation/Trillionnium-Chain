@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-"""Fixed-source and actual saved-v2 metadata controls, not fresh proof trials."""
+"""Historical fixed-source and saved-v2 controls, not current-source proof trials."""
 from __future__ import annotations
 
 from contextlib import redirect_stderr
 import copy
+import hashlib
 import io
 import json
+import os
 from pathlib import Path
-import shutil
+import re
 import struct
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -20,13 +23,52 @@ import w1_control_tree_audit as control
 import w1_profile_source_map as profile
 
 
+def historical_project_file(commit, row):
+    """Read the contract's existing Git blob; missing objects never fall back."""
+    audit.require(type(commit) is str and re.fullmatch(r'[0-9a-f]{40}', commit),
+                  'historical source commit identity')
+    size, path = row['bytes'], row['path']
+    audit.require(type(size) is int and 0 < size <= 2 * 1024 * 1024,
+                  'historical source byte bound: ' + path)
+    environment = dict(os.environ, GIT_NO_LAZY_FETCH='1')
+
+    def git(*args):
+        return subprocess.check_output(['git', '--no-replace-objects', *args],
+                                       cwd=audit.ROOT, env=environment,
+                                       stderr=subprocess.PIPE, timeout=15)
+
+    entry = git('ls-tree', '-z', commit, '--', path)
+    audit.require(entry.endswith(b'\0') and entry.count(b'\0') == 1,
+                  'one historical source entry required: ' + path)
+    header, separator, name = entry[:-1].partition(b'\t')
+    fields = header.split()
+    audit.require(separator and name == path.encode() and len(fields) == 3
+                  and fields[0] in (b'100644', b'100755') and fields[1] == b'blob'
+                  and re.fullmatch(rb'[0-9a-f]{40}', fields[2]),
+                  'historical source is not a regular Git blob: ' + path)
+    object_id = fields[2].decode()
+    audit.require(git('cat-file', '-t', object_id) == b'blob\n',
+                  'historical source object type: ' + path)
+    audit.require(git('cat-file', '-s', object_id) == str(size).encode() + b'\n',
+                  'historical source exact size: ' + path)
+    raw = git('cat-file', 'blob', object_id)
+    audit.require(len(raw) == size and hashlib.sha256(raw).hexdigest() == row['sha256'],
+                  'historical source exact digest: ' + path)
+    return raw
+
+
 class ImplementationAuditTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.contract, _ = audit.load_contract(audit.ROOT)
+        cls.contract, contract_raw = audit.load_contract(audit.ROOT)
+        project = {row['path']: historical_project_file(cls.contract['source_base_commit'], row)
+                   for row in cls.contract['project_files']}
+        helpers = audit.load_pinned_files(audit.ROOT, cls.contract['audit_helpers'])
         cls.assets = audit.load_pinned_files(audit.ROOT, cls.contract['saved_v2_files'])
         row = cls.contract['upstream_snapshot']
         snapshot = audit.load_pinned_files(audit.ROOT, [row])[row['path']]
+        cls.fixture = {audit.CONTRACT: contract_raw, row['path']: snapshot,
+                       **project, **helpers, **cls.assets}
         cls.sources, _ = audit.load_snapshot(snapshot, audit.UPSTREAM)
         cls.tree = control.audit_sources(cls.sources)
         cls.branch = cls.tree['final_join']['merkle_path']
@@ -37,13 +79,11 @@ class ImplementationAuditTests(unittest.TestCase):
         self.root = Path(self.tmp.name)
 
     def copy_contract_inputs(self):
-        paths = [audit.CONTRACT, self.contract['upstream_snapshot']['path']]
-        paths += [row['path'] for row in self.contract['project_files'] + self.contract['saved_v2_files']
-                  + self.contract['audit_helpers']]
-        for relative in paths:
+        for relative, raw in self.fixture.items():
             target = self.root / relative
             target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(audit.ROOT / relative, target)
+            with target.open('xb') as stream:
+                stream.write(raw)
 
     def changed_receipt(self, offset, data):
         assets = dict(self.assets)
@@ -53,7 +93,9 @@ class ImplementationAuditTests(unittest.TestCase):
         return assets
 
     def test_actual_saved_v2_mapping_keeps_all_security_claims_unqualified(self):
-        report = audit.build_report(audit.ROOT)
+        self.copy_contract_inputs()
+        report = audit.build_report(self.root)
+        self.assertEqual(report['source_base_commit'], self.contract['source_base_commit'])
         self.assertEqual(report['result'], 'MAPPING_REPRODUCED_SECURITY_HOLD')
         self.assertEqual(report['qualification'], audit.QUALIFICATION)
         self.assertEqual(report['saved_v2']['historical_rv32im_segments'], 43)
@@ -69,13 +111,28 @@ class ImplementationAuditTests(unittest.TestCase):
         self.assertIsNone(report['field']['uniform_bit_oracle_sigma_justified'])
         self.assertTrue(all(v is None for k, v in report['lifetime_budget'].items() if k != 'policy_adopted'))
         self.assertTrue(all(row['state'] == 'UNRESOLVED' for row in report['open_obligations']))
+        # Historical fixture success must not relabel the real current-source
+        # v1 invocation. Its exact 9,233-byte source contract is still refused.
+        with self.assertRaisesRegex(audit.AuditError, '^' + re.escape(
+                'input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs') + '$'):
+            audit.build_report(audit.ROOT)
 
     def test_changed_native_source_is_refused_before_mapping(self):
         self.copy_contract_inputs()
-        target = self.root / 'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs'
-        target.write_bytes(target.read_bytes() + b'\n// changed\n')
-        with self.assertRaisesRegex(audit.AuditError, 'input exceeds bound|pinned input drift'):
-            audit.build_report(self.root)
+        path = 'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs'
+        target = self.root / path
+        original = target.read_bytes()
+        tail_changed = original[:-1] + bytes([original[-1] ^ 1])
+        for changed, reason in ((original + b'\n// changed\n', 'input exceeds bound: '),
+                                (tail_changed, 'pinned input drift: ')):
+            with self.subTest(reason=reason):
+                target.write_bytes(changed)
+                with self.assertRaisesRegex(audit.AuditError, '^' + re.escape(reason + path) + '$'):
+                    audit.build_report(self.root)
+        # An absent historical object must not be replaced by the current file.
+        row = next(row for row in self.contract['project_files'] if row['path'] == path)
+        with self.assertRaises(subprocess.CalledProcessError):
+            historical_project_file('0' * 40, row)
 
     def test_changed_audit_helper_is_refused_before_execution(self):
         self.copy_contract_inputs()
@@ -83,7 +140,8 @@ class ImplementationAuditTests(unittest.TestCase):
             target = self.root / row['path']
             original = target.read_bytes()
             target.write_bytes(original + b'\n# changed helper\n')
-            with self.assertRaisesRegex(audit.AuditError, 'input exceeds bound|pinned input drift'):
+            with self.assertRaisesRegex(audit.AuditError, '^' + re.escape(
+                    'input exceeds bound: ' + row['path']) + '$'):
                 audit.build_report(self.root)
             target.write_bytes(original)
 
@@ -103,7 +161,8 @@ class ImplementationAuditTests(unittest.TestCase):
         data = bytearray(target.read_bytes())
         data[12000] ^= 1
         target.write_bytes(data)
-        with self.assertRaisesRegex(audit.AuditError, 'pinned input drift'):
+        with self.assertRaisesRegex(audit.AuditError, '^' + re.escape(
+                'pinned input drift: ' + audit.FIXTURE + 'succinct.bin') + '$'):
             audit.build_report(self.root)
 
     def test_contract_cannot_promote_unknown_quantum_budget_or_qualification(self):
@@ -122,7 +181,8 @@ class ImplementationAuditTests(unittest.TestCase):
         data = bytearray(target.read_bytes())
         data[len(data) // 2] ^= 1
         target.write_bytes(data)
-        with self.assertRaisesRegex(audit.AuditError, 'pinned input drift'):
+        with self.assertRaisesRegex(audit.AuditError, '^' + re.escape(
+                'pinned input drift: ' + self.contract['upstream_snapshot']['path']) + '$'):
             audit.build_report(self.root)
 
     def test_parent_directory_symlink_is_refused(self):
