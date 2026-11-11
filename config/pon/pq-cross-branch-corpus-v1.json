@@ -146,7 +146,7 @@
     ".github/workflows/pon-branch-encoding-acceptance.yml": "8d8295d8a1117dcd8bff9858f4cb0c80c917ad81",
     ".github/workflows/pon-history-stage-diagnostic.yml": "88b0ed45d65aff17d5cf5e0e14f7516efee24746",
     ".github/workflows/pon-legacy-reorg-cost-20261104.yml": "c58bf49b7be97e747314e2814fa5c4cc9295e891",
-    ".github/workflows/pon-next-architecture-security.yml": "27adab1aa9913d811d9bb1fb549589a0a95b6965",
+    ".github/workflows/pon-next-architecture-security.yml": "1817582239c9aecaaa66d40f0dfcaedeed252043",
     ".github/workflows/pon-original-workspace-large-state-cpu.yml": "5092acc212fd3429d607276a53f0b7d7097e774e",
     ".github/workflows/pon-pq-system-continuation.yml": "1e0af151589959f49841a6f051633a7eb7497fb1",
     ".github/workflows/pon-recent-batch-acceptance.yml": "4f863aa86694735aceac19542c2cc825010e36f8",
