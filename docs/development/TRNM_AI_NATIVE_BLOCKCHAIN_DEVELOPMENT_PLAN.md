@@ -1,3 +1,21 @@
+**W1 specialized arithmetic and winner-only proofs, 2026-11-11 America/New_York — HOLD:**
+
+Continue the fixed #908 source `6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d` in an
+isolated task branch. The [zero-paired lazy contract](../research/PON_W1_ZERO_PAIRED_LAZY_V1.md)
+combines the existing complete 152,832-product zero transcript schedule with
+winner-only proof construction. Preserve the old producer, all 512 transcript
+tiles, original target/canonical refusals and full production/reference
+verification. The five fixed arms include the original eager producer and
+sparse-prepared FullLimb eager/lazy controls. Six registered shards retain eight
+samples, every miss/exhaustion, actual preparation, complete begin/finish
+observations and all source/binary/process costs. The reader and source pins must
+refuse missing or contradictory observations. A successful component run is an
+achievable legal strategy cost, never an attacker lower bound, task-demand proof,
+current admission, receiver-service qualification or production activation.
+Record this candidate's own exact-source results; previous evidence is not its
+native execution receipt. All existing failed observations and all-algorithm,
+hardware, ownership and joint DAA/chainwork obligations remain intact.
+
 **C5 lossless evidence storage after C4 source refusal, 2026-11-11 UTC — HOLD:**
 
 Continue draft PR #908 above #901. The committed C4 evidence/Root-maintenance
