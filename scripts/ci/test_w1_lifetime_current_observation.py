@@ -71,6 +71,10 @@ class CurrentLifetimeObservationTests(unittest.TestCase):
                    if row['historical_sha256'] != row['current_sha256']]
         self.assertEqual(changed, list(current.CHANGED))
         self.assertEqual(len(self.sources), 20)
+        lock = next(row for row in self.contract['sources'] if row['path'] == 'trillionnium/Cargo.lock')
+        self.assertEqual(lock['bytes'], 40564)
+        self.assertEqual(lock['historical_sha256'], '05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c')
+        self.assertEqual(lock['current_sha256'], '9e553749f03f3a849af9562d1a62f20181c6ce3594c99283eaadecb918f4a25e')
         self.assertEqual(self.contract['sources'][7]['current_sha256'],
                          '108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554')
         self.assertEqual(self.contract['sources'][7]['historical_sha256'],
@@ -94,23 +98,26 @@ class CurrentLifetimeObservationTests(unittest.TestCase):
             current.report(self.root, raw)
 
     def test_store_source_mutation_is_refused(self):
-        path = self.root / current.CHANGED[0]
+        path = self.root / 'trillionnium/crates/trnm-pon-node/src/store.rs'
         path.write_bytes(path.read_bytes() + b'\n')
         with self.assertRaises(ValueError):
             current.report(self.root)
 
     def test_other_selected_source_mutation_is_refused(self):
-        path = self.root / 'trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs'
-        path.write_bytes(path.read_bytes() + b'\n')
-        with self.assertRaises(ValueError):
-            current.report(self.root)
+        for name in ('trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs', 'trillionnium/Cargo.lock'):
+            path = self.root / name
+            original = path.read_bytes()
+            path.write_bytes(original + b'\n')
+            with self.assertRaises(ValueError):
+                current.report(self.root)
+            path.write_bytes(original)
 
     def test_source_and_manifest_changed_together_do_not_repin_the_reader(self):
-        path = self.root / current.CHANGED[0]
+        path = self.root / 'trillionnium/crates/trnm-pon-node/src/store.rs'
         data = path.read_bytes() + b'\n'
         path.write_bytes(data)
         contract = deepcopy(self.contract)
-        row = next(row for row in contract['sources'] if row['path'] == current.CHANGED[0])
+        row = next(row for row in contract['sources'] if row['path'] == 'trillionnium/crates/trnm-pon-node/src/store.rs')
         row.update(bytes=len(data), current_sha256=hashlib.sha256(data).hexdigest())
         (self.root / current.CONTRACT).write_text(json.dumps(contract))
         with self.assertRaisesRegex(ValueError, 'unreviewed current source contract'):
@@ -123,7 +130,7 @@ class CurrentLifetimeObservationTests(unittest.TestCase):
             current.report(self.root)
 
     def test_missing_file_and_symlink_do_not_count_as_source_observations(self):
-        path = self.root / current.CHANGED[0]
+        path = self.root / 'trillionnium/crates/trnm-pon-node/src/store.rs'
         path.unlink()
         with self.assertRaises(OSError):
             current.report(self.root)

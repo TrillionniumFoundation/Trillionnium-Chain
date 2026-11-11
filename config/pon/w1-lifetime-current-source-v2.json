@@ -1,5 +1,6 @@
 {
   "changed_paths": [
+    "trillionnium/Cargo.lock",
     "trillionnium/crates/trnm-pon-node/src/store.rs"
   ],
   "historical_reader": {
@@ -17,7 +18,7 @@
   },
   "schema": "TRNM-W1-LIFETIME-CURRENT-SOURCE-CONTRACT2",
   "selected_source_scope": "20_selected_paths_not_full_dependency_or_execution_closure",
-  "source_base_commit": "3898582a321471fc2a6945b37ff4d0cd58c7a255",
+  "source_base_commit": "f6edf2d549ab2a6b83bda3945daf71aa0b025c80",
   "sources": [
     {
       "bytes": 924,
@@ -26,8 +27,8 @@
       "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml"
     },
     {
-      "bytes": 40332,
-      "current_sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+      "bytes": 40564,
+      "current_sha256": "9e553749f03f3a849af9562d1a62f20181c6ce3594c99283eaadecb918f4a25e",
       "historical_sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
       "path": "trillionnium/Cargo.lock"
     },
