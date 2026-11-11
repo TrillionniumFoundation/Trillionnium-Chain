@@ -1,6 +1,6 @@
 {
   "schema": "trnm-pq-authority-effects-v1",
-  "source_revision": "f2375a08f4458f842b96d30215adcd5380270f1d",
+  "source_revision": "4b653a74302a17264d5b9b60c67b348f6eb15551",
   "purpose": "curated-source-consistency-only",
   "coverage_complete": false,
   "whole_chain_pq_qualified": false,
@@ -199,7 +199,7 @@
     "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs": "e01a83b518933310f16f19b4dae63f00813e4244975e4a4805a918bc87145554",
     "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs": "97b0d3392d922bc2a5f62f38204a4b0157f49029dd61759ce69611867fc2d0b3",
     "trillionnium/crates/trnm-data-availability/src/cell/network.rs": "45b50bff63873c4897fca011fc009b229af618d5cc9e0cd8dcc14da5387d97db",
-    "trillionnium/crates/trnm-data-availability/src/cell/store.rs": "b3f1f62fcc984ffdbdbb8118dc6df8094bc62fba57fcde109a32133a62b54330",
+    "trillionnium/crates/trnm-data-availability/src/cell/store.rs": "7de45d5689d5f4f094bae786cea4c846a819ae9cbc4bfe26a7f9ba445bdf8b5d",
     "trillionnium/crates/trnm-data-availability/src/types.rs": "9251274c47edc1ddc5fef34c0130f5341d6977681a4e07c2eab89a235c6d55f1",
     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": "30c367d0a8e9c7339f26b00606d9cd8bf3e34dd801ff23875c4c0b9ae5c24c2c",
     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts.rs": "1254678a5f4db4b7b7e6aa7c97bc6c6baca74cb663b65acc1593f4786f7287c5",
