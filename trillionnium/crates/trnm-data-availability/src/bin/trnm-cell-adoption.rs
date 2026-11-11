@@ -9,6 +9,7 @@ init
 status
 observe --candidate TCV1 [--parent-commitment HEX64] [--evidence-file JSON]
 decide --request-id HEX32 --expected-snapshot FLOOR_JSON --action adopt|defer|retain|rollback --version-commitment HEX64 --local-review HEX64
+retain-proposal --request-id HEX32 --expected-snapshot FLOOR_JSON --proposal-commitment HEX64 --proposal-parent HEX64 --proposal-evidence HEX64 --local-review HEX64
 verify-selected --candidate TCV1 --expected-snapshot FLOOR_JSON --execution-file CURRENT_OPERATOR_JSON --cache EXISTING_TCL4_DB --read-ms N
 HEX32 and HEX64 mean exactly 32 and 64 bytes in lowercase hexadecimal.
 Policy JSON schema trnm.cell.adoption.policy.v1 requires node_id, policy_id, scope,
@@ -30,6 +31,10 @@ an independent owner/custody path before relying on its rollback-detection bound
 Floor files inside the database directory are refused. Different paths alone do not
 establish independent custody; restoring an old database and floor together is unsafe.
 Init selects nothing; observe never adopts. Decisions require an explicit local review.
+Retain-proposal keeps the selected parent while binding a separately observed direct
+child proposal and its exact evidence reference. Preserve the complete original
+request for cold-recovery retry; the stored review commitment cannot recover it.
+This records a local choice, not a training NoUpdate or verified model improvement.
 An old request may replay a historical receipt: recovery_floor always describes the
 current observed journal. Verification scans actual cached bytes under the choice guard.
 No command changes the policy, software, consensus, fees or Root; no command grants
@@ -69,9 +74,10 @@ mod unix {
     use serde_json::{json, Value};
     use trnm_data_availability::cell::{
         CellAdoptionActionV1, CellAdoptionOwnerV1, CellAdoptionPolicyV1, CellAdoptionReceiptV1,
-        CellAdoptionSnapshotV1, CellCandidateEvidenceV1, CellExecutionBoundaryV1, CellFileRoleV1,
-        CellLoaderContextV1, CellModelUpdateBoundaryV1, CellReleaseClosureV1, CellReleaseLimitsV1,
-        CellStoreV1, CellVersionLoaderContextV1, CellVersionManifestV1, MAX_CELL_VERSION_BYTES_V1,
+        CellAdoptionSnapshotV1, CellCandidateEvidenceV1, CellCandidateObservationV1,
+        CellExecutionBoundaryV1, CellFileRoleV1, CellLoaderContextV1, CellModelUpdateBoundaryV1,
+        CellReleaseClosureV1, CellReleaseLimitsV1, CellStoreV1, CellVersionLoaderContextV1,
+        CellVersionManifestV1, MAX_CELL_VERSION_BYTES_V1,
     };
 
     type Result<T> = std::result::Result<T, Box<dyn Error>>;
@@ -86,7 +92,7 @@ mod unix {
         let command = values[0].as_str();
         if !matches!(
             command,
-            "init" | "status" | "observe" | "decide" | "verify-selected"
+            "init" | "status" | "observe" | "decide" | "retain-proposal" | "verify-selected"
         ) {
             return Err(invalid("unknown local adoption command; use --help"));
         }
@@ -110,6 +116,7 @@ mod unix {
             }
             "observe" => observe(args, &common)?,
             "decide" => decide(args, &common)?,
+            "retain-proposal" => retain_proposal(args, &common)?,
             "verify-selected" => verify(args, &common, started)?,
             _ => unreachable!(),
         };
@@ -183,6 +190,41 @@ mod unix {
         // A reconciled request can return an older receipt. The exported floor
         // must be the current journal observation, never that receipt's after.
         Ok(output("decide", &owner.snapshot()?, receipt_json(&receipt)))
+    }
+
+    fn retain_proposal(mut args: Args<'_>, common: &Common) -> Result<Value> {
+        let request = parse_hex::<32>(args.take("--request-id")?)?;
+        let expected_path = args.path("--expected-snapshot")?;
+        let proposal = CellCandidateObservationV1 {
+            candidate: parse_hex::<64>(args.take("--proposal-commitment")?)?,
+            parent: Some(parse_hex::<64>(args.take("--proposal-parent")?)?),
+            evidence: parse_hex::<64>(args.take("--proposal-evidence")?)?,
+        };
+        let review = parse_hex::<64>(args.take("--local-review")?)?;
+        args.finish()?;
+        let setup = common.setup()?;
+        let expected = common.read_floor(&expected_path)?;
+        let mut owner = common.open(&setup.policy)?;
+        let receipt = owner.retain_proposal(request, &expected, &proposal, review)?;
+        let proposal = receipt.proposal();
+        Ok(output(
+            "retain-proposal",
+            &owner.snapshot()?,
+            json!({
+                "schema": "trnm.cell.proposal-retention.v1",
+                "proposal": {
+                    "candidate": hex(&proposal.candidate),
+                    "parent": proposal.parent.map(|value| hex(&value)),
+                    "evidence_reference_commitment": hex(&proposal.evidence)
+                },
+                "local_review": hex(&receipt.local_review_commitment()),
+                "retention": receipt_json(receipt.retention_receipt()),
+                "original_request_required_for_typed_retry": true,
+                "historical_typed_validation_attested": false,
+                "training_no_update_inferred": false,
+                "proposal_quality_verified": false
+            }),
+        ))
     }
 
     fn verify(mut args: Args<'_>, common: &Common, started: Instant) -> Result<Value> {

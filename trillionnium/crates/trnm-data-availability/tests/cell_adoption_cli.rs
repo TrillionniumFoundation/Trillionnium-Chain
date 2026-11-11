@@ -179,6 +179,35 @@ impl Fixture {
         command
     }
 
+    fn retain_proposal(
+        &self,
+        floor: &Path,
+        expected: &Path,
+        request: u8,
+        observation: &Value,
+        review: u8,
+    ) -> Command {
+        let mut command = self.command("retain-proposal", Some(floor));
+        command
+            .arg("--expected-snapshot")
+            .arg(expected)
+            .arg("--request-id")
+            .arg(hex(&[request; 32]))
+            .arg("--proposal-commitment")
+            .arg(observation["candidate"].as_str().unwrap())
+            .arg("--proposal-parent")
+            .arg(observation["parent"].as_str().unwrap())
+            .arg("--proposal-evidence")
+            .arg(
+                observation["evidence_reference_commitment"]
+                    .as_str()
+                    .unwrap(),
+            )
+            .arg("--local-review")
+            .arg(hex(&[review; 64]));
+        command
+    }
+
     fn adopt_anchor(&self) -> PathBuf {
         let (_, initial) = self.init();
         self.observe_anchor(&initial);
@@ -404,6 +433,127 @@ fn cli_nodes_can_adopt_or_defer_the_same_candidate_independently() {
         "selected use snapshot",
     );
     bad(&mut b.command("status", Some(&a_next)), "recovery policy");
+}
+
+#[test]
+fn cli_same_proposal_allows_adopt_defer_and_parent_retention_without_relabelling() {
+    let a = Fixture::new(51);
+    let b = Fixture::new(61);
+    let c = Fixture::new(71);
+    assert_eq!(a.candidate, b.candidate);
+    assert_eq!(b.candidate, c.candidate);
+    let af = a.adopt_anchor();
+    let bf = b.adopt_anchor();
+    let cf = c.adopt_anchor();
+    let observation = a.observe_candidate(&af)["result"].clone();
+    b.observe_candidate(&bf);
+    // A different node's observation does not enroll a proposal locally.
+    bad(
+        &mut c.retain_proposal(&cf, &cf, 2, &observation, 101),
+        "adoption proposal missing",
+    );
+    assert_eq!(c.observe_candidate(&cf)["result"], observation);
+
+    let adopted = good(&mut a.decision(&af, &af, 2, "adopt", &a.candidate));
+    let deferred = good(&mut b.decision(&bf, &bf, 2, "defer", &b.candidate));
+    let retained = good(&mut c.retain_proposal(&cf, &cf, 2, &observation, 101));
+    assert_eq!(retained["command"], "retain-proposal");
+    assert_eq!(
+        retained["result"]["schema"],
+        "trnm.cell.proposal-retention.v1"
+    );
+    assert_eq!(
+        retained["result"]["proposal"]["candidate"],
+        hex(&c.candidate.commitment())
+    );
+    assert_eq!(
+        retained["result"]["retention"]["candidate"],
+        hex(&c.anchor.commitment())
+    );
+    assert_eq!(retained["result"]["retention"]["action"], "retain");
+    assert_eq!(retained["result"]["training_no_update_inferred"], false);
+    assert_eq!(
+        retained["result"]["historical_typed_validation_attested"],
+        false
+    );
+    assert_eq!(retained["result"]["proposal_quality_verified"], false);
+    assert_ne!(
+        retained["result"]["local_review"],
+        retained["result"]["retention"]["local_review"]
+    );
+    for (fixture, result, selected) in [
+        (&a, &adopted, &a.candidate_file),
+        (&b, &deferred, &b.anchor_file),
+        (&c, &retained, &c.anchor_file),
+    ] {
+        let floor = fixture.save_floor("after-local-choice", result);
+        assert_eq!(
+            good(&mut fixture.command("status", Some(&floor)))["snapshot"],
+            result["snapshot"]
+        );
+        assert_eq!(
+            good(&mut fixture.verification(&floor, &floor, selected))["result"]
+                ["payload_bytes_verified"],
+            true
+        );
+    }
+    let c_retained = c.save_floor("retained", &retained);
+    bad(
+        &mut c.verification(&c_retained, &c_retained, &c.candidate_file),
+        "selected use snapshot",
+    );
+    // Every invocation is a fresh process. Exact retry preserves the old event
+    // while exporting the current recovery floor after a subsequent adoption.
+    let later = good(&mut c.decision(&c_retained, &c_retained, 3, "adopt", &c.candidate));
+    let current = c.save_floor("later-adopted", &later);
+    let replay = good(&mut c.retain_proposal(&current, &cf, 2, &observation, 101));
+    assert_eq!(replay["result"], retained["result"]);
+    assert_eq!(replay["snapshot"], later["snapshot"]);
+    bad(
+        &mut c.verification(&current, &c_retained, &c.anchor_file),
+        "selected use snapshot",
+    );
+    good(&mut c.verification(&current, &current, &c.candidate_file));
+    bad(
+        &mut c.retain_proposal(&current, &cf, 2, &observation, 102),
+        "request identity conflict",
+    );
+}
+
+#[test]
+fn cli_proposal_retention_refuses_substituted_parent_evidence_and_extra_authority() {
+    let f = Fixture::new(51);
+    let floor = f.adopt_anchor();
+    let observed = f.observe_candidate(&floor);
+    let original = observed["result"].clone();
+    for (field, value) in [
+        ("candidate", hex(&[99; 64])),
+        ("parent", hex(&[99; 64])),
+        ("evidence_reference_commitment", hex(&[99; 64])),
+    ] {
+        let mut changed = original.clone();
+        changed[field] = json!(value);
+        bad(
+            &mut f.retain_proposal(&floor, &floor, 2, &changed, 101),
+            "adoption proposal",
+        );
+        assert_eq!(
+            good(&mut f.command("status", Some(&floor)))["snapshot"],
+            observed["snapshot"]
+        );
+    }
+    bad(
+        f.retain_proposal(&floor, &floor, 2, &original, 101)
+            .arg("--grant-final-use")
+            .arg("true"),
+        "unknown local adoption argument",
+    );
+    let result = good(&mut f.retain_proposal(&floor, &floor, 2, &original, 101));
+    assert_eq!(result["snapshot"]["revision"], 2);
+    assert_eq!(
+        result["result"]["original_request_required_for_typed_retry"],
+        true
+    );
 }
 
 #[test]

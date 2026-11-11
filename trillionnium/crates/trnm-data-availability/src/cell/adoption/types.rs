@@ -288,6 +288,61 @@ pub struct CellAdoptionReceiptV1 {
     pub(super) evidence_set: CellVersionCommitmentV1,
 }
 
+/// A proposal-aware local retention observation. The inner TCA1 receipt keeps
+/// its original Retain(current) meaning; its review commitment binds this
+/// exact proposal observation and the local owner's original review reference.
+/// Neither receipt authenticates an evaluator or certifies proposal quality.
+///
+/// The caller must retain the original request, expected snapshot, proposal
+/// observation and local review for an exact retry after reopening. The stored
+/// commitment cannot reconstruct external evidence or those request bytes.
+/// A matching raw Retain can yield this wrapper after current validation; it
+/// does not attest which API ran or when the proposal was originally observed.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CellProposalRetentionReceiptV1 {
+    pub(super) proposal: CellCandidateObservationV1,
+    pub(super) local_review: CellVersionCommitmentV1,
+    pub(super) retention: CellAdoptionReceiptV1,
+}
+
+impl CellProposalRetentionReceiptV1 {
+    pub fn proposal(&self) -> &CellCandidateObservationV1 {
+        &self.proposal
+    }
+    pub fn local_review_commitment(&self) -> CellVersionCommitmentV1 {
+        self.local_review
+    }
+    pub fn retention_receipt(&self) -> &CellAdoptionReceiptV1 {
+        &self.retention
+    }
+}
+
+pub(super) fn proposal_retention_review(
+    request: CellDigestV1,
+    expected: &CellAdoptionSnapshotV1,
+    proposal: &CellCandidateObservationV1,
+    local_review: CellVersionCommitmentV1,
+) -> CellResultV1<CellVersionCommitmentV1> {
+    require(
+        expected.selected.is_some()
+            && expected.selected == proposal.parent
+            && expected.selected != Some(proposal.candidate)
+            && proposal.candidate != [0; 64]
+            && proposal.evidence != [0; 64]
+            && local_review != [0; 64],
+        "adoption proposal retention binding",
+    )?;
+    let mut bytes = request.to_vec();
+    let snapshot = expected.encode();
+    bytes.extend((snapshot.len() as u16).to_be_bytes());
+    bytes.extend(snapshot);
+    bytes.extend(proposal.candidate);
+    put_optional(&mut bytes, proposal.parent);
+    bytes.extend(proposal.evidence);
+    bytes.extend(local_review);
+    Ok(hash(b"TRNM/Cell/LocalProposalRetentionReview/v1\0", &bytes))
+}
+
 impl CellAdoptionReceiptV1 {
     pub fn request_id(&self) -> CellDigestV1 {
         self.decision.request

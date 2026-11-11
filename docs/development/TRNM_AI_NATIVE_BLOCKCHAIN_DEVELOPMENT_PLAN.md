@@ -1,3 +1,23 @@
+**PoN and learning-outcome composition, 2026-11-11 America/New_York — HOLD:**
+
+Continue the fixed #907 source `58f225e973054f69661bf06aeda936f9126ea8e1`
+with #909 `e338c000f26e9357ed33213624da787a3a009ed9`; the execution record
+must retain their exact identities and the actual merge parents.
+Keep valid W1 work independent of model gain, actual training `NoUpdate`
+independent of qualified node-local Defer/Retain, and miner/author/provider
+accounts independent. The [completed-use profile](specs/pon/CELL_LOCAL_DECISION_COMPLETED_USE_V1.md)
+joins original HEPLCP04 Selection and completion cuts with the native ACKed
+use export, without upgrading their authority. The
+[proposal-retention entry point](specs/pon/CELL_PROPOSAL_RETENTION_V1.md) binds
+the separately reviewed TCV1 proposal to ordinary Retain(parent), preserving
+TCA1 storage and replay semantics. It requires the original request for typed
+retry and cannot attest historical execution of that typed entry point.
+Run the new native role/payment, retention, CLI, original actor/SGD and
+cross-material refusal controls on their own fixed sources. Pending or failed
+executions remain pending or failed; no source-only pass grants model benefit,
+ordinary daemon assembly, independent B/C, portable FinalUse, current payment
+authority, whole-chain PQ qualification or production activation.
+
 **Throughput budget continuation, 2026-11-10 America/New_York — HOLD:**
 
 Continue #895 without changing the original Host, paid CPU, PQ command limits

@@ -24,8 +24,8 @@ mod types;
 pub use store::CellAdoptionOwnerV1;
 pub use types::{
     CellAdoptionActionV1, CellAdoptionPolicyV1, CellAdoptionReceiptV1, CellAdoptionSnapshotV1,
-    CellCandidateEvidenceV1, CellCandidateObservationV1, MAX_CELL_ADOPTION_CANDIDATES_V1,
-    MAX_CELL_ADOPTION_DECISIONS_V1,
+    CellCandidateEvidenceV1, CellCandidateObservationV1, CellProposalRetentionReceiptV1,
+    MAX_CELL_ADOPTION_CANDIDATES_V1, MAX_CELL_ADOPTION_DECISIONS_V1,
 };
 
 #[cfg(test)]

@@ -8,9 +8,9 @@ use rusqlite::{params, Connection, OpenFlags, Transaction, TransactionBehavior};
 
 use super::{
     files::Lease,
-    types::{hash, Decision},
+    types::{hash, proposal_retention_review, Decision},
     CellAdoptionActionV1, CellAdoptionPolicyV1, CellAdoptionReceiptV1, CellAdoptionSnapshotV1,
-    CellCandidateEvidenceV1, CellCandidateObservationV1,
+    CellCandidateEvidenceV1, CellCandidateObservationV1, CellProposalRetentionReceiptV1,
 };
 use crate::cell::{
     adoption_boundary::CellExecutionBoundaryV1, require, CellDigestV1, CellErrorV1, CellResultV1,
@@ -211,7 +211,58 @@ impl CellAdoptionOwnerV1 {
             candidate,
             review: review_commitment,
         };
+        self.decide_checked(decision, None)
+    }
+
+    /// Retain the current version while binding the separate proposal that the
+    /// local owner reviewed. The proposal must already be observed, name the
+    /// current direct parent and contain the exact retained evidence reference.
+    /// Those checks and the ordinary Retain(current) commit share one transaction.
+    /// No qualification, signature, payment, NoUpdate or FinalUse is inferred.
+    ///
+    /// TCA1/TAD1 bytes and the original Retain action are unchanged. A fresh
+    /// domain binds the full request into the existing review commitment.
+    /// Preserve these original inputs for an exact cold-recovery retry; an old
+    /// successful receipt remains historical and never grants current use.
+    /// A replay verifies the currently retained proposal observation. It does
+    /// not attest that this typed method validated the historical event: the
+    /// trusted owner can also submit the same bound review through raw decide.
+    pub fn retain_proposal(
+        &mut self,
+        request_id: CellDigestV1,
+        expected: &CellAdoptionSnapshotV1,
+        proposal: &CellCandidateObservationV1,
+        local_review_commitment: CellVersionCommitmentV1,
+    ) -> CellResultV1<CellProposalRetentionReceiptV1> {
+        let review =
+            proposal_retention_review(request_id, expected, proposal, local_review_commitment)?;
+        let retained = expected
+            .selected
+            .ok_or(CellErrorV1::Invalid("adoption proposal retention parent"))?;
+        let decision = Decision {
+            request: request_id,
+            before: expected.clone(),
+            action: CellAdoptionActionV1::Retain,
+            candidate: retained,
+            review,
+        };
+        let retention = self.decide_checked(decision, Some(proposal))?;
+        Ok(CellProposalRetentionReceiptV1 {
+            proposal: proposal.clone(),
+            local_review: local_review_commitment,
+            retention,
+        })
+    }
+
+    fn decide_checked(
+        &mut self,
+        decision: Decision,
+        proposal: Option<&CellCandidateObservationV1>,
+    ) -> CellResultV1<CellAdoptionReceiptV1> {
         decision.validate()?;
+        let expected = decision.before.clone();
+        let request_id = decision.request;
+        let candidate = decision.candidate;
         require(
             expected.policy == self.policy.digest(),
             "adoption decision policy",
@@ -221,6 +272,24 @@ impl CellAdoptionOwnerV1 {
             Transaction::new_unchecked(&self.connection, TransactionBehavior::Immediate)?;
         let audit = audit(&transaction, &self.policy, &self.floor)?;
         self.floor = audit.snapshot.clone();
+        if let Some(proposal) = proposal {
+            let retained = audit
+                .catalog
+                .get(&proposal.candidate)
+                .ok_or(CellErrorV1::Invalid("adoption proposal missing"))?;
+            require(
+                decision.action == CellAdoptionActionV1::Retain
+                    && expected.selected == Some(candidate)
+                    && proposal.candidate != candidate
+                    && proposal.parent == Some(candidate)
+                    && retained.parent == proposal.parent,
+                "adoption proposal current parent required",
+            )?;
+            require(
+                retained.observations.contains(&proposal.evidence),
+                "adoption proposal evidence missing",
+            )?;
+        }
         if let Some(previous) = audit.receipts.get(&request_id) {
             require(
                 previous.decision == decision,
@@ -231,7 +300,7 @@ impl CellAdoptionOwnerV1 {
             transaction.commit()?;
             return Ok(previous);
         }
-        require(audit.snapshot == *expected, "adoption stale local snapshot")?;
+        require(audit.snapshot == expected, "adoption stale local snapshot")?;
         require(
             audit.snapshot.revision < u64::from(self.policy.decisions),
             "adoption decision capacity",

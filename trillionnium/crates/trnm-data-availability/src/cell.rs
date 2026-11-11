@@ -43,7 +43,8 @@ mod version_retention;
 pub use adoption::{
     CellAdoptionActionV1, CellAdoptionOwnerV1, CellAdoptionPolicyV1, CellAdoptionReceiptV1,
     CellAdoptionSnapshotV1, CellCandidateEvidenceV1, CellCandidateObservationV1,
-    MAX_CELL_ADOPTION_CANDIDATES_V1, MAX_CELL_ADOPTION_DECISIONS_V1,
+    CellProposalRetentionReceiptV1, MAX_CELL_ADOPTION_CANDIDATES_V1,
+    MAX_CELL_ADOPTION_DECISIONS_V1,
 };
 pub use adoption_boundary::{CellExecutionBoundaryV1, CellModelUpdateBoundaryV1};
 
