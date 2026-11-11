@@ -1,0 +1,6 @@
+   Compiling getrandom v0.4.2
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qq/work/chain-sqlite-advisory-20261110/trillionnium/crates/trnm-crypto-primitives)
+   Compiling tempfile v3.27.0
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-sqlite-advisory-20261110/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.47s
+     Running unittests src/lib.rs (/home/qq/work/chain-sqlite-advisory-20261110-checks/native-target/debug/deps/trnm_data_availability-c3d73465fd2ca3d0)

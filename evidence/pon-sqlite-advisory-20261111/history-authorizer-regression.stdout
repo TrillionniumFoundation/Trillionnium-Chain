@@ -1,0 +1,6 @@
+
+running 1 test
+test store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1392 filtered out; finished in 0.13s
+
