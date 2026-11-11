@@ -3,6 +3,9 @@
 Status: **HOLD**. This is a reviewed inventory for the Python V2 root bridge,
 native Rust V3 candidate, V4 recovery-floor/provider-readback continuation and
 conditional V5 fresh-witness owner with a typed SQLite register component.
+The V5 provider readback bridge retains the original V4 provider declaration
+grammar while requiring live witnessed enrollment checks before and after the
+provider callback. It adds no effect execution or production authority.
 It neither computes a cryptographic lifetime
 failure bound nor activates a root, release, external effect or production
 service.
@@ -31,7 +34,7 @@ of keys, rosters and epochs over the lifetime remains unknown.
 | Successor possession | All three ML-DSA-87 keys AND all three SLH-DSA-SHA2-256s keys | Rotation, recovery and policy change, in addition to current-root approval | Python V2 and native V3 |
 | Anchor writer | Both fixed 2-of-3 quorums under a separately pinned writer roster | Fresh read and compare-and-swap request authentication, including the separate V5 witness request namespace | Python V2, native V3 and V5 |
 | Anchor response | Both fixed 2-of-3 quorums under a separately pinned anchor roster | Fresh response bound to request, scope and complete retained head | Python V2 and native V3 |
-| Effect provider | Both fixed 2-of-3 quorums under a separately pinned provider roster | Outcome readback for the complete intent and exact orphan epoch | Python V2 and native V4 declarations; actual effect entry remains unwired |
+| Effect provider | Both fixed 2-of-3 quorums under a separately pinned provider roster | Outcome readback for the complete intent and exact orphan epoch | Python V2 and native V4 declarations, plus V5 witnessed readback; actual effect entry remains unwired |
 | Witness response | Both fixed 2-of-3 quorums under a separately pinned witness roster | Complete fresh request and exact journal-head acknowledgement in the V5 namespace | Native V5 client, request authenticator and typed SQLite durable register; independently operated service remains unverified |
 
 The [V5 witness contract](ROOT_WITNESS_V5.md) adds the sixth role and uses the

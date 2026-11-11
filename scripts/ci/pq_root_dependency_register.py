@@ -23,10 +23,10 @@ from pq_source_reader import SourceReadError, read_regular
 SCHEMA = "trnm-pq-root-dependency-register-v3"
 RESULT_SCHEMA = "trnm-pq-root-dependency-register-result-v3"
 DEFAULT_MANIFEST = "config/pon/pq-root-dependency-register-v3.json"
-REVIEW_BASE = '454ae116159867ff6cddd91b964523df7f7e16f0'
+REVIEW_BASE = '225ab38e1e5f7e0852a28372bd8dd769eec1084b'
 MAX_BYTES = 1024 * 1024
 # Frozen after review of all declared files. No runtime regeneration is allowed.
-REVIEWED_SOURCE_SNAPSHOT_SHA256 = '0a6cb7dc497a9365e0538b0ab7de510c28068ef0f0b211d0f0971b460a7302d4'
+REVIEWED_SOURCE_SNAPSHOT_SHA256 = 'e1ee97550a6ec20b79f8d917793f2b4268772864e611448a6846869999bcb19b'
 
 PY = "formal/pon-nakamoto-v1/"
 POLICY = PY + "pq_root_recovery_policy_v1.py"
@@ -50,6 +50,7 @@ NATIVE_FLOOR = NODE + "src/root_recovery_v3/recovery_floor.rs"
 NATIVE_PROVIDER = NODE + "src/root_recovery_v3/effect_readback_v4.rs"
 NATIVE_WITNESS = NODE + "src/root_recovery_v3/witnessed_v5.rs"
 NATIVE_WITNESS_DURABLE = NODE + "src/root_recovery_v3/witnessed_v5/durable.rs"
+NATIVE_WITNESS_PROVIDER = NODE + "src/root_recovery_v3/witnessed_v5/provider_readback.rs"
 BASE_ROLES = ("root-approval", "successor-possession", "anchor-writer",
               "anchor-response", "effect-provider")
 ROLES = BASE_ROLES + ("witness-response",)
@@ -178,6 +179,12 @@ for _role in ("anchor-writer", "witness-response"):
         [NATIVE_CRYPTO, NATIVE_ML_ADAPTER, NATIVE_CRYPTO_PROFILE, NATIVE_OWNER,
          NATIVE_WITNESS, NATIVE_WITNESS_DURABLE],
         "typed-v5-authenticated-sqlite-cas-durable-before-ack-live-session-retries-only-exact-external-reopen-pin-no-daemon")
+
+ROLE_CONTRACT["effect-provider"]["implementations"]["rust-v5-witnessed-readback"] = implementation(
+    [NATIVE_CRYPTO, NATIVE_ML_ADAPTER, NATIVE_CRYPTO_PROFILE, NATIVE_POLICY,
+     NATIVE_OWNER, NATIVE_ANCHOR, NATIVE_STORAGE, NATIVE_FLOOR, NATIVE_PROVIDER,
+     NATIVE_WITNESS, NATIVE_WITNESS_PROVIDER],
+    "same-historical-operation-live-witness-before-and-after-readback-no-effect-entry")
 
 
 def hash_use(primitives, constructions, paths, roles):
@@ -313,6 +320,7 @@ SOURCE_PATHS = sorted(set(
     (POLICY, SIGNATURES, JOURNAL, PROVIDER, BACKEND, BUDGET,
      NATIVE_CRYPTO, NATIVE_ML_ADAPTER, NATIVE_CRYPTO_PROFILE, NATIVE_POLICY, NATIVE_OWNER,
      NATIVE_ANCHOR, NATIVE_STORAGE, NATIVE_FLOOR, NATIVE_PROVIDER, NATIVE_WITNESS, NATIVE_WITNESS_DURABLE,
+     NATIVE_WITNESS_PROVIDER,
      CRYPTO + "src/pq_root_v3/tests.rs", CRYPTO + "tests/pq_root_v3_native.rs",
      RELEASE + "src/root_recovery_v3_tests.rs",
      NODE + "tests/root_recovery_v3_native.rs",
@@ -322,6 +330,7 @@ SOURCE_PATHS = sorted(set(
      NODE + "tests/root_budget_v4_native.rs",
      NODE + "tests/root_witness_v5_native.rs",
      NODE + "tests/root_witness_v5_durable_native.rs",
+     NODE + "tests/root_witness_provider_v5_native.rs",
      CRYPTO + "src/lib.rs", CRYPTO + "Cargo.toml",
      CRATES + "trnm-protocol/src/lib.rs", CRATES + "trnm-protocol/Cargo.toml",
      RELEASE + "src/lib.rs", RELEASE + "Cargo.toml",

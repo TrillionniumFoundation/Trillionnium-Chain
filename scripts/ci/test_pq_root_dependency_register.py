@@ -162,6 +162,18 @@ class FrozenRoleTests(ContractCase):
             changed = deepcopy(data)
             changed["roles"]["effect-provider"]["implementations"]["rust-v4-readback"][field] = value
             self.refused(changed)
+        witnessed = data["roles"]["effect-provider"]["implementations"]["rust-v5-witnessed-readback"]
+        self.assertIn(register.NATIVE_WITNESS_PROVIDER, witnessed["source_paths"])
+        self.assertIn(register.NATIVE_WITNESS_PROVIDER, data["source_files_sha256"])
+        self.assertIn(register.NODE + "tests/root_witness_provider_v5_native.rs", data["source_files_sha256"])
+        self.assertEqual(witnessed["validity_contract"],
+                         "same-historical-operation-live-witness-before-and-after-readback-no-effect-entry")
+        self.assertFalse(witnessed["production_qualified"])
+        for field, value in (("production_qualified", True),
+                             ("validity_contract", "current-final-use-authority")):
+            changed = deepcopy(data)
+            changed["roles"]["effect-provider"]["implementations"]["rust-v5-witnessed-readback"][field] = value
+            self.refused(changed)
 
     def test_native_v5_witness_role_hashes_and_unproved_custody_are_explicit(self):
         data = manifest()
