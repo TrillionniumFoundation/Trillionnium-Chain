@@ -1,0 +1,18 @@
+{
+  "CARGO_BUILD_JOBS": "2",
+  "CARGO_ENCODED_RUSTFLAGS": null,
+  "CARGO_INCREMENTAL": null,
+  "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb",
+  "LD_LIBRARY_PATH": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+  "OPENSSL_CONF": "/dev/null",
+  "OPENSSL_DIR": "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install",
+  "OPENSSL_MODULES": "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install/lib/ossl-modules",
+  "OPENSSL_STATIC": "1",
+  "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+  "RUSTFLAGS": null,
+  "RUSTUP_TOOLCHAIN": "1.95.0",
+  "RUST_TEST_THREADS": "1",
+  "TRNM_PQ_OPENSSL": "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install/bin/openssl",
+  "TRNM_PQ_OPENSSL_SHA256": "65b8f0423f3031a5f0eea5e3d571a24bcaaf79fb8a1b3ee68ad2e7438b3dbac0",
+  "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+}

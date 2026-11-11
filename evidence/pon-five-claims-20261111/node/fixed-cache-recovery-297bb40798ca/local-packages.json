@@ -1,0 +1,158 @@
+[
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-audit-events#0.1.0",
+    "name": "trnm-audit-events",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-audit-events/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-bench#0.1.0",
+    "name": "trnm-bench",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-bench/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-checkpoint-store#0.1.0",
+    "name": "trnm-checkpoint-store",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-checkpoint-store/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-checkpoint-types#0.1.0",
+    "name": "trnm-checkpoint-types",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-checkpoint-types/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-control-plane#0.1.0",
+    "name": "trnm-control-plane",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-control-plane/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-crypto-primitives#0.1.0",
+    "name": "trnm-crypto-primitives",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-crypto-primitives/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "name": "trnm-data-availability",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-escrow-vault#0.1.0",
+    "name": "trnm-escrow-vault",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-escrow-vault/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-executor#0.1.0",
+    "name": "trnm-executor",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-executor/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-governance-guard#0.1.0",
+    "name": "trnm-governance-guard",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-governance-guard/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-mempool#0.1.0",
+    "name": "trnm-mempool",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-mempool/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+    "name": "trnm-mvcc-fee",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-mvcc-fee/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-oracle#0.1.0",
+    "name": "trnm-oracle",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-oracle/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-peer-lease#0.1.0",
+    "name": "trnm-peer-lease",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-peer-lease/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-pon-node#0.1.0",
+    "name": "trnm-pon-node",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-pon-node/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-protocol#0.1.0",
+    "name": "trnm-protocol",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-protocol/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-release-bundle#0.1.0",
+    "name": "trnm-release-bundle",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-release-bundle/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-research-protocol#0.1.0",
+    "name": "trnm-research-protocol",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-research-protocol/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-service-settlement#0.1.0",
+    "name": "trnm-service-settlement",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-service-settlement/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-sqlite-io-boundary#0.1.0",
+    "name": "trnm-sqlite-io-boundary",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-state-import#0.1.0",
+    "name": "trnm-state-import",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-state-import/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-task-kernel#0.1.0",
+    "name": "trnm-task-kernel",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-task-kernel/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-transport#0.1.0",
+    "name": "trnm-transport",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-transport/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-types#0.1.0",
+    "name": "trnm-types",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-types/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-verification-profiles#0.1.0",
+    "name": "trnm-verification-profiles",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-verification-profiles/Cargo.toml"
+  },
+  {
+    "id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-worker-agent#0.1.0",
+    "name": "trnm-worker-agent",
+    "version": "0.1.0",
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-worker-agent/Cargo.toml"
+  }
+]

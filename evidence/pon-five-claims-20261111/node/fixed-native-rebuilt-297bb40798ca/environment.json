@@ -1,0 +1,12 @@
+{
+  "PATH": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin:/home/qian-qi/.elan/bin:/home/qian-qi/.local/bin:/home/qian-qi/.elan/bin:/home/qian-qi/.local/bin:/home/qian-qi/.elan/bin:/home/qian-qi/.cargo/bin:/home/qian-qi/.local/bin:/opt/gradle/current/bin:/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools:/opt/android-sdk/build-tools/35.0.1:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin",
+  "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+  "RUSTUP_TOOLCHAIN": "1.95.0",
+  "LD_LIBRARY_PATH": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+  "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-pon-submit-target-d6cb",
+  "CARGO_BUILD_JOBS": "2",
+  "RUST_TEST_THREADS": "1",
+  "RUSTFLAGS": null,
+  "CARGO_ENCODED_RUSTFLAGS": null,
+  "release_profile_overrides": {}
+}

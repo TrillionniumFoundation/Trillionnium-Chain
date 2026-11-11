@@ -1,0 +1,29 @@
+{
+  "all": [
+    "cli_evidence_references_do_not_authenticate_claims_or_select_a_candidate",
+    "cli_historical_request_replay_exports_current_floor_and_conflicts_refuse",
+    "cli_init_and_observe_select_nothing_and_all_four_decisions_are_explicit",
+    "cli_latest_independent_floor_rejects_a_rolled_back_database",
+    "cli_nodes_can_adopt_or_defer_the_same_candidate_independently",
+    "cli_operator_inputs_require_private_files_parents_and_single_link_identity",
+    "cli_operator_paths_must_be_absolute_with_canonical_parent_directories",
+    "cli_refuses_symlink_inputs_and_create_never_resets_an_existing_owner",
+    "cli_requires_floor_review_expected_snapshot_and_rejects_extra_arguments",
+    "cli_selected_readback_rejects_changed_execution_pins_and_corrupted_cache_bytes",
+    "cli_strict_policy_rejects_unknown_authority_fields_roles_and_noncanonical_hex"
+  ],
+  "filter": null,
+  "selected": [
+    "cli_evidence_references_do_not_authenticate_claims_or_select_a_candidate",
+    "cli_historical_request_replay_exports_current_floor_and_conflicts_refuse",
+    "cli_init_and_observe_select_nothing_and_all_four_decisions_are_explicit",
+    "cli_latest_independent_floor_rejects_a_rolled_back_database",
+    "cli_nodes_can_adopt_or_defer_the_same_candidate_independently",
+    "cli_operator_inputs_require_private_files_parents_and_single_link_identity",
+    "cli_operator_paths_must_be_absolute_with_canonical_parent_directories",
+    "cli_refuses_symlink_inputs_and_create_never_resets_an_existing_owner",
+    "cli_requires_floor_review_expected_snapshot_and_rejects_extra_arguments",
+    "cli_selected_readback_rejects_changed_execution_pins_and_corrupted_cache_bytes",
+    "cli_strict_policy_rejects_unknown_authority_fields_roles_and_noncanonical_hex"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "all": [
+    "discovery_cli_pq_key_and_fresh_directory_reject_classic_wire_and_seed_aliases",
+    "original_release_cli_pq_fetch_checks_auth_before_cache_or_marker"
+  ],
+  "filter": null,
+  "selected": [
+    "discovery_cli_pq_key_and_fresh_directory_reject_classic_wire_and_seed_aliases",
+    "original_release_cli_pq_fetch_checks_auth_before_cache_or_marker"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "trnm-submit-ancestry-before-rustup-qualified-observation-v1",
+  "rustup_entry": "rustup run 1.95.0 /usr/bin/python3",
+  "sqlite_precheck_witness_cfg_observed": true,
+  "absolute_rustc": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+  "sqlite_layout_witness_cfg_observed": true,
+  "base": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "source": {
+    "head": "e63427560885b65c57db6bdc478df023111b4733",
+    "tree": "10a70f10bf5c64fe4b1d8df42c6463ff17aeba88",
+    "tracked_entries_verified": 28059,
+    "tracked_bytes_verified": 2592592885,
+    "full_git_blob_equality": true
+  },
+  "binary": {
+    "path": "/home/qian-qi/work/chain-pon-submit-target-d6cb/release/deps/trnm_pon_node-b9510f5893fe9b62",
+    "sha256_before": "f9f39f1e2b76c624810ff6e1c863541049db82f9442675865e635bb5cb584f56",
+    "sha256_after": "f9f39f1e2b76c624810ff6e1c863541049db82f9442675865e635bb5cb584f56"
+  },
+  "selector": "ingress::submit_activation_history_tests::submit_future_ancestor_is_checked_after_full_work_before_m06",
+  "native_exit_code": 101,
+  "expected_original_failure_observed": true,
+  "native_tests_passed": false,
+  "first_case_only_before_assertion": true,
+  "production_qualification": false,
+  "source_after": {
+    "head": "e63427560885b65c57db6bdc478df023111b4733",
+    "tree": "10a70f10bf5c64fe4b1d8df42c6463ff17aeba88",
+    "tracked_entries_verified": 28059,
+    "tracked_bytes_verified": 2592592885,
+    "full_git_blob_equality": true
+  },
+  "build_scope": "release default-feature trnm-pon-node library tests",
+  "artifacts_directory": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-native-rustup-qualified"
+}

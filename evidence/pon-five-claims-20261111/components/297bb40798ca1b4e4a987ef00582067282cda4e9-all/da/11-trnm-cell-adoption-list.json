@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell_adoption-a735a1ef19763c97",
+    "--list",
+    "--format",
+    "terse"
+  ],
+  "child_reaped": true,
+  "cwd": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability",
+  "elapsed_ns": 2093901,
+  "exit_code": 0,
+  "label": "11-trnm-cell-adoption-list",
+  "owned_pid": 91826,
+  "performance_measurement": false,
+  "started_unix_ns": 1794394512484783623,
+  "status": "command_succeeded",
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/11-trnm-cell-adoption-list.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 0,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/11-trnm-cell-adoption-list.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

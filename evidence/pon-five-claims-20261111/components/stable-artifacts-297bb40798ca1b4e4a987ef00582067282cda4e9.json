@@ -1,0 +1,1663 @@
+{
+  "artifact_root": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb",
+  "complete_da_suite_passed": false,
+  "files": [
+    {
+      "bytes": 955,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/cargo-version.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/cargo-version.json",
+      "sha256": "06a25ac00da9e6527002d5485d96e4d54b51187fb966c6bca15daf893612c45a"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/cargo-version.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/cargo-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 336,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/cargo-version.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/cargo-version.stdout.log",
+      "sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e"
+    },
+    {
+      "bytes": 1174,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/clippy/clippy.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/clippy/clippy.json",
+      "sha256": "3b2edf2dea92a0c86b6bf2e28965f2fc9b8e9539bfa9aca37f76c79208786abb"
+    },
+    {
+      "bytes": 6870,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/clippy/clippy.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/clippy/clippy.stderr.log",
+      "sha256": "db85641eeb400d42541f6154f637fc3f28fadbbbc448df549450c506f5e47a5c"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/clippy/clippy.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/clippy/clippy.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/clippy/source-after.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/clippy/source-after.json",
+      "sha256": "240516abc8be89bdcedc48745d03cf5ac3ca0847456f2f4b269c30a0e9a04079"
+    },
+    {
+      "bytes": 423,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/clippy/source-before.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/clippy/source-before.json",
+      "sha256": "240516abc8be89bdcedc48745d03cf5ac3ca0847456f2f4b269c30a0e9a04079"
+    },
+    {
+      "bytes": 1125,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/clippy/summary.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/clippy/summary.json",
+      "sha256": "86b763ef1e1b505d75f65838bd8636ebb1bcba78e1eef65f00a9c7e4cd7e84b7"
+    },
+    {
+      "bytes": 1115,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/00-trnm_crypto_primitives-list.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/00-trnm_crypto_primitives-list.json",
+      "sha256": "d0e624053f98d975dac2f882a038f9de3a84c1d090448e2a9cda63263683f9a3"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/00-trnm_crypto_primitives-list.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/00-trnm_crypto_primitives-list.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 19653,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/00-trnm_crypto_primitives-list.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/00-trnm_crypto_primitives-list.stdout.log",
+      "sha256": "4fa57575c8dda29176847c70fd6ea735ea0717033ca7e54f7d3d8af6336c30f3"
+    },
+    {
+      "bytes": 2122,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/00-trnm_crypto_primitives-native.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/00-trnm_crypto_primitives-native.json",
+      "sha256": "0120aed8d9426dcfc8dbfe09abbb87d3d054e2390ffdd330c1c2c66713759991"
+    },
+    {
+      "bytes": 688,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/00-trnm_crypto_primitives-native.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/00-trnm_crypto_primitives-native.stderr.log",
+      "sha256": "8d3bd95c1a7663e6d576d67d81aa316c2971167e0fdd210a5e45126d4d286845"
+    },
+    {
+      "bytes": 15686,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/00-trnm_crypto_primitives-native.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/00-trnm_crypto_primitives-native.stdout.log",
+      "sha256": "712f4a0e0ab23ae1e5134991b86fa8575f71b8bca7ab2f19522910a84ef53612"
+    },
+    {
+      "bytes": 33970,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/00-trnm_crypto_primitives-roster.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/00-trnm_crypto_primitives-roster.json",
+      "sha256": "6858810c32abf6a98c65623216ca9789326ad7bc7ca3cf08d124283a56d56fbf"
+    },
+    {
+      "bytes": 6721592,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/binaries/trnm_crypto_primitives-ec09512dfb6081aa",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/binaries/trnm_crypto_primitives-ec09512dfb6081aa",
+      "sha256": "0f85c378e749c52306a90d27cc17250eb1a124617fabaa9042323ecb806a6b7d"
+    },
+    {
+      "bytes": 395,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/binary-guards-after.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/binary-guards-after.json",
+      "sha256": "874500c3cc6e072adad5b114e034ab49c3dc99729d812329af78a4d655130c24"
+    },
+    {
+      "bytes": 415,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/binary-guards-before.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/binary-guards-before.json",
+      "sha256": "5a8b6adce3db7a3bf1dccd75718451c9f376f3d79fc2b554f5f9e6b28843aa29"
+    },
+    {
+      "bytes": 1188,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/build.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/build.json",
+      "sha256": "f3d1d987db8de8cb06feecdaec55547d87143b373726fd5c630ae4adfc32a840"
+    },
+    {
+      "bytes": 1946,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/build.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/build.stderr.log",
+      "sha256": "87126ae5a0fb651f4f61470afbc13bf4a61dcb76ac50d026bc3eb02fa3488275"
+    },
+    {
+      "bytes": 62039,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/build.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/build.stdout.log",
+      "sha256": "ea4860f19f8a8ca41380609d6fd140bad872e329b44dba56c5dd5ca94ef97981"
+    },
+    {
+      "bytes": 1184,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/compiler-artifacts.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/compiler-artifacts.json",
+      "sha256": "4d881e3b7c17184d05e1ccffd031030b7e3ca963134bf4a3ef3f8b937a5323e9"
+    },
+    {
+      "bytes": 904,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/preflight.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/preflight.json",
+      "sha256": "c67a29c65a2e76e24ee5252d2f9280a91864a602db2d61974ea3ab781a6912e6"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/preflight.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 172,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/preflight.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/preflight.stdout.log",
+      "sha256": "784eb6312d77d96e7bf1104b42b6fa980b5da12100befd8ba6c1606f49d165fc"
+    },
+    {
+      "bytes": 423,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/source-after.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/source-after.json",
+      "sha256": "240516abc8be89bdcedc48745d03cf5ac3ca0847456f2f4b269c30a0e9a04079"
+    },
+    {
+      "bytes": 423,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/source-before.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/source-before.json",
+      "sha256": "240516abc8be89bdcedc48745d03cf5ac3ca0847456f2f4b269c30a0e9a04079"
+    },
+    {
+      "bytes": 1719,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/summary.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/summary.json",
+      "sha256": "638acf7411c5099727f5537fff501d995ff9c0721bb07fb52e20cc4dfee6ff18"
+    },
+    {
+      "bytes": 1085,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/00-cell_adoption_cli-list.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/00-cell_adoption_cli-list.json",
+      "sha256": "780b96b3a9714b8fdcf3cb9b8787278d74233de426db5f36b884c8d22d3a1848"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/00-cell_adoption_cli-list.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/00-cell_adoption_cli-list.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 849,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/00-cell_adoption_cli-list.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/00-cell_adoption_cli-list.stdout.log",
+      "sha256": "83af18d70b36569f46bf3d16f6c147f05a5ae60e1e911afd18dbde40c25891e1"
+    },
+    {
+      "bytes": 2070,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/00-cell_adoption_cli-native.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/00-cell_adoption_cli-native.json",
+      "sha256": "f24515ec8658acd7fec25716cbb1b67f00aa1586cad8ec3ce5662153bb1dfb19"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/00-cell_adoption_cli-native.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/00-cell_adoption_cli-native.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1030,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/00-cell_adoption_cli-native.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/00-cell_adoption_cli-native.stdout.log",
+      "sha256": "425ac6c6b4790ef9b6bda20d930ea7bb152f3b5d27d4d0b0464b07737a9b7b9c"
+    },
+    {
+      "bytes": 1776,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/00-cell_adoption_cli-roster.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/00-cell_adoption_cli-roster.json",
+      "sha256": "e2bbf2e08fbed98ac01861e25b8bd0aac024d4cbb5c28acf555aba7affe220ff"
+    },
+    {
+      "bytes": 1088,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/01-cell_cache_wal_cli-list.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/01-cell_cache_wal_cli-list.json",
+      "sha256": "9119a981a9e5945ae0afa450bbd4183f980b559605b7dbc60a06f3216647d6b0"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/01-cell_cache_wal_cli-list.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/01-cell_cache_wal_cli-list.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 94,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/01-cell_cache_wal_cli-list.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/01-cell_cache_wal_cli-list.stdout.log",
+      "sha256": "c3c57e48d701cfa5a3ffc9d468d0d0917d650291168d7c87507fde0c7b219bc8"
+    },
+    {
+      "bytes": 2073,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/01-cell_cache_wal_cli-native.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/01-cell_cache_wal_cli-native.json",
+      "sha256": "3bdd3de3f43312ec029813b27e0654a7c355604bf324d598b6eed0ae8be4cbe7"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/01-cell_cache_wal_cli-native.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/01-cell_cache_wal_cli-native.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 212,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/01-cell_cache_wal_cli-native.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/01-cell_cache_wal_cli-native.stdout.log",
+      "sha256": "9ac376c3b4a0d0a711274ea4a99718d969ef616fbff3dbce498c77b10e38deb4"
+    },
+    {
+      "bytes": 246,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/01-cell_cache_wal_cli-roster.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/01-cell_cache_wal_cli-roster.json",
+      "sha256": "9e8d37a312938d841ad3d9d9551cbad6d945dbb7ff360c3774a62865a74d8b77"
+    },
+    {
+      "bytes": 1081,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/02-cell_closure_cli-list.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/02-cell_closure_cli-list.json",
+      "sha256": "617e0af15838b3c54258cb7ec012458aed909add41888fbf143c98b4ce7ac46b"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/02-cell_closure_cli-list.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/02-cell_closure_cli-list.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 403,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/02-cell_closure_cli-list.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/02-cell_closure_cli-list.stdout.log",
+      "sha256": "70d3da6829b2e73889943df5d801629f65aab452ab31276c9162a98e0ba09120"
+    },
+    {
+      "bytes": 2064,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/02-cell_closure_cli-native.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/02-cell_closure_cli-native.json",
+      "sha256": "359ff8c6f7abbf9aec9d741ec5bb646716e2b0483c657680aed0165d34d665f7"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/02-cell_closure_cli-native.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/02-cell_closure_cli-native.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 546,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/02-cell_closure_cli-native.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/02-cell_closure_cli-native.stdout.log",
+      "sha256": "141e4dacab66ee3ee21b2354c37f412a52ea059d6e33b588a3b9213f42e8838d"
+    },
+    {
+      "bytes": 872,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/02-cell_closure_cli-roster.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/02-cell_closure_cli-roster.json",
+      "sha256": "1b482f6e2a2a7b092b86c1f5b8989eddec570c344e6413eb82f3d3d79092c7da"
+    },
+    {
+      "bytes": 1089,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/03-cell_discovery_cli-list.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/03-cell_discovery_cli-list.json",
+      "sha256": "54d49b4880d9451dfe6bce700f85f49386367920a78f850c44bd370622f20011"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/03-cell_discovery_cli-list.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/03-cell_discovery_cli-list.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 413,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/03-cell_discovery_cli-list.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/03-cell_discovery_cli-list.stdout.log",
+      "sha256": "3b8e1db18bf41c4d9fbd995fbe1768d7f5c2be35e9a080b1f6756fa75a117a12"
+    },
+    {
+      "bytes": 2073,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/03-cell_discovery_cli-native.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/03-cell_discovery_cli-native.json",
+      "sha256": "03d95a537a1c4447d6d391275b1c0a354bf165d1ff1126adf8ac8f9f4fc5ebd8"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/03-cell_discovery_cli-native.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/03-cell_discovery_cli-native.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 556,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/03-cell_discovery_cli-native.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/03-cell_discovery_cli-native.stdout.log",
+      "sha256": "c9036eaa64b5ec6e09a3b58e9c26bd31cb21b01b4f3d5e2a237bc83b205b6240"
+    },
+    {
+      "bytes": 892,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/03-cell_discovery_cli-roster.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/03-cell_discovery_cli-roster.json",
+      "sha256": "0f387fbfae40e2000773fd8b3384e69c4b4d51790a7ce124dc96af5f3e9ae6ee"
+    },
+    {
+      "bytes": 1109,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/04-cell_fetch_deadline_cli-list.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/04-cell_fetch_deadline_cli-list.json",
+      "sha256": "d66e7c677e2d2591ff589391c5dfd1a2d3cdcb65ae145066d3a70b38c674d2dd"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/04-cell_fetch_deadline_cli-list.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/04-cell_fetch_deadline_cli-list.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 382,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/04-cell_fetch_deadline_cli-list.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/04-cell_fetch_deadline_cli-list.stdout.log",
+      "sha256": "35248c436d1b3defd0b6ddca454eb9786065a46072524632c088de23aad1a88f"
+    },
+    {
+      "bytes": 2098,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/04-cell_fetch_deadline_cli-native.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/04-cell_fetch_deadline_cli-native.json",
+      "sha256": "c74f6564c262d078f235bb95295aa01f52dce462bc35193384f53d2a1cf1485f"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/04-cell_fetch_deadline_cli-native.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/04-cell_fetch_deadline_cli-native.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 525,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/04-cell_fetch_deadline_cli-native.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/04-cell_fetch_deadline_cli-native.stdout.log",
+      "sha256": "364a639a750805f94d8b94df9560a3fee525180e4216631020be1c2cc4571f1b"
+    },
+    {
+      "bytes": 830,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/04-cell_fetch_deadline_cli-roster.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/04-cell_fetch_deadline_cli-roster.json",
+      "sha256": "fc71a44312b9ee82e8d6603de471be02093f7050dd1fdd7346ddad3a968d9f17"
+    },
+    {
+      "bytes": 1093,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/05-cell_persistent_cli-list.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/05-cell_persistent_cli-list.json",
+      "sha256": "97c01b13d26e4976cb5c407dac93d66efc9c98c1be68a603e4ad911fe0a35c97"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/05-cell_persistent_cli-list.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/05-cell_persistent_cli-list.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 450,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/05-cell_persistent_cli-list.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/05-cell_persistent_cli-list.stdout.log",
+      "sha256": "027a81f81a9080a84ef55e1a9604eda2077a0251e153146f09b142f3b7072b16"
+    },
+    {
+      "bytes": 2078,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/05-cell_persistent_cli-native.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/05-cell_persistent_cli-native.json",
+      "sha256": "28170f592ace70493b5d839c05cbc06675d68c6a551d338879a89de2a055c782"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/05-cell_persistent_cli-native.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/05-cell_persistent_cli-native.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 593,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/05-cell_persistent_cli-native.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/05-cell_persistent_cli-native.stdout.log",
+      "sha256": "867972be7844bbaaf7cf87310e0368094cbed084b0ee6b8e194fbb31883ea6bd"
+    },
+    {
+      "bytes": 966,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/05-cell_persistent_cli-roster.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/05-cell_persistent_cli-roster.json",
+      "sha256": "4cee31373f07c03d6d8820d0f8efcd855d73f87f7f617d4ee4c2aacbfc11e41c"
+    },
+    {
+      "bytes": 1109,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/06-cell_provider_ready_cli-list.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/06-cell_provider_ready_cli-list.json",
+      "sha256": "cfb5aa00cd001be22d9534cae68b447209cebebd0be3769611389b22ef5fa6cd"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/06-cell_provider_ready_cli-list.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/06-cell_provider_ready_cli-list.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 142,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/06-cell_provider_ready_cli-list.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/06-cell_provider_ready_cli-list.stdout.log",
+      "sha256": "b565fcc3910ae0c5eace0a7fcfa603c90a6b84ec3232cbc3e7d80b012cd61e7b"
+    },
+    {
+      "bytes": 2098,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/06-cell_provider_ready_cli-native.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/06-cell_provider_ready_cli-native.json",
+      "sha256": "ffa5103ffd39ff596d78dd83811d27be147342176e18c51abebb9edeb0f9960c"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/06-cell_provider_ready_cli-native.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/06-cell_provider_ready_cli-native.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 267,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/06-cell_provider_ready_cli-native.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/06-cell_provider_ready_cli-native.stdout.log",
+      "sha256": "a5a455956e0016739a4cf29b2fa1387c6cdb104cba34b77a97d4b31bf0e33770"
+    },
+    {
+      "bytes": 344,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/06-cell_provider_ready_cli-roster.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/06-cell_provider_ready_cli-roster.json",
+      "sha256": "156150529ece0bf25d06dbe7a5ab97c8827ee05b4d8b1a6ac75efbde8844af51"
+    },
+    {
+      "bytes": 1081,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/07-cell_release_cli-list.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/07-cell_release_cli-list.json",
+      "sha256": "d43135bbff1d78f650d1323a9e64aa9d7bd57b07dafa2ad7bb7e30120a9dea6f"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/07-cell_release_cli-list.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/07-cell_release_cli-list.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 155,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/07-cell_release_cli-list.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/07-cell_release_cli-list.stdout.log",
+      "sha256": "0485abe6dce8519edb03cb0a4a82f0f17c52ad97d329a8a083759253da32b55f"
+    },
+    {
+      "bytes": 2063,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/07-cell_release_cli-native.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/07-cell_release_cli-native.json",
+      "sha256": "c9efcb0f9d36d71cce058e9f21c65ac652e3f776ef1da761c43441cf2490b81b"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/07-cell_release_cli-native.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/07-cell_release_cli-native.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 280,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/07-cell_release_cli-native.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/07-cell_release_cli-native.stdout.log",
+      "sha256": "62eb1c63c71ed1ba3a46e91380b2d976a6ba7d24eeb7e07e344a82949f54c1dd"
+    },
+    {
+      "bytes": 370,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/07-cell_release_cli-roster.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/07-cell_release_cli-roster.json",
+      "sha256": "9ad147f9e77c20b88b780606d0cb04b3fe04bf7677af61abed74bbf8e83816be"
+    },
+    {
+      "bytes": 1077,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/08-cell_tensor_cli-list.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/08-cell_tensor_cli-list.json",
+      "sha256": "fd9f3e317fb47ffbe6e9382766e86e3b196cff3ff7735469f07dc274659c1684"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/08-cell_tensor_cli-list.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/08-cell_tensor_cli-list.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 594,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/08-cell_tensor_cli-list.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/08-cell_tensor_cli-list.stdout.log",
+      "sha256": "0330d709fa1ddb3bf18011593319d482b8d55cf7738c18580ab8cd5bb5b2079d"
+    },
+    {
+      "bytes": 2058,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/08-cell_tensor_cli-native.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/08-cell_tensor_cli-native.json",
+      "sha256": "dcd26051d35d7537503579c0b58a1ee5336f7c672a73b3b54af4731282040bd3"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/08-cell_tensor_cli-native.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/08-cell_tensor_cli-native.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 749,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/08-cell_tensor_cli-native.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/08-cell_tensor_cli-native.stdout.log",
+      "sha256": "31603ed6cc399d76229e59e18b1d20ed745e68d0370053f014e48a69ee80b872"
+    },
+    {
+      "bytes": 1258,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/08-cell_tensor_cli-roster.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/08-cell_tensor_cli-roster.json",
+      "sha256": "0c0dda0edfd6b14a2451520b6e0de7aaebbc799665756afff728275f8f75747b"
+    },
+    {
+      "bytes": 1061,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/09-pq_cell_cli-list.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/09-pq_cell_cli-list.json",
+      "sha256": "6bcf13c3a54408e574940770820c265ac6fb5b34321d75c1d5a3615bcf2995d5"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/09-pq_cell_cli-list.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/09-pq_cell_cli-list.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 155,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/09-pq_cell_cli-list.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/09-pq_cell_cli-list.stdout.log",
+      "sha256": "1b15dd6a57fe46e0088cf49321db35444b40bebac776bdeed29eb08543510f6d"
+    },
+    {
+      "bytes": 2038,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/09-pq_cell_cli-native.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/09-pq_cell_cli-native.json",
+      "sha256": "442661b25bd7355882d63cc32fbc2ff9c0284af92c2dd69e6c32cc7724068799"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/09-pq_cell_cli-native.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/09-pq_cell_cli-native.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 280,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/09-pq_cell_cli-native.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/09-pq_cell_cli-native.stdout.log",
+      "sha256": "3c955e2331f298a39cf8b7afcba1eac2aae23e434e5fd4b5f5e7c2ed46753083"
+    },
+    {
+      "bytes": 370,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/09-pq_cell_cli-roster.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/09-pq_cell_cli-roster.json",
+      "sha256": "b07e8658836d33de2cd52e6ee950c4d6fe81d80ab4f6e93deb96253ba9ad00ee"
+    },
+    {
+      "bytes": 1051,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/10-trnm-cell-list.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/10-trnm-cell-list.json",
+      "sha256": "38e0968adec3f630613da4db87a2fc2417fecdbdb35f44907c1736f8abe4d17f"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/10-trnm-cell-list.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/10-trnm-cell-list.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/10-trnm-cell-list.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/10-trnm-cell-list.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2027,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/10-trnm-cell-native.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/10-trnm-cell-native.json",
+      "sha256": "d4afe7b438a07fffe2780131f954e3eaa6a5261ac6a96de410b80e1ae0de71d4"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/10-trnm-cell-native.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/10-trnm-cell-native.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 113,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/10-trnm-cell-native.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/10-trnm-cell-native.stdout.log",
+      "sha256": "df166913f47ff1f04202cae9b31df67ed272d692d99a0023a8117dc3029100dd"
+    },
+    {
+      "bytes": 52,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/10-trnm-cell-roster.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/10-trnm-cell-roster.json",
+      "sha256": "4cc0c6dd0174d5f14f67a436220b085b655b17a2334de150f3a047a46eb37ba0"
+    },
+    {
+      "bytes": 1087,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/11-trnm-cell-adoption-list.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/11-trnm-cell-adoption-list.json",
+      "sha256": "b05c6c48891b4530cf4ccc1c8409b0d06d4ac259591fa465a86d9afaae265325"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/11-trnm-cell-adoption-list.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/11-trnm-cell-adoption-list.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/11-trnm-cell-adoption-list.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/11-trnm-cell-adoption-list.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2072,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/11-trnm-cell-adoption-native.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/11-trnm-cell-adoption-native.json",
+      "sha256": "47a65d794b2473137b1fc6efef9156d6316eba060a6fcf0a5d6f2be8f5cb74d6"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/11-trnm-cell-adoption-native.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/11-trnm-cell-adoption-native.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 113,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/11-trnm-cell-adoption-native.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/11-trnm-cell-adoption-native.stdout.log",
+      "sha256": "df166913f47ff1f04202cae9b31df67ed272d692d99a0023a8117dc3029100dd"
+    },
+    {
+      "bytes": 52,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/11-trnm-cell-adoption-roster.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/11-trnm-cell-adoption-roster.json",
+      "sha256": "4cc0c6dd0174d5f14f67a436220b085b655b17a2334de150f3a047a46eb37ba0"
+    },
+    {
+      "bytes": 1091,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/12-trnm-cell-discovery-list.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/12-trnm-cell-discovery-list.json",
+      "sha256": "5e4ee40edddaf48e7326cfb4c5f596189da0dc1f726fb16682626d6295ebabfd"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/12-trnm-cell-discovery-list.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/12-trnm-cell-discovery-list.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/12-trnm-cell-discovery-list.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/12-trnm-cell-discovery-list.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2077,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/12-trnm-cell-discovery-native.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/12-trnm-cell-discovery-native.json",
+      "sha256": "6785f65cf9b036d5b1ea999c696a7f1541ba480d89a9ba18f0b5aa48c4367605"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/12-trnm-cell-discovery-native.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/12-trnm-cell-discovery-native.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 113,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/12-trnm-cell-discovery-native.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/12-trnm-cell-discovery-native.stdout.log",
+      "sha256": "df166913f47ff1f04202cae9b31df67ed272d692d99a0023a8117dc3029100dd"
+    },
+    {
+      "bytes": 52,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/12-trnm-cell-discovery-roster.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/12-trnm-cell-discovery-roster.json",
+      "sha256": "4cc0c6dd0174d5f14f67a436220b085b655b17a2334de150f3a047a46eb37ba0"
+    },
+    {
+      "bytes": 1107,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/13-trnm_data_availability-list.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/13-trnm_data_availability-list.json",
+      "sha256": "935dcb4a9efa17e5b82bba28e2fc97d6af5aed0c20a27144b1c9c6e105be0afb"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/13-trnm_data_availability-list.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/13-trnm_data_availability-list.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 77228,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/13-trnm_data_availability-list.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/13-trnm_data_availability-list.stdout.log",
+      "sha256": "81c567a36692b36d1e79deae0919200dc5ccca879f019d3e72af01451f18a51b"
+    },
+    {
+      "bytes": 2103,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/13-trnm_data_availability-native.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/13-trnm_data_availability-native.json",
+      "sha256": "f7943fd25a1ac1baa6a017740cd7ba376b2a46dd5a016b849f7df2caeef6060a"
+    },
+    {
+      "bytes": 15013,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/13-trnm_data_availability-native.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/13-trnm_data_availability-native.stderr.log",
+      "sha256": "8a55fa92e1835a538ed81f7a62c06fddeaa3b59664e0ee49af1e10bc005e4b6b"
+    },
+    {
+      "bytes": 82052,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/13-trnm_data_availability-native.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/13-trnm_data_availability-native.stdout.log",
+      "sha256": "373d810ec5846c908163da960fb2250fc08ac307121ff992478f87be6b734f3b"
+    },
+    {
+      "bytes": 155994,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/13-trnm_data_availability-roster.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/13-trnm_data_availability-roster.json",
+      "sha256": "609a17dc3b760d6ef5975eb00822d733392e5bca1b093dd0025e1cd642fbbdea"
+    },
+    {
+      "bytes": 3984184,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_adoption_cli-54ea48ddfb060810",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_adoption_cli-54ea48ddfb060810",
+      "sha256": "01739abbe981980d367499ea37765233c0425679b1682c09212a41190d7300d9"
+    },
+    {
+      "bytes": 1051256,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_bep52_cost_v1-e4ddc15a419a0fb9",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_bep52_cost_v1-e4ddc15a419a0fb9",
+      "sha256": "be087b6e7c42027ff7ad1ec4f35c0b764cd8ed6093e369ab16880770c0b9c4bb"
+    },
+    {
+      "bytes": 3741584,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_cache_wal_cli-c447e0fb4604698c",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_cache_wal_cli-c447e0fb4604698c",
+      "sha256": "d6d3f484151f2e06e58da73d7e73f55366ad4ece3a1f5f3582627a5c464011c9"
+    },
+    {
+      "bytes": 3920192,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_closure_cli-710e4425e4aaadbe",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_closure_cli-710e4425e4aaadbe",
+      "sha256": "e691257d3e8fba486d5b913f8e7e2432324cf2c57cad8942eae06f195c9ab48a"
+    },
+    {
+      "bytes": 1051272,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_delta_workload_observer-48263eefa9ec4b8a",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_delta_workload_observer-48263eefa9ec4b8a",
+      "sha256": "8746eccde4d95c59d0a2d3168852c0723c6d15d69425384fa748b96917084228"
+    },
+    {
+      "bytes": 3952416,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_discovery_cli-b0001582b550d769",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_discovery_cli-b0001582b550d769",
+      "sha256": "a77f3d4a91b7990682be4955445425c91db4d6089b619cc15ad711d20a9e354c"
+    },
+    {
+      "bytes": 3818112,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_fetch_deadline_cli-20d46916f99e2ec2",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_fetch_deadline_cli-20d46916f99e2ec2",
+      "sha256": "ffce99b168eafc9b8f05dc5114cec779593b5e2c1d5c012057636c0d2a241442"
+    },
+    {
+      "bytes": 3800112,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_persistent_cli-e7959ba45649113d",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_persistent_cli-e7959ba45649113d",
+      "sha256": "cba6d86d421fac1f9c190d4235f02726876fa2c54058da6e3e12472b38969146"
+    },
+    {
+      "bytes": 3953872,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_provider_ready_cli-6a234193b4ce88f5",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_provider_ready_cli-6a234193b4ce88f5",
+      "sha256": "5e24ad09c0e93b04c1467f8c4220d30c95743e2adcbf1bb2eb9e16797abd4f46"
+    },
+    {
+      "bytes": 3839832,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_release_cli-976da714a129e38f",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_release_cli-976da714a129e38f",
+      "sha256": "de85093e1333721b9c889adbb366cdb15e28f45e99ffe38fad5676c883b71a32"
+    },
+    {
+      "bytes": 1051264,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_residency_observer-19e1f794a45f3e63",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_residency_observer-19e1f794a45f3e63",
+      "sha256": "20bfdd6a80035327afb525945203223a4cca8ad33820e89e2699b28b6b49d0b6"
+    },
+    {
+      "bytes": 1051256,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_rs46_cost_v1-7e1e5075247796c9",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_rs46_cost_v1-7e1e5075247796c9",
+      "sha256": "51c72b2dc077bb5987091ad994388fc32fd20cb9e70d776589eb0515b7360b9d"
+    },
+    {
+      "bytes": 1051280,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_sealed_research_next_use_v1-94b490bc9dfb3d94",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_sealed_research_next_use_v1-94b490bc9dfb3d94",
+      "sha256": "7826142b586f9f4f05985b30eb6b4e0c6a6c98ae44c43c1ba87ade94d150fc9c"
+    },
+    {
+      "bytes": 1051264,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_serving_ab_observer-41a3406802792dbe",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_serving_ab_observer-41a3406802792dbe",
+      "sha256": "c5e8163d58fa5ff415e82dc4ff4611e942894999cc25c0777695d6833320bffc"
+    },
+    {
+      "bytes": 1051280,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_signed_sealed_pipeline_v1-eca69481293cb510",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_signed_sealed_pipeline_v1-eca69481293cb510",
+      "sha256": "0d5cd5fc0ae1caa819566863eeeb14235acfedb61e83d64917678667416b61ec"
+    },
+    {
+      "bytes": 4024120,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_tensor_cli-01c0ff6c929d5bb4",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/cell_tensor_cli-01c0ff6c929d5bb4",
+      "sha256": "d933b5a39319d7d7042ea58f635e45e8590294faafd136094cbc09da097982cd"
+    },
+    {
+      "bytes": 3723152,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/pq_cell_cli-5acecb2a0ba1b894",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/pq_cell_cli-5acecb2a0ba1b894",
+      "sha256": "d922bbe7bf0f57583b889a61a6ebd66c32653060fc7b55a3c4883568e49d565d"
+    },
+    {
+      "bytes": 3973856,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm-cell",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm-cell",
+      "sha256": "6a2c8d92b1e23124820ac0b6866fda21dd923910bb69bc3c6560b88086ab888d"
+    },
+    {
+      "bytes": 3530752,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm-cell-adoption",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm-cell-adoption",
+      "sha256": "8569f0d3a5bfc95e9bcb2b420f0d1ab48292029a76bf7bbc802837adc6ab6d9e"
+    },
+    {
+      "bytes": 4007128,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm-cell-discovery",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm-cell-discovery",
+      "sha256": "9cb4d529b8fa18e5bb900466d3b5791df6f28632690cbc222c67f5cd406a13d0"
+    },
+    {
+      "bytes": 1051240,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm_cell-082545a3bcb4bee9",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm_cell-082545a3bcb4bee9",
+      "sha256": "15274830ac477a532b00e1787db88e9f2af0d694182af43b1882de27f8958ae6"
+    },
+    {
+      "bytes": 1051256,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm_cell_adoption-a735a1ef19763c97",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm_cell_adoption-a735a1ef19763c97",
+      "sha256": "4c25781df45a67d163985eae6b555a46b94cced5a4bc9128ed54d8711d0cb81e"
+    },
+    {
+      "bytes": 1051256,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm_cell_discovery-886084e361c47f39",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm_cell_discovery-886084e361c47f39",
+      "sha256": "ab564447b6ae157faf1fbe17fded801c0c897264c2441f0aa877f79ab220e8da"
+    },
+    {
+      "bytes": 16411728,
+      "kind": "retained_elf",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm_data_availability-64b25e344716c90a",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binaries/trnm_data_availability-64b25e344716c90a",
+      "sha256": "ac7491d9888890f10e60e31336b7c2cb5c74f3df89264dbd8ab8272037537c9f"
+    },
+    {
+      "bytes": 9307,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binary-guards-after.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binary-guards-after.json",
+      "sha256": "2a0fb7ee640290c3ee98cf72dfd4c126504346ea38fbb0b0914ae065c1402287"
+    },
+    {
+      "bytes": 9575,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binary-guards-before.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/binary-guards-before.json",
+      "sha256": "ba432fdd25721432bc2c0b20cd30abbeb1007b345225006f3c53580a7035e37a"
+    },
+    {
+      "bytes": 1212,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/build.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/build.json",
+      "sha256": "24346aa91b616935d23f7e370ff7feba56431dfa27aca857a82637894ae5d1b1"
+    },
+    {
+      "bytes": 1751,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/build.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/build.stderr.log",
+      "sha256": "0d2d40fa440ac986f37fb0f52d9f5aa02de26b9dba297f3950a3b187c388e76f"
+    },
+    {
+      "bytes": 116082,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/build.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/build.stdout.log",
+      "sha256": "63163d295789bc9f76050ee9fc1b906def9fc324385380d83a369977feb04a1e"
+    },
+    {
+      "bytes": 28611,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/compiler-artifacts.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/compiler-artifacts.json",
+      "sha256": "a40a63accb6707dca5b7cf0042f25f54e5ea021431be31f14d6e58f3080aece9"
+    },
+    {
+      "bytes": 350,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/failure.txt",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/failure.txt",
+      "sha256": "2adc4a241e13e312d9f653eafd0dd49cf12633ae34e97e8ecea45fb21fea9db0"
+    },
+    {
+      "bytes": 896,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/preflight.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/preflight.json",
+      "sha256": "277d0066d2d7b59a2e902edb6097a78816e58201aec5f0f0c464b3d9fc997f51"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/preflight.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 172,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/preflight.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/preflight.stdout.log",
+      "sha256": "784eb6312d77d96e7bf1104b42b6fa980b5da12100befd8ba6c1606f49d165fc"
+    },
+    {
+      "bytes": 423,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/source-after.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/source-after.json",
+      "sha256": "240516abc8be89bdcedc48745d03cf5ac3ca0847456f2f4b269c30a0e9a04079"
+    },
+    {
+      "bytes": 423,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/source-before.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/source-before.json",
+      "sha256": "240516abc8be89bdcedc48745d03cf5ac3ca0847456f2f4b269c30a0e9a04079"
+    },
+    {
+      "bytes": 7610,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/summary.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/summary.json",
+      "sha256": "3a5925699859d317356f12712e6a7bdfb975113c2cf23122a5c60d5649b9ed74"
+    },
+    {
+      "bytes": 17444,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/driver.py",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/driver.py",
+      "sha256": "4bfdd41d67ed420e8a70fa1983a5668c2080a9e1e6f640b0aa1b26940e85f662"
+    },
+    {
+      "bytes": 1108,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/environment.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/environment.json",
+      "sha256": "7b7d27edc53b9ec6a7c4b56ff3aacf287bb156a1866f06df40fd3f1acefc75a5"
+    },
+    {
+      "bytes": 1059,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/fmt/fmt.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/fmt/fmt.json",
+      "sha256": "d558c9e7f90c4a6698621b45bc162c50e1857e94e3a357a999cd67fd4ee494dc"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/fmt/fmt.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/fmt/fmt.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/fmt/fmt.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/fmt/fmt.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/fmt/source-after.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/fmt/source-after.json",
+      "sha256": "240516abc8be89bdcedc48745d03cf5ac3ca0847456f2f4b269c30a0e9a04079"
+    },
+    {
+      "bytes": 423,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/fmt/source-before.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/fmt/source-before.json",
+      "sha256": "240516abc8be89bdcedc48745d03cf5ac3ca0847456f2f4b269c30a0e9a04079"
+    },
+    {
+      "bytes": 1122,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/fmt/summary.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/fmt/summary.json",
+      "sha256": "4757798e4eb5532de08a67a763dfa821423064f8791bbc33e87f79559e11ef8d"
+    },
+    {
+      "bytes": 1136,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/fuzz-metadata/fuzz-metadata.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/fuzz-metadata/fuzz-metadata.json",
+      "sha256": "cdbe76056f6e4d920e4f546fbbff09459e7eea8f60a08632135b25acefbd2313"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/fuzz-metadata/fuzz-metadata.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/fuzz-metadata/fuzz-metadata.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 740865,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/fuzz-metadata/fuzz-metadata.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/fuzz-metadata/fuzz-metadata.stdout.log",
+      "sha256": "522ea76f457d593df1efa7c86446f5e83fdfd8c770d9e4811961bf2ab4500a8c"
+    },
+    {
+      "bytes": 423,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/fuzz-metadata/source-after.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/fuzz-metadata/source-after.json",
+      "sha256": "240516abc8be89bdcedc48745d03cf5ac3ca0847456f2f4b269c30a0e9a04079"
+    },
+    {
+      "bytes": 423,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/fuzz-metadata/source-before.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/fuzz-metadata/source-before.json",
+      "sha256": "240516abc8be89bdcedc48745d03cf5ac3ca0847456f2f4b269c30a0e9a04079"
+    },
+    {
+      "bytes": 1132,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/fuzz-metadata/summary.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/fuzz-metadata/summary.json",
+      "sha256": "defba5d32b69ab78032c8b1e0d5dcc626c12175f4c2514a1a9dbbe05d334a60e"
+    },
+    {
+      "bytes": 1016,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/provider-version.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/provider-version.json",
+      "sha256": "f90b5b5aff171ea3d950b09a1cbeaa58100e860f7d5aa038590a8596c4d41846"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/provider-version.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/provider-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 891,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/provider-version.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/provider-version.stdout.log",
+      "sha256": "9ee8890a318f46bf1186a598a0652076ebacf9cd1da3d46cab176c4c5ccf2b60"
+    },
+    {
+      "bytes": 955,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/rustc-version.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/rustc-version.json",
+      "sha256": "4bff1aef04fd2af1db2002ebfccc36abd9a158184a6f34516d2489db1e664e02"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/rustc-version.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/rustc-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/rustc-version.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/rustc-version.stdout.log",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "bytes": 14704,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/summary.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/summary.json",
+      "sha256": "61954e11c99a572fad61a44ff5c84557efb705952a74e7e845fdd3ba321fe21b"
+    },
+    {
+      "bytes": 1733,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/toolchain-provider-after.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/toolchain-provider-after.json",
+      "sha256": "89475c20b4bf72cfda9fcf9a45385eac15a106a76f8f4e28996960ef02268090"
+    },
+    {
+      "bytes": 1733,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/toolchain-provider-before.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/toolchain-provider-before.json",
+      "sha256": "89475c20b4bf72cfda9fcf9a45385eac15a106a76f8f4e28996960ef02268090"
+    },
+    {
+      "bytes": 423,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/workspace-metadata/source-after.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/workspace-metadata/source-after.json",
+      "sha256": "240516abc8be89bdcedc48745d03cf5ac3ca0847456f2f4b269c30a0e9a04079"
+    },
+    {
+      "bytes": 423,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/workspace-metadata/source-before.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/workspace-metadata/source-before.json",
+      "sha256": "240516abc8be89bdcedc48745d03cf5ac3ca0847456f2f4b269c30a0e9a04079"
+    },
+    {
+      "bytes": 1137,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/workspace-metadata/summary.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/workspace-metadata/summary.json",
+      "sha256": "53750f1bb6b45c415a71c06e7f056e192fab7ababf14b4cfbd2134b8c2c268eb"
+    },
+    {
+      "bytes": 1164,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/workspace-metadata/workspace-metadata.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/workspace-metadata/workspace-metadata.json",
+      "sha256": "2fbf82285510b4a4f70b464c5ef6cffe8da60f64facc567e991e0c523605df63"
+    },
+    {
+      "bytes": 0,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/workspace-metadata/workspace-metadata.stderr.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/workspace-metadata/workspace-metadata.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 855036,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/workspace-metadata/workspace-metadata.stdout.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-all/workspace-metadata/workspace-metadata.stdout.log",
+      "sha256": "34be308f1abbd9792beb885cf390332ab785082f93ab66d0a40f2abbfb2adc87"
+    },
+    {
+      "bytes": 5412,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-da-isolated-once/driver.py",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-da-isolated-once/driver.py",
+      "sha256": "2e75be4c67b6ff9c62f9d751ff11b02b4452af0f3d0f4e3b4719521057d5b770"
+    },
+    {
+      "bytes": 1108,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-da-isolated-once/environment.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-da-isolated-once/environment.json",
+      "sha256": "7b7d27edc53b9ec6a7c4b56ff3aacf287bb156a1866f06df40fd3f1acefc75a5"
+    },
+    {
+      "bytes": 854,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-da-isolated-once/native-combined.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-da-isolated-once/native-combined.log",
+      "sha256": "c7ab0bca0f9fa4e4e9e704e7b4a920db142186b08d3451dbb44500c7d036a93b"
+    },
+    {
+      "bytes": 4586,
+      "kind": "text_or_json",
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-da-isolated-once/receipt.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-da-isolated-once/receipt.json",
+      "sha256": "522bed2b145f59b9c36e14d29260b687b111bfac7d838261879029a58cf82b45"
+    }
+  ],
+  "groups": [
+    {
+      "group": "crypto",
+      "native_suites": [
+        {
+          "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_crypto_primitives-ec09512dfb6081aa",
+          "counts": {
+            "failed": 0,
+            "filtered_out": 61,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 135
+          },
+          "kernel_executable_observed": true,
+          "listed": 196,
+          "native_receipt": "00-trnm_crypto_primitives-native.json",
+          "selected": 135
+        }
+      ],
+      "source_stable": true,
+      "status": "component_tests_passed"
+    },
+    {
+      "group": "da",
+      "native_suites": [
+        {
+          "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_adoption_cli-54ea48ddfb060810",
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 11
+          },
+          "kernel_executable_observed": true,
+          "listed": 11,
+          "native_receipt": "00-cell_adoption_cli-native.json",
+          "selected": 11
+        },
+        {
+          "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_cache_wal_cli-c447e0fb4604698c",
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 1
+          },
+          "kernel_executable_observed": true,
+          "listed": 1,
+          "native_receipt": "01-cell_cache_wal_cli-native.json",
+          "selected": 1
+        },
+        {
+          "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_closure_cli-710e4425e4aaadbe",
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 5
+          },
+          "kernel_executable_observed": true,
+          "listed": 5,
+          "native_receipt": "02-cell_closure_cli-native.json",
+          "selected": 5
+        },
+        {
+          "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_discovery_cli-b0001582b550d769",
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 5
+          },
+          "kernel_executable_observed": true,
+          "listed": 5,
+          "native_receipt": "03-cell_discovery_cli-native.json",
+          "selected": 5
+        },
+        {
+          "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_fetch_deadline_cli-20d46916f99e2ec2",
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 5
+          },
+          "kernel_executable_observed": true,
+          "listed": 5,
+          "native_receipt": "04-cell_fetch_deadline_cli-native.json",
+          "selected": 5
+        },
+        {
+          "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_persistent_cli-e7959ba45649113d",
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 5
+          },
+          "kernel_executable_observed": true,
+          "listed": 5,
+          "native_receipt": "05-cell_persistent_cli-native.json",
+          "selected": 5
+        },
+        {
+          "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_provider_ready_cli-6a234193b4ce88f5",
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 2
+          },
+          "kernel_executable_observed": true,
+          "listed": 2,
+          "native_receipt": "06-cell_provider_ready_cli-native.json",
+          "selected": 2
+        },
+        {
+          "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_release_cli-976da714a129e38f",
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 2
+          },
+          "kernel_executable_observed": true,
+          "listed": 2,
+          "native_receipt": "07-cell_release_cli-native.json",
+          "selected": 2
+        },
+        {
+          "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_tensor_cli-01c0ff6c929d5bb4",
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 7
+          },
+          "kernel_executable_observed": true,
+          "listed": 7,
+          "native_receipt": "08-cell_tensor_cli-native.json",
+          "selected": 7
+        },
+        {
+          "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/pq_cell_cli-5acecb2a0ba1b894",
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 2
+          },
+          "kernel_executable_observed": true,
+          "listed": 2,
+          "native_receipt": "09-pq_cell_cli-native.json",
+          "selected": 2
+        },
+        {
+          "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell-082545a3bcb4bee9",
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 0
+          },
+          "kernel_executable_observed": true,
+          "listed": 0,
+          "native_receipt": "10-trnm-cell-native.json",
+          "selected": 0
+        },
+        {
+          "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell_adoption-a735a1ef19763c97",
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 0
+          },
+          "kernel_executable_observed": true,
+          "listed": 0,
+          "native_receipt": "11-trnm-cell-adoption-native.json",
+          "selected": 0
+        },
+        {
+          "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell_discovery-886084e361c47f39",
+          "counts": {
+            "failed": 0,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 0
+          },
+          "kernel_executable_observed": true,
+          "listed": 0,
+          "native_receipt": "12-trnm-cell-discovery-native.json",
+          "selected": 0
+        },
+        {
+          "binary": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_data_availability-64b25e344716c90a",
+          "counts": {
+            "failed": 1,
+            "filtered_out": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 740
+          },
+          "kernel_executable_observed": true,
+          "listed": 741,
+          "native_receipt": "13-trnm_data_availability-native.json",
+          "selected": 741
+        }
+      ],
+      "source_stable": true,
+      "status": "component_failed"
+    },
+    {
+      "group": "fmt",
+      "native_suites": [],
+      "source_stable": true,
+      "status": "check_passed"
+    },
+    {
+      "group": "workspace-metadata",
+      "native_suites": [],
+      "source_stable": true,
+      "status": "check_passed"
+    },
+    {
+      "group": "fuzz-metadata",
+      "native_suites": [],
+      "source_stable": true,
+      "status": "check_passed"
+    },
+    {
+      "group": "clippy",
+      "native_suites": [],
+      "source_stable": true,
+      "status": "check_passed"
+    }
+  ],
+  "isolated_diagnostic": {
+    "counts": {
+      "failed": 1,
+      "filtered_out": 740,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 0
+    },
+    "exit_code": 101,
+    "receipt": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-da-isolated-once/receipt.json",
+    "status": "diagnostic_failed"
+  },
+  "isolated_diagnostic_replaces_complete_suite": false,
+  "retained_elf_storage": "desktop external artifact directory; Git archival is a separate action",
+  "scope": "original component and quality run plus one isolated DA diagnostic",
+  "source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "toolchain_provider_inputs_stable": true,
+  "totals": {
+    "retained_elf": {
+      "bytes": 83915256,
+      "files": 25
+    },
+    "text_or_json": {
+      "bytes": 2380271,
+      "files": 172
+    }
+  },
+  "tree": "129267332b2ef87d3d66d014fddeb894faa9379f"
+}
