@@ -370,7 +370,12 @@ fn require_classical_network_settings(settings: &Settings) -> Result<()> {
     ensure(
         !settings.app.is_pq_account_profile(),
         "AUTH_CLASSICAL_FOR_PQ_PROFILE",
-    )
+    )?;
+    // The retained Settings identity does not validate mutable application
+    // fields. Refuse damaged development scope and orphan native_pq_ markers
+    // before signing, authentication, admission work or any socket operation.
+    settings.app.check_account_profile()?;
+    Ok(())
 }
 
 fn require_classical_network_owner(node: &Node) -> Result<()> {
@@ -2872,6 +2877,9 @@ pub fn sync_from_public_history_pq_v4(
     )
     .into())
 }
+
+#[cfg(test)]
+mod account_scope_tests;
 
 #[cfg(test)]
 mod tests {

@@ -33,7 +33,7 @@ serde_json = "1"
 hex = "0.4"
 fs2 = "0.4"
 libc = "0.2"
-rustix = { version = "1.1.4", features = ["fs", "net", "process", "time"] }
+rustix = { version = "1.1.6", features = ["fs", "net", "process", "time"] }
 sha2 = "0.10"
 rusqlite = { version = "=0.41.0", features = ["bundled", "fallible_uint", "hooks"] }
 openssl = { version = "=0.10.81", optional = true }
@@ -50,4 +50,4 @@ rusqlite = { version = "=0.41.0", features = ["trace"] }
 [target.'cfg(target_os = "linux")'.dependencies]
 trnm-release-bundle = { version = "=0.1.0", path = "../trnm-release-bundle" }
 nix = { version = "=0.30.1", features = ["fs", "poll", "process"] }
-rustix = { version = "1.1.4", features = ["rand"] }
+rustix = { version = "1.1.6", features = ["rand"] }

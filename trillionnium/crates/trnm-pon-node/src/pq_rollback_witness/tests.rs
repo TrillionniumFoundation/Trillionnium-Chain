@@ -782,3 +782,93 @@ fn invalid_external_checkpoint_is_rejected_before_touching_recovery_storage() {
         assert!(!missing.exists());
     }
 }
+
+#[test]
+fn live_retry_refuses_changed_durable_predecessor_at_the_same_head() {
+    let (_diagnostics, directory, policy, owner) = fixture();
+    let path = directory.path().join("witness.sqlite");
+    let owner = Arc::new(Mutex::new(owner));
+    let mut first = shared_client(&policy, &owner);
+    let initial = first.current().unwrap();
+    let next = Checkpoint::new(2, [2; 64]).unwrap();
+    first.advance(initial, next).unwrap();
+
+    // The authenticated head is unchanged. A structurally valid database
+    // predecessor must not invent another transition into that known head.
+    let forged = Checkpoint::new(initial.sequence, [9; 64]).unwrap();
+    let db = Connection::open(&path).unwrap();
+    assert_eq!(
+        db.execute(
+            "UPDATE witness_v1 SET previous_root=? WHERE singleton=1",
+            [forged.root.as_slice()],
+        )
+        .unwrap(),
+        1
+    );
+    drop(db);
+    let before = fs::read(&path).unwrap();
+    let mut retry = shared_client(&policy, &owner);
+    assert_eq!(
+        retry.advance(forged, next).unwrap_err().to_string(),
+        "PQ_WITNESS_RETRY_CONFLICT"
+    );
+    assert_eq!(owner.lock().unwrap().read_head().unwrap(), next);
+    assert_eq!(fs::read(&path).unwrap(), before);
+}
+
+#[test]
+fn cold_reopen_refuses_database_retry_history_and_accepts_new_successors() {
+    for change_predecessor in [false, true] {
+        let (_diagnostics, directory, policy, owner) = fixture();
+        let path = directory.path().join("witness.sqlite");
+        let mut first = client(&policy, owner, Arc::new(AtomicUsize::new(0)), false);
+        let initial = first.current().unwrap();
+        let next = Checkpoint::new(2, [2; 64]).unwrap();
+        let later = Checkpoint::new(3, [3; 64]).unwrap();
+        first.advance(initial, next).unwrap();
+        // Only the current checkpoint survives in independent authority.
+        let retained = first.current().unwrap();
+        drop(first);
+        let restored_predecessor = if change_predecessor {
+            let forged = Checkpoint::new(initial.sequence, [9; 64]).unwrap();
+            let db = Connection::open(&path).unwrap();
+            db.execute(
+                "UPDATE witness_v1 SET previous_root=? WHERE singleton=1",
+                [forged.root.as_slice()],
+            )
+            .unwrap();
+            forged
+        } else {
+            initial
+        };
+        let before = fs::read(&path).unwrap();
+        let reopened = DurableWitness::open_existing(
+            &path,
+            WitnessBinding::new(&policy, 1, key(73).public_spki(), key(74).public_spki()).unwrap(),
+            retained,
+            key(73),
+        )
+        .unwrap();
+        let owner = Arc::new(Mutex::new(reopened));
+        let mut retry = shared_client(&policy, &owner);
+        // ACK-loss recovery may read the retained target; it does not require
+        // signing a historical CAS from the restored predecessor metadata.
+        assert_eq!(retry.current().unwrap(), retained);
+        assert_eq!(
+            retry
+                .advance(restored_predecessor, next)
+                .unwrap_err()
+                .to_string(),
+            "PQ_WITNESS_RETRY_CONFLICT"
+        );
+        assert_eq!(fs::read(&path).unwrap(), before);
+
+        // A fresh authenticated successor and its exact live retry remain
+        // available. Refusing unknown history does not disable the service.
+        let mut fresh = shared_client(&policy, &owner);
+        assert_eq!(fresh.current().unwrap(), retained);
+        fresh.advance(next, later).unwrap();
+        fresh.advance(next, later).unwrap();
+        assert_eq!(fresh.current().unwrap(), later);
+    }
+}

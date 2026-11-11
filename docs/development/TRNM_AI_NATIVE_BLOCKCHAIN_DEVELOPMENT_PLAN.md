@@ -1,3 +1,24 @@
+**PQ retry provenance and classical network scope, 2026-11-11 America/New_York — HOLD:**
+
+Continue the exact #901 candidate `6c35f94d9387fac41c1547f05742d70150320b2e`.
+Bind a PNQ2 exact CAS retry to the predecessor actually committed by its live
+witness owner. A cold current-head recovery pin authenticates Current and a
+fresh successor, not historical predecessor bytes restored with SQLite.
+Keep observation-only ACK-loss recovery, live exact retries, uncertain-commit
+fencing and every original resource limit. Recheck the selected development
+account scope before Settings-aware classical request signatures, admission
+work and socket activity; preserve explicit PQ route refusal precedence.
+Update the affected Rustix dependency to 1.1.6 without changing supply-chain
+policy, native build profiles or unrelated SQLite dependencies.
+
+Validate the new refusals with unchanged-source negative subjects, real socket
+observation, actual restored predecessor metadata and retained recovery controls.
+Record the exact committed runtime, source bindings and native results separately.
+The original #901 native cleanup failure, honest-service failures and missing
+Code Scanning API analyses remain original failed observations. No signature
+forgery, independent custody, public-WAN confidentiality, old-root migration,
+quantum work lower bound or whole-chain PQ qualification is established here.
+
 **PQ source convergence, 2026-11-10 America/New_York — HOLD:**
 
 Continue #894 at `31543fb6dde565b62b47436e0b1d399b6d0bd772` with the
