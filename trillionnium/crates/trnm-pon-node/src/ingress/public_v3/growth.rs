@@ -1,5 +1,6 @@
 //! Explicit PGH2/PNP2 development slice on the original protected-v3 transport.
-//! No pool, history walker, automatic parent recovery or new supervisor.
+//! No pool, history-import service, automatic parent recovery or new supervisor.
+//! Current eligibility walks retained ancestor headers under the original budget.
 use super::*;
 use crate::store::growth::GrowthWorkCheckedPacket;
 use crate::{GrowthPacket, GrowthProgress};
@@ -136,13 +137,18 @@ pub(super) fn dispatch(
         Request::GrowthSubmitV1 { packet: text } => {
             let charge = measurement.ok_or("PUBLIC_GROWTH_ORIGINAL_CPU_REQUIRED")?;
             let packet = packet(&text)?;
+            let parent = packet.header.ledger.parent;
             {
                 let mut owner = lock_owner(node, &mut wait)?;
-                if let Some(id) = owner.precheck_growth_admission_with_progress(
-                    &packet,
-                    super::super::now()?,
-                    &checkpoint,
-                )? {
+                let clock = super::super::now()?;
+                let existing =
+                    owner.precheck_growth_admission_with_progress(&packet, clock, &checkpoint)?;
+                // A valid candidate timestamp does not cover nonmonotone
+                // ancestry. Refuse before W1 and before duplicate activation.
+                owner.check_observed_history_with_progress(parent, clock, &mut || {
+                    checkpoint(GrowthProgress::BeforeContext)
+                })?;
+                if let Some(id) = existing {
                     // This existing exact packet gets no new W1 priority.
                     return submit_result(&mut owner, id);
                 }
@@ -188,9 +194,15 @@ pub(super) fn dispatch(
             let mut owner = lock_owner(node, &mut wait)?;
             // Reacquired ORIGINAL owner. No cached State, clock or parent is
             // supplied; the typed entry rebinds all current inputs before commit.
+            let clock = super::super::now()?;
+            // Recheck after unlocked W1 under the original owner, deadline
+            // and CPU reservation before any new durable admission.
+            owner.check_observed_history_with_progress(parent, clock, &mut || {
+                checkpoint(GrowthProgress::BeforeContext)
+            })?;
             let id = owner.admit_growth_work_checked_with_worker_accounting(
                 checked,
-                super::super::now()?,
+                clock,
                 &checkpoint,
                 &charge.workers,
             )?;

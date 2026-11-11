@@ -486,36 +486,21 @@ fn public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation
                 .unwrap(),
             already_stored.then_some(id)
         );
-        let owner = Arc::new(Mutex::new(node));
-        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
-        let server = PublicServer::new(identity(92), policy)
-            .unwrap()
-            .with_native_growth()
-            .unwrap();
-        let mut run = Running::start(directory, owner, settings, server);
+        // Exercise the original postcommit activation helper independently
+        // of the new pre-W1 public ancestry refusal. Local admission retains
+        // its historical-validity contract and has already durably completed.
+        if !already_stored {
+            assert_eq!(node.admit_growth(&packet, clock).unwrap(), id);
+        }
         for _ in 0..2 {
-            let reply = run.call(&Request::GrowthSubmitV1 {
-                packet: hex::encode(packet.encode().unwrap()),
-            });
-            assert!(!reply.ok, "future ancestry activated: {}", reply.value);
-            assert!(
-                reply.value.to_string().contains("TIME_DEFERRED"),
-                "{}",
-                reply.value
-            );
-            let node = run.owner.as_ref().unwrap().lock().unwrap();
+            let error = submit_result(&mut node, id).unwrap_err().to_string();
+            assert!(error.contains("TIME_DEFERRED"), "{error}");
             assert_eq!(node.active().unwrap(), before);
             assert_eq!(
                 node.growth_packet(id).unwrap().encode().unwrap(),
                 packet.encode().unwrap()
             );
         }
-        let metrics = run.finish();
-        assert_eq!(metrics.work_started, u64::from(!already_stored));
-        assert!(metrics.mutation_cpu_charged_ns > 0);
-        assert_eq!(metrics.mutation_cpu_in_flight_after_shutdown, 0);
-        assert_eq!(metrics.paid_body_reserved_bytes_after_shutdown, 0);
-        assert_eq!(metrics.output_reserved_bytes_after_shutdown, 0);
     }
 }
 
@@ -798,5 +783,102 @@ fn growth_signed_tcp_uses_paid_parallel_preparation_and_rejects_unknown_child_cp
                 assert_eq!(metrics.mutation_cpu_clock_failures, 0);
             }
         }
+    }
+}
+
+#[test]
+fn public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work() {
+    for existing in [false, true] {
+        let settings = settings("public-growth-future-ancestor");
+        let directory = tempfile::tempdir().unwrap();
+        let mut node =
+            Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone())
+                .unwrap();
+        let future =
+            crate::ingress::now().unwrap() + settings.limit("future_skew_seconds").unwrap() + 3600;
+        let mut parent = settings.genesis();
+        for timestamp in [11, 21, future, 22, 23] {
+            let packet = node
+                .make_growth_consensus_maintenance(
+                    parent,
+                    vec![],
+                    crate::development_public(3).unwrap(),
+                    timestamp,
+                    4096,
+                )
+                .unwrap();
+            parent = node.admit_growth(&packet, future).unwrap();
+        }
+        let packet = node
+            .make_growth_consensus_maintenance(
+                parent,
+                vec![],
+                crate::development_public(3).unwrap(),
+                24,
+                4096,
+            )
+            .unwrap();
+        let id = packet.id().unwrap();
+        if existing {
+            assert_eq!(node.admit_growth(&packet, future).unwrap(), id);
+        }
+        let active = node.active().unwrap();
+        let owner = Arc::new(Mutex::new(node));
+        let server = PublicServer::new(
+            identity(92),
+            PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        )
+        .unwrap()
+        .with_native_growth()
+        .unwrap();
+        let mut run = Running::start(directory, owner, settings.clone(), server);
+        let work_before = run.metrics.lock().unwrap().work_started;
+        let reply = run.call(&Request::GrowthSubmitV1 {
+            packet: hex::encode(packet.encode().unwrap()),
+        });
+        assert!(
+            !reply.ok,
+            "future ancestor reached public activation: existing={existing}, future={future}, expected_block={}, reply={}",
+            hex::encode(id),
+            reply.value
+        );
+        assert!(
+            reply.value.to_string().contains("TIME_DEFERRED"),
+            "{}",
+            reply.value
+        );
+        assert_eq!(run.metrics.lock().unwrap().work_started, work_before);
+        {
+            let owner = run.owner.as_ref().unwrap().lock().unwrap();
+            assert_eq!(owner.active().unwrap(), active);
+            if existing {
+                assert_eq!(
+                    owner.growth_packet(id).unwrap().encode().unwrap(),
+                    packet.encode().unwrap()
+                );
+            } else {
+                assert!(owner.parent_height(id).is_err());
+            }
+        }
+        // A separate eligible branch still uses the real listener successfully.
+        let honest = {
+            let owner = run.owner.as_ref().unwrap().lock().unwrap();
+            owner
+                .make_growth_consensus_maintenance(
+                    settings.genesis(),
+                    vec![],
+                    crate::development_public(4).unwrap(),
+                    12,
+                    4096,
+                )
+                .unwrap()
+        };
+        assert_eq!(
+            run.submit(&honest)["active"],
+            hex::encode(honest.id().unwrap())
+        );
+        let metrics = run.finish();
+        assert_eq!(metrics.mutation_cpu_in_flight_after_shutdown, 0);
+        assert!(!metrics.mutation_cpu_unavailable_after_shutdown);
     }
 }

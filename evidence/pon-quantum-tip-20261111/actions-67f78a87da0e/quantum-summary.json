@@ -1,0 +1,60 @@
+{
+  "schema": "trnm-quantum-tip-success-observation-v1",
+  "tested_commit": "67f78a87da0e6797c0262e69e95f367bc549be38",
+  "tested_tree": "a08f325997c6563f69c97cb70a1d6e272150db5a",
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42939340379",
+  "job_id": 130257152672,
+  "job_conclusion": "success",
+  "tests": {
+    "quantum_network": 58,
+    "quantum_adversarial": 12,
+    "quantum_resource_clock": 18,
+    "joint_qualification": 34,
+    "dynamic_participation": 28,
+    "pq_lifetime_budget": 58,
+    "ci_contract_mutation": 180,
+    "total": 388,
+    "all_suites_reported_ok": true
+  },
+  "qualification_refusal": {
+    "exit": 3,
+    "value": "REFUSED_UNPROVED_JOINT_CONSENSUS"
+  },
+  "paired": {
+    "runs": 72,
+    "pairs": 36,
+    "complete_horizon_runs": 72,
+    "replayed_runs": 72,
+    "tip_measurement_requests": 1844,
+    "panel_complete": true,
+    "requests_are_physical_measurements": false,
+    "per_case_archive_read_in_this_review": false
+  },
+  "source_verification": {
+    "before_equals_after": true,
+    "tracked_entries": 27918,
+    "tracked_bytes": 2554646454,
+    "tracked_worktree_verified": true
+  },
+  "original_log": {
+    "path": "quantum-tip-paired.log",
+    "utf8_bytes": 277105,
+    "sha256": "53e1a6f2be6ea14be2b5cecb663af439cc7e1923973e462a2df60b5910108227"
+  },
+  "artifact": {
+    "id": 13820228378,
+    "size_in_bytes": 1208090,
+    "zip_sha256": "12b15c28fb72ec4e4aec31a1c6746b2c918e4184f07e906c6e39d62c771dc307",
+    "expires_at": "2026-12-11T01:51:20Z"
+  },
+  "separate_native_lane": {
+    "claimed_by_this_record": false,
+    "status_at_2026_11_11_015203_utc": "queued",
+    "job_id": 130257153150
+  },
+  "native_w1_verified": false,
+  "cp_cg_cq_proved": false,
+  "lifetime_qualified": false,
+  "release_ready": false,
+  "scope": "actual execution only at the named source; source5/source6 additions require their own execution"
+}

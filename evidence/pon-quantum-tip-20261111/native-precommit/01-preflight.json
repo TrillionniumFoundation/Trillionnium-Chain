@@ -1,0 +1,109 @@
+{
+  "phase": "preflight-and-original-source-verification",
+  "started_unix": 1794356820.767301,
+  "root": "/home/qian-qi/work/chain-quantum-daa-20261111-qdaa",
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-quantum-daa-20261111-qdaa",
+      "exit_code": 0,
+      "seconds": 0.09671258926391602,
+      "log": "01-preflight.log"
+    },
+    {
+      "argv": [
+        "cargo",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "rustc",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "rustc 1.95.0 (59807616e 2026-04-14)\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "rustfmt",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "rustfmt 1.9.0-stable (59807616e1 2026-04-14)\n",
+      "stderr": ""
+    }
+  ],
+  "base_commit": "e4abb172147e941b62483652b0ceabaae4317624",
+  "bundle_sha256": "7beac224da1f78281a9e565bbf0872da79dd27e9d64a2250c0b2ff4f3ef2887d",
+  "before_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs",
+      "git_blob_sha": "ee4c3f5adf425796da21a81337923d96a6062fac",
+      "sha256": "bab6e7213b968f6aed47e0e1172522dbaed95d0ab25648f67dfec171511464ed",
+      "bytes": 9541
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "git_blob_sha": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+      "sha256": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554",
+      "bytes": 382866
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs",
+      "git_blob_sha": "00b15fcd355fc1faf39b52848640ecc94d3b5a8b",
+      "sha256": "b9f8911a2eea552a8106acfe99eae1a5b9c1b22b6d0d9b092a108cc2409e8fa6",
+      "bytes": 29990
+    }
+  ],
+  "preflight_exit_code": 0,
+  "environment": {},
+  "resources": {
+    "cpus": 48,
+    "disk": {
+      "total": 982240026624,
+      "used": 811524366336,
+      "free": 150717386752
+    },
+    "meminfo": [
+      "MemTotal:       131760804 kB",
+      "MemFree:        13452456 kB",
+      "MemAvailable:   79263712 kB",
+      "Buffers:         3837960 kB",
+      "Cached:         52532072 kB",
+      "SwapCached:        54868 kB"
+    ]
+  },
+  "cache_scan": {
+    "argv": [
+      "rg",
+      "--files",
+      "--hidden",
+      "--no-ignore",
+      "--maxdepth",
+      "4",
+      "-g",
+      ".rustc_info.json",
+      "-g",
+      "!**/.git/**",
+      "-g",
+      "!**/node_modules/**",
+      "-g",
+      "!**/.venv/**",
+      "/home/qian-qi",
+      "/tmp"
+    ],
+    "exit_code": 2,
+    "paths": [],
+    "stderr": "rg: /tmp/systemd-private-14f92beb43c64786839eb57307ae8048-systemd-timesyncd.service-RQtgKZ: Permission denied (os error 13)\nrg: /tmp/systemd-private-14f92beb43c64786839eb57307ae8048-ModemManager.service-YOpdJ3: Permission denied (os error 13)\nrg: /tmp/systemd-private-14f92beb43c64786839eb57307ae8048-hepta-secrets-runtime.service-oIjq1E: Permission denied (os error 13)\nrg: /tmp/systemd-private-14f92beb43c64786839eb57307ae8048-systemd-oomd.service-lLuDxm: Permission denied (os error 13)\nrg: /home/qian-qi/workspace/pon-native-gates-20261107-525798-v2/architecture-profile-observer-246551a-v1/private: Permission denied (os error 13)\nrg: /home/qian-qi/workspace/pon-native-gates-20261107-525798-v2/architecture-profile-callers-246551a-v1/private: Permission denied (os error 13)\nrg: /tmp/systemd-private-14f92beb43c64786839eb57307ae8048-switcheroo-control.service-IMbCel: Permission denied (os error 13)\nrg: /home/qian-qi/work/p4-isolated-overlay-canary-20261031-v1/overlay-work/work: Permission de"
+  },
+  "native_caches": [],
+  "finished_unix": 1794356821.47282
+}

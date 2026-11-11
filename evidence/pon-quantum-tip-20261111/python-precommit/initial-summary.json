@@ -1,0 +1,15 @@
+{
+  "head": "e4abb172147e941b62483652b0ceabaae4317624",
+  "source_sha256": {
+    "formal/pon-nakamoto-v1/quantum_network_sim.py": "384c8e13ad7e0c8043dfdbc947bd3a12cdb3f5cb11415078f1ae5f3c3aeff2ed",
+    "formal/pon-nakamoto-v1/test_quantum_network_sim.py": "0a0e797b4622fbec82d9e5d1504b0860b0c7e33db0a874bccba0207a301cbdf5",
+    "formal/pon-nakamoto-v1/quantum_tip_measurement_campaign.py": "6cecc88576a5ceb5c583f8e203cbbafab2d5ee7387e12d2de266dd008e0158a7"
+  },
+  "results": {
+    "test_quantum_network_sim.py": 0,
+    "test_quantum_adversarial_search.py": 0,
+    "test_quantum_resource_clock.py": 0,
+    "compile": 0
+  },
+  "qualification": false
+}

@@ -1,0 +1,73 @@
+{
+  "schema": "trnm-quantum-tip-actions-observation-v1",
+  "observation_status": "PARTIAL_PASS_WITH_CI_CONTRACT_FAILURE",
+  "candidate_commit": "2582a6d15a14d3929d3238d844e710f5a291b422",
+  "candidate_tree": "472706bce99c94b47141ca5dd4c22e458e1deb4c",
+  "run": {
+    "id": 42934994220,
+    "attempt": 1,
+    "event": "push",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42934994220"
+  },
+  "job": {
+    "id": 130242739243,
+    "name": "quantum-tip-paired",
+    "conclusion": "failure",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42934994220/job/130242739243"
+  },
+  "raw_log": {
+    "file": "quantum-tip-paired.log",
+    "sha256": "41c645fdc5450e3a6716222934a7666227e5757bfa496dc00cc40ef70c05b724"
+  },
+  "observed_passes": {
+    "full_tracked_source_before_and_after": true,
+    "tracked_entries": 27910,
+    "tracked_bytes": 2553904566,
+    "project_preflight": true,
+    "distributed_source_inventory": true,
+    "corpus_pins": true,
+    "quantum_network_tests": 58,
+    "quantum_adversarial_tests": 12,
+    "quantum_resource_clock_tests": 18,
+    "joint_qualification_tests": 34,
+    "dynamic_participation_tests": 28,
+    "qualification_refusal_exit": 3,
+    "qualification_request": "REFUSED_UNPROVED_JOINT_CONSENSUS",
+    "paired_runs": 72,
+    "paired_comparisons": 36,
+    "complete_horizon_runs": 72,
+    "replayed_runs": 72,
+    "tip_measurement_requests": 1844
+  },
+  "observed_failures": {
+    "ci_contract": "inline source pin differs",
+    "ci_contract_tests_run": 180,
+    "ci_contract_test_failures": 10,
+    "ci_contract_test_errors": 3,
+    "guard_workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+    "guard_line": 80,
+    "guarded_path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "old_expected_git_blob": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+    "observed_git_blob": "94b213360db4c0de4fa81bbbedebd4fb5e47df4e",
+    "correction_scope": "reviewed current-candidate source guard; no historical receipt reclassification"
+  },
+  "artifact": {
+    "id": 13818064587,
+    "name": "quantum-tip-quantum-tip-paired-2582a6d15a14d3929d3238d844e710f5a291b422-1",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42934994220/artifacts/13818064587",
+    "github_reported_archive_sha256": "41eedb456b53f9af498d316bc791589230e87e8bc2fa7ebe2f782fc0fc1569f2",
+    "configured_retention_days": 30,
+    "archive_unpacked_in_this_review": false
+  },
+  "scope": {
+    "native_clock_result_in_this_summary": false,
+    "native_w1_verified": false,
+    "quantum_hardware_executed": false,
+    "all_legal_algorithm_cost_lower_bound": false,
+    "cp_cg_cq_proved": false,
+    "production_consensus_activation": false,
+    "release_ready": false,
+    "metrics_are_conditional_synthetic_observations": true,
+    "note": "1844 counts requests, not completed physical measurements. No adoption-gain estimate is inferred without reading the per-case report. This run belongs to the stated commit; successor commits require their own checks."
+  }
+}

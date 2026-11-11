@@ -1,0 +1,46 @@
+{
+  "schema": "trnm-qrom-fixed-source-failure-observation-v1",
+  "tested_commit": "2582a6d15a14d3929d3238d844e710f5a291b422",
+  "tested_tree": "472706bce99c94b47141ca5dd4c22e458e1deb4c",
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42935065392",
+  "job_id": 130242977468,
+  "original_log": {
+    "path": "qrom-implementation.log",
+    "git_blob": "47e01768c47037bb9a5c1b54413324238378f835",
+    "sha256": "7d7368fa962e4f6cb6d1c9715d9bb6376dd8b0fff23500fc84e2cb281d8b9a9f"
+  },
+  "observed": {
+    "result": "INPUT_REJECTED",
+    "reason": "input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs"
+  },
+  "review": {
+    "frozen_anchor": "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+    "selected_roster_files": 16,
+    "original_anchor_matching_files": 16,
+    "current_matching_files": 14,
+    "inherited_from_base": "e4abb172147e941b62483652b0ceabaae4317624",
+    "changed_files": {
+      "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs": {
+        "declared_bytes": 9233,
+        "current_bytes": 11172,
+        "delta": "Adds a production native-once CLI path; old complete relation, native benchmark and receipt verification paths remain byte-identical."
+      },
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs": {
+        "declared_bytes": 32354,
+        "current_bytes": 32654,
+        "delta": "Adds bounded 380-byte reservation and 133-byte decision payload forms to the selected grammar; retains the total limit and independent PQ-profile restrictions.",
+        "additional_decoder": "trillionnium/crates/trnm-protocol/src/funded_service_task_v1.rs",
+        "decoder_in_original_roster": false
+      }
+    },
+    "scope": "static source comparison; neither new current implementation execution nor a transitive dependency/cost closure"
+  },
+  "fixed_contract_changed": false,
+  "input_limit_raised": false,
+  "post_quantum_soundness_qualified": false,
+  "complete_w1_soundness_qualified": false,
+  "quantum_work_qualified": false,
+  "production_qualified": false,
+  "consensus_admission": false,
+  "security_bits_quantum": null
+}

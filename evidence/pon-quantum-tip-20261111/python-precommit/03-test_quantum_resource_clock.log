@@ -1,0 +1,23 @@
+test_all_processors_pay_data_and_factories (__main__.ResourceClockControls.test_all_processors_pay_data_and_factories) ... ok
+test_campaign_magic_state_budget_is_not_reset_per_trial (__main__.ResourceClockControls.test_campaign_magic_state_budget_is_not_reset_per_trial) ... ok
+test_campaign_rederives_clocks_and_replays_trace (__main__.ResourceClockControls.test_campaign_rederives_clocks_and_replays_trace) ... ok
+test_campaign_source_head_cannot_be_invented (__main__.ResourceClockControls.test_campaign_source_head_cannot_be_invented) ... ok
+test_certificate_and_bound_clock_mutation_rejected (__main__.ResourceClockControls.test_certificate_and_bound_clock_mutation_rejected) ... ok
+test_clock_cannot_be_forged_with_new_checksum (__main__.ResourceClockControls.test_clock_cannot_be_forged_with_new_checksum) ... ok
+test_clock_rounds_up_never_down (__main__.ResourceClockControls.test_clock_rounds_up_never_down) ... ok
+test_construction_mode_replaces_forged_circuit_inputs_and_replays (__main__.ResourceClockControls.test_construction_mode_replaces_forged_circuit_inputs_and_replays) ... ok
+test_fixed_distance_uses_whole_event_envelope (__main__.ResourceClockControls.test_fixed_distance_uses_whole_event_envelope) ... ok
+test_full_compute_inverse_and_readout_all_paid (__main__.ResourceClockControls.test_full_compute_inverse_and_readout_all_paid) ... ok
+test_invalid_budget_and_model_refused (__main__.ResourceClockControls.test_invalid_budget_and_model_refused) ... ok
+test_larger_campaign_can_require_larger_distance (__main__.ResourceClockControls.test_larger_campaign_can_require_larger_distance) ... ok
+test_proof_and_classical_check_do_not_change_quantum_gate_budget (__main__.ResourceClockControls.test_proof_and_classical_check_do_not_change_quantum_gate_budget) ... ok
+test_real_event_run_has_checked_resource_envelope (__main__.ResourceClockControls.test_real_event_run_has_checked_resource_envelope) ... ok
+test_serial_stage_cost_is_not_max_after_aggregation (__main__.ResourceClockControls.test_serial_stage_cost_is_not_max_after_aggregation) ... ok
+test_truncation_is_preserved_as_incomplete (__main__.ResourceClockControls.test_truncation_is_preserved_as_incomplete) ... ok
+test_unbudgeted_processors_speed_and_propagation_refused (__main__.ResourceClockControls.test_unbudgeted_processors_speed_and_propagation_refused) ... ok
+test_unknown_complete_oracle_and_zero_readout_are_refused (__main__.ResourceClockControls.test_unknown_complete_oracle_and_zero_readout_are_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 4.175s
+
+OK

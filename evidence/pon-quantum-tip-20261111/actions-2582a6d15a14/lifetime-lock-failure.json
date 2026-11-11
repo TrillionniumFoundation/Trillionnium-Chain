@@ -1,0 +1,38 @@
+{
+  "schema": "trnm-qdaa-lifetime-lock-failure-v1",
+  "candidate_commit": "2582a6d15a14d3929d3238d844e710f5a291b422",
+  "run_id": 42935065534,
+  "job_id": 130242977474,
+  "job_conclusion": "failure",
+  "tests_run": 58,
+  "errors": 1,
+  "exit_code": 1,
+  "failing_test": "test_default_research_register_contains_no_known_security_bound",
+  "diagnostic": "source lock hash mismatch: trillionnium/crates/trnm-pon-node/src/consensus.rs",
+  "previous_declared_source": "66b7064be597039ce871b5b12ad5568850a2dd46",
+  "reviewed_native_source": "2582a6d15a14d3929d3238d844e710f5a291b422",
+  "reviewed_declared_paths": 15,
+  "unchanged_paths_across_three_snapshots": 13,
+  "changes": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+      "origin": "inherited from PR #876",
+      "scope": "tests only; first 8052 production bytes unchanged"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "origin": "this continuation",
+      "scope": "existing helper gains pub(crate); body unchanged"
+    }
+  ],
+  "correction_scope": "only reviewed revision and two source digests; preserve event roster, all unknown bounds and all false qualification flags",
+  "raw_log": {
+    "file": "repository-truth.log",
+    "sha256": "e893a2bd56cea4743d380feb131da97995cc59495fff2eeddbc64e79467c483a"
+  },
+  "unproved_event_terms": 8,
+  "unproved_query_budgets": 4,
+  "actual_lifetime_failure_bound": null,
+  "source_binding_scope": "declared-event-paths-only",
+  "production_activation": false
+}

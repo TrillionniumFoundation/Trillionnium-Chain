@@ -7,7 +7,7 @@ physical qubits, fault correction and useful-work soundness are not simulated.
 """
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from fractions import Fraction
 import hashlib
 import heapq
@@ -39,6 +39,7 @@ ASSUMPTIONS = {
     "classical": "independent Poisson winner arrivals; query equivalents are assumed rate times elapsed",
     "quantum": "finite Grover trials with float64 sin^2 probability; no monotone success approximation",
     "quantum_trial_policy": "fixed iterations or capped first probability peak; not optimal cost/throughput or cheapest miner",
+    "quantum_tip_policy": "default discard/restart; opt-in latch on adopted tip, finish current iteration, measure once; no arbitrary-gate interruption model",
     "timing_inputs": "synthetic conditional rate and latency premises, not W1/hardware measurements",
     "private_future_parents": "private mining may continue on time-deferred parents; each receiver independently defers future imports",
     "marked_fraction_assumed_equal_uniform_ticket_probability": True,
@@ -157,6 +158,7 @@ class NetworkScenario:
     max_trace_rows: int = 80_000
     max_pending_events: int = 20_000
     cpu_limit_seconds: float = 10.0
+    quantum_tip_policy: str = "discard-restart"
 
     def validate(self) -> None:
         if self.policy in UNAVAILABLE_BACKENDS:
@@ -182,6 +184,13 @@ class NetworkScenario:
             raise ValueError("CLASSICAL_SHARE_SUM")
         if self.quantum_strategy not in ("honest-tip", "private-branch"):
             raise ValueError("QUANTUM_STRATEGY")
+        if self.quantum_tip_policy not in ("discard-restart", "measure-on-tip"):
+            raise ValueError("QUANTUM_TIP_POLICY")
+        if self.quantum_tip_policy == "measure-on-tip":
+            if self.quantum_strategy != "honest-tip":
+                raise ValueError("MEASURE_ON_TIP_REQUIRES_HONEST_TIP")
+            if self.quantum_clock_rounding != "upward":
+                raise ValueError("MEASURE_ON_TIP_REQUIRES_UPWARD_CLOCK")
         if self.quantum_timestamp_mode not in ("wall", "compressed", "mtp-min",
                                                "future-bound", "retarget-extremes"):
             raise ValueError("TIMESTAMP_MODE")
@@ -328,6 +337,7 @@ class Trial:
     iteration_seconds: float
     domain_setup_seconds: float = 0.0
     domain_id: str | None = None
+    tip_measurement: bool = False
 
 
 @dataclass
@@ -436,6 +446,9 @@ class Simulator:
             "future_timestamp_wait_scheduled_seconds": 0.0,
             "classical_query_equivalents": 0.0,
         } for name in self.miners}
+        if case.quantum_tip_policy == "measure-on-tip":
+            self.counts["q"].update(tip_measurement_requests=0, measurement_seconds=0.0,
+                                    measurement_processor_seconds=0.0)
         self.observer_reorgs = 0
         self.observer_max_reorg_depth = 0
         self.observer_prefix_violations = 0
@@ -565,10 +578,69 @@ class Simulator:
         elif recipient == "q" and self.case.quantum_strategy == "private-branch":
             if self.blocks[candidate].miner != "q":
                 self.counts["q"]["private_public_tip_updates_ignored"] += 1
-        else:
+        elif not (recipient == "q" and self.case.quantum_tip_policy == "measure-on-tip"
+                  and self._measure_on_tip()):
             self._cancel(recipient, "tip")
             self._start_miner(recipient)
         self._sample_prefix()
+
+
+    def _measure_on_tip(self) -> bool:
+        """Latch one old-context readout at the next complete iteration boundary.
+
+        Preparation is not a usable Grover state. Once prepared, an in-flight
+        iteration finishes and is paid before readout. Already-started readout
+        and candidate checking finish unchanged. Later tips update the view
+        without measuring the same state again. A reschedule is the same search,
+        with a fresh event serial solely to invalidate its original completion.
+        """
+        trial = self.active.get("q")
+        if trial is None:
+            return False
+        if trial.tip_measurement:
+            return True
+        elapsed = Fraction.from_float(float(self.now)) - Fraction.from_float(float(trial.started))
+        prepare = (Fraction.from_float(float(self.case.quantum_prepare_seconds))
+                   + Fraction.from_float(float(trial.domain_setup_seconds)))
+        if elapsed < prepare:
+            return False
+        iteration = Fraction.from_float(trial.iteration_seconds)
+        depth = min(trial.iterations, max(0, math.ceil((elapsed - prepare) / iteration)))
+        original_serial = trial.serial
+        readout_started = elapsed >= prepare + trial.iterations * iteration
+        if depth < trial.iterations:
+            if trial.domain_id is None:
+                chance = grover_success(float(probability(trial.target)), depth,
+                                        self.case.quantum_processors)
+            else:
+                domain = self.quantum_domain
+                if domain is None or domain.domain_id != trial.domain_id:
+                    raise ValueError("ACTIVE_DOMAIN_MISMATCH")
+                chance = finite_domain_success(self.case.quantum_domain_size, domain.marked_count,
+                                               depth, self.case.quantum_processors)
+            finish = upward_float(
+                Fraction.from_float(float(trial.started)) + prepare + depth * iteration
+                + Fraction.from_float(float(self.case.quantum_measure_seconds))
+                + Fraction.from_float(float(self.case.quantum_candidate_check_seconds)))
+            self.trial_serial += 1
+            trial = replace(trial, serial=self.trial_serial, finishes=finish,
+                            iterations=depth, success_probability=chance, tip_measurement=True)
+            self.active["q"] = trial
+            self._schedule(finish, "search", ("q", trial.serial))
+        else:
+            trial = replace(trial, tip_measurement=True)
+            self.active["q"] = trial
+        self.counts["q"]["tip_measurement_requests"] += 1
+        boundary_wait = max(Fraction(0), prepare + depth * iteration - elapsed)
+        self._emit("search-tip-measurement", miner="q", trial=trial.serial,
+                   original_trial=original_serial, parent=trial.parent,
+                   target_hex=f"{trial.target:064x}", timestamp=trial.timestamp,
+                   contains_probe=trial.contains_probe, domain_id=trial.domain_id,
+                   iterations=depth, success_probability=trial.success_probability,
+                   boundary_wait_seconds=upward_float(boundary_wait),
+                   readout_already_started=readout_started,
+                   scheduled_finish_seconds=trial.finishes)
+        return True
 
     def _is_ancestor(self, ancestor: str, tip: str) -> bool:
         height = self.blocks[ancestor].height
@@ -840,6 +912,12 @@ class Simulator:
                 exact_checked = min(Fraction.from_float(float(self.case.quantum_candidate_check_seconds)),
                                     max(Fraction(0), exact_elapsed - exact_check_start))
                 checked_seconds = float(exact_checked)
+                if self.case.quantum_tip_policy == "measure-on-tip":
+                    measure_seconds = Fraction.from_float(float(self.case.quantum_measure_seconds))
+                    measured = float(min(measure_seconds, max(
+                        Fraction(0), exact_elapsed - (exact_check_start - measure_seconds))))
+                    counts["measurement_seconds"] += measured
+                    counts["measurement_processor_seconds"] += measured * self.case.quantum_processors
             else:
                 check_starts_after = (self.case.quantum_prepare_seconds + trial.domain_setup_seconds
                                       + trial.iterations * trial.iteration_seconds

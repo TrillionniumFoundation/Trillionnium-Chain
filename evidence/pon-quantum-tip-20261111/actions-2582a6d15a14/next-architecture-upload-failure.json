@@ -1,0 +1,32 @@
+{
+  "schema": "trnm-native-evidence-upload-failure-observation-v1",
+  "tested_commit": "2582a6d15a14d3929d3238d844e710f5a291b422",
+  "tested_tree": "472706bce99c94b47141ca5dd4c22e458e1deb4c",
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42935065536",
+  "job_id": 130242977776,
+  "original_log": {
+    "path": "next-architecture.log",
+    "git_blob": "1fe8b059115ad41bdd233edb576456b8b9f3c38f",
+    "sha256": "3501c7d9b43f8c84246ad30bc01257cc0df356ffb590197efad4ee9a66018ac9"
+  },
+  "observed": {
+    "artifact_upload": "failure",
+    "reason": "A native-storage-component log/exit path contains the forbidden Colon : character",
+    "failed_example": "native-storage-component-cell::host_handoff::tests::research_fds::research_fd_sender_refuses_changed_pins_budget_task_parent_or_expiry_before_any_byte.exit",
+    "earlier_source_and_format_failures_retained_in_log": true
+  },
+  "reviewed_repair": {
+    "workflow": ".github/workflows/pon-next-architecture-security.yml",
+    "tests": "scripts/ci/test_cell_storage_convergence_ci.py",
+    "fixed_selectors": 18,
+    "stem_rule": "replace every :: in each fixed selector with - for artifact label and corresponding log lookup only",
+    "potential_log_and_exit_filenames": 36,
+    "static_names_unique": true,
+    "ascii_names_safe": true,
+    "original_cargo_and_reader_selectors_preserved": true,
+    "all_original_19_test_methods_preserved": true,
+    "execution_success_claimed": false
+  },
+  "service_acceptance_qualified": false,
+  "production_qualified": false
+}

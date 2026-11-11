@@ -1,0 +1,106 @@
+{
+  "scope": "precommit-working-tree-three-native-files",
+  "is_committed_source_validation": false,
+  "status": "RUNNING_03-baseline-new-regression",
+  "started_unix": 1794357127.799902,
+  "base_commit": "e4abb172147e941b62483652b0ceabaae4317624",
+  "root": "/home/qian-qi/work/chain-quantum-daa-20261111-qdaa",
+  "cargo_target_dir": "/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target",
+  "cargo_environment_overrides": {
+    "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target",
+    "CARGO_BUILD_JOBS": "2"
+  },
+  "repository_manifest_profile_overrides": "unchanged",
+  "commands": [
+    {
+      "label": "03-baseline-new-regression",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-quantum-daa-20261111-qdaa",
+      "environment_overrides": {
+        "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-quantum-daa-20261111-qdaa-native-target",
+        "CARGO_BUILD_JOBS": "2"
+      },
+      "started_unix": 1794357127.8180172,
+      "log": "03-baseline-new-regression.log"
+    }
+  ],
+  "limitations": [
+    "Other agents may concurrently edit unrelated files; no full-tree clean assertion is made.",
+    "This validates native current-eligibility ordering and fixture behavior, not a quantum security theorem.",
+    "The retained postcommit test is independent of the new pre-W1 guard.",
+    "No fixture here directly forces wall-clock rollback during unlocked W1 and owner reacquisition."
+  ],
+  "bundle_sha256": "7beac224da1f78281a9e565bbf0872da79dd27e9d64a2250c0b2ff4f3ef2887d",
+  "before_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs",
+      "bytes": 9541,
+      "sha256": "bab6e7213b968f6aed47e0e1172522dbaed95d0ab25648f67dfec171511464ed",
+      "git_blob_sha": "ee4c3f5adf425796da21a81337923d96a6062fac"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 382866,
+      "sha256": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554",
+      "git_blob_sha": "a8bd7b9c8d9b02617060bea955b3bb21d905129f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs",
+      "bytes": 29990,
+      "sha256": "b9f8911a2eea552a8106acfe99eae1a5b9c1b22b6d0d9b092a108cc2409e8fa6",
+      "git_blob_sha": "00b15fcd355fc1faf39b52848640ecc94d3b5a8b"
+    }
+  ],
+  "cargo_lock_before": {
+    "path": "trillionnium/Cargo.lock",
+    "bytes": 40597,
+    "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+    "git_blob_sha": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04"
+  },
+  "cargo_manifest_before": {
+    "path": "trillionnium/Cargo.toml",
+    "bytes": 2204,
+    "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "git_blob_sha": "44df8f8d5eec880d10da42c12a903c03658cfc65"
+  },
+  "baseline_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs",
+      "bytes": 9541,
+      "sha256": "bab6e7213b968f6aed47e0e1172522dbaed95d0ab25648f67dfec171511464ed",
+      "git_blob_sha": "ee4c3f5adf425796da21a81337923d96a6062fac"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 382866,
+      "sha256": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554",
+      "git_blob_sha": "a8bd7b9c8d9b02617060bea955b3bb21d905129f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs",
+      "bytes": 32875,
+      "sha256": "235515d51ee859f789c4933ef8c2b2eee93a304a24b431d3b366eb21a71c8fa3",
+      "git_blob_sha": "5fa37ac120534d73debac5e3220e49f7dc95b58b"
+    }
+  ],
+  "baseline_expected_assertion": {
+    "test": "public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work",
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs",
+    "line": 846,
+    "assertion": "assert_eq!(run.metrics.lock().unwrap().work_started, work_before);",
+    "meaning": "work_started must remain unchanged when retained ancestry is currently future-ineligible"
+  }
+}

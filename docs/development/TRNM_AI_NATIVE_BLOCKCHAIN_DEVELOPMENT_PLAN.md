@@ -1,3 +1,80 @@
+<!-- quantum-tip-exact-source-readback-20261111 -->
+**Quantum tip / current-clock exact-source readback — HOLD:**
+
+Candidate `2582a6d15a14d3929d3238d844e710f5a291b422` actually passed
+88 quantum policy/resource regressions, 34 joint qualification controls,
+28 dynamic-participation controls, all 72 paired horizons and their 72 replays,
+and all six selected native public Growth library regressions.
+The [original execution record](../../evidence/pon-quantum-tip-20261111/actions-2582a6d15a14/README.md)
+retains the same run's failed inline source guard, two formatter hunks and
+stale lifetime-source declaration. Apply the reviewed pin, formatting and
+15-path declaration repairs, then execute the successor's own checks.
+The repair source `67f78a87da0e6797c0262e69e95f367bc549be38` then actually
+passed all 388 quantum, joint, dynamic, PQ lifetime and CI mutation controls,
+all 72 horizons and all 72 replays. Its [own execution record](../../evidence/pon-quantum-tip-20261111/actions-67f78a87da0e/README.md)
+binds the complete source before and after. That quantum-lane result does not
+include the later nineteen-test W1 survey maintenance or portable evidence
+filename changes; those successors require their own checks.
+
+A separate twenty-source W1 lifetime reader also refused the changed store
+identity. Preserve that failed execution and the earlier 2026-11-09 report;
+maintain the current selected survey only after reviewing all twenty sources.
+The [new current survey](../../evidence/pon-w1-lifetime-current-20261111-qdaa/README.md)
+changes two source identities and their observation digests, with eighteen
+sources unchanged. Its fixture is source data, not an execution receipt.
+Require the retained nineteen-test suite to independently recompute the whole
+report and verify the source bytes on the successor. The separate inherited
+fixed-verifier QROM implementation mismatch remains unresolved.
+
+The [inherited QROM fixed-source review](../../evidence/pon-quantum-tip-20261111/qrom-fixed-source-review.md)
+separately compares all sixteen frozen inputs: the original source matches all
+sixteen, while the inherited and reviewed candidates match fourteen. Preserve
+the original rejection. The added one-call native CLI and bounded funded-service
+payload forms need an explicitly scoped current mapping; keep the frozen
+contract, reader, receipt sources and cost/security gates unchanged.
+
+The actual next-architecture artifact upload also rejected Rust-selector
+colons in eighteen pairs of log/exit filenames. Use a collision-free portable
+filename mapping in those two fixed loops while retaining the exact Cargo and
+native-reader selectors. Synchronize the strict workflow controls and run them
+independently; never drop failed evidence or rename files after their digest
+inventory is written. This maintenance does not change a native test or gate.
+
+The native test profile, consensus arithmetic, production flags and all
+unknown security bounds remain unchanged. The arm64 from-zero service
+failure remains separately unresolved until its child evidence or a successor
+execution establishes the result; build-only preparation is not acceptance.
+
+<!-- quantum-tip-current-clock-20261111 -->
+**Quantum tip measurement and current-clock admission — HOLD:**
+
+Continue #876 at `e4abb172147e941b62483652b0ceabaae4317624` with the
+[explicit policy and qualification scope](../protocol/pon-nakamoto-v1/details/QUANTUM_TIP_MEASUREMENT_V1.md).
+Add a declared measure-on-tip Grover policy with complete iteration boundaries,
+frozen old candidate context and retained readout/check/proof costs. Verify the
+new policy against the existing resource envelope and replay a separately named
+paired experiment on its exact committed source. Fixed propagation and equal-work
+tie retention restrict that experiment's adoption behavior; finite observations
+cannot supply a native quantum-security bound.
+
+Selectively port #811's current-clock parent-history checks before public W1 and
+before durable admission, keeping the original postcommit guard independently
+tested. Retain any observed old-source failure, all interrupted preparation observations,
+and source identities. Joint native-to-model reduction, all-legal-strategy W1
+cost, production tails, CP/CG/CQ and lifetime qualification remain open. No
+confirmation, signed-domain or production qualification is granted by these
+engineering controls. Complete the original source, CI, formatting and strict
+Clippy gates on this candidate and retain every unsuccessful observation.
+
+
+Selectively integrate #843's joint consensus qualification and dynamic
+participation layer, rebinding its independent 23-source digest to the actual
+native continuation. Keep all 18 environment inputs unknown, all 13 proof
+obligations open, and CP/CG/CQ/lifetime bounds null until justified. The source
+roster does not include the public ingress dispatch/tests; retain their
+whole-candidate identity and native execution separately. An intentional
+`--require-qualified` refusal remains a required negative gate.
+
 **System-boundary readback continuation, 2026-11-09 America/New_York — HOLD:**
 
 Continue the existing #847 candidate from M14

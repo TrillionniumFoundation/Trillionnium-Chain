@@ -1,0 +1,23 @@
+{
+  "schema": "trnm-qdaa-command-v1",
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/home/qian-qi/work/chain-quantum-daa-20261111-qdaa",
+  "started_utc": "2026-11-11T00:26:30.988138+00:00",
+  "elapsed_seconds": 0.11502190004102886,
+  "exit_code": 0,
+  "status": "completed",
+  "before_source_sha256": {
+    "formal/pon-nakamoto-v1/quantum_network_sim.py": "a9a0980f25dda02960d0b5dae0269e1de1190287df66144b32965ab80d46dad7",
+    "formal/pon-nakamoto-v1/test_quantum_network_sim.py": "6b0ff17dabaab2bbd62ef71aae7f82117f01fdbb0d9f7e15cf596249f32bbdad"
+  },
+  "after_source_sha256": {
+    "formal/pon-nakamoto-v1/quantum_network_sim.py": "a9a0980f25dda02960d0b5dae0269e1de1190287df66144b32965ab80d46dad7",
+    "formal/pon-nakamoto-v1/test_quantum_network_sim.py": "6b0ff17dabaab2bbd62ef71aae7f82117f01fdbb0d9f7e15cf596249f32bbdad"
+  },
+  "log_sha256": "0cac1b6c7dcc683ed21da76ac15672e9173c0f85ae174c896b416d5343efdee8",
+  "log_bytes": 166,
+  "qualification": false
+}
