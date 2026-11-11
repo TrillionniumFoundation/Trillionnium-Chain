@@ -1,0 +1,45 @@
+{
+  "schema": "trnm-qdaa-existing-host-gate-observation-v1",
+  "candidate_commit": "2582a6d15a14d3929d3238d844e710f5a291b422",
+  "run_id": 42935065534,
+  "job_id": 130242977385,
+  "status": "UNRESOLVED_REQUIRES_CHILD_ARTIFACT",
+  "host_controller": {
+    "passed": false,
+    "systemd_run_exit": 1,
+    "failure": null,
+    "final_host_errors": [],
+    "cleanup": "already-collected"
+  },
+  "preparation": {
+    "completed": true,
+    "exit_code": 0,
+    "timed_out": false,
+    "native_tests_executed": false,
+    "native_tests_executed_scope": "preparation only; no conclusion about later service execution",
+    "prepared_binary_sha256": "a4911b708b8da8e7d470dc9cfcdb4a48865ffa9b3ddd29a2288957847fa8b984"
+  },
+  "log": {
+    "sha256": "9ba906e7d70eed0edecef0c595cb492a3ec2fdfd4f5d0fae9130e1307a03b6a0",
+    "bytes": 177543,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42935065534/job/130242977385"
+  },
+  "artifact": {
+    "id": 13818913334,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42935065534/artifacts/13818913334",
+    "bytes": 9026593,
+    "github_reported_archive_sha256": "30164ee4d8054285567fc7db163f49367e822ed032130a9806755e340cc390a1",
+    "members_read_in_this_review": false
+  },
+  "needed_members": [
+    "from-zero-native-host/systemd-run.log",
+    "from-zero-native-host/child-result.json",
+    "from-zero-native/manifest.json",
+    "from-zero-native/format-check/stdout",
+    "from-zero-native/format-check/stderr"
+  ],
+  "reviewed_scope": "build preparation does not run formatting; service executes cargo fmt, and format failure can independently make the service fail. The console summary does not establish whether that was the only failure.",
+  "resolved": false,
+  "resource_gates_modified": false,
+  "production_activation": false
+}

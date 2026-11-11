@@ -149,6 +149,10 @@ jobs:
               raise SystemExit("expected explicit unproved-joint-consensus refusal")
           print("Observed exit 3 and REFUSED_UNPROVED_JOINT_CONSENSUS")
           PY
+      - name: Verify the reviewed lifetime source mapping and refusal controls
+        id: lifetime_tests
+        if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" lifetime-tests python3 scripts/ci/test_pq_lifetime_budget.py
       - name: Check retained CI contract
         id: ci_contract
         if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}
@@ -212,11 +216,11 @@ jobs:
           bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" rust-install rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
           bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" rust-version rustc --version --verbose
           bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" cargo-version cargo --version
-      - name: Run retained and new native current-clock tests
+      - name: Run retained and new native library current-clock tests
         id: native_tests
         if: ${{ !cancelled() && matrix.lane == 'native-current-clock' && steps.native_tools.outcome == 'success' }}
         working-directory: trillionnium
-        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" native-current-clock cargo test --locked -p trnm-pon-node public_growth_v1 -- --nocapture
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" native-current-clock cargo test --locked --lib -p trnm-pon-node public_growth_v1 -- --nocapture
       - name: Reject an empty native test selection
         id: native_selection
         if: ${{ !cancelled() && matrix.lane == 'native-current-clock' && steps.native_tests.outcome == 'success' }}

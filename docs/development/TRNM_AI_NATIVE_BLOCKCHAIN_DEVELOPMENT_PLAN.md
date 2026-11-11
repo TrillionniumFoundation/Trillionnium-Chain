@@ -1,3 +1,19 @@
+<!-- quantum-tip-exact-source-readback-20261111 -->
+**Quantum tip / current-clock exact-source readback — HOLD:**
+
+Candidate `2582a6d15a14d3929d3238d844e710f5a291b422` actually passed
+88 quantum policy/resource regressions, 34 joint qualification controls,
+28 dynamic-participation controls, all 72 paired horizons and their 72 replays,
+and all six selected native public Growth library regressions.
+The [original execution record](../../evidence/pon-quantum-tip-20261111/actions-2582a6d15a14/README.md)
+retains the same run's failed inline source guard, two formatter hunks and
+stale lifetime-source declaration. Apply the reviewed pin, formatting and
+15-path declaration repairs, then execute the successor's own checks.
+The native test profile, consensus arithmetic, production flags and all
+unknown security bounds remain unchanged. The arm64 from-zero service
+failure remains separately unresolved until its child evidence or a successor
+execution establishes the result; build-only preparation is not acceptance.
+
 <!-- quantum-tip-current-clock-20261111 -->
 **Quantum tip measurement and current-clock admission — HOLD:**
 

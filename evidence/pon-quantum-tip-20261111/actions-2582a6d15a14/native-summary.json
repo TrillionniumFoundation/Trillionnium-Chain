@@ -1,0 +1,57 @@
+{
+  "schema": "trnm-quantum-tip-native-observation-v1",
+  "observation_status": "NATIVE_TEST_PASS_WITH_FORMAT_FAILURE",
+  "candidate_commit": "2582a6d15a14d3929d3238d844e710f5a291b422",
+  "candidate_tree": "472706bce99c94b47141ca5dd4c22e458e1deb4c",
+  "run_id": 42934994220,
+  "job_id": 130242738936,
+  "job_conclusion": "failure",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "trnm-pon-node",
+    "public_growth_v1",
+    "--",
+    "--nocapture"
+  ],
+  "test_scope": "six library tests; other targets had zero matching tests",
+  "native_tests_passed": 6,
+  "native_tests_failed": 0,
+  "native_tests_ignored": 0,
+  "library_tests_filtered_out": 1326,
+  "test_seconds": 3.67,
+  "build_duration_as_reported": "10m 40s",
+  "required_test_selection_passed": true,
+  "full_tracked_source_before_and_after": true,
+  "rust_toolchain": "1.95.0",
+  "cargo_build_jobs": 2,
+  "rust_test_threads": 1,
+  "format_exit_code": 1,
+  "format_failure_scope": "two Node::open_with_permanent_account_growth_v2 call layouts in ingress/public_v3/growth/tests.rs",
+  "format_fix_scope": "apply the exact two formatter minus/plus hunks; preserve behavior",
+  "test_names": [
+    "public_growth_v1_control_output_reserve_serves_head_but_not_paid_operations",
+    "public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work",
+    "public_growth_v1_raw_new_ops_are_refused_by_legacy_and_arithmetic_listeners",
+    "public_growth_v1_real_listener_lost_ack_exact_query_reorg_and_cold_reopen",
+    "public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation",
+    "public_growth_v1_wire_profile_namespace_and_free_lane_cannot_be_confused"
+  ],
+  "raw_log": {
+    "file": "native-current-clock.log",
+    "sha256": "c1d69b149bd9bab48f8eb7d10a9df0d780dd196a8384900e034b6f52f5c905f7",
+    "bytes": 235749
+  },
+  "artifact": {
+    "id": 13818988533,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42934994220/artifacts/13818988533",
+    "github_reported_archive_sha256": "befd24d61e0826f3f59f1b6a913a94b08db81a474b54b4a610a6205e205ffd4a"
+  },
+  "previous_desktop_negative_baseline_terminal_result": "UNKNOWN",
+  "qualification": "HOLD_NO_GO",
+  "native_quantum_security_qualified": false,
+  "production_activation": false,
+  "note": "This is the original source3 result. The subsequent formatting correction needs its own execution. Test profile and features were not changed."
+}

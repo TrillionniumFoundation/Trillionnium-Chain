@@ -450,11 +450,9 @@ fn public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation
     for already_stored in [false, true] {
         let settings = settings("public-growth-current-activation-clock");
         let directory = tempfile::tempdir().unwrap();
-        let mut node = Node::open_with_permanent_account_growth_v2(
-            directory.path(),
-            settings.clone(),
-        )
-        .unwrap();
+        let mut node =
+            Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone())
+                .unwrap();
         let mut parent = settings.genesis();
         // The normal prefix makes a later low timestamp valid under the
         // original median-time rule, even after one future-dated ancestor.
@@ -793,11 +791,9 @@ fn public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work() {
     for existing in [false, true] {
         let settings = settings("public-growth-future-ancestor");
         let directory = tempfile::tempdir().unwrap();
-        let mut node = Node::open_with_permanent_account_growth_v2(
-            directory.path(),
-            settings.clone(),
-        )
-        .unwrap();
+        let mut node =
+            Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone())
+                .unwrap();
         let future =
             crate::ingress::now().unwrap() + settings.limit("future_skew_seconds").unwrap() + 3600;
         let mut parent = settings.genesis();

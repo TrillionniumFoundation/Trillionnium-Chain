@@ -216,10 +216,51 @@ in both modes, and the actual lifetime failure bound remains null.
 
 ### Current composed-source mapping
 
-The current 15-path lock is independently reviewed against exact source
-`66b7064be597039ce871b5b12ad5568850a2dd46`. Its current lock-byte SHA-256 is
+The current 15-path research lock is reviewed against the actual Git source
+`2582a6d15a14d3929d3238d844e710f5a291b422`. Its lock-byte SHA-256 is
+`aeea749058fdf10aeab6a79a562552ad8f7941ba80633ce99b9ae1b2db479351`. Every declared path was read from
+that source and compared with both the preceding declared source
+`66b7064be597039ce871b5b12ad5568850a2dd46` and the PR #876 baseline
+`e4abb172147e941b62483652b0ceabaae4317624`.
+
+| Comparison | Changed declared path | Reviewed difference |
+| --- | --- | --- |
+| Previous declaration to PR #876 | `trillionnium/crates/trnm-pon-node/src/consensus.rs` | Test helper changes and arithmetic-vector coverage; the 8052-byte production prefix preceding the test module is unchanged. |
+| PR #876 to this continuation | `trillionnium/crates/trnm-pon-node/src/store.rs` | The existing `check_observed_history_with_progress` helper gains `pub(crate)` visibility; its body is unchanged. |
+
+The other thirteen declared paths are byte-identical across all three source
+snapshots. The lock changes only its revision and those two digests; the
+research manifest changes only `experiment.source_revision`. The reader,
+event roster, obligations and arithmetic rules are unchanged. This source
+revision identifies the current reviewed declaration; it does not turn the
+older declaration or its historical checks into evidence for new source.
+
+The original candidate's repository-truth job
+[130242977474](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42935065534/job/130242977474)
+ran 58 lifetime-budget controls with one error: the old lock did not match
+the current `consensus.rs` bytes. The error and its original source identity
+remain retained. Updating the reviewed declaration does not retroactively
+change that result or constitute a passing execution of the new mapping.
+
+Neither
+`trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs` nor
+`trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs`
+belongs to these fifteen declared event paths. Their new dispatch guards and
+native tests need separate evidence tied to the complete candidate. This
+lock does not establish runtime coverage or a complete dependency closure.
+
+The eight unknown event terms and four unknown shared-primitive query
+budgets remain unknown. Actual lifetime failure remains null; theorem
+applicability, composition coverage, security qualification and activation
+flags remain false. The numerical target does not become an achieved
+security level through a source rebind.
+
+### Prior composed-source mapping
+
+The preceding 15-path lock was independently reviewed against exact source
+`66b7064be597039ce871b5b12ad5568850a2dd46`. Its lock-byte SHA-256 is
 `29ba9abdbb39d96bece885a0cd821fd9ad428413974cd530d26434f5a7daf84a`.
-The [current composition review](../../evidence/cell-storage-convergence-f2568-20261109/README.md)
+The [prior composition review](../../evidence/cell-storage-convergence-f2568-20261109/README.md)
 and its [source-maintenance inventory](../../evidence/cell-storage-convergence-f2568-20261109/ci-source-maintenance19.members.json)
 preserve the prior files, the original refusal, all 15 Git regular-blob and
 working-file comparisons, and isolated original Python controls.
