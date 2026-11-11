@@ -115,6 +115,24 @@ jobs:
           printf '%s\n' "$status" > "$OUT/$label.exit"
           exit "$status"
           SH
+          cat > "$out/native-selector-label.py" <<'PY'
+          from pathlib import Path
+          import json, re, sys
+          prefix, selector, output = sys.argv[1:]
+          if prefix not in ("native-storage", "native-storage-component"):
+              raise SystemExit("invalid native artifact prefix")
+          if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*", selector) is None:
+              raise SystemExit("invalid ASCII Rust selector")
+          # Identifiers contain no hyphen; '-' reverses to '::'. The '--'
+          # prefix boundary cannot occur in a nonempty encoded Rust path.
+          label = prefix + "--" + selector.replace("::", "-")
+          record = {"schema": "trnm-native-selector-artifact-v1",
+                    "prefix": prefix, "selector": selector, "label": label}
+          with (Path(output) / (label + ".selector.json")).open("x", encoding="utf-8") as stream:
+              json.dump(record, stream, sort_keys=True)
+              stream.write("\n")
+          print(label)
+          PY
       - name: Checkout the immutable event source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -218,8 +236,9 @@ jobs:
             cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling
           )
           for selector in "${required[@]}"; do
-            bash "$OUT/run-command.sh" "native-storage-component-$selector" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib "$selector" -- --exact --test-threads=1 || status=1
-            python3 -B scripts/ci/check_required_native_test.py "$OUT/native-storage-component-$selector.log" --test "$selector" || status=1
+            label="$(python3 -B "$OUT/native-selector-label.py" native-storage-component "$selector" "$OUT")"
+            bash "$OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib "$selector" -- --exact --test-threads=1 || status=1
+            python3 -B scripts/ci/check_required_native_test.py "$OUT/$label.log" --test "$selector" || status=1
           done
           exit "$status"
       - name: Run complete storage-owner module and exact new funding controls
@@ -246,8 +265,9 @@ jobs:
             store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies
           )
           for selector in "${required[@]}"; do
-            bash "$OUT/run-command.sh" "native-storage-$selector" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --test-threads=1 || status=1
-            python3 -B scripts/ci/check_required_native_test.py "$OUT/native-storage-$selector.log" --test "$selector" || status=1
+            label="$(python3 -B "$OUT/native-selector-label.py" native-storage "$selector" "$OUT")"
+            bash "$OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --test-threads=1 || status=1
+            python3 -B scripts/ci/check_required_native_test.py "$OUT/$label.log" --test "$selector" || status=1
           done
           exit "$status"
       - name: Run the new packet observer and retained native packet-status controls
