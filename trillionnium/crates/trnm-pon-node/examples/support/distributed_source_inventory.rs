@@ -5524,6 +5524,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_history_handoff_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_history_handoff_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_metered_fact_network_tests.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -5906,6 +5913,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/peer_polling.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/pool_reconcile_control_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/pool_reconcile_control_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/pool_run_control_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/pool_run_control_tests.rs"
         )),
     ),
     (

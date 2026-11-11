@@ -21,7 +21,7 @@ concurrency:
 env:
   CI: "true"
   CARGO_INCREMENTAL: "0"
-  CARGO_BUILD_JOBS: "2"
+  CARGO_BUILD_JOBS: "1"
   CARGO_TERM_COLOR: never
   RUST_TEST_THREADS: "1"
   PYTHONDONTWRITEBYTECODE: "1"
@@ -33,10 +33,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        source: [before, fixed]
+        source: [budget-before-v2, pool-before, pool-scan-before, fixed]
     env:
       DRIVER_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-      SUBJECT_SHA: ${{ matrix.source == 'before' && 'd6bbac6baf9e5356721ab56f7432058d07b6b49b' || github.event.pull_request.head.sha || github.sha }}
+      SUBJECT_SHA: ${{ matrix.source == 'budget-before-v2' && '89fb2269b0dd306fbd32c36f464842c3d7daee2b' || matrix.source == 'pool-before' && 'db93026b9314bfd8bc4350945036998f1b7d34aa' || matrix.source == 'pool-scan-before' && 'ae657e262278ae4a058220f66a6a0495721eb9ad' || github.event.pull_request.head.sha || github.sha }}
     steps:
       - name: Reserve fresh component observations
         env:
@@ -72,7 +72,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 -B driver/scripts/ci/test_pon_budget_controls.py > "$OUT/runner-controls.stdout" 2> "$OUT/runner-controls.stderr"
-      - name: Build once and execute all seven exact controls
+      - name: Build once and execute the exact assigned controls
         shell: bash
         run: |
           set -euo pipefail

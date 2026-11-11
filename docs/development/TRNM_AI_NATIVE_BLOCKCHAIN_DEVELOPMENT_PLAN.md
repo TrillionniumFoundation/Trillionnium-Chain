@@ -1,3 +1,20 @@
+**Throughput budget continuation, 2026-11-10 America/New_York — HOLD:**
+
+Continue #895 without changing the original Host, paid CPU, PQ command limits
+or confirmation criteria. The prior writer-handoff and ordinary mining fences
+are retained; `5ec9b4490fbfd22df4527e3b75ec74d6986572cf` also carries the original
+lightweight run control through retained-pool reconciliation and returned
+snapshots. Its test-only parent `ae657e262278ae4a058220f66a6a0495721eb9ad`
+retains the original production for the identical new scan controls. Existing
+before-source groups remain separately pinned. Native execution and current
+source maintenance are distinct observations until their actual receipts exist.
+The [exclusive History findings](../../evidence/chain-throughput-continuation-20261110-0b5320/EXCLUSIVE_HISTORY_FINDINGS.md)
+bind the latest original campaign to `7d6567b9`: 3/27 timely confirmation rounds,
+0/3 complete campaigns and 0/9 phases. That exclusive path is outside the shared
+writer repair. State-readback reuse and depletion-predicate reachability remain
+unimplemented or unproved; no increased capacity, throughput or activation is
+claimed by these component changes.
+
 **System-boundary readback continuation, 2026-11-09 America/New_York — HOLD:**
 
 Continue the existing #847 candidate from M14

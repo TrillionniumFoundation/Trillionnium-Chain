@@ -1,0 +1,20 @@
+{
+  "schema": "pon-throughput-local-preparation-v1",
+  "source_checkout_seed": "85a905b9e47cea0d76144253abb4a483b58bc2be",
+  "original_checkout_untouched": true,
+  "immutable_old_evidence_archives_shared_as_hardlinks": 1909,
+  "independent_files_copied": 26134,
+  "preparation_failures": [
+    {
+      "operation": "python -m unittest scripts.ci.test_pon_budget_controls scripts.ci.test_pq_authority_effect_register -q",
+      "exit_code": 1,
+      "reason": "The runner imports from its script directory; module invocation omitted that import path. Corrected to the exact existing workflow script invocation. No test implementation changed."
+    },
+    {
+      "operation": "initial scratch integration precheck wrapper",
+      "exit_code": 1,
+      "reason": "A label included scripts/project-preflight.sh and became a nonexistent output subdirectory. The first preflight ran but its output could not be written. Corrected wrapper uses Path.stem and starts a distinct output directory."
+    }
+  ],
+  "native_execution_claimed": false
+}
