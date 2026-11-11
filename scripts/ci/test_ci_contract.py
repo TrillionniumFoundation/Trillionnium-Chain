@@ -2739,6 +2739,11 @@ class MergedQualificationLaneTests(unittest.TestCase):
             '    python3 formal/pon-nakamoto-v1/fixed_probability_contract.py\n',
             '    python3 formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py --check\n',
         ), '    python3 formal/pon-nakamoto-v1/stateful_tail.py\n'),
+        'w1_oracle_evidence': ('repository-truth',
+                             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_restricted_oracle.py' -v\n", (
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_evidence_scope.py' -v\n",
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_native_bridge.py' -v\n",
+        ), "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fast_daa_reference_component.py' -v\n"),
         'completion': ('external-evidence-contract', '    python3 scripts/ci/test_invariant_evidence.py\n', (
             '    python3 scripts/ci/check_completion_evidence.py --historical\n',
             '    python3 scripts/ci/test_completion_evidence.py\n',
@@ -2805,6 +2810,9 @@ class MergedQualificationLaneTests(unittest.TestCase):
 
     def test_completion_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('completion')
+
+    def test_w1_oracle_evidence_commands_cannot_hide_or_suppress_failures(self):
+        self.reject_command_mutations('w1_oracle_evidence')
 
     def test_complete_groups_cannot_reorder_duplicate_or_hide_in_shell_conditions(self):
         self.checked(self.script)

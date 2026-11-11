@@ -1,3 +1,21 @@
+**W1 oracle evidence scope and native-packet bridge, 2026-11-10 America/New_York — HOLD:**
+
+Continue #876 at `e4abb172147e941b62483652b0ceabaae4317624` with the
+[versioned scope contract](../research/W1_ORACLE_EVIDENCE_SCOPE_V1.md).
+The fixed-context W1 oracle already exists; preserve its original 17 controls,
+five construction cases, V1 accounting payloads and source-bound historical
+receipts. Add a separate scope reader for full, restricted, reduced and
+caller-only circuit evidence. Recheck an original current-source PGH2/PNP2
+native packet through both the scalar relation and reversible macro program.
+The retained late-product packet must remain an oracle winner while full proof
+verification and native admission reject its corrupt product. Keep duplicate,
+cancelled, depth-zero and original deadline observations separate. Require the
+new control suites through the existing CI contract. Constructive upper bounds
+do not grant hardware calibration, optimality, a work lower bound or quantum
+mining security; original native/public-network and service gates remain HOLD.
+See the [source-bound record](../../evidence/pon-w1-oracle-scope-20261110/README.md)
+for actual commands and source identities; no unexecuted gate is reported passed.
+
 **System-boundary readback continuation, 2026-11-09 America/New_York — HOLD:**
 
 Continue the existing #847 candidate from M14
