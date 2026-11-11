@@ -470,7 +470,7 @@
         "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
         "observation": "Periodic branch-window retarget, not ASERT; arithmetic limits are not an economic security theorem.",
         "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
-        "sha256": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62"
+        "sha256": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d"
       },
       "application_authority_and_failed_attempt_charge": {
         "anchor_line": "830",
@@ -582,7 +582,7 @@
         "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
         "observation": "Required work is floor(2^256/(T+1)), using checked 512-bit arithmetic.",
         "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
-        "sha256": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62"
+        "sha256": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d"
       },
       "resource_accounting": {
         "anchor_line": "175",
@@ -648,9 +648,9 @@
         "sha256": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554"
       },
       {
-        "bytes": "20098",
+        "bytes": "20510",
         "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
-        "sha256": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62"
+        "sha256": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d"
       },
       {
         "bytes": "104121",
