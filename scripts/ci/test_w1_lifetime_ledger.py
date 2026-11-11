@@ -288,9 +288,16 @@ class LifetimeLedgerTests(unittest.TestCase):
     def test_source_lines_remain_independent_of_existing_qualification_labels(self):
         survey = self.survey
         self.assertEqual(survey["base_commit"], ledger.SOURCE_BASE)
+        reviewed_revisions = {
+            "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "7f83ea843d6d1578a475a7a0c4dc026da564a795",
+            "trillionnium/Cargo.lock": "7f83ea843d6d1578a475a7a0c4dc026da564a795",
+        }
+        self.assertEqual(ledger.SOURCE_REVIEWED_REVISIONS, reviewed_revisions)
+        self.assertEqual(survey["reviewed_source_revision_overrides"], reviewed_revisions)
         for path, expected in ledger.SOURCE_PINS.items():
             with self.subTest(source_path=path):
-                original = git_blob(ledger.SOURCE_BASE, path)
+                source_revision = reviewed_revisions.get(path, ledger.SOURCE_BASE)
+                original = git_blob(source_revision, path)
                 self.assertEqual(hashlib.sha256(original).hexdigest(), expected)
                 self.assertEqual(original, self.sources[path])
         self.assertEqual(survey["canonical_signature"]["algorithm"], "ML-DSA-65")
