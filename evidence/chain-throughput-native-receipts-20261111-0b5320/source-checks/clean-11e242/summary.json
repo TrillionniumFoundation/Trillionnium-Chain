@@ -1,0 +1,8 @@
+{
+  "schema": "pon-clean-source-checks-v1",
+  "source": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "source_guards_identical": true,
+  "commands": 14,
+  "passed": 14,
+  "native_tests_executed": false
+}

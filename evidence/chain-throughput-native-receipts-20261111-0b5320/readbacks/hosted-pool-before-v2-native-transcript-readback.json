@@ -1,0 +1,270 @@
+{
+  "schema": "pon-native-lane-transcript-readback-v1",
+  "scope": "copied original process streams, source receipts, input bytes and recorded binary guards; no local native execution or independent ELF download",
+  "result": "PASS",
+  "driver": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "errors": [],
+  "streams": [
+    {
+      "file": "driver-preflight.stdout",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+    },
+    {
+      "file": "driver-preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "subject-preflight.stdout",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+    },
+    {
+      "file": "subject-preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "rustc-path.stdout",
+      "bytes": 74,
+      "sha256": "d0193700af7f567877ce9dbc20f915552972e146926733da26ae3fe0e363efcc"
+    },
+    {
+      "file": "rustc-path.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "rustc-version.stdout",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "file": "rustc-version.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "cargo-version.stdout",
+      "bytes": 336,
+      "sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e"
+    },
+    {
+      "file": "cargo-version.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "cargo-graph.stdout",
+      "bytes": 891677,
+      "sha256": "6b14fe4bd82e09291ff45fccb3d7c1318f1c6f5e1cefc126fe1ba1d23e22f04f"
+    },
+    {
+      "file": "cargo-graph.stderr",
+      "bytes": 4876,
+      "sha256": "e4af2ea5d6eb7dc5b024bc380333830a70a47af06662b22504a4c20d097eaec4"
+    },
+    {
+      "file": "build.stdout",
+      "bytes": 120874,
+      "sha256": "703b94e2a23d37ff9f9b11733848479d02a738f8889b4d42f39533c2d4bc4c9a"
+    },
+    {
+      "file": "build.stderr",
+      "bytes": 4343,
+      "sha256": "d5a58b111bfce002e154fde05fa355bb54944d05b30612ca1f415e31f3f55caa"
+    },
+    {
+      "file": "libtest-list.stdout",
+      "bytes": 152049,
+      "sha256": "19ef917980c66c5900e198c4bf0f6c6e3cd732057a9197bc5508afb981b069b0"
+    },
+    {
+      "file": "libtest-list.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "test-01.stdout",
+      "bytes": 311,
+      "sha256": "0e08fd85db141bcf96c8cfb18ad14aaee298646d4e6fe6bf3f166d644492fdf0"
+    },
+    {
+      "file": "test-01.stderr",
+      "bytes": 345,
+      "sha256": "34a01fa132bbabd52f0bdefe6cfad493514b398a6513685cca351f919de77565"
+    },
+    {
+      "file": "test-02.stdout",
+      "bytes": 335,
+      "sha256": "0e4d3ae5226c18bcbf36f30c936525cf726cd0332601f8dec9f6b0dd54ad74b7"
+    },
+    {
+      "file": "test-02.stderr",
+      "bytes": 354,
+      "sha256": "4fd50651e15c198c96f9074b405a4d5b5032cd220217430798a6a7f225d7a657"
+    },
+    {
+      "file": "test-03.stdout",
+      "bytes": 325,
+      "sha256": "6125c4e4b45c17df3ff8c2fd3642c30a8f44a3b505541f0992ce26bbd9a22f45"
+    },
+    {
+      "file": "test-03.stderr",
+      "bytes": 360,
+      "sha256": "037ca52051d68b8c682e586ba4f8dcb4f74d3de790c92ead7ee915729ce462df"
+    },
+    {
+      "file": "test-04.stdout",
+      "bytes": 325,
+      "sha256": "c7beced5abdf9211098d4808633305cc81a25933f7ec815b266d6d74cd62ec63"
+    },
+    {
+      "file": "test-04.stderr",
+      "bytes": 352,
+      "sha256": "f5b4bcaad23ab1f3d04127c42d6b246ab5d5ee5c5701b9fd6d432f2d3bfe4a10"
+    },
+    {
+      "file": "test-05.stdout",
+      "bytes": 347,
+      "sha256": "6470d21edf4822e4d118ddd7cdaafe81e9ee23c621557b6721163f69dbf7f09a"
+    },
+    {
+      "file": "test-05.stderr",
+      "bytes": 342,
+      "sha256": "06bfacdeeae96e5bd99cb6731b0a7d301cbf431d46a363ed00747cb9b3edb05e"
+    },
+    {
+      "file": "test-06.stdout",
+      "bytes": 216,
+      "sha256": "91f9d55d375becf6641067385fadd45ae43884898ee7480b469bb786fbca9ca9"
+    },
+    {
+      "file": "test-06.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "test-07.stdout",
+      "bytes": 222,
+      "sha256": "4f630dea4ace20d2b019cb24b59a4fc3cc7b6541c379d976ea7c85e7f95a4855"
+    },
+    {
+      "file": "test-07.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "controls": [
+    {
+      "test": "mining::pool_run_control_tests::pool_run_stop_interrupts_batch_parent_scan",
+      "group": "pool",
+      "expected": "fail",
+      "expected_outcome_observed": true
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_stop_interrupts_registered_and_legacy_prepare",
+      "group": "pool",
+      "expected": "fail",
+      "expected_outcome_observed": true
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_stop_interrupts_post_search_revalidation",
+      "group": "pool",
+      "expected": "fail",
+      "expected_outcome_observed": true
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_original_deadline_interrupts_parent_scan",
+      "group": "pool",
+      "expected": "fail",
+      "expected_outcome_observed": true
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_cancelled_preview_keeps_queue_without_completed_m06",
+      "group": "pool",
+      "expected": "fail",
+      "expected_outcome_observed": true
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_native_and_sql_failures_survive_concurrent_stop",
+      "group": "pool",
+      "expected": "pass",
+      "expected_outcome_observed": true
+    },
+    {
+      "test": "mining::pool_run_control_tests::pool_run_completed_packet_and_reconcile_failure_remain_durable",
+      "group": "pool",
+      "expected": "pass",
+      "expected_outcome_observed": true
+    }
+  ],
+  "reader_sha256": "c7604dcf0bb9f533902e368a44b170c927d98c46080570673f268391fd9dc479",
+  "mode": "pool-before-v2",
+  "source": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+  "report_sha256": "a4cd8d6e81a5420897dc5b3ebda0040290a9b13a6d03ba7e4881d11a2b80ffca",
+  "native_report_result": "PASS",
+  "recorded_binary_guards": {
+    "libtest": {
+      "built_after": {
+        "bytes": 101800704,
+        "path": "/home/runner/work/_temp/target-budget-controls-pool-before-v2/release/deps/trnm_pon_node-b9510f5893fe9b62",
+        "sha256": "e7f03949e34e43d82539cfc0056e8c0f1874ca811f14bdd9651aacfdfb9f77e0"
+      },
+      "built_before": {
+        "bytes": 101800704,
+        "path": "/home/runner/work/_temp/target-budget-controls-pool-before-v2/release/deps/trnm_pon_node-b9510f5893fe9b62",
+        "sha256": "e7f03949e34e43d82539cfc0056e8c0f1874ca811f14bdd9651aacfdfb9f77e0"
+      },
+      "compiler_artifact": {
+        "executable": "/home/runner/work/_temp/target-budget-controls-pool-before-v2/release/deps/trnm_pon_node-b9510f5893fe9b62",
+        "features": [
+          "default"
+        ],
+        "filenames": [
+          "/home/runner/work/_temp/target-budget-controls-pool-before-v2/release/deps/trnm_pon_node-b9510f5893fe9b62"
+        ],
+        "fresh": false,
+        "manifest_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/subject/trillionnium/crates/trnm-pon-node/Cargo.toml",
+        "package_id": "path+file:///home/runner/work/Trillionnium-Chain/Trillionnium-Chain/subject/trillionnium/crates/trnm-pon-node#0.1.0",
+        "profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": true
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "src_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/subject/trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "test": true
+        }
+      },
+      "execution_path": "/home/runner/work/_temp/pon-budget-controls-pool-before-v2-42960214402-1/native/trnm-pon-node-libtest",
+      "retained_after": {
+        "bytes": 101800704,
+        "path": "/home/runner/work/_temp/pon-budget-controls-pool-before-v2-42960214402-1/native/trnm-pon-node-libtest",
+        "sha256": "e7f03949e34e43d82539cfc0056e8c0f1874ca811f14bdd9651aacfdfb9f77e0"
+      },
+      "retained_before": {
+        "bytes": 101800704,
+        "path": "/home/runner/work/_temp/pon-budget-controls-pool-before-v2-42960214402-1/native/trnm-pon-node-libtest",
+        "sha256": "e7f03949e34e43d82539cfc0056e8c0f1874ca811f14bdd9651aacfdfb9f77e0"
+      }
+    }
+  },
+  "actual_control_count": 7,
+  "native_pass_controls": 2,
+  "native_expected_failures": 5
+}

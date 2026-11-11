@@ -1,0 +1,175 @@
+{
+  "schema": "original-artifact-text-member-map-v1",
+  "artifact_id": 13832340481,
+  "role": "exact-head-repository-truth",
+  "source_zip": {
+    "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481.zip",
+    "bytes": 10829,
+    "sha256": "62ca19d15cff093a24039f5a517a718a7664cd33171128d3e1e2c0239a9eb4d4",
+    "git_blob_sha1": "4c7e9bc6bce8eaba98396c96405e5492b67e2380"
+  },
+  "selection": "Every regular UTF-8 original ZIP member; no transformations. Explicit ELF/SQLite and non-UTF8 members excluded. Full official ZIP retained separately.",
+  "raw_archive": {
+    "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text.tar.gz",
+    "bytes": 7435,
+    "sha256": "b5f54a924f339721be38246c05889ab7cf86ac253743930974cae8ef02d7f27a",
+    "git_blob_sha1": "97f9a08cfc84778281a1d324ef75d0aa72ceb53b"
+  },
+  "members": [
+    {
+      "original_member": "runtime-release-dependencies.json",
+      "bytes": 4795,
+      "sha256": "b3fee5cd20bec5bbd34e0f3ba593d60a08f9205b6c6a43b3c2ddbf46b997eeec",
+      "git_blob_sha1": "87d6eb90e3ecd28470bfb5f96c3b38ec4b9f4aa1",
+      "zip_crc32": 1415276524,
+      "selected": true,
+      "role": "original artifact text member",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text/runtime-release-dependencies.json",
+      "archive_member": "runtime-release-dependencies.json"
+    },
+    {
+      "original_member": "w1-postwin-contracts/cancellation-handoff.log",
+      "bytes": 4351,
+      "sha256": "4a0ab90b783f34f3b662793e08e6bcf53518a8765eda325830bde79e87861ddc",
+      "git_blob_sha1": "4d47c2e5c4246471b2b183bb42ca2b1ef6ba8d42",
+      "zip_crc32": 1239140608,
+      "selected": true,
+      "role": "original artifact text member",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text/w1-postwin-contracts/cancellation-handoff.log",
+      "archive_member": "w1-postwin-contracts/cancellation-handoff.log"
+    },
+    {
+      "original_member": "source.json",
+      "bytes": 423,
+      "sha256": "03bd6956b3711c85ef2505ab09ec990ac1ab8ccbeffe4fcf3cecc8173601e731",
+      "git_blob_sha1": "f9131414cc6e0cd31af139ffb1cb8e4b517db595",
+      "zip_crc32": 3355761088,
+      "selected": true,
+      "role": "original artifact text member",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text/source.json",
+      "archive_member": "source.json"
+    },
+    {
+      "original_member": "w1-postwin-contracts/coordinator-contract.log",
+      "bytes": 3833,
+      "sha256": "c83da2e686477415731ff502458878ac124193c86c8a2c3aacf9fc205b9b1c71",
+      "git_blob_sha1": "badb850e3916e7b794b147e7f21bae52f7c146e7",
+      "zip_crc32": 2733810225,
+      "selected": true,
+      "role": "original artifact text member",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text/w1-postwin-contracts/coordinator-contract.log",
+      "archive_member": "w1-postwin-contracts/coordinator-contract.log"
+    },
+    {
+      "original_member": "w1-postwin-contracts/deployment-comparison-audit.log",
+      "bytes": 3505,
+      "sha256": "039a92b8aab549d7c9d97cd8601c29de1d930802893cf73ccaf901bb77940f97",
+      "git_blob_sha1": "20770c4b43c15e6301ab1607163d0c7cefa094b4",
+      "zip_crc32": 1785104079,
+      "selected": true,
+      "role": "original artifact text member",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text/w1-postwin-contracts/deployment-comparison-audit.log",
+      "archive_member": "w1-postwin-contracts/deployment-comparison-audit.log"
+    },
+    {
+      "original_member": "w1-postwin-contracts/deployment-evidence-binding.log",
+      "bytes": 2465,
+      "sha256": "cf3519c600bc5a078938b16c3235ecabf7204888c7678be649078a91b21d6601",
+      "git_blob_sha1": "cfc578b9142c9fa0e71f6a335e548fabaa199f8b",
+      "zip_crc32": 530644829,
+      "selected": true,
+      "role": "original artifact text member",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text/w1-postwin-contracts/deployment-evidence-binding.log",
+      "archive_member": "w1-postwin-contracts/deployment-evidence-binding.log"
+    },
+    {
+      "original_member": "w1-postwin-contracts/generation-target.log",
+      "bytes": 2457,
+      "sha256": "103626bdf870b98c2cb0ef23a8cb943f6c2b16bf1afe08e1b9553c3a73c3fcf2",
+      "git_blob_sha1": "76288c405ac45094cde233a7f785c0881164f6de",
+      "zip_crc32": 2038465880,
+      "selected": true,
+      "role": "original artifact text member",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text/w1-postwin-contracts/generation-target.log",
+      "archive_member": "w1-postwin-contracts/generation-target.log"
+    },
+    {
+      "original_member": "w1-postwin-contracts/kaggle-worker-contract.log",
+      "bytes": 2195,
+      "sha256": "b24dd2326ccae6a24fc815532a77d1818291308307f2c8dc25ce6b7821ba065d",
+      "git_blob_sha1": "b9f4914ca3b954738192f4f4289dde20b272874c",
+      "zip_crc32": 745185934,
+      "selected": true,
+      "role": "original artifact text member",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text/w1-postwin-contracts/kaggle-worker-contract.log",
+      "archive_member": "w1-postwin-contracts/kaggle-worker-contract.log"
+    },
+    {
+      "original_member": "w1-postwin-contracts/owned-process-collector.log",
+      "bytes": 2459,
+      "sha256": "ea5e4706b2ecab178ee9bd8c393d29b7006007c2a75efa2f55d26c63454e311e",
+      "git_blob_sha1": "c217c2f7789f5ac31001cac23350e0cd7cca930b",
+      "zip_crc32": 3941369032,
+      "selected": true,
+      "role": "original artifact text member",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text/w1-postwin-contracts/owned-process-collector.log",
+      "archive_member": "w1-postwin-contracts/owned-process-collector.log"
+    },
+    {
+      "original_member": "w1-postwin-contracts/owned-runtime-reader.log",
+      "bytes": 1555,
+      "sha256": "e84cedb45bbab3b085b8f863be6aa2312e5089fb3e55d234e7dc4e8416f0de89",
+      "git_blob_sha1": "99f6282d69b34c06b73041ca42fd4966f9b42497",
+      "zip_crc32": 3955738858,
+      "selected": true,
+      "role": "original artifact text member",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text/w1-postwin-contracts/owned-runtime-reader.log",
+      "archive_member": "w1-postwin-contracts/owned-runtime-reader.log"
+    },
+    {
+      "original_member": "w1-postwin-contracts/owner-cancellation.log",
+      "bytes": 1642,
+      "sha256": "525f696bc1b4ffae3ec9a38d63f87796a3af0d5b0f7c82e65a25a215ad100ceb",
+      "git_blob_sha1": "a30f840f0a05bb72becc8d97d56bc77114c679b0",
+      "zip_crc32": 65900300,
+      "selected": true,
+      "role": "original artifact text member",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text/w1-postwin-contracts/owner-cancellation.log",
+      "archive_member": "w1-postwin-contracts/owner-cancellation.log"
+    },
+    {
+      "original_member": "w1-postwin-contracts/provider-contract.log",
+      "bytes": 2099,
+      "sha256": "d0c1c3381e8cd8e19586f01b3359afeecb67b9947b0b858ceb320b7f04c83b7d",
+      "git_blob_sha1": "e12db13377eaafa6e27b6bc3c6fc474c31b108ce",
+      "zip_crc32": 1770699219,
+      "selected": true,
+      "role": "original artifact text member",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text/w1-postwin-contracts/provider-contract.log",
+      "archive_member": "w1-postwin-contracts/provider-contract.log"
+    },
+    {
+      "original_member": "w1-postwin-contracts/source-builder.log",
+      "bytes": 1662,
+      "sha256": "5d0cc346a215e08c55a94677c957c80b0a84ffad35bbb66e8bd5d607dc3f5836",
+      "git_blob_sha1": "1773409e8a2cb6e3f7c7f10c67ebbb2ae106b80b",
+      "zip_crc32": 3910867787,
+      "selected": true,
+      "role": "original artifact text member",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text/w1-postwin-contracts/source-builder.log",
+      "archive_member": "w1-postwin-contracts/source-builder.log"
+    },
+    {
+      "original_member": "w1-postwin-contracts/winner-identity.log",
+      "bytes": 854,
+      "sha256": "3a784770c32dab2a50991b37633f7b672bd9cb7891cbd4801d7b907cd1cdb26f",
+      "git_blob_sha1": "2431a97d7d5ea7fc3d7623179b259f66ae4bb75f",
+      "zip_crc32": 1229527039,
+      "selected": true,
+      "role": "original artifact text member",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text/w1-postwin-contracts/winner-identity.log",
+      "archive_member": "w1-postwin-contracts/winner-identity.log"
+    }
+  ],
+  "excluded_members": []
+}
