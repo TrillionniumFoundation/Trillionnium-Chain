@@ -16,6 +16,7 @@ use trnm_crypto_primitives::qualified_work_task::{
     TaskMaterial,
 };
 use trnm_mvcc_fee::continuity_v1;
+use trnm_mvcc_fee::pon_executor::ExecutionProgress;
 use trnm_mvcc_fee::qualified_task_lifecycle;
 use trnm_protocol::{
     pon_wire::{hash, Hash, Header},
@@ -443,11 +444,17 @@ impl Node {
         input: &[u8],
         control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, crate::Error>,
     ) -> Result<PreparedCandidate> {
+        // The caller's original deadline/CPU owner also covers material binding
+        // and the complete parent read, including inactive-branch replay. Do not
+        // finish an uninterruptible state_at before consulting that owner.
+        let mut progress = || (control.progress)(ExecutionProgress::BeforeParentBinding);
+        progress()?;
         let (a, b) = derive_matrices(model, input).map_err(|e| format!("TASK_MATERIAL:{e:?}"))?;
         let task = trnm_crypto_primitives::pon_work::task_id(&a, &b)
             .map_err(|e| format!("TASK_MATRIX:{e:?}"))?;
+        progress()?;
         let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
-        let state = self.state_at(parent)?;
+        let state = self.state_at_with_progress(parent, &mut progress)?;
         if continuity_v1::enabled(&self.settings().app)
             && task == continuity_v1::maintenance_task()?
         {

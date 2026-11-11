@@ -1,0 +1,111 @@
+{
+  "scope": "Diagnostic dirty integration worktree, not hosted source acceptance",
+  "members": [
+    {
+      "path": "01-test_pq_lifetime_budget.stderr",
+      "bytes": 1196,
+      "sha256": "7317a9635f76911b5df157b5fdd5e1842bcfc67a1f7ab5e9a8e923472453c64f"
+    },
+    {
+      "path": "01-test_pq_lifetime_budget.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "02-pq_lifetime_budget.stderr",
+      "bytes": 162,
+      "sha256": "46f97184654ef409ada403bfeaaaafbb396163a57be3ac157d8a6b1986c9462f"
+    },
+    {
+      "path": "02-pq_lifetime_budget.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "03-test_pq_authority_effect_register.stderr",
+      "bytes": 27711,
+      "sha256": "1c114d1ee26ca4d0ae4c457be683ca684465530641f0a3cc411416895a19aded"
+    },
+    {
+      "path": "03-test_pq_authority_effect_register.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "04-pq_authority_effect_register.stderr",
+      "bytes": 159,
+      "sha256": "eb709ddcbc094516c23594ab287429ed3c0e44a93a40d46ecbf511a81bf0dd9d"
+    },
+    {
+      "path": "04-pq_authority_effect_register.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "05-pq_chain_claim_guard.stderr",
+      "bytes": 185,
+      "sha256": "5ef7628d9a20f2f2497aea9fff5870530d6c48a2a9e4de688ea57b6295a488c6"
+    },
+    {
+      "path": "05-pq_chain_claim_guard.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "06-w1_qrom_current_implementation_audit.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "06-w1_qrom_current_implementation_audit.stdout",
+      "bytes": 103904,
+      "sha256": "3457b0c594087801ca2bd902a5e32677c1ccf9518244e0df48fa5af443fefd49"
+    },
+    {
+      "path": "07-check_ci_contract.stderr",
+      "bytes": 1085,
+      "sha256": "9109d8b741054abd1fce41f2cc89d630195eff5b43c6a8381824bd5b5b08f8fc"
+    },
+    {
+      "path": "07-check_ci_contract.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "08-test_w1_factorial_native_gate.stderr",
+      "bytes": 108,
+      "sha256": "99b6df79cee2625ba390b4e8fbbdb6ddfcd40315cc5a822b2b85aed05e3f600e"
+    },
+    {
+      "path": "08-test_w1_factorial_native_gate.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "09-refresh_distributed_source_inventory.stderr",
+      "bytes": 76,
+      "sha256": "3060c11e06f46d1cbf92fbb40b0ecf6bfd5482816a73a13c7267e2efa34b28fb"
+    },
+    {
+      "path": "09-refresh_distributed_source_inventory.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "10-check_repository.stderr",
+      "bytes": 268,
+      "sha256": "edac7be684c6fd16f724e88a5614c45a54ffc83a9a8fe7165578bc4d25e68e44"
+    },
+    {
+      "path": "10-check_repository.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results.json",
+      "bytes": 24394,
+      "sha256": "79d9a364a78c9a36a79c99b14cf1de8d226381143e7fbdb9e369e6e0eed10867"
+    }
+  ],
+  "archive_sha256": "fb3b4a3e0b3f805f39cf187d8344653ae3c6236b9e87651c1593a9b17a78b9c6"
+}

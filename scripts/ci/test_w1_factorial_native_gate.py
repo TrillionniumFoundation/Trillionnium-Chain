@@ -16,7 +16,7 @@ EXAMPLES = ROOT / 'trillionnium/crates/trnm-pon-node/examples'
 MATERIAL_SOURCE = ROOT / 'trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs'
 COUNTS = {'factorial-kernel-tests': (14, 0), 'factorial-example-tests': (11, 0),
           'header-binding-tests': (1, 0), 'history-w1-tests': (5, 0),
-          'history-import-tests': (33, 1), 'cpu-completion-tests': (11, 0)}
+          'history-import-tests': (36, 1), 'cpu-completion-tests': (11, 0)}
 HISTORY = [
     'deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline',
     'deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu',
@@ -26,6 +26,9 @@ HISTORY = [
     'deadline_controls::history_control_resource_expiry_refuses_late_success',
     'deadline_controls::history_control_resource_expiry_keeps_original_resource_error',
     'deadline_controls::history_owner_resource_expiry_never_invokes_exclusive_or_shared_action',
+    'detached_budget_controls::shared_detached_history_continues_from_real_deficit_without_new_credit',
+    'detached_budget_controls::shared_detached_history_refill_keeps_original_resource_cancellation',
+    'detached_budget_controls::shared_detached_history_refill_cannot_renew_original_deadline',
 ]
 
 

@@ -3922,7 +3922,7 @@ impl Node {
     pub fn state_at(&self, tip: Hash) -> Result<State> {
         self.state_at_with_progress(tip, &mut || Ok(()))
     }
-    fn state_at_with_progress(
+    pub(crate) fn state_at_with_progress(
         &self,
         tip: Hash,
         progress: &mut dyn FnMut() -> Result<()>,

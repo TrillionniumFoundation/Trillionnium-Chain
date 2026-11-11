@@ -344,22 +344,26 @@ fn admit_packet(
     if let Some(tip) = activate {
         ensure(tip == packet.id()?, "PAGE_COMPLETE")?;
     }
-    let owns_node_mutex = matches!(owner, Owner::Shared(_));
+    let shared_owner = matches!(owner, Owner::Shared(_));
     metered_observed(cpu, control, observation, attribution, |operation| {
         let progress = operation.checkpoint_handle();
         // history_checkpoint checks the original deadline and actual Host
         // before its CPU observation, then again throughout every refill wait.
         // Keep that check at every native progress boundary; a second adjacent
         // control.check() performed no ledger work and duplicated Host reads.
-        let check = || progress.history_checkpoint(owns_node_mutex, &|| control.check());
-        check()?;
+        let held_check = || progress.history_checkpoint(shared_owner, &|| control.check());
+        // No mutex is held at the detached boundary. This does not qualify
+        // unfinished/replayed work: only the same operation's verified unique
+        // W1 completion may receive a wait from the original CPU sampler.
+        let detached_check = || progress.history_checkpoint(false, &|| control.check());
+        detached_check()?;
         let (existing, permit, codec) =
             super::observe_submit_phase(observation, SubmitPhase::Context, || {
                 owner.with(control, |node| {
                     let existing = node.precheck_public_admission_context_with_progress(
                         &packet,
                         clock,
-                        &mut |_| check(),
+                        &mut |_| held_check(),
                     )?;
                     let permit = if existing.is_none() {
                         node.begin_owner_work(&packet)?
@@ -380,15 +384,16 @@ fn admit_packet(
             return Ok((id, false, active));
         }
         let checked = super::observe_submit_phase(observation, SubmitPhase::Work, || {
-            verify_history_work(packet, &progress, owns_node_mutex, control)
+            verify_history_work(packet, &progress, false, control)
         })?;
         operation.history_work_verified_for_context(&checked, &codec)?;
         // Promotion changes only scheduling for this complete, unique W1.
-        // Shared owners retain nonwaiting checkpoints while holding Node;
-        // exclusive embedding has no Node mutex and keeps its exact stack.
-        check()?;
+        // A Shared owner is not itself proof of a held mutex. Complete W1's
+        // detached continuation may await the ORIGINAL account's refill;
+        // every held preparation/commit/activation boundary remains nonwaiting.
+        detached_check()?;
         let execution_progress = |point| {
-            check()?;
+            held_check()?;
             if point == trnm_mvcc_fee::pon_executor::ExecutionProgress::AfterMandatory {
                 cut("m06");
             }
@@ -400,12 +405,22 @@ fn admit_packet(
         );
         let id = match owner {
             Owner::Shared(node) => {
+                let detached_progress = |point| {
+                    detached_check()?;
+                    if point == trnm_mvcc_fee::pon_executor::ExecutionProgress::AfterMandatory {
+                        cut("m06");
+                    }
+                    Ok(())
+                };
                 let (guard, id, _) = super::admit_shared_checked(
                     node,
                     checked,
                     permit,
-                    &mut |_| check(),
-                    &execution,
+                    &mut |_| held_check(),
+                    super::SharedAdmissionExecution {
+                        held: &execution,
+                        detached_progress: &detached_progress,
+                    },
                     || Ok(clock),
                     observation,
                 )?;

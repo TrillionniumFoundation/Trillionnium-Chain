@@ -1078,7 +1078,10 @@ fn shared_admission_owner_wait_observes_control_deadline_and_original_two_second
                 checked,
                 None,
                 &mut |_| Ok(()),
-                &trnm_mvcc_fee::pon_executor::ExecutionControl::new(&check, &()),
+                crate::ingress::SharedAdmissionExecution {
+                    held: &trnm_mvcc_fee::pon_executor::ExecutionControl::new(&check, &()),
+                    detached_progress: &check,
+                },
                 || Ok(clock),
                 None,
             )

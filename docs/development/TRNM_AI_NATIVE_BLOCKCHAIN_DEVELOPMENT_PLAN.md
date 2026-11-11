@@ -11534,3 +11534,40 @@ CP/CG/CQ or confirmation tails, real independent demand, model net benefit,
 evaluator independence, cross-host resource responsibility or target-side
 external-effect reconciliation. Do not change `HOLD_NO_GO`, production activation
 or a null cost/security bound merely because these controls pass.
+
+### 2026-11-10 continue original-budget preparation and shared History
+
+Continue the exact `e4abb172147e941b62483652b0ceabaae4317624` native-boundary
+candidate. Preserve its original failed hosted observations, the separate
+`aaa3c539` three-run campaign, all service budgets and the existing integration
+target. The implementation scope is:
+
+- Check the restricted mining owner's existing execution control before material
+  and parent lookup, and carry that same control through the actual parent-state
+  read and inactive-branch replay. No new deadline, account, worker pool or State
+  result is introduced. Test early refusal, interruption during real reads,
+  retry, equivalent packet bytes and cold reopen on the retained Node backends.
+- Select History CPU checkpoints by the actual Node writer scope. Keep
+  preparation, held execution, reacquisition, commit and activation nonwaiting.
+  Only detached W1/M06 scopes may consult the existing original-account refill
+  mechanism; its complete-unique-W1 eligibility, deadline, cancellation, worker
+  charges and settlement rules remain unchanged. Test actual measured CPU debt,
+  writer availability, resource cancellation, deadline expiry and cold recovery.
+- Correct the history resource document: `work_order(chainwork DESC,height,id)`
+  already exists. A source-bound SQLite query-plan comparison may establish its
+  use for candidate ordering, but not a bound on complete recovery or history
+  retention. Keep the declared application limits and conditional command-rate
+  arithmetic unchanged.
+
+Bind the exact new source and required test roster before running the selected
+native suites, negative source-integrity controls, locked Cargo graphs,
+formatting, strict Clippy and repository/corpus checks. Retain pre-fix and
+post-fix executions separately; evidence-only commits do not relabel the tested
+source. Any original workload rerun retains its original Host, duration, limits
+and complete-confirmation predicates.
+
+Restricted-owner preparation and shared History controls are component
+closures. The original exclusive campaign, public confirmation under pressure,
+bounded total history, independent WAN service, PQ batch verification and
+conflict-aware execution remain separate acceptance obligations. These changes
+do not establish measured TPS or production qualification.

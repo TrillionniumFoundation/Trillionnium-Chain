@@ -450,7 +450,7 @@ jobs:
           # its parent control selects real SIGKILL cuts. It is not a skipped gate.
           expected = {"factorial-kernel-tests": (14, 0), "factorial-example-tests": (len(example_expected), 0),
               "header-binding-tests": (1, 0), "history-w1-tests": (5, 0),
-              "history-import-tests": (33, 1), "cpu-completion-tests": (11, 0)}
+              "history-import-tests": (36, 1), "cpu-completion-tests": (11, 0)}
           for name, counts in expected.items():
               text = (root / (name + ".log")).read_text()
               rows = re.findall(r'^test result: (\S+)\. ([0-9]+) passed; ([0-9]+) failed; ([0-9]+) ignored;', text, re.M)
@@ -498,6 +498,15 @@ jobs:
               rows = re.findall(r'^test ' + re.escape(selector) + r' \.\.\. ok$', history, re.M)
               if len(rows) != 1:
                   raise SystemExit(selector + ': exact deadline control did not execute once')
+          for name in (
+              'shared_detached_history_continues_from_real_deficit_without_new_credit',
+              'shared_detached_history_refill_keeps_original_resource_cancellation',
+              'shared_detached_history_refill_cannot_renew_original_deadline',
+          ):
+              selector = 'ingress::history_import::tests::detached_budget_controls::' + name
+              rows = re.findall(r'^test ' + re.escape(selector) + r' \.\.\. ok$', history, re.M)
+              if len(rows) != 1:
+                  raise SystemExit(selector + ': exact detached budget control did not execute once')
           codec_selector = ('ingress::history_import::tests::'
               'history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors')
           codec_rows = re.findall(r'^test ' + re.escape(codec_selector) + r' \.\.\. ok$', history, re.M)
