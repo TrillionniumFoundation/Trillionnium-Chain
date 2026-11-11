@@ -26,7 +26,7 @@ DEFAULT_MANIFEST = "config/pon/pq-root-dependency-register-v3.json"
 REVIEW_BASE = 'be5f047771e4d714726fec41abfa68231a06260b'
 MAX_BYTES = 1024 * 1024
 # Frozen after review of all declared files. No runtime regeneration is allowed.
-REVIEWED_SOURCE_SNAPSHOT_SHA256 = '1de0b7bac54253f9bfaf312a5930dc0283d6c2c980122eea0801f443043bb6cf'
+REVIEWED_SOURCE_SNAPSHOT_SHA256 = 'ac0cb401b9ef7111cd77085c3f817ecfe56bdc73fc5fd4206e2c3cc8f3767c52'
 
 PY = "formal/pon-nakamoto-v1/"
 POLICY = PY + "pq_root_recovery_policy_v1.py"
@@ -177,7 +177,7 @@ for _role in ("anchor-writer", "witness-response"):
     ROLE_CONTRACT[_role]["implementations"]["rust-v5-durable-register"] = implementation(
         [NATIVE_CRYPTO, NATIVE_ML_ADAPTER, NATIVE_CRYPTO_PROFILE, NATIVE_OWNER,
          NATIVE_WITNESS, NATIVE_WITNESS_DURABLE],
-        "typed-v5-authenticated-sqlite-cas-durable-before-ack-exact-external-reopen-pin-no-daemon")
+        "typed-v5-authenticated-sqlite-cas-durable-before-ack-live-session-retries-only-exact-external-reopen-pin-no-daemon")
 
 
 def hash_use(primitives, constructions, paths, roles):

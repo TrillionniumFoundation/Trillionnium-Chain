@@ -106,10 +106,20 @@ recovery service for that independent authority.
 
 An exchange verifies the complete writer quorum before entering the register
 transaction. A malformed or unauthenticated request cannot mutate the register
-or permanently fence its live owner. A CAS must match the exact stored
-predecessor and immediate successor. The register retains the predecessor so
-that an exact retry can acknowledge the same transition after cold reopen;
-another predecessor or a competing successor receives a signed mismatch.
+or permanently fence its live owner. A new CAS must match the exact current
+head and immediate successor. An exact retry receives `Advanced` only when this
+live owner authenticated and durably committed that same transition. The
+volatile `retry_from` record is set after COMMIT and synchronization; Current
+reads and mismatches cannot create it.
+
+Cold open deliberately starts with no authenticated retry pair. Persisted
+predecessor metadata cannot prove its own integrity: a restored row could retain
+the externally pinned current head while substituting a different predecessor.
+Historical retries therefore receive a signed `Mismatch`, including a pair that
+matches that restored metadata. A fresh `Current` response can still authenticate
+the pinned head. The V5 Root owner's recovery already completes a pending record
+at that witnessed target without repeating CAS. A new, authenticated CAS from
+the current head can establish the next live-session retry pair.
 
 SQLite COMMIT, main-file synchronization and parent-directory synchronization
 precede an `Advanced` receipt. The owner is fenced before attempting COMMIT.
@@ -137,7 +147,8 @@ sync calls also do not constitute a physical power-loss experiment.
 
 The separate `root_witness_v5_durable_native` suite defines twelve controls for
 exact CAS/retry/cold reopen; stale-database and independently retained-pin
-contrast; conflicting transitions; real SQLite COMMIT-busy refusal; failure or
+contrast; conflicting transitions and same-head cold predecessor substitution;
+real SQLite COMMIT-busy refusal; failure or
 wrong quorum after commit; original-budget replacement/cancellation; malformed
 writer requests; complete policy binding; exclusive ownership and inode
 replacement; partial/foreign schema and constructor refusals; read/CAS signing
@@ -186,9 +197,11 @@ CAS. It never resubmits the original anchor CAS, creates a new root statement,
 changes a nonce, clears uncertain state, or executes an external effect.
 
 Every V5 `context` and `observe_current_intent` again queries the live witness and
-requires exact current-head agreement. Observations remain non-clonable,
-non-serializable, borrowed point-in-time values with no effect capability. V5
-exposes neither its inner V3 owner nor a conversion or `Deref` escape.
+requires exact current-head agreement. `context` returns an owned signing
+snapshot; `apply` rechecks current agreement before accepting a transition.
+Current-intent observations remain non-clonable, non-serializable, borrowed
+point-in-time values. Neither result grants effect authority. V5 exposes
+neither its inner V3 owner nor a conversion or `Deref` escape.
 The live witness client also rejects a lower version or a different root at the
 same version after it has observed a head. That in-memory rule does not survive a
 complete process restart and cannot replace the external durable register.

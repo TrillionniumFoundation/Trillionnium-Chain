@@ -235,14 +235,23 @@ null budgets and false qualification values remain. M10
 that failure remains historical evidence. This source review does not qualify
 the repaired candidate or expand the declared transitive dependency scope.
 
-The 2026-11-11 successor review retains that historical review-base field and
-explicitly binds a new **41-file** snapshot. It adds `witnessed_v5.rs`, its
-`witnessed_v5/durable.rs` component and the separate protocol/durable native
-test targets. It updates the parent owner for the V5 composition and exact
-snapshot guards, and retains the V4 common-restore contrast in
-`recovery_floor_v4_native.rs`. The other 35 source hashes are unchanged from
-the selected integration baseline. The canonical source-map digest is
+The initial 2026-11-11 successor review, published in commit
+`32453783834aabf30141dc03248acb24874f01ca`, retained the historical review-base
+field and bound a **41-file** snapshot. It added `witnessed_v5.rs`, its
+`witnessed_v5/durable.rs` component and separate protocol/durable native test
+targets, updated the parent owner for V5 and exact snapshot guards, and retained
+the V4 common-restore contrast. The other 35 selected source hashes were
+unchanged from the integration baseline. That initial source-map digest was
 `1de0b7bac54253f9bfaf312a5930dc0283d6c2c980122eea0801f443043bb6cf`.
+
+The follow-up keeps the same 41-source roster and closes a cold retry boundary:
+a stored predecessor cannot itself authorize an Advanced retry receipt after
+reopen. Only a CAS authenticated and durably committed by the live session may
+establish its volatile retry pair. Fresh Current observations remain the cold
+reconciliation path. The component and its same twelve native test functions
+are rebound, including a same-head, altered-predecessor negative control. The
+current canonical source-map digest is
+`ac0cb401b9ef7111cd77085c3f817ecfe56bdc73fc5fd4206e2c3cc8f3767c52`.
 The newly reviewed files are successor working bytes; neither the retained M11
 review-base value nor the separate `e4abb172147e941b62483652b0ceabaae4317624`
 integration baseline claims that those new files existed or were executed at

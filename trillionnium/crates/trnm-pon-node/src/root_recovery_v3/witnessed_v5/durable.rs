@@ -47,6 +47,9 @@ pub struct DurableRootWitnessV5 {
     policy_bytes: Vec<u8>,
     signer: Box<dyn RootWriterSignerV3>,
     known: Row,
+    // Persisted predecessor bytes do not authenticate their own cold recovery.
+    // Only a CAS verified and durably committed by this live owner can retry.
+    retry_from: Option<JournalHeadV3>,
     fenced: bool,
 }
 
@@ -101,6 +104,7 @@ impl DurableRootWitnessV5 {
                 head: initial,
                 previous: None,
             },
+            retry_from: None,
             fenced: false,
         };
         owner.check_known(budget)?;
@@ -110,6 +114,8 @@ impl DurableRootWitnessV5 {
     /// `expected` and `policy` must come from authenticated authority outside the
     /// restored witness database and its sibling files. Both an older and newer
     /// stored head require explicit external reconciliation, never auto-adoption.
+    /// A cold owner does not acknowledge historical CAS retries from database
+    /// predecessor metadata. Fresh Current can authenticate the retained head.
     pub fn open_existing(
         path: &Path,
         policy: WitnessPolicyV5,
@@ -135,6 +141,7 @@ impl DurableRootWitnessV5 {
             policy_bytes,
             signer: Box::new(signer),
             known,
+            retry_from: None,
             fenced: false,
         })
     }
@@ -180,9 +187,12 @@ impl DurableRootWitnessV5 {
                 WitnessOutcomeV5::Advanced
             }
             (Some(expected), Some(target))
-                if before.head == target && before.previous == Some(expected) =>
+                if before.head == target
+                    && before.previous == Some(expected)
+                    && self.retry_from == Some(expected) =>
             {
-                // An exact retry acknowledges the original durable transition.
+                // Only this live owner authenticated and durably committed the
+                // original transition; cold predecessor bytes are insufficient.
                 WitnessOutcomeV5::Advanced
             }
             (Some(_), Some(_)) => WitnessOutcomeV5::Mismatch,
@@ -202,6 +212,9 @@ impl DurableRootWitnessV5 {
             self.files.sync()?;
         }
         self.known = after;
+        if after.head != before.head {
+            self.retry_from = Some(before.head);
+        }
         self.files.check()?;
         budget.check()?;
         Ok(outcome)

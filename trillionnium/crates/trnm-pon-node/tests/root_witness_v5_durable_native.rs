@@ -248,12 +248,13 @@ fn native_durable_witness_v5_exact_cas_retry_and_cold_reopen_have_dual_family_re
     assert!(h.open(h.initial).is_err());
     let mut owner = h.open(target).unwrap();
     exchange(&mut owner, h.current(), target, WitnessOutcomeV5::Current);
-    // The predecessor persisted through cold open; no in-memory retry cache.
+    // Cold predecessor metadata cannot prove the historical CAS. A fresh
+    // Current receipt above supplies the authenticated reconciliation outcome.
     exchange(
         &mut owner,
         h.cas(h.initial, target),
         target,
-        WitnessOutcomeV5::Advanced,
+        WitnessOutcomeV5::Mismatch,
     );
 }
 
@@ -310,12 +311,47 @@ fn native_durable_witness_v5_wrong_predecessor_and_competing_successor_are_misma
     );
     assert_eq!(disk_head(&h.path()), target);
     drop(owner);
+    // Keep the externally pinned head but corrupt the unauthenticated cold
+    // predecessor to exactly match a forged retry pair. Shape checks alone
+    // would permit this row; it still cannot authorize an Advanced receipt.
+    let restored = rusqlite::Connection::open(h.path()).unwrap();
+    restored
+        .execute(
+            "UPDATE root_witness_v5 SET previous_root=?1",
+            [wrong_previous.root.as_slice()],
+        )
+        .unwrap();
+    drop(restored);
     let mut owner = h.open(target).unwrap();
+    for _ in 0..2 {
+        exchange(
+            &mut owner,
+            h.cas(wrong_previous, target),
+            target,
+            WitnessOutcomeV5::Mismatch,
+        );
+    }
+    exchange(&mut owner, h.current(), target, WitnessOutcomeV5::Current);
+    // Neither Current nor a refused CAS promotes the restored predecessor.
     exchange(
         &mut owner,
         h.cas(wrong_previous, target),
         target,
         WitnessOutcomeV5::Mismatch,
+    );
+    let successor = next(target, 54);
+    exchange(
+        &mut owner,
+        h.cas(target, successor),
+        successor,
+        WitnessOutcomeV5::Advanced,
+    );
+    // This exact retry now refers to a CAS this session actually committed.
+    exchange(
+        &mut owner,
+        h.cas(target, successor),
+        successor,
+        WitnessOutcomeV5::Advanced,
     );
 }
 
@@ -372,6 +408,12 @@ fn native_durable_witness_v5_signing_failure_and_wrong_quorum_preserve_committed
             h.current(),
             target,
             WitnessOutcomeV5::Current,
+        );
+        exchange(
+            &mut recovered,
+            h.cas(h.initial, target),
+            target,
+            WitnessOutcomeV5::Mismatch,
         );
     }
 }
