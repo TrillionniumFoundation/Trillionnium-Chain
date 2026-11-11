@@ -1,0 +1,16 @@
+{
+  "schema": "final-page-nesting-source-control-v1",
+  "base": "528f9659cbde9d1b4f7aeb63747eca0475aef966",
+  "original_reader_blob": "cb29166ceba6d42416aa0e94617e475cf270331a",
+  "fixed_reader_blob": "993178315659318386b590c39df0e0dbb35c4a0f",
+  "test_blob": "1a6a8b8f6b840a797045dcd22dd1bfff0eb56acb",
+  "platform": "Darwin",
+  "python": "3.14.3",
+  "original_negative_exit": 1,
+  "original_negative_failures": 2,
+  "candidate_exit": 0,
+  "candidate_controls": 23,
+  "runtime_or_native_campaign_executed": false,
+  "four_business_metrics": null,
+  "qualification": "HOLD_NO_GO"
+}
