@@ -394,8 +394,9 @@ fn bounded_stop_runtime_and_invalid_material_do_not_mine_or_consume_pending_tran
 
 #[test]
 fn completed_sqlite_blocked_batch_observes_stop_before_revalidation_or_preparation() {
-    // A real second SQLite writer holds the reconciliation transaction. Neither
-    // the batch nor its SQLite work is made preemptible by the cooperative fence.
+    // A real second SQLite writer holds the reconciliation transaction. The
+    // SQLite wait is not preemptible; its next native checkpoint cancels the
+    // incomplete batch without claiming that selection completed.
     for requested_stop in [false, true] {
         let dir = tempfile::tempdir().unwrap();
         let (mut node, settings, mut config, _) = setup(dir.path());
@@ -465,7 +466,7 @@ fn completed_sqlite_blocked_batch_observes_stop_before_revalidation_or_preparati
         let event = &events[0];
         assert_eq!(event["kind"], "stopped-before-search");
         assert_eq!(event["failure_stage"], "pool-batch");
-        assert_eq!(event["transactions"], 1);
+        assert_eq!(event["transactions"], 0);
         assert!(event["pool_batch_ns"].as_u64().unwrap() >= 250_000_000);
         for field in [
             "pre_search_batch_validation_ns",

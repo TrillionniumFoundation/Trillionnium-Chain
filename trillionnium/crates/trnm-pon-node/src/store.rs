@@ -3924,7 +3924,7 @@ impl Node {
     pub fn state_at(&self, tip: Hash) -> Result<State> {
         self.state_at_with_progress(tip, &mut || Ok(()))
     }
-    fn state_at_with_progress(
+    pub(crate) fn state_at_with_progress(
         &self,
         tip: Hash,
         progress: &mut dyn FnMut() -> Result<()>,
@@ -5749,12 +5749,35 @@ impl Node {
         a: &[u32],
         b: &[u32],
     ) -> Result<crate::mining::PreparedCandidate> {
+        self.prepare_from_matrices_controlled(
+            parent,
+            transactions,
+            miner,
+            timestamp,
+            a,
+            b,
+            &ExecutionControl::new(&|_| Ok(()), &()),
+        )
+    }
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn prepare_from_matrices_controlled(
+        &self,
+        parent: Hash,
+        transactions: Vec<Vec<u8>>,
+        miner: Hash,
+        timestamp: u64,
+        a: &[u32],
+        b: &[u32],
+        control: &ExecutionControl<'_, Error>,
+    ) -> Result<crate::mining::PreparedCandidate> {
+        let mut progress = || (control.progress)(ExecutionProgress::BeforeParentBinding);
+        progress()?;
         self.ready()?;
         let height = self.record(parent)?.height.checked_add(1).ok_or("HEIGHT")?;
         let task = pon_work::task_id(a, b).map_err(|_| Error::from("WORK_TASK"))?;
-        let actual = self.state_at(parent)?;
+        let actual = self.state_at_with_progress(parent, &mut progress)?;
         let registered_task = self.eligible_work_task_from_state(&actual, task, height)?;
-        self.prepare_from_checked_parent(
+        self.prepare_from_checked_parent_controlled(
             parent,
             transactions,
             miner,
@@ -5763,6 +5786,7 @@ impl Node {
             b,
             &actual,
             &registered_task,
+            control,
         )
     }
     #[allow(clippy::too_many_arguments)]

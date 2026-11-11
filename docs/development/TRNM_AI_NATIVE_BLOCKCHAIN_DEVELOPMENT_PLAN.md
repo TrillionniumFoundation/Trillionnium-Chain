@@ -11571,3 +11571,58 @@ closures. The original exclusive campaign, public confirmation under pressure,
 bounded total history, independent WAN service, PQ batch verification and
 conflict-aware execution remain separate acceptance obligations. These changes
 do not establish measured TPS or production qualification.
+
+### 2026-11-11 continue from actual native handoff failure and pool control gaps
+
+Preserve the exact `7d6567b92575d1d84766afd49d0720b6f197b0e0` hosted results.
+Both component release builds succeeded. The four controlled-mining checks met
+their before/fixed expectations, but the shared History Continue case completed
+detached execution and then refused the held commit. Its failed last-epoch close
+made the final account observation unavailable. The old History negative cases
+and fixed cancellation case likewise lacked the reader's required final flow;
+do not count those rejected comparisons as successful negative controls. Keep
+the independent four-second service confirmation failures and the original
+thirty-second campaign separate from this component experiment.
+
+- After successful shared detached execution has joined its workers, allow only
+  the same verified unique-W1 operation to wait for original free CPU credit
+  before it reacquires the Node writer. Preserve the original live sampler,
+  thread ownership, all already purchased start reservations, resource callback,
+  absolute deadline and final settlement. Do not create credit, another request,
+  another reservation or a commit-cost promise. An unqualified operation that
+  passes the original paid check continues directly without new waiting rights;
+  refused and unknown operations cannot be revived. Held preparation, fallback
+  and commit continue to refuse rather than wait. Concurrent owners can consume
+  the available headroom before commit, so complete import still needs actual
+  source-bound execution evidence.
+- Add a test-only read-only observation after native scopes have fully settled
+  and before the last History epoch closes. Require the original balance identity,
+  zero live owners and reservations, exact paid CPU settlement, the actual close
+  outcome and cold-reopen marker. A final unavailable account may only be explained
+  by an observed known negative balance followed by the existing fail-closed epoch
+  fence; an absent or unknown pre-close sample remains a comparison failure.
+- Carry ordinary pool mining's existing stop flag and original run end through
+  pre-admission batch selection, parent reads, legacy and registered preparation,
+  preview and post-search revalidation. Keep cancellation distinct from genuine
+  SQL/native failures and avoid reclassifying cancelled groups as blocked. Keep
+  the original durable admit/activate/final-reconcile completion sequence. SQLite
+  and other indivisible calls remain cooperative rather than hard-preemptible.
+  New outer checkpoints use the caller's lightweight run control; preserve the
+  public owner's existing Host observation sites and worker accounting.
+- Retain the measured Host parser component investigation as a rejected
+  optimization: its isolated in-memory savings do not justify a service-level
+  claim or changing fresh Host observations. Continue profiling actual ownership,
+  state copying, repeated validation, persistence and retained history before
+  changing their contracts or increasing nominal block capacity.
+
+Build immutable old-production subjects with the exact shared test bodies and
+test-only hooks, then compare them with the fixed source. Bind same inputs by
+control group: seven original-budget controls and seven ordinary-pool controls.
+Keep fixed-only sampler invariants and the complete existing pool integration
+suite separate from the two-arm comparisons. Require original Rust/profile,
+actual binary and CLI identities, complete test lists, all original stdout/stderr,
+exact designated negative assertions and clean source-before/source-after
+receipts. Compilation errors, signals, early fixture expiry, missing cases and
+unrelated panics remain failures. Later binding/evidence commits retain the
+identity of the source that actually ran. Preserve every existing HOLD flag,
+production refusal, resource limit and confirmation criterion.

@@ -715,6 +715,81 @@ impl LiveRequestCpu {
             );
         }
     }
+
+    /// The same settled-worker History continuation may prepare to reacquire
+    /// its Node writer. This earns free credit through the ORIGINAL refill;
+    /// it does not reserve another start quantum or predict commit cost.
+    /// Another live owner may consume that headroom before the held checks,
+    /// which must still refuse rather than wait under the writer.
+    fn prepare_history_writer(&self, resource: &dyn Fn() -> Result<()>) -> Result<()> {
+        loop {
+            resource()?;
+            // Charge this exact owner's new interval once. The sampler keeps
+            // unknown/refused and verified-unique-W1 scheduling semantics.
+            self.observe_sample(false, true)?;
+            let (request, ready) = {
+                let mut state = match self.state.lock() {
+                    Ok(state) => state,
+                    Err(error) => {
+                        drop(error);
+                        self.unknown();
+                        return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+                    }
+                };
+                let mut budget = match self.budget.lock() {
+                    Ok(budget) => budget,
+                    Err(error) => {
+                        state.unavailable = true;
+                        drop(state);
+                        drop(error);
+                        self.unknown();
+                        return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+                    }
+                };
+                if state.unavailable
+                    || budget.unavailable
+                    || state.owner_thread != thread::current().id()
+                    || state.threads.len() != 1
+                    || !state.threads.contains_key(&state.owner_thread)
+                    || budget.in_flight == 0
+                    || budget.in_flight > MUTATION_CPU_WORKERS
+                    || (state.verified_completion
+                        && (budget.verified_completions == 0
+                            || budget.verified_completions > budget.in_flight))
+                {
+                    state.unavailable = true;
+                    budget.unavailable = true;
+                    return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+                }
+                ensure(!state.refused, "PUBLIC_MUTATION_CPU_BUDGET")?;
+                let Some(request) = state.public_request.clone() else {
+                    state.unavailable = true;
+                    budget.unavailable = true;
+                    return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+                };
+                // Stored free credit excludes EVERY outstanding start reserve.
+                // Reaching zero leaves the original principals intact; this
+                // operation cannot borrow another owner's purchased quantum.
+                // Nonpromoted work retains its original sampler verdict,
+                // including its own already purchased allowance when stored
+                // free credit is negative. It never receives this extra wait.
+                let ready = !state.verified_completion || budget.credit_ns >= 0;
+                (request, ready)
+            };
+            // No request/global mutex or Node writer is held across any caller
+            // resource observation, original deadline check or actual sleep.
+            request.check()?;
+            if ready {
+                return Ok(());
+            }
+            resource()?;
+            request.check()?;
+            thread::sleep(
+                Duration::from_millis(5)
+                    .min(request.deadline.saturating_duration_since(Instant::now())),
+            );
+        }
+    }
     fn observe_sample(&self, remove: bool, enforce: bool) -> Result<Option<PublicRequestDeadline>> {
         // All two-lock paths use request -> global. Neither is held across a
         // Work replay, envelope, State/root calculation, join or SQL call.
@@ -1146,6 +1221,9 @@ impl Drop for ServiceMutationCpuOperation {
 #[path = "scalar_cpu_completion_tests.rs"]
 mod completion_tests;
 #[cfg(all(test, target_os = "linux"))]
+#[path = "scalar_cpu_history_handoff_tests.rs"]
+mod history_handoff_tests;
+#[cfg(all(test, target_os = "linux"))]
 #[path = "scalar_cpu_tests.rs"]
 mod tests;
 
@@ -1167,6 +1245,14 @@ impl ServiceMutationCpuCheckpoint {
     ) -> Result<()> {
         self.live
             .observe_with_control(false, true, !owns_node_mutex, resource)
+    }
+
+    /// Call only after detached execution has joined its workers and before
+    /// reacquiring the Node writer. Only this same operation's unique verified
+    /// W1 may wait for original free credit, with its original request controls.
+    /// This is no reservation or guarantee that a later held commit can finish.
+    pub(crate) fn history_prepare_writer(&self, resource: &dyn Fn() -> Result<()>) -> Result<()> {
+        self.live.prepare_history_writer(resource)
     }
 
     pub(crate) fn shares_domain_with(&self, domain: &ServiceMutationCpuDomain) -> bool {

@@ -339,7 +339,8 @@ impl<'a> RawBindings<'a> {
 /// Real M05 metadata and strict M06 whole-prefix execution, all against one parent.
 /// M05 lane capacity is reused; the durable owner preserves complete group order
 /// instead of pretending its lane pop order can split or reorder control bundles.
-fn validate_pending(
+#[allow(clippy::too_many_arguments)]
+fn validate_pending_with_control(
     raws: &[Vec<u8>],
     height: u64,
     state: &State,
@@ -347,15 +348,17 @@ fn validate_pending(
     cfg: &Config,
     limits: &PoolLimits,
     node: &Node,
+    control: &ExecutionControl<'_, crate::Error>,
 ) -> Result<usize> {
     node.owner_preview_available()?;
     let owner_permit = node.continuous_pool_validation_permit()?;
-    let progress = |_| {
+    let progress = |point| {
+        (control.progress)(point)?;
         owner_permit
             .as_ref()
             .map_or(Ok(()), |permit| permit.progress())
     };
-    let control = ExecutionControl::new(&progress, &());
+    let control = ExecutionControl::new(&progress, control.worker_accounting);
     PendingPreview {
         height,
         state,
@@ -790,6 +793,14 @@ impl Node {
         Ok(summary)
     }
     fn pool_groups(&self, limits: &PoolLimits) -> Result<Vec<Group>> {
+        self.pool_groups_with_control(limits, &ExecutionControl::new(&|_| Ok(()), &()))
+    }
+    fn pool_groups_with_control(
+        &self,
+        limits: &PoolLimits,
+        control: &ExecutionControl<'_, crate::Error>,
+    ) -> Result<Vec<Group>> {
+        (control.progress)(ExecutionProgress::BeforeParentBinding)?;
         let (total, raw_bytes): (usize, usize) = self.db.query_row(
             "SELECT COUNT(*),COALESCE(SUM(length(raw)),0) FROM local_pool_rows",
             [],
@@ -816,6 +827,7 @@ impl Node {
         let mut count = 0;
         let mut bytes = 0;
         for (id, status, reason) in groups {
+            (control.progress)(ExecutionProgress::BeforeParentBinding)?;
             ensure(reason.len() <= 128, "POOL_STATE")?;
             let mut stmt=self.db.prepare("SELECT digest,sender,nonce,expiry,fee_limit,raw,position FROM local_pool_rows WHERE group_id=? ORDER BY position")?;
             let rows = stmt
@@ -840,6 +852,7 @@ impl Node {
             for (expected_position, (digest, sender, nonce, expiry, fee_limit, raw, position)) in
                 rows.into_iter().enumerate()
             {
+                (control.progress)(ExecutionProgress::BeforeParentBinding)?;
                 ensure(
                     position as usize == expected_position,
                     "POOL_GROUP_POSITION",
@@ -885,6 +898,12 @@ impl Node {
     /// Classification is branch-relative. SequenceConsumed does not assert that
     /// this exact transaction was mined or confirmed; use normal chain observation.
     pub fn pool_reconcile(&mut self) -> Result<PoolStatus> {
+        self.pool_reconcile_with_control(&ExecutionControl::new(&|_| Ok(()), &()))
+    }
+    fn pool_reconcile_with_control(
+        &mut self,
+        control: &ExecutionControl<'_, crate::Error>,
+    ) -> Result<PoolStatus> {
         ensure(
             self.mining_owner.is_none(),
             "OWNER_MINING_POOL_PURPOSE_PENDING",
@@ -892,23 +911,39 @@ impl Node {
         self.owner_pool_configured()?;
         let (context, limits) = self.pool_policy()?;
         let owner_permit = self.begin_owner_pool("reconcile", &[], context)?;
-        let actual = self.pool_parent()?;
-        let progress = |_| match &owner_permit {
-            Some(permit) => permit.progress(),
-            None => Ok(()),
+        // Only the caller's control extends across this parent read. Ordinary
+        // pool mining supplies its existing lightweight stop/end fence; the
+        // public wrapper supplies no-op progress. Keep the existing permit/Host
+        // checks at their original preview/persistence points below.
+        let actual = self.pool_parent_with_control(control)?;
+        let progress = |point| {
+            (control.progress)(point)?;
+            match &owner_permit {
+                Some(permit) => permit.progress(),
+                None => Ok(()),
+            }
         };
+        let guarded_control = ExecutionControl::new(&progress, control.worker_accounting);
         self.pool_reconcile_parent_with_control(
             &limits,
             &actual,
-            &ExecutionControl::new(&progress, &()),
+            &guarded_control,
             owner_permit.as_ref(),
         )?;
         self.pool_status_snapshot()
     }
     fn pool_parent(&self) -> Result<PoolParent> {
+        self.pool_parent_with_control(&ExecutionControl::new(&|_| Ok(()), &()))
+    }
+    fn pool_parent_with_control(
+        &self,
+        control: &ExecutionControl<'_, crate::Error>,
+    ) -> Result<PoolParent> {
+        let mut progress = || (control.progress)(ExecutionProgress::BeforeParentBinding);
+        progress()?;
         let (parent, generation) = self.active()?;
         let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
-        let state = self.state_at(parent)?;
+        let state = self.state_at_with_progress(parent, &mut progress)?;
         let root = self.record(parent)?.root;
         Ok(PoolParent {
             id: parent,
@@ -1324,15 +1359,32 @@ impl Node {
         max_records: usize,
         max_bytes: usize,
     ) -> Result<PoolBatch> {
+        self.pool_mining_batch_with_control(
+            parent,
+            generation,
+            max_records,
+            max_bytes,
+            &ExecutionControl::new(&|_| Ok(()), &()),
+        )
+    }
+    pub(crate) fn pool_mining_batch_with_control(
+        &mut self,
+        parent: Hash,
+        generation: u64,
+        max_records: usize,
+        max_bytes: usize,
+        control: &ExecutionControl<'_, crate::Error>,
+    ) -> Result<PoolBatch> {
         self.owner_preview_available()?;
+        (control.progress)(ExecutionProgress::BeforeParentBinding)?;
         ensure(self.active()? == (parent, generation), "POOL_STALE_PARENT")?;
         let (context, limits) = self.pool_policy()?;
         ensure(
             max_records > 0 && max_records <= 256 && max_bytes > 0 && max_bytes <= 524288,
             "POOL_BATCH_LIMIT",
         )?;
-        self.pool_reconcile()?;
-        let groups = self.pool_groups(&limits)?;
+        self.pool_reconcile_with_control(control)?;
+        let groups = self.pool_groups_with_control(&limits, control)?;
         let mut raws = Vec::new();
         let mut ids = Vec::new();
         let mut bytes = 0;
@@ -1346,14 +1398,18 @@ impl Node {
             raws.extend(group.rows.into_iter().map(|r| r.raw));
         }
         let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
-        let typed = validate_pending(
+        let state = self.state_at_with_progress(parent, &mut || {
+            (control.progress)(ExecutionProgress::BeforeParentBinding)
+        })?;
+        let typed = validate_pending_with_control(
             &raws,
             height,
-            &self.state_at(parent)?,
+            &state,
             parent,
             &self.settings.app,
             &limits,
             self,
+            control,
         )?;
         ensure(self.active()? == (parent, generation), "POOL_STALE_PARENT")?;
         Ok(PoolBatch {
@@ -1369,15 +1425,23 @@ impl Node {
     /// Exact retained group/raw recheck immediately before the mining owner uses
     /// a batch. A fence comparison alone never authenticates mutable batch fields.
     pub fn pool_validate_batch(&mut self, batch: &PoolBatch) -> Result<usize> {
+        self.pool_validate_batch_with_control(batch, &ExecutionControl::new(&|_| Ok(()), &()))
+    }
+    pub(crate) fn pool_validate_batch_with_control(
+        &mut self,
+        batch: &PoolBatch,
+        control: &ExecutionControl<'_, crate::Error>,
+    ) -> Result<usize> {
         self.owner_preview_available()?;
+        (control.progress)(ExecutionProgress::BeforeParentBinding)?;
         ensure(self.pool_batch_is_current(batch)?, "POOL_STALE_PARENT")?;
         let (_, limits) = self.pool_policy()?;
         ensure(
             batch.preview_miner == limits.preview_miner,
             "POOL_BATCH_BINDING",
         )?;
-        self.pool_reconcile()?;
-        let groups = self.pool_groups(&limits)?;
+        self.pool_reconcile_with_control(control)?;
+        let groups = self.pool_groups_with_control(&limits, control)?;
         let queued: Vec<_> = groups
             .iter()
             .filter(|g| g.status == PoolState::Queued)
@@ -1397,14 +1461,18 @@ impl Node {
             .parent_height(batch.parent)?
             .checked_add(1)
             .ok_or("HEIGHT")?;
-        let admitted = validate_pending(
+        let state = self.state_at_with_progress(batch.parent, &mut || {
+            (control.progress)(ExecutionProgress::BeforeParentBinding)
+        })?;
+        let admitted = validate_pending_with_control(
             &raws,
             height,
-            &self.state_at(batch.parent)?,
+            &state,
             batch.parent,
             &self.settings.app,
             &limits,
             self,
+            control,
         )?;
         ensure(
             self.active()? == (batch.parent, batch.generation),

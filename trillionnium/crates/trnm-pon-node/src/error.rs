@@ -191,6 +191,7 @@ error_codes! {
     RemoteTerminal => ("REMOTE_TERMINAL", RemoteRefusal),
     RemoteRetryable => ("REMOTE_RETRYABLE", RemoteRefusal),
     ; local_only {
+        MiningRunStopped => ("MINING_RUN_STOPPED", Cancelled),
         PqNetworkDeadline => ("PQ_NETWORK_DEADLINE", Cancelled),
         PqNetworkExpired => ("PQ_NETWORK_EXPIRED", Cancelled),
         PqNetworkRevoked => ("PQ_NETWORK_REVOKED", Cancelled),
