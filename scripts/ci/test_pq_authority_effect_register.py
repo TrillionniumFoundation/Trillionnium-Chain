@@ -70,7 +70,7 @@ class AuthorityEffectTests(unittest.TestCase):
         self.assertEqual({row['id']: row['effect_scope'] for row in result['routes']},
                          EXPECTED_SCOPES)
         self.assertEqual(result['source_revision'],
-                         '8add285b6c0a91d8b7812efe2d02c9342f74c91b')
+                         '7f83ea843d6d1578a475a7a0c4dc026da564a795')
         self.assertEqual(result['source_files_sha256'], self.original['source_files_sha256'])
         for name in ('coverage_complete', 'whole_chain_pq_qualified', 'production_activation',
                      'provenance_authenticated', 'call_graph_proved',

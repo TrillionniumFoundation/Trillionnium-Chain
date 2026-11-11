@@ -915,6 +915,14 @@ NATIVE_REQUIRED_PATHS |= frozenset((
     "docs/security/ACCOUNT_AUTHORIZATION_DEVELOPMENT_BOUNDARY_20261110.md",
 ))
 
+
+# Account scope and durable retry provenance controls remain distinct from the
+# original 52-control PNQ2/PqWitnessV4 roster and its historical observations.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "config/pon/pq-system-supplemental-tests-v1.json",
+    "trillionnium/crates/trnm-pon-node/src/ingress/account_scope_tests.rs",
+))
+
 # V4 continuation inputs are mandatory source dependencies, not proof of
 # independently deployed custody, external effects or algorithm migration.
 NATIVE_REQUIRED_PATHS |= frozenset((

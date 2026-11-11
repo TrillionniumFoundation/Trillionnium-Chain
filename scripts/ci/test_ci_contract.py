@@ -36,6 +36,9 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
                                NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
 from check_ci_contract import (check_pq_release_authority_controls, PQ_RELEASE_WORKFLOW,
                                PQ_RELEASE_MANIFEST, PQ_RELEASE_GROUPS, PQ_ROOT_HARNESS_FILES)
+from check_ci_contract import (check_pq_system_required_controls, PQ_SYSTEM_REQUIRED_MANIFEST,
+                               PQ_SYSTEM_SUPPLEMENTAL_MANIFEST, PQ_SYSTEM_REQUIRED_STEP,
+                               PQ_SYSTEM_SUPPLEMENTAL_STEP)
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
                                    cost_job_budget_seconds, rejection_job_budget_seconds)
 from report_current_implementation import DESTINATION, markdown, projection, validate as current_validate
@@ -2968,6 +2971,172 @@ class CellCurrentApiReadbackTests(unittest.TestCase):
                          "7326da0ad2c31fe599300d928fde84129ce83de0b072ef3bb46799d424aca3eb")
         self.assertIn("(line 364)", self.EXACT_CASE)
         self.assertEqual(self.observed.count(self.EXACT_CASE), 1)
+
+
+
+class PqSystemSupplementalControlTests(unittest.TestCase):
+    """Exercise selection and failure propagation with explicit shell test doubles."""
+
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        for relative in (PQ_RELEASE_WORKFLOW, PQ_SYSTEM_REQUIRED_MANIFEST,
+                         PQ_SYSTEM_SUPPLEMENTAL_MANIFEST,
+                         'scripts/ci/check_required_native_test.py'):
+            target = self.root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(ROOT / relative, target)
+        self.workflow = (self.root / PQ_RELEASE_WORKFLOW).read_text()
+        self.retained = json.loads((self.root / PQ_SYSTEM_REQUIRED_MANIFEST).read_text())
+        self.supplement = json.loads((self.root / PQ_SYSTEM_SUPPLEMENTAL_MANIFEST).read_text())
+
+    def write_manifest(self, relative, value):
+        (self.root / relative).write_text(json.dumps(value, indent=2) + '\n')
+
+    def test_retains_52_and_separately_requires_seven_without_claiming_execution(self):
+        self.assertEqual(check_pq_system_required_controls(self.root), {
+            'retained_meaningful_controls': 52, 'supplemental_meaningful_controls': 7,
+            'selected_meaningful_controls': 59, 'tests_executed': False})
+
+    def test_original_roster_name_count_order_and_scope_cannot_change(self):
+        mutations = (
+            ('remove', lambda value: value['tests'].pop()),
+            ('rename', lambda value: value['tests'].__setitem__(0, 'a::renamed')),
+            ('duplicate', lambda value: value['tests'].__setitem__(0, value['tests'][1])),
+            ('reorder', lambda value: value['tests'].reverse()),
+            ('counter', lambda value: value.__setitem__('expected_meaningful_controls', 59)),
+            ('qualification', lambda value: value.__setitem__('whole_chain_quantum_security_qualified', True)),
+            ('child', lambda value: value.__setitem__('child_process_harnesses_not_counted', [])),
+        )
+        for label, mutate in mutations:
+            with self.subTest(label=label):
+                value = json.loads(json.dumps(self.retained))
+                mutate(value)
+                self.write_manifest(PQ_SYSTEM_REQUIRED_MANIFEST, value)
+                with self.assertRaisesRegex(ValueError, 'PQ system'):
+                    check_pq_system_required_controls(self.root)
+
+    def test_supplement_requires_exact_full_names_and_separate_unchanged_budgets(self):
+        mutations = (
+            ('missing', lambda value: value['tests'].pop()),
+            ('empty', lambda value: value['tests'].__setitem__(0, '')),
+            ('short', lambda value: value['tests'].__setitem__(0, value['tests'][0].rsplit('::', 1)[1])),
+            ('duplicate', lambda value: value['tests'].__setitem__(0, value['tests'][1])),
+            ('retained', lambda value: value['tests'].__setitem__(0, self.retained['tests'][0])),
+            ('child', lambda value: value['tests'].__setitem__(0, self.retained['child_process_harnesses_not_counted'][0])),
+            ('counter', lambda value: value.__setitem__('expected_meaningful_controls', 6)),
+            ('bool-counter', lambda value: value.__setitem__('expected_meaningful_controls', True)),
+            ('retained-counter', lambda value: value.__setitem__('retained_meaningful_controls', 59)),
+            ('budget', lambda value: value.__setitem__('original_business_budgets_changed', True)),
+            ('qualification', lambda value: value.__setitem__('whole_chain_quantum_security_qualified', True)),
+        )
+        for label, mutate in mutations:
+            with self.subTest(label=label):
+                value = json.loads(json.dumps(self.supplement))
+                mutate(value)
+                self.write_manifest(PQ_SYSTEM_SUPPLEMENTAL_MANIFEST, value)
+                with self.assertRaisesRegex(ValueError, 'PQ system supplement'):
+                    check_pq_system_required_controls(self.root)
+
+    def test_hosted_supplement_cannot_skip_duplicate_filter_or_ignore_readback(self):
+        step = PQ_SYSTEM_SUPPLEMENTAL_STEP
+        mutations = (
+            ('remove', self.workflow.replace(step, '', 1)),
+            ('duplicate', self.workflow.replace(step, step + step, 1)),
+            ('disabled', self.workflow.replace(step, step.replace(
+                "if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}", 'if: false'), 1)),
+            ('substring', self.workflow.replace(step, step.replace(' -- --exact ', ' -- '), 1)),
+            ('readback', self.workflow.replace(step, step.replace(
+                'python3 scripts/ci/check_required_native_test.py', 'true'), 1)),
+            ('swallow', self.workflow.replace(step, step.replace('failed=1', 'failed=0'), 1)),
+            ('trigger', self.workflow.replace(
+                '      - ' + PQ_SYSTEM_SUPPLEMENTAL_MANIFEST + '\n', '', 1)),
+            ('retained-step', self.workflow.replace(PQ_SYSTEM_REQUIRED_STEP, '', 1)),
+            ('budget', self.workflow.replace(
+                '    timeout-minutes: 90\n', '    timeout-minutes: 120\n', 1)),
+        )
+        for label, text in mutations:
+            with self.subTest(label=label):
+                self.assertNotEqual(text, self.workflow)
+                (self.root / PQ_RELEASE_WORKFLOW).write_text(text)
+                with self.assertRaisesRegex(ValueError, 'PQ'):
+                    check_pq_system_required_controls(self.root)
+
+    def run_supplemental_shell(self, mode='pass'):
+        # Execute the actual workflow body and real transcript reader. The
+        # command recorder below is deliberately a test double, never Rust
+        # execution evidence.
+        out = self.root / ('synthetic-' + mode)
+        out.mkdir()
+        (out / 'run-command.sh').write_text(
+            'set -euo pipefail\npython3 "$PQ_OUT/synthetic-command.py" "$@"\n')
+        (out / 'synthetic-command.py').write_text(r'''
+import json, os, sys
+from pathlib import Path
+out = Path(os.environ['PQ_OUT'])
+names = json.loads(Path('config/pon/pq-system-supplemental-tests-v1.json').read_text())['tests']
+label, *command = sys.argv[1:]
+selector = command[10]
+expected = ['cargo', '+1.95.0', 'test', '--locked', '--manifest-path',
+            'trillionnium/Cargo.toml', '-p', 'trnm-pon-node', '--lib',
+            '--all-features', selector, '--', '--exact', '--show-output', '--test-threads=1']
+assert command == expected and selector in names
+assert label == f'native-supplemental-{names.index(selector):02d}'
+with (out / 'calls.jsonl').open('a') as calls:
+    calls.write(json.dumps({'label': label, 'selector': selector, 'command': command}) + '\n')
+mode = os.environ['TRNM_PQ_SYNTHETIC_MODE'] if selector == names[0] else 'pass'
+if mode == 'failed-command':
+    raise SystemExit(1)
+name = 'wrong::control' if mode == 'wrong-name' else selector
+raw = f'running 1 test\ntest {name} ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s\n'
+if mode == 'zero':
+    raw = 'running 0 tests\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s\n'
+elif mode == 'duplicate':
+    raw += raw
+elif mode == 'ignored':
+    raw = raw.replace('1 passed; 0 failed; 0 ignored', '0 passed; 0 failed; 1 ignored')
+(out / (label + '.log')).write_text(raw)
+''')
+        body = textwrap.dedent(PQ_SYSTEM_SUPPLEMENTAL_STEP.split('        run: |\n', 1)[1])
+        result = subprocess.run(
+            ['bash', '-c', body], cwd=self.root, capture_output=True, text=True,
+            env={**os.environ, 'PQ_OUT': str(out), 'TRNM_PQ_SYNTHETIC_MODE': mode})
+        calls_path = out / 'calls.jsonl'
+        calls = [json.loads(line) for line in calls_path.read_text().splitlines()] if calls_path.exists() else []
+        return result, calls, out
+
+    def test_workflow_body_selects_each_full_name_once_and_reads_back_every_run(self):
+        result, calls, out = self.run_supplemental_shell()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual([row['selector'] for row in calls], self.supplement['tests'])
+        self.assertEqual(len({row['label'] for row in calls}), 7)
+        for row in calls:
+            readback = json.loads((out / (row['label'] + '-execution.json')).read_text())
+            self.assertEqual(readback['test'], row['selector'])
+            self.assertEqual(readback['executed_tests'], 1)
+            self.assertEqual(readback['scope'], 'named-libtest-execution-only')
+
+    def test_real_reader_failures_and_command_failure_fail_after_attempting_all_controls(self):
+        for mode in ('zero', 'duplicate', 'wrong-name', 'ignored', 'failed-command'):
+            with self.subTest(mode=mode):
+                result, calls, _ = self.run_supplemental_shell(mode)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual([row['selector'] for row in calls], self.supplement['tests'])
+
+    def test_invalid_selector_lists_stop_before_any_native_command(self):
+        for label, names in (
+                ('empty', [''] + self.supplement['tests'][1:]),
+                ('duplicate', [self.supplement['tests'][1]] + self.supplement['tests'][1:]),
+                ('missing', self.supplement['tests'][:-1]),
+                ('retained', [self.retained['tests'][0]] + self.supplement['tests'][1:])):
+            with self.subTest(label=label):
+                value = json.loads(json.dumps(self.supplement))
+                value['tests'] = names
+                self.write_manifest(PQ_SYSTEM_SUPPLEMENTAL_MANIFEST, value)
+                result, calls, _ = self.run_supplemental_shell(label)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual(calls, [])
 
 
 if __name__ == '__main__':

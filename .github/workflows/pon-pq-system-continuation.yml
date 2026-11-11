@@ -5,6 +5,7 @@ on:
       - trillionnium/**
       - config/pon/pq-cross-branch-corpus-v1.json
       - config/pon/pq-system-required-tests-v1.json
+      - config/pon/pq-system-supplemental-tests-v1.json
       - config/pon/pq-native-tls-required-tests-v1.json
       - config/pon/pq-native-tls-witness-required-tests-v1.json
       - config/pon/pq-initial-root-material-required-tests-v1.json
@@ -459,6 +460,41 @@ jobs:
               failed=1
             fi
           done < "$PQ_OUT/required-tests.tsv"
+          test "$failed" = 0
+      - name: Execute supplemental account scope and witness retry controls
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - "$PQ_OUT/supplemental-tests.tsv" <<'PY'
+          import json, re, sys
+          from pathlib import Path
+          retained_path = 'config/pon/pq-system-required-tests-v1.json'
+          retained = json.loads(Path(retained_path).read_text())
+          value = json.loads(Path('config/pon/pq-system-supplemental-tests-v1.json').read_text())
+          assert value['schema'] == 'trnm-pq-system-supplemental-tests-v1'
+          assert value['scope'] == 'account-scope-and-witness-retry-provenance-only'
+          assert value['whole_chain_quantum_security_qualified'] is False
+          assert value['original_business_budgets_changed'] is False
+          assert value['retained_roster'] == retained_path
+          assert type(value['retained_meaningful_controls']) is int and value['retained_meaningful_controls'] == 52
+          assert retained['schema'] == 'trnm-pq-system-required-tests-v1'
+          assert retained['expected_meaningful_controls'] == len(retained['tests']) == 52
+          tests = value['tests']
+          assert type(value['expected_meaningful_controls']) is int and value['expected_meaningful_controls'] == 7
+          assert isinstance(tests, list) and len(tests) == len(set(tests)) == 7
+          assert all(isinstance(x, str) and re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*', x) for x in tests)
+          assert not set(tests) & (set(retained['tests']) | set(retained['child_process_harnesses_not_counted']))
+          Path(sys.argv[1]).write_text(''.join(f'native-supplemental-{i:02d}\t{name}\n' for i, name in enumerate(tests)))
+          PY
+          failed=0
+          while IFS=$'\t' read -r label selector; do
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done < "$PQ_OUT/supplemental-tests.tsv"
           test "$failed" = 0
       - name: Require admitted migration handoff and checkpoint endpoint ownership
         if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}

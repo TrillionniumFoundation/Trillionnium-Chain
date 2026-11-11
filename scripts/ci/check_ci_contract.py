@@ -1719,6 +1719,114 @@ def check_inline_source_pins(root: Path) -> int:
     return count
 
 
+
+# Keep the original 52-control roster immutable; these seven controls are a
+# separate source-reviewed supplement, not a new interpretation of old runs.
+PQ_SYSTEM_REQUIRED_MANIFEST = 'config/pon/pq-system-required-tests-v1.json'
+PQ_SYSTEM_SUPPLEMENTAL_MANIFEST = 'config/pon/pq-system-supplemental-tests-v1.json'
+PQ_SYSTEM_REQUIRED_NAMES_SHA256 = '98eb15dbccb48e365771ce98dd611d1a6786bbd53af5d120fbe2c92a53ffbbed'
+PQ_SYSTEM_SUPPLEMENTAL_NAMES = (
+    "ingress::account_scope_tests::invalid_account_scope_refuses_classical_session_and_signed_request",
+    "ingress::account_scope_tests::current_local_scope_refuses_previously_valid_classical_request",
+    "ingress::account_scope_tests::invalid_account_scope_never_connects_or_advances_classical_clients",
+    "ingress::account_scope_tests::valid_development_scope_retains_classical_signature_and_socket_path",
+    "ingress::account_scope_tests::explicit_pq_selector_retains_classical_route_refusal_precedence",
+    "pq_rollback_witness::tests::live_retry_refuses_changed_durable_predecessor_at_the_same_head",
+    "pq_rollback_witness::tests::cold_reopen_refuses_database_retry_history_and_accepts_new_successors",
+)
+PQ_SYSTEM_JOB_HEADER = r'''    name: PQ network and witness (${{ matrix.runner }}, ${{ matrix.source }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        source: [head, prospective-merge]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    env:
+      CARGO_BUILD_JOBS: "2"
+      CARGO_INCREMENTAL: "0"
+      RUST_TEST_THREADS: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      EXPECTED_TESTED: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+    steps:
+'''
+PQ_SYSTEM_BUILD_STEP = r'''      - name: Record compiler, exact locked graph and formatting
+        id: pq_build
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$PQ_OUT/run-command.sh" compiler rustc +1.95.0 -Vv
+          bash "$PQ_OUT/run-command.sh" locked-graph cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1
+          bash "$PQ_OUT/run-command.sh" format cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          bash "$PQ_OUT/run-command.sh" build cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features --no-run --message-format=json
+'''
+PQ_SYSTEM_REQUIRED_STEP = r'''      - name: Execute every required native effect and rejection control
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - "$PQ_OUT/required-tests.tsv" <<'PY'
+          import json, re, sys
+          from pathlib import Path
+          value = json.loads(Path('config/pon/pq-system-required-tests-v1.json').read_text())
+          assert value['schema'] == 'trnm-pq-system-required-tests-v1'
+          assert value['whole_chain_quantum_security_qualified'] is False
+          tests = value['tests']
+          assert len(tests) == value['expected_meaningful_controls'] and len(set(tests)) == len(tests)
+          assert len(tests) == 52
+          assert all(re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*', x) for x in tests)
+          assert not set(tests) & set(value['child_process_harnesses_not_counted'])
+          Path(sys.argv[1]).write_text(''.join(f'native-{i:02d}\t{name}\n' for i, name in enumerate(tests)))
+          PY
+          failed=0
+          while IFS=$'\t' read -r label selector; do
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done < "$PQ_OUT/required-tests.tsv"
+          test "$failed" = 0
+'''
+PQ_SYSTEM_SUPPLEMENTAL_STEP = r'''      - name: Execute supplemental account scope and witness retry controls
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - "$PQ_OUT/supplemental-tests.tsv" <<'PY'
+          import json, re, sys
+          from pathlib import Path
+          retained_path = 'config/pon/pq-system-required-tests-v1.json'
+          retained = json.loads(Path(retained_path).read_text())
+          value = json.loads(Path('config/pon/pq-system-supplemental-tests-v1.json').read_text())
+          assert value['schema'] == 'trnm-pq-system-supplemental-tests-v1'
+          assert value['scope'] == 'account-scope-and-witness-retry-provenance-only'
+          assert value['whole_chain_quantum_security_qualified'] is False
+          assert value['original_business_budgets_changed'] is False
+          assert value['retained_roster'] == retained_path
+          assert type(value['retained_meaningful_controls']) is int and value['retained_meaningful_controls'] == 52
+          assert retained['schema'] == 'trnm-pq-system-required-tests-v1'
+          assert retained['expected_meaningful_controls'] == len(retained['tests']) == 52
+          tests = value['tests']
+          assert type(value['expected_meaningful_controls']) is int and value['expected_meaningful_controls'] == 7
+          assert isinstance(tests, list) and len(tests) == len(set(tests)) == 7
+          assert all(isinstance(x, str) and re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*', x) for x in tests)
+          assert not set(tests) & (set(retained['tests']) | set(retained['child_process_harnesses_not_counted']))
+          Path(sys.argv[1]).write_text(''.join(f'native-supplemental-{i:02d}\t{name}\n' for i, name in enumerate(tests)))
+          PY
+          failed=0
+          while IFS=$'\t' read -r label selector; do
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done < "$PQ_OUT/supplemental-tests.tsv"
+          test "$failed" = 0
+'''
+
 def check_pq_release_authority_controls(root: Path) -> dict:
     """Pin the complete release roster and its actual hosted execution wiring.
 
@@ -1799,6 +1907,82 @@ def check_pq_release_authority_controls(root: Path) -> dict:
             'python_test_doubles': 18, 'tests_executed': False}
 
 
+
+def check_pq_system_required_controls(root: Path) -> dict:
+    """Keep 52 retained controls and seven supplemental exact runs mandatory.
+
+    This inspects source selection and failure propagation only. Each hosted
+    native run still needs the existing per-command source recorder and the
+    named-libtest transcript reader; this function does not execute Rust tests.
+    """
+    for relative in (PQ_RELEASE_WORKFLOW, PQ_SYSTEM_REQUIRED_MANIFEST,
+                     PQ_SYSTEM_SUPPLEMENTAL_MANIFEST):
+        source = root / relative
+        require(source.is_file() and not source.is_symlink(),
+                'PQ system controls require a regular source: ' + relative)
+    retained = json.loads((root / PQ_SYSTEM_REQUIRED_MANIFEST).read_text())
+    require(isinstance(retained, dict)
+            and retained.get('schema') == 'trnm-pq-system-required-tests-v1'
+            and retained.get('scope') ==
+            'explicit PNQ2/PqWitnessV4 component controls; no whole-system qualification'
+            and type(retained.get('expected_meaningful_controls')) is int
+            and retained['expected_meaningful_controls'] == 52
+            and all(retained.get(key) is False for key in (
+                'whole_chain_quantum_security_qualified', 'original_business_budgets_changed'))
+            and retained.get('child_process_harnesses_not_counted') == [
+                'store::pq_rollback_witness::combined_tests::independent_witness_process_child'],
+            'PQ system controls must retain the original 52-control scope and counters')
+    names = retained.get('tests')
+    require(isinstance(names, list) and len(names) == 52
+            and all(isinstance(name, str) and re.fullmatch(
+                r'[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*', name) for name in names)
+            and len(set(names)) == 52
+            and hashlib.sha256(('\n'.join(names) + '\n').encode()).hexdigest()
+            == PQ_SYSTEM_REQUIRED_NAMES_SHA256,
+            'PQ system original 52 reviewed test names changed')
+
+    supplement = json.loads((root / PQ_SYSTEM_SUPPLEMENTAL_MANIFEST).read_text())
+    require(isinstance(supplement, dict)
+            and supplement.get('schema') == 'trnm-pq-system-supplemental-tests-v1'
+            and supplement.get('scope') == 'account-scope-and-witness-retry-provenance-only'
+            and supplement.get('retained_roster') == PQ_SYSTEM_REQUIRED_MANIFEST
+            and type(supplement.get('retained_meaningful_controls')) is int
+            and supplement['retained_meaningful_controls'] == 52
+            and type(supplement.get('expected_meaningful_controls')) is int
+            and supplement['expected_meaningful_controls'] == 7
+            and supplement.get('tests') == list(PQ_SYSTEM_SUPPLEMENTAL_NAMES)
+            and not set(PQ_SYSTEM_SUPPLEMENTAL_NAMES) & (
+                set(names) | set(retained['child_process_harnesses_not_counted']))
+            and all(supplement.get(key) is False for key in (
+                'whole_chain_quantum_security_qualified', 'original_business_budgets_changed')),
+            'PQ system supplement must require all seven distinct reviewed full-name controls')
+
+    text = (root / PQ_RELEASE_WORKFLOW).read_text()
+    header, separator, body = text.partition('\njobs:\n')
+    require(bool(separator), 'PQ system workflow requires an explicit jobs mapping')
+    paths = re.findall(r'^      - ([A-Za-z0-9_./*-]+)$', header, re.M)
+    for relative in ('trillionnium/**', PQ_SYSTEM_REQUIRED_MANIFEST,
+                     PQ_SYSTEM_SUPPLEMENTAL_MANIFEST, PQ_RELEASE_WORKFLOW,
+                     'scripts/ci/check_ci_contract.py', 'scripts/ci/test_ci_contract.py',
+                     'scripts/ci/check_required_native_test.py',
+                     'scripts/ci/record_pq_native_command.py', 'scripts/ci/pinned_native_process.py'):
+        require(paths.count(relative) == 1,
+                'PQ workflow must trigger for each system control source: ' + relative)
+    pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*):\n(.*?)(?=^  [a-z][a-z0-9-]*:\n|\Z)', body)
+    jobs = dict(pairs)
+    job = jobs.get('native', '')
+    require(len(jobs) == len(pairs) and job.startswith(PQ_SYSTEM_JOB_HEADER)
+            and 'continue-on-error' not in job and not re.search(r'^    if:', job, re.M),
+            'PQ system controls retain both native runners, head/merge sources and original budgets')
+    for step in (PQ_SYSTEM_BUILD_STEP, PQ_SYSTEM_REQUIRED_STEP, PQ_SYSTEM_SUPPLEMENTAL_STEP):
+        require(job.count(step) == text.count(step) == 1,
+                'PQ system build and both exact execution/readback steps must remain complete')
+    require(PQ_SYSTEM_BUILD_STEP + PQ_SYSTEM_REQUIRED_STEP + PQ_SYSTEM_SUPPLEMENTAL_STEP in job,
+            'PQ system build must precede the retained 52 and separate seven exact control runs')
+    return {'retained_meaningful_controls': 52, 'supplemental_meaningful_controls': 7,
+            'selected_meaningful_controls': 59, 'tests_executed': False}
+
+
 def validate(root: Path = ROOT) -> dict:
     # Discovery can exit successfully with zero tests when a pattern disappears.
     # These mandatory files are executed explicitly and must also exist at review.
@@ -1814,6 +1998,7 @@ def validate(root: Path = ROOT) -> dict:
                 'required useful Cell test source is missing: ' + name)
     inline_source_pins = check_inline_source_pins(root)
     pq_release_authority_controls = check_pq_release_authority_controls(root)
+    pq_system_controls = check_pq_system_required_controls(root)
     check_from_zero_host_callsites(root)
     check_w1_postwin_workflow((root / '.github/workflows/pon-w1-transparent-profile.yml').read_text())
     text = (root / WORKFLOW).read_text()
@@ -2091,6 +2276,7 @@ def validate(root: Path = ROOT) -> dict:
             'native_cost_architectures': 2, 'artifact_comparison_jobs': 1,
             'w1_actual_reuse_v3_cells': 4, 'inline_source_pins': inline_source_pins,
             'pq_release_authority_controls': pq_release_authority_controls,
+            'pq_system_controls': pq_system_controls,
             'tests_executed': False}
 
 

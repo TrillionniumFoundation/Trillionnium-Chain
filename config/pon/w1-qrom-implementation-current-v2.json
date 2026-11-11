@@ -1,7 +1,7 @@
 {
   "schema": "TRNM-W1-QROM-IMPLEMENTATION-CONTRACT2",
   "scope": "Offline research mapping only. Does not authorize consensus or production admission.",
-  "source_base_commit": "39336622c63df1ae746d83a76bb53202cd01ba17",
+  "source_base_commit": "7f83ea843d6d1578a475a7a0c4dc026da564a795",
   "profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
   "project_source_scope": "Selected entry, relation, framing, native work and locked dependency files; not all transitive source or compiled feature semantics.",
   "project_files": [
@@ -367,7 +367,7 @@
       {
         "path": "trillionnium/Cargo.lock",
         "bytes": 40597,
-        "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f"
+        "sha256": "53c4eab0fb3d2951894348de2b765e0a573e49acb5dbfe1fe805719ec868a136"
       },
       {
         "path": "trillionnium/Cargo.toml",
@@ -377,7 +377,7 @@
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
         "bytes": 924,
-        "sha256": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3"
+        "sha256": "caff7ff137c94e26a378a2a95ae029a21b1ee30a79d08a05b8c9e3b1f1810ab8"
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_adversarial_cost.rs",
@@ -942,6 +942,7 @@
     "grouped_factored_producer": "Expanded local closure includes the reviewed #824 exact B(Ax) preparation/execution and separate example selector. These two files do not call or change W1; no verifier/protocol/manifest/lock/include changes relative to #827 were observed. This inventory establishes no cost lower bound or consensus credit.",
     "root_storage_integration_20261109": "Reviewed merge 44e96b1a841a50613d0b93484c5e576caec9f81f retains all 16 selected project files, saved fixtures, parameters and unresolved obligations. The local closure adds the three pq_root_v3 Rust source/test files and rebinds only the crypto module export and workspace lock among the prior 134 inputs. Optional root exports, the release OpenSSL dependency edge and the storage getrandom edge do not establish native execution, external dependency closure, a new proof or any security qualification.",
     "sqlite_dependency_security_20261109": "Reviewed dependency checkpoint 189b9b5959d836ef6ae96e14fb285948e4920aa9 rebinds only trillionnium/Cargo.lock within the existing 137 local-closure files. The fixed package graph upgrades bundled rusqlite/libsqlite3-sys to 0.41.0/0.39.0 with their required hashlink/hashbrown resolution. All 16 selected project files, saved proof materials, historical reader/contract, helpers, proof parameters and 15 unresolved obligations are unchanged. This mapping supplies no native execution, third-party dependency closure or security qualification.",
-    "from_zero_filter_cost_inventory_20261110": "Reviewed source 39336622c63df1ae746d83a76bb53202cd01ba17 adds only the finite pon_from_zero_filter_cost_v1.rs diagnostic example to the existing 137 local-closure inputs, producing 138. All original closure records, all 16 selected project files, saved proof materials, historical reader/contract, helpers, proof parameters and 15 unresolved obligations retain their bytes. The example calls the existing native PNW1 components; this source inventory does not change the selected RISC Zero proof relation or establish a minimum legal work cost. Preserve the earlier local Rust source inventory refusal. The 138 inputs retain the original crate-root and literal-data inventory scope; this reader does not enumerate Rust #[path] imports outside those roots. The new example, like the older expensive-verifier example, imports trnm-pon-node/examples/support/w1_from_zero.rs, which is outside this selected inventory. The separate native experiment guards the whole tracked source and does not turn this mapping into a complete Rust include/build graph. Native observations remain bound to source 39336622; this mapping supplies no new native execution, cryptographic verification or security qualification."
+    "from_zero_filter_cost_inventory_20261110": "Reviewed source 39336622c63df1ae746d83a76bb53202cd01ba17 adds only the finite pon_from_zero_filter_cost_v1.rs diagnostic example to the existing 137 local-closure inputs, producing 138. All original closure records, all 16 selected project files, saved proof materials, historical reader/contract, helpers, proof parameters and 15 unresolved obligations retain their bytes. The example calls the existing native PNW1 components; this source inventory does not change the selected RISC Zero proof relation or establish a minimum legal work cost. Preserve the earlier local Rust source inventory refusal. The 138 inputs retain the original crate-root and literal-data inventory scope; this reader does not enumerate Rust #[path] imports outside those roots. The new example, like the older expensive-verifier example, imports trnm-pon-node/examples/support/w1_from_zero.rs, which is outside this selected inventory. The separate native experiment guards the whole tracked source and does not turn this mapping into a complete Rust include/build graph. Native observations remain bound to source 39336622; this mapping supplies no new native execution, cryptographic verification or security qualification.",
+    "rustix_dependency_security_20261111": "Reviewed source 7f83ea843d6d1578a475a7a0c4dc026da564a795 rebinds only trillionnium/Cargo.lock and trillionnium/crates/trnm-crypto-primitives/Cargo.toml among the existing 138 local-closure files. The dependency update selects rustix 1.1.6 for RUSTSEC-2026-0486; all other locked package records and dependency features are unchanged. The other 136 closure inputs, all 16 selected project files, saved proof materials, historical reader/contract, helpers, proof parameters and 15 unresolved obligations retain their bytes. Node ingress and rollback-witness changes in that commit are outside this selected mapping scope. Preserve the earlier exact lock-pin refusal. This mapping supplies no native execution, external dependency implementation review, whole-chain proof or security qualification."
   }
 }
