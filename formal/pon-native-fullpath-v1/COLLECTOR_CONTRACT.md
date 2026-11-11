@@ -48,6 +48,14 @@ The frozen schedule is the denominator. Missing attempts, missing resources, can
 
 The current native process namespace is inherently a development component collector: even perfect recorded arithmetic yields `COMPONENT_OBSERVATION_ONLY`, with security and overall gate HOLD. No compressed collector or proof verifier is implemented; compressed rows cannot qualify through this native schema. The reader never manufactures a recorded-performance, quantum-cost, production or public-network qualification.
 
+## Strict collector source audits
+
+Before requesting even the native context, `collect_native.py` calls the existing `scripts/ci/verify_ci_source.py` exact-head verifier against the explicitly supplied commit. The verifier checks actual tracked file bytes and rejects index flags, object replacements and filters that could otherwise conceal a change behind clean Git status. The successful snapshot includes the commit, tree, tracked file count and tracked byte total. The collector repeats the audit after process ownership is settled and checks that the snapshots and binary digest still agree.
+
+The audits run outside the measured experiment. Each audit writes a new `source-before.json` or `source-after.json` under `trnm-native-fullpath-raw-source-audit-v1`, including the original failure type and message when validation fails. A failed initial audit does not run the binary or invent a frozen native schedule. A failed closing audit retains the frozen process attempts and leaves source continuity unavailable. If ownership remains unresolved, the closing audit is not attempted.
+
+The separate `source-binding.json` sidecar uses `trnm-native-fullpath-raw-source-binding-v1` and hashes the context, preregistration, process report and successful audit records. Missing closing evidence remains null. Existing process and context v1 schemas are unchanged. These are local raw-byte source snapshots: they do not attest execution, link the executable to a reproducible build, establish source authenticity, or demonstrate the original resource contract. Their qualification remains HOLD; all original deadlines, denominators and resource gates retain their meaning.
+
 ## Original collector lifecycle and normalization
 
 `adapt_native.py` consumes the frozen four-start `collect_native.py` format. Original schedule rows include the actual pre-run `parent_hex` and `task_hex`; normalization preserves them and the original depth 6 / 4 s thresholds. The externally supplied original preregistration digest remains in the final readback. Normalized files are deterministic post-collection derivations, never described as a newly frozen plan.

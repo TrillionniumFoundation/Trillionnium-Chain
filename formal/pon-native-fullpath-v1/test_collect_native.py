@@ -200,7 +200,7 @@ class CollectorLifecycleTests(unittest.TestCase):
             self.assert_terminal(root, row)
             self.assert_terminal(root, blocked)
 
-    def collect_with_fault(self, unresolved):
+    def collect_with_fault(self, unresolved, postflight_error=False):
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory)
             repo = base / "source"
@@ -218,7 +218,10 @@ class CollectorLifecycleTests(unittest.TestCase):
 
             fault = ({"return_value": UnreapedProcess()} if unresolved else
                      {"side_effect": OSError(errno.EAGAIN, "injected process startup failure")})
+            snapshot = {"tested_commit": source, "tested_tree": "d" * 40}
+            audited = [snapshot, ValueError("injected raw-source mutation")] if postflight_error else None
             with (patch.object(driver, "git", side_effect=source_git),
+                  patch.object(driver, "verify_source", return_value=snapshot, side_effect=audited),
                   patch.object(driver.subprocess, "run", return_value=context),
                   patch.object(driver.subprocess, "Popen", **fault) as launch,
                   patch.object(driver.os, "killpg", side_effect=PermissionError("injected cleanup refusal")),
@@ -241,6 +244,28 @@ class CollectorLifecycleTests(unittest.TestCase):
             self.assertFalse(row["process_reaped"])
             self.assertEqual(report["owner_unresolved"], unresolved)
             self.assertEqual(report["resource_accounting_complete"], not unresolved)
+            binding = json.loads((output / "source-binding.json").read_text())
+            self.assertEqual(binding["schema"], driver.SOURCE_BINDING_SCHEMA)
+            self.assertEqual(binding["observations"]["sha256"],
+                             driver.digest((output / "process-observations.json").read_bytes()))
+            self.assertFalse(binding["execution_attested"])
+            self.assertFalse(binding["binary_build_provenance_qualified"])
+            self.assertFalse(binding["original_host_contract_qualified"])
+            self.assertEqual(binding["qualification"], "HOLD")
+            self.assertEqual(binding["source_before"]["sha256"],
+                             driver.digest((output / "source-before.json").read_bytes()))
+            if postflight_error:
+                after = json.loads((output / "source-after.json").read_text())
+                self.assertIsNone(after["snapshot"])
+                self.assertEqual(after["error"]["message"], "injected raw-source mutation")
+                self.assertFalse(report["source_and_binary_unchanged"])
+                self.assertIsNone(binding["source_after"])
+                self.assertTrue(any("SOURCE_AUDIT" in e for e in report["collection_errors"]))
+            elif unresolved:
+                self.assertIsNone(binding["source_after"])
+            else:
+                self.assertEqual(binding["source_after"]["sha256"],
+                                 driver.digest((output / "source-after.json").read_bytes()))
             self.assert_terminal(output, row)
 
     def test_startup_oserror_keeps_every_frozen_attempt(self):
@@ -248,6 +273,9 @@ class CollectorLifecycleTests(unittest.TestCase):
 
     def test_cleanup_failure_keeps_every_frozen_attempt(self):
         self.collect_with_fault(unresolved=True)
+
+    def test_failed_raw_source_postflight_keeps_every_frozen_attempt(self):
+        self.collect_with_fault(unresolved=False, postflight_error=True)
 
     def test_preflight_context_failure_saves_logs_without_freezing_a_schedule(self):
         stdout, stderr = b'{"event":"context-error"}\n', b"context diagnostic\n"
@@ -263,6 +291,7 @@ class CollectorLifecycleTests(unittest.TestCase):
                 args = SimpleNamespace(repo=repo, output=output, binary=Path(sys.executable),
                                        expected_source=source, process_timeout=1)
                 with (patch.object(driver, "git", side_effect=lambda _repo, *a: "" if a[0] == "status" else source),
+                      patch.object(driver, "verify_source", return_value={"tested_commit": source, "tested_tree": "d" * 40}),
                       patch.object(driver.subprocess, "run", side_effect=failure),
                       patch.object(driver.subprocess, "Popen") as launch,
                       self.assertRaises(type(failure)) as caught):
@@ -273,6 +302,95 @@ class CollectorLifecycleTests(unittest.TestCase):
                 self.assertEqual((output / "context.stderr.txt").read_bytes(), stderr)
                 self.assertFalse((output / "preregistration.json").exists())
                 self.assertFalse((output / "process-observations.json").exists())
+
+
+class RawSourceAuditTests(unittest.TestCase):
+    """Actual Git counterexamples; no fake measurements or native-work claims."""
+
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        root = Path(self.directory.name)
+        self.repo, self.out = root / "source", root / "evidence"
+        self.repo.mkdir()
+        self.out.mkdir()
+        self.git("init", "-q")
+        self.git("config", "user.name", "reader-test")
+        self.git("config", "user.email", "reader-test@example.invalid")
+        (self.repo / "tracked.txt").write_text("original\n")
+        self.git("add", "tracked.txt")
+        self.git("commit", "-qm", "fixture")
+        self.commit = self.git("rev-parse", "HEAD").strip()
+
+    def git(self, *args):
+        return subprocess.check_output(["git", *args], cwd=self.repo, text=True, stderr=subprocess.PIPE)
+
+    def audit(self):
+        return driver.audit_source(self.repo, self.commit, self.out, "before")
+
+    def assert_rejected(self, message):
+        with self.assertRaisesRegex(ValueError, message):
+            self.audit()
+        receipt = json.loads((self.out / "source-before.json").read_text())
+        self.assertEqual(receipt["schema"], driver.SOURCE_AUDIT_SCHEMA)
+        self.assertIsNone(receipt["snapshot"])
+        self.assertEqual(receipt["error"]["type"], "ValueError")
+        self.assertFalse(receipt["execution_attested"])
+        self.assertFalse(receipt["original_host_contract_qualified"])
+        self.assertFalse((self.out / "preregistration.json").exists())
+
+    def test_clean_source_captures_actual_tree_and_raw_entry_count(self):
+        snapshot, reference = self.audit()
+        self.assertEqual(snapshot["tested_commit"], self.commit)
+        self.assertEqual(snapshot["tested_tree"], self.git("rev-parse", "HEAD^{tree}").strip())
+        self.assertEqual(snapshot["tracked_entries"], 1)
+        self.assertEqual(snapshot["tracked_bytes"], len(b"original\n"))
+        self.assertEqual(reference["sha256"], driver.digest((self.out / reference["path"]).read_bytes()))
+
+    def test_assume_unchanged_cannot_hide_changed_source(self):
+        self.git("update-index", "--assume-unchanged", "tracked.txt")
+        (self.repo / "tracked.txt").write_text("mutated\n")
+        self.assertEqual(self.git("status", "--porcelain", "--untracked-files=all"), "")
+        self.assert_rejected("index hides tracked worktree entries")
+
+    def test_skip_worktree_cannot_hide_changed_source(self):
+        self.git("update-index", "--skip-worktree", "tracked.txt")
+        (self.repo / "tracked.txt").write_text("mutated\n")
+        self.assertEqual(self.git("status", "--porcelain", "--untracked-files=all"), "")
+        self.assert_rejected("index hides tracked worktree entries")
+
+    def test_clean_filter_cannot_hide_changed_raw_source(self):
+        (self.repo / ".gitattributes").write_text("tracked.txt filter=constant\n")
+        self.git("config", "filter.constant.clean", "sed s/modified/original/g")
+        self.git("add", ".gitattributes", "tracked.txt")
+        self.git("commit", "-qm", "filter fixture")
+        self.commit = self.git("rev-parse", "HEAD").strip()
+        (self.repo / "tracked.txt").write_text("modified\n")
+        self.git("add", "tracked.txt")  # The clean filter preserves the original index blob.
+        self.assertEqual(self.git("status", "--porcelain", "--untracked-files=all"), "")
+        self.assert_rejected("tracked source bytes differ from commit")
+
+    def test_wrong_head_does_not_freeze_an_experiment_schedule(self):
+        self.commit = "a" * 40
+        self.assert_rejected("head identity mismatch")
+
+    def test_invalid_raw_source_precedes_native_context_execution(self):
+        self.git("update-index", "--assume-unchanged", "tracked.txt")
+        root = Path(self.directory.name)
+        marker = root / "native-context-was-run"
+        binary = root / "context-marker"
+        binary.write_text("#!/bin/sh\n: > '" + str(marker) + "'\nexit 4\n")
+        binary.chmod(0o700)
+        output = root / "collection"
+        args = SimpleNamespace(repo=self.repo, output=output, binary=binary,
+                               expected_source=self.commit, process_timeout=1)
+        with self.assertRaisesRegex(ValueError, "index hides tracked worktree entries"):
+            driver.collect(args)
+        self.assertFalse(marker.exists())
+        self.assertTrue((output / "source-before.json").is_file())
+        self.assertFalse((output / "preregistration.json").exists())
+        self.assertFalse((output / "process-observations.json").exists())
+
 
 
 if __name__ == "__main__":
