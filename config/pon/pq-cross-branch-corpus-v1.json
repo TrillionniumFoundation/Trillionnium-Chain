@@ -495,7 +495,7 @@
     "scripts/ci/pq_proof_profile_binding.py": "e810c13b4abcf889c493f8d7530dd3518abb8481",
     "scripts/ci/pq_root_custody_review_v1.py": "aceabcdcf2dfa9eba2fb284fc6c7b3a0ce33eea3",
     "scripts/ci/pq_root_custody_review_v2.py": "4e75f1d2998cc2bd41cece38346ee47634e21567",
-    "scripts/ci/pq_root_dependency_register.py": "c43b02a76cc4ebc678cf619074b05428c5abcaf3",
+    "scripts/ci/pq_root_dependency_register.py": "b870baa0af67e33e20c96da4794eb48ceae67ee2",
     "scripts/ci/pq_root_migration_review_v1.py": "71c2fff2f3c0dd9b7974efaf162e97c54f3bcb6e",
     "scripts/ci/pq_source_reader.py": "a35092e9d3d4457d8e9a9f30b73ca65a34359546",
     "scripts/ci/record_pq_native_command.py": "a4926bf81aab702833b1bb4ff2ebe710df70dd9d",
