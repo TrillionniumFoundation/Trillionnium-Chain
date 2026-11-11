@@ -1,0 +1,35 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/test_w1_stark_route_audit.py"
+  ],
+  "cwd": "/home/qq/work/chain-sqlite-advisory-20261110",
+  "elapsed_ns": 8717547,
+  "environment": {
+    "CARGO_BUILD_JOBS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": null,
+    "CARGO_TARGET_DIR": null,
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "error": "index hides tracked worktree entries",
+  "exit_code": null,
+  "log_file": "route-parent-refusal-0818.log",
+  "log_sha256": null,
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-11T08:09:47.591478+00:00",
+  "status": "record_failed",
+  "whole_chain_quantum_security_qualified": false
+}

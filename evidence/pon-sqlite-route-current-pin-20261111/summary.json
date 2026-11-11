@@ -1,0 +1,52 @@
+{
+  "implementation": "fc46e1015e8be4f94ff533a96e26453cc4046c9c",
+  "implementation_tree": "5666bc32c782588eca2cd127f06ed85217a172ec",
+  "previous_public_head": "94ffff4f339b8550667a4cf27026c99241b8fd27",
+  "base": "00386efa07cd2e72351d6bbce7a55aca8c098932",
+  "current_qrom_mapping_old_sha256": "861201e73694970232de00c97366c156fb23035b98dd4a73422301130e08fd1b",
+  "current_qrom_mapping_new_sha256": "3ce8a244eefa4e197a53047dd5a38b2497bdf5eb0e36f463005cd7b372c14fc8",
+  "changed_mapping_fields": [
+    "source_base_commit",
+    "local_path_closure"
+  ],
+  "route_source_count": 18,
+  "method_count": 28,
+  "corpus_pins": 937,
+  "corpus_required_paths": 845,
+  "successful_command_count": 16,
+  "retained_failures": {
+    "parent94_route_methods": 28,
+    "parent94_route_errors": 8,
+    "hidden_index_before_test": "record_failed; no native test executed",
+    "first_route_source": "15 of 16 command exits zero; corpus correctly refused appended development plan blob"
+  },
+  "native_campaign_rerun": false,
+  "whole_workspace_runtime_qualified": false,
+  "four_proven": [
+    false,
+    false,
+    false,
+    false
+  ],
+  "all_authority": false,
+  "all_algorithm_cost_bound": null,
+  "MU1_universal_points": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  ],
+  "status": "HOLD_NO_GO"
+}

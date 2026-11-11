@@ -1,0 +1,16 @@
+preflight 0
+ci 0
+repository 0
+source43 0
+route28 0
+route-report 0
+corpus 1
+corpus-controls 0
+ci-controls 0
+inventory 0
+workspace-graph 0
+fuzz-graph 0
+workspace-check 0
+workspace-fmt 0
+workspace-clippy 0
+original-policy 0
