@@ -26,7 +26,7 @@ DEFAULT_MANIFEST = "config/pon/pq-root-dependency-register-v3.json"
 REVIEW_BASE = 'be5f047771e4d714726fec41abfa68231a06260b'
 MAX_BYTES = 1024 * 1024
 # Frozen after review of all declared files. No runtime regeneration is allowed.
-REVIEWED_SOURCE_SNAPSHOT_SHA256 = '76cf5db4ce841bc3763d6010d79f835a6a0018c8d12f40a4047f0455b8bde6a1'
+REVIEWED_SOURCE_SNAPSHOT_SHA256 = '06a4b41a5300618f3750567abd6e582eab4fc5d290d8cd6e8fe5d9f726d7f2f6'
 
 PY = "formal/pon-nakamoto-v1/"
 POLICY = PY + "pq_root_recovery_policy_v1.py"
