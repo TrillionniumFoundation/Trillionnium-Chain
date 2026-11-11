@@ -1,7 +1,8 @@
 # Root dependency and query obligation register V3
 
 Status: **HOLD**. This is a reviewed inventory for the Python V2 root bridge,
-native Rust V3 candidate and explicit V4 recovery-floor/provider-readback continuation.
+native Rust V3 candidate, V4 recovery-floor/provider-readback continuation and
+conditional V5 fresh-witness owner with a typed SQLite register component.
 It neither computes a cryptographic lifetime
 failure bound nor activates a root, release, external effect or production
 service.
@@ -20,7 +21,7 @@ independence, query-model and composition obligations.
 
 ## 1. Authority roles and implementation boundaries
 
-The register requires all five roles, their actual implementations and their
+The register requires all six roles, their actual implementations and their
 entire key-epoch population. A roster has three keys per family. The number
 of keys, rosters and epochs over the lifetime remains unknown.
 
@@ -28,9 +29,20 @@ of keys, rosters and epochs over the lifetime remains unknown.
 | --- | --- | --- | --- |
 | Root approval | ML-DSA-87 2-of-3 AND SLH-DSA-SHA2-256s 2-of-3 | Normal operation, rotation, revocation, recovery and policy change | Python V2 and native V3 |
 | Successor possession | All three ML-DSA-87 keys AND all three SLH-DSA-SHA2-256s keys | Rotation, recovery and policy change, in addition to current-root approval | Python V2 and native V3 |
-| Anchor writer | Both fixed 2-of-3 quorums under a separately pinned writer roster | Fresh read and compare-and-swap request authentication | Python V2 and native V3 |
+| Anchor writer | Both fixed 2-of-3 quorums under a separately pinned writer roster | Fresh read and compare-and-swap request authentication, including the separate V5 witness request namespace | Python V2, native V3 and V5 |
 | Anchor response | Both fixed 2-of-3 quorums under a separately pinned anchor roster | Fresh response bound to request, scope and complete retained head | Python V2 and native V3 |
 | Effect provider | Both fixed 2-of-3 quorums under a separately pinned provider roster | Outcome readback for the complete intent and exact orphan epoch | Python V2 and native V4 declarations; actual effect entry remains unwired |
+| Witness response | Both fixed 2-of-3 quorums under a separately pinned witness roster | Complete fresh request and exact journal-head acknowledgement in the V5 namespace | Native V5 client, request authenticator and typed SQLite durable register; independently operated service remains unverified |
+
+The [V5 witness contract](ROOT_WITNESS_V5.md) adds the sixth role and uses the
+existing writer keys in a separate request namespace. The witness roster must
+be disjoint from root, writer and original anchor keys. Its independent custody,
+policy provisioning, common-restore exclusion and deployed durable CAS-before-ACK
+behavior remain explicit open obligations. The typed SQLite component implements
+local transactional persistence and exact independent reopen checks; it supplies
+no daemon, network framing, physical power-loss or custody evidence. It has no Python V2 or native
+V3 witness implementation. V5 consumes the original shared operation budget and
+does not create a new lifetime budget for its separate domain tags.
 
 The [native cryptographic module](../../trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs)
 uses the existing
@@ -69,14 +81,14 @@ recovery procedures.
 
 ## 2. Shared primitive accounting
 
-The register contains sixteen declared hash-use groups and four canonical
+The register contains seventeen declared hash-use groups and four canonical
 primitive entries. The use groups identify source-level purposes. They do not
 supply a reduction from scheme operations to primitive queries.
 
 | Primitive | Recorded dependency |
 | --- | --- |
-| SHAKE128 | ML-DSA-87 internals across all five roles |
-| SHAKE256 | ML-DSA-87 internals across all five roles |
+| SHAKE128 | ML-DSA-87 internals across all six roles |
+| SHAKE256 | ML-DSA-87 internals across all six roles |
 | SHA-256 | SLH-DSA-SHA2-256s internals and the Python OpenSSL executable-integrity check |
 | SHA-512 | SLH internals, HMAC-SHA-512 and MGF1-SHA-512; Python and native identities, commitments, state and request bindings |
 
@@ -102,6 +114,7 @@ anchor requests and provider requests. The native mapping additionally names:
 | Owner `anchor.rs` | Complete fresh writer request, carried into the signed anchor response |
 | Owner `recovery_floor.rs` | Full enrollment bound to the externally supplied V4 history floor |
 | Owner `effect_readback_v4.rs` | Complete provider enrollment and intent, fresh request, exact orphan epoch and retained evidence chain |
+| Owner `witnessed_v5.rs` and its `durable.rs` component | Complete enrollment; declared restore domain, recovery epoch and witness roster; complete fresh read or exact CAS request; request digest carried into the witness receipt. The durable component checks exact provisioned policy bytes and uses the same request/receipt domains. |
 
 The native crypto domains include `TRNM/RootV3/Key/v3`,
 `TRNM/RootV3/RosterCommitment/v3` and `TRNM/RootV3/Operation/v3`.
@@ -207,7 +220,7 @@ are unchanged. This review does not relabel any M6 native observation as a run
 of the new dependency graph, and the inspector still returns
 `source_revision_bound = false`.
 
-The current compatibility review uses M11 commit
+The preceding compatibility review used M11 commit
 `be5f047771e4d714726fec41abfa68231a06260b`, tree
 `1ed07f1e5fa04febddd4e33487062a04d22ce3cd`. All 37 declared files were read
 from that exact Git snapshot and matched against the working bytes. Relative
@@ -215,12 +228,34 @@ to M8, only the selected `root_recovery_v3/storage.rs` source changes: the
 private connection now has an exclusive `RefMut` owner while a progress guard
 and transaction are live. The original callback interval, cancellation and
 deadline, transaction checks and durable synchronization order remain.
-The current canonical source-map digest is
+That canonical source-map digest was
 `54106449c9d83a4b2926429160c8fd340d8004a67502ddf7b1e932df655859f6`. The other 36 selected files, all declarations,
 null budgets and false qualification values remain. M10
 `b0c52dcae9c698e38b33a82d0200c0d8294f3ba1` failed its new native compilation;
 that failure remains historical evidence. This source review does not qualify
 the repaired candidate or expand the declared transitive dependency scope.
+
+The 2026-11-11 successor review retains that historical review-base field and
+explicitly binds a new **41-file** snapshot. It adds `witnessed_v5.rs`, its
+`witnessed_v5/durable.rs` component and the separate protocol/durable native
+test targets. It updates the parent owner for the V5 composition and exact
+snapshot guards, and retains the V4 common-restore contrast in
+`recovery_floor_v4_native.rs`. The other 35 source hashes are unchanged from
+the selected integration baseline. The canonical source-map digest is
+`1de0b7bac54253f9bfaf312a5930dc0283d6c2c980122eea0801f443043bb6cf`.
+The newly reviewed files are successor working bytes; neither the retained M11
+review-base value nor the separate `e4abb172147e941b62483652b0ceabaae4317624`
+integration baseline claims that those new files existed or were executed at
+either earlier commit. The inspector continues to return
+`source_revision_bound = false`; exact committed-source native observations are
+recorded separately.
+
+This review also explicitly extends the role and hash-use declarations for V5.
+It does not expand any probability or query bound, change a quorum, create a
+primitive alias, or promote a deployment claim. Both
+`independent_common_restore_exclusion_proved` and
+`native_witness_durable_service_verified` remain false. The source checker has
+no accept-current-bytes mode; its reviewed digest and the manifest must agree.
 
 The checker reuses the existing
 [descriptor-bound source reader](../../scripts/ci/pq_source_reader.py).

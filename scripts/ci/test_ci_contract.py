@@ -343,6 +343,8 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         for file in ('run_pq_root_native_v3.py', 'test_run_pq_root_native_v3.py',
                      'test_pq_root_dependency_register.py', 'pq_root_dependency_register.py',
                      'run_pq_root_continuation_v4.py', 'test_run_pq_root_continuation_v4.py',
+                     'run_pq_root_witness_v5.py', 'test_run_pq_root_witness_v5.py',
+                     'test_ci_observation_process.py',
                      'test_authenticated_suite_count.py',
                      'test_pq_root_custody_review_v1.py', 'pq_root_custody_review_v1.py',
                      'test_pq_root_custody_review_v2.py', 'pq_root_custody_review_v2.py',
@@ -401,6 +403,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                                for suite in suites[2:])
         native_block += '    python3 scripts/ci/run_pq_root_native_v3.py\n'
         native_block += '    python3 scripts/ci/run_pq_root_continuation_v4.py\n'
+        native_block += '    python3 scripts/ci/run_pq_root_witness_v5.py\n'
         host = ('    python3 scripts/ci/run_from_zero_host.py -- '
                 'python3 scripts/ci/run_from_zero_native.py --out '
                 '"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"\n')
@@ -2724,6 +2727,8 @@ class MergedQualificationLaneTests(unittest.TestCase):
             '    python3 scripts/ci/test_pq_root_migration_review_v1.py\n',
             '    python3 scripts/ci/pq_root_migration_review_v1.py\n',
             '    python3 scripts/ci/test_run_pq_root_continuation_v4.py\n',
+            '    python3 scripts/ci/test_run_pq_root_witness_v5.py\n',
+            '    python3 scripts/ci/test_ci_observation_process.py\n',
             '    python3 scripts/ci/test_authenticated_suite_count.py\n',
         ), '    python3 scripts/ci/test_pq_chain_claim_guard.py\n'),
         'qrom_current_source': ('repository-truth', '    python3 scripts/ci/test_pq_chain_claim_guard.py\n    # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.\n', (

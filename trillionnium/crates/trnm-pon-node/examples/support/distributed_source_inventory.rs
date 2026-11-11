@@ -6434,6 +6434,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/durable.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/durable.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -7904,6 +7918,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/tests/public_v3_distinct_invalid_work.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/public_v3_distinct_invalid_work.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -7999,6 +8020,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/root_recovery_v3_native.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_durable_native.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/root_witness_v5_durable_native.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_native.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/root_witness_v5_native.rs"
         )),
     ),
     (

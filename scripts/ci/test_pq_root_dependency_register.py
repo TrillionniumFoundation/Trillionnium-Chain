@@ -1,4 +1,4 @@
-"""Adversarial controls for the V2/V3 root dependency review register.
+"""Adversarial controls for the V2-V5 root dependency review register.
 
 These tests do not supply cryptographic error estimates. A successful register
 check is a source/declaration consistency result, including an explicit list
@@ -21,7 +21,7 @@ import pq_root_dependency_register as register
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = "config/pon/pq-root-dependency-register-v3.json"
 EXPECTED_ROLES = {"root-approval", "successor-possession", "anchor-writer",
-                  "anchor-response", "effect-provider"}
+                  "anchor-response", "effect-provider", "witness-response"}
 EXPECTED_PRIMITIVES = {"sha256", "sha512", "shake128", "shake256"}
 EXPECTED_DOMAINS = {"signature", "commitment", "proof", "ledger", "transport",
                     "recovery", "release", "application"}
@@ -47,6 +47,8 @@ class ContractCase(unittest.TestCase):
                      "composition_coverage_proved", "theorem_applicability_verified",
                      "transitive_dependency_closure_proved", "whole_chain_hash_query_scope_closed",
                      "independent_custody_verified",
+                     "independent_common_restore_exclusion_proved",
+                     "native_witness_durable_service_verified",
                      "anchor_independence_verified", "actual_external_effects_verified",
                      "native_m15_production_integration_complete", "production_activation",
                      "operational_refusal_caps_are_adversary_bounds", "source_revision_bound"):
@@ -159,6 +161,44 @@ class FrozenRoleTests(ContractCase):
                              ("validity_contract", "current-final-use-authority")):
             changed = deepcopy(data)
             changed["roles"]["effect-provider"]["implementations"]["rust-v4-readback"][field] = value
+            self.refused(changed)
+
+    def test_native_v5_witness_role_hashes_and_unproved_custody_are_explicit(self):
+        data = manifest()
+        witness = data["roles"]["witness-response"]
+        self.assertEqual(set(witness["implementations"]),
+                         {"rust-v5-witnessed-owner", "rust-v5-durable-register"})
+        self.assertFalse(witness["independent_custody_verified"])
+        self.assertEqual(witness["epoch_scope"], data["roles"]["anchor-response"]["epoch_scope"])
+        native = witness["implementations"]["rust-v5-witnessed-owner"]
+        self.assertIn(register.NATIVE_WITNESS, native["source_paths"])
+        self.assertFalse(native["production_qualified"])
+        durable = witness["implementations"]["rust-v5-durable-register"]
+        self.assertIn(register.NATIVE_WITNESS_DURABLE, durable["source_paths"])
+        self.assertFalse(durable["production_qualified"])
+        changed = deepcopy(data)
+        del changed["roles"]["witness-response"]["implementations"]["rust-v5-durable-register"]
+        self.refused(changed)
+        self.assertIn(register.NATIVE_WITNESS_DURABLE, data["source_files_sha256"])
+        self.assertIn(register.NODE + "tests/root_witness_v5_durable_native.rs", data["source_files_sha256"])
+        self.assertFalse(data["operational_refusal_caps"]["native-witness-database-bytes"]["bounds_adversary_queries"])
+        use = data["hash_uses"]["native-fresh-witness-v5"]
+        self.assertEqual(use["primitive_ids"], ["sha512"])
+        self.assertEqual(use["roles"], ["anchor-writer", "witness-response"])
+        for key in ("ml-dsa-internals", "slh-dsa-sha2-internals"):
+            self.assertIn("witness-response", data["hash_uses"][key]["roles"])
+        for key in ("python-public-key-identities-v2", "python-verified-message-identity-v2",
+                    "python-journal-state-scope-effect-v2", "python-provider-executable-integrity"):
+            self.assertNotIn("witness-response", data["hash_uses"][key]["roles"])
+        for field in ("independent_common_restore_exclusion_proved",
+                      "native_witness_durable_service_verified"):
+            self.assertFalse(data["profiles"][field])
+            changed = deepcopy(data)
+            changed["profiles"][field] = True
+            self.refused(changed)
+        for field in ("roles", "source_paths", "constructions"):
+            changed = deepcopy(data)
+            changed["hash_uses"]["native-fresh-witness-v5"][field].pop()
             self.refused(changed)
 
     def test_height_and_unix_expiry_profiles_cannot_be_silently_equated(self):
