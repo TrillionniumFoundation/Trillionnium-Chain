@@ -430,7 +430,7 @@
   "schema": "TRNM-W1-LIFETIME-LEDGER-REPORT1",
   "selected_source_survey": {
     "all_selected_source_bytes_match": true,
-    "base_commit": "189b9b5959d836ef6ae96e14fb285948e4920aa9",
+    "base_commit": "622c402c273f6a9f433eb8b63cd501fd1db486e5",
     "canonical_signature": {
       "algorithm": "ML-DSA-65",
       "canonical_spki_bytes": "1974",
@@ -554,7 +554,7 @@
         "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
         "observation": "PQ packet encoding retains the native complete witness length.",
         "path": "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs",
-        "sha256": "f8c65d541eeff28625f1028ab1ba1e9c8fa6dadc71cca39a1a7368da850b52cc"
+        "sha256": "7591e929cd32bc7fff51710c5e585eb8f557f18077c8997b89832793ff300d20"
       },
       "payload_sha384": {
         "anchor_line": "86",
@@ -638,9 +638,9 @@
         "sha256": "7c404502cbcc358b95cbf4f5ae88a1582e144562790913266eba599e5da8341d"
       },
       {
-        "bytes": "7976",
+        "bytes": "11650",
         "path": "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs",
-        "sha256": "f8c65d541eeff28625f1028ab1ba1e9c8fa6dadc71cca39a1a7368da850b52cc"
+        "sha256": "7591e929cd32bc7fff51710c5e585eb8f557f18077c8997b89832793ff300d20"
       },
       {
         "bytes": "382866",
