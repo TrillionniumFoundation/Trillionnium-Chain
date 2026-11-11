@@ -163,6 +163,11 @@ def summarize(results: dict, reports: list[dict], host_before: list[dict]) -> di
                         history_import_failed += 1
                     else:
                         raise EvidenceError('UNCLASSIFIED_CLIENT_IMPORT')
+            if p['finite_phase_criteria_met'] is True:
+                require(n_window == 3 and p['all_signed_rounds_confirmed_in_window'] is True
+                        and p['receiver_client_state_equal'] is True
+                        and p['observer_complete'] is True,
+                        'CLAIMED_PHASE_PASS_WITHOUT_REQUIRED_CONFIRMED_STATE')
             phases.append({
                 'run': run_number, 'mode': mode,
                 'attacker_processes_requested': p['attacker_processes_requested'],
@@ -171,6 +176,13 @@ def summarize(results: dict, reports: list[dict], host_before: list[dict]) -> di
                 'receiver_client_state_equal': p['receiver_client_state_equal'] is True,
                 'budget_depletion_observed': p['genuine_budget_depletion_observed'] is True,
             })
+    for i, attempt in enumerate(attempts):
+        if attempt['complete_success'] is True or attempt['original_criteria_met'] is True:
+            require(attempt['complete_success'] is True and
+                    attempt['original_criteria_met'] is True and
+                    attempt['step']['returncode'] == 0 and
+                    all(p['phase_criteria_met'] for p in phases[i * 3:(i + 1) * 3]),
+                    'CLAIMED_CAMPAIGN_PASS_WITHOUT_THREE_PHASES')
     complete_campaigns = sum(a['complete_success'] is True and
                              a['original_criteria_met'] is True and
                              a['step']['returncode'] == 0 for a in attempts)
@@ -233,6 +245,8 @@ def audit(path: str, expected_head: str, expected_tree: str,
         hosts = []
         for n, attempt in enumerate(result['attempts'], 1):
             report_path = f'run-{n}-raw/report.json'
+            require(z.getinfo(report_path).file_size <= MAX_JSON_BYTES,
+                    'REPORT_TOO_LARGE')
             raw_report = z.read(report_path)
             require(hashlib.sha256(raw_report).hexdigest() == attempt['report_sha256'],
                     'REPORT_SHA_MISMATCH')
