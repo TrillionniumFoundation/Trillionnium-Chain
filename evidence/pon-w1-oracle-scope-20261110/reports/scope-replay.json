@@ -1,0 +1,32 @@
+{
+  "full-native-scope.json": {
+    "construction_schedule_rebuilt": true,
+    "native_node_admission_verified": false,
+    "quantum_hardware_executed": false,
+    "quantum_mining_security_qualified": false,
+    "report_sha256": "41a27477e7e0aece79b6b6f445aa88e6b10b64f82466ef7364739a46546b803a",
+    "result": "REBUILD_MATCH",
+    "schema": "trnm-w1-quantum-evidence-scope-v1",
+    "scope": "NATIVE_SHAPE_FIXED_CONTEXT_FULL_PREDICATE_CONSTRUCTION"
+  },
+  "generic-accounting-scope.json": {
+    "construction_schedule_rebuilt": false,
+    "native_node_admission_verified": false,
+    "quantum_hardware_executed": false,
+    "quantum_mining_security_qualified": false,
+    "report_sha256": "39d2e7de9dda76dbda8b287581e27c2496c6879cdc0beac14a46b4e705e3b407",
+    "result": "REBUILD_MATCH",
+    "schema": "trnm-w1-quantum-evidence-scope-v1",
+    "scope": "GENERIC_CONDITIONAL_ACCOUNTING"
+  },
+  "restricted-native-scope.json": {
+    "construction_schedule_rebuilt": true,
+    "native_node_admission_verified": false,
+    "quantum_hardware_executed": false,
+    "quantum_mining_security_qualified": false,
+    "report_sha256": "a610ecf9a5a73e46b74bdb990ee960f2670c5749e48992bb407f9963975c6305",
+    "result": "REBUILD_MATCH",
+    "schema": "trnm-w1-quantum-evidence-scope-v1",
+    "scope": "NATIVE_SHAPE_FIXED_CONTEXT_LEGAL_SUBSET_CONSTRUCTION"
+  }
+}

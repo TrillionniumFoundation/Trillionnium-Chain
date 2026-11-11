@@ -1,0 +1,82 @@
+{
+  "members": [
+    {
+      "bytes": 15115,
+      "path": "README.md",
+      "sha256": "1ec3c168c2568c4288878a47c9992b4837beecedde98618bab167f2f15970b73"
+    },
+    {
+      "bytes": 49262,
+      "path": "execution-records-manifest.json",
+      "sha256": "e87230eb03a235fe2f37c371f0155f4af699dda3dc4e82d4bc2e2b099b3a38d0"
+    },
+    {
+      "bytes": 875081,
+      "path": "execution-records.tar.gz",
+      "sha256": "fc53c26cab3f1577b0a343fe37b8f339220788bb7879a97febda0690c914a553"
+    },
+    {
+      "bytes": 1362,
+      "path": "native-artifact.json",
+      "sha256": "23a2bd4b428c99a7ad1f3cf83b9c2abd305784d80a26ea1b11b3fd400b177c7f"
+    },
+    {
+      "bytes": 129999,
+      "path": "native-fullpath-e4abb172.zip",
+      "sha256": "d9ce3ead97f87759707829220525f50420126fa0347cbd64ec46aeb69bbd57c9"
+    },
+    {
+      "bytes": 30141,
+      "path": "reports/bridge-rebuilt.json",
+      "sha256": "24cb1149f8dc19f8da6e73de4a2761b5da7bd0e95db59c1b88f55abdc0618046"
+    },
+    {
+      "bytes": 30141,
+      "path": "reports/bridge-result.json",
+      "sha256": "24cb1149f8dc19f8da6e73de4a2761b5da7bd0e95db59c1b88f55abdc0618046"
+    },
+    {
+      "bytes": 46612,
+      "path": "reports/full-native-scope.json",
+      "sha256": "bcb7543280624c231560ba9144e43f7afc17b5391fe7b90f2776a5fb6ca7d0ea"
+    },
+    {
+      "bytes": 5940,
+      "path": "reports/generic-accounting-scope.json",
+      "sha256": "2cb8dc4ab819a88d9d5159aa0760505c5c1136292d7f0b51d3c24fb14b637ebf"
+    },
+    {
+      "bytes": 1597,
+      "path": "reports/illustrative-resource-request.json",
+      "sha256": "35c2fdb4b0500494b7710c694b94dd6e7e5bda4ed74f7ed573119af2fdab9934"
+    },
+    {
+      "bytes": 30161,
+      "path": "reports/native-oracle-spec.json",
+      "sha256": "9aa43edb932965635753920008880233429b2777c91ac379d393bea63057b2fe"
+    },
+    {
+      "bytes": 46738,
+      "path": "reports/restricted-native-scope.json",
+      "sha256": "3a80a6d3a264efc3dca446089d3ef74594409bb6549a97846a1c79ec134b214f"
+    },
+    {
+      "bytes": 1347,
+      "path": "reports/scope-replay.json",
+      "sha256": "67dadca4520692c2216fc6c8ac1985aad6083e5033b0e3fef97936aa99e4aa0a"
+    },
+    {
+      "bytes": 2697,
+      "path": "source-change-review.json",
+      "sha256": "ced0c3ed1f08a8b26d1bd9c87092a8a8a0413991b659bb9cc7b767eaa9ddac0a"
+    },
+    {
+      "bytes": 7778,
+      "path": "summary.json",
+      "sha256": "172e752dd648c8140e1743185c6d6b17a0a369c0a8f50304cb8730c660552953"
+    }
+  ],
+  "schema": "trnm-w1-evidence-members-v1",
+  "scope": "all files except this manifest itself",
+  "tested_source_commit": "6e39f27357ce7c030f5662ada3d524fecb58d63e"
+}

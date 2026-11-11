@@ -1,0 +1,1390 @@
+{
+  "archive": {
+    "bytes": 875081,
+    "path": "execution-records.tar.gz",
+    "sha256": "fc53c26cab3f1577b0a343fe37b8f339220788bb7879a97febda0690c914a553"
+  },
+  "members": [
+    {
+      "bytes": 660,
+      "path": "bounded-clippy/attempt/provider-interruption-state.json",
+      "sha256": "d4e8cb9648cb2ced066c04e30148ba5340ceeddf5aeefcb59166389108f78fbe"
+    },
+    {
+      "bytes": 1134579,
+      "path": "bounded-clippy/attempt/provider-observations/pq-provider/build-and-smoke.log",
+      "sha256": "ae2205582c3761997ce66edffdb1b46f923eb29bf6418e52a50ef8a72a4b818e"
+    },
+    {
+      "bytes": 0,
+      "path": "bounded-clippy/attempt/provider.env",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1399,
+      "path": "bounded-clippy/attempt/records/live-source-identity.receipt.json",
+      "sha256": "4452d52700cbf98aacef6c29fa11d2ba06b881fdb890302c0d279d79c4cb5313"
+    },
+    {
+      "bytes": 0,
+      "path": "bounded-clippy/attempt/records/live-source-identity.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 50,
+      "path": "bounded-clippy/attempt/records/live-source-identity.stdout.log",
+      "sha256": "c9189287fa5be9efdbc950b4c56a69e205cc0c5ff95be725775e6be48f7502da"
+    },
+    {
+      "bytes": 962,
+      "path": "bounded-clippy/attempt/records/preflight.receipt.json",
+      "sha256": "8207f7fb3b3ace54293d815dd60b84b6a326b501f792aedeaf8b5f3066f757ad"
+    },
+    {
+      "bytes": 0,
+      "path": "bounded-clippy/attempt/records/preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 173,
+      "path": "bounded-clippy/attempt/records/preflight.stdout.log",
+      "sha256": "25c4e6e1a6eff239d7f592b271eac2a06ea2e527a97f92ff2ba12ae5e1d163c3"
+    },
+    {
+      "bytes": 2318,
+      "path": "bounded-clippy/attempt/records/provider.receipt.json",
+      "sha256": "5468eeeffdb06cd77ff578535d794c9c4dd6516439af5e1acb3e397aa05b5bb6"
+    },
+    {
+      "bytes": 1635717,
+      "path": "bounded-clippy/attempt/records/provider.resource-samples.ndjson",
+      "sha256": "15b824b919ee7d564c7066027c7d061d21898d15648d3774ba7ebc29d2f1714f"
+    },
+    {
+      "bytes": 0,
+      "path": "bounded-clippy/attempt/records/provider.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 163,
+      "path": "bounded-clippy/attempt/records/provider.stdout.log",
+      "sha256": "e7978e6e73556d5b5b53df889dfbe8399e6d298c56e84696030ea7281e8e88e1"
+    },
+    {
+      "bytes": 1185,
+      "path": "bounded-clippy/attempt/records/source-after.receipt.json",
+      "sha256": "3c171309adc116ce43585dd96fe881924f0e62fd08629f41b06c40adae2d89f4"
+    },
+    {
+      "bytes": 0,
+      "path": "bounded-clippy/attempt/records/source-after.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "path": "bounded-clippy/attempt/records/source-after.stdout.log",
+      "sha256": "d676544a479331025cae9e6055d55629514489b223db3a4cc5125aa059468c1b"
+    },
+    {
+      "bytes": 423,
+      "path": "bounded-clippy/attempt/source-after.json",
+      "sha256": "d676544a479331025cae9e6055d55629514489b223db3a4cc5125aa059468c1b"
+    },
+    {
+      "bytes": 7800,
+      "path": "bounded-clippy/attempt/summary.json",
+      "sha256": "ddf72caa36ecf8ecd8cb4c22c6e69620e3692efa5018f0204997594231af7184"
+    },
+    {
+      "bytes": 843,
+      "path": "bounded-clippy/capabilities.json",
+      "sha256": "7a0a377ddbe735b0f488fdb5c410eb81a17b85523db3c7ff77c1c817ff8cef4b"
+    },
+    {
+      "bytes": 844,
+      "path": "bounded-clippy/capability-recheck/capabilities.json",
+      "sha256": "12ce8065a1a118530d936e7c16fc74040c1c1e2aea7f088b7d1a368935739f6f"
+    },
+    {
+      "bytes": 1495,
+      "path": "bounded-clippy/capability-recheck/clippy-startup.receipt.json",
+      "sha256": "15c6894526701702bfd46d7f2ea7d391c72395205e3d36b553fb95bc3c2eb788"
+    },
+    {
+      "bytes": 0,
+      "path": "bounded-clippy/capability-recheck/clippy-startup.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 38,
+      "path": "bounded-clippy/capability-recheck/clippy-startup.stdout.log",
+      "sha256": "35a36a02149eb682cc65a0f29c482942cab20c49fe19f75208155febbcbb78e8"
+    },
+    {
+      "bytes": 2733,
+      "path": "bounded-clippy/capability-recheck/group-rss-probe.receipt.json",
+      "sha256": "2c431ea00880774b24f24d25a3c7bb7af88c470f6ae5223aaf481ef694e33233"
+    },
+    {
+      "bytes": 0,
+      "path": "bounded-clippy/capability-recheck/group-rss-probe.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 38,
+      "path": "bounded-clippy/capability-recheck/group-rss-probe.stdout.log",
+      "sha256": "2cfec2cca669bcc73f9a50ae8a0553918cf3ea2e36f25516def894ea04ac6ce8"
+    },
+    {
+      "bytes": 3007,
+      "path": "bounded-clippy/capability-recheck/rustc-startup.receipt.json",
+      "sha256": "66b63360018046fac4f606dcd0f7eb8f334568db62a20990da7044e71eb4b396"
+    },
+    {
+      "bytes": 0,
+      "path": "bounded-clippy/capability-recheck/rustc-startup.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 36,
+      "path": "bounded-clippy/capability-recheck/rustc-startup.stdout.log",
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+    },
+    {
+      "bytes": 2925,
+      "path": "bounded-clippy/capability-recheck/virtual-limit-probe.receipt.json",
+      "sha256": "249bad0d90dcfa1a415b1a2d2a2cad3cdee0ed101a25e7e6561f54f73ae858d5"
+    },
+    {
+      "bytes": 0,
+      "path": "bounded-clippy/capability-recheck/virtual-limit-probe.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 66,
+      "path": "bounded-clippy/capability-recheck/virtual-limit-probe.stdout.log",
+      "sha256": "a9116bbc32720d6f0a112fe753b7348b7beaacd16d95082606945de7b3097d69"
+    },
+    {
+      "bytes": 2947,
+      "path": "bounded-clippy/group-rss-probe.receipt.json",
+      "sha256": "6fa9c59d93d0c3443cb701fde518c682957675e9d328b68a91a60fd3cbcfc969"
+    },
+    {
+      "bytes": 0,
+      "path": "bounded-clippy/group-rss-probe.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 38,
+      "path": "bounded-clippy/group-rss-probe.stdout.log",
+      "sha256": "2cfec2cca669bcc73f9a50ae8a0553918cf3ea2e36f25516def894ea04ac6ce8"
+    },
+    {
+      "bytes": 6363,
+      "path": "bounded-clippy/probe-source-v1.py",
+      "sha256": "72de60668b8fd06ef9469cb80e6e6e8ff600ca43e37e08744e628b6cccbe925c"
+    },
+    {
+      "bytes": 6363,
+      "path": "bounded-clippy/probe_cloud_resource_caps.py",
+      "sha256": "72de60668b8fd06ef9469cb80e6e6e8ff600ca43e37e08744e628b6cccbe925c"
+    },
+    {
+      "bytes": 6643,
+      "path": "bounded-clippy/probe_cloud_resource_caps_v2.py",
+      "sha256": "8083c9f43f1663f7d5175b34f0e99d74ce4c88ffbd092b4509cd3c364ca01244"
+    },
+    {
+      "bytes": 18801,
+      "path": "bounded-clippy/run_bounded_clippy.py",
+      "sha256": "79e86383d7543490790dfd7a4c81a39092c5d9922b66458edbe3dd51cfbb0bde"
+    },
+    {
+      "bytes": 1976,
+      "path": "bounded-clippy/task-owned-cache-capacity-review.json",
+      "sha256": "a0ff73441de3566758d01eade2ba33a908e55716c5bdf64cd3fe4ebf45594e34"
+    },
+    {
+      "bytes": 1612,
+      "path": "bounded-clippy/virtual-limit-probe.receipt.json",
+      "sha256": "bf4bdc85f8ef6215b5dacd85afb1fca786149b04548aa776fa66ea68f7315d4b"
+    },
+    {
+      "bytes": 0,
+      "path": "bounded-clippy/virtual-limit-probe.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 66,
+      "path": "bounded-clippy/virtual-limit-probe.stdout.log",
+      "sha256": "a9116bbc32720d6f0a112fe753b7348b7beaacd16d95082606945de7b3097d69"
+    },
+    {
+      "bytes": 30141,
+      "path": "bridge-cli/bridge-rebuilt.json",
+      "sha256": "24cb1149f8dc19f8da6e73de4a2761b5da7bd0e95db59c1b88f55abdc0618046"
+    },
+    {
+      "bytes": 30141,
+      "path": "bridge-cli/bridge-result.json",
+      "sha256": "24cb1149f8dc19f8da6e73de4a2761b5da7bd0e95db59c1b88f55abdc0618046"
+    },
+    {
+      "bytes": 1182,
+      "path": "bridge-cli/build.receipt.json",
+      "sha256": "e3763fc257f7325cff1f8c7abcc81f09c53afdf26a7c17526620e0667ed082c6"
+    },
+    {
+      "bytes": 0,
+      "path": "bridge-cli/build.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "bridge-cli/build.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3373,
+      "path": "bridge-cli/summary.json",
+      "sha256": "72f3517f8172074abfb9230d0fd674523eba15858248bb242482f0f14eec8817"
+    },
+    {
+      "bytes": 1291,
+      "path": "bridge-cli/verify.receipt.json",
+      "sha256": "a40efbc4701027dfe559d719de8c7c92bd1bd10c25694df5cfd4d84dc07290c8"
+    },
+    {
+      "bytes": 0,
+      "path": "bridge-cli/verify.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "bridge-cli/verify.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1841,
+      "path": "cloud-feasibility/assessment.json",
+      "sha256": "86db5d7071d661ee1869e507a62eff397425746b474da24c543887102b4d51c8"
+    },
+    {
+      "bytes": 1938,
+      "path": "cloud-feasibility/inventory.receipt.json",
+      "sha256": "722890748a48f0c9e5cd5fde646a676eb47fcebafe80f49bce66b6611f7a8c46"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-feasibility/inventory.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1132,
+      "path": "cloud-feasibility/inventory.stdout.log",
+      "sha256": "f8571b4a36ecacea2a6368d50e9be031ead39ebbade1f9458845860a1e3fb748"
+    },
+    {
+      "bytes": 1257,
+      "path": "cloud-feasibility/openssl-archive-head.receipt.json",
+      "sha256": "597d7db828ff7f584a5f5b9b1e30b7796732b7670e482db34316325efbb40c76"
+    },
+    {
+      "bytes": 6660,
+      "path": "cloud-feasibility/openssl-archive-head.response",
+      "sha256": "450d9f61a0064ab13a3164d15ca06a7b3497d74468806ff733ef66279565effc"
+    },
+    {
+      "bytes": 1225,
+      "path": "cloud-feasibility/openssl-archive-head.stderr.log",
+      "sha256": "1b7e695016850898c950dba0e6a71a03152766fcf0328961009fcf9f8bd6f028"
+    },
+    {
+      "bytes": 31,
+      "path": "cloud-feasibility/openssl-archive-head.stdout.log",
+      "sha256": "e7708de625ab1d54a06f287a6b407fefc6867b81074197d10ed5fc5043acc788"
+    },
+    {
+      "bytes": 1217,
+      "path": "cloud-feasibility/rust-manifest-sha256.receipt.json",
+      "sha256": "29e4c7fc3001a8a1a806942471152e42bed5be56cfdc27f56740a1638ea67171"
+    },
+    {
+      "bytes": 91,
+      "path": "cloud-feasibility/rust-manifest-sha256.response",
+      "sha256": "52e6493c928f1cb0504652c7dd18446f590c9f697cd7071d94c562a6c03ff0a1"
+    },
+    {
+      "bytes": 870,
+      "path": "cloud-feasibility/rust-manifest-sha256.stderr.log",
+      "sha256": "9bb1bd29bca9e47f9ae7c906c91c157e6cea472421599c3e1b0098a67a917609"
+    },
+    {
+      "bytes": 27,
+      "path": "cloud-feasibility/rust-manifest-sha256.stdout.log",
+      "sha256": "c71dfd67bfdf11c055ed97621157c4ec4b5923a5abda42a06e4cadab020fcf8b"
+    },
+    {
+      "bytes": 1186,
+      "path": "cloud-feasibility/rust-manifest.receipt.json",
+      "sha256": "ce57ff5448ed767af15b8216610d91f87c49ea74d578b462ea87d2f328b269fe"
+    },
+    {
+      "bytes": 848342,
+      "path": "cloud-feasibility/rust-manifest.response",
+      "sha256": "821ff14e4c4a1cbe1e8915f35aff0a3fbbdf8d293ad48ab8f31e3b0440c581f9"
+    },
+    {
+      "bytes": 870,
+      "path": "cloud-feasibility/rust-manifest.stderr.log",
+      "sha256": "474622affe879dd5069364f397441807b7a8cc1001d21ff283ec82dfa11914c8"
+    },
+    {
+      "bytes": 31,
+      "path": "cloud-feasibility/rust-manifest.stdout.log",
+      "sha256": "d6251936b3be36fa8352d3059803a951b917907cb2a5a9a9203a748200f7595d"
+    },
+    {
+      "bytes": 1671,
+      "path": "cloud-feasibility/source-install-contract.receipt.json",
+      "sha256": "2b274cff8c3677183dbb15cc74e4017d0742cbb28578a28f67ab46f7dccad62b"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-feasibility/source-install-contract.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 9255,
+      "path": "cloud-feasibility/source-install-contract.stdout.log",
+      "sha256": "db84c56350fa8990be860dc7507c557ce5a492fd605c67089ad66676dda1aa2f"
+    },
+    {
+      "bytes": 9444,
+      "path": "cloud-feasibility/summary.json",
+      "sha256": "a3298d53b683029e8cb66ed69f20a7adb909143d27937454cbf31560df9c8347"
+    },
+    {
+      "bytes": 1849,
+      "path": "cloud-rust/clippy-resource-assessment.json",
+      "sha256": "77b1bfbda9c35a57b3e9f78a3307aef92f7fd8202e403c9f8d395b49523ff067"
+    },
+    {
+      "bytes": 6905,
+      "path": "cloud-rust/cloud_rust_feasibility.py",
+      "sha256": "85ef42f14437dbe032ab1bbc12450ef799f47f672f526740f7fdc59b9bdba221"
+    },
+    {
+      "bytes": 5151,
+      "path": "cloud-rust/final-status.json",
+      "sha256": "5ccd9e1d39b44fb26a6e5e57b9d61fe402a9c2c347c8e5f6eb3782e1c7a3c68c"
+    },
+    {
+      "bytes": 1792,
+      "path": "cloud-rust/input-pins.json",
+      "sha256": "2d545bf178191449c8b05c18e43994c3cc87f310645475f96f75c9486029a1b9"
+    },
+    {
+      "bytes": 3226,
+      "path": "cloud-rust/light-gate-observation.json",
+      "sha256": "fe94fc161802d548888632d77557fc3c5b92bbe96e1d6414c8633fe1bfd7dc2c"
+    },
+    {
+      "bytes": 999,
+      "path": "cloud-rust/records/cargo-version.receipt.json",
+      "sha256": "0f33fd083d7e32dfc9207fc75f8c62e6c4c113d9bd5fdbbdd2121663c4372426"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/cargo-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 36,
+      "path": "cloud-rust/records/cargo-version.stdout.log",
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    {
+      "bytes": 1008,
+      "path": "cloud-rust/records/clippy-version.receipt.json",
+      "sha256": "825d22e9c5e7f603018f1887f6c6cd8ba739294ae038f42e135b226d413b7925"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/clippy-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 38,
+      "path": "cloud-rust/records/clippy-version.stdout.log",
+      "sha256": "35a36a02149eb682cc65a0f29c482942cab20c49fe19f75208155febbcbb78e8"
+    },
+    {
+      "bytes": 1400,
+      "path": "cloud-rust/records/download-cargo.receipt.json",
+      "sha256": "75b22beb60d4407eaa3f4818a520f0b163f6a398fbe15c922efe37d319992f60"
+    },
+    {
+      "bytes": 712,
+      "path": "cloud-rust/records/download-cargo.stderr.log",
+      "sha256": "88fa86668fd3b035ade6a5ce1581efa066e8e343fdaf125136538f0b5dfd0f01"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/download-cargo.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1430,
+      "path": "cloud-rust/records/download-clippy-preview.receipt.json",
+      "sha256": "e20fe86e70ef3aee3ce59579ae48f2ae1ed2c77db0338bab7cc40d896ea638c5"
+    },
+    {
+      "bytes": 475,
+      "path": "cloud-rust/records/download-clippy-preview.stderr.log",
+      "sha256": "80525e66e617d4e62dfe784a0ba86c6d23c328fafc972eca51fbb16e4cc4eac9"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/download-clippy-preview.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1415,
+      "path": "cloud-rust/records/download-rust-std.receipt.json",
+      "sha256": "5528b0da1796e8693946827192a3c4e1271f79a94b0cf9105177a58f5d98df09"
+    },
+    {
+      "bytes": 791,
+      "path": "cloud-rust/records/download-rust-std.stderr.log",
+      "sha256": "2aa9be31daa09277719c55ca45bc6bd3bfe55e2b01d147b519720cae1b3ecf8d"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/download-rust-std.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1400,
+      "path": "cloud-rust/records/download-rustc.receipt.json",
+      "sha256": "f65856f45b234e9280ccc1acd131c8f8691b7b1c2327f480f311a2557be6ae35"
+    },
+    {
+      "bytes": 870,
+      "path": "cloud-rust/records/download-rustc.stderr.log",
+      "sha256": "9dcabfa9be8dca337aaea17a8f0bb382440de7c2c434b31f76c6bb19c67627d5"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/download-rustc.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1434,
+      "path": "cloud-rust/records/download-rustfmt-preview.receipt.json",
+      "sha256": "0da62ca1b78fef77d0c0c4a678f2bd3a3b863e9161dc6b63ffde2366eb41177f"
+    },
+    {
+      "bytes": 554,
+      "path": "cloud-rust/records/download-rustfmt-preview.stderr.log",
+      "sha256": "7b20c456a787a8ae29a74d2c6d2d95dceef255710cd461888451b3e982231b21"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/download-rustfmt-preview.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1203,
+      "path": "cloud-rust/records/extract-cargo.receipt.json",
+      "sha256": "9e4e3372676a8fefc37dcfec20bf17f0ccbdce7e97cb14c5b5e28c0b2655790b"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/extract-cargo.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/extract-cargo.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1232,
+      "path": "cloud-rust/records/extract-clippy-preview.receipt.json",
+      "sha256": "83a6d9cc2682e48ecfecffad7370450ae9733876f3bbddfc09ed6ae7ced91ebe"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/extract-clippy-preview.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/extract-clippy-preview.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1215,
+      "path": "cloud-rust/records/extract-rust-std.receipt.json",
+      "sha256": "3a4af73ea205e605a90423375535991eefa5ec9ab718bf539de7889801a4724a"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/extract-rust-std.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/extract-rust-std.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1204,
+      "path": "cloud-rust/records/extract-rustc.receipt.json",
+      "sha256": "e21109bd02a0253a7d074aabbcd205d53f49aa23864464b8dfa30705728cc306"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/extract-rustc.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/extract-rustc.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1235,
+      "path": "cloud-rust/records/extract-rustfmt-preview.receipt.json",
+      "sha256": "83d78d68fe9ad450b1d84609acb8660416c6a9db027856e483940bc871ff0821"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/extract-rustfmt-preview.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/extract-rustfmt-preview.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1063,
+      "path": "cloud-rust/records/format.receipt.json",
+      "sha256": "5377f2b3ae0d422c6ce3d37133a947ff728eeee010391afc8925c0ce6781c918"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/format.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/format.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1177,
+      "path": "cloud-rust/records/install-cargo.receipt.json",
+      "sha256": "4fbe76e3ae621a17d7927352a780c8e799b66b3cc9cebee08f699cd6878b51ac"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/install-cargo.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 197,
+      "path": "cloud-rust/records/install-cargo.stdout.log",
+      "sha256": "59eb8a0e4a056bdf589138484bee3c26e5f92297e84346622305053f265b9b70"
+    },
+    {
+      "bytes": 1206,
+      "path": "cloud-rust/records/install-clippy-preview.receipt.json",
+      "sha256": "2c8755b088b23a21e7ddc3de3c4ad0b7f270b61c0882f66218257ed1928ab733"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/install-clippy-preview.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 207,
+      "path": "cloud-rust/records/install-clippy-preview.stdout.log",
+      "sha256": "4041290b3a9e10cdc9d55a85766734e7ec78ed6894bf821581ff3a7ce995a5b9"
+    },
+    {
+      "bytes": 1190,
+      "path": "cloud-rust/records/install-rust-std.receipt.json",
+      "sha256": "d7c2b268196aab85b8e191a17933cacb6f16c712a7fb858f2b5e6489b2c02dd4"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/install-rust-std.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 228,
+      "path": "cloud-rust/records/install-rust-std.stdout.log",
+      "sha256": "6cdeba8f1e1736b7f7cec18fbd96c933e0d7b662be9f54b012321b45abaf5de6"
+    },
+    {
+      "bytes": 1177,
+      "path": "cloud-rust/records/install-rustc.receipt.json",
+      "sha256": "e20dbffe005ed27cd9e5b67147897e0e7529a1f529888552b764d1af5cac31b6"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/install-rustc.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 197,
+      "path": "cloud-rust/records/install-rustc.stdout.log",
+      "sha256": "d35caf93ce6af67c06aa5ed57e7bb1d4763d562c54c0040bc7edfcb3b810128e"
+    },
+    {
+      "bytes": 1210,
+      "path": "cloud-rust/records/install-rustfmt-preview.receipt.json",
+      "sha256": "450fdb2bdb9f2ef24c72c4b1b9ae5ff35e82420c5b4c434a5afdf590e3f6aeea"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/install-rustfmt-preview.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 209,
+      "path": "cloud-rust/records/install-rustfmt-preview.stdout.log",
+      "sha256": "dde1aafd86a0e33566177edda07a734d4e3245ee51b6eff633d66ebbe779e759"
+    },
+    {
+      "bytes": 1191,
+      "path": "cloud-rust/records/metadata-all-features-locked-fetch.receipt.json",
+      "sha256": "4adb85256d25bfb2753c8ed679344c2cc2cae095b39dcb48721cf95eba972757"
+    },
+    {
+      "bytes": 198,
+      "path": "cloud-rust/records/metadata-all-features-locked-fetch.stderr.log",
+      "sha256": "d6b1ef8eab2b607f30b901c16fc911d725c85022c68a8c20d986d8e47a46a196"
+    },
+    {
+      "bytes": 900138,
+      "path": "cloud-rust/records/metadata-all-features-locked-fetch.stdout.log",
+      "sha256": "ada1323081e5a48f1fa8e12c3c6241975b22fa6aa3f49ec4bd600a3a6675d438"
+    },
+    {
+      "bytes": 1210,
+      "path": "cloud-rust/records/metadata-all-features-offline-final.receipt.json",
+      "sha256": "be9df8596fe40d1761debae503a10f8786747833854d862c58f0868c04c38def"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/metadata-all-features-offline-final.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 900138,
+      "path": "cloud-rust/records/metadata-all-features-offline-final.stdout.log",
+      "sha256": "ada1323081e5a48f1fa8e12c3c6241975b22fa6aa3f49ec4bd600a3a6675d438"
+    },
+    {
+      "bytes": 1216,
+      "path": "cloud-rust/records/metadata-all-features-offline-initial.receipt.json",
+      "sha256": "b7d5aad4caedf679a88ff80cc6104544db53c4016f610d3c52e50f7987463cab"
+    },
+    {
+      "bytes": 127,
+      "path": "cloud-rust/records/metadata-all-features-offline-initial.stderr.log",
+      "sha256": "3a394785649db52ecb4966cc9fa60499798dfb35daf8e36d3b18428b3acb4483"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/metadata-all-features-offline-initial.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1155,
+      "path": "cloud-rust/records/metadata-default-locked-fetch.receipt.json",
+      "sha256": "bf76e0a84756362bd4c583d0627ccef332b43779c532df2ca07a22c6ddce06e0"
+    },
+    {
+      "bytes": 4876,
+      "path": "cloud-rust/records/metadata-default-locked-fetch.stderr.log",
+      "sha256": "d8d3ee6b1ebebff9c9590a2e849c6b499ca180ac1d5ff967b8dc50fdb242a514"
+    },
+    {
+      "bytes": 884413,
+      "path": "cloud-rust/records/metadata-default-locked-fetch.stdout.log",
+      "sha256": "e3318c1279dceaa4f3e656542e797dd549c3d9d57036012fd45c018de577665e"
+    },
+    {
+      "bytes": 1171,
+      "path": "cloud-rust/records/metadata-default-offline-final.receipt.json",
+      "sha256": "f81321528e43daa69bd2cf965657e40cc3799ce25d37a4dfc65af3bca19588b6"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/metadata-default-offline-final.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 884413,
+      "path": "cloud-rust/records/metadata-default-offline-final.stdout.log",
+      "sha256": "e3318c1279dceaa4f3e656542e797dd549c3d9d57036012fd45c018de577665e"
+    },
+    {
+      "bytes": 1179,
+      "path": "cloud-rust/records/metadata-default-offline-initial.receipt.json",
+      "sha256": "ff2da5b89a9050ab399e9216ff6e8af2c955df5175aeb5c0cc342b0a42e2be54"
+    },
+    {
+      "bytes": 375,
+      "path": "cloud-rust/records/metadata-default-offline-initial.stderr.log",
+      "sha256": "6fc6f49c7e2dcd749999f63c0b7141b7caf3f5de5dca299452aa5b2988b5213d"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/metadata-default-offline-initial.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1143,
+      "path": "cloud-rust/records/metadata-fuzz-locked-fetch.receipt.json",
+      "sha256": "413a88b1d4cd60f88709734d10edfd6f2505640556dd18d62c3e9ba28e7ce977"
+    },
+    {
+      "bytes": 149,
+      "path": "cloud-rust/records/metadata-fuzz-locked-fetch.stderr.log",
+      "sha256": "8999d3f2942a8c99c7d54c052a41c5f48634eca9f04e89344345bc51503b5af6"
+    },
+    {
+      "bytes": 768014,
+      "path": "cloud-rust/records/metadata-fuzz-locked-fetch.stdout.log",
+      "sha256": "661daad59ae44b287f9bf045608b4a4d4949695cc910ff6a75763f19ee0d8c19"
+    },
+    {
+      "bytes": 1162,
+      "path": "cloud-rust/records/metadata-fuzz-offline-final.receipt.json",
+      "sha256": "72a1c9718a166bf2a7594211f13505ed36bd18baa3b40d45117a225a24cd1796"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/metadata-fuzz-offline-final.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 768014,
+      "path": "cloud-rust/records/metadata-fuzz-offline-final.stdout.log",
+      "sha256": "661daad59ae44b287f9bf045608b4a4d4949695cc910ff6a75763f19ee0d8c19"
+    },
+    {
+      "bytes": 1168,
+      "path": "cloud-rust/records/metadata-fuzz-offline-initial.receipt.json",
+      "sha256": "cc470be7e8b09d6d119e8bae5b330397639775cd9c2a712e43d9e227d6ae9588"
+    },
+    {
+      "bytes": 376,
+      "path": "cloud-rust/records/metadata-fuzz-offline-initial.stderr.log",
+      "sha256": "cb9d1d75f18c4af591ce91c6060c51a3171d076dc44a26b980f738b92f011c0e"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/metadata-fuzz-offline-initial.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 947,
+      "path": "cloud-rust/records/preflight.receipt.json",
+      "sha256": "786cf9776f9208a8c65c14ec7bc79ba1d14ffdba495d3a9005663c6780b6e555"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 173,
+      "path": "cloud-rust/records/preflight.stdout.log",
+      "sha256": "25c4e6e1a6eff239d7f592b271eac2a06ea2e527a97f92ff2ba12ae5e1d163c3"
+    },
+    {
+      "bytes": 1016,
+      "path": "cloud-rust/records/rustc-version.receipt.json",
+      "sha256": "f981ff545e950c9a84cd9936badef88da0c417a6a435f638bb159bbad64cf670"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/rustc-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196,
+      "path": "cloud-rust/records/rustc-version.stdout.log",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "bytes": 1006,
+      "path": "cloud-rust/records/rustfmt-version.receipt.json",
+      "sha256": "1dec5eec9c1c3ff412ec3161b1933954dda88fa6c85c26dab69256b74d062d7b"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/rustfmt-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 45,
+      "path": "cloud-rust/records/rustfmt-version.stdout.log",
+      "sha256": "21e923568a260155c34a6f780f9513d3962c088aa3bbe8c91ab5385f470547d1"
+    },
+    {
+      "bytes": 1162,
+      "path": "cloud-rust/records/source-after.receipt.json",
+      "sha256": "a9dfbb88bcc52ccfa817f55a39f50a052df620ada9a5fed090b0a26d39f86c67"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/source-after.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "path": "cloud-rust/records/source-after.stdout.log",
+      "sha256": "d676544a479331025cae9e6055d55629514489b223db3a4cc5125aa059468c1b"
+    },
+    {
+      "bytes": 1166,
+      "path": "cloud-rust/records/source-before.receipt.json",
+      "sha256": "dc100b842dde2f6eb79f10f59a41d96fb4792edfdd4d5e4c8e8d1356a01e8915"
+    },
+    {
+      "bytes": 0,
+      "path": "cloud-rust/records/source-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "path": "cloud-rust/records/source-before.stdout.log",
+      "sha256": "d676544a479331025cae9e6055d55629514489b223db3a4cc5125aa059468c1b"
+    },
+    {
+      "bytes": 423,
+      "path": "cloud-rust/source-after.json",
+      "sha256": "d676544a479331025cae9e6055d55629514489b223db3a4cc5125aa059468c1b"
+    },
+    {
+      "bytes": 423,
+      "path": "cloud-rust/source-before.json",
+      "sha256": "d676544a479331025cae9e6055d55629514489b223db3a4cc5125aa059468c1b"
+    },
+    {
+      "bytes": 16713,
+      "path": "cloud-rust/summary.json",
+      "sha256": "6d97a6ebe2fae4ee6dc91c4047db299b923011e2c363f9a73d711baa5e8ab6f1"
+    },
+    {
+      "bytes": 12447,
+      "path": "cloud-rust/validate_cloud_rust.py",
+      "sha256": "6d5623eb01854a43663734aff56b4c52181f30bbd88e3aac19731ddcf85457b3"
+    },
+    {
+      "bytes": 686,
+      "path": "final-source-review/committed-patch.receipt.json",
+      "sha256": "67a611535382fd89eda943befac5cc7ac2820d73a83195cdf6b116134e9c1a79"
+    },
+    {
+      "bytes": 0,
+      "path": "final-source-review/committed-patch.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "final-source-review/committed-patch.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 5003,
+      "path": "formal/bridge-25.stderr",
+      "sha256": "55cfed124e564af1c51c0b2c9fff282070a33a1c1ed2d544f23352c67aa8ac55"
+    },
+    {
+      "bytes": 0,
+      "path": "formal/bridge-25.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3581,
+      "path": "formal/command-record.json",
+      "sha256": "6c80b9bba290aa5714e6fda5ae6d7eac1740d4e75b1787271954a2e18788800e"
+    },
+    {
+      "bytes": 2277,
+      "path": "formal/scope-12.stderr",
+      "sha256": "d81c8651facd77708de1b57eedb0eafc1fe7ce3ffd72a7597c5076fc8feab310"
+    },
+    {
+      "bytes": 0,
+      "path": "formal/scope-12.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "path": "formal/source-after.json",
+      "sha256": "d676544a479331025cae9e6055d55629514489b223db3a4cc5125aa059468c1b"
+    },
+    {
+      "bytes": 0,
+      "path": "formal/source-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "path": "formal/source-after.stdout",
+      "sha256": "d676544a479331025cae9e6055d55629514489b223db3a4cc5125aa059468c1b"
+    },
+    {
+      "bytes": 423,
+      "path": "formal/source-before.json",
+      "sha256": "d676544a479331025cae9e6055d55629514489b223db3a4cc5125aa059468c1b"
+    },
+    {
+      "bytes": 0,
+      "path": "formal/source-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "path": "formal/source-before.stdout",
+      "sha256": "d676544a479331025cae9e6055d55629514489b223db3a4cc5125aa059468c1b"
+    },
+    {
+      "bytes": 3317,
+      "path": "preparation-observations.json",
+      "sha256": "2de718db423b934e835fc7d8c8a49c9a4851d7a95ee6a19dff53232f8f7a060f"
+    },
+    {
+      "bytes": 0,
+      "path": "scope-cli/full-native-scope.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 405,
+      "path": "scope-cli/full-native-scope.stdout.log",
+      "sha256": "00738cf0f843ca3871ab5e5580ba3240f588a25c2504633291fa02d798631651"
+    },
+    {
+      "bytes": 0,
+      "path": "scope-cli/generic-accounting-scope.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 382,
+      "path": "scope-cli/generic-accounting-scope.stdout.log",
+      "sha256": "7f6d88318669dcdd8936777cc3d206d2a9adf2c60c94638e65120906b30745f3"
+    },
+    {
+      "bytes": 0,
+      "path": "scope-cli/restricted-native-scope.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 403,
+      "path": "scope-cli/restricted-native-scope.stdout.log",
+      "sha256": "5187dd29323c7c15f8bab88a7e6e4735b0eed3dd740d8cab8b6739de7672083a"
+    },
+    {
+      "bytes": 2373,
+      "path": "scope-cli/summary.json",
+      "sha256": "c2fc9530596befb734911d791b0f61bb4edfd8472c4f05e327d8dd1d850141a4"
+    },
+    {
+      "bytes": 559,
+      "path": "supplemental/00-preflight.receipt.json",
+      "sha256": "654b325077e5e0fad5826bd46546137c0455b068586358f374649ea5d46018b9"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/00-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 173,
+      "path": "supplemental/00-preflight.stdout.log",
+      "sha256": "25c4e6e1a6eff239d7f592b271eac2a06ea2e527a97f92ff2ba12ae5e1d163c3"
+    },
+    {
+      "bytes": 686,
+      "path": "supplemental/01-source-before.receipt.json",
+      "sha256": "1d702221eced8f2aa30710e43b9f335372eb0b32552f7ba9b4ad5d1031089109"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/01-source-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "path": "supplemental/01-source-before.stdout.log",
+      "sha256": "d676544a479331025cae9e6055d55629514489b223db3a4cc5125aa059468c1b"
+    },
+    {
+      "bytes": 683,
+      "path": "supplemental/99-source-after.receipt.json",
+      "sha256": "c6ab39476cc34716e648a86304040906ca4f4490d2e9b4b5b8f06961913e4e93"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/99-source-after.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "path": "supplemental/99-source-after.stdout.log",
+      "sha256": "d676544a479331025cae9e6055d55629514489b223db3a4cc5125aa059468c1b"
+    },
+    {
+      "bytes": 677,
+      "path": "supplemental/adversarial.receipt.json",
+      "sha256": "2f620a74ef1b07179043943d35b153b4549194f04a467da18fdf93930c77925e"
+    },
+    {
+      "bytes": 2243,
+      "path": "supplemental/adversarial.stderr.log",
+      "sha256": "e2f57ed308d6e6ddb455fe4e87df6edc604a88168061e7a4030519952bf2f6aa"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/adversarial.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 690,
+      "path": "supplemental/candidate-clock.receipt.json",
+      "sha256": "06f3c6ea3529713f03ed58c721ade594db5d2fc87aab3ac679dbc337903df338"
+    },
+    {
+      "bytes": 1220,
+      "path": "supplemental/candidate-clock.stderr.log",
+      "sha256": "7831ffcbbd4d0ecccafedc82dabcba592054b14bec9ae249f84e7349eef221c5"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/candidate-clock.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 654,
+      "path": "supplemental/ci-contract.receipt.json",
+      "sha256": "745ad42893edc5eeed7945e1d7f7e8d3b00466697e6964f5ed11ab7fb37d03e5"
+    },
+    {
+      "bytes": 32290,
+      "path": "supplemental/ci-contract.stderr.log",
+      "sha256": "3db568c6fa42e565846ff2161a6b942ad61ad866a41e2110d8900eae001d9de8"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/ci-contract.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 576,
+      "path": "supplemental/ci-inspector.receipt.json",
+      "sha256": "16122c5dbc64d7dc0636381495b1e43b37a57f03b57f13bee4a072a43e713793"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/ci-inspector.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 431,
+      "path": "supplemental/ci-inspector.stdout.log",
+      "sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb"
+    },
+    {
+      "bytes": 655,
+      "path": "supplemental/clock.receipt.json",
+      "sha256": "2352b522e8164ef070ce870a6861fbd513ebb45d357eb7965232d73146e9345a"
+    },
+    {
+      "bytes": 2947,
+      "path": "supplemental/clock.stderr.log",
+      "sha256": "30d7ce1a578d416a3b13fc497ba3f7ffcc16aa708fb68b9c47b71dab8406b200"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/clock.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 676,
+      "path": "supplemental/corpus-controls.receipt.json",
+      "sha256": "61dee1f3580e37bc9664525a6f62108a96c2124b04797f6a2e055604eb6f9556"
+    },
+    {
+      "bytes": 9605,
+      "path": "supplemental/corpus-controls.stderr.log",
+      "sha256": "eaf51a692558fa1c7b1749966a9e0cafcffb2686fdd1707b7f1ecad10d4e478b"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/corpus-controls.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 570,
+      "path": "supplemental/corpus.receipt.json",
+      "sha256": "18c4e1f42a9c60a0cbf262fced98004bbe3eb6c1d2e8dd754df1a63a1e3411db"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/corpus.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 558,
+      "path": "supplemental/corpus.stdout.log",
+      "sha256": "bc58940a20930807bfbe747c7bdf3fb95858b8a002609c6c47856acef997c145"
+    },
+    {
+      "bytes": 645,
+      "path": "supplemental/daa.receipt.json",
+      "sha256": "8997af0787365db80c46c0677de2e5a311a5d1f6d1b97ef68eef2c8b9ec6171c"
+    },
+    {
+      "bytes": 3308,
+      "path": "supplemental/daa.stderr.log",
+      "sha256": "ada2b05a91edba0cba68bdb95117f6c8a72150423452810fa1be0ba7813c7c7e"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/daa.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 596,
+      "path": "supplemental/inventory.receipt.json",
+      "sha256": "d30797e03051d835c7fb560361b5cf38b2504f0d5b497ae340e949ee490458ac"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/inventory.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 35,
+      "path": "supplemental/inventory.stdout.log",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "bytes": 667,
+      "path": "supplemental/native-reader.receipt.json",
+      "sha256": "bd236b54ea5a736a45a5e10782d8c3a5fcad363e9d598367afa75fdc980b5d81"
+    },
+    {
+      "bytes": 17984,
+      "path": "supplemental/native-reader.stderr.log",
+      "sha256": "da2128846987812867723caf54be67e2e598b54cbd23c5c68aa65e564d5d034e"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/native-reader.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 658,
+      "path": "supplemental/network.receipt.json",
+      "sha256": "ba24a09e7e8d5aced222ad12ed9fdd7344b1efaf92799d4e14d7d9f5f50e7517"
+    },
+    {
+      "bytes": 6731,
+      "path": "supplemental/network.stderr.log",
+      "sha256": "8b278f77462b89a806aea1dbdd776a013231f385a3f9a40de3af13ce89ade881"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/network.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 560,
+      "path": "supplemental/patch-whitespace.receipt.json",
+      "sha256": "33f715f0e697e0482afdd609aa165b9d1e09728c4fb1f646ccea81ee7d240223"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/patch-whitespace.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/patch-whitespace.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 646,
+      "path": "supplemental/pq-daa.receipt.json",
+      "sha256": "00c8b6efd4cfceefa7b9bfd7e9b55c2b15c5d52d0871a5743e32e7a215d3f9be"
+    },
+    {
+      "bytes": 1096,
+      "path": "supplemental/pq-daa.stderr.log",
+      "sha256": "877c94c5a335287c010c68f2b00368ec9cf31e8291efe40d67bfa127704e18f3"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/pq-daa.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 571,
+      "path": "supplemental/repository.receipt.json",
+      "sha256": "db36f9c49c537e51caca898b33f29433b5b9dc2818a63b73992af7f9ab6dcafc"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/repository.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 307,
+      "path": "supplemental/repository.stdout.log",
+      "sha256": "d1a4b0b2366d707fb7303865a67185aba8e614d1f700a9251c8fe352144d6102"
+    },
+    {
+      "bytes": 668,
+      "path": "supplemental/resources.receipt.json",
+      "sha256": "28e97bef5e132c277b86b1b9ae441a7c4ace2957afebc6abbbb14e541c78d216"
+    },
+    {
+      "bytes": 4273,
+      "path": "supplemental/resources.stderr.log",
+      "sha256": "c5fb95eb17c7193d176172107f0f0bf2726161f8669da9533f3f0e01eb8180bd"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/resources.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 702,
+      "path": "supplemental/reversible-components.receipt.json",
+      "sha256": "558111218159d9e6165358c613f909e2785c04575dd2588fb9f37a7c17596c1d"
+    },
+    {
+      "bytes": 2841,
+      "path": "supplemental/reversible-components.stderr.log",
+      "sha256": "e3d7529b86b68888594a0bd744bc41f9c37041a6f57e14ffdc2693d76dd84e28"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/reversible-components.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 676,
+      "path": "supplemental/source-integrity.receipt.json",
+      "sha256": "6c5c65b54d791370f93ca4495f9b82365a660e6d50a3c3b952332ce04a9320a9"
+    },
+    {
+      "bytes": 7103,
+      "path": "supplemental/source-integrity.stderr.log",
+      "sha256": "1fcdc255c68b055b12d6e8ffe2656053590fa9c83516383bff9221bd6c15a1b0"
+    },
+    {
+      "bytes": 484,
+      "path": "supplemental/source-integrity.stdout.log",
+      "sha256": "3e67aa174531f0672747fdd32fec704f2557d636abe9c4dac31a706343700513"
+    },
+    {
+      "bytes": 18033,
+      "path": "supplemental/summary.json",
+      "sha256": "7081cb9228b6af5a24d609071944bc2e4fd023fc76421727f0783fb16fa0650b"
+    },
+    {
+      "bytes": 664,
+      "path": "supplemental/w1-oracle.receipt.json",
+      "sha256": "7572ff789bf2aad421f278a6d6a098f4306f19c9d4e56d968a7a985cc7904d51"
+    },
+    {
+      "bytes": 3115,
+      "path": "supplemental/w1-oracle.stderr.log",
+      "sha256": "06e4daeb8c3b7511764733470bd1c326a170c357d3524196cb56f6c781ff48d2"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/w1-oracle.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 686,
+      "path": "supplemental/w1-restricted.receipt.json",
+      "sha256": "f0bef9a6639f80c7cadbf3494b0eaaec0942dab7344628742bee70a8812f64b3"
+    },
+    {
+      "bytes": 2384,
+      "path": "supplemental/w1-restricted.stderr.log",
+      "sha256": "3dded84b747f9f214fad84c4bc3ddac1f16dfd7d95ff13ed4c178d1e7c160996"
+    },
+    {
+      "bytes": 0,
+      "path": "supplemental/w1-restricted.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2141,
+      "path": "transport/bundle-create-6e39f27357ce.json",
+      "sha256": "8e74930e0ae57a73f841d14cc671194cbf4b91fa62551079faec5fd04b0b68bf"
+    },
+    {
+      "bytes": 551,
+      "path": "transport/desktop-after-cloud-light-recheck.json",
+      "sha256": "fa091fcf381977c3813352f0cd5ae3821fb668234856ad8f21f800c167347db4"
+    },
+    {
+      "bytes": 558,
+      "path": "transport/desktop-final-channel-recheck.json",
+      "sha256": "7c8b9fca6c9aea7e73915742a07d84521ea50f8d824e1b18cbeae127880d2a3a"
+    },
+    {
+      "bytes": 1346,
+      "path": "transport/desktop-validation-recovery-6e39f27357ce.json",
+      "sha256": "4e8271b35fc1740567dfb4fed7dde097d0c0aefb9d540e39497d06cdadca4c7f"
+    },
+    {
+      "bytes": 549,
+      "path": "transport/desktop-validation-root-recovery.json",
+      "sha256": "d26f1bcbe5ddf7b7fcb4d65a40ad2abf5fbcb7c8f948973c86feeac94d7c69fa"
+    },
+    {
+      "bytes": 2772,
+      "path": "transport/desktop-validation-transport-6e39f27357ce.json",
+      "sha256": "8ea96faf5c4822b242422ecb47f5b571b6e7ffb2836eb502f8dde455805a1458"
+    },
+    {
+      "bytes": 150042,
+      "path": "transport/source-6e39f27357ce.bundle",
+      "sha256": "961b7e0f160218613fe37b95f12d686b9a6dcceade2492904d00e8ca68fdf73a"
+    },
+    {
+      "bytes": 22050,
+      "path": "transport/validate_on_desktop.py",
+      "sha256": "3e36463fd96a7af1a5b0746cbb2b758a8bb19d158b1480c82fc1646630dc7ae5"
+    },
+    {
+      "bytes": 186528,
+      "path": "upstream/baseline-job-129995452145.log",
+      "sha256": "55b124ac25ba8b29297cd89abedf43e63ed8096a69c4923a1fa4995fb63c231b"
+    },
+    {
+      "bytes": 1821,
+      "path": "upstream/observations.json",
+      "sha256": "366af6f6318c813f7269fa5e688bf7f1230325122af5180166aa012a9dfc3aa2"
+    }
+  ],
+  "schema": "trnm-w1-execution-record-members-v1"
+}

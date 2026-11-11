@@ -1,57 +1,98 @@
 # W1 construction scope and native-packet differential
 
-**Quantum mining security and production qualification remain HOLD / NO-GO.**
+**The fixed-context W1 reversible oracle exists. Quantum mining security and production qualification remain HOLD / NO-GO.**
 
-This continuation adds a separately versioned construction/accounting scope
-reader and a read-only bridge between an original native PGH2/PNP2 packet,
-the complete scalar W1 relation and the reversible macro program. The
-[scope contract](../../docs/research/W1_ORACLE_EVIDENCE_SCOPE_V1.md) explains
-the acceptance boundaries. Original V1 accounting and simulator bytes remain
-unchanged; their local `full_W1_oracle_constructed=false` is not a statement
-that the repository lacks the retained fixed-context construction.
+The source change separates construction, software execution, submitted-proof validity and native admission. It adds a versioned scope reader and a read-only packet bridge, wires both control suites into the required repository-truth sequence, and preserves historical V1 source/report identities. See the [scope contract](../../docs/research/W1_ORACLE_EVIDENCE_SCOPE_V1.md).
 
-## Original native input cohort
+## Exact source and delivery state
 
-The frozen [artifact provenance](native-artifact.json) binds the original
-[ZIP](native-fullpath-e4abb172.zip), fetched through GitHub and independently
-hashed before use. It is not regenerated or relabelled as a later native run.
-
-| Identity | Original value |
+| Identity | Value |
 | --- | --- |
-| Source | `e4abb172147e941b62483652b0ceabaae4317624` |
-| Tree | `016ebf3deeac88d6d7a782edf563f2291ebe17f5` |
-| GitHub Actions | [Run 42830743579](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42830743579), job `129927393431` |
-| Artifact | `13785762485`, 129,999 bytes |
-| ZIP SHA-256 | `d9ce3ead97f87759707829220525f50420126fa0347cbd64ec46aeb69bbd57c9` |
-| Original preregistration SHA-256 | `9ba442904cc481e8371ff90bef97908dd1f0dcf59ce442375b18d0fd8a10f443` |
-| Native binary SHA-256 | `fe18172189e555693c701d0d6b686c519e2a4c5d7a55ecdf999cb7c4e77db7b7` |
+| Tested implementation commit | `6e39f27357ce7c030f5662ada3d524fecb58d63e` |
+| Tested tree | `f36683afd74fa9811bddf21787ab2386900ea70b` |
+| Original native input commit | `e4abb172147e941b62483652b0ceabaae4317624` |
+| Original native input tree | `016ebf3deeac88d6d7a782edf563f2291ebe17f5` |
+| Local task branch | `fix/chain-w1-oracle-evidence-20261110-0776` |
+| Intended draft base | `fix/chain-pon-native-boundaries-20261110-02769a` (#876) |
 
-The original source-before/source-after guards agree. Nine native processes
-produce four scheduled observations: valid accepted, exact duplicate, corrupt
-product rejected as `WORK:Product`, and cancellation before `VerifiedWork`.
-Only one newly admitted local block is recorded, at depth zero, with zero timely
-accepted progress under the original service contract. That component's
-successful workflow explicitly retains `overall_gate=security_gate=HOLD`.
+This evidence-only continuation records executions of the implementation commit; it does not rename those executions as tests of the later evidence commit. Complete source guards bracket both Python groups and the Rust metadata/format group, and agree on unchanged source. Each guard covers 27,892 tracked entries and 2,553,814,149 bytes; the identity checker itself explicitly reports `tests_executed_by_identity_check=false`.
 
-The new bridge must independently reparse the full packet, replay the scalar
-W1 relation, compare the same input with the native-sized macro oracle and
-verify clean uncomputation. Its late-product control must preserve the winning
-nonce while rejecting the submitted product. It never executes quantum
-hardware or a new native binary and never grants a global admission result.
+**Strict Clippy and publication remain incomplete.** The prepared desktop runner upload was acknowledged. The source bundle upload timed out, and subsequent read-only PTY, health and file-metadata reconciliation returned `Internal error`. The remote bundle remains **Unknown**. A separate cloud fallback installed and hash-checked the official fixed Rust 1.95.0 components, then actually passed default/all-features/fuzz locked offline Cargo metadata and workspace formatting on this commit. Three initial offline missing-cache failures, the locked dependency retrievals and the successful offline rechecks are all retained. Metadata and formatting do not supply a Clippy result. No push, new PR or hosted CI pass is claimed. The required local ProfHepta GitHub route was preserved. Transport failures, cloud command records and exact recovery inputs are included in the [execution records](execution-records.tar.gz).
 
-## Retained upstream CI failure
+## Construction already retained
 
-At original source `e4abb172`, the
-[repository-truth job](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42830743518/job/129995452145)
-failed in `test_pq_lifetime_budget.py`: 58 methods ran, one errored on
-`source lock hash mismatch: trillionnium/crates/trnm-pon-node/src/consensus.rs`.
-The quantum suites occur later in that lane and were not executed there.
-This is an original source-identity refusal, not an observed oracle failure.
-The separately successful native-fullpath component does not erase it.
+The [original construction record](../pon-quantum-construction-20261104/README.md) retains 17 construction controls and five cases: three native-sized macro executions and two reduced-shape leaf-gate executions. The nonce, bounded noise branches, ordered transcript, ticket/target, phase and inverse are included. Those original records retain their original source and execution modes.
 
-## Validation record
+The new scope reader rebuilds the selected program and census. It distinguishes the complete fixed-context predicate, a legal restricted subset, reduced controls and caller-only budgets. A caller-supplied `constructed-w1/` label cannot certify a circuit. The [seven preserved V1 sources](source-change-review.json) are byte-identical to the base. In the V1 accounting/model outputs, the local `full_W1_oracle_constructed=false` describes those invocations, not a repository-wide absence of a construction.
 
-The source commit introduces the readers, their negative controls, original
-artifact and CI wiring. Exact committed-source execution and review results
-are recorded by a subsequent evidence-only update. Until those receipts are
-present, this file makes no new committed-source test or hosted-CI pass claim.
+Three saved scope reports passed CLI reconstruction: [full PGH2](reports/full-native-scope.json), [restricted PGH2](reports/restricted-native-scope.json), and [generic accounting](reports/generic-accounting-scope.json). Their [request](reports/illustrative-resource-request.json) uses synthetic accounting premises and no physical model. These reports reconstruct schedules; their own execution flags remain false.
+
+| PGH2 logical construction | Logical qubits | Compute-Z-uncompute gates | Serial depth upper bound |
+| --- | ---: | ---: | ---: |
+| Full fixed-context | 22,253,429 | 17,718,795,839 | 1,969,864,925 |
+| Legal restricted subset | 22,030,197 | 15,992,948,079 | 1,102,062,749 |
+
+These are constructive upper bounds for particular logical circuits, not physical costs or lower bounds on the cheapest legal attacker. The restricted oracle can discard full-predicate winners; fewer gates do not establish a cheaper campaign at matched success probability. Marked probability, preprocessing, reuse, all attempts, scheduling and fault-tolerant implementation still need separate evidence. The PNH1 census in the research note has different framing and must not be substituted for this PGH2 table.
+
+## Original native input and new differential
+
+The [artifact provenance](native-artifact.json) binds the original [ZIP](native-fullpath-e4abb172.zip), GitHub Actions [run 42830743579](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42830743579), job `129927393431`, artifact `13785762485`. The 129,999-byte ZIP has SHA-256 `d9ce3ead97f87759707829220525f50420126fa0347cbd64ec46aeb69bbd57c9`. Its original preregistration is `9ba442904cc481e8371ff90bef97908dd1f0dcf59ce442375b18d0fd8a10f443`; its native binary is `fe18172189e555693c701d0d6b686c519e2a4c5d7a55ecdf999cb7c4e77db7b7`.
+
+The original source guards agree. Nine native processes supply four scheduled observations: valid accepted, exact duplicate, corrupt product rejected as `WORK:Product`, and cancellation before `VerifiedWork`. They record one new local block, depth zero and zero timely accepted progress under the original service contract. The original successful component workflow retains `overall_gate=security_gate=HOLD` and `performance_gate=COMPONENT_OBSERVATION_ONLY`.
+
+The [new bridge report](reports/bridge-result.json) reparses both PNP2 packets, replays the complete scalar W1 relation and compares the valid PGH2 input with one native-sized reversible **macro interpreter** execution. It agrees on challenge, transcript, ticket, winner and phase `-1`, preserves nonce zero, and observes inverse execution and clean ancillas. The report records **5,543,958 macro calls**, not leaf-gate or quantum-hardware execution.
+
+The late-product control changes C[4095] from 949175 to 949176. The header, A/B matrices, nonce and transcript remain identical, so the same oracle observation still marks the nonce as a winner. The complete submitted-proof replay rejects `PRODUCT`; the original native process rejects `WORK:Product`. The late-product comparison reuses the same fixed-template/nonce observation; it is not counted as a second oracle execution. **A winning nonce does not authorize a corrupt submitted proof.**
+
+The bridge CLI then independently rebuilds the complete saved report from the same externally pinned archive. [Original](reports/bridge-result.json) and [replayed](reports/bridge-rebuilt.json) reports are byte-identical: 30,141 bytes, SHA-256 `24cb1149f8dc19f8da6e73de4a2761b5da7bd0e95db59c1b88f55abdc0618046`. These two CLI invocations are separate software replays of the same case, not additional native observations or independent quantum security evidence. No new native node process ran in this continuation. The original reader's `native_relation_replayed_by_reader=false` is retained; this continuation's scalar replay is recorded separately.
+
+## Executed checks
+
+All **599 selected top-level unittest methods** in the 16 named suites passed, with zero skips. The two new suites contribute 37; the existing suites contribute 562, including one newly added CI omission-control method. By method origin, that is 38 added methods and 561 pre-existing methods. Nested subprocess controls, historical construction cases and native wrong-context cases are not added to this count. This is the stated selected Python scope, not the complete repository or Rust suite.
+
+| Suite | Outer methods | Result |
+| --- | ---: | --- |
+| native-bridge | 25 | PASS |
+| evidence-scope | 12 | PASS |
+| reversible-components | 17 | PASS |
+| w1-oracle | 17 | PASS |
+| w1-restricted | 12 | PASS |
+| resources | 25 | PASS |
+| clock | 18 | PASS |
+| candidate-clock | 6 | PASS |
+| adversarial | 12 | PASS |
+| network | 39 | PASS |
+| daa | 19 | PASS |
+| pq-daa | 6 | PASS |
+| native-reader | 109 | PASS |
+| ci-contract | 180 | PASS |
+| source-integrity | 43 | PASS |
+| corpus-controls | 59 | PASS |
+
+The actual repository/link checker, corpus inspector, CI-contract inspector and source inventory also passed on the implementation commit. A separate `git diff --check e4abb172... 6e39f273...` checks the actual committed 13-file patch; its receipt is retained in `final-source-review/`. The supplemental worktree-only whitespace check ran on a clean checkout and is not used as a substitute for that committed-range check. Static inspector success is not test execution or security qualification. The corpus retains 1,086 pinned blobs and 994 required paths. The CI omission controls reject missing, duplicate, reordered, backgrounded and failure-suppressed new commands. Archive controls include NUL-truncated ZIP names, traversal, symlinks, duplicate paths, file/parent conflicts, substituted source and altered packets. Recomputed report hashes cannot upgrade unsupported qualification flags.
+
+The separate Rust metadata/format group used an external toolchain prefix, Cargo home and target directory, one build job and disabled incremental compilation. Its nine metadata command observations remain distinct: each profile's first offline command failed with exit 101, its locked retrieval succeeded, and its final locked offline command succeeded. Formatting passed with `--all -- --check`. The full source guard took 867.49 seconds before that group and 63.47 seconds after it; both actually exited zero and matched. No timeout occurred in those guards. Full command streams, toolchain archive and executable hashes, and lockfile identities are under `cloud-rust/` in the execution archive. No native node build/run or fuzz execution is claimed by metadata.
+
+## Bounded provider attempt and unexecuted Clippy
+
+A subsequent actual attempt retained the required `cargo clippy --locked --offline --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings` scope. The fixed OpenSSL 3.5.9 prerequisite entered GCC compilation under the original maintained preparation script. The process supervisor imposed a 2 GiB per-process address limit and watched the owned group's RSS and shared resource low watermarks. This executor exposes no delegated cgroup; the RSS watchdog is not a hard kernel group-memory limit or an adversarial process jail. Small capability probes, including the initially overconservative exit-drain observation and corrected recheck, are retained separately from repository tests.
+
+After **246.81 seconds**, shared free disk was observed at **2,147,143,680 bytes**, below the declared **2,147,483,648-byte (2 GiB)** floor. The supervisor sent SIGKILL only to its owned build group. The provider exited **-9**, with `stop_reason=shared_disk_free_low_watermark`; no live group members remained. This is a controlled disk-budget interruption, not an observed OOM or a source compilation error. The provider's success receipt was not produced because the killed shell could not complete its exit handler. The supervisor receipt, original build log and resource samples are preserved in `bounded-clippy/`.
+
+**Strict Clippy was not started**, because provider preparation did not complete. Its flags were not relaxed and no pass is inferred from metadata, formatting or compiler startup. The final full source guard passed in 14.65 seconds and matched the previously completed same-source anchor; the earlier anchor retains its original execution time rather than being relabelled as a new guard. A read-only capacity review found that reclaiming all measured task-owned regenerable caches would still not meet the original 4 GiB start requirement. Other task files were not removed. The remaining native build/Clippy gate needs an environment with sufficient resources; the prepared desktop route remains blocked by the recorded HeptaRuntime errors.
+
+## Preserved failures and remaining gates
+
+At original source `e4abb172`, the [repository-truth job](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42830743518/job/129995452145) ran 58 methods in `test_pq_lifetime_budget.py` with one error: `source lock hash mismatch: trillionnium/crates/trnm-pon-node/src/consensus.rs`. The quantum suites occur later in that lane and were not executed there. Its original log is retained in the execution archive. This source-identity refusal remains unresolved in this branch; no historical pin was weakened to hide it. A successful native component or local Python subset does not erase that failure.
+
+Preparation observations are also retained, including the initially rejected scope label, corrected missing plan pin, ZIP-name review finding, unsuccessful unnamed-head bundle attempt and remote transfer failure. Session observations without copied raw logs are explicitly labelled, and are not counted as final-source tests.
+
+The following remain unqualified: quantum hardware execution, physical cost calibration, attacker optimality, quantum work lower bounds, whole-campaign quantum mining security, and full current native/public-network admission and recovery. Test totals and large circuit counts do not close those obligations. All production and security qualification flags remain false or HOLD.
+
+## Review and reproduce
+
+The [summary](summary.json), [execution archive](execution-records.tar.gz), [archive member manifest](execution-records-manifest.json) and [file manifest](member-manifest.json) retain command arguments, original outputs, exit codes, times, input/source hashes and transport state. Extract the archive outside a clean checkout; its command paths identify the original execution workspace.
+
+At the recorded source, the two new suites can be run with Python unittest discovery under `formal/pon-nakamoto-v1`, using `test_w1_quantum_evidence_scope.py` and `test_w1_quantum_native_bridge.py`. Replay a scope with `w1_quantum_evidence_scope.py --verify REPORT`. Replay the bridge with `w1_quantum_native_bridge.py --verify REPORT`, the retained ZIP, and all five independently supplied pins from `native-artifact.json`; the exact argv is in `bridge-cli/verify.receipt.json` inside the archive. Historical report verification on a later evidence-only commit also validates the original commit/tree/blob identities before accepting unchanged reader inputs.
+
+For desktop recovery, inspect the existing remote bundle's complete size and SHA before consuming it. The archive contains the 150,042-byte incremental `transport/source-6e39f27357ce.bundle`, SHA-256 `961b7e0f160218613fe37b95f12d686b9a6dcceade2492904d00e8ca68fdf73a`; it requires original base `e4abb172` in the receiving Git repository. The retained runner fixes source and toolchain, checks ProfHepta, uses an isolated worktree and target, and performs locked metadata, formatting and strict Clippy with source guards. Do not repeat an uncertain upload or infer success from a previous host-health response.
