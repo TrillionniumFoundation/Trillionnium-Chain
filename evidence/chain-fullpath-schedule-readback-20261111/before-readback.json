@@ -1,0 +1,516 @@
+{
+  "artifact_coverage": "retained-subset",
+  "artifact_manifest_sha256": "d109aff9ea3dc147ce6703f360849f398e1965c07e58c20f4593bcb54f167325",
+  "measured_head": "53e1b98a7955898b9feff4778f7136c0fd0199c8",
+  "measured_tree": "094ccb0afc9e7ffbbcc83f85efb6ca4ad8d54aa0",
+  "original_campaign_complete_success": false,
+  "original_campaign_failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+  "original_finalization_failures": [],
+  "outer_resource_limits": [
+    [
+      "/sys/fs/cgroup/system.slice/trnm-native-campaign-43104547221-1.service",
+      "400000 100000",
+      "17179869184"
+    ],
+    [
+      "/sys/fs/cgroup/system.slice",
+      "max 100000",
+      "max"
+    ],
+    [
+      "/sys/fs/cgroup",
+      null,
+      null
+    ]
+  ],
+  "planned_attempts": 3,
+  "qualification": "HOLD_NO_GO",
+  "retained_binary_bytes_verified": true,
+  "runs": [
+    {
+      "acquisition_and_failed_attempt_costs_retained_in_original": true,
+      "actual_complete_attempt_wall_ns": 113389175838,
+      "complete_lifecycle_cost_ns": null,
+      "cross_phase_goodput_sum": null,
+      "cross_phase_scope": "reset phases replay the same business; they are separate comparisons",
+      "economics_complete": true,
+      "finite_experiment_criteria_met": false,
+      "honest_preparation_cpu_ns": 2401026394,
+      "honest_preparation_wall_ns": 2433583614,
+      "number": 1,
+      "original_attempt_complete_success": false,
+      "original_process_error": null,
+      "original_process_returncode": 101,
+      "original_report_validation_failure": null,
+      "phases": [
+        {
+          "actual_parent_phase_wall_ns": 34497972115,
+          "complete_declared_round_observations": false,
+          "counts": {
+            "repeated_transaction_observations": 0,
+            "unknown": 1,
+            "validated": 1
+          },
+          "finite_phase_criteria_met": false,
+          "fixed_pressure_window_ns": 30000000000,
+          "historical_successful_imports_without_work_observation": 0,
+          "mode": "baseline",
+          "observed_rounds": 2,
+          "observed_validated_business_per_actual_second": {
+            "denominator": 6899594423,
+            "numerator": 200000000
+          },
+          "original_claimed_confirmation_rounds": 1,
+          "original_history_calls_retained": 7,
+          "original_submissions_retained": 14,
+          "outcomes": [
+            {
+              "ended_ns": 28005193220,
+              "repeated_transaction": false,
+              "round": 0,
+              "started_ns": 1000727695,
+              "state": "validated",
+              "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+            },
+            {
+              "ended_ns": 30001812979,
+              "repeated_transaction": false,
+              "round": 1,
+              "started_ns": 28005243084,
+              "state": "unknown",
+              "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+            }
+          ],
+          "planned_rounds": 3,
+          "stale_work_cost_ns": null,
+          "stale_work_scope": "reorged confirmations are counted; complete abandoned producer work is not observed",
+          "successful_round_latency_p50_nearest_rank_ns": 27004465525,
+          "successful_round_latency_p95_ns": null,
+          "successful_round_latency_p99_ns": null,
+          "successful_round_latency_samples": 1,
+          "unique_validated_business_observed": 1,
+          "unique_validated_transaction_ids": [
+            "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+          ],
+          "unobserved_rounds": 1,
+          "validated_goodput_per_second": null,
+          "whole_parent_phase_cpu_ns": 8336041036
+        },
+        {
+          "actual_parent_phase_wall_ns": 35587355709,
+          "complete_declared_round_observations": false,
+          "counts": {
+            "repeated_transaction_observations": 0,
+            "unknown": 1
+          },
+          "finite_phase_criteria_met": false,
+          "fixed_pressure_window_ns": 30000000000,
+          "historical_successful_imports_without_work_observation": 0,
+          "mode": "from-zero",
+          "observed_rounds": 1,
+          "observed_validated_business_per_actual_second": {
+            "denominator": 1,
+            "numerator": 0
+          },
+          "original_claimed_confirmation_rounds": 0,
+          "original_history_calls_retained": 5,
+          "original_submissions_retained": 7,
+          "outcomes": [
+            {
+              "ended_ns": 30002747736,
+              "repeated_transaction": false,
+              "round": 0,
+              "started_ns": 1000571889,
+              "state": "unknown",
+              "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+            }
+          ],
+          "planned_rounds": 3,
+          "stale_work_cost_ns": null,
+          "stale_work_scope": "reorged confirmations are counted; complete abandoned producer work is not observed",
+          "successful_round_latency_p50_nearest_rank_ns": null,
+          "successful_round_latency_p95_ns": null,
+          "successful_round_latency_p99_ns": null,
+          "successful_round_latency_samples": 0,
+          "unique_validated_business_observed": 0,
+          "unique_validated_transaction_ids": [],
+          "unobserved_rounds": 2,
+          "validated_goodput_per_second": null,
+          "whole_parent_phase_cpu_ns": 8844828811
+        },
+        {
+          "actual_parent_phase_wall_ns": 35583680336,
+          "complete_declared_round_observations": false,
+          "counts": {
+            "repeated_transaction_observations": 0,
+            "unknown": 1
+          },
+          "finite_phase_criteria_met": false,
+          "fixed_pressure_window_ns": 30000000000,
+          "historical_successful_imports_without_work_observation": 0,
+          "mode": "late-product",
+          "observed_rounds": 1,
+          "observed_validated_business_per_actual_second": {
+            "denominator": 1,
+            "numerator": 0
+          },
+          "original_claimed_confirmation_rounds": 0,
+          "original_history_calls_retained": 4,
+          "original_submissions_retained": 7,
+          "outcomes": [
+            {
+              "ended_ns": 30085389402,
+              "repeated_transaction": false,
+              "round": 0,
+              "started_ns": 1001973121,
+              "state": "unknown",
+              "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+            }
+          ],
+          "planned_rounds": 3,
+          "stale_work_cost_ns": null,
+          "stale_work_scope": "reorged confirmations are counted; complete abandoned producer work is not observed",
+          "successful_round_latency_p50_nearest_rank_ns": null,
+          "successful_round_latency_p95_ns": null,
+          "successful_round_latency_p99_ns": null,
+          "successful_round_latency_samples": 0,
+          "unique_validated_business_observed": 0,
+          "unique_validated_transaction_ids": [],
+          "unobserved_rounds": 2,
+          "validated_goodput_per_second": null,
+          "whole_parent_phase_cpu_ns": 8854458116
+        }
+      ],
+      "report_sha256": "914ae3aa324d1424cbd4753d7cdd9629ea6a6f4e93c64266149d39e5e34caa0b"
+    },
+    {
+      "acquisition_and_failed_attempt_costs_retained_in_original": true,
+      "actual_complete_attempt_wall_ns": 113437446181,
+      "complete_lifecycle_cost_ns": null,
+      "cross_phase_goodput_sum": null,
+      "cross_phase_scope": "reset phases replay the same business; they are separate comparisons",
+      "economics_complete": true,
+      "finite_experiment_criteria_met": false,
+      "honest_preparation_cpu_ns": 2392606809,
+      "honest_preparation_wall_ns": 2416756905,
+      "number": 2,
+      "original_attempt_complete_success": false,
+      "original_process_error": null,
+      "original_process_returncode": 101,
+      "original_report_validation_failure": null,
+      "phases": [
+        {
+          "actual_parent_phase_wall_ns": 34602517025,
+          "complete_declared_round_observations": false,
+          "counts": {
+            "repeated_transaction_observations": 0,
+            "unknown": 1,
+            "validated": 1
+          },
+          "finite_phase_criteria_met": false,
+          "fixed_pressure_window_ns": 30000000000,
+          "historical_successful_imports_without_work_observation": 0,
+          "mode": "baseline",
+          "observed_rounds": 2,
+          "observed_validated_business_per_actual_second": {
+            "denominator": 1384100681,
+            "numerator": 40000000
+          },
+          "original_claimed_confirmation_rounds": 1,
+          "original_history_calls_retained": 7,
+          "original_submissions_retained": 14,
+          "outcomes": [
+            {
+              "ended_ns": 27900482073,
+              "repeated_transaction": false,
+              "round": 0,
+              "started_ns": 1001738545,
+              "state": "validated",
+              "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+            },
+            {
+              "ended_ns": 30008777814,
+              "repeated_transaction": false,
+              "round": 1,
+              "started_ns": 27900569426,
+              "state": "unknown",
+              "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+            }
+          ],
+          "planned_rounds": 3,
+          "stale_work_cost_ns": null,
+          "stale_work_scope": "reorged confirmations are counted; complete abandoned producer work is not observed",
+          "successful_round_latency_p50_nearest_rank_ns": 26898743528,
+          "successful_round_latency_p95_ns": null,
+          "successful_round_latency_p99_ns": null,
+          "successful_round_latency_samples": 1,
+          "unique_validated_business_observed": 1,
+          "unique_validated_transaction_ids": [
+            "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+          ],
+          "unobserved_rounds": 1,
+          "validated_goodput_per_second": null,
+          "whole_parent_phase_cpu_ns": 8386181743
+        },
+        {
+          "actual_parent_phase_wall_ns": 35591453426,
+          "complete_declared_round_observations": false,
+          "counts": {
+            "repeated_transaction_observations": 0,
+            "unknown": 1
+          },
+          "finite_phase_criteria_met": false,
+          "fixed_pressure_window_ns": 30000000000,
+          "historical_successful_imports_without_work_observation": 0,
+          "mode": "from-zero",
+          "observed_rounds": 1,
+          "observed_validated_business_per_actual_second": {
+            "denominator": 1,
+            "numerator": 0
+          },
+          "original_claimed_confirmation_rounds": 0,
+          "original_history_calls_retained": 5,
+          "original_submissions_retained": 7,
+          "outcomes": [
+            {
+              "ended_ns": 30075493856,
+              "repeated_transaction": false,
+              "round": 0,
+              "started_ns": 1001481318,
+              "state": "unknown",
+              "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+            }
+          ],
+          "planned_rounds": 3,
+          "stale_work_cost_ns": null,
+          "stale_work_scope": "reorged confirmations are counted; complete abandoned producer work is not observed",
+          "successful_round_latency_p50_nearest_rank_ns": null,
+          "successful_round_latency_p95_ns": null,
+          "successful_round_latency_p99_ns": null,
+          "successful_round_latency_samples": 0,
+          "unique_validated_business_observed": 0,
+          "unique_validated_transaction_ids": [],
+          "unobserved_rounds": 2,
+          "validated_goodput_per_second": null,
+          "whole_parent_phase_cpu_ns": 8847529435
+        },
+        {
+          "actual_parent_phase_wall_ns": 35589532306,
+          "complete_declared_round_observations": false,
+          "counts": {
+            "repeated_transaction_observations": 0,
+            "unknown": 1
+          },
+          "finite_phase_criteria_met": false,
+          "fixed_pressure_window_ns": 30000000000,
+          "historical_successful_imports_without_work_observation": 0,
+          "mode": "late-product",
+          "observed_rounds": 1,
+          "observed_validated_business_per_actual_second": {
+            "denominator": 1,
+            "numerator": 0
+          },
+          "original_claimed_confirmation_rounds": 0,
+          "original_history_calls_retained": 4,
+          "original_submissions_retained": 7,
+          "outcomes": [
+            {
+              "ended_ns": 30079574687,
+              "repeated_transaction": false,
+              "round": 0,
+              "started_ns": 1000620006,
+              "state": "unknown",
+              "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+            }
+          ],
+          "planned_rounds": 3,
+          "stale_work_cost_ns": null,
+          "stale_work_scope": "reorged confirmations are counted; complete abandoned producer work is not observed",
+          "successful_round_latency_p50_nearest_rank_ns": null,
+          "successful_round_latency_p95_ns": null,
+          "successful_round_latency_p99_ns": null,
+          "successful_round_latency_samples": 0,
+          "unique_validated_business_observed": 0,
+          "unique_validated_transaction_ids": [],
+          "unobserved_rounds": 2,
+          "validated_goodput_per_second": null,
+          "whole_parent_phase_cpu_ns": 8856133171
+        }
+      ],
+      "report_sha256": "6dc67a5b9c1fc1e972071f9e83f9c03bddc6850871238d1cbc538eba67183e45"
+    },
+    {
+      "acquisition_and_failed_attempt_costs_retained_in_original": true,
+      "actual_complete_attempt_wall_ns": 113843164167,
+      "complete_lifecycle_cost_ns": null,
+      "cross_phase_goodput_sum": null,
+      "cross_phase_scope": "reset phases replay the same business; they are separate comparisons",
+      "economics_complete": true,
+      "finite_experiment_criteria_met": false,
+      "honest_preparation_cpu_ns": 2721170946,
+      "honest_preparation_wall_ns": 2756996311,
+      "number": 3,
+      "original_attempt_complete_success": false,
+      "original_process_error": null,
+      "original_process_returncode": 101,
+      "original_report_validation_failure": null,
+      "phases": [
+        {
+          "actual_parent_phase_wall_ns": 34688094048,
+          "complete_declared_round_observations": false,
+          "counts": {
+            "repeated_transaction_observations": 0,
+            "unknown": 1,
+            "validated": 1
+          },
+          "finite_phase_criteria_met": false,
+          "fixed_pressure_window_ns": 30000000000,
+          "historical_successful_imports_without_work_observation": 0,
+          "mode": "baseline",
+          "observed_rounds": 2,
+          "observed_validated_business_per_actual_second": {
+            "denominator": 1084002939,
+            "numerator": 31250000
+          },
+          "original_claimed_confirmation_rounds": 1,
+          "original_history_calls_retained": 7,
+          "original_submissions_retained": 13,
+          "outcomes": [
+            {
+              "ended_ns": 28208363602,
+              "repeated_transaction": false,
+              "round": 0,
+              "started_ns": 1001927470,
+              "state": "validated",
+              "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+            },
+            {
+              "ended_ns": 30006711140,
+              "repeated_transaction": false,
+              "round": 1,
+              "started_ns": 28208438732,
+              "state": "unknown",
+              "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+            }
+          ],
+          "planned_rounds": 3,
+          "stale_work_cost_ns": null,
+          "stale_work_scope": "reorged confirmations are counted; complete abandoned producer work is not observed",
+          "successful_round_latency_p50_nearest_rank_ns": 27206436132,
+          "successful_round_latency_p95_ns": null,
+          "successful_round_latency_p99_ns": null,
+          "successful_round_latency_samples": 1,
+          "unique_validated_business_observed": 1,
+          "unique_validated_transaction_ids": [
+            "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+          ],
+          "unobserved_rounds": 1,
+          "validated_goodput_per_second": null,
+          "whole_parent_phase_cpu_ns": 8391268129
+        },
+        {
+          "actual_parent_phase_wall_ns": 35682832094,
+          "complete_declared_round_observations": false,
+          "counts": {
+            "repeated_transaction_observations": 0,
+            "unknown": 1
+          },
+          "finite_phase_criteria_met": false,
+          "fixed_pressure_window_ns": 30000000000,
+          "historical_successful_imports_without_work_observation": 0,
+          "mode": "from-zero",
+          "observed_rounds": 1,
+          "observed_validated_business_per_actual_second": {
+            "denominator": 1,
+            "numerator": 0
+          },
+          "original_claimed_confirmation_rounds": 0,
+          "original_history_calls_retained": 4,
+          "original_submissions_retained": 7,
+          "outcomes": [
+            {
+              "ended_ns": 30004173976,
+              "repeated_transaction": false,
+              "round": 0,
+              "started_ns": 1000357942,
+              "state": "unknown",
+              "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+            }
+          ],
+          "planned_rounds": 3,
+          "stale_work_cost_ns": null,
+          "stale_work_scope": "reorged confirmations are counted; complete abandoned producer work is not observed",
+          "successful_round_latency_p50_nearest_rank_ns": null,
+          "successful_round_latency_p95_ns": null,
+          "successful_round_latency_p99_ns": null,
+          "successful_round_latency_samples": 0,
+          "unique_validated_business_observed": 0,
+          "unique_validated_transaction_ids": [],
+          "unobserved_rounds": 2,
+          "validated_goodput_per_second": null,
+          "whole_parent_phase_cpu_ns": 8853254635
+        },
+        {
+          "actual_parent_phase_wall_ns": 35513644648,
+          "complete_declared_round_observations": false,
+          "counts": {
+            "repeated_transaction_observations": 0,
+            "unknown": 1
+          },
+          "finite_phase_criteria_met": false,
+          "fixed_pressure_window_ns": 30000000000,
+          "historical_successful_imports_without_work_observation": 0,
+          "mode": "late-product",
+          "observed_rounds": 1,
+          "observed_validated_business_per_actual_second": {
+            "denominator": 1,
+            "numerator": 0
+          },
+          "original_claimed_confirmation_rounds": 0,
+          "original_history_calls_retained": 4,
+          "original_submissions_retained": 7,
+          "outcomes": [
+            {
+              "ended_ns": 30078371964,
+              "repeated_transaction": false,
+              "round": 0,
+              "started_ns": 1000748866,
+              "state": "unknown",
+              "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+            }
+          ],
+          "planned_rounds": 3,
+          "stale_work_cost_ns": null,
+          "stale_work_scope": "reorged confirmations are counted; complete abandoned producer work is not observed",
+          "successful_round_latency_p50_nearest_rank_ns": null,
+          "successful_round_latency_p95_ns": null,
+          "successful_round_latency_p99_ns": null,
+          "successful_round_latency_samples": 0,
+          "unique_validated_business_observed": 0,
+          "unique_validated_transaction_ids": [],
+          "unobserved_rounds": 2,
+          "validated_goodput_per_second": null,
+          "whole_parent_phase_cpu_ns": 8859466700
+        }
+      ],
+      "report_sha256": "c1d151a10d20e154e2407d1a371d7345359a20df2cffdb6efb09a24c309a64bc"
+    }
+  ],
+  "schema": "pon-unique-validated-business-observation-v1",
+  "scope": {
+    "application_savings_measured": false,
+    "host_or_execution_attestation": false,
+    "independent_operators_qualified": false,
+    "minimum_legal_work_cost_proved": false,
+    "missing_observation_is_zero": false,
+    "model_benefit_measured": false,
+    "native_finality_authenticated": false,
+    "native_observation_and_byte_identity_join_only": true,
+    "production_activation": false,
+    "public_throughput_qualified": false,
+    "reader_executes_w1_or_verifies_signatures": false,
+    "rounds_are_unique_business": false,
+    "source_receipt_internal_consistency_verified": true,
+    "whole_chain_pq_qualified": false
+  }
+}
