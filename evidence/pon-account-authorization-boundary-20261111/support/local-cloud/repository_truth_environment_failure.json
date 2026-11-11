@@ -1,0 +1,80 @@
+{
+  "schema": "repository-truth-environment-failure-analysis-v1",
+  "reviewer": "/root/pq_local_audit",
+  "reviewed_at_utc": "2026-11-11T01:31:42.915194+00:00",
+  "source_head": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "result": {
+    "id": "repository-truth",
+    "argv": [
+      "bash",
+      "scripts/ci/ci_job.sh",
+      "repository-truth"
+    ],
+    "returncode": 1,
+    "launch_error": null,
+    "elapsed_seconds": 1580.3394632210006,
+    "finished_utc": "2026-11-11T01:29:34.888054+00:00",
+    "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+    "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+    "source_status_after": "",
+    "stdout_sha256": "3e451e7a1b86eb9ae75cc17f384154f5ef625853244b64a680e3ab0fd3926aee",
+    "stderr_sha256": "5ffd95d773fc907588bd9b91b1be9526523e2bec381e198555fe41a8e2d142d6",
+    "pass": false,
+    "qualification_granted": false
+  },
+  "raw_record_directory": "/workspace/scratch/a4188f5c86b5/validation/90ee47159e32e9014410a1823bed05d84c17b858/repository-truth",
+  "failure": {
+    "command": "python3 scripts/ci/test_read_original_native_campaign.py --artifact-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963 --expected-manifest-sha256 12406cc156e57c130fa14af2b50b386031ec3640ce7f0234ed5bc9f0a700aac3 --expected-head 9e705ccf75b7318dcc4bda4815956f58beb10e72 --expected-tree 521ae87a28060d545979069b189eebbc74a71fd8 --retained-subset",
+    "file": "scripts/ci/test_read_original_native_campaign.py",
+    "line": 62,
+    "operation": "os.link(ARTIFACT / name, path)",
+    "test_group": "ActualArtifactReaderTests",
+    "tests_run": 21,
+    "errors": 19,
+    "all_error_cause": "OSError errno 18 (EXDEV), Invalid cross-device link while creating cloned SCOPE.txt",
+    "assertion_failures_observed": 0,
+    "source_fixture_device": 27,
+    "default_temporary_directory_device": 39,
+    "original_base_commit": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+    "base_script_git_blob": "84d011df6d90809a369c93be481d8f4bc1e1c875",
+    "candidate_script_git_blob": "84d011df6d90809a369c93be481d8f4bc1e1c875",
+    "classification": "Existing test environment prerequisite: temporary cloned hardlinks must share the artifact filesystem. No new account-scope assertion failed.",
+    "base_lane_executed": false
+  },
+  "same_filesystem_diagnostic": {
+    "performed": true,
+    "location": "Independent temporary fixture under /workspace/scratch/a4188f5c86b5/coordination; automatically cleaned",
+    "device": 27,
+    "hardlink_success": true,
+    "same_inode": true,
+    "link_count": 2,
+    "repository_files_modified": false
+  },
+  "recommended_repair": {
+    "kind": "Execution environment only",
+    "action": "Choose a temporary directory outside the repository on st_dev 27 and record TMPDIR in the validation argv; retain the first failed record. Re-run the failed exact reader command to verify the environment, then re-run the complete original repository-truth lane for an overall pass.",
+    "source_or_test_relaxation_required": false,
+    "retry_executed_by_reviewer": false
+  },
+  "unexecuted_original_lane_tail": [
+    "python3 scripts/ci/test_account_archive_conformance.py",
+    "python3 scripts/ci/test_run_account_execution_conformance.py",
+    "python3 scripts/ci/report_current_implementation.py --check",
+    "python3 scripts/ci/test_work_cost_report.py",
+    "python3 scripts/test_qualification_runtime.py"
+  ],
+  "fixture_precheck": {
+    "mode": "read-only source review; no Cargo invocation",
+    "conclusion": "No definite retained fixture compatibility conflict found with the new development scope guard.",
+    "evidence": [
+      "Config has no Deserialize implementation and retains private PQ owner fields; ordinary external integration tests obtain it from constructors.",
+      "Installed/profile constructors inherit all three existing scope fields from config/pon/devnet-v1.json.",
+      "No pre-existing params whole-value replacement or deletion of these three fields was found in the examined workspace Rust tests; the new negative controls intentionally perform them.",
+      "funded_service_v1/tests.rs retains SERVICE_CONTRACT_PROFILE precedence because its existing pure funded configuration check precedes check_account_profile.",
+      "pq3_quota_authority.rs, pq5_task_renewal.rs, Node history_import_tests.rs and task_observation.rs already expect their malformed PQ selectors to be rejected.",
+      "Other temporary params mutations affect unrelated limits/model fields and leave the three scope fields and absent classical PQ selectors intact."
+    ]
+  },
+  "repository_truth_pass_claimed": false,
+  "production_qualification_claimed": false
+}

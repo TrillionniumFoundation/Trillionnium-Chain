@@ -1,0 +1,272 @@
+{
+  "cargo_executed": false,
+  "collected_commands_executed": false,
+  "control_script_sha256": "d16c1b24ba3e8325d4dd277caaf0c5616a210dc9cfd89e2f93eafa0f1352b562",
+  "controls": [
+    {
+      "block_codes": [],
+      "case": "exact-original-positive",
+      "control_satisfied": true,
+      "exception": null,
+      "expected": "ACCEPT_AS_NONTERMINAL_ARCHIVE_ONLY",
+      "fixture_plan_sha256": "9d9f043d07a25bdc6973d930ee7432b87697a4f24ededf7bf30542343c4b0fec",
+      "observed": "ARCHIVAL_EXCEPTION_VERIFIED",
+      "project_test_execution": false
+    },
+    {
+      "block_codes": [
+        "BUNDLE_DECLARED_RECORD_MISSING",
+        "INCOMPLETE_ARCHIVE_RECEIPT_MISMATCH",
+        "INCOMPLETE_RECORD",
+        "REQUIRED_INCOMPLETE_ARCHIVE_NOT_OBSERVED"
+      ],
+      "case": "wrong-stderr-hash",
+      "control_satisfied": true,
+      "exception": null,
+      "expected": "REFUSE",
+      "fixture_plan_sha256": "d4497d4838fe2ca7f589e898b96ba63215aea3a64fc7d1234957bbd096ede519",
+      "observed": "REFUSED",
+      "project_test_execution": false
+    },
+    {
+      "block_codes": [
+        "BUNDLE_DECLARED_RECORD_MISSING",
+        "INCOMPLETE_RECORD",
+        "UNAPPROVED_EMPTY_RESULT"
+      ],
+      "case": "missing-whitelist",
+      "control_satisfied": true,
+      "exception": null,
+      "expected": "REFUSE",
+      "fixture_plan_sha256": "de8fcf237e8c4c00dae3b60a0c7818230db3b954341e2170129c14314b566dd0",
+      "observed": "REFUSED",
+      "project_test_execution": false
+    },
+    {
+      "block_codes": [
+        "EvidenceError"
+      ],
+      "case": "wrong-host",
+      "control_satisfied": true,
+      "exception": "unreviewed or duplicate incomplete-record archive exception",
+      "expected": "REFUSE",
+      "fixture_plan_sha256": "e5ab1e3b156bfaef637899f9cb09d359c3564690d143f8a7ed68c6181071f4e8",
+      "observed": "REFUSED",
+      "project_test_execution": false
+    },
+    {
+      "block_codes": [
+        "EvidenceError"
+      ],
+      "case": "wrong-source-commit",
+      "control_satisfied": true,
+      "exception": "unreviewed or duplicate incomplete-record archive exception",
+      "expected": "REFUSE",
+      "fixture_plan_sha256": "352f05f678ddcb801b1fa591a7f24a4b3b74249d331a127a605482891dd95914",
+      "observed": "REFUSED",
+      "project_test_execution": false
+    },
+    {
+      "block_codes": [
+        "EvidenceError"
+      ],
+      "case": "wrong-id",
+      "control_satisfied": true,
+      "exception": "unreviewed or duplicate incomplete-record archive exception",
+      "expected": "REFUSE",
+      "fixture_plan_sha256": "f1716745f405e1d9133540176cb28522a7937a288410b3fbba4266f7f52d89f6",
+      "observed": "REFUSED",
+      "project_test_execution": false
+    },
+    {
+      "block_codes": [
+        "EvidenceError"
+      ],
+      "case": "wrong-input-id",
+      "control_satisfied": true,
+      "exception": "unreviewed or duplicate incomplete-record archive exception",
+      "expected": "REFUSE",
+      "fixture_plan_sha256": "a830e6f24b3328c287a256059acd5c60f91f367b3625008354ef1925673eb727",
+      "observed": "REFUSED",
+      "project_test_execution": false
+    },
+    {
+      "block_codes": [
+        "EvidenceError"
+      ],
+      "case": "wrong-origin-job-id",
+      "control_satisfied": true,
+      "exception": "unreviewed or duplicate incomplete-record archive exception",
+      "expected": "REFUSE",
+      "fixture_plan_sha256": "b1b31201cc9e6275f37bbaaa64851b9ece48435d8c017cf635e4b143187892ab",
+      "observed": "REFUSED",
+      "project_test_execution": false
+    },
+    {
+      "block_codes": [
+        "BUNDLE_DECLARED_RECORD_MISSING",
+        "INPUT_ERROR",
+        "REQUIRED_INCOMPLETE_ARCHIVE_NOT_OBSERVED",
+        "REQUIRED_RECORD_NOT_TERMINAL"
+      ],
+      "case": "nonempty-malformed-result",
+      "control_satisfied": true,
+      "exception": null,
+      "expected": "REFUSE",
+      "fixture_plan_sha256": "a76d43f8d9f86c6b37937e436e57cf5d2bd91508e6006aec78401c02f7656f97",
+      "observed": "REFUSED",
+      "project_test_execution": false
+    },
+    {
+      "block_codes": [
+        "BUNDLE_DECLARED_RECORD_MISSING",
+        "INCOMPLETE_RECORD",
+        "REQUIRED_INCOMPLETE_ARCHIVE_NOT_OBSERVED"
+      ],
+      "case": "missing-original-result",
+      "control_satisfied": true,
+      "exception": null,
+      "expected": "REFUSE",
+      "fixture_plan_sha256": "b877d29d4eb0572b3ec919ced59eaf1cff602fbddf69a0e99d2edca5f9440660",
+      "observed": "REFUSED",
+      "project_test_execution": false
+    },
+    {
+      "block_codes": [
+        "BUNDLE_DECLARED_RECORD_MISSING",
+        "INCOMPLETE_RECORD",
+        "REQUIRED_RECORD_NOT_TERMINAL"
+      ],
+      "case": "ordinary-missing-result",
+      "control_satisfied": true,
+      "exception": null,
+      "expected": "REFUSE",
+      "fixture_plan_sha256": "15d570308b05ccf5694ab7b9fdbda44422af410a37412fc35c856c108fd63aa8",
+      "observed": "REFUSED",
+      "project_test_execution": false
+    },
+    {
+      "block_codes": [
+        "BUNDLE_DECLARED_RECORD_MISSING",
+        "INPUT_ERROR",
+        "REQUIRED_RECORD_NOT_TERMINAL"
+      ],
+      "case": "ordinary-malformed-result",
+      "control_satisfied": true,
+      "exception": null,
+      "expected": "REFUSE",
+      "fixture_plan_sha256": "225a89cd766b4d78470c0a5744d21d5ae26026a6183cee0de47fefdb0f765304",
+      "observed": "REFUSED",
+      "project_test_execution": false
+    },
+    {
+      "block_codes": [
+        "INCOMPLETE_RECEIPT_PROJECTION_COLLISION"
+      ],
+      "case": "projection-destination-collision",
+      "control_satisfied": true,
+      "exception": null,
+      "expected": "REFUSE",
+      "fixture_plan_sha256": "fc0f52e2c17c2a3b96e5aa92f2c6a995867ba833935e7d676bfc5ae34e9ef132",
+      "observed": "REFUSED",
+      "project_test_execution": false
+    },
+    {
+      "block_codes": [
+        "INPUT_ERROR",
+        "REQUIRED_INCOMPLETE_ARCHIVE_NOT_OBSERVED",
+        "REQUIRED_RECORD_NOT_TERMINAL"
+      ],
+      "case": "manifest-claims-complete",
+      "control_satisfied": true,
+      "exception": null,
+      "expected": "REFUSE",
+      "fixture_plan_sha256": "af69429ef2a746209029c10ec51f7a710e9a59aafe618fd57d42bee0542e3dae",
+      "observed": "REFUSED",
+      "project_test_execution": false
+    },
+    {
+      "block_codes": [
+        "INPUT_ERROR",
+        "REQUIRED_INCOMPLETE_ARCHIVE_NOT_OBSERVED",
+        "REQUIRED_RECORD_NOT_TERMINAL"
+      ],
+      "case": "manifest-claims-terminal-result",
+      "control_satisfied": true,
+      "exception": null,
+      "expected": "REFUSE",
+      "fixture_plan_sha256": "0033a53fc9ddc24a90bb8320bd01908590da0f27f68f4af73599825d2cebe2a2",
+      "observed": "REFUSED",
+      "project_test_execution": false
+    },
+    {
+      "block_codes": [
+        "EvidenceError"
+      ],
+      "case": "global-terminal-policy-disabled",
+      "control_satisfied": true,
+      "exception": "ordinary incomplete records must remain blocked",
+      "expected": "REFUSE",
+      "fixture_plan_sha256": "631c10e47eb773fedfc060f13bd03d60f12160c475e1bb4b8acafd95435357b9",
+      "observed": "REFUSED",
+      "project_test_execution": false
+    },
+    {
+      "block_codes": [
+        "EvidenceError"
+      ],
+      "case": "duplicate-whitelist-entry",
+      "control_satisfied": true,
+      "exception": "unreviewed or duplicate incomplete-record archive exception",
+      "expected": "REFUSE",
+      "fixture_plan_sha256": "f27fb6cf598382dbfeb70167f1e805c95eb9dac87053483e927d9b5835c28bde",
+      "observed": "REFUSED",
+      "project_test_execution": false
+    },
+    {
+      "block_codes": [
+        "BUNDLE_DECLARED_RECORD_MISSING",
+        "CONFLICTING_RECORD_COPIES",
+        "DUPLICATE_INCOMPLETE_ARCHIVE_EXCEPTION",
+        "INCOMPLETE_RECORD"
+      ],
+      "case": "duplicate-exception-consumption",
+      "control_satisfied": true,
+      "exception": null,
+      "expected": "REFUSE",
+      "fixture_plan_sha256": "02766f8ebe5e6bbef7e496335d9a6e12236b4c13e2abd0c14b9765b98644f492",
+      "observed": "REFUSED",
+      "project_test_execution": false
+    },
+    {
+      "block_codes": [
+        "BUNDLE_DECLARED_RECORD_MISSING",
+        "REQUIRED_INCOMPLETE_ARCHIVE_NOT_OBSERVED"
+      ],
+      "case": "required-incomplete-record-removed",
+      "control_satisfied": true,
+      "exception": null,
+      "expected": "REFUSE",
+      "fixture_plan_sha256": "3b097a8203796ff0bb8120af0ef23557fa337cc9fd0cadbc412e6250c338db52",
+      "observed": "REFUSED",
+      "project_test_execution": false
+    },
+    {
+      "case": "exact-terminal-copies-regression",
+      "control_satisfied": true,
+      "observed": "TWO_RAW_COPIES_ONE_TERMINAL_RECORD",
+      "project_test_execution": false
+    }
+  ],
+  "controls_satisfied": 20,
+  "created_utc": "2026-11-11T04:07:14.908826+00:00",
+  "delivery_plan_sha256": "1633f0b86ea2a40e0a8c74b4e0b3152215a58c4edd7bcca63dd92f341ab46204",
+  "fixture_data_only": true,
+  "full_ci_acceptance_granted": false,
+  "helper_sha256": "82b643284a2eb4ac66cfa052fb84912695c2cf06fec42a96504f607a7e8804a5",
+  "original_inputs_unchanged": true,
+  "production_qualification_granted": false,
+  "project_tests_executed": false,
+  "schema": "trnm-incomplete-archive-helper-controls-v1",
+  "stage_executed": false
+}

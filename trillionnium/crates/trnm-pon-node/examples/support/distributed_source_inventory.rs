@@ -4278,6 +4278,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-mvcc-fee/tests/account_development_scope.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/tests/account_development_scope.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-mvcc-fee/tests/capacity_progress.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -6473,6 +6480,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs"
         )),
     ),
     (

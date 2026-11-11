@@ -1,0 +1,26 @@
+{
+  "id": "qualification-runtime-gnu-time",
+  "argv": [
+    "env",
+    "TRNM_GNU_TIME=/workspace/scratch/a4188f5c86b5/validation-tools/gnu-time-desktop/usr/bin/time",
+    "python3",
+    "scripts/test_qualification_runtime.py"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 21.835998301000473,
+  "finished_utc": "2026-11-11T01:57:35.528151+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "95080cee20b34f6f1810e9511ca85046f1706b4edce59957e01f9b7cb6316818",
+  "pass": true,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 1.079888,
+    "system_cpu_seconds": 4.398858,
+    "maximum_rss_kib": 22636,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

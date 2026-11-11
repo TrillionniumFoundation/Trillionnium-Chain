@@ -1,0 +1,196 @@
+{
+  "schema": "readonly-node-recovery-failure-diagnostic-v1",
+  "created_utc": "2026-11-11T04:41:02.786791+00:00",
+  "native_job": "1a1c8ba754b-135c4-1d3",
+  "source": {
+    "repository": "/workspace/scratch/a4188f5c86b5/chain-pq-profile-boundary",
+    "base": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+    "head": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+    "tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+    "clean_at_read": true
+  },
+  "observation": {
+    "path": "/workspace/scratch/a4188f5c86b5/coordination/data-node-stdout-observed-prefix-0-71666.log",
+    "bytes": 71666,
+    "sha256": "79aaeb8460f0d6476bb7cf97ad0650a86705486cbceda1b1db7289315d57def2",
+    "is_complete_log": false,
+    "test_binary_expected_tests": 1402,
+    "fail_markers": [
+      {
+        "line": 237,
+        "text": "test ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_lost_ack_and_cold_resume_reuse_exact_wire_without_history_consuming_sequence ... FAILED"
+      },
+      {
+        "line": 238,
+        "text": "test ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_plain_parent_recovery_and_cold_membership_keep_one_original_campaign ... FAILED"
+      }
+    ],
+    "panic_observed": false,
+    "terminal_suite_summary_observed": false,
+    "scope_error_not_observed_in_prefix_is_not_exculpatory": true
+  },
+  "same_fixture_observed_passes": [
+    "test ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_call_cap_reservation_survives_cold_open_without_native_dispatch ... ok",
+    "test ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_hybrid_tls_parent_recovery_and_cold_membership_keep_one_original_campaign ... ok",
+    "test ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_repeated_eof_and_cold_open_keep_the_original_three_attempt_limit ... ok",
+    "test ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_signed_expiry_label_cannot_fence_a_healthy_local_campaign_or_gain_a_retry ... ok"
+  ],
+  "object_comparison": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs",
+      "base_object": "f663880bba1bfe54614e848e809073bb403d318a",
+      "z_object": "f663880bba1bfe54614e848e809073bb403d318a",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases",
+      "base_object": "d01ff4ddc9caa06bae36f9935c5e54ccb5baa7db",
+      "z_object": "d01ff4ddc9caa06bae36f9935c5e54ccb5baa7db",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/public_submit.rs",
+      "base_object": "352f87adc656756f6409182f36d2c8db8d1a6df1",
+      "z_object": "352f87adc656756f6409182f36d2c8db8d1a6df1",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/public_submit",
+      "base_object": "e1eb14aa3dce498e5db35d4545b9633ddaff37c7",
+      "z_object": "e1eb14aa3dce498e5db35d4545b9633ddaff37c7",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs",
+      "base_object": "ef2494869bfe78083d890e400ec6be7642bef033",
+      "z_object": "ef2494869bfe78083d890e400ec6be7642bef033",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "base_object": "53de49ec72ce2bd891b1342659949c31cba8b47e",
+      "z_object": "53de49ec72ce2bd891b1342659949c31cba8b47e",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network",
+      "base_object": "f3d9739c47b2770b34607aed9ffc3d8781143c64",
+      "z_object": "f3d9739c47b2770b34607aed9ffc3d8781143c64",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+      "base_object": "61e8ff02976ebc79e2dc9f5a71ae531884cba5dc",
+      "z_object": "61e8ff02976ebc79e2dc9f5a71ae531884cba5dc",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2",
+      "base_object": "64770c87e7cfa8996c8526f6062ea3b78991a87c",
+      "z_object": "64770c87e7cfa8996c8526f6062ea3b78991a87c",
+      "equal": true
+    },
+    {
+      "path": "config/pon/devnet-v1.json",
+      "base_object": "a60f403b2f0e7343aed61170ca2aef875a787790",
+      "z_object": "a60f403b2f0e7343aed61170ca2aef875a787790",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "base_object": "0758122202468cdf7ad938c058442be15555c329",
+      "z_object": "0758122202468cdf7ad938c058442be15555c329",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "base_object": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+      "z_object": "a766d083bc1955041bf2fc537cb2731e2d4eb6c4",
+      "equal": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "base_object": "a52e20fe46fe409bf3aac5b63c4b9d01438bb705",
+      "z_object": "5d2ccbcac24abc55f3598fad0a22da4cd8c8d0d2",
+      "equal": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "base_object": "f03902e8ee3d081e3ffc9d965be4fdd3b5786c5f",
+      "z_object": "f03902e8ee3d081e3ffc9d965be4fdd3b5786c5f",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+      "base_object": "7c5d2f974a8faf0c48b7f636eca80e334b2a4214",
+      "z_object": "7c5d2f974a8faf0c48b7f636eca80e334b2a4214",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/Cargo.toml",
+      "base_object": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "z_object": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "base_object": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+      "z_object": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives",
+      "base_object": "3bff846e9d6278d8f9bbad25aa71b66c0b9e7a00",
+      "z_object": "3bff846e9d6278d8f9bbad25aa71b66c0b9e7a00",
+      "equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol",
+      "base_object": "7b15f61b2c6c195dc7f35ab3180cc7f74f939f67",
+      "z_object": "7b15f61b2c6c195dc7f35ab3180cc7f74f939f67",
+      "equal": true
+    }
+  ],
+  "findings": {
+    "fixture_scope_is_valid_by_source": true,
+    "fixture_uses_real_npq6_owner": true,
+    "new_node_and_m06_paths_are_reachable": true,
+    "new_guard_timing_impact_unresolved": true,
+    "root_direct_pq_config_digest_calls": {
+      "base": 1,
+      "z": 2,
+      "scope": "Successful valid NPQ6 root_for_config direct checks; not a total campaign call count"
+    },
+    "direct_namespace_guard_additions": {
+      "each_successful_session_ready": 1,
+      "successful_history_call_ready_and_read_history_validation_sites": 4,
+      "successful_send_packet_ready_sites": 5,
+      "scope": "Static direct call sites on successful path, excludes nested journal/remote Node calls and retries; not measured execution counts"
+    },
+    "campaign_original_budget_seconds": 10,
+    "campaign_max_submit_attempts_per_packet": 3,
+    "campaign_max_calls": 16,
+    "campaign_max_parent_packets": 1,
+    "campaign_retry_pause_milliseconds": 100,
+    "cold_open_consumes_original_deadline": true,
+    "cold_resume_does_not_renew_deadline": true,
+    "server_and_proxy_lifetimes_seconds": 30,
+    "readiness_before_campaign_seconds": 5,
+    "native_send_deadline_is_min_campaign_and_now_plus_seconds": 10,
+    "native_signed_request_expiry_uses_floor_remaining_seconds": true,
+    "actual_base_execution_performed": false,
+    "cause_established": false
+  },
+  "actions": {
+    "source_modified": false,
+    "raw_modified": false,
+    "cargo_started": false,
+    "remote_job_started_or_restarted": false,
+    "threshold_or_flags_changed": false
+  },
+  "next_required_evidence": [
+    "Original complete panic, exact file/line, printed assertion values or outcome.failure and suite summary",
+    "Same-job final context/result/stdout/stderr and source-after when actually created",
+    "Only after panic, identify exact phase and existing recorded timing/error fields; unchanged base source is not an execution control"
+  ]
+}

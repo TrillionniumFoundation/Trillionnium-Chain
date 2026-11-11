@@ -781,6 +781,7 @@ impl Node {
                     .map_err(continuous_error)?;
                 let spec = crate::operator_pq_startup::StartupSpec::decode(&spec_raw)?;
                 let settings = spec.settings()?;
+                settings.app.check_account_profile()?;
                 let network = spec.network_policy(&settings)?;
                 let bootstrap = catalog
                     .read_role(
@@ -842,6 +843,9 @@ impl Node {
             let settings = Settings::development_with_operator_checkpoint_tile(
                 &spec, &bundle, &model, &input, paths,
             )?;
+            // Settings follow protected material reads and startup reservations.
+            // Failure stays in this build result so the real operation settles.
+            settings.app.check_account_profile()?;
             progress()?;
             ensure(
                 view.body.identity.network == hex::encode(settings.network())

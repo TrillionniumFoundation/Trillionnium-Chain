@@ -1,0 +1,28 @@
+{
+  "id": "m06-test-build",
+  "argv": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-mvcc-fee",
+    "--all-features",
+    "--test",
+    "account_development_scope",
+    "--no-run"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 974.3198544130005,
+  "finished_utc": "2026-11-11T01:16:38.264816+00:00",
+  "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_status_after": "",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "c993da26968e673f1c36f9a16188f6edbb23558826c8b1217f16b39e34b6b838",
+  "pass": true,
+  "qualification_granted": false
+}

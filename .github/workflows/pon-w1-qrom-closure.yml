@@ -88,15 +88,15 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/w1_qrom_semantics_audit.py --out "$W1_CLOSURE_OUT/semantics.json"
-          # The successor binds the selected M8 source; the original report stays archived.
-          python3 scripts/w1_lifetime_ledger.py --input evidence/pon-w1-lifetime-current-20261109/project-input.json > "$W1_CLOSURE_OUT/lifetime.json"
+          # Bind the reviewed account-boundary source; both older reports stay archived.
+          python3 scripts/w1_lifetime_ledger.py --input evidence/pon-w1-lifetime-account-boundary-20261110/project-input.json > "$W1_CLOSURE_OUT/lifetime.json"
           python3 scripts/w1_qrom_composition_budget.py > "$W1_CLOSURE_OUT/composition-unknown.json"
           python3 scripts/w1_qrom_composition_budget.py --example > "$W1_CLOSURE_OUT/composition-example.json"
           python3 scripts/w1_qrom_joint_oracle_diagnostic.py > "$W1_CLOSURE_OUT/joint-oracle-unknown.json"
           python3 scripts/w1_qrom_joint_oracle_diagnostic.py --example alias > "$W1_CLOSURE_OUT/joint-oracle-alias.json"
           python3 scripts/w1_qrom_joint_oracle_diagnostic.py --example separated > "$W1_CLOSURE_OUT/joint-oracle-separated.json"
           cmp evidence/pon-w1-qrom-semantics-current-20261109/report.json "$W1_CLOSURE_OUT/semantics.json"
-          cmp evidence/pon-w1-lifetime-current-20261109/project-report.json "$W1_CLOSURE_OUT/lifetime.json"
+          cmp evidence/pon-w1-lifetime-account-boundary-20261110/project-report.json "$W1_CLOSURE_OUT/lifetime.json"
           for name in composition-unknown composition-example joint-oracle-unknown joint-oracle-alias joint-oracle-separated; do
             cmp "evidence/pon-w1-qrom-formal-bridge-20261107/$name.json" "$W1_CLOSURE_OUT/$name.json"
           done

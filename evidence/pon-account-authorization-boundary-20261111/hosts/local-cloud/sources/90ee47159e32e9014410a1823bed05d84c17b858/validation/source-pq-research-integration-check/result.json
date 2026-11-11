@@ -1,0 +1,18 @@
+{
+  "id": "source-pq-research-integration-check",
+  "argv": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 74.16762118999986,
+  "finished_utc": "2026-11-11T01:06:41.162678+00:00",
+  "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_status_after": "",
+  "stdout_sha256": "83e8ef0fcffe54c1a7b9ce8dc6f692a78a0f249712de0d09c767ab802feb6be7",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "pass": true,
+  "qualification_granted": false
+}

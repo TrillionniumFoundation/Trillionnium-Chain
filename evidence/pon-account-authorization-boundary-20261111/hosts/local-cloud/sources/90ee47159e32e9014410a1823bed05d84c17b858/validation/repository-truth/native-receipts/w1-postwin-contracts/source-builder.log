@@ -1,0 +1,13 @@
+test_duplicate_or_oversized_configuration_never_silently_normalizes (test_w1_kaggle_source_builder.SourceBuilderContract.test_duplicate_or_oversized_configuration_never_silently_normalizes) ... ok
+test_exact_pinned_configuration_accepts_observed_four_cpu_envelope (test_w1_kaggle_source_builder.SourceBuilderContract.test_exact_pinned_configuration_accepts_observed_four_cpu_envelope) ... ok
+test_existing_outputs_and_symlink_destinations_cannot_be_replaced (test_w1_kaggle_source_builder.SourceBuilderContract.test_existing_outputs_and_symlink_destinations_cannot_be_replaced) ... ok
+test_nested_parallel_oversubscription_and_implicit_compression_are_rejected (test_w1_kaggle_source_builder.SourceBuilderContract.test_nested_parallel_oversubscription_and_implicit_compression_are_rejected) ... ok
+test_serialization_is_deterministic_bounded_and_never_interpolates_code (test_w1_kaggle_source_builder.SourceBuilderContract.test_serialization_is_deterministic_bounded_and_never_interpolates_code) ... ok
+test_source_tree_binary_and_template_identifiers_are_exact (test_w1_kaggle_source_builder.SourceBuilderContract.test_source_tree_binary_and_template_identifiers_are_exact) ... ok
+test_template_mutation_bom_crlf_and_wrong_entry_are_rejected (test_w1_kaggle_source_builder.SourceBuilderContract.test_template_mutation_bom_crlf_and_wrong_entry_are_rejected) ... ok
+test_unknown_schema_fields_and_boolean_or_float_budgets_are_rejected (test_w1_kaggle_source_builder.SourceBuilderContract.test_unknown_schema_fields_and_boolean_or_float_budgets_are_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.032s
+
+OK

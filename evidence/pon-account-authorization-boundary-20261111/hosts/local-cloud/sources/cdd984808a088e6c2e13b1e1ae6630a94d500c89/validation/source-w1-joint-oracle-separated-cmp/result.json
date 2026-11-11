@@ -1,0 +1,25 @@
+{
+  "id": "source-w1-joint-oracle-separated-cmp",
+  "argv": [
+    "cmp",
+    "evidence/pon-w1-qrom-formal-bridge-20261107/joint-oracle-separated.json",
+    "/workspace/scratch/a4188f5c86b5/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-w1-joint-oracle-separated-reproduce/stdout.log"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 0.13386553799955436,
+  "finished_utc": "2026-11-11T01:36:25.664365+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "pass": true,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 0.0021259999999999994,
+    "system_cpu_seconds": 0.0,
+    "maximum_rss_kib": 13556,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

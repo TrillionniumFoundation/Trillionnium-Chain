@@ -59,9 +59,32 @@ class LifetimeLedgerTests(unittest.TestCase):
 
     def test_project_unknowns_do_not_produce_a_target_or_qualification(self):
         result = ledger.make_report(ledger.template(), ROOT)
-        fixture = ROOT / "evidence/pon-w1-lifetime-current-20261109/project-report.json"
+        # This is an independently fixed successor, not an expected value read
+        # from the implementation under test. The M8 observation stays intact.
+        historical = ROOT / "evidence/pon-w1-lifetime-current-20261109/project-report.json"
+        self.assertEqual(hashlib.sha256(historical.read_bytes()).hexdigest(),
+                         "8ee20462d669a0e21b0fe964585f85fa2a49e7e58273459ab2501b4a2e39dfc0")
+        fixture = ROOT / "evidence/pon-w1-lifetime-account-boundary-20261110/project-report.json"
+        # Permit exactly the seven reviewed source-observation changes. Every
+        # other historical report field is still compared in full; expected
+        # values must not be populated from ledger.SOURCE_BASE/SOURCE_PINS.
+        expected = json.loads(historical.read_bytes())
+        survey = expected["selected_source_survey"]
+        survey["base_commit"] = "077ac4f33206de00a178553d9a0c729a20685088"
+        survey["observations"]["cumulative_weight"]["anchor_line"] = "5157"
+        survey["observations"]["cumulative_weight"]["sha256"] = (
+            "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca")
+        survey["observations"]["native_work_verifier"]["anchor_line"] = "1124"
+        survey["observations"]["native_work_verifier"]["sha256"] = (
+            "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca")
+        survey["sources"][7]["bytes"] = "383977"
+        survey["sources"][7]["sha256"] = (
+            "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca")
+        self.assertEqual((json.dumps(expected, indent=2, sort_keys=True, allow_nan=False)
+                          + "\n").encode(), fixture.read_bytes())
         self.assertEqual((json.dumps(result, indent=2, sort_keys=True, allow_nan=False)
                           + "\n").encode(), fixture.read_bytes())
+        self.assertNotEqual(fixture.read_bytes(), historical.read_bytes())
         budget = result["lifetime_ledger"]
         self.assertIsNone(budget["sum_of_group_adversary_query_envelopes"])
         self.assertIsNone(budget["conditional_union"]["hypothetical_expression_meets_target"])
@@ -249,7 +272,8 @@ class LifetimeLedgerTests(unittest.TestCase):
     def test_source_mutation_missing_source_and_symlink_are_refused(self):
         key = "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs"
         lock = "trillionnium/Cargo.lock"
-        for changed in (key, lock):
+        store = "trillionnium/crates/trnm-pon-node/src/store.rs"
+        for changed in (key, lock, store):
             sources = dict(self.sources)
             sources[changed] += b"\n"
             with self.subTest(changed=changed), self.assertRaisesRegex(
@@ -268,6 +292,17 @@ class LifetimeLedgerTests(unittest.TestCase):
         with self.assertRaises(ledger.LedgerError) as refused:
             ledger.source_survey(sources)
         self.assertEqual(str(refused.exception), "source identity mismatch: " + lock)
+        # Reuse the M7 revision already required above; the closure checkout has
+        # fetch-depth: 0. No new M8 history dependency or lazy fetch is added.
+        # These actual pre-boundary store bytes remain invalid current source.
+        historical_store = git_blob("7ddfe2bfa480d1ebd91c07d03d56a963fff038c5", store)
+        self.assertEqual(hashlib.sha256(historical_store).hexdigest(),
+                         "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554")
+        sources = dict(self.sources)
+        sources[store] = historical_store
+        with self.assertRaises(ledger.LedgerError) as refused:
+            ledger.source_survey(sources)
+        self.assertEqual(str(refused.exception), "source identity mismatch: " + store)
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "trillionnium").symlink_to(ROOT / "trillionnium", target_is_directory=True)
@@ -276,7 +311,12 @@ class LifetimeLedgerTests(unittest.TestCase):
 
     def test_source_lines_remain_independent_of_existing_qualification_labels(self):
         survey = self.survey
-        self.assertEqual(survey["base_commit"], ledger.SOURCE_BASE)
+        reviewed_base = "077ac4f33206de00a178553d9a0c729a20685088"
+        reviewed_store = "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca"
+        self.assertEqual(ledger.SOURCE_BASE, reviewed_base)
+        self.assertEqual(survey["base_commit"], reviewed_base)
+        self.assertEqual(ledger.SOURCE_PINS["trillionnium/crates/trnm-pon-node/src/store.rs"],
+                         reviewed_store)
         for path, expected in ledger.SOURCE_PINS.items():
             with self.subTest(source_path=path):
                 original = git_blob(ledger.SOURCE_BASE, path)

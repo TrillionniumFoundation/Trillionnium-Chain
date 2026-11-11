@@ -1,0 +1,24 @@
+{
+  "id": "source-ci-integrity-tests",
+  "argv": [
+    "python3",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 6.933758772000147,
+  "finished_utc": "2026-11-11T01:36:08.356186+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "68c47b83f5c00b2e0353303ac33dfe820b5f086f5cfd71c54c0a65982bcde977",
+  "stderr_sha256": "fa6d227c543119191d3f6a514a1b2bf2bc3f6a2be3fd26be2f84b15b00caf97e",
+  "pass": true,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 2.452918,
+    "system_cpu_seconds": 2.260799,
+    "maximum_rss_kib": 21468,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

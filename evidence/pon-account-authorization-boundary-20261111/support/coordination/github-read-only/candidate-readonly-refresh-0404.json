@@ -1,0 +1,24 @@
+{
+  "atomic_snapshot": false,
+  "encoding": "utf-8",
+  "files": [
+    {
+      "eof": true,
+      "path": "/home/qian-qi/chain-pq-a418-final-records/candidate-refresh-after-storage.stdout.json",
+      "sha256": "cca812af06f0f1e343a64c2dcd4b5c1d112ffdaf0a705ee1c39ade34a06b7c26",
+      "size": 477,
+      "text": "{\n  \"login\": \"ProfHepta\",\n  \"id\": 102159240,\n  \"permissions\": {\n    \"admin\": true,\n    \"push\": true\n  },\n  \"pull\": {\n    \"number\": 847,\n    \"state\": \"open\",\n    \"draft\": true,\n    \"head_ref\": \"fix/chain-hepta-closure-candidate-20261109-481716\",\n    \"head_sha\": \"df927b6ffaecff293b9e9428e3ba516f47cd101a\",\n    \"head_repo\": \"TrillionniumFoundation/Trillionnium-Chain\",\n    \"base_ref\": \"main\",\n    \"base_sha\": \"dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\"\n  },\n  \"read_only\": true\n}\n",
+      "version": "2050:51182063:477:1794369860577425305:1794369860577425305"
+    },
+    {
+      "eof": true,
+      "path": "/home/qian-qi/chain-pq-a418-final-records/candidate-refresh-after-storage.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "text": "",
+      "version": "2050:51182064:0:1794369852732669485:1794369852732669485"
+    }
+  ],
+  "snapshot_scope": "independent_file",
+  "truncated": false
+}

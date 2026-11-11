@@ -1,0 +1,181 @@
+{
+  "advisory_database": {
+    "archive": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/advisories-28d73fc95e5972af3403225a217def57dcaba3c4.tar.gz",
+    "archive_sha256": "fcc2e8035756170b2dd9e292dcc8e6ee9194b35b6e50e54eab513269db3ccf4d",
+    "commit_time": "2026-11-10T14:45:03+01:00",
+    "head": "28d73fc95e5972af3403225a217def57dcaba3c4",
+    "origin": "https://github.com/RustSec/advisory-db",
+    "path": "/home/qian-qi/chain-pq-a418-final-cargo-home/advisory-dbs/advisory-db-3157b0e258782691",
+    "status": "",
+    "tree": "247ffa118a3e073e70825e62bde8c473d4ac6b45"
+  },
+  "cargo_deny": {
+    "bytes": 8802728,
+    "copied_exactly": true,
+    "elf": true,
+    "path": "/home/qian-qi/chain-pq-a418-final-ci-tools/deny-0.20.2/bin/cargo-deny",
+    "rebuilt": false,
+    "sha256": "5c6fbc977c16a36144f91ff4959e14a6e3468be150d6b2ac693bcdbdd591a535",
+    "source": "/home/qian-qi/work/chain-security-tools-20261104/deny-0.20.2/bin/cargo-deny"
+  },
+  "cargo_home": "/home/qian-qi/chain-pq-a418-final-cargo-home",
+  "commands": [
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "cargo_net_offline": "true",
+      "elapsed_seconds": 0.31588282715529203,
+      "id": "main-metadata-locked-offline",
+      "returncode": 0,
+      "stderr": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/main-metadata-locked-offline.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/main-metadata-locked-offline.stdout",
+      "stdout_sha256": "a1a6cf2c425c1d16497eba284c30109689c65b69916e67e6fe84d0bfbca0061f"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "fetch",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml"
+      ],
+      "cargo_net_offline": "true",
+      "elapsed_seconds": 0.21530752605758607,
+      "id": "fuzz-fetch-locked-offline",
+      "returncode": 0,
+      "stderr": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/fuzz-fetch-locked-offline.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/fuzz-fetch-locked-offline.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "cargo_net_offline": "true",
+      "elapsed_seconds": 0.2157192099839449,
+      "id": "fuzz-metadata-locked-offline",
+      "returncode": 0,
+      "stderr": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/fuzz-metadata-locked-offline.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/fuzz-metadata-locked-offline.stdout",
+      "stdout_sha256": "a3522fdfad824fabf5cd4603efe8218c4262f896f60e11269de5637732a277fa"
+    },
+    {
+      "argv": [
+        "/home/qian-qi/chain-pq-a418-final-ci-tools/deny-0.20.2/bin/cargo-deny",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--config",
+        "deny.toml",
+        "--locked",
+        "fetch",
+        "db"
+      ],
+      "cargo_net_offline": "false",
+      "elapsed_seconds": 7.687731357989833,
+      "id": "fetch-official-advisory-db",
+      "returncode": 0,
+      "stderr": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/fetch-official-advisory-db.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/fetch-official-advisory-db.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/home/qian-qi/chain-pq-a418-final-cargo-home/advisory-dbs/advisory-db-3157b0e258782691",
+        "archive",
+        "--format=tar.gz",
+        "--output=/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/advisories-28d73fc95e5972af3403225a217def57dcaba3c4.tar.gz",
+        "28d73fc95e5972af3403225a217def57dcaba3c4"
+      ],
+      "cargo_net_offline": "true",
+      "elapsed_seconds": 0.16566127305850387,
+      "id": "archive-official-advisory-db",
+      "returncode": 0,
+      "stderr": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/archive-official-advisory-db.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/continuation-1/archive-official-advisory-db.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "finished_utc": "2026-11-11T02:13:25.356926+00:00",
+  "graphs": [
+    {
+      "features": [
+        "--all-features"
+      ],
+      "graph": "main",
+      "metadata_package_count": 182,
+      "metadata_sha256": "a1a6cf2c425c1d16497eba284c30109689c65b69916e67e6fe84d0bfbca0061f",
+      "name_version_source_exactly_equal_to_lock": true,
+      "registry_package_count": 156
+    },
+    {
+      "features": [],
+      "graph": "fuzz",
+      "metadata_package_count": 150,
+      "metadata_sha256": "a3522fdfad824fabf5cd4603efe8218c4262f896f60e11269de5637732a277fa",
+      "name_version_source_exactly_equal_to_lock": true,
+      "registry_package_count": 137
+    }
+  ],
+  "initial_locked_fetches": [
+    {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "fetch",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "cargo_net_offline": "true",
+      "elapsed_seconds": 1.5694284269120544,
+      "id": "main-fetch-locked-offline",
+      "returncode": 0,
+      "stderr": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/main-fetch-locked-offline.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/main-fetch-locked-offline.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "prior_failure_diagnosis": "Default-feature metadata contains 151 of 156 locked registry packages; the five absent packages are the optional OpenSSL chain. No unexpected version/source. This continuation validates the existing all-features specification.",
+  "prior_report": "/home/qian-qi/chain-pq-a418-final-ci-tools/preparation-evidence/preparation-report.json",
+  "prior_report_sha256": "55a10e642011c000a368f6b0ee32f01931a6378f6a39be85c91cba174a6b43a2",
+  "prior_status_preserved": "FAIL",
+  "qualification_granted": false,
+  "recommended_lane_environment": {
+    "CARGO_HOME": "/home/qian-qi/chain-pq-a418-final-cargo-home",
+    "CARGO_NET_OFFLINE": "true",
+    "TRNM_CI_TOOL_ROOT": "/home/qian-qi/chain-pq-a418-final-ci-tools"
+  },
+  "schema": "a418-isolated-desktop-supply-chain-preparation-continuation-v1",
+  "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "started_utc": "2026-11-11T02:13:16.013852+00:00",
+  "status": "PREPARED_REAL_TOOL_LOCKED_GRAPHS_AND_CLEAN_OFFICIAL_DB",
+  "supply_chain_policy_pass_claimed": false,
+  "tool_root": "/home/qian-qi/chain-pq-a418-final-ci-tools"
+}

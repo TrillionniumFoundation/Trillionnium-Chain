@@ -1,0 +1,24 @@
+{
+  "id": "source-pq-research-integration-tests",
+  "argv": [
+    "python3",
+    "scripts/ci/test_pq_research_integration.py"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 271.16298387200004,
+  "finished_utc": "2026-11-11T01:40:32.585459+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "8560da752d7ffbd824c2d607c1b2a8b6c1930667386e6f59dedacae90834ed7f",
+  "pass": true,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 194.709753,
+    "system_cpu_seconds": 60.834143000000005,
+    "maximum_rss_kib": 29504,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

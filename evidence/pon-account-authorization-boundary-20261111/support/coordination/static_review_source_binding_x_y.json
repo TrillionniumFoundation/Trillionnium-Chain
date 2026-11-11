@@ -1,0 +1,151 @@
+{
+  "schema": "chain-current-source-binding-static-review-v1",
+  "reviewer": "/root/pq_profile_review",
+  "reviewed_at_utc": "2026-11-11T01:08:12.310646+00:00",
+  "repository": "/workspace/scratch/a4188f5c86b5/chain-pq-profile-boundary",
+  "implementation_commit": "077ac4f33206de00a178553d9a0c729a20685088",
+  "binding_commit": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "mode": "READ_ONLY_STATIC_DIFF_AND_GIT_OBJECT_CHECKS",
+  "result": "PASS_STATIC_BINDING_REVIEW",
+  "scope": "Exact X..Y eight-file diff. Independent raw Git-object identity checks, JSON semantic comparison and AST comparison; no repository gate execution or Cargo/native test claim.",
+  "repository_edited": false,
+  "cargo_executed": false,
+  "source_gates_executed": false,
+  "changed_files": [
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "x_git_blob": "4f863aa86694735aceac19542c2cc825010e36f8",
+      "y_git_blob": "4c860d26d023a27c5f08f3db23a25d8e6c3e4e23",
+      "y_sha256": "463789a97273c5290f9d03d56eb6a460d24a73288b4f27586fa125c84467e8e9",
+      "y_bytes": 36087
+    },
+    {
+      "path": "config/pon/pq-authority-effects-v1.json",
+      "x_git_blob": "adbce9a7866f1b9edfbbb3b556873c509d12228d",
+      "y_git_blob": "3d66637ff161e54a2764e801477b3a1f15f2cc03",
+      "y_sha256": "7686475ebf7751095d56fe92f911eac3ca99ba52f8a3b59f7633242dca72a256",
+      "y_bytes": 14196
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "x_git_blob": "9781fc7225c50b3a8710ce10a1adba332c2617df",
+      "y_git_blob": "b49b17984f3a8ae55175400b22da51305d07115d",
+      "y_sha256": "1eb331245458a3eb228e72830c9d788b2534934c2c86658fa8fc5cc2285e29fe",
+      "y_bytes": 197698
+    },
+    {
+      "path": "config/pon/pq128-lifetime-budget-v1.json",
+      "x_git_blob": "c36fc3e9d904c6e9b634425a1784f96280305951",
+      "y_git_blob": "a37445c256f84498c94a242b18c76a7c55b1e208",
+      "y_sha256": "e70ed3f9ef266f330bae12cc37f8f37ad544e522fcca3a32e69db1d5552ffef7",
+      "y_bytes": 17620
+    },
+    {
+      "path": "config/pon/pq128-source-lock-v1.json",
+      "x_git_blob": "7644527dccaf4f8559ac2ca94334b658ca1d7438",
+      "y_git_blob": "b5966245668f65ee3e0355bba44403f8720a5e2f",
+      "y_sha256": "8489c8a862e8801aa385006a600708a521e16e5c6f5afbf0a1f88ed84bffa655",
+      "y_bytes": 2173
+    },
+    {
+      "path": "scripts/ci/pq_authority_effect_register.py",
+      "x_git_blob": "5ed3512c9289df5043ef1c95013567fe54d22c5e",
+      "y_git_blob": "7b3609375ab9dd2741cb2b2499cede95d138ac5e",
+      "y_sha256": "0f634d526f59da7f85aab69427aaf9fa82728d2d406581dbf717b984c473cb87",
+      "y_bytes": 11132
+    },
+    {
+      "path": "scripts/ci/test_pq_authority_effect_register.py",
+      "x_git_blob": "c3d12d5d5433d79c1d0d592aae5584ecf2c1731b",
+      "y_git_blob": "bc19b69db040e16cd85376a9a46f435635db7cf9",
+      "y_sha256": "2ff0f5ffadc17bc5968119d0bf693e35655b84440bb52fa67eed41150444580c",
+      "y_bytes": 14682
+    },
+    {
+      "path": "scripts/w1_lifetime_ledger.py",
+      "x_git_blob": "2e8973a3a5af930938a08432e1384da6ebe6f177",
+      "y_git_blob": "23f300e1feac2c5c1e22e2d669abae298f4b199b",
+      "y_sha256": "9b77a60adfe8ba8ee4fb0754a270c77c667bd3b3ebd9b6f3558dfde2fe26000e",
+      "y_bytes": 37814
+    }
+  ],
+  "checks": {
+    "exact_eight_file_scope": true,
+    "x_is_ancestor_of_y": true,
+    "workflow_changes_only_three_exact_blob_values": [
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+        "before": "44acbb5d854a8e0a7c4979b4715bd9949b656cd5",
+        "after": "ec3a2be0530eb23ea596474ba057ed172759f777"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+        "before": "5d4c26c962a390fb3b5162d60c52db6c4a53b84b",
+        "after": "d94f27a764a2788e90352881b52fc9017a32ab67"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "before": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+        "after": "a766d083bc1955041bf2fc537cb2731e2d4eb6c4"
+      }
+    ],
+    "workflow_runtime_steps_budgets_and_source_checks_unchanged": true,
+    "authority_register_source_file_count": 44,
+    "authority_register_route_count": 7,
+    "authority_register_routes_and_false_qualification_fields_unchanged": true,
+    "authority_register_current_pins_match_x_and_y_git_objects": true,
+    "authority_register_canonical_lock_sha256": "d9b9f94cfd7cfed46784c22eb6ee8ec865460bdfb587948874d4c9c498832350",
+    "authority_register_ast_unchanged_except_two_pin_constants": true,
+    "prior_revision_negative_control_added": "893738947a50dc42819b56e632192de4f9f24fa0",
+    "prior_test_assertions_preserved": true,
+    "pq128_source_lock_file_count": 15,
+    "pq128_source_lock_pins_match_x_and_y_git_objects": true,
+    "lifetime_budget_only_revision_changed": [
+      {
+        "path": "/experiment/source_revision",
+        "before": "66b7064be597039ce871b5b12ad5568850a2dd46",
+        "after": "077ac4f33206de00a178553d9a0c729a20685088",
+        "kind": "changed"
+      }
+    ],
+    "lifetime_ledger_source_pin_count": 20,
+    "lifetime_ledger_ast_unchanged_except_source_base_and_pin_map": true,
+    "lifetime_ledger_only_store_pin_changed_and_all_pins_match_x_and_y": true,
+    "corpus_updated_pin_count": 13,
+    "corpus_updated_paths": [
+      ".github/workflows/pon-recent-batch-acceptance.yml",
+      "config/pon/pq-authority-effects-v1.json",
+      "config/pon/pq128-lifetime-budget-v1.json",
+      "config/pon/pq128-source-lock-v1.json",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "scripts/ci/pq_authority_effect_register.py",
+      "scripts/ci/test_pq_authority_effect_register.py",
+      "scripts/w1_lifetime_ledger.py",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs"
+    ],
+    "corpus_added_pins_and_required_paths": [
+      "docs/security/ACCOUNT_AUTHORIZATION_DEVELOPMENT_BOUNDARY_20261110.md",
+      "trillionnium/crates/trnm-mvcc-fee/tests/account_development_scope.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs"
+    ],
+    "corpus_removed_pins": [],
+    "corpus_changed_pins_match_y_git_objects": true,
+    "corpus_non_pin_metadata_historical_records_and_source_composition_unchanged": true,
+    "historical_evidence_or_qualification_files_changed_in_x_y": false
+  },
+  "conclusions": [
+    "Y rebinds current selected-source identity to X and updates directly affected corpus/workflow pins. No runtime gate algorithm, required job, budget, source reader, route effect-scope or qualification predicate is relaxed in this diff.",
+    "The new negative test requires refusal of the former accepted authority source_revision 893738947a50dc42819b56e632192de4f9f24fa0; it adds coverage and does not replace older invalid cases.",
+    "All 44 authority SHA-256 pins, all PQ128 source-lock pins, and all 20 lifetime-ledger pins were independently recomputed from X Git blobs and found byte-identical in Y. The canonical authority fixed-lock digest matches the new constant.",
+    "Corpus additions bind the new boundary document and two new test files. No pins or required paths are removed. All non-pin corpus fields, including historical-source records, source composition, HOLD and false qualification/activation fields, remain unchanged.",
+    "This review does not requalify a historical cohort, authenticate executed binaries, assert native test success, or qualify production. Runtime/source gate results must be captured separately on the frozen committed tree."
+  ],
+  "remaining": [
+    "Run the assigned source-integrity gates after root confirms completion of its full-tree source-before receipt.",
+    "Root-owned compilation/native checks remain separate; this reviewer did not run Cargo or edit the isolated checkout."
+  ]
+}

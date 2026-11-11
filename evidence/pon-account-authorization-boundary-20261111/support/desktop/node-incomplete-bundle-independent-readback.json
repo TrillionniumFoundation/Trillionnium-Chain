@@ -1,0 +1,112 @@
+{
+  "absent_source_after": {
+    "directory_present_in_bundle": false,
+    "id": "node-retained-source-after",
+    "no_execution_receipt_invented": true,
+    "observation": {
+      "execution_not_proven": true,
+      "exists": false,
+      "path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-source-after",
+      "result_available": false
+    }
+  },
+  "archive": {
+    "bytes": 4900,
+    "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/desktop-node-retained-evidence-v1.tar.gz",
+    "sha256": "ba661f928baba648358ba104bf5e0ffee6f7c92acd5452e0199078a12f56694f"
+  },
+  "archive_original_members_verified": 8,
+  "archive_total_members_verified": 9,
+  "created_utc": "2026-11-11T04:03:00.900935+00:00",
+  "full_ci_acceptance_granted": false,
+  "host": "desktop",
+  "incomplete": {
+    "argv": [
+      "env",
+      "CARGO_HOME=/home/qian-qi/chain-pq-a418-final-cargo-home",
+      "TRNM_CI_TOOL_ROOT=/home/qian-qi/chain-pq-a418-final-ci-tools",
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "--test-threads=1"
+    ],
+    "classification": "INCOMPLETE_EMPTY_RESULT",
+    "counts_as_terminal": false,
+    "finished_utc": null,
+    "id": "node-retained-all-targets",
+    "pass": null,
+    "receipt_pins": {
+      "context.json": {
+        "bytes": 4332,
+        "sha256": "326711c660b4386e1b8a96e5e47eb42e75c8f300fb6b810264681063a530e879"
+      },
+      "result.json": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr.log": {
+        "bytes": 4193,
+        "sha256": "493e9415cd00edae5285702fc2c319b647549964a9a79bd7aa24f339424a23f0"
+      },
+      "stdout.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "returncode": null,
+    "source_identity_after_execution": null
+  },
+  "limitations": [
+    "Archive readback and export source observations do not synthesize a missing execution result or source-after command.",
+    "LLVM ENOSPC is actual compiler output; unknown wrapper outcome is not reclassified PASS or FAIL.",
+    "Target disappearance cause remains unknown; historical binary measurements do not establish present file availability."
+  ],
+  "manifest": {
+    "bytes": 9471,
+    "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-evidence-v1/export-manifest.json",
+    "sha256": "e2df706167feb4515b5852eb1b7f3c142642d7a7c7b4441d7b301e5bbcd98572"
+  },
+  "native_test_execution_established_for_incomplete_command": false,
+  "origin_job_id": "1a1c8980187-135c4-111",
+  "original_bytes_unchanged": true,
+  "original_target_observation": {
+    "disappearance_cause": "unknown",
+    "exists": false,
+    "no_cause_attributed_to_cache_cleanup": true,
+    "path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final-target"
+  },
+  "preflight": {
+    "classification": "PASS",
+    "id": "node-retained-preflight",
+    "result_sha256": "be102806269f62aec3342996216857998a4f129eae70612911a3f598dbadbb04"
+  },
+  "production_qualification_granted": false,
+  "project_tests_executed": false,
+  "runtime_status": {
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "job_id": "1a1c8980187-135c4-111",
+    "outcome": "unknown",
+    "reason": "supervisor disappeared without a confirmed terminal receipt",
+    "state": "finalizing",
+    "status_authoritative": false,
+    "terminal_publication_confirmed": false
+  },
+  "schema": "trnm-node-incomplete-original-bundle-readback-v1",
+  "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+  "stage_executed": false,
+  "transfer_report": {
+    "bytes": 2281,
+    "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-transfer-verification.json",
+    "sha256": "adc1e06e315d9c4ea48cb3259ddf319bc3034a6c6783ceddbe3b49300e347817"
+  }
+}

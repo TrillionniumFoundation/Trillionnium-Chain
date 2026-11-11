@@ -1,0 +1,88 @@
+{
+  "actual_Running_headers": [
+    "     Running unittests src/lib.rs (/data/chain-pq-a418-node-retained-target-20261111/debug/deps/trnm_pon_node-2cfc25289c60243c)"
+  ],
+  "all_archive_members_equal_current_extracted_raw_bytes": true,
+  "all_manifest_member_lengths_and_sha256_match": true,
+  "archive": {
+    "bytes": 49417,
+    "members": 21,
+    "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/desktop-node-retained-data-evidence-v1.tar.gz",
+    "sha256": "5964496925744cdeae11ee177883ee537b696feefe6ee5c6cb027e64af851238"
+  },
+  "inventory": {
+    "bytes": 230795,
+    "classifications": {
+      "FAIL": 13,
+      "PASS": 50
+    },
+    "incomplete": 1,
+    "old58_objects_unchanged": true,
+    "sha256": "b9bda8938371f22a4b48a2af7377afd8a39523ea9d71afb3c2912bc02f3b400e",
+    "terminal_records": 63
+  },
+  "manifest": {
+    "bytes": 11448,
+    "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/export-manifest.json",
+    "schema": "desktop-primary-evidence-export-v1",
+    "sha256": "3fd826bc86628ce83c57a68a3bb59ca6d2a4a57dd55136c8ba57d290de1887ee",
+    "source_after": {
+      "head": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "status_porcelain": "",
+      "tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec"
+    },
+    "source_before": {
+      "head": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "status_porcelain": "",
+      "tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec"
+    }
+  },
+  "mode_note": "The DATA export manifest binds member names, bytes and SHA256; it does not include a mode field. An initial ad hoc reviewer mode lookup stopped with KeyError; the completed byte verification follows the actual schema and does not claim original-mode attestation.",
+  "new_project_or_native_execution": false,
+  "original_source_modes_bound_by_this_manifest": false,
+  "qualification_granted": false,
+  "raw_summaries_not_summed": [
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1401 filtered out; finished in 0.00s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1401 filtered out; finished in 0.00s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1401 filtered out; finished in 0.00s",
+    "test result: FAILED. 1359 passed; 4 failed; 39 ignored; 0 measured; 0 filtered out; finished in 7809.10s"
+  ],
+  "records": [
+    {
+      "elapsed_seconds": 0.1797194560058415,
+      "id": "node-retained-data-preflight",
+      "pass": true,
+      "returncode": 0
+    },
+    {
+      "elapsed_seconds": 32.46372414496727,
+      "id": "node-retained-data-source-before",
+      "pass": true,
+      "returncode": 0
+    },
+    {
+      "elapsed_seconds": 9327.54999621096,
+      "id": "node-retained-data-all-targets",
+      "pass": false,
+      "returncode": 101
+    },
+    {
+      "elapsed_seconds": 41.56752834888175,
+      "id": "node-retained-data-source-after",
+      "pass": true,
+      "returncode": 0
+    }
+  ],
+  "reviewed_utc": "2026-11-11T06:46:01.695339+00:00",
+  "schema": "account-boundary-data-package-independent-readback-v1",
+  "source_or_raw_modified": false,
+  "tar_modes_observed": [
+    292
+  ],
+  "transfer": {
+    "bytes": 5364,
+    "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-transfer-verification.json",
+    "sha256": "fac8235fb1b823c10c3441eb8e3b3de05d11eb77aba8999117b5e5cc8aeb8a8d"
+  },
+  "unsafe_paths_duplicates_links_special_files_rejected": true
+}
