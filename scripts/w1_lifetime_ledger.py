@@ -40,7 +40,10 @@ OUTPUT_SCHEMA = "TRNM-W1-LIFETIME-LEDGER-REPORT1"
 # of the child commit containing this ledger and its successor report. This is
 # selected source identity only; it does not identify an executed binary or
 # establish any proof, lifetime, consensus, or production qualification.
-SOURCE_BASE = "8add285b6c0a91d8b7812efe2d02c9342f74c91b"
+# Rustix 1.1.6 changes only the selected crypto manifest and workspace lock.
+# The successor retains the prior report; all eighteen other selected sources,
+# arithmetic, unknown inputs and independent HOLD qualifications are unchanged.
+SOURCE_BASE = "7f83ea843d6d1578a475a7a0c4dc026da564a795"
 MAX_INPUT_BYTES = 262144
 MAX_INTEGER_BITS = 512
 PHASES = (
@@ -114,8 +117,8 @@ GROUPS = {
     },
 }
 SOURCE_PINS = {
-    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3",
-    "trillionnium/Cargo.lock": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "caff7ff137c94e26a378a2a95ae029a21b1ee30a79d08a05b8c9e3b1f1810ab8",
+    "trillionnium/Cargo.lock": "53c4eab0fb3d2951894348de2b765e0a573e49acb5dbfe1fe805719ec868a136",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b",
     "trillionnium/crates/trnm-protocol/src/pq_frame.rs": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429",
     "trillionnium/crates/trnm-protocol/src/crypto_profile.rs": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a",
