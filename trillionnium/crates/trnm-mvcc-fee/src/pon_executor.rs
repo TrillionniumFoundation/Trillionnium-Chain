@@ -1472,6 +1472,39 @@ pub fn validate_main_envelope(raw: &[u8], height: u64, cfg: &Config) -> Result<E
         .legacy
         .ok_or("PQ_ACCOUNT_NATIVE_API_REQUIRED")
 }
+// This operation-local carrier binds the decoded canonical fields to the exact
+// borrowed input. The successful PNX1 decoder checks complete framing, every
+// payload rule, nonce/fee canonicality and the fixed 64-byte signature suffix.
+// Therefore its unsigned()/encode() bytes equal these slices exactly. Keep the
+// original decoder and all signature/profile/state checks; only avoid making
+// two more owned encodings for the mathematical signing and transaction hashes.
+struct DecodedLegacyEnvelope<'a> {
+    envelope: Envelope,
+    wire: &'a [u8],
+}
+impl<'a> DecodedLegacyEnvelope<'a> {
+    fn decode(wire: &'a [u8]) -> Result<Self> {
+        Ok(Self {
+            envelope: Envelope::decode(wire).map_err(|_| "ENCODING")?,
+            wire,
+        })
+    }
+
+    fn signing_digest(&self) -> Hash {
+        // decode() established len >= 159 and consumed this exact suffix.
+        let unsigned = &self.wire[..self.wire.len() - self.envelope.signature.len()];
+        hash(b"tx-sign", &[unsigned])
+    }
+
+    fn id(&self) -> Hash {
+        hash(b"tx-id", &[self.wire])
+    }
+}
+
+#[cfg(test)]
+#[path = "pon_executor/legacy_preparation_tests.rs"]
+mod legacy_preparation_tests;
+
 fn prepare(
     raw: &[u8],
     height: u64,
@@ -1507,7 +1540,8 @@ fn prepare(
     if let Some(policy) = &cfg.pq_accounts {
         return pq_accounts::prepare(raw, height, cfg, signatures, policy);
     }
-    let tx = Envelope::decode(raw).map_err(|_| "ENCODING")?;
+    let decoded = DecodedLegacyEnvelope::decode(raw)?;
+    let tx = &decoded.envelope;
     funded_service_v1::check_command(cfg, tx.tag, &tx.payload)?;
     require(
         !(18..=21).contains(&tx.tag) || qualified_task_lifecycle::enabled(cfg),
@@ -1565,11 +1599,11 @@ fn prepare(
     signatures.fetch_add(1, Ordering::Relaxed);
     verify_hex_strict(
         &sender,
-        &tx.signing_digest().map_err(|_| "ENCODING")?,
+        &decoded.signing_digest(),
         &hex::encode(tx.signature),
     )
     .map_err(|_| "SIGNATURE")?;
-    let transaction_id = tx.id().map_err(|_| "ENCODING")?.to_vec();
+    let transaction_id = decoded.id().to_vec();
     let command = ApplicationCommand {
         sender: tx.sender,
         nonce: tx.nonce,
@@ -1580,7 +1614,7 @@ fn prepare(
     Ok(Prepared {
         native_pq: None,
         command,
-        legacy: Some(tx),
+        legacy: Some(decoded.envelope),
         sender,
         encoded_len: raw.len(),
         transaction_id,
