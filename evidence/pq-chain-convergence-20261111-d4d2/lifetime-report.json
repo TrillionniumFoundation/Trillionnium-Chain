@@ -606,16 +606,20 @@
         "sha256": "4dd08a40f9719b6a8e310c65b63fc3af44b6d4fb6a6db83af296600334da747b"
       }
     },
+    "reviewed_source_revision_overrides": {
+      "trillionnium/Cargo.lock": "7f83ea843d6d1578a475a7a0c4dc026da564a795",
+      "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "7f83ea843d6d1578a475a7a0c4dc026da564a795"
+    },
     "sources": [
       {
         "bytes": "924",
         "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
-        "sha256": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3"
+        "sha256": "caff7ff137c94e26a378a2a95ae029a21b1ee30a79d08a05b8c9e3b1f1810ab8"
       },
       {
         "bytes": "40597",
         "path": "trillionnium/Cargo.lock",
-        "sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f"
+        "sha256": "53c4eab0fb3d2951894348de2b765e0a573e49acb5dbfe1fe805719ec868a136"
       },
       {
         "bytes": "12902",
