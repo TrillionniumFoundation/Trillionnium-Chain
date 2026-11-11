@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 import re
 import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -23,7 +25,7 @@ class ProofProfileBindingTests(unittest.TestCase):
         cls.mapping = json.loads((ROOT / binding.MAPPING).read_bytes())
         cls.system = json.loads((ROOT / binding.lifetime.DEFAULT_MANIFEST).read_bytes())
         cls.paths = {binding.DEFAULT_MANIFEST, binding.MAPPING,
-                     binding.lifetime.DEFAULT_MANIFEST}
+                     binding.lifetime.DEFAULT_MANIFEST, binding.upstream.DEFAULT_MANIFEST}
         cls.paths.update(row['path'] for group in ('project_files', 'saved_v2_files')
                          for row in cls.mapping[group])
         cls.paths.add(cls.mapping['upstream_snapshot']['path'])
@@ -53,7 +55,8 @@ class ProofProfileBindingTests(unittest.TestCase):
 
     def test_actual_selected_profile_is_bound_without_security_promotion(self):
         result = binding.inspect(ROOT)
-        self.assertEqual(result['status'], 'PROFILE_BOUND_SECURITY_HOLD')
+        self.assertEqual(result['schema'], 'trnm-pq-proof-profile-binding-result-v2')
+        self.assertEqual(result['status'], 'PROFILE_BOUND_UPSTREAM_REVOKED_HOLD')
         self.assertEqual(result['selected_profile_id'], binding.PROFILE)
         self.assertEqual(result['selected_identity']['sdk'], '3.0.6')
         self.assertEqual(result['selected_identity']['image_id'][0], 1958252411)
@@ -71,8 +74,62 @@ class ProofProfileBindingTests(unittest.TestCase):
         for key in ('whole_chain_pq_qualified', 'composition_coverage_proved',
                     'production_activation', 'whole_chain_hash_query_scope_closed',
                     'native_proof_verification_performed', 'compiled_or_loaded_identity_verified',
-                    'complete_dependency_closure_verified'):
+                    'complete_dependency_closure_verified', 'current_proof_use_eligible'):
             self.assertIs(result[key], False)
+
+    def test_upstream_withdrawal_uses_the_same_real_profile_and_artifact_bytes(self):
+        result = binding.inspect(ROOT)
+        upstream = result['upstream_security']
+        self.assertEqual(upstream['schema'], binding.upstream.RESULT_SCHEMA)
+        self.assertEqual(upstream['status'], 'KNOWN_AFFECTED_SELECTED_PROFILE')
+        self.assertEqual(upstream['selected_identity']['profile_id'], result['selected_profile_id'])
+        self.assertEqual(upstream['selected_identity']['guest_image_id'],
+                         result['selected_identity']['image_id'])
+        self.assertEqual(len(upstream['affected_locked_packages']), 15)
+        for path, digest in upstream['source_files_sha256'].items():
+            with self.subTest(source=path):
+                self.assertEqual(result['source_files_sha256'][path], digest)
+        self.assertIs(upstream['actual_w1_exploit_reproduced'], False)
+        self.assertIs(upstream['groth16_use_inferred_from_lock_presence'], False)
+        self.assertIsNone(upstream['actual_lifetime_failure_bound'])
+
+    def test_missing_security_register_cannot_fall_back_to_historical_binding(self):
+        root = self.checkout()
+        (root / binding.upstream.DEFAULT_MANIFEST).unlink()
+        with self.assertRaisesRegex(binding.SourceReadError, 'missing source'):
+            binding.inspect(root)
+
+    def test_omitting_succinct_from_upstream_withdrawal_is_refused(self):
+        root = self.checkout()
+        register = json.loads((root / binding.upstream.DEFAULT_MANIFEST).read_bytes())
+        register['release']['affected_receipt_formats'].remove('succinct')
+        self.write(root, binding.upstream.DEFAULT_MANIFEST, register)
+        with self.assertRaisesRegex(binding.upstream.UpstreamSecurityError, 'unreviewed upstream policy'):
+            binding.inspect(root)
+
+    def test_self_approving_the_historical_profile_cannot_reinstate_it(self):
+        root = self.checkout()
+        register = json.loads((root / binding.upstream.DEFAULT_MANIFEST).read_bytes())
+        register['approved_current_profile_ids'] = [binding.PROFILE]
+        self.write(root, binding.upstream.DEFAULT_MANIFEST, register)
+        with self.assertRaisesRegex(binding.upstream.UpstreamSecurityError, 'self-promotion'):
+            binding.inspect(root)
+
+    def test_cli_preserves_historical_diagnostic_but_refuses_current_use(self):
+        root = self.checkout()
+        command = [sys.executable, str(ROOT / 'scripts/ci/pq_proof_profile_binding.py'),
+                   '--root', str(root)]
+        diagnostic = subprocess.run(command, capture_output=True, timeout=15, check=False)
+        current = subprocess.run(command + ['--require-current'], capture_output=True,
+                                 timeout=15, check=False)
+        self.assertEqual(diagnostic.returncode, 0, diagnostic.stderr)
+        self.assertEqual(current.returncode, 2, current.stderr)
+        self.assertEqual(diagnostic.stdout, current.stdout)
+        self.assertEqual(json.loads(current.stdout)['status'], 'PROFILE_BOUND_UPSTREAM_REVOKED_HOLD')
+        refusal = json.loads(current.stderr)
+        self.assertEqual(refusal['schema'], binding.RESULT_SCHEMA)
+        self.assertEqual(refusal['status'], 'REFUSE')
+        self.assertIs(refusal['current_proof_use_eligible'], False)
 
     def test_native_system_experiment_is_reported_as_not_covering_risc0(self):
         result = binding.inspect(ROOT)

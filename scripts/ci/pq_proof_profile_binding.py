@@ -5,6 +5,8 @@ This reader compares selected source bytes and declarations. It does not run a
 proof verifier, establish a build closure, discharge a theorem hypothesis or
 authorize admission. The native-PNW1 lifetime register remains a different
 experiment; its presence cannot qualify the selected RISC Zero proof profile.
+The upstream security lifecycle check is mandatory. A byte-identical historical
+profile can be reproducible while its current-use eligibility is withdrawn.
 """
 from __future__ import annotations
 
@@ -20,11 +22,12 @@ import tomllib
 import zlib
 
 import pq_lifetime_budget as lifetime
+import w1_upstream_security as upstream
 from pq_source_reader import SourceReadError, read_regular
 
 
 SCHEMA = 'trnm-pq-proof-profile-binding-v1'
-RESULT_SCHEMA = 'trnm-pq-proof-profile-binding-result-v1'
+RESULT_SCHEMA = 'trnm-pq-proof-profile-binding-result-v2'
 DEFAULT_MANIFEST = 'config/pon/pq-proof-profile-binding-v1.json'
 PROFILE = 'trnm-w1-risc0-3.0.6-poseidon2-join-v2'
 NATIVE_PROFILE = 'pon-nakamoto-v1-pq-research-native-pnw1'
@@ -294,6 +297,21 @@ def inspect(root, manifest=DEFAULT_MANIFEST, expected_profile_descriptor_sha256=
     require(b"'manuscript_date': '2026-01-01'" in evaluator,
             'evaluator theorem revision differs')
 
+    upstream_security = upstream.inspect(root)
+    upstream_identity = upstream_security['selected_identity']
+    require(upstream_identity['profile_id'] == PROFILE
+            and upstream_identity['hash_suite'] == identity['hash_suite']
+            and upstream_identity['final_control_id'] == identity['final_control_id']
+            and upstream_identity['verifier_parameters_digest'] == identity['verifier_parameters_digest']
+            and upstream_identity['guest_image_id'] == identity['image_id'],
+            'upstream security inspection refers to a different proof identity')
+    # Reconcile the two real read scopes. Neither an independently correct
+    # report for another source nor a changed policy file can fill this slot.
+    for path, digest in upstream_security['source_files_sha256'].items():
+        if path not in observations:
+            observations[path] = read_regular(root, path, MAX_BYTES)
+        require(sha(observations[path]) == digest,
+                'upstream security source differs from profile observation: ' + path)
     for path, before in observations.items():
         require(read_regular(root, path, len(before)) == before,
                 'selected input changed between observations: ' + path)
@@ -307,8 +325,11 @@ def inspect(root, manifest=DEFAULT_MANIFEST, expected_profile_descriptor_sha256=
     if expected_profile_descriptor_sha256 is not None:
         require(profile_digest == expected_profile_descriptor_sha256,
                 'candidate proof profile descriptor mismatch')
+    status = ('PROFILE_BOUND_UPSTREAM_REVOKED_HOLD'
+              if upstream_security['status'] == 'KNOWN_AFFECTED_SELECTED_PROFILE'
+              else 'PROFILE_BOUND_MIGRATION_UNREVIEWED_HOLD')
     return {
-        'schema': RESULT_SCHEMA, 'status': 'PROFILE_BOUND_SECURITY_HOLD',
+        'schema': RESULT_SCHEMA, 'status': status,
         'selected_profile_id': PROFILE, 'selected_profile_descriptor_sha256': profile_digest,
         'candidate_profile_identity_matched': expected_profile_descriptor_sha256 is not None,
         'selected_identity': identity, 'binding_manifest_sha256': sha(raw),
@@ -320,6 +341,8 @@ def inspect(root, manifest=DEFAULT_MANIFEST, expected_profile_descriptor_sha256=
         'compiled_or_loaded_identity_verified': False,
         'native_proof_verification_performed': False,
         'independent_source_authentication': False,
+        'upstream_security': upstream_security,
+        'current_proof_use_eligible': False,
         'system_lifetime_register': {
             'profile_id': NATIVE_PROFILE,
             'source_revision': system['experiment']['source_revision'],
@@ -343,7 +366,9 @@ def inspect(root, manifest=DEFAULT_MANIFEST, expected_profile_descriptor_sha256=
         'production_activation': False,
         'note': 'A source/profile binding is not a security theorem. The native-PNW1 register '
                 'and both P3 candidates supply no selected-profile failure bound; byte pins '
-                'and endpoint equality do not authenticate a deployed implementation.',
+                'and endpoint equality do not authenticate a deployed implementation. '
+                'The mandatory upstream lifecycle result separately withdraws the affected '
+                'historical profile from current use; historical replay cannot reinstate it.',
     }
 
 
@@ -352,17 +377,22 @@ def main(argv=None):
     parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument('--manifest', default=DEFAULT_MANIFEST)
     parser.add_argument('--expected-profile-descriptor-sha256')
+    parser.add_argument('--require-current', action='store_true',
+                        help='refuse current use of a withdrawn or unreviewed proof profile')
     args = parser.parse_args(argv)
     try:
         result = inspect(args.root, args.manifest, args.expected_profile_descriptor_sha256)
+        print(json.dumps(result, sort_keys=True, allow_nan=False))
+        if args.require_current:
+            upstream.require_current(result['upstream_security'])
     except (ProfileError, lifetime.BudgetError, SourceReadError, OSError,
             KeyError, TypeError, ValueError, RecursionError) as error:
         print(json.dumps({'schema': RESULT_SCHEMA, 'status': 'REFUSE', 'reason': str(error),
                           'actual_lifetime_failure_bound': None,
+                          'current_proof_use_eligible': False,
                           'whole_chain_pq_qualified': False, 'production_activation': False},
                          sort_keys=True), file=sys.stderr)
         return 2
-    print(json.dumps(result, sort_keys=True, allow_nan=False))
     return 0
 
 

@@ -2737,7 +2737,17 @@ class MergedQualificationLaneTests(unittest.TestCase):
         'qrom_current_source': ('repository-truth', '    python3 scripts/ci/test_pq_chain_claim_guard.py\n    # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.\n', (
             '    python3 scripts/ci/test_w1_qrom_current_implementation_audit.py\n',
             '    python3 scripts/w1_qrom_current_implementation_audit.py\n',
+        ), '    python3 scripts/ci/test_w1_upstream_security.py\n'),
+        'upstream_security': ('repository-truth', '    python3 scripts/w1_qrom_current_implementation_audit.py\n', (
+            '    python3 scripts/ci/test_w1_upstream_security.py\n',
+            '    python3 scripts/ci/w1_upstream_security.py\n',
+            '    python3 scripts/ci/test_pq_proof_profile_binding.py\n',
+            '    python3 scripts/ci/pq_proof_profile_binding.py\n',
         ), "    python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v\n"),
+        'posterior_policy': ('repository-truth',
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_adversarial_search.py' -v\n", (
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_posterior_policy.py' -v\n",
+        ), "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_resource_clock.py' -v\n"),
         'hash_use_contract': ('repository-truth', '    python3 scripts/ci/pq_authority_surface_scan.py --summary-only\n', (
             '    python3 scripts/ci/test_hash_use_contract.py\n',
             '    python3 scripts/ci/hash_use_contract.py\n',
@@ -2812,6 +2822,12 @@ class MergedQualificationLaneTests(unittest.TestCase):
     def test_current_mapping_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('qrom_current_source')
 
+    def test_upstream_security_controls_cannot_be_skipped_or_suppressed(self):
+        self.reject_command_mutations('upstream_security')
+
+    def test_posterior_policy_controls_cannot_be_skipped_or_suppressed(self):
+        self.reject_command_mutations('posterior_policy')
+
     def test_hash_use_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('hash_use_contract')
 
@@ -2830,6 +2846,8 @@ class MergedQualificationLaneTests(unittest.TestCase):
                     '    if false; then\n' + block + '    fi\n',
                     '    if\n' + block + '    then :; fi\n',
                     '    {\n' + block + '    } || true\n'):
+                if replacement == block:  # Reversing a one-command group changes nothing.
+                    continue
                 with self.subTest(group=name, replacement=replacement):
                     with self.assertRaises(ValueError):
                         self.checked(self.script.replace(block, replacement, 1))
