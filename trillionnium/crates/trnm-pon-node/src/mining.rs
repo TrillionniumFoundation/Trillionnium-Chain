@@ -565,6 +565,10 @@ mod prepare_control_tests;
 #[path = "pool_run_control_tests.rs"]
 pub(crate) mod pool_run_control_tests;
 
+#[cfg(test)]
+#[path = "pool_reconcile_control_tests.rs"]
+pub(crate) mod pool_reconcile_control_tests;
+
 // This is the existing run's cooperative wall/stop fence. Ordinary mining has
 // no public paid-CPU operation to borrow or replenish. A private local-only error
 // plus this callback's own marker distinguishes cancellation from an unrelated
@@ -723,6 +727,8 @@ where
         let stage = Instant::now();
         #[cfg(test)]
         pool_run_control_tests::enter_stage("pool-batch", end);
+        #[cfg(test)]
+        pool_reconcile_control_tests::enter_stage("pool-batch", end);
         let batch_result = owner.pool_mining_batch_with_control(
             parent,
             generation,
@@ -933,6 +939,8 @@ where
             let stage = Instant::now();
             #[cfg(test)]
             pool_run_control_tests::enter_stage("batch-revalidation", end);
+            #[cfg(test)]
+            pool_reconcile_control_tests::enter_stage("batch-revalidation", end);
             let validation = owner.pool_validate_batch_with_control(&batch, &control);
             event.post_search_batch_validation_ns = stage.elapsed().as_nanos();
             report.post_search_batch_validation_ns += event.post_search_batch_validation_ns;

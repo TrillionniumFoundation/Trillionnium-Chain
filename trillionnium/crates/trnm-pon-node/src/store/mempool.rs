@@ -583,6 +583,8 @@ impl PendingPreview<'_, '_> {
             })?;
         #[cfg(test)]
         crate::mining::pool_run_control_tests::after_pool_execution();
+        #[cfg(test)]
+        crate::mining::pool_reconcile_control_tests::after_pool_execution();
         *node.commitment_observation.borrow_mut() = Some(output.commitment.observation);
         if reuse != self.signatures.len() {
             self.signatures.clear();
@@ -872,6 +874,8 @@ impl Node {
                     count <= limits.max_records && bytes <= limits.max_bytes,
                     "POOL_STORAGE_LIMIT",
                 )?;
+                #[cfg(test)]
+                crate::mining::pool_reconcile_control_tests::pool_rows(count);
                 ids.extend_from_slice(&digest);
                 decoded.push(Row {
                     digest: bytes32(digest)?,
