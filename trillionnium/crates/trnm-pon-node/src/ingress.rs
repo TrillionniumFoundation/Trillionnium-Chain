@@ -1311,29 +1311,20 @@ fn observe_submit_phase<T>(
 }
 
 /// Reuse the caller's original CPU operation, worker accounting and absolute
-/// cancellation control. This creates no new account, reservation or refill
-/// source. One bounded snapshot slot keeps M06 memory concurrency at one owner.
-struct SharedAdmissionExecution<'a, 'b> {
-    held: &'a trnm_mvcc_fee::pon_executor::ExecutionControl<'b, Error>,
-    // Selected only after dropping the original Node writer. Preparation,
-    // capacity fallback, reacquisition and commit always use `held`.
-    detached_progress:
-        &'a (dyn Fn(trnm_mvcc_fee::pon_executor::ExecutionProgress) -> Result<()> + Sync),
-}
-
+/// cancellation control. There is no reservation/refill/account construction
+/// here. One bounded snapshot slot keeps M06 memory concurrency at one owner.
 fn admit_shared_checked<'a>(
     node: &'a Mutex<Node>,
     checked: WorkCheckedPacket,
     permit: Option<crate::store::OwnerPacketPermit>,
     progress: &mut dyn FnMut(u64) -> Result<()>,
-    execution: SharedAdmissionExecution<'_, '_>,
+    control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, Error>,
     clock: impl Fn() -> Result<u64>,
     observation: Option<&public_v3::request_observation::TaskObservation>,
 ) -> Result<(MutexGuard<'a, Node>, Hash, u64)> {
     use crate::store::{DetachedExecutionLease, PreparedSharedAdmission};
     use public_v3::SubmitPhase;
     use trnm_mvcc_fee::pon_executor::ExecutionProgress;
-    let control = execution.held;
     let wait_end = Instant::now() + Duration::from_secs(2);
     let (mut owner, lease): (MutexGuard<'a, Node>, Option<DetachedExecutionLease>) =
         observe_submit_phase(observation, SubmitPhase::AdmissionOwnerWait, || loop {
@@ -1401,14 +1392,10 @@ fn admit_shared_checked<'a>(
             }
             PreparedSharedAdmission::Execute(prepared) => {
                 drop(owner);
-                let detached = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
-                    execution.detached_progress,
-                    control.worker_accounting,
-                );
                 let executed = observe_submit_phase(observation, SubmitPhase::Execution, || {
                     execution_observation::run(
                         observation,
-                        &detached,
+                        control,
                         execution_observation::Scope::DetachedExecution,
                         |control| prepared.execute(control),
                     )
@@ -1541,10 +1528,7 @@ fn dispatch_shared_submit_with_execution_observation(
         checked,
         owner_permit,
         progress,
-        SharedAdmissionExecution {
-            held: control,
-            detached_progress: control.progress,
-        },
+        control,
         now,
         observation,
     )?;

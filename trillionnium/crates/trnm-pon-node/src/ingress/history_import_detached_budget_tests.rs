@@ -3,6 +3,7 @@
 //! it is not useful application work or a throughput/campaign measurement.
 use super::*;
 use public_v3::request_observation::ThreadCpuStamp;
+use rusqlite::OptionalExtension;
 use std::sync::atomic::AtomicBool;
 
 #[derive(Default, serde::Serialize)]
@@ -59,11 +60,13 @@ fn detached_history_original_account(mode: DuringRefill) {
     assert_eq!(original.observe().unwrap().stored_credit_ns, 0);
     let deadline = Instant::now() + Duration::from_secs(5);
     let replay = Arc::new(Mutex::new(None));
+    let before_epoch_close = Arc::new(Mutex::new(None));
     let injected = Arc::new(AtomicBool::new(false));
     let observed_owner = owner.clone();
     let observed_domain = original.clone();
     let observed_packet = packet.clone();
     let observed_replay = replay.clone();
+    let observed_close = before_epoch_close.clone();
     let observed_injected = injected.clone();
     OBSERVER.with(|hook| {
         *hook.borrow_mut() = Some(Box::new(move |stage| {
@@ -75,6 +78,15 @@ fn detached_history_original_account(mode: DuringRefill) {
                     &observed_domain,
                     &observed_packet,
                     deadline,
+                ));
+            }
+            if stage == "before_epoch_close" {
+                // Both observations are read-only and occur after settlement.
+                // Do not refill, extend the request, repair debt or bypass the
+                // last-epoch crash fence merely to obtain diagnostic evidence.
+                *observed_close.lock().unwrap() = Some((
+                    observed_domain.observe().unwrap(),
+                    observed_domain.observe_actual_flow().unwrap(),
                 ));
             }
         }));
@@ -115,21 +127,97 @@ fn detached_history_original_account(mode: DuringRefill) {
     );
     OBSERVER.with(|hook| *hook.borrow_mut() = None);
     let snapshot = observation.snapshot();
+    let before_epoch_close = before_epoch_close.lock().unwrap().take();
+    let after_cpu = original.observe().unwrap();
     let flow = original.observe_actual_flow().unwrap();
+    let db = rusqlite::Connection::open_with_flags(
+        directory.path().join("native.sqlite"),
+        rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
+    )
+    .unwrap();
+    let epoch_marker: Option<Vec<u8>> = db
+        .query_row(
+            "SELECT value FROM metadata WHERE key='ordinary-public-v3-epoch-v1'",
+            [],
+            |row| row.get(0),
+        )
+        .optional()
+        .unwrap();
+    drop(db);
     println!(
         "{}",
         serde_json::json!({
-            "schema": "history-detached-original-refill-control-v1",
+            "schema": "history-detached-original-refill-control-v2",
             "mode": format!("{mode:?}"),
             "outcome": result.as_ref().map(hex::encode).map_err(ToString::to_string),
             "replay": *replay.lock().unwrap(),
             "refill_resource_checks": refill_checks.load(Ordering::SeqCst),
+            "before_epoch_close": before_epoch_close.as_ref().map(|(cpu, flow)| {
+                serde_json::json!({"cpu":cpu,"flow":flow})
+            }),
+            "after_epoch_close_cpu": after_cpu,
+            "epoch_marker": epoch_marker.as_ref().map(hex::encode),
             "flow": flow,
             "history": snapshot,
             "native_campaign_executed": false,
         })
     );
     assert!(injected.load(Ordering::SeqCst));
+    let (before_cpu, before_flow) =
+        before_epoch_close.expect("settled pre-close cut was not reached");
+    let before_flow = before_flow.expect("original settled CPU identity is unavailable");
+    assert!(!before_cpu.accounting_unavailable);
+    assert_eq!(before_cpu.in_flight, 0);
+    assert_eq!(before_flow.initial_credit_ns, 0);
+    assert_eq!(before_flow.booked_reservation_ns, 0);
+    assert_eq!(before_flow.termination_reserved_ns, 0);
+    assert_eq!(before_flow.unsettled_known_live_cpu_ns, 0);
+    assert_eq!(before_flow.live_owners, 0);
+    assert_eq!(
+        before_flow.paid_cpu_debit_ns,
+        before_flow.settled_full_cpu_ns
+    );
+    assert!(before_flow.balance_identity_verified);
+    assert_eq!(before_flow.stored_credit_ns, before_cpu.stored_credit_ns);
+    assert!(
+        before_flow.paid_cpu_debit_ns
+            >= replay
+                .lock()
+                .unwrap()
+                .as_ref()
+                .unwrap()
+                .actual_thread_cpu_ns
+    );
+    assert_eq!(after_cpu.stored_credit_ns, before_cpu.stored_credit_ns);
+    assert_eq!(after_cpu.in_flight, 0);
+    let close = snapshot
+        .phases
+        .iter()
+        .find(|phase| phase.phase == SubmitPhase::HistoryEpochClose)
+        .unwrap();
+    let dirty_close = before_cpu.stored_credit_ns < 0;
+    assert!(close.started && close.completed);
+    if dirty_close {
+        // Known settled debt is deliberately fenced at the last epoch close.
+        // Its later optional flow is unavailable because the ORIGINAL crash
+        // guard latched unavailable, not because the debit identity was lost.
+        assert_eq!(close.accepted, Some(false));
+        assert_eq!(close.error_code, Some("PUBLIC_MUTATION_CPU_UNAVAILABLE"));
+        assert!(after_cpu.accounting_unavailable);
+        assert!(flow.is_none());
+        assert_eq!(epoch_marker.as_deref(), Some(b"active-v1".as_slice()));
+        assert!(result
+            .as_ref()
+            .err()
+            .unwrap()
+            .is(crate::ErrorCode::PublicMutationCpuUnavailable));
+    } else {
+        assert_eq!(close.accepted, Some(true));
+        assert_eq!(close.error_code, None);
+        assert!(!after_cpu.accounting_unavailable);
+        assert_eq!(flow.as_ref(), Some(&before_flow));
+        assert!(epoch_marker.is_none());
+    }
     assert!(
         refill_checks.load(Ordering::SeqCst) > 0,
         "detached execution refused actual debt before its original refill control: {result:?}"
@@ -189,7 +277,7 @@ fn detached_history_original_account(mode: DuringRefill) {
     }
     drop(node);
     drop(owner);
-    let reopened = Node::open(directory.path(), settings.clone(), 2).unwrap();
+    let mut reopened = Node::open(directory.path(), settings.clone(), 2).unwrap();
     assert_eq!(
         reopened.read_active().unwrap().0,
         if matches!(mode, DuringRefill::Continue) {
@@ -198,6 +286,13 @@ fn detached_history_original_account(mode: DuringRefill) {
             settings.genesis()
         }
     );
+    if dirty_close {
+        assert!(reopened
+            .remote_history_cpu_domain()
+            .err()
+            .unwrap()
+            .is(crate::ErrorCode::OwnerPublicServiceUncleanEpoch));
+    }
 }
 
 #[test]
