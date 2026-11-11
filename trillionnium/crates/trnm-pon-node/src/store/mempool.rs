@@ -928,13 +928,14 @@ impl Node {
             }
         };
         let guarded_control = ExecutionControl::new(&progress, control.worker_accounting);
-        self.pool_reconcile_parent_with_control(
+        self.pool_reconcile_parent_with_read_control(
             &limits,
             &actual,
             &guarded_control,
             owner_permit.as_ref(),
+            control,
         )?;
-        self.pool_status_snapshot()
+        self.pool_status_snapshot_with_control(control)
     }
     fn pool_parent(&self) -> Result<PoolParent> {
         self.pool_parent_with_control(&ExecutionControl::new(&|_| Ok(()), &()))
@@ -965,6 +966,22 @@ impl Node {
         control: &ExecutionControl<'_, crate::Error>,
         owner_permit: Option<&super::OwnerPoolPermit>,
     ) -> Result<PreviewBinding<'a>> {
+        self.pool_reconcile_parent_with_read_control(
+            limits,
+            actual,
+            control,
+            owner_permit,
+            &ExecutionControl::new(&|_| Ok(()), &()),
+        )
+    }
+    fn pool_reconcile_parent_with_read_control<'a>(
+        &mut self,
+        limits: &PoolLimits,
+        actual: &'a PoolParent,
+        control: &ExecutionControl<'_, crate::Error>,
+        owner_permit: Option<&super::OwnerPoolPermit>,
+        read_control: &ExecutionControl<'_, crate::Error>,
+    ) -> Result<PreviewBinding<'a>> {
         self.recheck_owner_pool(owner_permit)?;
         let PoolParent {
             id: parent,
@@ -974,10 +991,14 @@ impl Node {
             ..
         } = actual;
         let (parent, generation, height) = (*parent, *generation, *height);
-        let groups = self.pool_groups(limits)?;
+        // Ordinary mining supplies only its original lightweight run fence for
+        // these reads. Existing public-owner callers keep a no-op read control;
+        // their guarded execution/Host checks stay at the original sites.
+        let groups = self.pool_groups_with_control(limits, read_control)?;
         // Prior admission and current signed retained-group permission are both
         // required before branch-relative status/State processing of each group.
         for group in &groups {
+            (read_control.progress)(ExecutionProgress::BeforeParentBinding)?;
             let raws: Vec<_> = group.rows.iter().map(|row| row.raw.clone()).collect();
             self.check_owner_pool_retained(owner_permit, &raws)?;
         }
@@ -998,6 +1019,7 @@ impl Node {
         };
         let mut updates = Vec::new();
         for group in groups {
+            (read_control.progress)(ExecutionProgress::BeforeParentBinding)?;
             let (status, reason) = if group.rows.iter().any(|row| height > row.expiry) {
                 (PoolState::Expired, "EXPIRED".to_owned())
             } else if group
@@ -1066,9 +1088,15 @@ impl Node {
     /// Bounded read-only snapshot, with an explicit last-reconcile generation.
     /// This never executes M06 and must not promote stale classifications.
     pub fn pool_status_snapshot(&self) -> Result<PoolStatus> {
+        self.pool_status_snapshot_with_control(&ExecutionControl::new(&|_| Ok(()), &()))
+    }
+    fn pool_status_snapshot_with_control(
+        &self,
+        control: &ExecutionControl<'_, crate::Error>,
+    ) -> Result<PoolStatus> {
         let (context, limits) = self.pool_policy()?;
         let (parent, generation) = self.active()?;
-        let groups = self.pool_groups(&limits)?;
+        let groups = self.pool_groups_with_control(&limits, control)?;
         let mut count = 0;
         let mut bytes = 0;
         let statuses = groups
