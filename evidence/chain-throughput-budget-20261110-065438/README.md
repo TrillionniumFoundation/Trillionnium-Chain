@@ -96,7 +96,7 @@ hosted comparison, not from that typecheck or the earlier G2 execution.
 | [Local continuation checks](local-continuation-checks/README.md) | Frozen combined production library typechecked with Rust 1.95 and unchanged input hashes. | No cfg(test) compilation or native execution in these local checks. |
 | [Host parser component](host-parser-component/README.md) | Isolated parser savings were too small to justify a service claim; no fast path was applied. | In-memory component timings exclude fresh Host I/O and observation costs. |
 
-The expanded `pon-budget-controls.yml` lane compares three immutable subjects on
+The earlier expanded `pon-budget-controls.yml` revision compared three immutable subjects on
 separate runners. Original-budget before V2 must show six designated failures
 and one equivalence pass; ordinary-pool before must show five designated failures
 and two equivalence/error passes. Fixed must pass their fourteen shared controls,
@@ -104,6 +104,10 @@ five additional original-account invariants and the complete ten-test pool
 integration suite. Same-input checks are scoped to each shared group. The actual
 libtest, integration harness and CLI binary are bound to the original compiler
 and release profile, complete rosters and source-before/source-after receipts.
+The [later continuation](../chain-throughput-continuation-20261110-0b5320/README.md)
+adds the fourth reconciliation-scan lane and records the native fixture failure
+and explicitly versioned old-pool subject correction. This paragraph describes
+the earlier runner revision, not the current roster.
 
 Every History case must expose the fully settled original account before epoch
 close. A final unavailable account is only explainable by an observed known

@@ -31,13 +31,15 @@ from verify_ci_source import verify as verify_source
 ROOT = Path(__file__).resolve().parents[2]
 BUDGET_BEFORE_SHA = '89fb2269b0dd306fbd32c36f464842c3d7daee2b'
 BUDGET_BEFORE_TREE = 'c4cd82ed0004709192eff1563d90423bd5641e99'
-POOL_BEFORE_SHA = 'db93026b9314bfd8bc4350945036998f1b7d34aa'
-POOL_BEFORE_TREE = '379f05bda52b20130e5d895788f0613aa680472c'
+# V2 changes only the old subject's temporary fixture-schema cleanup.
+# Keep the original subject and failed native receipts as separate evidence.
+POOL_BEFORE_SHA = '84e68b4f7a9b2f48f9c47ed05c9a44229d186e30'
+POOL_BEFORE_TREE = '4e85966ae98b0081fcc2f9d0e8af313bc4f7d005'
 POOL_SCAN_BEFORE_SHA = 'ae657e262278ae4a058220f66a6a0495721eb9ad'
 POOL_SCAN_BEFORE_TREE = 'def5ae894d06b787222b6b2b2b2d97bf8be59366'
 BEFORE_SOURCES = {
     'budget-before-v2': (BUDGET_BEFORE_SHA, BUDGET_BEFORE_TREE),
-    'pool-before': (POOL_BEFORE_SHA, POOL_BEFORE_TREE),
+    'pool-before-v2': (POOL_BEFORE_SHA, POOL_BEFORE_TREE),
     'pool-scan-before': (POOL_SCAN_BEFORE_SHA, POOL_SCAN_BEFORE_TREE),
 }
 HISTORY_PREFIX = 'ingress::history_import::tests::detached_budget_controls::'
@@ -125,7 +127,7 @@ HANDOFF_CONTROLS = tuple(HANDOFF_PREFIX + suffix for suffix in (
 ))
 CONTROL_GROUPS = {'budget': BUDGET_CONTROLS, 'pool': POOL_CONTROLS,
                   'history-handoff': HANDOFF_CONTROLS, 'pool-scan': POOL_SCAN_CONTROLS}
-MODE_GROUPS = {'budget-before-v2': ('budget',), 'pool-before': ('pool',),
+MODE_GROUPS = {'budget-before-v2': ('budget',), 'pool-before-v2': ('pool',),
               'pool-scan-before': ('pool-scan',),
               'fixed': ('budget', 'pool', 'history-handoff', 'pool-scan')}
 FIXED_ONLY_INPUTS = (
@@ -482,9 +484,9 @@ def validate_case(name: str, mode: str, process: dict, stdout: str, stderr: str)
 
 def validate_pool_case(name: str, mode: str, process: dict,
                        stdout: str, stderr: str) -> dict:
-    require(name in POOL_CONTROLS and mode in ('pool-before', 'fixed'),
+    require(name in POOL_CONTROLS and mode in ('pool-before-v2', 'fixed'),
             'EXACT_POOL_CASE_REQUIRED')
-    failed = mode == 'pool-before' and name in POOL_FAILURES
+    failed = mode == 'pool-before-v2' and name in POOL_FAILURES
     require(process.get('started') is True and process.get('failure') is None
             and process.get('cleanup_errors') == []
             and type(process.get('exit_code')) is int
@@ -605,7 +607,7 @@ def run(args: argparse.Namespace) -> dict:
             and not out.is_relative_to(ROOT), 'OUTPUT_OUTSIDE_BOTH_CHECKOUTS')
     out.mkdir(exist_ok=False)
     selected = controls_for_mode(args.mode)
-    failures = {'budget-before-v2': 6, 'pool-before': 5, 'pool-scan-before': 2, 'fixed': 0}[args.mode]
+    failures = {'budget-before-v2': 6, 'pool-before-v2': 5, 'pool-scan-before': 2, 'fixed': 0}[args.mode]
     report = {'schema': SCHEMA, 'result': 'FAIL', 'scope': 'assigned-native-component-controls-only',
               'mode': args.mode, 'expected_driver': args.driver_sha, 'expected_source': args.source_sha,
               'groups': list(MODE_GROUPS[args.mode]), 'required_lib_tests': list(selected),

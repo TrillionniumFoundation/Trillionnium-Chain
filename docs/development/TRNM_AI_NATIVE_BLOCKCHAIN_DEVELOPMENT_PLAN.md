@@ -6,8 +6,17 @@ are retained; `5ec9b4490fbfd22df4527e3b75ec74d6986572cf` also carries the origin
 lightweight run control through retained-pool reconciliation and returned
 snapshots. Its test-only parent `ae657e262278ae4a058220f66a6a0495721eb9ad`
 retains the original production for the identical new scan controls. Existing
-before-source groups remain separately pinned. Native execution and current
-source maintenance are distinct observations until their actual receipts exist.
+before-source groups remain separately pinned. The first native `5ec9b449`
+targeted run passed 20/21 controls; cold reopen correctly refused a test-only
+counter table left by its durability fault injector. Test-only correction
+`36f803033ca342a966fe6a8c6d5bf8b68355b5b9` removes that table without weakening
+any assertion or deadline. Its identical revised old-pool subject is
+`84e68b4f7a9b2f48f9c47ed05c9a44229d186e30` (`pool-before-v2`), preserving the
+original failed result. Both `ae657e26` native scan negatives reached the exact
+six-versus-two assertion; its ad hoc wrapper failure remains separately recorded.
+See the [native execution record](../../evidence/chain-throughput-continuation-20261110-0b5320/NATIVE_EXECUTION.md).
+Corrected current-source native and strict-Clippy gates still need their own
+receipts; none of these observations certifies the original business campaign.
 The [exclusive History findings](../../evidence/chain-throughput-continuation-20261110-0b5320/EXCLUSIVE_HISTORY_FINDINGS.md)
 bind the latest original campaign to `7d6567b9`: 3/27 timely confirmation rounds,
 0/3 complete campaigns and 0/9 phases. That exclusive path is outside the shared

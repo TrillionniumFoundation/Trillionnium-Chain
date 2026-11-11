@@ -16,5 +16,19 @@
       "reason": "A label included scripts/project-preflight.sh and became a nonexistent output subdirectory. The first preflight ran but its output could not be written. Corrected wrapper uses Path.stem and starts a distinct output directory."
     }
   ],
-  "native_execution_claimed": false
+  "native_execution_claimed": false,
+  "fixture_maintenance_observations": [
+    {
+      "operation": "check_pq_research_integration.py on the in-progress fixture correction",
+      "exit_code": 1,
+      "observed_error": "HOLD_NO_GO: changed source: docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "resolution": "Rebound only the edited plan blob after recording its changed content; all1086 paths,994 required paths and qualification assertions remain. Subsequent original inspector exited0."
+    },
+    {
+      "operation": "absolute cargo fmt invocation without its sibling tools on PATH",
+      "exit_code": 101,
+      "observed_error": "no such command: fmt",
+      "resolution": "Reran with the same installed1.95 toolchain bin prepended to PATH; full workspace fmt --check exited0. No formatter or production change was used to hide the invocation failure."
+    }
+  ]
 }

@@ -147,6 +147,8 @@ class BudgetControlsTests(unittest.TestCase):
         runner.validate_source_pair('fixed', current, current)
         for mode, driver, source in (
             ('budget-before-v2', current, 'b' * 40), ('budget-before-v2', runner.BUDGET_BEFORE_SHA, runner.BUDGET_BEFORE_SHA),
+            ('pool-before', current, runner.POOL_BEFORE_SHA),
+            ('pool-before-v2', current, 'db93026b9314bfd8bc4350945036998f1b7d34aa'),
             ('fixed', current, runner.BUDGET_BEFORE_SHA), ('fixed', current, 'b' * 40),
             ('fixed', 'main', 'main'), ('unknown', current, current),
         ):
@@ -394,19 +396,20 @@ class BudgetControlsTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 runner.validate_source_pair('fixed', sha, sha)
         self.assertEqual(runner.controls_for_mode('budget-before-v2'), runner.BUDGET_CONTROLS)
-        self.assertEqual(runner.controls_for_mode('pool-before'), runner.POOL_CONTROLS)
+        self.assertEqual(runner.controls_for_mode('pool-before-v2'), runner.POOL_CONTROLS)
         self.assertEqual(runner.controls_for_mode('pool-scan-before'), runner.POOL_SCAN_CONTROLS)
         fixed = runner.controls_for_mode('fixed')
         self.assertEqual(len(fixed), 21)
         self.assertEqual(len(set(fixed)), 21)
-        self.assertEqual(set(runner.same_input_groups('pool-before')), {'common', 'pool'})
+        self.assertEqual(set(runner.same_input_groups('pool-before-v2')), {'common', 'pool'})
         self.assertEqual(set(runner.same_input_groups('budget-before-v2')), {'common', 'budget'})
         self.assertEqual(set(runner.same_input_groups('pool-scan-before')), {'common', 'pool-scan'})
         self.assertEqual(runner.GROUP_INPUTS['pool-scan'], (
             'trillionnium/crates/trnm-pon-node/src/pool_reconcile_control_tests.rs',))
         self.assertEqual(set(runner.same_input_groups('fixed')), {'common', 'budget', 'pool', 'pool-scan'})
-        with self.assertRaises(ValueError):
-            runner.controls_for_mode('before')
+        for mode in ('before', 'pool-before'):
+            with self.subTest(mode=mode), self.assertRaises(ValueError):
+                runner.controls_for_mode(mode)
 
     def test_one_fixed_build_selects_lib_integration_and_its_real_cli(self):
         command = runner.build_command('fixed')
@@ -414,7 +417,7 @@ class BudgetControlsTests(unittest.TestCase):
             'cargo', '+1.95.0', 'test', '--locked', '--release', '--manifest-path',
             'trillionnium/Cargo.toml', '-p', 'trnm-pon-node', '--lib', '--test', 'pool_mining',
             '--no-run', '--message-format=json'])
-        self.assertEqual(runner.build_command('pool-before'), runner.build_command('budget-before-v2'))
+        self.assertEqual(runner.build_command('pool-before-v2'), runner.build_command('budget-before-v2'))
         self.assertEqual(runner.build_command('pool-scan-before'), runner.build_command('budget-before-v2'))
         source, target, binary, row = self.artifact()
         _, _, integration, integration_row = self.artifact('pool-integration')
@@ -430,7 +433,7 @@ class BudgetControlsTests(unittest.TestCase):
                 runner.select_binaries(encode(rows), source, target, 'fixed')
         with self.assertRaises(ValueError):
             runner.select_binaries(encode([row, integration_row, cli_row, finish]),
-                                   source, target, 'pool-before')
+                                   source, target, 'pool-before-v2')
 
     def test_cli_target_source_profile_and_embedded_path_cannot_be_substituted(self):
         source, target, _, row = self.artifact()
@@ -482,7 +485,7 @@ class BudgetControlsTests(unittest.TestCase):
 
     def test_pool_old_requires_exact_panic_and_work_after_the_original_signal(self):
         for name in runner.POOL_FAILURES:
-            self.assertEqual(runner.validate_control(name, 'pool-before', process(True),
+            self.assertEqual(runner.validate_control(name, 'pool-before-v2', process(True),
                              transcript(name, True), pool_panic(name))['expected'], 'fail')
             _, line, right = runner.POOL_FAILURES[name]
             wrong_left = '1' if right == 0 else '256'
@@ -495,10 +498,10 @@ class BudgetControlsTests(unittest.TestCase):
                         pool_panic(name).replace('IGNORED_STOP', 'OTHER_FAILURE'),
                         pool_panic(name).replace('right: ' + str(right), 'right: 999')):
                 with self.subTest(name=name, stderr=bad), self.assertRaises(ValueError):
-                    runner.validate_control(name, 'pool-before', process(True), transcript(name, True), bad)
+                    runner.validate_control(name, 'pool-before-v2', process(True), transcript(name, True), bad)
             for code in (0, 1, -9, 130, None, False):
                 with self.subTest(name=name, code=code), self.assertRaises(ValueError):
-                    runner.validate_control(name, 'pool-before', dict(process(True), exit_code=code),
+                    runner.validate_control(name, 'pool-before-v2', dict(process(True), exit_code=code),
                                             transcript(name, True), pool_panic(name))
 
     def test_pool_scan_before_requires_exact_named_assertion_and_six_to_two_rows(self):
@@ -573,7 +576,7 @@ class BudgetControlsTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 runner.validate_control(name, 'fixed', process(),
                                         transcript(name).replace('0 ignored', '1 ignored'), '')
-            for mode in ('budget-before-v2', 'pool-before'):
+            for mode in ('budget-before-v2', 'pool-before-v2'):
                 with self.subTest(name=name, mode=mode), self.assertRaises(ValueError):
                     runner.validate_control(name, mode, process(True),
                                             transcript(name, True), pool_scan_panic(name))
@@ -594,7 +597,7 @@ class BudgetControlsTests(unittest.TestCase):
                       source[start + 2])
 
     def test_pool_fixed_and_two_old_positive_controls_require_real_named_success(self):
-        for mode, names in (('fixed', runner.POOL_CONTROLS), ('pool-before', runner.POOL_POSITIVES)):
+        for mode, names in (('fixed', runner.POOL_CONTROLS), ('pool-before-v2', runner.POOL_POSITIVES)):
             for name in names:
                 self.assertEqual(runner.validate_control(name, mode, process(), transcript(name), '')['expected'], 'pass')
                 for bad_process in (process(True), dict(process(), started=False),
@@ -652,7 +655,7 @@ class BudgetControlsTests(unittest.TestCase):
                     path = root / relative
                     path.parent.mkdir(parents=True, exist_ok=True)
                     path.write_text('fixed-only reader fixture\n')
-        if mode in ('pool-before', 'pool-scan-before'):
+        if mode in ('pool-before-v2', 'pool-scan-before'):
             # Independent source groups do not compare unrelated test inputs.
             for group, relatives in runner.GROUP_INPUTS.items():
                 if group not in runner.MODE_GROUPS[mode]:
@@ -685,7 +688,7 @@ class BudgetControlsTests(unittest.TestCase):
             elif label.startswith('test-'):
                 name = command[2]
                 failed = (mode == 'budget-before-v2' and name != runner.EQUIVALENCE
-                          or mode == 'pool-before' and name in runner.POOL_FAILURES
+                          or mode == 'pool-before-v2' and name in runner.POOL_FAILURES
                           or mode == 'pool-scan-before' and name in runner.POOL_SCAN_CONTROLS)
                 status = process(failed)
                 observation_record = history(name, mode) if name in runner.HISTORY else None
@@ -827,13 +830,15 @@ class BudgetControlsTests(unittest.TestCase):
 
     def test_workflow_keeps_four_sources_separate_and_all_failures(self):
         text = (runner.ROOT / '.github/workflows/pon-budget-controls.yml').read_text()
-        for expected in ('source: [budget-before-v2, pool-before, pool-scan-before, fixed]', runner.BUDGET_BEFORE_SHA,
+        for expected in ('source: [budget-before-v2, pool-before-v2, pool-scan-before, fixed]', runner.BUDGET_BEFORE_SHA,
                          runner.POOL_BEFORE_SHA, runner.POOL_SCAN_BEFORE_SHA, 'CARGO_BUILD_JOBS: "1"', 'path: driver',
                          'path: subject', 'fail-fast: false', 'cancel-in-progress: false',
                          'if: always()', 'rustup toolchain install 1.95.0',
                          '--driver-sha "$DRIVER_SHA" --source-sha "$SUBJECT_SHA"'):
             self.assertIn(expected, text)
         self.assertNotIn('continue-on-error:', text)
+        self.assertNotIn("matrix.source == 'pool-before'", text)
+        self.assertNotIn('db93026b9314bfd8bc4350945036998f1b7d34aa', text)
         self.assertNotIn('run_public_v3_service_campaign', text)
         self.assertNotIn('pq-cross-branch-corpus', text)
 
