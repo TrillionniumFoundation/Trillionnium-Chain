@@ -1,0 +1,61 @@
+[
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "label": "corpus-inspector",
+    "returncode": 0,
+    "seconds": 17.53614180300019
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_research_integration.py",
+      "-v"
+    ],
+    "label": "corpus-controls",
+    "returncode": 124,
+    "seconds": 180.0302938949999
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/pq_chain_claim_guard.py"
+    ],
+    "label": "claim-guard",
+    "returncode": 0,
+    "seconds": 2.8966797789998964
+  },
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "label": "preflight",
+    "returncode": 0,
+    "seconds": 1.7027800599998955
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "label": "diff-check",
+    "returncode": 0,
+    "seconds": 4.865712850000364
+  },
+  {
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_research_integration.py",
+      "-v"
+    ],
+    "execution_timeout_seconds": 600,
+    "label": "corpus-controls-600s",
+    "prior_timeout_retained": true,
+    "returncode": 0,
+    "seconds": 404.4657040959996
+  }
+]
