@@ -756,6 +756,9 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_capture_chain_hepta_identity.py
     python3 scripts/ci/test_chain_hepta_qualification.py
     python3 scripts/ci/test_chain_hepta_command_binding.py
+    python3 scripts/test_cell_learning_business_economics.py
+    python3 scripts/test_cell_learning_business_join.py
+    python3 scripts/test_cell_learning_training_no_update_join.py
     python3 scripts/ci/test_pon_daa_head_binding.py
     python3 -B scripts/ci/test_llm_hosted_once.py
     "${TRNM_RUNTIME_RELEASE_PYTHON:-python3}" scripts/test_llm_runtime_release.py
@@ -1351,6 +1354,12 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'current cost, policy and cell deadline reader controls must execute exactly once in repository-truth')
+    for command in ('python3 scripts/test_cell_learning_business_economics.py',
+                    'python3 scripts/test_cell_learning_business_join.py',
+                    'python3 scripts/test_cell_learning_training_no_update_join.py'):
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'learning business readback controls must execute exactly once in repository-truth')
     for command in PROOF_LATENCY_READER_COMMANDS:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,

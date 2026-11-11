@@ -1,0 +1,42 @@
+test_actor_projection_and_independence_claims_are_not_manifest_inputs (__main__.BusinessJoinTests.test_actor_projection_and_independence_claims_are_not_manifest_inputs) ... ok
+test_advancing_anchor_in_same_epoch_requires_sequence_and_generation_progress (__main__.BusinessJoinTests.test_advancing_anchor_in_same_epoch_requires_sequence_and_generation_progress) ... ok
+test_archived_adopt_and_no_update_are_replayed_without_promoting_qualification (__main__.BusinessJoinTests.test_archived_adopt_and_no_update_are_replayed_without_promoting_qualification) ... ok
+test_cli_replays_original_bytes_and_has_no_output_write_path (__main__.BusinessJoinTests.test_cli_replays_original_bytes_and_has_no_output_write_path) ... ok
+test_closed_manifest_rejects_unverified_authority_flags_duplicates_and_integer_aliases (__main__.BusinessJoinTests.test_closed_manifest_rejects_unverified_authority_flags_duplicates_and_integer_aliases) ... ok
+test_consumer_next_task_bundle_and_cost_pins_cannot_be_relabelled (__main__.BusinessJoinTests.test_consumer_next_task_bundle_and_cost_pins_cannot_be_relabelled) ... ok
+test_distinct_source_pair_in_one_material_is_refused (__main__.BusinessJoinTests.test_distinct_source_pair_in_one_material_is_refused) ... ok
+test_independent_manifest_pin_and_each_original_file_pin_are_required (__main__.BusinessJoinTests.test_independent_manifest_pin_and_each_original_file_pin_are_required) ... ok
+test_m12_checkpoint_rewind_or_same_sequence_root_change_is_refused (__main__.BusinessJoinTests.test_m12_checkpoint_rewind_or_same_sequence_root_change_is_refused) ... ok
+test_mislabelled_financial_decision_is_refused (__main__.BusinessJoinTests.test_mislabelled_financial_decision_is_refused) ... ok
+test_missing_latest_owner_read_preserves_prior_observation_and_unknown_status (__main__.BusinessJoinTests.test_missing_latest_owner_read_preserves_prior_observation_and_unknown_status) ... ok
+test_no_update_retains_complete_incumbent_and_unknown_financial_amounts (__main__.BusinessJoinTests.test_no_update_retains_complete_incumbent_and_unknown_financial_amounts) ... ok
+test_no_update_synthetic_contract_service_fee_is_not_improvement_or_consensus_credit (__main__.BusinessJoinTests.test_no_update_synthetic_contract_service_fee_is_not_improvement_or_consensus_credit) ... ok
+test_observation_limit_and_unmatched_raw_cannot_hide_extra_reads (__main__.BusinessJoinTests.test_observation_limit_and_unmatched_raw_cannot_hide_extra_reads) ... ok
+test_operation_identity_must_match_every_material_and_original_checkpoint (__main__.BusinessJoinTests.test_operation_identity_must_match_every_material_and_original_checkpoint) ... ok
+test_original_actor_next_run_projection_preserves_both_archived_decisions (__main__.BusinessJoinTests.test_original_actor_next_run_projection_preserves_both_archived_decisions) ... ok
+test_outer_root_schema_cannot_relabel_a_legacy_inner_checkpoint (__main__.BusinessJoinTests.test_outer_root_schema_cannot_relabel_a_legacy_inner_checkpoint) ... FAIL
+test_paid_missing_recovered_three_cut_sequence_preserves_gap_and_never_replays (__main__.BusinessJoinTests.test_paid_missing_recovered_three_cut_sequence_preserves_gap_and_never_replays) ... ok
+test_recovery_cannot_rewrite_retained_cost_or_payment_facts (__main__.BusinessJoinTests.test_recovery_cannot_rewrite_retained_cost_or_payment_facts) ... ok
+test_recovery_rejects_rewind_changed_same_sequence_or_changed_original_operation (__main__.BusinessJoinTests.test_recovery_rejects_rewind_changed_same_sequence_or_changed_original_operation) ... ok
+test_repeated_exact_observation_never_sums_payments_or_grants_replay (__main__.BusinessJoinTests.test_repeated_exact_observation_never_sums_payments_or_grants_replay) ... ok
+test_source_declaration_does_not_authenticate_historical_execution (__main__.BusinessJoinTests.test_source_declaration_does_not_authenticate_historical_execution) ... ok
+test_source_declarations_cannot_replace_decoded_actor_provenance (__main__.BusinessJoinTests.test_source_declarations_cannot_replace_decoded_actor_provenance) ... ok
+test_unrelated_valid_native_payment_does_not_match_learning_request_result (__main__.BusinessJoinTests.test_unrelated_valid_native_payment_does_not_match_learning_request_result) ... ok
+
+======================================================================
+FAIL: test_outer_root_schema_cannot_relabel_a_legacy_inner_checkpoint (__main__.BusinessJoinTests.test_outer_root_schema_cannot_relabel_a_legacy_inner_checkpoint)
+----------------------------------------------------------------------
+cell_adoption_readback.ReadbackRefusal: BUSINESS_CHECKPOINT_SCHEMA
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/b4d6d3702e3a/chain-nextuse-work/scripts/test_cell_learning_business_join.py", line 226, in test_outer_root_schema_cannot_relabel_a_legacy_inner_checkpoint
+    with self.assertRaisesRegex(ValueError, "LEARNING_CHECKPOINT_VERSION"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "LEARNING_CHECKPOINT_VERSION" does not match "BUSINESS_CHECKPOINT_SCHEMA"
+
+----------------------------------------------------------------------
+Ran 24 tests in 1.823s
+
+FAILED (failures=1)

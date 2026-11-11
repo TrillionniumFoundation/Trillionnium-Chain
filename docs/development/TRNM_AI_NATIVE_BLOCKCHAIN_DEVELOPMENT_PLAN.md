@@ -11409,3 +11409,59 @@ seven successful submissions. Preserve `CONFIRMATION_TARGET` and
 and nested CPU scopes. Open-network liveness, all-legal-strategy cost, joint
 classical/quantum DAA and chain quality, independent useful demand/model benefit,
 and ordinary same-operation external-effect recovery remain open.
+
+### 2026-11-09 — Bind original learning and native paid-task observations
+
+Continue #835 at `e2a02f9271b49f146e70806c8a66e161b5973971` with the
+[same-operation business readback contract](CELL_LEARNING_BUSINESS_READBACK_V1.md).
+Replay original HEPLCP02 selection/completion/use material and bind one declared
+source pair, operation, full selected or retained version, next task and cost
+source. Outer Root schema declarations do not promote legacy inner checkpoints.
+
+Consume the existing native paid-Task V3 export without replacing the M12 or
+Node owners. Check original contract/task identities and an explicit new
+application request/result mapping; do not retrofit that mapping onto historical
+contracts. Separate development service-fee observations, improvement rewards
+and consensus credit. NoUpdate may finish the original service without adopting
+a candidate; unknown external amounts remain null and all payment authority stays
+absent.
+
+Compare up to sixteen read-only observation cuts, preserving missing cuts and
+write-once costs, historical payment and delivery. Current anchors follow the
+original generation rules. Rewind, changed same-sequence state and reassignment
+of original operations are refusals; gaps do not authorize retry or repayment.
+
+Retain the two old real-model cases as retrospective reader inputs, with exact
+original source and byte identities. New paid-schema tests remain synthetic.
+Keep required CI lanes intact and add scoped hosted readback with retained raw
+outputs. Source consistency, structural completeness and passing tests do not
+authenticate independent demand, evaluation, consumer benefit, physical cost,
+external settlement, complete recovery or Hepta FinalUse. HOLD_NO_GO, DENY_ALL
+and all production-activation refusals remain in force.
+
+### 2026-11-11 — Preserve NextUse provenance and consume explicit trainer NoUpdate
+
+Continue the integration source `df927b6ffaecff293b9e9428e3ba516f47cd101a`
+and incorporate the original #855 business/economics and actor-provenance
+reader from `d9ef94f34339c8f76591fa54c14724c54805af36`. Preserve all
+historical evidence and same-original-actor/different-run qualifications.
+The [HEPLCP03 interoperability contract](specs/pon/HEPLCP03_TRAINER_NO_UPDATE_INTEROP_V1.md)
+consumes fixed Hepta source `f97f3c90ac1ac3d5171fd9f25b3e34431f44a367`
+without changing old HEPLCP02 bytes or its archived reports.
+
+Replay the explicit TrainingNoUpdateV2 tag-8 result and the exact five-receipt
+Experience/Dataset/TrainingNoUpdate/Selection/RetainedModelNextUse path. Bind
+its reason, original trainer, incumbent, Dataset, quotas and separately pinned
+Root update rule. Never reinterpret failed or unknown training as NoUpdate,
+create a candidate, invent Evaluation/Proposal receipts or treat the same
+actor's distinct run as an independent consumer. Version the new reports and
+business material manifest; retain null unknown artifact costs and every false
+authority flag.
+
+The [retained local observations](../../evidence/heplcp03-interop-20261111/README.md)
+separate a Rust coordinator/codec engineering fixture, two original Rust source
+controls, reader and source-integrity controls, synthetic zero-signature joins,
+and unchanged historical readbacks. Preserve all failed development runs and
+incomplete broad validation. No ordinary model training, independently signed
+consumer/FinalUse observation, deployment recovery or settlement is supplied by
+this compatibility change. Source checks and structural replay retain HOLD.

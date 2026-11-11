@@ -7,6 +7,11 @@ on:
       - scripts/test_cell_learning_scope_join.py
       - scripts/cell_learning_iteration_join.py
       - scripts/cell_learning_completion_join.py
+      - scripts/cell_learning_business_join.py
+      - scripts/cell_learning_business_economics.py
+      - scripts/test_cell_learning_business_join.py
+      - scripts/test_cell_learning_business_economics.py
+      - scripts/test_cell_learning_training_no_update_join.py
       - scripts/ci/pq_proof_profile_binding.py
       - scripts/ci/test_pq_proof_profile_binding.py
       - scripts/ci/audit_native_campaign_outcomes.py
@@ -57,6 +62,7 @@ jobs:
           case "$SUITE" in
             scope)
               python3 scripts/test_cell_learning_scope_join.py -v
+              python3 scripts/test_cell_learning_training_no_update_join.py -v
               ;;
             proof-profile)
               python3 scripts/ci/test_pq_proof_profile_binding.py -v

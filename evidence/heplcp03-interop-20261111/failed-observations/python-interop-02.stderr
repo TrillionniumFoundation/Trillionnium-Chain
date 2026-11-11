@@ -1,0 +1,30 @@
+test_business_v2_cli_and_legacy_codec_separation (__main__.TrainingNoUpdateInteropTests.test_business_v2_cli_and_legacy_codec_separation) ... ok
+test_business_v2_requires_separately_pinned_same_operation_root_material (__main__.TrainingNoUpdateInteropTests.test_business_v2_requires_separately_pinned_same_operation_root_material) ... ok
+test_cli_requires_paired_root_inputs_and_emits_only_closed_schema (__main__.TrainingNoUpdateInteropTests.test_cli_requires_paired_root_inputs_and_emits_only_closed_schema) ... ok
+test_explicit_synthetic_full_join_has_five_receipts_and_no_fabricated_evaluation (__main__.TrainingNoUpdateInteropTests.test_explicit_synthetic_full_join_has_five_receipts_and_no_fabricated_evaluation) ... ok
+test_missing_selection_next_use_or_original_readback_does_not_complete (__main__.TrainingNoUpdateInteropTests.test_missing_selection_next_use_or_original_readback_does_not_complete) ... ok
+test_native_scope_checks_no_candidate_without_claiming_equal_tensors (__main__.TrainingNoUpdateInteropTests.test_native_scope_checks_no_candidate_without_claiming_equal_tensors) ... ok
+test_next_use_requires_retained_bundle_distinct_run_and_committed_receipt (__main__.TrainingNoUpdateInteropTests.test_next_use_requires_retained_bundle_distinct_run_and_committed_receipt) ... ok
+test_original_dataset_baseline_budget_and_generator_are_required (__main__.TrainingNoUpdateInteropTests.test_original_dataset_baseline_budget_and_generator_are_required) ... ok
+test_original_heplcp02_six_and_seven_receipt_reports_remain_byte_equivalent (__main__.TrainingNoUpdateInteropTests.test_original_heplcp02_six_and_seven_receipt_reports_remain_byte_equivalent) ... FAIL
+test_original_rust_cuts_and_every_signing_payload_match (__main__.TrainingNoUpdateInteropTests.test_original_rust_cuts_and_every_signing_payload_match) ... ok
+test_original_scope_rule_must_match_even_after_all_receipts_are_rehashed (__main__.TrainingNoUpdateInteropTests.test_original_scope_rule_must_match_even_after_all_receipts_are_rehashed) ... ok
+test_original_tag_six_and_seven_rust_known_vectors_remain_exact (__main__.TrainingNoUpdateInteropTests.test_original_tag_six_and_seven_rust_known_vectors_remain_exact) ... ok
+test_pending_or_failed_task_cannot_become_completed_no_update (__main__.TrainingNoUpdateInteropTests.test_pending_or_failed_task_cannot_become_completed_no_update) ... ok
+test_rehashed_extra_evaluation_or_duplicate_training_cannot_change_path (__main__.TrainingNoUpdateInteropTests.test_rehashed_extra_evaluation_or_duplicate_training_cannot_change_path) ... ok
+test_unknown_training_tags_and_reason_codes_never_mean_no_update (__main__.TrainingNoUpdateInteropTests.test_unknown_training_tags_and_reason_codes_never_mean_no_update) ... ok
+test_use_join_requires_original_root_scope_before_reading_use (__main__.TrainingNoUpdateInteropTests.test_use_join_requires_original_root_scope_before_reading_use) ... ok
+test_version_requires_explicit_outcome_and_never_upgrades_legacy_bytes (__main__.TrainingNoUpdateInteropTests.test_version_requires_explicit_outcome_and_never_upgrades_legacy_bytes) ... ok
+
+======================================================================
+FAIL: test_original_heplcp02_six_and_seven_receipt_reports_remain_byte_equivalent (__main__.TrainingNoUpdateInteropTests.test_original_heplcp02_six_and_seven_receipt_reports_remain_byte_equivalent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/b4d6d3702e3a/chain-nextuse-work/scripts/test_cell_learning_training_no_update_join.py", line 355, in test_original_heplcp02_six_and_seven_receipt_reports_remain_byte_equivalent
+    self.assertEqual(encoded, archived.read_bytes())
+AssertionError: b'{"a[73 chars]56":"3ef31ff2570d2700ada144b3860ddd5f1fdea0700[13416 chars]]}\n' != b'{"a[73 chars]56":"8ba561db51a2808a3d6a4ebcc684436cbb3619c94[13416 chars]]}\n'
+
+----------------------------------------------------------------------
+Ran 17 tests in 1.365s
+
+FAILED (failures=1)

@@ -73,6 +73,11 @@ class MutationWriter:
             self.digest(value["composition_digest"]); self.number(value["disposition"], 1)
         elif tag == 5:
             self.digest(value["candidate_bundle"]); self.digest(value["selection_digest"])
+        elif tag == 8:
+            self.number(value["reason"], 1)
+            for name in ("retained_bundle", "dataset", "update_rule"):
+                self.digest(value[name])
+            self.number(value["steps"], 8); self.number(value["milliseconds"], 8)
         else:
             self.digest(value["retained_bundle" if tag == 7 else "candidate_bundle"])
             for name in ("principal_id", "agent_id", "cell_id", "run_id"):
@@ -84,7 +89,8 @@ class MutationWriter:
 
 def mutated_encoding(snapshot):
     writer = MutationWriter()
-    writer.raw.extend(join.MAGIC)
+    writer.raw.extend(join.TRAINER_NO_UPDATE_MAGIC if any(
+        receipt["observation"]["tag"] == 8 for receipt in snapshot["receipts"]) else join.MAGIC)
     request, owners = snapshot["request"], snapshot["owners"]
     for name in join.REQUEST_IDS:
         writer.identifier(request[name])
@@ -131,7 +137,7 @@ class CheckpointWireBoundaryTests(unittest.TestCase):
                     expected_readback_sha256="0" * 64, frozen=None, expected=None)
 
     def test_legacy_or_future_magic_refused_without_filling_new_fields(self):
-        for magic in (b"HEPLCP01", b"HEPLCP03", b"OTHER002"):
+        for magic in (b"HEPLCP01", b"HEPLCP04", b"OTHER002"):
             with self.subTest(magic=magic), self.assertRaisesRegex(native.ReadbackRefusal, "LEARNING_CHECKPOINT_VERSION"):
                 join.decode_native_learning_checkpoint(magic + b"\0" * 16)
 
