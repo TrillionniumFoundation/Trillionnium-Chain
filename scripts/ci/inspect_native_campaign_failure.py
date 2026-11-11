@@ -228,6 +228,108 @@ def _reported_native_confirmation_timing(confirmations: list, window_seconds: in
     }
 
 
+
+def _final_history_page_activation(history: list) -> dict:
+    """Characterize original last-page submit_result work without PASS inference.
+
+    Bounded to the seven-page pattern observed in the three 6c35f94 native
+    baseline reports. Unknown/malformed/duplicate spans remain UNKNOWN. Stage
+    timing is nested in history_import and cannot be added to import CPU.
+    """
+    result = {
+        "status": "unknown",
+        "history_count": len(history) if isinstance(history, list) else None,
+        "pages": [],
+        "last_submit_result_wall_ns": None,
+        "last_submit_result_thread_cpu_ns": None,
+        "last_import_wall_ns": None,
+        "prior_six_import_wall_median_ns": None,
+        "last_vs_prior_six_import_wall_delta_ns": None,
+        "same_last_two_packet_hex_chars": None,
+        "qualification": False,
+        "interpretation": (
+            "Original reported stage intervals only; submit_result is nested "
+            "in history_import. Not a proof of cause, avoidable cost, "
+            "budget relaxation or service acceptance."
+        ),
+    }
+    if not isinstance(history, list) or len(history) != 7:
+        return result
+    pages = []
+    for index, row in enumerate(history):
+        if not isinstance(row, dict):
+            return result
+        response = row.get("response")
+        value = response.get("value") if isinstance(response, dict) else None
+        page_packets = value.get("packets") if isinstance(value, dict) else None
+        complete = value.get("complete") if isinstance(value, dict) else None
+        imported = row.get("client_import")
+        native = imported.get("native_import_observation") if isinstance(imported, dict) else None
+        local_packets = native.get("packets") if isinstance(native, dict) else None
+        if (type(complete) is not bool or not isinstance(page_packets, list)
+                or len(page_packets) != 1 or type(page_packets[0]) is not str
+                or not isinstance(local_packets, list) or len(local_packets) != 1
+                or not isinstance(local_packets[0], dict)):
+            return result
+        phases = local_packets[0].get("phases")
+        matches = ([stage for stage in phases if isinstance(stage, dict)
+                    and stage.get("phase") == "submit_result"]
+                   if isinstance(phases, list) else [])
+        if len(matches) != 1:
+            return result
+        submit = matches[0]
+        wall = imported.get("wall_ns")
+        cpu = imported.get("thread_cpu_ns")
+        if (type(wall) is not int or wall < 0 or type(cpu) is not int or cpu < 0
+                or type(submit.get("started")) is not bool
+                or type(submit.get("completed")) is not bool):
+            return result
+        started = submit["started"]
+        if started:
+            if (submit.get("completed") is not True
+                    or submit.get("accepted") is not True
+                    or submit.get("error_code") is not None
+                    or type(submit.get("wall_ns")) is not int
+                    or submit["wall_ns"] < 0
+                    or type(submit.get("thread_cpu_ns")) is not int
+                    or submit["thread_cpu_ns"] < 0):
+                return result
+        elif (submit.get("completed") is not False
+              or submit.get("accepted") is not None
+              or submit.get("error_code") is not None
+              or submit.get("wall_ns") is not None
+              or submit.get("thread_cpu_ns") is not None):
+            return result
+        pages.append({
+            "index": index, "complete": complete,
+            "packet_hex_chars": len(page_packets[0]),
+            "client_import_wall_ns": wall,
+            "client_import_thread_cpu_ns": cpu,
+            "submit_result_started": started,
+            "submit_result_wall_ns": submit.get("wall_ns"),
+            "submit_result_thread_cpu_ns": submit.get("thread_cpu_ns"),
+        })
+    result["pages"] = pages
+    if (all(not page["complete"] and not page["submit_result_started"]
+            for page in pages[:6])
+            and pages[6]["complete"] and pages[6]["submit_result_started"]):
+        earlier = sorted(page["client_import_wall_ns"] for page in pages[:6])
+        median = (earlier[2] + earlier[3]) // 2
+        result.update({
+            "status": "observed_final_page_activation",
+            "last_submit_result_wall_ns": pages[6]["submit_result_wall_ns"],
+            "last_submit_result_thread_cpu_ns": pages[6]["submit_result_thread_cpu_ns"],
+            "last_import_wall_ns": pages[6]["client_import_wall_ns"],
+            "prior_six_import_wall_median_ns": median,
+            "last_vs_prior_six_import_wall_delta_ns": (
+                pages[6]["client_import_wall_ns"] - median
+            ),
+            "same_last_two_packet_hex_chars": (
+                pages[6]["packet_hex_chars"] == pages[5]["packet_hex_chars"]
+            ),
+        })
+    return result
+
 def _phase(phase: dict, name: str, attackers: int) -> dict:
     history = phase.get("history", [])
     submissions = phase.get("submissions", [])
@@ -279,6 +381,7 @@ def _phase(phase: dict, name: str, attackers: int) -> dict:
         ),
         "native_packet_stage_observations": _packet_stage_observations(history),
         "terminal_history_import_boundary": _terminal_import_boundary(history),
+        "final_history_page_activation": _final_history_page_activation(history),
         "submit_client_wall_ns": _sum_observed(submissions, "elapsed_wall_ns"),
         "full_work_accepted": phase.get("full_work_accepted"),
         "full_work_failed": phase.get("full_work_failed"),
