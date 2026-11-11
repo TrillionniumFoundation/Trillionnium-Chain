@@ -550,6 +550,10 @@ impl Node {
     }
 }
 
+#[cfg(test)]
+#[path = "mining_prepare_control_tests.rs"]
+mod prepare_control_tests;
+
 fn pause_until(deadline: Instant, end: Instant, stop: &AtomicBool) {
     while !stop.load(Ordering::Acquire) && Instant::now() < deadline && Instant::now() < end {
         let remaining = deadline.min(end).saturating_duration_since(Instant::now());
