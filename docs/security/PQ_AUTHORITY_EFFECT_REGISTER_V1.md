@@ -4,7 +4,7 @@
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
 routes to the current reviewed source
-`ef6df12a042912664df64f2112c2b1c600dce9fa`. The
+`8add285b6c0a91d8b7812efe2d02c9342f74c91b`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -17,6 +17,22 @@ classic transfer type is not interchangeable with the native account owner, and
 a signature, context comparison, downloaded artifact or certificate observation
 must not be recorded as a different downstream permission. That original source
 inventory did not itself establish a classical bypass of a PQ owner.
+
+## Joint-source continuation
+
+This review derives all 44 regular Git blobs from runtime checkpoint
+`8add285b6c0a91d8b7812efe2d02c9342f74c91b`, tree `8aaa486aa4ccd4e41e33241fb4e7e273d3c3d5f6`. The canonical lock SHA-256 is
+`da8d605dead05faa1302c96d8bba1ff4f1e07cd5423390a34679f02dc73cecb9`. Compared with the previous checkpoint, only
+`pon_executor.rs` and `store.rs` change within this declared scope. They enforce
+the development-only configuration at state-root, execution and Node owner
+boundaries. Classical development execution remains separate from the explicit
+PQ owner. The preserved read-only classical API keeps its existing PQ-selector
+error precedence; all actual effects still check the complete scope first.
+
+The added account tests and owner wrappers are separately included in the
+native source inventory and corpus. This 44-path register does not claim to
+cover those additions, TLS or the V5 Root witness as a complete authority graph.
+Earlier checkpoint observations below retain their original source identities.
 
 ## The seven bounded routes
 

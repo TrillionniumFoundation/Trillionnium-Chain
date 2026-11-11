@@ -214,7 +214,18 @@ Its source hashes describe the bytes read for the example only. All security,
 theorem-applicability, composition-coverage, and activation flags remain false
 in both modes, and the actual lifetime failure bound remains null.
 
-### Current composed-source mapping
+### Current joint-source mapping
+
+The 15 declared paths are bound to `8add285b6c0a91d8b7812efe2d02c9342f74c91b`, tree `8aaa486aa4ccd4e41e33241fb4e7e273d3c3d5f6`.
+Only `trnm-pon-node/src/store.rs` differs from the preceding 15-path lock: the
+account-scope check now guards fresh/cold/warm Node ownership before execution.
+The original event sets, equations, unknown terms and qualification flags are
+unchanged. V5 witness custody and entropy obligations are recorded separately
+in the Root register; their absence from this 15-path roster remains explicit.
+A metadata child stores this lock; its own exact source requires separate
+validation. The lifetime bound remains unknown.
+
+### Earlier composed-source mapping
 
 The current 15-path lock is reviewed against the published runtime checkpoint
 [`ef6df12a042912664df64f2112c2b1c600dce9fa`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/ef6df12a042912664df64f2112c2b1c600dce9fa),

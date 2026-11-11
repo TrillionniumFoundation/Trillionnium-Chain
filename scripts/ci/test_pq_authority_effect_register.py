@@ -70,7 +70,7 @@ class AuthorityEffectTests(unittest.TestCase):
         self.assertEqual({row['id']: row['effect_scope'] for row in result['routes']},
                          EXPECTED_SCOPES)
         self.assertEqual(result['source_revision'],
-                         'ef6df12a042912664df64f2112c2b1c600dce9fa')
+                         '8add285b6c0a91d8b7812efe2d02c9342f74c91b')
         self.assertEqual(result['source_files_sha256'], self.original['source_files_sha256'])
         for name in ('coverage_complete', 'whole_chain_pq_qualified', 'production_activation',
                      'provenance_authenticated', 'call_graph_proved',
@@ -149,6 +149,7 @@ class AuthorityEffectTests(unittest.TestCase):
 
     def test_source_revision_schema_purpose_and_route_context_drift_refuse(self):
         for field, value in (('source_revision', '0' * 40),
+                             ('source_revision', 'ef6df12a042912664df64f2112c2b1c600dce9fa'),
                              ('source_revision', '88568e2511fcf166e6824947ac97b06b72104385'),
                              ('source_revision', '0f0592ace4b08a1d39e1ffad31beee76ddc4fd66'),
                              ('source_revision', '1f7ff4106f14e5b514d95a9faf2c5eea1233aea5'),

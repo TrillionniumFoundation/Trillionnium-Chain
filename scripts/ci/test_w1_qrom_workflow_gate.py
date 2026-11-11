@@ -39,6 +39,7 @@ import w1_qrom_conditional_budget as budget
 import w1_qrom_implementation_audit as implementation
 import w1_qrom_historical_fixture as historical
 import w1_qrom_current_implementation_audit as current
+import w1_qrom_supplemental_controls as supplemental
 
 
 def embedded_python(workflow: str, step_id: str) -> str:
@@ -103,6 +104,7 @@ class WorkflowGateTests(unittest.TestCase):
                      for step in ('named_tests', 'report_scopes', 'status')}
         cls.roster_bytes = (ROOT / ROSTER).read_bytes()
         cls.roster = json.loads(cls.roster_bytes)
+        cls.supplemental_roster, cls.supplemental_roster_bytes = supplemental.load_roster(ROOT)
         # Actual project reports are the positive baseline. Tests mutate their
         # concrete values; they do not reproduce the gate's arithmetic rules.
         historical_report, historical_receipt = historical.historical_mapping(ROOT)
@@ -116,6 +118,17 @@ class WorkflowGateTests(unittest.TestCase):
             'budget-hypothetical.json': budget.make_report(budget.example_input()),
             'budget-hypothetical-input.json': budget.serializable(budget.example_input()),
         }
+        # Inert named cases isolate the completion protocol. The mandatory
+        # supplemental steps execute the real historical/current control suites.
+        suites = {row['module']: row['tests'] for row in cls.supplemental_roster['suites']}
+        def isolated_discovery(loader, start_dir, pattern='test*.py', top_level_dir=None):
+            return unittest.TestSuite(named_fixture(name) for name in suites[Path(pattern).stem])
+        with mock.patch.object(unittest.TestLoader, 'discover', isolated_discovery):
+            for row in cls.supplemental_roster['suites']:
+                report = supplemental.run_suite(ROOT, row['suite'], stream=io.StringIO())
+                if report['all_named_controls_passed'] is not True:
+                    raise ValueError('isolated supplemental completion failed')
+                cls.reports[supplemental.OUTPUTS[row['suite']]] = report
 
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory(prefix='w1-workflow-gate-')
@@ -131,6 +144,8 @@ class WorkflowGateTests(unittest.TestCase):
         roster_path = root / ROSTER
         roster_path.parent.mkdir(parents=True)
         roster_path.write_bytes(self.roster_bytes)
+        (root / supplemental.ROSTER).write_bytes(self.supplemental_roster_bytes)
+        (out / supplemental.RETAINED_ROSTER).write_bytes(self.supplemental_roster_bytes)
         for name, report in (self.reports if reports is None else reports).items():
             write_json(out / name, report)
         identity = {
@@ -154,7 +169,10 @@ class WorkflowGateTests(unittest.TestCase):
         }
         stdout, stderr = io.StringIO(), io.StringIO()
         exit_code = 0
-        with working_directory(root), mock.patch.object(sys, 'argv', ['gate', str(out)]), \
+        # The scope gate reconstructs observations from the actual checkout;
+        # only retained report files are replaced by each isolated mutation.
+        source_root = ROOT if step == 'report_scopes' else root
+        with working_directory(source_root), mock.patch.object(sys, 'argv', ['gate', str(out)]), \
                 mock.patch.dict(os.environ, environment), redirect_stdout(stdout), redirect_stderr(stderr):
             try:
                 exec(compile(self.codes[step], str(WORKFLOW) + ':' + step, 'exec'),
@@ -211,6 +229,36 @@ class WorkflowGateTests(unittest.TestCase):
         self.assertIs(read_json(out / 'named-tests.json')['all_named_controls_passed'], True)
         return root, out
 
+    def run_supplemental(self, root, mode):
+        row = self.supplemental_roster['suites'][0]
+        module = row['module']
+        directory = root / 'scripts/ci'
+        directory.mkdir(parents=True, exist_ok=True)
+        if mode == 'import_exit_zero':
+            (directory / (module + '.py')).write_text('raise SystemExit(0)\n')
+        elif mode == 'load_tests_exit_zero':
+            (directory / (module + '.py')).write_text(
+                'def load_tests(loader, standard_tests, pattern):\n    raise SystemExit(0)\n')
+        discover = unittest.TestLoader.discover
+        def isolated_discovery(loader, start_dir, pattern='test*.py', top_level_dir=None):
+            if mode in ('import_exit_zero', 'load_tests_exit_zero'):
+                return discover(loader, start_dir, pattern, top_level_dir)
+            names = list(row['tests'])
+            if mode == 'no_tests':
+                names.clear()
+            elif mode == 'duplicate':
+                names.append(names[0])
+            return unittest.TestSuite(named_fixture(name, mode == 'skip') for name in names)
+        cached = sys.modules.pop(module, None)
+        try:
+            with mock.patch.object(sys, 'path', [str(directory)] + list(sys.path)), \
+                    mock.patch.object(unittest.TestLoader, 'discover', isolated_discovery):
+                return supplemental.run_suite(root, 'historical', stream=io.StringIO())
+        finally:
+            sys.modules.pop(module, None)
+            if cached is not None:
+                sys.modules[module] = cached
+
     def assert_scope_rejected(self, mutate):
         reports = deepcopy(self.reports)
         mutate(reports)
@@ -231,12 +279,18 @@ class WorkflowGateTests(unittest.TestCase):
         result = self.run_named(root, out, 'import_exit_zero')
         self.assertNotEqual(result[0], 0, 'SystemExit(0) must not be a successful test stage')
         self.assertIs(read_json(out / 'named-tests.json')['all_named_controls_passed'], False)
+        report = self.run_supplemental(root, 'import_exit_zero')
+        self.assertIs(report['all_named_controls_passed'], False)
+        self.assertIn('SystemExit', report['exception'] + '\n'.join(report['loader_errors']))
 
     def test_named_load_tests_system_exit_zero_is_rejected(self):
         root, out = self.workspace()
         result = self.run_named(root, out, 'load_tests_exit_zero')
         self.assertNotEqual(result[0], 0, 'load_tests SystemExit(0) must not complete the roster')
         self.assertIs(read_json(out / 'named-tests.json')['all_named_controls_passed'], False)
+        report = self.run_supplemental(root, 'load_tests_exit_zero')
+        self.assertIs(report['all_named_controls_passed'], False)
+        self.assertIn('SystemExit', report['exception'])
 
     def test_named_missing_duplicate_and_skipped_controls_are_rejected(self):
         for mode in ('missing', 'duplicate', 'skip'):
@@ -245,13 +299,20 @@ class WorkflowGateTests(unittest.TestCase):
                 result = self.run_named(root, out, mode)
                 self.assertNotEqual(result[0], 0)
                 self.assertIs(read_json(out / 'named-tests.json')['all_named_controls_passed'], False)
+        for mode in ('no_tests', 'duplicate', 'skip'):
+            with self.subTest(supplemental=mode):
+                root, _ = self.workspace()
+                report = self.run_supplemental(root, mode)
+                self.assertIs(report['all_named_controls_passed'], False)
 
     def test_status_rejects_exit_zero_without_named_completion(self):
-        root, out = self.completed_workspace()
-        (out / 'named-tests.json').unlink()  # All other evidence and step successes remain.
-        result = self.execute('status', root, out)
-        self.assertNotEqual(result[0], 0, 'successful steps cannot replace a completion record')
-        self.assertIs(read_json(out / 'ci-status.json')['all_required_observations_passed'], False)
+        for name in ('named-tests.json', *supplemental.OUTPUTS.values()):
+            with self.subTest(completion=name):
+                root, out = self.completed_workspace()
+                (out / name).unlink()  # All other evidence and step successes remain.
+                result = self.execute('status', root, out)
+                self.assertNotEqual(result[0], 0, 'successful steps cannot replace a completion record')
+                self.assertIs(read_json(out / 'ci-status.json')['all_required_observations_passed'], False)
 
     def test_status_independently_rechecks_named_ids_and_boolean_scope(self):
         for mutation in ('missing_success', 'duplicate_success', 'skip', 'scope_zero', 'passed_one'):
@@ -273,6 +334,16 @@ class WorkflowGateTests(unittest.TestCase):
                 result = self.execute('status', root, out)
                 self.assertNotEqual(result[0], 0)
                 self.assertIs(read_json(out / 'ci-status.json')['all_required_observations_passed'], False)
+        for suite in supplemental.OUTPUTS:
+            with self.subTest(supplemental=suite):
+                root, out = self.completed_workspace()
+                path = out / supplemental.OUTPUTS[suite]
+                report = read_json(path)
+                report['success_ids'].pop()
+                write_json(path, report)
+                result = self.execute('status', root, out)
+                self.assertNotEqual(result[0], 0)
+                self.assertIs(read_json(out / 'ci-status.json')['supplemental_completion_verified'], False)
 
     def test_status_requires_every_step_outcome_and_conclusion(self):
         root, out = self.completed_workspace()
@@ -395,6 +466,18 @@ class WorkflowGateTests(unittest.TestCase):
         def wrong_git_mode(reports):
             reports['historical-source.json']['project_files'][0]['git_mode'] = '120000'
 
+        def replaced_git_blob(reports):
+            reports['historical-source.json']['project_files'][0]['git_blob_oid'] = '0' * 40
+
+        def changed_regular_git_mode(reports):
+            row = reports['historical-source.json']['project_files'][0]
+            row['git_mode'] = '100755' if row['git_mode'] == '100644' else '100644'
+
+        def mutually_relabelled_historical_sources(reports):
+            for row in (reports['historical-source.json']['project_files'][0],
+                        reports['implementation.json']['project_files'][0]):
+                row.update(path='unreviewed-source.rs', bytes=1, sha256='0' * 64)
+
         def replace_refusal_with_success(reports):
             reports['current-v1-refusal.json']['result'] = 'MAPPING_REPRODUCED_SECURITY_HOLD'
 
@@ -416,11 +499,33 @@ class WorkflowGateTests(unittest.TestCase):
         def incomplete_current_closure(reports):
             reports['implementation-current.json']['local_path_closure']['files'].pop()
 
+        def replaced_current_revision(reports):
+            reports['implementation-current.json']['source_base_commit'] = '0' * 40
+
+        def replaced_current_contract(reports):
+            reports['implementation-current.json']['contract_sha256'] = '0' * 64
+
+        def replaced_current_closure(reports):
+            closure = reports['implementation-current.json']['local_path_closure']
+            closure['files'] = [{'path': 'unreviewed-source.rs', 'bytes': 1, 'sha256': '0' * 64}]
+            closure['source_files_checked'] = 1
+
+        def missing_supplemental_completion(reports):
+            del reports[supplemental.OUTPUTS['historical']]
+
+        def skipped_supplemental_control(reports):
+            report = reports[supplemental.OUTPUTS['current']]
+            report['skipped'] = [[report['expected_ids'][0], 'skipped control']]
+
         for mutation in (true_implementation, zero_qualification, inferred_bits, full_theorem,
                          latest_revision, relabel_historical, promote_historical_to_current,
-                         wrong_git_mode, replace_refusal_with_success, remove_refusal,
+                         wrong_git_mode, replaced_git_blob, changed_regular_git_mode,
+                         mutually_relabelled_historical_sources,
+                         replace_refusal_with_success, remove_refusal,
                          remove_current_mapping, historical_report_as_current,
-                         promote_current_mapping, refuse_as_zero, incomplete_current_closure):
+                         promote_current_mapping, refuse_as_zero, incomplete_current_closure,
+                         replaced_current_revision, replaced_current_contract, replaced_current_closure,
+                         missing_supplemental_completion, skipped_supplemental_control):
             with self.subTest(mutation=mutation.__name__):
                 self.assert_scope_rejected(mutation)
 

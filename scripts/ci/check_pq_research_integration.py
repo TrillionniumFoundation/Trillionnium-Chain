@@ -902,6 +902,11 @@ NATIVE_REQUIRED_PATHS |= frozenset((
 # Presence and pins remain source consistency, not whole-chain qualification.
 NATIVE_REQUIRED_PATHS |= frozenset((
     "scripts/w1_qrom_historical_fixture.py",
+    "scripts/ci/w1_qrom_supplemental_controls.py",
+    "config/pon/w1-qrom-supplemental-tests-v1.json",
+    "evidence/pq-chain-convergence-20261111-d4d2/README.md",
+    "evidence/pq-chain-convergence-20261111-d4d2/lifetime-input.json",
+    "evidence/pq-chain-convergence-20261111-d4d2/lifetime-report.json",
     "scripts/ci/test_w1_qrom_historical_fixture.py",
     "trillionnium/crates/trnm-mvcc-fee/tests/account_development_scope.rs",
     "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs",

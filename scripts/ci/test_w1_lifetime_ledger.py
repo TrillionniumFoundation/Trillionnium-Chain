@@ -59,7 +59,7 @@ class LifetimeLedgerTests(unittest.TestCase):
 
     def test_project_unknowns_do_not_produce_a_target_or_qualification(self):
         result = ledger.make_report(ledger.template(), ROOT)
-        fixture = ROOT / "evidence/pon-w1-lifetime-current-20261111/project-report.json"
+        fixture = ROOT / "evidence/pq-chain-convergence-20261111-d4d2/lifetime-report.json"
         self.assertEqual((json.dumps(result, indent=2, sort_keys=True, allow_nan=False)
                           + "\n").encode(), fixture.read_bytes())
         budget = result["lifetime_ledger"]

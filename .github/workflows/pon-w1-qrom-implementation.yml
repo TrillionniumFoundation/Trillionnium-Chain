@@ -231,7 +231,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/ci/test_w1_qrom_historical_fixture.py -v 2>&1 | tee "$W1_QROM_OUT/historical-controls.log"
+          python3 scripts/ci/w1_qrom_supplemental_controls.py --suite historical \
+            --repo-root "$GITHUB_WORKSPACE" --output-dir "$W1_QROM_OUT" \
+            2>&1 | tee "$W1_QROM_OUT/historical-controls.log"
       - name: Reproduce the historical map and retain current-tree v1 refusal
         id: implementation
         if: always() && steps.preflight.outcome == 'success'
@@ -246,7 +248,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/ci/test_w1_qrom_current_implementation_audit.py -v 2>&1 | tee "$W1_QROM_OUT/current-controls.log"
+          python3 scripts/ci/w1_qrom_supplemental_controls.py --suite current \
+            --repo-root "$GITHUB_WORKSPACE" --output-dir "$W1_QROM_OUT" \
+            2>&1 | tee "$W1_QROM_OUT/current-controls.log"
           python3 scripts/w1_qrom_current_implementation_audit.py --repo-root "$GITHUB_WORKSPACE" \
             --output "$W1_QROM_OUT/implementation-current.json" 2>&1 | tee "$W1_QROM_OUT/implementation-current.log"
       - name: Preserve all unknown project quantum inputs
@@ -279,7 +283,16 @@ jobs:
           import re
           import sys
 
+          # These generators re-read the reviewed source contracts and actual
+          # checkout. Reports cannot vouch for one another's source identities.
+          repo_root = Path.cwd()
+          sys.path.insert(0, str(repo_root / 'scripts'))
+          import w1_qrom_historical_fixture as historical_materializer
+          import w1_qrom_current_implementation_audit as current_mapper
+          import w1_qrom_supplemental_controls as supplemental_controls
+
           out = Path(sys.argv[1])
+          supplemental_controls.verify_completions(repo_root, out)
           def require(condition, message):
               if not condition:
                   raise ValueError(message)
@@ -304,6 +317,14 @@ jobs:
           def exact_qualification(observed, expected):
               return (type(observed) is dict and set(observed) == set(expected)
                       and all(observed[key] is value for key, value in expected.items()))
+
+          def exact_observation(observed, expected, label):
+              # Canonical JSON also distinguishes bool/int and int/float values;
+              # Python container equality alone would accept True == 1.
+              canonical = lambda value: json.dumps(value, sort_keys=True,
+                  separators=(',', ':'), allow_nan=False)
+              require(canonical(observed) == canonical(expected),
+                      label + ': differs from the actual reviewed-source observation')
 
           implementation = read('implementation.json')
           expected_implementation = {
@@ -400,6 +421,12 @@ jobs:
                        'whole_repository_source_verified', 'third_party_source_closure_verified',
                        'provider_build_identity_verified', 'git_commit_ancestry_verified'):
               require(current.get(flag) is False, 'current-source mapping widened: ' + flag)
+          expected_historical, expected_materialization = historical_materializer.historical_mapping(repo_root)
+          exact_observation(implementation, expected_historical, 'historical mapping')
+          exact_observation(historical, expected_materialization, 'historical Git materialization')
+          exact_observation(refusal, historical_materializer.current_v1_refusal(repo_root),
+                            'current-tree historical refusal')
+          exact_observation(current, current_mapper.build_report(repo_root), 'current-source mapping')
           expected_budget = {
               'unconditional_project_security_bits': None,
               'quantum_security_bits': None,
@@ -624,6 +651,9 @@ jobs:
 
           out = Path(sys.argv[1])
           steps = json.loads(os.environ['W1_QROM_STEP_RESULTS'])
+          sys.path.insert(0, str(Path.cwd() / 'scripts/ci'))
+          import w1_qrom_supplemental_controls as supplemental_controls
+
           expected_digest = 'ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8'
           required_modules = (
               'test_w1_control_tree_audit',
@@ -717,6 +747,12 @@ jobs:
               named_completion_sha256 = check_named_completion()
           except Exception as error:
               named_completion_error = str(error)
+          supplemental_completion_error = None
+          supplemental_completion_sha256 = None
+          try:
+              supplemental_completion_sha256 = supplemental_controls.verify_completions(Path.cwd(), out)
+          except Exception as error:
+              supplemental_completion_error = str(error)
           required = (
               'observations', 'checkout', 'source_before', 'preflight', 'named_tests',
               'historical_controls', 'implementation', 'current_implementation',
@@ -752,8 +788,11 @@ jobs:
               'named_test_completion_error': named_completion_error,
               'named_test_completion_sha256': named_completion_sha256,
               'named_test_completion_verified': named_completion_error is None,
+              'supplemental_completion_error': supplemental_completion_error,
+              'supplemental_completion_sha256': supplemental_completion_sha256,
+              'supplemental_completion_verified': supplemental_completion_error is None,
               'all_required_observations_passed': not incomplete and identity_error is None
-                  and named_completion_error is None,
+                  and named_completion_error is None and supplemental_completion_error is None,
               'scope': 'Separate historical mapping, actual current-tree historical refusal, reviewed current-source mapping and conditional arithmetic. None establishes proof or quantum security.',
               'post_quantum_soundness_qualified': False,
               'complete_w1_soundness_qualified': False,
@@ -769,7 +808,8 @@ jobs:
           if report['all_required_observations_passed'] is not True:
               raise SystemExit('required observations failed, were skipped or lost source identity: '
                                + ', '.join(incomplete) + '; ' + str(identity_error)
-                               + '; named completion: ' + str(named_completion_error))
+                               + '; named completion: ' + str(named_completion_error)
+                               + '; supplemental completion: ' + str(supplemental_completion_error))
           print('All required exact-source observations completed; project security remains unqualified.')
           PY
       - name: Retain source identities reports logs and every failure

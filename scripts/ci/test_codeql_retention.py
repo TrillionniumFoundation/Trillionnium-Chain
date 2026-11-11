@@ -19,6 +19,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW = ROOT / ".github/workflows/codeql-real-exact-source.yml"
+EXPORT_WORKFLOW = ROOT / ".github/workflows/codeql-analysis-export.yml"
 
 
 def step(text, name):
@@ -47,6 +48,72 @@ class CodeqlRetentionTests(unittest.TestCase):
             env=dict(os.environ, SARIF_DIR=str(directory)),
             capture_output=True, text=True, check=False,
         )
+
+    def require_pr_source_contract(self, workflow, exporter):
+        # Read the literal event mapping, refusing any PR branch/path/type filter.
+        # No event or job is dispatched by these local workflow controls.
+        for text, expected_events in ((workflow, {"push", "pull_request"}),
+                                      (exporter, {"pull_request", "workflow_dispatch"})):
+            self.assertNotIn("pull_request_target", text)
+            sections = re.findall(r"^on:\n(.*?)(?=^\S|\Z)", text, re.MULTILINE | re.DOTALL)
+            self.assertEqual(len(sections), 1)
+            events = list(re.finditer(r"^  ([a-z_]+):[^\n]*", sections[0], re.MULTILINE))
+            self.assertEqual(len(events), len(expected_events))
+            self.assertEqual({event.group(1) for event in events}, expected_events)
+            index = next(i for i, event in enumerate(events) if event.group(1) == "pull_request")
+            self.assertEqual(events[index].group(0), "  pull_request:")
+            end = events[index + 1].start() if index + 1 < len(events) else len(sections[0])
+            body = sections[0][events[index].end():end]
+            self.assertEqual([line for line in body.splitlines()
+                              if line.strip() and not line.lstrip().startswith("#")], [])
+        guard = ("    if: github.event_name != 'pull_request' || "
+                 "github.event.pull_request.head.repo.full_name == github.repository\n")
+        self.assertEqual(workflow.count(guard), 1)
+        checkout = step(workflow, "Checkout exact event source")
+        source = ("${{ matrix.source == 'head' && github.event_name == 'pull_request' && "
+                  "github.event.pull_request.head.sha || github.sha }}")
+        self.assertEqual(field(checkout, "ref"), source)
+        self.assertEqual(field(checkout, "persist-credentials"), "false")
+        for name in ("Refuse any other source identity", "Recheck exact source after analysis"):
+            self.assertEqual(field(step(workflow, name), "EXPECTED_SOURCE_SHA"), source)
+        analyze = step(workflow, "Generate local exact-source SARIF for exact source SHA")
+        self.assertEqual(field(analyze, "upload"), "never")
+        self.assertEqual(field(analyze, "ref"), "${{ github.event_name == 'pull_request' && "
+                         "matrix.source == 'head' && format('refs/pull/{0}/head', "
+                         "github.event.pull_request.number) || github.ref }}")
+        self.assertEqual(field(analyze, "sha"), "${{ github.event_name == 'pull_request' && "
+                         "matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}")
+
+    def test_local_sarif_covers_exporter_pr_scope_with_immutable_same_repository_sources(self):
+        self.require_pr_source_contract(self.workflow, EXPORT_WORKFLOW.read_text(encoding="utf-8"))
+
+    def test_pr_trigger_and_source_mutations_are_refused(self):
+        exporter = EXPORT_WORKFLOW.read_text(encoding="utf-8")
+        changes = [
+            ("  pull_request:\n", "  pull_request:\n    branches: [main]\n"),
+            ("  pull_request:\n", "  pull_request:\n    branches-ignore: ['fix/**']\n"),
+            ("  pull_request:\n", "  pull_request:\n    paths: ['trillionnium/**']\n"),
+            ("  pull_request:\n", "  pull_request:\n    paths-ignore: ['scripts/**']\n"),
+            ("  pull_request:\n", "  pull_request:\n    types: [opened]\n"),
+            ("  pull_request:\n", "  pull_request_target:\n"),
+            ("  pull_request:\n", ""),
+            ("    if: github.event_name != 'pull_request' || "
+             "github.event.pull_request.head.repo.full_name == github.repository\n", "    if: true\n"),
+            ("          ref: ${{ matrix.source == 'head' && github.event_name == 'pull_request' && "
+             "github.event.pull_request.head.sha || github.sha }}\n", "          ref: main\n"),
+            ("          persist-credentials: false\n", "          persist-credentials: true\n"),
+            ("          upload: never\n", "          upload: always\n"),
+            ("          sha: ${{ github.event_name == 'pull_request' && matrix.source == 'head' && "
+             "github.event.pull_request.head.sha || github.sha }}\n", "          sha: ${{ github.sha }}\n"),
+        ]
+        for old, new in changes:
+            with self.subTest(replacement=new):
+                self.assertIn(old, self.workflow)
+                with self.assertRaises(AssertionError):
+                    self.require_pr_source_contract(self.workflow.replace(old, new, 1), exporter)
+        with self.assertRaises(AssertionError):
+            self.require_pr_source_contract(self.workflow,
+                exporter.replace("  pull_request:\n", "  pull_request:\n    branches: [main]\n", 1))
 
     def test_failure_retention_does_not_hide_or_skip_real_analysis(self):
         analyze = step(self.workflow, "Generate local exact-source SARIF for exact source SHA")

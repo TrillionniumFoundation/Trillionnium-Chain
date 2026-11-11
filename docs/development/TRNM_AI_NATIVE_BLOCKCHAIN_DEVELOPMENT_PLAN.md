@@ -8,7 +8,11 @@ execution and fresh/cold/warm Node boundaries; ordinary development remains
 a separately selected classical profile. Preserve all historical evidence.
 The W1 workflow materializes the original Git blobs for its historical mapping,
 retains the old reader's refusal of current source, and independently checks
-the current V2 mapping. Neither historical success nor source consistency
+the current V2 mapping. Rebuild the reports to reject source-identity
+substitution and require the complete separate 8/14 control rosters; empty or
+skipped suites cannot count as success. The local CodeQL SARIF lane covers
+stacked PRs while preserving the independent API-export requirement.
+Neither historical success nor source consistency
 grants cryptographic qualification. Root V5 and provider readback remain
 separate controlled components; there is no new installed witness/effect route.
 Freeze and validate this exact joint source, including native refusal/recovery

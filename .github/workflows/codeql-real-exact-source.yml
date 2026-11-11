@@ -8,10 +8,9 @@ on:
       - main
       - fix/chain-six-axis-performance-20261103
       - fix/chain-native-codeql-source-scan-20261106-gpt6
+  # Match the read-only export lane's ordinary PR scope, including stacked bases.
+  # This local SARIF lane does not supply the exporter's Code Scanning API results.
   pull_request:
-    branches:
-      - main
-      - fix/chain-six-axis-performance-20261103
 permissions:
   contents: read
 jobs:
