@@ -1,0 +1,15 @@
+Restart=no
+MainPID=5280
+Slice=system.slice
+ControlGroup=/system.slice/trnm-fixed-root-f0-42509669473-1-fixed-host-root-f0.service
+WorkingDirectory=/home/runner/work/Trillionnium-Chain/Trillionnium-Chain
+User=1001
+Group=1001
+KillMode=control-group
+Id=trnm-fixed-root-f0-42509669473-1-fixed-host-root-f0.service
+Description=Trillionnium F0 controller head bb026697a972521009bc133ae6ed2b653e18e931 prepared b52907bd9ea4b0d34a00bf0d1d27391deb895fd4cc09595372835ad4abdac59e
+LoadState=loaded
+ActiveState=active
+SubState=running
+Transient=yes
+InvocationID=281af221823b46a2a4f680645a19ea24

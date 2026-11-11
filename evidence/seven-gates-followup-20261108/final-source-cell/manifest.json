@@ -1,0 +1,21 @@
+{
+  "files": {
+    "README.md": {
+      "bytes": 2048,
+      "sha256": "033a6e4d8b8776ff09592687b8e9672f35847caae843ed99825ee0ca442972b4"
+    },
+    "final-observation.json": {
+      "bytes": 2995,
+      "sha256": "93065ac9e057ecf1880c6aae1e1dd85affd92efaa9fd13902d654f6129f1c44b"
+    },
+    "original-observations.tar.gz": {
+      "bytes": 238251,
+      "sha256": "ae236e1971f461513ff9fee8992df3c33ac34579e7e826a4a732020b9b223014"
+    }
+  },
+  "paired_hepta_commit": "36d5eff44f4071bb1f250b1c7706dc690cf0a875",
+  "qualification": "HOLD_NO_GO",
+  "schema": "trnm-seven-gates-final-cell-files-v1",
+  "tested_chain_commit": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "tested_chain_tree": "18175756871bf341586fc37be1b17a00ef1dd099"
+}

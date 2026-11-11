@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="nextest-run" tests="39" failures="0" errors="0" uuid="daa6f76b-4408-4a08-b6ce-22d1fb7d7bdd" timestamp="2026-11-08T07:28:43.149-05:00" time="8.376">
+    <testsuite name="codex-hepta-agentd" tests="27" disabled="0" errors="0" failures="0">
+        <testcase name="learning_iteration_checkpoint::profile_tests::changed_frozen_profile_cannot_restore_or_replace_the_original_checkpoint" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:43.152-05:00" time="0.008">
+        </testcase>
+        <testcase name="learning_iteration_checkpoint::profile_tests::both_no_update_paths_keep_the_frozen_profile_and_full_parent_after_cold_reopen" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:43.152-05:00" time="0.014">
+        </testcase>
+        <testcase name="learning_iteration_checkpoint::profile_tests::previous_codec_version_is_refused_without_repair_or_append" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:43.161-05:00" time="0.006">
+        </testcase>
+        <testcase name="learning_iteration_checkpoint::tests::foreign_owner_request_skipped_stage_and_divergent_successor_leave_current_unchanged" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:43.167-05:00" time="0.008">
+        </testcase>
+        <testcase name="learning_iteration_checkpoint::tests::malformed_counts_strings_tags_and_truncated_checkpoints_are_rejected" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:43.174-05:00" time="0.005">
+        </testcase>
+        <testcase name="learning_iteration_checkpoint::tests::maximum_legal_snapshots_roundtrip_all_decisions_inside_original_root_bound" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:43.180-05:00" time="0.011">
+        </testcase>
+        <testcase name="learning_iteration_checkpoint::tests::each_checkpoint_reopens_and_exact_retry_performs_no_second_cas" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:43.166-05:00" time="0.030">
+        </testcase>
+        <testcase name="learning_iteration_checkpoint::tests::valid_json_with_corrupt_protected_record_metadata_is_never_restored" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:43.191-05:00" time="0.006">
+        </testcase>
+        <testcase name="learning_iteration_checkpoint::tests::write_failure_and_lost_ack_reconcile_original_record_without_reexecution" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:43.197-05:00" time="0.006">
+        </testcase>
+        <testcase name="neuron_generation_runtime::tests::update::adopted_learning::updated_candidate_uses_original_actor_and_recovers_without_another_reset" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:43.203-05:00" time="3.338">
+        </testcase>
+        <testcase name="neuron_generation_runtime::tests::update::adopted_learning::updated_actor_rechecks_current_withdrawal_and_revocation" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:43.197-05:00" time="3.694">
+        </testcase>
+        <testcase name="neuron_generation_runtime::tests::update::learning::ordinary_actor_reads_actual_use_and_cold_recovery_without_reexecution" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:46.541-05:00" time="3.097">
+        </testcase>
+        <testcase name="neuron_generation_runtime::tests::update::learning::unpublished_actor_refuses_learning_readback_and_keeps_transport_errors" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:49.638-05:00" time="0.307">
+        </testcase>
+        <testcase name="plasticity_runtime::lifetime_tests::learning_iteration_tests::coordinator_uses_native_proposal_owner_and_reconciles_lost_ack" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:49.945-05:00" time="0.118">
+        </testcase>
+        <testcase name="plasticity_runtime::lifetime_tests::learning_iteration_tests::evaluated_no_update_waits_for_selection_and_cannot_resume_after_expiry" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:50.063-05:00" time="0.072">
+        </testcase>
+        <testcase name="plasticity_runtime::lifetime_tests::learning_iteration_tests::invalid_signature_prevents_dataset_training_and_checkpoint_progress" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:50.135-05:00" time="0.009">
+        </testcase>
+        <testcase name="plasticity_runtime::lifetime_tests::learning_iteration_tests::no_update_next_use_checks_actual_selection_stage_and_controller" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:50.144-05:00" time="0.049">
+        </testcase>
+        <testcase name="plasticity_runtime::lifetime_tests::learning_iteration_tests::profile_tests::signed_training_profile_drift_stops_before_evaluator_and_cannot_rebind_restore" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:50.193-05:00" time="0.027">
+        </testcase>
+        <testcase name="plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::completed_recovery_checks_current_revocation_controller_and_signature_expiry" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:50.220-05:00" time="0.062">
+        </testcase>
+        <testcase name="plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::completed_recovery_checks_ready_and_clock_after_awaiting_owner_attestation" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:50.283-05:00" time="0.010">
+        </testcase>
+        <testcase name="plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::completed_recovery_reauthenticates_all_signed_stages_without_reproposing_or_checkpointing" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:50.292-05:00" time="0.206">
+        </testcase>
+        <testcase name="plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::completed_recovery_rejects_each_invalid_retained_signature_before_work" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:50.499-05:00" time="0.164">
+        </testcase>
+        <testcase name="plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::fresh_receipt_wait_rechecks_time_and_ready_before_checkpointing" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:50.663-05:00" time="0.011">
+        </testcase>
+        <testcase name="plasticity_runtime::lifetime_tests::learning_iteration_tests::recovery_tests::partial_and_completed_recovery_preserve_deadlines_and_only_resume_after_authentication" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:50.674-05:00" time="0.119">
+        </testcase>
+        <testcase name="plasticity_runtime::lifetime_tests::learning_iteration_tests::scope_and_generation_readiness_refuse_before_owner_work" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:50.793-05:00" time="0.009">
+        </testcase>
+        <testcase name="plasticity_runtime::lifetime_tests::learning_iteration_tests::separate_keys_under_one_controller_cannot_self_evaluate" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:50.803-05:00" time="0.038">
+        </testcase>
+        <testcase name="neuron_generation_runtime::tests::update::learning::running_actor_refuses_current_withdrawal_and_revocation" classname="codex-hepta-agentd" timestamp="2026-11-08T07:28:46.892-05:00" time="4.633">
+        </testcase>
+    </testsuite>
+    <testsuite name="codex-hepta-learning-artifacts" tests="12" disabled="0" errors="0" failures="0">
+        <testcase name="learning_iteration::profile_tests::frozen_profile_is_required_and_committed_before_any_owner_work" classname="codex-hepta-learning-artifacts" timestamp="2026-11-08T07:28:50.842-05:00" time="0.003">
+        </testcase>
+        <testcase name="learning_iteration::profile_tests::trainer_and_evaluator_cannot_replace_the_frozen_profile" classname="codex-hepta-learning-artifacts" timestamp="2026-11-08T07:28:50.844-05:00" time="0.003">
+        </testcase>
+        <testcase name="learning_iteration::retained_tests::existing_cutover_signing_bytes_are_preserved_and_retained_use_has_its_own_tag" classname="codex-hepta-learning-artifacts" timestamp="2026-11-08T07:28:50.847-05:00" time="0.002">
+        </testcase>
+        <testcase name="learning_iteration::retained_tests::retained_task_and_model_cutover_are_not_interchangeable" classname="codex-hepta-learning-artifacts" timestamp="2026-11-08T07:28:50.850-05:00" time="0.003">
+        </testcase>
+        <testcase name="learning_iteration::retained_tests::retained_use_rejects_wrong_partition_selection_and_missing_owner_receipts" classname="codex-hepta-learning-artifacts" timestamp="2026-11-08T07:28:50.853-05:00" time="0.002">
+        </testcase>
+        <testcase name="learning_iteration::tests::completes_only_after_next_task_and_replays_every_durable_boundary" classname="codex-hepta-learning-artifacts" timestamp="2026-11-08T07:28:50.855-05:00" time="0.002">
+        </testcase>
+        <testcase name="learning_iteration::tests::failed_validation_never_advances_checkpoint" classname="codex-hepta-learning-artifacts" timestamp="2026-11-08T07:28:50.858-05:00" time="0.002">
+        </testcase>
+        <testcase name="learning_iteration::tests::no_update_cannot_skip_selection_or_substitute_a_no_admissible_proposal" classname="codex-hepta-learning-artifacts" timestamp="2026-11-08T07:28:50.859-05:00" time="0.002">
+        </testcase>
+        <testcase name="learning_iteration::tests::no_update_keeps_baseline_and_replays_selection_and_actual_next_use" classname="codex-hepta-learning-artifacts" timestamp="2026-11-08T07:28:50.861-05:00" time="0.003">
+        </testcase>
+        <testcase name="learning_iteration::tests::over_budget_dataset_and_cross_dataset_training_are_rejected" classname="codex-hepta-learning-artifacts" timestamp="2026-11-08T07:28:50.865-05:00" time="0.002">
+        </testcase>
+        <testcase name="learning_iteration::tests::owner_independence_is_checked_before_any_stage" classname="codex-hepta-learning-artifacts" timestamp="2026-11-08T07:28:50.867-05:00" time="0.001">
+        </testcase>
+        <testcase name="learning_iteration::tests::replay_rejects_missing_receipts_changed_budget_and_false_next_use" classname="codex-hepta-learning-artifacts" timestamp="2026-11-08T07:28:50.868-05:00" time="0.002">
+        </testcase>
+    </testsuite>
+</testsuites>

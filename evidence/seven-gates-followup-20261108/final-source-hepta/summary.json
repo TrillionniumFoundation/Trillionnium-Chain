@@ -1,0 +1,313 @@
+{
+  "actual_model_execution": false,
+  "archive": {
+    "bytes": 1020840,
+    "file_manifest_entries_verified": 79,
+    "filename": "hepta-36d5-bb026-native-controls.tar.xz",
+    "index_sha256": "0f818a2a0de03eccf96ebb6cd56be91485042d7115c596bf293d89764029aa3f",
+    "members": 80,
+    "sha256": "df4cbe229cc78a06435dda2824fcdaea93cec40c3f39308e996ee955ef562d4a"
+  },
+  "command_delta_from_original": [
+    "--tool-config-file",
+    "hepta:/home/qian-qi/work/hepta-36d5-native-20261108-3a200/native-02/nextest-output.toml"
+  ],
+  "complete_build_load_closure_verified": false,
+  "component_native_exit": 0,
+  "component_status": "PASSED_ENGINEERING_CONTROLS",
+  "configuration_delta": {
+    "bytes": 92,
+    "only_override": "store.dir",
+    "path": "/home/qian-qi/work/hepta-36d5-native-20261108-3a200/native-02/nextest-output.toml",
+    "repository_profile_unchanged": true,
+    "sha256": "d5d0be97699a5ccc03e76f79f3b3a50c68f3faba2d6355289faecef8fd21c486",
+    "store_directory": "/home/qian-qi/work/hepta-36d5-native-20261108-3a200/native-02/nextest-store",
+    "text": "[store]\ndir = \"/home/qian-qi/work/hepta-36d5-native-20261108-3a200/native-02/nextest-store\"\n",
+    "upstream_nextest_commit": "d2e7b879fb79975e8b47a8e3ce569b651e6381c0"
+  },
+  "current_wrapper": {
+    "bytes": 18496,
+    "path": "/home/qian-qi/work/hepta-36d5-native-20261108-3a200/run_new_pair.py",
+    "sha256": "3d65cfcf9c98ba390375e502338993456b75d32d46e6c8d44835fa3ae9828458"
+  },
+  "failure_history": [
+    {
+      "attempt": "build-01",
+      "exit_code": 2,
+      "native_tests_executed": false,
+      "raw_result": "build-01/result.json",
+      "reason": "Original just recipe inserts --no-fail-fast; Nextest 0.9.103 rejects combining it with --no-run.",
+      "source_unchanged": true
+    },
+    {
+      "attempt": "native-01",
+      "direct3_executed": false,
+      "exit_code": 99,
+      "learning39_native_exit": 0,
+      "raw_result": "native-01/result.json",
+      "raw_tracked_entries_match": true,
+      "recovery": "Generated JUnit was retained byte-for-byte and moved outside source only after source mismatch and relocation manifests were recorded.",
+      "source_status": "MISMATCH",
+      "status_preserved": "BLOCKED_OR_FAILED",
+      "untracked_paths": [
+        "codex-rs/target/nextest/local/junit.xml"
+      ]
+    }
+  ],
+  "full_environment_equivalence_claimed": false,
+  "hepta_source_before_after_verified": true,
+  "hepta_tracked_bytes": 150824608,
+  "hepta_tracked_entries": 11191,
+  "hepta_tracked_manifest_sha256": "995ac4de3528d8e240e1d0dd0c1b532fe2239eeab017a1880076c49e9028fc86",
+  "historical_results_reused": false,
+  "independent_crypto_review": false,
+  "independent_local_artifact_checks": {
+    "actual_memory_cpu_limits_each_boundary": true,
+    "all_member_hashes": true,
+    "archive_hash": true,
+    "fresh_junit_ids_and_exact_names": true,
+    "no_junit_failures_errors_skips": true,
+    "source_manifest_commitment_equal": true
+  },
+  "metadata_strategy": "original run-nextest full-metadata branch for tool config",
+  "paired_chain_sha_input": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "paired_chain_source_verified_by_this_run": false,
+  "performance_qualification": false,
+  "production_final_use_qualified": false,
+  "profile": {
+    "config_proof_scope": "Exact source profile retained; same Nextest 0.9.103 parser; store-only tool config; no deliberately timed-out test was added.",
+    "inherited_retries": 1,
+    "inherited_slow_timeout": {
+      "period": "30s",
+      "terminate-after": 2
+    },
+    "name": "local",
+    "ordinary_watchdog_seconds": 60,
+    "sha256": "63f832eabf890a5f3cd7c0e4ee1856b1ca99d4db8952de71b81282265668dc8c",
+    "test_timeout_increased": false
+  },
+  "qualification": "HOLD_NO_GO",
+  "remaining_unknowns": [
+    "real training and independent evaluation",
+    "real payment and installation/final use",
+    "independent WAN cold recovery and device loading",
+    "actual exec/library/provider closure",
+    "consensus joint model and Node migration",
+    "all-domain PQ lifetime composition and independent review"
+  ],
+  "resources_after": {
+    "CPUQuotaPerSecUSec": "2s",
+    "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bc509c52-138b0-19e.service",
+    "MemoryMax": "8589934592",
+    "Nice": "10",
+    "RuntimeMaxUSec": "infinity",
+    "cpu.max": "200000 100000",
+    "cpu.stat": "usage_usec 23935810\nuser_usec 22591845\nsystem_usec 1343965\nnice_usec 22539000\ncore_sched.force_idle_usec 0\nnr_periods 156\nnr_throttled 62\nthrottled_usec 183238\nnr_bursts 0\nburst_usec 0",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+    "memory.max": "8589934592",
+    "memory.peak": "433659904",
+    "memory.swap.max": "max",
+    "memory.swap.peak": "0",
+    "pids.max": "146420",
+    "pids.peak": "23",
+    "proc_self_cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bc509c52-138b0-19e.service\n",
+    "unit": "hepta-runtime-job-1a1bc509c52-138b0-19e.service"
+  },
+  "resources_before": {
+    "CPUQuotaPerSecUSec": "2s",
+    "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bc509c52-138b0-19e.service",
+    "MemoryMax": "8589934592",
+    "Nice": "10",
+    "RuntimeMaxUSec": "infinity",
+    "cpu.max": "200000 100000",
+    "cpu.stat": "usage_usec 54480\nuser_usec 42593\nsystem_usec 11886\nnice_usec 40000\ncore_sched.force_idle_usec 0\nnr_periods 1\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+    "memory.max": "8589934592",
+    "memory.peak": "25071616",
+    "memory.swap.max": "max",
+    "memory.swap.peak": "0",
+    "pids.max": "146420",
+    "pids.peak": "5",
+    "proc_self_cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bc509c52-138b0-19e.service\n",
+    "unit": "hepta-runtime-job-1a1bc509c52-138b0-19e.service"
+  },
+  "schema": "hepta-36d5-bb026-component-summary-v1",
+  "source_collector": {
+    "bytes": 18941,
+    "path": "/home/qian-qi/work/hepta-36d5-native-20261108-3a200/capture_chain_hepta_identity.py",
+    "sha256": "548900aaf6d54456f3693e78af9df7d2bab8e90bbba77955df2c952258a4f367"
+  },
+  "steps": [
+    {
+      "exact_names_match_original": true,
+      "exact_test_count": 39,
+      "fresh_run_uuid": "41002e4d-1303-453a-8a3c-dd2dbd4e4ca1",
+      "junit_sha256": "de129b1d848e9c372ae13bf7fe9b9980365af9e018a57f5a18318ea76e1c2fcc",
+      "log_sha256": "1c69b30b1878a21a2605a2e03fa3be29a7000a11e375bb7504862f7fa86bed50",
+      "name": "learning39",
+      "native_exit": 0,
+      "observed_test_binaries": [
+        {
+          "bytes": 240303960,
+          "path": "/home/qian-qi/work/hepta-36d5-native-20261108-3a200/target/debug/deps/codex_hepta_agentd-d6345fda85a765d4",
+          "sha256": "78a846b0d35579172221174ea530fb64f615d207aac2a8848209128b2134c08a"
+        },
+        {
+          "bytes": 4636984,
+          "path": "/home/qian-qi/work/hepta-36d5-native-20261108-3a200/target/debug/deps/codex_hepta_learning_artifacts-b73fa1b9b3099753",
+          "sha256": "e471d4890c07ebe56fe5712af575db9e7083c9cb44fcc250876133bb0ec0a878"
+        }
+      ],
+      "resources_after": {
+        "CPUQuotaPerSecUSec": "2s",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bc509c52-138b0-19e.service",
+        "MemoryMax": "8589934592",
+        "Nice": "10",
+        "RuntimeMaxUSec": "infinity",
+        "cpu.max": "200000 100000",
+        "cpu.stat": "usage_usec 18129205\nuser_usec 17319820\nsystem_usec 809384\nnice_usec 17281000\ncore_sched.force_idle_usec 0\nnr_periods 108\nnr_throttled 60\nthrottled_usec 183120\nnr_bursts 0\nburst_usec 0",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "8589934592",
+        "memory.peak": "430858240",
+        "memory.swap.max": "max",
+        "memory.swap.peak": "0",
+        "pids.max": "146420",
+        "pids.peak": "23",
+        "proc_self_cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bc509c52-138b0-19e.service\n",
+        "unit": "hepta-runtime-job-1a1bc509c52-138b0-19e.service"
+      },
+      "resources_before": {
+        "CPUQuotaPerSecUSec": "2s",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bc509c52-138b0-19e.service",
+        "MemoryMax": "8589934592",
+        "Nice": "10",
+        "RuntimeMaxUSec": "infinity",
+        "cpu.max": "200000 100000",
+        "cpu.stat": "usage_usec 738029\nuser_usec 566889\nsystem_usec 171139\nnice_usec 567000\ncore_sched.force_idle_usec 0\nnr_periods 8\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "8589934592",
+        "memory.peak": "78524416",
+        "memory.swap.max": "max",
+        "memory.swap.peak": "0",
+        "pids.max": "146420",
+        "pids.peak": "6",
+        "proc_self_cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bc509c52-138b0-19e.service\n",
+        "unit": "hepta-runtime-job-1a1bc509c52-138b0-19e.service"
+      },
+      "wall_seconds": 10.01279001700459
+    },
+    {
+      "exact_names_match_original": true,
+      "exact_test_count": 3,
+      "fresh_run_uuid": "4b997023-0fb3-448f-bfc5-7c51565146aa",
+      "junit_sha256": "163788783bf832573fffb755b211055b3235311b5126197830d45a338ae82af7",
+      "log_sha256": "c4e14dacd2a2fbd54e9737103a257954803973dc805d703e9c3cca87f578a307",
+      "name": "direct3",
+      "native_exit": 0,
+      "observed_test_binaries": [
+        {
+          "bytes": 240303960,
+          "path": "/home/qian-qi/work/hepta-36d5-native-20261108-3a200/target/debug/deps/codex_hepta_agentd-d6345fda85a765d4",
+          "sha256": "78a846b0d35579172221174ea530fb64f615d207aac2a8848209128b2134c08a"
+        },
+        {
+          "bytes": 4636984,
+          "path": "/home/qian-qi/work/hepta-36d5-native-20261108-3a200/target/debug/deps/codex_hepta_learning_artifacts-b73fa1b9b3099753",
+          "sha256": "e471d4890c07ebe56fe5712af575db9e7083c9cb44fcc250876133bb0ec0a878"
+        }
+      ],
+      "resources_after": {
+        "CPUQuotaPerSecUSec": "2s",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bc509c52-138b0-19e.service",
+        "MemoryMax": "8589934592",
+        "Nice": "10",
+        "RuntimeMaxUSec": "infinity",
+        "cpu.max": "200000 100000",
+        "cpu.stat": "usage_usec 23269716\nuser_usec 22067250\nsystem_usec 1202465\nnice_usec 22019000\ncore_sched.force_idle_usec 0\nnr_periods 150\nnr_throttled 62\nthrottled_usec 183238\nnr_bursts 0\nburst_usec 0",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "8589934592",
+        "memory.peak": "433659904",
+        "memory.swap.max": "max",
+        "memory.swap.peak": "0",
+        "pids.max": "146420",
+        "pids.peak": "23",
+        "proc_self_cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bc509c52-138b0-19e.service\n",
+        "unit": "hepta-runtime-job-1a1bc509c52-138b0-19e.service"
+      },
+      "resources_before": {
+        "CPUQuotaPerSecUSec": "2s",
+        "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bc509c52-138b0-19e.service",
+        "MemoryMax": "8589934592",
+        "Nice": "10",
+        "RuntimeMaxUSec": "infinity",
+        "cpu.max": "200000 100000",
+        "cpu.stat": "usage_usec 18751447\nuser_usec 17810226\nsystem_usec 941221\nnice_usec 17766000\ncore_sched.force_idle_usec 0\nnr_periods 114\nnr_throttled 60\nthrottled_usec 183120\nnr_bursts 0\nburst_usec 0",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "8589934592",
+        "memory.peak": "430858240",
+        "memory.swap.max": "max",
+        "memory.swap.peak": "0",
+        "pids.max": "146420",
+        "pids.peak": "23",
+        "proc_self_cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1bc509c52-138b0-19e.service\n",
+        "unit": "hepta-runtime-job-1a1bc509c52-138b0-19e.service"
+      },
+      "wall_seconds": 3.5008446520077996
+    }
+  ],
+  "supervisor_timeout_seconds_declared": 5400,
+  "systemd_runtime_max_usec_observed": "infinity",
+  "tested_hepta_source": {
+    "locks": {
+      ".devcontainer/codex-install/pnpm-lock.yaml": "dc160e89b6c18b6f199744cf1348c56a3efe45b399a1a57c3bbe28f03c4885b9",
+      "MODULE.bazel.lock": "e80ef06b6f824a19cdcedd6010738b316ccca96b83ad8730fafb52153a2634fb",
+      "apps/hepta-control-ui/package-lock.json": "716a8be89200c7f916a1db41fdc5a4c8e1badc5a72c230a6aabee2215baa2d19",
+      "apps/hepta-control-ui/rust/Cargo.lock": "99d22c4031512530e66b1e1cbec256d069e6e613e158f37d247d9307de265734",
+      "apps/hepta-control-ui/rust/robrix-ui/patches/cargo-makepad.Cargo.lock": "a7a430f48541ea113a6d8a85153ec3de5c9570953602a212e8a71597e4cca647",
+      "codex-rs/Cargo.lock": "4165307bb6c41d08e6c1c362060f2a958c8200ea43fdab2b8b1e6220ad82b55c",
+      "codex-rs/third_party/accesskit-0.17.1/Cargo.lock": "113950acd22987215eee25cdd9a63e7b2fb2fea4dd97bb4c14118e5f14e03f4c",
+      "codex-rs/third_party/aws-config-1.12.0/Cargo.lock": "3a37dfd25d255503591e98e804521872ada8ae33b4fd155604291621b48a9e4f",
+      "codex-rs/third_party/matrix-sdk-crypto-0.18.0/Cargo.lock": "a5d7e872d3cbe3d1fdb5f2fb1aacf0647ad08774e939d19c4dd07103464686e9",
+      "codex-rs/third_party/matrix-sdk-sqlite-0.18.0/Cargo.lock": "3d01214819e5129222113e3f3a07891821fd1e9d13db0a7bec6e4c9fab4e282d",
+      "flake.lock": "f5f2c3088434125206c1668ede486901a0cad712832cb38950d56137230ff8fb",
+      "pnpm-lock.yaml": "42e7c955619977812c70b7b44c0aabaaae3d9249cf6777db942e589f2a043081",
+      "qualification/hnmf-adversarial-reference/Cargo.lock": "077b9eb1010dbe284566760a75373972c292164f21bc8efc78d8a13b3e4df5c5",
+      "qualification/hnmf-contract-reference/Cargo.lock": "37e381293ce9281e203dad1bbb4ffcc7ace611a0ff789ea7a472814d5839c69d",
+      "qualification/hnmf-reference/Cargo.lock": "8557470dd0e1e6c68b52ce54835b754beca16e00a2f0b20098e48c06530422ac",
+      "scripts/codex_package/smoke_tests/uv.lock": "f91022575695bdbec3bf87a3fbd97f9f6aacd03bbbcea5e33b1056a98dfac6e7",
+      "scripts/uv.lock": "6b8e7a82d1a4f4c5d59ce57cf8be472ea031c6fb0a905506258d434132b3c99c",
+      "sdk/python-runtime/uv.lock": "77751399c5fb958a85607cdec8b2f7704c3b4a2fffd5f5ef66f907146590e791",
+      "sdk/python/uv.lock": "c212c08818ad1a2b4016862d27e22e77b950296b3ed382594233535fdc5ba258",
+      "tools/argument-comment-lint/Cargo.lock": "43deace1b5473447caf871bbf463c6f9b9c83e1382dc5f9db602394ac5d18421"
+    },
+    "sha": "36d5eff44f4071bb1f250b1c7706dc690cf0a875",
+    "tree": "077347454d7517f8f5e16cd2dfc0f6a1c502109d"
+  },
+  "toolchain": {
+    "cargo": {
+      "bytes": 42865872,
+      "path": "/home/qian-qi/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "sha256": "f30f9fd1b1d0b8fd10dc33219eb4cd4bec3543f40e434ac71f5a03fd0359063f",
+      "version": "cargo 1.96.0 (30a34c682 2026-05-25)\n"
+    },
+    "just": {
+      "bytes": 5452040,
+      "path": "/home/qian-qi/work/chain-hepta-native-1f3ba4601505/tools/bin/just",
+      "sha256": "4f864ee6df9b9f351c8b5f95bc9fe589c92080237c2a87c048218a635c3604f7",
+      "version": "just 1.51.0\n"
+    },
+    "nextest": {
+      "bytes": 24038232,
+      "path": "/home/qian-qi/work/chain-hepta-native-1f3ba4601505/tools/bin/cargo-nextest",
+      "sha256": "e999c122a02c3fe74a1b66d254b6419a8a665e8bf540b1d31de7933a6d3753f1",
+      "version": "cargo-nextest 0.9.103 (d2e7b879f 2025-08-25)\nrelease: 0.9.103\ncommit-hash: d2e7b879fb79975e8b47a8e3ce569b651e6381c0\ncommit-date: 2025-08-25\nhost: x86_64-unknown-linux-gnu\n"
+    },
+    "rustc": {
+      "bytes": 646032,
+      "path": "/home/qian-qi/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "sha256": "ba4b837efb6612dfa8d941c5a72b8a50d1d03a0f36216743b173949aa8d9eb75",
+      "version": "rustc 1.96.0 (ac68faa20 2026-05-25)\nbinary: rustc\ncommit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96\ncommit-date: 2026-05-25\nhost: x86_64-unknown-linux-gnu\nrelease: 1.96.0\nLLVM version: 22.1.2\n"
+    }
+  },
+  "total_exact_cases": 42
+}

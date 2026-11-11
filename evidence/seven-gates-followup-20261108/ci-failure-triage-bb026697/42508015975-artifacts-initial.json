@@ -1,0 +1,26 @@
+{
+  "observed_utc": "2026-11-08 18:55:29 UTC",
+  "data": {
+    "artifacts": [
+      {
+        "id": 13629186603,
+        "name": "codeql-analysis-export-42508015975-1",
+        "size_in_bytes": 198416,
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13629186603",
+        "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13629186603/zip",
+        "expired": false,
+        "created_at": "2026-11-08T18:34:15Z",
+        "expires_at": "2026-12-08T18:34:14Z",
+        "updated_at": "2026-11-08T18:34:15Z",
+        "digest": "sha256:087095a9fe7703a089f5951cd17fde528e72f6db8b276f16dd89e2632b62fac5",
+        "workflow_run": {
+          "id": 42508015975,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-seven-gates-followup-20261108-3a20",
+          "head_sha": "bb026697a972521009bc133ae6ed2b653e18e931"
+        }
+      }
+    ]
+  }
+}

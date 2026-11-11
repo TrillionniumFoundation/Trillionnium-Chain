@@ -1,0 +1,10 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"audit_recorded\": true,\n  \"job_id\": \"1a1bc88e35c-138b0-31e\",\n  \"stderr\": {\n    \"bytes_hex\": \"\",\n    \"eof\": true,\n    \"next_offset\": 0,\n    \"offset\": 0,\n    \"size\": 0,\n    \"text\": \"\"\n  },\n  \"stdout\": {\n    \"bytes_hex\": \"7b22657869745f636f6465223a20312c20226e616d6573706163655f7265616479223a2066616c73652c20226f62736572766174696f6e5f736861323536223a202262653836666561356235396637323964363036373234633066303365326330303831633230386531333261646331656533363833653835363332623133383930222c20226f7574707574223a20222f686f6d652f7169616e2d71692f776f726b73706163652f636861696e2d736576656e2d67617465732d32303236313130382d336132302f6d31352d666561736962696c6974792d7631222c2022737464657272223a2022756e73686172653a2063616e6e6f74206f70656e202f70726f632f73656c662f73657467726f7570733a205065726d697373696f6e2064656e6965645c6e227d0a\",\n    \"eof\": true,\n    \"next_offset\": 297,\n    \"offset\": 0,\n    \"size\": 297,\n    \"text\": \"{\\\"exit_code\\\": 1, \\\"namespace_ready\\\": false, \\\"observation_sha256\\\": \\\"be86fea5b59f729d606724c0f03e2c0081c208e132adc1ee3683e85632b13890\\\", \\\"output\\\": \\\"/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/m15-feasibility-v1\\\", \\\"stderr\\\": \\\"unshare: cannot open /proc/self/setgroups: Permission denied\\\\n\\\"}\\n\"\n  }\n}"
+    }
+  ],
+  "structuredContent": null,
+  "isError": false
+}

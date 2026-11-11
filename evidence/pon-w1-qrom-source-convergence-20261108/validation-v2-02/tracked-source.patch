@@ -1,0 +1,278 @@
+diff --git a/.github/workflows/pon-w1-qrom-closure.yml b/.github/workflows/pon-w1-qrom-closure.yml
+index 2364b0d818..f1f9465428 100644
+--- a/.github/workflows/pon-w1-qrom-closure.yml
++++ b/.github/workflows/pon-w1-qrom-closure.yml
+@@ -94,8 +94,8 @@ jobs:
+           python3 scripts/w1_qrom_joint_oracle_diagnostic.py > "$W1_CLOSURE_OUT/joint-oracle-unknown.json"
+           python3 scripts/w1_qrom_joint_oracle_diagnostic.py --example alias > "$W1_CLOSURE_OUT/joint-oracle-alias.json"
+           python3 scripts/w1_qrom_joint_oracle_diagnostic.py --example separated > "$W1_CLOSURE_OUT/joint-oracle-separated.json"
+-          cmp evidence/pon-w1-qrom-semantics-20261107/report.json "$W1_CLOSURE_OUT/semantics.json"
+-          cmp evidence/pon-w1-lifetime-20261107/project-report.json "$W1_CLOSURE_OUT/lifetime.json"
++          cmp evidence/pon-w1-qrom-source-convergence-20261108/semantics-bb026697.json "$W1_CLOSURE_OUT/semantics.json"
++          cmp evidence/pon-w1-qrom-source-convergence-20261108/lifetime-bb026697.json "$W1_CLOSURE_OUT/lifetime.json"
+           for name in composition-unknown composition-example joint-oracle-unknown joint-oracle-alias joint-oracle-separated; do
+             cmp "evidence/pon-w1-qrom-formal-bridge-20261107/$name.json" "$W1_CLOSURE_OUT/$name.json"
+           done
+diff --git a/.github/workflows/pon-w1-qrom-implementation.yml b/.github/workflows/pon-w1-qrom-implementation.yml
+index 735fb437d5..481fd66a3c 100644
+--- a/.github/workflows/pon-w1-qrom-implementation.yml
++++ b/.github/workflows/pon-w1-qrom-implementation.yml
+@@ -90,8 +90,8 @@ jobs:
+           import unittest
+ 
+           out = Path(sys.argv[1])
+-          roster_path = Path('config/pon/w1-qrom-required-tests-v1.json')
+-          expected_digest = 'ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8'
++          roster_path = Path('config/pon/w1-qrom-required-tests-v2.json')
++          expected_digest = 'e0d1cd257e890ecb2173053da898d915cf39d3c0c5f5868379bb36f5d975c286'
+           required_modules = (
+               'test_w1_control_tree_audit',
+               'test_w1_qrom_conditional_budget',
+@@ -120,7 +120,7 @@ jobs:
+               'production_qualified', 'consensus_admission',
+           )
+           if (type(manifest) is not dict
+-                  or manifest.get('schema') != 'TRNM-W1-QROM-REQUIRED-TESTS1'
++                  or manifest.get('schema') != 'TRNM-W1-QROM-REQUIRED-TESTS2'
+                   or type(manifest.get('suites')) is not list
+                   or type(manifest.get('expected_tests')) is not int
+                   or manifest['expected_tests'] <= 0
+@@ -231,7 +231,7 @@ jobs:
+         shell: bash
+         run: |
+           set -euo pipefail
+-          python3 scripts/w1_qrom_implementation_audit.py --repo-root "$GITHUB_WORKSPACE" \
++          python3 scripts/w1_qrom_implementation_audit_v2.py --repo-root "$GITHUB_WORKSPACE" \
+             --output "$W1_QROM_OUT/implementation.json" 2>&1 | tee "$W1_QROM_OUT/implementation.log"
+       - name: Preserve all unknown project quantum inputs
+         id: budget_unknown
+@@ -299,9 +299,35 @@ jobs:
+               'consensus_admission': False,
+               'security_bits_quantum': None,
+           }
++          expected_source_review = {
++              'schema': 'TRNM-W1-QROM-SOURCE-TRANSITION1',
++              'review_sha256': '988a67862cff06d2d6d580dc65db84f9d177a7bbbdb9e79c96c3dc4f81d9491b',
++              'historical_contract_sha256': '7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22',
++              'historical_engine_sha256': 'c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354',
++              'historical_report_sha256': 'eebf074f5f4a77cb7277035300294ef9308cb5ec5d0441336665bafcb6647c8b',
++              'selected_project_file_count': 16,
++              'unchanged_project_file_count': 14,
++              'changed_paths': [
++                  'formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs',
++                  'trillionnium/crates/trnm-protocol/src/pon_wire.rs',
++              ],
++              'historical_route_byte_projection_reproduced': True,
++              'historical_semantic_report_fields_reproduced': True,
++              'new_native_once_route_qualified': False,
++              'funded_service_decoder_qualified': False,
++              'whole_source_and_build_equivalence_proved': False,
++          }
++          source_review = implementation.get('source_review') if type(implementation) is dict else None
++          require(type(source_review) is dict
++                  and set(source_review) == set(expected_source_review)
++                  and all(type(source_review[key]) is type(value) and source_review[key] == value
++                          for key, value in expected_source_review.items()),
++                  'implementation source transition scope or provenance differs')
+           require(type(implementation) is dict
+-                  and implementation.get('schema') == 'TRNM-W1-QROM-IMPLEMENTATION-AUDIT1'
++                  and implementation.get('schema') == 'TRNM-W1-QROM-IMPLEMENTATION-AUDIT2'
+                   and implementation.get('result') == 'MAPPING_REPRODUCED_SECURITY_HOLD'
++                  and implementation.get('contract_sha256') == 'bed7e925b5c02f896ea0f6ada378a346080d044a8c7c3879f7d47c034fb86280'
++                  and implementation.get('source_base_commit') == 'bb026697a972521009bc133ae6ed2b653e18e931'
+                   and exact_qualification(implementation.get('qualification'), expected_implementation),
+                   'implementation observation widened its qualification scope')
+           expected_budget = {
+@@ -528,7 +554,7 @@ jobs:
+ 
+           out = Path(sys.argv[1])
+           steps = json.loads(os.environ['W1_QROM_STEP_RESULTS'])
+-          expected_digest = 'ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8'
++          expected_digest = 'e0d1cd257e890ecb2173053da898d915cf39d3c0c5f5868379bb36f5d975c286'
+           required_modules = (
+               'test_w1_control_tree_audit',
+               'test_w1_qrom_conditional_budget',
+@@ -553,11 +579,11 @@ jobs:
+           def check_named_completion():
+               roster_raw = (out / 'required-tests.json').read_bytes()
+               if (hashlib.sha256(roster_raw).hexdigest() != expected_digest
+-                      or roster_raw != Path('config/pon/w1-qrom-required-tests-v1.json').read_bytes()):
++                      or roster_raw != Path('config/pon/w1-qrom-required-tests-v2.json').read_bytes()):
+                   raise ValueError('retained named-test roster differs from the reviewed source pin')
+               manifest = strict_json(roster_raw)
+               if (type(manifest) is not dict
+-                      or manifest.get('schema') != 'TRNM-W1-QROM-REQUIRED-TESTS1'
++                      or manifest.get('schema') != 'TRNM-W1-QROM-REQUIRED-TESTS2'
+                       or type(manifest.get('suites')) is not list
+                       or any(type(row) is not dict for row in manifest['suites'])
+                       or tuple(row.get('module') for row in manifest['suites']) != required_modules
+diff --git a/scripts/ci/test_w1_qrom_implementation_audit.py b/scripts/ci/test_w1_qrom_implementation_audit.py
+index 4798472b08..3eda627358 100644
+--- a/scripts/ci/test_w1_qrom_implementation_audit.py
++++ b/scripts/ci/test_w1_qrom_implementation_audit.py
+@@ -15,7 +15,8 @@ import unittest
+ from unittest import mock
+ 
+ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+-import w1_qrom_implementation_audit as audit
++import w1_qrom_implementation_audit_v2 as audit
++import w1_qrom_implementation_audit as historical_audit
+ import w1_control_tree_audit as control
+ import w1_profile_source_map as profile
+ 
+@@ -39,7 +40,7 @@ class ImplementationAuditTests(unittest.TestCase):
+     def copy_contract_inputs(self):
+         paths = [audit.CONTRACT, self.contract['upstream_snapshot']['path']]
+         paths += [row['path'] for row in self.contract['project_files'] + self.contract['saved_v2_files']
+-                  + self.contract['audit_helpers']]
++                  + self.contract['audit_helpers'] + self.contract['historical_inputs']]
+         for relative in paths:
+             target = self.root / relative
+             target.parent.mkdir(parents=True, exist_ok=True)
+@@ -54,6 +55,7 @@ class ImplementationAuditTests(unittest.TestCase):
+ 
+     def test_actual_saved_v2_mapping_keeps_all_security_claims_unqualified(self):
+         report = audit.build_report(audit.ROOT)
++        self.assertEqual(report['schema'], 'TRNM-W1-QROM-IMPLEMENTATION-AUDIT2')
+         self.assertEqual(report['result'], 'MAPPING_REPRODUCED_SECURITY_HOLD')
+         self.assertEqual(report['qualification'], audit.QUALIFICATION)
+         self.assertEqual(report['saved_v2']['historical_rv32im_segments'], 43)
+@@ -72,10 +74,16 @@ class ImplementationAuditTests(unittest.TestCase):
+ 
+     def test_changed_native_source_is_refused_before_mapping(self):
+         self.copy_contract_inputs()
+-        target = self.root / 'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs'
+-        target.write_bytes(target.read_bytes() + b'\n// changed\n')
+-        with self.assertRaisesRegex(audit.AuditError, 'input exceeds bound|pinned input drift'):
+-            audit.build_report(self.root)
++        for path in sorted(audit.CHANGED_PATHS | {
++                'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs'}):
++            target = self.root / path
++            original = target.read_bytes()
++            changed = bytearray(original)
++            changed[100] ^= 1
++            target.write_bytes(changed)
++            with self.assertRaisesRegex(audit.AuditError, 'pinned input drift'):
++                audit.build_report(self.root)
++            target.write_bytes(original)
+ 
+     def test_changed_audit_helper_is_refused_before_execution(self):
+         self.copy_contract_inputs()
+@@ -90,13 +98,57 @@ class ImplementationAuditTests(unittest.TestCase):
+     def test_import_cache_and_search_path_cannot_replace_checked_helper_bytes(self):
+         self.copy_contract_inputs()
+         with mock.patch.object(profile, 'extract_stark_parameters', return_value={'QUERIES': 1}), \
+-                mock.patch.object(control, 'audit_sources', side_effect=AssertionError('wrong import')):
++                mock.patch.object(control, 'audit_sources', side_effect=AssertionError('wrong import')), \
++                mock.patch.object(historical_audit, 'inspect_v2', side_effect=AssertionError('wrong engine')):
+             report = audit.build_report(self.root)
+         self.assertEqual(report['stark_parameters']['QUERIES'], 50)
+         self.assertEqual(report['control_tree']['root'], audit.CONTROL_ROOT)
+         self.assertEqual(report['helper_execution']['sources'], self.contract['audit_helpers'])
+         self.assertFalse(report['helper_execution']['upstream_source_executed'])
+ 
++    def test_version_two_transition_preserves_exact_historical_projection_and_unknowns(self):
++        report = audit.build_report(audit.ROOT)
++        scope = report['source_review']
++        self.assertEqual(scope['changed_paths'], sorted(audit.CHANGED_PATHS))
++        self.assertEqual(scope['selected_project_file_count'], 16)
++        self.assertEqual(scope['unchanged_project_file_count'], 14)
++        self.assertTrue(scope['historical_route_byte_projection_reproduced'])
++        self.assertTrue(scope['historical_semantic_report_fields_reproduced'])
++        for key in ('new_native_once_route_qualified', 'funded_service_decoder_qualified',
++                    'whole_source_and_build_equivalence_proved'):
++            self.assertIs(scope[key], False)
++        inputs = audit.load_pinned_files(audit.ROOT, self.contract['historical_inputs'])
++        review = audit.strict_json(inputs[audit.SOURCE_REVIEW])
++        project = audit.load_pinned_files(audit.ROOT, self.contract['project_files'])
++        for path in sorted(audit.CHANGED_PATHS):
++            mutated = dict(project)
++            data = bytearray(mutated[path])
++            data[0] ^= 1  # The preserved part cannot drift behind unchanged review metadata.
++            mutated[path] = bytes(data)
++            with self.assertRaisesRegex(audit.AuditError, 'historical source projection differs'):
++                audit.verify_reviewed_source_projection(mutated, review)
++
++    def test_historical_engine_contract_report_and_review_remain_immutable_inputs(self):
++        self.copy_contract_inputs()
++        for row in self.contract['historical_inputs']:
++            target = self.root / row['path']
++            original = target.read_bytes()
++            mutated = bytearray(original)
++            mutated[len(mutated) // 2] ^= 1
++            target.write_bytes(mutated)
++            with self.assertRaisesRegex(audit.AuditError,
++                                        'pinned input drift|unsupported implementation contract'):
++                audit.build_report(self.root)
++            target.write_bytes(original)
++
++    def test_version_one_contract_still_refuses_the_changed_sources(self):
++        self.assertEqual(historical_audit.CONTRACT,
++                         'config/pon/w1-qrom-implementation-v1.json')
++        self.assertEqual(audit.sha((audit.ROOT / audit.ENGINE).read_bytes()), audit.ENGINE_SHA256)
++        with self.assertRaisesRegex(historical_audit.AuditError,
++                                    'input exceeds bound|pinned input drift'):
++            historical_audit.build_report(audit.ROOT)
++
+     def test_changed_seal_word_is_rejected_by_full_artifact_identity(self):
+         self.copy_contract_inputs()
+         target = self.root / (audit.FIXTURE + 'succinct.bin')
+diff --git a/scripts/ci/test_w1_qrom_workflow_gate.py b/scripts/ci/test_w1_qrom_workflow_gate.py
+index 99e12db017..6f7b12b3be 100644
+--- a/scripts/ci/test_w1_qrom_workflow_gate.py
++++ b/scripts/ci/test_w1_qrom_workflow_gate.py
+@@ -24,7 +24,7 @@ from unittest import mock
+ 
+ ROOT = Path(__file__).resolve().parents[2]
+ WORKFLOW = ROOT / '.github/workflows/pon-w1-qrom-implementation.yml'
+-ROSTER = 'config/pon/w1-qrom-required-tests-v1.json'
++ROSTER = 'config/pon/w1-qrom-required-tests-v2.json'
+ REQUIRED_STAGES = (
+     'observations', 'checkout', 'source_before', 'preflight', 'named_tests',
+     'implementation', 'budget_unknown', 'budget_hypothetical',
+@@ -35,7 +35,7 @@ BASE = 'b' * 40
+ 
+ sys.path.insert(0, str(ROOT / 'scripts'))
+ import w1_qrom_conditional_budget as budget
+-import w1_qrom_implementation_audit as implementation
++import w1_qrom_implementation_audit_v2 as implementation
+ 
+ 
+ def embedded_python(workflow: str, step_id: str) -> str:
+@@ -383,6 +383,36 @@ class WorkflowGateTests(unittest.TestCase):
+             with self.subTest(mutation=mutation.__name__):
+                 self.assert_scope_rejected(mutation)
+ 
++        for key in ('new_native_once_route_qualified', 'funded_service_decoder_qualified',
++                    'whole_source_and_build_equivalence_proved'):
++            for value in (True, 0, None, 'false'):
++                with self.subTest(source_review=key, value=value):
++                    def change(reports, key=key, value=value):
++                        reports['implementation.json']['source_review'][key] = value
++                    self.assert_scope_rejected(change)
++            with self.subTest(missing_source_review=key):
++                def missing(reports, key=key):
++                    del reports['implementation.json']['source_review'][key]
++                self.assert_scope_rejected(missing)
++
++        changes = {
++            'historical_engine_sha256': '0' * 64,
++            'historical_contract_sha256': '0' * 64,
++            'historical_report_sha256': '0' * 64,
++            'selected_project_file_count': 16.0,
++            'unchanged_project_file_count': True,
++            'historical_route_byte_projection_reproduced': 1,
++            'historical_semantic_report_fields_reproduced': False,
++            'changed_paths': [],
++            'schema': 'TRNM-W1-QROM-SOURCE-TRANSITION0',
++            'unreviewed_source_qualified': False,
++        }
++        for key, value in changes.items():
++            with self.subTest(source_transition=key):
++                def change(reports, key=key, value=value):
++                    reports['implementation.json']['source_review'][key] = value
++                self.assert_scope_rejected(change)
++
+ 
+ if __name__ == '__main__':
+     unittest.main()

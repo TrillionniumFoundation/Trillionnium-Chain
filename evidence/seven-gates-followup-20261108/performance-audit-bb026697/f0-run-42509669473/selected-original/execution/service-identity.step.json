@@ -1,0 +1,25 @@
+{
+  "command": [
+    "systemctl",
+    "show",
+    "trnm-fixed-root-f0-42509669473-1-fixed-host-root-f0.service",
+    "--all",
+    "--property=Id,LoadState,ActiveState,SubState,ControlGroup,MainPID,User,Group,Slice,Transient,KillMode,Restart,WorkingDirectory,InvocationID,Description"
+  ],
+  "complete_success": true,
+  "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+  "elapsed_ns": 4503460,
+  "elapsed_seconds": 0.00450346,
+  "error": null,
+  "name": "service-identity",
+  "outer_stage_timeout_seconds": 10,
+  "returncode": 0,
+  "stderr": "service-identity.stderr.log",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_truncated": false,
+  "stdout": "service-identity.stdout.log",
+  "stdout_bytes": 582,
+  "stdout_sha256": "7f9889cd0474a33fe7b1c46ae95fc88dc7cca1b5a5ee2daed99f2d864cc3b24b",
+  "stdout_truncated": false
+}

@@ -1,0 +1,95 @@
+{
+  "observed_utc": "2026-11-08 19:01:21 UTC",
+  "data": {
+    "jobs": [
+      {
+        "id": 128819775064,
+        "name": "F0 (x64, head, one baseline and one ROOT phase)",
+        "status": "completed",
+        "conclusion": "failure",
+        "run_id": 42509669473,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Freeze all denominators before checkout or preparation",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Checkout exactly the event head without retained credentials",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Verify the exact source and all independent parser controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Install source-pinned compiler and fetch the locked graph",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Prepare one source-bound ELF and execute five original plus two resource controls",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Arm a previously absent exact controller service",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Run exactly one pair in the declared controller and public Host",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 8
+          },
+          {
+            "name": "Always retain denominators and inspect only exact owned services",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 9
+          },
+          {
+            "name": "Retain final source, workflow outcomes and every regular partial artifact",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10
+          },
+          {
+            "name": "Upload all available success, failure and unobserved evidence",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11
+          },
+          {
+            "name": "Post Checkout exactly the event head without retained credentials",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 22
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 23
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -3,16 +3,22 @@
 from __future__ import annotations
 
 import copy
+import contextlib
 import hashlib
 import io
 import json
+import os
 from pathlib import Path
 import shutil
+import signal
+import sys
 import tarfile
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import w1_v2_controls_gate as gate
+import w1_stage_measure as stage
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -21,6 +27,8 @@ RECORDED_OUT = Path('/workspace/shared/w1-run/controls-3-repaired')
 RECORDED_VERIFIER = Path('/workspace/shared/w1-run/pinned-bin/w1-verify-v2')
 VERIFIER_SHA256 = '9c3e3f321a24e1acb66638058fd77f67906824593422692f9e296e70a688fe65'
 ARCHIVE_SHA256 = '0bdc390cd790f9e6493690db22658f12f40f4eb086c0499ba490623e8c16b1b1'
+CURRENT_ARCHIVE = ROOT / 'evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz'
+CURRENT_ARCHIVE_SHA256 = 'e5f2e58908889961a0198a273ea2c5aab0a70c679ea46c5b06d92a0012fab028'
 
 
 class V2ControlsGateTests(unittest.TestCase):
@@ -58,7 +66,8 @@ class V2ControlsGateTests(unittest.TestCase):
         # These explicit original paths and the retained hash replay evidence
         # consistency. No historical executable is invoked or authenticated.
         return gate.validate(self.out, PROOF, verifier_path=RECORDED_VERIFIER,
-                             verifier_sha256=VERIFIER_SHA256, recorded_out=RECORDED_OUT)
+                             verifier_sha256=VERIFIER_SHA256, recorded_out=RECORDED_OUT,
+                             process_schema=gate.HISTORICAL_PROCESS_SCHEMA)
 
     def test_real_saved_controls_pass(self):
         self.assertEqual(self.report, gate.read_json(PROOF / 'controls-result.json'))
@@ -213,7 +222,8 @@ class V2ControlsGateTests(unittest.TestCase):
     def test_verifier_hash_must_match_pinned_identity(self):
         with self.assertRaisesRegex(ValueError, 'v2 controls summary differs: verifier_sha256'):
             gate.validate(self.out, PROOF, verifier_path=RECORDED_VERIFIER,
-                          verifier_sha256='0' * 64, recorded_out=RECORDED_OUT)
+                          verifier_sha256='0' * 64, recorded_out=RECORDED_OUT,
+                          process_schema=gate.HISTORICAL_PROCESS_SCHEMA)
 
     def test_integer_exit_codes_cannot_be_booleans(self):
         self.report['controls'][1]['process']['returncode'] = True
@@ -230,6 +240,174 @@ class V2ControlsGateTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, f'v2 controls summary differs: {key}'):
                     self.validate()
                 self.report[key] = original
+
+    def current_process(self, exit_code=0):
+        # This is an actual small process lifecycle control, not proof evidence.
+        out = Path(self.temp.name) / f'current-process-{exit_code}'
+        return stage.measure([sys.executable, '-I', '-S', '-c',
+                              f'raise SystemExit({exit_code})'], out, 120)
+
+    def test_current_stage_measurements_pass_without_proof_claim(self):
+        for code in (0, 7):
+            with self.subTest(code=code):
+                process = self.current_process(code)
+                self.assertEqual(process['schema'], gate.CURRENT_PROCESS_SCHEMA)
+                self.assertFalse(process['complete_proof_claim'])
+                self.assertFalse(process['prover_resource_completeness_established'])
+                gate.validate_process(process, code)
+
+    def test_current_gate_rejects_legacy_without_explicit_replay(self):
+        with self.assertRaisesRegex(ValueError, 'process observation differs: schema'):
+            gate.validate(self.out, PROOF, verifier_path=RECORDED_VERIFIER,
+                          verifier_sha256=VERIFIER_SHA256, recorded_out=RECORDED_OUT)
+        with self.assertRaisesRegex(ValueError, 'historical process schema requires explicit'):
+            gate.validate(self.out, PROOF, verifier_path=RECORDED_VERIFIER,
+                          verifier_sha256=VERIFIER_SHA256,
+                          process_schema=gate.HISTORICAL_PROCESS_SCHEMA)
+        self.validate()
+
+    def test_current_gate_rejects_unknown_process_schema(self):
+        process = self.current_process()
+        for value in (None, '', 'TRNM-W1-STAGE-MEASUREMENT4'):
+            with self.subTest(schema=value):
+                with self.assertRaisesRegex(ValueError, 'unsupported process observation schema'):
+                    gate.validate_process(process, 0, process_schema=value)
+                with self.assertRaisesRegex(ValueError, 'process observation differs: schema'):
+                    gate.validate_process(dict(process, schema=value), 0)
+
+    def test_current_stage_cancellation_fields_are_mandatory_and_exact(self):
+        process = self.current_process()
+        changes = {
+            'cancellation_schema': 'unknown', 'result_is_pre_handoff_snapshot': False,
+            'canceled_signal': 15, 'cancellation_event': {},
+            'deadline_exhausted_at_snapshot': True,
+        }
+        for name, value in changes.items():
+            for missing in (False, True):
+                with self.subTest(field=name, missing=missing):
+                    altered = dict(process)
+                    if missing:
+                        del altered[name]
+                    else:
+                        altered[name] = value
+                    with self.assertRaisesRegex(ValueError, 'current process observation differs: ' + name):
+                        gate.validate_process(altered, 0)
+
+    def test_current_stage_clock_cannot_extend_original_budget(self):
+        process = self.current_process()
+        for name in ('started_monotonic', 'wall_seconds', 'effective_deadline_monotonic',
+                     'effective_remaining_seconds'):
+            for value in (True, 0, -1, None, float('inf'), float('nan')):
+                with self.subTest(field=name, value=value):
+                    with self.assertRaisesRegex(ValueError, 'current process clock differs: ' + name):
+                        gate.validate_process(dict(process, **{name: value}), 0)
+        for changes in (
+                {'wall_seconds': process['effective_remaining_seconds']},
+                {'effective_remaining_seconds': 121},
+                {'effective_deadline_monotonic': process['effective_deadline_monotonic'] + 1},
+                {'wall_limit_seconds': 121}):
+            with self.subTest(changes=changes):
+                with self.assertRaises(ValueError):
+                    gate.validate_process(dict(process, **changes), 0)
+
+    def test_current_stage_cannot_skip_common_settlement_controls(self):
+        process = self.current_process()
+        for changes in (
+                {'returncode': True}, {'owned_session_observation_complete': False},
+                {'proc_scan_errors': [{}]}, {'group_probe_errors': [{}]},
+                {'cleanup_errors': [{}]}, {'members_after_child_exit': [{}]},
+                {'final_owned_session_members': [{}]}, {'known_owned_groups': []},
+                {'process_group_remaining_after_child_exit': True},
+                {'final_known_group_probes': []}, {'complete_proof_claim': True}):
+            with self.subTest(changes=changes):
+                with self.assertRaises(ValueError):
+                    gate.validate_process(dict(process, **changes), 0)
+
+    def test_current_hosted_controls_bind_common_clock_and_summary_completion(self):
+        # Replay the exact failed bb026697 hosted run; do not call it a new
+        # verification or silently replace its original failed gate outcome.
+        raw = CURRENT_ARCHIVE.read_bytes()
+        self.assertEqual(hashlib.sha256(raw).hexdigest(), CURRENT_ARCHIVE_SHA256)
+        current = Path(self.temp.name) / 'hosted'
+        with tarfile.open(fileobj=io.BytesIO(raw), mode='r:xz') as archive:
+            archive.extractall(current, filter='data')
+        self.out = current / 'v2-controls'
+        self.report = gate.read_json(self.out / 'result.json')
+        original = copy.deepcopy(self.report)
+        command = original['controls'][0]['process']['command']
+
+        def validate_current():
+            return gate.validate(self.out, PROOF, verifier_path=Path(command[0]),
+                                 verifier_sha256=original['verifier_sha256'],
+                                 recorded_out=Path(command[1]).parents[1])
+
+        self.assertEqual(validate_current()['completed_controls'], 58)
+        for name in ('started_monotonic', 'deadline_monotonic'):
+            for value in (None, True, 0, -1, float('inf'), float('nan')):
+                with self.subTest(field=name, value=value):
+                    self.report = copy.deepcopy(original)
+                    self.report[name] = value
+                    self.save()
+                    with self.assertRaises(ValueError):
+                        validate_current()
+        for changes in (
+                {'deadline_monotonic': original['deadline_monotonic'] + 1},
+                {'started_monotonic': original['started_monotonic'] - 1},
+                {'elapsed_wall_seconds': 0.000001}):
+            with self.subTest(changes=changes):
+                self.report = dict(copy.deepcopy(original), **changes)
+                self.save()
+                with self.assertRaises(ValueError):
+                    validate_current()
+        for changes in (
+                {'schema': gate.HISTORICAL_PROCESS_SCHEMA},
+                {'canceled_signal': 15}, {'cancellation_event': {}},
+                {'deadline_exhausted_at_snapshot': True}):
+            with self.subTest(process_changes=changes):
+                self.report = copy.deepcopy(original)
+                self.report['controls'][0]['process'].update(changes)
+                self.save(0)
+                with self.assertRaises(ValueError):
+                    validate_current()
+
+    def test_cancellation_after_stage_snapshot_cannot_complete_the_controls(self):
+        # /usr/bin/true supplies only a real exited process. It cannot verify
+        # the receipt; cancellation must prevent even the positive parser from
+        # running and must leave the whole control attempt incomplete.
+        verifier = Path(shutil.which('true')).resolve(strict=True)
+        out = Path(self.temp.name) / 'late-cancellation'
+        original_write = stage.write_new
+        sent = []
+
+        def saved_then_cancel(path, value):
+            original_write(path, value)
+            if path.name == 'result.json' and path.parent.name == 'process':
+                sent.append(path)
+                os.kill(os.getpid(), signal.SIGTERM)
+
+        with patch.object(stage, 'write_new', side_effect=saved_then_cancel), \
+                contextlib.redirect_stdout(io.StringIO()):
+            code = gate.controls.main([
+                '--verifier', str(verifier), '--receipt', str(PROOF / 'succinct.bin'),
+                '--header', str(PROOF / 'header.bin'), '--expected-artifacts',
+                str(PROOF / 'expected-artifacts.bin'), '--out', str(out)])
+        self.assertEqual(code, 1)
+        self.assertEqual(len(sent), 1)
+        snapshot = gate.read_json(sent[0])
+        self.assertEqual(snapshot['returncode'], 0)
+        self.assertTrue(snapshot['stage_process_complete'])
+        self.assertTrue(snapshot['result_is_pre_handoff_snapshot'])
+        self.assertFalse(snapshot['complete_proof_claim'])
+        result = gate.read_json(out / 'result.json')
+        self.assertFalse(result['all_controls_passed'])
+        self.assertEqual(result['completed_controls'], 0)
+        self.assertIsNone(result['positive_report'])
+        self.assertIn('Canceled', result['error'])
+        self.assertEqual(result['uncompleted_controls'][0]['status'],
+                         'ATTEMPT_WITHOUT_FINAL_CONTROL_RESULT')
+        with self.assertRaisesRegex(ValueError, 'all 58 original controls are required'):
+            gate.validate(out, PROOF, verifier_path=verifier,
+                          verifier_sha256=gate.controls.sha(verifier))
 
 
 if __name__ == '__main__':

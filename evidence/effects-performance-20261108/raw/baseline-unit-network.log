@@ -1,0 +1,157 @@
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded zmij v1.0.21
+  Downloaded generic-array v0.14.7
+  Downloaded curve25519-dalek-derive v0.1.1
+  Downloaded smallvec v1.15.1
+  Downloaded rustc_version v0.4.1
+  Downloaded cpufeatures v0.2.17
+  Downloaded cfg_aliases v0.2.2
+  Downloaded cfg-if v1.0.4
+  Downloaded once_cell v1.21.4
+  Downloaded subtle v2.6.1
+  Downloaded errno v0.3.14
+  Downloaded base64ct v1.8.3
+  Downloaded pkg-config v0.3.32
+  Downloaded getrandom v0.2.17
+  Downloaded fallible-streaming-iterator v0.1.9
+  Downloaded crypto-common v0.1.7
+  Downloaded hashlink v0.11.1
+  Downloaded version_check v0.9.5
+  Downloaded shlex v1.3.0
+  Downloaded quote v1.0.45
+  Downloaded memchr v2.8.0
+  Downloaded signature v2.2.0
+  Downloaded block-buffer v0.10.4
+  Downloaded proc-macro-crate v3.5.0
+  Downloaded itoa v1.0.18
+  Downloaded fastrand v2.3.0
+  Downloaded fallible-iterator v0.3.0
+  Downloaded toml_edit v0.25.13+spec-1.1.0
+  Downloaded unicode-ident v1.0.24
+  Downloaded zeroize v1.9.1
+  Downloaded spki v0.7.3
+  Downloaded sha2 v0.10.9
+  Downloaded foldhash v0.2.0
+  Downloaded semver v1.0.27
+  Downloaded digest v0.10.7
+  Downloaded bitflags v2.11.0
+  Downloaded toml_parser v1.1.3+spec-1.1.0
+  Downloaded der v0.7.10
+  Downloaded getrandom v0.4.2
+  Downloaded proc-macro2 v1.0.106
+  Downloaded serde_core v1.0.228
+  Downloaded borsh v1.8.0
+  Downloaded serde_json v1.0.149
+  Downloaded typenum v1.20.1
+  Downloaded indexmap v2.13.1
+  Downloaded hashbrown v0.16.1
+  Downloaded rusqlite v0.39.0
+  Downloaded ed25519-dalek v2.2.0
+  Downloaded winnow v1.0.4
+  Downloaded vcpkg v0.2.15
+  Downloaded curve25519-dalek v4.1.3
+  Downloaded syn v2.0.117
+  Downloaded cc v1.2.59
+  Downloaded serde v1.0.228
+  Downloaded rustix v1.1.4
+  Downloaded bytes v1.12.1
+  Downloaded const-oid v0.9.6
+  Downloaded borsh-derive v1.8.0
+  Downloaded toml_datetime v1.1.1+spec-1.1.0
+  Downloaded pkcs8 v0.10.2
+  Downloaded ed25519 v2.2.3
+  Downloaded tempfile v3.27.0
+  Downloaded find-msvc-tools v0.1.9
+  Downloaded rand_core v0.6.4
+  Downloaded equivalent v1.0.2
+  Downloaded libc v0.2.184
+  Downloaded linux-raw-sys v0.12.1
+  Downloaded libsqlite3-sys v0.37.0
+   Compiling proc-macro2 v1.0.106
+   Compiling version_check v0.9.5
+   Compiling quote v1.0.45
+   Compiling unicode-ident v1.0.24
+   Compiling typenum v1.20.1
+   Compiling semver v1.0.27
+   Compiling winnow v1.0.4
+   Compiling hashbrown v0.16.1
+   Compiling equivalent v1.0.2
+   Compiling cfg-if v1.0.4
+   Compiling find-msvc-tools v0.1.9
+   Compiling shlex v1.3.0
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling pkg-config v0.3.32
+   Compiling generic-array v0.14.7
+   Compiling rustc_version v0.4.1
+   Compiling cc v1.2.59
+   Compiling vcpkg v0.2.15
+   Compiling cfg_aliases v0.2.2
+   Compiling foldhash v0.2.0
+   Compiling indexmap v2.13.1
+   Compiling bitflags v2.11.0
+   Compiling libc v0.2.184
+   Compiling curve25519-dalek v4.1.3
+   Compiling cpufeatures v0.2.17
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling digest v0.10.7
+   Compiling borsh v1.8.0
+   Compiling syn v2.0.117
+   Compiling zmij v1.0.21
+   Compiling subtle v2.6.1
+   Compiling zeroize v1.9.1
+   Compiling serde_core v1.0.228
+   Compiling once_cell v1.21.4
+   Compiling signature v2.2.0
+   Compiling rustix v1.1.4
+   Compiling getrandom v0.4.2
+   Compiling ed25519 v2.2.3
+   Compiling hashlink v0.11.1
+   Compiling sha2 v0.10.9
+   Compiling serde_json v1.0.149
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling fallible-iterator v0.3.0
+   Compiling smallvec v1.15.1
+   Compiling linux-raw-sys v0.12.1
+   Compiling libsqlite3-sys v0.37.0
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.0
+   Compiling proc-macro-crate v3.5.0
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling borsh-derive v1.8.0
+   Compiling ed25519-dalek v2.2.0
+   Compiling rusqlite v0.39.0
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/3a200666069f/effects_performance/chain/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/3a200666069f/effects_performance/chain/trillionnium/crates/trnm-service-settlement)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 26.66s
+     Running unittests src/lib.rs (/workspace/scratch/3a200666069f/effects_performance/target/debug/deps/trnm_service_settlement-b287584320d37ce9)
+
+running 2 tests
+
+thread 'native_generation_budget_v2::tests::generation_prepare_rejects_full_journal_before_claiming_a_fresh_task' (1407) panicked at crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs:266:5:
+assertion `left == right` failed
+  left: {[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]: ([106, 250, 116, 24, 40, 17, 109, 4, 161, 170, 111, 6, 66, 79, 6, 255, 20, 32, 41, 73, 76, 126, 61, 34, 182, 64, 148, 125, 200, 177, 147, 36], [232, 141, 115, 116, 119, 106, 194, 184, 73, 63, 80, 154, 242, 57, 128, 57, 190, 84, 113, 81, 11, 253, 221, 73, 6, 163, 35, 103, 203, 173, 118, 79]), [40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40]: ([66, 80, 109, 88, 126, 38, 163, 147, 83, 225, 199, 40, 106, 132, 242, 61, 234, 6, 59, 168, 95, 137, 9, 226, 254, 177, 87, 237, 249, 86, 170, 228], [232, 141, 115, 116, 119, 106, 194, 184, 73, 63, 80, 154, 242, 57, 128, 57, 190, 84, 113, 81, 11, 253, 221, 73, 6, 163, 35, 103, 203, 173, 118, 79])}
+ right: {[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]: ([106, 250, 116, 24, 40, 17, 109, 4, 161, 170, 111, 6, 66, 79, 6, 255, 20, 32, 41, 73, 76, 126, 61, 34, 182, 64, 148, 125, 200, 177, 147, 36], [232, 141, 115, 116, 119, 106, 194, 184, 73, 63, 80, 154, 242, 57, 128, 57, 190, 84, 113, 81, 11, 253, 221, 73, 6, 163, 35, 103, 203, 173, 118, 79])}
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test native_generation_budget_v2::tests::generation_prepare_rejects_full_journal_before_claiming_a_fresh_task ... FAILED
+
+thread 'native_generation_budget_v2::tests::generation_prepare_rejects_invalid_or_stale_anchor_before_claiming_a_fresh_task' (1408) panicked at crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs:302:9:
+assertion `left == right` failed
+  left: {[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]: ([106, 250, 116, 24, 40, 17, 109, 4, 161, 170, 111, 6, 66, 79, 6, 255, 20, 32, 41, 73, 76, 126, 61, 34, 182, 64, 148, 125, 200, 177, 147, 36], [125, 224, 234, 162, 236, 156, 139, 181, 253, 48, 223, 205, 219, 9, 44, 171, 149, 29, 53, 159, 46, 63, 111, 31, 155, 177, 102, 79, 33, 43, 222, 216]), [40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40]: ([66, 80, 109, 88, 126, 38, 163, 147, 83, 225, 199, 40, 106, 132, 242, 61, 234, 6, 59, 168, 95, 137, 9, 226, 254, 177, 87, 237, 249, 86, 170, 228], [125, 224, 234, 162, 236, 156, 139, 181, 253, 48, 223, 205, 219, 9, 44, 171, 149, 29, 53, 159, 46, 63, 111, 31, 155, 177, 102, 79, 33, 43, 222, 216])}
+ right: {[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]: ([106, 250, 116, 24, 40, 17, 109, 4, 161, 170, 111, 6, 66, 79, 6, 255, 20, 32, 41, 73, 76, 126, 61, 34, 182, 64, 148, 125, 200, 177, 147, 36], [125, 224, 234, 162, 236, 156, 139, 181, 253, 48, 223, 205, 219, 9, 44, 171, 149, 29, 53, 159, 46, 63, 111, 31, 155, 177, 102, 79, 33, 43, 222, 216])}
+test native_generation_budget_v2::tests::generation_prepare_rejects_invalid_or_stale_anchor_before_claiming_a_fresh_task ... FAILED
+
+failures:
+
+failures:
+    native_generation_budget_v2::tests::generation_prepare_rejects_full_journal_before_claiming_a_fresh_task
+    native_generation_budget_v2::tests::generation_prepare_rejects_invalid_or_stale_anchor_before_claiming_a_fresh_task
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 67 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p trnm-service-settlement --lib`

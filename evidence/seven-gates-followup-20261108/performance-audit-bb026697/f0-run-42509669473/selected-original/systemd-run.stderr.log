@@ -1,0 +1,7 @@
+Running as unit: trnm-fixed-root-f0-42509669473-1-fixed-host-root-f0.service
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=1
+Service runtime: 1min 18.810s
+CPU time consumed: 13.264s
+Memory peak: 71.8M
+Memory swap peak: 0B

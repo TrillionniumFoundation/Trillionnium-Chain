@@ -52,6 +52,50 @@ snapshot; locally newer records cannot be imported into the provider pool.
 The returned list has at most eight distinct endpoints. These are snapshot
 observations, not a transaction held across subsequent network operations.
 
+### Fair admission before the permanent manifest quota
+
+Both the classic and ML-DSA-65 discovery clients collect the current bounded
+round before admitting its records to the replay directory. Admission visits
+the first record from each actual replying bootstrap, then each second record,
+and so on, before applying the existing endpoint-selection policy. Processing
+one entire bootstrap reply first allowed two eight-record batches to consume
+all sixteen permanent manifest identities before a third source's valid record
+could compete. Balancing only the final endpoint list could not recover that
+rejected source.
+
+The new order retains at most four reply bodies: 10,724 bytes for CDP1 or
+114,948 bytes for CDP2. This is a bound on these temporary bodies, not total
+process RSS. All connections, received bytes, rejected records and signature
+attempts remain charged to the original operation. Admission checks the current
+wall time and durable clock floor; each monotonic lease still begins at the
+reply's original receive time. Waiting for later replies cannot refresh a TTL,
+the caller's deadline or an authority expiry. Sequence conflicts, final
+high-water readback and the sixteen-identity quota retain their existing rules.
+Signature-verified conflict history uses eligibility at actual receive time;
+expiry while waiting for another bootstrap cannot erase an earlier observed
+same-sequence conflict. Such historical evidence may disqualify an owner but
+cannot supply an expired candidate or bypass current-time durable admission.
+
+The real TCP saturation regressions use three actual bootstrap replies carrying
+8, 8 and 1 valid signed records. They require the later source to survive, one
+capacity rejection, sixteen retained identities, exactly three connections and
+all seventeen records' actual response bytes. Cold reopen then must reject a
+signed lower sequence. The classic and PQ controls exercise their respective
+native signature implementations and the actual SQLite replay owner.
+The additional classic/PQ delayed-source regressions receive two conflicting
+short-lived records before their actual expiry, wait for that expiry in the
+third source, then receive the same owner's fresh higher sequence. Discovery
+still refuses the equivocating identity, retains the newer durable high water,
+and charges exactly the original three record checks and response bodies.
+
+This schedule does not certify separate administrators or authenticate a
+bootstrap's network channel. Repeated or earlier operations can still exhaust
+the permanent directory allocation, including through one permitted bootstrap.
+An already saturated namespace remains capacity-limited: no row eviction,
+automatic namespace reset or expiry-based quota refund is introduced. A PN5
+public-discovery claim still needs authenticated source identities, independently
+established control domains and the declared surviving-source WAN campaign.
+
 Every resulting manifest is checked against the pinned manifest digest and
 the independently pinned Cell context before output publication. Existing Cell
 chunk checks and the full ordered payload hash remain required.

@@ -1,0 +1,264 @@
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	﻿2026-11-08T18:14:01.8584012Z ##[group]Run set -euo pipefail
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8584351Z [36;1mset -euo pipefail[0m
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8584896Z [36;1mpython3 scripts/w1_qrom_semantics_audit.py --out "$W1_CLOSURE_OUT/semantics.json"[0m
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8585644Z [36;1mpython3 scripts/w1_lifetime_ledger.py --input evidence/pon-w1-lifetime-20261107/project-input.json > "$W1_CLOSURE_OUT/lifetime.json"[0m
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8586401Z [36;1mpython3 scripts/w1_qrom_composition_budget.py > "$W1_CLOSURE_OUT/composition-unknown.json"[0m
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8587052Z [36;1mpython3 scripts/w1_qrom_composition_budget.py --example > "$W1_CLOSURE_OUT/composition-example.json"[0m
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8587709Z [36;1mpython3 scripts/w1_qrom_joint_oracle_diagnostic.py > "$W1_CLOSURE_OUT/joint-oracle-unknown.json"[0m
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8610645Z [36;1mpython3 scripts/w1_qrom_joint_oracle_diagnostic.py --example alias > "$W1_CLOSURE_OUT/joint-oracle-alias.json"[0m
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8611581Z [36;1mpython3 scripts/w1_qrom_joint_oracle_diagnostic.py --example separated > "$W1_CLOSURE_OUT/joint-oracle-separated.json"[0m
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8612372Z [36;1mcmp evidence/pon-w1-qrom-semantics-20261107/report.json "$W1_CLOSURE_OUT/semantics.json"[0m
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8613019Z [36;1mcmp evidence/pon-w1-lifetime-20261107/project-report.json "$W1_CLOSURE_OUT/lifetime.json"[0m
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8613741Z [36;1mfor name in composition-unknown composition-example joint-oracle-unknown joint-oracle-alias joint-oracle-separated; do[0m
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8614496Z [36;1m  cmp "evidence/pon-w1-qrom-formal-bridge-20261107/$name.json" "$W1_CLOSURE_OUT/$name.json"[0m
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8615074Z [36;1mdone[0m
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8627746Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8628199Z env:
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8628491Z   PYTHONDONTWRITEBYTECODE: 1
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8628996Z   W1_CLOSURE_ROSTER_SHA256: ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8629423Z   SOURCE_KIND: head
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8629699Z   EXPECTED_SOURCE: bb026697a972521009bc133ae6ed2b653e18e931
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8630065Z   EXPECTED_HEAD: bb026697a972521009bc133ae6ed2b653e18e931
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8630401Z   EXPECTED_BASE: 7e044b65454f4c9ea505591727332acffb33e7e5
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8630796Z   W1_CLOSURE_OUT: /home/runner/work/_temp/w1-qrom-closure-head-42508015884-1
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:01.8631158Z ##[endgroup]
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:04.7705563Z evidence/pon-w1-qrom-semantics-20261107/report.json /home/runner/work/_temp/w1-qrom-closure-head-42508015884-1/semantics.json differ: byte 73514, line 1696
+W1 QROM closure (head, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:14:04.7720406Z ##[error]Process completed with exit code 1.
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	﻿2026-11-08T18:14:07.3234197Z ##[group]Run set -euo pipefail
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3234558Z [36;1mset -euo pipefail[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3235148Z [36;1mpython3 - <<'PY' 2>&1 | tee "$W1_CLOSURE_OUT/completion.log"[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3235496Z [36;1mimport json[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3235709Z [36;1mimport os[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3235933Z [36;1mfrom pathlib import Path[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3236176Z [36;1mimport sys[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3236395Z [36;1msys.path.insert(0, 'scripts/ci')[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3236697Z [36;1mimport w1_qrom_closure_controls as controls[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3237017Z [36;1mout = Path(os.environ['W1_CLOSURE_OUT'])[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3237419Z [36;1mrequired = ('observations', 'checkout', 'source_before', 'preflight',[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3237841Z [36;1m            'named_controls', 'reproduce', 'source_after')[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3238234Z [36;1msteps = controls.strict_json(os.environ['W1_CLOSURE_STEPS'])[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3238692Z [36;1mfailed = [name for name in required if type(steps.get(name)) is not dict[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3239148Z [36;1m          or steps[name].get('outcome') != 'success'[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3239495Z [36;1m          or steps[name].get('conclusion') != 'success'][0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3239786Z [36;1merror = None[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3239987Z [36;1mtry:[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3240291Z [36;1m    controls.check(Path.cwd(), out, os.environ['W1_CLOSURE_ROSTER_SHA256'])[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3240782Z [36;1m    before = controls.strict_json((out / 'source-before.json').read_bytes())[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3241271Z [36;1m    after = controls.strict_json((out / 'source-after.json').read_bytes())[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3241738Z [36;1m    controls.require(before == after, 'source observations differ')[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3242240Z [36;1m    controls.require(before['schema'] == 'trnm-ci-source-v1', 'source schema differs')[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3242840Z [36;1m    controls.require(before['tracked_worktree_verified'] is True, 'tracked source is unverified')[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3243456Z [36;1m    controls.require(type(before['tracked_entries']) is int and before['tracked_entries'] > 0,[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3243912Z [36;1m                     'tracked source count differs')[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3244351Z [36;1m    controls.require(before['kind'] == os.environ['SOURCE_KIND'], 'source kind differs')[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3245123Z [36;1m    controls.require(before['tested_commit'] == os.environ['EXPECTED_SOURCE'], 'source commit differs')[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3245733Z [36;1m    controls.require(before['candidate'] == os.environ['EXPECTED_HEAD'], 'candidate differs')[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3246214Z [36;1m    if os.environ['SOURCE_KIND'] == 'prospective-merge':[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3246669Z [36;1m        controls.require(before['base'] == os.environ['EXPECTED_BASE'], 'base differs')[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3247407Z [36;1m        controls.require(before['prospective_merge'] == os.environ['EXPECTED_SOURCE'], 'merge differs')[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3247867Z [36;1m    else:[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3248217Z [36;1m        controls.require(before['base'] is None and before['prospective_merge'] is None,[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3248658Z [36;1m                         'head observation has merge fields')[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3248995Z [36;1mexcept (Exception, SystemExit) as caught:[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3249338Z [36;1m    error = type(caught).__name__ + ': ' + str(caught)[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3249667Z [36;1mpassed = not failed and error is None[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3249994Z [36;1mstatus = {'schema': 'TRNM-W1-QROM-CLOSURE-CI1',[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3250353Z [36;1m          'expected_source': os.environ['EXPECTED_SOURCE'],[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3250721Z [36;1m          'expected_head': os.environ['EXPECTED_HEAD'],[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3251065Z [36;1m          'expected_base': os.environ['EXPECTED_BASE'],[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3251404Z [36;1m          'source_kind': os.environ['SOURCE_KIND'],[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3251857Z [36;1m          'required_stages': list(required), 'steps': steps,[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3252298Z [36;1m          'failed_or_skipped_stages': failed, 'completion_or_identity_error': error,[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3252734Z [36;1m          'all_required_observations_passed': passed,[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3253085Z [36;1m          'qualification': controls.QUALIFICATION}[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3253447Z [36;1mwith (out / 'ci-status.json').open('x') as stream:[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3253864Z [36;1m    json.dump(status, stream, indent=2, sort_keys=True, allow_nan=False)[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3254243Z [36;1m    stream.write('\n')[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3254496Z [36;1mif not passed:[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3255091Z [36;1m    raise SystemExit('required QROM continuation observations did not all complete')[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3255703Z [36;1mprint('All fixed named observations completed; complete QROM and chain qualification remain false.')[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3256167Z [36;1mPY[0m
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3268537Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3268869Z env:
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3269075Z   PYTHONDONTWRITEBYTECODE: 1
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3269489Z   W1_CLOSURE_ROSTER_SHA256: ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3269921Z   SOURCE_KIND: head
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3270181Z   EXPECTED_SOURCE: bb026697a972521009bc133ae6ed2b653e18e931
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3270539Z   EXPECTED_HEAD: bb026697a972521009bc133ae6ed2b653e18e931
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3270874Z   EXPECTED_BASE: 7e044b65454f4c9ea505591727332acffb33e7e5
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3271267Z   W1_CLOSURE_OUT: /home/runner/work/_temp/w1-qrom-closure-head-42508015884-1
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3273304Z   W1_CLOSURE_STEPS: {
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	  "observations": {
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "outputs": {},
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "outcome": "success",
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "conclusion": "success"
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	  },
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	  "checkout": {
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "outputs": {
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	      "commit": "bb026697a972521009bc133ae6ed2b653e18e931",
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	      "ref": ""
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    },
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "outcome": "success",
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "conclusion": "success"
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	  },
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	  "source_before": {
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "outputs": {},
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "outcome": "success",
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "conclusion": "success"
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	  },
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	  "preflight": {
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "outputs": {},
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "outcome": "success",
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "conclusion": "success"
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	  },
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	  "named_controls": {
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "outputs": {},
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "outcome": "success",
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "conclusion": "success"
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	  },
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	  "reproduce": {
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "outputs": {},
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "outcome": "failure",
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "conclusion": "failure"
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	  },
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	  "source_after": {
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "outputs": {},
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "outcome": "success",
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	    "conclusion": "success"
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	  }
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	}
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3275388Z ##[endgroup]
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3740700Z required QROM continuation observations did not all complete
+W1 QROM closure (head, x64)	Validate named completion and every required stage independently	2026-11-08T18:14:07.3812287Z ##[error]Process completed with exit code 1.
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	﻿2026-11-08T18:12:47.8159079Z ##[group]Run set -euo pipefail
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8159417Z [36;1mset -euo pipefail[0m
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8159812Z [36;1mpython3 scripts/w1_qrom_semantics_audit.py --out "$W1_CLOSURE_OUT/semantics.json"[0m
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8160561Z [36;1mpython3 scripts/w1_lifetime_ledger.py --input evidence/pon-w1-lifetime-20261107/project-input.json > "$W1_CLOSURE_OUT/lifetime.json"[0m
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8161568Z [36;1mpython3 scripts/w1_qrom_composition_budget.py > "$W1_CLOSURE_OUT/composition-unknown.json"[0m
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8185526Z [36;1mpython3 scripts/w1_qrom_composition_budget.py --example > "$W1_CLOSURE_OUT/composition-example.json"[0m
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8186521Z [36;1mpython3 scripts/w1_qrom_joint_oracle_diagnostic.py > "$W1_CLOSURE_OUT/joint-oracle-unknown.json"[0m
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8187544Z [36;1mpython3 scripts/w1_qrom_joint_oracle_diagnostic.py --example alias > "$W1_CLOSURE_OUT/joint-oracle-alias.json"[0m
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8188677Z [36;1mpython3 scripts/w1_qrom_joint_oracle_diagnostic.py --example separated > "$W1_CLOSURE_OUT/joint-oracle-separated.json"[0m
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8189703Z [36;1mcmp evidence/pon-w1-qrom-semantics-20261107/report.json "$W1_CLOSURE_OUT/semantics.json"[0m
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8190344Z [36;1mcmp evidence/pon-w1-lifetime-20261107/project-report.json "$W1_CLOSURE_OUT/lifetime.json"[0m
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8191319Z [36;1mfor name in composition-unknown composition-example joint-oracle-unknown joint-oracle-alias joint-oracle-separated; do[0m
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8192102Z [36;1m  cmp "evidence/pon-w1-qrom-formal-bridge-20261107/$name.json" "$W1_CLOSURE_OUT/$name.json"[0m
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8192547Z [36;1mdone[0m
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8205410Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8205747Z env:
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8205968Z   PYTHONDONTWRITEBYTECODE: 1
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8206384Z   W1_CLOSURE_ROSTER_SHA256: ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8206830Z   SOURCE_KIND: prospective-merge
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8207158Z   EXPECTED_SOURCE: 4b55e3b3a01ad44f4da37a76298232e4a29d031a
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8207522Z   EXPECTED_HEAD: bb026697a972521009bc133ae6ed2b653e18e931
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8207875Z   EXPECTED_BASE: 7e044b65454f4c9ea505591727332acffb33e7e5
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8208321Z   W1_CLOSURE_OUT: /home/runner/work/_temp/w1-qrom-closure-prospective-merge-42508015884-1
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:47.8208751Z ##[endgroup]
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:50.7581992Z evidence/pon-w1-qrom-semantics-20261107/report.json /home/runner/work/_temp/w1-qrom-closure-prospective-merge-42508015884-1/semantics.json differ: byte 73514, line 1696
+W1 QROM closure (prospective-merge, x64)	Reproduce pinned observations and unknown project inputs	2026-11-08T18:12:50.7597695Z ##[error]Process completed with exit code 1.
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	﻿2026-11-08T18:12:53.3540393Z ##[group]Run set -euo pipefail
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3540819Z [36;1mset -euo pipefail[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3541449Z [36;1mpython3 - <<'PY' 2>&1 | tee "$W1_CLOSURE_OUT/completion.log"[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3541813Z [36;1mimport json[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3542042Z [36;1mimport os[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3542289Z [36;1mfrom pathlib import Path[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3542586Z [36;1mimport sys[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3542831Z [36;1msys.path.insert(0, 'scripts/ci')[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3543156Z [36;1mimport w1_qrom_closure_controls as controls[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3543505Z [36;1mout = Path(os.environ['W1_CLOSURE_OUT'])[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3543941Z [36;1mrequired = ('observations', 'checkout', 'source_before', 'preflight',[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3544389Z [36;1m            'named_controls', 'reproduce', 'source_after')[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3544806Z [36;1msteps = controls.strict_json(os.environ['W1_CLOSURE_STEPS'])[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3545265Z [36;1mfailed = [name for name in required if type(steps.get(name)) is not dict[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3545736Z [36;1m          or steps[name].get('outcome') != 'success'[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3546091Z [36;1m          or steps[name].get('conclusion') != 'success'][0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3546393Z [36;1merror = None[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3546600Z [36;1mtry:[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3546915Z [36;1m    controls.check(Path.cwd(), out, os.environ['W1_CLOSURE_ROSTER_SHA256'])[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3547422Z [36;1m    before = controls.strict_json((out / 'source-before.json').read_bytes())[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3547923Z [36;1m    after = controls.strict_json((out / 'source-after.json').read_bytes())[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3548392Z [36;1m    controls.require(before == after, 'source observations differ')[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3548903Z [36;1m    controls.require(before['schema'] == 'trnm-ci-source-v1', 'source schema differs')[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3549510Z [36;1m    controls.require(before['tracked_worktree_verified'] is True, 'tracked source is unverified')[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3550141Z [36;1m    controls.require(type(before['tracked_entries']) is int and before['tracked_entries'] > 0,[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3550615Z [36;1m                     'tracked source count differs')[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3551243Z [36;1m    controls.require(before['kind'] == os.environ['SOURCE_KIND'], 'source kind differs')[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3552115Z [36;1m    controls.require(before['tested_commit'] == os.environ['EXPECTED_SOURCE'], 'source commit differs')[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3552742Z [36;1m    controls.require(before['candidate'] == os.environ['EXPECTED_HEAD'], 'candidate differs')[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3553235Z [36;1m    if os.environ['SOURCE_KIND'] == 'prospective-merge':[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3553703Z [36;1m        controls.require(before['base'] == os.environ['EXPECTED_BASE'], 'base differs')[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3554306Z [36;1m        controls.require(before['prospective_merge'] == os.environ['EXPECTED_SOURCE'], 'merge differs')[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3554773Z [36;1m    else:[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3555131Z [36;1m        controls.require(before['base'] is None and before['prospective_merge'] is None,[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3555592Z [36;1m                         'head observation has merge fields')[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3555934Z [36;1mexcept (Exception, SystemExit) as caught:[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3556290Z [36;1m    error = type(caught).__name__ + ': ' + str(caught)[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3556633Z [36;1mpassed = not failed and error is None[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3556968Z [36;1mstatus = {'schema': 'TRNM-W1-QROM-CLOSURE-CI1',[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3557338Z [36;1m          'expected_source': os.environ['EXPECTED_SOURCE'],[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3557722Z [36;1m          'expected_head': os.environ['EXPECTED_HEAD'],[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3558078Z [36;1m          'expected_base': os.environ['EXPECTED_BASE'],[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3558425Z [36;1m          'source_kind': os.environ['SOURCE_KIND'],[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3558956Z [36;1m          'required_stages': list(required), 'steps': steps,[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3559424Z [36;1m          'failed_or_skipped_stages': failed, 'completion_or_identity_error': error,[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3559884Z [36;1m          'all_required_observations_passed': passed,[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3560247Z [36;1m          'qualification': controls.QUALIFICATION}[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3560625Z [36;1mwith (out / 'ci-status.json').open('x') as stream:[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3561226Z [36;1m    json.dump(status, stream, indent=2, sort_keys=True, allow_nan=False)[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3561670Z [36;1m    stream.write('\n')[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3561927Z [36;1mif not passed:[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3562309Z [36;1m    raise SystemExit('required QROM continuation observations did not all complete')[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3562931Z [36;1mprint('All fixed named observations completed; complete QROM and chain qualification remain false.')[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3563400Z [36;1mPY[0m
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3575988Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3576330Z env:
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3576548Z   PYTHONDONTWRITEBYTECODE: 1
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3576968Z   W1_CLOSURE_ROSTER_SHA256: ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3577418Z   SOURCE_KIND: prospective-merge
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3577743Z   EXPECTED_SOURCE: 4b55e3b3a01ad44f4da37a76298232e4a29d031a
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3578116Z   EXPECTED_HEAD: bb026697a972521009bc133ae6ed2b653e18e931
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3578469Z   EXPECTED_BASE: 7e044b65454f4c9ea505591727332acffb33e7e5
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3578922Z   W1_CLOSURE_OUT: /home/runner/work/_temp/w1-qrom-closure-prospective-merge-42508015884-1
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3581173Z   W1_CLOSURE_STEPS: {
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	  "observations": {
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "outputs": {},
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "outcome": "success",
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "conclusion": "success"
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	  },
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	  "checkout": {
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "outputs": {
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	      "commit": "4b55e3b3a01ad44f4da37a76298232e4a29d031a",
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	      "ref": ""
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    },
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "outcome": "success",
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "conclusion": "success"
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	  },
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	  "source_before": {
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "outputs": {},
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "outcome": "success",
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "conclusion": "success"
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	  },
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	  "preflight": {
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "outputs": {},
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "outcome": "success",
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "conclusion": "success"
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	  },
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	  "named_controls": {
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "outputs": {},
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "outcome": "success",
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "conclusion": "success"
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	  },
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	  "reproduce": {
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "outputs": {},
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "outcome": "failure",
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "conclusion": "failure"
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	  },
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	  "source_after": {
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "outputs": {},
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "outcome": "success",
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	    "conclusion": "success"
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	  }
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	}
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.3583308Z ##[endgroup]
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.4066378Z required QROM continuation observations did not all complete
+W1 QROM closure (prospective-merge, x64)	Validate named completion and every required stage independently	2026-11-08T18:12:53.4144081Z ##[error]Process completed with exit code 1.

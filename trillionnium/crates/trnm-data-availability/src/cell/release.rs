@@ -14,7 +14,7 @@ use std::{
 use super::{
     manifest::MAX_MANIFEST_BYTES, network::NetworkFetchSession, require, CellDigestV1, CellErrorV1,
     CellLoaderContextV1, CellModelReleaseRootV1, CellPeerLimitsV1, CellReleaseClosureV1,
-    CellReleaseLimitsV1, CellReleaseManifestV1, CellResultV1, CellStoreV1,
+    CellReleaseLimitsV1, CellReleaseManifestV1, CellResidencyV1, CellResultV1, CellStoreV1,
     CellTensorModelManifestV1,
 };
 
@@ -123,7 +123,33 @@ struct ClosureMarker<'a> {
     closure: &'a CellReleaseClosureV1,
     wire: &'a [u8],
     tensor_model: Option<&'a CellTensorModelManifestV1>,
-    cancelled: Option<&'a AtomicBool>,
+    readiness: ClosureReadiness<'a>,
+}
+
+/// Internal preparation controls only. The residency branch is a typed
+/// capacity check over already pinned metadata, not a caller-supplied callback
+/// or an execution-authority hook. All branches keep the original session.
+#[derive(Clone, Copy, Default)]
+enum ClosureReadiness<'a> {
+    #[default]
+    None,
+    Cancellable(&'a AtomicBool),
+    ResidentCapacity {
+        owner: &'a CellResidencyV1,
+        expected: &'a CellLoaderContextV1,
+        cancelled: &'a AtomicBool,
+    },
+}
+
+impl<'a> ClosureReadiness<'a> {
+    fn cancelled(self) -> Option<&'a AtomicBool> {
+        match self {
+            Self::None => None,
+            Self::Cancellable(cancelled) | Self::ResidentCapacity { cancelled, .. } => {
+                Some(cancelled)
+            }
+        }
+    }
 }
 
 /// A complete declared byte set and strict dense tensor metadata observation.
@@ -181,7 +207,7 @@ pub fn fetch_tensor_model_with_options_to_file(
             closure,
             wire: &wire,
             tensor_model: Some(model),
-            cancelled: None,
+            readiness: ClosureReadiness::None,
         }),
     )?;
     Ok(CellTransportFetchReportV2 {
@@ -220,7 +246,15 @@ pub fn fetch_closure_with_options_to_file(
     options: CellReleaseFetchOptionsV2,
     output: &Path,
 ) -> CellResultV1<CellTransportFetchReportV2<CellClosureFetchReportV1>> {
-    fetch_closure_checked(store, closure, expected, peers, options, Some(output), None)
+    fetch_closure_checked(
+        store,
+        closure,
+        expected,
+        peers,
+        options,
+        Some(output),
+        ClosureReadiness::None,
+    )
 }
 
 /// Prefetch one owner-pinned closure into the disposable cache without creating
@@ -237,8 +271,16 @@ pub fn fetch_closure(
     peers: &[SocketAddr],
     limits: CellReleaseFetchLimitsV1,
 ) -> CellResultV1<CellClosureFetchReportV1> {
-    fetch_closure_checked(store, closure, expected, peers, limits.into(), None, None)
-        .map(|result| result.report)
+    fetch_closure_checked(
+        store,
+        closure,
+        expected,
+        peers,
+        limits.into(),
+        None,
+        ClosureReadiness::None,
+    )
+    .map(|result| result.report)
 }
 
 /// The original marker-free prefetch with cooperative caller cancellation.
@@ -260,7 +302,34 @@ pub fn fetch_closure_cancellable(
         peers,
         limits.into(),
         None,
-        Some(cancelled),
+        ClosureReadiness::Cancellable(cancelled),
+    )
+    .map(|result| result.report)
+}
+
+/// The same closure operation with an internal RAM/reference preflight between
+/// its complete metadata pass and its first payload request. It neither starts
+/// a second transport session nor refunds failed metadata work.
+pub(super) fn fetch_closure_for_residency(
+    store: &CellStoreV1,
+    closure: &CellReleaseClosureV1,
+    expected: &CellLoaderContextV1,
+    peers: &[SocketAddr],
+    limits: CellReleaseFetchLimitsV1,
+    (owner, cancelled): (&CellResidencyV1, &AtomicBool),
+) -> CellResultV1<CellClosureFetchReportV1> {
+    fetch_closure_checked(
+        store,
+        closure,
+        expected,
+        peers,
+        limits.into(),
+        None,
+        ClosureReadiness::ResidentCapacity {
+            owner,
+            expected,
+            cancelled,
+        },
     )
     .map(|result| result.report)
 }
@@ -272,7 +341,7 @@ fn fetch_closure_checked(
     peers: &[SocketAddr],
     mut options: CellReleaseFetchOptionsV2,
     output: Option<&Path>,
-    cancelled: Option<&AtomicBool>,
+    readiness: ClosureReadiness<'_>,
 ) -> CellResultV1<CellTransportFetchReportV2<CellClosureFetchReportV1>> {
     options.start()?;
     let mut limits = options.limits;
@@ -294,7 +363,7 @@ fn fetch_closure_checked(
             closure,
             wire: &wire,
             tensor_model: None,
-            cancelled,
+            readiness,
         }),
     )?;
     Ok(CellTransportFetchReportV2 {
@@ -351,7 +420,7 @@ pub fn fetch_model_release_with_options_to_file(
             closure,
             wire: &wire,
             tensor_model: None,
-            cancelled: None,
+            readiness: ClosureReadiness::None,
         }),
     )?;
     Ok(CellTransportFetchReportV2 {
@@ -468,7 +537,9 @@ fn fetch_release_checked(
         limits.peer,
         options.transport,
         deadline,
-        closure.as_ref().and_then(|marker| marker.cancelled),
+        closure
+            .as_ref()
+            .and_then(|marker| marker.readiness.cancelled()),
     )?;
     session.check_cancelled()?;
     let mut report = CellReleaseFetchReportV1 {
@@ -516,6 +587,21 @@ fn fetch_release_checked(
             "release chunk budget",
         )?;
     }
+    if let Some(marker) = &closure {
+        if let ClosureReadiness::ResidentCapacity {
+            owner,
+            expected,
+            cancelled,
+        } = marker.readiness
+        {
+            // No payload has been requested yet. The same immutable owner
+            // remains borrowed throughout fetch; the final staging pass still
+            // rechecks every actual payload and the complete reservation.
+            owner.verify_prefetch_capacity(store, marker.closure, expected, deadline, cancelled)?;
+        }
+    }
+    session.check_cancelled()?;
+    check_deadline(deadline)?;
     for digest in release.cells() {
         session.check_cancelled()?;
         check_deadline(deadline)?;

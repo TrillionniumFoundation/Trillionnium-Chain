@@ -1,0 +1,23 @@
+{
+  "command": [
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_w1_v2_controls_gate.py",
+    "-v"
+  ],
+  "started_unix_ns": 1794163917876440947,
+  "finished_unix_ns": 1794163919462790308,
+  "exit_code": 0,
+  "source_state": "dirty-candidate",
+  "qualification": "PARSER_LIFECYCLE_ONLY",
+  "source_sha256": {
+    "scripts/ci/w1_v2_controls_gate.py": "34556ac0ef72589d50b1b6de0a9377a26d0cb2b51ebac92b1f9efb5af7a2073f",
+    "scripts/ci/test_w1_v2_controls_gate.py": "284c2e982b4a094e7ddbfdd3ba2e195e2814710653a61725c6125c883003edbf"
+  }
+}

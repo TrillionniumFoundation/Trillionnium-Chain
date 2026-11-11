@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "<string>", line 61, in <module>
+  File "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/source-exact/scripts/m15_isolated_native_support.py", line 255, in tools_input
+    return value, raw, {"files": checked, "mappings": mappings, "setpriv": helper_runtime(value)}
+                                                                           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/source-exact/scripts/m15_isolated_native_support.py", line 209, in helper_runtime
+    pinned_file(entry["source"])
+  File "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/source-exact/scripts/m15_isolated_native_support.py", line 61, in pinned_file
+    raise ValueError("single-linked regular tool/source required")
+ValueError: single-linked regular tool/source required

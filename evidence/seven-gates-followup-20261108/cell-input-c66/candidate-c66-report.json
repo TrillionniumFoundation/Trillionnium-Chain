@@ -1,0 +1,232 @@
+{
+  "schema": "chain-hepta-cell-merged-candidate-review-v1",
+  "recorded_at": "2026-11-08T17:36:11.602484+00:00",
+  "chain_source": "c66ffbdc46312f80f4d0faf829d37e43356a3799",
+  "chain_tree": "c3fbb2d1900d838a6cfd7b3373ad84d484f3c619",
+  "hepta_source": "36d5eff44f4071bb1f250b1c7706dc690cf0a875",
+  "ancestry": {
+    "chain_head": "c66ffbdc46312f80f4d0faf829d37e43356a3799",
+    "chain_tree": "c3fbb2d1900d838a6cfd7b3373ad84d484f3c619",
+    "sources": {
+      "base_812": "7e044b65454f4c9ea505591727332acffb33e7e5",
+      "learning_809": "5f7eccf86e252cce67bf5dd6f614c1c7a1824e53",
+      "cell_807": "0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a"
+    },
+    "is_ancestor": {
+      "base_812": true,
+      "learning_809": true,
+      "cell_807": true
+    },
+    "hepta_old": "f1785ca15e41e4e49509a5b211a659e3cbdbf60e",
+    "hepta_pair": "36d5eff44f4071bb1f250b1c7706dc690cf0a875",
+    "hepta_ahead": 4,
+    "hepta_behind": 0,
+    "hepta_compare_sha256": "8410be093c57ec7f823afadc107a23ea05522b85350b69b965a0a656921ab6d5",
+    "chain_source_edits_during_native_validation": false,
+    "production_activation": false,
+    "qualification": "HOLD_NO_GO"
+  },
+  "source_coverage": {
+    "base": null,
+    "candidate": "c66ffbdc46312f80f4d0faf829d37e43356a3799",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "c66ffbdc46312f80f4d0faf829d37e43356a3799",
+    "tested_tree": "c3fbb2d1900d838a6cfd7b3373ad84d484f3c619",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2381933187,
+    "tracked_entries": 23450,
+    "tracked_worktree_verified": true
+  },
+  "native": {
+    "log": {
+      "path": "validation-c66ffbdc-02/p2p-complete.log",
+      "bytes": 59012,
+      "sha256": "ef45e1392a6429e9ecf42f99e08276ab1f73a731d40fbc91bc8e47743df1af5f"
+    },
+    "library_passed": 450,
+    "integration_passed": 34,
+    "doctest_passed": 12,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 0,
+    "original_new_tests_required": 51,
+    "original_new_tests_unique_successful_matches": 51,
+    "binary_count": 12,
+    "binary_identities": [
+      {
+        "bytes": 91463040,
+        "path": "/workspace/scratch/3a200666069f/hepta_cell/cargo-target/debug/deps/trnm_data_availability-da201d8a9afcad9d",
+        "sha256": "854ab39b49266110e3965e5a73b3d93182ad39d2e428dbc3a6180169d7b7140f"
+      },
+      {
+        "bytes": 6882984,
+        "path": "/workspace/scratch/3a200666069f/hepta_cell/cargo-target/debug/deps/trnm_cell-10341aeb7390382e",
+        "sha256": "3a655bc5869d34ebe954915b92bb386993e3605f0e50920d4f544090a631f3c5"
+      },
+      {
+        "bytes": 6883072,
+        "path": "/workspace/scratch/3a200666069f/hepta_cell/cargo-target/debug/deps/trnm_cell_discovery-98d227d4017229fe",
+        "sha256": "8de1467ab035a607022f1189d471d16948438d6508b94e9e64faf742dee82b13"
+      },
+      {
+        "bytes": 49902064,
+        "path": "/workspace/scratch/3a200666069f/hepta_cell/cargo-target/debug/deps/cell_cache_wal_cli-3a86d01ebee11b37",
+        "sha256": "57e57a113b06a8267968a99ecb7d9361afa95a8b6baeca6d274c153b94855c54"
+      },
+      {
+        "bytes": 50497920,
+        "path": "/workspace/scratch/3a200666069f/hepta_cell/cargo-target/debug/deps/cell_closure_cli-43a7cec7ef43da6a",
+        "sha256": "e2d66e03e1121b8075e0274637089a45b46a0b5cc851e684d596f5ee9a502c72"
+      },
+      {
+        "bytes": 50699448,
+        "path": "/workspace/scratch/3a200666069f/hepta_cell/cargo-target/debug/deps/cell_discovery_cli-56110d961ab48254",
+        "sha256": "5c5ad0016dc84841a9ad95b47f6c0562e6bfd4181665decc60939ae011da40d9"
+      },
+      {
+        "bytes": 50073448,
+        "path": "/workspace/scratch/3a200666069f/hepta_cell/cargo-target/debug/deps/cell_fetch_deadline_cli-037f02c499f99c12",
+        "sha256": "5ac8449611fe485b4d434f1b55d5907a556fbe40faaf9dc326d161384c0fbfee"
+      },
+      {
+        "bytes": 49968544,
+        "path": "/workspace/scratch/3a200666069f/hepta_cell/cargo-target/debug/deps/cell_persistent_cli-57531858f370926e",
+        "sha256": "9d5cc8cea8401ce15c5d349703679de7cb35f966c80b72e5caa1fcd5e9086416"
+      },
+      {
+        "bytes": 50476840,
+        "path": "/workspace/scratch/3a200666069f/hepta_cell/cargo-target/debug/deps/cell_provider_ready_cli-ef4310d0da17b8c7",
+        "sha256": "283cbc1008ec55f2a1b8102f5436dd760b48ba16857cf4fbcc8a938462b67642"
+      },
+      {
+        "bytes": 50020368,
+        "path": "/workspace/scratch/3a200666069f/hepta_cell/cargo-target/debug/deps/cell_release_cli-6b0dc91c9cf6cd5f",
+        "sha256": "ae9da98ff09d74e10e818a4aad1bff17905ad80b3f8a64aac87998df6b7337e8"
+      },
+      {
+        "bytes": 51125504,
+        "path": "/workspace/scratch/3a200666069f/hepta_cell/cargo-target/debug/deps/cell_tensor_cli-b480051b32f06a7e",
+        "sha256": "430c64de10d4a69d74a4356794b4d845024b7a914fc054474fca7389665f8b0c"
+      },
+      {
+        "bytes": 49450704,
+        "path": "/workspace/scratch/3a200666069f/hepta_cell/cargo-target/debug/deps/pq_cell_cli-15447ce51f1c2921",
+        "sha256": "befefe432d6de4d9d2ea7d2aa460533329eb82db4efb879b6794800f6f7f3833"
+      }
+    ],
+    "scope": "original complete default-feature trnm-data-availability package command; actual native engineering controls on a shared Linux execution surface"
+  },
+  "python_controls": {
+    "source_negative": 43,
+    "pq_source_negative": 57,
+    "ci_contract": 151,
+    "legacy_readback": 26,
+    "learning_join": 25
+  },
+  "format_passed": true,
+  "locked_default_all_features_and_fuzz_graphs_passed": true,
+  "repository_checks_passed": true,
+  "source_inventory_passed": true,
+  "exact_source_blob_checks": 880,
+  "strict_all_workspace_all_target_all_feature_clippy": "NOT_PASSED",
+  "clippy_failed_observations": [
+    "attempt 01: missing nix index before any compilation",
+    "attempt 02: trnm-pon-node lib and lib-test clippy-driver SIGKILL; cause not proven",
+    "attempt 03: ENOSPC creating pq_application_migration_v6 temp metadata directory"
+  ],
+  "sqlite_build_boundary_observations": [
+    "attempt 02: UNQUALIFIED because RUSTC was not absolute",
+    "attempt 03: UNQUALIFIED because direct cargo invocation lacked toolchain/lib in normal loader paths"
+  ],
+  "next_environment_basis": "reuse original authority-final-validation-runner.py environment(), including absolute RUSTC/RUSTDOC and LD_LIBRARY_PATH=TOOLCHAIN/lib; do not change SQLite build fence",
+  "attempts": [
+    {
+      "directory": "validation-c66ffbdc-01",
+      "source": "c66ffbdc46312f80f4d0faf829d37e43356a3799",
+      "source_unchanged": true,
+      "summary": {
+        "path": "validation-c66ffbdc-01/summary.json",
+        "bytes": 16110,
+        "sha256": "8bc826b480e13bdd9570bb3ac2dc52ed82ef0661a342fffb4a4e859b71c840c6"
+      },
+      "failed_commands": [
+        {
+          "label": "graph-default",
+          "exit_code": 101,
+          "log": "graph-default.log",
+          "sha256": "ac0d23eea2d2a9711e62ac1fb0a44d9bb3e1b739569da45e9117a8c7ff2927e1"
+        },
+        {
+          "label": "graph-all-features",
+          "exit_code": 101,
+          "log": "graph-all-features.log",
+          "sha256": "ac0d23eea2d2a9711e62ac1fb0a44d9bb3e1b739569da45e9117a8c7ff2927e1"
+        },
+        {
+          "label": "graph-fuzz",
+          "exit_code": 101,
+          "log": "graph-fuzz.log",
+          "sha256": "411756f445db3eeea4d983ca8b116f2e74f0670f5bb414708b12e25a0c244401"
+        },
+        {
+          "label": "p2p-complete",
+          "exit_code": 101,
+          "log": "p2p-complete.log",
+          "sha256": "ac0d23eea2d2a9711e62ac1fb0a44d9bb3e1b739569da45e9117a8c7ff2927e1"
+        },
+        {
+          "label": "clippy-workspace",
+          "exit_code": 101,
+          "log": "clippy-workspace.log",
+          "sha256": "ac0d23eea2d2a9711e62ac1fb0a44d9bb3e1b739569da45e9117a8c7ff2927e1"
+        }
+      ]
+    },
+    {
+      "directory": "validation-c66ffbdc-02",
+      "source": "c66ffbdc46312f80f4d0faf829d37e43356a3799",
+      "source_unchanged": true,
+      "summary": {
+        "path": "validation-c66ffbdc-02/summary.json",
+        "bytes": 21566,
+        "sha256": "f495d14940a13c5aab99fe94b1bad89ce4849f48ac6fb4f1bee720ec120b0eb0"
+      },
+      "failed_commands": [
+        {
+          "label": "clippy-workspace",
+          "exit_code": 101,
+          "log": "clippy-workspace.log",
+          "sha256": "75731d9ff07fe49a95a06b9a66756559d5ddcc52a87d082a2a997cbeaca1bed8"
+        }
+      ]
+    },
+    {
+      "directory": "validation-c66ffbdc-03",
+      "source": "c66ffbdc46312f80f4d0faf829d37e43356a3799",
+      "source_unchanged": true,
+      "summary": {
+        "path": "validation-c66ffbdc-03/summary.json",
+        "bytes": 19481,
+        "sha256": "8466fde7168b09d30c37b3a9d276d88fa74d4966274185cb7bd2bea542826018"
+      },
+      "failed_commands": [
+        {
+          "label": "clippy-workspace",
+          "exit_code": 101,
+          "log": "clippy-workspace.log",
+          "sha256": "11648b9f091abc9b6f8ff11fdba6cb9d7239c9441dd134cf451670c7ba73fabc"
+        }
+      ]
+    }
+  ],
+  "hepta_native_reexecuted": false,
+  "real_training_verified": false,
+  "settlement_verified": false,
+  "independent_wan_recovery_qualified": false,
+  "physical_device_loading_qualified": false,
+  "full_learning_iteration_qualified": false,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO"
+}

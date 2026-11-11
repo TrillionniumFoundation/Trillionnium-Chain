@@ -1,0 +1,206 @@
+{
+  "audit_helpers": [
+    {
+      "bytes": 18002,
+      "path": "scripts/w1_control_tree_audit.py",
+      "sha256": "0e9b8e2fd9f6905f98b3df1a52b4ac2a46481b101b1d1a6afd29c2f5502f4865"
+    },
+    {
+      "bytes": 33723,
+      "path": "scripts/w1_profile_source_map.py",
+      "sha256": "324dc1726fc5bfcfd79e5d78d890737bfdd3c5877d74e417d2ed8018254523b0"
+    },
+    {
+      "bytes": 23660,
+      "path": "scripts/w1_fri_transcript_audit.py",
+      "sha256": "12cc991999f68d925f078888d1e18302739171ee6187bbeb2f3bfb17c19a88fc"
+    }
+  ],
+  "historical_inputs": [
+    {
+      "bytes": 6875,
+      "path": "config/pon/w1-qrom-implementation-v1.json",
+      "sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22"
+    },
+    {
+      "bytes": 21678,
+      "path": "scripts/w1_qrom_implementation_audit.py",
+      "sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354"
+    },
+    {
+      "bytes": 69290,
+      "path": "evidence/pon-w1-qrom-implementation-20261107/implementation-map.json",
+      "sha256": "eebf074f5f4a77cb7277035300294ef9308cb5ec5d0441336665bafcb6647c8b"
+    },
+    {
+      "bytes": 5168,
+      "path": "evidence/pon-w1-qrom-source-convergence-20261108/source-review.json",
+      "sha256": "988a67862cff06d2d6d580dc65db84f9d177a7bbbdb9e79c96c3dc4f81d9491b"
+    }
+  ],
+  "lifetime_budget": {
+    "accepted_statements_lifetime": null,
+    "adaptive_composition_bound": null,
+    "concrete_hash_to_ideal_oracle_error": null,
+    "hash_output_sigma_bits": null,
+    "max_fs_rounds_per_reduction": null,
+    "max_recursive_nodes_per_statement": null,
+    "min_verifier_randomness_bits": null,
+    "policy_adopted": false,
+    "quantum_queries_lifetime": null,
+    "rrbr_knowledge_error": null,
+    "target_total_failure_probability": null
+  },
+  "profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+  "project_files": [
+    {
+      "bytes": 5246,
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs",
+      "sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9"
+    },
+    {
+      "bytes": 1282,
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/wire.rs",
+      "sha256": "fae4f60cca4bcd5aff132935307d3ea11de194765c6e3050adfaf7f346ef9cf3"
+    },
+    {
+      "bytes": 349,
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml",
+      "sha256": "9ed358e1e24b58505d5d37e0a88ef3538b2c6146c3303a87c33b19208d667d25"
+    },
+    {
+      "bytes": 38332,
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock",
+      "sha256": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865"
+    },
+    {
+      "bytes": 11172,
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+      "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
+    },
+    {
+      "bytes": 284,
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs",
+      "sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb"
+    },
+    {
+      "bytes": 498,
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+      "sha256": "65263e60248f29008ff098d5fcf1f573a19da5a40f87ecdaa6d3cd5063c104ba"
+    },
+    {
+      "bytes": 46489,
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock",
+      "sha256": "9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef"
+    },
+    {
+      "bytes": 445,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/src/main.rs",
+      "sha256": "c2db185d338be3ab7c6256239b750445e084547de742221517f9fc9f12711468"
+    },
+    {
+      "bytes": 564,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml",
+      "sha256": "48f1c4580ff7de989bdcf1055d12ed5128b105994e653e6d11a593c029bd2037"
+    },
+    {
+      "bytes": 46025,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock",
+      "sha256": "03a3b7f6cc81a6e1678f2fd23b2b448f8f90931c258f4e66a7bcdc422447d2bf"
+    },
+    {
+      "bytes": 14597,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs",
+      "sha256": "aeee8bebc5b098744a34a568232fadb5a79963760d8e2e8b3fb6176683987322"
+    },
+    {
+      "bytes": 11159,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/v2.rs",
+      "sha256": "9f31aec3b6d7f376164b58f3ab2f89a191716a560235f73c692b390d1c9fa45b"
+    },
+    {
+      "bytes": 104121,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+    },
+    {
+      "bytes": 3747,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs",
+      "sha256": "fd99053e94bb38b929b848898f4f2ad9f7d3ce33d48097e444337f6ed1d82919"
+    },
+    {
+      "bytes": 32654,
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+    }
+  ],
+  "project_source_scope": "Selected entry, relation, framing, native work and locked dependency files; not all transitive source or compiled feature semantics.",
+  "proof_obligations": [
+    "latest_theorem_version_equivalence",
+    "complete_relation_and_compiler",
+    "all_27_recursion_program_semantics",
+    "control_padding_and_recursive_trace_size_reachability",
+    "relaxed_rbr_knowledge_soundness",
+    "committed_relation_monotonicity",
+    "merkle_multi_extractability",
+    "sponge_and_domain_separation_mapping",
+    "fiat_shamir_challenge_and_salt_mapping",
+    "finite_field_sampling_and_challenge_length",
+    "sequential_adaptive_composition",
+    "lifetime_global_quantum_budget",
+    "concrete_enabled_features_and_debug_exclusion",
+    "quantum_work_and_chainweight",
+    "pq_signature_owner_authorization"
+  ],
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "consensus_admission": false,
+    "post_quantum_soundness_qualified": false,
+    "pq_signature_qualification_inferred": false,
+    "production_qualified": false,
+    "quantum_work_qualified": false,
+    "security_bits_quantum": null
+  },
+  "saved_v2_files": [
+    {
+      "bytes": 257014,
+      "path": "evidence/pon-w1-full-v2-20261105/succinct.bin",
+      "sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"
+    },
+    {
+      "bytes": 318,
+      "path": "evidence/pon-w1-full-v2-20261105/header.bin",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+    },
+    {
+      "bytes": 64,
+      "path": "evidence/pon-w1-full-v2-20261105/expected-artifacts.bin",
+      "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+    },
+    {
+      "bytes": 49506,
+      "path": "evidence/pon-w1-full-v2-20261105/input.bin",
+      "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"
+    },
+    {
+      "bytes": 375928,
+      "path": "evidence/pon-w1-full-v2-20261105/guest.bin",
+      "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f"
+    },
+    {
+      "bytes": 198014,
+      "path": "evidence/pon-w1-full-v2-20261105/proof-result.json",
+      "sha256": "a2bbd9ed141b87823ea6d50322c0d65f706e32aca028d1b5ab19f1327c1194cc"
+    }
+  ],
+  "schema": "TRNM-W1-QROM-IMPLEMENTATION-CONTRACT2",
+  "scope": "Offline research mapping only. Does not authorize consensus or production admission.",
+  "source_base_commit": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "source_review": "evidence/pon-w1-qrom-source-convergence-20261108/source-review.json",
+  "upstream_commit": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9",
+  "upstream_snapshot": {
+    "bytes": 69332,
+    "path": "evidence/pon-w1-qrom-implementation-20261107/upstream-sources.json.gz",
+    "sha256": "f6be3667106df6843f5f29c0954cdce8e2617da36c9c91a7a5198665675e0253"
+  }
+}

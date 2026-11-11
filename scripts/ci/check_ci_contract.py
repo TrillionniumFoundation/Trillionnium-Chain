@@ -631,6 +631,7 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_ci_execution.py
     python3 scripts/ci/test_capture_chain_hepta_identity.py
     python3 scripts/ci/test_chain_hepta_qualification.py
+    python3 scripts/ci/test_chain_hepta_command_binding.py
     python3 scripts/ci/test_pon_daa_head_binding.py
     python3 -B scripts/ci/test_llm_hosted_once.py
     "${TRNM_RUNTIME_RELEASE_PYTHON:-python3}" scripts/test_llm_runtime_release.py
@@ -744,6 +745,7 @@ on:
       - scripts/w1_owned_process_collector_v1.py
       - scripts/test_w1_owned_process_collector_v1.py
       - evidence/pon-w1-full-v2-20261105/**
+      - evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz
       - evidence/pon-w1-fresh-runtime-20261107/**
       - evidence/pon-w1-backend-sdk-20261107/**
       - scripts/w1_kaggle_worker_template.py
@@ -751,6 +753,7 @@ on:
       - scripts/project-preflight.sh
       - evidence/pon-w1-complete-succinct-20261028/**
       - evidence/pon-w1-full-v2-20261105/**
+      - evidence/seven-gates-followup-20261108/research-ci-fix/transparent-bb-controls.tar.xz
       - evidence/pon-w1-verifier-hardening-20261028/**
       - evidence/pon-w1-transparent-profile-20261104/**
       - evidence/pon-w1-stark-review-20261106/**
@@ -869,7 +872,7 @@ W1_POSTWIN_CRITICAL_STEPS = {
               raise SystemExit('all 15 named source-map controls must execute exactly once without skips')
           PY
 ''',
-    "v2_gate_tests": r'''      - name: Execute all 23 saved-v2 report consistency controls
+    "v2_gate_tests": r'''      - name: Execute all 31 saved-v2 report consistency controls
         if: always() && steps.source.outcome == 'success'
         id: v2_gate_tests
         shell: bash
@@ -882,9 +885,17 @@ W1_POSTWIN_CRITICAL_STEPS = {
           text = Path(sys.argv[1]).read_text()
           expected = {
               'test_budget_and_qualification_cannot_be_widened',
+              'test_cancellation_after_stage_snapshot_cannot_complete_the_controls',
               'test_case_command_must_use_pinned_verifier',
               'test_case_command_must_use_planned_inputs',
               'test_case_result_must_match_summary',
+              'test_current_gate_rejects_legacy_without_explicit_replay',
+              'test_current_gate_rejects_unknown_process_schema',
+              'test_current_hosted_controls_bind_common_clock_and_summary_completion',
+              'test_current_stage_cancellation_fields_are_mandatory_and_exact',
+              'test_current_stage_cannot_skip_common_settlement_controls',
+              'test_current_stage_clock_cannot_extend_original_budget',
+              'test_current_stage_measurements_pass_without_proof_claim',
               'test_incomplete_session_observation_is_rejected',
               'test_integer_exit_codes_cannot_be_booleans',
               'test_mutation_identity_must_match_planned_bytes',
@@ -909,9 +920,9 @@ W1_POSTWIN_CRITICAL_STEPS = {
           required = sorted((name, f'test_w1_v2_controls_gate.V2ControlsGateTests.{name}', 'ok')
                             for name in expected)
           if (sorted(rows) != required
-                  or re.findall(r'^Ran ([0-9]+) tests in ', text, re.M) != ['23']
+                  or re.findall(r'^Ran ([0-9]+) tests in ', text, re.M) != ['31']
                   or re.findall(r'^OK(?: \(.*\))?$', text, re.M) != ['OK']):
-              raise SystemExit('all 23 named v2 report controls must execute exactly once without skips')
+              raise SystemExit('all 31 named v2 report controls must execute exactly once without skips')
           PY
 ''',
     "staged_tests": r'''      - name: Execute staged lifecycle and complete-observation rejection controls

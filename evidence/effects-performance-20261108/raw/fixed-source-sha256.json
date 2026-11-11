@@ -1,0 +1,5 @@
+{
+  "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs": "588418856005866db8dce3de138b1116eaaf365e8c116d5f420b9c2357b475bb",
+  "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs": "d4abf3a15058639ddfea90ca521faa89fbf3ba8616122585dc928866c20227f5",
+  "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs": "2e1d60181608023ba7f2de38dab32d1e6143671b3b162d5762841d0a62bdbdb1"
+}

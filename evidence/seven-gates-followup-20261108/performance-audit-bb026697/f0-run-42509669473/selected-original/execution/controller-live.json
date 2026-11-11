@@ -1,0 +1,23 @@
+{
+  "binary_sha256": "e38433c515bf93f0edfb6f4e61cefabf8d7266bcb425a596c788e183444e79e1",
+  "boot_id": "6fae7d78-0f76-4321-ab7d-01307f08f992",
+  "cgroup": "/system.slice/trnm-fixed-root-f0-42509669473-1-fixed-host-root-f0.service",
+  "cgroup_identity": {
+    "device": 31,
+    "gid": 0,
+    "inode": 6942,
+    "mode": 493,
+    "uid": 0
+  },
+  "gid": 1001,
+  "invocation_id": "281af221823b46a2a4f680645a19ea24",
+  "job_sha256": "b52907bd9ea4b0d34a00bf0d1d27391deb895fd4cc09595372835ad4abdac59e",
+  "observation_stage": "before any native phase invocation",
+  "parent_pid": 1,
+  "phase": "controller",
+  "pid": 5280,
+  "process_start_ticks": 30131,
+  "schema": "fixed-root-owned-controller-live-v1",
+  "service": "trnm-fixed-root-f0-42509669473-1-fixed-host-root-f0.service",
+  "uid": 1001
+}

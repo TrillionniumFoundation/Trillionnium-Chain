@@ -1,0 +1,25 @@
+{
+  "files": {
+    "README.md": {
+      "bytes": 6704,
+      "sha256": "ef5d04a91a2d319bc26409c2fef2b985b494119652b345a30667e4e330f5e3f9"
+    },
+    "git-history-readback.json": {
+      "bytes": 14919,
+      "sha256": "fc1a48758847b7eede6c62d5e47acf131bdd8085cd5c73cd46a6d6945202064c"
+    },
+    "original-readback.tar.gz": {
+      "bytes": 55728,
+      "sha256": "b847d1a075b22f40df14e19de42fa39c869b927bfb5567c59411f09b0d0bdc1b"
+    },
+    "roster-conservation.json": {
+      "bytes": 55445,
+      "sha256": "6da1395799477d859199e7e9ca92a547148be956cf6d2880eda80ca96feeb94b"
+    }
+  },
+  "original_authority_runner_passed": false,
+  "qualification": "HOLD_NO_GO",
+  "schema": "trnm-release-roster-archive-index-v1",
+  "scope": "Read-only reconciliation of the existing Unix native stdout; no new test execution or override of the immutable exact-52 refusal",
+  "tested_chain_commit": "bb026697a972521009bc133ae6ed2b653e18e931"
+}

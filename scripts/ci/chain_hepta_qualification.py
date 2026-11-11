@@ -330,6 +330,51 @@ def packet_for_plan(plan_raw, identity_reference=None):
                 records=[], learning=None, effects=[])
 
 
+def command_source_conflicts(value, record):
+    """Check the existing Chain command receipt, without authenticating it.
+
+    A command may exit zero and still fail its after-source observation. That
+    receipt cannot be normalized into a completed stage or provider readback.
+    Consistency here is not a native-result adapter or a new source observation.
+    """
+    before, after = value.get("before"), value.get("after")
+    issues = []
+    for observation in (before, after):
+        try:
+            fields(observation, "schema kind tested_commit tested_tree candidate base prospective_merge "
+                   "tracked_worktree_verified tracked_entries tracked_bytes tests_executed_by_identity_check",
+                   "RAW_COMMAND_SOURCE_UNVERIFIED")
+            require(observation.get("schema") == "trnm-ci-source-v1" and
+                    observation.get("kind") in ("head", "prospective-merge") and
+                    observation.get("tracked_worktree_verified") is True and
+                    observation.get("tests_executed_by_identity_check") is False,
+                    "RAW_COMMAND_SOURCE_UNVERIFIED")
+            digest(observation.get("tested_commit"), 40)
+            digest(observation.get("tested_tree"), 40)
+            digest(observation["candidate"], 40)
+            if observation["kind"] == "head":
+                require(observation["candidate"] == observation["tested_commit"] and
+                        observation["base"] is None and observation["prospective_merge"] is None,
+                        "RAW_COMMAND_SOURCE_UNVERIFIED")
+            else:
+                digest(observation["base"], 40)
+                digest(observation["prospective_merge"], 40)
+                require(observation["prospective_merge"] == observation["tested_commit"],
+                        "RAW_COMMAND_SOURCE_UNVERIFIED")
+            integer(observation.get("tracked_entries"), 1)
+            integer(observation.get("tracked_bytes"))
+        except Refusal:
+            issues.append("RAW_COMMAND_SOURCE_UNVERIFIED")
+            continue
+        pair = record["source_pair"]
+        if pair is None or any(observation[key] != pair["chain"][field]
+                               for key, field in (("tested_commit", "sha"), ("tested_tree", "tree"))):
+            issues.append("RAW_COMMAND_SOURCE_MISMATCH")
+    if type(before) is dict and type(after) is dict and before != after:
+        issues.append("RAW_COMMAND_SOURCE_CHANGED")
+    return sorted(set(issues))
+
+
 def raw_negative_observations(raw, record):
     """Surface contradictions only; an unknown raw format can NEVER supply PASS.
 
@@ -349,6 +394,15 @@ def raw_negative_observations(raw, record):
     if value.get("schema") == "trnm-pq-native-command-v1":
         native_exit = value.get("exit_code")
         summary["status"] = value.get("status")
+        # record_failed includes an actual zero-exit child whose source changed.
+        # running/missing states and absent exits retain their uncertainty.
+        if value.get("status") != "command_succeeded":
+            issues.append("RAW_COMMAND_NOT_SUCCEEDED")
+        if "error" in value:
+            issues.append("RAW_COMMAND_ERROR_PRESENT")
+        if type(native_exit) is not int:
+            issues.append("RAW_NATIVE_EXIT_UNOBSERVED")
+        issues.extend(command_source_conflicts(value, record))
     if type(native_exit) is int:
         summary["native_exit"] = native_exit
         if native_exit != record["native_exit"]:

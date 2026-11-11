@@ -1,0 +1,88 @@
+test_actual_saved_v2_mapping_keeps_all_security_claims_unqualified (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_actual_saved_v2_mapping_keeps_all_security_claims_unqualified) ... ERROR
+test_changed_audit_helper_is_refused_before_execution (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_changed_audit_helper_is_refused_before_execution) ... ok
+test_changed_native_source_is_refused_before_mapping (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_changed_native_source_is_refused_before_mapping) ... ok
+test_changed_seal_word_is_rejected_by_full_artifact_identity (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_changed_seal_word_is_rejected_by_full_artifact_identity) ... FAIL
+test_changed_source_snapshot_is_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_changed_source_snapshot_is_refused) ... FAIL
+test_contract_cannot_promote_unknown_quantum_budget_or_qualification (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_contract_cannot_promote_unknown_quantum_budget_or_qualification) ... ok
+test_control_index_high_bits_are_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_control_index_high_bits_are_refused) ... ok
+test_duplicate_keys_and_nonfinite_numbers_are_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_duplicate_keys_and_nonfinite_numbers_are_refused) ... ok
+test_existing_output_is_not_replaced (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_existing_output_is_not_replaced) ... ok
+test_external_commitment_substitution_is_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_external_commitment_substitution_is_refused) ... ok
+test_false_historical_guest_identity_is_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_false_historical_guest_identity_is_refused) ... ok
+test_fixed_receipt_trailing_data_is_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_fixed_receipt_trailing_data_is_refused) ... ok
+test_fri_schedule_does_not_treat_boolean_as_po2 (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_fri_schedule_does_not_treat_boolean_as_po2) ... ok
+test_import_cache_and_search_path_cannot_replace_checked_helper_bytes (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_import_cache_and_search_path_cannot_replace_checked_helper_bytes) ... ERROR
+test_inner_and_outer_parameter_fields_are_separate_controls (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_inner_and_outer_parameter_fields_are_separate_controls) ... ok
+test_parent_directory_symlink_is_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_parent_directory_symlink_is_refused) ... ok
+test_raw_po2_must_not_be_montgomery_decoded (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_raw_po2_must_not_be_montgomery_decoded) ... ok
+test_real_control_inclusion_sibling_change_is_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_real_control_inclusion_sibling_change_is_refused) ... ok
+test_zero_seal_and_foreign_receipt_kind_are_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_zero_seal_and_foreign_receipt_kind_are_refused) ... ok
+
+======================================================================
+ERROR: test_actual_saved_v2_mapping_keeps_all_security_claims_unqualified (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_actual_saved_v2_mapping_keeps_all_security_claims_unqualified)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_implementation_audit.py", line 56, in test_actual_saved_v2_mapping_keeps_all_security_claims_unqualified
+    report = audit.build_report(audit.ROOT)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/w1_qrom_implementation_audit.py", line 289, in build_report
+    project = load_pinned_files(root, contract['project_files'])
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/w1_qrom_implementation_audit.py", line 119, in load_pinned_files
+    data = bounded_file(root, path, item['bytes'])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/w1_qrom_implementation_audit.py", line 95, in bounded_file
+    require(len(data) <= limit, f'input exceeds bound: {relative}')
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/w1_qrom_implementation_audit.py", line 57, in require
+    raise AuditError(reason)
+w1_qrom_implementation_audit.AuditError: input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs
+
+======================================================================
+ERROR: test_import_cache_and_search_path_cannot_replace_checked_helper_bytes (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_import_cache_and_search_path_cannot_replace_checked_helper_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_implementation_audit.py", line 94, in test_import_cache_and_search_path_cannot_replace_checked_helper_bytes
+    report = audit.build_report(self.root)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/w1_qrom_implementation_audit.py", line 289, in build_report
+    project = load_pinned_files(root, contract['project_files'])
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/w1_qrom_implementation_audit.py", line 119, in load_pinned_files
+    data = bounded_file(root, path, item['bytes'])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/w1_qrom_implementation_audit.py", line 95, in bounded_file
+    require(len(data) <= limit, f'input exceeds bound: {relative}')
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/w1_qrom_implementation_audit.py", line 57, in require
+    raise AuditError(reason)
+w1_qrom_implementation_audit.AuditError: input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs
+
+======================================================================
+FAIL: test_changed_seal_word_is_rejected_by_full_artifact_identity (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_changed_seal_word_is_rejected_by_full_artifact_identity)
+----------------------------------------------------------------------
+w1_qrom_implementation_audit.AuditError: input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_implementation_audit.py", line 106, in test_changed_seal_word_is_rejected_by_full_artifact_identity
+    with self.assertRaisesRegex(audit.AuditError, 'pinned input drift'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "pinned input drift" does not match "input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs"
+
+======================================================================
+FAIL: test_changed_source_snapshot_is_refused (test_w1_qrom_implementation_audit.ImplementationAuditTests.test_changed_source_snapshot_is_refused)
+----------------------------------------------------------------------
+w1_qrom_implementation_audit.AuditError: input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/consensus-pq/scripts/ci/test_w1_qrom_implementation_audit.py", line 125, in test_changed_source_snapshot_is_refused
+    with self.assertRaisesRegex(audit.AuditError, 'pinned input drift'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "pinned input drift" does not match "input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs"
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.165s
+
+FAILED (failures=2, errors=2)

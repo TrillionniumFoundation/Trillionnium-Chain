@@ -1,0 +1,78 @@
+test_source_kind_relations_and_complete_schema_are_required (__main__.CommandBindingTests.test_source_kind_relations_and_complete_schema_are_required) ... 
+  test_source_kind_relations_and_complete_schema_are_required (__main__.CommandBindingTests.test_source_kind_relations_and_complete_schema_are_required) (changed={'candidate': '43e0769c79e685228f9bc29b310bac9b599cd075'}) ... FAIL
+  test_source_kind_relations_and_complete_schema_are_required (__main__.CommandBindingTests.test_source_kind_relations_and_complete_schema_are_required) (changed={'base': '86c6337b3ec1330efbfff7b2c6af645e089d9a32'}) ... FAIL
+  test_source_kind_relations_and_complete_schema_are_required (__main__.CommandBindingTests.test_source_kind_relations_and_complete_schema_are_required) (changed={'prospective_merge': '18656946e73a66ec5529a3c19e762c5824636bff'}) ... FAIL
+  test_source_kind_relations_and_complete_schema_are_required (__main__.CommandBindingTests.test_source_kind_relations_and_complete_schema_are_required) (changed={'kind': 'prospective-merge', 'base': 'ed8a834cc13844c4b1041afe593320820f6084e5', 'prospective_merge': 'aea3f0ac07d03d2b300ce9edb06a3d4af280e9bd'}) ... FAIL
+  test_source_kind_relations_and_complete_schema_are_required (__main__.CommandBindingTests.test_source_kind_relations_and_complete_schema_are_required) (missing='candidate') ... FAIL
+  test_source_kind_relations_and_complete_schema_are_required (__main__.CommandBindingTests.test_source_kind_relations_and_complete_schema_are_required) (missing='base') ... FAIL
+  test_source_kind_relations_and_complete_schema_are_required (__main__.CommandBindingTests.test_source_kind_relations_and_complete_schema_are_required) (missing='prospective_merge') ... FAIL
+test_success_status_cannot_hide_original_recorder_error (__main__.CommandBindingTests.test_success_status_cannot_hide_original_recorder_error) ... FAIL
+
+======================================================================
+FAIL: test_source_kind_relations_and_complete_schema_are_required (__main__.CommandBindingTests.test_source_kind_relations_and_complete_schema_are_required) (changed={'candidate': '43e0769c79e685228f9bc29b310bac9b599cd075'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/chain/scripts/ci/test_chain_hepta_command_binding.py", line 135, in test_source_kind_relations_and_complete_schema_are_required
+    self.assertIn("RAW_COMMAND_SOURCE_UNVERIFIED", row["raw_result_conflicts"])
+AssertionError: 'RAW_COMMAND_SOURCE_UNVERIFIED' not found in []
+
+======================================================================
+FAIL: test_source_kind_relations_and_complete_schema_are_required (__main__.CommandBindingTests.test_source_kind_relations_and_complete_schema_are_required) (changed={'base': '86c6337b3ec1330efbfff7b2c6af645e089d9a32'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/chain/scripts/ci/test_chain_hepta_command_binding.py", line 135, in test_source_kind_relations_and_complete_schema_are_required
+    self.assertIn("RAW_COMMAND_SOURCE_UNVERIFIED", row["raw_result_conflicts"])
+AssertionError: 'RAW_COMMAND_SOURCE_UNVERIFIED' not found in []
+
+======================================================================
+FAIL: test_source_kind_relations_and_complete_schema_are_required (__main__.CommandBindingTests.test_source_kind_relations_and_complete_schema_are_required) (changed={'prospective_merge': '18656946e73a66ec5529a3c19e762c5824636bff'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/chain/scripts/ci/test_chain_hepta_command_binding.py", line 135, in test_source_kind_relations_and_complete_schema_are_required
+    self.assertIn("RAW_COMMAND_SOURCE_UNVERIFIED", row["raw_result_conflicts"])
+AssertionError: 'RAW_COMMAND_SOURCE_UNVERIFIED' not found in []
+
+======================================================================
+FAIL: test_source_kind_relations_and_complete_schema_are_required (__main__.CommandBindingTests.test_source_kind_relations_and_complete_schema_are_required) (changed={'kind': 'prospective-merge', 'base': 'ed8a834cc13844c4b1041afe593320820f6084e5', 'prospective_merge': 'aea3f0ac07d03d2b300ce9edb06a3d4af280e9bd'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/chain/scripts/ci/test_chain_hepta_command_binding.py", line 135, in test_source_kind_relations_and_complete_schema_are_required
+    self.assertIn("RAW_COMMAND_SOURCE_UNVERIFIED", row["raw_result_conflicts"])
+AssertionError: 'RAW_COMMAND_SOURCE_UNVERIFIED' not found in []
+
+======================================================================
+FAIL: test_source_kind_relations_and_complete_schema_are_required (__main__.CommandBindingTests.test_source_kind_relations_and_complete_schema_are_required) (missing='candidate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/chain/scripts/ci/test_chain_hepta_command_binding.py", line 143, in test_source_kind_relations_and_complete_schema_are_required
+    self.assertIn("RAW_COMMAND_SOURCE_UNVERIFIED", self.review(receipt)["raw_result_conflicts"])
+AssertionError: 'RAW_COMMAND_SOURCE_UNVERIFIED' not found in []
+
+======================================================================
+FAIL: test_source_kind_relations_and_complete_schema_are_required (__main__.CommandBindingTests.test_source_kind_relations_and_complete_schema_are_required) (missing='base')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/chain/scripts/ci/test_chain_hepta_command_binding.py", line 143, in test_source_kind_relations_and_complete_schema_are_required
+    self.assertIn("RAW_COMMAND_SOURCE_UNVERIFIED", self.review(receipt)["raw_result_conflicts"])
+AssertionError: 'RAW_COMMAND_SOURCE_UNVERIFIED' not found in []
+
+======================================================================
+FAIL: test_source_kind_relations_and_complete_schema_are_required (__main__.CommandBindingTests.test_source_kind_relations_and_complete_schema_are_required) (missing='prospective_merge')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/chain/scripts/ci/test_chain_hepta_command_binding.py", line 143, in test_source_kind_relations_and_complete_schema_are_required
+    self.assertIn("RAW_COMMAND_SOURCE_UNVERIFIED", self.review(receipt)["raw_result_conflicts"])
+AssertionError: 'RAW_COMMAND_SOURCE_UNVERIFIED' not found in []
+
+======================================================================
+FAIL: test_success_status_cannot_hide_original_recorder_error (__main__.CommandBindingTests.test_success_status_cannot_hide_original_recorder_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3a200666069f/chain/scripts/ci/test_chain_hepta_command_binding.py", line 147, in test_success_status_cannot_hide_original_recorder_error
+    self.assertIn("RAW_COMMAND_ERROR_PRESENT", row["raw_result_conflicts"])
+AssertionError: 'RAW_COMMAND_ERROR_PRESENT' not found in []
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.007s
+
+FAILED (failures=8)

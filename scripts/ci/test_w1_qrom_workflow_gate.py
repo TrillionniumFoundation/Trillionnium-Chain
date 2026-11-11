@@ -24,7 +24,7 @@ from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW = ROOT / '.github/workflows/pon-w1-qrom-implementation.yml'
-ROSTER = 'config/pon/w1-qrom-required-tests-v1.json'
+ROSTER = 'config/pon/w1-qrom-required-tests-v2.json'
 REQUIRED_STAGES = (
     'observations', 'checkout', 'source_before', 'preflight', 'named_tests',
     'implementation', 'budget_unknown', 'budget_hypothetical',
@@ -35,7 +35,7 @@ BASE = 'b' * 40
 
 sys.path.insert(0, str(ROOT / 'scripts'))
 import w1_qrom_conditional_budget as budget
-import w1_qrom_implementation_audit as implementation
+import w1_qrom_implementation_audit_v2 as implementation
 
 
 def embedded_python(workflow: str, step_id: str) -> str:
@@ -382,6 +382,36 @@ class WorkflowGateTests(unittest.TestCase):
         for mutation in (true_implementation, zero_qualification, inferred_bits, full_theorem, latest_revision):
             with self.subTest(mutation=mutation.__name__):
                 self.assert_scope_rejected(mutation)
+
+        for key in ('new_native_once_route_qualified', 'funded_service_decoder_qualified',
+                    'whole_source_and_build_equivalence_proved'):
+            for value in (True, 0, None, 'false'):
+                with self.subTest(source_review=key, value=value):
+                    def change(reports, key=key, value=value):
+                        reports['implementation.json']['source_review'][key] = value
+                    self.assert_scope_rejected(change)
+            with self.subTest(missing_source_review=key):
+                def missing(reports, key=key):
+                    del reports['implementation.json']['source_review'][key]
+                self.assert_scope_rejected(missing)
+
+        changes = {
+            'historical_engine_sha256': '0' * 64,
+            'historical_contract_sha256': '0' * 64,
+            'historical_report_sha256': '0' * 64,
+            'selected_project_file_count': 16.0,
+            'unchanged_project_file_count': True,
+            'historical_route_byte_projection_reproduced': 1,
+            'historical_semantic_report_fields_reproduced': False,
+            'changed_paths': [],
+            'schema': 'TRNM-W1-QROM-SOURCE-TRANSITION0',
+            'unreviewed_source_qualified': False,
+        }
+        for key, value in changes.items():
+            with self.subTest(source_transition=key):
+                def change(reports, key=key, value=value):
+                    reports['implementation.json']['source_review'][key] = value
+                self.assert_scope_rejected(change)
 
 
 if __name__ == '__main__':

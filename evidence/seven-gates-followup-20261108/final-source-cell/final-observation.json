@@ -1,0 +1,83 @@
+{
+  "schema": "chain-hepta-cell-final-observation-v1",
+  "source": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "tree": "18175756871bf341586fc37be1b17a00ef1dd099",
+  "paired_hepta_source": "36d5eff44f4071bb1f250b1c7706dc690cf0a875",
+  "observed_scope": "local complete default-feature Cell package and named Python follow-up controls on final source; raw commands enumerated in summary.json",
+  "local_component_command_count": 17,
+  "all_requested_local_commands_passed": true,
+  "native": {
+    "library_passed": 450,
+    "integration_passed": 34,
+    "doctest_passed": 12,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 0,
+    "required_new_test_count": 51,
+    "uniquely_matched_successful_new_tests": 51,
+    "test_binary_count": 12,
+    "original_command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-data-availability",
+      "--",
+      "--test-threads=1"
+    ]
+  },
+  "python_control_counts": {
+    "command-binding": 13,
+    "qualification-reader": 48,
+    "w1-lifetime": 19,
+    "legacy-readback": 26,
+    "learning-join": 25
+  },
+  "source_coverage": {
+    "base": null,
+    "candidate": "bb026697a972521009bc133ae6ed2b653e18e931",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "bb026697a972521009bc133ae6ed2b653e18e931",
+    "tested_tree": "18175756871bf341586fc37be1b17a00ef1dd099",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2382494143,
+    "tracked_entries": 23515,
+    "tracked_worktree_verified": true
+  },
+  "source_before_after_unchanged": true,
+  "provider_toolchain_and_binary_bytes_unchanged": true,
+  "locked_default_all_features_and_fuzz_graphs_passed": true,
+  "workspace_format_passed": true,
+  "exact_source_blob_checks": 881,
+  "source_inventory_passed": true,
+  "original_32_command_campaign_executed_by_this_local_run": false,
+  "original_integrated_17_command_campaign_executed_by_this_local_run": false,
+  "strict_all_workspace_clippy_executed_by_this_local_run": false,
+  "whole_repository_copytree_check_executed_by_this_local_run": false,
+  "native_tests_executed_again_on_this_final_source": true,
+  "prior_candidate_results_relabelled": false,
+  "hepta_native_execution_owned_by_separate_run": true,
+  "prior_observation_archive": {
+    "file": "evidence-package-c66.tar.gz",
+    "sha256": "2bd14e354dc5da5aaa09135c4bc2e7600008ab697a3f45db632853a3965e770c",
+    "preserves": [
+      "missing-dependency native0 attempt",
+      "SIGKILL Clippy attempt",
+      "ENOSPC Clippy attempt",
+      "SQLite build-fence UNQUALIFIED observations"
+    ]
+  },
+  "full_learning_iteration_qualified": false,
+  "real_training_qualified": false,
+  "settlement_qualified": false,
+  "independent_wan_recovery_qualified": false,
+  "physical_device_loading_qualified": false,
+  "whole_chain_pq_qualified": false,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO"
+}

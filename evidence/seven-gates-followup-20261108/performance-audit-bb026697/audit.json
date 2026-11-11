@@ -1,0 +1,409 @@
+{
+  "schema": "trnm-performance-contract-read-only-audit-v1",
+  "observed_utc": "2026-11-08 18:16:21 UTC",
+  "qualification": "HOLD",
+  "repo": "TrillionniumFoundation/Trillionnium-Chain",
+  "pull_request": 817,
+  "source": {
+    "kind": "head",
+    "commit": "bb026697a972521009bc133ae6ed2b653e18e931",
+    "tree": "18175756871bf341586fc37be1b17a00ef1dd099",
+    "paired_hepta_commit": "36d5eff44f4071bb1f250b1c7706dc690cf0a875",
+    "prospective_merge": null,
+    "audited_local_source": "/workspace/scratch/3a200666069f/chain",
+    "declared_desktop_source": "/home/qian-qi/workspace/chain-seven-gates-20261108-3a20/source-exact",
+    "source_file_checks": [
+      {
+        "path": ".github/workflows/pon-native-campaign-qualification.yml",
+        "bytes": 22343,
+        "sha256": "1b1b2ab8331b8bb53874a6e9a4845facfa9d9717473a7c3732fb068a8d96b14a",
+        "equal_exact_committed_bytes": true
+      },
+      {
+        "path": ".github/workflows/pon-fixed-host-root-f0.yml",
+        "bytes": 17173,
+        "sha256": "89e5058056006cee4d24dcfe1afa52e991bd40959bfa19463878b0a7ad168093",
+        "equal_exact_committed_bytes": true
+      },
+      {
+        "path": ".github/workflows/pon-native-fullpath.yml",
+        "bytes": 5677,
+        "sha256": "8f5dc92659cb6c731a4d53e09b439179e5537851af1572e7db44d51174ca7ec6",
+        "equal_exact_committed_bytes": true
+      },
+      {
+        "path": "scripts/run_fixed_host_root_f0.py",
+        "bytes": 37318,
+        "sha256": "abf75f729dcb54d7c2bebf2c54c253c5164e801b7ebcc642bb8ba58290518cca",
+        "equal_exact_committed_bytes": true
+      },
+      {
+        "path": "scripts/read_original_native_campaign.py",
+        "bytes": 53880,
+        "sha256": "4381e3af6dac9ea2301cb78ff1761628a3b0e236750d1f291f4d51118c31b417",
+        "equal_exact_committed_bytes": true
+      },
+      {
+        "path": "scripts/pon_public_v3_phase_read.py",
+        "bytes": 69313,
+        "sha256": "deeadace0e557298728aa10f7636b340a86fe2bd705b2d0ebd0c9b17773f3482",
+        "equal_exact_committed_bytes": true
+      },
+      {
+        "path": "scripts/ci/run_native_phase_host.py",
+        "bytes": 18895,
+        "sha256": "0d3def84ec4d00fb15e040e14b7c1d8f26908e63eb03f363c4d4f8cb9a8aa7c7",
+        "equal_exact_committed_bytes": true
+      },
+      {
+        "path": "scripts/ci/run_fixed_root_phase_host.py",
+        "bytes": 27285,
+        "sha256": "f572b12727d119f7d1c1490d2a8c70de69e596155e20a837ebf94d19e24911e7",
+        "equal_exact_committed_bytes": true
+      },
+      {
+        "path": "scripts/ci/public_host_ci_observation.py",
+        "bytes": 5452,
+        "sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de",
+        "equal_exact_committed_bytes": true
+      },
+      {
+        "path": "scripts/ci/fixed_root_f0_resources.py",
+        "bytes": 10381,
+        "sha256": "43b86bdab5715917cd7e7140765099a75178815e730a66d438b820b9cb370a4a",
+        "equal_exact_committed_bytes": true
+      },
+      {
+        "path": "scripts/ci/finalize_fixed_root_f0.py",
+        "bytes": 17304,
+        "sha256": "608ba877822f706b82427398c5f90d5811be47ab02f37f7ae09a59b8c1771866",
+        "equal_exact_committed_bytes": true
+      },
+      {
+        "path": "scripts/ci/fixed_root_f0_ownership.py",
+        "bytes": 9980,
+        "sha256": "a6376e43166cd782a90ac782c1619ef6ec6cd5cbb8d25093aedaf870c2d5dba1",
+        "equal_exact_committed_bytes": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+        "bytes": 111313,
+        "sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf",
+        "equal_exact_committed_bytes": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs",
+        "bytes": 20219,
+        "sha256": "d7657fc6c5bd85b630cb4402846ef7e408cb30b7cf4466b4e9e16a67d018a5fd",
+        "equal_exact_committed_bytes": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs",
+        "bytes": 70379,
+        "sha256": "22ba99066afa5afee448e180d33d9b2b5ad6fb6bf7e46ecc42206df2dd7ccb11",
+        "equal_exact_committed_bytes": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_support.rs",
+        "bytes": 12378,
+        "sha256": "cbe45e3260db576700f84277683c293099968fae6b63031c9ba4e4dd197d71d9",
+        "equal_exact_committed_bytes": true
+      },
+      {
+        "path": "config/systemd/trnmponpublic.slice",
+        "bytes": 325,
+        "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+        "equal_exact_committed_bytes": true
+      },
+      {
+        "path": "docs/security/PUBLIC_V3_FIXED_HOST_ROOT_EXPERIMENT_R10.md",
+        "bytes": 16311,
+        "sha256": "92aaf6fb5a8396fc8f57839a76f9f80aed8447e5a9e524e594fa266f83b7cec6",
+        "equal_exact_committed_bytes": true
+      }
+    ]
+  },
+  "audit_actions": {
+    "source_modified": false,
+    "native_tests_executed": false,
+    "builds_executed": false,
+    "workflow_dispatched": false,
+    "system_services_changed": false,
+    "real_payments_made": false,
+    "downloaded_existing_fullpath_artifact": true
+  },
+  "existing_runs": [
+    {
+      "id": 42508015918,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42508015918",
+      "path": ".github/workflows/pon-native-campaign-qualification.yml",
+      "event": "pull_request",
+      "head_sha": "bb026697a972521009bc133ae6ed2b653e18e931",
+      "run_attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "updated_at": "2026-11-08T18:13:58Z"
+    },
+    {
+      "id": 42508015727,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42508015727",
+      "path": ".github/workflows/pon-native-fullpath.yml",
+      "event": "pull_request",
+      "head_sha": "bb026697a972521009bc133ae6ed2b653e18e931",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "updated_at": "2026-11-08T18:10:59Z"
+    }
+  ],
+  "f0_route": {
+    "runner_present": true,
+    "workflow_present_at_candidate": true,
+    "throughput_v1_present_at_candidate": false,
+    "uses_unmerged_804": false,
+    "matching_changed_paths_from_7e_base": [],
+    "automatic_f0_in_19_run_listing": false,
+    "default_branch": "main",
+    "default_branch_f0_file_http_status": 404,
+    "default_branch_original_campaign_file_http_status": 404,
+    "dispatch_api_attempted": false,
+    "usable_manual_dispatch_verified": false,
+    "note": "Do not infer a successful or refused workflow_dispatch API request from file presence checks; no dispatch was attempted."
+  },
+  "contract": {
+    "public_host": {
+      "cpu_max": "25000 100000",
+      "cpu_max_burst": "0",
+      "memory_max": "2147483648",
+      "memory_swap_max": "0",
+      "pids_max": "256",
+      "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice"
+    },
+    "controller": {
+      "cpu_max": "400000 100000",
+      "memory_max": "17179869184",
+      "nice": 10,
+      "minimum_affinity_cpus": 4,
+      "ancestor_limit_validation_required": true,
+      "limits_are_ceilings_not_reservations": true
+    },
+    "original_campaign": {
+      "selector": "separate_process_work_and_signed_confirmation_campaign",
+      "profile": "release",
+      "toolchain": "1.95.0",
+      "state_backend": "authenticated-v1",
+      "work_profile": "RawR14",
+      "planned_complete_runs": 3,
+      "modes": [
+        "baseline",
+        "from-zero",
+        "late-product"
+      ],
+      "attacker_processes": [
+        0,
+        24,
+        24
+      ],
+      "phase_seconds": 30,
+      "scheduled_seconds": [
+        1,
+        5,
+        9
+      ],
+      "seed_transfers": 1024,
+      "seed_blocks": 4,
+      "business_packets_per_phase": 21,
+      "business_transactions_per_phase": 3,
+      "confirmation_depth": 6,
+      "total_phase_observations": 9,
+      "total_packet_exposures": 189,
+      "total_confirmation_round_slots": 27,
+      "strict_four_second_slo_enforced_by_finite_pass": false,
+      "actual_finite_confirmation_deadline": "whole 30-second pressure window",
+      "fixed_host_launcher_requires_real_ci": true
+    },
+    "f0": {
+      "selector": "fixed_public_host_root_rejection_and_signed_confirmation_diagnostic",
+      "planned_complete_runs": 1,
+      "modes": [
+        "baseline",
+        "valid-work-root"
+      ],
+      "attacker_processes": [
+        0,
+        24
+      ],
+      "m06_workers": 1,
+      "phase_seconds": 30,
+      "scheduled_seconds": [
+        1,
+        5,
+        9
+      ],
+      "business_packets_per_phase": 21,
+      "business_transactions_per_phase": 3,
+      "total_packet_exposures": 42,
+      "total_confirmation_round_slots": 6,
+      "confirmation_depth": 6,
+      "four_second_slo_ns": 4000000000,
+      "strict_less_than": true,
+      "slo_from_scheduled_offset_including_lateness": true,
+      "source_controls_in_prepare": 7,
+      "native_execution_timeout_seconds": 540,
+      "controller_runtime_max_seconds": 600,
+      "phase_service_runtime_max_seconds": 300,
+      "qualification_flags_required_false": [
+        "original_campaign_qualified",
+        "work_profile_qualified",
+        "independent_operators",
+        "wan_qualified",
+        "production_candidate",
+        "production_activation"
+      ]
+    },
+    "preparation": {
+      "toolchain": "1.95.0",
+      "cargo_must_be_rustup_proxy_with_sibling_rustup": true,
+      "cargo_proxy": "/home/qian-qi/.cargo/bin/cargo",
+      "offline_locked_release": true,
+      "cargo_jobs": 2,
+      "clippy_timeout_seconds": 900,
+      "build_timeout_seconds": 1800,
+      "expected_compiler_profile": {
+        "debug_assertions": false,
+        "debuginfo": 0,
+        "opt_level": "3",
+        "overflow_checks": false,
+        "test": true
+      },
+      "retained_binary_mode": "0500",
+      "not_a_performance_run": true,
+      "honest_signing_search_and_execution_cost_measured_separately_from_phase_latency": true
+    }
+  },
+  "metrics": {
+    "qualified_goodput": null,
+    "qualified_end_to_end_business_tail_latency": null,
+    "sustainable_business_tps_source_field": null,
+    "existing_request_tail_statistics": [
+      "known_count",
+      "unknown_count",
+      "p50_nearest_rank_ns",
+      "p95_nearest_rank_ns",
+      "max_ns",
+      "p99_all_terminal_records_ns",
+      "p99_all_retained_entered_terminal_ns"
+    ],
+    "whole_request_population_p99_source_field": null,
+    "p99_guard": "All retained entered records must terminate with known durations; missing/unentered/lost population is not reconstructed.",
+    "f0_latency_samples_currently_observed_in_this_audit": 0,
+    "packet_ack_is_confirmation": false,
+    "packet_exposure_is_business_transaction": false,
+    "full_original_campaign_green_would_prove_strict_four_second_contract": false
+  },
+  "fullpath_existing_artifact": {
+    "id": 13628047668,
+    "name": "native-fullpath-bb026697a972521009bc133ae6ed2b653e18e931-1",
+    "bytes": 130012,
+    "zip_sha256": "d9e23a88ec31be8d73054eaa519456989fed309b4c5f9801989e5c2de45f6646",
+    "zip_sha256_matches_github_artifact_digest": true,
+    "member_count": 51,
+    "source_before": {
+      "base": null,
+      "candidate": "bb026697a972521009bc133ae6ed2b653e18e931",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "bb026697a972521009bc133ae6ed2b653e18e931",
+      "tested_tree": "18175756871bf341586fc37be1b17a00ef1dd099",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2382494143,
+      "tracked_entries": 23515,
+      "tracked_worktree_verified": true
+    },
+    "source_after": {
+      "base": null,
+      "candidate": "bb026697a972521009bc133ae6ed2b653e18e931",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "bb026697a972521009bc133ae6ed2b653e18e931",
+      "tested_tree": "18175756871bf341586fc37be1b17a00ef1dd099",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2382494143,
+      "tracked_entries": 23515,
+      "tracked_worktree_verified": true
+    },
+    "reader_summary": {
+      "overall_gate": "HOLD",
+      "security_gate": "HOLD",
+      "performance_gate": "COMPONENT_OBSERVATION_ONLY",
+      "scheduled": 4,
+      "recorded": 4,
+      "missing": [],
+      "recorded_unique_new_native_blocks": 1,
+      "timely_accepted_progress": 0,
+      "production_activation": false
+    },
+    "attempts": [
+      {
+        "id": "valid",
+        "status": "accepted",
+        "full_native_replay_observed": true,
+        "late_product_rejection_observed": false,
+        "last_canonical_depth": 0
+      },
+      {
+        "id": "duplicate",
+        "status": "duplicate",
+        "full_native_replay_observed": false,
+        "late_product_rejection_observed": false,
+        "last_canonical_depth": 0
+      },
+      {
+        "id": "late_product",
+        "status": "rejected",
+        "full_native_replay_observed": false,
+        "late_product_rejection_observed": true,
+        "last_canonical_depth": null
+      },
+      {
+        "id": "cancelled",
+        "status": "cancelled",
+        "full_native_replay_observed": false,
+        "late_product_rejection_observed": false,
+        "last_canonical_depth": null
+      }
+    ],
+    "collector": {
+      "manifest_sha256": "69cda388ecde5b4d0f3354379c2d79f8a565c20f8eaa51a09c2ad2d1e4e34b27",
+      "observations_sha256": "a67893e7c692d4fa1577b461894b5b76b6786d70499adebd9e45dfe33f60e611",
+      "observed_through_ns": 3245693669,
+      "output": "/home/runner/work/_temp/native-fullpath/processes",
+      "processes": 9,
+      "qualification": "HOLD",
+      "source_and_binary_unchanged": true
+    },
+    "source_is_head_not_prospective_merge": true
+  },
+  "effect_boundaries": {
+    "funding": "Development-network fixtures and deterministic development signing identities; paid_cpu_debit_ns is CPU credit settlement, not external monetary payment.",
+    "system_changes": "Fixed Host launchers may sudo-install the reviewed runtime slice, daemon-reload/start, and manage uniquely owned transient services in genuine authorized CI.",
+    "not_proved": [
+      "real financial payment",
+      "Hepta payment/adoption loop",
+      "external operation execution authority",
+      "independent WAN operators",
+      "full population goodput/tail",
+      "full build/load closure",
+      "eight-domain production PQ qualification"
+    ]
+  },
+  "remaining_actions": [
+    "Observe existing original campaign run 42508015918; do not dispatch a duplicate.",
+    "Preserve original failed/missing rows and exact artifact/source/binary bindings on completion.",
+    "Treat fullpath success only as correct component HOLD behavior.",
+    "Desktop may prepare exact F0 binary in isolated output/target; ordinary desktop cannot claim the CI-only fixed Host execution.",
+    "A complete same-source qualified business goodput/tail lane remains absent; do not import unmerged throughput-v1 results."
+  ]
+}

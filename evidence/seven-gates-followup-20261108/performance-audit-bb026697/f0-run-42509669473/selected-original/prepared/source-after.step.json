@@ -1,0 +1,28 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "bb026697a972521009bc133ae6ed2b653e18e931",
+    "--output",
+    "/home/runner/work/_temp/pon-fixed-host-root-f0-42509669473-1/prepared/source-after.json"
+  ],
+  "complete_success": true,
+  "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+  "elapsed_ns": 2388405527,
+  "elapsed_seconds": 2.388405527,
+  "error": null,
+  "name": "source-after",
+  "outer_stage_timeout_seconds": 120,
+  "returncode": 0,
+  "stderr": "source-after.stderr.log",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_truncated": false,
+  "stdout": "source-after.stdout.log",
+  "stdout_bytes": 423,
+  "stdout_sha256": "326ae5e61f108651760b3a27b42ae0d5091ec224be724d96fc622498e55a34aa",
+  "stdout_truncated": false
+}

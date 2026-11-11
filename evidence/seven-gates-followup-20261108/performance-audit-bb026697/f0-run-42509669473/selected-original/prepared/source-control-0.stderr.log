@@ -1,0 +1,12 @@
+
+thread 'phase_host::separate_broker_scope_clears_on_unwind_and_refuses_missing_actors' (5147) panicked at crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs:485:24:
+assertion `left == right` failed
+  left: 0
+ right: 24
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'phase_host::separate_broker_scope_clears_on_unwind_and_refuses_missing_actors' (5147) panicked at crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs:500:54:
+fixture unwind
+
+thread 'phase_host::separate_broker_scope_clears_on_unwind_and_refuses_missing_actors' (5147) panicked at crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs:469:9:
+one explicit broker scope

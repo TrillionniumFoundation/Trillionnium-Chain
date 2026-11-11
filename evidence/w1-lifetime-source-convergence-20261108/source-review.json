@@ -1,0 +1,201 @@
+{
+  "all_hash_calls_or_runtime_counts_preserved": false,
+  "changed_selected_files": [
+    "trillionnium/crates/trnm-pon-node/src/store.rs"
+  ],
+  "exact_byte_comparisons": [
+    {
+      "exact_bytes_utf8": "    pub(crate) fn verify(packet: Packet) -> Result<Self> {\n        let h = &packet.header;\n        let work = pon_work::verify(h.challenge(), h.work_task, h.target, &packet.proof)\n            .map_err(|e| Error::from(format!(\"WORK:{e:?}\")))?;\n        Ok(Self {\n            packet,\n            work,\n            owner_permit: None,\n        })\n    }\n",
+      "observation": "Complete native verifier keeps challenge, work_task, target and proof input expressions.",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "effb8360b32259be760bc28f27174042c6558522a2d959b9047e229b85aaafaf",
+      "signature": "    pub(crate) fn verify(packet: Packet) -> Result<Self> {",
+      "unchanged": true
+    },
+    {
+      "exact_bytes_utf8": "    pub(crate) fn verify_with_progress(\n        packet: Packet,\n        progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,\n    ) -> Result<Self> {\n        let h = &packet.header;\n        let work = pon_work::verify_with_progress(\n            h.challenge(),\n            h.work_task,\n            h.target,\n            &packet.proof,\n            progress,\n        )\n        .map_err(|error| match error {\n            pon_work::VerificationError::Relation(error) => Error::from(format!(\"WORK:{error:?}\")),\n            pon_work::VerificationError::Cancelled(error) => error,\n        })?;\n        Ok(Self {\n            packet,\n            work,\n            owner_permit: None,\n        })\n    }\n",
+      "observation": "Progress-aware complete native verifier and its exact inputs are unchanged.",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "3ef9e31ed96108b463963747f3a2b44d3a36b95a39a386e387b711ed24cb15fa",
+      "signature": "    pub(crate) fn verify_with_progress(",
+      "unchanged": true
+    },
+    {
+      "exact_bytes_utf8": "    pub(crate) fn verify_with_arithmetic_facts(\n        packet: Packet,\n        facts: &pon_work::arithmetic_facts::ArithmeticFactCache,\n        progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,\n        observation: &mut pon_work::arithmetic_facts::ArithmeticObservation,\n    ) -> Result<Self> {\n        let h = &packet.header;\n        let work = facts\n            .verify_with_observation(\n                h.challenge(),\n                h.work_task,\n                h.target,\n                &packet.proof,\n                progress,\n                observation,\n            )\n            .map_err(|error| match error {\n                pon_work::arithmetic_facts::FactError::Relation(error) => {\n                    Error::from(format!(\"WORK:{error:?}\"))\n                }\n                pon_work::arithmetic_facts::FactError::Cancelled(error) => error,\n                pon_work::arithmetic_facts::FactError::Unavailable => {\n                    Error::from(\"WORK_ARITHMETIC_FACTS_UNAVAILABLE\")\n                }\n            })?;\n        Ok(Self {\n            packet,\n            work,\n            owner_permit: None,\n        })\n    }\n",
+      "observation": "Arithmetic-fact path retains the same complete W1 input expressions.",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "320a8d24202819acef3619a0d8989c3f845157707455e12260fdd35f42004282",
+      "signature": "    pub(crate) fn verify_with_arithmetic_facts(",
+      "unchanged": true
+    },
+    {
+      "exact_bytes_utf8": "    fn key(challenge: Hash, task: Hash, target: Hash, bytes: &[u8]) -> Option<Hash> {\n        // The original verifier refuses a wrong width before reading proof\n        // bytes. An optional cache must not turn that constant-cost refusal\n        // into an unbounded hash over an attacker-controlled buffer.\n        if bytes.len() != PROOF_BYTES {\n            return None;\n        }\n        #[cfg(test)]\n        CACHE_KEY_PROOF_BYTES.with(|count| count.set(count.get() + bytes.len()));\n        Some(hash(\n            b\"w1-exact-invalid-math-v1\",\n            &[PROFILE.as_bytes(), &challenge, &task, &target, bytes],\n        ))\n    }\n",
+      "observation": "Optional negative-cache hash retains its tag, profile and complete proof/context inputs.",
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+      "sha256": "c0b06c7f41e76291318f22f233e036b01354c24839072d47dad68717e96e4759",
+      "signature": "    fn key(challenge: Hash, task: Hash, target: Hash, bytes: &[u8]) -> Option<Hash> {",
+      "unchanged": true
+    },
+    {
+      "exact_bytes_utf8": "    pub fn encode(&self) -> Vec<u8> {\n        let mut o = Vec::with_capacity(HEADER_BYTES);\n        o.extend(b\"PNH1\");\n        o.extend(1_u16.to_le_bytes());\n        for h in [self.network, self.parameters, self.parent] {\n            o.extend(h)\n        }\n        o.extend(self.height.to_le_bytes());\n        o.extend(self.timestamp.to_le_bytes());\n        for h in [\n            self.target,\n            self.miner,\n            self.transactions,\n            self.state,\n            self.receipts,\n            self.work_task,\n        ] {\n            o.extend(h)\n        }\n        o.extend(self.nonce.to_le_bytes());\n        o\n    }\n",
+      "observation": "PNH1 header byte grammar and field order are unchanged.",
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "sha256": "29f737c8946a2f30cdfeed8e6e4fc2c4293a90f378674aa11eeb27c5c58a462d",
+      "signature": "    pub fn encode(&self) -> Vec<u8> {",
+      "unchanged": true
+    },
+    {
+      "exact_bytes_utf8": "    pub fn challenge(&self) -> Hash {\n        hash(b\"challenge\", &[&self.encode()])\n    }\n",
+      "observation": "W1 challenge still hashes the exact encoded PNH1 header.",
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "sha256": "78d91b760d8cc968a1f8f66c1b27102e195ef5afd06b09bf51aab7d11a96ac9b",
+      "signature": "    pub fn challenge(&self) -> Hash {",
+      "unchanged": true
+    },
+    {
+      "exact_bytes_utf8": "        let work = parent\n            .work\n            .checked_add(consensus::required_work(h.target)?)?;",
+      "observation": "Admission still adds parent work and the complete header target required_work.",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "73136593c3057ae8db36a01071debd5d57b9aec438603932d91a7fbbdda5452c",
+      "unchanged": true
+    }
+  ],
+  "identical_selected_files": 19,
+  "native_tests_executed": false,
+  "new_selected_source": "7e044b65454f4c9ea505591727332acffb33e7e5",
+  "observed_changes": [
+    "Store gains task/demand/async observation modules and read-only reconciliation, with current admission and state-readback changes.",
+    "Optional rejection-cache wrappers add bounded reservation/storage metadata and path observations; they cannot mint VerifiedWork on a cache hit.",
+    "pon_wire payload_len accepts separately decoded funded-service task/decision payloads; Header encode/challenge bytes remain unchanged."
+  ],
+  "old_selected_source": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "production_activation": false,
+  "quantum_query_budget_instantiated": false,
+  "reviewed_diff_bytes": 50189,
+  "reviewed_diff_sha256": "55ff0a6ca7db39887367f8cd0e588ec58128a981ed3fb9aaf2c7655e32556033",
+  "schema": "trnm-w1-lifetime-source-review-v1",
+  "scope": "Only the selected source-survey statements and exact W1 call/input/credit expressions are reviewed; not all owner semantics or hash uses.",
+  "source_rows": [
+    {
+      "new_sha256": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3",
+      "old_sha256": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3",
+      "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+      "unchanged": true
+    },
+    {
+      "new_sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+      "old_sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+      "path": "trillionnium/Cargo.lock",
+      "unchanged": true
+    },
+    {
+      "new_sha256": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b",
+      "old_sha256": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b",
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+      "unchanged": true
+    },
+    {
+      "new_sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429",
+      "old_sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429",
+      "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+      "unchanged": true
+    },
+    {
+      "new_sha256": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a",
+      "old_sha256": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a",
+      "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+      "unchanged": true
+    },
+    {
+      "new_sha256": "7c404502cbcc358b95cbf4f5ae88a1582e144562790913266eba599e5da8341d",
+      "old_sha256": "7c404502cbcc358b95cbf4f5ae88a1582e144562790913266eba599e5da8341d",
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+      "unchanged": true
+    },
+    {
+      "new_sha256": "f8c65d541eeff28625f1028ab1ba1e9c8fa6dadc71cca39a1a7368da850b52cc",
+      "old_sha256": "f8c65d541eeff28625f1028ab1ba1e9c8fa6dadc71cca39a1a7368da850b52cc",
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs",
+      "unchanged": true
+    },
+    {
+      "new_sha256": "e6e322d670d28ca86c3c94a19bb3b5d53feab3265631d3c83a278e9d5892fb8e",
+      "old_sha256": "b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "unchanged": false
+    },
+    {
+      "new_sha256": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62",
+      "old_sha256": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62",
+      "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+      "unchanged": true
+    },
+    {
+      "new_sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+      "old_sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "unchanged": true
+    },
+    {
+      "new_sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+      "old_sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+      "path": "config/pon/devnet-v1.json",
+      "unchanged": true
+    },
+    {
+      "new_sha256": "d6b5c3b25f6cd8287de5b927f271d0436ffe736470eb914d02a8a17497ea0909",
+      "old_sha256": "d6b5c3b25f6cd8287de5b927f271d0436ffe736470eb914d02a8a17497ea0909",
+      "path": "formal/pon-nakamoto-v1/work_query_bound.py",
+      "unchanged": true
+    },
+    {
+      "new_sha256": "5a1a250680299561cb83b0b7d17ab57cf180e64277f981f5130cdf04e70aeb99",
+      "old_sha256": "5a1a250680299561cb83b0b7d17ab57cf180e64277f981f5130cdf04e70aeb99",
+      "path": "formal/pon-nakamoto-v1/w1_quantum_oracle.py",
+      "unchanged": true
+    },
+    {
+      "new_sha256": "b590ed91d491577c494a667a9271410b420dc35b7088705ef99982c2abd3b702",
+      "old_sha256": "b590ed91d491577c494a667a9271410b420dc35b7088705ef99982c2abd3b702",
+      "path": "formal/pon-nakamoto-v1/w1_quantum_restricted_oracle.py",
+      "unchanged": true
+    },
+    {
+      "new_sha256": "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f",
+      "old_sha256": "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f",
+      "path": "formal/pon-nakamoto-v1/quantum_oracle_resources.py",
+      "unchanged": true
+    },
+    {
+      "new_sha256": "8d7257c315da4590e463b6bdb49434d284c0239681d6d8e50759dafda42c456a",
+      "old_sha256": "8d7257c315da4590e463b6bdb49434d284c0239681d6d8e50759dafda42c456a",
+      "path": "formal/pon-nakamoto-v1/quantum_resource_clock.py",
+      "unchanged": true
+    },
+    {
+      "new_sha256": "4dd08a40f9719b6a8e310c65b63fc3af44b6d4fb6a6db83af296600334da747b",
+      "old_sha256": "4dd08a40f9719b6a8e310c65b63fc3af44b6d4fb6a6db83af296600334da747b",
+      "path": "formal/pon-nakamoto-v1/quantum_daa_model.py",
+      "unchanged": true
+    },
+    {
+      "new_sha256": "53048b6a7fd413bfb25abee86c4b7868be1c28364d43f53dc1bb2e40b14ae4b5",
+      "old_sha256": "53048b6a7fd413bfb25abee86c4b7868be1c28364d43f53dc1bb2e40b14ae4b5",
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs",
+      "unchanged": true
+    },
+    {
+      "new_sha256": "12cc991999f68d925f078888d1e18302739171ee6187bbeb2f3bfb17c19a88fc",
+      "old_sha256": "12cc991999f68d925f078888d1e18302739171ee6187bbeb2f3bfb17c19a88fc",
+      "path": "scripts/w1_fri_transcript_audit.py",
+      "unchanged": true
+    },
+    {
+      "new_sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354",
+      "old_sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354",
+      "path": "scripts/w1_qrom_implementation_audit.py",
+      "unchanged": true
+    }
+  ],
+  "whole_chain_pq_qualified": false
+}

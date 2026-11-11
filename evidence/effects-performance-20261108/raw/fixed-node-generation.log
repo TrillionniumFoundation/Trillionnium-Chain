@@ -1,0 +1,16 @@
+   Compiling curve25519-dalek v4.1.3
+   Compiling serde_derive v1.0.228
+   Compiling serde v1.0.228
+   Compiling ed25519-dalek v2.2.0
+   Compiling thiserror-impl v1.0.69
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/3a200666069f/effects_performance/chain/trillionnium/crates/trnm-sqlite-io-boundary)
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=["/workspace/scratch/5faaca703596/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib"]; observed=["/workspace/scratch/3a200666069f/effects_performance/target/debug", "/workspace/scratch/3a200666069f/effects_performance/target/debug/deps", "/workspace/scratch/5faaca703596/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib"]; allowed=["/workspace/scratch/3a200666069f/effects_performance/target/debug", "/workspace/scratch/3a200666069f/effects_performance/target/debug/deps", "/workspace/scratch/5faaca703596/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib", "/workspace/scratch/5faaca703596/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib"]
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/3a200666069f/effects_performance/chain/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/3a200666069f/effects_performance/chain/trillionnium/crates/trnm-service-settlement)
+   Compiling thiserror v1.0.69
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/3a200666069f/effects_performance/chain/trillionnium/crates/trnm-protocol)
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/3a200666069f/effects_performance/chain/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/3a200666069f/effects_performance/chain/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-release-bundle v0.1.0 (/workspace/scratch/3a200666069f/effects_performance/chain/trillionnium/crates/trnm-release-bundle)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/3a200666069f/effects_performance/chain/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/3a200666069f/effects_performance/chain/trillionnium/crates/trnm-pon-node)

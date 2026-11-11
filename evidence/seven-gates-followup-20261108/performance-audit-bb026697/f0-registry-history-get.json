@@ -1,0 +1,155 @@
+{
+  "schema": "f0-dispatch-registry-history-get-only-v1",
+  "observed_utc": "2026-11-08T18:20:41.690372+00:00",
+  "dispatch_attempted": false,
+  "results": [
+    {
+      "query": "workflows_page_2",
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows?per_page=100&page=2",
+      "exit_code": 0,
+      "response_sha256": "e42ab374d81c07cc2babb8a2f85d639c14b92af975ec58340e189a4745eddbb8",
+      "data": {
+        "total_count": 388,
+        "page_count": 100,
+        "matches": [
+          {
+            "id": 399731485,
+            "node_id": "W_kwDOTty1_c4X02sd",
+            "name": "PoN fixed Host ROOT F0 diagnostic",
+            "path": ".github/workflows/pon-fixed-host-root-f0.yml",
+            "state": "active",
+            "created_at": "2026-10-28T14:03:59.000-04:00",
+            "updated_at": "2026-10-28T14:03:59.000-04:00",
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/399731485",
+            "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/main/.github/workflows/pon-fixed-host-root-f0.yml",
+            "badge_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/workflows/PoN%20fixed%20Host%20ROOT%20F0%20diagnostic/badge.svg"
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "query": "workflows_page_3",
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows?per_page=100&page=3",
+      "exit_code": 0,
+      "response_sha256": "40ad8b4e369e46d2b8910158e22a5e996f8c32298b45223866d870b6f5dd0360",
+      "data": {
+        "total_count": 388,
+        "page_count": 100,
+        "matches": []
+      },
+      "stderr": ""
+    },
+    {
+      "query": "workflows_page_4",
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows?per_page=100&page=4",
+      "exit_code": 0,
+      "response_sha256": "d6298725eb32c35a41483206e3bfa9d064020e81122cb4f6ebee1f8bfcb5f7dc",
+      "data": {
+        "total_count": 388,
+        "page_count": 88,
+        "matches": []
+      },
+      "stderr": ""
+    },
+    {
+      "query": "previous_dispatch_runs",
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/399731485/runs?event=workflow_dispatch&per_page=5",
+      "exit_code": 0,
+      "response_sha256": "a2790a384d7d281e7395679000c35d27768d89dbd7052f725b8f4688beb59915",
+      "data": {
+        "total_count": 0,
+        "runs": []
+      },
+      "stderr": ""
+    },
+    {
+      "query": "current_head_f0_runs",
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/399731485/runs?head_sha=bb026697a972521009bc133ae6ed2b653e18e931&per_page=100",
+      "exit_code": 0,
+      "response_sha256": "a2790a384d7d281e7395679000c35d27768d89dbd7052f725b8f4688beb59915",
+      "data": {
+        "total_count": 0,
+        "runs": []
+      },
+      "stderr": ""
+    },
+    {
+      "query": "fixed_candidate_yaml",
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/contents/.github/workflows/pon-fixed-host-root-f0.yml?ref=bb026697a972521009bc133ae6ed2b653e18e931",
+      "exit_code": 0,
+      "response_sha256": "24c2854c79b37370eb6a5a4f75c40978f63e7037aa5c540ef79b1623b4b19e86",
+      "data": {
+        "path": ".github/workflows/pon-fixed-host-root-f0.yml",
+        "sha": "733184b54aba30ab56c5a076bcfefdea31e1e2b1",
+        "size": 17173,
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/bb026697a972521009bc133ae6ed2b653e18e931/.github/workflows/pon-fixed-host-root-f0.yml",
+        "file_sha256": "89e5058056006cee4d24dcfe1afa52e991bd40959bfa19463878b0a7ad168093",
+        "first_60_lines": [
+          "name: PoN fixed Host ROOT F0 diagnostic",
+          "on:",
+          "  # Bootstrap only this separately reviewed route from a same-repository PR.",
+          "  # A new dispatch-only workflow is unavailable before it reaches default branch.",
+          "  pull_request:",
+          "    paths:",
+          "      - .github/workflows/pon-fixed-host-root-f0.yml",
+          "      - scripts/run_fixed_host_root_f0.py",
+          "      - scripts/ci/run_fixed_root_phase_host.py",
+          "      - scripts/ci/fixed_root_f0_ownership.py",
+          "      - scripts/ci/fixed_root_f0_resources.py",
+          "      - scripts/ci/finalize_fixed_root_f0.py",
+          "      - scripts/ci/test_fixed_root_f0.py",
+          "      - scripts/ci/test_fixed_root_phase_host.py",
+          "      - scripts/ci/test_fixed_root_resources.py",
+          "      - scripts/ci/fixtures/fixed_root_f0_legacy_resource_counterexample.json",
+          "      - trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+          "      - trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs",
+          "      - trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host_resources.rs",
+          "      - trillionnium/crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs",
+          "      - docs/security/PUBLIC_V3_FIXED_HOST_ROOT_EXPERIMENT_R10.md",
+          "  workflow_dispatch:",
+          "permissions:",
+          "  contents: read",
+          "concurrency:",
+          "  group: pon-fixed-host-root-f0-${{ github.event.pull_request.number || github.ref }}",
+          "  cancel-in-progress: false",
+          "jobs:",
+          "  fixed-host-root-f0:",
+          "    name: F0 (x64, head, one baseline and one ROOT phase)",
+          "    if: >-",
+          "      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&",
+          "      (github.event_name == 'workflow_dispatch' ||",
+          "       (github.event_name == 'pull_request' &&",
+          "        github.event.pull_request.head.repo.full_name == github.repository &&",
+          "        github.event.pull_request.head.repo.fork == false))",
+          "    runs-on: ubuntu-24.04",
+          "    # Includes separately bounded dependency acquisition/build and always cleanup;",
+          "    # the actual native invocation remains a single 540-second outer cap.",
+          "    timeout-minutes: 100",
+          "    env:",
+          "      CI: \"true\"",
+          "      CARGO_INCREMENTAL: \"0\"",
+          "      CARGO_BUILD_JOBS: \"2\"",
+          "      RUST_TEST_THREADS: \"1\"",
+          "      PYTHONDONTWRITEBYTECODE: \"1\"",
+          "      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}",
+          "    steps:",
+          "      - name: Freeze all denominators before checkout or preparation",
+          "        id: reserve",
+          "        shell: bash",
+          "        run: |",
+          "          set -euo pipefail",
+          "          out=\"$RUNNER_TEMP/pon-fixed-host-root-f0-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT\"",
+          "          mkdir \"$out\"",
+          "          printf 'OUT=%s\\n' \"$out\" >> \"$GITHUB_ENV\"",
+          "          printf 'CARGO_HOME=%s/cargo-fixed-host-root-f0\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"",
+          "          printf 'CARGO_TARGET_DIR=%s/target-fixed-host-root-f0\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"",
+          "          export F0_PREDECLARED_OUT=\"$out\"",
+          "          python3 - <<'PY'"
+        ],
+        "expected_bytes_equal": true
+      },
+      "stderr": ""
+    }
+  ]
+}

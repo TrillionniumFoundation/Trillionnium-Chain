@@ -15,7 +15,8 @@ import unittest
 from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-import w1_qrom_implementation_audit as audit
+import w1_qrom_implementation_audit_v2 as audit
+import w1_qrom_implementation_audit as historical_audit
 import w1_control_tree_audit as control
 import w1_profile_source_map as profile
 
@@ -39,7 +40,7 @@ class ImplementationAuditTests(unittest.TestCase):
     def copy_contract_inputs(self):
         paths = [audit.CONTRACT, self.contract['upstream_snapshot']['path']]
         paths += [row['path'] for row in self.contract['project_files'] + self.contract['saved_v2_files']
-                  + self.contract['audit_helpers']]
+                  + self.contract['audit_helpers'] + self.contract['historical_inputs']]
         for relative in paths:
             target = self.root / relative
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -54,6 +55,7 @@ class ImplementationAuditTests(unittest.TestCase):
 
     def test_actual_saved_v2_mapping_keeps_all_security_claims_unqualified(self):
         report = audit.build_report(audit.ROOT)
+        self.assertEqual(report['schema'], 'TRNM-W1-QROM-IMPLEMENTATION-AUDIT2')
         self.assertEqual(report['result'], 'MAPPING_REPRODUCED_SECURITY_HOLD')
         self.assertEqual(report['qualification'], audit.QUALIFICATION)
         self.assertEqual(report['saved_v2']['historical_rv32im_segments'], 43)
@@ -72,10 +74,16 @@ class ImplementationAuditTests(unittest.TestCase):
 
     def test_changed_native_source_is_refused_before_mapping(self):
         self.copy_contract_inputs()
-        target = self.root / 'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs'
-        target.write_bytes(target.read_bytes() + b'\n// changed\n')
-        with self.assertRaisesRegex(audit.AuditError, 'input exceeds bound|pinned input drift'):
-            audit.build_report(self.root)
+        for path in sorted(audit.CHANGED_PATHS | {
+                'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs'}):
+            target = self.root / path
+            original = target.read_bytes()
+            changed = bytearray(original)
+            changed[100] ^= 1
+            target.write_bytes(changed)
+            with self.assertRaisesRegex(audit.AuditError, 'pinned input drift'):
+                audit.build_report(self.root)
+            target.write_bytes(original)
 
     def test_changed_audit_helper_is_refused_before_execution(self):
         self.copy_contract_inputs()
@@ -90,12 +98,69 @@ class ImplementationAuditTests(unittest.TestCase):
     def test_import_cache_and_search_path_cannot_replace_checked_helper_bytes(self):
         self.copy_contract_inputs()
         with mock.patch.object(profile, 'extract_stark_parameters', return_value={'QUERIES': 1}), \
-                mock.patch.object(control, 'audit_sources', side_effect=AssertionError('wrong import')):
+                mock.patch.object(control, 'audit_sources', side_effect=AssertionError('wrong import')), \
+                mock.patch.object(historical_audit, 'inspect_v2', side_effect=AssertionError('wrong engine')):
             report = audit.build_report(self.root)
         self.assertEqual(report['stark_parameters']['QUERIES'], 50)
         self.assertEqual(report['control_tree']['root'], audit.CONTROL_ROOT)
         self.assertEqual(report['helper_execution']['sources'], self.contract['audit_helpers'])
         self.assertFalse(report['helper_execution']['upstream_source_executed'])
+
+    def test_version_two_transition_preserves_exact_historical_projection_and_unknowns(self):
+        report = audit.build_report(audit.ROOT)
+        scope = report['source_review']
+        self.assertEqual(scope['changed_paths'], sorted(audit.CHANGED_PATHS))
+        self.assertEqual(scope['selected_project_file_count'], 16)
+        self.assertEqual(scope['unchanged_project_file_count'], 14)
+        self.assertTrue(scope['historical_route_byte_projection_reproduced'])
+        self.assertTrue(scope['historical_semantic_report_fields_reproduced'])
+        for key in ('new_native_once_route_qualified', 'funded_service_decoder_qualified',
+                    'whole_source_and_build_equivalence_proved'):
+            self.assertIs(scope[key], False)
+        inputs = audit.load_pinned_files(audit.ROOT, self.contract['historical_inputs'])
+        review = audit.strict_json(inputs[audit.SOURCE_REVIEW])
+        project = audit.load_pinned_files(audit.ROOT, self.contract['project_files'])
+        for path in sorted(audit.CHANGED_PATHS):
+            mutated = dict(project)
+            data = bytearray(mutated[path])
+            data[0] ^= 1  # The preserved part cannot drift behind unchanged review metadata.
+            mutated[path] = bytes(data)
+            with self.assertRaisesRegex(audit.AuditError, 'historical source projection differs'):
+                audit.verify_reviewed_source_projection(mutated, review)
+
+        inspect = audit.inspect_v2
+        for key, value in (('fresh_cryptographic_verification', 0),
+                           ('control_inclusion_matches_reconstructed_tree', 1),
+                           ('outer_recursion_seal_po2_raw', 18.0)):
+            def producer_regression(*args, key=key, value=value):
+                observed = inspect(*args)
+                observed[key] = value
+                return observed
+            with self.subTest(historical_json_type=key), \
+                    mock.patch.object(audit, 'inspect_v2', side_effect=producer_regression), \
+                    self.assertRaisesRegex(audit.AuditError, 'historical semantic mapping fields changed'):
+                audit.build_report(audit.ROOT)
+
+    def test_historical_engine_contract_report_and_review_remain_immutable_inputs(self):
+        self.copy_contract_inputs()
+        for row in self.contract['historical_inputs']:
+            target = self.root / row['path']
+            original = target.read_bytes()
+            mutated = bytearray(original)
+            mutated[len(mutated) // 2] ^= 1
+            target.write_bytes(mutated)
+            with self.assertRaisesRegex(audit.AuditError,
+                                        'pinned input drift|unsupported implementation contract'):
+                audit.build_report(self.root)
+            target.write_bytes(original)
+
+    def test_version_one_contract_still_refuses_the_changed_sources(self):
+        self.assertEqual(historical_audit.CONTRACT,
+                         'config/pon/w1-qrom-implementation-v1.json')
+        self.assertEqual(audit.sha((audit.ROOT / audit.ENGINE).read_bytes()), audit.ENGINE_SHA256)
+        with self.assertRaisesRegex(historical_audit.AuditError,
+                                    'input exceeds bound|pinned input drift'):
+            historical_audit.build_report(audit.ROOT)
 
     def test_changed_seal_word_is_rejected_by_full_artifact_identity(self):
         self.copy_contract_inputs()

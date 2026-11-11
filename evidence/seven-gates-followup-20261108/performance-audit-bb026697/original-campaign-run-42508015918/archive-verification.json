@@ -1,0 +1,12 @@
+{
+  "all_checks_completed": false,
+  "completed_utc": "2026-11-08T18:35:58.613273+00:00",
+  "failure": "ValueError: auditor repository head",
+  "head": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "host_custody_authenticated": false,
+  "native_execution_performed": false,
+  "qualification": "HOLD",
+  "schema": "trnm-original-campaign-archive-verification-v1",
+  "started_utc": "2026-11-08T18:35:58.608627+00:00",
+  "tree": "18175756871bf341586fc37be1b17a00ef1dd099"
+}

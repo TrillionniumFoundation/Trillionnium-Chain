@@ -1,0 +1,119 @@
+{
+  "schema": "trnm-f0-dispatch-preconditions-read-only-v1",
+  "observed_utc": "2026-11-08T18:20:41.690372+00:00",
+  "source_commit": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "source_tree": "18175756871bf341586fc37be1b17a00ef1dd099",
+  "repo": "TrillionniumFoundation/Trillionnium-Chain",
+  "authenticated_read_actor": "ProfHepta",
+  "workflow": {
+    "id": 399731485,
+    "node_id": "W_kwDOTty1_c4X02sd",
+    "name": "PoN fixed Host ROOT F0 diagnostic",
+    "path": ".github/workflows/pon-fixed-host-root-f0.yml",
+    "state": "active",
+    "created_at": "2026-10-28T14:03:59.000-04:00",
+    "updated_at": "2026-10-28T14:03:59.000-04:00",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/399731485",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/main/.github/workflows/pon-fixed-host-root-f0.yml",
+    "badge_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/workflows/PoN%20fixed%20Host%20ROOT%20F0%20diagnostic/badge.svg"
+  },
+  "workflow_collection": {
+    "total_count": 388,
+    "read_pages": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "page_sizes": [
+      100,
+      100,
+      100,
+      88
+    ],
+    "matching_pages": [
+      2
+    ],
+    "matching_registered_entries": 1
+  },
+  "candidate_yaml": {
+    "blob_sha": "733184b54aba30ab56c5a076bcfefdea31e1e2b1",
+    "bytes": 17173,
+    "sha256": "89e5058056006cee4d24dcfe1afa52e991bd40959bfa19463878b0a7ad168093",
+    "matches_exact_local_candidate": true,
+    "workflow_dispatch_declared": true,
+    "inputs": {},
+    "required_inputs": [],
+    "default_inputs": {},
+    "dispatch_expected_head_expression": "github.event.pull_request.head.sha || github.sha",
+    "separate_expected_head_input": false
+  },
+  "branch_ref": {
+    "ref": "refs/heads/fix/chain-seven-gates-followup-20261108-3a20",
+    "object": {
+      "sha": "bb026697a972521009bc133ae6ed2b653e18e931",
+      "type": "commit",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/bb026697a972521009bc133ae6ed2b653e18e931"
+    },
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs/heads/fix/chain-seven-gates-followup-20261108-3a20"
+  },
+  "deduplication": {
+    "workflow_id": 399731485,
+    "head_sha": "bb026697a972521009bc133ae6ed2b653e18e931",
+    "all_events_all_statuses_count": 0,
+    "head_query": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/399731485/runs?head_sha=bb026697a972521009bc133ae6ed2b653e18e931&per_page=100",
+    "all_historical_dispatch_count": 0
+  },
+  "request_preconditions_verified": true,
+  "dispatch_sent_by_this_audit": false,
+  "dispatch_api_acceptance_observed_by_this_audit": false,
+  "api_body": {
+    "ref": "fix/chain-seven-gates-followup-20261108-3a20"
+  },
+  "exact_argv": [
+    "/usr/bin/gh",
+    "workflow",
+    "run",
+    "399731485",
+    "--repo",
+    "TrillionniumFoundation/Trillionnium-Chain",
+    "--ref",
+    "fix/chain-seven-gates-followup-20261108-3a20"
+  ],
+  "post_dispatch_required": {
+    "head_sha": "bb026697a972521009bc133ae6ed2b653e18e931",
+    "workflow_id": 399731485,
+    "event": "workflow_dispatch",
+    "exact_new_run_id_retained": true,
+    "keep_failed_and_partial_results": true,
+    "blind_retry_prohibited_when_outcome_unknown": true
+  },
+  "main_file_absence": {
+    "http_status": 404,
+    "preserved": true,
+    "proves_dispatch_registration_absent": false
+  },
+  "effect_scope": {
+    "github_token_permissions": {
+      "contents": "read"
+    },
+    "deployment": false,
+    "production_activation": false,
+    "real_money_payments": false,
+    "repository_push": false,
+    "credentials_configuration_change": false,
+    "actions_internal_credentials_used": true,
+    "ci_compute_and_artifact_storage_consumed": true,
+    "hosted_runner_runtime_slice_and_owned_services_changed": true,
+    "max_job_minutes": 100,
+    "controller_max_seconds": 600,
+    "native_invocation_max_seconds": 540,
+    "phase_service_max_seconds": 300,
+    "artifact_retention_days": 30
+  },
+  "qualification": "HOLD",
+  "remote_read_jobs": [
+    "1a1bc62c1c0-138b0-225",
+    "1a1bc63ec1d-138b0-22a"
+  ]
+}

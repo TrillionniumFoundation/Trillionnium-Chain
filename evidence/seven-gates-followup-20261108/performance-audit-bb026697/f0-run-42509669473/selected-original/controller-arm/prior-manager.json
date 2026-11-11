@@ -1,0 +1,17 @@
+{
+  "ActiveState": "inactive",
+  "ControlGroup": "",
+  "Description": "trnm-fixed-root-f0-42509669473-1-fixed-host-root-f0.service",
+  "Group": "",
+  "Id": "trnm-fixed-root-f0-42509669473-1-fixed-host-root-f0.service",
+  "InvocationID": "",
+  "KillMode": "control-group",
+  "LoadState": "not-found",
+  "MainPID": "0",
+  "Restart": "no",
+  "Slice": "",
+  "SubState": "dead",
+  "Transient": "no",
+  "User": "",
+  "WorkingDirectory": ""
+}

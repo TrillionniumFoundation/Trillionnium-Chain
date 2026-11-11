@@ -1,0 +1,4 @@
+{"exit_code": 0, "receipt": "/tmp/trnm-pq-command-control-x9w0_cm9/records/control.json", "status": "command_succeeded"}
+{"exit_code": 3, "receipt": "/tmp/trnm-pq-command-control-p6o552i7/records/control.json", "status": "command_failed"}
+{"exit_code": 7, "receipt": "/tmp/trnm-pq-command-control-v9p5nrhx/records/control.json", "status": "command_failed"}
+{"exit_code": 0, "receipt": "/tmp/trnm-pq-command-control-wlo565ma/records/control.json", "status": "record_failed"}

@@ -1,0 +1,429 @@
+{
+  "all_controller_resource_boundaries": [
+    {
+      "complete": false,
+      "phase": "baseline",
+      "stage": "before_launch",
+      "status": "unobserved"
+    },
+    {
+      "complete": false,
+      "phase": "baseline",
+      "stage": "actors_ready",
+      "status": "unobserved"
+    },
+    {
+      "complete": false,
+      "phase": "baseline",
+      "stage": "after_reap",
+      "status": "unobserved"
+    },
+    {
+      "complete": false,
+      "phase": "valid-work-root",
+      "stage": "before_launch",
+      "status": "unobserved"
+    },
+    {
+      "complete": false,
+      "phase": "valid-work-root",
+      "stage": "actors_ready",
+      "status": "unobserved"
+    },
+    {
+      "complete": false,
+      "phase": "valid-work-root",
+      "stage": "after_reap",
+      "status": "unobserved"
+    }
+  ],
+  "all_planned_business_packets": [
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 0,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 1,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 2,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 3,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 4,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 5,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 6,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 7,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 8,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 9,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 10,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 11,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 12,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 13,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 14,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 15,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 16,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 17,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 18,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 19,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 20,
+      "phase": "baseline",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 0,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 1,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 2,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 3,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 4,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 5,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 6,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 7,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 8,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 9,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 10,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 11,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 12,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 13,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 14,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 15,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 16,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 17,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 18,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 19,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    },
+    {
+      "ack_is_not_confirmation": true,
+      "observed_attempts": 0,
+      "packet_index": 20,
+      "phase": "valid-work-root",
+      "timely_network_ack": false
+    }
+  ],
+  "all_planned_rounds": [
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "four_second_slo_met": false,
+      "phase": "baseline",
+      "round": 0,
+      "scheduled_offset_ns": 1000000000,
+      "status": "unobserved"
+    },
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "four_second_slo_met": false,
+      "phase": "baseline",
+      "round": 1,
+      "scheduled_offset_ns": 5000000000,
+      "status": "unobserved"
+    },
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "four_second_slo_met": false,
+      "phase": "baseline",
+      "round": 2,
+      "scheduled_offset_ns": 9000000000,
+      "status": "unobserved"
+    },
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "four_second_slo_met": false,
+      "phase": "valid-work-root",
+      "round": 0,
+      "scheduled_offset_ns": 1000000000,
+      "status": "unobserved"
+    },
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "four_second_slo_met": false,
+      "phase": "valid-work-root",
+      "round": 1,
+      "scheduled_offset_ns": 5000000000,
+      "status": "unobserved"
+    },
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "four_second_slo_met": false,
+      "phase": "valid-work-root",
+      "round": 2,
+      "scheduled_offset_ns": 9000000000,
+      "status": "unobserved"
+    }
+  ],
+  "controller_ceiling_is_not_reserved_physical_capacity": true,
+  "controller_resource_schema": "fixed-host-root-controller-resources-v1",
+  "controller_resources_complete": false,
+  "created_utc": "2026-11-08T18:53:26.122352+00:00",
+  "f1_implemented": false,
+  "head": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "independent_wan_qualification": false,
+  "job_id": "fixed-host-root-f0",
+  "native_execution_observed": false,
+  "new_f0_four_second_slo_ns": 4000000000,
+  "old_root_per_round_four_second_predicate_existed": false,
+  "paid_burst_ns": 2000000000,
+  "paid_refill_ns_per_second": 250000000,
+  "per_actor_rss_qualified": false,
+  "phase_window_ns": 30000000000,
+  "planned_business_packet_exposures": 42,
+  "planned_complete_runs": 1,
+  "planned_confirmations": 6,
+  "planned_controller_resource_boundary_samples": 6,
+  "planned_phases": [
+    "baseline",
+    "valid-work-root"
+  ],
+  "production_activation": false,
+  "public_host": {
+    "cpu_max": "25000 100000",
+    "memory_max": "2147483648"
+  },
+  "run_attempt": "1",
+  "run_id": "42509669473",
+  "schema": "fixed-host-root-f0-workflow-predeclaration-v1",
+  "selector": "fixed_public_host_root_rejection_and_signed_confirmation_diagnostic",
+  "selector_invocation_attempted": false,
+  "service_remaining": "unknown",
+  "slo_from_scheduled_time_includes_queue_and_final_observer": true,
+  "source_kind": "event-head",
+  "tree": null
+}

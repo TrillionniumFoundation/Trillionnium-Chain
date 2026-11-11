@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/home/runner/.cargo/bin/rustup",
+    "run",
+    "1.95.0",
+    "rustc",
+    "-Vv"
+  ],
+  "complete_success": true,
+  "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+  "elapsed_ns": 11366389,
+  "elapsed_seconds": 0.011366389,
+  "error": null,
+  "name": "rustc-version",
+  "outer_stage_timeout_seconds": 60,
+  "returncode": 0,
+  "stderr": "rustc-version.stderr.log",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_truncated": false,
+  "stdout": "rustc-version.stdout.log",
+  "stdout_bytes": 196,
+  "stdout_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+  "stdout_truncated": false
+}

@@ -1,0 +1,514 @@
+[
+  {
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "stdout": "bb026697a972521009bc133ae6ed2b653e18e931\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "exit_code": 0,
+    "stdout": "18175756871bf341586fc37be1b17a00ef1dd099\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "ls-tree",
+      "-r",
+      "--name-only",
+      "bb026697a972521009bc133ae6ed2b653e18e931",
+      "--",
+      "trillionnium/crates/trnm-release-bundle"
+    ],
+    "exit_code": 0,
+    "stdout": "trillionnium/crates/trnm-release-bundle/Cargo.toml\ntrillionnium/crates/trnm-release-bundle/README.md\ntrillionnium/crates/trnm-release-bundle/src/content_v1.rs\ntrillionnium/crates/trnm-release-bundle/src/content_v1/tests.rs\ntrillionnium/crates/trnm-release-bundle/src/lib.rs\ntrillionnium/crates/trnm-release-bundle/src/pq_release.rs\ntrillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum.rs\ntrillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum_tests.rs\ntrillionnium/crates/trnm-release-bundle/src/pq_release/current_tests.rs\ntrillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material.rs\ntrillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material_tests.rs\ntrillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs\ntrillionnium/crates/trnm-release-bundle/src/pq_release/retained_verifier_tests.rs\ntrillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs\ntrillionnium/crates/trnm-release-bundle/src/pq_release/validated_root_tests.rs\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "155c8e3a8c188ba113accb4079e9ad344d5c63a1",
+      "7e044b65454f4c9ea505591727332acffb33e7e5"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "7e044b65454f4c9ea505591727332acffb33e7e5",
+      "bb026697a972521009bc133ae6ed2b653e18e931"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "155c8e3a8c188ba113accb4079e9ad344d5c63a1^"
+    ],
+    "exit_code": 0,
+    "stdout": "12e510b211110d93d9ead07e02c07a1eecc28ae9\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "ls-tree",
+      "12e510b211110d93d9ead07e02c07a1eecc28ae9",
+      "--",
+      "trillionnium/crates/trnm-release-bundle/src/content_v1/tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "show",
+      "--format=fuller",
+      "--no-patch",
+      "155c8e3a8c188ba113accb4079e9ad344d5c63a1"
+    ],
+    "exit_code": 0,
+    "stdout": "commit 155c8e3a8c188ba113accb4079e9ad344d5c63a1\nAuthor:     Qian QI <102159240+ProfHepta@users.noreply.github.com>\nAuthorDate: Sun Nov 8 14:10:48 2026 +0800\nCommit:     Qian QI <102159240+ProfHepta@users.noreply.github.com>\nCommitDate: Sun Nov 8 14:10:48 2026 +0800\n\n    feat(security): bind CPQ1 authorization to complete content\n    \n    Add versioned SHA-512 commitments over actual state, release artifacts, model payloads and direct dependencies, and migration material. Join the full claim to pinned ML-DSA candidate verification without granting production authority.\n    \n    Preserve legacy locators and all HOLD/NO-GO qualification boundaries. Include exact-source native CI, independent framing vectors, source pins, and the independent fuzz lock dependency.\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "log",
+      "--format=%H %P %s",
+      "--follow",
+      "bb026697a972521009bc133ae6ed2b653e18e931",
+      "--",
+      "trillionnium/crates/trnm-release-bundle/src/content_v1/tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "155c8e3a8c188ba113accb4079e9ad344d5c63a1 12e510b211110d93d9ead07e02c07a1eecc28ae9 feat(security): bind CPQ1 authorization to complete content\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--name-status",
+      "7e044b65454f4c9ea505591727332acffb33e7e5",
+      "bb026697a972521009bc133ae6ed2b653e18e931",
+      "--",
+      "trillionnium/crates/trnm-release-bundle",
+      "evidence/pq-authority-preflight-20261108-9d315/authority-final-validation-runner.py",
+      "config/pon/pq-initial-root-material-required-tests-v1.json"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "7e044b65454f4c9ea505591727332acffb33e7e5:trillionnium/crates/trnm-release-bundle"
+    ],
+    "exit_code": 0,
+    "stdout": "326e561cfdf894b64c8115b538c78809278a80a6\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "bb026697a972521009bc133ae6ed2b653e18e931:trillionnium/crates/trnm-release-bundle"
+    ],
+    "exit_code": 0,
+    "stdout": "326e561cfdf894b64c8115b538c78809278a80a6\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "7e044b65454f4c9ea505591727332acffb33e7e5:config/pon/pq-initial-root-material-required-tests-v1.json"
+    ],
+    "exit_code": 0,
+    "stdout": "0c14ebf5c70fb0f7ee823d324897e12fb41820c8\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "bb026697a972521009bc133ae6ed2b653e18e931:config/pon/pq-initial-root-material-required-tests-v1.json"
+    ],
+    "exit_code": 0,
+    "stdout": "0c14ebf5c70fb0f7ee823d324897e12fb41820c8\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "7e044b65454f4c9ea505591727332acffb33e7e5:evidence/pq-authority-preflight-20261108-9d315/authority-final-validation-runner.py"
+    ],
+    "exit_code": 0,
+    "stdout": "1e1955540157c0b5378d3ab708199fa81678933e\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "bb026697a972521009bc133ae6ed2b653e18e931:evidence/pq-authority-preflight-20261108-9d315/authority-final-validation-runner.py"
+    ],
+    "exit_code": 0,
+    "stdout": "1e1955540157c0b5378d3ab708199fa81678933e\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "7e044b65454f4c9ea505591727332acffb33e7e5:trillionnium/crates/trnm-release-bundle/Cargo.toml"
+    ],
+    "exit_code": 0,
+    "stdout": "d3ca6d017b48fe5b99c1b360c136a4fabe294b55\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "bb026697a972521009bc133ae6ed2b653e18e931:trillionnium/crates/trnm-release-bundle/Cargo.toml"
+    ],
+    "exit_code": 0,
+    "stdout": "d3ca6d017b48fe5b99c1b360c136a4fabe294b55\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "7e044b65454f4c9ea505591727332acffb33e7e5:trillionnium/crates/trnm-release-bundle/README.md"
+    ],
+    "exit_code": 0,
+    "stdout": "e09e3cfa25e09092a6c07b65ee7f017d8a6b7946\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "bb026697a972521009bc133ae6ed2b653e18e931:trillionnium/crates/trnm-release-bundle/README.md"
+    ],
+    "exit_code": 0,
+    "stdout": "e09e3cfa25e09092a6c07b65ee7f017d8a6b7946\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "7e044b65454f4c9ea505591727332acffb33e7e5:trillionnium/crates/trnm-release-bundle/src/content_v1.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "2a4b046f18a6142ae90f0232a741bc5f8aba87b2\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "bb026697a972521009bc133ae6ed2b653e18e931:trillionnium/crates/trnm-release-bundle/src/content_v1.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "2a4b046f18a6142ae90f0232a741bc5f8aba87b2\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "7e044b65454f4c9ea505591727332acffb33e7e5:trillionnium/crates/trnm-release-bundle/src/content_v1/tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "0e850dd1e82a8b0ec56d62eab554dd01cf9cfe77\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "bb026697a972521009bc133ae6ed2b653e18e931:trillionnium/crates/trnm-release-bundle/src/content_v1/tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "0e850dd1e82a8b0ec56d62eab554dd01cf9cfe77\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "155c8e3a8c188ba113accb4079e9ad344d5c63a1:trillionnium/crates/trnm-release-bundle/src/content_v1/tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "0e850dd1e82a8b0ec56d62eab554dd01cf9cfe77\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "7e044b65454f4c9ea505591727332acffb33e7e5:trillionnium/crates/trnm-release-bundle/src/lib.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "bf8395a48b3ed1236a3f4b0e72978356e08e34fc\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "bb026697a972521009bc133ae6ed2b653e18e931:trillionnium/crates/trnm-release-bundle/src/lib.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "bf8395a48b3ed1236a3f4b0e72978356e08e34fc\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "7e044b65454f4c9ea505591727332acffb33e7e5:trillionnium/crates/trnm-release-bundle/src/pq_release.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "04fc5e9a584a3052e2fbf0a8cd33fb528fe6e5ad\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "bb026697a972521009bc133ae6ed2b653e18e931:trillionnium/crates/trnm-release-bundle/src/pq_release.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "04fc5e9a584a3052e2fbf0a8cd33fb528fe6e5ad\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "7e044b65454f4c9ea505591727332acffb33e7e5:trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "d1d010efcc81c70659031b530f754d9451493b7d\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "bb026697a972521009bc133ae6ed2b653e18e931:trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "d1d010efcc81c70659031b530f754d9451493b7d\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "7e044b65454f4c9ea505591727332acffb33e7e5:trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum_tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "12588e1f41e270e181dddeeb32cf741d6aea1fe7\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "bb026697a972521009bc133ae6ed2b653e18e931:trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum_tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "12588e1f41e270e181dddeeb32cf741d6aea1fe7\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "7e044b65454f4c9ea505591727332acffb33e7e5:trillionnium/crates/trnm-release-bundle/src/pq_release/current_tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "2e4adc88d48ae0597582a8898818d9b0b97b6a0b\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "bb026697a972521009bc133ae6ed2b653e18e931:trillionnium/crates/trnm-release-bundle/src/pq_release/current_tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "2e4adc88d48ae0597582a8898818d9b0b97b6a0b\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "7e044b65454f4c9ea505591727332acffb33e7e5:trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "d1e812ca5cb0df07e51233005cfd503daeb67e4a\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "bb026697a972521009bc133ae6ed2b653e18e931:trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "d1e812ca5cb0df07e51233005cfd503daeb67e4a\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "7e044b65454f4c9ea505591727332acffb33e7e5:trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material_tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "6ba9115a5a5f40273d039404150165a51dd55eec\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "bb026697a972521009bc133ae6ed2b653e18e931:trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material_tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "6ba9115a5a5f40273d039404150165a51dd55eec\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "7e044b65454f4c9ea505591727332acffb33e7e5:trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "f8e61f0f8d233b1a0d7729d10155d89cd739d979\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "bb026697a972521009bc133ae6ed2b653e18e931:trillionnium/crates/trnm-release-bundle/src/pq_release/quorum_preflight_tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "f8e61f0f8d233b1a0d7729d10155d89cd739d979\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "7e044b65454f4c9ea505591727332acffb33e7e5:trillionnium/crates/trnm-release-bundle/src/pq_release/retained_verifier_tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "4331a217b34de4b1ad03f75591b446922aa12b10\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "bb026697a972521009bc133ae6ed2b653e18e931:trillionnium/crates/trnm-release-bundle/src/pq_release/retained_verifier_tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "4331a217b34de4b1ad03f75591b446922aa12b10\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "7e044b65454f4c9ea505591727332acffb33e7e5:trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "ab2302235dd09d62d7e60a34b7b53163a5224be2\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "bb026697a972521009bc133ae6ed2b653e18e931:trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "ab2302235dd09d62d7e60a34b7b53163a5224be2\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "7e044b65454f4c9ea505591727332acffb33e7e5:trillionnium/crates/trnm-release-bundle/src/pq_release/validated_root_tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "cc39b708545fdb0d28b86ea1e0ad113f323a2833\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "bb026697a972521009bc133ae6ed2b653e18e931:trillionnium/crates/trnm-release-bundle/src/pq_release/validated_root_tests.rs"
+    ],
+    "exit_code": 0,
+    "stdout": "cc39b708545fdb0d28b86ea1e0ad113f323a2833\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

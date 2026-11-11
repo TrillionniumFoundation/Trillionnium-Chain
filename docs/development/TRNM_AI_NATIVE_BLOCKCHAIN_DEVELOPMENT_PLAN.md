@@ -351,6 +351,21 @@ independent and their failed evidence remains retained.
 The [retained Cell V2 record](../../evidence/pon-useful-cell-stateful-v2-20261107/README.md)
 contains the complete local replay, counterexample/repair and source-pinned gates.
 
+**Original frozen learning iteration to native use, 2026-11-08 America/New_York:**
+Continue #787 with the [bounded checkpoint/readback join](specs/pon/CELL_LEARNING_ITERATION_JOIN_V2.md).
+Hepta #5357 adds a mandatory owner-frozen evaluation-profile commitment before
+training and refuses lineage/evaluation drift or profile substitution during
+recovery. Its explicit HEPLCP02 format does not reinterpret historical HEPLCP01.
+The Chain reader replays exact native checkpoint bytes and joins the complete
+original request, owners, budgets, learning receipts and Selection cut to the
+existing native next-use readback. Preserve evaluated and proposal-rejected
+NoUpdate, original complete parent retention and current owner authority.
+Hash consistency cannot authenticate pre-dispatch custody, learning signatures,
+independent control, actual model execution or settlement. The original funded
+Task/M12/work/confirmation/loader adapters remain responsible for their real
+effects; this read-only join does not replace them or create FinalUse. Keep the
+complete-cycle gate at **HOLD_NO_GO** pending same-source original evidence.
+
 
 **Cell original native use readbacks, 2026-11-08:** Preserve the original
 Hepta actor as the owner of retained-parent and adopted-candidate next-use.
@@ -10106,3 +10121,122 @@ implementation review remain required. Keep production activation, FinalUse
 and whole-chain PQ qualifications false and all seven requested gates at
 HOLD / NO-GO until their own complete, same-source evidence passes. Historical
 successes and failures retain their exact original source identities.
+
+### 2026-11-08 complete Cell version, discovery, custody and task residency
+
+Continue the existing next-architecture candidate at
+`9f54b05c643185a5041fc1f78cef77e95877f52a` in an isolated stacked review branch.
+The six requested storage/distribution capabilities share one source tree;
+separate CPQ1 and Hepta readback candidates are not treated as merged or accepted.
+
+The [complete-version contract](specs/pon/CELL_COMPLETE_VERSION_V1.md) adds TCV1
+and CPV3: one canonical commitment and publisher signature bind the entire model
+root, dependency graph, environment closure and exact full manifest/chunk set.
+Actual cache readback includes every model and environment payload under one
+aggregate budget and original deadline. Same release members with a different
+dependency graph cannot reuse the signature. This is declared-byte completeness;
+unlisted dependencies and actual loader/device compatibility remain owner gates.
+
+The [discovery refinement](specs/pon/CELL_PROVIDER_DISCOVERY_DEV_V1.md) moves
+source-fair scheduling before permanent identity-quota admission. Two early
+sources returning eight valid records each can no longer exclude a later source
+merely by batch order. Signature/history checking retains receipt time while
+current admission retains the original TTL and deadline, including same-sequence
+conflicts that expire while later replies arrive. No high-water row, namespace,
+connection allowance, signature allowance or original timeout is reset.
+
+The [custody/continuation contract](specs/pon/CELL_CUSTODY_CONTINUATION_V1.md)
+reads real physical archives for an independently pinned complete replica roster.
+TCV1 coverage requires both model and environment at the same exact store/slot;
+complementary fragments or mismatched owners cannot be pooled into a complete
+version. All probes share a nonrefundable aggregate payload/probe budget. Renewal
+and repair plans retain the original terms and responsible owners. Contactability
+is not prepaid funding; sponsor disappearance requests a replacement without
+lowering replica requirements, extending an old lease or granting deletion.
+The complete-version continuation plan pairs model and environment actions at
+the same original store/slot, retaining both payers and both sets of original
+terms. Model health cannot hide environment repair or sponsor loss. A missing
+component observation or an expired observation deadline cannot produce a
+healthy complete-version plan. Unique version payload size remains distinct
+from component probe reservations.
+
+Residency checks incremental RAM/reference demand after complete metadata but
+before payload download inside the original network session. A task-local
+borrowed working set admits only a complete canonical resident set and has no
+remote or disk fallback during hot reads. Current loader pins, original deadline
+and latched cancellation are rechecked without conferring execution authority.
+
+| Capability | Candidate control added | Remaining acceptance evidence |
+| --- | --- | --- |
+| Complete version | TCV1/CPV3, exact dependencies and environment, complete byte readback | Actual restricted-loader dependency inventory, device/ABI readback, separate CPQ1 qualification |
+| Discovery | Fair durable admission, expiry/conflict preservation, original aggregate budgets | Authenticated bootstrap response/query binding, genuinely independent operators and WAN/Sybil scope |
+| Custody | Exact per-store whole-version intersection and physical archive readback | Independently administered custody/failure domains and elapsed-time recovery campaigns |
+| Renewal/repair economy | Original terms, payer/responsible-owner work items, no invented funding or refund | Real prepaid successor funding, repair effects, sponsor replacement and economic sustainability |
+| Loading/cache | Pre-download memory rejection and bounded complete task RAM set | Measured NVMe/device transfer and ordinary expert/VRAM path |
+| Current use | Fresh supplied-owner view checks; no cache-to-execution grant | Actual Hepta CURRENT/resource/FinalUse guard and ordinary next-task execution |
+
+All six end-to-end capability qualifications remain **HOLD_NO_GO** pending their
+explicit external/owner evidence. Published plaintext cannot be made secret or
+forgotten by revocation. Preserve the actual failed pre-fix discovery controls,
+intermediate build failures and source-specific final validation separately.
+
+The [source-bound implementation and observation record](../../evidence/cell-six-capabilities-20261108/README.md)
+retains both complete campaigns. Initial source `a7e3ebd7883d6b865c997e8c1cbce7576caa6f4b`
+passed 457 native tests and 11 compile-fail doctests; reviewed source
+`bbe7f6fbed13450922a9bac49c0c5cfafcf3cf1e` passed 462 native tests and 11
+compile-fail doctests. All 51 newly added native tests ran successfully on the
+reviewed source. Each source passed its own 17-command gate, including strict
+whole-workspace all-target/all-feature Clippy, locked dependency graphs,
+negative source/CI-contract controls and repository links. These are default
+feature component runtime tests on shared Linux x86_64, not all-feature runtime,
+independent Host/WAN/device or FinalUse acceptance. Evidence-only delivery does
+not change those source identities or close the six operational qualifications.
+
+### 2026-11-08 seven-gate integration follow-up
+
+Continue the same integration lineage from `7e044b65454f4c9ea505591727332acffb33e7e5`.
+The [follow-up source and evidence index](../../evidence/seven-gates-followup-20261108/README.md)
+adds the complete #807 and #809 candidates and freezes Hepta
+`36d5eff44f4071bb1f250b1c7706dc690cf0a875`, whose initial HEPLCP02 request
+binds the original owner's evaluation profile. Preserve all original source
+ancestry, failed attempts, unexecuted cases and deadlines. Re-run actual native
+commands on the final fixed source; side-branch passes are not final results.
+
+The same workstream also fixes two concrete refusal boundaries. Native generation
+checks journal capacity, task reuse and current anchor before permanently claiming
+a new task under the same journal write lock. A subsequent storage failure still
+retains the original owner claim and its recovery obligation. Qualification
+accounting rejects original `record_failed` and incomplete command receipts even
+when a child exited zero, and binds both raw source observations to the actual
+head or prospective merge. This remains a consistency check, not receipt
+authentication or a native result adapter. The reviewed W1 lifetime source pin
+restores its original 19 tests without closing any cryptographic uncertainty.
+
+P0 integration, consensus, authority/effects and the real Hepta iteration; P1
+independent Cell/WAN recovery; P2 matched goodput/tail latency; and P3 eight-domain
+PQ composition and independent review all remain HOLD / NO-GO. No resource,
+confirmation, custody or production authorization requirement is reduced.
+
+The same follow-up preserves the actual research CI failures at `bb026697`.
+The current transparent receipt gate requires version-3 cancellation and
+deadline fields; version 2 remains an explicit historical replay only. All
+original 23 report controls and 58 native receipt controls remain, with eight
+additive report/lifecycle controls. A real signal after stage-result fsync
+retains the exit-zero snapshot but cancels the actual call, so the incomplete
+aggregate cannot complete the gate. Later source repairs receive their own
+source identities and cannot inherit the original frozen pair's native passes.
+
+The [versioned QROM source mapping](../../evidence/pon-w1-qrom-source-convergence-20261108/README.md)
+repairs two actual research-workflow failures while retaining the unchanged v1
+engine, contract, 81-name roster and historical reports. The distinct v2 contract
+binds the current 16-file selection and two exact source projections; its 84-name
+roster preserves all original names. The original 105-name closure roster and
+seven exact report comparisons remain, with separately versioned current
+semantics/lifetime provenance baselines. Exact field/type/value checks keep new
+qualification flags false, and canonical JSON comparison rejects numeric aliases
+of booleans or integers. Preserve both internal review counterexamples and the
+patch's explicit dirty-source identity. These selected-input mapping checks do
+not establish the new native paths, complete dependency/build/load equivalence,
+a concrete lifetime quantum budget, or independent cryptographic review. Freeze
+and validate the complete integrated repair separately before publishing its
+source-bound observations; all seven acceptance gates remain HOLD.

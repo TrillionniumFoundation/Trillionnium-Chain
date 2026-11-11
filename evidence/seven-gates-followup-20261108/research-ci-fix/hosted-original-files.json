@@ -1,0 +1,32 @@
+[
+  {
+    "path": "source-before.json",
+    "bytes": 423,
+    "sha256": "326ae5e61f108651760b3a27b42ae0d5091ec224be724d96fc622498e55a34aa"
+  },
+  {
+    "path": "source-before.log",
+    "bytes": 423,
+    "sha256": "326ae5e61f108651760b3a27b42ae0d5091ec224be724d96fc622498e55a34aa"
+  },
+  {
+    "path": "source-after.json",
+    "bytes": 423,
+    "sha256": "326ae5e61f108651760b3a27b42ae0d5091ec224be724d96fc622498e55a34aa"
+  },
+  {
+    "path": "source-after.log",
+    "bytes": 423,
+    "sha256": "326ae5e61f108651760b3a27b42ae0d5091ec224be724d96fc622498e55a34aa"
+  },
+  {
+    "path": "v2-receipt-controls.log",
+    "bytes": 9547,
+    "sha256": "4bf5dc19a1a114f0079c84b62db6bdaef003690a895dad73689a2240cf251b76"
+  },
+  {
+    "path": "v2-controls-validation.log",
+    "bytes": 985,
+    "sha256": "c8619733c4d65ff268b4b59cbf8da481e2f2398382c82e4b7652239f981baca0"
+  }
+]

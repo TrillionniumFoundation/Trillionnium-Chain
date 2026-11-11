@@ -90,8 +90,8 @@ jobs:
           import unittest
 
           out = Path(sys.argv[1])
-          roster_path = Path('config/pon/w1-qrom-required-tests-v1.json')
-          expected_digest = 'ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8'
+          roster_path = Path('config/pon/w1-qrom-required-tests-v2.json')
+          expected_digest = 'e0d1cd257e890ecb2173053da898d915cf39d3c0c5f5868379bb36f5d975c286'
           required_modules = (
               'test_w1_control_tree_audit',
               'test_w1_qrom_conditional_budget',
@@ -120,7 +120,7 @@ jobs:
               'production_qualified', 'consensus_admission',
           )
           if (type(manifest) is not dict
-                  or manifest.get('schema') != 'TRNM-W1-QROM-REQUIRED-TESTS1'
+                  or manifest.get('schema') != 'TRNM-W1-QROM-REQUIRED-TESTS2'
                   or type(manifest.get('suites')) is not list
                   or type(manifest.get('expected_tests')) is not int
                   or manifest['expected_tests'] <= 0
@@ -231,7 +231,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/w1_qrom_implementation_audit.py --repo-root "$GITHUB_WORKSPACE" \
+          python3 scripts/w1_qrom_implementation_audit_v2.py --repo-root "$GITHUB_WORKSPACE" \
             --output "$W1_QROM_OUT/implementation.json" 2>&1 | tee "$W1_QROM_OUT/implementation.log"
       - name: Preserve all unknown project quantum inputs
         id: budget_unknown
@@ -299,9 +299,35 @@ jobs:
               'consensus_admission': False,
               'security_bits_quantum': None,
           }
+          expected_source_review = {
+              'schema': 'TRNM-W1-QROM-SOURCE-TRANSITION1',
+              'review_sha256': '988a67862cff06d2d6d580dc65db84f9d177a7bbbdb9e79c96c3dc4f81d9491b',
+              'historical_contract_sha256': '7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22',
+              'historical_engine_sha256': 'c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354',
+              'historical_report_sha256': 'eebf074f5f4a77cb7277035300294ef9308cb5ec5d0441336665bafcb6647c8b',
+              'selected_project_file_count': 16,
+              'unchanged_project_file_count': 14,
+              'changed_paths': [
+                  'formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs',
+                  'trillionnium/crates/trnm-protocol/src/pon_wire.rs',
+              ],
+              'historical_route_byte_projection_reproduced': True,
+              'historical_semantic_report_fields_reproduced': True,
+              'new_native_once_route_qualified': False,
+              'funded_service_decoder_qualified': False,
+              'whole_source_and_build_equivalence_proved': False,
+          }
+          source_review = implementation.get('source_review') if type(implementation) is dict else None
+          require(type(source_review) is dict
+                  and set(source_review) == set(expected_source_review)
+                  and all(type(source_review[key]) is type(value) and source_review[key] == value
+                          for key, value in expected_source_review.items()),
+                  'implementation source transition scope or provenance differs')
           require(type(implementation) is dict
-                  and implementation.get('schema') == 'TRNM-W1-QROM-IMPLEMENTATION-AUDIT1'
+                  and implementation.get('schema') == 'TRNM-W1-QROM-IMPLEMENTATION-AUDIT2'
                   and implementation.get('result') == 'MAPPING_REPRODUCED_SECURITY_HOLD'
+                  and implementation.get('contract_sha256') == 'bed7e925b5c02f896ea0f6ada378a346080d044a8c7c3879f7d47c034fb86280'
+                  and implementation.get('source_base_commit') == 'bb026697a972521009bc133ae6ed2b653e18e931'
                   and exact_qualification(implementation.get('qualification'), expected_implementation),
                   'implementation observation widened its qualification scope')
           expected_budget = {
@@ -528,7 +554,7 @@ jobs:
 
           out = Path(sys.argv[1])
           steps = json.loads(os.environ['W1_QROM_STEP_RESULTS'])
-          expected_digest = 'ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8'
+          expected_digest = 'e0d1cd257e890ecb2173053da898d915cf39d3c0c5f5868379bb36f5d975c286'
           required_modules = (
               'test_w1_control_tree_audit',
               'test_w1_qrom_conditional_budget',
@@ -553,11 +579,11 @@ jobs:
           def check_named_completion():
               roster_raw = (out / 'required-tests.json').read_bytes()
               if (hashlib.sha256(roster_raw).hexdigest() != expected_digest
-                      or roster_raw != Path('config/pon/w1-qrom-required-tests-v1.json').read_bytes()):
+                      or roster_raw != Path('config/pon/w1-qrom-required-tests-v2.json').read_bytes()):
                   raise ValueError('retained named-test roster differs from the reviewed source pin')
               manifest = strict_json(roster_raw)
               if (type(manifest) is not dict
-                      or manifest.get('schema') != 'TRNM-W1-QROM-REQUIRED-TESTS1'
+                      or manifest.get('schema') != 'TRNM-W1-QROM-REQUIRED-TESTS2'
                       or type(manifest.get('suites')) is not list
                       or any(type(row) is not dict for row in manifest['suites'])
                       or tuple(row.get('module') for row in manifest['suites']) != required_modules

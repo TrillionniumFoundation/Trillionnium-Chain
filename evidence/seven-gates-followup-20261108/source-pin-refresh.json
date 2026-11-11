@@ -1,0 +1,53 @@
+{
+  "schema": "trnm-reviewed-followup-source-pin-refresh-v1",
+  "scope": "Reviewed command-receipt and preclaim validation changes, plus sole-plan continuation; no provider/configuration/activation claim change",
+  "prior_pin_count": 880,
+  "current_pin_count": 881,
+  "prior_required_count": 788,
+  "current_required_count": 789,
+  "all_previous_required_paths_retained": true,
+  "all_qualification_assertions_unchanged": true,
+  "changes": [
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "before_blob": "aa98b0c9f2fd2457369b0b1a93aa5ba96addf33c",
+      "after_blob": "b7bf2fafc9af358a14dba321a0f773bd1fa76960"
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "before_blob": "49ddaaec79c6165a5c9e0b34b8206fcc73b54875",
+      "after_blob": "67f886b57bb2b484122673057e9396696a5150c6"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "before_blob": "1879094e7b27d6a1c2f9d0ffc394a23fd3013aa3",
+      "after_blob": "fec665018097545f6ad6b1657ebd4e21924cf902"
+    },
+    {
+      "path": "scripts/ci/chain_hepta_qualification.py",
+      "before_blob": "832978cbe989a7786f619a974b67fb9a54c15c72",
+      "after_blob": "b5faf8360f85d7ce4b69b313b82afb592b4d0816"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/async_w1_generation_v2/tests.rs",
+      "before_blob": "311bdc47c029c9aef489a6a06a7cdc413849f259",
+      "after_blob": "1ecf4221169ae9cb18d10d5a8cbba1471b20ae52"
+    },
+    {
+      "path": "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs",
+      "before_blob": "7766ff2b52592939c926b4c9c9f27ff1915efd70",
+      "after_blob": "d5f0a5d9c7499fa4b82331e5fba8c1ec7c6f825b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs",
+      "before_blob": "5875624b9c1d33d7fd5cdefc3aca2b1177f5e978",
+      "after_blob": "b4bacc0ec0ffdf347953fe39d71ef8ceaa5fcbf6"
+    },
+    {
+      "path": "scripts/ci/test_chain_hepta_command_binding.py",
+      "before_blob": null,
+      "after_blob": "2297f6afe201f503eb9e0de8dcb7fa1a4f840cfd"
+    }
+  ],
+  "qualification": "HOLD_NO_GO"
+}

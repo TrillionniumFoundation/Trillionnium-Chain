@@ -1,0 +1,21 @@
+{
+  "binary_path": "/home/runner/work/_temp/pon-fixed-host-root-f0-42509669473-1/prepared/public_v3_multiprocess.bin",
+  "binary_sha256": "e38433c515bf93f0edfb6f4e61cefabf8d7266bcb425a596c788e183444e79e1",
+  "description": "Trillionnium F0 controller head bb026697a972521009bc133ae6ed2b653e18e931 prepared b52907bd9ea4b0d34a00bf0d1d27391deb895fd4cc09595372835ad4abdac59e",
+  "execution_path": "/home/runner/work/_temp/pon-fixed-host-root-f0-42509669473-1/execution",
+  "expected_cgroup": "/system.slice/trnm-fixed-root-f0-42509669473-1-fixed-host-root-f0.service",
+  "gid": 1001,
+  "head": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "job_id": "fixed-host-root-f0",
+  "job_sha256": "b52907bd9ea4b0d34a00bf0d1d27391deb895fd4cc09595372835ad4abdac59e",
+  "phase": "controller",
+  "prepared_path": "/home/runner/work/_temp/pon-fixed-host-root-f0-42509669473-1/prepared/prepared.json",
+  "prior_load_state": "not-found",
+  "run_attempt": "1",
+  "run_id": "42509669473",
+  "schema": "fixed-root-owned-controller-v1",
+  "service": "trnm-fixed-root-f0-42509669473-1-fixed-host-root-f0.service",
+  "source_root": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+  "tree": "18175756871bf341586fc37be1b17a00ef1dd099",
+  "uid": 1001
+}

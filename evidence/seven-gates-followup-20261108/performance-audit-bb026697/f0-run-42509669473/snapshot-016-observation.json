@@ -1,0 +1,18 @@
+{
+  "observed_utc": "2026-11-08 18:44:31 UTC",
+  "read_failure": null,
+  "run_id": 42509669473,
+  "run_attempt": 1,
+  "status": "queued",
+  "conclusion": null,
+  "head_sha": "bb026697a972521009bc133ae6ed2b653e18e931",
+  "source_identity_matches": true,
+  "jobs": [
+    {
+      "id": 128819775064,
+      "status": "queued",
+      "conclusion": null,
+      "steps": []
+    }
+  ]
+}

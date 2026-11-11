@@ -538,6 +538,187 @@ fn real_tcp_pq_low_owner_flood_keeps_later_bootstrap_without_extra_budget() {
 }
 
 #[test]
+fn real_tcp_pq_manifest_quota_flood_keeps_later_source_without_resetting_highwater_or_budget() {
+    use super::super::diversity_tests::{saturation_endpoints, scoped_ports, WireBootstrap};
+    let temp = tempfile::tempdir().unwrap();
+    let endpoints = saturation_endpoints();
+    let mut signers: Vec<_> = (1..=17)
+        .map(|seed| {
+            let seed = Zeroizing::new([seed; 32]);
+            let spki = PqNativeSigningKey::public_spki_from_seed(&seed);
+            let key_id = ml_dsa_65_key_id_from_spki(&spki).unwrap();
+            (
+                PqNativeSigningKey::from_owned_seed(seed, key_id).unwrap(),
+                CellPqKeyPinV2 {
+                    key_id,
+                    generation: 1,
+                    spki,
+                    not_before: 1,
+                    expires_at: u64::MAX,
+                    revoked_at: None,
+                },
+            )
+        })
+        .collect();
+    signers.sort_by_key(|(_, pin)| pin.key_id);
+    let pins = CellPqKeyPinsV2::new(signers.iter().map(|(_, pin)| pin.clone()).collect()).unwrap();
+    let path = temp.path().join("directory");
+    let directory = CellProviderDirectoryV2::open(&path, context(), pins.clone()).unwrap();
+    let request = request([92; 32]);
+    let now = wall_now().unwrap().as_secs();
+    let records: Vec<_> = signers
+        .iter()
+        .zip(&endpoints)
+        .map(|((key, pin), endpoint)| {
+            CellProviderRecordV2::sign(
+                CellProviderStatementV2 {
+                    request,
+                    owner: pin.key_id,
+                    owner_generation: 1,
+                    endpoint: *endpoint,
+                    sequence: 2,
+                    issued_unix_seconds: now,
+                    expires_unix_seconds: now + 240,
+                    withdrawn: false,
+                },
+                key,
+            )
+            .unwrap()
+        })
+        .collect();
+    let first = WireBootstrap::start(b'2', records[..8].iter().map(|r| r.encode()).collect());
+    let second = WireBootstrap::start(b'2', records[8..16].iter().map(|r| r.encode()).collect());
+    let later = WireBootstrap::start(b'2', vec![records[16].encode()]);
+    let mut allowed = endpoints.clone();
+    allowed.extend([first.address, second.address, later.address]);
+    let options = CellDiscoveryOptionsV2 {
+        request,
+        bootstraps: vec![first.address, second.address, later.address],
+        addresses: scoped_ports(&allowed),
+    };
+    let requests_left = AtomicU64::new(3);
+    let bytes = 3 * 10 + 17 * CELL_PROVIDER_RECORD_BYTES_V2 as u64;
+    let responses = ResponseBudget::new(bytes);
+    let overall = Instant::now() + Duration::from_secs(10);
+    let transport = RequestContext {
+        cancelled: None,
+        timeout: Duration::from_secs(2),
+        overall,
+        requests_left: &requests_left,
+        responses: &responses,
+    };
+    let mut observed = CellDiscoveryObservationV2::default();
+    let (selected, expiry) =
+        transport::discover(&directory, &options, &transport, &mut observed).unwrap();
+    assert_eq!(selected.len(), MAX_DISCOVERED_PROVIDERS);
+    assert!(expiry <= overall);
+    assert_eq!(observed.connection_attempts, 3);
+    assert_eq!(requests_left.load(Ordering::Relaxed), 0);
+    assert_eq!(observed.record_validation_attempts, 17);
+    assert_eq!(observed.capacity_rejections, 1);
+    assert_eq!(observed.rejected_records, 1);
+    assert_eq!(observed.received_response_bytes, bytes);
+    assert_eq!(responses.received().unwrap(), bytes);
+    assert_eq!(directory.usage().unwrap().retained_identities, 16);
+    assert!(
+        selected.contains(&endpoints[16]),
+        "early source batches must not exhaust the durable quota before the later source competes"
+    );
+    first.finish();
+    second.finish();
+    later.finish();
+
+    drop(directory);
+    let reopened = CellProviderDirectoryV2::open(&path, context(), pins).unwrap();
+    assert_eq!(reopened.usage().unwrap().retained_identities, 16);
+    let mut stale = records[16].statement().clone();
+    stale.sequence = 1;
+    let stale = CellProviderRecordV2::sign(stale, &signers[16].0).unwrap();
+    let wall = wall_now().unwrap().as_secs();
+    stale
+        .verify_at(request, wall, &options.addresses, reopened.keys())
+        .unwrap();
+    assert!(matches!(
+        reopened.accept_verified(&stale, options.bootstraps[2].ip(), wall, overall),
+        Err(CellErrorV1::Invalid("discovery sequence replay"))
+    ));
+    assert_eq!(reopened.usage().unwrap().retained_identities, 16);
+}
+
+#[test]
+fn real_tcp_pq_receive_time_equivocation_survives_later_bootstrap_delay_and_expiry() {
+    use super::super::diversity_tests::{provider_endpoints, scoped_ports, WireBootstrap};
+    let temp = tempfile::tempdir().unwrap();
+    let (key, pin) = key_and_pin();
+    let pins = CellPqKeyPinsV2::new(vec![pin.clone()]).unwrap();
+    let directory =
+        CellProviderDirectoryV2::open(&temp.path().join("directory"), context(), pins).unwrap();
+    let request = request([93; 32]);
+    let endpoints = provider_endpoints();
+    let now = wall_now().unwrap().as_secs();
+    let short_expiry = now + 3;
+    let records: Vec<_> = (0..3)
+        .map(|index| {
+            CellProviderRecordV2::sign(
+                CellProviderStatementV2 {
+                    request,
+                    owner: pin.key_id,
+                    owner_generation: pin.generation,
+                    endpoint: endpoints[index],
+                    sequence: if index == 2 { 2 } else { 1 },
+                    issued_unix_seconds: now,
+                    expires_unix_seconds: if index == 2 { now + 240 } else { short_expiry },
+                    withdrawn: false,
+                },
+                &key,
+            )
+            .unwrap()
+        })
+        .collect();
+    let first = WireBootstrap::start(b'2', vec![records[0].encode()]);
+    let conflict = WireBootstrap::start(b'2', vec![records[1].encode()]);
+    let later = WireBootstrap::start_after(b'2', vec![records[2].encode()], Some(short_expiry));
+    let mut allowed = endpoints[..3].to_vec();
+    allowed.extend([first.address, conflict.address, later.address]);
+    let options = CellDiscoveryOptionsV2 {
+        request,
+        bootstraps: vec![first.address, conflict.address, later.address],
+        addresses: scoped_ports(&allowed),
+    };
+    let requests_left = AtomicU64::new(3);
+    let bytes = 3 * 10 + 3 * CELL_PROVIDER_RECORD_BYTES_V2 as u64;
+    let responses = ResponseBudget::new(bytes);
+    let overall = Instant::now() + Duration::from_secs(10);
+    let transport = RequestContext {
+        cancelled: None,
+        timeout: Duration::from_secs(5),
+        overall,
+        requests_left: &requests_left,
+        responses: &responses,
+    };
+    let mut observed = CellDiscoveryObservationV2::default();
+    assert!(matches!(
+        transport::discover(&directory, &options, &transport, &mut observed),
+        Err(CellErrorV1::Invalid("discovery has no admissible provider"))
+    ));
+    assert_eq!(observed.connection_attempts, 3);
+    assert_eq!(requests_left.load(Ordering::Relaxed), 0);
+    assert_eq!(observed.record_validation_attempts, 3);
+    assert_eq!(observed.received_response_bytes, bytes);
+    assert_eq!(responses.received().unwrap(), bytes);
+    assert_eq!(observed.capacity_rejections, 0);
+    first.finish();
+    conflict.finish();
+    later.finish();
+    assert_eq!(
+        directory
+            .records(request, wall_now().unwrap().as_secs(), overall)
+            .unwrap(),
+        vec![records[2].clone()]
+    );
+}
+
+#[test]
 fn pq_discovery_actual_response_exhaustion_stops_before_dial() {
     // Exercise no allowance, a partial header and one complete empty-directory
     // response. In every case connection capacity deliberately remains: it must

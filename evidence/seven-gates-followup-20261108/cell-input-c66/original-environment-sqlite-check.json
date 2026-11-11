@@ -1,0 +1,20 @@
+{
+  "captured_at": "2026-11-08T17:40:24.634400+00:00",
+  "source": "c66ffbdc46312f80f4d0faf829d37e43356a3799",
+  "command": [
+    "cargo",
+    "check",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-sqlite-io-boundary"
+  ],
+  "environment_basis": "original authority-final-validation-runner.py environment()",
+  "explicit_loader_path": "/workspace/scratch/5faaca703596/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+  "exit_code": 0,
+  "log_sha256": "2a8bebbf007d8f645f19d91fce00953cfb3fd30c6c916c1a800853a33614c219",
+  "scope": "build environment repair check only; no new Node runtime or acceptance claim",
+  "unqualified_warning_observed": false
+}

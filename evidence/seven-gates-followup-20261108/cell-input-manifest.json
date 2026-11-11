@@ -1,0 +1,24 @@
+{
+  "files": {
+    "candidate-c66-report.json": {
+      "bytes": 9333,
+      "sha256": "4528606119af762ede6e166b817cde7bff1357e11bb056caf6dcfd32447767ba"
+    },
+    "evidence-package-c66.tar.gz": {
+      "bytes": 291039,
+      "sha256": "2bd14e354dc5da5aaa09135c4bc2e7600008ab697a3f45db632853a3965e770c"
+    },
+    "original-environment-sqlite-check.json": {
+      "bytes": 730,
+      "sha256": "936b6e83c59437c0c15089b36312cbbaa4914f50e1e1bada16f3f8f5ecb2dbff"
+    },
+    "original-environment-sqlite-check.log": {
+      "bytes": 646,
+      "sha256": "2a8bebbf007d8f645f19d91fce00953cfb3fd30c6c916c1a800853a33614c219"
+    }
+  },
+  "global_qualification": "HOLD_NO_GO",
+  "schema": "trnm-retained-cell-input-evidence-v1",
+  "scope": "Input-commit component observations only; never a result of the final integration commit",
+  "tested_chain_commit": "c66ffbdc46312f80f4d0faf829d37e43356a3799"
+}

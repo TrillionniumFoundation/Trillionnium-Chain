@@ -1,0 +1,4 @@
+
+thread 'fixed_public_host_root_rejection_and_signed_confirmation_diagnostic' (5390) panicked at crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs:1423:5:
+F0 criteria failed; all raw evidence retained at /home/runner/work/_temp/pon-fixed-host-root-f0-42509669473-1/execution/raw
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
