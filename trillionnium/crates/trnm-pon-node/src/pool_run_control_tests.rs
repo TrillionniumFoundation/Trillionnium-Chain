@@ -466,7 +466,7 @@ fn pool_run_completed_packet_and_reconcile_failure_remain_durable() {
                 assert_eq!(events[0]["kind"], "failed");
                 assert_eq!(events[0]["failure_stage"], "pool-reconciliation");
                 connection
-                    .execute_batch("DROP TRIGGER pool_control_after_activation")
+                    .execute_batch("DROP TRIGGER pool_control_after_activation; DROP TABLE pool_control_count;")
                     .unwrap();
             } else {
                 let report = result.unwrap();
