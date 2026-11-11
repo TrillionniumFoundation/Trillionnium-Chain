@@ -654,6 +654,45 @@ fn periodic_snapshot_policy_symlink_directory_link_and_hardlink_are_refused() {
     );
 }
 
+#[cfg(unix)]
+#[test]
+fn periodic_snapshot_regular_policy_reopens_and_preexisting_fifo_is_refused() {
+    let directory = tempfile::tempdir().unwrap();
+    let policy = CellPeriodicSnapshotPolicyV1 {
+        responsible_owner: [1; 32],
+        store_id: [2; 32],
+        initial_operation: [3; 32],
+        initial_contract: [4; 32],
+        first_due_height: 10,
+        interval_heights: 10,
+        maximum_snapshots: 2,
+    };
+    let regular_directory = directory.path().join("regular");
+    let owner = CellPeriodicSnapshotOwnerV1::create(&regular_directory, policy.clone(), deadline())
+        .unwrap();
+    let reopened =
+        CellPeriodicSnapshotOwnerV1::open(&regular_directory, owner.commitment(), deadline())
+            .unwrap();
+    assert_eq!(reopened.policy(), &policy);
+
+    let fifo_directory = directory.path().join("fifo");
+    fs::create_dir(&fifo_directory).unwrap();
+    rustix::fs::mkfifo(
+        fifo_directory.join(POLICY_FILE),
+        rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR,
+    )
+    .unwrap();
+    // An ordinary nonregular-file refusal, not a reproduction of a path swap.
+    assert_invalid(
+        CellPeriodicSnapshotOwnerV1::open(&fifo_directory, owner.commitment(), deadline()),
+        "periodic snapshot policy file",
+    );
+    assert_eq!(
+        fs::read(regular_directory.join(POLICY_FILE)).unwrap(),
+        policy.encode().unwrap()
+    );
+}
+
 #[test]
 fn periodic_snapshot_changed_ordinal_due_predecessor_schedule_and_scope_are_refused() {
     let mut fixture = Fixture::new(2);

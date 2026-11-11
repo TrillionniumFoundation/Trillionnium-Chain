@@ -427,6 +427,16 @@ fn observe_with_custody(
     )?;
     let started = Instant::now();
     let deadline = started + Duration::from_secs(spec.seconds);
+    report["latency_observation_v1"] = json!({
+        "clock": "std::time::Instant monotonic wall clock",
+        "origin": "custody observation entry after input-file read/parse and fresh output setup; before source checks, packing and transport",
+        "values_are_cumulative_not_additive": true,
+        "pinned_snapshot_ready_ns": null, "transport_complete_ns": null,
+        "cold_recovery_complete_ns": null, "selected_typed_release_ready_ns": null,
+        "sealed_model_environment_ready_ns": null, "two_forward_receipt_ns": null,
+        "first_use_scope": "complete CTS1/TCV1 selected and admitted for typed local byte use; not first token or first model output",
+        "loopback_only": true, "wan_qualified": false
+    });
     let cancelled = AtomicBool::new(false);
     let operation = digest(&spec.operation)?;
     check(
@@ -580,6 +590,8 @@ fn observe_with_custody(
             "chunks": expected.chunks,
         });
     }
+    report["latency_observation_v1"]["pinned_snapshot_ready_ns"] =
+        json!(started.elapsed().as_nanos());
     report["stage"] = json!("complete pinned release over actual loopback TCP");
     let received_path = spec.output.join("bep52-received.sqlite");
     let received = cache(&received_path)?;
@@ -612,6 +624,7 @@ fn observe_with_custody(
         "cts1": hex::encode(release_snapshot.commitment()),
         "bep52_plan": hex::encode(transport_plan),
     });
+    report["latency_observation_v1"]["transport_complete_ns"] = json!(started.elapsed().as_nanos());
     report["stage"] = json!("original TCA3 complete physical retention");
     let config = CellVersionRetentionConfigV3 {
         retention: CellRetentionConfigV1 {
@@ -707,6 +720,8 @@ fn observe_with_custody(
         consumer
     };
 
+    report["latency_observation_v1"]["cold_recovery_complete_ns"] =
+        json!(started.elapsed().as_nanos());
     report["stage"] = json!("actual CPV4 consumer verification and joint residency");
     let timestamp = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
     let mut seed = Zeroizing::new([0_u8; 32]);
@@ -765,7 +780,17 @@ fn observe_with_custody(
     }
     // Both closures must be admitted together under the same finite RAM
     // owner before creating any process-visible snapshot.
-    let admitted = pool.admit_local_release_snapshot(
+    let selected = pool.select_local_release_snapshot(
+        None,
+        operation,
+        &release_snapshot,
+        &snapshot_context,
+        limits,
+        deadline,
+        &cancelled,
+    )?;
+    let admitted = pool.admit_selected_local_release_snapshot(
+        selected,
         operation,
         &release_snapshot,
         &snapshot_context,
@@ -774,7 +799,13 @@ fn observe_with_custody(
         &cancelled,
     )?;
     admitted.with_local(operation, &snapshot_context, |_| ())?;
-    drop(admitted);
+    report["snapshot"]["complete_local_selection"] = json!({
+        "revision": selected.revision(), "cts1": hex::encode(selected.snapshot()),
+        "tcv1": hex::encode(selected.version()), "durable_current": false,
+        "execution_authorized": false
+    });
+    report["latency_observation_v1"]["selected_typed_release_ready_ns"] =
+        json!(started.elapsed().as_nanos());
     report["snapshot"]["typed_snapshot_admitted"] = json!(true);
     report["typed_snapshot_admitted"] = json!(true);
     let seal_limits = CellSealedLoaderLimitsV1 {
@@ -785,6 +816,10 @@ fn observe_with_custody(
         pool.seal_declared_loader(&model_owner, seal_limits, deadline, &cancelled)?;
     let environment_bundle =
         pool.seal_declared_loader(&environment_owner, seal_limits, deadline, &cancelled)?;
+    admitted.with_local(operation, &snapshot_context, |_| ())?;
+    drop(admitted);
+    report["latency_observation_v1"]["sealed_model_environment_ready_ns"] =
+        json!(started.elapsed().as_nanos());
     let descriptor = CellHostHandoffDescriptorV1 {
         operation,
         owner_generation: 1,
@@ -964,6 +999,8 @@ fn observe_with_custody(
             && final_result["supervisor"]["waited_child_reaped"] == true,
         "original wait4 and two fresh actual forward receipts required",
     )?;
+    report["latency_observation_v1"]["two_forward_receipt_ns"] =
+        json!(started.elapsed().as_nanos());
     report["stage"] = json!("complete research next-use");
     report["actual_next_use"] = final_result;
     report["snapshot"]["composition_worker_executed"] = json!(true);

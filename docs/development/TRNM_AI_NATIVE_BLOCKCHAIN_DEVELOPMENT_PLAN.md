@@ -1,3 +1,39 @@
+**Cell storage four-gate continuation, 2026-11-11 America/New_York — HOLD:**
+
+Continue the exact #879 storage head
+`30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6` under the
+[four-gate continuation contract](specs/pon/CELL_STORAGE_FOUR_GATE_CONTINUATION_V1.md).
+Keep authenticated discovery V3, complete TCA3/TCV1/CTS1 identities, original
+four-second discovery control and 300-second model operation, finite funding,
+all historical failures and production refusal.
+
+Reserve bounded time for later pinned bootstrap sources and downstream byte
+work without extending any original lease or resource reservation. Select
+one complete local CTS1 with a manager-bound increasing CAS ticket; validate
+both actual resident closures, tensor schema and current contexts before one
+assignment. Legacy selected-closure routes cannot split that complete choice,
+and both selected closures remain protected from eviction. The actual sealed
+research entry uses this complete selection and holds paired admission across
+sealing both closures. This local routing ticket is not durable Hepta CURRENT
+or FinalUse authority.
+
+Reuse bounded global retention layout and repair-ledger checks before repair
+admission/reconciliation and before physical copy; preserve durable debits on
+later refusal. Open CPS1 policy files without blocking on nonregular input,
+retaining all original checks. Keep these defensive changes distinct from an
+unexecuted metadata-corruption reproduction. Measure actual first verified
+local byte use, explicit prefetch, warm disk and resident reuse, and retain
+cumulative real-model readiness milestones without calling them first-token
+latency or WAN measurements.
+
+Freeze and execute the complete affected native suites, the unchanged
+slow-source test against its predecessor and repaired source, exact locked
+graphs, strict Clippy, formatting, source-integrity/CI controls and repository
+links. Preserve all failures and exact source identities. Independent provider
+administration and fault domains, replacement-domain repair ownership, actual
+paid renewal, authenticated remote read challenges, the original 72-hour PN5
+WAN duty and ordinary Hepta CURRENT/FinalUse remain separate open gates.
+
 **Paged real-model research bridge — NOT_RUN; qualification HOLD:**
 
 An explicit [paged sealed research route](specs/pon/CELL_SEALED_PAGED_RESEARCH_NEXT_USE_V1.md)

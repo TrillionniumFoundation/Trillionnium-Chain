@@ -604,7 +604,7 @@ impl CellRetentionStoreV1 {
             stopped: false,
         };
         control.check()?;
-        let mut row = self.required_row(operation)?;
+        let mut row = self.audited_repair_row_controlled(operation, &mut control)?;
         control.check()?;
         require(row.status != 2, "retention retired")?;
         require(
@@ -737,6 +737,14 @@ impl CellRetentionStoreV1 {
         )?;
         control.check()?;
         if !already_complete {
+            // The durable intent and its debit survive a refusal here. Reuse
+            // the original complete arena invariants before physical work;
+            // an individually valid row is not a complete layout observation.
+            let current = self.audited_repair_row_controlled(operation, &mut control)?;
+            require(
+                row_checksum(&current) == row_checksum(&row),
+                "retention repair prior changed",
+            )?;
             self.copy_payload_controlled(&row, cache, &mut control)?;
             self.complete_repair_controlled(repair_operation, operation, amount, &mut control)?;
         }
@@ -777,7 +785,7 @@ impl CellRetentionStoreV1 {
             stopped: false,
         };
         control.check()?;
-        let mut row = self.required_row(operation)?;
+        let mut row = self.audited_repair_row_controlled(operation, &mut control)?;
         control.check()?;
         require(row.status != 2, "retention retired")?;
         require(
@@ -1259,6 +1267,27 @@ impl CellRetentionStoreV1 {
     fn required_row(&self, operation: CellDigestV1) -> CellResultV1<Row> {
         self.row(operation)?
             .ok_or(CellErrorV1::Invalid("retention unknown obligation"))
+    }
+
+    /// Observe the existing bounded layout and repair-conservation rules under
+    /// the repair owner's original checkpoints. This is a current local check,
+    /// not an atomic snapshot against noncooperating database writers.
+    fn audited_repair_row_controlled(
+        &self,
+        operation: CellDigestV1,
+        control: &mut OperationControl<'_, impl FnMut() -> CellResultV1<()>>,
+    ) -> CellResultV1<Row> {
+        control.check()?;
+        validate_schema(&self.connection)?;
+        self.check_arena_controlled(control)?;
+        let rows =
+            Self::audit_layout_from(&self.connection, &self.config, &mut || control.check())?;
+        let row = rows
+            .into_iter()
+            .find(|row| row.contract.operation == operation)
+            .ok_or(CellErrorV1::Invalid("retention unknown obligation"))?;
+        control.check()?;
+        Ok(row)
     }
 
     fn row(&self, operation: CellDigestV1) -> CellResultV1<Option<Row>> {

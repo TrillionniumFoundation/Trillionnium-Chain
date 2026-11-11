@@ -23,11 +23,13 @@ use super::{
     CellReleaseFetchLimitsV1, CellResultV1, CellStoreV1, MAX_CELL_BYTES,
 };
 
+mod release_selection;
 #[cfg(target_os = "linux")]
 mod sealed_loader;
 mod tensor;
 mod version;
 mod working_set;
+pub use release_selection::{CellLocalReleaseSelectionV1, CellLocalSelectionStateV1};
 #[cfg(target_os = "linux")]
 pub use sealed_loader::{
     CellSealedLoaderBundleV1, CellSealedLoaderFileV1, CellSealedLoaderLimitsV1,
@@ -204,7 +206,7 @@ pub struct CellResidencyV1 {
     chunks: BTreeMap<ChunkKey, Arc<[u8]>>,
     residents: BTreeMap<CellDigestV1, ResidentClosure>,
     usage: CellResidencyUsageV1,
-    selection: Option<CellLocalSelectionV1>,
+    selection: Option<CellLocalSelectionStateV1>,
 }
 
 impl CellResidencyV1 {
@@ -229,8 +231,13 @@ impl CellResidencyV1 {
         self.usage
     }
 
+    /// Legacy single-closure selection only. Complete-release mode returns
+    /// None here; use `local_selection` to distinguish its selected profile.
     pub fn selection(&self) -> Option<CellLocalSelectionV1> {
-        self.selection
+        match self.selection {
+            Some(CellLocalSelectionStateV1::Closure(selected)) => Some(selected),
+            _ => None,
+        }
     }
 
     /// Explicit routing prediction or cold-load preparation. A caller chooses
@@ -408,8 +415,7 @@ impl CellResidencyV1 {
         let resident = self.residents.get(&id).ok_or(CellErrorV1::Unavailable)?;
         require(!resident.hot, "resident hot pin")?;
         require(
-            self.selection
-                .is_none_or(|selected| selected.closure_id != id),
+            self.selection.is_none_or(|selected| !selected.protects(id)),
             "resident local selection pinned",
         )?;
         self.usage.chunk_references -= resident.chunk_references;
@@ -424,6 +430,7 @@ impl CellResidencyV1 {
     /// Atomically replace only this process's byte-selection hint. The existing
     /// Hepta owner must separately enforce CURRENT, generation/withdrawal,
     /// resource admission, tensor readback and FinalUse under its real guard.
+    /// A complete-release selection cannot be downgraded through this API.
     /// No slow operation or user callback runs after the final checkpoint.
     pub fn select_local(
         &mut self,
@@ -434,13 +441,13 @@ impl CellResidencyV1 {
     ) -> CellResultV1<CellLocalSelectionV1> {
         checkpoint(deadline, cancelled)?;
         require(
-            self.selection == expected_previous,
+            self.selection == expected_previous.map(CellLocalSelectionStateV1::Closure),
             "resident selection conflict",
         )?;
         self.resident(expected)?;
         let revision = self
             .selection
-            .map_or(0, |selected| selected.revision)
+            .map_or(0, CellLocalSelectionStateV1::revision)
             .checked_add(1)
             .ok_or(CellErrorV1::Invalid(
                 "resident selection revision exhausted",
@@ -451,7 +458,7 @@ impl CellResidencyV1 {
             closure_id: expected.closure_id,
         };
         checkpoint(deadline, cancelled)?;
-        self.selection = Some(selected);
+        self.selection = Some(CellLocalSelectionStateV1::Closure(selected));
         Ok(selected)
     }
 
@@ -478,7 +485,7 @@ impl CellResidencyV1 {
         consume: impl FnOnce(CellResidentViewV1<'a>) -> T,
     ) -> CellResultV1<T> {
         require(
-            self.selection
+            self.selection()
                 .is_some_and(|selected| selected.closure_id == expected.closure_id),
             "resident local selection mismatch",
         )?;

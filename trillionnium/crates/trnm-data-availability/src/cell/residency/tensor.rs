@@ -269,7 +269,7 @@ impl CellResidencyV1 {
         cancelled: &AtomicBool,
     ) -> CellResultV1<CellResidentTensorModelV1<'a>> {
         require(
-            self.selection
+            self.selection()
                 .is_some_and(|selection| selection.closure_id == expected.closure_id),
             "resident local selection mismatch",
         )?;
