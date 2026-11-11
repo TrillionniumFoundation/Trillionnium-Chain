@@ -347,5 +347,79 @@ class TerminalBoundaryIntegrityTests(unittest.TestCase):
                 self.assertIsNone(result["boundary_stage"])
 
 
+
+class FinalPageActivationDiagnosticTests(unittest.TestCase):
+    """The seventh import may activate the original page, never a qualification."""
+
+    @staticmethod
+    def sample_history():
+        history = []
+        for index in range(7):
+            final = index == 6
+            history.append({
+                "response": {"value": {"complete": final, "packets": ["ab" * 10]}},
+                "client_import": {
+                    "wall_ns": 10 + index * 2,
+                    "thread_cpu_ns": 5 + index,
+                    "native_import_observation": {"packets": [{"phases": [{
+                        "phase": "submit_result", "started": final,
+                        "completed": final, "accepted": True if final else None,
+                        "error_code": None,
+                        "wall_ns": 8 if final else None,
+                        "thread_cpu_ns": 3 if final else None,
+                    }]}]},
+                },
+            })
+        return history
+
+    def test_actual_final_page_stage_is_reported_but_not_qualified(self):
+        from inspect_native_campaign_failure import _final_history_page_activation, _phase
+        rows = self.sample_history()
+        details = _final_history_page_activation(rows)
+        self.assertEqual(details["status"], "observed_final_page_activation")
+        self.assertEqual(details["last_submit_result_wall_ns"], 8)
+        self.assertEqual(details["last_submit_result_thread_cpu_ns"], 3)
+        self.assertTrue(details["same_last_two_packet_hex_chars"])
+        self.assertFalse(details["qualification"])
+        self.assertIn("nested", details["interpretation"])
+        phase = fixture()["phases"][0]
+        phase["history"] = rows
+        observed = _phase(phase, "baseline", 0)
+        self.assertEqual(observed["final_history_page_activation"]["status"],
+                         "observed_final_page_activation")
+        self.assertFalse(observed["flags"]["signed_rounds_confirmed"])
+        self.assertFalse(observed["flags"]["reported_finite_phase_criteria_met"])
+
+    def test_missing_duplicate_or_invalid_confirmation_cannot_create_final_activation(self):
+        from inspect_native_campaign_failure import _final_history_page_activation
+        original = self.sample_history()
+        tests = []
+        tests.append(original[:6])
+        bad = json.loads(json.dumps(original))
+        bad[-1]["response"]["value"]["complete"] = "true"
+        tests.append(bad)
+        bad = json.loads(json.dumps(original))
+        bad[-1]["response"]["value"]["packets"].append("other")
+        tests.append(bad)
+        bad = json.loads(json.dumps(original))
+        stages = bad[-1]["client_import"]["native_import_observation"]["packets"][0]["phases"]
+        stages.append(dict(stages[0]))
+        tests.append(bad)
+        bad = json.loads(json.dumps(original))
+        bad[-1]["client_import"]["native_import_observation"]["packets"][0]["phases"][0]["accepted"] = False
+        tests.append(bad)
+        bad = json.loads(json.dumps(original))
+        bad[-1]["response"]["value"]["complete"] = False
+        tests.append(bad)
+        bad = json.loads(json.dumps(original))
+        bad[-1]["client_import"]["wall_ns"] = True
+        tests.append(bad)
+        for history in tests:
+            with self.subTest(index=tests.index(history)):
+                details = _final_history_page_activation(history)
+                self.assertEqual(details["status"], "unknown")
+                self.assertFalse(details["qualification"])
+
+
 if __name__ == "__main__":
     unittest.main()

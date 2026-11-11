@@ -1,0 +1,68 @@
+{
+  "schema": "pq-root-final-page-submit-result-observation-v1",
+  "kind": "offline-independent-readback-not-native-run",
+  "original_source_head": "6c35f94d9387fac41c1547f05742d70150320b2e",
+  "original_source_tree": "11bffc8135e49f3c3e86ff384e25ec2a7b3a4ba7",
+  "original_actions_run_id": 42983166696,
+  "original_artifact_id": 13838364210,
+  "original_artifact_zip_sha256": "8fae87e2740750f94ae3a6f62ca5ceff4af978d56e283b8ab8c96f11a09f5b8e",
+  "workload": {
+    "campaigns": 3,
+    "phases_per_campaign": 3,
+    "phase_window_seconds": 30,
+    "attackers": [
+      0,
+      24,
+      24
+    ],
+    "business_blocks": 21,
+    "seed_transfers": 1024,
+    "seed_blocks": 4
+  },
+  "whole_campaigns_succeeded": 0,
+  "qualification": "HOLD_NO_GO",
+  "production_authority": "DENY_ALL",
+  "release_and_cryptography_qualified": false,
+  "timing_intervals_nested_nonadditive": true,
+  "stage_from_native_packet": "submit_result",
+  "all_three_seventh_pages_one_packet_complete_true": true,
+  "earlier_six_pages_submit_result_not_entered": true,
+  "seventh_packet_hex_chars": 99016,
+  "sixth_packet_hex_chars": 99016,
+  "runs": [
+    {
+      "run": 1,
+      "report_sha256": "c07d59b2b83387320b5321fb5c367c3bdc43941ad3ef964950b3596b74ab6d08",
+      "baseline_confirmed_in_window": 1,
+      "history_pages": 7,
+      "all_seven_imports_succeeded": true,
+      "seventh_import_wall_ns": 8912342455,
+      "seventh_import_thread_cpu_ns": 2008846325,
+      "seventh_submit_result_wall_ns": 6491375183,
+      "seventh_submit_result_thread_cpu_ns": 1448117292,
+      "last_minus_prior_six_median_import_wall_ns": 6415463897
+    },
+    {
+      "run": 2,
+      "report_sha256": "10294d23078b6cfe669e1f2c46863ac2edb8a53b2fcc6b59c916fe01b85784a9",
+      "baseline_confirmed_in_window": 1,
+      "history_pages": 7,
+      "all_seven_imports_succeeded": true,
+      "seventh_submit_result_wall_ns": 6518982861,
+      "seventh_submit_result_thread_cpu_ns": 1473658383,
+      "last_minus_prior_six_median_import_wall_ns": 6602054119
+    },
+    {
+      "run": 3,
+      "report_sha256": "00c29f2f91eba8f438d75b90d318f1a88dbc37311d282f9b834778957aa4808a",
+      "baseline_confirmed_in_window": 1,
+      "history_pages": 7,
+      "all_seven_imports_succeeded": true,
+      "seventh_submit_result_wall_ns": 6500169435,
+      "seventh_submit_result_thread_cpu_ns": 1453683093,
+      "last_minus_prior_six_median_import_wall_ns": 6460979234
+    }
+  ],
+  "interpretation": "The terminal page has comparable one-packet payload size but enters a previously unentered submit_result path. This is an observed stage boundary, not proof of unique root cause or safe omission of host checks.",
+  "no_qualification_upgrade": true
+}
