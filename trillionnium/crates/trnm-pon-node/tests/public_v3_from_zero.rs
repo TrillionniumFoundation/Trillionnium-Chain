@@ -1665,6 +1665,9 @@ fn signed_confirmation_phase_with_builder(
 #[path = "public_v3_from_zero/fresh_challenge.rs"]
 mod fresh_challenge;
 
+#[path = "public_v3_from_zero/sp27_receiver_controls.rs"]
+mod sp27_receiver_controls;
+
 #[test]
 fn from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline(
 ) {
