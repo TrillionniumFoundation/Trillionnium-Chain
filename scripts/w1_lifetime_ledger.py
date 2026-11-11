@@ -114,8 +114,8 @@ GROUPS = {
     },
 }
 SOURCE_PINS = {
-    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3",
-    "trillionnium/Cargo.lock": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "caff7ff137c94e26a378a2a95ae029a21b1ee30a79d08a05b8c9e3b1f1810ab8",
+    "trillionnium/Cargo.lock": "53c4eab0fb3d2951894348de2b765e0a573e49acb5dbfe1fe805719ec868a136",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b",
     "trillionnium/crates/trnm-protocol/src/pq_frame.rs": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429",
     "trillionnium/crates/trnm-protocol/src/crypto_profile.rs": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a",
