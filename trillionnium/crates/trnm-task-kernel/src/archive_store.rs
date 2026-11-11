@@ -990,6 +990,74 @@ mod tests {
     };
     use tempfile::tempdir;
 
+    #[cfg(unix)]
+    #[test]
+    fn sqlite_archive_sidecars_refuse_creation_and_reopen_without_file_effects() {
+        use std::os::unix::fs::symlink;
+
+        for existing in [false, true] {
+            let directory = tempdir().unwrap();
+            let database = directory.path().join("archive.sqlite");
+            let policy = policy();
+            if existing {
+                drop(TaskArchiveStoreV1::initialize(&database, policy.clone()).unwrap());
+            }
+            let original = fs::read(&database).ok();
+            for suffix in ["-wal", "-shm", "-journal"] {
+                let mut name = database.as_os_str().to_os_string();
+                name.push(suffix);
+                let sidecar = PathBuf::from(name);
+                let target = directory.path().join(format!("missing{suffix}"));
+                for dangling in [true, false] {
+                    if dangling {
+                        symlink(&target, &sidecar).unwrap();
+                    } else {
+                        fs::write(&sidecar, b"unresolved sidecar bytes").unwrap();
+                    }
+                    let result = if existing {
+                        TaskArchiveStoreV1::open_existing(&database, policy.clone())
+                    } else {
+                        TaskArchiveStoreV1::initialize(&database, policy.clone())
+                    };
+                    let error = result.expect_err("sidecar object must refuse before SQLite open");
+                    assert_eq!(error.code(), AgentMarketErrorCodeV1::SidecarPresent);
+                    assert_eq!(fs::read(&database).ok(), original);
+                    if dangling {
+                        assert_eq!(fs::read_link(&sidecar).unwrap(), target);
+                        assert!(
+                            !target.exists(),
+                            "refusal must not create the symlink target"
+                        );
+                    } else {
+                        assert_eq!(fs::read(&sidecar).unwrap(), b"unresolved sidecar bytes");
+                    }
+                    fs::remove_file(&sidecar).unwrap();
+                }
+            }
+            if !existing {
+                drop(TaskArchiveStoreV1::initialize(&database, policy.clone()).unwrap());
+            }
+            TaskArchiveStoreV1::open_existing(&database, policy).unwrap();
+        }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn sqlite_archive_inspection_error_refuses_before_creating_database() {
+        let directory = tempdir().unwrap();
+        let database = directory.path().join("a".repeat(255));
+        let mut probe = database.as_os_str().to_os_string();
+        probe.push("-wal");
+        let cause = fs::symlink_metadata(&probe).expect_err("overlong sidecar fixture");
+        assert_ne!(cause.kind(), std::io::ErrorKind::NotFound);
+        let error = TaskArchiveStoreV1::initialize(&database, policy())
+            .expect_err("an inspection error is not proof that a sidecar is absent");
+        assert_eq!(error.code(), AgentMarketErrorCodeV1::StoreFailure);
+        assert!(error.message().starts_with("cannot inspect SQLite sidecar"));
+        assert!(!database.exists(), "refusal must precede database creation");
+        assert_eq!(fs::read_dir(directory.path()).unwrap().count(), 0);
+    }
+
     fn context() -> ProtocolContextV1 {
         ProtocolContextV1 {
             genesis_hash: Hash32V1([1; 32]),

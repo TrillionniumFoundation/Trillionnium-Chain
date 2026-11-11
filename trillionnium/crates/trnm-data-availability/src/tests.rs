@@ -1330,7 +1330,10 @@ fn sqlite_dangling_sidecars_refuse_existing_store_without_touching_files() {
         }
         assert_eq!(std::fs::read(config.path()).unwrap(), original);
         assert_eq!(std::fs::read_link(&sidecar).unwrap(), target);
-        assert!(!target.exists(), "rejection must not create a symlink target");
+        assert!(
+            !target.exists(),
+            "rejection must not create a symlink target"
+        );
         std::fs::remove_file(sidecar).unwrap();
     }
     DataAvailabilityStoreV1::open_existing(config).expect("unmodified store remains usable");
@@ -1372,7 +1375,10 @@ fn sqlite_sidecar_names_preserve_non_utf8_database_bytes() {
             assert!(error.message().starts_with("unresolved SQLite sidecar"));
         }
         assert_eq!(std::fs::read(config.path()).unwrap(), original);
-        assert_eq!(std::fs::read(&sidecar).unwrap(), b"unresolved sidecar bytes");
+        assert_eq!(
+            std::fs::read(&sidecar).unwrap(),
+            b"unresolved sidecar bytes"
+        );
         std::fs::remove_file(sidecar).unwrap();
     }
     DataAvailabilityStoreV1::open_existing(config).expect("unmodified store remains usable");
@@ -1395,7 +1401,10 @@ fn sqlite_dangling_sidecars_refuse_creation_before_database_exists() {
             .expect_err("pre-existing sidecar must refuse before database creation");
         assert_eq!(error.code(), DaErrorCodeV1::StoreFailure);
         assert!(error.message().starts_with("unresolved SQLite sidecar"));
-        assert!(!config.path().exists(), "refusal must not create the database");
+        assert!(
+            !config.path().exists(),
+            "refusal must not create the database"
+        );
         assert_eq!(std::fs::read_link(&sidecar).unwrap(), target);
         assert!(!target.exists(), "refusal must not create a symlink target");
         std::fs::remove_file(sidecar).unwrap();
@@ -1502,4 +1511,33 @@ fn open_existing_requires_precreated_regular_nonsymlink_store() {
             DaErrorCodeV1::StoreFailure
         );
     }
+}
+
+#[cfg(unix)]
+#[test]
+fn sqlite_sidecar_inspection_error_refuses_before_database_creation() {
+    let fixture = Fixture::new(4, 16_384);
+    let database = fixture.directory.path().join("a".repeat(255));
+    let mut probe = database.as_os_str().to_os_string();
+    probe.push("-journal");
+    let cause = std::fs::symlink_metadata(&probe).expect_err("overlong sidecar fixture");
+    assert_ne!(cause.kind(), std::io::ErrorKind::NotFound);
+    let config = DaStoreConfigV1::new(
+        &database,
+        fixture.scope_id,
+        hash(100),
+        fixture.committee.clone(),
+        fixture.policy.clone(),
+        fixture.attestors[0].0,
+    )
+    .unwrap();
+    let error = DataAvailabilityStoreV1::open(config)
+        .expect_err("inspection failure cannot be treated as sidecar absence");
+    assert_eq!(error.code(), DaErrorCodeV1::StoreFailure);
+    assert!(error.message().starts_with("cannot inspect SQLite sidecar"));
+    assert!(!database.exists(), "refusal must precede database creation");
+    assert_eq!(
+        std::fs::read_dir(fixture.directory.path()).unwrap().count(),
+        0
+    );
 }
