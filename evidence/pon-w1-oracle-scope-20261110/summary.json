@@ -88,6 +88,14 @@
     "separate_macro_for_late_product": false
   },
   "existing_suite_outer_test_methods": 562,
+  "historical_report_child_verification": {
+    "actual_bridge_cli_verify_exit_code": 0,
+    "archive": "recovery-records.tar.gz",
+    "archive_prefix": "evidence-child-8dc/",
+    "executed_commit": "8dc625abe7116c75223a95f9be5931ca6075bf89",
+    "original_report_source_preserved": "6e39f27357ce7c030f5662ada3d524fecb58d63e",
+    "report_byte_identical": true
+  },
   "native_input": {
     "new_native_processes": 0,
     "original_block_depth": 0,
@@ -105,11 +113,14 @@
   "new_outer_test_methods": 38,
   "new_suite_outer_test_methods": 37,
   "preexisting_outer_test_methods": 561,
+  "previous_evidence_commit": "8dc625abe7116c75223a95f9be5931ca6075bf89",
   "publication": {
     "branch": "fix/chain-w1-oracle-evidence-20261110-0776",
     "draft_pr_created": false,
     "intended_base_branch": "fix/chain-pon-native-boundaries-20261110-02769a",
+    "note": "Push and draft creation are separately verified after this record is committed.",
     "push_executed": false,
+    "record_phase": "BEFORE_PUBLICATION_OF_THIS_EVIDENCE_UPDATE",
     "required_channel": "HeptaRuntime local GitHub, ProfHepta"
   },
   "qualification": {
@@ -128,10 +139,27 @@
   },
   "record_date": "2026-11-10",
   "record_timezone": "America/New_York",
+  "recorded_at_utc": "2026-11-11T02:13:00.864902+00:00",
   "rust_validation": {
     "bounded_attempt_source_unchanged": true,
+    "cloud_strict_clippy": "NOT_STARTED",
     "cloud_toolchain": "1.95.0",
-    "desktop_execution": "NOT_STARTED",
+    "desktop_command_receipts": 20,
+    "desktop_execution": "VALIDATION_PASSED",
+    "desktop_existing_provider": "OpenSSL 3.5.9; five installed inputs pinned before and after; no new provider build",
+    "desktop_format": "PASS",
+    "desktop_metadata": {
+      "all-features": "PASS",
+      "default": "PASS",
+      "fuzz": "PASS"
+    },
+    "desktop_provider_unchanged": true,
+    "desktop_record_archive_sha256": "5dd560fc76bc667160a7dd32cc7a7fc3625a46b6a5d68eb40804794f0658091a",
+    "desktop_record_members": 67,
+    "desktop_source_commit": "6e39f27357ce7c030f5662ada3d524fecb58d63e",
+    "desktop_source_unchanged": true,
+    "desktop_strict_clippy_elapsed_seconds": 181.24977065389976,
+    "desktop_summary": "desktop-validation.json",
     "format": "PASS",
     "hard_group_physical_memory_limit": false,
     "initial_offline_failures_retained": 3,
@@ -141,6 +169,8 @@
       "default": "PASS",
       "fuzz": "PASS"
     },
+    "native_tests_executed": false,
+    "new_native_node_processes": 0,
     "provider_build": {
       "disk_free_floor_bytes": 2147483648,
       "executed": true,
@@ -149,10 +179,12 @@
       "remaining_live_group_members": [],
       "stop_reason": "shared_disk_free_low_watermark"
     },
-    "remote_bundle": "UNKNOWN",
+    "remote_bundle": "RECOVERED_AND_SHA256_VERIFIED",
     "runner_upload": "CONFIRMED_WRITTEN",
-    "strict_clippy": "NOT_EXECUTED",
-    "strict_clippy_note": "fixed provider build was stopped by the declared disk watchdog; Clippy never started"
+    "sqlite_io_boundary": "UNQUALIFIED",
+    "sqlite_io_boundary_note": "Preserved build-script warning for additional provider loader directory; Clippy exit 0 does not qualify it.",
+    "strict_clippy": "PASS",
+    "strict_clippy_note": "Desktop command exited 0 on the implementation commit; cloud Clippy was not started."
   },
   "schema": "trnm-w1-oracle-scope-delivery-v1",
   "scope_cli": {
@@ -163,7 +195,7 @@
     "synthetic_accounting_premises": true
   },
   "selected_outer_test_methods": 599,
-  "status": "PYTHON_AND_LIGHT_RUST_PASSED_STRICT_CLIPPY_AND_PUBLICATION_INCOMPLETE",
+  "status": "SELECTED_PYTHON_AND_DESKTOP_STATIC_CHECKS_PASSED_SECURITY_HOLD",
   "test_count_scope": "top-level unittest methods in the named 16 suites; nested subprocess controls not added",
   "test_suites": [
     {
@@ -251,6 +283,7 @@
     "base": "e4abb172147e941b62483652b0ceabaae4317624",
     "bounded_build_source_unchanged": true,
     "commit": "6e39f27357ce7c030f5662ada3d524fecb58d63e",
+    "desktop_guards_identical": true,
     "formal_guards_identical": true,
     "full_source_guard": {
       "base": null,
