@@ -51,8 +51,8 @@ NODE_RUN_BODY = """\
             store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies
           )
           for selector in "${required[@]}"; do
-            bash "$OUT/run-command.sh" "native-storage-$selector" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --test-threads=1 || status=1
-            python3 -B scripts/ci/check_required_native_test.py "$OUT/native-storage-$selector.log" --test "$selector" || status=1
+            bash "$OUT/run-command.sh" "native-storage-${selector//::/-}" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --test-threads=1 || status=1
+            python3 -B scripts/ci/check_required_native_test.py "$OUT/native-storage-${selector//::/-}.log" --test "$selector" || status=1
           done
           exit "$status"
 """
@@ -102,8 +102,8 @@ COMPONENT_RUN_BODY = """\
             cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling
           )
           for selector in "${required[@]}"; do
-            bash "$OUT/run-command.sh" "native-storage-component-$selector" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib "$selector" -- --exact --test-threads=1 || status=1
-            python3 -B scripts/ci/check_required_native_test.py "$OUT/native-storage-component-$selector.log" --test "$selector" || status=1
+            bash "$OUT/run-command.sh" "native-storage-component-${selector//::/-}" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib "$selector" -- --exact --test-threads=1 || status=1
+            python3 -B scripts/ci/check_required_native_test.py "$OUT/native-storage-component-${selector//::/-}.log" --test "$selector" || status=1
           done
           exit "$status"
 """
@@ -342,6 +342,16 @@ class CellStorageConvergenceCiControls(unittest.TestCase):
 
     def test_current_source_preserves_complete_runtime_and_failure_seams(self) -> None:
         validate(self.text)
+        labels = [
+            prefix + name.replace("::", "-")
+            for prefix, names in (("native-storage-", NODE_REQUIRED_NAMES),
+                                  ("native-storage-component-", COMPONENT_REQUIRED_NAMES))
+            for name in names
+        ]
+        self.assertEqual(len(labels), 18)
+        self.assertEqual(len(labels), len(set(labels)))
+        for label in labels:
+            self.assertRegex(label, r"\A[A-Za-z0-9_-]+\Z")
 
     def test_new_commands_cannot_be_omitted_moved_duplicated_or_stubbed(self) -> None:
         blocks = (step(self.text, PYTHON_STEP), step(self.text, NODE_STEP))
@@ -349,7 +359,7 @@ class CellStorageConvergenceCiControls(unittest.TestCase):
                  if ("version-retention-vector" in line or "storage-descriptor-vector" in line
                      or "storage-convergence-workflow-controls" in line
                      or 'native-storage-owner cargo' in line
-                     or '"native-storage-$selector" cargo' in line
+                     or '"native-storage-${selector//::/-}" cargo' in line
                      or "check_required_native_test.py" in line)]
         self.assertEqual(len(lines), 6)
         for line in lines:
@@ -378,7 +388,7 @@ class CellStorageConvergenceCiControls(unittest.TestCase):
                 with self.subTest(name=name, change=change):
                     self.rejected(self.text.replace(line, change, 1))
         self.rejected(self.text.replace('for selector in "${required[@]}";', 'for selector in "${required[0]}";', 1))
-        self.rejected(self.text.replace('"$OUT/native-storage-$selector.log" --test', '"$OUT/native-storage-owner.log" --test', 1))
+        self.rejected(self.text.replace('"$OUT/native-storage-${selector//::/-}.log" --test', '"$OUT/native-storage-owner.log" --test', 1))
         self.rejected(self.text.replace('"$selector" -- --exact --test-threads=1', '"$selector" -- --test-threads=1', 1))
 
     def test_native_and_python_failure_exits_and_source_guards_cannot_be_skipped(self) -> None:
@@ -475,7 +485,7 @@ class CellStorageConvergenceCiControls(unittest.TestCase):
             ('"$selector" -- --exact --test-threads=1', '"$selector" -- --ignored --exact --test-threads=1'),
             ('"$selector" -- --exact --test-threads=1', '"$selector" -- --skip omitted --exact --test-threads=1'),
             ('"$selector" -- --exact --test-threads=1', '"$selector" -- --test-threads=1'),
-            ('"$OUT/native-storage-component-$selector.log"', '"$OUT/p2p-complete.log"'),
+            ('"$OUT/native-storage-component-${selector//::/-}.log"', '"$OUT/p2p-complete.log"'),
         ):
             changed = original.replace(old, new, 1)
             self.rejected(self.text.replace(original.rstrip("\n"), changed.rstrip("\n"), 1))

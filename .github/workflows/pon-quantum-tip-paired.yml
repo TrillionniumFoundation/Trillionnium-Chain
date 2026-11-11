@@ -157,6 +157,14 @@ jobs:
         id: w1_lifetime_tests
         if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}
         run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" w1-lifetime-tests python3 scripts/ci/test_w1_lifetime_ledger.py
+      - name: Verify portable native evidence names and retained exact selections
+        id: storage_evidence_tests
+        if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" storage-evidence-tests python3 scripts/ci/test_cell_storage_convergence_ci.py
+      - name: Verify discovery controls on the shared native evidence workflow
+        id: discovery_evidence_tests
+        if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}
+        run: bash "$RUNNER_TEMP/quantum-tip-evidence/record-command.sh" discovery-evidence-tests python3 scripts/ci/test_cell_discovery_v3_ci.py
       - name: Check retained CI contract
         id: ci_contract
         if: ${{ !cancelled() && matrix.lane == 'quantum-tip-paired' && steps.preflight.outcome == 'success' }}

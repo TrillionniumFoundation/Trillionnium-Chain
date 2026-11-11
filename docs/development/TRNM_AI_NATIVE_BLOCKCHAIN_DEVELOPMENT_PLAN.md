@@ -9,6 +9,13 @@ The [original execution record](../../evidence/pon-quantum-tip-20261111/actions-
 retains the same run's failed inline source guard, two formatter hunks and
 stale lifetime-source declaration. Apply the reviewed pin, formatting and
 15-path declaration repairs, then execute the successor's own checks.
+The repair source `67f78a87da0e6797c0262e69e95f367bc549be38` then actually
+passed all 388 quantum, joint, dynamic, PQ lifetime and CI mutation controls,
+all 72 horizons and all 72 replays. Its [own execution record](../../evidence/pon-quantum-tip-20261111/actions-67f78a87da0e/README.md)
+binds the complete source before and after. That quantum-lane result does not
+include the later nineteen-test W1 survey maintenance or portable evidence
+filename changes; those successors require their own checks.
+
 A separate twenty-source W1 lifetime reader also refused the changed store
 identity. Preserve that failed execution and the earlier 2026-11-09 report;
 maintain the current selected survey only after reviewing all twenty sources.
@@ -18,6 +25,20 @@ sources unchanged. Its fixture is source data, not an execution receipt.
 Require the retained nineteen-test suite to independently recompute the whole
 report and verify the source bytes on the successor. The separate inherited
 fixed-verifier QROM implementation mismatch remains unresolved.
+
+The [inherited QROM fixed-source review](../../evidence/pon-quantum-tip-20261111/qrom-fixed-source-review.md)
+separately compares all sixteen frozen inputs: the original source matches all
+sixteen, while the inherited and reviewed candidates match fourteen. Preserve
+the original rejection. The added one-call native CLI and bounded funded-service
+payload forms need an explicitly scoped current mapping; keep the frozen
+contract, reader, receipt sources and cost/security gates unchanged.
+
+The actual next-architecture artifact upload also rejected Rust-selector
+colons in eighteen pairs of log/exit filenames. Use a collision-free portable
+filename mapping in those two fixed loops while retaining the exact Cargo and
+native-reader selectors. Synchronize the strict workflow controls and run them
+independently; never drop failed evidence or rename files after their digest
+inventory is written. This maintenance does not change a native test or gate.
 
 The native test profile, consensus arithmetic, production flags and all
 unknown security bounds remain unchanged. The arm64 from-zero service

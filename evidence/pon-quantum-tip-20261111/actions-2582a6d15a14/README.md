@@ -55,6 +55,24 @@ command explicitly selects `--lib`: the same six tests live in the library,
 and the original full-workspace baseline gates remain unchanged. The original
 source3 command and its results remain in the raw log.
 
+## Additional source and evidence-transport failures
+
+The QROM implementation job's fixed-source reader rejected the inherited
+`w1_v2_verifier/src/main.rs` bytes. The complete `qrom-implementation.log` and
+`qrom-fixed-source-failure.json` retain that failure. The separate
+[static source review](../qrom-fixed-source-review.md) compares all sixteen
+selected files and identifies two inherited production changes. It does not
+alter the frozen contract or turn the refusal into proof of an attack.
+
+The next-architecture job also failed artifact upload because its fixed Rust
+test selectors put `::` in log/exit filenames. The complete original
+`next-architecture.log` retains the earlier test and source failures as well
+as the upload rejection. `next-architecture-upload-failure.json` identifies
+that narrow transport issue. The reviewed repair changes artifact names in
+two loops, preserves exact test selection and reader checks, and retains all
+output files and their digest inventory. This repair is not a successful
+rerun or an attribution of the separate native service failures.
+
 ## Existing host gate remains separately unresolved
 
 The arm64 cross-architecture job completed its earlier cost steps but its
