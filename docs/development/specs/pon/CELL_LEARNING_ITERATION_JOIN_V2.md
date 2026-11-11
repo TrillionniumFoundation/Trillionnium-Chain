@@ -95,6 +95,33 @@ missing historical pin. Existing records remain under their original source;
 this change neither repairs them in place nor authorizes a new dispatch for an
 uncertain old operation.
 
+The accepted format remains **HEPLCP02 only**. `HEPLCP03` (explicit trainer
+NoUpdate, observation tag 8) and `HEPLCP04` (explicit node-local decision,
+observation tag 9) are refused by this reader and by the completion and scoped
+completion joins that use it. This boundary also applies to the initial
+checkpoint embedded in a scoped Root profile. Replacing a newer header with
+`HEPLCP02` does not make its observation tags valid.
+
+Hepta source `337b2027ded9c196423007a0c00357d160d06de3` introduces
+`LocalDecisionV2` under the separate
+`hepta.learning.iteration-local-decision.v2\0` signing domain. Its
+AdoptCandidate, DeferCandidate and RetainParent dispositions follow a qualified
+proposal and preserve the original evaluation and proposal receipts. Local
+deferral or retention is not evaluator NoUpdate, proposal NoAdmissibleUpdate or
+trainer NoUpdate. The local decision shares the Selection stage but is not the
+original Selection observation: actual selection and next use still require
+their own receipts and current owner authority. A reader must not skip tag 9,
+relabel it as tag 5, infer adoption from the stage, or convert local retention
+into an upstream NoUpdate result.
+
+The existing joins therefore make no completed-learning claim about these
+newer records. New-format support requires a separately reviewed reader and
+paired exports from the original native codec and use owner. The scope suite's
+new-header and tag-9 cases are explicit hostile mutations of the unchanged
+historical HEPLCP02 corpus, not successful native HEPLCP04 evidence. An opaque
+evidence commitment alone does not verify the new signatures, settlement,
+independent evaluation or current adoption permission.
+
 ## Join and independent expectations
 
 `scripts/cell_learning_iteration_join.py` is invoked through the existing

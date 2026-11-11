@@ -1,0 +1,222 @@
+{
+  "all_static_checks_passed": false,
+  "cargo_build_test_clippy_executed": false,
+  "environment": {
+    "CARGO_HOME": "/home/agent/.cargo",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "RUSTC": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustc",
+    "RUSTFMT": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustfmt"
+  },
+  "expected_head": "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13",
+  "full_source_guard_runs_requested": 1,
+  "head_unchanged": true,
+  "lock_sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+  "runs": [
+    {
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "elapsed_seconds": 22.905250942999373,
+      "exit_code": 0,
+      "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/check-repository.log",
+      "log_sha256": "c91633381bb744ca3ae71784e0bb95909c1056e53ace3553c8b9d54648ce5a36",
+      "name": "check-repository",
+      "reported": {
+        "activation": false,
+        "head": "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13",
+        "local_links": 6617,
+        "normal_dependency_edges": 27,
+        "result": "PASS",
+        "runtime_implemented": false,
+        "rust_files": 1480,
+        "source_state": "committed-clean",
+        "tree": "3fba36baa1682fd5b4cbd5e49e07204464c26ed4",
+        "workspace_packages": 26
+      },
+      "started_utc": "2026-11-11T01:27:58.061727+00:00",
+      "tests": null
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "elapsed_seconds": 0.2571757539999453,
+      "exit_code": 0,
+      "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/check-ci-contract.log",
+      "log_sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb",
+      "name": "check-ci-contract",
+      "reported": {
+        "artifact_comparison_jobs": 1,
+        "head_jobs": 5,
+        "inline_source_pins": 26,
+        "merge_lanes": 5,
+        "native_cost_architectures": 2,
+        "pq_release_authority_controls": {
+          "complete_release": 55,
+          "groups": {
+            "cch1_content_binding": 3,
+            "initial_root_material": 6,
+            "original_release": 37,
+            "quorum_preflight": 9
+          },
+          "platform_scope": "unix",
+          "python_test_doubles": 18,
+          "tests_executed": false
+        },
+        "tests_executed": false,
+        "w1_actual_reuse_v3_cells": 4
+      },
+      "started_utc": "2026-11-11T01:28:20.967598+00:00",
+      "tests": null
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "elapsed_seconds": 4.349076275000698,
+      "exit_code": 0,
+      "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/test-ci-source-integrity.log",
+      "log_sha256": "2d94e001611b2054cdf006e63dc78d1de3fadeabb36fac11cf8c218c1d8d0c6a",
+      "name": "test-ci-source-integrity",
+      "started_utc": "2026-11-11T01:28:21.225863+00:00",
+      "tests": 43
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "scripts/test_cell_learning_iteration_join.py",
+        "-v"
+      ],
+      "elapsed_seconds": 0.5156047700002091,
+      "exit_code": 0,
+      "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/learning-iteration.log",
+      "log_sha256": "4238dd733aa6eb3dddd341b084b7de0861626e55a787e06daaa558bb1b88bfa9",
+      "name": "learning-iteration",
+      "started_utc": "2026-11-11T01:28:25.579067+00:00",
+      "tests": 25
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "scripts/test_cell_learning_completion_join.py",
+        "-v"
+      ],
+      "elapsed_seconds": 0.6861994339997182,
+      "exit_code": 0,
+      "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/learning-completion.log",
+      "log_sha256": "2768dfb9f7cf50d16c8914b5f3255ee85161c7799c5c2b456aa201fba1fc829a",
+      "name": "learning-completion",
+      "started_utc": "2026-11-11T01:28:26.095213+00:00",
+      "tests": 13
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "scripts/test_cell_learning_scope_join.py",
+        "-v"
+      ],
+      "elapsed_seconds": 1.2590154469999106,
+      "exit_code": 0,
+      "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/learning-scope.log",
+      "log_sha256": "109e0bf6b31aaf55908b0374ca98efee2858d94f1a2bb35a7866dd2f6ee5dc05",
+      "name": "learning-scope",
+      "started_utc": "2026-11-11T01:28:26.781957+00:00",
+      "tests": 13
+    },
+    {
+      "command": [
+        "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/cargo",
+        "fmt",
+        "--all",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "elapsed_seconds": 22.214927629000158,
+      "exit_code": 1,
+      "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/cargo-fmt-check.log",
+      "log_sha256": "549250996ea6688b928800695904fb041478053d0619b41a827451c8efff73ee",
+      "name": "cargo-fmt-check",
+      "started_utc": "2026-11-11T01:28:28.041927+00:00",
+      "tests": null
+    },
+    {
+      "command": [
+        "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "elapsed_seconds": 0.1809984390001773,
+      "exit_code": 0,
+      "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/cargo-metadata-locked-offline.log",
+      "log_sha256": "81bb7691688e2d2ea4e36009b9136e6183a04b494ef8db3927f5b9c4be05e6f7",
+      "name": "cargo-metadata-locked-offline",
+      "package_count": 177,
+      "resolve_node_count": 177,
+      "started_utc": "2026-11-11T01:28:50.267577+00:00",
+      "stderr_log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/cargo-metadata-locked-offline.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tests": null,
+      "workspace_default_member_count": 26,
+      "workspace_member_count": 26
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13",
+        "--output",
+        "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/full-source-guard.json"
+      ],
+      "elapsed_seconds": 16.077753784999913,
+      "exit_code": 0,
+      "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/full-source-guard.log",
+      "log_sha256": "75088a4490ae1a1304afdc6c10f6d1d1130929882fae661b159ca40f84249185",
+      "name": "full-source-guard",
+      "reported": {
+        "base": null,
+        "candidate": "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13",
+        "tested_tree": "3fba36baa1682fd5b4cbd5e49e07204464c26ed4",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2551682835,
+        "tracked_entries": 27867,
+        "tracked_worktree_verified": true
+      },
+      "started_utc": "2026-11-11T01:28:50.483103+00:00",
+      "tests": null
+    }
+  ],
+  "scope": "exact-final-source-static-contract-validation-not-native-runtime-pass",
+  "source_file_count_sha256": 29,
+  "source_files_after": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/source-files-after.json",
+  "source_files_before": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/source-files-before.json",
+  "source_unchanged": true,
+  "task_base": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+  "task_changed_file_count": 18,
+  "unittest_count": 94,
+  "worktree": "/workspace/scratch/227dcdfdc6e4/chain-node-adoption",
+  "worktree_clean_before_after": true
+}

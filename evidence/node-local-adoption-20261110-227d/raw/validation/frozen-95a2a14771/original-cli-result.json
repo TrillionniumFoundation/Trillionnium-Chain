@@ -1,0 +1,25 @@
+{
+  "name": "original-cli",
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-data-availability",
+    "--test",
+    "cell_adoption_cli",
+    "-j1",
+    "--",
+    "--test-threads=1"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 6.204,
+  "source_commit": "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13",
+  "source_unchanged": true,
+  "log_sha256": "1dae0fae215bdd0692578686b74dd996dc61259643159d535c3588d5640dd04a",
+  "profile_overrides": {},
+  "scope": "targeted original-profile validation"
+}

@@ -5,6 +5,8 @@
 
 use std::{fmt, io};
 
+mod adoption;
+mod adoption_boundary;
 mod archive;
 mod bep52;
 mod bep52_peer;
@@ -37,6 +39,13 @@ mod tensor_reader;
 mod version;
 mod version_content;
 mod version_retention;
+
+pub use adoption::{
+    CellAdoptionActionV1, CellAdoptionOwnerV1, CellAdoptionPolicyV1, CellAdoptionReceiptV1,
+    CellAdoptionSnapshotV1, CellCandidateEvidenceV1, CellCandidateObservationV1,
+    MAX_CELL_ADOPTION_CANDIDATES_V1, MAX_CELL_ADOPTION_DECISIONS_V1,
+};
+pub use adoption_boundary::{CellExecutionBoundaryV1, CellModelUpdateBoundaryV1};
 
 pub use archive::{
     CellReleaseRetentionConfigV2, CellReleaseRetentionContractV2, CellReleaseRetentionReadbackV2,
@@ -135,12 +144,12 @@ pub use release::{
     CellReleaseFetchOptionsV2, CellReleaseFetchReportV1, CellTensorModelFetchReportV1,
     CellTransportFetchReportV2,
 };
+pub use residency::{CellAdoptionUseV1, CellResidentVersionV1, CellResidentVersionViewV1};
 pub use residency::{
     CellLocalSelectionV1, CellResidencyConfigV1, CellResidencyPrepareReportV1,
     CellResidencyUsageV1, CellResidencyV1, CellResidentFileV1, CellResidentTensorFileV1,
     CellResidentTensorModelV1, CellResidentTensorV1, CellResidentViewV1, CellResidentWorkingSetV1,
 };
-pub use residency::{CellResidentVersionV1, CellResidentVersionViewV1};
 pub use retained::{
     fetch_retained_version_set, CellRetainedFetchFailureV1, CellRetainedFetchObservationV1,
     CellRetainedFetchUsageV1, CellRetainedObjectV1, CellRetainedReadBudgetV1,

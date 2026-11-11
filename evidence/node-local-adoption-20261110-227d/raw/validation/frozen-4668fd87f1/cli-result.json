@@ -1,0 +1,23 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-data-availability",
+    "--test",
+    "cell_adoption_cli",
+    "-j1",
+    "--",
+    "--test-threads=1"
+  ],
+  "exit_code": 101,
+  "elapsed_seconds": 218.45,
+  "source_commit": "4668fd87f1c4c7f6f4e206572e817a0c22201582",
+  "log_sha256": "b5b4dd2b56401da51cc66eb9a00dcdfe0c14884a9d137b916c89fdabdec80220",
+  "profile_overrides": {},
+  "build_jobs": 1
+}

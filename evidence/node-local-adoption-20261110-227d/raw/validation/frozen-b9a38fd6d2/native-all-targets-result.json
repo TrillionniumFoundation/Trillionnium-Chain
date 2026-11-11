@@ -1,0 +1,25 @@
+{
+  "name": "native-all-targets",
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-data-availability",
+    "--all-targets",
+    "--all-features",
+    "-j1",
+    "--",
+    "--test-threads=1"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 234.619,
+  "source_commit": "b9a38fd6d245e20849c7edd848dbbe18298cad7e",
+  "source_unchanged": true,
+  "log_sha256": "3079c28f188a052db6848fa0561087ada1b227a7080eb67d414ef38890828fcb",
+  "profile_overrides": {},
+  "coordination": "Hepta build paused; one Cargo build for this task; -j1"
+}

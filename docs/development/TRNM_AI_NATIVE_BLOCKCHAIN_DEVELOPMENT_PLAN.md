@@ -11409,3 +11409,80 @@ seven successful submissions. Preserve `CONFIRMATION_TARGET` and
 and nested CPU scopes. Open-network liveness, all-legal-strategy cost, joint
 classical/quantum DAA and chain quality, independent useful demand/model benefit,
 and ordinary same-operation external-effect recovery remain open.
+
+### 2026-11-10: preserve explicit node-local Cell adoption
+
+Keep open candidate/evaluation/settlement observations separate from the
+existing PQ release role's single current authorization. Continue the joint
+candidate with a new TCA1 local selection journal and the
+[Node-local Cell adoption V1 contract](specs/pon/NODE_LOCAL_CELL_ADOPTION_V1.md).
+Record Adopt, Defer, Retain and Rollback as explicit monotonically ordered
+operator-policy decisions over complete TCV1 metadata. A new candidate or new
+evidence reference must not select a model, revoke the currently selected model
+or authorize an executable/configuration/Root change.
+
+Use the immutable approved anchor to bound allowed model-data payload changes,
+retain the complete environment, loader interface and dependency graph, and
+check network/consensus/fees/Root/software/configuration pins at selected use.
+Connect that decision to the actual resident-byte consumer while holding a
+cooperating-writer fence. Provide explicit local init/status/observe/decide and
+actual-cache-read verification commands. Re-adoption and rollback create new
+decisions; they do not manufacture new knowledge or revive an old snapshot.
+
+Validate two nodes making different choices for the same candidate, unchanged
+selection after new evidence, real selected-byte consumption, stale CAS and
+A-to-B-to-A rejection, independent recovery-floor checks, genuine commit/ACK
+faults and strict local CLI inputs. Preserve the negative control in which
+rolling back both the database and its floor cannot establish freshness.
+
+This is an opt-in local consumer boundary. Default/deployed caller migration,
+protected policy custody, current release/FinalUse authorization, authentic
+chain inclusion and independently reproduced model benefit retain their
+original acceptance gates. The ordinary Hepta stage-owner assembly remains a
+separate joint-candidate requirement. No production flag or consensus/fee/Root
+rule is changed by this continuation.
+
+### 2026-11-11: node-local adoption original-profile validation
+
+Runtime source `b9a38fd6d245e20849c7edd848dbbe18298cad7e` completed the original
+locked/offline data-availability all-targets/all-features run with `-j1` and one
+test thread: **786 passed, zero failed, ignored or filtered**, comprising 741
+library and 45 integration tests. The new 16 durable-owner, six model-boundary
+and four actual selected-resident controls total 26 library tests; the 11 new
+CLI controls are included in the integration count. Full strict all-targets
+Clippy and workspace formatting also exited zero, with no profile overrides.
+The [retained evidence](../../evidence/node-local-adoption-20261110-227d/README.md)
+binds each command, result, log and source observation separately.
+
+The 55 original release-bundle/PQ authority-boundary tests relevant to M15 ran
+on `95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13`, with the release package and its
+dependency source unchanged at the final runtime. That source also passed 43
+Python source-integrity tests and 51 iteration/completion/scope-reader tests,
+repository/CI contracts and full locked/offline metadata: 177 packages and 26
+workspace members. Its one complete source guard verified 27,867 tracked
+entries and 2,551,682,835 bytes. Its separate formatting failure was closed by
+the subsequent format-only runtime commit. These supporting suites are not
+added to the 786 data-availability total.
+
+Preserve the earlier compiler SIGKILL observations, private-constructor fixture
+failure, 11 private-directory fixture failures, dirty-source refusal and strict
+Clippy failures. The separately labelled 741-test package-debug-zero diagnostic
+and earlier 11-test CLI passes do not replace or inflate the final original-
+profile result. Four tested binary digests and the later task-owned build-cache
+cleanup outcome remain recorded; source, evidence and shared dependencies were
+retained. The evidence-only continuation records matching Git blobs and SHA-256
+for 2,103 code/configuration/workflow paths, keeping the tested runtime unchanged.
+
+TCA1 selection remains opt-in and local. Candidate/evaluation/chain/settlement
+references cannot self-grant policy, current release authorization or FinalUse.
+Rollback and re-adoption create new local revisions; chain reorganization cannot
+rewind that history. Current deployment custody, ordinary caller migration,
+independent model benefit and actual chain settlement retain their own gates.
+The historical learning joins continue to refuse HEPLCP03/04 and tag 9 under an
+old header; local defer/retain is not evaluator, trainer or proposal NoUpdate.
+
+The retained H-channel probes failed at their recorded times and performed no
+remote Git write as part of those probes. Under the existing user authorization,
+root plans publication through the separately identity-checked ProfHepta
+connector; the actual remote commit/tree belongs in the PR and readback. This
+evidence does not claim that publication already occurred or that H recovered.

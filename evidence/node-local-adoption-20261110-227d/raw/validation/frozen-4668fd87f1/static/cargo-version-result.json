@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/cargo",
+    "--version"
+  ],
+  "elapsed_seconds": 0.05287802200018632,
+  "exit_code": 0,
+  "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-4668fd87f1/static/cargo-version.log",
+  "log_sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+  "name": "cargo-version",
+  "started_utc": "2026-11-11T00:51:54.415196+00:00",
+  "tests": null
+}
