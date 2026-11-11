@@ -389,11 +389,75 @@ jobs:
           if not storage_components_passed or not sealed_python_passed:
               raise SystemExit("required storage convergence component stages did not succeed")
           PY
+      - name: Prepare portable artifact names without changing test inputs or raw logs
+        if: ${{ always() && steps.reserve.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B - "$OUT" <<'PY'
+          from pathlib import Path
+          from urllib.parse import quote
+          import hashlib
+          import json
+          import os
+          import shutil
+          import sys
+
+          original = Path(sys.argv[1])
+          portable = original.with_name(original.name + "-portable")
+          # Keep the original file names and contents until all native test and
+          # required-test log readers have finished. Only the upload copy is encoded.
+          portable.mkdir()
+          records = []
+          seen = set()
+
+          def fingerprint(path):
+              digest = hashlib.sha256()
+              size = 0
+              with path.open("rb") as stream:
+                  for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                      digest.update(chunk)
+                      size += len(chunk)
+              return size, digest.hexdigest()
+
+          for src in sorted(original.rglob("*")):
+              if src.is_symlink():
+                  raise SystemExit(f"refusing symlink in retained evidence: {src}")
+              if not src.is_file():
+                  continue
+              rel = src.relative_to(original)
+              safe = Path(*(quote(part, safe="-._") for part in rel.parts))
+              if safe.as_posix() in seen:
+                  raise SystemExit(f"portable evidence-name collision: {safe}")
+              seen.add(safe.as_posix())
+              target = portable / safe
+              target.parent.mkdir(parents=True, exist_ok=True)
+              shutil.copyfile(src, target)
+              size, sha = fingerprint(src)
+              if fingerprint(target) != (size, sha):
+                  raise SystemExit(f"retained evidence copy mismatch: {rel}")
+              records.append({
+                  "original_path": rel.as_posix(),
+                  "uploaded_path": safe.as_posix(),
+                  "bytes": size,
+                  "sha256": sha,
+              })
+
+          (portable / "artifact-name-map.json").write_text(
+              json.dumps({
+                  "schema": "trnm-portable-ci-artifact-map-v1",
+                  "scope": "byte-identical post-test upload copy; raw logs remain unchanged",
+                  "files": records,
+              }, sort_keys=True, indent=2) + "\n"
+          )
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
+              env.write(f"UPLOAD_OUT={portable}\n")
+          PY
       - name: Retain logs and failed or partial observations
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: next-architecture-${{ matrix.runner }}-${{ matrix.source }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/next-architecture-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}/
+          path: ${{ env.UPLOAD_OUT }}
           if-no-files-found: error
           retention-days: 30
