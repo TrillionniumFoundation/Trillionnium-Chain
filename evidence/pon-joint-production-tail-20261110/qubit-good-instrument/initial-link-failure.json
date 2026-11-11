@@ -1,0 +1,15 @@
+{
+  "schema": "trnm-qubit-initial-link-failure-v1",
+  "observation": "follow-up complete re-observation on the identical initial README bytes; original first driver aborted on same reported broken link",
+  "readme_sha256": "6b46e138ce07b27d2d91eed2ac11ef9ae711db4d29c551f91f4d46b37432f3a1",
+  "argv": [
+    "python",
+    "scripts/ci/check_repository.py"
+  ],
+  "exit_code": 2,
+  "stdout": "",
+  "stderr": "Repository check failed: broken link evidence/pon-joint-production-tail-20261110/qubit-good-instrument/README.md -> ../../../../formal/pon-nakamoto-v1/STATEFUL_RESOURCE_TAIL_V1.md\n",
+  "original_first_driver_exception": "AssertionError: broken link to ../../../../formal/pon-nakamoto-v1/STATEFUL_RESOURCE_TAIL_V1.md",
+  "original_first_driver_full_child_streams_retained": false,
+  "native_executed": false
+}
