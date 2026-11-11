@@ -643,7 +643,7 @@
     "tests/fixtures/llm_material_runtime_bridge_v1/historical_target.json": "2f3c2aed7ff8e546c7cd2569f3b27bdeb9d30d30",
     "tests/fuzz/Cargo.lock": "30408ee702c2a31525286b2d4f14c9c461db8803",
     "tests/fuzz/Cargo.toml": "a55d73741e6971601f1f3df6dec9b19a924d9a8e",
-    "trillionnium/Cargo.lock": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+    "trillionnium/Cargo.lock": "f3f53a76db2867c8906f0aea49ad83a6954d3ef4",
     "trillionnium/Cargo.toml": "44df8f8d5eec880d10da42c12a903c03658cfc65",
     "trillionnium/crates/trnm-checkpoint-store/Cargo.toml": "86bf7216ee32ad2c63c5925e8fa7ae5a2d35b5f9",
     "trillionnium/crates/trnm-checkpoint-store/examples/checkpoint_fault_domain_probe.rs": "bbdd8fd6aeeedd3bcd84c4619301c07f27d6d208",
