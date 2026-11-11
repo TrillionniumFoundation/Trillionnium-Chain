@@ -450,6 +450,25 @@ class ReviewedSourceTests(ContractCase):
         self.write()
         self.inspect_refuses("frozen reviewed snapshot")
 
+    def test_reverted_lock_dependency_is_refused_even_with_rewritten_manifest_hash(self):
+        # Reproduce the dependency changed by this reviewed source continuation.
+        # A different resolvable package version is still different source.
+        relative = "trillionnium/Cargo.lock"
+        path = self.root / relative
+        raw = path.read_bytes()
+        current = (b'name = "rustix"\nversion = "1.1.6"\n'
+                   b'source = "registry+https://github.com/rust-lang/crates.io-index"\n'
+                   b'checksum = "e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa"')
+        previous = (b'name = "rustix"\nversion = "1.1.4"\n'
+                    b'source = "registry+https://github.com/rust-lang/crates.io-index"\n'
+                    b'checksum = "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"')
+        self.assertEqual(raw.count(current), 1)
+        path.write_bytes(raw.replace(current, previous, 1))
+        self.inspect_refuses("source hash mismatch: trillionnium/Cargo.lock")
+        self.data["source_files_sha256"][relative] = hashlib.sha256(path.read_bytes()).hexdigest()
+        self.write()
+        self.inspect_refuses("frozen reviewed snapshot")
+
     def test_omitted_extra_or_rebound_source_paths_refuse(self):
         original = deepcopy(self.data)
         del self.data["source_files_sha256"][NATIVE_OWNER]

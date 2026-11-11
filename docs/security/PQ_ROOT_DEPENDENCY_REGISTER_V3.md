@@ -222,6 +222,26 @@ null budgets and false qualification values remain. M10
 that failure remains historical evidence. This source review does not qualify
 the repaired candidate or expand the declared transitive dependency scope.
 
+The 2026-11-11 fullpath dependency continuation reviews exact commit
+`53e1b98a7955898b9feff4778f7136c0fd0199c8`, tree
+`094ccb0afc9e7ffbbcc83f85efb6ca4ad8d54aa0`. All 37 declared regular files
+match that Git snapshot. Relative to the preceding M11 review, only
+`trillionnium/Cargo.lock` and
+`trillionnium/crates/trnm-crypto-primitives/Cargo.toml` differ. The lock changes
+only the rustix package version and checksum from 1.1.4 to 1.1.6; its dependency
+edges and every other package are unchanged. The Linux crypto test dependency
+now selects that same exact version with the original `time` feature.
+The current canonical source-map digest is
+`8195617385b57241b7fa420dfd1d05f0d3b6287c818c1edcafc65697598ab577`.
+The other 35 selected file hashes, complete path roster, roles, suites, budgets,
+deadlines and qualification values remain unchanged. The previous checker
+actually refused the changed lockfile; the original 42-control suite failed
+with four failures and one error before this repair. The retained controls and
+an additional reverted-lockfile/rewritten-manifest negative case require the
+same refusal boundaries after review. This is source consistency maintenance,
+not dependency security, native execution or original-budget service acceptance.
+The inspector still returns `source_revision_bound = false` and `HOLD`.
+
 The checker reuses the existing
 [descriptor-bound source reader](../../scripts/ci/pq_source_reader.py).
 It refuses missing, symlinked, nonregular, oversized and changing source

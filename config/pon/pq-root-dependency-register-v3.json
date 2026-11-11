@@ -688,7 +688,7 @@
     "wire_equivalence_proved": false
   },
   "purpose": "declared-root-dependency-and-query-obligation-inventory",
-  "review_base_revision": "be5f047771e4d714726fec41abfa68231a06260b",
+  "review_base_revision": "53e1b98a7955898b9feff4778f7136c0fd0199c8",
   "roles": {
     "anchor-response": {
       "action_coverage": [
@@ -1047,9 +1047,9 @@
     "formal/pon-nakamoto-v1/pq_root_recovery_signatures_v2.py": "3031dc21e27dd492fa37c17ca4413dae0632f5fbf072f4c5a90c9183021a175f",
     "scripts/ci/pq_lifetime_budget.py": "eba31bee86b025a55c45cf8a86ad95bb85db1221af9c1ccd38799666e512555e",
     "scripts/ci/pq_source_reader.py": "b3eb3f23b42c012dc1a5a07daa479db5e2982b2a20006f047552c9f13e1a65cb",
-    "trillionnium/Cargo.lock": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+    "trillionnium/Cargo.lock": "53c4eab0fb3d2951894348de2b765e0a573e49acb5dbfe1fe805719ec868a136",
     "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
-    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3",
+    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "caff7ff137c94e26a378a2a95ae029a21b1ee30a79d08a05b8c9e3b1f1810ab8",
     "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "74f11c99984a0c199f6b1a882206dc887440a3c69668dd3833054eb0e98fd32c",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs": "2f775934937dc0997579ca43132c3a2aee262103ec66ca4a4be08d3b8f4f93f4",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs": "9b03c4f4a22175fe183e045bc1a2e25282232a4bb156281970f542e7277ebf1b",
