@@ -140,7 +140,7 @@
   },
   "parent_profile": "pon-nakamoto-v1",
   "pinned_blobs": {
-    ".github/workflows/chain-hepta-closure-candidate.yml": "daacb250c24417c33cac729462e033561f52154b",
+    ".github/workflows/chain-hepta-closure-candidate.yml": "26699a44003d4462b97dd8aa369025bbabef51bc",
     ".github/workflows/codeql-real-exact-source.yml": "6d76cdfea69d6c14660df3a88cd25cad4ad95d28",
     ".github/workflows/cpq1-full-content.yml": "87ecbc31d5187a6a039c121174727d6116b46086",
     ".github/workflows/pon-branch-encoding-acceptance.yml": "b21f487c58b265ce780e6c9472da6efaea0f69da",
