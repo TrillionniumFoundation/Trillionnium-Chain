@@ -41,6 +41,13 @@ OUTPUT_SCHEMA = "TRNM-W1-LIFETIME-LEDGER-REPORT1"
 # selected source identity only; it does not identify an executed binary or
 # establish any proof, lifetime, consensus, or production qualification.
 SOURCE_BASE = "8add285b6c0a91d8b7812efe2d02c9342f74c91b"
+# Preserve the historical common-source baseline while explicitly identifying the
+# two reviewed dependency inputs from the later rustix security checkpoint.
+# This is byte provenance only, never a new security theorem or qualification.
+SOURCE_REVIEWED_REVISIONS = {
+    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "7f83ea843d6d1578a475a7a0c4dc026da564a795",
+    "trillionnium/Cargo.lock": "7f83ea843d6d1578a475a7a0c4dc026da564a795",
+}
 MAX_INPUT_BYTES = 262144
 MAX_INTEGER_BITS = 512
 PHASES = (
@@ -581,6 +588,7 @@ def source_survey(sources):
     desired = (config["retarget_interval"] - 1) * config["target_spacing_seconds"]
     return {
         "base_commit": SOURCE_BASE,
+        "reviewed_source_revision_overrides": dict(SOURCE_REVIEWED_REVISIONS),
         "coverage": "selected_implementation_coverage_not_exhaustive",
         "all_selected_source_bytes_match": True,
         "whole_repository_build_or_behavior_verified": False,
