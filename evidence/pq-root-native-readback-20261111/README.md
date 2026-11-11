@@ -28,7 +28,7 @@ The reader verifies exact source and archive identity; manifest coverage and pay
 
 ## Independent tests and limitations
 
-The exact new GitHub code and eleven synthetic negative controls were fetched and executed on the authorized Hepta host ai395: **11/11 passed**, exit 0. These are negative controls, not an original campaign or independently paid external operation.
+The exact new GitHub code and thirteen synthetic negative controls were fetched and executed on the authorized Hepta host ai395: **13/13 passed**, exit 0. These are negative controls, not an original campaign or independently paid external operation.
 
 The historical [V4 qualification record](../pq-root-continuation-v4-20261109/qualification-record.json) binds source **0d99924005b70b1308bf3e62c53e9300fbb4aac4**, not the present source. Its eight actual domain failure probability bounds are unknown. Independent operators and device/key backup, outside-the-common-restore freshness, native M15/FinalUse and real provider settlement/reorg responsibility, explicit secure migration, all-key/all-epoch and shared-oracle security reductions remain open.
 
