@@ -7,7 +7,7 @@
     "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
     "model": "quantum-adaptive-lifetime",
     "horizon": "UNSPECIFIED: no finite deployment lifetime or stopping rule is qualified; include prior preprocessing and surviving authority after retirement.",
-    "source_revision": "5ec9b4490fbfd22df4527e3b75ec74d6986572cf"
+    "source_revision": "f2375a08f4458f842b96d30215adcd5380270f1d"
   },
   "assumptions": [
     {

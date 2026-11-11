@@ -82,8 +82,36 @@ class LifetimeLedgerTests(unittest.TestCase):
             "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca")
         self.assertEqual((json.dumps(expected, indent=2, sort_keys=True, allow_nan=False)
                           + "\n").encode(), fixture.read_bytes())
+        self.assertEqual(hashlib.sha256(fixture.read_bytes()).hexdigest(),
+                         "b050b861ec172305d708ba7c01ca47d547b1646cc3daee1d6aec9877d2cf3390")
+        account_boundary = fixture
+        fixture = ROOT / "evidence/pon-w1-lifetime-five-claims-20261111/project-report.json"
+        # These fixed values were reviewed from exact Git objects at the
+        # composed implementation commit, independently of the reader output.
+        survey["base_commit"] = "f2375a08f4458f842b96d30215adcd5380270f1d"
+        survey["observations"]["native_work_verifier"]["anchor_line"] = "1124"
+        survey["observations"]["native_work_verifier"]["sha256"] = (
+            "fd638ddde61e9d91e639b859be5e514913d54e4f33e51853e6a4271da80357a5")
+        survey["observations"]["cumulative_weight"]["anchor_line"] = "5159"
+        survey["observations"]["cumulative_weight"]["sha256"] = (
+            "fd638ddde61e9d91e639b859be5e514913d54e4f33e51853e6a4271da80357a5")
+        survey["sources"][7]["bytes"] = "384863"
+        survey["sources"][7]["sha256"] = (
+            "fd638ddde61e9d91e639b859be5e514913d54e4f33e51853e6a4271da80357a5")
+        survey["observations"]["required_work_formula"]["anchor_line"] = "141"
+        survey["observations"]["required_work_formula"]["sha256"] = (
+            "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d")
+        survey["observations"]["actual_target_rule"]["anchor_line"] = "188"
+        survey["observations"]["actual_target_rule"]["sha256"] = (
+            "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d")
+        survey["sources"][8]["bytes"] = "20510"
+        survey["sources"][8]["sha256"] = (
+            "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d")
+        self.assertEqual((json.dumps(expected, indent=2, sort_keys=True, allow_nan=False)
+                          + "\n").encode(), fixture.read_bytes())
         self.assertEqual((json.dumps(result, indent=2, sort_keys=True, allow_nan=False)
                           + "\n").encode(), fixture.read_bytes())
+        self.assertNotEqual(fixture.read_bytes(), account_boundary.read_bytes())
         self.assertNotEqual(fixture.read_bytes(), historical.read_bytes())
         budget = result["lifetime_ledger"]
         self.assertIsNone(budget["sum_of_group_adversary_query_envelopes"])
@@ -311,8 +339,8 @@ class LifetimeLedgerTests(unittest.TestCase):
 
     def test_source_lines_remain_independent_of_existing_qualification_labels(self):
         survey = self.survey
-        reviewed_base = "077ac4f33206de00a178553d9a0c729a20685088"
-        reviewed_store = "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca"
+        reviewed_base = "f2375a08f4458f842b96d30215adcd5380270f1d"
+        reviewed_store = "fd638ddde61e9d91e639b859be5e514913d54e4f33e51853e6a4271da80357a5"
         self.assertEqual(ledger.SOURCE_BASE, reviewed_base)
         self.assertEqual(survey["base_commit"], reviewed_base)
         self.assertEqual(ledger.SOURCE_PINS["trillionnium/crates/trnm-pon-node/src/store.rs"],
