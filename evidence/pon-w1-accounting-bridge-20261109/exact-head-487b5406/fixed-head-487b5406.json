@@ -1,0 +1,63 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "487b5406b20b487c1a372d19a103f29dcea110b9",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "487b5406b20b487c1a372d19a103f29dcea110b9",
+    "tested_tree": "7eb19399c2fabeab81441d06fb6e2d8762effb24",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2502238895,
+    "tracked_entries": 26211,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "python3",
+    "-B",
+    "-c",
+    "import json,subprocess,sys\ncommands=[['python3', '-B', 'formal/pon-nakamoto-v1/test_four_propositions_w1_v2.py', '-v'], ['python3', '-B', 'formal/pon-nakamoto-v1/test_four_propositions_v1.py', '-v'], ['python3', '-B', 'formal/pon-nakamoto-v1/test_demand_evidence.py', '-v'], ['python3', '-B', 'formal/pon-nakamoto-v1/test_work_utility.py', '-v'], ['python3', '-B', 'formal/pon-nakamoto-v1/test_upgrade_policy.py', '-v'], ['python3', '-B', 'scripts/ci/test_ci_contract.py', '-v'], ['python3', '-B', 'scripts/ci/test_ci_source_integrity.py', '-v'], ['python3', '-B', 'scripts/ci/check_repository.py'], ['python3', '-B', 'scripts/ci/check_ci_contract.py'], ['python3', '-B', 'scripts/ci/check_pq_research_integration.py'], ['python3', '-B', 'scripts/refresh_distributed_source_inventory.py', '--check'], ['python3', '-B', 'formal/pon-nakamoto-v1/four_propositions_w1_v2.py', '--input', 'evidence/pon-w1-accounting-bridge-20261109/challenge-1-input.json', '--pins', 'evidence/pon-w1-accounting-bridge-20261109/challenge-1-pins.json', '--check-view', 'evidence/pon-w1-accounting-bridge-20261109/challenge-1-view.json'], ['python3', '-B', 'formal/pon-nakamoto-v1/four_propositions_w1_v2.py', '--input', 'evidence/pon-w1-accounting-bridge-20261109/challenge-2-input.json', '--pins', 'evidence/pon-w1-accounting-bridge-20261109/challenge-2-pins.json', '--check-view', 'evidence/pon-w1-accounting-bridge-20261109/challenge-2-view.json']]\nresults=[]\nfor argv in commands:\n print(json.dumps({\"running\":argv}),flush=True)\n r=subprocess.run(argv,check=False)\n results.append({\"argv\":argv,\"exit_code\":r.returncode})\nprint(json.dumps({\"command_results\":results,\"production_activation\":False}),flush=True)\nsys.exit(int(any(r[\"exit_code\"] for r in results)))\n"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "487b5406b20b487c1a372d19a103f29dcea110b9",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "487b5406b20b487c1a372d19a103f29dcea110b9",
+    "tested_tree": "7eb19399c2fabeab81441d06fb6e2d8762effb24",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2502238895,
+    "tracked_entries": 26211,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/home/qq/work/chain-w1-accounting-a1f04f22-20261109",
+  "elapsed_ns": 17095051061,
+  "environment": {
+    "CARGO_BUILD_JOBS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": null,
+    "CARGO_TARGET_DIR": null,
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 1,
+  "log_bytes": 161601,
+  "log_file": "fixed-head-487b5406.log",
+  "log_sha256": "6f81035676aed536bf64321607251bcf3e2e04f425536904a67b6f446aa8187a",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-10T07:52:14.957797+00:00",
+  "status": "command_failed",
+  "whole_chain_quantum_security_qualified": false
+}

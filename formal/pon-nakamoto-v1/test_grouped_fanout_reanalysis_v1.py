@@ -38,6 +38,7 @@ def synthetic_campaign():
         })
     return {
         'schema': replay.INPUT_SCHEMA, 'status': 'PASS', 'topologies': topologies,
+        'produced': [{'nonce': 1, 'work_id': 'first'}, {'nonce': 2, 'work_id': 'second'}],
         'failures': [], 'not_started_topologies': [],
         'expected_source_sha': 'a' * 40, 'runner_sha256': 'b' * 64,
         'source_before': {'commit': 'a' * 40, 'synthetic_fixture': True},
@@ -62,11 +63,14 @@ class FanoutReanalysisTests(unittest.TestCase):
         raw = encode(value)
         result = replay.reanalyze(raw, expected_sha256=sha(raw))
         self.assertEqual(result['status'], 'PASS')
+        self.assertEqual(result['schema'], 'pon-grouped-fanout-reanalysis-v2')
+        self.assertEqual(replay.INPUT_SCHEMA, 'pon-grouped-fresh-fanout-campaign-v0')
         self.assertEqual(result['topology_denominator'], [1, 2, 4])
         self.assertEqual(result['planned_receiver_slots'], 7)
         self.assertEqual(result['planned_transport_attempts'], 42)
         self.assertEqual(result['input_sha256'], sha(raw))
         for size, row in zip((1, 2, 4), result['topologies']):
+            self.assertEqual(row['new_accounting']['schema'], 'pon-grouped-fresh-deployment-cost-v1')
             self.assertEqual(row['new_accounting']['planned_receivers'], size)
             self.assertEqual(row['new_accounting']['verified_receptions'], size * 3)
             self.assertEqual(row['new_accounting']['receiver_wait4_cpu_seconds'], size * 3.0)
@@ -82,6 +86,59 @@ class FanoutReanalysisTests(unittest.TestCase):
         self.assertEqual(result['checker']['source_sha256'],
                          sha(Path(replay.accounting.__file__).read_bytes()))
         self.assertEqual(result['checker']['reanalysis_source_sha256'], sha(Path(replay.__file__).read_bytes()))
+
+
+    def test_consistent_topology_renaming_cannot_replace_original_producer_ids(self):
+        value = synthetic_campaign()
+        for worker in value['topologies'][1]['workers']:
+            for row in worker['worker_report']['transport_records']:
+                if row['case'] in ('valid', 'carrier_replay', 'discarded_response'):
+                    row['verification']['work_id'] += '-renamed'
+        result = self.recheck(value)
+        self.assertEqual(result['status'], 'FAIL')
+        self.assertEqual([row['new_status'] for row in result['topologies']], ['PASS', 'FAIL', 'PASS'])
+        row = result['topologies'][1]['new_accounting']
+        self.assertIsNone(row['distinct_verified_work_ids'])
+        self.assertEqual(row['observed_distinct_verified_work_ids_partial'], 2)
+        self.assertEqual(row['receiver_wait4_cpu_seconds'], 6.0)
+        self.assertTrue(any('WORK_ID_NOT_FIXED_PACKET' in issue for issue in row['issues']))
+
+    def test_every_topology_cannot_swap_the_two_original_packet_slots(self):
+        value = synthetic_campaign()
+        for topology in value['topologies']:
+            for worker in topology['workers']:
+                for row in worker['worker_report']['transport_records']:
+                    if row['case'] in ('valid', 'carrier_replay', 'discarded_response'):
+                        current = row['verification']['work_id']
+                        row['verification']['work_id'] = 'second' if current == 'first' else 'first'
+        result = self.recheck(value)
+        self.assertEqual(result['status'], 'FAIL')
+        self.assertEqual(len(result['new_failures']), 3)
+        for size, topology in zip((1, 2, 4), result['topologies']):
+            report = topology['new_accounting']
+            self.assertFalse(report['producer_work_ids_bound'])
+            self.assertIsNone(report['distinct_verified_work_ids'])
+            self.assertEqual(report['completed_transport_attempts'], size * 6)
+            self.assertEqual(report['receiver_wait4_cpu_seconds'], size * 3.0)
+
+    def test_missing_or_aliased_producer_roster_retains_denominator_and_costs(self):
+        for produced in (None, [], [{'nonce': 1, 'work_id': 'first'}],
+                         [{'nonce': 1, 'work_id': 'first'}, {'nonce': 2, 'work_id': 'first'}],
+                         [{'nonce': True, 'work_id': 'first'}, {'nonce': 2, 'work_id': 'second'}]):
+            with self.subTest(produced=produced):
+                value = synthetic_campaign()
+                value['produced'] = produced
+                result = self.recheck(value)
+                self.assertEqual(result['status'], 'FAIL')
+                self.assertTrue(any(issue.startswith('ORIGINAL_FIXED_PACKET_PRODUCER')
+                                    for issue in result['issues']))
+                for size, topology in zip((1, 2, 4), result['topologies']):
+                    report = topology['new_accounting']
+                    self.assertIsNone(report['distinct_verified_work_ids'])
+                    self.assertEqual(report['completed_transport_attempts'], size * 6)
+                    self.assertEqual(report['receiver_wait4_cpu_seconds'], size * 3.0)
+                self.assertFalse(result['new_experiment_executed'])
+                self.assertEqual(result['qualification_status'], 'HOLD')
 
     def test_external_pin_is_mandatory_and_tampered_input_is_refused(self):
         raw = encode(synthetic_campaign())

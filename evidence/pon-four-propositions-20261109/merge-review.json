@@ -1,0 +1,35 @@
+{
+  "schema": "pon-four-propositions-local-merge-review-v1",
+  "parents": [
+    "e2a02f9271b49f146e70806c8a66e161b5973971",
+    "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e"
+  ],
+  "conflicts_resolved": [
+    "sole-plan-both-continuations-retained",
+    "current-corpus-e2-plus-exact-four-current-pin-changes"
+  ],
+  "imported_files_verified": 9,
+  "pin_changes": [
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "old_blob": "88cfbf66086f151a5593101dbc5990bc1386b193",
+      "new_blob": "22919215322c526f7e3234b058130ae5c927fa43"
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "old_blob": "8eeccef221a010129c6fc054d911b15a692be97a",
+      "new_blob": "ca74ea35860b3317e01845cb9d1b2783052c04e3"
+    },
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "old_blob": "e5f130a9648c285d71abc9ce659ec66fecf8f92f",
+      "new_blob": "4b1285a1efe9f97376ffb770b608190f9f313929"
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "old_blob": "0b0596d5b2d5a0c26a1f746408180245ba2f2862",
+      "new_blob": "3f7592a977a2605eac55685ce407b9f783d15749"
+    }
+  ],
+  "production_activation": false
+}
