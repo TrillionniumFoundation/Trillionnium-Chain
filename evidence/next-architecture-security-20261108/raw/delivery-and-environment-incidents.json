@@ -1,0 +1,122 @@
+{
+  "schema": "trnm.next-retained-incident-ledger.v1",
+  "qualification": "HOLD_NO_GO",
+  "scope": "A descriptive ledger of observed setup, transport, source-audit and execution incidents. Raw experiment and CI records remain separate; this ledger does not authenticate a new experiment or erase failed attempts.",
+  "incidents": [
+    {
+      "kind": "materialization",
+      "jobs": [
+        "1a1b97389ef-12894-145f",
+        "1a1b97b74af-12894-1490",
+        "1a1b97705c9-12894-1475"
+      ],
+      "observation": "Initial full fetch timed out (124); the later shallow fetch was explicitly cancelled (-15); a main-host read hit a lazy-fetch timeout. The integration ultimately used a fully materialized isolated desktop checkout with no sparse/assume-unchanged flags. These are not native test runs."
+    },
+    {
+      "kind": "transfer",
+      "observation": "Initial binary-upload chunk calls were rejected for missing expected_version, with no committed destination. The source bundle was subsequently transferred as checked base64 text and decoded with its expected SHA256."
+    },
+    {
+      "kind": "patch-preparation",
+      "job": "1a1b993177b-12894-1543",
+      "observation": "Initial dry-run application failed at development-plan context after the upstream base added a 47-line header. No patch was applied in that dry-run; the later application used the unique actual section anchor and preserved the upstream header."
+    },
+    {
+      "kind": "native-compile",
+      "source": "539738590dbfd4449bc0ca2718462670245f3ab6",
+      "raw": "attempt-1",
+      "observation": "The full P2P crate passed; Node compilation then failed with E0603 for DEFAULT_SNAPSHOT_BYTE_LIMIT visibility. Commit bced22f712552302848e3e04f7acf24068af2048 widened only its visibility within crate::store. The original 8 GiB limit is unchanged."
+    },
+    {
+      "kind": "fix-preparation",
+      "job": "1a1b9aaefbc-12894-15f3",
+      "observation": "An auxiliary pin-edit step raised KeyError after the intended one-line visibility edit. The file was not in the selected PQ pinned_blobs map; no pin was fabricated. The isolated one-file diff was verified before commit."
+    },
+    {
+      "kind": "native-p2p",
+      "source": "bced22f712552302848e3e04f7acf24068af2048",
+      "raw": "attempt-2",
+      "observation": "376 P2P library tests passed and one existing TCP announcement test failed with WouldBlock. The wrapper stopped after that failure, retaining unexecuted commands."
+    },
+    {
+      "kind": "native-p2p-diagnostic",
+      "source": "bced22f712552302848e3e04f7acf24068af2048",
+      "raw": "b-tcp-diagnostic",
+      "observation": "One exact replay of the same test binary failed again with WouldBlock. Original 200 ms client and 250 ms server limits were unchanged; binary hashes before and after agree. Cause remains unestablished."
+    },
+    {
+      "kind": "continuation-preparation",
+      "job": "1a1b9b71510-12894-1648",
+      "observation": "A final preparation print raised NameError for remaining after the continuation script had been written, before any native command ran."
+    },
+    {
+      "kind": "cancelled-source-audit",
+      "job": "1a1b9bc4fa1-12894-1676",
+      "raw": "source-io-incident",
+      "observation": "The continuation was cancelled while the original source checker waited in folio_wait_bit_common reading a historical 5297-byte evidence file. No native continuation command executed. Terminal cancellation and retained output were observed."
+    },
+    {
+      "kind": "uncertain-recovery-launch",
+      "job": "1a1b9c87a41-12894-16db",
+      "raw": "source-io-incident/reconciliation.json",
+      "observation": "Controller launch remained unknown; exact-key reconciliation did not relaunch. No remote job directory or system/user unit was found, no recovery result/directory was present, and the original reader had exited. The original source file subsequently read in full and matched its Git blob; no file replacement was observed or performed. Physical IO root cause is not established. The recovery command's fixed-B HEAD guard prevents later mutation after C3."
+    },
+    {
+      "kind": "source-audit-timeout",
+      "source": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+      "raw": "attempt-3",
+      "observation": "The original full source-before checker hit its 600-second controller watchdog and exited -15. Source-after completed successfully in 364.024537959 seconds. No native command ran in this attempt. Attempt 4 retained the same watchdogs; its source-before completed in 4.728288494 seconds."
+    },
+    {
+      "kind": "native-p2p",
+      "source": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+      "raw": "attempt-4",
+      "observation": "The local library replay finished with 374 passed/3 failed: first_manifest_read_preserves_cold_warm_status_and_exact_rejection_counts (no admissible provider), tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit (WouldBlock), tcp_publication_ack_requires_live_schema_and_actual_persisted_highwater (WouldBlock). Integration/doc targets were not reached after the library failure. No deadlines were changed, and the failures are retained separately from complete CI passes."
+    },
+    {
+      "kind": "local-original-host-refusal",
+      "source": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+      "raw": "attempt-4/test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner.stdout",
+      "observation": "The ordinary shared development host failed the original PUBLIC_HOST_KERNEL_PARENT assertion. It was not substituted for the original fixed Host and the assertion was not weakened."
+    },
+    {
+      "kind": "ci-preparation-wiring",
+      "source": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+      "run": 42455215948,
+      "raw": [
+        "ci-x86-head",
+        "ci-x86-merge",
+        "ci-arm-head",
+        "ci-arm-merge"
+      ],
+      "observation": "All four initial CI lanes passed complete P2P and the other component checks but the original public Host fixture preparation rejected the missing source.json. The new workflow had written source-before.json. This fixture's native child did not execute in those first lanes."
+    },
+    {
+      "kind": "ci-wiring-correction",
+      "source": "9f54b05c643185a5041fc1f78cef77e95877f52a",
+      "run": 42456517352,
+      "raw": [
+        "ci-fixed-x86-head",
+        "ci-fixed-x86-merge",
+        "ci-fixed-arm-head",
+        "ci-fixed-arm-merge"
+      ],
+      "observation": "Only the new workflow changed: copy the successful verifier's exact source-before.json into the original launcher's required ordinary source.json file and compare the bytes before and after. All four subsequent CI lanes succeeded. Actual child execution is established by each fixture manifest/native.log and Host controller/inside/outside records, not by preparation.json, which correctly retains native_tests_executed=false for its own scope."
+    },
+    {
+      "kind": "read-only-telemetry",
+      "jobs": [
+        "1a1b9de0878-12894-1755"
+      ],
+      "observation": "A read-only gh pr view probe used unsupported baseRefOid and failed before obtaining CI data; it was corrected to supported fields. Some Hepta read/status calls returned direct SSH host admission deadline; no child submitted. Such telemetry errors are not native test outcomes."
+    }
+  ],
+  "unchanged_claim_boundaries": {
+    "production_consensus_activation": false,
+    "whole_chain_pq128": false,
+    "sustainable_rewards": false,
+    "independent_wan": false,
+    "external_hepta_finaluse": false,
+    "finite_grid_is_universal_proof": false
+  }
+}

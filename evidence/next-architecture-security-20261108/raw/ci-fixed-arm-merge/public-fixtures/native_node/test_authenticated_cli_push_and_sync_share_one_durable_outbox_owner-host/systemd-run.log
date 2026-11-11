@@ -1,0 +1,8 @@
+Running as unit: trnm-from-zero-42456517352-1-next-architecture-7842.service
+{"schema": "trnm-ci-public-fixture-host-execution-v1", "passed": true, "failures": [], "receipt": "/home/runner/work/_temp/next-architecture-prospective-merge-42456517352-1/public-fixtures/native_node/test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner"}
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 24.842s
+CPU time consumed: 5.296s
+Memory peak: 3.0M
+Memory swap peak: 0B

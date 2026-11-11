@@ -1,0 +1,14 @@
+   Compiling trnm-research-protocol v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-research-protocol)
+    Finished `release` profile [optimized] target(s) in 0.50s
+     Running tests/hepta_handoff_pq.rs (/home/runner/work/_temp/target-next-architecture/release/deps/hepta_handoff_pq-a282346195698b4a)
+
+running 6 tests
+test chain_and_fresh_hepta_owner_context_cannot_be_reused ... ok
+test malformed_oversize_noncanonical_and_extra_bytes_fail_before_authorization ... ok
+test no_classical_signature_or_algorithm_negotiation_is_accepted ... ok
+test one_pq_signing_key_cannot_claim_multiple_independent_dids ... ok
+test pin_lifetime_generation_and_revocation_are_freshly_enforced ... ok
+test real_pq_signature_and_bounded_canonical_wire_round_trip ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+

@@ -1,0 +1,32 @@
+{
+  "all_planned_commands_completed": true,
+  "command_success": false,
+  "external_hepta_finaluse_executed": false,
+  "independent_wan_executed": false,
+  "native_nonempty_counts": {
+    "growth-cli-packet-cold": 1,
+    "hepta-classical-receiver": 4,
+    "hepta-pq-receiver": 6,
+    "native-accepted-task": 3,
+    "native-node-packet-status": 2,
+    "native-packet-observer": 9,
+    "native-settlement-cold-readback": 4,
+    "native_growth_v2_cold_observer": 5,
+    "native_growth_v2_exact_packet_observation": 2,
+    "native_growth_v2_packet_observer": 1,
+    "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner": null,
+    "test_confirmed_transfer_is_removed_by_a_real_heavier_fork": 1,
+    "test_every_reorg_process_cut_and_admission_gap_recovers_once": 1,
+    "transport-replay": 4
+  },
+  "observed_commands": 29,
+  "original_host_contract_executed": false,
+  "planned_commands": 29,
+  "pq128_qualified": false,
+  "qualification": "HOLD_NO_GO",
+  "schema": "trnm-next-component-execution-v1",
+  "source_before_after_identical": true,
+  "source_commit": "a93024cfdd4f4a4dfede03507f3b3289385bfc49",
+  "sustainable_rewards_qualified": false,
+  "unexecuted": []
+}

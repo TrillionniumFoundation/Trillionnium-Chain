@@ -1,0 +1,9 @@
+    Finished `release` profile [optimized] target(s) in 0.06s
+     Running unittests src/lib.rs (/home/runner/work/_temp/target-next-architecture/release/deps/trnm_pon_node-10ac2862d4ea8e0a)
+
+running 2 tests
+test store::growth::tests::native_growth_v2_exact_packet_observation_binds_bytes_context_and_active_snapshot ... ok
+test store::growth::tests::native_growth_v2_exact_packet_observation_refuses_foreign_epoch ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 1185 filtered out; finished in 0.11s
+
