@@ -1305,6 +1305,104 @@ fn schema_drift_and_sidecar_are_fail_closed_without_migration() {
     );
 }
 
+#[cfg(unix)]
+#[test]
+fn sqlite_dangling_sidecars_refuse_existing_store_without_touching_files() {
+    use std::os::unix::fs::symlink;
+
+    let fixture = Fixture::new(4, 16_384);
+    let config = fixture.config(0);
+    drop(DataAvailabilityStoreV1::open(config.clone()).expect("initial store"));
+    let original = std::fs::read(config.path()).expect("original database");
+    for suffix in ["-wal", "-shm", "-journal"] {
+        let mut name = config.path().as_os_str().to_os_string();
+        name.push(suffix);
+        let sidecar = PathBuf::from(name);
+        let target = fixture.directory.path().join(format!("missing{suffix}"));
+        symlink(&target, &sidecar).expect("dangling sidecar");
+        for result in [
+            DataAvailabilityStoreV1::open_existing(config.clone()),
+            DataAvailabilityStoreV1::open(config.clone()),
+        ] {
+            let error = result.expect_err("every sidecar object must refuse before SQLite open");
+            assert_eq!(error.code(), DaErrorCodeV1::StoreFailure);
+            assert!(error.message().starts_with("unresolved SQLite sidecar"));
+        }
+        assert_eq!(std::fs::read(config.path()).unwrap(), original);
+        assert_eq!(std::fs::read_link(&sidecar).unwrap(), target);
+        assert!(!target.exists(), "rejection must not create a symlink target");
+        std::fs::remove_file(sidecar).unwrap();
+    }
+    DataAvailabilityStoreV1::open_existing(config).expect("unmodified store remains usable");
+}
+
+#[cfg(unix)]
+#[test]
+fn sqlite_sidecar_names_preserve_non_utf8_database_bytes() {
+    use std::ffi::OsString;
+    use std::os::unix::ffi::OsStringExt;
+
+    let fixture = Fixture::new(4, 16_384);
+    let path = fixture
+        .directory
+        .path()
+        .join(OsString::from_vec(b"da-\xff.sqlite".to_vec()));
+    let config = DaStoreConfigV1::new(
+        path,
+        fixture.scope_id,
+        hash(100),
+        fixture.committee.clone(),
+        fixture.policy.clone(),
+        fixture.attestors[0].0,
+    )
+    .expect("non-UTF-8 store config");
+    drop(DataAvailabilityStoreV1::open(config.clone()).expect("initial store"));
+    let original = std::fs::read(config.path()).unwrap();
+    for suffix in ["-wal", "-shm", "-journal"] {
+        let mut name = config.path().as_os_str().to_os_string();
+        name.push(suffix);
+        let sidecar = PathBuf::from(name);
+        std::fs::write(&sidecar, b"unresolved sidecar bytes").unwrap();
+        for result in [
+            DataAvailabilityStoreV1::open_existing(config.clone()),
+            DataAvailabilityStoreV1::open(config.clone()),
+        ] {
+            let error = result.expect_err("exact-byte sidecar must refuse before SQLite open");
+            assert_eq!(error.code(), DaErrorCodeV1::StoreFailure);
+            assert!(error.message().starts_with("unresolved SQLite sidecar"));
+        }
+        assert_eq!(std::fs::read(config.path()).unwrap(), original);
+        assert_eq!(std::fs::read(&sidecar).unwrap(), b"unresolved sidecar bytes");
+        std::fs::remove_file(sidecar).unwrap();
+    }
+    DataAvailabilityStoreV1::open_existing(config).expect("unmodified store remains usable");
+}
+
+#[cfg(unix)]
+#[test]
+fn sqlite_dangling_sidecars_refuse_creation_before_database_exists() {
+    use std::os::unix::fs::symlink;
+
+    let fixture = Fixture::new(4, 16_384);
+    let config = fixture.config(0);
+    for suffix in ["-wal", "-shm", "-journal"] {
+        let mut name = config.path().as_os_str().to_os_string();
+        name.push(suffix);
+        let sidecar = PathBuf::from(name);
+        let target = fixture.directory.path().join(format!("missing{suffix}"));
+        symlink(&target, &sidecar).unwrap();
+        let error = DataAvailabilityStoreV1::open(config.clone())
+            .expect_err("pre-existing sidecar must refuse before database creation");
+        assert_eq!(error.code(), DaErrorCodeV1::StoreFailure);
+        assert!(error.message().starts_with("unresolved SQLite sidecar"));
+        assert!(!config.path().exists(), "refusal must not create the database");
+        assert_eq!(std::fs::read_link(&sidecar).unwrap(), target);
+        assert!(!target.exists(), "refusal must not create a symlink target");
+        std::fs::remove_file(sidecar).unwrap();
+    }
+    DataAvailabilityStoreV1::open(config).expect("clean creation remains available");
+}
+
 #[test]
 fn row_tamper_is_rejected_on_reopen() {
     let fixture = Fixture::new(4, 16_384);
