@@ -280,3 +280,7 @@ native owners, independently justified clock and service bounds, complete
 carry-in and resource coverage, quantitative dynamic participation assumptions,
 and the same-source native failure reduction. This finite extension identifies
 and checks the missing handover contract; it does not close those qualifications.
+
+The [joint production-tail continuation](JOINT_PRODUCTION_TAIL_V1.md) gives a
+conditional Cauchy-Schwarz interface for the combined `A+E-J` process and exact
+finite-model checks. Actual native production laws remain unproved.

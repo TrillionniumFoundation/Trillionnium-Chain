@@ -1,0 +1,16 @@
+{
+  "request_reference": "../ci-head-341b-terminal/publication-control.json#/request",
+  "same_controller_host_key_and_parameters": true,
+  "response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "tool call error: tool call failed for `codex_apps/h.process_start`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+      }
+    ],
+    "isError": true
+  },
+  "status": "UNKNOWN",
+  "job_id": null,
+  "no_alternate_publisher_job_submitted": true
+}

@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "python3",
+    "evidence/pon-joint-production-tail-20261110/credit-fullpath-341b/verify.py"
+  ],
+  "exit_code": 0,
+  "base_head": "4dbebc9be2ec4e14abe268a47415423b282db99e",
+  "scope": "evidence-only working tree checks; no archived commands executed"
+}

@@ -1,0 +1,11 @@
+{
+  "request": {
+    "host": "mac",
+    "path": "/Users/qianqi/work/chain-joint-tail-source-20261110-8e76.tar.gz"
+  },
+  "tool": "h.file_info",
+  "observed_response": "tool call error: tool call failed for codex_apps/h.file_info; Mcp error: -32603: MCP request timed out",
+  "write_requested": false,
+  "remote_file_existence_inferred": false,
+  "publication_route": "authorized selected GitHub connector fallback"
+}

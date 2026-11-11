@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "exit_code": 0,
+  "expected_exit": 0,
+  "passed": true,
+  "elapsed_seconds": 2.856718933002412,
+  "source_commit": "db9991c537e3469f1b7b6e1fa6f8466ac62edc4f",
+  "source_tree": "64f5c864417aa567239dd67d3113eb8a0cef795e",
+  "stdout_sha256": "28be01b01d2eec28633d84b98e6c39a8f50ba4b30dcc3d85a5277bf23f916004",
+  "stderr_sha256": "283a3522353f96a9cc5310c50d5bc0c411d5a0ad12344c3f234d2cc1e53d43dc"
+}

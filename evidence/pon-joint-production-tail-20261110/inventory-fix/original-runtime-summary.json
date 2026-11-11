@@ -1,0 +1,38 @@
+[
+  {
+    "job_id": 129702270255,
+    "summary_count": 430,
+    "reported_passed": 5069,
+    "reported_ignored": 83,
+    "consensus_roster": [
+      "2026-11-10T09:52:24.8010398Z test consensus::tests::aligned_division_matches_original_for_wide_arbitrary_operands ... ok",
+      "2026-11-10T09:52:24.8158567Z test consensus::tests::aligned_division_preserves_all_512_shift_and_limb_boundaries ... ok",
+      "2026-11-10T09:52:24.8385561Z test consensus::tests::aligned_required_work_and_retarget_match_original_arithmetic ... ok",
+      "2026-11-10T09:52:24.8386746Z test consensus::tests::branch_target_window_uses_checked_child_height_and_exact_parent_period ... ok",
+      "2026-11-10T09:52:24.8387376Z test consensus::tests::exact_extreme_work_and_overflow ... ok",
+      "2026-11-10T09:52:24.8388039Z test consensus::tests::full_width_division_matches_small_and_high_operands ... ok",
+      "2026-11-10T09:52:24.8395221Z test consensus::tests::native_arithmetic_matches_python_integer_vectors ... ok",
+      "2026-11-10T09:52:24.8396283Z test consensus::tests::parent_first_median_keeps_short_even_windows_and_error_precedence ... ok",
+      "2026-11-10T09:52:24.8397028Z test consensus::tests::retarget_checks_both_time_products_before_adjusting_work ... ok",
+      "2026-11-10T09:52:24.8397774Z test consensus::tests::time_deferred_is_not_consensus_invalidity ... ok"
+    ]
+  },
+  {
+    "job_id": 129702270195,
+    "summary_count": 430,
+    "reported_passed": 5069,
+    "reported_ignored": 83,
+    "consensus_roster": [
+      "2026-11-10T09:55:50.3988628Z test consensus::tests::aligned_division_matches_original_for_wide_arbitrary_operands ... ok",
+      "2026-11-10T09:55:50.4282656Z test consensus::tests::aligned_division_preserves_all_512_shift_and_limb_boundaries ... ok",
+      "2026-11-10T09:55:50.4662646Z test consensus::tests::aligned_required_work_and_retarget_match_original_arithmetic ... ok",
+      "2026-11-10T09:55:50.4664422Z test consensus::tests::branch_target_window_uses_checked_child_height_and_exact_parent_period ... ok",
+      "2026-11-10T09:55:50.4665459Z test consensus::tests::exact_extreme_work_and_overflow ... ok",
+      "2026-11-10T09:55:50.4666481Z test consensus::tests::full_width_division_matches_small_and_high_operands ... ok",
+      "2026-11-10T09:55:50.4675491Z test consensus::tests::native_arithmetic_matches_python_integer_vectors ... ok",
+      "2026-11-10T09:55:50.4676590Z test consensus::tests::parent_first_median_keeps_short_even_windows_and_error_precedence ... ok",
+      "2026-11-10T09:55:50.4677963Z test consensus::tests::retarget_checks_both_time_products_before_adjusting_work ... ok",
+      "2026-11-10T09:55:50.4679361Z test consensus::tests::time_deferred_is_not_consensus_invalidity ... ok"
+    ]
+  }
+]

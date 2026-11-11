@@ -1,0 +1,723 @@
+{
+  "total_count": 8,
+  "jobs": [
+    {
+      "id": 129827161938,
+      "run_id": 42815422293,
+      "workflow_name": "PoN owned process cleanup",
+      "head_branch": "fix/chain-joint-production-tail-20261110-8e76",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42815422293",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAeOk1HUg",
+      "head_sha": "341b7b6195a44d3f4a758c98f846457567ac1de3",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/129827161938",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42815422293/job/129827161938",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-10T12:24:03Z",
+      "started_at": "2026-11-10T14:16:04Z",
+      "completed_at": "2026-11-10T14:18:54Z",
+      "name": "aggregate-owner-controls (prospective-merge)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-10T14:16:05Z",
+          "completed_at": "2026-11-10T14:16:05Z"
+        },
+        {
+          "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-10T14:16:05Z",
+          "completed_at": "2026-11-10T14:16:55Z"
+        },
+        {
+          "name": "Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-10T14:16:55Z",
+          "completed_at": "2026-11-10T14:17:05Z"
+        },
+        {
+          "name": "Verify actual source and original native ABI",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-10T14:17:05Z",
+          "completed_at": "2026-11-10T14:17:05Z"
+        },
+        {
+          "name": "Execute every original aggregate owner control and charge-wait regression",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-10T14:17:05Z",
+          "completed_at": "2026-11-10T14:17:22Z"
+        },
+        {
+          "name": "Exercise fresh host namespace contract without creating a native scope",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-10T14:17:22Z",
+          "completed_at": "2026-11-10T14:17:33Z"
+        },
+        {
+          "name": "Exercise same-owner child preparation without native cgroup effects",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-10T14:17:33Z",
+          "completed_at": "2026-11-10T14:17:44Z"
+        },
+        {
+          "name": "Exercise original native handoff and private host controller mechanics",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-10T14:17:44Z",
+          "completed_at": "2026-11-10T14:18:51Z"
+        },
+        {
+          "name": "Preserve exact source after controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-10T14:18:51Z",
+          "completed_at": "2026-11-10T14:18:51Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-10T14:18:51Z",
+          "completed_at": "2026-11-10T14:18:52Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-11-10T14:18:52Z",
+          "completed_at": "2026-11-10T14:18:52Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-10T14:18:52Z",
+          "completed_at": "2026-11-10T14:18:52Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-11-10T14:18:52Z",
+          "completed_at": "2026-11-10T14:18:52Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/129827161938",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000085834,
+      "runner_name": "GitHub Actions 1000085834",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 129827162352,
+      "run_id": 42815422293,
+      "workflow_name": "PoN owned process cleanup",
+      "head_branch": "fix/chain-joint-production-tail-20261110-8e76",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42815422293",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAeOk1I8A",
+      "head_sha": "341b7b6195a44d3f4a758c98f846457567ac1de3",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/129827162352",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42815422293/job/129827162352",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-10T12:24:03Z",
+      "started_at": "2026-11-10T14:18:20Z",
+      "completed_at": "2026-11-10T14:21:08Z",
+      "name": "aggregate-owner-controls (head)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-10T14:18:21Z",
+          "completed_at": "2026-11-10T14:18:21Z"
+        },
+        {
+          "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-10T14:18:21Z",
+          "completed_at": "2026-11-10T14:19:10Z"
+        },
+        {
+          "name": "Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-10T14:19:10Z",
+          "completed_at": "2026-11-10T14:19:20Z"
+        },
+        {
+          "name": "Verify actual source and original native ABI",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-10T14:19:20Z",
+          "completed_at": "2026-11-10T14:19:20Z"
+        },
+        {
+          "name": "Execute every original aggregate owner control and charge-wait regression",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-10T14:19:20Z",
+          "completed_at": "2026-11-10T14:19:36Z"
+        },
+        {
+          "name": "Exercise fresh host namespace contract without creating a native scope",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-10T14:19:36Z",
+          "completed_at": "2026-11-10T14:19:46Z"
+        },
+        {
+          "name": "Exercise same-owner child preparation without native cgroup effects",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-10T14:19:46Z",
+          "completed_at": "2026-11-10T14:19:57Z"
+        },
+        {
+          "name": "Exercise original native handoff and private host controller mechanics",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-10T14:19:57Z",
+          "completed_at": "2026-11-10T14:21:03Z"
+        },
+        {
+          "name": "Preserve exact source after controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-10T14:21:03Z",
+          "completed_at": "2026-11-10T14:21:05Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-10T14:21:05Z",
+          "completed_at": "2026-11-10T14:21:06Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-11-10T14:21:06Z",
+          "completed_at": "2026-11-10T14:21:06Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-10T14:21:06Z",
+          "completed_at": "2026-11-10T14:21:06Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-11-10T14:21:06Z",
+          "completed_at": "2026-11-10T14:21:06Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/129827162352",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000085877,
+      "runner_name": "GitHub Actions 1000085877",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 129827162438,
+      "run_id": 42815422293,
+      "workflow_name": "PoN owned process cleanup",
+      "head_branch": "fix/chain-joint-production-tail-20261110-8e76",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42815422293",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAeOk1JRg",
+      "head_sha": "341b7b6195a44d3f4a758c98f846457567ac1de3",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/129827162438",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42815422293/job/129827162438",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-10T12:24:03Z",
+      "started_at": "2026-11-10T14:14:48Z",
+      "completed_at": "2026-11-10T14:15:51Z",
+      "name": "cleanup (ubuntu-24.04-arm, prospective-merge)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-10T14:14:49Z",
+          "completed_at": "2026-11-10T14:14:50Z"
+        },
+        {
+          "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-10T14:14:50Z",
+          "completed_at": "2026-11-10T14:15:40Z"
+        },
+        {
+          "name": "Verify actual source and ordered main merge",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-10T14:15:40Z",
+          "completed_at": "2026-11-10T14:15:40Z"
+        },
+        {
+          "name": "Select the real GNU time observer on macOS",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4,
+          "started_at": "2026-11-10T14:15:40Z",
+          "completed_at": "2026-11-10T14:15:40Z"
+        },
+        {
+          "name": "Run complete original owners and every cleanup regression",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-10T14:15:40Z",
+          "completed_at": "2026-11-10T14:15:47Z"
+        },
+        {
+          "name": "Preserve unchanged source and precise scope",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-10T14:15:47Z",
+          "completed_at": "2026-11-10T14:15:48Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-10T14:15:48Z",
+          "completed_at": "2026-11-10T14:15:49Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-10T14:15:49Z",
+          "completed_at": "2026-11-10T14:15:49Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-10T14:15:49Z",
+          "completed_at": "2026-11-10T14:15:49Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/129827162438",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_id": 1000085806,
+      "runner_name": "GitHub Actions 1000085806",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 129827162455,
+      "run_id": 42815422293,
+      "workflow_name": "PoN owned process cleanup",
+      "head_branch": "fix/chain-joint-production-tail-20261110-8e76",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42815422293",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAeOk1JVw",
+      "head_sha": "341b7b6195a44d3f4a758c98f846457567ac1de3",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/129827162455",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42815422293/job/129827162455",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-10T12:24:03Z",
+      "started_at": "2026-11-10T14:16:26Z",
+      "completed_at": "2026-11-10T14:18:11Z",
+      "name": "cleanup (ubuntu-24.04, prospective-merge)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-10T14:16:28Z",
+          "completed_at": "2026-11-10T14:16:28Z"
+        },
+        {
+          "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-10T14:16:28Z",
+          "completed_at": "2026-11-10T14:17:59Z"
+        },
+        {
+          "name": "Verify actual source and ordered main merge",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-10T14:17:59Z",
+          "completed_at": "2026-11-10T14:17:59Z"
+        },
+        {
+          "name": "Select the real GNU time observer on macOS",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4,
+          "started_at": "2026-11-10T14:17:59Z",
+          "completed_at": "2026-11-10T14:17:59Z"
+        },
+        {
+          "name": "Run complete original owners and every cleanup regression",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-10T14:17:59Z",
+          "completed_at": "2026-11-10T14:18:05Z"
+        },
+        {
+          "name": "Preserve unchanged source and precise scope",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-10T14:18:05Z",
+          "completed_at": "2026-11-10T14:18:06Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-10T14:18:06Z",
+          "completed_at": "2026-11-10T14:18:08Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-10T14:18:08Z",
+          "completed_at": "2026-11-10T14:18:08Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-10T14:18:08Z",
+          "completed_at": "2026-11-10T14:18:08Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/129827162455",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000085840,
+      "runner_name": "GitHub Actions 1000085840",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 129827162480,
+      "run_id": 42815422293,
+      "workflow_name": "PoN owned process cleanup",
+      "head_branch": "fix/chain-joint-production-tail-20261110-8e76",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42815422293",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAeOk1JcA",
+      "head_sha": "341b7b6195a44d3f4a758c98f846457567ac1de3",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/129827162480",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42815422293/job/129827162480",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": "2026-11-10T12:24:03Z",
+      "started_at": "2026-11-10T12:24:03Z",
+      "completed_at": "2026-11-10T12:39:36Z",
+      "name": "cleanup (macos-15, prospective-merge)",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/129827162480",
+      "labels": [
+        "macos-15"
+      ],
+      "runner_id": 0,
+      "runner_name": "",
+      "runner_group_id": 0,
+      "runner_group_name": ""
+    },
+    {
+      "id": 129827162494,
+      "run_id": 42815422293,
+      "workflow_name": "PoN owned process cleanup",
+      "head_branch": "fix/chain-joint-production-tail-20261110-8e76",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42815422293",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAeOk1Jfg",
+      "head_sha": "341b7b6195a44d3f4a758c98f846457567ac1de3",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/129827162494",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42815422293/job/129827162494",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-10T12:24:03Z",
+      "started_at": "2026-11-10T14:19:45Z",
+      "completed_at": "2026-11-10T14:23:45Z",
+      "name": "cleanup (ubuntu-24.04, head)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-10T14:19:46Z",
+          "completed_at": "2026-11-10T14:19:47Z"
+        },
+        {
+          "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-10T14:19:47Z",
+          "completed_at": "2026-11-10T14:23:34Z"
+        },
+        {
+          "name": "Verify actual source and ordered main merge",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-10T14:23:34Z",
+          "completed_at": "2026-11-10T14:23:34Z"
+        },
+        {
+          "name": "Select the real GNU time observer on macOS",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4,
+          "started_at": "2026-11-10T14:23:34Z",
+          "completed_at": "2026-11-10T14:23:34Z"
+        },
+        {
+          "name": "Run complete original owners and every cleanup regression",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-10T14:23:34Z",
+          "completed_at": "2026-11-10T14:23:39Z"
+        },
+        {
+          "name": "Preserve unchanged source and precise scope",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-10T14:23:39Z",
+          "completed_at": "2026-11-10T14:23:41Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-10T14:23:41Z",
+          "completed_at": "2026-11-10T14:23:42Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-10T14:23:42Z",
+          "completed_at": "2026-11-10T14:23:42Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-10T14:23:42Z",
+          "completed_at": "2026-11-10T14:23:42Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/129827162494",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000085904,
+      "runner_name": "GitHub Actions 1000085904",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 129827162495,
+      "run_id": 42815422293,
+      "workflow_name": "PoN owned process cleanup",
+      "head_branch": "fix/chain-joint-production-tail-20261110-8e76",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42815422293",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAeOk1Jfw",
+      "head_sha": "341b7b6195a44d3f4a758c98f846457567ac1de3",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/129827162495",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42815422293/job/129827162495",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-10T12:24:03Z",
+      "started_at": "2026-11-10T14:15:31Z",
+      "completed_at": "2026-11-10T14:16:25Z",
+      "name": "cleanup (ubuntu-24.04-arm, head)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-10T14:15:32Z",
+          "completed_at": "2026-11-10T14:15:32Z"
+        },
+        {
+          "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-10T14:15:32Z",
+          "completed_at": "2026-11-10T14:16:15Z"
+        },
+        {
+          "name": "Verify actual source and ordered main merge",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-10T14:16:15Z",
+          "completed_at": "2026-11-10T14:16:15Z"
+        },
+        {
+          "name": "Select the real GNU time observer on macOS",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4,
+          "started_at": "2026-11-10T14:16:15Z",
+          "completed_at": "2026-11-10T14:16:15Z"
+        },
+        {
+          "name": "Run complete original owners and every cleanup regression",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-10T14:16:15Z",
+          "completed_at": "2026-11-10T14:16:22Z"
+        },
+        {
+          "name": "Preserve unchanged source and precise scope",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-10T14:16:22Z",
+          "completed_at": "2026-11-10T14:16:23Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-10T14:16:23Z",
+          "completed_at": "2026-11-10T14:16:24Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-10T14:16:24Z",
+          "completed_at": "2026-11-10T14:16:24Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-10T14:16:24Z",
+          "completed_at": "2026-11-10T14:16:24Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/129827162495",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_id": 1000085821,
+      "runner_name": "GitHub Actions 1000085821",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 129827162518,
+      "run_id": 42815422293,
+      "workflow_name": "PoN owned process cleanup",
+      "head_branch": "fix/chain-joint-production-tail-20261110-8e76",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42815422293",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAeOk1Jlg",
+      "head_sha": "341b7b6195a44d3f4a758c98f846457567ac1de3",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/129827162518",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42815422293/job/129827162518",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": "2026-11-10T12:24:03Z",
+      "started_at": "2026-11-10T12:24:03Z",
+      "completed_at": "2026-11-10T12:39:29Z",
+      "name": "cleanup (macos-15, head)",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/129827162518",
+      "labels": [
+        "macos-15"
+      ],
+      "runner_id": 0,
+      "runner_name": "",
+      "runner_group_id": 0,
+      "runner_group_name": ""
+    }
+  ]
+}

@@ -2609,6 +2609,7 @@ class MergedQualificationLaneTests(unittest.TestCase):
             '    python3 formal/pon-nakamoto-v1/joint_consensus_qualification.py --check\n',
             '    python3 formal/pon-nakamoto-v1/test_joint_consensus_qualification.py\n',
             '    python3 formal/pon-nakamoto-v1/test_dynamic_participation_v1.py\n',
+            '    python3 formal/pon-nakamoto-v1/test_joint_production_tail_v1.py\n',
         ), '    python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v\n'),
         'completion': ('external-evidence-contract', '    python3 scripts/ci/test_invariant_evidence.py\n', (
             '    python3 scripts/ci/check_completion_evidence.py --historical\n',

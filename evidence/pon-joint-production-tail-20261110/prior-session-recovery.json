@@ -1,0 +1,27 @@
+{
+  "basis": "visible conversation source and review requirements",
+  "current_test_command": [
+    "python3",
+    "recovered-drafts/test_joint_production_tail_v1.py",
+    "-v"
+  ],
+  "current_tests_passed": 27,
+  "native_execution_performed": false,
+  "original_blobs_recovered": false,
+  "original_local_commit": "7f605fef4a16a7bf36a0151db4c12e8a8914b280",
+  "original_logs_recovered": false,
+  "qualification": "HOLD_NO_GO",
+  "recorded_at_utc": "2026-11-10T07:22:38.848692+00:00",
+  "remote_write_performed": false,
+  "restored_candidate_files": {
+    "joint_production_tail_v1.py": {
+      "bytes": 13807,
+      "sha256": "452bb06ac34793b74521339873c3b570a504f5449c7023200873143789a1ee1d"
+    },
+    "test_joint_production_tail_v1.py": {
+      "bytes": 16764,
+      "sha256": "282d4e753edcdd127adc954122be934aeff7007e5e747f7eb12cc0eeff594378"
+    }
+  },
+  "schema": "joint-tail-conversation-recovery-v1"
+}
