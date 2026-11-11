@@ -1,0 +1,29 @@
+{
+  "name": "diagnostic-lib-no-debug",
+  "command": [
+    "cargo",
+    "--config",
+    "profile.test.package.trnm-data-availability.debug=0",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-data-availability",
+    "--lib",
+    "--all-features",
+    "-j1",
+    "--",
+    "--test-threads=1"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 186.621,
+  "source_commit": "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13",
+  "source_unchanged": true,
+  "log_sha256": "a53595db884a208bfc38729a0032fa2a114fefebf22a42c031ca12d520da4d49",
+  "profile_overrides": {
+    "profile.test.package.trnm-data-availability.debug": 0
+  },
+  "scope": "diagnostic behavior; does not replace original-profile qualification"
+}

@@ -1,0 +1,38 @@
+{
+  "name": "cargo-metadata",
+  "argv": [
+    "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--format-version",
+    "1",
+    "--manifest-path",
+    "trillionnium/Cargo.toml"
+  ],
+  "started_utc": "2026-11-11T04:13:01.670806+00:00",
+  "elapsed_seconds": 0.39039169199895696,
+  "exit_code": 0,
+  "environment_overrides": {
+    "CARGO_HOME": "/home/agent/.cargo",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "RUSTC": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustc",
+    "RUSTFMT": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustfmt"
+  },
+  "path_prefix": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin",
+  "source_before": {
+    "head": "eb32162449eab623f69bbd7016b694600cb382c5",
+    "tree": "c15f37e3f64456c9817019e8aec5d723a29549f0",
+    "status": ""
+  },
+  "source_after": {
+    "head": "eb32162449eab623f69bbd7016b694600cb382c5",
+    "tree": "c15f37e3f64456c9817019e8aec5d723a29549f0",
+    "status": ""
+  },
+  "preflight_exit": 0,
+  "stdout_bytes": 850959,
+  "stdout_sha256": "81bb7691688e2d2ea4e36009b9136e6183a04b494ef8db3927f5b9c4be05e6f7",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

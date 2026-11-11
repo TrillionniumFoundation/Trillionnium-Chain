@@ -1,0 +1,47 @@
+{
+  "schema": "trnm.local-adoption.h-channel-probes.v1",
+  "recorded_at_utc": "2026-11-11T00:47:00.555310+00:00",
+  "agent": "/root/runtime_channel_inventory",
+  "scope": "Exact small Mac identity probe and accompanying configured-host read; no remote Git mutation was requested.",
+  "calls": [
+    {
+      "tool": "h.host_list",
+      "arguments": {},
+      "result": {
+        "is_error": true,
+        "mcp_code": -32603,
+        "message": "Internal error"
+      }
+    },
+    {
+      "tool": "h.process_start",
+      "arguments": {
+        "host": "mac",
+        "executable": "/opt/homebrew/bin/gh",
+        "args": [
+          "api",
+          "user",
+          "--jq",
+          ".login"
+        ],
+        "idempotency_key": "cell-adoption-github-identity-mac-20261111",
+        "timeout_seconds": 20
+      },
+      "result": {
+        "is_error": true,
+        "mcp_code": -32603,
+        "message": "Internal error",
+        "job_id": null,
+        "authenticated_login": null,
+        "launch_status": "unknown"
+      }
+    }
+  ],
+  "new_key_retry_performed": false,
+  "remote_git_write_performed": false,
+  "connector_read_only_identity": {
+    "nickname": "ProfHepta",
+    "id": "102159240",
+    "does_not_verify_heptaruntime_channel": true
+  }
+}
