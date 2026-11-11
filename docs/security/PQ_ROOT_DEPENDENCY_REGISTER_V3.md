@@ -249,8 +249,8 @@ a stored predecessor cannot itself authorize an Advanced retry receipt after
 reopen. Only a CAS authenticated and durably committed by the live session may
 establish its volatile retry pair. Fresh Current observations remain the cold
 reconciliation path. The component and its same twelve native test functions
-are rebound, including a same-head, altered-predecessor negative control. The
-current canonical source-map digest is
+are rebound, including a same-head, altered-predecessor negative control. That
+follow-up's canonical source-map digest was
 `ac0cb401b9ef7111cd77085c3f817ecfe56bdc73fc5fd4206e2c3cc8f3767c52`.
 The newly reviewed files are successor working bytes; neither the retained M11
 review-base value nor the separate `e4abb172147e941b62483652b0ceabaae4317624`
@@ -265,6 +265,35 @@ primitive alias, or promote a deployment claim. Both
 `independent_common_restore_exclusion_proved` and
 `native_witness_durable_service_verified` remain false. The source checker has
 no accept-current-bytes mode; its reviewed digest and the manifest must agree.
+
+### 2026-11-11 S3 source refresh
+
+The current review uses commit
+`454ae116159867ff6cddd91b964523df7f7e16f0`, tree
+`3117250c4db0f2ae681d51ed6ee5e6a2fa7555a9`. All 41 declared files were read
+from that published snapshot. Exactly three source digests change from the
+preceding frozen map: `trillionnium/Cargo.lock`,
+`trillionnium/crates/trnm-crypto-primitives/Cargo.toml`, and
+`trillionnium/crates/trnm-pon-node/Cargo.toml`. Their reviewed differences
+are the existing Rustix 1.1.4 to 1.1.6 remediation; the other 38 selected
+source hashes and all existing feature selections are unchanged.
+
+The prior frozen source-map digest
+`76cf5db4ce841bc3763d6010d79f835a6a0018c8d12f40a4047f0455b8bde6a1`
+and its retained M11 review-base value remain historical inputs. On S3, the
+[original repository-truth job](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43042229392/job/130613468571)
+ran the unchanged 43 controls and recorded four failures plus one error,
+starting with the stale workspace lockfile pin. That failed observation is
+retained; no source is reverted and no guard is relaxed to make it pass.
+The refreshed canonical source-map digest is
+`0a6cb7dc497a9365e0538b0ab7de510c28068ef0f0b211d0f0971b460a7302d4`.
+
+This source-only refresh preserves the 41-path roster, all six roles, both
+signature families, hash-use declarations, operation limits, deadlines,
+unknown budgets and false qualification fields. Existing historical reports
+keep their original source identities. The inspector still returns
+`source_revision_bound = false`; it supplies no native execution, custody,
+cryptographic lifetime bound or production qualification.
 
 The checker reuses the existing
 [descriptor-bound source reader](../../scripts/ci/pq_source_reader.py).

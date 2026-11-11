@@ -1,0 +1,148 @@
+{
+  "negative": {
+    "actual_batch_exit_code": 1,
+    "actual_failure_exit_code": 101,
+    "actual_native_failures": 5,
+    "actual_native_passes": 2,
+    "component_validation_passed": false,
+    "expectations_matched": 7,
+    "named_tests_required": 7,
+    "native_inventory_invocations": 1,
+    "source_before_equals_final": true,
+    "transcripts": [
+      {
+        "actual_assertion_failure": false,
+        "label": "native-list",
+        "log_sha256": "907fcec793c13cf0969db01dc8398176fed9956d8989e222e29dd489117218d2",
+        "native_exit_code": 0,
+        "test": null
+      },
+      {
+        "actual_assertion_failure": true,
+        "label": "account-01",
+        "log_sha256": "4034cee6487576aa6d6c2a405e7ad90d32710a201443507c270e20b6953b2a1f",
+        "native_exit_code": 101,
+        "test": "ingress::account_scope_tests::invalid_account_scope_refuses_classical_session_and_signed_request"
+      },
+      {
+        "actual_assertion_failure": true,
+        "label": "account-02",
+        "log_sha256": "081f0ebf4ca4e11cfa3bcaa4eca986f0831b94f916b4fb7f73b0c5db4d293c50",
+        "native_exit_code": 101,
+        "test": "ingress::account_scope_tests::current_local_scope_refuses_previously_valid_classical_request"
+      },
+      {
+        "actual_assertion_failure": true,
+        "label": "account-03",
+        "log_sha256": "9b573648ea2c6493039d359c0ded9084aa694a849bf2cea50d95d26a2300068d",
+        "native_exit_code": 101,
+        "test": "ingress::account_scope_tests::invalid_account_scope_never_connects_or_advances_classical_clients"
+      },
+      {
+        "actual_assertion_failure": false,
+        "label": "account-04",
+        "log_sha256": "93f65005a655c6e9d9795581e53eb6c8ed9d362ceff62be4e550dd2e6f48d0b8",
+        "native_exit_code": 0,
+        "test": "ingress::account_scope_tests::valid_development_scope_retains_classical_signature_and_socket_path"
+      },
+      {
+        "actual_assertion_failure": false,
+        "label": "account-05",
+        "log_sha256": "7b8d6d96714efd9c86111524150e6b80762c1b2afd5c8004be31782c91998017",
+        "native_exit_code": 0,
+        "test": "ingress::account_scope_tests::explicit_pq_selector_retains_classical_route_refusal_precedence"
+      },
+      {
+        "actual_assertion_failure": true,
+        "label": "witness-new-01",
+        "log_sha256": "9ddc4bc9c4c6011c8cc175ebf7a7684e5ec0ca03146530e846a62112b01c53e3",
+        "native_exit_code": 101,
+        "test": "pq_rollback_witness::tests::live_retry_refuses_changed_durable_predecessor_at_the_same_head"
+      },
+      {
+        "actual_assertion_failure": true,
+        "label": "witness-new-02",
+        "log_sha256": "aab461240afc6c8fe0f0d257101cfe790a73030f21859fe1267bb8d80279ae33",
+        "native_exit_code": 101,
+        "test": "pq_rollback_witness::tests::cold_reopen_refuses_database_retry_history_and_accepts_new_successors"
+      }
+    ]
+  },
+  "negative_build_proof": {
+    "artifact_sha256": "1b97c712cd455b2fb351403fc1c8af7739584c55124162a2c6794ab617764a1d",
+    "build_receipt_sha256": "020053db2013930dccc2f52e6bd087393e53b0880b471d98edbc7d182b04a653",
+    "elf": {
+      "bytes": 536142984,
+      "device": 2050,
+      "inode": 37552554,
+      "sha256": "522c2bfaec2c04bf25caee9a6990e68bdf1c384245ed628ad27d5ad8fb69ee18"
+    },
+    "features": [
+      "default",
+      "pq-native-openssl",
+      "pq-root-v3"
+    ],
+    "profile": {
+      "debug_assertions": true,
+      "debuginfo": 2,
+      "opt_level": "3",
+      "overflow_checks": true,
+      "test": true
+    },
+    "ready_sha256": "a62bb533eee7b28ab2033e19cda25ec576f5a08c1111a4950eb0a5610b97acb5",
+    "source": "f7c51532cc6657360b97226d9f396158253cea78",
+    "tree": "628f0d54ad9127471cc3902b50b915c4df2dcad7"
+  },
+  "negative_source": "f7c51532cc6657360b97226d9f396158253cea78",
+  "new_builds_executed_by_packer": false,
+  "new_native_tests_executed_by_packer": false,
+  "original_business_budgets_changed": false,
+  "positive": {
+    "focused_extra5_passed": 5,
+    "named_controls_passed": 64,
+    "native_inventory_invocations": 1,
+    "retained52_passed": 52,
+    "source_before_equals_final": true,
+    "supplemental7_passed": 7
+  },
+  "positive_build_proof": {
+    "artifact_sha256": "fd771ceffcda88a5b5424a971b677e4c43b874ff0688729babf834381c3b3bae",
+    "build_receipt_sha256": "96025722e0048134e52b4ad834692b00ac94629340fcbd5deeb0db219c890c80",
+    "elf": {
+      "bytes": 536158360,
+      "device": 2050,
+      "inode": 36966751,
+      "sha256": "081ee2780e100ac74ee57a934edc5ae83dca0eaac2a3c370eb294ec442efe4ef"
+    },
+    "features": [
+      "default",
+      "pq-native-openssl",
+      "pq-root-v3"
+    ],
+    "profile": {
+      "debug_assertions": true,
+      "debuginfo": 2,
+      "opt_level": "3",
+      "overflow_checks": true,
+      "test": true
+    },
+    "ready_sha256": "a8af1a70192ef8b03781ce10d7c35cdef2004150e795493c5c3a848f3897bef8",
+    "source": "454ae116159867ff6cddd91b964523df7f7e16f0",
+    "tree": "3117250c4db0f2ae681d51ed6ee5e6a2fa7555a9"
+  },
+  "positive_source": "454ae116159867ff6cddd91b964523df7f7e16f0",
+  "production_activation": false,
+  "schema": "trnm-native-evidence-copy-verification-v1",
+  "source_preparation_actual_exit_codes": [
+    1,
+    0
+  ],
+  "synthetic_observer_controls": {
+    "actual_old_observer_counterexamples": 1,
+    "native_tests_executed": false,
+    "retained_and_regression_controls": 17,
+    "source_position_cases": 3,
+    "source_position_table_controls": 1
+  },
+  "whole_chain_quantum_security_qualified": false
+}

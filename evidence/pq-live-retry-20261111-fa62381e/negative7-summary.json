@@ -1,0 +1,149 @@
+{
+  "component_validation_passed": false,
+  "default_workspace_profiles": true,
+  "native_tests_failed": 5,
+  "native_tests_passed": 2,
+  "negative_control_expectations_met": true,
+  "observations": [
+    {
+      "error": null,
+      "expected_command_exit_code": 0,
+      "label": "preflight",
+      "native_failures_are_successes": false,
+      "owner": {
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh",
+          "--audit"
+        ],
+        "cwd": "/tmp/chain-pq-negative-fa62381e",
+        "elapsed_ns": 93001354,
+        "executed": true,
+        "exit_code": 0,
+        "log": "preflight.log",
+        "process_exit_code": 0,
+        "timed_out": false
+      },
+      "source_receipt": null,
+      "source_recorded": false
+    },
+    {
+      "error": null,
+      "expected_command_exit_code": 0,
+      "label": "compiler",
+      "native_failures_are_successes": false,
+      "owner": {
+        "command": [
+          "rustc",
+          "+1.95.0",
+          "-Vv"
+        ],
+        "cwd": "/tmp/chain-pq-negative-fa62381e",
+        "elapsed_ns": 26951559,
+        "executed": true,
+        "exit_code": 0,
+        "log": "compiler.log",
+        "process_exit_code": 0,
+        "timed_out": false
+      },
+      "source_receipt": null,
+      "source_recorded": false
+    },
+    {
+      "error": null,
+      "expected_command_exit_code": 0,
+      "label": "node-lib-build",
+      "native_failures_are_successes": false,
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "/tmp/chain-pq-negative-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "f7c51532cc6657360b97226d9f396158253cea78",
+          "--tested",
+          "f7c51532cc6657360b97226d9f396158253cea78",
+          "--label",
+          "node-lib-build",
+          "--output",
+          "/tmp/chain-pq-fa62381e-s3-negative/commands",
+          "--",
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--lib",
+          "--all-features",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "cwd": "/tmp/chain-pq-negative-fa62381e",
+        "elapsed_ns": 768164095988,
+        "executed": true,
+        "exit_code": 0,
+        "log": "node-lib-build.log",
+        "process_exit_code": 0,
+        "timed_out": false
+      },
+      "source_receipt": "/tmp/chain-pq-fa62381e-s3-negative/commands/node-lib-build.json",
+      "source_recorded": true
+    },
+    {
+      "error": null,
+      "expected_command_exit_code": 1,
+      "label": "negative-native-batch",
+      "native_failures_are_successes": false,
+      "owner": {
+        "command": [
+          "/usr/bin/python3",
+          "/tmp/chain-pq-negative-fa62381e/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "f7c51532cc6657360b97226d9f396158253cea78",
+          "--tested",
+          "f7c51532cc6657360b97226d9f396158253cea78",
+          "--label",
+          "negative-native-batch",
+          "--output",
+          "/tmp/chain-pq-fa62381e-s3-negative/commands",
+          "--",
+          "/usr/bin/python3",
+          "/tmp/chain-pq-fa62381e-negative-tools/chain-pq-fa62381e-negative-validation-v3.py",
+          "_native_batch",
+          "/tmp/chain-pq-negative-fa62381e",
+          "/tmp/chain-pq-fa62381e-s3-negative/native-artifact.json",
+          "1b97c712cd455b2fb351403fc1c8af7739584c55124162a2c6794ab617764a1d",
+          "/tmp/chain-pq-fa62381e-s3-negative/batch",
+          "58e2fa946a7dc34cf58e8b357e04c2789da98f8b6218768d8e29651c6cf6b6f7",
+          "900"
+        ],
+        "cwd": "/tmp/chain-pq-negative-fa62381e",
+        "elapsed_ns": 53362446261,
+        "executed": true,
+        "exit_code": 1,
+        "log": "negative-native-batch.log",
+        "owns_process_group": false,
+        "process_exit_code": 1,
+        "timed_out": false,
+        "timeout_scope": "each native invocation; durable job owns whole batch"
+      },
+      "source_receipt": "/tmp/chain-pq-fa62381e-s3-negative/commands/negative-native-batch.json",
+      "source_recorded": true
+    }
+  ],
+  "original_business_budgets_changed": false,
+  "phase_error": null,
+  "positive_source": "454ae116159867ff6cddd91b964523df7f7e16f0",
+  "production_activation": false,
+  "retained_pnq2_roster_executed_in_full": false,
+  "runner_sha256": "58e2fa946a7dc34cf58e8b357e04c2789da98f8b6218768d8e29651c6cf6b6f7",
+  "source": "f7c51532cc6657360b97226d9f396158253cea78",
+  "source_lineage_sha256": "d7d3e8e3a02525aa6db80ffa7e53cc606741ebbaa5da834cd01d6f1eadb78c1f",
+  "whole_chain_quantum_security_qualified": false
+}

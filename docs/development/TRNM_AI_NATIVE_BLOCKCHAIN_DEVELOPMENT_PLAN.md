@@ -1,3 +1,60 @@
+**S3 native execution and C4 source-register maintenance, 2026-11-11 UTC — HOLD:**
+
+Continue the existing [draft PR #908](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/908)
+above #901. The runtime checkpoint is
+`7f83ea843d6d1578a475a7a0c4dc026da564a795`; the final source used by the fresh
+positive native, strict-Clippy and supply observations is
+`454ae116159867ff6cddd91b964523df7f7e16f0`, tree
+`3117250c4db0f2ae681d51ed6ee5e6a2fa7555a9`. Preserve the separate S1, S2,
+S3, isolated negative-child and later evidence-commit identities in the
+[new execution record](../../evidence/pq-live-retry-20261111-fa62381e/README.md).
+
+The actual fresh S3 native batch passed 64 unique named controls: the unchanged
+52-control PNQ2/PqWitnessV4 roster, seven mandatory supplemental controls, and five unique
+recovery/cleanup extras. The isolated child
+`f7c51532cc6657360b97226d9f396158253cea78` changes only the two reviewed runtime
+behaviors back to #901 while retaining the new tests and dependency graphs.
+Its seven native observations are five real assertion failures (each exit 101)
+and two compatibility passes. Preserve the native batch's command_failed/exit 1
+and component_validation_passed=false alongside the separate seven-of-seven
+expectation match. Inventory listing and synthetic observer controls do not
+increase the native test totals. Actual ELF identity and complete physical
+source before/after/final checks were retained; no business budget was changed.
+
+The original strict workspace/all-targets/all-features Clippy command and the
+seven original supply-chain observations passed on S3. Retain the exact Rust
+1.95.0/OpenSSL 3.5.9 provider identities, original graphs/policies, the real
+advisory snapshot, original #901 failures and later S2/S3 hosted failures.
+The hosted S3 QROM lane separately completed its unchanged 105-control roster
+(including the nineteen lifetime controls) and all seven report comparisons.
+These observations are not transferred to a later evidence child's source.
+
+The S3 repository-truth lane exposed a further stale Root dependency map:
+all 41 declared files were reviewed and exactly three Rustix-related pins had
+changed. The successor refresh changes those three pins and the reviewed
+checkpoint/digest, preserving the other 38 pins, all roles/algorithms/budgets,
+prior maps and original four-failure/one-error observation. The original
+43 controls passed on the applied precommit maintenance snapshot; the new
+current report remains HOLD with eight null domain bounds, a null total bound
+and source_revision_bound=false. Keep this preliminary scope distinct from
+its required final committed-source rerun and report reproduction.
+
+Complete each final candidate's exact locked graphs, retained tests, strict
+Clippy, formatting, source-integrity negatives and Markdown links with the
+original gates. Preserve every actual failure, timeout, unexecuted hosted job
+and observation identity. A local successful analysis does not replace the
+independent eligible exact-source Code Scanning API export. Missing historical
+artifacts, runner-allocation cancellations, protocol timeouts and actual
+native campaign failures retain their different recorded causes.
+
+Ordinary development still uses its selected classical account profile.
+Independent custody and non-co-restored freshness, complete ordinary/public/
+WAN/recovery transport coverage, historical commitment migration, joint W1/
+DAA/chainwork quantum security and an applicable lifetime composition bound
+remain unclosed. The reversible W1 oracle and passing controls are not a
+quantum-mining safety proof. Whole-chain PQ qualification, production
+activation and unproved security bounds remain false or unknown.
+
 **PQ retry provenance and classical network scope, 2026-11-11 America/New_York — HOLD:**
 
 Continue the exact #901 candidate `6c35f94d9387fac41c1547f05742d70150320b2e`.
