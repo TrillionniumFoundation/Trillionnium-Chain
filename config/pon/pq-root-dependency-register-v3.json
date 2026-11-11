@@ -28,13 +28,37 @@
         "successor-possession",
         "anchor-writer",
         "anchor-response",
-        "effect-provider"
+        "effect-provider",
+        "witness-response"
       ],
       "source_paths": [
         "formal/pon-nakamoto-v1/pq_openssl_backend.py",
         "formal/pon-nakamoto-v1/pq_root_recovery_signatures_v2.py",
         "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
         "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs"
+      ]
+    },
+    "native-fresh-witness-v5": {
+      "constructions": [
+        "native-v5-complete-enrollment",
+        "native-v5-restore-domain-epoch-and-witness-roster-binding",
+        "native-v5-complete-fresh-read-or-exact-cas-request",
+        "native-v5-request-digest-bound-witness-receipt"
+      ],
+      "failure_bound": null,
+      "primitive_ids": [
+        "sha512"
+      ],
+      "quantum_reduction": "uninstantiated",
+      "query_to_primitive_mapping": "uninstantiated",
+      "roles": [
+        "anchor-writer",
+        "witness-response"
+      ],
+      "source_paths": [
+        "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs",
+        "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs",
+        "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/durable.rs"
       ]
     },
     "native-key-identities-v3": {
@@ -52,7 +76,8 @@
         "successor-possession",
         "anchor-writer",
         "anchor-response",
-        "effect-provider"
+        "effect-provider",
+        "witness-response"
       ],
       "source_paths": [
         "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs"
@@ -159,7 +184,8 @@
         "successor-possession",
         "anchor-writer",
         "anchor-response",
-        "effect-provider"
+        "effect-provider",
+        "witness-response"
       ],
       "source_paths": [
         "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs"
@@ -341,7 +367,8 @@
         "successor-possession",
         "anchor-writer",
         "anchor-response",
-        "effect-provider"
+        "effect-provider",
+        "witness-response"
       ],
       "source_paths": [
         "formal/pon-nakamoto-v1/pq_openssl_backend.py",
@@ -374,6 +401,10 @@
       "failure_bound": null,
       "status": "open"
     },
+    "independently-retained-witness-and-trusted-policy": {
+      "failure_bound": null,
+      "status": "open"
+    },
     "native-provider-and-effect-owner-integration": {
       "failure_bound": null,
       "status": "open"
@@ -395,6 +426,10 @@
       "status": "open"
     },
     "whole-chain-event-coverage": {
+      "failure_bound": null,
+      "status": "open"
+    },
+    "witness-durable-cas-before-acknowledgement": {
       "failure_bound": null,
       "status": "open"
     }
@@ -486,6 +521,17 @@
       "source_path": "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
       "symbol": "MAX_VERIFICATIONS_V3",
       "unit": "verification-reservations"
+    },
+    "native-witness-database-bytes": {
+      "bounds_adversary_queries": false,
+      "maximum": "1048576",
+      "permits_history_pruning": false,
+      "permits_lifetime_reset": false,
+      "purpose": "operational-refusal-only",
+      "scope": "one-typed-native-witness-register",
+      "source_path": "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/durable.rs",
+      "symbol": "MAX_DATABASE_BYTES",
+      "unit": "bytes"
     },
     "python-retained-events": {
       "bounds_adversary_queries": false,
@@ -586,6 +632,7 @@
       },
       "shared_scope": "all-listed-roles-in-one-lifetime",
       "use_ids": [
+        "native-fresh-witness-v5",
         "native-key-identities-v3",
         "native-owner-and-anchor-v3",
         "native-policy-checkpoint-artifact-v3",
@@ -674,6 +721,7 @@
   "prior_register_query_budgets_are_independent": false,
   "production_activation": false,
   "profiles": {
+    "independent_common_restore_exclusion_proved": false,
     "native_clock_authority_qualified": false,
     "native_clock_source": "trusted-caller-unix-seconds",
     "native_m15_production_integration_complete": false,
@@ -683,6 +731,9 @@
     "native_root_kernel_feature": "pq-root-v3",
     "native_sqlite_descriptor_race_proved_absent": false,
     "native_storage_assumption": "trusted-private-directory-administration-during-sqlite-open",
+    "native_witness": "v5-client-and-typed-durable-register-component-no-daemon",
+    "native_witness_durable_service_verified": false,
+    "native_witness_trust": "separately-provisioned-policy-and-surviving-durable-register-required",
     "python": "root-research-v2-height-contract",
     "rust": "root-research-v3-unix-seconds-contract",
     "wire_equivalence_proved": false
@@ -753,6 +804,22 @@
           ],
           "status": "source-candidate-only",
           "validity_contract": "native-v3-fresh-request"
+        },
+        "rust-v5-witnessed-owner": {
+          "production_qualified": false,
+          "source_paths": [
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/anchor.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/recovery_floor.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/storage.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs",
+            "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+            "trillionnium/crates/trnm-release-bundle/src/root_recovery_v3.rs"
+          ],
+          "status": "source-candidate-only",
+          "validity_contract": "fresh-witness-and-exact-ack-required-under-original-budget-no-effect-entry"
         }
       },
       "independent_custody_verified": false
@@ -760,7 +827,9 @@
     "anchor-writer": {
       "action_coverage": [
         "fresh-read",
-        "compare-and-swap"
+        "compare-and-swap",
+        "v5-witness-fresh-read",
+        "v5-witness-compare-and-swap"
       ],
       "actual_lifetime_failure_bound": null,
       "approval_policy": {
@@ -820,6 +889,35 @@
           ],
           "status": "source-candidate-only",
           "validity_contract": "native-v3-fresh-request"
+        },
+        "rust-v5-durable-register": {
+          "production_qualified": false,
+          "source_paths": [
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/durable.rs",
+            "trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+          ],
+          "status": "source-candidate-only",
+          "validity_contract": "typed-v5-authenticated-sqlite-cas-durable-before-ack-live-session-retries-only-exact-external-reopen-pin-no-daemon"
+        },
+        "rust-v5-witnessed-owner": {
+          "production_qualified": false,
+          "source_paths": [
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/anchor.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/recovery_floor.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/storage.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs",
+            "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+            "trillionnium/crates/trnm-release-bundle/src/root_recovery_v3.rs"
+          ],
+          "status": "source-candidate-only",
+          "validity_contract": "fresh-witness-and-exact-ack-required-under-original-budget-no-effect-entry"
         }
       },
       "independent_custody_verified": false
@@ -964,6 +1062,22 @@
           ],
           "status": "source-candidate-only",
           "validity_contract": "unix-seconds-expiry-exclusive-v3"
+        },
+        "rust-v5-witnessed-owner": {
+          "production_qualified": false,
+          "source_paths": [
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/anchor.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/recovery_floor.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/storage.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs",
+            "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+            "trillionnium/crates/trnm-release-bundle/src/root_recovery_v3.rs"
+          ],
+          "status": "source-candidate-only",
+          "validity_contract": "fresh-witness-and-exact-ack-required-under-original-budget-no-effect-entry"
         }
       },
       "independent_custody_verified": false
@@ -1031,6 +1145,88 @@
           ],
           "status": "source-candidate-only",
           "validity_contract": "unix-seconds-expiry-exclusive-v3"
+        },
+        "rust-v5-witnessed-owner": {
+          "production_qualified": false,
+          "source_paths": [
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/anchor.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/recovery_floor.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/storage.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs",
+            "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+            "trillionnium/crates/trnm-release-bundle/src/root_recovery_v3.rs"
+          ],
+          "status": "source-candidate-only",
+          "validity_contract": "fresh-witness-and-exact-ack-required-under-original-budget-no-effect-entry"
+        }
+      },
+      "independent_custody_verified": false
+    },
+    "witness-response": {
+      "action_coverage": [
+        "v5-fresh-read",
+        "v5-exact-successor-acknowledgement"
+      ],
+      "actual_lifetime_failure_bound": null,
+      "approval_policy": {
+        "combiner": "AND",
+        "families": {
+          "ML-DSA-87": {
+            "required": 2,
+            "roster_size": 3
+          },
+          "SLH-DSA-SHA2-256s": {
+            "required": 2,
+            "roster_size": 3
+          }
+        }
+      },
+      "epoch_scope": {
+        "coverage": [
+          "initial",
+          "active",
+          "successor",
+          "retired",
+          "recovered"
+        ],
+        "maximum_signatures": null,
+        "maximum_verification_attempts": null,
+        "reset_after_recovery": false,
+        "reset_after_restart": false,
+        "reset_after_rotation": false,
+        "status": "unknown-lifetime-population",
+        "total_epochs": null,
+        "total_keys": null,
+        "total_rosters": null
+      },
+      "implementations": {
+        "rust-v5-durable-register": {
+          "production_qualified": false,
+          "source_paths": [
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/durable.rs",
+            "trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+          ],
+          "status": "source-candidate-only",
+          "validity_contract": "typed-v5-authenticated-sqlite-cas-durable-before-ack-live-session-retries-only-exact-external-reopen-pin-no-daemon"
+        },
+        "rust-v5-witnessed-owner": {
+          "production_qualified": false,
+          "source_paths": [
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+            "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs",
+            "trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+          ],
+          "status": "source-candidate-only",
+          "validity_contract": "complete-fresh-request-and-exact-head-bound-dual-quorum-receipt"
         }
       },
       "independent_custody_verified": false
@@ -1058,15 +1254,19 @@
     "trillionnium/crates/trnm-pon-node/Cargo.toml": "397ca6c01aec6227f95fa11c9e2ba19da180e953afa5a9cb1dec521d4a171e71",
     "trillionnium/crates/trnm-pon-node/src/lib.rs": "0b7e076069645bdf502ff4521ea7c1d77b75a64e5137df3527b0cd6e7167c461",
     "trillionnium/crates/trnm-pon-node/src/release_owner.rs": "350702d2221a3f343c3968174e1ec5ae7b9179f0cf3e372db7d0614ee6784ab6",
-    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs": "34000f247b1708eaff11bf9e97914c8d805fb65c58c44a4b5d24f3acb3f1a905",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs": "a304394e4f07cc5bee809ededc29852f9f68df84c926d58367ffa7f8f242939b",
     "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/anchor.rs": "c3bee91ae17af6c5a67ee7d603e553e82dab38024cc07d230c0a6bf75865d7f2",
     "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/effect_readback_v4.rs": "30b638eb31f17e7256e705dfce23e9332205b6b24af687b6f386e848a255ec5e",
     "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/recovery_floor.rs": "af6199f2c6d2392e3292d341aa5a16b7d55be7fb830d85a196c692c809b4600c",
     "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/storage.rs": "2449be51c9a74b1e3f4eda3bd2c8adb44e80ee3646ff0d02cf9faae59a83a356",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs": "e0f41b22bf8ed8f444fc0b004a8e030f8c548ea96022e6cf5b35230c6be39f96",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/durable.rs": "079d75c580d53df9be937b43cb47a3381be1d58f1397f008fab2b5350544f4d3",
     "trillionnium/crates/trnm-pon-node/tests/recovery_floor_v4_native.rs": "3616d905976853c2a6a8d7b7b98db156b653d056f9f170f77454ce3b66602fe1",
     "trillionnium/crates/trnm-pon-node/tests/root_budget_v4_native.rs": "adff3dee63a81b67256bf8d97ca92d8a470a0a741bb82a8b110206f2cdf0305a",
     "trillionnium/crates/trnm-pon-node/tests/root_effect_readback_v4_native.rs": "2a129af69dfc81e8e0a03973d0c4a76f151b4bb44c0be5e60a365c9680887ed9",
     "trillionnium/crates/trnm-pon-node/tests/root_recovery_v3_native.rs": "3e0cc6d167ba846193a1fd06b079333c104168529fc20a611468a6ac8c2e8cea",
+    "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_durable_native.rs": "e937c0e8501e30bd775cdaffdf24e22b7efea73197185caa7c5f9be2b097febe",
+    "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_native.rs": "e22cc9e6c3dda598f3532ef3bf6ce41086cf8589e22bacb839ea3c141de53c05",
     "trillionnium/crates/trnm-pon-node/tests/support/root_recovery_v3_fixture.rs": "6d0570da659dd93df86f6239814b67178c47afe4dc05f14f38209db582c9a400",
     "trillionnium/crates/trnm-protocol/Cargo.toml": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc",
     "trillionnium/crates/trnm-protocol/src/crypto_profile.rs": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a",

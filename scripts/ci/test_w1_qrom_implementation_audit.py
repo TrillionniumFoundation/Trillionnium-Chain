@@ -4,10 +4,8 @@ from __future__ import annotations
 
 from contextlib import redirect_stderr
 import copy
-import hashlib
 import io
 import json
-import os
 from pathlib import Path
 import re
 import struct
@@ -23,52 +21,16 @@ import w1_control_tree_audit as control
 import w1_profile_source_map as profile
 
 
-def historical_project_file(commit, row):
-    """Read the contract's existing Git blob; missing objects never fall back."""
-    audit.require(type(commit) is str and re.fullmatch(r'[0-9a-f]{40}', commit),
-                  'historical source commit identity')
-    size, path = row['bytes'], row['path']
-    audit.require(type(size) is int and 0 < size <= 2 * 1024 * 1024,
-                  'historical source byte bound: ' + path)
-    environment = dict(os.environ, GIT_NO_LAZY_FETCH='1')
-
-    def git(*args):
-        return subprocess.check_output(['git', '--no-replace-objects', *args],
-                                       cwd=audit.ROOT, env=environment,
-                                       stderr=subprocess.PIPE, timeout=15)
-
-    entry = git('ls-tree', '-z', commit, '--', path)
-    audit.require(entry.endswith(b'\0') and entry.count(b'\0') == 1,
-                  'one historical source entry required: ' + path)
-    header, separator, name = entry[:-1].partition(b'\t')
-    fields = header.split()
-    audit.require(separator and name == path.encode() and len(fields) == 3
-                  and fields[0] in (b'100644', b'100755') and fields[1] == b'blob'
-                  and re.fullmatch(rb'[0-9a-f]{40}', fields[2]),
-                  'historical source is not a regular Git blob: ' + path)
-    object_id = fields[2].decode()
-    audit.require(git('cat-file', '-t', object_id) == b'blob\n',
-                  'historical source object type: ' + path)
-    audit.require(git('cat-file', '-s', object_id) == str(size).encode() + b'\n',
-                  'historical source exact size: ' + path)
-    raw = git('cat-file', 'blob', object_id)
-    audit.require(len(raw) == size and hashlib.sha256(raw).hexdigest() == row['sha256'],
-                  'historical source exact digest: ' + path)
-    return raw
+import w1_qrom_historical_fixture as historical
 
 
 class ImplementationAuditTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.contract, contract_raw = audit.load_contract(audit.ROOT)
-        project = {row['path']: historical_project_file(cls.contract['source_base_commit'], row)
-                   for row in cls.contract['project_files']}
-        helpers = audit.load_pinned_files(audit.ROOT, cls.contract['audit_helpers'])
-        cls.assets = audit.load_pinned_files(audit.ROOT, cls.contract['saved_v2_files'])
-        row = cls.contract['upstream_snapshot']
-        snapshot = audit.load_pinned_files(audit.ROOT, [row])[row['path']]
-        cls.fixture = {audit.CONTRACT: contract_raw, row['path']: snapshot,
-                       **project, **helpers, **cls.assets}
+        cls.contract, cls.fixture, _ = historical.fixture_inputs(audit.ROOT)
+        cls.assets = {row['path']: cls.fixture[row['path']]
+                      for row in cls.contract['saved_v2_files']}
+        snapshot = cls.fixture[cls.contract['upstream_snapshot']['path']]
         cls.sources, _ = audit.load_snapshot(snapshot, audit.UPSTREAM)
         cls.tree = control.audit_sources(cls.sources)
         cls.branch = cls.tree['final_join']['merkle_path']
@@ -132,7 +94,7 @@ class ImplementationAuditTests(unittest.TestCase):
         # An absent historical object must not be replaced by the current file.
         row = next(row for row in self.contract['project_files'] if row['path'] == path)
         with self.assertRaises(subprocess.CalledProcessError):
-            historical_project_file('0' * 40, row)
+            historical.historical_project_file(audit.ROOT, '0' * 40, row)
 
     def test_changed_audit_helper_is_refused_before_execution(self):
         self.copy_contract_inputs()

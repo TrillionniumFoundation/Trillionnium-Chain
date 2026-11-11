@@ -27,7 +27,8 @@ WORKFLOW = ROOT / '.github/workflows/pon-w1-qrom-implementation.yml'
 ROSTER = 'config/pon/w1-qrom-required-tests-v1.json'
 REQUIRED_STAGES = (
     'observations', 'checkout', 'source_before', 'preflight', 'named_tests',
-    'implementation', 'budget_unknown', 'budget_hypothetical',
+    'historical_controls', 'implementation', 'current_implementation',
+    'budget_unknown', 'budget_hypothetical',
     'report_scopes', 'source_after',
 )
 HEAD = 'a' * 40
@@ -36,6 +37,8 @@ BASE = 'b' * 40
 sys.path.insert(0, str(ROOT / 'scripts'))
 import w1_qrom_conditional_budget as budget
 import w1_qrom_implementation_audit as implementation
+import w1_qrom_historical_fixture as historical
+import w1_qrom_current_implementation_audit as current
 
 
 def embedded_python(workflow: str, step_id: str) -> str:
@@ -102,8 +105,12 @@ class WorkflowGateTests(unittest.TestCase):
         cls.roster = json.loads(cls.roster_bytes)
         # Actual project reports are the positive baseline. Tests mutate their
         # concrete values; they do not reproduce the gate's arithmetic rules.
+        historical_report, historical_receipt = historical.historical_mapping(ROOT)
         cls.reports = {
-            'implementation.json': implementation.build_report(ROOT),
+            'implementation.json': historical_report,
+            'historical-source.json': historical_receipt,
+            'current-v1-refusal.json': historical.current_v1_refusal(ROOT),
+            'implementation-current.json': current.build_report(ROOT),
             'budget-unknown.json': budget.make_report(
                 {'schema': budget.INPUT_SCHEMA, 'input_kind': 'hypothetical'}),
             'budget-hypothetical.json': budget.make_report(budget.example_input()),
@@ -379,7 +386,41 @@ class WorkflowGateTests(unittest.TestCase):
         def latest_revision(reports):
             reports['budget-hypothetical.json']['source']['latest_revision_full_text_equivalence_verified'] = True
 
-        for mutation in (true_implementation, zero_qualification, inferred_bits, full_theorem, latest_revision):
+        def relabel_historical(reports):
+            reports['historical-source.json']['historical_source_commit'] = 'a' * 40
+
+        def promote_historical_to_current(reports):
+            reports['historical-source.json']['current_project_mapping'] = True
+
+        def wrong_git_mode(reports):
+            reports['historical-source.json']['project_files'][0]['git_mode'] = '120000'
+
+        def replace_refusal_with_success(reports):
+            reports['current-v1-refusal.json']['result'] = 'MAPPING_REPRODUCED_SECURITY_HOLD'
+
+        def remove_refusal(reports):
+            del reports['current-v1-refusal.json']
+
+        def remove_current_mapping(reports):
+            del reports['implementation-current.json']
+
+        def historical_report_as_current(reports):
+            reports['implementation-current.json'] = deepcopy(reports['implementation.json'])
+
+        def promote_current_mapping(reports):
+            reports['implementation-current.json']['qualification']['quantum_work_qualified'] = True
+
+        def refuse_as_zero(reports):
+            reports['current-v1-refusal.json']['current_source_mapping_performed'] = 0
+
+        def incomplete_current_closure(reports):
+            reports['implementation-current.json']['local_path_closure']['files'].pop()
+
+        for mutation in (true_implementation, zero_qualification, inferred_bits, full_theorem,
+                         latest_revision, relabel_historical, promote_historical_to_current,
+                         wrong_git_mode, replace_refusal_with_success, remove_refusal,
+                         remove_current_mapping, historical_report_as_current,
+                         promote_current_mapping, refuse_as_zero, incomplete_current_closure):
             with self.subTest(mutation=mutation.__name__):
                 self.assert_scope_rejected(mutation)
 

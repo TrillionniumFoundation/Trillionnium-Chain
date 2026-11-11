@@ -369,6 +369,8 @@ ROOT_RECOVERY_STRUCTURE_BLOCK = """    python3 -m unittest discover -s formal/po
     python3 scripts/ci/test_pq_root_migration_review_v1.py
     python3 scripts/ci/pq_root_migration_review_v1.py
     python3 scripts/ci/test_run_pq_root_continuation_v4.py
+    python3 scripts/ci/test_run_pq_root_witness_v5.py
+    python3 scripts/ci/test_ci_observation_process.py
     python3 scripts/ci/test_authenticated_suite_count.py
 """
 ROOT_RECOVERY_TRUTH_PREFIX = CREDIT_MODEL_PREFIX + '''    python3 scripts/ci/test_project_boundary.py
@@ -387,6 +389,7 @@ ROOT_RECOVERY_NATIVE_BLOCK = '''    # Execute root components before the retaine
     python3 formal/pon-nakamoto-v1/test_pq_root_recovery_journal_native_v2.py -v
     python3 scripts/ci/run_pq_root_native_v3.py
     python3 scripts/ci/run_pq_root_continuation_v4.py
+    python3 scripts/ci/run_pq_root_witness_v5.py
 '''
 ROOT_RECOVERY_TEST_FILES = (
     'formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py',
@@ -399,6 +402,11 @@ ROOT_RECOVERY_TEST_FILES = (
     'scripts/ci/test_pq_root_dependency_register.py',
     'scripts/ci/run_pq_root_continuation_v4.py',
     'scripts/ci/test_run_pq_root_continuation_v4.py',
+    'scripts/ci/run_pq_root_witness_v5.py',
+    'scripts/ci/test_run_pq_root_witness_v5.py',
+    'scripts/ci/ci_observation.py',
+    'scripts/ci/test_ci_observation_process.py',
+    'formal/pon-nakamoto-v1/bounded_process.py',
     'scripts/ci/test_authenticated_suite_count.py',
     'scripts/ci/test_pq_root_custody_review_v1.py',
     'scripts/ci/pq_root_custody_review_v1.py',
@@ -407,6 +415,8 @@ ROOT_RECOVERY_TEST_FILES = (
     'scripts/ci/test_pq_root_migration_review_v1.py',
     'scripts/ci/pq_root_migration_review_v1.py',
     'trillionnium/crates/trnm-pon-node/tests/recovery_floor_v4_native.rs',
+    'trillionnium/crates/trnm-pon-node/tests/root_witness_v5_native.rs',
+    'trillionnium/crates/trnm-pon-node/tests/root_witness_v5_durable_native.rs',
     'trillionnium/crates/trnm-pon-node/tests/root_effect_readback_v4_native.rs',
     'trillionnium/crates/trnm-pon-node/tests/root_budget_v4_native.rs',
     'trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs',
@@ -708,6 +718,8 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_pq_root_migration_review_v1.py
     python3 scripts/ci/pq_root_migration_review_v1.py
     python3 scripts/ci/test_run_pq_root_continuation_v4.py
+    python3 scripts/ci/test_run_pq_root_witness_v5.py
+    python3 scripts/ci/test_ci_observation_process.py
     python3 scripts/ci/test_authenticated_suite_count.py
     python3 scripts/ci/test_pq_chain_claim_guard.py
     # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.
@@ -715,6 +727,8 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 scripts/w1_qrom_current_implementation_audit.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
+    python3 scripts/ci/test_hash_use_contract.py
+    python3 scripts/ci/hash_use_contract.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
     python3 -m unittest discover -s scripts/ci -p 'test_pq_quantum_daa_scenarios.py' -v
     # Public-input framing only: no seed proof or signature qualification.
@@ -1469,6 +1483,11 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'credit model controls must execute exactly once in repository-truth')
+    for command in ('python3 scripts/ci/test_hash_use_contract.py',
+                    'python3 scripts/ci/hash_use_contract.py'):
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'hash-purpose controls must execute exactly once in repository-truth')
     for command in ('python3 scripts/ci/test_w1_qrom_current_implementation_audit.py',
                     'python3 scripts/w1_qrom_current_implementation_audit.py'):
         require(code_lines(lanes['repository-truth']).count(command) == 1

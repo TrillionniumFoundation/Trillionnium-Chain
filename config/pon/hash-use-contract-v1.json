@@ -1,0 +1,1505 @@
+{
+  "schema": "trnm-hash-use-contract-v1",
+  "purpose": "reviewed-source-obligation-inventory",
+  "review_base_revision": "e4abb172147e941b62483652b0ceabaae4317624",
+  "source_binding": "declared-path-bytes-only-not-authenticated-history",
+  "primitives": {
+    "sha256": {
+      "construction": "FIPS180-4/SHA-256",
+      "output_bits": 256
+    },
+    "sha384": {
+      "construction": "FIPS180-4/SHA-384",
+      "output_bits": 384
+    },
+    "sha512": {
+      "construction": "FIPS180-4/SHA-512",
+      "output_bits": 512
+    },
+    "sha3-512": {
+      "construction": "FIPS202/SHA3-512",
+      "output_bits": 512
+    },
+    "risc0-poseidon2": {
+      "construction": "risc0-3.0.6/Poseidon2/BabyBear",
+      "output_bits": null
+    }
+  },
+  "games": {
+    "fixed-target-preimage": {
+      "selection_order": "target-digest-fixed-before-search",
+      "attacker_output": "one-accepted-preimage-of-that-target",
+      "qualification": "target-distribution-and-valid-input-domain-unqualified"
+    },
+    "fixed-message-second-preimage": {
+      "selection_order": "complete-original-object-fixed-before-replacement-search",
+      "attacker_output": "different-valid-object-with-the-fixed-original-digest",
+      "qualification": "message-length-target-population-and-advice-unqualified"
+    },
+    "chosen-pair-collision": {
+      "selection_order": "attacker-selects-both-objects-before-one-is-authorized",
+      "attacker_output": "two-distinct-valid-objects-with-one-digest",
+      "qualification": "valid-object-domain-and-authorization-reduction-unqualified"
+    },
+    "merkle-binding": {
+      "selection_order": "depends-on-fixed-root-or-attacker-prepared-tree-game",
+      "attacker_output": "conflicting-leaf-content-position-or-tree-opening",
+      "qualification": "leaf-node-empty-shape-and-openings-reduction-unqualified"
+    },
+    "work-threshold-search": {
+      "selection_order": "branch-context-and-threshold-fixed-before-each-search",
+      "attacker_output": "legal-complete-W1-candidate-with-ticket-at-most-target",
+      "qualification": "target-is-a-set-not-a-single-digest-and-work-cost-is-unqualified"
+    },
+    "proof-soundness-qrom": {
+      "selection_order": "adaptive-statements-and-transcripts-in-a-complete-proof-game",
+      "attacker_output": "accepting-proof-of-a-false-complete-statement",
+      "qualification": "PCS-FS-recursion-extraction-and-concrete-oracle-losses-unqualified"
+    }
+  },
+  "uses": {
+    "model-legacy-root": {
+      "category": "model",
+      "source_paths": [
+        "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/closure.rs"
+      ],
+      "symbols": [
+        "CellModelReleaseRootV1::id",
+        "router_commitment",
+        "CellManifestV1::id",
+        "CellReleaseManifestV1::id"
+      ],
+      "primitives": [
+        "sha256"
+      ],
+      "encoding": {
+        "record": "TMR1/TCD1/TCM1/TCR1",
+        "framing": "Versioned encodings with lengths; TMR1 embeds the closure, router digest and canonical ordered direct lineage IDs.",
+        "domains": [
+          "trnm.cell-model-release-root.v1\\0",
+          "trnm.cell-model-router-roster.v1\\0",
+          "trnm.cell-manifest.v1\\0",
+          "trnm.cell-release-manifest.v1\\0"
+        ]
+      },
+      "attack_games": [
+        "fixed-message-second-preimage",
+        "chosen-pair-collision"
+      ],
+      "attacker_control": "A fixed accepted object gives a replacement game; an attacker who prepares both valid candidates before authorization gives a different collision game. Validity and actual owner authority remain separate constraints.",
+      "input_scope": "The manifest/root literal bytes are hashed; embedded payload, chunk and dependency digests do not re-read their referenced objects.",
+      "legacy_reference_roles": [
+        "payload",
+        "chunks",
+        "base",
+        "parent",
+        "tokenizer",
+        "layout",
+        "runtime",
+        "router",
+        "lineage"
+      ],
+      "migration": {
+        "input_material": "unchanged-existing-format",
+        "claimed_scope": "existing-format-only",
+        "original_bytes_required": false,
+        "old_commitment_strengthened": false,
+        "historical_provenance_restored": false,
+        "transitive_dependency_closure_proved": false,
+        "adoption_status": "not-established",
+        "requirements": [
+          "new-versioned-domain-and-exact-canonical-encoding",
+          "actual-original-content-before-any-full-content-claim",
+          "independently-authenticated-expected-object-and-profile",
+          "fresh-current-owner-authorization-for-the-new-format",
+          "explicit-handling-of-every-retained-legacy-reference",
+          "nonrewinding-recovery-frontier-and-surviving-liabilities",
+          "explicit-retirement-and-downgrade-policy-before-adoption"
+        ]
+      },
+      "open_obligations": [
+        "Per-object replacement/collision game and valid model constraints.",
+        "Fresh versioned full-content owner adoption; no automatic widening of TMR1 IDs."
+      ],
+      "consumed_outputs": {
+        "manifest_release_model_and_router_ids": {
+          "primitive": "sha256",
+          "consumed_bits": 256,
+          "truncation": "none",
+          "notes": "CellDigestV1 retains the complete 32-byte SHA-256 output."
+        },
+        "embedded_payload_chunk_and_lineage_references": {
+          "primitive": "sha256",
+          "consumed_bits": 256,
+          "truncation": "none",
+          "notes": "Referenced legacy 32-byte digests remain 256-bit inputs; an outer root does not widen them."
+        }
+      }
+    },
+    "model-full-payload": {
+      "category": "model",
+      "source_paths": [
+        "trillionnium/crates/trnm-protocol/src/content_commitment.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/content_v2.rs"
+      ],
+      "symbols": [
+        "observe_reader",
+        "CellContentManifestV2::verify_payload_reader"
+      ],
+      "primitives": [
+        "sha512"
+      ],
+      "encoding": {
+        "record": "CCH1/TCM2",
+        "framing": "CCH1 header binds profile, content kind, instance, generation and exact length; TCM2 embeds the full payload claim.",
+        "domains": [
+          "TRNM/CPQ1/FullContent/SHA512/v1\\0",
+          "CCH1 kind 3 ModelManifest",
+          "CCH1 kind 4 ModelPayload"
+        ]
+      },
+      "attack_games": [
+        "fixed-message-second-preimage",
+        "chosen-pair-collision"
+      ],
+      "attacker_control": "A fixed accepted object gives a replacement game; an attacker who prepares both valid candidates before authorization gives a different collision game. Validity and actual owner authority remain separate constraints.",
+      "input_scope": "The typed adapter checks a separately pinned manifest claim and re-reads the actual complete payload; its five old dependency aliases are literal metadata.",
+      "legacy_reference_roles": [
+        "base",
+        "parent",
+        "tokenizer",
+        "layout",
+        "runtime"
+      ],
+      "migration": {
+        "input_material": "actual-full-content",
+        "claimed_scope": "direct-encoded-content-only",
+        "original_bytes_required": true,
+        "old_commitment_strengthened": false,
+        "historical_provenance_restored": false,
+        "transitive_dependency_closure_proved": false,
+        "adoption_status": "not-established",
+        "requirements": [
+          "new-versioned-domain-and-exact-canonical-encoding",
+          "actual-original-content-before-any-full-content-claim",
+          "independently-authenticated-expected-object-and-profile",
+          "fresh-current-owner-authorization-for-the-new-format",
+          "explicit-handling-of-every-retained-legacy-reference",
+          "nonrewinding-recovery-frontier-and-surviving-liabilities",
+          "explicit-retirement-and-downgrade-policy-before-adoption"
+        ]
+      },
+      "open_obligations": [
+        "Independent current manifest expectation and live owner integration.",
+        "Five dependency aliases alone supply no dependency-content authority."
+      ],
+      "consumed_outputs": {
+        "manifest_digest": {
+          "primitive": "sha512",
+          "consumed_bits": 512,
+          "truncation": "none",
+          "notes": "The CCH1 ModelManifest record retains all 64 digest bytes."
+        },
+        "payload_digest": {
+          "primitive": "sha512",
+          "consumed_bits": 512,
+          "truncation": "none",
+          "notes": "The CCH1 ModelPayload record retains all 64 digest bytes."
+        }
+      }
+    },
+    "model-direct-dependencies": {
+      "category": "model",
+      "source_paths": [
+        "trillionnium/crates/trnm-protocol/src/content_commitment.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/content_v2.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/content_v2/closure.rs"
+      ],
+      "symbols": [
+        "CellContentClosureV2::verify_readers",
+        "CellContentDependencyV2::ALL"
+      ],
+      "primitives": [
+        "sha512"
+      ],
+      "encoding": {
+        "record": "TCC2",
+        "framing": "Complete TCM2 plus five fixed ordered role-tagged CCH1 records: Base, Parent, Tokenizer, Layout, Runtime.",
+        "domains": [
+          "TRNM/CPQ1/FullContent/SHA512/v1\\0",
+          "TCC2 role slots 1..5"
+        ]
+      },
+      "attack_games": [
+        "fixed-message-second-preimage",
+        "chosen-pair-collision"
+      ],
+      "attacker_control": "A fixed accepted object gives a replacement game; an attacker who prepares both valid candidates before authorization gives a different collision game. Validity and actual owner authority remain separate constraints.",
+      "input_scope": "Readback requires the model payload and each of the five complete declared dependency objects under one shared budget.",
+      "legacy_reference_roles": [
+        "embedded metadata aliases",
+        "undeclared transitive dependencies"
+      ],
+      "migration": {
+        "input_material": "actual-declared-direct-objects",
+        "claimed_scope": "declared-direct-object-set-only",
+        "original_bytes_required": true,
+        "old_commitment_strengthened": false,
+        "historical_provenance_restored": false,
+        "transitive_dependency_closure_proved": false,
+        "adoption_status": "not-established",
+        "requirements": [
+          "new-versioned-domain-and-exact-canonical-encoding",
+          "actual-original-content-before-any-full-content-claim",
+          "independently-authenticated-expected-object-and-profile",
+          "fresh-current-owner-authorization-for-the-new-format",
+          "explicit-handling-of-every-retained-legacy-reference",
+          "nonrewinding-recovery-frontier-and-surviving-liabilities",
+          "explicit-retirement-and-downgrade-policy-before-adoption"
+        ]
+      },
+      "open_obligations": [
+        "Completeness of transitive dependencies and semantic compatibility are unproved.",
+        "Byte readback is not CURRENT, installation or FinalUse."
+      ],
+      "consumed_outputs": {
+        "closure_digest": {
+          "primitive": "sha512",
+          "consumed_bits": 512,
+          "truncation": "none",
+          "notes": "The enclosing CCH1 ModelManifest digest retains 64 bytes."
+        },
+        "each_direct_dependency_digest": {
+          "primitive": "sha512",
+          "consumed_bits": 512,
+          "truncation": "none",
+          "notes": "Each of the five full CCH1 dependency records carries a 64-byte digest."
+        }
+      }
+    },
+    "transaction-root": {
+      "category": "transaction",
+      "source_paths": [
+        "trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+      ],
+      "symbols": [
+        "sequence_root",
+        "pon_wire::hash"
+      ],
+      "primitives": [
+        "sha256"
+      ],
+      "encoding": {
+        "record": "PNW1 transaction sequence",
+        "framing": "Leaf binds LE64 index and complete transaction bytes; odd levels duplicate the final hash. Empty, leaf and internal node use different tags. No separate outer leaf-count field.",
+        "domains": [
+          "TRNM-PON1\\0",
+          "transactions-empty",
+          "transactions-leaf",
+          "transactions-node"
+        ]
+      },
+      "attack_games": [
+        "fixed-message-second-preimage",
+        "chosen-pair-collision",
+        "merkle-binding"
+      ],
+      "attacker_control": "A fixed accepted object gives a replacement game; an attacker who prepares both valid candidates before authorization gives a different collision game. Validity and actual owner authority remain separate constraints.",
+      "input_scope": "The root covers the supplied ordered transaction byte sequence. It does not validate signatures, execution, or the semantic dependencies inside each transaction.",
+      "legacy_reference_roles": [
+        "transaction-internal identity and content references"
+      ],
+      "migration": {
+        "input_material": "unchanged-existing-format",
+        "claimed_scope": "existing-format-only",
+        "original_bytes_required": false,
+        "old_commitment_strengthened": false,
+        "historical_provenance_restored": false,
+        "transitive_dependency_closure_proved": false,
+        "adoption_status": "not-established",
+        "requirements": [
+          "new-versioned-domain-and-exact-canonical-encoding",
+          "actual-original-content-before-any-full-content-claim",
+          "independently-authenticated-expected-object-and-profile",
+          "fresh-current-owner-authorization-for-the-new-format",
+          "explicit-handling-of-every-retained-legacy-reference",
+          "nonrewinding-recovery-frontier-and-surviving-liabilities",
+          "explicit-retirement-and-downgrade-policy-before-adoption"
+        ]
+      },
+      "open_obligations": [
+        "Prove shape/position and bounded-size binding for this exact indexed duplicate-last tree.",
+        "A new 64-byte tree needs fresh encoding, exact proofs and owner activation."
+      ],
+      "consumed_outputs": {
+        "leaf_node_and_root_digest": {
+          "primitive": "sha256",
+          "consumed_bits": 256,
+          "truncation": "none",
+          "notes": "Hash aliases are [u8;32]; no 64-byte transaction-root consumer exists in this contract."
+        }
+      }
+    },
+    "state-root": {
+      "category": "state",
+      "source_paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "trillionnium/crates/trnm-protocol/src/pon_state.rs"
+      ],
+      "symbols": [
+        "state_root_from_entries",
+        "state_node_hash",
+        "account_archive_root_from_accounts"
+      ],
+      "primitives": [
+        "sha256"
+      ],
+      "encoding": {
+        "record": "PNW1 sparse state and account archive",
+        "framing": "Domain-tagged hashed paths and exact leaf bytes; sorted unique hash paths; fixed-depth empty/branch grammar.",
+        "domains": [
+          "TRNM-PON1\\0",
+          "state-key",
+          "state-leaf",
+          "state-node",
+          "state-empty",
+          "account-archive-key-v1",
+          "account-archive-leaf-v1",
+          "account-archive-branch-v1",
+          "account-archive-empty-v1"
+        ]
+      },
+      "attack_games": [
+        "fixed-message-second-preimage",
+        "chosen-pair-collision",
+        "merkle-binding"
+      ],
+      "attacker_control": "A fixed accepted object gives a replacement game; an attacker who prepares both valid candidates before authorization gives a different collision game. Validity and actual owner authority remain separate constraints.",
+      "input_scope": "The supplied state rows or account tuples are committed by the existing 32-byte sparse tree. CST1 is a separate candidate format, not a replacement of this root.",
+      "legacy_reference_roles": [
+        "identity fields and values that themselves contain old digests"
+      ],
+      "migration": {
+        "input_material": "unchanged-existing-format",
+        "claimed_scope": "existing-format-only",
+        "original_bytes_required": false,
+        "old_commitment_strengthened": false,
+        "historical_provenance_restored": false,
+        "transitive_dependency_closure_proved": false,
+        "adoption_status": "not-established",
+        "requirements": [
+          "new-versioned-domain-and-exact-canonical-encoding",
+          "actual-original-content-before-any-full-content-claim",
+          "independently-authenticated-expected-object-and-profile",
+          "fresh-current-owner-authorization-for-the-new-format",
+          "explicit-handling-of-every-retained-legacy-reference",
+          "nonrewinding-recovery-frontier-and-surviving-liabilities",
+          "explicit-retirement-and-downgrade-policy-before-adoption"
+        ]
+      },
+      "open_obligations": [
+        "Exact sparse-tree collision/replacement and all state owner paths.",
+        "Do not substitute a hash of this old root for a complete CST1 re-read."
+      ],
+      "consumed_outputs": {
+        "state_and_account_sparse_tree_digest": {
+          "primitive": "sha256",
+          "consumed_bits": 256,
+          "truncation": "none",
+          "notes": "All sparse-tree paths, leaves, branches and resulting roots use [u8;32]."
+        }
+      }
+    },
+    "history-block-anchor": {
+      "category": "history",
+      "source_paths": [
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/history_page.rs"
+      ],
+      "symbols": [
+        "Header::block_id",
+        "Header::challenge",
+        "Node::history_with_progress"
+      ],
+      "primitives": [
+        "sha256"
+      ],
+      "encoding": {
+        "record": "PNH1 block IDs and parent ancestry",
+        "framing": "Block ID hashes the complete header and trace. Parent, transaction, state, receipt and task fields remain 32-byte references.",
+        "domains": [
+          "TRNM-PON1\\0",
+          "block",
+          "challenge"
+        ]
+      },
+      "attack_games": [
+        "fixed-message-second-preimage",
+        "chosen-pair-collision"
+      ],
+      "attacker_control": "A fixed accepted object gives a replacement game; an attacker who prepares both valid candidates before authorization gives a different collision game. Validity and actual owner authority remain separate constraints.",
+      "input_scope": "The block anchor commits header/trace literals. History traverses and validates retained ancestry; there is no migrated 64-byte standalone history-root format in this inventory.",
+      "legacy_reference_roles": [
+        "parent ancestry",
+        "transaction root",
+        "state root",
+        "receipt root",
+        "work task"
+      ],
+      "migration": {
+        "input_material": "unchanged-existing-format",
+        "claimed_scope": "existing-format-only",
+        "original_bytes_required": false,
+        "old_commitment_strengthened": false,
+        "historical_provenance_restored": false,
+        "transitive_dependency_closure_proved": false,
+        "adoption_status": "not-established",
+        "requirements": [
+          "new-versioned-domain-and-exact-canonical-encoding",
+          "actual-original-content-before-any-full-content-claim",
+          "independently-authenticated-expected-object-and-profile",
+          "fresh-current-owner-authorization-for-the-new-format",
+          "explicit-handling-of-every-retained-legacy-reference",
+          "nonrewinding-recovery-frontier-and-surviving-liabilities",
+          "explicit-retirement-and-downgrade-policy-before-adoption"
+        ]
+      },
+      "open_obligations": [
+        "Full historical content/finality and surviving liability reconstruction.",
+        "An outer SHA-512 anchor cannot repair a collision in an old ancestor commitment."
+      ],
+      "consumed_outputs": {
+        "header_block_id_and_parent_reference": {
+          "primitive": "sha256",
+          "consumed_bits": 256,
+          "truncation": "none",
+          "notes": "Header::block_id returns Hash=[u8;32], and parent/trace references remain 32 bytes."
+        }
+      }
+    },
+    "signature-key-identity": {
+      "category": "signature",
+      "source_paths": [
+        "trillionnium/crates/trnm-protocol/src/pq_frame.rs"
+      ],
+      "symbols": [
+        "ml_dsa_65_key_id_from_spki"
+      ],
+      "primitives": [
+        "sha256"
+      ],
+      "encoding": {
+        "record": "TPQ1 ML-DSA-65 SPKI key identifier",
+        "framing": "Fixed key-ID domain followed by exact strict DER ML-DSA-65 SPKI bytes.",
+        "domains": [
+          "TRNM/PoN/PQKey/v1\\0"
+        ]
+      },
+      "attack_games": [
+        "fixed-target-preimage",
+        "fixed-message-second-preimage",
+        "chosen-pair-collision"
+      ],
+      "attacker_control": "A fixed accepted object gives a replacement game; an attacker who prepares both valid candidates before authorization gives a different collision game. Validity and actual owner authority remain separate constraints.",
+      "input_scope": "The ID binds one exact SPKI encoding. Cryptographic key validation and independently pinned authority are separate.",
+      "legacy_reference_roles": [
+        "32-byte network and owner identities"
+      ],
+      "migration": {
+        "input_material": "unchanged-existing-format",
+        "claimed_scope": "existing-format-only",
+        "original_bytes_required": false,
+        "old_commitment_strengthened": false,
+        "historical_provenance_restored": false,
+        "transitive_dependency_closure_proved": false,
+        "adoption_status": "not-established",
+        "requirements": [
+          "new-versioned-domain-and-exact-canonical-encoding",
+          "actual-original-content-before-any-full-content-claim",
+          "independently-authenticated-expected-object-and-profile",
+          "fresh-current-owner-authorization-for-the-new-format",
+          "explicit-handling-of-every-retained-legacy-reference",
+          "nonrewinding-recovery-frontier-and-surviving-liabilities",
+          "explicit-retirement-and-downgrade-policy-before-adoption"
+        ]
+      },
+      "open_obligations": [
+        "A fixed digest preimage game, known original SPKI second-preimage game and attacker-prepared key-pair collision game have different input/control assumptions.",
+        "An arbitrary digest preimage is not necessarily a valid authorized signing key."
+      ],
+      "consumed_outputs": {
+        "tpq1_key_id": {
+          "primitive": "sha256",
+          "consumed_bits": 256,
+          "truncation": "none",
+          "notes": "ml_dsa_65_key_id_from_spki returns all 32 bytes and TPQ1 stores the complete field."
+        }
+      }
+    },
+    "signature-tpq1-payload": {
+      "category": "signature",
+      "source_paths": [
+        "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+        "trillionnium/crates/trnm-protocol/src/pq_transaction.rs"
+      ],
+      "symbols": [
+        "payload_commitment",
+        "Transfer::unsigned_statement",
+        "Transfer::logical_id"
+      ],
+      "primitives": [
+        "sha384",
+        "sha256"
+      ],
+      "encoding": {
+        "record": "TPQ1/QTX1",
+        "framing": "SHA-384 payload input is DOMAIN || payload tag || BE64 length || actual body; QTX1 logical ID hashes domain, BE32 body length, body and key ID. SHA-256 separately derives QTX1 owner context.",
+        "domains": [
+          "TRNM/PoN/PQAuth/ML-DSA-65/v1\\0",
+          "payload\\0",
+          "TRNM/PoN/QTX1Identity/v1\\0",
+          "TRNM/PoN/QTX1Context/v1\\0"
+        ]
+      },
+      "attack_games": [
+        "fixed-message-second-preimage",
+        "chosen-pair-collision"
+      ],
+      "attacker_control": "A fixed accepted object gives a replacement game; an attacker who prepares both valid candidates before authorization gives a different collision game. Validity and actual owner authority remain separate constraints.",
+      "input_scope": "Payload and operation identity hash actual body bytes. TPQ1 still carries 32-byte key, owner and network identities; the outer signature does not expand their binding strength.",
+      "legacy_reference_roles": [
+        "signer key ID",
+        "owner context",
+        "network",
+        "sender",
+        "recipient"
+      ],
+      "migration": {
+        "input_material": "unchanged-existing-format",
+        "claimed_scope": "existing-format-only",
+        "original_bytes_required": false,
+        "old_commitment_strengthened": false,
+        "historical_provenance_restored": false,
+        "transitive_dependency_closure_proved": false,
+        "adoption_status": "not-established",
+        "requirements": [
+          "new-versioned-domain-and-exact-canonical-encoding",
+          "actual-original-content-before-any-full-content-claim",
+          "independently-authenticated-expected-object-and-profile",
+          "fresh-current-owner-authorization-for-the-new-format",
+          "explicit-handling-of-every-retained-legacy-reference",
+          "nonrewinding-recovery-frontier-and-surviving-liabilities",
+          "explicit-retirement-and-downgrade-policy-before-adoption"
+        ]
+      },
+      "open_obligations": [
+        "Full signature-forgery and valid-owner reduction, with distinct hash roles.",
+        "SHA-384 ideal collision query scaling is not a lifetime failure probability."
+      ],
+      "consumed_outputs": {
+        "payload_commitment": {
+          "primitive": "sha384",
+          "consumed_bits": 384,
+          "truncation": "none",
+          "notes": "TPQ1 unsigned bytes[128..176] consume all 48 SHA-384 bytes."
+        },
+        "qtx1_logical_id": {
+          "primitive": "sha384",
+          "consumed_bits": 384,
+          "truncation": "none",
+          "notes": "Transfer::logical_id returns all 48 SHA-384 bytes."
+        },
+        "qtx1_owner_context": {
+          "primitive": "sha256",
+          "consumed_bits": 256,
+          "truncation": "none",
+          "notes": "Transfer::context returns all 32 SHA-256 bytes; the payload width does not widen this field."
+        }
+      }
+    },
+    "signature-cpq1-content": {
+      "category": "signature",
+      "source_paths": [
+        "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth.rs",
+        "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
+        "trillionnium/crates/trnm-protocol/src/content_commitment.rs",
+        "trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+      ],
+      "symbols": [
+        "verify_candidate_content",
+        "CandidateProfileVerifier::verify",
+        "CandidateEnvelope",
+        "observe_reader"
+      ],
+      "primitives": [
+        "sha512"
+      ],
+      "encoding": {
+        "record": "CPQ1 envelope with complete CCH1 payload",
+        "framing": "Content join compares exact 213-byte CCH1 record, observation, profile, kind-purpose and generation before the mathematical signature result is returned.",
+        "domains": [
+          "TRNM/CPQ1/FullContent/SHA512/v1\\0",
+          "CPQ1 envelope domains in bound crypto profile"
+        ]
+      },
+      "attack_games": [
+        "fixed-message-second-preimage",
+        "chosen-pair-collision"
+      ],
+      "attacker_control": "A fixed accepted object gives a replacement game; an attacker who prepares both valid candidates before authorization gives a different collision game. Validity and actual owner authority remain separate constraints.",
+      "input_scope": "A complete read observation is joined to a complete signed claim. This is not a new HashML-DSA variant and does not establish current effect authority.",
+      "legacy_reference_roles": [
+        "profile descriptor identity literals",
+        "content-specific referenced objects"
+      ],
+      "migration": {
+        "input_material": "actual-full-content",
+        "claimed_scope": "direct-encoded-content-only",
+        "original_bytes_required": true,
+        "old_commitment_strengthened": false,
+        "historical_provenance_restored": false,
+        "transitive_dependency_closure_proved": false,
+        "adoption_status": "not-established",
+        "requirements": [
+          "new-versioned-domain-and-exact-canonical-encoding",
+          "actual-original-content-before-any-full-content-claim",
+          "independently-authenticated-expected-object-and-profile",
+          "fresh-current-owner-authorization-for-the-new-format",
+          "explicit-handling-of-every-retained-legacy-reference",
+          "nonrewinding-recovery-frontier-and-surviving-liabilities",
+          "explicit-retirement-and-downgrade-policy-before-adoption"
+        ]
+      },
+      "open_obligations": [
+        "Whole ML-DSA internal primitive dependencies remain in their own signature register.",
+        "Current roles/quorum, revocation, recovery and FinalUse are independent owner obligations."
+      ],
+      "consumed_outputs": {
+        "cch1_digest": {
+          "primitive": "sha512",
+          "consumed_bits": 512,
+          "truncation": "none",
+          "notes": "The complete 213-byte signed CCH1 record contains a 64-byte content digest."
+        },
+        "cpq1_profile_id": {
+          "primitive": "sha512",
+          "consumed_bits": 512,
+          "truncation": "none",
+          "notes": "BoundCryptoProfile uses the complete 64-byte SHA-512 configuration ID."
+        },
+        "ml_dsa_internal_hashes": {
+          "primitive": null,
+          "consumed_bits": null,
+          "truncation": "not-mapped",
+          "notes": "SHAKE internals are separate signature-algorithm dependencies; their role-specific outputs are not mapped by the CCH1 digest width."
+        }
+      }
+    },
+    "storage-cell-chunks": {
+      "category": "storage",
+      "source_paths": [
+        "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/store.rs"
+      ],
+      "symbols": [
+        "CellChunkV1",
+        "CellManifestV1::id",
+        "verify_chunk"
+      ],
+      "primitives": [
+        "sha256"
+      ],
+      "encoding": {
+        "record": "TCM1 chunk and payload checks",
+        "framing": "Chunk and payload digests hash raw bytes without a per-chunk hash domain; TCM1 binds the size, ordered chunk sizes/digests and payload digest.",
+        "domains": [
+          "raw SHA-256 for chunk/payload bytes: no domain tag",
+          "trnm.cell-manifest.v1\\0"
+        ]
+      },
+      "attack_games": [
+        "fixed-message-second-preimage",
+        "chosen-pair-collision",
+        "merkle-binding"
+      ],
+      "attacker_control": "A fixed accepted object gives a replacement game; an attacker who prepares both valid candidates before authorization gives a different collision game. Validity and actual owner authority remain separate constraints.",
+      "input_scope": "Legacy transport/cache verification compares actual raw chunk and payload bytes to old manifest digests.",
+      "legacy_reference_roles": [
+        "payload digest",
+        "chunk digest",
+        "dependency aliases"
+      ],
+      "migration": {
+        "input_material": "unchanged-existing-format",
+        "claimed_scope": "existing-format-only",
+        "original_bytes_required": false,
+        "old_commitment_strengthened": false,
+        "historical_provenance_restored": false,
+        "transitive_dependency_closure_proved": false,
+        "adoption_status": "not-established",
+        "requirements": [
+          "new-versioned-domain-and-exact-canonical-encoding",
+          "actual-original-content-before-any-full-content-claim",
+          "independently-authenticated-expected-object-and-profile",
+          "fresh-current-owner-authorization-for-the-new-format",
+          "explicit-handling-of-every-retained-legacy-reference",
+          "nonrewinding-recovery-frontier-and-surviving-liabilities",
+          "explicit-retirement-and-downgrade-policy-before-adoption"
+        ]
+      },
+      "open_obligations": [
+        "Per-chunk target populations, positions and lifetime usage.",
+        "Keep legacy transport hashes separate from a newly pinned full-payload CCH1 claim."
+      ],
+      "consumed_outputs": {
+        "payload_and_chunk_checks": {
+          "primitive": "sha256",
+          "consumed_bits": 256,
+          "truncation": "none",
+          "notes": "TCM1 and the actual raw-byte readers compare complete 32-byte SHA-256 digests."
+        }
+      }
+    },
+    "storage-bep52-root": {
+      "category": "storage",
+      "source_paths": [
+        "trillionnium/crates/trnm-data-availability/src/cell/bep52.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/store.rs"
+      ],
+      "symbols": [
+        "CellBep52BindingV1::from_pinned_manifest",
+        "CellBep52BindingV1::verify_chunk",
+        "hash_pair"
+      ],
+      "primitives": [
+        "sha256"
+      ],
+      "encoding": {
+        "record": "BEP52 single-file research transport binding",
+        "framing": "Raw SHA-256(left32 || right32), zero padding leaves and fixed-size proof siblings; proof and pinned manifest enforce index, leaf count and exact byte lengths. Info-hash commits canonical info bytes.",
+        "domains": [
+          "BEP52 raw pair hashing: no custom leaf/node domain tag",
+          "BEP52 canonical info dictionary"
+        ]
+      },
+      "attack_games": [
+        "fixed-message-second-preimage",
+        "chosen-pair-collision",
+        "merkle-binding"
+      ],
+      "attacker_control": "A fixed accepted object gives a replacement game; an attacker who prepares both valid candidates before authorization gives a different collision game. Validity and actual owner authority remain separate constraints.",
+      "input_scope": "BEP52 hashes bind transport material under its exact existing grammar. They do not inherit CCH1 domains or establish model/dependency authority.",
+      "legacy_reference_roles": [
+        "TCM1 manifest ID",
+        "piece root",
+        "info hash"
+      ],
+      "migration": {
+        "input_material": "unchanged-existing-format",
+        "claimed_scope": "existing-format-only",
+        "original_bytes_required": false,
+        "old_commitment_strengthened": false,
+        "historical_provenance_restored": false,
+        "transitive_dependency_closure_proved": false,
+        "adoption_status": "not-established",
+        "requirements": [
+          "new-versioned-domain-and-exact-canonical-encoding",
+          "actual-original-content-before-any-full-content-claim",
+          "independently-authenticated-expected-object-and-profile",
+          "fresh-current-owner-authorization-for-the-new-format",
+          "explicit-handling-of-every-retained-legacy-reference",
+          "nonrewinding-recovery-frontier-and-surviving-liabilities",
+          "explicit-retirement-and-downgrade-policy-before-adoption"
+        ]
+      },
+      "open_obligations": [
+        "Exact BEP52 tree/padding/opening analysis and valid transport population.",
+        "A magnet or successful chunk download cannot stand in for a full independent CCH1 expectation."
+      ],
+      "consumed_outputs": {
+        "leaf_branch_and_piece_root": {
+          "primitive": "sha256",
+          "consumed_bits": 256,
+          "truncation": "none",
+          "notes": "Each CellDigestV1 is exactly 32 bytes; hash_pair consumes two complete digests."
+        },
+        "bep52_info_hash": {
+          "primitive": "sha256",
+          "consumed_bits": 256,
+          "truncation": "none",
+          "notes": "Magnet btmh:1220 identifies the complete 32-byte SHA-256 info-hash."
+        }
+      }
+    },
+    "migration-full-state": {
+      "category": "migration",
+      "source_paths": [
+        "trillionnium/crates/trnm-mvcc-fee/src/content_commitment_v1.rs",
+        "trillionnium/crates/trnm-protocol/src/content_commitment.rs",
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+      ],
+      "symbols": [
+        "observe_migration_checkpoint_v1",
+        "observe_state_snapshot_v1"
+      ],
+      "primitives": [
+        "sha512",
+        "sha256"
+      ],
+      "encoding": {
+        "record": "CMG1/CST1/SCF1",
+        "framing": "CMG1 includes old locator, actual header/genesis/trace, sorted source accounts and full SPKIs; CST1 streams complete supported state/configuration.",
+        "domains": [
+          "CMG1",
+          "CST1",
+          "SCF1",
+          "TRNM/CPQ1/FullContent/SHA512/v1\\0"
+        ]
+      },
+      "attack_games": [
+        "fixed-message-second-preimage",
+        "chosen-pair-collision"
+      ],
+      "attacker_control": "A fixed accepted object gives a replacement game; an attacker who prepares both valid candidates before authorization gives a different collision game. Validity and actual owner authority remain separate constraints.",
+      "input_scope": "Actual current material is re-read; old checkpoint/ancestry fields remain literal references. Unsupported opaque state configurations are refused.",
+      "legacy_reference_roles": [
+        "old checkpoint",
+        "header parent and other root fields",
+        "configuration identity literals"
+      ],
+      "migration": {
+        "input_material": "actual-full-content",
+        "claimed_scope": "direct-encoded-content-only",
+        "original_bytes_required": true,
+        "old_commitment_strengthened": false,
+        "historical_provenance_restored": false,
+        "transitive_dependency_closure_proved": false,
+        "adoption_status": "not-established",
+        "requirements": [
+          "new-versioned-domain-and-exact-canonical-encoding",
+          "actual-original-content-before-any-full-content-claim",
+          "independently-authenticated-expected-object-and-profile",
+          "fresh-current-owner-authorization-for-the-new-format",
+          "explicit-handling-of-every-retained-legacy-reference",
+          "nonrewinding-recovery-frontier-and-surviving-liabilities",
+          "explicit-retirement-and-downgrade-policy-before-adoption"
+        ]
+      },
+      "open_obligations": [
+        "Source finality, historical ownership and anti-rollback custody remain unproved by rehashing.",
+        "Lost history requires independent fresh migration authorization; no legacy-anchor wrapper fallback."
+      ],
+      "consumed_outputs": {
+        "new_cmg1_cst1_digest": {
+          "primitive": "sha512",
+          "consumed_bits": 512,
+          "truncation": "none",
+          "notes": "CCH1 retains the full 64-byte digest of actual supported migration/state content."
+        },
+        "legacy_checkpoint_check": {
+          "primitive": "sha256",
+          "consumed_bits": 256,
+          "truncation": "none",
+          "notes": "The old checkpoint identity is still a 32-byte Header::block_id, included as a literal reference."
+        }
+      }
+    },
+    "release-artifact": {
+      "category": "release",
+      "source_paths": [
+        "trillionnium/crates/trnm-release-bundle/src/content_v1.rs",
+        "trillionnium/crates/trnm-protocol/src/content_commitment.rs"
+      ],
+      "symbols": [
+        "observe_release_artifact_v1",
+        "verify_release_artifact_v1",
+        "observe_release_file_v1"
+      ],
+      "primitives": [
+        "sha512",
+        "sha256"
+      ],
+      "encoding": {
+        "record": "RAC1/CCH1",
+        "framing": "Complete framed artifact entry and actual file bytes feed CCH1; old SHA-256 is checked only for compatibility.",
+        "domains": [
+          "RAC1",
+          "TRNM/CPQ1/FullContent/SHA512/v1\\0"
+        ]
+      },
+      "attack_games": [
+        "fixed-message-second-preimage",
+        "chosen-pair-collision"
+      ],
+      "attacker_control": "A fixed accepted object gives a replacement game; an attacker who prepares both valid candidates before authorization gives a different collision game. Validity and actual owner authority remain separate constraints.",
+      "input_scope": "The directly read artifact and metadata are committed. Build inputs, external labels and current release role authority are not reconstructed.",
+      "legacy_reference_roles": [
+        "legacy artifact digest",
+        "platform/source-path labels",
+        "external build dependency identities"
+      ],
+      "migration": {
+        "input_material": "actual-full-content",
+        "claimed_scope": "direct-encoded-content-only",
+        "original_bytes_required": true,
+        "old_commitment_strengthened": false,
+        "historical_provenance_restored": false,
+        "transitive_dependency_closure_proved": false,
+        "adoption_status": "not-established",
+        "requirements": [
+          "new-versioned-domain-and-exact-canonical-encoding",
+          "actual-original-content-before-any-full-content-claim",
+          "independently-authenticated-expected-object-and-profile",
+          "fresh-current-owner-authorization-for-the-new-format",
+          "explicit-handling-of-every-retained-legacy-reference",
+          "nonrewinding-recovery-frontier-and-surviving-liabilities",
+          "explicit-retirement-and-downgrade-policy-before-adoption"
+        ]
+      },
+      "open_obligations": [
+        "Independent expected claim and immutable/current file custody.",
+        "Full build/dependency closure and live release adoption remain separate."
+      ],
+      "consumed_outputs": {
+        "new_rac1_content_digest": {
+          "primitive": "sha512",
+          "consumed_bits": 512,
+          "truncation": "none",
+          "notes": "RAC1 streams into a full 64-byte CCH1 digest."
+        },
+        "compatibility_artifact_digest": {
+          "primitive": "sha256",
+          "consumed_bits": 256,
+          "truncation": "none",
+          "notes": "Legacy artifact SHA-256 comparison remains a complete 32-byte compatibility check."
+        }
+      }
+    },
+    "profile-byte-commitment": {
+      "category": "profile",
+      "source_paths": [
+        "trillionnium/crates/trnm-protocol/src/crypto_profile.rs"
+      ],
+      "symbols": [
+        "BoundCryptoProfile::commitment",
+        "CryptoProfile::hash_rule"
+      ],
+      "primitives": [
+        "sha512"
+      ],
+      "encoding": {
+        "record": "Generic CPQ1 per-purpose byte commitment",
+        "framing": "Domain, full profile ID, purpose byte, BE64 input length and caller-supplied bytes; WorkChallenge/WorkTicket are refused.",
+        "domains": [
+          "TRNM/CryptoProfile/Commitment/v1\\0"
+        ]
+      },
+      "attack_games": [
+        "fixed-message-second-preimage",
+        "chosen-pair-collision"
+      ],
+      "attacker_control": "A fixed accepted object gives a replacement game; an attacker who prepares both valid candidates before authorization gives a different collision game. Validity and actual owner authority remain separate constraints.",
+      "input_scope": "Only the supplied literal bytes are committed. A 32-byte payload is indistinguishable from a 32-byte old digest without a typed object contract.",
+      "legacy_reference_roles": [
+        "arbitrary caller-supplied nested digests"
+      ],
+      "migration": {
+        "input_material": "unchanged-existing-format",
+        "claimed_scope": "existing-format-only",
+        "original_bytes_required": false,
+        "old_commitment_strengthened": false,
+        "historical_provenance_restored": false,
+        "transitive_dependency_closure_proved": false,
+        "adoption_status": "not-established",
+        "requirements": [
+          "new-versioned-domain-and-exact-canonical-encoding",
+          "actual-original-content-before-any-full-content-claim",
+          "independently-authenticated-expected-object-and-profile",
+          "fresh-current-owner-authorization-for-the-new-format",
+          "explicit-handling-of-every-retained-legacy-reference",
+          "nonrewinding-recovery-frontier-and-surviving-liabilities",
+          "explicit-retirement-and-downgrade-policy-before-adoption"
+        ]
+      },
+      "open_obligations": [
+        "Every caller needs its own object meaning, independently fixed expectation and input-completeness review.",
+        "A longer output does not prove full-content recomputation or transitive binding."
+      ],
+      "consumed_outputs": {
+        "generic_candidate_commitment": {
+          "primitive": "sha512",
+          "consumed_bits": 512,
+          "truncation": "none",
+          "notes": "BoundCryptoProfile::commitment returns [u8;64]; the input may still be an old short digest."
+        }
+      }
+    },
+    "work-threshold": {
+      "category": "work",
+      "source_paths": [
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs"
+      ],
+      "symbols": [
+        "pon_work::hash",
+        "precheck_proof_statement",
+        "verify",
+        "Header::challenge"
+      ],
+      "primitives": [
+        "sha256"
+      ],
+      "encoding": {
+        "record": "PNW1 work transcript and threshold ticket",
+        "framing": "Canonical W1 task/noise/transcript/ticket with the full header-derived challenge; ticket accepted when at most the branch target.",
+        "domains": [
+          "TRNM-PON1\\0",
+          "TRNM-PON-TRACE1\\0",
+          "task",
+          "noise",
+          "ticket",
+          "challenge"
+        ]
+      },
+      "attack_games": [
+        "work-threshold-search"
+      ],
+      "attacker_control": "A miner searches valid candidates for an acceptance set determined by target and branch context; neither arbitrary hash collisions nor a free primitive query are automatically valid blocks.",
+      "input_scope": "Complete W1 relation and target search remain distinct from generic fixed-digest preimage or arbitrary collision finding.",
+      "legacy_reference_roles": [
+        "header roots and identity fields"
+      ],
+      "migration": {
+        "input_material": "unchanged-existing-format",
+        "claimed_scope": "existing-format-only",
+        "original_bytes_required": false,
+        "old_commitment_strengthened": false,
+        "historical_provenance_restored": false,
+        "transitive_dependency_closure_proved": false,
+        "adoption_status": "not-established",
+        "requirements": [
+          "new-versioned-domain-and-exact-canonical-encoding",
+          "actual-original-content-before-any-full-content-claim",
+          "independently-authenticated-expected-object-and-profile",
+          "fresh-current-owner-authorization-for-the-new-format",
+          "explicit-handling-of-every-retained-legacy-reference",
+          "nonrewinding-recovery-frontier-and-surviving-liabilities",
+          "explicit-retirement-and-downgrade-policy-before-adoption"
+        ]
+      },
+      "open_obligations": [
+        "Joint cheapest legal strategy, parallelism, memory, DAA, timestamp, chainwork and fork model.",
+        "No 2^(n/2) claim ignores target acceptance density or supplies a physical work lower bound."
+      ],
+      "consumed_outputs": {
+        "challenge_task_trace_and_ticket": {
+          "primitive": "sha256",
+          "consumed_bits": 256,
+          "truncation": "none",
+          "notes": "Each challenge, task, trace and ticket Hash is [u8;32]; target density and valid W1 computation determine the search game."
+        },
+        "raw_noise_hash_output": {
+          "primitive": "sha256",
+          "consumed_bits": 256,
+          "truncation": "none",
+          "notes": "The raw hash(noise, challenge, label, counter) output is 32 bytes before the separate rejection-sampling and early-stop consumer."
+        },
+        "sampled_noise_field_words": {
+          "primitive": null,
+          "consumed_bits": null,
+          "truncation": "not-mapped",
+          "notes": "expand_with_progress splits each raw SHA-256 digest into eight little-endian u32 candidates, retains only v < 4294967291, and stops at the requested output length; the final digest may be partially consumed. Each retained field word is encoded as 32 bits; this is not an entropy or security claim."
+        }
+      }
+    },
+    "proof-risc0-selected": {
+      "category": "proof",
+      "source_paths": [
+        "config/pon/pq-proof-profile-binding-v1.json",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+        "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs",
+        "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs"
+      ],
+      "symbols": [
+        "PROFILE_ID",
+        "IMAGE_ID",
+        "expected_identity"
+      ],
+      "primitives": [
+        "sha256",
+        "risc0-poseidon2"
+      ],
+      "encoding": {
+        "record": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+        "framing": "Selected composite proof route and pinned SDK/image/control/parameter identities; exact local source mapping remains separate from proof security.",
+        "domains": [
+          "RISC Zero 3.0.6 route-specific Poseidon2/SHA-256 roles; no CCH1 replacement"
+        ]
+      },
+      "attack_games": [
+        "merkle-binding",
+        "proof-soundness-qrom"
+      ],
+      "attacker_control": "The attacker may choose adaptive statements, proof bytes, transcripts and recursive material. The owner independently pins the exact verifier, profile, image/control IDs and parameters. Acceptance requires the complete verifier; Merkle binding and QROM soundness need distinct project reductions.",
+      "input_scope": "The selected parameter descriptor is an inspected source declaration, not a verifier execution or composed quantum soundness theorem.",
+      "legacy_reference_roles": [
+        "image ID",
+        "control ID",
+        "verifier parameters digest",
+        "recursive proof commitments"
+      ],
+      "migration": {
+        "input_material": "unchanged-existing-format",
+        "claimed_scope": "existing-format-only",
+        "original_bytes_required": false,
+        "old_commitment_strengthened": false,
+        "historical_provenance_restored": false,
+        "transitive_dependency_closure_proved": false,
+        "adoption_status": "not-established",
+        "requirements": [
+          "new-versioned-domain-and-exact-canonical-encoding",
+          "actual-original-content-before-any-full-content-claim",
+          "independently-authenticated-expected-object-and-profile",
+          "fresh-current-owner-authorization-for-the-new-format",
+          "explicit-handling-of-every-retained-legacy-reference",
+          "nonrewinding-recovery-frontier-and-surviving-liabilities",
+          "explicit-retirement-and-downgrade-policy-before-adoption"
+        ]
+      },
+      "open_obligations": [
+        "Concrete PCS/Merkle/Fiat-Shamir/adaptive recursion/knowledge extraction and oracle-instantiation losses.",
+        "Current theorem-version equivalence and whole-lifetime query/statement populations remain unproved."
+      ],
+      "consumed_outputs": {
+        "native_w1_sha256_values": {
+          "primitive": "sha256",
+          "consumed_bits": 256,
+          "truncation": "none",
+          "notes": "Native statement hashes carried into the proof remain 32-byte values."
+        },
+        "risc0_merkle_and_transcript_outputs": {
+          "primitive": "risc0-poseidon2",
+          "consumed_bits": null,
+          "truncation": "not-mapped",
+          "notes": "Exact field-element encoding, output consumption and effective codomain need the selected route mapping; raw byte width is not entropy."
+        },
+        "recursive_and_final_verifier_roles": {
+          "primitive": null,
+          "consumed_bits": null,
+          "truncation": "not-mapped",
+          "notes": "A complete route-by-route consumer/truncation map is still an open proof obligation."
+        }
+      }
+    },
+    "proof-p3-tagged-reference": {
+      "category": "proof",
+      "source_paths": [
+        "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3.rs",
+        "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs"
+      ],
+      "symbols": [
+        "tagged_sha3::PROFILE_ID",
+        "FRAME_MAGIC",
+        "DESCRIPTOR",
+        "frame_header",
+        "Role"
+      ],
+      "primitives": [
+        "sha3-512"
+      ],
+      "encoding": {
+        "record": "TRNM-W1-P3-SHA3-512-TAGGED-R1",
+        "framing": "Version/profile/descriptor/component/role/context framing with exact payload length; leaf, branch, transcript and statement-context roles remain one concrete SHA3-512 substrate.",
+        "domains": [
+          "TRNM-W1-SHARED-HASH\\0",
+          "Leaf=1",
+          "Branch=2",
+          "Transcript=3",
+          "StatementContext=4"
+        ]
+      },
+      "attack_games": [
+        "merkle-binding",
+        "proof-soundness-qrom"
+      ],
+      "attacker_control": "The attacker may choose statement, proof and transcript bytes. The owner independently pins the exact P3 profile, component, descriptor, expected header and expected artifacts. This route supplies no recursive SHA3 verifier; recursion would require a separately qualified extension. Complete verification, Merkle binding and QROM reductions remain distinct obligations.",
+      "input_scope": "A distinct research reference profile; it is not the selected RISC Zero route and its 512-bit output is not a transferable proof-security bound.",
+      "legacy_reference_roles": [
+        "statement/public input commitments"
+      ],
+      "migration": {
+        "input_material": "unchanged-existing-format",
+        "claimed_scope": "existing-format-only",
+        "original_bytes_required": false,
+        "old_commitment_strengthened": false,
+        "historical_provenance_restored": false,
+        "transitive_dependency_closure_proved": false,
+        "adoption_status": "not-established",
+        "requirements": [
+          "new-versioned-domain-and-exact-canonical-encoding",
+          "actual-original-content-before-any-full-content-claim",
+          "independently-authenticated-expected-object-and-profile",
+          "fresh-current-owner-authorization-for-the-new-format",
+          "explicit-handling-of-every-retained-legacy-reference",
+          "nonrewinding-recovery-frontier-and-surviving-liabilities",
+          "explicit-retirement-and-downgrade-policy-before-adoption"
+        ]
+      },
+      "open_obligations": [
+        "FRI finite-field error, transcript sampling, recursive SHA3 relation and exact QROM reduction.",
+        "Domain tags do not establish independent random oracles."
+      ],
+      "consumed_outputs": {
+        "merkle_leaf_branch_and_statement_context_digest": {
+          "primitive": "sha3-512",
+          "consumed_bits": 512,
+          "truncation": "none",
+          "notes": "Eight raw little-endian u64 words preserve every output bit; they are not reduced modulo Goldilocks."
+        },
+        "transcript_hash_output": {
+          "primitive": "sha3-512",
+          "consumed_bits": 512,
+          "truncation": "none",
+          "notes": "The framed transcript hasher emits the full SHA3-512 digest."
+        },
+        "sampled_fiat_shamir_field_challenges": {
+          "primitive": null,
+          "consumed_bits": null,
+          "truncation": "not-mapped",
+          "notes": "Sampling and extension-field consumption are separate from digest width and need the concrete FS reduction."
+        }
+      }
+    }
+  },
+  "migration_requirements": [
+    "new-versioned-domain-and-exact-canonical-encoding",
+    "actual-original-content-before-any-full-content-claim",
+    "independently-authenticated-expected-object-and-profile",
+    "fresh-current-owner-authorization-for-the-new-format",
+    "explicit-handling-of-every-retained-legacy-reference",
+    "nonrewinding-recovery-frontier-and-surviving-liabilities",
+    "explicit-retirement-and-downgrade-policy-before-adoption"
+  ],
+  "query_model_notes": {
+    "generic_ideal_constant_success_queries": "Single-target preimage has square-root and random-function collision has cube-root query scaling under their respective ideal models.",
+    "examples_are_security_bits": false,
+    "examples_are_lifetime_failure_bounds": false,
+    "ideal_output_width_examples": [
+      {
+        "output_bits": 256,
+        "preimage_exponent": {
+          "numerator": "256",
+          "denominator": "2"
+        },
+        "collision_exponent": {
+          "numerator": "256",
+          "denominator": "3"
+        }
+      },
+      {
+        "output_bits": 384,
+        "preimage_exponent": {
+          "numerator": "384",
+          "denominator": "2"
+        },
+        "collision_exponent": {
+          "numerator": "384",
+          "denominator": "3"
+        }
+      },
+      {
+        "output_bits": 512,
+        "preimage_exponent": {
+          "numerator": "512",
+          "denominator": "2"
+        },
+        "collision_exponent": {
+          "numerator": "512",
+          "denominator": "3"
+        }
+      }
+    ],
+    "second_preimage_requires_its_own_message_length_and_target_model": true,
+    "multi_target_preprocessing_advice_and_reduction_losses_included_in_proof": false,
+    "adversary_query_maximum": null,
+    "query_budget_overrun_probability": null,
+    "physical_memory_circuit_and_fault_tolerance_costs_calibrated": false,
+    "shared_primitive_queries_reset_at_domain_key_or_epoch": false,
+    "primary_references": [
+      "https://arxiv.org/abs/quant-ph/9605043",
+      "https://arxiv.org/abs/quant-ph/9705002",
+      "https://arxiv.org/abs/1312.1027"
+    ]
+  },
+  "proof_profiles": {
+    "selected_risc0": {
+      "profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+      "expected_identity": {
+        "sdk": "3.0.6",
+        "image_id": [
+          1958252411,
+          3287394615,
+          1805488136,
+          1516578702,
+          78549041,
+          790278610,
+          301018785,
+          4279049364
+        ],
+        "hash_suite": "poseidon2",
+        "final_control_id": "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+        "verifier_parameters_digest": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013",
+        "field": {
+          "base_modulus": "2013265921",
+          "extension_degree": 4,
+          "extension_polynomial": "X^4 + 11"
+        },
+        "fri": {
+          "queries": 50,
+          "inverse_rate": 4,
+          "folding_factor": 16,
+          "final_min_degree": 256
+        }
+      },
+      "status": "selected-source-declaration-only",
+      "qrom_soundness_bound": null,
+      "theorem_version_equivalence_verified": false
+    },
+    "tagged_p3_reference": {
+      "profile_id": "TRNM-W1-P3-SHA3-512-TAGGED-R1",
+      "sdk": "0.8.0",
+      "hash": "SHA3-512",
+      "output_bits": 512,
+      "sponge_rate_bits": 576,
+      "sponge_capacity_bits": 1024,
+      "field_modulus": "18446744069414584321",
+      "extension_polynomial": "X^2-7",
+      "fri_queries": 64,
+      "log_blowup": 2,
+      "log_final_poly_len": 0,
+      "max_log_arity": 1,
+      "status": "separate-research-reference-only",
+      "qrom_soundness_bound": null
+    },
+    "parameter_sets_may_be_combined_for_qualification": false,
+    "source_parameter_binding_proves_implementation_refinement": false
+  },
+  "qualification": {
+    "actual_lifetime_failure_bound": null,
+    "security_bits": null,
+    "whole_chain_hash_query_scope_closed": false,
+    "composition_coverage_proved": false,
+    "whole_chain_pq_qualified": false,
+    "production_activation": false
+  },
+  "source_files": {
+    "config/pon/pq-proof-profile-binding-v1.json": {
+      "bytes": 2378,
+      "sha256": "eec20a37cdf7d90b38febab2d9bb724f0cc8f3b80a6e66e14c2734cd1625fd23"
+    },
+    "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs": {
+      "bytes": 5246,
+      "sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9"
+    },
+    "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs": {
+      "bytes": 13329,
+      "sha256": "98876ea9e223f90079f69bd6f1f75f6a17b9988ed9412fdda8a16bc40367aebf"
+    },
+    "formal/pon-nakamoto-v1/w1_public_stark_research/src/tagged_sha3.rs": {
+      "bytes": 11732,
+      "sha256": "b6bf9e1d77e0e1711f3a8c667223afc5a7262b7658011d3fbbf6006ccd5b0847"
+    },
+    "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs": {
+      "bytes": 284,
+      "sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb"
+    },
+    "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs": {
+      "bytes": 11172,
+      "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": {
+      "bytes": 104121,
+      "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth.rs": {
+      "bytes": 3525,
+      "sha256": "5d7cb197c4296777ac00708b6b260cf2ee27aac17b778b43bbd71b9009b708d9"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs": {
+      "bytes": 11609,
+      "sha256": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52.rs": {
+      "bytes": 12578,
+      "sha256": "c33ff4435a2227d1de962b40d3e7bb5cb913b6a13c2a442aed1399fe36732447"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/closure.rs": {
+      "bytes": 15264,
+      "sha256": "72188669d94263583b5a716748e253f3a09eca09b93f0295bfb56f29a647307d"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/content_v2.rs": {
+      "bytes": 10435,
+      "sha256": "b5fd6c236f913267e56665d3c9ab0874f9b208d98f907fdff7c9ef037cc1876c"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/content_v2/closure.rs": {
+      "bytes": 10027,
+      "sha256": "1c0382b63872465491a52bc40fa475d22e77e9ab44de16df4c2f5fd5f4bd8f1b"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs": {
+      "bytes": 11176,
+      "sha256": "cf945af731b8172d6b093bded63d546ac3f3a15756524e739a50187dcdaebdc5"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs": {
+      "bytes": 6915,
+      "sha256": "6311b100634a1358e2d1aad2d9b71300e75f599326f9f5c61d4eff8149ac3915"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/store.rs": {
+      "bytes": 23492,
+      "sha256": "b3f1f62fcc984ffdbdbb8118dc6df8094bc62fba57fcde109a32133a62b54330"
+    },
+    "trillionnium/crates/trnm-mvcc-fee/src/content_commitment_v1.rs": {
+      "bytes": 12099,
+      "sha256": "75e3ba7f16c4daa97fe6ec9b340047e38dceb17ca32d81340dbbcf8f631d384e"
+    },
+    "trillionnium/crates/trnm-pon-node/src/lib.rs": {
+      "bytes": 36822,
+      "sha256": "0b7e076069645bdf502ff4521ea7c1d77b75a64e5137df3527b0cd6e7167c461"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/history_page.rs": {
+      "bytes": 51391,
+      "sha256": "43c2f10765dd16c5f8b51ec9f667667866180b9963b10da7304095bea3ed3e16"
+    },
+    "trillionnium/crates/trnm-protocol/src/content_commitment.rs": {
+      "bytes": 9650,
+      "sha256": "1e85bb848addea4287ae4f8d5f26dcc1aece9919106dfd73c531ba0b96eeb5e1"
+    },
+    "trillionnium/crates/trnm-protocol/src/crypto_profile.rs": {
+      "bytes": 41595,
+      "sha256": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a"
+    },
+    "trillionnium/crates/trnm-protocol/src/pon_state.rs": {
+      "bytes": 19189,
+      "sha256": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb"
+    },
+    "trillionnium/crates/trnm-protocol/src/pon_wire.rs": {
+      "bytes": 32654,
+      "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+    },
+    "trillionnium/crates/trnm-protocol/src/pq_frame.rs": {
+      "bytes": 13891,
+      "sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429"
+    },
+    "trillionnium/crates/trnm-protocol/src/pq_transaction.rs": {
+      "bytes": 6151,
+      "sha256": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3"
+    },
+    "trillionnium/crates/trnm-release-bundle/src/content_v1.rs": {
+      "bytes": 5453,
+      "sha256": "dd4755bab39ba4f60887f298b7616493c389c39e299aa1e05eb22d4573d0e3cc"
+    }
+  }
+}

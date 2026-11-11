@@ -385,6 +385,9 @@ impl Node {
         inputs: policy::Inputs,
         cpu: &ServiceMutationCpuDomain,
     ) -> Result<Self> {
+        // Caller-supplied Settings are available before the startup journal and
+        // reservation; validate them before either can be created or charged.
+        settings.app.check_account_profile()?;
         let (owner, permit, operation, fault) = Self::prepare_mining_owner(&inputs, cpu)?;
         Self::finish_mining_open(
             path, settings, workers, &inputs, owner, permit, operation, fault,
@@ -437,6 +440,9 @@ impl Node {
             let settings = Settings::development_with_operator_checkpoint_tile(
                 &spec, &bundle, &model, &input, paths,
             )?;
+            // Keep this inside the measured build: a failure must still settle
+            // the already reserved startup operation through its existing path.
+            settings.app.check_account_profile()?;
             progress()?;
             Ok((settings, model, input))
         })();

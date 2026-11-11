@@ -1,3 +1,21 @@
+**PQ source convergence, 2026-11-10 America/New_York — HOLD:**
+
+Continue #894 at `31543fb6dde565b62b47436e0b1d399b6d0bd772` with the
+reviewed #896 V5 Root components, the retained account development-boundary
+source, and the 17-use hash contract. Keep complete TLS keys and live provider
+history checks. Require the development-only configuration at state-root,
+execution and fresh/cold/warm Node boundaries; ordinary development remains
+a separately selected classical profile. Preserve all historical evidence.
+The W1 workflow materializes the original Git blobs for its historical mapping,
+retains the old reader's refusal of current source, and independently checks
+the current V2 mapping. Neither historical success nor source consistency
+grants cryptographic qualification. Root V5 and provider readback remain
+separate controlled components; there is no new installed witness/effect route.
+Freeze and validate this exact joint source, including native refusal/recovery
+controls, original budgets, locked graphs, strict Clippy and source-negative
+checks. All whole-chain, public-WAN, physical-custody and production claims
+remain false or unknown.
+
 **System-boundary readback continuation, 2026-11-09 America/New_York — HOLD:**
 
 Continue the existing #847 candidate from M14

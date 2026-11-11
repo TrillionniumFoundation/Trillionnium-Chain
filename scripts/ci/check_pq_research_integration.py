@@ -265,6 +265,10 @@ CONVERGENCE_REQUIRED_PATHS = frozenset((
     "scripts/ci/test_pq_chain_claim_guard.py",
     "scripts/ci/pq_lifetime_budget.py",
     "scripts/ci/test_pq_lifetime_budget.py",
+    "scripts/ci/hash_use_contract.py",
+    "scripts/ci/test_hash_use_contract.py",
+    "config/pon/hash-use-contract-v1.json",
+    "docs/security/HASH_USE_CONTRACT_V1.md",
     "config/pon/pq128-lifetime-budget-v1.json",
     "config/pon/pq128-source-lock-v1.json",
     "config/pon/pq128-lifetime-example-v1.json",
@@ -871,6 +875,39 @@ NATIVE_FALSE = frozenset((
     "whole_native_authorization_migrated", "default_profile_migrated",
     "allow_legacy_fallback", "production_activation", "public_wan_accepted",
     "physical_rollback_resistant",
+))
+
+# New security observations require explicit source inventory entries even
+# where their filenames are outside the automatically scanned PQ namespace.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "scripts/ci/check_consensus_roster.py",
+    "scripts/ci/test_consensus_roster.py",
+    "scripts/ci/run_pq_root_witness_v5.py",
+    "scripts/ci/test_run_pq_root_witness_v5.py",
+    "scripts/ci/ci_observation.py",
+    "scripts/ci/test_ci_observation_process.py",
+    "formal/pon-nakamoto-v1/bounded_process.py",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs",
+    "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_native.rs",
+    "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_durable_native.rs",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/durable.rs",
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_distinct_invalid_work.rs",
+    "docs/security/ROOT_WITNESS_V5.md",
+    "evidence/pon-w1-lifetime-current-20261111/README.md",
+    "evidence/pon-w1-lifetime-current-20261111/project-input.json",
+    "evidence/pon-w1-lifetime-current-20261111/project-report.json",
+))
+
+# The convergence adds executable scope and historical/current separation.
+# Presence and pins remain source consistency, not whole-chain qualification.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "scripts/w1_qrom_historical_fixture.py",
+    "scripts/ci/test_w1_qrom_historical_fixture.py",
+    "trillionnium/crates/trnm-mvcc-fee/tests/account_development_scope.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+    "docs/security/ACCOUNT_AUTHORIZATION_DEVELOPMENT_BOUNDARY_20261110.md",
 ))
 
 # V4 continuation inputs are mandatory source dependencies, not proof of

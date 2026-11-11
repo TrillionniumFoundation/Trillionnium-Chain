@@ -88,7 +88,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/w1_qrom_semantics_audit.py --out "$W1_CLOSURE_OUT/semantics.json"
-          # The successor binds the reviewed authority checkpoint; prior reports stay archived.
+          # The successor binds the reviewed current source; prior reports stay archived.
           python3 scripts/w1_lifetime_ledger.py --input evidence/pon-w1-lifetime-current-20261111/project-input.json > "$W1_CLOSURE_OUT/lifetime.json"
           python3 scripts/w1_qrom_composition_budget.py > "$W1_CLOSURE_OUT/composition-unknown.json"
           python3 scripts/w1_qrom_composition_budget.py --example > "$W1_CLOSURE_OUT/composition-example.json"

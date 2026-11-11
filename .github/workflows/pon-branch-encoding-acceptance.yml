@@ -5,10 +5,13 @@ on:
       - trillionnium/crates/trnm-protocol/src/pon_wire.rs
       - trillionnium/crates/trnm-pon-node/src/consensus.rs
       - trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs
+      - trillionnium/crates/trnm-pon-node/tests/public_v3_distinct_invalid_work.rs
       - trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs
       - trillionnium/crates/trnm-pon-node/src/account_archive_prototype/**
       - scripts/ci/check_native_constants_roster.py
       - scripts/ci/test_native_constants_roster.py
+      - scripts/ci/check_consensus_roster.py
+      - scripts/ci/test_consensus_roster.py
       - scripts/ci/test_branch_migration_count.py
       - evidence/branch-migration-count-20261106/**
       - .github/workflows/pon-branch-encoding-acceptance.yml
@@ -146,8 +149,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          python3 scripts/ci/test_consensus_roster.py
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib consensus::tests:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/work-arithmetic.log"
-          grep -E '^test result: ok\. 10 passed; 0 failed; 0 ignored;' "$OUT/work-arithmetic.log"
+          python3 scripts/ci/check_consensus_roster.py "$OUT/work-arithmetic.log"
           for test in aligned_division_preserves_all_512_shift_and_limb_boundaries aligned_division_matches_original_for_wide_arbitrary_operands aligned_required_work_and_retarget_match_original_arithmetic; do
             selector="consensus::tests::$test"
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
@@ -168,6 +172,14 @@ jobs:
           TRNM_CI_RECEIPT_DIR="$OUT/network-test-profile" \
           cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_service_campaign -- --show-output --test-threads=1 2>&1 | tee "$OUT/network-test-profile.log"
           grep -E '^test result: ok\. 2 passed; 0 failed; 0 ignored;' "$OUT/network-test-profile.log"
+      - name: Require distinct invalid-work rejection across real shared listeners
+        if: ${{ always() && steps.pq_provider.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          selector=distinct_false_traces_and_cross_listener_retry_pay_one_shared_domain_without_effects
+          cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_distinct_invalid_work -- --show-output --test-threads=1 2>&1 | tee "$OUT/distinct-invalid-work.log"
+          python3 scripts/ci/check_required_native_test.py "$OUT/distinct-invalid-work.log" --test "$selector"
       - name: Check complete native target lint without allowances
         shell: bash
         run: |
