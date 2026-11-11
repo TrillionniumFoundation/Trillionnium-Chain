@@ -364,6 +364,36 @@ impl Fixture {
         )
     }
 
+    fn restore_controlled(
+        &self,
+        target: &CellStoreV1,
+        budget: &mut CellPagedShardRestoreBudgetV2,
+        read: impl FnMut(&CellRs46ShardContractV1, Instant) -> CellResultV1<Option<Vec<u8>>>,
+        checkpoint: &mut impl FnMut() -> CellResultV1<()>,
+    ) -> CellResultV1<CellPagedShardRestoreReadbackV2> {
+        let model = self.contract.model.loader_context();
+        let environment = self.contract.environment.loader_context();
+        restore_cell_paged_version_to_cache_controlled_v2(
+            CellPagedShardRestoreRequestV2 {
+                plan_file: &self.plan,
+                catalog: &self.catalog,
+                current_height: 11,
+                original_root_operation: self.contract.operation,
+                content: &self.content,
+                expected: &CellVersionLoaderContextV1 {
+                    commitment: self.contract.version.commitment(),
+                    model: &model,
+                    environment: &environment,
+                },
+                content_pin: self.content.commitment(),
+                target,
+            },
+            budget,
+            read,
+            checkpoint,
+        )
+    }
+
     fn provider_payloads(&self) -> Vec<CellDigestV1> {
         (0..6)
             .map(|slot| {
@@ -722,5 +752,266 @@ fn paged_consumer_restore_requires_the_original_retained_root_operation() {
     .is_err());
     assert_eq!(reads, 0);
     assert_eq!(budget.usage().attempts_committed, 0);
+    assert_eq!(target.cache_usage().unwrap().chunk_rows, 0);
+}
+
+#[test]
+fn paged_consumer_control_cancels_after_last_valid_shard_before_final_chunk_write() {
+    let fixture = Fixture::new(2, 2);
+    let target = cache(&fixture.directory.path().join("cancel-last.sqlite"));
+    let reads = std::cell::Cell::new(0);
+    let mut budget = CellPagedShardRestoreBudgetV2::new(fixture.limits(2)).unwrap();
+    let original_deadline = budget.deadline();
+    let result = fixture.restore_controlled(
+        &target,
+        &mut budget,
+        |contract, end| {
+            assert_eq!(end, original_deadline);
+            // Slot five is present: cancellation happens after obtaining the
+            // fourth valid shard for the last chunk, not a missing-quorum case.
+            let wire = fixture.read_subset(contract, end, &[0, 2, 4, 5])?;
+            reads.set(reads.get() + 1);
+            Ok(wire)
+        },
+        &mut || require(reads.get() < 18, "test original owner cancelled"),
+    );
+    assert!(matches!(
+        result,
+        Err(CellErrorV1::Invalid("test original owner cancelled"))
+    ));
+    assert_eq!(reads.get(), 18);
+    assert_eq!(target.cache_usage().unwrap().chunk_rows, 2);
+    assert_eq!(budget.usage().attempts_committed, 1);
+    assert_eq!(budget.usage().provider_reads_committed, 18);
+    assert_eq!(budget.codec_usage().attempts_committed, 2);
+    assert_eq!(budget.readback_usage().attempted_scans, 0);
+    assert_eq!(budget.deadline(), original_deadline);
+    let spent = budget.usage();
+    let mut retry_reads = 0;
+    assert!(matches!(
+        fixture.restore(&target, &mut budget, |_, _| {
+            retry_reads += 1;
+            Ok(None)
+        }),
+        Err(CellErrorV1::Invalid("paged restore control stopped"))
+    ));
+    assert_eq!(retry_reads, 0);
+    assert_eq!(budget.usage(), spent);
+    assert_eq!(target.cache_usage().unwrap().chunk_rows, 2);
+}
+
+#[test]
+fn paged_consumer_control_all_boundaries_preserve_costs_bytes_and_stop_retries() {
+    let fixture = Fixture::new(1, 2);
+    let original_providers = fixture.provider_payloads();
+    let reference = cache(&fixture.directory.path().join("control-reference.sqlite"));
+    let mut reference_budget = CellPagedShardRestoreBudgetV2::new(fixture.limits(2)).unwrap();
+    let mut checkpoints = 0;
+    let result = fixture
+        .restore_controlled(
+            &reference,
+            &mut reference_budget,
+            |contract, end| fixture.read(contract, end),
+            &mut || {
+                checkpoints += 1;
+                Ok(())
+            },
+        )
+        .unwrap();
+    assert_eq!(result.chunks, 2);
+    assert_eq!(result.verified_shards, 8);
+    assert_eq!(result.readback_usage.attempted_scans, 1);
+    let mut before_admission = false;
+    let mut during_codec = false;
+    let mut after_publication = false;
+    let mut during_readback = false;
+    // Sweep the actual cooperative boundaries, including codec reconstruction,
+    // cache publication/readback and the final complete-content scan. No test
+    // relies on a magic checkpoint ordinal or a timing race.
+    for stop in 1..=checkpoints {
+        let directory = tempfile::tempdir_in(fixture.directory.path()).unwrap();
+        let target = cache(&directory.path().join("consumer.sqlite"));
+        let mut budget = CellPagedShardRestoreBudgetV2::new(fixture.limits(2)).unwrap();
+        let original_deadline = budget.deadline();
+        let mut calls = 0;
+        let result = fixture.restore_controlled(
+            &target,
+            &mut budget,
+            |contract, end| fixture.read(contract, end),
+            &mut || {
+                calls += 1;
+                assert!(calls <= stop, "a stopped owner was called again");
+                require(calls < stop, "test boundary owner refusal")
+            },
+        );
+        assert!(
+            matches!(
+                result,
+                Err(CellErrorV1::Invalid("test boundary owner refusal"))
+            ),
+            "boundary {stop}"
+        );
+        assert_eq!(calls, stop);
+        let spent = budget.usage();
+        let codec = budget.codec_usage();
+        let readback = budget.readback_usage();
+        let cache_usage = target.cache_usage().unwrap();
+        before_admission |= spent.attempts_committed == 0;
+        during_codec |= codec.attempts_committed > 0 && codec.cache_bytes_committed == 0;
+        after_publication |= cache_usage.chunk_rows > 0;
+        during_readback |= readback.attempted_scans > 0;
+        if spent.attempts_committed > 0 {
+            assert_eq!(spent, reference_budget.usage());
+        }
+        if readback.attempted_scans > 0 {
+            assert_eq!(readback, reference_budget.readback_usage());
+        }
+        // Any chunks committed before refusal remain readable and match the
+        // original hashes. Refusal does not erase already incurred effects.
+        for manifest in fixture.content.version().manifests() {
+            for chunk in manifest.chunks() {
+                if let Some(bytes) = target.chunk(chunk.sha256).unwrap() {
+                    assert_eq!(bytes.len(), chunk.size as usize);
+                    assert_eq!(<[u8; 32]>::from(Sha256::digest(&bytes)), chunk.sha256);
+                }
+            }
+        }
+        let mut retry_reads = 0;
+        assert!(matches!(
+            fixture.restore(&target, &mut budget, |_, _| {
+                retry_reads += 1;
+                Ok(None)
+            }),
+            Err(CellErrorV1::Invalid("paged restore control stopped"))
+        ));
+        assert_eq!(retry_reads, 0);
+        assert_eq!(budget.usage(), spent);
+        assert_eq!(budget.codec_usage(), codec);
+        assert_eq!(budget.readback_usage(), readback);
+        assert_eq!(budget.deadline(), original_deadline);
+        assert_eq!(target.cache_usage().unwrap(), cache_usage);
+    }
+    assert!(before_admission && during_codec && after_publication && during_readback);
+    assert_eq!(fixture.provider_payloads(), original_providers);
+}
+
+#[test]
+fn paged_consumer_control_checks_the_original_deadline_after_owner_returns() {
+    let fixture = Fixture::new(1, 2);
+    let target = cache(&fixture.directory.path().join("late-control.sqlite"));
+    let mut limits = fixture.limits(2);
+    limits.deadline = Instant::now() + Duration::from_millis(100);
+    let mut budget = CellPagedShardRestoreBudgetV2::new(limits).unwrap();
+    let mut calls = 0;
+    let result = fixture.restore_controlled(
+        &target,
+        &mut budget,
+        |_, _| panic!("expired owner must not dispatch a provider read"),
+        &mut || {
+            calls += 1;
+            std::thread::sleep(
+                limits.deadline.saturating_duration_since(Instant::now())
+                    + Duration::from_millis(1),
+            );
+            Ok(())
+        },
+    );
+    assert!(matches!(
+        result,
+        Err(CellErrorV1::Invalid("paged restore original deadline"))
+    ));
+    assert_eq!(calls, 1);
+    assert_eq!(budget.deadline(), limits.deadline);
+    assert_eq!(budget.usage(), CellPagedShardRestoreUsageV2::default());
+    assert_eq!(target.cache_usage().unwrap().chunk_rows, 0);
+    assert!(matches!(
+        fixture.restore(&target, &mut budget, |_, _| panic!(
+            "cancelled reservation retried"
+        )),
+        Err(CellErrorV1::Invalid("paged restore control stopped"))
+    ));
+}
+
+#[test]
+fn paged_consumer_control_read_failure_can_retry_within_original_allowance() {
+    let fixture = Fixture::new(1, 2);
+    let target = cache(&fixture.directory.path().join("read-failure.sqlite"));
+    let mut budget = CellPagedShardRestoreBudgetV2::new(fixture.limits(2)).unwrap();
+    assert!(matches!(
+        fixture.restore_controlled(
+            &target,
+            &mut budget,
+            |_, _| Err(CellErrorV1::Unavailable),
+            &mut || Ok(()),
+        ),
+        Err(CellErrorV1::Unavailable)
+    ));
+    let first = budget.usage();
+    let result = fixture
+        .restore_controlled(
+            &target,
+            &mut budget,
+            |contract, end| fixture.read(contract, end),
+            &mut || Ok(()),
+        )
+        .unwrap();
+    assert_eq!(result.usage.attempts_committed, 2);
+    assert_eq!(
+        result.usage.input_bytes_committed,
+        2 * first.input_bytes_committed
+    );
+    assert_eq!(
+        result.usage.cache_bytes_committed,
+        2 * first.cache_bytes_committed
+    );
+    assert_eq!(
+        result.usage.provider_reads_committed,
+        2 * first.provider_reads_committed
+    );
+    assert_eq!(result.readback_usage.attempted_scans, 1);
+    for manifest in fixture.content.version().manifests() {
+        target.verify_complete(manifest).unwrap();
+    }
+}
+
+#[test]
+fn paged_consumer_control_read_error_cannot_hide_concurrent_owner_cancellation() {
+    let fixture = Fixture::new(1, 2);
+    let target = cache(
+        &fixture
+            .directory
+            .path()
+            .join("cancel-and-read-error.sqlite"),
+    );
+    let mut budget = CellPagedShardRestoreBudgetV2::new(fixture.limits(2)).unwrap();
+    let cancelled = std::cell::Cell::new(false);
+    let mut stop_observations = 0;
+    assert!(matches!(
+        fixture.restore_controlled(
+            &target,
+            &mut budget,
+            |_, _| {
+                cancelled.set(true);
+                Err(CellErrorV1::Unavailable)
+            },
+            &mut || {
+                if cancelled.get() {
+                    stop_observations += 1;
+                }
+                require(!cancelled.get(), "test concurrent owner cancellation")
+            },
+        ),
+        Err(CellErrorV1::Unavailable)
+    ));
+    assert_eq!(stop_observations, 1);
+    let charged = budget.usage();
+    assert_eq!(charged.attempts_committed, 1);
+    assert!(matches!(
+        fixture.restore(&target, &mut budget, |_, _| panic!(
+            "cancelled owner redispatched"
+        )),
+        Err(CellErrorV1::Invalid("paged restore control stopped"))
+    ));
+    assert_eq!(budget.usage(), charged);
     assert_eq!(target.cache_usage().unwrap().chunk_rows, 0);
 }

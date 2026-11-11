@@ -1058,6 +1058,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-data-availability/examples/cell_bep52_iterative_discovery.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/examples/cell_bep52_iterative_discovery.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-data-availability/examples/cell_delta_workload_observer.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -1083,6 +1090,55 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_next_use_v1.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_next_use_v2.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_next_use_v2.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_paged_next_use_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_paged_next_use_v1.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/bep52.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/bep52.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/paged.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/paged.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/paged/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/paged/tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/snapshot.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/snapshot.rs"
         )),
     ),
     (
@@ -1198,6 +1254,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup/tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/tests.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -1205,10 +1275,52 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/release.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/release.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/release/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/release/tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/tests.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell/bep52_storage.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/bep52_storage.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell/bep52_storage/peer.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/bep52_storage/peer.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell/bep52_storage/peer/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/bep52_storage/peer/tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell/bep52_storage/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/bep52_storage/tests.rs"
         )),
     ),
     (
@@ -1555,6 +1667,41 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/codec.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/codec.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/file.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/file.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-data-availability/src/cell/erasure/tests.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -1779,6 +1926,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-data-availability/src/cell/release_snapshot.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/release_snapshot.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell/release_snapshot/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/release_snapshot/tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -1898,6 +2059,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-data-availability/src/cell/retention/reservation_preflight.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/retention/reservation_preflight.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2010,6 +2178,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-data-availability/src/cell/version_retention/chunk_read.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/version_retention/chunk_read.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-data-availability/src/cell/version_retention/codec.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2056,6 +2231,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests/shard_plan_capacity.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests/shard_plan_paged.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests/shard_plan_paged.rs"
         )),
     ),
     (
@@ -7106,6 +7288,34 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged/recovery.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged/recovery.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged/recovery/execute.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged/recovery/execute.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged/recovery/preflight.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged/recovery/preflight.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/recovery.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -7138,6 +7348,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/version.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs"
         )),
     ),
     (

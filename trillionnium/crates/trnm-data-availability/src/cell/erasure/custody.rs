@@ -136,6 +136,23 @@ impl CellRs46CodewordV1 {
         inputs: &[CellRs46ShardInputV1<'_>],
         budget: &mut CellRs46RepairBudgetV1,
     ) -> CellResultV1<CellRs46RepairV1> {
+        self.repair_chunk_controlled(binding, expected_codeword, inputs, budget, &mut || Ok(()))
+    }
+
+    /// The original owner may stop work between bounded shard checks,
+    /// reconstruction and re-encoding. A checkpoint error is propagated, never
+    /// classified as a damaged shard. Admitted byte/attempt debits remain spent.
+    /// The caller owns cancellation state across invocations; this is neither
+    /// a new resource authority nor preemption inside a codec operation.
+    pub fn repair_chunk_controlled(
+        &self,
+        binding: &CellRs46ChunkBindingV1,
+        expected_codeword: CellDigestV1,
+        inputs: &[CellRs46ShardInputV1<'_>],
+        budget: &mut CellRs46RepairBudgetV1,
+        checkpoint: &mut impl FnMut() -> CellResultV1<()>,
+    ) -> CellResultV1<CellRs46RepairV1> {
+        repair_checkpoint(budget, checkpoint)?;
         require(self.id() == expected_codeword, "RS46 codeword pin")?;
         require(self.binding == *binding, "RS46 codeword original chunk pin")?;
         require(
@@ -162,11 +179,14 @@ impl CellRs46CodewordV1 {
                 * (SHARD_HEADER_BYTES + binding.shard_bytes()) as u64;
         let usage_before = budget.usage();
         budget.reserve(input_bytes, reconstruction_bytes)?;
+        repair_checkpoint(budget, checkpoint)?;
         let mut verified = Vec::new();
         let mut rejected = Vec::new();
         for input in inputs {
-            budget.check_deadline()?;
-            match self.verify_input(input) {
+            repair_checkpoint(budget, checkpoint)?;
+            let observed = self.verify_input(input);
+            repair_checkpoint(budget, checkpoint)?;
+            match observed {
                 Ok(shard) => verified.push(shard),
                 Err(_) => rejected.push(input.index),
             }
@@ -175,12 +195,13 @@ impl CellRs46CodewordV1 {
             verified.len() >= 4,
             "RS46 repair requires four committed shards",
         )?;
-        budget.check_deadline()?;
+        repair_checkpoint(budget, checkpoint)?;
         let source = binding.recover_chunk(&verified)?;
-        budget.check_deadline()?;
+        repair_checkpoint(budget, checkpoint)?;
         let codeword = binding.encode_chunk(&source)?;
+        repair_checkpoint(budget, checkpoint)?;
         for (index, shard) in codeword.iter().enumerate() {
-            budget.check_deadline()?;
+            repair_checkpoint(budget, checkpoint)?;
             require(
                 shard.id() == self.shards[index],
                 "RS46 repaired codeword pin",
@@ -194,7 +215,7 @@ impl CellRs46CodewordV1 {
             .into_iter()
             .filter(|shard| !verified.contains(&shard.index()))
             .collect();
-        budget.check_deadline()?;
+        repair_checkpoint(budget, checkpoint)?;
         Ok(CellRs46RepairV1 {
             codeword: expected_codeword,
             source,
@@ -226,34 +247,69 @@ impl CellRs46CodewordV1 {
         target: CellRs46CacheTargetV1<'_>,
         budget: &mut CellRs46RepairBudgetV1,
     ) -> CellResultV1<CellRs46RepairV1> {
+        self.repair_chunk_to_cache_controlled(
+            binding,
+            expected_codeword,
+            inputs,
+            target,
+            budget,
+            &mut || Ok(()),
+        )
+    }
+
+    /// Carry one owner checkpoint through the codec, strong content checks,
+    /// CAS publication and actual readback. Refusal after a committed cache
+    /// write retains valid bytes and all admitted costs, but returns no success.
+    pub fn repair_chunk_to_cache_controlled(
+        &self,
+        binding: &CellRs46ChunkBindingV1,
+        expected_codeword: CellDigestV1,
+        inputs: &[CellRs46ShardInputV1<'_>],
+        target: CellRs46CacheTargetV1<'_>,
+        budget: &mut CellRs46RepairBudgetV1,
+        checkpoint: &mut impl FnMut() -> CellResultV1<()>,
+    ) -> CellResultV1<CellRs46RepairV1> {
         let deadline = budget.deadline;
-        let mut repair = self.repair_chunk(binding, expected_codeword, inputs, budget)?;
+        let mut repair =
+            self.repair_chunk_controlled(binding, expected_codeword, inputs, budget, checkpoint)?;
+        repair_checkpoint(budget, checkpoint)?;
         budget.reserve_cache(2 * u64::from(binding.source_bytes()))?;
+        repair_checkpoint(budget, checkpoint)?;
         target.content.verify_chunk(
             binding.manifest_id(),
             binding.chunk_index() as usize,
             &repair.source,
         )?;
-        budget.check_deadline()?;
+        repair_checkpoint(budget, checkpoint)?;
         target
             .store
             .put_chunk_with_deadline(&binding.chunk, &repair.source, Some(deadline))?;
+        repair_checkpoint(budget, checkpoint)?;
         let readback = target
             .store
             .chunk_with_deadline(binding.chunk.sha256, Some(deadline))?
             .ok_or(CellErrorV1::Unavailable)?;
-        budget.check_deadline()?;
+        repair_checkpoint(budget, checkpoint)?;
         target.content.verify_chunk(
             binding.manifest_id(),
             binding.chunk_index() as usize,
             &readback,
         )?;
         require(readback == repair.source, "RS46 cache exact readback")?;
-        budget.check_deadline()?;
+        repair_checkpoint(budget, checkpoint)?;
         repair.cache_readback_observed = true;
         repair.usage_after = budget.usage();
         Ok(repair)
     }
+}
+
+fn repair_checkpoint(
+    budget: &CellRs46RepairBudgetV1,
+    checkpoint: &mut impl FnMut() -> CellResultV1<()>,
+) -> CellResultV1<()> {
+    budget.check_deadline()?;
+    checkpoint()?;
+    budget.check_deadline()
 }
 
 fn codeword_id(bytes: &[u8]) -> CellDigestV1 {

@@ -10866,3 +10866,70 @@ operation, independent placement, future availability, prepaid repair, WAN SLA,
 actual NVMe/VRAM, arbitrary-loader dependency confinement, ordinary Hepta next-task
 execution, current FinalUse or a whole-chain PQ lifetime bound. All six original
 operational qualifications remain HOLD until their own evidence is present.
+
+### 2026-11-10 Cell discovery and controlled consumer restoration continuation
+
+Continue the exact #879 delivery
+`30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6` in one isolated successor.
+The original release-profile recovery measurement belongs to runtime
+`8dee97636e2b6932fb7a22b1b54f2cab09ae8406`; #861's grouped funding/repair
+operation remains a separate source and experiment. Neither supplies runtime
+acceptance for this successor. The existing integration stack is retained;
+main, deployed services and provider data are not activated by this work.
+
+1. Add an opt-in bounded iterative BEP5 client beside the existing one-hop
+   client. Follow admitted nodes by XOR distance under the original shared
+   UDP/TCP session. Apply immutable endpoint policies before every dial and to
+   returned peer hints; retain all failed-query costs. No response may expand
+   an explicit address/port allowlist. The public policy excludes special-use
+   IPv4 blocks. This is a finite read-only client, not a resident DHT owner.
+2. Carry the existing execution owner's checkpoint through paged restoration,
+   actual RS work, cache publication and complete TCV2 byte scanning. Preserve
+   all original context, current plan, deadline, readback and quota checks.
+   Cancellation or deadline refusal locks the in-memory reservation, including
+   later compatibility-entry calls; ordinary data failures keep bounded retry
+   semantics. Simultaneous callback error and cancellation must retain the
+   original error while still locking the reservation. Costs and valid partial
+   cache writes remain observable.
+3. Execute a finite synthetic example with real two-hop UDP discovery for each
+   of a model/environment pair, explicit owner peer selection, real TCP BEP52
+   transfer and complete independently pinned TCV2 readback. Use one receiver
+   session, four DHT queries, two TCP connections and a six-attempt ceiling;
+   reconcile actual server/client application bytes and join all threads.
+   Add it to the existing source/architecture CI example lane with failure
+   propagation, preserving the original examples and full native suite.
+4. Freeze one source tree, retain development failures, then run the complete
+   DA suite, exact new controls through that suite, the actual example, strict
+   workspace/all-target/all-feature Clippy, formatting, locked dependency
+   graphs, original source-integrity controls and repository/link checks.
+   Bind each observation to the frozen source and actual toolchain. A source
+   inspector, all-targets build or another branch's result is not native
+   execution. Existing #879 hosted failures remain distinct until their own
+   same-source gates pass.
+
+The first source inspection of this successor exposed inherited registration
+drift in #879: twelve recorded blob pins still describe files before the
+complete-release/paged-recovery increment, and the embedded source inventory
+omits 29 already tracked source paths. Review the exact old-pin/current-blob
+differences and restore registration to the actual immutable #879 bytes;
+do not revert implementation or relabel its earlier tests. Add the three new
+discovery/example paths and the controlled restoration paths to the current
+register. Retain the original refusal and require fresh full DA and native
+storage-owner execution on the complete successor.
+
+The next product bridge must use the original Hepta release/adoption owners.
+The Q24 typed asset loader is not a generic SmolLM/LLM ABI. The research worker's
+two sealed forwards explicitly grant no FinalUse; a TMR1 content pin alone does
+not select a compatible runtime. Ordinary integration still needs one fixed
+Chain/Hepta/model/environment candidate and ResolveRelease -> existing
+admission/current/withdrawal/resource/installation owner -> actual loaded
+readback -> authorized distinct task -> terminal recovery evidence.
+
+Open acceptance obligations remain: resident public discovery and public-client
+interoperability; independently administered and observed fault domains;
+continuous paid custody with renewal, repair, replacement and exit; encrypted,
+authorized private-weight export; elapsed custody campaigns and measured WAN
+latency/failure distributions; and ordinary Hepta FinalUse/cold recovery. Six
+declared provider names and local successful downloads do not close them. No
+consensus, funding, model-quality, production or whole-chain PQ qualification
+is granted by these component changes.
