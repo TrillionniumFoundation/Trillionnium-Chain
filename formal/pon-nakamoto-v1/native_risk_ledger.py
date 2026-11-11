@@ -11,7 +11,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from native_execution_certificate import CertificateError, require, strict_json
+from native_execution_certificate import CertificateError, canonical, require, strict_json
 from native_owner_journal import read_frames as read_native_frames, read_journal
 from native_owner_score_bridge import fields, hx, uint
 
@@ -164,7 +164,11 @@ def read_risk_ledger(directory: Path, native_directory: Path,
             result = outcome["confirmation_wrapper_result"]
             require(start["native_before"]["sequence"] <= post <= expected + 2, "R_OUTCOME_RANGE")
             if post == expected + 2:
-                require(invoked and terminal is not None and terminal["result"] == result, "R_NATIVE_OUTCOME_BINDING")
+                # Python container equality coerces false == 0 and 1 == 1.0.
+                # Bind the complete typed JSON result, including nested fields,
+                # to the separately checked native terminal without coercion.
+                require(invoked and terminal is not None
+                        and canonical(terminal["result"]) == canonical(result), "R_NATIVE_OUTCOME_BINDING")
             else:
                 require(result["ok"] is False and (invoked or post == start["native_before"]["sequence"]),
                         "R_INCOMPLETE_RESULT_PROMOTED")

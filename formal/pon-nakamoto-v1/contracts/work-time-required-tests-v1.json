@@ -16,6 +16,8 @@
     "test_branch_time_daa_v1.ColdReplayTests.test_persisted_anchor_mutations_refuse_even_inside_matching_envelope",
     "test_branch_time_daa_v1.ColdReplayTests.test_qualification_does_not_promote_reference_execution",
     "test_branch_time_daa_v1.ColdReplayTests.test_restore_never_accepts_snapshot_schedule_as_its_own_authority",
+    "test_branch_time_daa_v1.PeriodicCompressionRegressionTests.test_compressed_legacy_replay_preserves_credit_and_current_clock_refusal",
+    "test_branch_time_daa_v1.PeriodicCompressionRegressionTests.test_strictly_increasing_legacy_branch_reaches_793_with_positive_spans",
     "test_branch_time_daa_v1.TemporalRuleTests.test_duplicate_record_cannot_increase_snapshot_or_bypass_current_clock",
     "test_branch_time_daa_v1.TemporalRuleTests.test_even_short_history_uses_native_upper_median",
     "test_branch_time_daa_v1.TemporalRuleTests.test_future_clock_deferral_is_nonmutating_and_same_header_can_later_pass",
