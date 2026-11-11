@@ -561,6 +561,10 @@ impl Node {
 #[path = "mining_prepare_control_tests.rs"]
 mod prepare_control_tests;
 
+#[cfg(test)]
+#[path = "pool_run_control_tests.rs"]
+pub(crate) mod pool_run_control_tests;
+
 fn pause_until(deadline: Instant, end: Instant, stop: &AtomicBool) {
     while !stop.load(Ordering::Acquire) && Instant::now() < deadline && Instant::now() < end {
         let remaining = deadline.min(end).saturating_duration_since(Instant::now());
@@ -684,6 +688,8 @@ where
             break;
         }
         let stage = Instant::now();
+        #[cfg(test)]
+        pool_run_control_tests::enter_stage("pool-batch", end);
         let batch_result = owner.pool_mining_batch(
             parent,
             generation,
@@ -692,6 +698,8 @@ where
         );
         event.pool_batch_ns = stage.elapsed().as_nanos();
         report.pool_batch_ns += event.pool_batch_ns;
+        #[cfg(test)]
+        pool_run_control_tests::after_stage("pool-batch");
         let batch = match batch_result {
             Ok(batch) => batch,
             Err(error) => {
@@ -737,6 +745,8 @@ where
         }
         let make_stage = Instant::now();
         let stage = Instant::now();
+        #[cfg(test)]
+        pool_run_control_tests::enter_stage("prepare", end);
         let prepared = (|| match &config.material {
             MiningMaterial::LegacyDevelopment => {
                 ensure(
@@ -766,6 +776,8 @@ where
         event.prepare_ns = stage.elapsed().as_nanos();
         report.prepare_ns += event.prepare_ns;
         drop(owner);
+        #[cfg(test)]
+        pool_run_control_tests::after_stage("prepare");
         let candidate = match prepared {
             Ok(candidate) => candidate,
             Err(error) => {
@@ -866,9 +878,13 @@ where
         let mut failure_stage = "batch-revalidation";
         let completion: Result<bool> = (|| {
             let stage = Instant::now();
+            #[cfg(test)]
+            pool_run_control_tests::enter_stage("batch-revalidation", end);
             let validation = owner.pool_validate_batch(&batch);
             event.post_search_batch_validation_ns = stage.elapsed().as_nanos();
             report.post_search_batch_validation_ns += event.post_search_batch_validation_ns;
+            #[cfg(test)]
+            pool_run_control_tests::after_stage("batch-revalidation");
             validation?;
             if stop.load(Ordering::Acquire) || Instant::now() >= end {
                 return Ok(false);

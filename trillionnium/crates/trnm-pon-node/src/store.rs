@@ -3194,6 +3194,8 @@ impl Node {
             .map_err(|error| Error::from(error).local_integrity())?
         {
             if state.len().is_multiple_of(256) {
+                #[cfg(test)]
+                crate::mining::pool_run_control_tests::state_rows(state.len());
                 progress()?;
             }
             let key: String = (|| -> Result<_> {

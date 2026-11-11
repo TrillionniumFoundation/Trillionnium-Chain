@@ -567,6 +567,8 @@ impl PendingPreview<'_, '_> {
                     })?,
             );
         }
+        #[cfg(test)]
+        crate::mining::pool_run_control_tests::before_pool_execution();
         let output = self
             .prefix
             .as_mut()
@@ -576,6 +578,8 @@ impl PendingPreview<'_, '_> {
                 ExecutionError::Relation(error) => PoolPreviewError::Native(error.into()),
                 ExecutionError::Cancelled(error) => PoolPreviewError::Cancelled(error),
             })?;
+        #[cfg(test)]
+        crate::mining::pool_run_control_tests::after_pool_execution();
         *node.commitment_observation.borrow_mut() = Some(output.commitment.observation);
         if reuse != self.signatures.len() {
             self.signatures.clear();
