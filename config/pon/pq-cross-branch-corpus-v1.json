@@ -1128,7 +1128,7 @@
     "trillionnium/crates/trnm-pon-node/tests/native_task_operation_v2.rs": "7d27c2e45b51b8d3baa6206398c2cc434d51d902",
     "trillionnium/crates/trnm-pon-node/tests/no_gain_fees.rs": "e2e8774bfeac630fb0175c85974154e39bd68b9a",
     "trillionnium/crates/trnm-pon-node/tests/pq_account_native.rs": "99ba8efc995e4c5332de42a588d27989c4152ec5",
-    "trillionnium/crates/trnm-pon-node/tests/pq_application_local_cli.rs": "b3daebf15d480213f33d43a43e802ae3a610e65d",
+    "trillionnium/crates/trnm-pon-node/tests/pq_application_local_cli.rs": "1d0f5ab97e6014763763ba8ff72f4969be3494a0",
     "trillionnium/crates/trnm-pon-node/tests/pq_application_local_cli/export.rs": "db5c8d0ecdc24f6e039842828b0067b81ea13b87",
     "trillionnium/crates/trnm-pon-node/tests/pq_application_local_cli/fixture.rs": "bc8fe58052dd555af5ba931da9ef5f9d9d621653",
     "trillionnium/crates/trnm-pon-node/tests/pq_application_local_cli/fixture/tasks.rs": "ea6eaa9127f18b746b96352ec5efeb620a80a144",
