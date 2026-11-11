@@ -1,0 +1,64 @@
+{
+  "schema": "pq-root-native-independent-readback-v1",
+  "source_head": "53e1b98a7955898b9feff4778f7136c0fd0199c8",
+  "source_tree": "094ccb0afc9e7ffbbcc83f85efb6ca4ad8d54aa0",
+  "original_actions_run": 43104547221,
+  "original_artifact_id": 13894656010,
+  "artifact_zip_bytes": 71025468,
+  "artifact_sha256": "9a2c2250205c6a5fe18524451addf56115aafbf951d9a5c2fd3f6056988e437e",
+  "zip_members": 1766,
+  "manifest_payload_entries": 1765,
+  "manifest_payload_bytes": 522609424,
+  "all_payload_size_sha256_crc_verified": true,
+  "source_before_after_equal": true,
+  "original_inputs": {
+    "attacker_processes": [
+      0,
+      24,
+      24
+    ],
+    "business_blocks": 21,
+    "seed_blocks": 4,
+    "seed_transfers": 1024,
+    "phase_seconds": 30
+  },
+  "receiver_verifier_resource_limits": {
+    "cpu_max": "25000 100000",
+    "memory_max": "2147483648",
+    "memory_swap_max": "0",
+    "pids_max": "256",
+    "cpu_max_burst": "0"
+  },
+  "native_test_exit_codes": [
+    101,
+    101,
+    101
+  ],
+  "complete_original_campaigns": 0,
+  "planned_original_campaigns": 3,
+  "complete_phases": 0,
+  "planned_phases": 9,
+  "window_confirmations": 3,
+  "planned_window_confirmations": 27,
+  "receiver_client_equal_phases": 0,
+  "history_rpc_ok": 47,
+  "history_import_succeeded": 41,
+  "history_import_failed": 6,
+  "distinct_fixture_transactions": 1,
+  "observed_window_transaction_ids": [
+    "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+  ],
+  "all_observed_window_confirmations_have_finality": false,
+  "all_observed_window_confirmations_have_execution_authority": false,
+  "source_code_sha256_at_independent_host": "5341d7897c7e5274c476d0bdcf9a388c9d7a8321241cc77a242239838140037d",
+  "source_test_sha256_at_independent_host": "d2ffbfc1ca0760466ab04f686d11a8c027bda81ecbf9620c300a8d7d64abbb82",
+  "independent_host_test_count": 11,
+  "independent_host_test_exit_code": 0,
+  "actual_lifetime_failure_bound": null,
+  "composition_coverage_proved": false,
+  "whole_chain_pq_qualified": false,
+  "production_activation": false,
+  "status": "HOLD_NO_GO",
+  "authority": "DENY_ALL",
+  "scope": "retained original Actions artifact and same-host evidence only; no external effect, security theorem or independent real-world operator qualification"
+}
