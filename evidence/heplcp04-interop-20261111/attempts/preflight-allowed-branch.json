@@ -1,0 +1,9 @@
+{
+  "source_sha": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "branch": "fix/chain-heplcp04-local-decision-20261111-af52",
+  "command": "bash scripts/project-preflight.sh",
+  "returncode": 0,
+  "at_utc": "2026-11-11T12:20:34.202624+00:00",
+  "log_sha256": "f9ceb2e281f6c13617d7d0e20b4af06f62759d3b5898d367160daeca0e53c8d2",
+  "output": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-heplcp04-local-decision-20261111-af52\", \"remote_policy_mutated\": false}\n"
+}

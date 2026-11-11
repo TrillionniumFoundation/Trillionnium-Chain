@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "git",
+    "commit",
+    "-m",
+    "feat(chain): add HEPLCP04 local-decision structural readback"
+  ],
+  "cwd": "/home/qq/af52-chain-20261111/source-sparse",
+  "elapsed_seconds": 0.03216442698612809,
+  "explicit_environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "returncode": 128,
+  "stderr_sha256": "3b5a5063cd290409f2aa31a15ceaa8e59ddfb22086fafdda3938a062b618cd92",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
