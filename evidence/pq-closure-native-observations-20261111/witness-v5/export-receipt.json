@@ -1,0 +1,66 @@
+{
+  "aggregate_budget_qualified": false,
+  "all_archived_bytes_verified": true,
+  "all_selected_commands_passed": null,
+  "archive": "/data/chain-pq-closure-20261111-d4d2-witness-v5-subset-c09dbbe9921d-01.tar.xz",
+  "bytes": 1485528,
+  "complete": null,
+  "failed_commands": [],
+  "failed_target_partial_ok": {},
+  "kind": "witness-v5",
+  "manifest": {
+    "bytes": 4853,
+    "mode": 384,
+    "sha256": "6f822118e93f032b1b93da62017ea9d3af0db3edb40b683787f81923d94da2e6"
+  },
+  "members": 18,
+  "mode": 384,
+  "native_tests_observed": 11,
+  "original_group_failed": true,
+  "production_activation": false,
+  "provider_unchanged": true,
+  "references": {
+    "original_archive": {
+      "bytes": 1557288,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-pq-closure-20261111-d4d2-validation-c09dbbe9921d-01.tar.xz",
+      "sha256": "6d22e3ca7dcd98a75da46f6717f122f2293fa0d870a5aa2807e7f8252aee6acd"
+    },
+    "original_export_receipt": {
+      "bytes": 812,
+      "mode": 384,
+      "path": "/home/qian-qi/work/chain-pq-closure-20261111-d4d2-validation-c09dbbe9921d-01-export-receipt.json",
+      "sha256": "099c28ac5aec848003d4c6256d9b1df0e1c6d50ba94abd0f4ddec5fd7d5165f9"
+    },
+    "original_failure_receipt": {
+      "bytes": 4908,
+      "member": "native/root-witness-v5-native.receipt.json",
+      "mode": 384,
+      "sha256": "e526388d1d5047dd7dea16321697c7ac0be9a97d7e2c4cdd112fbd997bd24bdd"
+    },
+    "original_failure_stderr": {
+      "bytes": 357,
+      "member": "native/root-witness-v5-native.stderr.log",
+      "mode": 384,
+      "sha256": "5bd6f12dc9645b5dca78a3919fdab970acd8ee08fb8310e15b795d26efe3b40f"
+    },
+    "original_failure_stdout": {
+      "bytes": 609,
+      "member": "native/root-witness-v5-native.stdout.log",
+      "mode": 384,
+      "sha256": "bb06e807ec010f9d786a2662228896a1ba1c46ed465fd5cf809a5fe311c6737b"
+    },
+    "original_summary": {
+      "bytes": 118687,
+      "member": "native/summary.json",
+      "mode": 384,
+      "sha256": "94a6489e8bff3fc303e5d6835cd39d46dcc2f9cdcfe5d601b9fbb08fa8b7082c"
+    }
+  },
+  "remaining_subset_complete": true,
+  "schema": "trnm-observation-archive-receipt-v1",
+  "sha256": "6c43489d81a1d809a4a85d04bd1cc7381466509606468930049fb83124328d12",
+  "source": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+  "source_unchanged": true,
+  "whole_chain_quantum_security_qualified": false
+}

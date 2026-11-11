@@ -1,0 +1,65 @@
+{
+  "all_named_controls_passed": true,
+  "errors": [],
+  "exception": null,
+  "expected_failures": [],
+  "expected_ids": [
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_cli_publishes_three_separate_scopes_and_never_overwrites",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_exact_real_historical_mapping_keeps_current_tree_unqualified",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_git_replace_cannot_substitute_the_historical_object",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_git_symlink_entry_is_refused_even_with_matching_bytes",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_historical_blob_ignores_changed_worktree_and_new_head",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_missing_commit_never_falls_back_to_present_worktree",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_original_reader_acceptance_is_not_a_current_refusal",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_wrong_size_digest_path_and_commit_type_are_refused"
+  ],
+  "failures": [],
+  "loader_errors": [],
+  "module": "test_w1_qrom_historical_fixture",
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "consensus_admission": false,
+    "post_quantum_soundness_qualified": false,
+    "pq_signature_qualification_inferred": false,
+    "production_qualified": false,
+    "quantum_work_qualified": false,
+    "security_bits_quantum": null
+  },
+  "registered_ids": [
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_cli_publishes_three_separate_scopes_and_never_overwrites",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_exact_real_historical_mapping_keeps_current_tree_unqualified",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_git_replace_cannot_substitute_the_historical_object",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_git_symlink_entry_is_refused_even_with_matching_bytes",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_historical_blob_ignores_changed_worktree_and_new_head",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_missing_commit_never_falls_back_to_present_worktree",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_original_reader_acceptance_is_not_a_current_refusal",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_wrong_size_digest_path_and_commit_type_are_refused"
+  ],
+  "required_tests": 8,
+  "roster_sha256": "33bdae599edc3ef8f54efd84245d24b90b0b4effdb2f71b2cdae52a71d4001c4",
+  "schema": "TRNM-W1-QROM-SUPPLEMENTAL-CONTROL-OBSERVATION1",
+  "skipped": [],
+  "started_ids": [
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_cli_publishes_three_separate_scopes_and_never_overwrites",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_exact_real_historical_mapping_keeps_current_tree_unqualified",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_git_replace_cannot_substitute_the_historical_object",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_git_symlink_entry_is_refused_even_with_matching_bytes",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_historical_blob_ignores_changed_worktree_and_new_head",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_missing_commit_never_falls_back_to_present_worktree",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_original_reader_acceptance_is_not_a_current_refusal",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_wrong_size_digest_path_and_commit_type_are_refused"
+  ],
+  "success_ids": [
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_cli_publishes_three_separate_scopes_and_never_overwrites",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_exact_real_historical_mapping_keeps_current_tree_unqualified",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_git_replace_cannot_substitute_the_historical_object",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_git_symlink_entry_is_refused_even_with_matching_bytes",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_historical_blob_ignores_changed_worktree_and_new_head",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_missing_commit_never_falls_back_to_present_worktree",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_original_reader_acceptance_is_not_a_current_refusal",
+    "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_wrong_size_digest_path_and_commit_type_are_refused"
+  ],
+  "suite": "historical",
+  "tests_run": 8,
+  "unexpected_successes": []
+}

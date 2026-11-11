@@ -1,0 +1,161 @@
+{
+  "all_expected_outcomes_observed": true,
+  "harness_sha256": "b43d6931d442e54d78d6fc023e613b0c905f246ccad7d70bbc272c9c6281b0bc",
+  "native_execution_performed": false,
+  "observations": [
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "gate_sha256": "c0cb6e13eb3c720df530c6562695154968912b16ad9bcbedb3df566561a29983",
+      "mutation": "baseline",
+      "phase": "before-c0",
+      "stderr_file": "before-c0-baseline.stderr.log",
+      "stdout_file": "before-c0-baseline.stdout.log",
+      "workflow_sha256": "debe378405a72673632491d3c3801e5b11a6f26869c1b83ce6aff70a4498c4ef"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "gate_sha256": "c0cb6e13eb3c720df530c6562695154968912b16ad9bcbedb3df566561a29983",
+      "mutation": "forged_historical_blob_oid",
+      "phase": "before-c0",
+      "stderr_file": "before-c0-forged_historical_blob_oid.stderr.log",
+      "stdout_file": "before-c0-forged_historical_blob_oid.stdout.log",
+      "workflow_sha256": "debe378405a72673632491d3c3801e5b11a6f26869c1b83ce6aff70a4498c4ef"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "gate_sha256": "c0cb6e13eb3c720df530c6562695154968912b16ad9bcbedb3df566561a29983",
+      "mutation": "forged_historical_regular_mode",
+      "phase": "before-c0",
+      "stderr_file": "before-c0-forged_historical_regular_mode.stderr.log",
+      "stdout_file": "before-c0-forged_historical_regular_mode.stdout.log",
+      "workflow_sha256": "debe378405a72673632491d3c3801e5b11a6f26869c1b83ce6aff70a4498c4ef"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "gate_sha256": "c0cb6e13eb3c720df530c6562695154968912b16ad9bcbedb3df566561a29983",
+      "mutation": "mutually_forged_historical_source",
+      "phase": "before-c0",
+      "stderr_file": "before-c0-mutually_forged_historical_source.stderr.log",
+      "stdout_file": "before-c0-mutually_forged_historical_source.stdout.log",
+      "workflow_sha256": "debe378405a72673632491d3c3801e5b11a6f26869c1b83ce6aff70a4498c4ef"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "gate_sha256": "c0cb6e13eb3c720df530c6562695154968912b16ad9bcbedb3df566561a29983",
+      "mutation": "forged_current_revision",
+      "phase": "before-c0",
+      "stderr_file": "before-c0-forged_current_revision.stderr.log",
+      "stdout_file": "before-c0-forged_current_revision.stdout.log",
+      "workflow_sha256": "debe378405a72673632491d3c3801e5b11a6f26869c1b83ce6aff70a4498c4ef"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "gate_sha256": "c0cb6e13eb3c720df530c6562695154968912b16ad9bcbedb3df566561a29983",
+      "mutation": "forged_current_contract",
+      "phase": "before-c0",
+      "stderr_file": "before-c0-forged_current_contract.stderr.log",
+      "stdout_file": "before-c0-forged_current_contract.stdout.log",
+      "workflow_sha256": "debe378405a72673632491d3c3801e5b11a6f26869c1b83ce6aff70a4498c4ef"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "gate_sha256": "c0cb6e13eb3c720df530c6562695154968912b16ad9bcbedb3df566561a29983",
+      "mutation": "forged_current_closure_and_count",
+      "phase": "before-c0",
+      "stderr_file": "before-c0-forged_current_closure_and_count.stderr.log",
+      "stdout_file": "before-c0-forged_current_closure_and_count.stdout.log",
+      "workflow_sha256": "debe378405a72673632491d3c3801e5b11a6f26869c1b83ce6aff70a4498c4ef"
+    },
+    {
+      "accepted": true,
+      "exit_code": 0,
+      "gate_sha256": "db1736b8c59bdba99446b498a4d8b79588cfb4ea8a071a41c009093658b2be28",
+      "mutation": "baseline",
+      "phase": "after-repair",
+      "stderr_file": "after-repair-baseline.stderr.log",
+      "stdout_file": "after-repair-baseline.stdout.log",
+      "workflow_sha256": "9973ccc839cc0850e4ecfcdce0ac4d060c3d19da07c43fd5a35fb9aa9816d47f"
+    },
+    {
+      "accepted": false,
+      "exit_code": 1,
+      "gate_sha256": "db1736b8c59bdba99446b498a4d8b79588cfb4ea8a071a41c009093658b2be28",
+      "mutation": "forged_historical_blob_oid",
+      "phase": "after-repair",
+      "stderr_file": "after-repair-forged_historical_blob_oid.stderr.log",
+      "stdout_file": "after-repair-forged_historical_blob_oid.stdout.log",
+      "workflow_sha256": "9973ccc839cc0850e4ecfcdce0ac4d060c3d19da07c43fd5a35fb9aa9816d47f"
+    },
+    {
+      "accepted": false,
+      "exit_code": 1,
+      "gate_sha256": "db1736b8c59bdba99446b498a4d8b79588cfb4ea8a071a41c009093658b2be28",
+      "mutation": "forged_historical_regular_mode",
+      "phase": "after-repair",
+      "stderr_file": "after-repair-forged_historical_regular_mode.stderr.log",
+      "stdout_file": "after-repair-forged_historical_regular_mode.stdout.log",
+      "workflow_sha256": "9973ccc839cc0850e4ecfcdce0ac4d060c3d19da07c43fd5a35fb9aa9816d47f"
+    },
+    {
+      "accepted": false,
+      "exit_code": 1,
+      "gate_sha256": "db1736b8c59bdba99446b498a4d8b79588cfb4ea8a071a41c009093658b2be28",
+      "mutation": "mutually_forged_historical_source",
+      "phase": "after-repair",
+      "stderr_file": "after-repair-mutually_forged_historical_source.stderr.log",
+      "stdout_file": "after-repair-mutually_forged_historical_source.stdout.log",
+      "workflow_sha256": "9973ccc839cc0850e4ecfcdce0ac4d060c3d19da07c43fd5a35fb9aa9816d47f"
+    },
+    {
+      "accepted": false,
+      "exit_code": 1,
+      "gate_sha256": "db1736b8c59bdba99446b498a4d8b79588cfb4ea8a071a41c009093658b2be28",
+      "mutation": "forged_current_revision",
+      "phase": "after-repair",
+      "stderr_file": "after-repair-forged_current_revision.stderr.log",
+      "stdout_file": "after-repair-forged_current_revision.stdout.log",
+      "workflow_sha256": "9973ccc839cc0850e4ecfcdce0ac4d060c3d19da07c43fd5a35fb9aa9816d47f"
+    },
+    {
+      "accepted": false,
+      "exit_code": 1,
+      "gate_sha256": "db1736b8c59bdba99446b498a4d8b79588cfb4ea8a071a41c009093658b2be28",
+      "mutation": "forged_current_contract",
+      "phase": "after-repair",
+      "stderr_file": "after-repair-forged_current_contract.stderr.log",
+      "stdout_file": "after-repair-forged_current_contract.stdout.log",
+      "workflow_sha256": "9973ccc839cc0850e4ecfcdce0ac4d060c3d19da07c43fd5a35fb9aa9816d47f"
+    },
+    {
+      "accepted": false,
+      "exit_code": 1,
+      "gate_sha256": "db1736b8c59bdba99446b498a4d8b79588cfb4ea8a071a41c009093658b2be28",
+      "mutation": "forged_current_closure_and_count",
+      "phase": "after-repair",
+      "stderr_file": "after-repair-forged_current_closure_and_count.stderr.log",
+      "stdout_file": "after-repair-forged_current_closure_and_count.stdout.log",
+      "workflow_sha256": "9973ccc839cc0850e4ecfcdce0ac4d060c3d19da07c43fd5a35fb9aa9816d47f"
+    }
+  ],
+  "old_gate_commit": "8add285b6c0a91d8b7812efe2d02c9342f74c91b",
+  "proof_security_qualified": false,
+  "quantum_security_qualified": false,
+  "real_supplemental_suites_executed": false,
+  "schema": "TRNM-W1-QROM-SCOPE-GATE-ADVERSARIAL-COMPARISON1",
+  "scope": "Compare the exact C0 and repaired scope gates on the six observed source forgeries.\n\nUses actual generated mapping reports and the existing isolated workflow harness.\nSupplemental completion fixtures are inert named cases; this is a gate negative\ncontrol, not execution of the real supplemental suites or a security qualification.",
+  "source_bindings": {
+    "config/pon/w1-qrom-supplemental-tests-v1.json": "33bdae599edc3ef8f54efd84245d24b90b0b4effdb2f71b2cdae52a71d4001c4",
+    "scripts/ci/test_w1_qrom_workflow_gate.py": "9974811ec1252498df88727e6e9e07e4aa61bbd39d4006fee1157d78a001bc15",
+    "scripts/ci/w1_qrom_supplemental_controls.py": "42364a64d05995b20391911f26d9db3f9273fe04e7aa9372ce991393dc7cd561",
+    "scripts/w1_qrom_current_implementation_audit.py": "f27bb39eedbf799b8d36b638f47fe8e795c82793dc523618fc49a4c6758c84b4",
+    "scripts/w1_qrom_historical_fixture.py": "ecd8a99a207082a37548a6e38068d02156316e96da6da8af807a7787d73ab20e",
+    "scripts/w1_qrom_implementation_audit.py": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "schema": "c1-cross-arch-cost-pre-artifact-observation-v1",
+  "observed_utc": "2026-11-11T04:49:52.727999+00:00",
+  "run_id": 42955583052,
+  "rows": [
+    {
+      "architecture": "arm64",
+      "job_id": 130309764639,
+      "log": {
+        "path": "/workspace/scratch/d4d2da8133e2/c1-hosted-diagnostics/root-recovery/logs/job-log-130309764639.log",
+        "bytes": 179190,
+        "sha256": "1a6ef06ae8e072c013db5f0c56737be204c33697777b7a3abd160603df6aa1ee"
+      },
+      "host_result": {
+        "path": "/workspace/scratch/d4d2da8133e2/c1-hosted-diagnostics/cross-arch-arm64-host-result-from-log.json",
+        "bytes": 7644,
+        "sha256": "1cf487205293b22ec6be89cb1ede6d06b89d59a91701a98c7d099ff63eec744f"
+      },
+      "build_returncode": 0,
+      "build_timed_out": false,
+      "build_wall_ns": 214964510434,
+      "preparation_source_before_equals_after": true,
+      "source_head": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+      "source_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+      "controller_failure": null,
+      "final_host_errors": [],
+      "systemd_run_exit": 1,
+      "host_passed": false,
+      "native_test_terminals": null,
+      "native_report_acceptance": null,
+      "classification": "source/build preparation and host finalization succeeded; native child returned nonzero; inner format/test/report acceptance cause pending raw artifact"
+    },
+    {
+      "architecture": "x64",
+      "job_id": 130309764652,
+      "log": {
+        "path": "/workspace/scratch/d4d2da8133e2/c1-hosted-diagnostics/root-recovery/logs/job-log-130309764652.log",
+        "bytes": 178933,
+        "sha256": "dbe35a796b8894a87e8dfba71cd909a7b0612b3955c79cc663df22858a12fb8b"
+      },
+      "host_result": {
+        "path": "/workspace/scratch/d4d2da8133e2/c1-hosted-diagnostics/cross-arch-x64-host-result-from-log.json",
+        "bytes": 7645,
+        "sha256": "821f0e8037600f5d7ef05feaebdcc7354f47534ea7994e3d02066d1317df0511"
+      },
+      "build_returncode": 0,
+      "build_timed_out": false,
+      "build_wall_ns": 177374808936,
+      "preparation_source_before_equals_after": true,
+      "source_head": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+      "source_tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6",
+      "controller_failure": null,
+      "final_host_errors": [],
+      "systemd_run_exit": 1,
+      "host_passed": false,
+      "native_test_terminals": null,
+      "native_report_acceptance": null,
+      "classification": "source/build preparation and host finalization succeeded; native child returned nonzero; inner format/test/report acceptance cause pending raw artifact"
+    }
+  ],
+  "old_results_reused": false,
+  "native_executions_started_by_this_reader": 0,
+  "qualification_inferred": false
+}

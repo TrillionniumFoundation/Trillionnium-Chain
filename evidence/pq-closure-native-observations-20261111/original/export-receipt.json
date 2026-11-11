@@ -1,0 +1,25 @@
+{
+  "all_archived_bytes_verified": true,
+  "all_selected_commands_passed": false,
+  "archive": "/home/qian-qi/work/chain-pq-closure-20261111-d4d2-validation-c09dbbe9921d-01.tar.xz",
+  "bytes": 1557288,
+  "failed_commands": [
+    "root-effect-readback-v4-native",
+    "root-witness-v5-native"
+  ],
+  "manifest": {
+    "bytes": 16060,
+    "mode": 384,
+    "sha256": "08b5d98c83d6bf1a24e2df7ec5218f9b35765dd33978f388efb18c8b9e1dbfee"
+  },
+  "members": 90,
+  "mode": 384,
+  "native_tests_observed": 66,
+  "not_started": [],
+  "provider_unchanged": true,
+  "schema": "trnm-native-archive-receipt-v1",
+  "sha256": "6d22e3ca7dcd98a75da46f6717f122f2293fa0d870a5aa2807e7f8252aee6acd",
+  "source": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+  "source_unchanged": true,
+  "whole_chain_quantum_security_qualified": false
+}

@@ -1,0 +1,233 @@
+{
+  "actual_byte_sha256_git_blob_mode_and_stable_file_metadata_checked": true,
+  "claim_guard_per_test_ids_present_in_original_log": false,
+  "claim_guard_source_method_counts": {
+    "ClaimReaderRaceTests": 0,
+    "DescriptorReaderControls": 14,
+    "TestClaimGuard": 41
+  },
+  "clean_c1_head_and_status_observed_before_and_after_packaging_source_read": true,
+  "expected_ci_execution_success_ids": [
+    "__main__.ObservationTests.test_checked_timeout_retains_failure_and_stops_descendant_writer",
+    "__main__.ObservationTests.test_cooperative_timeout_never_becomes_a_success",
+    "__main__.ObservationTests.test_existing_log_is_not_overwritten_or_reused",
+    "__main__.ObservationTests.test_fuzz_receipt_requires_instrumented_mutations",
+    "__main__.ObservationTests.test_real_nonzero_child_is_retained_and_fails_the_runner",
+    "__main__.ObservationTests.test_real_success_child_is_not_reclassified",
+    "__main__.ObservationTests.test_term_ignoring_leader_still_uses_original_hard_kill",
+    "__main__.ObservationTests.test_timeout_kills_descendant_even_when_term_exits_parent_zero",
+    "__main__.RequiredNativeTestTests.test_cli_keeps_missing_and_invalid_logs_nonzero",
+    "__main__.RequiredNativeTestTests.test_ignored_failed_measured_or_missing_outcome_is_rejected",
+    "__main__.RequiredNativeTestTests.test_invalid_expected_name_is_not_an_interpolated_pattern",
+    "__main__.RequiredNativeTestTests.test_multiple_runs_or_summary_replay_is_rejected",
+    "__main__.RequiredNativeTestTests.test_noncanonical_control_lines_fail_closed",
+    "__main__.RequiredNativeTestTests.test_one_named_pass_with_nocapture_progress",
+    "__main__.RequiredNativeTestTests.test_progress_is_streamed_and_not_collected",
+    "__main__.RequiredNativeTestTests.test_wrong_test_duplicate_or_missing_identity_is_rejected",
+    "__main__.RequiredNativeTestTests.test_zero_matches_is_not_a_pass",
+    "__main__.SourceIdentityTests.test_head_and_merge_evidence_cannot_be_interchanged",
+    "test_ci_observation_process.ObserverProcessOwnershipTests.test_checked_failure_retains_receipt_and_stops_writer",
+    "test_ci_observation_process.ObserverProcessOwnershipTests.test_failure_stops_inherited_log_writer_and_keeps_exit",
+    "test_ci_observation_process.ObserverProcessOwnershipTests.test_last_group_signal_precedes_first_reap",
+    "test_ci_observation_process.ObserverProcessOwnershipTests.test_non_timeout_wait_failure_is_not_relabelled",
+    "test_ci_observation_process.ObserverProcessOwnershipTests.test_signal_exit_keeps_actual_status",
+    "test_ci_observation_process.ObserverProcessOwnershipTests.test_success_stops_inherited_log_writer",
+    "test_ci_observation_process.ObserverProcessOwnershipTests.test_timeout_preserves_cooperative_exit_and_kills_writer",
+    "test_ci_source_integrity.TrackedSourceTests.test_actual_bytes_are_checked_even_if_status_reports_clean",
+    "test_ci_source_integrity.TrackedSourceTests.test_assume_unchanged_cannot_hide_modified_source",
+    "test_ci_source_integrity.TrackedSourceTests.test_executable_mode_checked_even_when_git_ignores_filemode",
+    "test_ci_source_integrity.TrackedSourceTests.test_graft_file_is_rejected",
+    "test_ci_source_integrity.TrackedSourceTests.test_hidden_index_flag_is_rejected_even_without_changes",
+    "test_ci_source_integrity.TrackedSourceTests.test_intermediate_directory_symlink_rejected",
+    "test_ci_source_integrity.TrackedSourceTests.test_new_native_c_bytes_are_verified_without_an_extension_allowlist",
+    "test_ci_source_integrity.TrackedSourceTests.test_nonregular_file_rejected_without_waiting_for_fifo",
+    "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_accepts_exact_ancestor_candidate_tree",
+    "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_accepts_exact_diverged_combination",
+    "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_ignores_environment_merge_driver",
+    "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_ignores_local_union_attributes",
+    "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_local_binary_attributes_cannot_reject_valid_tree",
+    "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_never_executes_local_merge_driver",
+    "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_rejects_injected_committed_source",
+    "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_rejects_omitted_base_change",
+    "test_ci_source_integrity.TrackedSourceTests.test_prospective_merge_rejects_unreviewed_conflict_resolution",
+    "test_ci_source_integrity.TrackedSourceTests.test_receipt_reuses_raw_source_guard",
+    "test_ci_source_integrity.TrackedSourceTests.test_regular_file_symlink_substitution_rejected",
+    "test_ci_source_integrity.TrackedSourceTests.test_replacement_commit_cannot_relabel_different_source",
+    "test_ci_source_integrity.TrackedSourceTests.test_same_size_stat_cached_change_is_rejected",
+    "test_ci_source_integrity.TrackedSourceTests.test_skip_worktree_cannot_hide_modified_source",
+    "test_ci_source_integrity.TrackedSourceTests.test_source_fence_checked_retains_actual_failed_observation",
+    "test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_child_keeps_actual_success_and_bytes",
+    "test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_commit_switch_during_command_is_rejected",
+    "test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_wrong_head_cannot_start_child",
+    "test_ci_source_integrity.TrackedSourceTests.test_source_fence_dirty_before_command_cannot_start_child",
+    "test_ci_source_integrity.TrackedSourceTests.test_source_fence_dirty_source_preserves_primary_failure",
+    "test_ci_source_integrity.TrackedSourceTests.test_source_fence_existing_fuzz_and_supply_callers_pin_every_command",
+    "test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_clean_other_commit_cannot_borrow_pass",
+    "test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_dirty_source_cannot_write_pass",
+    "test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_requires_initial_pin",
+    "test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_valid_source_never_upgrades_existing_failure",
+    "test_ci_source_integrity.TrackedSourceTests.test_source_fence_index_hidden_child_mutation_still_refuses",
+    "test_ci_source_integrity.TrackedSourceTests.test_source_fence_keeps_nonzero_primary_error_and_drift",
+    "test_ci_source_integrity.TrackedSourceTests.test_source_fence_pin_is_clean_and_does_not_follow_later_changes",
+    "test_ci_source_integrity.TrackedSourceTests.test_source_fence_timeout_and_source_failure_preserve_both",
+    "test_ci_source_integrity.TrackedSourceTests.test_source_fence_zero_exit_with_real_dirty_source_is_not_success",
+    "test_ci_source_integrity.TrackedSourceTests.test_staged_change_is_rejected",
+    "test_ci_source_integrity.TrackedSourceTests.test_subdirectory_is_not_a_complete_source_root",
+    "test_ci_source_integrity.TrackedSourceTests.test_tracked_symlink_target_change_rejected",
+    "test_ci_source_integrity.TrackedSourceTests.test_untracked_configuration_cannot_hide_new_source",
+    "test_ci_source_integrity.TrackedSourceTests.test_valid_raw_files_modes_and_symlink",
+    "test_rust_baseline_shards.RustShardTests.test_actual_nonzero_child_retains_failure_and_cannot_fan_in",
+    "test_rust_baseline_shards.RustShardTests.test_actual_two_parent_merge_identity_and_receipts_cannot_be_relabelled",
+    "test_rust_baseline_shards.RustShardTests.test_fixed_fd_bounded_read_rejects_growth_symlink_and_special_file",
+    "test_rust_baseline_shards.RustShardTests.test_full_local_lane_and_hosted_command_union_are_exact",
+    "test_rust_baseline_shards.RustShardTests.test_missing_extra_alias_duplicate_json_and_changed_script_refuse",
+    "test_rust_baseline_shards.RustShardTests.test_native_release_moves_as_one_exact_block_after_quality_dependencies",
+    "test_rust_baseline_shards.RustShardTests.test_partial_wrong_source_attempt_false_zero_and_unexpected_fields_refuse",
+    "test_rust_baseline_shards.RustShardTests.test_real_child_source_mutation_keeps_zero_process_code_but_fails_owner",
+    "test_rust_baseline_shards.RustShardTests.test_two_complete_current_source_receipts_are_required"
+  ],
+  "full_checkout_materialized": false,
+  "git_object_verification": {
+    "current_checkout_not_relabelled_as_original_execution": true,
+    "git_object_bytes_verified": 171498180,
+    "materialized_blob_records_verified": 5135,
+    "source": {
+      "commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+      "tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6"
+    },
+    "unmaterialized_tree_entries": 22777
+  },
+  "inspected_gate_source_files": [
+    {
+      "bytes": 14642,
+      "git_blob": "14b24b24877f043aec8e0dd2b00a10b8e9b735c4",
+      "path": "scripts/ci/test_ci_execution.py",
+      "sha256": "19e74cf4dbbd247e36a3ce4625503d42aabadff871a5e7a1991b3f0b7092f04b"
+    },
+    {
+      "bytes": 25907,
+      "git_blob": "47bf35a471696e0fc1072ab2d4b6167490bfdf1c",
+      "path": "scripts/ci/test_ci_source_integrity.py",
+      "sha256": "d46d92b789dc95798e5406a0ccd685e4449dbc38ab040d8035621268fa4f5f6e"
+    },
+    {
+      "bytes": 7334,
+      "git_blob": "83a132a161d1b93c569e7382f238046609a229fc",
+      "path": "scripts/ci/test_ci_observation_process.py",
+      "sha256": "52cd36b22d529406365b05b431dd943c3b7526ff942a0438555d30467c284720"
+    },
+    {
+      "bytes": 11390,
+      "git_blob": "7db46a080a02fc95cab338734fe8464096b61e42",
+      "path": "scripts/ci/test_rust_baseline_shards.py",
+      "sha256": "3ae9945d25dcfb5f5931fa30ccc0aabc252ae6a760097e7adf3e3ed1d05a9c11"
+    },
+    {
+      "bytes": 28476,
+      "git_blob": "95d77463a35c690b188d5dbfcb16ebf499276cc6",
+      "path": "scripts/ci/test_pq_chain_claim_guard.py",
+      "sha256": "5a3c2e0d15dbfed68cb7afcc0c7f88a6b5c8620823ea7257e0dc5ef2be570a6f"
+    },
+    {
+      "bytes": 11231,
+      "git_blob": "c775290c138c3b41a32e654f56ed5cbe9acec3ee",
+      "path": "scripts/ci/verify_ci_source.py",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    },
+    {
+      "bytes": 8837,
+      "git_blob": "9ee54850767a1fce3848483660860dd8d976c777",
+      "path": "scripts/ci/ci_observation.py",
+      "sha256": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a"
+    },
+    {
+      "bytes": 14253,
+      "git_blob": "9b616a77ee437b195349887d6e60f880903ebf7d",
+      "path": "scripts/ci/pq_chain_claim_guard.py",
+      "sha256": "d2c4ef94d854f748fb112d0639d13c054794f1d57764bafef2ca16d6be6e75fd"
+    },
+    {
+      "bytes": 5569,
+      "git_blob": "a35092e9d3d4457d8e9a9f30b73ca65a34359546",
+      "path": "scripts/ci/pq_source_reader.py",
+      "sha256": "b3eb3f23b42c012dc1a5a07daa479db5e2982b2a20006f047552c9f13e1a65cb"
+    },
+    {
+      "bytes": 20543,
+      "git_blob": "1de78fbee6948d23b39df9628ead1e2a913a250e",
+      "path": "scripts/ci/pq_lifetime_budget.py",
+      "sha256": "eba31bee86b025a55c45cf8a86ad95bb85db1221af9c1ccd38799666e512555e"
+    },
+    {
+      "bytes": 40416,
+      "git_blob": "26b1fd86c19e15fdd45af51641582b03e360a847",
+      "path": "scripts/ci/ci_job.sh",
+      "sha256": "b2a3ca19d15beee945da0efb173b6ed3c6717d92baf759c970e4c05531c55fca"
+    },
+    {
+      "bytes": 35332,
+      "git_blob": "4d8a23542b730786c8e9055ca8485cf6da2c1b8c",
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "sha256": "1cb75c13bea9e7f9913985ff4c0210ff73a3f61ba72ae3584c34ee9476e0579d"
+    }
+  ],
+  "materialized_worktree_bytes_independently_verified": 171498180,
+  "materialized_worktree_files_independently_verified": 5135,
+  "observation_started_at_utc": "2026-11-11T04:34:17.022426+00:00",
+  "observed_at_utc": "2026-11-11T04:34:21.436434+00:00",
+  "old_241_package_changed": false,
+  "preserved_original_static_files": {
+    "README.md": {
+      "bytes": 5840,
+      "sha256": "57f20d8dd7318099dd206f37f1dac6f8815eddce4e5fac7a638d9952908bd156"
+    },
+    "STATIC_SHA256SUMS": {
+      "bytes": 616,
+      "sha256": "f90aa7af017f0f227f30d2e551c97fd453045a777b8b5a92dddf5c0d84508003"
+    },
+    "static-raw-c09dbbe992.tar.xz": {
+      "bytes": 574216,
+      "sha256": "0e84878ae27b3c1895eada4cd72105326ac89fe10b9d3608dc90139ba53f4b36"
+    },
+    "static-raw-index.json": {
+      "bytes": 33634,
+      "sha256": "8590bc58cc2c1b1f9b92cdc9f69a73f043ca7f6ca56cef7d662a9e7a5cd6258f"
+    },
+    "static-source-verification.json": {
+      "bytes": 8315,
+      "sha256": "741d61e48c1340326e092448906c3d118328d6e7e856f7a7eb964462dbb77488"
+    },
+    "static-summary.json": {
+      "bytes": 15647,
+      "sha256": "ca29802cf714a5d6723cdc265ad9099c3a64f0554c16a961ff573852cfc432e8"
+    },
+    "static-test-roster.json": {
+      "bytes": 74920,
+      "sha256": "813b69f05d3d4b556fa1698851734f142c0680625039711e9c33fcd95ca92ed7"
+    },
+    "verify_static.py": {
+      "bytes": 15754,
+      "sha256": "833a46a6a5c386d4834572ab3d33bb0d06d83f1cde07bec9c69b15e3e2b86124"
+    }
+  },
+  "retained_before_after_bytes_equal": true,
+  "retained_snapshot_sha256": "81966162e2ae881348ae09cb94879b8b705fd309fba1d79b1d30aeb86f676b1f",
+  "schema": "TRNM-C1-REQUIRED-GATES-SOURCE-READBACK1",
+  "scope": "Later independent packaging readback validates retained manifest consistency and actual C1 bytes; it does not replay the tests or independently authenticate original execution timing.",
+  "source": {
+    "commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+    "tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6"
+  },
+  "source_repository_changed": false,
+  "unmaterialized_paths_absent_and_skip_worktree_marked": 22777,
+  "verification_methods": [
+    "Compare original receipts with original unittest completion, exact result count and outcome forms, exit codes, timeout flags, log byte lengths and SHA-256.",
+    "Require all 77 verbose success IDs to be unique and match the complete inspected C1 test-class methods; require exactly 55 successful claim-guard dots with an unskipped OK summary.",
+    "Compare original source-before and source-after bytes and their fixed SHA-256 to the prior C1 materialized snapshot.",
+    "Read local C1 Git objects without replace refs or lazy fetch and compare every retained materialized source mode, size, blob ID and SHA-256.",
+    "Independently compare the current materialized file bytes/modes, verify skipped sparse paths, and check clean C1 head at both boundaries.",
+    "Compare all eight prior static files byte-for-byte with their held original copies; preserve the first run unknown and excluded 18 dots."
+  ],
+  "verification_ran_native_workloads": false,
+  "verification_ran_tests": false
+}

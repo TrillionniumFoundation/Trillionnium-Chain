@@ -1,0 +1,95 @@
+{
+  "aggregate_budget_qualified": false,
+  "archive_sha256": "6c43489d81a1d809a4a85d04bd1cc7381466509606468930049fb83124328d12",
+  "commands_recorded": 3,
+  "elf_bytes_rehashed": false,
+  "failed_commands": [],
+  "host_or_execution_attestation_claimed": false,
+  "kind": "witness-v5",
+  "native_observation": {
+    "completed_ok_names": [
+      "native_witness_v5_lost_ack_retains_pending_and_resumes_without_another_cas",
+      "native_witness_v5_open_checks_retained_root_key_roles",
+      "native_witness_v5_pre_cas_disconnect_retries_only_the_verified_witness_transition",
+      "native_witness_v5_restoring_every_authority_remains_an_explicit_counterexample",
+      "native_witness_v5_rotation_cannot_reuse_witness_keys",
+      "native_witness_v5_signed_response_must_bind_the_complete_fresh_request",
+      "native_witness_v5_success_is_witnessed_before_pending_is_completed",
+      "native_witness_v5_surviving_witness_refuses_common_owner_anchor_restore",
+      "native_witness_v5_unavailable_witness_has_no_static_floor_fallback",
+      "native_witness_v5_unwitnessed_v3_commit_cannot_be_promoted_from_an_ancestor_floor",
+      "native_witness_v5_wrong_signature_and_outcome_are_refused"
+    ],
+    "exit_code": 0,
+    "projection": {
+      "filtered_out": 6,
+      "passed": 11,
+      "tests": [
+        "native_witness_v5_lost_ack_retains_pending_and_resumes_without_another_cas",
+        "native_witness_v5_open_checks_retained_root_key_roles",
+        "native_witness_v5_pre_cas_disconnect_retries_only_the_verified_witness_transition",
+        "native_witness_v5_restoring_every_authority_remains_an_explicit_counterexample",
+        "native_witness_v5_rotation_cannot_reuse_witness_keys",
+        "native_witness_v5_signed_response_must_bind_the_complete_fresh_request",
+        "native_witness_v5_success_is_witnessed_before_pending_is_completed",
+        "native_witness_v5_surviving_witness_refuses_common_owner_anchor_restore",
+        "native_witness_v5_unavailable_witness_has_no_static_floor_fallback",
+        "native_witness_v5_unwitnessed_v3_commit_cannot_be_promoted_from_an_ancestor_floor",
+        "native_witness_v5_wrong_signature_and_outcome_are_refused"
+      ]
+    },
+    "remaining_without_ok": [],
+    "target_passed": true,
+    "terminal_summaries": [
+      [
+        "ok",
+        "11",
+        "0",
+        "0",
+        "0",
+        "6"
+      ]
+    ],
+    "timed_out": false,
+    "timeout_seconds": 1200,
+    "valid": true
+  },
+  "not_started": [],
+  "original_archive_sha256": "6d22e3ca7dcd98a75da46f6717f122f2293fa0d870a5aa2807e7f8252aee6acd",
+  "original_completed_names_not_repeated": [
+    "native_witness_v5_another_recovery_epoch_cannot_use_the_same_service_pin",
+    "native_witness_v5_callback_budget_replacement_and_cancellation_remain_fenced",
+    "native_witness_v5_changed_signed_pending_and_anchor_cannot_bypass_role_snapshot",
+    "native_witness_v5_complete_binding_and_role_separation_are_required",
+    "native_witness_v5_context_and_intent_recheck_live_witness_and_latch_failure",
+    "native_witness_v5_corrupt_pending_never_advances_the_witness"
+  ],
+  "original_group_passed": false,
+  "original_timeout_seconds": 1200,
+  "partial_ok_is_not_a_target_pass": true,
+  "planned_remaining_names": [
+    "native_witness_v5_lost_ack_retains_pending_and_resumes_without_another_cas",
+    "native_witness_v5_open_checks_retained_root_key_roles",
+    "native_witness_v5_pre_cas_disconnect_retries_only_the_verified_witness_transition",
+    "native_witness_v5_restoring_every_authority_remains_an_explicit_counterexample",
+    "native_witness_v5_rotation_cannot_reuse_witness_keys",
+    "native_witness_v5_signed_response_must_bind_the_complete_fresh_request",
+    "native_witness_v5_success_is_witnessed_before_pending_is_completed",
+    "native_witness_v5_surviving_witness_refuses_common_owner_anchor_restore",
+    "native_witness_v5_unavailable_witness_has_no_static_floor_fallback",
+    "native_witness_v5_unwitnessed_v3_commit_cannot_be_promoted_from_an_ancestor_floor",
+    "native_witness_v5_wrong_signature_and_outcome_are_refused"
+  ],
+  "production_activation": false,
+  "remaining_subset_complete": true,
+  "schema": "TRNM-C1-SUBSET-EVIDENCE-VERIFICATION1",
+  "source": {
+    "branch": "fix/chain-pq-closure-20261111-d4d2",
+    "commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+    "status": "",
+    "tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6"
+  },
+  "verified": true,
+  "whole_chain_pq_qualified": false,
+  "workloads_rerun": false
+}

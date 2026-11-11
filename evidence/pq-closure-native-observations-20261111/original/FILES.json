@@ -1,0 +1,22 @@
+[
+  {
+    "bytes": 1557288,
+    "path": "original/native-original-c09dbbe992.tar.xz",
+    "sha256": "6d22e3ca7dcd98a75da46f6717f122f2293fa0d870a5aa2807e7f8252aee6acd"
+  },
+  {
+    "bytes": 812,
+    "path": "original/export-receipt.json",
+    "sha256": "099c28ac5aec848003d4c6256d9b1df0e1c6d50ba94abd0f4ddec5fd7d5165f9"
+  },
+  {
+    "bytes": 13742,
+    "path": "original/portable-verification.json",
+    "sha256": "e39d777664d851fcacf4d93e48906da77d70f70e5f526e3b9ba204745d8531ac"
+  },
+  {
+    "bytes": 13832,
+    "path": "original/git-verification.json",
+    "sha256": "9b9c8e7cb5ce77e227e82e0faef63d7f2954dd39a87563350244fb25ac4ed3d4"
+  }
+]

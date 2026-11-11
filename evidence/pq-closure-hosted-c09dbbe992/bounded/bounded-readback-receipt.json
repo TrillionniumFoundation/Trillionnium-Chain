@@ -1,0 +1,7 @@
+{
+  "path": "bounded-readback-c09dbbe992.tar.xz",
+  "bytes": 719180,
+  "sha256": "9f7f152885e9eb54725a5fe8909ce90ee5ac23a62facff20f39d0702d2fd22a8",
+  "indexed_files": 108,
+  "scope": "bounded C1 refresh; no test rerun or source mutation"
+}

@@ -1,0 +1,209 @@
+{
+  "full_checkout_materialized": false,
+  "full_git_source_scan_repeated_during_packaging": false,
+  "limit": "The later partial observer record is retained as its own observation. No missing original terminal snapshot or native source snapshot is synthesized.",
+  "original_first_run_source_after_present": false,
+  "original_partial_observer_record": "python-validation-partial-observation.json",
+  "original_partial_observer_source_recheck": {
+    "all_listed_materialized_bytes_modes_sizes_sha256_and_git_blob_ids_match": true,
+    "current_checkout_head_matches_and_status_clean_at_observation_start_and_end": true,
+    "git_commit_and_tree_match": true,
+    "manifest_partitions_full_git_tree": true,
+    "materialized_bytes": 171498180,
+    "materialized_files": 5135,
+    "scope": "This later independent read-only observation is not the missing source-after record of the original validation execution.",
+    "unmaterialized_paths_absent_and_skip_worktree_marked": true,
+    "unmaterialized_sparse_paths": 22777
+  },
+  "retained_snapshot_paths": [
+    "python-validation-c09dbbe992/source-before.json",
+    "python-validation-c09dbbe992-resume01/source-before.json",
+    "python-validation-c09dbbe992-resume01/source-after.json"
+  ],
+  "retained_snapshot_sha256": "81966162e2ae881348ae09cb94879b8b705fd309fba1d79b1d30aeb86f676b1f",
+  "retained_snapshots_byte_identical": true,
+  "schema": "TRNM-C1-STATIC-SOURCE-VERIFICATION1",
+  "scope": "all-materialized-tracked-bytes-compared-to-git",
+  "snapshot_full_tree_partition_paths": 27912,
+  "snapshot_materialized_bytes": 171498180,
+  "snapshot_materialized_files": 5135,
+  "snapshot_unmaterialized_sparse_paths": 22777,
+  "source": {
+    "commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+    "tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6"
+  },
+  "targeted_c1_git_blobs_verified_against_retained_snapshot": [
+    {
+      "bytes": 48555,
+      "git_blob": "ca86a3eaa99ca023687e62af46af05741842db81",
+      "mode": "100644",
+      "path": ".github/workflows/pon-w1-qrom-implementation.yml",
+      "sha256": "9973ccc839cc0850e4ecfcdce0ac4d060c3d19da07c43fd5a35fb9aa9816d47f"
+    },
+    {
+      "bytes": 10677,
+      "git_blob": "6510d1385154c01e5c4da6a5ef9d3320b081159a",
+      "mode": "100644",
+      "path": "config/pon/w1-qrom-required-tests-v1.json",
+      "sha256": "ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8"
+    },
+    {
+      "bytes": 3687,
+      "git_blob": "c0e27c935d52bd18a4ae3dc49cd85c79df734858",
+      "mode": "100644",
+      "path": "config/pon/w1-qrom-supplemental-tests-v1.json",
+      "sha256": "33bdae599edc3ef8f54efd84245d24b90b0b4effdb2f71b2cdae52a71d4001c4"
+    },
+    {
+      "bytes": 39350,
+      "git_blob": "c9d609a9375d0d58cad8c322afc9b3358cc793f5",
+      "mode": "100644",
+      "path": "scripts/ci/test_cell_storage_convergence_ci.py",
+      "sha256": "668e520787f4a676740af59392baf3654234922b4cc95c43bd980d1359b21839"
+    },
+    {
+      "bytes": 189232,
+      "git_blob": "15c65e0b31bd811cafea46311a9bb2de32c6460c",
+      "mode": "100644",
+      "path": "scripts/ci/test_ci_contract.py",
+      "sha256": "f51449525f847e91768c72d437b8e47917b1df0c97b362af6b1c0dab74433296"
+    },
+    {
+      "bytes": 21712,
+      "git_blob": "e08dcf6e0f2d900e702e9cae8980b4267869870d",
+      "mode": "100644",
+      "path": "scripts/ci/test_codeql_retention.py",
+      "sha256": "b1af2d0d0bb9a60d77cfe0011356033d2da2f468c31cefa1e6250bbd9f774ff1"
+    },
+    {
+      "bytes": 5334,
+      "git_blob": "415ed404f40ae81acfd8aca7495a0aeab5f08fb9",
+      "mode": "100644",
+      "path": "scripts/ci/test_consensus_roster.py",
+      "sha256": "d396576381c2c7b778893545cf3dff73d772b3d2a312184f667fc87d9c99e983"
+    },
+    {
+      "bytes": 17776,
+      "git_blob": "758bbd9a644d597b379dba07a6f3ad3f3e6f2bcc",
+      "mode": "100644",
+      "path": "scripts/ci/test_hash_use_contract.py",
+      "sha256": "7047a4499943e0dcf20f4fbb481d4582f572d3e2e09bff4e2bf0306b5e08fd2e"
+    },
+    {
+      "bytes": 14776,
+      "git_blob": "fd91565a2b75831c7df835806a5ca16cbdf1d6cc",
+      "mode": "100644",
+      "path": "scripts/ci/test_pq_authority_effect_register.py",
+      "sha256": "b9b8163df5c8f501438d5c277249032a390cd32f854b2320c5344f736467c858"
+    },
+    {
+      "bytes": 28476,
+      "git_blob": "95d77463a35c690b188d5dbfcb16ebf499276cc6",
+      "mode": "100644",
+      "path": "scripts/ci/test_pq_chain_claim_guard.py",
+      "sha256": "5a3c2e0d15dbfed68cb7afcc0c7f88a6b5c8620823ea7257e0dc5ef2be570a6f"
+    },
+    {
+      "bytes": 34544,
+      "git_blob": "fde7fa3f388db9ab9f9760b9229f928a7b2f2767",
+      "mode": "100644",
+      "path": "scripts/ci/test_pq_lifetime_budget.py",
+      "sha256": "721ed07762d84cde999c16cdc519b4b796e407d8d3a224aa96956fd2c2d2115f"
+    },
+    {
+      "bytes": 49843,
+      "git_blob": "8359c3c3673cee671b11ad5fe349a1405645c3cd",
+      "mode": "100644",
+      "path": "scripts/ci/test_pq_research_integration.py",
+      "sha256": "1b0f1f71531c1f1ef2b48014c6506a7219000038b5f9f32da5fcdf04f0045532"
+    },
+    {
+      "bytes": 29213,
+      "git_blob": "ee780e325b612a2bf92025b6ae30c80f5f4433ef",
+      "mode": "100644",
+      "path": "scripts/ci/test_pq_root_dependency_register.py",
+      "sha256": "e4f7b07cfaae181cf24881891ee16f4a48347cbac003edb029ad84f240d055ce"
+    },
+    {
+      "bytes": 3154,
+      "git_blob": "dad6a5da05b8fea1a5117c6aa359e3abb79cab7c",
+      "mode": "100644",
+      "path": "scripts/ci/test_run_pq_root_continuation_v4.py",
+      "sha256": "f4a0c36059679671f5b53846ba31f14cd21bcfc126fec7809748f95b47ba9eea"
+    },
+    {
+      "bytes": 4020,
+      "git_blob": "5a436137c7f85d1d9ac74b9efcc4d0a54a81feef",
+      "mode": "100644",
+      "path": "scripts/ci/test_run_pq_root_witness_v5.py",
+      "sha256": "5b5b5a10e86f2f37c8566b220db374138bb1cda888974e76c820ff97e8a78450"
+    },
+    {
+      "bytes": 19036,
+      "git_blob": "212f028eee75fa375489d5782d20fa3b19919561",
+      "mode": "100644",
+      "path": "scripts/ci/test_w1_lifetime_ledger.py",
+      "sha256": "ad07a74f7089ac6a629973f81710a3a42954d736680aff025ec3eb509a359b9c"
+    },
+    {
+      "bytes": 19272,
+      "git_blob": "10b124d640704bc9de68e2c147dec54feb22dbf6",
+      "mode": "100644",
+      "path": "scripts/test_export_codeql_analysis.py",
+      "sha256": "7327eb8a26f66c87ee7e48604a7cd0e22424fa5e684e3d8c7c52c28f1f0103df"
+    }
+  ],
+  "tests_rerun_during_packaging": false,
+  "verified_at_utc": "2026-11-11T04:15:30.785451+00:00",
+  "workflow_body_bindings": [
+    {
+      "bytes": 6519,
+      "initial_body_prepared_but_not_counted_as_executed": true,
+      "resume_terminal_receipt_verified": true,
+      "sha256": "4bcd223ad2625ef32e0368b9a5835b0e7cad0c66f6b5cabca0b9f38396e8235b",
+      "step": "named_tests"
+    },
+    {
+      "bytes": 207,
+      "initial_body_prepared_but_not_counted_as_executed": true,
+      "resume_terminal_receipt_verified": true,
+      "sha256": "c29cc741c55ab7c2ad194f214db36da2a80e27561e8642a13c626c526773d8b7",
+      "step": "historical_controls"
+    },
+    {
+      "bytes": 173,
+      "initial_body_prepared_but_not_counted_as_executed": true,
+      "resume_terminal_receipt_verified": true,
+      "sha256": "25dd187c8221243f244f35dd661c60a352cb3c92112aeb9b1be2c0256a7a3cb9",
+      "step": "implementation"
+    },
+    {
+      "bytes": 398,
+      "initial_body_prepared_but_not_counted_as_executed": true,
+      "resume_terminal_receipt_verified": true,
+      "sha256": "0cc635be79f0ebde182cdaabb1eeedf8e6dc12076dfe69438b31c500b94399fb",
+      "step": "current_implementation"
+    },
+    {
+      "bytes": 138,
+      "initial_body_prepared_but_not_counted_as_executed": true,
+      "resume_terminal_receipt_verified": true,
+      "sha256": "a87e32cc037f49c960c09b43ef294b966c47219e911772acb3129f80cd52d634",
+      "step": "budget_unknown"
+    },
+    {
+      "bytes": 368,
+      "initial_body_prepared_but_not_counted_as_executed": true,
+      "resume_terminal_receipt_verified": true,
+      "sha256": "4033acf5ba185a7b7f8c3860fec5218278c6035ef8c25ca3b84e88eac71afd29",
+      "step": "budget_hypothetical"
+    },
+    {
+      "bytes": 19349,
+      "initial_body_prepared_but_not_counted_as_executed": true,
+      "resume_terminal_receipt_verified": true,
+      "sha256": "528553216dabe62afbfd9a0407da771f40332f1a557e8878fe4a00020ce25ecd",
+      "step": "report_scopes"
+    }
+  ]
+}

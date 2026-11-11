@@ -1,0 +1,57 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "/workspace/scratch/d4d2da8133e2/evidence-stage/pq-closure-dependency-readback-0e554f36ff/verify_readback.py",
+    "--repo",
+    "/workspace/scratch/d4d2da8133e2/chain-pq-closure"
+  ],
+  "exit_code": 0,
+  "fresh_api_calls": 0,
+  "new_cargo_commands": 0,
+  "new_tests_executed": 0,
+  "prior_frozen_packets": [
+    {
+      "changed": false,
+      "directory": "cloud",
+      "entries_verified": 5,
+      "manifest_sha256": "f77183cef7ad05ea546de42ac62fed5cc864054fe570b58ac5f58d4a0bf2cc4e"
+    },
+    {
+      "changed": false,
+      "directory": "desktop",
+      "entries_verified": 7,
+      "manifest_sha256": "dc422d7006f0fc4f53bbdff33669bc6cd93d5ee6a0d957447476be3afe82c2cf"
+    },
+    {
+      "changed": false,
+      "directory": "publication",
+      "entries_verified": 6,
+      "manifest_sha256": "90f281711ce4e8306f4fd919652400532283d8190f53b1c803e0f51ff9a6e2a9"
+    }
+  ],
+  "result": {
+    "affected_package_identities": 1,
+    "c2_new_metadata_execution": false,
+    "c2_pin": "50.0.2",
+    "c2_pin_inside_retained_ranges": 0,
+    "complete_alert_records": 7,
+    "complete_vulnerability_scan": false,
+    "interrupted_observation_preserved": true,
+    "original_c1_graph_nodes": {
+      "all_features": 182,
+      "default": 177,
+      "fuzz": 150
+    },
+    "original_job_recovered": true,
+    "repo_objects_rechecked": true,
+    "verified": true,
+    "whole_chain_pq_qualified": false
+  },
+  "schema": "TRNM-DEPENDABOT-PACKET-VERIFICATION1",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_utf8": "",
+  "stdout_sha256": "f621335c9b0065705eb4e2ca7016081b88f5fec17e6888fa933c52483c8cb799",
+  "stdout_utf8": "{\n  \"affected_package_identities\": 1,\n  \"c2_new_metadata_execution\": false,\n  \"c2_pin\": \"50.0.2\",\n  \"c2_pin_inside_retained_ranges\": 0,\n  \"complete_alert_records\": 7,\n  \"complete_vulnerability_scan\": false,\n  \"interrupted_observation_preserved\": true,\n  \"original_c1_graph_nodes\": {\n    \"all_features\": 182,\n    \"default\": 177,\n    \"fuzz\": 150\n  },\n  \"original_job_recovered\": true,\n  \"repo_objects_rechecked\": true,\n  \"verified\": true,\n  \"whole_chain_pq_qualified\": false\n}\n",
+  "verified_at_utc": "2026-11-11T05:50:32.899895+00:00"
+}

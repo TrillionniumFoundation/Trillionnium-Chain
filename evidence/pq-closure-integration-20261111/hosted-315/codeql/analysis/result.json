@@ -1,0 +1,25 @@
+{
+  "all_branch_historical_alerts": false,
+  "analyses": [],
+  "check_annotations": [],
+  "complete": false,
+  "error": "CodeQL analyses/checks did not complete and stabilize before the deadline",
+  "finished_utc": "2026-11-11T02:56:50.414536+00:00",
+  "full_original_sarif_upload": false,
+  "last_checks": [],
+  "schema": "codeql-exact-source-analysis-export-v2",
+  "scope": "All API-available exact PR source analyses/categories after the existing CodeQL check completes; SARIF is the API-provided subset. Source-only check annotations may lack a PR association; complete export does not qualify the PR security gate.",
+  "security_gate_changed": false,
+  "started_utc": "2026-11-11T02:37:17.845501+00:00",
+  "target": {
+    "base": "e4abb172147e941b62483652b0ceabaae4317624",
+    "event": "pull_request",
+    "head": "31543fb6dde565b62b47436e0b1d399b6d0bd772",
+    "head_ref": "refs/pull/894/head",
+    "merge": "1301b4596ba79a9b1345c9f0a62d3bc256cc768f",
+    "pr": 894,
+    "ref": "refs/pull/894/merge"
+  },
+  "target_pr_gate_authenticated": false,
+  "target_pr_gate_verdict": null
+}

@@ -1,0 +1,90 @@
+{
+  "aggregate_budget_qualified": false,
+  "archive_sha256": "878e1c55747030ef3629edea182a39ae508cdf4362cdce89078251199e57844f",
+  "commands_recorded": 3,
+  "elf_bytes_rehashed": false,
+  "failed_commands": [],
+  "host_or_execution_attestation_claimed": false,
+  "kind": "readback",
+  "native_observation": {
+    "completed_ok_names": [
+      "native_provider_v4_later_root_provider_alias_refuses_before_transport",
+      "native_provider_v4_live_session_refuses_complete_record_rollback",
+      "native_provider_v4_live_session_refuses_same_length_history_substitution",
+      "native_provider_v4_lost_and_unknown_reads_keep_original_operation_pending",
+      "native_provider_v4_orphan_epochs_require_explicit_same_epoch_reconciliation",
+      "native_provider_v4_oversized_journal_refuses_before_lookup",
+      "native_provider_v4_real_declaration_reopens_without_effect_authority",
+      "native_provider_v4_replays_original_operation_after_authority_rotation",
+      "native_provider_v4_unknown_does_not_erase_known_outcome_and_conflicts_refuse",
+      "native_provider_v4_unresolved_orphan_is_not_replaced_by_new_epoch"
+    ],
+    "exit_code": 0,
+    "projection": {
+      "filtered_out": 4,
+      "passed": 10,
+      "tests": [
+        "native_provider_v4_later_root_provider_alias_refuses_before_transport",
+        "native_provider_v4_live_session_refuses_complete_record_rollback",
+        "native_provider_v4_live_session_refuses_same_length_history_substitution",
+        "native_provider_v4_lost_and_unknown_reads_keep_original_operation_pending",
+        "native_provider_v4_orphan_epochs_require_explicit_same_epoch_reconciliation",
+        "native_provider_v4_oversized_journal_refuses_before_lookup",
+        "native_provider_v4_real_declaration_reopens_without_effect_authority",
+        "native_provider_v4_replays_original_operation_after_authority_rotation",
+        "native_provider_v4_unknown_does_not_erase_known_outcome_and_conflicts_refuse",
+        "native_provider_v4_unresolved_orphan_is_not_replaced_by_new_epoch"
+      ]
+    },
+    "remaining_without_ok": [],
+    "target_passed": true,
+    "terminal_summaries": [
+      [
+        "ok",
+        "10",
+        "0",
+        "0",
+        "0",
+        "4"
+      ]
+    ],
+    "timed_out": false,
+    "timeout_seconds": 1200,
+    "valid": true
+  },
+  "not_started": [],
+  "original_archive_sha256": "6d22e3ca7dcd98a75da46f6717f122f2293fa0d870a5aa2807e7f8252aee6acd",
+  "original_completed_names_not_repeated": [
+    "native_provider_v4_callback_cannot_replace_cancel_or_replenish_budget",
+    "native_provider_v4_complete_request_and_both_signature_families_are_required",
+    "native_provider_v4_enrollment_requires_floor_complete_bytes_kind_and_attempt",
+    "native_provider_v4_foreign_replaced_linked_and_truncated_journals_refuse"
+  ],
+  "original_group_passed": false,
+  "original_timeout_seconds": 1200,
+  "partial_ok_is_not_a_target_pass": true,
+  "planned_remaining_names": [
+    "native_provider_v4_later_root_provider_alias_refuses_before_transport",
+    "native_provider_v4_live_session_refuses_complete_record_rollback",
+    "native_provider_v4_live_session_refuses_same_length_history_substitution",
+    "native_provider_v4_lost_and_unknown_reads_keep_original_operation_pending",
+    "native_provider_v4_orphan_epochs_require_explicit_same_epoch_reconciliation",
+    "native_provider_v4_oversized_journal_refuses_before_lookup",
+    "native_provider_v4_real_declaration_reopens_without_effect_authority",
+    "native_provider_v4_replays_original_operation_after_authority_rotation",
+    "native_provider_v4_unknown_does_not_erase_known_outcome_and_conflicts_refuse",
+    "native_provider_v4_unresolved_orphan_is_not_replaced_by_new_epoch"
+  ],
+  "production_activation": false,
+  "remaining_subset_complete": true,
+  "schema": "TRNM-C1-SUBSET-EVIDENCE-VERIFICATION1",
+  "source": {
+    "branch": "fix/chain-pq-closure-20261111-d4d2",
+    "commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+    "status": "",
+    "tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6"
+  },
+  "verified": true,
+  "whole_chain_pq_qualified": false,
+  "workloads_rerun": false
+}
