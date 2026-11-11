@@ -636,5 +636,378 @@ class AdversarialPolicyControls(unittest.TestCase):
         self.assertGreater(rows[0]["scheduled_finish_seconds"], 1e25)
 
 
+
+class MeasureOnTipControls(unittest.TestCase):
+    """Conditional Grover interruption controls, not native mining evidence."""
+
+    @staticmethod
+    def case(**changes):
+        base = NetworkScenario(
+            "measure_on_tip", duration_seconds=6,
+            classical_block_rate_at_initial_target=0,
+            quantum_tip_policy="measure-on-tip", quantum_clock_rounding="upward",
+            quantum_fixed_iterations=10, quantum_iteration_seconds=0.5,
+            quantum_prepare_seconds=0.25, quantum_measure_seconds=0.125,
+            quantum_candidate_check_seconds=0.25, quantum_proof_seconds=0.5,
+            quantum_domain_size=16, quantum_domain_marked_count=1,
+            propagation_seconds=0.25, probe_arrival_seconds=0)
+        return replace(base, **changes)
+
+    @staticmethod
+    def advance(sim, at):
+        while sim.events and sim.events[0][0] <= at:
+            if not sim.step():
+                break
+        sim.now = at
+
+    def notice(self, sim, at=0.875, label="public", parent="prefix"):
+        self.advance(sim, at)
+        block = append_block(sim, label, parent, stamp=sim.start_timestamp + int(at))
+        sim.receive("q", block.block_id)
+        return block
+
+    def start_sim(self, **changes):
+        sim = Simulator(self.case(**changes))
+        sim.start()
+        return sim
+
+    def test_policy_is_explicit_and_requires_upward_honest_tip_clock(self):
+        self.assertEqual(NetworkScenario("legacy").quantum_tip_policy, "discard-restart")
+        for patch, message in (
+                (dict(quantum_tip_policy="unknown"), "QUANTUM_TIP_POLICY"),
+                (dict(quantum_clock_rounding="nearest"), "MEASURE_ON_TIP_REQUIRES_UPWARD_CLOCK"),
+                (dict(quantum_strategy="private-branch"), "MEASURE_ON_TIP_REQUIRES_HONEST_TIP")):
+            with self.subTest(patch=patch), self.assertRaisesRegex(ValueError, message):
+                replace(self.case(), **patch).validate()
+
+    def test_middle_of_iteration_waits_to_boundary_and_preserves_old_context(self):
+        sim = self.start_sim()
+        old = sim.active["q"]
+        domain = sim.quantum_domain
+        self.notice(sim)
+        trial = sim.active["q"]
+        self.assertNotEqual(trial.serial, old.serial)
+        self.assertEqual(trial.started, old.started)
+        for name in ("parent", "timestamp", "target", "contains_probe",
+                     "domain_id", "domain_setup_seconds"):
+            self.assertEqual(getattr(trial, name), getattr(old, name), name)
+        self.assertIs(sim.quantum_domain, domain)
+        self.assertEqual(sim.domain_count, 1)
+        self.assertEqual(trial.iterations, 2)
+        self.assertEqual(trial.finishes, 1.625)
+        self.assertAlmostEqual(trial.success_probability, 3721 / 4096)
+        self.assertEqual(sim.counts["q"]["searches_started"], 1)
+        self.assertEqual(sim.counts["q"]["searches_cancelled"], 0)
+        row = next(r for r in sim.trace if r["kind"] == "search-tip-measurement")
+        self.assertEqual(row["original_trial"], old.serial)
+        self.assertEqual(row["boundary_wait_seconds"], 0.375)
+
+    def test_exact_boundary_and_adjacent_floats_do_not_round_into_same_depth(self):
+        for at, depth in ((0.25, 0), (math.nextafter(0.75, 0), 1),
+                          (0.75, 1), (math.nextafter(0.75, math.inf), 2)):
+            with self.subTest(at=at):
+                sim = self.start_sim()
+                self.notice(sim, at)
+                self.assertEqual(sim.active["q"].iterations, depth)
+                if depth == 0:
+                    self.assertAlmostEqual(sim.active["q"].success_probability, 1 / 16)
+
+    def test_unprepared_state_cancels_and_does_not_measure_or_reuse_new_parent_domain(self):
+        for setup, at, charged in ((0, 0.125, 0), (1, 0.5, 0.5)):
+            with self.subTest(setup=setup):
+                sim = self.start_sim(quantum_domain_setup_seconds=setup)
+                old_domain = sim.quantum_domain.domain_id
+                block = self.notice(sim, at)
+                self.assertEqual(sim.active["q"].parent, block.block_id)
+                self.assertNotEqual(sim.quantum_domain.domain_id, old_domain)
+                self.assertEqual(sim.counts["q"]["cancelled_on_tip"], 1)
+                self.assertEqual(sim.counts["q"]["tip_measurement_requests"], 0)
+                self.assertEqual(sim.counts["q"]["measurement_seconds"], 0)
+                self.assertEqual(sim.domain_setup_seconds_charged, charged)
+
+    def test_parallel_probability_conditions_on_one_shared_marked_set(self):
+        sim = self.start_sim(quantum_processors=2)
+        self.notice(sim)
+        self.assertEqual(sim.domain_count, 1)
+        self.assertEqual(sim.quantum_domain.marked_count, 1)
+        self.assertAlmostEqual(sim.active["q"].success_probability, 16636591 / 16777216)
+        self.assertEqual(sim.active["q"].finishes, 1.625)
+
+    def test_no_marked_solution_and_all_marked_domain_keep_same_timing(self):
+        for marked, probability_value in ((0, 0), (16, 1)):
+            with self.subTest(marked=marked):
+                sim = self.start_sim(quantum_domain_marked_count=marked)
+                self.notice(sim)
+                self.assertEqual(sim.active["q"].iterations, 2)
+                self.assertEqual(sim.active["q"].finishes, 1.625)
+                self.assertAlmostEqual(sim.active["q"].success_probability, probability_value)
+                self.advance(sim, 1.625)
+                self.assertEqual(sim.counts["q"]["proofs_started"], int(marked != 0))
+                self.assertEqual(sim.counts["q"]["searches_failed"], int(marked == 0))
+
+    def test_abstract_probability_uses_old_target_not_new_tip(self):
+        sim = self.start_sim(quantum_domain_size=None, quantum_domain_marked_count=None)
+        old = sim.active["q"]
+        public = "prefix"
+        for index in range(17):
+            public = append_block(sim, f"public{index}", public,
+                                  stamp=sim.blocks[public].timestamp + 1).block_id
+        self.advance(sim, 0.875)
+        sim.receive("q", public)
+        self.assertNotEqual(sim.target_for(public), old.target)
+        self.assertEqual(sim.active["q"].target, old.target)
+        self.assertAlmostEqual(sim.active["q"].success_probability,
+                               grover_success(float(Fraction(old.target + 1, 1 << 256)), 2))
+
+    def test_latched_measurement_ignores_more_tips_and_does_not_draw_rng_early(self):
+        class CountingRandom(ControlledRandom):
+            def __init__(self):
+                super().__init__((1.0,))
+                self.calls = 0
+
+            def random(self):
+                self.calls += 1
+                return super().random()
+
+        sim = self.start_sim()
+        rng = CountingRandom()
+        sim.rngs["q"] = rng
+        first = self.notice(sim)
+        trial = sim.active["q"]
+        second = self.notice(sim, 1.0, "public2", first.block_id)
+        sim.receive("q", second.block_id)
+        self.notice(sim, 1.5, "public3", second.block_id)
+        self.assertIs(sim.active["q"], trial)
+        self.assertEqual(rng.calls, 0)
+        self.assertEqual(sim.counts["q"]["tip_measurement_requests"], 1)
+        self.advance(sim, 1.625)
+        self.assertEqual(rng.calls, 1)
+        self.assertEqual(sim.counts["q"]["searches_failed"], 1)
+        self.assertEqual(sim.active["q"].parent, "public3")
+
+    def test_already_started_readout_or_check_completes_once_at_original_time(self):
+        for at in (5.25, 5.3125, 5.5):
+            with self.subTest(at=at):
+                sim = self.start_sim()
+                old = sim.active["q"]
+                self.notice(sim, at)
+                trial = sim.active["q"]
+                self.assertEqual(trial.serial, old.serial)
+                self.assertEqual(trial.finishes, old.finishes)
+                self.assertEqual(trial.success_probability, old.success_probability)
+                self.assertTrue(trial.tip_measurement)
+                self.assertEqual(sim.counts["q"]["tip_measurement_requests"], 1)
+                self.advance(sim, old.finishes)
+                self.assertEqual(sim.counts["q"]["searches_completed"], 1)
+
+    def test_success_generates_old_parent_proof_then_publishes_without_winning_tie(self):
+        sim = self.start_sim(quantum_processors=2)
+        sim.rngs["q"] = ControlledRandom((0.0,))
+        public = self.notice(sim)
+        self.advance(sim, 1.625)
+        q = sim.counts["q"]
+        self.assertEqual(q["searches_completed"], 1)
+        self.assertEqual(q["logical_iterations_completed"], 4)
+        self.assertEqual(q["search_seconds"], 1.625)
+        self.assertEqual(q["measurement_seconds"], 0.125)
+        self.assertEqual(q["measurement_processor_seconds"], 0.25)
+        self.assertEqual(q["candidate_checks_completed"], 2)
+        self.assertEqual(q["candidate_check_seconds"], 0.25)
+        self.assertEqual(q["candidate_check_processor_seconds"], 0.5)
+        self.assertEqual(sim.proofs["q"][0].parent, "prefix")
+        self.assertEqual(q["blocks_created"], 0)
+        self.advance(sim, 2.125)
+        created = [b for b in sim.blocks.values() if b.miner == "q"]
+        self.assertEqual(len(created), 1)
+        self.assertEqual(created[0].parent, "prefix")
+        self.assertEqual(sim.views["q"].tip, public.block_id)
+        self.assertEqual(q["stale_proofs_completed"], 1)
+        self.assertEqual(q["proof_seconds"], 0.5)
+        self.assertTrue(any(r["kind"] == "publish" and r["tip"] == created[0].block_id
+                            for r in sim.trace))
+        self.assertTrue(any(at == 2.375 and kind == "delivery" for at, _, kind, _ in sim.events))
+
+    def test_tip_during_proof_preserves_one_old_proof_and_next_search_uses_latest_view(self):
+        sim = self.start_sim()
+        sim.rngs["q"] = ControlledRandom((0.0,))
+        first = self.notice(sim)
+        self.advance(sim, 1.625)
+        proof = sim.proofs["q"]
+        newest = self.notice(sim, 1.75, "later", first.block_id)
+        self.assertIs(sim.proofs["q"], proof)
+        self.assertNotIn("q", sim.active)
+        self.assertEqual(sim.counts["q"]["proofs_started"], 1)
+        self.advance(sim, 2.125)
+        self.assertEqual(sim.active["q"].parent, newest.block_id)
+        self.assertEqual(sim.counts["q"]["proofs_completed"], 1)
+
+    def test_original_completion_is_obsolete_and_search_counts_are_conserved(self):
+        sim = self.start_sim()
+        sim.rngs["q"] = ControlledRandom((0.0,))
+        self.notice(sim)
+        summary, _ = sim.run()
+        q = summary["miners"]["q"]
+        self.assertEqual(q["proofs_started"], 1)
+        self.assertGreaterEqual(summary["obsolete_events_skipped"], 1)
+        self.assertEqual(q["searches_started"],
+                         q["searches_completed"] + q["searches_cancelled"] + q["searches_censored"])
+
+    def test_horizon_only_charges_consumed_residual_readout_and_check(self):
+        for horizon, iterations, measurement, checks in (
+                (1.0, 1, 0, 0), (1.3125, 2, 0.0625, 0), (1.5, 2, 0.125, 0.125)):
+            with self.subTest(horizon=horizon):
+                sim = self.start_sim(duration_seconds=horizon, quantum_processors=3)
+                self.notice(sim)
+                summary, _ = sim.run()
+                q = summary["miners"]["q"]
+                self.assertEqual(q["search_seconds"], horizon)
+                self.assertEqual(q["logical_iterations_completed"], 3 * iterations)
+                self.assertEqual(q["measurement_seconds"], measurement)
+                self.assertEqual(q["measurement_processor_seconds"], 3 * measurement)
+                self.assertEqual(q["candidate_check_seconds"], checks)
+                self.assertEqual(q["candidate_checks_censored"], 3 if checks else 0)
+                self.assertEqual(q["proofs_started"], 0)
+                self.assertEqual(q["searches_censored"], 1)
+
+    def test_shock_cancels_latched_state_and_charges_partial_readout(self):
+        sim = self.start_sim()
+        self.notice(sim)
+        self.advance(sim, 1.3125)
+        sim._shock(ParticipationShock(1.3125, 0, 0))
+        self.assertNotIn("q", sim.active)
+        self.assertEqual(sim.counts["q"]["cancelled_on_shock"], 1)
+        self.assertEqual(sim.counts["q"]["measurement_seconds"], 0.0625)
+        self.assertEqual(sim.counts["q"]["logical_iterations_completed"], 2)
+        self.advance(sim, 1.625)
+        self.assertEqual(sim.counts["q"]["proofs_started"], 0)
+        self.assertEqual(sim.counts["q"]["searches_completed"], 0)
+
+    def test_same_time_completion_and_tip_delivery_consume_one_search_only(self):
+        for delivery_first in (False, True):
+            with self.subTest(delivery_first=delivery_first):
+                sim = Simulator(self.case(quantum_initial_factor=0))
+                public = append_block(sim, "public")
+                sim.quantum_factor = 1
+                sim.rngs["q"] = ControlledRandom((0.0,))
+                if delivery_first:
+                    sim._schedule(5.625, "delivery", ("q", public.block_id))
+                sim.start()
+                if not delivery_first:
+                    sim._schedule(5.625, "delivery", ("q", public.block_id))
+                self.advance(sim, 5.625)
+                self.assertEqual(sim.counts["q"]["searches_completed"], 1)
+                self.assertEqual(sim.counts["q"]["proofs_started"], 1)
+                self.assertEqual(sim.proofs["q"][0].parent, "prefix")
+
+
+    def test_resource_bound_keeps_one_start_and_one_check_batch_per_interrupted_search(self):
+        import quantum_oracle_resources as resources
+        import quantum_resource_clock as clock
+
+        case = self.case(quantum_processors=2, propagation_seconds=0.1,
+                         duration_seconds=2, max_events=1000, max_blocks=100)
+        request = resources.example(True)
+        request = replace(request, workload=replace(request.workload, independent_instances=2))
+        binding = clock.bind_resource_clock(case, request, request.physical_models[0].name, 10**30)
+        sim = Simulator(binding.scenario)
+        sim.rngs["q"] = ControlledRandom((0.0,))
+        sim.start()
+        trial = sim.active["q"]
+        arrival = binding.scenario.quantum_prepare_seconds + 1.25 * trial.iteration_seconds
+        self.assertLess(arrival, case.duration_seconds)
+        self.notice(sim, arrival)
+        self.assertTrue(sim.active["q"].tip_measurement)
+        self.assertEqual(sim.active["q"].iterations, 2)
+        summary, trace = sim.run()
+        audit = clock.audit_execution(binding, summary, trace)
+        self.assertTrue(audit["whole_campaign_envelope_respected"])
+        q = summary["miners"]["q"]
+        self.assertEqual(q["tip_measurement_requests"], 1)
+        self.assertLessEqual(q["candidate_checks_started"], 2 * q["searches_started"])
+        self.assertLessEqual(q["proofs_started"], q["searches_started"])
+        self.assertFalse(audit["security_theorem"])
+
+
+
+class TipCampaignReaderControls(unittest.TestCase):
+    """Reader refusals, distinct from executing a full paired campaign."""
+
+    @staticmethod
+    def metadata():
+        import quantum_tip_measurement_campaign as campaign
+        source = campaign.source_at(campaign.ROOT)
+        campaign.validate_source_record(source)
+        report = {
+            "schema": campaign.SCHEMA, "source": source, "source_after": source,
+            "scope": campaign.SCOPE, "assumptions": campaign.ASSUMPTIONS,
+            "parameters": campaign.panel_parameters(), "observations": [],
+            "paired_comparisons": [],
+            "actual_python_process": {"wall_seconds": 1.0, "cpu_seconds": 0.5,
+                "python": "controlled-parser-fixture", "platform": "controlled-parser-fixture",
+                "scope": "simulator and artifact serialization only"},
+        }
+        manifest = {"schema": campaign.SCHEMA + "-manifest", "files_sha256": {}}
+        return campaign, report, manifest
+
+    def test_report_cannot_add_success_claims_or_nonfinite_timing(self):
+        campaign, report, manifest = self.metadata()
+        campaign.validate_report_metadata(report, manifest)
+        for location, key, value, error in (
+                ("report", "release_ready", True, "REPORT_KEYS"),
+                ("manifest", "verified", True, "MANIFEST_KEYS"),
+                ("process", "quantum_security_qualified", True, "PROCESS_KEYS"),
+                ("process", "wall_seconds", float("nan"), "PROCESS_TIMING"),
+                ("process", "cpu_seconds", True, "PROCESS_TIMING")):
+            altered = json.loads(json.dumps(report))
+            altered_manifest = json.loads(json.dumps(manifest))
+            destination = {"report": altered, "manifest": altered_manifest,
+                           "process": altered["actual_python_process"]}[location]
+            destination[key] = value
+            with self.subTest(location=location, key=key), self.assertRaisesRegex(ValueError, error):
+                campaign.validate_report_metadata(altered, altered_manifest)
+
+    def test_rehashed_report_cannot_accept_uncommitted_current_source(self):
+        from unittest.mock import patch
+        campaign, report, manifest = self.metadata()
+        for field in ("all_source_files_committed_at_head", "runner_committed_at_head"):
+            altered = json.loads(json.dumps(report))
+            dirty = dict(altered["source"])
+            dirty["all_source_files_committed_at_head"] = True
+            dirty["runner_committed_at_head"] = True
+            dirty[field] = False
+            altered["source"] = altered["source_after"] = dirty
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as directory:
+                out = Path(directory)
+                (out / "report.json").write_bytes(campaign.canonical(altered))
+                altered_manifest = {"schema": campaign.SCHEMA + "-manifest",
+                                    "files_sha256": {"report.json": campaign.sha(out / "report.json")}}
+                (out / "manifest.json").write_bytes(campaign.canonical(altered_manifest))
+                # Fault injection models the actual source inspection reporting
+                # uncommitted bytes. Rehashing the report must not waive it.
+                with patch.object(campaign, "source_at", return_value=dirty):
+                    with self.assertRaisesRegex(ValueError, "UNCOMMITTED_ENUMERATED_SOURCE"):
+                        campaign.verify(campaign.ROOT, out)
+
+    def test_campaign_refuses_source_tree_outputs_before_creating_them(self):
+        import quantum_tip_measurement_campaign as campaign
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            out = root / "inside"
+            with self.assertRaisesRegex(ValueError, "OUTPUT_INSIDE_SOURCE_TREE"):
+                campaign.run(root, out)
+            self.assertFalse(out.exists())
+            alias = root.parent / (root.name + "-alias")
+            created = False
+            try:
+                alias.symlink_to(root, target_is_directory=True)
+                created = True
+                with self.assertRaisesRegex(ValueError, "OUTPUT_INSIDE_SOURCE_TREE"):
+                    campaign.output_path(root, alias / "inside")
+                self.assertFalse(out.exists())
+            finally:
+                if created:
+                    alias.unlink(missing_ok=True)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -1,0 +1,17 @@
+test_explicit_grid_and_zero_probability_tie_break (__main__.BoundedPolicyControls.test_explicit_grid_and_zero_probability_tie_break) ... ok
+test_fresh_shared_domain_renewal_objective_includes_setup_and_single_proof (__main__.BoundedPolicyControls.test_fresh_shared_domain_renewal_objective_includes_setup_and_single_proof) ... ok
+test_independent_integer_grid_and_candidate_check_cost (__main__.BoundedPolicyControls.test_independent_integer_grid_and_candidate_check_cost) ... ok
+test_same_processor_budget_beats_first_peak (__main__.BoundedPolicyControls.test_same_processor_budget_beats_first_peak) ... ok
+test_bounded_grid_rejects_unbounded_or_mixed_profile_claim (__main__.CampaignReadbackControls.test_bounded_grid_rejects_unbounded_or_mixed_profile_claim) ... ok
+test_campaign_roundtrip_and_rehashed_forgery_controls (__main__.CampaignReadbackControls.test_campaign_roundtrip_and_rehashed_forgery_controls) ... ok
+test_integer_work_consistent_wrong_target_is_independently_rejected (__main__.CampaignReadbackControls.test_integer_work_consistent_wrong_target_is_independently_rejected) ... ok
+test_domain_and_exact_binomial_limits_fail_explicitly (__main__.FiniteDomainControls.test_domain_and_exact_binomial_limits_fail_explicitly) ... ok
+test_enumerate_every_small_predicate_before_parallel_averaging (__main__.FiniteDomainControls.test_enumerate_every_small_predicate_before_parallel_averaging) ... ok
+test_exact_amplitude_vectors_all_small_marked_counts (__main__.FiniteDomainControls.test_exact_amplitude_vectors_all_small_marked_counts) ... ok
+test_exact_binomial_weights_and_no_solution_mass (__main__.FiniteDomainControls.test_exact_binomial_weights_and_no_solution_mass) ... ok
+test_integer_ticket_sampler_uses_inclusive_boundary_once_per_domain (__main__.FiniteDomainControls.test_integer_ticket_sampler_uses_inclusive_boundary_once_per_domain) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 1.360s
+
+OK

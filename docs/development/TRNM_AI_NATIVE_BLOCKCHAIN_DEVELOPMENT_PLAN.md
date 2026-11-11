@@ -1,3 +1,33 @@
+<!-- quantum-tip-current-clock-20261111 -->
+**Quantum tip measurement and current-clock admission — HOLD:**
+
+Continue #876 at `e4abb172147e941b62483652b0ceabaae4317624` with the
+[explicit policy and qualification scope](../protocol/pon-nakamoto-v1/details/QUANTUM_TIP_MEASUREMENT_V1.md).
+Add a declared measure-on-tip Grover policy with complete iteration boundaries,
+frozen old candidate context and retained readout/check/proof costs. Verify the
+new policy against the existing resource envelope and replay a separately named
+paired experiment on its exact committed source. Fixed propagation and equal-work
+tie retention restrict that experiment's adoption behavior; finite observations
+cannot supply a native quantum-security bound.
+
+Selectively port #811's current-clock parent-history checks before public W1 and
+before durable admission, keeping the original postcommit guard independently
+tested. Retain any observed old-source failure, all interrupted preparation observations,
+and source identities. Joint native-to-model reduction, all-legal-strategy W1
+cost, production tails, CP/CG/CQ and lifetime qualification remain open. No
+confirmation, signed-domain or production qualification is granted by these
+engineering controls. Complete the original source, CI, formatting and strict
+Clippy gates on this candidate and retain every unsuccessful observation.
+
+
+Selectively integrate #843's joint consensus qualification and dynamic
+participation layer, rebinding its independent 23-source digest to the actual
+native continuation. Keep all 18 environment inputs unknown, all 13 proof
+obligations open, and CP/CG/CQ/lifetime bounds null until justified. The source
+roster does not include the public ingress dispatch/tests; retain their
+whole-candidate identity and native execution separately. An intentional
+`--require-qualified` refusal remains a required negative gate.
+
 **System-boundary readback continuation, 2026-11-09 America/New_York — HOLD:**
 
 Continue the existing #847 candidate from M14

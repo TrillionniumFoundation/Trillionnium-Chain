@@ -1,0 +1,27 @@
+{
+  "schema": "trnm-qdaa-command-v1",
+  "argv": [
+    "python3",
+    "-B",
+    "formal/pon-nakamoto-v1/test_quantum_network_sim.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/work/chain-quantum-daa-20261111-qdaa",
+  "started_utc": "2026-11-11T00:26:31.121958+00:00",
+  "elapsed_seconds": 6.133211442967877,
+  "exit_code": 0,
+  "status": "completed",
+  "before_source_sha256": {
+    "formal/pon-nakamoto-v1/quantum_network_sim.py": "384c8e13ad7e0c8043dfdbc947bd3a12cdb3f5cb11415078f1ae5f3c3aeff2ed",
+    "formal/pon-nakamoto-v1/test_quantum_network_sim.py": "0a0e797b4622fbec82d9e5d1504b0860b0c7e33db0a874bccba0207a301cbdf5",
+    "formal/pon-nakamoto-v1/quantum_tip_measurement_campaign.py": "6cecc88576a5ceb5c583f8e203cbbafab2d5ee7387e12d2de266dd008e0158a7"
+  },
+  "after_source_sha256": {
+    "formal/pon-nakamoto-v1/quantum_network_sim.py": "384c8e13ad7e0c8043dfdbc947bd3a12cdb3f5cb11415078f1ae5f3c3aeff2ed",
+    "formal/pon-nakamoto-v1/test_quantum_network_sim.py": "0a0e797b4622fbec82d9e5d1504b0860b0c7e33db0a874bccba0207a301cbdf5",
+    "formal/pon-nakamoto-v1/quantum_tip_measurement_campaign.py": "6cecc88576a5ceb5c583f8e203cbbafab2d5ee7387e12d2de266dd008e0158a7"
+  },
+  "log_sha256": "6a62331cb4b5de005980135a4f46c751ca3e8f7a0ba1ff35ffb1dacf7bbe221f",
+  "log_bytes": 8909,
+  "qualification": false
+}
