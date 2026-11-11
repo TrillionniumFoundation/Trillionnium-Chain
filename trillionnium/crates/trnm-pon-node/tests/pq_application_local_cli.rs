@@ -25,6 +25,18 @@ fn ordinary_npq6_submit_and_cold_status_execute_current_task_and_evaluator_roles
     let root = tempfile::tempdir().unwrap();
     let mut producer = app.open(&root.path().join("producer"));
     let samples = app.samples(&mut producer);
+    // Full, actually signed NPQ6 command/evidence envelopes still parse to the
+    // exact original packet bytes through the optimized once-only preflight.
+    for (index, packet) in samples.packets.iter().enumerate() {
+        let bytes = packet.encode_for_settings(&app.tls.settings).unwrap();
+        let decoded =
+            trnm_pon_node::Packet::decode_for_settings(&bytes, &app.tls.settings).unwrap();
+        assert_eq!(
+            decoded.encode_for_settings(&app.tls.settings).unwrap(),
+            bytes,
+            "signed packet {index}"
+        );
+    }
     app.assert_task_and_evaluator_state(&producer, &samples);
     drop(producer);
     let directory = root.path().join("receiver");
