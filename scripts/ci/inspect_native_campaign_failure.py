@@ -291,6 +291,7 @@ def _final_history_page_activation(history: list) -> dict:
                     or submit.get("error_code") is not None
                     or type(submit.get("wall_ns")) is not int
                     or submit["wall_ns"] < 0
+                    or submit["wall_ns"] > wall
                     or type(submit.get("thread_cpu_ns")) is not int
                     or submit["thread_cpu_ns"] < 0):
                 return result

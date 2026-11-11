@@ -421,5 +421,21 @@ class FinalPageActivationDiagnosticTests(unittest.TestCase):
                 self.assertFalse(details["qualification"])
 
 
+
+class FinalPageNestedWallControls(unittest.TestCase):
+    def test_submit_result_wall_cannot_exceed_its_parent_import(self):
+        from inspect_native_campaign_failure import _final_history_page_activation
+        for excess in (1, 10**30):
+            rows = FinalPageActivationDiagnosticTests.sample_history()
+            parent_wall = rows[-1]["client_import"]["wall_ns"]
+            stage = rows[-1]["client_import"]["native_import_observation"]["packets"][0]["phases"][0]
+            stage["wall_ns"] = parent_wall + excess
+            with self.subTest(excess=excess):
+                result = _final_history_page_activation(rows)
+                self.assertEqual(result["status"], "unknown")
+                self.assertIsNone(result["last_submit_result_wall_ns"])
+                self.assertIsNone(result["last_submit_result_thread_cpu_ns"])
+                self.assertFalse(result["qualification"])
+
 if __name__ == "__main__":
     unittest.main()
