@@ -38,7 +38,9 @@ MAX_REGISTRY_BYTES = 128 * 1024
 MAX_SOURCE_BYTES = 2 * 1024 * 1024
 # A source plus its JSON pin cannot be silently updated together. A different
 # source roster requires a separately reviewed mapping update in this reader.
-FROZEN_SOURCE_SET_SHA256 = "6b3a1654c722ecf1ce858feb2b5428b9736180138ee5bb4f5e3a01e96f47e583"
+# Current QROM mapping reviewed at 94ffff4f; BASE_COMMIT remains the retained
+# historical/literature baseline, not a new cryptographic qualification.
+FROZEN_SOURCE_SET_SHA256 = "3e860e3524b09aab299c515220d78ad84c1a62c751c7394a67184783c5d66574"
 SOURCE_SCOPE = "selected_route_inputs_not_full_repository_or_dependency_closure"
 ROUTE_IDS = ("risc0_poseidon2_fixed_v2", "plonky3_poseidon2_w1_r1",
              "plonky3_tagged_sha3_512_w1_r1")
