@@ -8,6 +8,21 @@ Formal performance claims require separately established resource isolation;
 shared-host timing remains diagnostic. Prior theory and native evidence are not
 new experiments in this continuation. Coordinator integration remains separate.
 
+## SP27-01 native credit observer continuation — 2026-11-11, HOLD
+
+Continue the exact SP27-01 observer `5e49c682d612c1237d00f2c89e225d3633ee5584`
+on the frozen publication baseline. The [native accounting experiment](../research/SP27_01_NATIVE_CREDIT_ACCOUNTING_20261111.md)
+connects legal same-kernel preparation histories to original Node admission,
+branch chainwork, canonical selection, reward maturity and reorganization.
+Retain all setup, misses, rejection controls, clean restarts, cancellation and
+unfinished attempts. New executions require their own source/binary manifests
+and machine consumer checks. The original 28,792-attempt archive remains
+unchanged and no historical timing is promoted to a performance result.
+Local telemetry consumption is not Agent 02/06 owner acknowledgment. Without
+a new significant security result, integrate the cost section into 02/06;
+shared catalog edits remain coordinator change requests. This research test
+changes no signing domain, consensus validation rule or activation flag.
+
 ## S&P 2027 publication continuation — 2026-11-10, HOLD
 
 Publication branch: `docs/chain-sp2027`, based on the current #876 delivery

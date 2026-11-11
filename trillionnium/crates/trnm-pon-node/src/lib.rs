@@ -1,5 +1,7 @@
 //! Experimental native composition; never imports Python or activates production.
 #![forbid(unsafe_code)]
+#[cfg(test)]
+mod sp27_cost_attribution_tests;
 mod ancestry_index;
 /// Explicit bounded native Cell replay; never installs a consensus work rule.
 pub mod cell_native_v1;
