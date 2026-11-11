@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Read-only root V2/V3 source and shared-hash inventory; never qualification.
+"""Read-only root V2-V5 source and shared-hash inventory; never qualification.
 
-This fixed review schema records five authority roles and declared source bytes.
+This fixed review schema records six authority roles and declared source bytes.
 It has no theorem verifier, query-to-error calculator, telemetry-to-adversary
 conversion, deployment authority, or promotion switch. Numeric adversary caps
 and failure bounds are deliberately unsupported. Local refusal limits remain
@@ -26,7 +26,7 @@ DEFAULT_MANIFEST = "config/pon/pq-root-dependency-register-v3.json"
 REVIEW_BASE = 'be5f047771e4d714726fec41abfa68231a06260b'
 MAX_BYTES = 1024 * 1024
 # Frozen after review of all declared files. No runtime regeneration is allowed.
-REVIEWED_SOURCE_SNAPSHOT_SHA256 = '54106449c9d83a4b2926429160c8fd340d8004a67502ddf7b1e932df655859f6'
+REVIEWED_SOURCE_SNAPSHOT_SHA256 = 'ac0cb401b9ef7111cd77085c3f817ecfe56bdc73fc5fd4206e2c3cc8f3767c52'
 
 PY = "formal/pon-nakamoto-v1/"
 POLICY = PY + "pq_root_recovery_policy_v1.py"
@@ -48,16 +48,21 @@ NATIVE_ANCHOR = NODE + "src/root_recovery_v3/anchor.rs"
 NATIVE_STORAGE = NODE + "src/root_recovery_v3/storage.rs"
 NATIVE_FLOOR = NODE + "src/root_recovery_v3/recovery_floor.rs"
 NATIVE_PROVIDER = NODE + "src/root_recovery_v3/effect_readback_v4.rs"
-ROLES = ("root-approval", "successor-possession", "anchor-writer",
-         "anchor-response", "effect-provider")
+NATIVE_WITNESS = NODE + "src/root_recovery_v3/witnessed_v5.rs"
+NATIVE_WITNESS_DURABLE = NODE + "src/root_recovery_v3/witnessed_v5/durable.rs"
+BASE_ROLES = ("root-approval", "successor-possession", "anchor-writer",
+              "anchor-response", "effect-provider")
+ROLES = BASE_ROLES + ("witness-response",)
 SUITES = ("ML-DSA-87", "SLH-DSA-SHA2-256s")
 ACTIONS = ("normal", "rotate", "revoke", "recover", "policy-change")
 ROLE_ACTIONS = {
     "root-approval": list(ACTIONS),
     "successor-possession": ["rotate", "recover", "policy-change"],
-    "anchor-writer": ["fresh-read", "compare-and-swap"],
+    "anchor-writer": ["fresh-read", "compare-and-swap", "v5-witness-fresh-read",
+                      "v5-witness-compare-and-swap"],
     "anchor-response": ["fresh-read", "compare-and-swap"],
     "effect-provider": ["fresh-outcome-readback-at-exact-orphan-epoch"],
+    "witness-response": ["v5-fresh-read", "v5-exact-successor-acknowledgement"],
 }
 DOMAINS = ("signature", "commitment", "proof", "ledger", "transport",
            "recovery", "release", "application")
@@ -115,7 +120,7 @@ EPOCH_SCOPE = {
 }
 
 ROLE_CONTRACT = {}
-for _role in ROLES:
+for _role in BASE_ROLES:
     _python_sources = [POLICY, SIGNATURES, BACKEND, BUDGET]
     if _role in ("anchor-writer", "anchor-response"):
         _python_sources.append(JOURNAL)
@@ -148,6 +153,32 @@ for _role in ROLES:
              NATIVE_OWNER, NATIVE_ANCHOR, NATIVE_STORAGE, NATIVE_FLOOR, NATIVE_PROVIDER],
             "historical-operation-fresh-readback-only-no-effect-entry")
 
+for _role in ROLES[:4]:
+    ROLE_CONTRACT[_role]["implementations"]["rust-v5-witnessed-owner"] = implementation(
+        [NATIVE_CRYPTO, NATIVE_ML_ADAPTER, NATIVE_CRYPTO_PROFILE, NATIVE_POLICY,
+         NATIVE_OWNER, NATIVE_ANCHOR, NATIVE_STORAGE, NATIVE_FLOOR, NATIVE_WITNESS],
+        "fresh-witness-and-exact-ack-required-under-original-budget-no-effect-entry")
+ROLE_CONTRACT["witness-response"] = {
+    "approval_policy": quorum(2),
+    "action_coverage": ROLE_ACTIONS["witness-response"],
+    "epoch_scope": copy.deepcopy(EPOCH_SCOPE),
+    "implementations": {
+        "rust-v5-witnessed-owner": implementation(
+            [NATIVE_CRYPTO, NATIVE_ML_ADAPTER, NATIVE_CRYPTO_PROFILE, NATIVE_OWNER,
+             NATIVE_WITNESS],
+            "complete-fresh-request-and-exact-head-bound-dual-quorum-receipt"),
+    },
+    "actual_lifetime_failure_bound": None,
+    "independent_custody_verified": False,
+}
+
+
+for _role in ("anchor-writer", "witness-response"):
+    ROLE_CONTRACT[_role]["implementations"]["rust-v5-durable-register"] = implementation(
+        [NATIVE_CRYPTO, NATIVE_ML_ADAPTER, NATIVE_CRYPTO_PROFILE, NATIVE_OWNER,
+         NATIVE_WITNESS, NATIVE_WITNESS_DURABLE],
+        "typed-v5-authenticated-sqlite-cas-durable-before-ack-live-session-retries-only-exact-external-reopen-pin-no-daemon")
+
 
 def hash_use(primitives, constructions, paths, roles):
     return {"primitive_ids": sorted(primitives), "constructions": list(constructions),
@@ -167,21 +198,21 @@ HASH_USES = {
     "python-policy-statement-operation-v1": hash_use(
         ("sha512",), ("domain-separated-complete-encodings",), (POLICY,), ROOT_ROLES),
     "python-public-key-identities-v2": hash_use(
-        ("sha512",), ("suite-and-canonical-SPKI-DER",), (SIGNATURES,), ROLES),
+        ("sha512",), ("suite-and-canonical-SPKI-DER",), (SIGNATURES,), BASE_ROLES),
     "python-statement-and-operation-v2": hash_use(
         ("sha512",), ("complete-statement", "witness-independent-operation-identity"),
         (SIGNATURES,), ROOT_ROLES),
     "python-verified-message-identity-v2": hash_use(
-        ("sha512",), ("complete-verified-message",), (SIGNATURES,), ROLES),
+        ("sha512",), ("complete-verified-message",), (SIGNATURES,), BASE_ROLES),
     "python-journal-state-scope-effect-v2": hash_use(
         ("sha512",), ("enrollment-event-state-chain", "owner-scope", "complete-effect-intent"),
-        (JOURNAL,), ROLES),
+        (JOURNAL,), BASE_ROLES),
     "python-anchor-request-v2": hash_use(
         ("sha512",), ("complete-fresh-request",), (JOURNAL,), ROLES[2:4]),
     "python-provider-request-v2": hash_use(
         ("sha512",), ("complete-request-and-orphan-epoch",), (PROVIDER,), (ROLES[4],)),
     "python-provider-executable-integrity": hash_use(
-        ("sha256",), ("trusted-local-executable-checksum",), (BACKEND,), ROLES),
+        ("sha256",), ("trusted-local-executable-checksum",), (BACKEND,), BASE_ROLES),
     "native-key-identities-v3": hash_use(
         ("sha512",), ("native-v3-suite-and-key-encoding",),
         (NATIVE_CRYPTO,), ROLES),
@@ -204,6 +235,12 @@ HASH_USES = {
         ("sha512",), ("native-v4-complete-provider-enrollment", "native-v4-complete-intent",
                       "native-v4-fresh-request-and-exact-orphan-epoch", "native-v4-retained-record-chain"),
         (NATIVE_PROVIDER,), (ROLES[4],)),
+    "native-fresh-witness-v5": hash_use(
+        ("sha512",), ("native-v5-complete-enrollment",
+                      "native-v5-restore-domain-epoch-and-witness-roster-binding",
+                      "native-v5-complete-fresh-read-or-exact-cas-request",
+                      "native-v5-request-digest-bound-witness-receipt"),
+        (NATIVE_WITNESS, NATIVE_WITNESS_DURABLE, NATIVE_OWNER), ("anchor-writer", "witness-response")),
 }
 
 PRIMITIVE_IDENTITIES = {
@@ -248,6 +285,9 @@ OPERATIONAL_CAPS = {
         "one-release-intent"),
     "native-retained-journal-events": refusal_cap(
         NATIVE_OWNER, "MAX_JOURNAL_EVENTS_V3", 128, "journal-events"),
+    "native-witness-database-bytes": refusal_cap(
+        NATIVE_WITNESS_DURABLE, "MAX_DATABASE_BYTES", 1048576, "bytes",
+        "one-typed-native-witness-register"),
     "native-verification-reservations": refusal_cap(
         NATIVE_CRYPTO, "MAX_VERIFICATIONS_V3", 4096, "verification-reservations",
         "one-shared-native-operation-budget"),
@@ -264,13 +304,15 @@ OPEN_OBLIGATIONS = {
         "shared-oracle-instantiation", "resource-and-query-transformations",
         "preprocessing-and-initial-advice", "implementation-refinement",
         "independent-custody", "independently-retained-fresh-anchor",
+        "independently-retained-witness-and-trusted-policy",
+        "witness-durable-cas-before-acknowledgement",
         "native-provider-and-effect-owner-integration", "real-external-effect-reconciliation",
     )
 }
 SOURCE_PATHS = sorted(set(
     (POLICY, SIGNATURES, JOURNAL, PROVIDER, BACKEND, BUDGET,
      NATIVE_CRYPTO, NATIVE_ML_ADAPTER, NATIVE_CRYPTO_PROFILE, NATIVE_POLICY, NATIVE_OWNER,
-     NATIVE_ANCHOR, NATIVE_STORAGE, NATIVE_FLOOR, NATIVE_PROVIDER,
+     NATIVE_ANCHOR, NATIVE_STORAGE, NATIVE_FLOOR, NATIVE_PROVIDER, NATIVE_WITNESS, NATIVE_WITNESS_DURABLE,
      CRYPTO + "src/pq_root_v3/tests.rs", CRYPTO + "tests/pq_root_v3_native.rs",
      RELEASE + "src/root_recovery_v3_tests.rs",
      NODE + "tests/root_recovery_v3_native.rs",
@@ -278,6 +320,8 @@ SOURCE_PATHS = sorted(set(
      NODE + "tests/recovery_floor_v4_native.rs",
      NODE + "tests/root_effect_readback_v4_native.rs",
      NODE + "tests/root_budget_v4_native.rs",
+     NODE + "tests/root_witness_v5_native.rs",
+     NODE + "tests/root_witness_v5_durable_native.rs",
      CRYPTO + "src/lib.rs", CRYPTO + "Cargo.toml",
      CRATES + "trnm-protocol/src/lib.rs", CRATES + "trnm-protocol/Cargo.toml",
      RELEASE + "src/lib.rs", RELEASE + "Cargo.toml",
@@ -304,6 +348,10 @@ FROZEN = {
         "native_m15_production_integration_complete": False,
         "native_recovery_floor": "caller-authenticated-pin-not-independent-custody-proof",
         "native_provider_readback": "v4-declarations-only-no-effect-dispatch",
+        "native_witness": "v5-client-and-typed-durable-register-component-no-daemon",
+        "native_witness_trust": "separately-provisioned-policy-and-surviving-durable-register-required",
+        "independent_common_restore_exclusion_proved": False,
+        "native_witness_durable_service_verified": False,
     },
     "roles": ROLE_CONTRACT,
     "hash_uses": HASH_USES,
@@ -364,6 +412,9 @@ def validate_manifest(data):
         "native_unwired_roles": ["effect-provider"],
         "native_unwired_role_scope": "effect-entry-and-production-owner-not-readback-code",
         "native_readback_candidate_roles": ["effect-provider"],
+        "native_witness_candidate_roles": ["witness-response"],
+        "independent_common_restore_exclusion_proved": False,
+        "native_witness_durable_service_verified": False,
         "hash_use_count": len(HASH_USES),
         "unknown_lifetime_query_budgets": sorted(PRIMITIVES),
         "unknown_role_lifetime_populations": list(ROLES),

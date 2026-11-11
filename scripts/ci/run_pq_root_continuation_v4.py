@@ -26,6 +26,7 @@ FLOOR = (
     'native_floor_v4_pending_target_needs_signed_replay_and_explicit_completion',
     'native_floor_v4_pending_bytes_do_not_become_authority_from_head_match',
     'native_floor_v4_fresh_anchor_authentication_remains_required',
+    'native_floor_v4_common_restore_contrast_stale_pin_accepts_surviving_pin_rejects',
     'native_floor_v4_invalid_pin_shapes_are_refused',
 )
 PROVIDER = (

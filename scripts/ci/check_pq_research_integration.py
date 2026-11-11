@@ -862,6 +862,27 @@ NATIVE_FALSE = frozenset((
     "physical_rollback_resistant",
 ))
 
+# New security observations require explicit source inventory entries even
+# where their filenames are outside the automatically scanned PQ namespace.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "scripts/ci/check_consensus_roster.py",
+    "scripts/ci/test_consensus_roster.py",
+    "scripts/ci/run_pq_root_witness_v5.py",
+    "scripts/ci/test_run_pq_root_witness_v5.py",
+    "scripts/ci/ci_observation.py",
+    "scripts/ci/test_ci_observation_process.py",
+    "formal/pon-nakamoto-v1/bounded_process.py",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs",
+    "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_native.rs",
+    "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_durable_native.rs",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/durable.rs",
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_distinct_invalid_work.rs",
+    "docs/security/ROOT_WITNESS_V5.md",
+    "evidence/pon-w1-lifetime-current-20261111/README.md",
+    "evidence/pon-w1-lifetime-current-20261111/project-input.json",
+    "evidence/pon-w1-lifetime-current-20261111/project-report.json",
+))
+
 # V4 continuation inputs are mandatory source dependencies, not proof of
 # independently deployed custody, external effects or algorithm migration.
 NATIVE_REQUIRED_PATHS |= frozenset((

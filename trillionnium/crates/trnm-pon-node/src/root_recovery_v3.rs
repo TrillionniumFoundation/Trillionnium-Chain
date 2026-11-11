@@ -26,6 +26,7 @@ mod recovery_floor;
 pub use recovery_floor::RecoveryFloorV4;
 pub mod effect_readback_v4;
 mod storage;
+pub mod witnessed_v5;
 use anchor::AnchorClientV3;
 pub use anchor::{
     AnchorEnvelopeV3, AnchorOutcomeV3, AnchorReceiptV3, AnchorRequestV3, RootAnchorTransportV3,
@@ -656,7 +657,23 @@ impl RootOwnerV3 {
         now_unix: u64,
         budget: &mut OwnerBudgetV3,
     ) -> RootOwnerResultV3<CommittedRootOperationV3> {
-        let result = self.apply_inner(envelope, now_unix, budget);
+        // V3 deliberately retains its original single-anchor research contract.
+        // The strict V5 owner supplies an independent commit acknowledgement.
+        self.apply_with_commit_ack(envelope, now_unix, budget, |_, _, _| Ok(()))
+    }
+
+    fn apply_with_commit_ack(
+        &mut self,
+        envelope: &RootEnvelopeV3,
+        now_unix: u64,
+        budget: &mut OwnerBudgetV3,
+        acknowledge: impl FnOnce(
+            JournalHeadV3,
+            JournalHeadV3,
+            &mut OwnerBudgetV3,
+        ) -> RootOwnerResultV3<()>,
+    ) -> RootOwnerResultV3<CommittedRootOperationV3> {
+        let result = self.apply_inner(envelope, now_unix, budget, acknowledge);
         if result.is_err() {
             self.fenced = true;
         }
@@ -668,6 +685,11 @@ impl RootOwnerV3 {
         envelope: &RootEnvelopeV3,
         now_unix: u64,
         budget: &mut OwnerBudgetV3,
+        acknowledge: impl FnOnce(
+            JournalHeadV3,
+            JournalHeadV3,
+            &mut OwnerBudgetV3,
+        ) -> RootOwnerResultV3<()>,
     ) -> RootOwnerResultV3<CommittedRootOperationV3> {
         self.healthy(budget)?;
         let raw = envelope.encode().map_err(map_error)?;
@@ -715,6 +737,11 @@ impl RootOwnerV3 {
         // No error path deletes this reservation or signs a replacement request.
         self.anchor.advance(event.previous, event.head, budget)?;
         self.store.check_identity()?;
+        let original_budget = budget.identity.clone();
+        let acknowledged = acknowledge(event.previous, event.head, budget);
+        budget.check_identity(&original_budget)?;
+        acknowledged?;
+        self.store.check_identity()?;
         self.finish(&event, budget)?;
         budget.check()?;
         Ok(CommittedRootOperationV3 {
@@ -759,6 +786,47 @@ impl RootOwnerV3 {
                 .pending
                 .ok_or_else(|| rejected("ROOT_OWNER_NO_PENDING"))?;
             self.check_anchor(pending.head, budget)?;
+            self.finish(&pending, budget)?;
+            budget.check()?;
+            Ok(pending.head)
+        })();
+        if result.is_err() {
+            self.fenced = true;
+        }
+        result
+    }
+
+    /// Strict adapters may complete only after their additional authority has
+    /// acknowledged this exact pending transition. Authenticate the complete
+    /// pending bytes before that callback can advance any external state.
+    fn resume_pending_with_commit_ack(
+        &mut self,
+        budget: &mut OwnerBudgetV3,
+        acknowledge: impl FnOnce(
+            JournalHeadV3,
+            JournalHeadV3,
+            &mut OwnerBudgetV3,
+        ) -> RootOwnerResultV3<()>,
+    ) -> RootOwnerResultV3<JournalHeadV3> {
+        let result = (|| {
+            let mut loaded = self.load(budget)?;
+            let pending = loaded
+                .pending
+                .take()
+                .ok_or_else(|| rejected("ROOT_OWNER_NO_PENDING"))?;
+            Self::replay_event(
+                &self.enrollment,
+                &mut loaded.state,
+                &mut loaded.head,
+                &pending,
+                budget,
+            )?;
+            self.check_anchor(pending.head, budget)?;
+            let original_budget = budget.identity.clone();
+            let acknowledged = acknowledge(pending.previous, pending.head, budget);
+            budget.check_identity(&original_budget)?;
+            acknowledged?;
+            self.store.check_identity()?;
             self.finish(&pending, budget)?;
             budget.check()?;
             Ok(pending.head)

@@ -436,6 +436,42 @@ class CorpusGateTests(unittest.TestCase):
         self.save()
         self.assertFalse(check(self.root)['cryptographic_acceptance'])
 
+    def test_witness_v5_component_sources_cannot_be_omitted_or_changed(self):
+        # Independent names ensure these newly introduced sources remain
+        # mandatory even if both a manifest requirement and its pin disappear.
+        paths = (
+            "scripts/ci/run_pq_root_witness_v5.py",
+            "scripts/ci/test_run_pq_root_witness_v5.py",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/durable.rs",
+            "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_native.rs",
+            "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_durable_native.rs",
+        )
+        original = copy.deepcopy(self.manifest)
+        for name in paths:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+            self.manifest = copy.deepcopy(original)
+            self.save()
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b" changed witness component")
+                with self.subTest(path=name, mutation=True), self.assertRaisesRegex(
+                        IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        self.assertFalse(check(self.root)["cryptographic_acceptance"])
+
     def test_runtime_verifier_dependency_file_and_pin_cannot_both_be_dropped(self):
         # Keep this real dependency named independently of the checker's set.
         name = 'scripts/ci/runtime-release-requirements.txt'

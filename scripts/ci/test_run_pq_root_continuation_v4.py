@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Synthetic runner controls; no native execution is implied by these tests."""
 import unittest
+import re
+from pathlib import Path
 from unittest.mock import patch
 
 import run_pq_root_continuation_v4 as runner
@@ -19,6 +21,14 @@ class ContinuationRunnerControls(unittest.TestCase):
             self.assertIn("--test-threads=1", argv)
             self.assertNotIn("--ignored", argv)
             self.assertTrue(required)
+
+    def test_floor_roster_covers_every_native_rust_test_in_source(self):
+        source = (Path(__file__).resolve().parents[2] /
+                  "trillionnium/crates/trnm-pon-node/tests/recovery_floor_v4_native.rs").read_text()
+        rust_tests = re.findall(r"(?m)^#\[test\]\s*\nfn ([A-Za-z_]\w*)\s*\(", source)
+        self.assertTrue(rust_tests)
+        self.assertEqual(len(rust_tests), len(set(rust_tests)))
+        self.assertEqual(set(rust_tests), set(runner.FLOOR))
 
     def test_empty_or_duplicate_test_inventories_fail_before_execution(self):
         for name in ("FLOOR", "PROVIDER", "CALLBACK_BUDGET"):
