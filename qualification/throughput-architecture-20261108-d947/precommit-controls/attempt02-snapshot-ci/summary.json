@@ -1,0 +1,77 @@
+{
+  "scope": "candidate snapshot and CI controls; no native throughput qualification",
+  "base": "7e044b65454f4c9ea505591727332acffb33e7e5",
+  "cargo": "/home/qian-qi/.cargo/bin/cargo",
+  "results": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_ns": 165245589
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_stateful_tail_snapshot.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "wall_ns": 1268659053
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_ci_contract.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "wall_ns": 71599781527
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_ci_source_integrity.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "wall_ns": 5328084186
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 0,
+      "wall_ns": 45675852585
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_ns": 64918888
+    }
+  ]
+}

@@ -10106,3 +10106,118 @@ implementation review remain required. Keep production activation, FinalUse
 and whole-chain PQ qualifications false and all seven requested gates at
 HOLD / NO-GO until their own complete, same-source evidence passes. Historical
 successes and failures retain their exact original source identities.
+
+### 2026-11-08 data, ordering and deterministic execution continuation
+
+Continue from the same unified source `7e044b65454f4c9ea505591727332acffb33e7e5`.
+The updated
+[architecture comparison contract](../protocol/pon-nakamoto-v1/details/ARCHITECTURE_COMPARISON_V1.md#2026-11-08-implementation-order-and-decision-gates)
+keeps the order explicit: improve existing data/ordering boundaries, bounded
+batch operations and deterministic execution; measure the complete native path
+under the original aggregate resource contract; consider a full NG, Prism or
+GHOSTDAG successor only when propagation/ordering/fork loss is demonstrated to
+dominate. Existing M06 parallel preparation, canonical conflict replay, History
+batching and the withdrawn mixed-sender experiment are preserved.
+
+The primary-source comparison now states the original Bitcoin-NG one-quarter
+adversarial mining-power premise, Prism's shared winning-hash role sortition,
+GHOSTDAG's rate/delay-dependent parameterization, the committee assumptions of
+Narwhal/Tusk and Mysticeti, v2's validated transaction-vote integration and
+Block-STM's preset-order execution scope. The IEEE S&P 2026 round-jumping
+counterexample and the 2026-11-03 Starfish revision add concrete dependency,
+catch-up and dissemination fault obligations. They do not identify a measured
+winner for this project or qualify a production implementation.
+
+Preserve exact byte/state/receipt/root/error equivalence, one durable writer,
+current authority at commit, joined bounded workers, stable operation IDs and
+all failures. The CPU/memory/PID contract covers every worker in aggregate.
+Separate completed-only latency from full-population censored tails and retain
+unknown/unstarted outcomes in the planned population. Overlapping stage
+intervals are not additive bottleneck costs. No source check or microbenchmark
+may replace original four-second/six-depth/quarter-CPU hostile service, History,
+cold recovery or independent WAN observations.
+
+Work-cost, legal preparation reuse, probability and joint-state bounds, native
+time/DAA/credit, and whole-chain PQ composition continue as independent proof
+and implementation gates. Later drafts are not presumed ancestors of this
+candidate. The separately described useful-computation application service
+requires a declared security model and reviewed migration; it adds no automatic
+fallback or authority. All current HOLD, production and FinalUse flags remain.
+
+The finite `stateful_tail.make_optimal_tail` factory now captures a private
+immutable model before constructing its Bellman cache. The original frozen
+dataclass still held mutable caller mappings: replacing an action after an
+initial query could mix a cached probability of zero with an uncached
+probability of one. Existing static reports did not mutate their model, so this
+is not a retraction of those reports or a new W1 security result. A query now
+keeps construction-time semantics; a changed model requires a new query, and
+the caller must keep the model stable during construction.
+
+Seven new controls cover cached and uncached queries, state-set changes,
+mutable action/outcome sequences, detached record aliases, invalid laws and the
+unchanged complete historical report. The 6,156 dynamic-program cases, 324
+binomial comparisons, report digest and all seven original HOLD flags are
+preserved. The additive test command is required once in repository-truth
+alongside the original report, under the existing CI contract.
+
+The native PQ executor now borrows a private complete checked configuration for
+one entry call. Every public preparation, validation, application and decoding
+entry still checks its current configuration; the value is never retained in a
+prepared command or used as account authority. For the actual AccountsV2
+fixture, instrumentation reduces complete configuration digests in N-transaction
+block validation from 2N + 3 to 1, single/dual signature preparation from 4/6 to
+2/3, current-authority validation from 4 to 1, and prepared-command application
+from 3 to 1. These counts are scoped call observations, not a universal profile
+bound or an original-budget throughput result. The existing atomic charge still
+runs before each real signature verification, including invalid signatures.
+Fresh configuration, rotated authority, late invalid input, complete parent
+grammar, canonical errors, state/receipt/root equality for 1/2/4/8 workers and
+cancellation joins remain explicit controls.
+
+The fullpath collector now invokes the existing exact-head raw-byte verifier
+before requesting native context and again only after process ownership is
+settled. Hidden Git index flags and clean filters cannot substitute a clean
+porcelain report for actual tracked bytes. Failed initial audits do not launch
+the context or invent a frozen schedule; failed closing audits preserve all
+frozen attempts, and unresolved ownership leaves closing evidence unavailable.
+Separate trnm-native-fullpath-raw-source-audit-v1 and
+trnm-native-fullpath-raw-source-binding-v1 sidecars retain source snapshots and
+hash their relationship to context, preregistration and process observations.
+Existing context/process v1 schemas remain intact. These receipts are not
+execution attestation, reproducible binary provenance or resource acceptance.
+
+The [continuation evidence](../../qualification/throughput-architecture-20261108-d947/README.md)
+separates component controls, combined exact-source checks and original-host
+readiness. The observed desktop had no /sys/fs/cgroup/trnmponpublic.slice;
+no original-budget native campaign ran under that absence. Keep the original
+0.25 CPU, 2 GiB, zero-swap, 256-PID, four-second and sixteen-hostile contract.
+Refresh only the five changed current corpus blob pins; preserve all historical
+source inputs, upstream heads, required-path membership and false claim flags.
+
+#### Current-source lifetime survey follow-up
+
+The first combined-source run at 18ad3b752b22513901242737be20141137f41961
+passed the snapshot, fullpath, CI-contract and raw-source negative controls,
+with matching before/after tracked-byte receipts. Its all-feature Rust tests
+and Clippy failed at the OpenSSL ML-DSA seed API; the separately observed build
+output selected the system 3.0 headers. The unchanged repository prerequisite
+is the pinned static 3.5.9 provider. Retain that failed lane and use explicitly
+verified provider bytes plus fresh positive/negative smoke for a new full lane.
+An earlier Python controller hit its accidental sixty-second outer timeout;
+the complete recorded recovery changes no original four-second native gate.
+
+The hosted W1 closure guard also rejected a stale independent source-survey
+pin for the changed PQ executor. Reviewing all twenty selected inputs found
+one additional store.rs pin already stale in the unified 7e044 baseline.
+Refresh these two raw SHA-256 values and the survey's native-input snapshot
+to 18ad3b, after checking the current proof verification, required-work credit
+and per-signature charging anchors. Preserve the dated 2026-11-07 report.
+
+The [fresh current-source survey](../../evidence/pon-w1-lifetime-20261108/current-source-18ad3b-report.json)
+changes only selected_source_survey relative to that historical report.
+Inputs, ledger arithmetic, counterexamples, resource bounds and false security
+qualifications are unchanged. The closure workflow compares against the new
+dated report. This is a reviewed static source survey, not a new execution,
+quantum-work, clock or security certificate. Current corpus pin membership and
+the native inventory remain unchanged; the plan's current blob pin follows
+this continuation. All qualification and activation gates remain HOLD.

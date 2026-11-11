@@ -1,0 +1,22 @@
+{
+  "schema": "chain-throughput-host-readiness-observation-v1",
+  "host": "desktop",
+  "root_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+  "parent_exists": false,
+  "resource_contract": {
+    "cpu_cores": "0.25",
+    "memory_bytes": 2147483648,
+    "swap_bytes": 0,
+    "pids": 256,
+    "deadline_seconds": 4,
+    "hostile_workers": 16
+  },
+  "native_campaign_executed": false,
+  "limits_are_requested_not_qualification": true,
+  "cargo": "/home/qian-qi/.cargo/bin/cargo",
+  "load_average": [
+    20.37255859375,
+    14.298828125,
+    11.61279296875
+  ]
+}

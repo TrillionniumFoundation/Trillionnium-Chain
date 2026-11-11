@@ -157,6 +157,7 @@ NATIVE_OWNER_JOURNAL = ('    cargo test --offline --locked --manifest-path trill
 NATIVE_RISK_LEDGER = '    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_risk_ledger\n    "$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_risk_ledger_v1")" "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger"\n    NATIVE_RISK_LEDGER_RUN="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/run.json" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p \'test_native_risk_ledger.py\' -v\n    python3 formal/pon-nakamoto-v1/native_risk_ledger.py --run "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/run.json" --output "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/checked.json"\n'
 WORK_NATIVE_MODEL_COMMANDS = (
     'python3 formal/pon-nakamoto-v1/stateful_tail.py',
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_stateful_tail_snapshot.py' -v",
     'python3 formal/pon-nakamoto-v1/residual_grover.py',
     "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_fork_witness.py' -v",
     "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_execution_certificate.py' -v",
@@ -598,6 +599,7 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     # Conditional resource/event models retain unknown W1 hardware and protocol gates.
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v
     python3 formal/pon-nakamoto-v1/stateful_tail.py
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_stateful_tail_snapshot.py' -v
     python3 formal/pon-nakamoto-v1/residual_grover.py
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_fork_witness.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_execution_certificate.py' -v
