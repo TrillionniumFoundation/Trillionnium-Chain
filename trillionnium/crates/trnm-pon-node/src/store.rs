@@ -6677,7 +6677,7 @@ impl Node {
     pub fn check_observed_history(&self, tip: Hash, observed_now: u64) -> Result<()> {
         self.check_observed_history_with_progress(tip, observed_now, &mut || Ok(()))
     }
-    fn check_observed_history_with_progress(
+    pub(crate) fn check_observed_history_with_progress(
         &self,
         tip: Hash,
         observed_now: u64,

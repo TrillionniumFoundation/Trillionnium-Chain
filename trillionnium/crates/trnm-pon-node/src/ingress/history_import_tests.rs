@@ -1082,6 +1082,7 @@ fn shared_admission_owner_wait_observes_control_deadline_and_original_two_second
                     held: &trnm_mvcc_fee::pon_executor::ExecutionControl::new(&check, &()),
                     detached_progress: &check,
                     before_writer: &|| Ok(()),
+                    activation_parent: None,
                 },
                 || Ok(clock),
                 None,

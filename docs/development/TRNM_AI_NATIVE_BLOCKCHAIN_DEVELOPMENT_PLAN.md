@@ -11837,3 +11837,47 @@ changed current-source corpus entries. All four original proposition flags
 remain unproved, all authority stays false, and demand, independent full-cost
 benefit and all-legal-strategy hardness remain open. Existing acceptance
 contracts and production activation are unchanged.
+
+### 2026-11-11 — Compose W1 accounting, local adoption and current Node admission
+
+Compose the exact #895 budget source `11e242dbaaae14a9d16282fe8deaf36827e98395`,
+#847 account-boundary continuation `2419777413e44314a4e9e693e81e03bb7590800f`,
+#897 local adoption source `376d82bdeab3b98ebeed92952dfadbbba1eae585`, and
+#860 W1 content-accounting bridge `6ab14e5f3cb642e685196a52942d9235eff2f4a0`
+through ordinary merges in an isolated child of the existing integration
+candidate. Keep both plan continuations, all required source paths and CI
+commands, historical fixtures, original failed observations and explicit false
+qualification flags. Earlier component runs keep their original source identities;
+their results do not qualify this new composition.
+
+For ordinary Submit, complete the original W1 relation verification before
+reading the parent's full observed-time ancestry. Check that ancestry under the
+newly observed clock before application preparation/execution and again after
+detached execution has reacquired the writer, before block persistence.
+Preserve the original cancellation, deadline, paid CPU account, worker charges
+and post-admission activation checks. A clock rollback after detached execution
+can still incur application cost; the new fence prevents its block commit.
+Existing exact-packet retries retain their original observed-activation path.
+History import keeps its historical-validity contract and does not acquire an
+ordinary-Submit activation requirement. The extra read remains O(history depth);
+this change makes no service-amplification or throughput claim.
+
+Retain an actual test-only old-production subject and its original failed
+observation. Then freeze the complete repaired source and execute the same
+regression plus the affected retained suites, the W1 V1/V2 accounting controls,
+local adoption controls, exact locked Cargo graphs, formatting, strict Clippy,
+source-integrity mutations and original CI/repository inspectors. Source-binding
+successors require their own identities, particularly examples that embed the
+source inventory and corpus. Keep absent or interrupted observations distinct
+from successful native executions.
+
+The five propositions remain separate: complete W1 relation verification,
+all-legal-strategy work cost, independent future-task full-cost model benefit,
+legitimate local adoption, and ordinary subsequent-task FinalUse. Content
+commitments, a local selection decision and a passing mechanism test do not
+supply the other propositions. HEPLCP04 remains outside the existing Chain
+reader contract until its own exact owner and signature integration is reviewed.
+Independent demand, cost/security bounds, ordinary learning/evaluation owners,
+actual future-task consumption and original public business acceptance remain
+open. No production, payment, consensus-rule, Root, node-code or FinalUse
+authority is granted by this composition.

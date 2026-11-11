@@ -425,6 +425,7 @@ fn admit_packet(
                         held: &execution,
                         detached_progress: &detached_progress,
                         before_writer: &|| progress.history_prepare_writer(&|| control.check()),
+                        activation_parent: None,
                     },
                     || Ok(clock),
                     observation,

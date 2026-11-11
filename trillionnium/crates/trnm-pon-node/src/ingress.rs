@@ -1297,6 +1297,10 @@ struct SubmitDispatchContext<'a> {
 #[path = "ingress/execution_observation.rs"]
 mod execution_observation;
 
+#[cfg(test)]
+#[path = "ingress/submit_activation_history_tests.rs"]
+mod submit_activation_history_tests;
+
 fn observe_submit_phase<T>(
     observation: Option<&public_v3::request_observation::TaskObservation>,
     phase: public_v3::SubmitPhase,
@@ -1322,6 +1326,31 @@ struct SharedAdmissionExecution<'a, 'b> {
     // Selected only after successful detached execution has joined workers,
     // before acquiring the writer. Held/fallback paths never call this.
     before_writer: &'a (dyn Fn() -> Result<()> + Sync),
+    // Submit requests activation under its current clock. History import keeps
+    // its separate historical-validity contract and passes None.
+    activation_parent: Option<Hash>,
+}
+
+impl SharedAdmissionExecution<'_, '_> {
+    fn check_activation_parent(
+        &self,
+        owner: &Node,
+        observed_now: u64,
+        progress: &mut dyn FnMut(u64) -> Result<()>,
+    ) -> Result<()> {
+        if let Some(parent) = self.activation_parent {
+            // Complete W1 has already succeeded. Keep the original held CPU,
+            // cancellation and deadline owner through this O(history) read.
+            // No rejected or cheap-prechecked proof can invoke this scan.
+            owner.check_observed_history_with_progress(parent, observed_now, &mut || {
+                progress(0)?;
+                (self.held.progress)(
+                    trnm_mvcc_fee::pon_executor::ExecutionProgress::BeforeHeaderContext,
+                )
+            })?;
+        }
+        Ok(())
+    }
 }
 
 fn admit_shared_checked<'a>(
@@ -1369,6 +1398,7 @@ fn admit_shared_checked<'a>(
         })?;
     observe_submit_phase(observation, SubmitPhase::Admission, || {
         let observed_now = clock()?;
+        execution.check_activation_parent(&owner, observed_now, progress)?;
         let checked = owner.attach_owner_work(checked, permit)?;
         let Some(lease) = lease else {
             let id = execution_observation::run(
@@ -1430,6 +1460,7 @@ fn admit_shared_checked<'a>(
                     })?;
                 let observed_now = clock()?;
                 let id = observe_submit_phase(observation, SubmitPhase::Commit, || {
+                    execution.check_activation_parent(&owner, observed_now, progress)?;
                     owner.commit_shared_admission(executed, observed_now, control)
                 })?;
                 Ok((owner, id, observed_now))
@@ -1486,6 +1517,7 @@ fn dispatch_shared_submit_with_execution_observation(
         ..
     } = context;
     let packet = observe_submit_phase(observation, SubmitPhase::Decode, decode)?;
+    let activation_parent = packet.header.parent;
     let owner_permit = {
         let mut owner = observe_submit_phase(observation, SubmitPhase::ContextOwnerWait, || {
             lock_owner(node, progress)
@@ -1551,6 +1583,7 @@ fn dispatch_shared_submit_with_execution_observation(
             // Public submit retains its existing progress checks below; only
             // History supplies the original-account writer preparation wait.
             before_writer: &|| Ok(()),
+            activation_parent: Some(activation_parent),
         },
         now,
         observation,
