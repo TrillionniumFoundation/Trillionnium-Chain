@@ -16,6 +16,33 @@ Run locally:
 
     python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
 
+## Negative controls: independence and nonce freshness
+
+Two adversarial tests in `test_pq_external_rollback_oracle.py` are deliberately
+**accepted counterexamples under violated assumptions**, not positive security
+qualifications:
+
+1. **Co-restored witness**: after the actual witness advances to sequence 2, an
+   old internally consistent node at sequence 1 is rejected by that surviving
+   witness. A separately reconstructed witness with the same fixture identity,
+   key and old sequence 1 head answers a *new* verifier challenge and the old
+   node passes `authorize_restore`. A fresh nonce alone cannot recover the
+   missing outside-rollback state. Any production deployment must prove
+   independent durable witness authority, key custody, backup administration,
+   and an authenticated latest lower bound not controlled by the restore actor.
+2. **Replayed verifier challenge**: after the witness advances, the old HMAC
+   receipt still verifies when the verifier reuses the captured challenge.
+   Only an independently generated, nonrepeating challenge, a current remote
+   observation, and a separately pinned witness key can meet the *stated*
+   reference preconditions. This local function is stateless: it cannot prove
+   the origin/freshness of a caller-supplied challenge or network response.
+
+These tests run without an independent machine, PQ signature authority,
+production RPC, durable external journal, recovery execution, or a cold restart;
+they prove neither deployed safety nor a quantum failure bound. They retain
+**HOLD / NO-GO** and do not change executable consensus, production permissions,
+effects or admission thresholds.
+
 ## Unclosed conditions
 
 Production still requires: a truly independent durable monotonic root with fault-resistant persistence and authenticated (PQ-appropriate) challenge-response; authenticated current witness identity/rotation/revocation; exactly-once external publication/ack before effects, crash cutover and atomicity policy, reorg/side-effect compensation, node bootstrap and historical migrations, cross-process tests that restore the **entire** DB and replay external receipts, independent adversarial review and out-of-band recovery governance.
