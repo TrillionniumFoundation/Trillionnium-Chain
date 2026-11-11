@@ -1,0 +1,19 @@
+{
+  "id": "rust-baseline",
+  "argv": [
+    "bash",
+    "scripts/ci/ci_job.sh",
+    "rust-baseline"
+  ],
+  "returncode": 1,
+  "launch_error": null,
+  "elapsed_seconds": 745.0452695019999,
+  "finished_utc": "2026-11-11T01:15:26.768294+00:00",
+  "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_status_after": "",
+  "stdout_sha256": "f49ff3d78b9ad220af40462743e4d31e615e869e32bd35686cc3ce30d15d721b",
+  "stderr_sha256": "63164cd220af9e4d47cee46276506b9a4110c2527e2b00d37840116fa322db9b",
+  "pass": false,
+  "qualification_granted": false
+}

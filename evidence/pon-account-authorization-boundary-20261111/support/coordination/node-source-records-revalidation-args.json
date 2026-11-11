@@ -1,0 +1,10 @@
+{
+  "host": "desktop",
+  "executable": "/usr/bin/python3",
+  "args": [
+    "-"
+  ],
+  "stdin": "import json,subprocess,os,time\nfrom pathlib import Path\nrepo=Path('/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final')\nrecords=Path('/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89')\nout={'utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'source_head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip(),'source_status':subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],cwd=repo,text=True),'old_target_exists':Path('/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final-target').exists(),'record_files':{},'disks':[]}\nfor n in ['node-retained-preflight','node-retained-all-targets','node-retained-source-after']:\n p=records/n;out['record_files'][n]=([{'name':v.name,'bytes':v.stat().st_size} for v in sorted(p.iterdir())] if p.exists() else None)\nfor n in ['/home/qian-qi','/data','/dev/shm']:\n s=os.statvfs(n);out['disks'].append({'path':n,'device':os.stat(n).st_dev,'available':s.f_bavail*s.f_frsize})\nprint(json.dumps(out,indent=2))\n",
+  "cwd": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final",
+  "idempotency_key": "pq-a418-node-source-records-after-external-target-loss-1"
+}

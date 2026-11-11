@@ -1,0 +1,19 @@
+{
+  "id": "repository-truth",
+  "argv": [
+    "bash",
+    "scripts/ci/ci_job.sh",
+    "repository-truth"
+  ],
+  "returncode": 1,
+  "launch_error": null,
+  "elapsed_seconds": 1580.3394632210006,
+  "finished_utc": "2026-11-11T01:29:34.888054+00:00",
+  "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_status_after": "",
+  "stdout_sha256": "3e451e7a1b86eb9ae75cc17f384154f5ef625853244b64a680e3ab0fd3926aee",
+  "stderr_sha256": "5ffd95d773fc907588bd9b91b1be9526523e2bec381e198555fe41a8e2d142d6",
+  "pass": false,
+  "qualification_granted": false
+}

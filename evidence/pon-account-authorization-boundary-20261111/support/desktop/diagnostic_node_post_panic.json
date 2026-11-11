@@ -1,0 +1,629 @@
+{
+  "actions": {
+    "budgets_or_thresholds_modified": false,
+    "cargo_invoked": false,
+    "environment_modified": false,
+    "files_created": [
+      "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_node_post_panic.md",
+      "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_node_post_panic.json"
+    ],
+    "local_checks": "Read, hash, JSON parse and exact consistency comparisons only; not a native validation run",
+    "native_jobs_started": false,
+    "new_optimization_proposed": false,
+    "predecessor_bytes_modified": false,
+    "raw_bytes_modified": false,
+    "source_modified": false,
+    "tests_rerun": false
+  },
+  "actual_failures": [
+    {
+      "error": "IO: Resource temporarily unavailable (os error 11)",
+      "limits": "No lower-level socket stage or root cause is identified by this retained error. Subsequent Resume success assertions did not execute.",
+      "observed_boundary": "cold Resume success assertion",
+      "panic_source": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs:209:5",
+      "stdout_lines": [
+        1446,
+        1449
+      ],
+      "test": "ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_lost_ack_and_cold_resume_reuse_exact_wire_without_history_consuming_sequence"
+    },
+    {
+      "error": "PUBLIC_CLIENT_DEADLINE",
+      "limits": "The original ten-second campaign includes cold reopen and Resume; it is not renewed. This message does not identify which constituent operation consumed the time or attribute incremental guard cost.",
+      "observed_boundary": "cold Resume success assertion",
+      "panic_source": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs:130:5",
+      "stdout_lines": [
+        1451,
+        1454
+      ],
+      "test": "ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_plain_parent_recovery_and_cold_membership_keep_one_original_campaign"
+    },
+    {
+      "active_state_unchanged_on_refusal": true,
+      "authenticated_backend": false,
+      "error": "PUBLIC_MUTATION_CPU_BUDGET",
+      "error_code": "PublicMutationCpuBudget",
+      "error_kind": "Capacity",
+      "limits": "The authenticated iteration later in this same loop was not reached. Active-state readback is limited to this observed refusal, not a general assertion that every failed operation leaves every persisted byte unchanged.",
+      "observed_boundary": "first legacy-backend iteration, original metered native result unwrap",
+      "panic_source": "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs:1058:31",
+      "stdout_lines": [
+        1456,
+        1462
+      ],
+      "test": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner"
+    },
+    {
+      "cleanup": {
+        "child_cleanup_error": null,
+        "child_exit_observed": true,
+        "child_exit_success": true,
+        "cleanup_complete": true,
+        "primary_error_preserved": true,
+        "worker_cleanup_error": null,
+        "worker_join_observed": true
+      },
+      "error": "IO: Connection reset by peer (os error 104)",
+      "error_code": null,
+      "error_kind": "Transport",
+      "limits": "Later successful-submit, replay and independent-process-restart assertions were not reached. Cleanup completion preserves the error, does not prove that the failed send had no earlier effects, and does not locate an ingress/commit/witness phase.",
+      "observed_boundary": "first send result unwrap",
+      "panic_source": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:586:6",
+      "stdout_lines": [
+        1464,
+        1468
+      ],
+      "test": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart"
+    }
+  ],
+  "captured_diagnostics": {
+    "arithmetic_counters_limit": "Zero arithmetic-stage counters on this legacy backend neither prove no work nor measure the incremental guard contribution. Original host/all-honest-service qualification booleans remain false.",
+    "large_parent_balance_check": {
+      "arithmetic_verified": true,
+      "credited_refill_ns": 700213267,
+      "guard_cpu_attribution_established": false,
+      "initial_credit_ns": 2000000000,
+      "paid_cpu_debit_ns": 2728308769,
+      "remaining_paid_credit_ns": -28095502
+    },
+    "large_parent_original_dispatch": {
+      "active_state_unchanged_on_refusal": true,
+      "actual_cpu_flow_after": {
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 700213267,
+        "discarded_refill_ns": 18405456,
+        "initial_credit_ns": 2000000000,
+        "live_debited_cpu_ns": 2728161652,
+        "live_owners": 0,
+        "paid_cpu_debit_ns": 2728308769,
+        "remaining_paid_credit_ns": -28095502,
+        "schema": "public-v3-local-actual-cpu-flow-v1",
+        "settled_full_cpu_ns": 2728308769,
+        "settlement_discard_ns": 0,
+        "settlement_residual_cpu_ns": 147117,
+        "stored_credit_ns": -28095502,
+        "unsettled_known_live_cpu_ns": 0
+      },
+      "actual_cpu_flow_before": {
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 0,
+        "discarded_refill_ns": 0,
+        "initial_credit_ns": 2000000000,
+        "live_debited_cpu_ns": 0,
+        "live_owners": 0,
+        "paid_cpu_debit_ns": 0,
+        "remaining_paid_credit_ns": 2000000000,
+        "schema": "public-v3-local-actual-cpu-flow-v1",
+        "settled_full_cpu_ns": 0,
+        "settlement_discard_ns": 0,
+        "settlement_residual_cpu_ns": 0,
+        "stored_credit_ns": 2000000000,
+        "unsettled_known_live_cpu_ns": 0
+      },
+      "authenticated_backend": false,
+      "complete_key_utf8_and_canonical_value_bytes": 8625548,
+      "cpu_budget_after": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": -28095502,
+        "worker_limit": 2
+      },
+      "cpu_budget_before": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 2000000000,
+        "worker_limit": 2
+      },
+      "dispatch_elapsed_ns": "2871025464",
+      "measurement_scope": "actual original metered dispatch; observation after outcome, no alternative execution, refill or altered acceptance",
+      "observed_held_capacity_lower_bound_bytes": 8391103,
+      "original_dispatch_result": {
+        "Ok": "ok"
+      },
+      "original_native_result": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "refusal_readback_error": null,
+      "refusal_readback_scope": "read-only observation after original native outcome and CPU settlement; neither result is changed",
+      "schema": "native-large-parent-original-dispatch-diagnostic-v1"
+    },
+    "large_parent_original_json_lines": [
+      {
+        "line": 1457,
+        "line_sha256_including_lf": "2530feb0ded305e33283b3719505a7b61b7f61fc97bd7723e712e4c261945340",
+        "raw_line_bytes": 17413,
+        "schema": "native-large-parent-original-dispatch-diagnostic-v1"
+      },
+      {
+        "line": 1458,
+        "line_sha256_including_lf": "acecc693767be781dd9487b8f42f98295816f3eaf528969fbc6c94228340fbb1",
+        "raw_line_bytes": 15490,
+        "schema": "native-large-parent-arithmetic-stages-v1"
+      },
+      {
+        "line": 1459,
+        "line_sha256_including_lf": "46c1a30acb5d39f832cf2fbd69740242ca0fbb12248801b3f83e1ada44a93700",
+        "raw_line_bytes": 1106,
+        "schema": "native-large-parent-schedule-parity-v1"
+      }
+    ],
+    "large_parent_schedule_parity": {
+      "admitted_parent": "0d8bc316c037050a8ae9a58ba53c84970c48792f8bf471999ee5644672b1c6a2",
+      "all_honest_service_qualified": false,
+      "authenticated_backend": false,
+      "budget_depletion_demonstrated": false,
+      "complete_key_utf8_and_canonical_value_bytes": 8625548,
+      "early_capacity_observed_lower_bound_bytes": 8391103,
+      "genesis": "46f490f617a7aae11650bf20b790943699528de11341fd730b06b2017e24283a",
+      "genesis_fixture": "2100 explicitly seeded 4080-byte string cells; original native validator and one signed admitted seed block; not default-genesis historical growth",
+      "genesis_state_root": "afd8ca7ce215c51c620ca9d5823e9d7b3e4ccc47231ada4ef102366c15e66159",
+      "host_qualified": false,
+      "native_result": {
+        "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+      },
+      "original_cpu_receipt": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 2728161652,
+        "live_refused": true,
+        "owner_cpu_ns": 2727098194,
+        "residual_cpu_ns": 147117,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 1210575,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 2728308769
+      },
+      "schema": "native-large-parent-schedule-parity-v1"
+    },
+    "phase_marker": "TRNM_PQ_PHASE_DIAGNOSTIC",
+    "phase_records_stderr": 0,
+    "phase_records_stdout": 0,
+    "stderr": {
+      "bytes": 4667,
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-all-targets/stderr.log",
+      "sha256": "31d06d28bf2c70fbd4a022b1690062e38fbf61f931fdfe2ed7488854098e2500"
+    },
+    "stdout": {
+      "bytes": 209668,
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-all-targets/stdout.log",
+      "sha256": "3591e3a47da4904328b0eff2382a0d3f434c3673b7a859c2a3d6d10171f97435"
+    },
+    "witness_cleanup": {
+      "child_cleanup_error": null,
+      "child_exit_observed": true,
+      "child_exit_success": true,
+      "cleanup_complete": true,
+      "primary_error_preserved": true,
+      "worker_cleanup_error": null,
+      "worker_join_observed": true
+    },
+    "witness_cleanup_line": 1465
+  },
+  "causal_limits": [
+    "The four actual panic errors do not establish an ACCOUNT_DEVELOPMENT_SCOPE_REQUIRED or PQ_ACCOUNT_PROFILE_UNAVAILABLE semantic refusal.",
+    "Earlier exact-source inspection established valid profile configurations in these fixtures, but new Node/M06 guards are reachable. Unchanged fixtures and lockfile are not dependency isolation from this change.",
+    "NPQ6 flows reach additional full PQ configuration-digest checks; their incremental time and CPU cost were not measured.",
+    "The legacy large-parent case takes classical scope/selector checks, not the PQ config-digest branch or an added canonicalization of its eight-MiB initial State.",
+    "The new Node guard is outside the witness client request implementation. Each witness Current/CAS has a separate 250 ms cap, but the actual reset cannot be assigned to that cap without phase evidence.",
+    "A recorded deadline error, CPU refusal or transport error is an observed failure boundary, not proof of environmental cause, an unchanged-base failure, or a change-induced regression.",
+    "The base commit was not executed as a comparison. Guard-cost effects remain unexcluded; no causal attribution or optimization conclusion is made."
+  ],
+  "created_utc": "2026-11-11T06:48:02.469354+00:00",
+  "job": {
+    "command_elapsed_seconds": 9327.54999621096,
+    "command_finished_utc": "2026-11-11T06:26:28.622222+00:00",
+    "command_returncode": 101,
+    "host": "desktop",
+    "origin_job_id": "1a1c8ba754b-135c4-1d3",
+    "supervisor_observation": {
+      "cancelled": false,
+      "exit_code": 1,
+      "provenance": "authoritative completion observation supplied by root; command rc is independently verified from the raw receipt",
+      "state": "failed",
+      "timeout": false
+    }
+  },
+  "native_scope": {
+    "cargo_running_headers": [
+      {
+        "line": 101,
+        "text": "     Running unittests src/lib.rs (/data/chain-pq-a418-node-retained-target-20261111/debug/deps/trnm_pon_node-2cfc25289c60243c)"
+      }
+    ],
+    "failed": 4,
+    "filtered_out": 0,
+    "ignored": 39,
+    "ignored_controls_counted_as_executed": false,
+    "measured": 0,
+    "nested_child_summaries": [
+      {
+        "line": 662,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1401 filtered out; finished in 0.00s"
+      },
+      {
+        "line": 888,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1401 filtered out; finished in 0.00s"
+      },
+      {
+        "line": 894,
+        "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1401 filtered out; finished in 0.00s"
+      }
+    ],
+    "nested_counts_added_to_parent": false,
+    "new_account_scope_test_lines": [
+      {
+        "line": 791,
+        "text": "test store::account_profile_scope_tests::cold_open_rechecks_account_scope_without_rewriting_existing_storage ... ok"
+      },
+      {
+        "line": 792,
+        "text": "test store::account_profile_scope_tests::growth_owner_rechecks_scope_before_open_recovery_and_noop_activation ... ok"
+      },
+      {
+        "line": 793,
+        "text": "test store::account_profile_scope_tests::invalid_account_scope_never_creates_legacy_or_authenticated_namespace ... ok"
+      },
+      {
+        "line": 794,
+        "text": "test store::account_profile_scope_tests::warm_owner_rechecks_current_account_scope_before_reads_recovery_and_activation ... ok"
+      }
+    ],
+    "outer_summary": "test result: FAILED. 1359 passed; 4 failed; 39 ignored; 0 measured; 0 filtered out; finished in 7809.10s",
+    "passed": 1359,
+    "remaining_integration_targets_executed": false,
+    "source_after": {
+      "base": null,
+      "candidate": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "tested_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2551591940,
+      "tracked_entries": 27862,
+      "tracked_worktree_verified": true
+    },
+    "stdout_summary_line": 1477,
+    "suite_elapsed_seconds": 7809.1,
+    "total": 1402
+  },
+  "paired_markdown": "diagnostic_node_post_panic.md",
+  "pre_panic_snapshots": [
+    {
+      "bytes": 9554,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_node_recovery_readonly.md",
+      "sha256": "fa813f91f3e27694258eddcf196a25dbff0df7a1b8f85dee677ee1e249e1d983",
+      "unchanged": true
+    },
+    {
+      "bytes": 8356,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_node_recovery_readonly.json",
+      "sha256": "04e0ccb41f8e00f6921e52a2bf12b48b805b2a6024a01ab0fc8e45fcac621c64",
+      "unchanged": true
+    },
+    {
+      "bytes": 6461,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_node_large_parent_pre_panic_addendum.md",
+      "sha256": "cff1ddc924f9f4a6330c9290e6f710a4556285933a25708111d60cd8dd698338",
+      "unchanged": true
+    },
+    {
+      "bytes": 5878,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_node_large_parent_pre_panic_addendum.json",
+      "sha256": "82e0f36e5d5d4791b0706d29780c3ecfecbe10bfd3e2df6f5169e106983d48b9",
+      "unchanged": true
+    },
+    {
+      "bytes": 9798,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_node_witness_pre_panic_addendum.md",
+      "sha256": "bca796c7f8a46cb6b3d3af2d6be2fd22a4c4ffd2c36787e45555e945a69765aa",
+      "unchanged": true
+    },
+    {
+      "bytes": 9992,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_node_witness_pre_panic_addendum.json",
+      "sha256": "b422ff812d0500cf194bf1398ee8b45f78684191e13ecc0e0b0bf900ca45ae81",
+      "unchanged": true
+    }
+  ],
+  "raw_bundle": {
+    "fail_records": 1,
+    "manifest": {
+      "bytes": 11448,
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/export-manifest.json",
+      "sha256": "3fd826bc86628ce83c57a68a3bb59ca6d2a4a57dd55136c8ba57d290de1887ee"
+    },
+    "manifest_original_files_verified": 20,
+    "pass_records": 3,
+    "receipt_stream_hashes_all_verified": true,
+    "reconstructed_stdout_matches_canonical": true,
+    "record_count": 4,
+    "root": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1",
+    "root_import_verification": {
+      "bytes": 1571,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/root-node-data-import-verification.json",
+      "sha256": "9fbdd6840549058c728d509bf6b0f13f66748711833d41092c73a32759635aa2"
+    }
+  },
+  "readme_review": {
+    "limits": "Review covers the completed-Node section and its claims against these raw records and the preserved source analyses; it does not qualify hosted CI or turn failed retained lanes into PASS.",
+    "line_span": [
+      201,
+      262
+    ],
+    "phase_absence_verified_in_both_complete_streams": true,
+    "result": "No factual or scope blocker found",
+    "reviewed_file": {
+      "bytes": 23437,
+      "path": "/workspace/scratch/a4188f5c86b5/coordination/delivery-evidence-README.completed-node.draft.md",
+      "sha256": "66f347097c6408a19689f87fa1709c423a1d3195d33f2be22a89d6f1edca886a"
+    },
+    "revisions_required": [],
+    "section": "Retained Node failure and exact observed limits"
+  },
+  "records": [
+    {
+      "id": "node-retained-data-preflight",
+      "receipts": {
+        "context.json": {
+          "bytes": 4021,
+          "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-preflight/context.json",
+          "sha256": "ff2129003f27e4354e2277cce2b78aedfd46384725c682f8eaf94d4da0d9cdcd"
+        },
+        "result.json": {
+          "bytes": 892,
+          "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-preflight/result.json",
+          "sha256": "e6408d14395022c469cd9c4c517dbb0558f8871e7ceeba17abb533459570e10a"
+        },
+        "stderr.log": {
+          "bytes": 0,
+          "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-preflight/stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout.log": {
+          "bytes": 175,
+          "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-preflight/stdout.log",
+          "sha256": "da31fbe4f4567eebe98e8554d607f4ed5190dc4d3f7f8b4d02de9e9c2ee04f26"
+        }
+      },
+      "result": {
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 19616,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 0.02060300000000001,
+          "user_cpu_seconds": 0.07000799999999999
+        },
+        "elapsed_seconds": 0.1797194560058415,
+        "finished_utc": "2026-11-11T03:50:28.068646+00:00",
+        "id": "node-retained-data-preflight",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "da31fbe4f4567eebe98e8554d607f4ed5190dc4d3f7f8b4d02de9e9c2ee04f26"
+      }
+    },
+    {
+      "id": "node-retained-data-source-before",
+      "receipts": {
+        "context.json": {
+          "bytes": 4230,
+          "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-source-before/context.json",
+          "sha256": "b8226e0525fcd1ec66fb073e2e28ba4612cdb5d9d5ad85804d868ebdd6329908"
+        },
+        "result.json": {
+          "bytes": 1078,
+          "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-source-before/result.json",
+          "sha256": "ede48cfa808f1b18d218b924a86639d63d3564acaa50554b46dbdc8acba25083"
+        },
+        "stderr.log": {
+          "bytes": 0,
+          "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-source-before/stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout.log": {
+          "bytes": 423,
+          "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-source-before/stdout.log",
+          "sha256": "318b5e572d587c852ae1829b067e9b1e63f2b2dde33d36b60b5f610c772502d8"
+        }
+      },
+      "result": {
+        "argv": [
+          "python3",
+          "scripts/ci/verify_ci_source.py",
+          "--kind",
+          "head",
+          "--expected-head",
+          "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+          "--output",
+          "/home/qian-qi/chain-pq-a418-final-records/node-retained-data-source-before.json"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 112660,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 3.648962,
+          "user_cpu_seconds": 7.56511
+        },
+        "elapsed_seconds": 32.46372414496727,
+        "finished_utc": "2026-11-11T03:51:00.791515+00:00",
+        "id": "node-retained-data-source-before",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "318b5e572d587c852ae1829b067e9b1e63f2b2dde33d36b60b5f610c772502d8"
+      }
+    },
+    {
+      "id": "node-retained-data-all-targets",
+      "receipts": {
+        "context.json": {
+          "bytes": 4411,
+          "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-all-targets/context.json",
+          "sha256": "34fc3427b9bc3fdd82dc9c28965844dea6b965a78071e7b52da84d2440f3e845"
+        },
+        "result.json": {
+          "bytes": 1267,
+          "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-all-targets/result.json",
+          "sha256": "5bd2e262e23817041a8183f4bf5ecfcc3cb33f43d1727a002808eff178d2c3d3"
+        },
+        "stderr.log": {
+          "bytes": 4667,
+          "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-all-targets/stderr.log",
+          "sha256": "31d06d28bf2c70fbd4a022b1690062e38fbf61f931fdfe2ed7488854098e2500"
+        },
+        "stdout.log": {
+          "bytes": 209668,
+          "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-all-targets/stdout.log",
+          "sha256": "3591e3a47da4904328b0eff2382a0d3f434c3673b7a859c2a3d6d10171f97435"
+        }
+      },
+      "result": {
+        "argv": [
+          "env",
+          "CARGO_HOME=/home/qian-qi/chain-pq-a418-final-cargo-home",
+          "TRNM_CI_TOOL_ROOT=/home/qian-qi/chain-pq-a418-final-ci-tools",
+          "CARGO_TARGET_DIR=/data/chain-pq-a418-node-retained-target-20261111",
+          "cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "--test-threads=1"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 4309204,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 250.34848,
+          "user_cpu_seconds": 7720.648627
+        },
+        "elapsed_seconds": 9327.54999621096,
+        "finished_utc": "2026-11-11T06:26:28.622222+00:00",
+        "id": "node-retained-data-all-targets",
+        "launch_error": null,
+        "pass": false,
+        "qualification_granted": false,
+        "returncode": 101,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "31d06d28bf2c70fbd4a022b1690062e38fbf61f931fdfe2ed7488854098e2500",
+        "stdout_sha256": "3591e3a47da4904328b0eff2382a0d3f434c3673b7a859c2a3d6d10171f97435"
+      }
+    },
+    {
+      "id": "node-retained-data-source-after",
+      "receipts": {
+        "context.json": {
+          "bytes": 4228,
+          "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-source-after/context.json",
+          "sha256": "221ffc2bdff6ce980b57d491856701b983054ad4f6a3ccd4cd5c0cb8cb3e6977"
+        },
+        "result.json": {
+          "bytes": 1087,
+          "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-source-after/result.json",
+          "sha256": "a1ddea00a9087724014215321037f01b550a358b88e8eccd39ccb8efdae3138d"
+        },
+        "stderr.log": {
+          "bytes": 0,
+          "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-source-after/stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout.log": {
+          "bytes": 423,
+          "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-source-after/stdout.log",
+          "sha256": "318b5e572d587c852ae1829b067e9b1e63f2b2dde33d36b60b5f610c772502d8"
+        }
+      },
+      "result": {
+        "argv": [
+          "python3",
+          "scripts/ci/verify_ci_source.py",
+          "--kind",
+          "head",
+          "--expected-head",
+          "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+          "--output",
+          "/home/qian-qi/chain-pq-a418-final-records/node-retained-data-source-after.json"
+        ],
+        "child_resources": {
+          "maximum_rss_kib": 112692,
+          "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+          "system_cpu_seconds": 3.7304019999999998,
+          "user_cpu_seconds": 8.450956
+        },
+        "elapsed_seconds": 41.56752834888175,
+        "finished_utc": "2026-11-11T06:27:10.516448+00:00",
+        "id": "node-retained-data-source-after",
+        "launch_error": null,
+        "pass": true,
+        "qualification_granted": false,
+        "returncode": 0,
+        "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+        "source_status_after": "",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "318b5e572d587c852ae1829b067e9b1e63f2b2dde33d36b60b5f610c772502d8"
+      }
+    }
+  ],
+  "review_outcome": "HOLD; real retained Node command FAIL preserved; no full CI, release or production qualification granted",
+  "schema": "account-boundary-node-post-panic-readonly-diagnostic-v1",
+  "source": {
+    "actual_base_execution_performed": false,
+    "base": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+    "tested_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+    "tested_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec"
+  }
+}

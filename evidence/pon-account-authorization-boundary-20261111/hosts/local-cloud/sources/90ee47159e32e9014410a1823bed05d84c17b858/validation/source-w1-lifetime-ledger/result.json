@@ -1,0 +1,18 @@
+{
+  "id": "source-w1-lifetime-ledger",
+  "argv": [
+    "python3",
+    "scripts/w1_lifetime_ledger.py"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 29.73612639500061,
+  "finished_utc": "2026-11-11T01:18:54.099105+00:00",
+  "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_status_after": "",
+  "stdout_sha256": "b050b861ec172305d708ba7c01ca47d547b1646cc3daee1d6aec9877d2cf3390",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "pass": true,
+  "qualification_granted": false
+}

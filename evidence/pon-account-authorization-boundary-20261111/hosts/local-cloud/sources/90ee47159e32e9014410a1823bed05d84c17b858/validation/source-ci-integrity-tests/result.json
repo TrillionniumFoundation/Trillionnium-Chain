@@ -1,0 +1,18 @@
+{
+  "id": "source-ci-integrity-tests",
+  "argv": [
+    "python3",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 39.770918911999615,
+  "finished_utc": "2026-11-11T01:17:41.378036+00:00",
+  "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_status_after": "",
+  "stdout_sha256": "4cd538c782f9dca8969a0ace149cfcf3f053f483e6a836efbb81d329508ec074",
+  "stderr_sha256": "600b97037a236b64e7dbe384c046313a0edad4b8e25a8c68ed1bea200322a66c",
+  "pass": true,
+  "qualification_granted": false
+}

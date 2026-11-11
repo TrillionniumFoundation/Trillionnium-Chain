@@ -1,0 +1,13 @@
+..............F....
+======================================================================
+FAIL: test_project_unknowns_do_not_produce_a_target_or_qualification (__main__.LifetimeLedgerTests.test_project_unknowns_do_not_produce_a_target_or_qualification)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/a4188f5c86b5/chain-pq-profile-boundary/scripts/ci/test_w1_lifetime_ledger.py", line 63, in test_project_unknowns_do_not_produce_a_target_or_qualification
+    self.assertEqual((json.dumps(result, indent=2, sort_keys=True, allow_nan=False)
+AssertionError: b'{\n[17836 chars]t": "077ac4f33206de00a178553d9a0c729a20685088"[14138 chars]n}\n' != b'{\n[17836 chars]t": "189b9b5959d836ef6ae96e14fb285948e4920aa9"[14138 chars]n}\n'
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.667s
+
+FAILED (failures=1)

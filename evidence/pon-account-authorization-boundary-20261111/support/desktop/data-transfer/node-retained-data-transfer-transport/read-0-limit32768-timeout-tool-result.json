@@ -1,0 +1,20 @@
+{
+  "schema": "assistant-recorded-direct-h-binary-read-v1",
+  "tool_name": "mcp__codex_apps__h_binary_read",
+  "arguments": {
+    "host": "desktop",
+    "path": "/home/qian-qi/chain-pq-a418-final-ci-tools/desktop-node-retained-data-evidence-v1.tar.gz",
+    "offset": 0,
+    "limit": 32768
+  },
+  "call_tool_result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+      }
+    ],
+    "isError": true
+  },
+  "native_sdk_original_bytes_claimed": false
+}

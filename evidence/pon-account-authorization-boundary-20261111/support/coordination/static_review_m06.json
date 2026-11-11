@@ -1,0 +1,454 @@
+{
+  "schema": "chain-account-profile-static-review-v1",
+  "reviewer": "/root/pq_local_audit",
+  "reviewed_at_utc": "2026-11-11T00:54:03.092889+00:00",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "base_commit": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+  "review_mode": "STATIC_SOURCE_AND_LOCAL_PATCH_COMPOSITION_ONLY",
+  "reviewed_artifact_boundary": "Original coordination patch bytes before root-owned final Rust 1.95 formatting and native validation; this review does not bind any subsequently edited or committed tree.",
+  "conclusion": "No confirmed blocking compile/API defect or scope/selector downgrade bypass was found within the reviewed public Config mutation and Node warm-owner boundaries. Rustfmt parsed the M06 files but reported four test formatting hunks. Native type checking and execution remain unverified by this reviewer.",
+  "remote_mutations_performed_by_reviewer": false,
+  "remote_patch_application_verified": false,
+  "compiled": false,
+  "native_tests_run": false,
+  "test_function_count": 5,
+  "test_functions": [
+    "classical_development_keeps_signed_transfer_maturity_fee_subsidy_and_receipt_bytes",
+    "classical_development_empty_block_keeps_real_maturity_and_subsidy_effects",
+    "altered_missing_null_or_mistyped_development_scope_refuses_real_and_empty_blocks",
+    "partial_null_and_unknown_pq_selections_never_authorize_classical_effects",
+    "real_native_pq_genesis_and_owner_checks_survive_the_development_scope_guard"
+  ],
+  "composition_validation": {
+    "reviewed_at_utc": "2026-11-11T00:51:41.533643+00:00",
+    "temporary_composition_directory": "/workspace/scratch/a4188f5c86b5/coordination/static-review-m06-8et6ba0s",
+    "all_checks_passed": true,
+    "checks": [
+      {
+        "label": "M06 baseline Git blob identity",
+        "passed": true,
+        "expected": "a52e20fe46fe409bf3aac5b63c4b9d01438bb705",
+        "actual": "a52e20fe46fe409bf3aac5b63c4b9d01438bb705"
+      },
+      {
+        "label": "Node baseline Git blob identity",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+        "expected": "5d4c26c962a390fb3b5162d60c52db6c4a53b84b",
+        "actual": "5d4c26c962a390fb3b5162d60c52db6c4a53b84b"
+      },
+      {
+        "label": "Node baseline Git blob identity",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+        "expected": "44acbb5d854a8e0a7c4979b4715bd9949b656cd5",
+        "actual": "44acbb5d854a8e0a7c4979b4715bd9949b656cd5"
+      },
+      {
+        "label": "Node baseline Git blob identity",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "expected": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+        "actual": "a8bd7b9c8d9b02617060bea955b3bb21d905129f"
+      },
+      {
+        "label": "m06.patch: git apply check",
+        "passed": true,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "label": "m06.patch: git apply apply",
+        "passed": true,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "label": "Applied M06 matches intended after bytes",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
+      },
+      {
+        "label": "M06 output manifest SHA256",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "expected": "30c367d0a8e9c7339f26b00606d9cd8bf3e34dd801ff23875c4c0b9ae5c24c2c",
+        "actual": "30c367d0a8e9c7339f26b00606d9cd8bf3e34dd801ff23875c4c0b9ae5c24c2c"
+      },
+      {
+        "label": "Applied M06 matches intended after bytes",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-mvcc-fee/tests/account_development_scope.rs"
+      },
+      {
+        "label": "M06 output manifest SHA256",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-mvcc-fee/tests/account_development_scope.rs",
+        "expected": "9028a974376dd5a3b220e03f4ed97bf7eb41ead8be01868f87fdb4ce29f2a0b6",
+        "actual": "9028a974376dd5a3b220e03f4ed97bf7eb41ead8be01868f87fdb4ce29f2a0b6"
+      },
+      {
+        "label": "node-account-profile.patch: git apply check",
+        "passed": true,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "label": "node-account-profile.patch: git apply apply",
+        "passed": true,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "label": "Applied Node primary matches work bytes",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs"
+      },
+      {
+        "label": "Node primary output manifest SHA256 and Git blob",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs",
+        "sha256": "11f49763363c45f1bf6cd13d5095b0900f360238974663d2e0328ef517838cf3",
+        "git_blob": "81d6658b258afc22394098786066ab04f344e29c"
+      },
+      {
+        "label": "Applied Node primary matches work bytes",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs"
+      },
+      {
+        "label": "Node primary output manifest SHA256 and Git blob",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+        "sha256": "59398375101f36e234001dbd5bb15cd767a7b8537f457ccb104c41b110dfef4a",
+        "git_blob": "d94f27a764a2788e90352881b52fc9017a32ab67"
+      },
+      {
+        "label": "Applied Node primary matches work bytes",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs"
+      },
+      {
+        "label": "Node primary output manifest SHA256 and Git blob",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+        "sha256": "860f056313689e43cb03a941507e4c61e70892723d046bf7ac151e220984b447",
+        "git_blob": "ec3a2be0530eb23ea596474ba057ed172759f777"
+      },
+      {
+        "label": "Applied Node primary matches work bytes",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs"
+      },
+      {
+        "label": "Node primary output manifest SHA256 and Git blob",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "sha256": "869b7311d1b1124ef5e5c45130a6341049bf229100810ea5f65f04b752925398",
+        "git_blob": "792289bd4848e3626783c4b33d0916df54e8f29e"
+      },
+      {
+        "label": "node-warm-integrity.patch: git apply check",
+        "passed": true,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "label": "node-warm-integrity.patch: git apply apply",
+        "passed": true,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "label": "Applied warm followup matches after bytes",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs"
+      },
+      {
+        "label": "Warm followup output manifest SHA256",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs",
+        "expected": "ff6024a3ba68ebe25a5720dd68ad427ce5f76b0ee9aae768e2bed80d0423387e",
+        "actual": "ff6024a3ba68ebe25a5720dd68ad427ce5f76b0ee9aae768e2bed80d0423387e"
+      },
+      {
+        "label": "Applied warm followup matches after bytes",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs"
+      },
+      {
+        "label": "Warm followup output manifest SHA256",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "expected": "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca",
+        "actual": "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca"
+      },
+      {
+        "label": "node-growth-scope-tests.patch: git apply check",
+        "passed": true,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "label": "node-growth-scope-tests.patch: git apply apply",
+        "passed": true,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "label": "Applied growth test followup matches after bytes",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs"
+      },
+      {
+        "label": "Growth test output manifest SHA256",
+        "passed": true,
+        "path": "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs",
+        "expected": "c3eb664735f0977f86eb08157f209d1fc6a4af7ada0037976b0204fd9acc290d",
+        "actual": "c3eb664735f0977f86eb08157f209d1fc6a4af7ada0037976b0204fd9acc290d"
+      },
+      {
+        "label": "Growth patch manifest SHA256",
+        "passed": true
+      },
+      {
+        "label": "M06 patch manifest SHA256",
+        "passed": true
+      }
+    ],
+    "patches": [
+      {
+        "path": "/workspace/scratch/a4188f5c86b5/coordination/m06-patch/m06.patch",
+        "sha256": "43c890ff75d1ddbc98ed2d4c4ec5e6e46a1412252f524ccf420bc474723f4130",
+        "bytes": 16067
+      },
+      {
+        "path": "/workspace/scratch/a4188f5c86b5/coordination/node-patch/node-account-profile.patch",
+        "sha256": "3f9ac418cfab506cec16ae59fe540993fab38e229b7fbd00f193c3fda8dacc1c",
+        "bytes": 11053
+      },
+      {
+        "path": "/workspace/scratch/a4188f5c86b5/coordination/node-patch/node-warm-integrity.patch",
+        "sha256": "23e4982a6b6a75806ed28536cbf64e795d5ac55c487e039ee00fc4470b1464db",
+        "bytes": 3894
+      },
+      {
+        "path": "/workspace/scratch/a4188f5c86b5/coordination/node-patch/node-growth-scope-tests.patch",
+        "sha256": "e9c60bc4ba76791d98ba75f3278e28726a0043c01635ec725d42d7cf2d66e0c0",
+        "bytes": 5302
+      }
+    ],
+    "composed_files": [
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+        "sha256": "30c367d0a8e9c7339f26b00606d9cd8bf3e34dd801ff23875c4c0b9ae5c24c2c",
+        "git_blob": "5d2ccbcac24abc55f3598fad0a22da4cd8c8d0d2",
+        "bytes": 151436
+      },
+      {
+        "path": "trillionnium/crates/trnm-mvcc-fee/tests/account_development_scope.rs",
+        "sha256": "9028a974376dd5a3b220e03f4ed97bf7eb41ead8be01868f87fdb4ce29f2a0b6",
+        "git_blob": "bc92ac0e8e56c608546f2f9c21b4ed46fceb8158",
+        "bytes": 12433
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs",
+        "sha256": "c3eb664735f0977f86eb08157f209d1fc6a4af7ada0037976b0204fd9acc290d",
+        "git_blob": "fd51290590520b4d988d87170edbfd1446d421d8",
+        "bytes": 9844
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+        "sha256": "59398375101f36e234001dbd5bb15cd767a7b8537f457ccb104c41b110dfef4a",
+        "git_blob": "d94f27a764a2788e90352881b52fc9017a32ab67",
+        "bytes": 120278
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+        "sha256": "860f056313689e43cb03a941507e4c61e70892723d046bf7ac151e220984b447",
+        "git_blob": "ec3a2be0530eb23ea596474ba057ed172759f777",
+        "bytes": 58175
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "sha256": "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca",
+        "git_blob": "a766d083bc1955041bf2fc537cb2731e2d4eb6c4",
+        "bytes": 383977
+      }
+    ]
+  },
+  "rustfmt_observation": {
+    "toolchain_path": "/workspace/scratch/f7c0ded86bcc/toolchain/installed/bin",
+    "rustc_version": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "rustfmt_version": "rustfmt 1.9.0-stable (ac68faa20c 2026-05-25)",
+    "arguments": [
+      "--edition",
+      "2021",
+      "--config",
+      "skip_children=true",
+      "--check",
+      "m06-patch/after/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "m06-patch/after/trillionnium/crates/trnm-mvcc-fee/tests/account_development_scope.rs"
+    ],
+    "exit_code": 1,
+    "syntax_diagnostics_observed": false,
+    "formatting_passed": false,
+    "source_formatting_hunks": 0,
+    "test_formatting_hunks": 4,
+    "required_style_changes": [
+      "Collapse the initial meta:issued tuple",
+      "Wrap the classical root_for_config equality assertion",
+      "Reflow execute_with_progress assignment and unwrap_err",
+      "Wrap the native PQ root_for_config equality assertion"
+    ],
+    "original_patch_bytes_changed": false,
+    "interpretation": "Successful Rust syntax parsing only. This result is not compilation, type checking, a clean format gate, or execution. Root will use its independently verified Rust 1.95 toolchain for final formatting and native checks.",
+    "root_reported_final_toolchain_path": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin"
+  },
+  "findings": [
+    {
+      "id": "M01",
+      "classification": "static-confirmation",
+      "subject": "Typed development scope is checked before any PQ or classical owner decision",
+      "result": "check_account_profile requires params to be a JSON object, production_activation to be boolean false, not_mainnet to be boolean true, and coin_atomic_unit to be exactly test-unit-no-market-value. Missing, null, numeric, string-encoded booleans and wrong container types are refused. The scope check runs before both existing private PQ owner branches.",
+      "evidence": [
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs::Config::check_account_profile"
+      ],
+      "claim_limit": "This is a research/development scope check, not a production profile definition or authenticated network membership proof."
+    },
+    {
+      "id": "M02",
+      "classification": "static-confirmation",
+      "subject": "PQ selection remains fail-closed without an Ed25519 fallback",
+      "result": "A native PQ selector present even with null activates the existing native check and requires its private owner. A retained private native owner remains selected after marker deletion and detects changed configuration. The optional QTX1 private owner still runs its unchanged check. Only after both private-owner branches fail to select does the classical branch require complete absence of account_authorization_profile and every native_pq_ key, including null and unknown future names.",
+      "evidence": [
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs::Config::check_account_profile",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs::enabled",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs::policy",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts.rs::AccountPolicy::check_config"
+      ],
+      "claim_limit": "No branch in the reviewed check turns a failed explicit PQ check into classical verification. The valid independent classical development path remains intentionally reachable."
+    },
+    {
+      "id": "M03",
+      "classification": "static-confirmation",
+      "subject": "Empty blocks and direct read-only admission/root entry points are fenced",
+      "result": "root_for_config and validate_main_envelope now invoke the same public guard. Existing execute_with_state_inputs and prepare_block_state_with_inputs invoke it before BeforeStateClone, mandatory transitions, observers, reward calculation, commitments or output. Empty transaction lists therefore do not bypass scope validation. Existing prepare also invokes it. The raw root function remains a pure hash routine and does not grant execution authority.",
+      "evidence": [
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs::root_for_config",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs::validate_main_envelope",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs::execute_with_state_inputs",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs::prepare_block_state_with_inputs",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs::prepare"
+      ],
+      "qualification": "The existing pure funded_service_v1 check precedes the guard in executor paths. Its disabled-profile branch accepts the malformed/non-object scope candidates used by the tests, allowing the expected ACCOUNT_DEVELOPMENT_SCOPE_REQUIRED error. Selected funded profiles can retain their pre-existing earlier error order."
+    },
+    {
+      "id": "M04",
+      "classification": "static-confirmation",
+      "subject": "No root/check recursion or half-initialized native genesis dependency",
+      "result": "The native private-owner check hashes the configuration and checks network/parameters/selector identity; it does not call root_for_config and does not require a nonzero context.genesis. Native genesis installs the private owner before state validation and computes its genesis using the existing raw root, then fills context.genesis. The new root_for_config guard therefore introduces neither a recursive dependency nor a new half-initialized-genesis requirement.",
+      "evidence": [
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs::config_digest",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs::policy",
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs::build_genesis_profile"
+      ]
+    },
+    {
+      "id": "M05",
+      "classification": "manual-API-and-type-review",
+      "subject": "Five test functions use real existing APIs and dependencies",
+      "result": "Envelope is Debug/Clone/PartialEq/Eq and exposes encode/id, Output and ExecutionError support the asserted error paths, AtomicUsize observer/progress closures meet Sync requirements, and explicit Infallible resolves the generic cancellation type. ml-dsa 0.1.1 is already a dev-dependency. The SigningKey/Keypair/from_seed/SPKI pattern matches the existing native PQ fixture, and the included DER fixture exists at the exact relative path. No missing dependency, private API access or obvious ownership/type mismatch was found.",
+      "claim_limit": "Manual source review and rustfmt parsing do not establish that Rust type checking or linking will succeed.",
+      "evidence": [
+        "trillionnium/crates/trnm-mvcc-fee/tests/account_development_scope.rs",
+        "trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "trillionnium/crates/trnm-protocol/tests/support/native_pq_accounts_fixture.rs",
+        "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der"
+      ]
+    },
+    {
+      "id": "M06",
+      "classification": "manual-effect-review",
+      "subject": "Positive controls prove intended monetary semantics when executed",
+      "result": "The classical control produces a real Ed25519 signed transfer and compares the entire resulting State, account nonce, debit/credit, mature reward removal, fee-funded pending reward, fixed subsidy, issued total, canonical receipt bytes, root and verification metric for workers 1/2/4/8. The empty-block control still expects actual maturity and subsidy effects. Inputs total 100000777, maturity transfers 777 without changing issued, transfer moves 1234, fees move into the pending reward, subsidy adds 1000 to issued and the pending reward. The native PQ control uses a real ML-DSA65 key/genesis and an empty block before checking retained-owner mutation failures.",
+      "claim_limit": "These are reviewed expected assertions, not observed test results. Classical test timestamp 1501 is valid for this executor-level fixture; Node consensus timestamp acceptance is a different layer."
+    },
+    {
+      "id": "M07",
+      "classification": "manual-negative-control-review",
+      "subject": "Rejected mutations retain parent state and skip hooks",
+      "result": "The test source includes 35 invalid development-scope configurations, 27 partial/null/unknown selector configurations, and five private native PQ owner/scope mutations. Every helper checks direct guard/root/admission refusal plus empty and signed blocks with workers 1 and 4 through both progress and observed execution. It asserts zero progress callbacks, zero mandatory/transaction observer callbacks, unchanged parent map and unchanged parent root.",
+      "claim_limit": "This matrix is source-derived. No native run has confirmed the 67 configuration cases or their exact expected error codes."
+    },
+    {
+      "id": "M08",
+      "classification": "peer-static-trace-corroboration",
+      "subject": "Node growth activation dispatch reaches the common owner check",
+      "result": "The initially flagged separate Node::activate -> growth_activate branch was independently traced by /root/pq_profile_review at the exact base. growth_activate_with_progress calls growth_guard -> namespace before BEGIN IMMEDIATE and before the already-active/lower-work early return. The new warm namespace check therefore covers this branch; a new growth test followup was included in the verified local patch composition.",
+      "evidence": [
+        "static_review_node.json",
+        "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs::growth_activate_with_progress",
+        "trillionnium/crates/trnm-pon-node/src/store/growth.rs::growth_guard"
+      ],
+      "claim_limit": "This is peer static corroboration, not a native growth test result. Node activation may invoke an initial progress callback before the guard; do not generalize the M06 zero-callback assertion to all Node APIs."
+    }
+  ],
+  "limitations": [
+    "The helper does not authenticate an arbitrary caller-supplied complete classical Config, recompute all classic network/parameter identity, or provide a universal immutable digest for classical settings. Trusted Settings construction and Node namespace/storage identity remain required.",
+    "Replacing an entire owner/configuration from a different trusted constructor is outside the single-field/selector mutation guarantee. No remote exploit or native downgrade witness has been demonstrated; do not claim a universal downgrade proof.",
+    "The reviewed patch preserves valid classic research execution. It does not qualify any profile for a production network, define production participants, implement complete legacy account/snapshot migration, or establish a retirement ceremony.",
+    "State rows, signed domains and profile identities are unchanged by these source edits, but preservation of all existing IDs and compatibility must still be demonstrated by the relevant native regression tests.",
+    "No remote deployment/application outcome is established. Only local coordination files and local temporary patch composition were mutated by this review.",
+    "Final formatter, build and native test output belong to the root-owned assembled checkout and must be reported separately."
+  ],
+  "supporting_exact_base_references": [
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "git_blob": "a52e20fe46fe409bf3aac5b63c4b9d01438bb705"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+      "git_blob": "61e8ff02976ebc79e2dc9f5a71ae531884cba5dc"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts.rs",
+      "git_blob": "38703878aec1f1359befed818d83e30344b354af"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/funded_service_v1.rs",
+      "git_blob": "70411ab97a738bf10f9c50de47bd95f1be62649a"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "git_blob": "a92d02b7e1edd316aba52cb1b2ff8b546e65c03d"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+      "git_blob": "7c5d2f974a8faf0c48b7f636eca80e334b2a4214"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der",
+      "git_blob": "b1e4beedb3e6f92178fb4adc955304a1008f9421"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/error.rs",
+      "git_blob": "22a1be7f0603920ca1662ffe9c4363e6db763929"
+    }
+  ],
+  "next_required_validation": [
+    "Apply final formatting with the root-owned Rust 1.95 toolchain, then bind the final assembled bytes and patch diff to the tested checkout.",
+    "Run M06 account_development_scope and the four Node account_profile_scope_tests in the actual selected feature modes.",
+    "Run the existing relevant real PQ owner/classical execution/reopen/recovery/growth regressions chosen by the root owner; preserve original IDs and expected bytes.",
+    "Report compiler/test results separately; this static report must not be upgraded into a passed-native claim."
+  ]
+}

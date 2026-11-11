@@ -1,0 +1,3 @@
+# Preserve every hash-bound evidence member byte-for-byte.
+* -text
+*.log -whitespace

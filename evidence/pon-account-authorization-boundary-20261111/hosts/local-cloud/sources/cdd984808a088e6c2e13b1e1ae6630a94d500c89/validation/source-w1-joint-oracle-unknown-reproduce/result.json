@@ -1,0 +1,24 @@
+{
+  "id": "source-w1-joint-oracle-unknown-reproduce",
+  "argv": [
+    "python3",
+    "scripts/w1_qrom_joint_oracle_diagnostic.py"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 0.40607975399962015,
+  "finished_utc": "2026-11-11T01:36:20.641624+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "cac5fa1b09a64207bfde34931de1937894e31739912e9bcea70705b0fac899eb",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "pass": true,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 0.057089999999999995,
+    "system_cpu_seconds": 0.09303800000000001,
+    "maximum_rss_kib": 13708,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

@@ -1,0 +1,27 @@
+   Compiling shlex v1.3.0
+   Compiling crypto-common v0.2.2
+   Compiling cc v1.2.59
+   Compiling serde_json v1.0.149
+   Compiling digest v0.11.3
+   Compiling sha2-asm v0.6.4
+   Compiling sha2 v0.10.9
+   Compiling libsqlite3-sys v0.39.0
+   Compiling ed25519-dalek v2.2.0
+   Compiling shake v0.1.0
+   Compiling signature v3.0.0
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-protocol)
+   Compiling rusqlite v0.41.0
+   Compiling ml-dsa v0.1.1
+   Compiling getrandom v0.4.2
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-verification-profiles)
+   Compiling tempfile v3.27.0
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-release-bundle v0.1.0 (/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-release-bundle)
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6m 06s
+     Running tests/pq_application_local_feature_off.rs (/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final-target/debug/deps/pq_application_local_feature_off-8baa9d6a7b1ecea0)

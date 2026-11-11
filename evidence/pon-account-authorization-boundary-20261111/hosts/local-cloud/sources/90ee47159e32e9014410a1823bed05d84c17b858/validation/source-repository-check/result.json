@@ -1,0 +1,18 @@
+{
+  "id": "source-repository-check",
+  "argv": [
+    "python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 97.81877459600037,
+  "finished_utc": "2026-11-11T01:16:38.264414+00:00",
+  "source_head_before": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_head_after": "90ee47159e32e9014410a1823bed05d84c17b858",
+  "source_status_after": "",
+  "stdout_sha256": "769072738a9bf1a9da694a7555375f643fbb5584042bc3b829f9ac7e22795660",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "pass": true,
+  "qualification_granted": false
+}

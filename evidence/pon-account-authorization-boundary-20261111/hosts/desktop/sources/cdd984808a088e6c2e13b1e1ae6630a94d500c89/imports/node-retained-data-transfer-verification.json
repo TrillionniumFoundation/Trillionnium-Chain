@@ -1,0 +1,105 @@
+{
+  "acceptance_granted": false,
+  "actual_cargo_running_headers": [
+    "     Running unittests src/lib.rs (/data/chain-pq-a418-node-retained-target-20261111/debug/deps/trnm_pon_node-2cfc25289c60243c)"
+  ],
+  "actual_failed_test_lines": [
+    "test ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_lost_ack_and_cold_resume_reuse_exact_wire_without_history_consuming_sequence ... FAILED",
+    "test ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_plain_parent_recovery_and_cold_membership_keep_one_original_campaign ... FAILED",
+    "test store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner ... FAILED",
+    "test store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart ... FAILED"
+  ],
+  "actual_test_summary_lines": [
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1401 filtered out; finished in 0.00s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1401 filtered out; finished in 0.00s",
+    "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1401 filtered out; finished in 0.00s",
+    "test result: FAILED. 1359 passed; 4 failed; 39 ignored; 0 measured; 0 filtered out; finished in 7809.10s"
+  ],
+  "archive": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/desktop-node-retained-data-evidence-v1.tar.gz",
+  "archive_bytes": 49417,
+  "archive_sha256": "5964496925744cdeae11ee177883ee537b696feefe6ee5c6cb027e64af851238",
+  "archive_to_manifest_to_extracted_members_verified": true,
+  "chunks": [
+    {
+      "bytes": 22174,
+      "chunk_sha256": "7b106eaf78eeac3eb4c74d2e00a103fd7a32e1d5cdb3e5d69165ac7c64438355",
+      "next_offset": 16384,
+      "offset": 0,
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-transfer/chunk-0.json",
+      "sha256": "e40fd9871e995908f553db86d70c4a561da9456b3dade4dc33a385c8abd35be8"
+    },
+    {
+      "bytes": 22178,
+      "chunk_sha256": "7c878845e514f12a81b12e0873b7c2a23da3d1f57acccf90633b5e12d2d7f222",
+      "next_offset": 32768,
+      "offset": 16384,
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-transfer/chunk-16384.json",
+      "sha256": "320419790fde841e84f362d960f772f5ba81f1dcd37a69eafbd32ba778bc97b4"
+    },
+    {
+      "bytes": 22178,
+      "chunk_sha256": "b4dee663f72e8b90041c20ecc9e1da37e08c5e1bfa0fcfd6d1ad0d44df474750",
+      "next_offset": 49152,
+      "offset": 32768,
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-transfer/chunk-32768.json",
+      "sha256": "1877d4705caab95c92c327ce03d4e042cdf12f3a3847c7e7edc62247257357cc"
+    },
+    {
+      "bytes": 685,
+      "chunk_sha256": "64dfee953eb86df7353f9f074bb3bd30de94a31bcb4795f559a7a1c1da6e267e",
+      "next_offset": 49417,
+      "offset": 49152,
+      "path": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-transfer/chunk-49152.json",
+      "sha256": "1d9b33a69ee9de94533afda9dd9d9f39c24b93925ce37b3504006aa6a5fc75d3"
+    }
+  ],
+  "compiled_targets_not_treated_as_executed": true,
+  "complete_command_ids": [
+    "node-retained-data-preflight",
+    "node-retained-data-source-before",
+    "node-retained-data-all-targets",
+    "node-retained-data-source-after"
+  ],
+  "host": "desktop",
+  "local_extracted_directory": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-evidence-v1",
+  "manifest_sha256": "3fd826bc86628ce83c57a68a3bb59ca6d2a4a57dd55136c8ba57d290de1887ee",
+  "member_count": 21,
+  "nested_summaries_not_added_to_parent_totals": true,
+  "origin_job_id": "1a1c8ba754b-135c4-1d3",
+  "original_file_count": 20,
+  "original_full_rust_failure_not_replaced": true,
+  "original_incomplete_node_queue_not_replaced": true,
+  "record_results": {
+    "node-retained-data-all-targets": {
+      "elapsed_seconds": 9327.54999621096,
+      "finished_utc": "2026-11-11T06:26:28.622222+00:00",
+      "pass": false,
+      "returncode": 101
+    },
+    "node-retained-data-preflight": {
+      "elapsed_seconds": 0.1797194560058415,
+      "finished_utc": "2026-11-11T03:50:28.068646+00:00",
+      "pass": true,
+      "returncode": 0
+    },
+    "node-retained-data-source-after": {
+      "elapsed_seconds": 41.56752834888175,
+      "finished_utc": "2026-11-11T06:27:10.516448+00:00",
+      "pass": true,
+      "returncode": 0
+    },
+    "node-retained-data-source-before": {
+      "elapsed_seconds": 32.46372414496727,
+      "finished_utc": "2026-11-11T03:51:00.791515+00:00",
+      "pass": true,
+      "returncode": 0
+    }
+  },
+  "remote_archive": "/home/qian-qi/chain-pq-a418-final-ci-tools/desktop-node-retained-data-evidence-v1.tar.gz",
+  "remote_file_version": "2050:4328000:49417:1794378646407089732:1794378646412089579",
+  "schema": "desktop-node-data-transfer-verification-v1",
+  "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+  "test_summary_lines_are_verbatim_including_nested_subprocesses": true,
+  "verified_utc": "2026-11-11T06:36:03.964689+00:00"
+}

@@ -1,0 +1,184 @@
+{
+  "absent_command_ids": [
+    "node-retained-source-after"
+  ],
+  "acceptance_granted": false,
+  "captured_utc": "2026-11-11T03:52:52.577326+00:00",
+  "complete_command_ids": [
+    "node-retained-preflight"
+  ],
+  "entries": [
+    {
+      "archive_member": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-preflight/context.json",
+      "bytes": 4016,
+      "remote_source": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-preflight/context.json",
+      "sha256": "92d5e2dd5ab4eeb81ab16e0f8730b93c3b5148059cef81022dd94b4f434f4db9"
+    },
+    {
+      "archive_member": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-preflight/result.json",
+      "bytes": 875,
+      "remote_source": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-preflight/result.json",
+      "sha256": "be102806269f62aec3342996216857998a4f129eae70612911a3f598dbadbb04"
+    },
+    {
+      "archive_member": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-preflight/stderr.log",
+      "bytes": 0,
+      "remote_source": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-preflight/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-preflight/stdout.log",
+      "bytes": 175,
+      "remote_source": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-preflight/stdout.log",
+      "sha256": "da31fbe4f4567eebe98e8554d607f4ed5190dc4d3f7f8b4d02de9e9c2ee04f26"
+    },
+    {
+      "archive_member": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-all-targets/context.json",
+      "bytes": 4332,
+      "remote_source": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-all-targets/context.json",
+      "sha256": "326711c660b4386e1b8a96e5e47eb42e75c8f300fb6b810264681063a530e879"
+    },
+    {
+      "archive_member": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-all-targets/result.json",
+      "bytes": 0,
+      "remote_source": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-all-targets/result.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-all-targets/stderr.log",
+      "bytes": 4193,
+      "remote_source": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-all-targets/stderr.log",
+      "sha256": "493e9415cd00edae5285702fc2c319b647549964a9a79bd7aa24f339424a23f0"
+    },
+    {
+      "archive_member": "primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-all-targets/stdout.log",
+      "bytes": 0,
+      "remote_source": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-all-targets/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "host": "desktop",
+  "incomplete_command_ids": [
+    "node-retained-all-targets"
+  ],
+  "incomplete_records": {
+    "node-retained-all-targets": {
+      "classification": "INCOMPLETE_EMPTY_RESULT",
+      "context_sha256": "326711c660b4386e1b8a96e5e47eb42e75c8f300fb6b810264681063a530e879",
+      "result_bytes": 0,
+      "result_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 4193,
+      "stderr_sha256": "493e9415cd00edae5285702fc2c319b647549964a9a79bd7aa24f339424a23f0",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "terminal_return_code_reconstructed": false
+    }
+  },
+  "no_original_runtime_or_command_result_fabricated": true,
+  "observations": {
+    "cargo_running_header_observed": false,
+    "compiler_error": "rustc-LLVM ERROR: IO failure on output stream: No space left on device",
+    "observations_are_not_an_atomic_cross_tool_snapshot": true,
+    "original_target": {
+      "disappearance_cause": "unknown",
+      "exists": false,
+      "no_cause_attributed_to_cache_cleanup": true,
+      "path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final-target"
+    },
+    "record_directories": [
+      {
+        "exists": true,
+        "files": [
+          {
+            "bytes": 4016,
+            "name": "context.json",
+            "sha256": "92d5e2dd5ab4eeb81ab16e0f8730b93c3b5148059cef81022dd94b4f434f4db9"
+          },
+          {
+            "bytes": 875,
+            "name": "result.json",
+            "sha256": "be102806269f62aec3342996216857998a4f129eae70612911a3f598dbadbb04"
+          },
+          {
+            "bytes": 0,
+            "name": "stderr.log",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "bytes": 175,
+            "name": "stdout.log",
+            "sha256": "da31fbe4f4567eebe98e8554d607f4ed5190dc4d3f7f8b4d02de9e9c2ee04f26"
+          }
+        ],
+        "path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-preflight"
+      },
+      {
+        "exists": true,
+        "files": [
+          {
+            "bytes": 4332,
+            "name": "context.json",
+            "sha256": "326711c660b4386e1b8a96e5e47eb42e75c8f300fb6b810264681063a530e879"
+          },
+          {
+            "bytes": 0,
+            "name": "result.json",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "bytes": 4193,
+            "name": "stderr.log",
+            "sha256": "493e9415cd00edae5285702fc2c319b647549964a9a79bd7aa24f339424a23f0"
+          },
+          {
+            "bytes": 0,
+            "name": "stdout.log",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-all-targets"
+      }
+    ],
+    "root_probe": {
+      "job_id": "1a1c8b83934-135c4-1c9",
+      "original_stdout_utf8": "{\n  \"utc\": \"2026-11-11T03:48:01Z\",\n  \"source_head\": \"cdd984808a088e6c2e13b1e1ae6630a94d500c89\",\n  \"source_status\": \"\",\n  \"old_target_exists\": false,\n  \"record_files\": {\n    \"node-retained-preflight\": [\n      {\n        \"name\": \"context.json\",\n        \"bytes\": 4016\n      },\n      {\n        \"name\": \"result.json\",\n        \"bytes\": 875\n      },\n      {\n        \"name\": \"stderr.log\",\n        \"bytes\": 0\n      },\n      {\n        \"name\": \"stdout.log\",\n        \"bytes\": 175\n      }\n    ],\n    \"node-retained-all-targets\": [\n      {\n        \"name\": \"context.json\",\n        \"bytes\": 4332\n      },\n      {\n        \"name\": \"result.json\",\n        \"bytes\": 0\n      },\n      {\n        \"name\": \"stderr.log\",\n        \"bytes\": 4193\n      },\n      {\n        \"name\": \"stdout.log\",\n        \"bytes\": 0\n      }\n    ],\n    \"node-retained-source-after\": null\n  },\n  \"disks\": [\n    {\n      \"path\": \"/home/qian-qi\",\n      \"device\": 2050,\n      \"available\": 55981068288\n    },\n    {\n      \"path\": \"/data\",\n      \"device\": 2067,\n      \"available\": 173251186688\n    },\n    {\n      \"path\": \"/dev/shm\",\n      \"device\": 24,\n      \"available\": 44715040768\n    }\n  ]\n}\n",
+      "stdout_bytes": 1135,
+      "stdout_sha256": "cd78e2f84b77f89cb9e136b6ae6af905b2c29215c55cb6f8a0d9bc2666cd6b1a"
+    },
+    "runtime_status": {
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "job_id": "1a1c8980187-135c4-111",
+      "outcome": "unknown",
+      "reason": "supervisor disappeared without a confirmed terminal receipt",
+      "state": "finalizing",
+      "status_authoritative": false,
+      "terminal_publication_confirmed": false
+    },
+    "source_after_directory": {
+      "execution_not_proven": true,
+      "exists": false,
+      "path": "/home/qian-qi/chain-pq-a418-final-records/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-source-after",
+      "result_available": false
+    },
+    "test_execution_not_established": true
+  },
+  "origin_job_id": "1a1c8980187-135c4-111",
+  "original_empty_result_preserved": true,
+  "original_logs_unchanged": true,
+  "schema": "desktop-node-incomplete-evidence-export-v1",
+  "source_and_targets_not_modified_by_exporter": true,
+  "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_identity_after_export": {
+    "head": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+    "status_porcelain": "",
+    "tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec"
+  },
+  "source_identity_before_export": {
+    "head": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+    "status_porcelain": "",
+    "tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec"
+  },
+  "source_identity_method": "Git HEAD/tree/status observation; no new native test and no claim of a new full tracked-byte scan",
+  "source_status_during_export": ""
+}

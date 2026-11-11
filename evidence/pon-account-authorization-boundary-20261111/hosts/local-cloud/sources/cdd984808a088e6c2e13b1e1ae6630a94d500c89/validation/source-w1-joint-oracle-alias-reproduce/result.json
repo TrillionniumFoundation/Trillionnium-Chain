@@ -1,0 +1,26 @@
+{
+  "id": "source-w1-joint-oracle-alias-reproduce",
+  "argv": [
+    "python3",
+    "scripts/w1_qrom_joint_oracle_diagnostic.py",
+    "--example",
+    "alias"
+  ],
+  "returncode": 0,
+  "launch_error": null,
+  "elapsed_seconds": 0.3899690289999853,
+  "finished_utc": "2026-11-11T01:36:20.592688+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "1e427168ad06f93dee645982bd412e58b97ce825132559e7a07a47f2a6530522",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "pass": true,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 0.054223,
+    "system_cpu_seconds": 0.035727999999999996,
+    "maximum_rss_kib": 13696,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

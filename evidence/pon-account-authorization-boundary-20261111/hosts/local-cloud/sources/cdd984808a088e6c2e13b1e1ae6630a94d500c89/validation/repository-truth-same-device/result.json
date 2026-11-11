@@ -1,0 +1,25 @@
+{
+  "id": "repository-truth-same-device",
+  "argv": [
+    "bash",
+    "scripts/ci/ci_job.sh",
+    "repository-truth"
+  ],
+  "returncode": 1,
+  "launch_error": null,
+  "elapsed_seconds": 1123.8664846390002,
+  "finished_utc": "2026-11-11T01:53:27.628473+00:00",
+  "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_status_after": "",
+  "stdout_sha256": "0ef1cd607640e1d6677da47bdaad43b1e8eab37478fe39a5e69fd7e19c8ee6c1",
+  "stderr_sha256": "62b62520c3ec2e89929b689aa6b021309272b72a0437243214807f5721e22db7",
+  "pass": false,
+  "qualification_granted": false,
+  "child_resources": {
+    "user_cpu_seconds": 726.8527760000001,
+    "system_cpu_seconds": 187.736468,
+    "maximum_rss_kib": 390668,
+    "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis"
+  }
+}

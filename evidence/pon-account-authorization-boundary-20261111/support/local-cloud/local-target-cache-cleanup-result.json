@@ -1,0 +1,136 @@
+{
+  "schema": "account-boundary-task-cache-cleanup-v1",
+  "started_utc": "2026-11-11T06:22:11.162243+00:00",
+  "manifest_sha256": "35af37314cbc74bcd8be9d38ae18ce146cdbff6f3c073ff8661c867d45d63431",
+  "source_head": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "preflight_result": "PASS",
+  "basis": "Root task ledger has no active local native build/test; remote Z Node job uses a different host and /data target. Only the 19 reviewed task-owned cache files are selected. No global process-quiescence claim.",
+  "retained_roots_verified_before": 18,
+  "retained_fingerprint_records_verified": 151,
+  "unresolved_dependencies": 0,
+  "filesystem_available_before_bytes": 263172096,
+  "deleted": [
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_data_availability-6c58396037a144f4.rlib",
+      "bytes": 84886306,
+      "sha256": "1cf2ef22275674eea343b18c0b38040eb2efb31c32f1ed0cebf04aad90d42d5a",
+      "allocated_bytes_before": 84889600
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_data_availability-6c58396037a144f4.rmeta",
+      "bytes": 4526493,
+      "sha256": "cc60cbf1eec5ee7293cd563e2f62367970747256f0375d826aafbe3dd27c5998",
+      "allocated_bytes_before": 4530176
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/trnm_data_availability-6c58396037a144f4.d",
+      "bytes": 17022,
+      "sha256": "1b0dc9a96daa21a121ff72ac90c4cc69a3e418c048f379e72b4fca02e5e75503",
+      "allocated_bytes_before": 20480
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_mvcc_fee-7df429b76db18745.rlib",
+      "bytes": 73227996,
+      "sha256": "a9be135be710c548ff7b19fc9ecd8ac634d03d7d74495267630fa07e7ef54782",
+      "allocated_bytes_before": 73228288
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_mvcc_fee-7df429b76db18745.rmeta",
+      "bytes": 3952201,
+      "sha256": "e19e6b8b45a79354525f06f97000cdfaa149aca14bf7f6e0d55d050474844f48",
+      "allocated_bytes_before": 3952640
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/trnm_mvcc_fee-7df429b76db18745.d",
+      "bytes": 15519,
+      "sha256": "e18520fa1a41a0f04e3a9779cf90bb8dba08adff58b99a6c3dab74d9e4a0d8fb",
+      "allocated_bytes_before": 16384
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_crypto_primitives-5e295247336dbb60.rlib",
+      "bytes": 25459828,
+      "sha256": "42414ddc60f0905db7dd4565351d0646306de21d272576a28bcef152c489c126",
+      "allocated_bytes_before": 25460736
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_crypto_primitives-5e295247336dbb60.rmeta",
+      "bytes": 1799874,
+      "sha256": "45b7536be0dba5e880139832dc5a9781b38960d983e8cd49d0b1a2f02128ec71",
+      "allocated_bytes_before": 1802240
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/trnm_crypto_primitives-5e295247336dbb60.d",
+      "bytes": 7439,
+      "sha256": "5085dc4dd3584a4ee56619a0b68be932e145edc353de58a4e1c80791a1256e59",
+      "allocated_bytes_before": 8192
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_service_settlement-699aecc755010478.rlib",
+      "bytes": 21353768,
+      "sha256": "5bea6ad4fa4cb3194f9afbc7f1d8ecc72346dacaa4c7d39d3b309bc9fced3768",
+      "allocated_bytes_before": 21356544
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_service_settlement-699aecc755010478.rmeta",
+      "bytes": 1856564,
+      "sha256": "73039f04001caad63ae841692b878e8a67eb71d905e05d4a71eb9d3de1d66e99",
+      "allocated_bytes_before": 1859584
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/trnm_service_settlement-699aecc755010478.d",
+      "bytes": 2791,
+      "sha256": "96bbce59eaf68e60d63b8724fac10a95bb08bffdb371c02eef4c7742f8aa1ded",
+      "allocated_bytes_before": 4096
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_task_kernel-742957565c3600f1.rlib",
+      "bytes": 16715348,
+      "sha256": "76f1d45b2192e6103d8a1cca6aff67258a0f4db7c2bc742209776286632ee591",
+      "allocated_bytes_before": 16715776
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_task_kernel-742957565c3600f1.rmeta",
+      "bytes": 1558167,
+      "sha256": "4b06d5f71e77799129eae32302db0a15f0cd81e62bd8113f5d127f7508cec648",
+      "allocated_bytes_before": 1560576
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/trnm_task_kernel-742957565c3600f1.d",
+      "bytes": 1852,
+      "sha256": "d5b328917f78f4644feeb24823f545e30ea8e679f552bd0b779659d20764655f",
+      "allocated_bytes_before": 4096
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_release_bundle-a8ae2dfafcbd02b0.rlib",
+      "bytes": 13568326,
+      "sha256": "d04cd88023738af5c927ccadfa01d8bc02432cfd1a8cc3a9d680a483365671c3",
+      "allocated_bytes_before": 13570048
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_release_bundle-a8ae2dfafcbd02b0.rmeta",
+      "bytes": 433702,
+      "sha256": "9bd2d747d41a1cdf9f0595e42728fd7a884cfa3c0f68b9b3dc7202333c3f53ea",
+      "allocated_bytes_before": 434176
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/trnm_release_bundle-a8ae2dfafcbd02b0.d",
+      "bytes": 1590,
+      "sha256": "c93b8e7a0addcaeb2b8b7fd6a9652b654f416b52dfa37acaac1aadfaebbe89a0",
+      "allocated_bytes_before": 4096
+    },
+    {
+      "path": "/workspace/scratch/a4188f5c86b5/target-pq-profile-boundary-local/debug/deps/libtrnm_pon_node-948c362b9f890486.rmeta",
+      "bytes": 32849790,
+      "sha256": "69b2e2828aa2c855aed611cf008fffacd415417a9257529053559b8f7cf1a4af",
+      "allocated_bytes_before": 32849920
+    }
+  ],
+  "source_changed": false,
+  "native_job_changed": false,
+  "qualification_granted": false,
+  "retained_roots_verified_after": 18,
+  "retained_fingerprint_records_verified_after": 151,
+  "pass": true,
+  "filesystem_available_after_bytes": 545431552,
+  "finished_utc": "2026-11-11T06:22:12.475164+00:00"
+}

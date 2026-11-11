@@ -1,0 +1,517 @@
+{
+  "actions": {
+    "cargo_executed": false,
+    "optimization_flags_modified": false,
+    "original_wrapper_mutated": false,
+    "source_modified": false,
+    "tests_rerun": false,
+    "threshold_or_quota_modified": false
+  },
+  "actual_execution_context": {
+    "argv": [
+      "env",
+      "CARGO_HOME=/home/qian-qi/chain-pq-a418-final-cargo-home",
+      "TRNM_CI_TOOL_ROOT=/home/qian-qi/chain-pq-a418-final-ci-tools",
+      "bash",
+      "scripts/ci/ci_job.sh",
+      "rust-baseline"
+    ],
+    "context_note": "Explicit env argv overrides the recorder base environment CARGO_HOME; libtest threads=1 does not remove the fixture own server/downloader threads.",
+    "context_path": "/workspace/scratch/a4188f5c86b5/coordination/full-rust-baseline-context-read.json",
+    "context_sha256": "3d42e81bde9d9a825b0ed8fb869ec4904e15b690485edcd3fe26743ceafb39a4",
+    "effective_cargo_home_from_argv": "/home/qian-qi/chain-pq-a418-final-cargo-home",
+    "environment": {
+      "CARGO_BUILD_JOBS": "2",
+      "CARGO_HOME": "/home/qian-qi/.cargo",
+      "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "RUST_TEST_THREADS": "1",
+      "TMPDIR": "/home/qian-qi/chain-pq-a418-final-tmp"
+    },
+    "recorder_sha256": "10089fad39140cbb56c15b85c72c8e5e8c76fc368d74c2ac2cb11233b1310562"
+  },
+  "baseline_comparison_limit": "No execution at base was performed. Identical source/dependency objects do not establish that base reproduced or passed this failure, and do not grant baseline qualification.",
+  "comparison_base": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+  "created_utc": "2026-11-11T03:16:44.978149+00:00",
+  "diagnostic_status": "source_and_failure_boundary_review_complete; root cause not fully resolved",
+  "environment_and_timing_limits": {
+    "cargo_compile_duration_seconds": 1911,
+    "child_maximum_rss_is_not_da_phase_peak_or_oom_evidence": true,
+    "derived_baseline_start_utc": "2026-11-11T02:16:00.463850+00:00",
+    "earliest_possible_test_phase_utc": "2026-11-11T02:47:51.463850+00:00",
+    "missing_dependency_or_environment_breakage_proven": false,
+    "repository_truth_finished_utc": "2026-11-11T02:44:19.940646+00:00",
+    "repository_truth_overlap_conclusion": "The completed repository-truth lane ended before the earliest possible Rust test phase; overlapping job starts do not establish contention during DA tests. Other host activity/IO/CPU pressure remains unmeasured.",
+    "suite_time_is_not_case_time": true,
+    "transport_and_sqlite_are_cooperative_not_preemptive": true
+  },
+  "failure_1": {
+    "excluded_claims": [
+      "The 20-frame quota was fully consumed: observed attempts=16.",
+      "The response-byte quota was fully consumed: 100144 < 165736 and the code separately classifies exact byte exhaustion.",
+      "No TCP access was available: one live connection returned 100144 bytes.",
+      "The error proves missing remote data, a networking outage, storage failure, or CPU contention.",
+      "This is an account/PQ guard failure: the executed owner chain is the unchanged DA retained-set and local cache/transport chain."
+    ],
+    "fixture": {
+      "client_request_timeout_seconds": 2,
+      "lines": [
+        240,
+        248,
+        253,
+        296,
+        307,
+        327,
+        341,
+        344,
+        760,
+        780,
+        805
+      ],
+      "max_connections": 1,
+      "overall_timeout_seconds": 10,
+      "parallelism": 1,
+      "peer": "127.0.0.1 ephemeral listener, created in the same fixture",
+      "request_quota": 20,
+      "response_byte_quota_static_arithmetic": 165736,
+      "server_request_timeout_seconds": 2,
+      "source": "trillionnium/crates/trnm-data-availability/src/cell/retained/tests.rs",
+      "unique_chunks": 15,
+      "unique_manifests": 5,
+      "versions": 2
+    },
+    "leading_unconfirmed_mechanism": "Original 2-second connection expired after verified prefix; next request(s) spent frame reservations but could not redial under max_connections=1; non-Io admission reason became Unavailable. The counts fit this path, but actual deadline/phase telemetry is missing.",
+    "observed_error": "Unavailable",
+    "observed_usage": {
+      "cached_chunks": 0,
+      "completed_manifests": 3,
+      "connection_attempts": 1,
+      "downloaded_chunks": 9,
+      "received_response_bytes": 100144,
+      "request_attempts": 16
+    },
+    "panic": "cell/retained/tests.rs:780:6 unwrap Err CellRetainedFetchFailureV1",
+    "static_arithmetic": {
+      "all_five_manifest_response_bytes": 1755,
+      "full_union_response_bytes": 165736,
+      "manifest_wire_bytes": 342,
+      "not_a_native_test_or_fixture_reexecution": true,
+      "prefix_if_adapter_among_three_completed_members": 100144,
+      "prefix_limit": "100144 exactly matches this prefix; member ordering/deadline timestamps were not recorded, so equality alone is not proof of a particular timing branch."
+    },
+    "test": "cell::retained::tests::native_tcp_recovers_every_retained_version_with_one_shared_exact_quota",
+    "verified_findings": [
+      {
+        "anchors": [
+          "cell/retained.rs:422-455",
+          "cell/retained.rs:457-496"
+        ],
+        "finding": "All five metadata objects are fetched and pinned before any payload member. completed_manifests=3 means execution reached the fourth payload-member call, after owner preflight and all metadata checks. No whole-set observation was returned."
+      },
+      {
+        "anchors": [
+          "cell/network/persistent.rs:41-45",
+          "cell/network/persistent.rs:272-299",
+          "cell/network/persistent.rs:341-343",
+          "cell/network/persistent.rs:428-432",
+          "cell/network/persistent.rs:663-675"
+        ],
+        "finding": "The persistent request_timeout fixes the entire connection lifetime at initial request/dial and server accept; later frames take min(new attempt deadline, original connection deadline), with no renewal. Thus the fixture has a 2-second connection envelope despite its 10-second set deadline."
+      },
+      {
+        "anchors": [
+          "cell/network/persistent.rs:247-251",
+          "cell/network/persistent.rs:272-285"
+        ],
+        "finding": "Frame attempts are charged before checking a reusable slot. An expired slot is removed; because the one original connection budget has already been spent, redial admission returns Invalid(\"connection budget exhausted\") without increasing connection_attempts or receiving response bytes."
+      },
+      {
+        "anchors": [
+          "cell/network.rs:797-843",
+          "cell/network.rs:850-863"
+        ],
+        "finding": "download_chunk_via preserves Io details but discards non-Io errors via Err(_) => (), then reports Unavailable if no peer succeeds. The connection-admission reason can therefore be erased. This is a proven diagnostic limitation, not proof that this branch caused the observed run."
+      },
+      {
+        "anchors": [
+          "cell/network.rs:560-595",
+          "cell/network.rs:617-632"
+        ],
+        "finding": "The downloader and receiver are distinct scoped threads with a bounded one-item channel. A further request can be charged before the receiver observes a prior failure and latches cancellation, so 16 attempts need not mean 16 wire exchanges."
+      },
+      {
+        "anchors": [
+          "cell/retained/tests.rs:366-377",
+          "cell/retained/tests.rs:780",
+          "cell/retained/tests.rs:805-808"
+        ],
+        "finding": "The panic occurs before Server::finish collects/asserts the service report. Drop joins but discards the worker result, and the tempfile fixture is unwound. Existing logs do not retain the server completion/error phase or the actual connection lifetime."
+      },
+      {
+        "anchors": [
+          "cell/network.rs:607",
+          "cell/network.rs:664",
+          "cell/network.rs:749-753",
+          "cell/store.rs:124-158",
+          "cell/cache_wal.rs:114-131",
+          "cell/cache_wal.rs:150-164"
+        ],
+        "finding": "Receiver manifest and chunk persistence are real SQLite writes and full-byte checks between requests. Writes inherit the overall operation deadline, use FULL synchronous and WAL truncation before IMMEDIATE commit; this work can consume the same connection lifetime, but its measured cost is absent."
+      }
+    ]
+  },
+  "failure_2": {
+    "complete_target_work_not_measured_completion": [
+      {
+        "cache_shard_calls": 390,
+        "case_chunks": 65,
+        "shard_write_transactions": 780
+      },
+      {
+        "cache_shard_calls": 768,
+        "case_chunks": 128,
+        "shard_write_transactions": 1536
+      }
+    ],
+    "not_proven": [
+      "失败属于 65 还是 128 case；失败 chunk/slot；3 个 provider check 中的精确位置。",
+      "CPU 饱和、I/O 延迟、临时盘、调度/锁竞争各自的耗时贡献。",
+      "十秒窗口必然不合理，或任何放宽阈值/优化已经必要。",
+      "本轮账户边界代码造成该失败；直接相关包树、全部 path deps 与锁文件没有变化也不能等价于通过资格。",
+      "repository-truth 与 Rust job 的启动重叠导致 DA 争抢；local_audit 已核其完整 Python lane 先于 Rust 测试开始结束。",
+      "累计 children maximum RSS 可以作为 DA 阶段峰值或 OOM 证明。",
+      "没有在 comparison_base 实际执行本测试；不能把源/锁相同表述为已在 base 复现或已证明属于 preexisting failure。"
+    ],
+    "observed_error": "Invalid(\"RS46 provider deadline\")",
+    "proven_boundary": "The one 10-second absolute create deadline had expired at one of cache_shard entry/post-verification/post-two-CAS-write checks. This build path has not yet created the CRP1 output file or invoked physical provider publish. Partial local CAS writes may already exist.",
+    "review_path": "/workspace/scratch/a4188f5c86b5/coordination/diagnostic_da_rs46_readonly.json",
+    "review_sha256": "3913eacb20711ad19c9ed27fb098c0d25a94eb344f3b5952e0324bfb2417174b",
+    "test": "cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_accepts_complete_65_and_128_chunk_catalogs",
+    "verified_findings": [
+      {
+        "anchors": [
+          {
+            "lines": [
+              13,
+              14
+            ],
+            "path": "trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests.rs"
+          },
+          {
+            "lines": [
+              125,
+              155,
+              160,
+              162
+            ],
+            "path": "trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests/shard_plan_capacity.rs"
+          }
+        ],
+        "finding": "fixture 每个 65/128 case 各给整个 create 操作一个共享的 10 秒绝对 wall deadline；不是每个 shard 重新给 10 秒。"
+      },
+      {
+        "anchors": [
+          {
+            "lines": [
+              25,
+              33,
+              38
+            ],
+            "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/file.rs"
+          },
+          {
+            "lines": [
+              232,
+              298,
+              300,
+              303,
+              315,
+              323,
+              325,
+              351
+            ],
+            "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs"
+          },
+          {
+            "lines": [
+              163,
+              170,
+              173,
+              180,
+              559,
+              560
+            ],
+            "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/provider.rs"
+          }
+        ],
+        "finding": "实际链为 File::create -> Plan::build -> source_view/容量校验 -> catalog.populate_cache -> 每 chunk 的 RS 编码和 6 个 CSP1 contract -> cache_shard。当前错误字符串只来自 provider::check；此 create 链没有物理 provider publish 调用。"
+      },
+      {
+        "anchors": [
+          {
+            "lines": [
+              170,
+              171,
+              172,
+              173,
+              174,
+              179,
+              180,
+              560
+            ],
+            "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/provider.rs"
+          }
+        ],
+        "finding": "可将实际拒绝点缩到 cache_shard 的 3 个 check：入口；verify_pin/verify_wire 后；put_manifest/put_chunk 后。它证明共享 deadline 当时已耗尽，不能判定具体 case/chunk/slot 或 CPU/IO 原因。"
+      },
+      {
+        "anchors": [
+          {
+            "lines": [
+              120,
+              124,
+              132,
+              133,
+              147,
+              150,
+              156,
+              158,
+              177,
+              187,
+              234,
+              241
+            ],
+            "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs"
+          },
+          {
+            "lines": [
+              16,
+              96,
+              124,
+              150
+            ],
+            "path": "trillionnium/crates/trnm-data-availability/src/cell/cache_wal.rs"
+          }
+        ],
+        "finding": "每个 shard 缓存调用各执行独立 manifest 和 chunk 写事务；write_with_deadline 使用 min(原绝对 deadline, now+5s)，并在每次写前执行 WAL TRUNCATE、FULL synchronous、IMMEDIATE transaction 与提交。系统调用和 SQLite 工作是合作式 deadline，未提供抢占。"
+      },
+      {
+        "anchors": [
+          {
+            "lines": [
+              10,
+              15,
+              17,
+              18,
+              106,
+              114,
+              115
+            ],
+            "path": "trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests/shard_plan_capacity.rs"
+          },
+          {
+            "lines": [
+              270,
+              281,
+              291,
+              325,
+              351
+            ],
+            "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs"
+          }
+        ],
+        "arithmetic": [
+          {
+            "complete_chunks": 65,
+            "configured_provider_capacity_bytes": 1048576,
+            "maximum_obligations": 128,
+            "required_provider_capacity_bytes": 528384,
+            "target_cache_chunk_rows": 455,
+            "target_cache_manifest_rows": 392,
+            "target_shard_write_transactions": 780,
+            "target_six_slot_calls": 390
+          },
+          {
+            "complete_chunks": 128,
+            "configured_provider_capacity_bytes": 1048576,
+            "maximum_obligations": 128,
+            "required_provider_capacity_bytes": 1044480,
+            "target_cache_chunk_rows": 896,
+            "target_cache_manifest_rows": 770,
+            "target_shard_write_transactions": 1536,
+            "target_six_slot_calls": 768
+          }
+        ],
+        "finding": "对于成功跑完的完整 65/128 case，目标是 390/768 次 cache_shard，因而仅 shard 缓存就有 780/1536 次写事务，另有原始 catalog 恢复和校验。失败运行完成了多少次没有记录；不能把这些目标数当作实测。"
+      },
+      {
+        "anchors": [
+          {
+            "lines": [
+              33,
+              38
+            ],
+            "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/file.rs"
+          },
+          {
+            "lines": [
+              174,
+              179,
+              180
+            ],
+            "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/provider.rs"
+          }
+        ],
+        "finding": "本次失效发生在 build 返回前；create 的 CRP1 open_file 位于 build 之后。局部 cache 暂存写可能已发生，不能扩写成零外部效果；也不能把此错误称为 provider 物理 quota 拒绝。"
+      }
+    ]
+  },
+  "minimum_next_diagnostic": {
+    "forbidden_shortcuts": [
+      "Do not increase time/connection/byte/row quotas.",
+      "Do not skip or ignore either test.",
+      "Do not change optimization flags or release/debug profile to make the gate green.",
+      "Do not call this a reproduced base failure without actually executing base."
+    ],
+    "performed": false,
+    "sequence": [
+      "Preserve the original full FAIL, exact ELF hash, recorder/context and all raw logs; let the already-authorized original wrapper finish feature-off/source-after unchanged.",
+      "If root proceeds, run each exact failing case separately once using the same frozen existing ELF, original Cargo test working directory and recorded provider/loader/TMPDIR, with one test thread and unchanged deadlines/quotas/assertions/profile. Capture elapsed/CPU/RSS plus contemporaneous host/cgroup and filesystem observations. Treat any pass as a targeted repeatability observation, never as replacement for the failed full baseline.",
+      "If the same failure remains ambiguous, obtain minimal diagnostic phase data: TCP original-connection elapsed/deadline and request/manifest index plus server report; RS46 case/chunk/slot and elapsed before/after its three checks, encoding and CAS writes. Instrumented source/binary or tracing has separate provenance and can perturb timing; it is not the original Z qualification run."
+    ]
+  },
+  "qualification_granted": false,
+  "raw_observation": {
+    "binary_hash_measured_by_this_review": false,
+    "binary_path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final-target/debug/deps/trnm_data_availability-206231ff342af726",
+    "log_bytes": 134555,
+    "log_path": "/workspace/scratch/a4188f5c86b5/coordination/full-rust-baseline-observed-complete-stdout.log",
+    "log_sha256": "91f4595a10c116306297e2acf061a1449e45ce26d524fe05645b21a13cf19d92",
+    "running_binary_line": 752,
+    "suite_elapsed_seconds": 735.2,
+    "suite_failed": 2,
+    "suite_filtered_out": 0,
+    "suite_ignored": 0,
+    "suite_passed": 713,
+    "suite_summary_line": 1490,
+    "wrapper_result": {
+      "argv": [
+        "env",
+        "CARGO_HOME=/home/qian-qi/chain-pq-a418-final-cargo-home",
+        "TRNM_CI_TOOL_ROOT=/home/qian-qi/chain-pq-a418-final-ci-tools",
+        "bash",
+        "scripts/ci/ci_job.sh",
+        "rust-baseline"
+      ],
+      "child_resources": {
+        "maximum_rss_kib": 4303520,
+        "rss_scope": "maximum of waited children, including earlier Git metadata children; not an OOM diagnosis",
+        "system_cpu_seconds": 339.372881,
+        "user_cpu_seconds": 4184.074726
+      },
+      "elapsed_seconds": 2841.481356428005,
+      "finished_utc": "2026-11-11T03:03:21.945206+00:00",
+      "id": "rust-baseline",
+      "launch_error": null,
+      "pass": false,
+      "qualification_granted": false,
+      "returncode": 101,
+      "source_head_after": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_head_before": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+      "source_status_after": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "91f4595a10c116306297e2acf061a1449e45ce26d524fe05645b21a13cf19d92"
+    }
+  },
+  "reviewed_source_files": [
+    {
+      "git_blob": "36e64009bceb5acebcb419fcfee4af9068d84fc5",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/retained/tests.rs",
+      "sha256": "9bd32be201d267b01595a395619cb4bb902fb017aa0a0f24ca7a1829dae0a976",
+      "worktree_equals_exact_head": true
+    },
+    {
+      "git_blob": "8bb6dcc43adfcd06794cce01d80fb676268bd1f6",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/retained.rs",
+      "sha256": "e9b4e6e1dde309ec644e0a80ed702eb098c3a5cb788f9153ffa1de0c78354128",
+      "worktree_equals_exact_head": true
+    },
+    {
+      "git_blob": "e184be5ec93f69e9fdc1e96a2c44185435f8329a",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/version/tests.rs",
+      "sha256": "927110aebc7738f3385d67096f610bda36a342a3c780fdee7982b1b0ef31b82f",
+      "worktree_equals_exact_head": true
+    },
+    {
+      "git_blob": "40192e48750ab07e6efa649c93d20cddfccaf867",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+      "sha256": "45b50bff63873c4897fca011fc009b229af618d5cc9e0cd8dcc14da5387d97db",
+      "worktree_equals_exact_head": true
+    },
+    {
+      "git_blob": "f1bf1975b35d5f4ee6706c65a7d73ffbf199fb58",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network/persistent.rs",
+      "sha256": "0a5eb5aba7dc838a73fd05dafbd69412b08cd8347cd839398f74bb85e52adde4",
+      "worktree_equals_exact_head": true
+    },
+    {
+      "git_blob": "c268c2d25f39030162c05b13d121a36ce974ed0c",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+      "sha256": "b3f1f62fcc984ffdbdbb8118dc6df8094bc62fba57fcde109a32133a62b54330",
+      "worktree_equals_exact_head": true
+    },
+    {
+      "git_blob": "1688b5afb4a77147358bee45514738c9da0d0635",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/cache_wal.rs",
+      "sha256": "17805b6ef0d8aeba2a9959f4459e41e094ca601342f11e0874914efa9d8d71f8",
+      "worktree_equals_exact_head": true
+    },
+    {
+      "git_blob": "ccbd170297584e9ee7e86edacb2ddd9547985088",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
+      "sha256": "cf945af731b8172d6b093bded63d546ac3f3a15756524e739a50187dcdaebdc5",
+      "worktree_equals_exact_head": true
+    },
+    {
+      "git_blob": "072edd68a39dcb69969d9e74954628d18f7d7d07",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/closure.rs",
+      "sha256": "72188669d94263583b5a716748e253f3a09eca09b93f0295bfb56f29a647307d",
+      "worktree_equals_exact_head": true
+    }
+  ],
+  "schema": "trnm-da-baseline-readonly-diagnostic-v1",
+  "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "source_tree": "1ed39b6ebe55cb00c238f26f6bfc9361ab93faec",
+  "unchanged_source_and_dependencies": [
+    {
+      "base_git_object": "1345ba7ede9d5e08d26ecc2f7f8c6a3474ff6158",
+      "head_git_object": "1345ba7ede9d5e08d26ecc2f7f8c6a3474ff6158",
+      "identical": true,
+      "path": "trillionnium/crates/trnm-data-availability"
+    },
+    {
+      "base_git_object": "3bff846e9d6278d8f9bbad25aa71b66c0b9e7a00",
+      "head_git_object": "3bff846e9d6278d8f9bbad25aa71b66c0b9e7a00",
+      "identical": true,
+      "path": "trillionnium/crates/trnm-crypto-primitives"
+    },
+    {
+      "base_git_object": "7b15f61b2c6c195dc7f35ab3180cc7f74f939f67",
+      "head_git_object": "7b15f61b2c6c195dc7f35ab3180cc7f74f939f67",
+      "identical": true,
+      "path": "trillionnium/crates/trnm-protocol"
+    },
+    {
+      "base_git_object": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+      "head_git_object": "def80fa394ebb1ae6ce7d1d62ed77524152a2d04",
+      "identical": true,
+      "path": "trillionnium/Cargo.lock"
+    },
+    {
+      "base_git_object": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "head_git_object": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "identical": true,
+      "path": "trillionnium/Cargo.toml"
+    }
+  ],
+  "whole_rust_baseline_status": "FAIL"
+}

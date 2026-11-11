@@ -1,0 +1,7 @@
+{
+  "chunk_id": "66cbee",
+  "wall_time_seconds": 0.00001962,
+  "exit_code": 0,
+  "original_token_count": 309,
+  "output": "{\"archive\": \"/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/desktop-node-retained-data-evidence-v1.tar.gz\", \"archive_bytes\": 49417, \"archive_sha256\": \"5964496925744cdeae11ee177883ee537b696feefe6ee5c6cb027e64af851238\", \"manifest_sha256\": \"3fd826bc86628ce83c57a68a3bb59ca6d2a4a57dd55136c8ba57d290de1887ee\", \"record_results\": {\"node-retained-data-all-targets\": {\"elapsed_seconds\": 9327.54999621096, \"finished_utc\": \"2026-11-11T06:26:28.622222+00:00\", \"pass\": false, \"returncode\": 101}, \"node-retained-data-preflight\": {\"elapsed_seconds\": 0.1797194560058415, \"finished_utc\": \"2026-11-11T03:50:28.068646+00:00\", \"pass\": true, \"returncode\": 0}, \"node-retained-data-source-after\": {\"elapsed_seconds\": 41.56752834888175, \"finished_utc\": \"2026-11-11T06:27:10.516448+00:00\", \"pass\": true, \"returncode\": 0}, \"node-retained-data-source-before\": {\"elapsed_seconds\": 32.46372414496727, \"finished_utc\": \"2026-11-11T03:51:00.791515+00:00\", \"pass\": true, \"returncode\": 0}}, \"report\": \"/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-retained-data-transfer-verification.json\", \"report_sha256\": \"fac8235fb1b823c10c3441eb8e3b3de05d11eb77aba8999117b5e5cc8aeb8a8d\"}\n"
+}

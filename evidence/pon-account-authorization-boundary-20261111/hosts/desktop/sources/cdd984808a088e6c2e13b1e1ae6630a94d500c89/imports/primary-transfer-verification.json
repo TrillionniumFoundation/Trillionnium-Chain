@@ -1,0 +1,242 @@
+{
+  "acceptance_granted": false,
+  "all_51_original_member_sizes_and_hashes_verified": true,
+  "all_chunk_hashes_verified": true,
+  "archive_bytes": 891385,
+  "archive_sha256": "6325997d4238a8fcdfc3ea59c3a55951d8c77066468111f31813eff418764f9c",
+  "chunk_count": 22,
+  "chunks": [
+    {
+      "bytes": 65536,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0000000.json",
+      "next_offset": 65536,
+      "offset": 0,
+      "sha256": "cf234a18edb401a068b08bc8bb8bf95b42e0d5ba938c37bc3e6aef32d95366f0"
+    },
+    {
+      "bytes": 65536,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0065536.json",
+      "next_offset": 131072,
+      "offset": 65536,
+      "sha256": "981eb74675e3a4d56b48be75ed5c50e79082f7a74277376f44c524b4af708b11"
+    },
+    {
+      "bytes": 65536,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0131072.json",
+      "next_offset": 196608,
+      "offset": 131072,
+      "sha256": "fc664ceb3b5efa9e910adc514a2d31bacc91b2a1d49b92d3c743178e50d9d68e"
+    },
+    {
+      "bytes": 65536,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0196608.json",
+      "next_offset": 262144,
+      "offset": 196608,
+      "sha256": "96020a6adc4fd4e13ef87261ff7df351ba8c9155b8987f5bc921cf6988796c7d"
+    },
+    {
+      "bytes": 65536,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0262144.json",
+      "next_offset": 327680,
+      "offset": 262144,
+      "sha256": "fe14381cfc88c5a3189ec812bba5550d5241b7c7557de813f5e9ceb227455ab9"
+    },
+    {
+      "bytes": 65536,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0327680.json",
+      "next_offset": 393216,
+      "offset": 327680,
+      "sha256": "2f4e6b9d116b58eb28b85140ca67c9ba4df26080544ad4b3097a84c9ec91190e"
+    },
+    {
+      "bytes": 32768,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0393216.json",
+      "next_offset": 425984,
+      "offset": 393216,
+      "sha256": "f66ed458ec42e05e9b27c6efcf1fd8a6ac081e48a541a754195c0b18da198c8d"
+    },
+    {
+      "bytes": 32768,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0425984.json",
+      "next_offset": 458752,
+      "offset": 425984,
+      "sha256": "de7e40cc78aa049a766944d62ba193aa9c25ccb09316c50148a989972d1f5b3a"
+    },
+    {
+      "bytes": 32768,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0458752.json",
+      "next_offset": 491520,
+      "offset": 458752,
+      "sha256": "19621e9136d7956c595986c73c790520fde920fe6ca3d57bcd4d8ae9acaa88e3"
+    },
+    {
+      "bytes": 32768,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0491520.json",
+      "next_offset": 524288,
+      "offset": 491520,
+      "sha256": "c03ce14135698e6178a19c8d536b0c5cd50aac86c00c291232977245fba8c9ab"
+    },
+    {
+      "bytes": 32768,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0524288.json",
+      "next_offset": 557056,
+      "offset": 524288,
+      "sha256": "96dd314ef1c06dbfdff7492ea06e2f31faecd961b9e7e76a7e6c64345ad09082"
+    },
+    {
+      "bytes": 32768,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0557056.json",
+      "next_offset": 589824,
+      "offset": 557056,
+      "sha256": "b845c397e968629b2c97bbd05ad84ad0319ee5d888cda911f460a89fb5fa1caa"
+    },
+    {
+      "bytes": 32768,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0589824.json",
+      "next_offset": 622592,
+      "offset": 589824,
+      "sha256": "1bc44193ad41832f3fc58cd7e21334a4ffd6955f24230feb5e4fda3245bb500e"
+    },
+    {
+      "bytes": 32768,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0622592.json",
+      "next_offset": 655360,
+      "offset": 622592,
+      "sha256": "e39eedfa32cbc29502bb020488a44be1faf2520c337b4c6a16d0478ff5e2edf3"
+    },
+    {
+      "bytes": 32768,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0655360.json",
+      "next_offset": 688128,
+      "offset": 655360,
+      "sha256": "c34c9e51211e5eb4ab34a5031975d34ecc8d3152a720095e1f5d29fa0f1b68f4"
+    },
+    {
+      "bytes": 32768,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0688128.json",
+      "next_offset": 720896,
+      "offset": 688128,
+      "sha256": "0d24951faec4d7d75e33c2fdcc711ec87f980dd9c416fb3a7171c3d067c8a430"
+    },
+    {
+      "bytes": 32768,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0720896.json",
+      "next_offset": 753664,
+      "offset": 720896,
+      "sha256": "a30abc6bcffed0fd4c8de184198eb00190540c1bfa27eaae182e3b9b41a53149"
+    },
+    {
+      "bytes": 32768,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0753664.json",
+      "next_offset": 786432,
+      "offset": 753664,
+      "sha256": "a61d4df4eef09504253218cb66d562b0656a57fdab9db6f53bc163e7d378bb05"
+    },
+    {
+      "bytes": 32768,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0786432.json",
+      "next_offset": 819200,
+      "offset": 786432,
+      "sha256": "d13f57260e8b2a95b7fb3660702823ff0c333ab384169603cdf5dd9fc0c3841c"
+    },
+    {
+      "bytes": 32768,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0819200.json",
+      "next_offset": 851968,
+      "offset": 819200,
+      "sha256": "cfd96bac0ad7d2cd7560d844dc1c8e8459800ec1da79f2066a36009bcf5f8cd1"
+    },
+    {
+      "bytes": 32768,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0851968.json",
+      "next_offset": 884736,
+      "offset": 851968,
+      "sha256": "4192a746938e25a1293f25527d849177dd01814e5e60886afc52b11a58d51704"
+    },
+    {
+      "bytes": 6649,
+      "local_transfer_record": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-transfer/chunk-0884736.json",
+      "next_offset": 891385,
+      "offset": 884736,
+      "sha256": "1743a190392f9f45338b6162b37f63a25510becd13a97303836fbda524e48915"
+    }
+  ],
+  "complete_archive_sha256_verified": true,
+  "completed_utc": "2026-11-11T02:29:21.597333+00:00",
+  "failed_read_text_used_as_file_content": false,
+  "host": "desktop",
+  "initial_large_concurrent_read_returned_service_error": true,
+  "local_archive": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/desktop-primary-evidence-v1.tar.gz",
+  "local_extracted_directory": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1",
+  "member_count": 52,
+  "node_binary_readback": {
+    "bytes": 534143600,
+    "mtime_ns": 1794363077753253803,
+    "path": "/home/qian-qi/chain-pq-profile-boundary-20261111-a418-final-target/debug/deps/trnm_pon_node-2cfc25289c60243c",
+    "post_run_hash": true,
+    "sha256": "87ca599d29ed8a168694f4ff3b290c2eeefdcba1608804a70d131857a1558cad",
+    "stat_stable_during_hash": true
+  },
+  "official_advisory_archive_local": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1/tool-preparation/continuation-1/advisories-28d73fc95e5972af3403225a217def57dcaba3c4.tar.gz",
+  "official_advisory_archive_sha256": "fcc2e8035756170b2dd9e292dcc8e6ee9194b35b6e50e54eab513269db3ccf4d",
+  "prior_preparation_failure_retained": true,
+  "remote_archive": "/home/qian-qi/chain-pq-a418-final-ci-tools/desktop-primary-evidence-v1.tar.gz",
+  "remote_version": "2050:4388285:891385:1794363539853399274:1794363539853399274",
+  "running_lanes_included": false,
+  "schema": "version-bound-desktop-primary-evidence-transfer-v1",
+  "source_before_local": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1/primary/source-before.json",
+  "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "tool_preparation_local": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1/tool-preparation/continuation-1/preparation-report.json",
+  "verified_primary_receipts": [
+    {
+      "context_sha256": "79397400564ffa6be5296400cd34854e5cbdc58ef02da01a726c031e85b32164",
+      "host": "desktop",
+      "id": "preflight",
+      "local_record_directory": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/preflight",
+      "pass": true,
+      "result_sha256": "c960752738acc394948d6913915ddc3d6688d9c9f90fa2485a29c6fbbc482471",
+      "returncode": 0,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "context_sha256": "751e1902aabfb90ba8fd5ea01d115c4a085113968d33d52cd0a217766a642eeb",
+      "host": "desktop",
+      "id": "source-before",
+      "local_record_directory": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/source-before",
+      "pass": true,
+      "result_sha256": "32e2167bec660420bd9b178eb2735df8e8da4a9ce87bd74fc9164c8e3f28abc8",
+      "returncode": 0,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "context_sha256": "d207948a7f850c826041da6d9b9c2858939b07254172944e62c5ad38412c79cc",
+      "host": "desktop",
+      "id": "workspace-graph",
+      "local_record_directory": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/workspace-graph",
+      "pass": true,
+      "result_sha256": "30b77da32d5c716fa51134d226e1532e6baa1f3cf2b1cc00e73cb3522d68dc7c",
+      "returncode": 0,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "context_sha256": "694bbbe4da96dfd144dc124c961510819215257750de43a6a72a0b332d24611e",
+      "host": "desktop",
+      "id": "node-new-tests",
+      "local_record_directory": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/node-new-tests",
+      "pass": true,
+      "result_sha256": "693986546fbee567828b42e6288b4f5c9623ff911e22cc0b9a7d8a56d18865cd",
+      "returncode": 0,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    },
+    {
+      "context_sha256": "7a0c6dc2cb0f4a7c3d94985c5f2589e43ba8d8f85bc75fc7125c68e15879eb1e",
+      "host": "desktop",
+      "id": "strict-workspace-clippy",
+      "local_record_directory": "/workspace/scratch/a4188f5c86b5/desktop-evidence/cdd984808a088e6c2e13b1e1ae6630a94d500c89/primary-evidence-v1/primary/validation/cdd984808a088e6c2e13b1e1ae6630a94d500c89/strict-workspace-clippy",
+      "pass": true,
+      "result_sha256": "b62d485fd5d3a3113dc8e21dc179e3edc14c50bb7ffe8d63f0c999b8606db0b2",
+      "returncode": 0,
+      "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89"
+    }
+  ]
+}

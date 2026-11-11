@@ -1,0 +1,37 @@
+{
+  "acceptance_granted": false,
+  "cleanup_or_actor_attribution_made": false,
+  "closed_read_operation_id": "91eed5ec464e6467c1fe2f5df0b208077535b9faae10773e4775d0970f67a8e4",
+  "entries": [
+    {
+      "bytes": 59354,
+      "local_path": "/workspace/scratch/a4188f5c86b5/coordination/node-runtime-incident/chain-pq-a418-target-inventory-20261111.json",
+      "remote_file_version": "24:1234284:59354:1794368637877602546:1794368637877602546",
+      "remote_source": "/dev/shm/chain-pq-a418-target-inventory-20261111.json",
+      "sha256": "ee7ae6e78cfd54f26fd30e33816a0d9fb18e03bdb9ac50d19e4a8d7713bc649b"
+    },
+    {
+      "bytes": 2029,
+      "local_path": "/workspace/scratch/a4188f5c86b5/coordination/node-runtime-incident/chain-pq-a418-mount-capacity.json",
+      "remote_file_version": "24:1234287:2029:1794368773826470773:1794368773826470773",
+      "remote_source": "/dev/shm/chain-pq-a418-mount-capacity.json",
+      "sha256": "efc9a84f71a7ae6a48c0955c89a1ae9f4c7d9fe441d01c9fbe86a6a31b15557e"
+    },
+    {
+      "bytes": 1135,
+      "local_path": "/workspace/scratch/a4188f5c86b5/coordination/node-runtime-incident/original-source-records-probe-stdout.json",
+      "original_probe_job_id": "1a1c8b83934-135c4-1c9",
+      "sha256": "cd78e2f84b77f89cb9e136b6ae6af905b2c29215c55cb6f8a0d9bc2666cd6b1a",
+      "stream": "stdout"
+    }
+  ],
+  "host": "desktop",
+  "observations_are_not_an_atomic_snapshot": true,
+  "observations_are_not_test_results": true,
+  "original_native_sdk_payload": "/workspace/scratch/a4188f5c86b5/coordination/node-runtime-incident/native-read-multiple-files-payload.json",
+  "original_native_sdk_payload_sha256": "1ecf06465c18d2285d6fcb08700dabcd9493c6a6f3ee8abcd481726008bc32cb",
+  "original_node_job_id": "1a1c8980187-135c4-111",
+  "schema": "desktop-node-runtime-incident-observations-v1",
+  "source_commit": "cdd984808a088e6c2e13b1e1ae6630a94d500c89",
+  "target_disappearance_cause": "unknown"
+}
