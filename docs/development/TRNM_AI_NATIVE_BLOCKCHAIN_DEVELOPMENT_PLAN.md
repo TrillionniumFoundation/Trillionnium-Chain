@@ -1,3 +1,13 @@
+## S&P 2027 producer-history observation — 2026-11-11, HOLD
+
+The [SP27-01 research observer](../research/SP27_01_HISTORY_OBSERVER_20261111.md)
+adds matched existing-kernel lifecycle records, task-content/label distinction,
+counted retained heap, local output/cleanup and fresh-process replay support.
+It grants no Node credit and changes no consensus or production qualification.
+Formal performance claims require separately established resource isolation;
+shared-host timing remains diagnostic. Prior theory and native evidence are not
+new experiments in this continuation. Coordinator integration remains separate.
+
 ## S&P 2027 publication continuation — 2026-11-10, HOLD
 
 Publication branch: `docs/chain-sp2027`, based on the current #876 delivery
