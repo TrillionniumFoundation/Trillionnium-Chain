@@ -104,6 +104,18 @@ class EvidenceReaderTests(unittest.TestCase):
         data[1][0]['phases'][0]['history'][0]['status'] = 'timeout'
         self.assert_refused(data, 'rpc vs native import')
 
+    def test_forged_phase_success_without_three_confirmations_is_refused(self):
+        data = synthetic()
+        data[1][0]['phases'][0]['finite_phase_criteria_met'] = True
+        self.assert_refused(data, 'forged phase success')
+
+    def test_forged_campaign_success_without_three_phases_is_refused(self):
+        data = synthetic()
+        data[0]['attempts'][0]['complete_success'] = True
+        data[0]['attempts'][0]['original_criteria_met'] = True
+        data[0]['attempts'][0]['step']['returncode'] = 0
+        self.assert_refused(data, 'forged campaign success')
+
     def test_zip_manifest_integrity_and_mutated_member(self):
         def make_archive(manifest_digest=None, path='body.txt'):
             raw = b'test payload'
