@@ -13,6 +13,9 @@ use std::{
 use trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki;
 use zeroize::Zeroizing;
 
+#[path = "auth_time_fairness_tests.rs"]
+mod time_fairness;
+
 fn context() -> CellDiscoveryContextV1 {
     CellDiscoveryContextV1 {
         namespace: [1; 32],
