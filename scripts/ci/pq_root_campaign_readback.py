@@ -163,6 +163,36 @@ def verify_phase_claim_witnesses(p: dict) -> None:
                 type(meter) is dict and meter.get('accounting_unavailable') is False and
                 type(actual) is dict and actual.get('balance_identity_verified') is True,
                 'DEPLETION_CLAIM_WITHOUT_ACTUAL_METER_WITNESS')
+        # An Ok wrapper and an identity flag do not bind the *values* of
+        # the paid ledger to the observed meter. The original raw snapshots
+        # can differ during live work, so such a sample cannot independently
+        # corroborate a claimed moment of true depletion.
+        require(meter.get('schema') == 'public-v3-local-stored-cpu-budget-v1' and
+                actual.get('schema') == 'public-v3-local-actual-cpu-flow-v1' and
+                meter.get('burst_ns') == 2_000_000_000 and
+                meter.get('refill_ns_per_second') == 250_000_000 and
+                meter.get('start_reserve_ns') == 100_000_000 and
+                actual.get('initial_credit_ns') == 2_000_000_000,
+                'DEPLETION_CLAIM_METER_PROFILE_MISMATCH')
+        fields = ('credited_refill_ns', 'paid_cpu_debit_ns',
+                  'booked_reservation_ns', 'stored_credit_ns',
+                  'remaining_paid_credit_ns')
+        require(all(type(actual.get(k)) is int and actual[k] >= 0
+                    for k in fields) and
+                type(meter.get('stored_credit_ns')) is int and
+                meter['stored_credit_ns'] >= 0,
+                'DEPLETION_CLAIM_METER_VALUE_TYPE')
+        stored = actual['stored_credit_ns']
+        booked = actual['booked_reservation_ns']
+        require(actual['initial_credit_ns'] +
+                actual['credited_refill_ns'] -
+                actual['paid_cpu_debit_ns'] - booked == stored and
+                actual['remaining_paid_credit_ns'] == stored + booked,
+                'DEPLETION_CLAIM_UNBALANCED_PAID_LEDGER')
+        require(meter['stored_credit_ns'] == stored,
+                'DEPLETION_CLAIM_SNAPSHOT_CREDIT_DIVERGENCE')
+        require(stored < meter['start_reserve_ns'],
+                'DEPLETION_CLAIM_NOT_BELOW_ORIGINAL_START_RESERVE')
 
 
 def summarize(results: dict, reports: list[dict], host_before: list[dict]) -> dict:
@@ -377,3 +407,4 @@ def main():
 
 if __name__ == '__main__':
     raise SystemExit(main())
+
