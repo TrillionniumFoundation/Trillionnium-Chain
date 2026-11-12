@@ -171,3 +171,24 @@ reserve their actual amounts, and rounding dust follows the existing deadline re
 This closes the specified native derivation/ablation-weight gap for representable
 integer bundles. It does not certify Shapley fairness, concealed-source independence,
 arbitrary model composition or future model benefit. V3 retains its original rules.
+
+The retained V4 test
+`same_full_bundle_admits_split_reward_redistribution_with_known_aliases` makes one
+remaining weakness concrete: repartitioning one admitted source's unchanged
+aggregate delta can change its paid share. With the same complete bundle and
+unchanged author 2 component, `(A, B)` pays the source of authors 0/1 66666 units;
+`(A + Z, -Z, B)` pays it 96551 from the same authorized 100000-unit budget. Actual
+claims, all transaction fees charged to those two accounts and known-source quotas
+are checked. Their combined account increase after those fees rises by 26814 units;
+real-world training and operating costs are not measured. The 4-intake and
+100000-unit source caps remain enforced.
+
+This is a counterexample to decomposition-invariant attribution, not a cap bypass,
+forgery, unauthorized payer debit or independently governed public-network result.
+The [exact construction and successor conditions](details/NATIVE_MODEL_COMPOSITION_V4.md#retained-known-source-splitting-counterexample)
+preserve the public 25-row corpus, the existing profile and the source map. A fresh
+successor would need source-level aggregation, omission and entitlement before an
+explicit authorized internal allocation; identifying unknown common controllers
+and obtaining prospective evaluation remain separate obligations. A passing
+regression means that the counterexample was reproduced, not that the economic
+weakness was repaired or public economic security was qualified.
