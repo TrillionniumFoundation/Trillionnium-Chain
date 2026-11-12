@@ -75,6 +75,9 @@ impl CellRs46ShardProviderV1 {
             "RS46 observed provider independent descriptor pin",
         )?;
         self.check_reserved_contract(contract)?;
+        let metadata_pin = self
+            .arena
+            .payload_observation_metadata_pin_v2(expected_operation, deadline)?;
         controlled(deadline, checkpoint)?;
         let observation = self.arena.observe_payload_controlled_v2(
             expected_operation,
@@ -89,21 +92,19 @@ impl CellRs46ShardProviderV1 {
             "RS46 provider descriptor changed",
         )?;
         controlled(deadline, checkpoint)?;
-        match observation {
+        let result = match observation {
             CellRetentionPayloadObservationV2::Verified(bytes) => {
                 // A malformed committed CSP1/CRS1 relation is a contract error,
                 // not a provider-local erasure, even if a payload hash matches.
                 let shard = contract.verify_wire(&bytes)?;
                 controlled(deadline, checkpoint)?;
-                Ok(CellRs46ProviderReadObservationV2::Verified(
-                    CellRs46StoredShardV1 {
-                        operation: expected_operation,
-                        provider_store: self.arena.store_id(),
-                        codeword: contract.owner().codeword,
-                        placement: contract.owner().placement,
-                        shard,
-                    },
-                ))
+                CellRs46ProviderReadObservationV2::Verified(CellRs46StoredShardV1 {
+                    operation: expected_operation,
+                    provider_store: self.arena.store_id(),
+                    codeword: contract.owner().codeword,
+                    placement: contract.owner().placement,
+                    shard,
+                })
             }
             CellRetentionPayloadObservationV2::Rejected(fault) => {
                 let stage = match fault.stage {
@@ -120,18 +121,33 @@ impl CellRs46ShardProviderV1 {
                         CellRs46ProviderPayloadFaultStageV2::PayloadDigest
                     }
                 };
-                Ok(CellRs46ProviderReadObservationV2::Rejected(
-                    CellRs46ProviderPayloadFaultV2 {
-                        operation: expected_operation,
-                        provider_store: self.arena.store_id(),
-                        stage,
-                        expected_bytes: fault.expected_bytes,
-                        read_bytes_lower_bound: fault.read_bytes_lower_bound,
-                        read_bytes_upper_bound: fault.read_bytes_upper_bound,
-                        original: fault.original,
-                    },
-                ))
+                CellRs46ProviderReadObservationV2::Rejected(CellRs46ProviderPayloadFaultV2 {
+                    operation: expected_operation,
+                    provider_store: self.arena.store_id(),
+                    stage,
+                    expected_bytes: fault.expected_bytes,
+                    read_bytes_lower_bound: fault.read_bytes_lower_bound,
+                    read_bytes_upper_bound: fault.read_bytes_upper_bound,
+                    original: fault.original,
+                })
             }
-        }
+        };
+        // Both branches have now run their last callback. Fence metadata and
+        // descriptor identity again, without another callback or payload read.
+        // This closes synchronous checkpoint mutation schedules; it does not
+        // provide an atomic snapshot against arbitrary concurrent writers.
+        require(
+            self.arena
+                .payload_observation_metadata_pin_v2(expected_operation, deadline)?
+                == metadata_pin,
+            "retention read metadata changed",
+        )?;
+        self.check_reserved_contract(contract)?;
+        require(
+            self.descriptor(contract.binding(), expected_operation, deadline)? == *contract,
+            "RS46 provider descriptor changed",
+        )?;
+        check(deadline)?;
+        Ok(result)
     }
 }

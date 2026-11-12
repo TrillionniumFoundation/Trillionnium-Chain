@@ -31,6 +31,24 @@ pub(crate) enum CellRetentionPayloadObservationV2 {
 }
 
 impl CellRetentionStoreV1 {
+    /// Recheck only metadata and physical arena identity, without another
+    /// checkpoint or payload read. Callers place this after their last callback;
+    /// this is not an atomic snapshot against arbitrary concurrent writers.
+    pub(crate) fn payload_observation_metadata_pin_v2(
+        &self,
+        operation: CellDigestV1,
+        deadline: Instant,
+    ) -> CellResultV1<Vec<u8>> {
+        check_deadline(deadline)?;
+        validate_schema(&self.connection)?;
+        self.check_arena()?;
+        let row = self.required_row(operation)?;
+        require(row.status == 1, "retention unavailable")?;
+        let pin = row_checksum(&row);
+        check_deadline(deadline)?;
+        Ok(pin)
+    }
+
     pub(crate) fn observe_payload_controlled_v2(
         &mut self,
         operation: CellDigestV1,
@@ -134,6 +152,13 @@ impl CellRetentionStoreV1 {
             "retention read metadata changed",
         )?;
         control.check()?;
+        // The terminal callback can change the same inode or metadata after
+        // the earlier fences. No further callback runs after this postcheck.
+        require(
+            self.payload_observation_metadata_pin_v2(operation, deadline)? == row_checksum(&row),
+            "retention read metadata changed",
+        )?;
+        check_deadline(deadline)?;
         Ok(match fault {
             Some(fault) => CellRetentionPayloadObservationV2::Rejected(fault),
             None => CellRetentionPayloadObservationV2::Verified(bytes),
