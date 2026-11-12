@@ -1,3 +1,40 @@
+**Root/execution V6 continuation, 2026-11-12 UTC — HOLD:**
+
+Continue PR #940 at exact base `8970e2c81abbf48e2a4d3f0802d79624ab20fadd`.
+The [V6 continuation contract](../security/ROOT_EXECUTION_CONTINUATION_V6.md)
+defines the new SQLite witness receipt namespace and external provider-history
+lower bound. Preserve V5 and V4 signed/stored bytes and their original refusal
+controls. A retained lower bound is neither a latest-head oracle nor independent
+freshness custody. No local checkpoint may authenticate its own currentness.
+
+Retain every original signed witness request and response, including all four
+approvals on each side, durably before releasing the V6 ACK. Archive failure
+after CAS remains an explicit fenced gap. Captured-request replay must not
+consume archive capacity. Cold opening rechecks the exact independent head and
+receipt-chain checkpoint; historical receipts do not create new signing authority.
+
+Require an explicit externally retained same-operation provider-history floor
+before the witnessed readback route. Verify an exact complete frame boundary,
+allow a valid later suffix, reject missing/downgraded/replaced history before
+provider transport, and retain the counterexample for an unretained lost suffix.
+This route reconciles original provider evidence; it does not dispatch effects.
+
+The full native witness roster is 50 controls: 17 original V5, 12 original
+durable V5, 14 provider readback and 7 V6 archive controls. Definitions and
+static review are not native executions. Run the original complete V3/V4
+runners, locked graphs, whole-workspace strict Clippy, formatting, source
+integrity rejection controls and links on the exact final committed source.
+Retain earlier failures and indeterminate remote observations with their own
+source identities. Reconstructed or reformatted candidates need fresh checks.
+
+The Hepta companion binds the existing durable owner/run/step provider key,
+original wire payload and immutable provider context at its pre-send barrier.
+Neither that key nor a Root authorization-statement ID supplies cross-run
+business-intent deduplication. Independent state survival, distributed quorum
+recovery/reconfiguration, full provider-frontier witnessing, ordinary M15 and
+FinalUse assembly, bounded provider atomic deduplication and original service
+qualification remain open. No production activation or whole-chain claim.
+
 **System security combined source and retained execution, 2026-11-12 UTC — HOLD:**
 
 The immutable runtime composition checkpoint is

@@ -10,7 +10,8 @@ import run_pq_root_witness_v5 as runner
 INVENTORIES = (
     ("WITNESS", "fresh-witness", "root_witness_v5_native", 17),
     ("DURABLE", "durable-witness", "root_witness_v5_durable_native", 12),
-    ("PROVIDER_READBACK", "provider-readback", "root_witness_provider_v5_native", 8),
+    ("PROVIDER_READBACK", "provider-readback", "root_witness_provider_v5_native", 14),
+    ("RECEIPTS", "retained-receipts", "root_witness_v6_receipts_native", 7),
 )
 
 
@@ -29,6 +30,22 @@ class WitnessRunnerControls(unittest.TestCase):
                 ])
                 self.assertEqual(required, getattr(runner, attribute))
                 self.assertEqual(len(required), count)
+
+    def test_joint_roster_contains_fifty_distinct_required_methods(self):
+        names = [name for _, _, required in runner.suites() for name in required]
+        self.assertEqual(len(names), 50)
+        self.assertEqual(len(set(names)), 50)
+        altered = (runner.WITNESS[0],) + runner.RECEIPTS[1:]
+        with patch.object(runner, "RECEIPTS", altered), self.assertRaises(ValueError):
+            runner.suites()
+
+    def test_retained_receipt_target_cannot_claim_zero_tests_or_omit_replay_control(self):
+        target = runner.RECEIPTS
+        self.assertIn("native_receipts_v6_replayed_writer_request_cannot_consume_capacity_or_fence_owner", target)
+        raw = ("running 0 tests\n"
+               "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0s\n")
+        with self.assertRaises(ValueError):
+            runner.checked_result(raw, target, 0)
 
     def test_frozen_rosters_cover_every_native_source_test_without_ignores(self):
         for attribute, _, target, _ in INVENTORIES:

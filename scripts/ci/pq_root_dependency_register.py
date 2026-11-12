@@ -26,7 +26,7 @@ DEFAULT_MANIFEST = "config/pon/pq-root-dependency-register-v3.json"
 REVIEW_BASE = '225ab38e1e5f7e0852a28372bd8dd769eec1084b'
 MAX_BYTES = 1024 * 1024
 # Frozen after review of all declared files. No runtime regeneration is allowed.
-REVIEWED_SOURCE_SNAPSHOT_SHA256 = 'e1ee97550a6ec20b79f8d917793f2b4268772864e611448a6846869999bcb19b'
+REVIEWED_SOURCE_SNAPSHOT_SHA256 = '844d27717babb9b3a286cd28915a06b0cd1152ffcf151ffdf6c30a01708bd9fe'
 
 PY = "formal/pon-nakamoto-v1/"
 POLICY = PY + "pq_root_recovery_policy_v1.py"
@@ -50,6 +50,7 @@ NATIVE_FLOOR = NODE + "src/root_recovery_v3/recovery_floor.rs"
 NATIVE_PROVIDER = NODE + "src/root_recovery_v3/effect_readback_v4.rs"
 NATIVE_WITNESS = NODE + "src/root_recovery_v3/witnessed_v5.rs"
 NATIVE_WITNESS_DURABLE = NODE + "src/root_recovery_v3/witnessed_v5/durable.rs"
+NATIVE_WITNESS_RECEIPTS = NODE + "src/root_recovery_v3/witnessed_v5/durable/receipts.rs"
 NATIVE_WITNESS_PROVIDER = NODE + "src/root_recovery_v3/witnessed_v5/provider_readback.rs"
 BASE_ROLES = ("root-approval", "successor-possession", "anchor-writer",
               "anchor-response", "effect-provider")
@@ -180,6 +181,12 @@ for _role in ("anchor-writer", "witness-response"):
          NATIVE_WITNESS, NATIVE_WITNESS_DURABLE],
         "typed-v5-authenticated-sqlite-cas-durable-before-ack-live-session-retries-only-exact-external-reopen-pin-no-daemon")
 
+for _role in ("anchor-writer", "witness-response"):
+    ROLE_CONTRACT[_role]["implementations"]["rust-v6-receipted-register"] = implementation(
+        [NATIVE_CRYPTO, NATIVE_ML_ADAPTER, NATIVE_CRYPTO_PROFILE, NATIVE_OWNER,
+         NATIVE_WITNESS, NATIVE_WITNESS_DURABLE, NATIVE_WITNESS_RECEIPTS],
+        "same-sqlite-original-signed-exchange-durable-before-return-external-head-count-digest-pin-no-new-authority-no-daemon")
+
 ROLE_CONTRACT["effect-provider"]["implementations"]["rust-v5-witnessed-readback"] = implementation(
     [NATIVE_CRYPTO, NATIVE_ML_ADAPTER, NATIVE_CRYPTO_PROFILE, NATIVE_POLICY,
      NATIVE_OWNER, NATIVE_ANCHOR, NATIVE_STORAGE, NATIVE_FLOOR, NATIVE_PROVIDER,
@@ -242,6 +249,10 @@ HASH_USES = {
         ("sha512",), ("native-v4-complete-provider-enrollment", "native-v4-complete-intent",
                       "native-v4-fresh-request-and-exact-orphan-epoch", "native-v4-retained-record-chain"),
         (NATIVE_PROVIDER,), (ROLES[4],)),
+    "native-retained-witness-receipts-v6": hash_use(
+        ("sha512",), ("native-v6-policy-bound-initial-receipt-checkpoint",
+                      "native-v6-complete-original-request-and-all-quorum-signatures-receipt-chain"),
+        (NATIVE_WITNESS_RECEIPTS, NATIVE_OWNER), ("anchor-writer", "witness-response")),
     "native-fresh-witness-v5": hash_use(
         ("sha512",), ("native-v5-complete-enrollment",
                       "native-v5-restore-domain-epoch-and-witness-roster-binding",
@@ -295,6 +306,15 @@ OPERATIONAL_CAPS = {
     "native-witness-database-bytes": refusal_cap(
         NATIVE_WITNESS_DURABLE, "MAX_DATABASE_BYTES", 1048576, "bytes",
         "one-typed-native-witness-register"),
+    "native-witness-receipt-database-bytes-v6": refusal_cap(
+        NATIVE_WITNESS_DURABLE, "MAX_RECEIPT_DATABASE_BYTES_V6", 33554432, "bytes",
+        "one-typed-native-receipted-witness-register"),
+    "native-witness-retained-receipts-v6": refusal_cap(
+        NATIVE_WITNESS_RECEIPTS, "MAX_RECORDS", 128, "signed-exchange-records",
+        "one-typed-native-receipted-witness-register"),
+    "native-witness-receipt-record-bytes-v6": refusal_cap(
+        NATIVE_WITNESS_RECEIPTS, "MAX_RECORD_BYTES", 196608, "bytes-per-retained-exchange",
+        "one-typed-native-receipted-witness-register"),
     "native-verification-reservations": refusal_cap(
         NATIVE_CRYPTO, "MAX_VERIFICATIONS_V3", 4096, "verification-reservations",
         "one-shared-native-operation-budget"),
@@ -320,7 +340,8 @@ SOURCE_PATHS = sorted(set(
     (POLICY, SIGNATURES, JOURNAL, PROVIDER, BACKEND, BUDGET,
      NATIVE_CRYPTO, NATIVE_ML_ADAPTER, NATIVE_CRYPTO_PROFILE, NATIVE_POLICY, NATIVE_OWNER,
      NATIVE_ANCHOR, NATIVE_STORAGE, NATIVE_FLOOR, NATIVE_PROVIDER, NATIVE_WITNESS, NATIVE_WITNESS_DURABLE,
-     NATIVE_WITNESS_PROVIDER,
+     NATIVE_WITNESS_PROVIDER, NATIVE_WITNESS_RECEIPTS,
+     NODE + "tests/root_witness_v6_receipts_native.rs",
      CRYPTO + "src/pq_root_v3/tests.rs", CRYPTO + "tests/pq_root_v3_native.rs",
      RELEASE + "src/root_recovery_v3_tests.rs",
      NODE + "tests/root_recovery_v3_native.rs",
@@ -359,6 +380,8 @@ FROZEN = {
         "native_provider_readback": "v4-declarations-only-no-effect-dispatch",
         "native_witness": "v5-client-and-typed-durable-register-component-no-daemon",
         "native_witness_trust": "separately-provisioned-policy-and-surviving-durable-register-required",
+        "native_witness_receipt_archive": "v6-bounded-original-exchange-evidence-with-external-checkpoint-no-distributed-service",
+        "native_witness_receipt_archive_independence_verified": False,
         "independent_common_restore_exclusion_proved": False,
         "native_witness_durable_service_verified": False,
     },

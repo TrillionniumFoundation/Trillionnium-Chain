@@ -140,8 +140,29 @@ impl Ready {
         )
     }
     fn journal(&self) -> ProviderEvidenceJournalV4 {
-        ProviderEvidenceJournalV4::create(&self.path, self.enrollment.clone(), &mut owner_budget())
-            .unwrap()
+        let mut journal = ProviderEvidenceJournalV4::create(
+            &self.path,
+            self.enrollment.clone(),
+            &mut owner_budget(),
+        )
+        .unwrap();
+        // This fixture is the first independent enrollment, not a restored file.
+        journal
+            .install_external_history_floor_v6(
+                ProviderHistoryFloorV6::initial(&self.enrollment).unwrap(),
+                &mut owner_budget(),
+            )
+            .unwrap();
+        journal
+    }
+    fn reopen_pinned(&self, floor: ProviderHistoryFloorV6) -> ProviderEvidenceJournalV4 {
+        ProviderEvidenceJournalV4::open_existing_with_history_floor_v6(
+            &self.path,
+            self.enrollment.clone(),
+            floor,
+            &mut owner_budget(),
+        )
+        .unwrap()
     }
     fn reopen_journal(&self) -> ProviderEvidenceJournalV4 {
         ProviderEvidenceJournalV4::open_existing(
@@ -263,9 +284,10 @@ fn native_witness_provider_v5_created_and_cold_owners_read_the_same_operation() 
     assert_eq!(observed.last_known, Some(ProviderOutcomeV4::Applied));
     assert!(ready.witness.state.borrow().reads >= before + 4);
     no_effect_authority(&observed);
+    let retained = journal.history_checkpoint_v6(&mut owner_budget()).unwrap();
     drop(journal);
     ready.reopen_root();
-    let mut journal = ready.reopen_journal();
+    let mut journal = ready.reopen_pinned(retained);
     assert_eq!(journal.evidence(&mut owner_budget()).unwrap(), observed);
     let next = read(&mut ready, &mut journal, &mut provider).unwrap();
     assert_eq!(next.readbacks_started, 2);
@@ -285,12 +307,13 @@ fn native_witness_provider_v5_lost_read_reply_reopens_pending_without_redispatch
     let mut ready = Ready::new(42);
     let mut journal = ready.journal();
     let mut provider = Provider::new(&ready);
+    let retained = journal.history_checkpoint_v6(&mut owner_budget()).unwrap();
     provider.fault = ProviderFault::LostReply;
     assert!(read(&mut ready, &mut journal, &mut provider).is_err());
     assert!(journal.evidence(&mut owner_budget()).is_err());
     drop(journal);
     ready.reopen_root();
-    let mut journal = ready.reopen_journal();
+    let mut journal = ready.reopen_pinned(retained);
     let pending = journal.evidence(&mut owner_budget()).unwrap();
     assert!(pending.pending);
     assert_eq!(pending.readbacks_started, 1);
@@ -470,4 +493,201 @@ fn native_witness_provider_v5_historical_material_and_operation_are_exact() {
             .is_err());
         ready.assert_no_new_root_operation();
     }
+}
+
+#[test]
+fn native_provider_floor_v6_new_and_cold_unpinned_queries_are_refused() {
+    let mut ready = Ready::new(61);
+    let mut journal = ProviderEvidenceJournalV4::create(
+        &ready.path,
+        ready.enrollment.clone(),
+        &mut owner_budget(),
+    )
+    .unwrap();
+    let bytes = fs::read(&ready.path).unwrap();
+    // Local export neither certifies freshness nor installs a floor.
+    let observed = journal.history_checkpoint_v6(&mut owner_budget()).unwrap();
+    assert_eq!(observed.operation_id(), ready.operation);
+    let mut provider = Provider::new(&ready);
+    let error = read(&mut ready, &mut journal, &mut provider).unwrap_err();
+    assert_eq!(
+        error.to_string(),
+        "ROOT_PROVIDER_EXTERNAL_HISTORY_FLOOR_REQUIRED"
+    );
+    assert!(provider.requests.is_empty());
+    assert_eq!(fs::read(&ready.path).unwrap(), bytes);
+    drop(journal);
+    let mut cold = ready.reopen_journal();
+    assert!(read(&mut ready, &mut cold, &mut provider).is_err());
+    assert!(provider.requests.is_empty());
+    assert_eq!(fs::read(&ready.path).unwrap(), bytes);
+    ready.assert_no_new_root_operation();
+}
+
+#[test]
+fn native_provider_floor_v6_surviving_prefix_refuses_cold_rollback_and_new_path() {
+    let mut ready = Ready::new(62);
+    let mut journal = ready.journal();
+    let initial_bytes = fs::read(&ready.path).unwrap();
+    let mut provider = Provider::new(&ready);
+    read(&mut ready, &mut journal, &mut provider).unwrap();
+    journal
+        .observe_orphan_epoch(11, &mut owner_budget())
+        .unwrap();
+    let floor = journal.history_checkpoint_v6(&mut owner_budget()).unwrap();
+    let retained = ProviderHistoryFloorV6::from_external_pin(&floor.encode().unwrap()).unwrap();
+    assert_eq!(retained, floor);
+    drop(journal);
+    fs::write(&ready.path, &initial_bytes).unwrap();
+    let error = ProviderEvidenceJournalV4::open_existing_with_history_floor_v6(
+        &ready.path,
+        ready.enrollment.clone(),
+        floor.clone(),
+        &mut owner_budget(),
+    )
+    .err()
+    .unwrap();
+    assert_eq!(
+        error.to_string(),
+        "ROOT_PROVIDER_HISTORY_FLOOR_NOT_IN_HISTORY"
+    );
+    assert_eq!(fs::read(&ready.path).unwrap(), initial_bytes);
+    let replacement = ready
+        .harness
+        .directory
+        .path()
+        .join("another-empty-provider-journal");
+    let mut second = ProviderEvidenceJournalV4::create(
+        &replacement,
+        ready.enrollment.clone(),
+        &mut owner_budget(),
+    )
+    .unwrap();
+    let bytes = fs::read(&replacement).unwrap();
+    assert!(second
+        .install_external_history_floor_v6(floor, &mut owner_budget())
+        .is_err());
+    assert!(second.evidence(&mut owner_budget()).is_err());
+    assert_eq!(fs::read(&replacement).unwrap(), bytes);
+    assert_eq!(provider.requests.len(), 1);
+    ready.assert_no_new_root_operation();
+}
+
+#[test]
+fn native_provider_floor_v6_pending_suffix_reopens_original_operation() {
+    let mut ready = Ready::new(63);
+    let mut journal = ready.journal();
+    let mut provider = Provider::new(&ready);
+    read(&mut ready, &mut journal, &mut provider).unwrap();
+    let floor = journal.history_checkpoint_v6(&mut owner_budget()).unwrap();
+    provider.fault = ProviderFault::LostReply;
+    assert!(read(&mut ready, &mut journal, &mut provider).is_err());
+    drop(journal);
+    let mut cold = ready.reopen_pinned(floor);
+    let pending = cold.evidence(&mut owner_budget()).unwrap();
+    assert!(pending.pending);
+    assert_eq!(pending.last_known, Some(ProviderOutcomeV4::Applied));
+    assert_eq!(pending.readbacks_started, 2);
+    provider.fault = ProviderFault::None;
+    let result = read(&mut ready, &mut cold, &mut provider).unwrap();
+    assert_eq!(result.readbacks_started, 3);
+    assert_eq!(result.operation_id, ready.operation);
+    assert!(provider
+        .requests
+        .iter()
+        .all(|request| request.operation_id == ready.operation));
+    no_effect_authority(&result);
+    ready.assert_no_new_root_operation();
+}
+
+#[test]
+fn native_provider_floor_v6_every_identity_and_exact_frame_boundary_is_checked() {
+    let mut ready = Ready::new(64);
+    let mut journal = ready.journal();
+    let mut provider = Provider::new(&ready);
+    read(&mut ready, &mut journal, &mut provider).unwrap();
+    let floor = journal.history_checkpoint_v6(&mut owner_budget()).unwrap();
+    let bytes = floor.encode().unwrap();
+    let domain = b"TRNM/RootProvider/HistoryFloor/v6\0".len();
+    drop(journal);
+    for offset in [
+        domain,
+        domain + 64,
+        domain + 128 + 7,
+        domain + 136 + 7,
+        domain + 144,
+    ] {
+        let mut changed = bytes.clone();
+        changed[offset] ^= 1;
+        let pin = ProviderHistoryFloorV6::from_external_pin(&changed).unwrap();
+        assert!(
+            ProviderEvidenceJournalV4::open_existing_with_history_floor_v6(
+                &ready.path,
+                ready.enrollment.clone(),
+                pin,
+                &mut owner_budget(),
+            )
+            .is_err()
+        );
+    }
+    let mut trailing = bytes.clone();
+    trailing.push(0);
+    assert!(ProviderHistoryFloorV6::from_external_pin(&trailing).is_err());
+    assert!(ProviderHistoryFloorV6::from_external_pin(&bytes[..bytes.len() - 1]).is_err());
+    let mut wrong_domain = bytes;
+    wrong_domain[0] ^= 1;
+    assert!(ProviderHistoryFloorV6::from_external_pin(&wrong_domain).is_err());
+    assert_eq!(provider.requests.len(), 1);
+}
+
+#[test]
+fn native_provider_floor_v6_live_floor_cannot_be_downgraded_or_cleared() {
+    let mut ready = Ready::new(65);
+    let mut journal = ready.journal();
+    let initial = ProviderHistoryFloorV6::initial(&ready.enrollment).unwrap();
+    let mut provider = Provider::new(&ready);
+    read(&mut ready, &mut journal, &mut provider).unwrap();
+    let floor = journal.history_checkpoint_v6(&mut owner_budget()).unwrap();
+    journal
+        .install_external_history_floor_v6(floor.clone(), &mut owner_budget())
+        .unwrap();
+    journal
+        .install_external_history_floor_v6(floor, &mut owner_budget())
+        .unwrap();
+    let bytes = fs::read(&ready.path).unwrap();
+    let error = journal
+        .install_external_history_floor_v6(initial, &mut owner_budget())
+        .unwrap_err();
+    assert_eq!(error.to_string(), "ROOT_PROVIDER_HISTORY_FLOOR_REGRESSION");
+    assert!(journal.evidence(&mut owner_budget()).is_err());
+    assert!(read(&mut ready, &mut journal, &mut provider).is_err());
+    assert_eq!(provider.requests.len(), 1);
+    assert_eq!(fs::read(&ready.path).unwrap(), bytes);
+}
+
+#[test]
+fn native_provider_floor_v6_unretained_suffix_loss_remains_an_explicit_boundary() {
+    let mut ready = Ready::new(66);
+    let mut journal = ready.journal();
+    let old_floor = journal.history_checkpoint_v6(&mut owner_budget()).unwrap();
+    let old_bytes = fs::read(&ready.path).unwrap();
+    let mut provider = Provider::new(&ready);
+    read(&mut ready, &mut journal, &mut provider).unwrap();
+    journal
+        .observe_orphan_epoch(12, &mut owner_budget())
+        .unwrap();
+    let newer = journal.history_checkpoint_v6(&mut owner_budget()).unwrap();
+    assert_ne!(newer, old_floor);
+    drop(journal);
+    fs::write(&ready.path, old_bytes).unwrap();
+    // An old externally retained floor cannot detect loss of an unretained
+    // suffix. No external effect is dispatched or claimed reversed.
+    let mut cold = ready.reopen_pinned(old_floor);
+    let evidence = cold.evidence(&mut owner_budget()).unwrap();
+    assert_eq!(evidence.last_known, None);
+    assert_eq!(evidence.orphaned_at, None);
+    assert_eq!(evidence.readbacks_started, 0);
+    no_effect_authority(&evidence);
+    assert_eq!(provider.requests.len(), 1);
+    ready.assert_no_new_root_operation();
 }

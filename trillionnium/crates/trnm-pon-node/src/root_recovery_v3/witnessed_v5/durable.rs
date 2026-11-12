@@ -26,8 +26,38 @@ use std::path::{Component, Path, PathBuf};
 use std::sync::atomic::Ordering;
 use std::time::{Duration, Instant};
 
-const APPLICATION_ID: u32 = 0x5257_5635;
+mod receipts;
+use receipts::ArchiveV6;
+pub use receipts::{ReceiptedRootWitnessV6, RetainedWitnessReceiptV6, WitnessReceiptCheckpointV6};
+
 const MAX_DATABASE_BYTES: u64 = 1024 * 1024;
+const MAX_RECEIPT_DATABASE_BYTES_V6: u64 = 32 * 1024 * 1024;
+
+#[derive(Clone, Copy, Eq, PartialEq)]
+enum Namespace {
+    RegisterV5,
+    ReceiptsV6,
+}
+impl Namespace {
+    fn application_id(self) -> u32 {
+        match self {
+            Self::RegisterV5 => 0x5257_5635,
+            Self::ReceiptsV6 => 0x5257_5636,
+        }
+    }
+    fn version(self) -> u32 {
+        match self {
+            Self::RegisterV5 => 5,
+            Self::ReceiptsV6 => 6,
+        }
+    }
+    fn maximum_bytes(self) -> u64 {
+        match self {
+            Self::RegisterV5 => MAX_DATABASE_BYTES,
+            Self::ReceiptsV6 => MAX_RECEIPT_DATABASE_BYTES_V6,
+        }
+    }
+}
 const DDL: &str = "CREATE TABLE root_witness_v5(singleton INTEGER PRIMARY KEY CHECK(singleton=1),policy BLOB NOT NULL,version INTEGER NOT NULL CHECK(version>=0 AND version<=128),root BLOB NOT NULL CHECK(length(root)=64),previous_version INTEGER NOT NULL CHECK(previous_version>=0),previous_root BLOB NOT NULL CHECK(length(previous_root)=64))";
 
 #[derive(Clone, Copy, Eq, PartialEq)]
@@ -43,6 +73,8 @@ pub struct DurableRootWitnessV5 {
     // Declaration order closes SQLite before releasing its file/directory lease.
     db: Connection,
     files: HeldFiles,
+    namespace: Namespace,
+    archive: Option<ArchiveV6>,
     policy: WitnessPolicyV5,
     policy_bytes: Vec<u8>,
     signer: Box<dyn RootWriterSignerV3>,
@@ -64,13 +96,30 @@ impl DurableRootWitnessV5 {
         signer: impl RootWriterSignerV3 + 'static,
         budget: &mut OwnerBudgetV3,
     ) -> RootOwnerResultV3<Self> {
+        Self::register(
+            path,
+            policy,
+            enrollment,
+            signer,
+            budget,
+            Namespace::RegisterV5,
+        )
+    }
+    fn register(
+        path: &Path,
+        policy: WitnessPolicyV5,
+        enrollment: &JournalEnrollmentV3,
+        signer: impl RootWriterSignerV3 + 'static,
+        budget: &mut OwnerBudgetV3,
+        namespace: Namespace,
+    ) -> RootOwnerResultV3<Self> {
         budget.check()?;
         policy.check_enrollment(enrollment)?;
         let initial = enrollment.initial_head()?;
         initial.validate()?;
         require(initial.version == 0, "ROOT_WITNESS_V5_INITIAL_HEAD")?;
-        let files = HeldFiles::bind(path, true)?;
-        let mut db = connection(path)?;
+        let files = HeldFiles::bind(path, true, namespace)?;
+        let mut db = connection(path, namespace)?;
         files.check()?;
         let policy_bytes = canonical_policy(&policy);
         {
@@ -80,10 +129,13 @@ impl DurableRootWitnessV5 {
                 .transaction_with_behavior(TransactionBehavior::Immediate)
                 .map_err(map_error)?;
             tx.execute_batch(DDL).map_err(map_error)?;
-            tx.pragma_update(None, "application_id", APPLICATION_ID)
+            tx.pragma_update(None, "application_id", namespace.application_id())
                 .map_err(map_error)?;
-            tx.pragma_update(None, "user_version", 5)
+            tx.pragma_update(None, "user_version", namespace.version())
                 .map_err(map_error)?;
+            if namespace == Namespace::ReceiptsV6 {
+                tx.execute_batch(receipts::DDL).map_err(map_error)?;
+            }
             tx.execute(
                 "INSERT INTO root_witness_v5 VALUES(1,?,0,?,0,zeroblob(64))",
                 params![&policy_bytes, initial.root.as_slice()],
@@ -97,6 +149,12 @@ impl DurableRootWitnessV5 {
         let mut owner = Self {
             db,
             files,
+            namespace,
+            archive: if namespace == Namespace::ReceiptsV6 {
+                Some(ArchiveV6::initial(&policy))
+            } else {
+                None
+            },
             policy,
             policy_bytes,
             signer: Box::new(signer),
@@ -123,13 +181,35 @@ impl DurableRootWitnessV5 {
         signer: impl RootWriterSignerV3 + 'static,
         budget: &mut OwnerBudgetV3,
     ) -> RootOwnerResultV3<Self> {
+        Self::reopen(path, policy, expected, None, signer, budget)
+    }
+    fn reopen(
+        path: &Path,
+        policy: WitnessPolicyV5,
+        expected: JournalHeadV3,
+        expected_archive: Option<ArchiveV6>,
+        signer: impl RootWriterSignerV3 + 'static,
+        budget: &mut OwnerBudgetV3,
+    ) -> RootOwnerResultV3<Self> {
         budget.check()?;
         expected.validate()?;
-        let files = HeldFiles::bind(path, false)?;
-        let mut db = connection(path)?;
+        let namespace = if expected_archive.is_some() {
+            Namespace::ReceiptsV6
+        } else {
+            Namespace::RegisterV5
+        };
+        let files = HeldFiles::bind(path, false, namespace)?;
+        let mut db = connection(path, namespace)?;
         files.check()?;
         let policy_bytes = canonical_policy(&policy);
-        let known = read_transaction(&mut db, &files, &policy_bytes, budget)?;
+        let known = read_transaction(&mut db, &files, &policy_bytes, namespace, budget)?;
+        if let Some(expected) = expected_archive {
+            let recovered = receipts::replay(&db, &policy, known.head, budget, true)?;
+            require(
+                recovered == expected,
+                "ROOT_WITNESS_V6_INDEPENDENT_RECEIPT_CHECKPOINT",
+            )?;
+        }
         require(
             known.head == expected,
             "ROOT_WITNESS_V5_INDEPENDENT_REOPEN_HEAD",
@@ -137,6 +217,8 @@ impl DurableRootWitnessV5 {
         Ok(Self {
             db,
             files,
+            namespace,
+            archive: expected_archive,
             policy,
             policy_bytes,
             signer: Box::new(signer),
@@ -146,11 +228,25 @@ impl DurableRootWitnessV5 {
         })
     }
 
-    fn check_known(&mut self, budget: &OwnerBudgetV3) -> RootOwnerResultV3<()> {
+    fn check_known(&mut self, budget: &mut OwnerBudgetV3) -> RootOwnerResultV3<()> {
         require(
-            read_transaction(&mut self.db, &self.files, &self.policy_bytes, budget)? == self.known,
+            read_transaction(
+                &mut self.db,
+                &self.files,
+                &self.policy_bytes,
+                self.namespace,
+                budget,
+            )? == self.known,
             "ROOT_WITNESS_V5_DURABLE_STATE_CHANGED",
-        )
+        )?;
+        if let Some(expected) = self.archive {
+            require(
+                receipts::replay(&self.db, &self.policy, self.known.head, budget, false)?
+                    == expected,
+                "ROOT_WITNESS_V6_RECEIPT_HISTORY_CHANGED",
+            )?;
+        }
+        Ok(())
     }
 
     fn decide(
@@ -165,7 +261,7 @@ impl DurableRootWitnessV5 {
             .0
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(map_error)?;
-        let before = read_row(&tx, &self.policy_bytes)?;
+        let before = read_row(&tx, &self.policy_bytes, self.namespace)?;
         require(
             before == self.known,
             "ROOT_WITNESS_V5_DURABLE_STATE_CHANGED",
@@ -199,7 +295,7 @@ impl DurableRootWitnessV5 {
             _ => return Err(rejected("ROOT_WITNESS_V5_REQUEST_SHAPE")),
         };
         require(
-            read_row(&tx, &self.policy_bytes)? == after,
+            read_row(&tx, &self.policy_bytes, self.namespace)? == after,
             "ROOT_WITNESS_V5_DURABLE_CAS",
         )?;
         self.files.check()?;
@@ -232,7 +328,30 @@ impl RootWitnessTransportV5 for DurableRootWitnessV5 {
         // Unauthenticated input cannot mutate or fence durable authority.
         envelope.verify_writer(&self.policy, budget)?;
         let original_budget = budget.identity.clone();
+        if let Some(archive) = self.archive {
+            let replay = (|| {
+                self.check_known(budget)?;
+                receipts::contains_request(&self.db, archive, envelope.request.digest()?, budget)
+            })();
+            match replay {
+                // A captured request cannot consume new archive capacity. Refusal
+                // does not mutate or fence an otherwise healthy live owner.
+                Ok(true) => return Err(rejected("ROOT_WITNESS_V6_REQUEST_ALREADY_RETAINED")),
+                Ok(false) => {}
+                Err(error) => {
+                    self.fenced = true;
+                    return Err(error);
+                }
+            }
+        }
         let result = (|| {
+            self.check_known(budget)?;
+            if let Some(archive) = self.archive {
+                require(
+                    archive.count < receipts::MAX_RECORDS,
+                    "ROOT_WITNESS_V6_RECEIPT_CAPACITY",
+                )?;
+            }
             let outcome = self.decide(&envelope.request, budget)?;
             let receipt =
                 WitnessReceiptV5::for_request(&envelope.request, self.known.head, outcome)?;
@@ -248,7 +367,13 @@ impl RootWitnessTransportV5 for DurableRootWitnessV5 {
             // and held identities before releasing its authenticated receipt.
             self.check_known(budget)?;
             budget.check_identity(&original_budget)?;
-            Ok(SignedWitnessReceiptV5 { receipt, approvals })
+            let response = SignedWitnessReceiptV5 { receipt, approvals };
+            if self.archive.is_some() {
+                receipts::retain(self, &envelope, &response, budget)?;
+            }
+            self.check_known(budget)?;
+            budget.check_identity(&original_budget)?;
+            Ok(response)
         })();
         self.fenced = result.is_err();
         result
@@ -271,20 +396,30 @@ fn canonical_policy(policy: &WitnessPolicyV5) -> Vec<u8> {
     bytes
 }
 
-fn read_row(db: &Connection, policy: &[u8]) -> RootOwnerResultV3<Row> {
+fn read_row(db: &Connection, policy: &[u8], namespace: Namespace) -> RootOwnerResultV3<Row> {
     let (application, version, schema_rows): (u32, u32, u64) = db.query_row(
         "SELECT (SELECT application_id FROM pragma_application_id),(SELECT user_version FROM pragma_user_version),(SELECT COUNT(*) FROM sqlite_master)",
         [], |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
     ).map_err(map_error)?;
     require(
-        application == APPLICATION_ID && version == 5 && schema_rows == 1,
+        application == namespace.application_id()
+            && version == namespace.version()
+            && schema_rows
+                == if namespace == Namespace::ReceiptsV6 {
+                    2
+                } else {
+                    1
+                },
         "ROOT_WITNESS_V5_DURABLE_SCHEMA",
     )?;
     let schema: bool = db.query_row(
-        "SELECT COALESCE(type='table' AND name='root_witness_v5' AND tbl_name='root_witness_v5' AND typeof(sql)='text' AND length(CAST(sql AS BLOB))=?1 AND sql=?2,0) FROM sqlite_master",
+        "SELECT COALESCE(type='table' AND name='root_witness_v5' AND tbl_name='root_witness_v5' AND typeof(sql)='text' AND length(CAST(sql AS BLOB))=?1 AND sql=?2,0) FROM sqlite_master WHERE name='root_witness_v5'",
         params![DDL.len(), DDL], |row| row.get(0),
     ).map_err(map_error)?;
     require(schema, "ROOT_WITNESS_V5_DURABLE_SCHEMA")?;
+    if namespace == Namespace::ReceiptsV6 {
+        receipts::check_schema(db)?;
+    }
     let count: u64 = db
         .query_row("SELECT COUNT(*) FROM root_witness_v5", [], |row| row.get(0))
         .map_err(map_error)?;
@@ -348,6 +483,7 @@ fn read_transaction(
     db: &mut Connection,
     files: &HeldFiles,
     policy: &[u8],
+    namespace: Namespace,
     budget: &OwnerBudgetV3,
 ) -> RootOwnerResultV3<Row> {
     files.check()?;
@@ -356,7 +492,7 @@ fn read_transaction(
         .0
         .transaction_with_behavior(TransactionBehavior::Deferred)
         .map_err(map_error)?;
-    let row = read_row(&tx, policy)?;
+    let row = read_row(&tx, policy, namespace)?;
     files.check()?;
     budget.check()?;
     tx.commit().map_err(map_error)?;
@@ -364,7 +500,7 @@ fn read_transaction(
     budget.check()?;
     Ok(row)
 }
-fn connection(path: &Path) -> RootOwnerResultV3<Connection> {
+fn connection(path: &Path, namespace: Namespace) -> RootOwnerResultV3<Connection> {
     let db = Connection::open_with_flags(
         path,
         OpenFlags::SQLITE_OPEN_READ_WRITE
@@ -384,8 +520,12 @@ fn connection(path: &Path) -> RootOwnerResultV3<Connection> {
         journal == "delete" && page_size == 4096,
         "ROOT_WITNESS_V5_DURABLE_DATABASE_MODE",
     )?;
-    db.pragma_update(None, "max_page_count", MAX_DATABASE_BYTES / page_size)
-        .map_err(map_error)?;
+    db.pragma_update(
+        None,
+        "max_page_count",
+        namespace.maximum_bytes() / page_size,
+    )
+    .map_err(map_error)?;
     Ok(db)
 }
 
@@ -395,9 +535,10 @@ struct HeldFiles {
     path: PathBuf,
     parent: PathBuf,
     process: u32,
+    namespace: Namespace,
 }
 impl HeldFiles {
-    fn bind(path: &Path, create: bool) -> RootOwnerResultV3<Self> {
+    fn bind(path: &Path, create: bool, namespace: Namespace) -> RootOwnerResultV3<Self> {
         require(path.is_absolute(), "ROOT_WITNESS_V5_DURABLE_ABSOLUTE_PATH")?;
         let parent = path
             .parent()
@@ -425,7 +566,7 @@ impl HeldFiles {
             flags |= OFlags::CREATE | OFlags::EXCL;
         }
         let file = File::from(openat(&directory, name, flags, Mode::RUSR | Mode::WUSR)?);
-        private_file(&file)?;
+        private_file(&file, namespace)?;
         file.try_lock_exclusive()
             .map_err(|_| rejected("ROOT_WITNESS_V5_DURABLE_BUSY"))?;
         if !create {
@@ -435,8 +576,10 @@ impl HeldFiles {
                 &header[..16] == b"SQLite format 3\0"
                     && header[18] == 1
                     && header[19] == 1
-                    && u32::from_be_bytes(header[60..64].try_into().unwrap()) == 5
-                    && u32::from_be_bytes(header[68..72].try_into().unwrap()) == APPLICATION_ID,
+                    && u32::from_be_bytes(header[60..64].try_into().unwrap())
+                        == namespace.version()
+                    && u32::from_be_bytes(header[68..72].try_into().unwrap())
+                        == namespace.application_id(),
                 "ROOT_WITNESS_V5_DURABLE_DATABASE_NAMESPACE",
             )?;
         }
@@ -446,6 +589,7 @@ impl HeldFiles {
             path: path.to_path_buf(),
             parent: parent.to_path_buf(),
             process: std::process::id(),
+            namespace,
         };
         value.check()?;
         Ok(value)
@@ -455,7 +599,7 @@ impl HeldFiles {
             self.process == std::process::id(),
             "ROOT_WITNESS_V5_DURABLE_PROCESS_CHANGED",
         )?;
-        private_file(&self.file)?;
+        private_file(&self.file, self.namespace)?;
         private_directory(&self.directory)?;
         require(
             self.parent.canonicalize()? == self.parent,
@@ -477,7 +621,7 @@ impl HeldFiles {
             OFlags::RDONLY | OFlags::NOFOLLOW | OFlags::NONBLOCK | OFlags::CLOEXEC,
             Mode::empty(),
         )?);
-        private_file(&named)?;
+        private_file(&named, self.namespace)?;
         require(
             identity(&named.metadata()?) == identity(&self.file.metadata()?),
             "ROOT_WITNESS_V5_DURABLE_DATABASE_REPLACED",
@@ -492,14 +636,14 @@ impl HeldFiles {
 fn identity(meta: &fs::Metadata) -> (u64, u64) {
     (meta.dev(), meta.ino())
 }
-fn private_file(file: &File) -> RootOwnerResultV3<()> {
+fn private_file(file: &File, namespace: Namespace) -> RootOwnerResultV3<()> {
     let meta = file.metadata()?;
     require(
         meta.is_file()
             && meta.nlink() == 1
             && meta.uid() == rustix::process::geteuid().as_raw()
             && meta.mode() & 0o7777 == 0o600
-            && meta.len() <= MAX_DATABASE_BYTES,
+            && meta.len() <= namespace.maximum_bytes(),
         "ROOT_WITNESS_V5_DURABLE_FILE_IDENTITY",
     )
 }

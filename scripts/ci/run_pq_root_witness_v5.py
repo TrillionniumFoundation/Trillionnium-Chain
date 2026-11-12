@@ -63,6 +63,22 @@ PROVIDER_READBACK = (
     'native_witness_provider_v5_provider_roster_cannot_reuse_witness_keys',
     'native_witness_provider_v5_callback_cannot_replace_budget_or_clear_cancellation',
     'native_witness_provider_v5_historical_material_and_operation_are_exact',
+    'native_provider_floor_v6_new_and_cold_unpinned_queries_are_refused',
+    'native_provider_floor_v6_surviving_prefix_refuses_cold_rollback_and_new_path',
+    'native_provider_floor_v6_pending_suffix_reopens_original_operation',
+    'native_provider_floor_v6_every_identity_and_exact_frame_boundary_is_checked',
+    'native_provider_floor_v6_live_floor_cannot_be_downgraded_or_cleared',
+    'native_provider_floor_v6_unretained_suffix_loss_remains_an_explicit_boundary',
+)
+
+RECEIPTS = (
+    'native_receipts_v6_cold_readback_preserves_exact_signatures_without_new_authority',
+    'native_receipts_v6_original_root_owner_recovers_lost_ack_without_repeating_cas',
+    'native_receipts_v6_retention_commit_busy_preserves_advanced_head_without_claiming_ack',
+    'native_receipts_v6_same_head_history_loss_and_signature_tamper_are_rejected',
+    'native_receipts_v6_fresh_namespace_never_auto_migrates_v5_or_downgrades',
+    'native_receipts_v6_oversized_record_and_live_history_removal_fail_closed',
+    'native_receipts_v6_replayed_writer_request_cannot_consume_capacity_or_fence_owner',
 )
 
 
@@ -78,7 +94,8 @@ def suites():
     for name, target, required, count in (
         ("fresh-witness", "root_witness_v5_native", WITNESS, 17),
         ("durable-witness", "root_witness_v5_durable_native", DURABLE, 12),
-        ("provider-readback", "root_witness_provider_v5_native", PROVIDER_READBACK, 8),
+        ("provider-readback", "root_witness_provider_v5_native", PROVIDER_READBACK, 14),
+        ("retained-receipts", "root_witness_v6_receipts_native", RECEIPTS, 7),
     ):
         if len(required) != count or len(set(required)) != len(required):
             raise ValueError("complete reviewed native witness inventory required: " + name)
@@ -86,6 +103,9 @@ def suites():
                 "-p", "trnm-pon-node", "--features", "pq-root-v3",
                 "--test", target, "--", "--nocapture", "--test-threads=1"]
         entries.append((name, argv, required))
+    names = [name for _, _, required in entries for name in required]
+    if len(names) != len(set(names)):
+        raise ValueError("native witness targets cannot double-count a required method")
     return tuple(entries)
 
 

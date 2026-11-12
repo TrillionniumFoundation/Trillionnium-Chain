@@ -179,7 +179,7 @@ class FrozenRoleTests(ContractCase):
         data = manifest()
         witness = data["roles"]["witness-response"]
         self.assertEqual(set(witness["implementations"]),
-                         {"rust-v5-witnessed-owner", "rust-v5-durable-register"})
+                         {"rust-v5-witnessed-owner", "rust-v5-durable-register", "rust-v6-receipted-register"})
         self.assertFalse(witness["independent_custody_verified"])
         self.assertEqual(witness["epoch_scope"], data["roles"]["anchor-response"]["epoch_scope"])
         native = witness["implementations"]["rust-v5-witnessed-owner"]
@@ -577,6 +577,57 @@ class ReviewedSourceTests(ContractCase):
         self.assertNotIn("Traceback", result.stderr)
         self.assertEqual(json.loads(result.stderr)["status"], "REFUSE")
 
+
+
+class RetainedWitnessV6Tests(ContractCase):
+    def test_original_receipt_component_is_required_without_effect_authority(self):
+        data = manifest()
+        for role in ("anchor-writer", "witness-response"):
+            receipt = data["roles"][role]["implementations"]["rust-v6-receipted-register"]
+            self.assertIn(register.NATIVE_WITNESS_RECEIPTS, receipt["source_paths"])
+            self.assertIn("no-new-authority", receipt["validity_contract"])
+            self.assertFalse(receipt["production_qualified"])
+            changed = deepcopy(data)
+            changed["roles"][role]["implementations"]["rust-v6-receipted-register"]["production_qualified"] = True
+            self.refused(changed)
+        for path in (register.NATIVE_WITNESS_RECEIPTS,
+                     register.NODE + "tests/root_witness_v6_receipts_native.rs"):
+            self.assertIn(path, data["source_files_sha256"])
+            changed = deepcopy(data)
+            del changed["source_files_sha256"][path]
+            self.refused(changed)
+
+    def test_receipt_caps_are_refusal_limits_without_pruning_or_query_claims(self):
+        expected = {
+            "native-witness-receipt-database-bytes-v6": "33554432",
+            "native-witness-retained-receipts-v6": "128",
+            "native-witness-receipt-record-bytes-v6": "196608",
+        }
+        for name, maximum in expected.items():
+            data = manifest()
+            cap = data["operational_refusal_caps"][name]
+            self.assertEqual(cap["maximum"], maximum)
+            self.assertFalse(cap["bounds_adversary_queries"])
+            self.assertFalse(cap["permits_history_pruning"])
+            self.assertFalse(cap["permits_lifetime_reset"])
+            for field, value in (("maximum", "0"), ("bounds_adversary_queries", True),
+                                 ("permits_history_pruning", True), ("permits_lifetime_reset", True)):
+                changed = deepcopy(data)
+                changed["operational_refusal_caps"][name][field] = value
+                self.refused(changed)
+
+    def test_receipt_hash_uses_share_the_original_unknown_sha512_lifetime(self):
+        data = manifest()
+        name = "native-retained-witness-receipts-v6"
+        self.assertEqual(data["hash_uses"][name]["primitive_ids"], ["sha512"])
+        self.assertIn(name, data["primitives"]["sha512"]["use_ids"])
+        self.assertIsNone(data["primitives"]["sha512"]["query_budget"]["maximum"])
+        self.assertIsNone(data["hash_uses"][name]["failure_bound"])
+        changed = deepcopy(data)
+        changed["hash_uses"][name]["source_paths"].remove(register.NATIVE_WITNESS_RECEIPTS)
+        self.refused(changed)
+        data["profiles"]["native_witness_receipt_archive_independence_verified"] = True
+        self.refused(data)
 
 if __name__ == "__main__":
     unittest.main()

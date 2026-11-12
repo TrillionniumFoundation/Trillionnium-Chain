@@ -6490,6 +6490,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/durable/receipts.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/durable/receipts.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/provider_readback.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -8097,6 +8104,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/root_witness_v5_native.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/root_witness_v6_receipts_native.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/root_witness_v6_receipts_native.rs"
         )),
     ),
     (
