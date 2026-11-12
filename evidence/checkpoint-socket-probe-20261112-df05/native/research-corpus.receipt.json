@@ -1,0 +1,37 @@
+{
+  "bytes": 558,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "cwd": "/data/chain-checkpoint-probe-20261112-df05",
+  "elapsed_ns": 22382039141,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+  "log": "research-corpus.log",
+  "name": "research-corpus",
+  "process_exit_code": 0,
+  "sha256": "b41d7152e22d36e82128355e3191f8057ef44e37fd6217cfe5afbe4145f99f04",
+  "source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "target_after_identity": {
+    "device": 2067,
+    "gid": 1000,
+    "inode": 26345745,
+    "mode": 448,
+    "uid": 1000
+  },
+  "target_before_identity": {
+    "device": 2067,
+    "gid": 1000,
+    "inode": 26345745,
+    "mode": 448,
+    "uid": 1000
+  },
+  "target_identity_error": null,
+  "timed_out": false
+}
