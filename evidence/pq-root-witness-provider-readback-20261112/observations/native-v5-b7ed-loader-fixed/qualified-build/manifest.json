@@ -1,0 +1,30 @@
+{
+  "source": "b7ed54cdb7793ca0a22f85350fecc0162d089fba",
+  "scope": "actual unmodified SQLite I/O build-fence output, not test execution",
+  "files": [
+    {
+      "source_path": "/workspace/scratch/3069292387f3/root-target/debug/build/trnm-sqlite-io-boundary-d67ff94a357995c9/output",
+      "file": "output",
+      "bytes": 5211,
+      "sha256": "e521b197effec2ef4273d1d5ec9c0fad09807b71d379d036d03cb3121159ee6a"
+    },
+    {
+      "source_path": "/workspace/scratch/3069292387f3/root-target/debug/build/trnm-sqlite-io-boundary-d67ff94a357995c9/out/trnm-witness-symbols.stdout",
+      "file": "out-trnm-witness-symbols.stdout",
+      "bytes": 220,
+      "sha256": "37f7d8a71c793ab01ae5dd4a1308e269c5644c0e6501b498c5df9748c63aed8b"
+    },
+    {
+      "source_path": "/workspace/scratch/3069292387f3/root-target/debug/build/trnm-sqlite-io-boundary-d67ff94a357995c9/out/trnm-witness-symbols.stderr",
+      "file": "out-trnm-witness-symbols.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source_path": "/workspace/scratch/3069292387f3/root-target/debug/build/trnm-sqlite-io-boundary-d67ff94a357995c9/out/libtrnm_sqlite_layout_witness.a",
+      "file": "out-libtrnm_sqlite_layout_witness.a",
+      "bytes": 151368,
+      "sha256": "10952a64f0dc3a2b5f719e6d6e2675fd5835674a6d1f549d8c2f37994d5c95df"
+    }
+  ]
+}

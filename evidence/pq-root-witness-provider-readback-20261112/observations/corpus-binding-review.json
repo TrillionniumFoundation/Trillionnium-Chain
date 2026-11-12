@@ -1,0 +1,77 @@
+[
+  {
+    "path": "config/pon/pq-root-dependency-register-v3.json",
+    "old": "72182dedfde77c107c8a5cbbb32614019f4e6595",
+    "new": "4787dea08d164a9f4fc0aad34da7350c02c9952c"
+  },
+  {
+    "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "old": "d4c9f7f9b2fbd8bd5e8f4f832e46d99aae5ce8df",
+    "new": "4769c2ed7ab47f60b84f8cf281114e6098e6b6ff"
+  },
+  {
+    "path": "docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md",
+    "old": "b532bdd0d86ecca2dc0b1056addffe82ba43a0f0",
+    "new": "4959e04dd2bc2d72aa40defe904d10898c8cae48"
+  },
+  {
+    "path": "docs/security/ROOT_WITNESS_V5.md",
+    "old": "e118ba06d80a3321e3f3aa672c7eb2a33f248cb3",
+    "new": "bfe9bb5e4fffa439841defe71dde132be0152469"
+  },
+  {
+    "path": "scripts/ci/check_pq_research_integration.py",
+    "old": "07044acb3d1289940b917cd02a944d00b6f90ed5",
+    "new": "799e903db3a1766d0b9972c9e85f582016433c1c"
+  },
+  {
+    "path": "scripts/ci/pq_root_dependency_register.py",
+    "old": "ff37292c5c1a047614cc63050d0d6d9d1fd51a9f",
+    "new": "1c0838f791e1c4b37a5b47787b8727944eb992e1"
+  },
+  {
+    "path": "scripts/ci/run_pq_root_witness_v5.py",
+    "old": "316a44b9140ae8787a0561b52d318e9d5679fc5b",
+    "new": "0160523e9ca76f83380bda198a59ed288675d1fa"
+  },
+  {
+    "path": "scripts/ci/test_pq_research_integration.py",
+    "old": "8359c3c3673cee671b11ad5fe349a1405645c3cd",
+    "new": "3fd4366e1a18ff2234cc9622a7b34aa7e173e66f"
+  },
+  {
+    "path": "scripts/ci/test_pq_root_dependency_register.py",
+    "old": "ee780e325b612a2bf92025b6ae30c80f5f4433ef",
+    "new": "810480ce46d0e9de65f908331339e8f92e908dd5"
+  },
+  {
+    "path": "scripts/ci/test_run_pq_root_witness_v5.py",
+    "old": "5a436137c7f85d1d9ac74b9efcc4d0a54a81feef",
+    "new": "2eaf82ae5c930a98ae64a18ab031fd60cb66ad66"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "old": "6b8a0824630cef2d084b803f189d8fb54aafce76",
+    "new": "e8d7bebb1d9b9eafd7cb0695a79a8988a4f0c71f"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/effect_readback_v4.rs",
+    "old": "a0f7152aa1f23bb78618f094d62f7a575a662a9d",
+    "new": "9047dfbe1769ec8b526ec3f77d3bce5924b96683"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs",
+    "old": "955671dcca7e3e9b7872b950e402eca5ceb580e7",
+    "new": "002900d98e72962ca45f53cbfbf6f0ab7e739c29"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/provider_readback.rs",
+    "old": null,
+    "new": "8c0fc25e95623d9c7a0394494290393744d33b0a"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/tests/root_witness_provider_v5_native.rs",
+    "old": null,
+    "new": "da1a4c58f261b1afa13400293f48f469920ce548"
+  }
+]
