@@ -481,8 +481,8 @@ jobs:
           assert retained['schema'] == 'trnm-pq-system-required-tests-v1'
           assert retained['expected_meaningful_controls'] == len(retained['tests']) == 52
           tests = value['tests']
-          assert type(value['expected_meaningful_controls']) is int and value['expected_meaningful_controls'] == 7
-          assert isinstance(tests, list) and len(tests) == len(set(tests)) == 7
+          assert type(value['expected_meaningful_controls']) is int and value['expected_meaningful_controls'] == 11
+          assert isinstance(tests, list) and len(tests) == len(set(tests)) == 11
           assert all(isinstance(x, str) and re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*', x) for x in tests)
           assert not set(tests) & (set(retained['tests']) | set(retained['child_process_harnesses_not_counted']))
           Path(sys.argv[1]).write_text(''.join(f'native-supplemental-{i:02d}\t{name}\n' for i, name in enumerate(tests)))

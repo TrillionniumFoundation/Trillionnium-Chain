@@ -3,7 +3,7 @@
   "scope": "account-scope-and-witness-retry-provenance-only",
   "retained_roster": "config/pon/pq-system-required-tests-v1.json",
   "retained_meaningful_controls": 52,
-  "expected_meaningful_controls": 7,
+  "expected_meaningful_controls": 11,
   "tests": [
     "ingress::account_scope_tests::invalid_account_scope_refuses_classical_session_and_signed_request",
     "ingress::account_scope_tests::current_local_scope_refuses_previously_valid_classical_request",
@@ -11,7 +11,11 @@
     "ingress::account_scope_tests::valid_development_scope_retains_classical_signature_and_socket_path",
     "ingress::account_scope_tests::explicit_pq_selector_retains_classical_route_refusal_precedence",
     "pq_rollback_witness::tests::live_retry_refuses_changed_durable_predecessor_at_the_same_head",
-    "pq_rollback_witness::tests::cold_reopen_refuses_database_retry_history_and_accepts_new_successors"
+    "pq_rollback_witness::tests::cold_reopen_refuses_database_retry_history_and_accepts_new_successors",
+    "ingress::account_scope_tests::invalid_account_scope_refuses_pq_network_policy",
+    "ingress::account_scope_tests::invalid_account_scope_never_connects_pq_history_client",
+    "ingress::account_scope_tests::changed_native_pq_configuration_refuses_network_entry",
+    "ingress::account_scope_tests::valid_account_scope_retains_pq_policy_and_history_socket_path"
   ],
   "whole_chain_quantum_security_qualified": false,
   "original_business_budgets_changed": false

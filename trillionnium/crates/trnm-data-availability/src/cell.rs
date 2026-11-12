@@ -36,6 +36,7 @@ mod tensor;
 mod tensor_reader;
 mod version;
 mod version_content;
+mod version_content_closure_v3;
 mod version_retention;
 
 pub use archive::{
@@ -179,6 +180,10 @@ pub use version_content::{
 #[cfg(target_os = "linux")]
 pub use version_content::{
     CellSealedContentScopeV2, VerifiedCellSealedContentV2, VerifiedCellSealedVersionContentV2,
+};
+pub use version_content_closure_v3::{
+    CellContentLineagePinV3, CellContentLineageReadbackV3, CellVersionContentClosureV3,
+    MAX_CELL_CONTENT_LINEAGE_BYTES_V3, MAX_CELL_CONTENT_LINEAGE_VERSIONS_V3,
 };
 pub use version_retention::{
     CellVersionCatalogAnchorV3, CellVersionLoaderPinV3, CellVersionRetentionConfigV3,

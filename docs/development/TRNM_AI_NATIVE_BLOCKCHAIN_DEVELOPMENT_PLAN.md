@@ -1,3 +1,36 @@
+**PQ entry configuration and declared content-lineage continuation, 2026-11-12 America/New_York — HOLD:**
+
+Continue the copied-lease/V5 integration at #940, retaining the complete #939
+history and all original failures. Apply the existing account/profile validator
+before constructing a PQ network policy or preparing a public PQ History call.
+Keep the existing classical-route refusal precedence, valid development/PQ
+combinations, signed formats, network domains and original business budgets.
+Preserve the tests-only failing source and repaired source as separate native
+observations. Four additional named controls extend the original 52 plus seven
+supplemental methods; the old execution counts are not reassigned.
+
+The additive [TCV3 contract](specs/pon/CELL_CONTENT_LINEAGE_CLOSURE_V3.md) binds
+every complete TCV2 member and selected root under a fresh SHA-512 domain.
+Every declared TMR1 ancestor must be present as complete content. The existing
+retained-set owner checks its exact roster, epoch and windows, then reads actual
+CellStore bytes through TCV2 with one cumulative session and original deadline.
+Missing ancestors, ambiguous legacy aliases, invalid graphs and false content
+claims refuse the aggregate observation. The format has independent limits of
+sixteen versions, sixteen levels and 32 MiB metadata. It supplies a sequential
+content observation, without switching ordinary callers or proving historical
+provenance, undeclared semantic dependencies, custody or current FinalUse.
+
+Register the new direct implementation and changed public entry in the existing
+eight-domain lifetime source inventory. Review all twenty-one declared files
+against the actual runtime checkpoint; this is source coverage, not a proof of
+transitive dependencies, a shared-oracle reduction or a numerical failure bound.
+All eight terms remain unknown/null. Keep the Root register and its independent
+custody, recovery, migration, W1/DAA, whole-chain and production gates unchanged.
+Run the exact committed source, retained native rosters, new content controls,
+locked graphs, strict Clippy, formatting and source/link negative controls before
+assigning any final component result. Hosted HEAD and merge observations retain
+their own source and execution status.
+
 **System security combined source and retained execution, 2026-11-12 UTC — HOLD:**
 
 The immutable runtime composition checkpoint is

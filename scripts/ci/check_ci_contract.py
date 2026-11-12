@@ -1720,8 +1720,9 @@ def check_inline_source_pins(root: Path) -> int:
 
 
 
-# Keep the original 52-control roster immutable; these seven controls are a
-# separate source-reviewed supplement, not a new interpretation of old runs.
+# Keep the original 52-control roster and the first seven supplemental names.
+# Four additional PQ account-scope controls extend the source-reviewed
+# supplement without reinterpreting any prior execution.
 PQ_SYSTEM_REQUIRED_MANIFEST = 'config/pon/pq-system-required-tests-v1.json'
 PQ_SYSTEM_SUPPLEMENTAL_MANIFEST = 'config/pon/pq-system-supplemental-tests-v1.json'
 PQ_SYSTEM_REQUIRED_NAMES_SHA256 = '98eb15dbccb48e365771ce98dd611d1a6786bbd53af5d120fbe2c92a53ffbbed'
@@ -1733,6 +1734,10 @@ PQ_SYSTEM_SUPPLEMENTAL_NAMES = (
     "ingress::account_scope_tests::explicit_pq_selector_retains_classical_route_refusal_precedence",
     "pq_rollback_witness::tests::live_retry_refuses_changed_durable_predecessor_at_the_same_head",
     "pq_rollback_witness::tests::cold_reopen_refuses_database_retry_history_and_accepts_new_successors",
+    "ingress::account_scope_tests::invalid_account_scope_refuses_pq_network_policy",
+    "ingress::account_scope_tests::invalid_account_scope_never_connects_pq_history_client",
+    "ingress::account_scope_tests::changed_native_pq_configuration_refuses_network_entry",
+    "ingress::account_scope_tests::valid_account_scope_retains_pq_policy_and_history_socket_path",
 )
 PQ_SYSTEM_JOB_HEADER = r'''    name: PQ network and witness (${{ matrix.runner }}, ${{ matrix.source }})
     strategy:
@@ -1810,8 +1815,8 @@ PQ_SYSTEM_SUPPLEMENTAL_STEP = r'''      - name: Execute supplemental account sco
           assert retained['schema'] == 'trnm-pq-system-required-tests-v1'
           assert retained['expected_meaningful_controls'] == len(retained['tests']) == 52
           tests = value['tests']
-          assert type(value['expected_meaningful_controls']) is int and value['expected_meaningful_controls'] == 7
-          assert isinstance(tests, list) and len(tests) == len(set(tests)) == 7
+          assert type(value['expected_meaningful_controls']) is int and value['expected_meaningful_controls'] == 11
+          assert isinstance(tests, list) and len(tests) == len(set(tests)) == 11
           assert all(isinstance(x, str) and re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*', x) for x in tests)
           assert not set(tests) & (set(retained['tests']) | set(retained['child_process_harnesses_not_counted']))
           Path(sys.argv[1]).write_text(''.join(f'native-supplemental-{i:02d}\t{name}\n' for i, name in enumerate(tests)))
@@ -1909,7 +1914,7 @@ def check_pq_release_authority_controls(root: Path) -> dict:
 
 
 def check_pq_system_required_controls(root: Path) -> dict:
-    """Keep 52 retained controls and seven supplemental exact runs mandatory.
+    """Keep 52 retained controls and eleven supplemental exact runs mandatory.
 
     This inspects source selection and failure propagation only. Each hosted
     native run still needs the existing per-command source recorder and the
@@ -1949,13 +1954,13 @@ def check_pq_system_required_controls(root: Path) -> dict:
             and type(supplement.get('retained_meaningful_controls')) is int
             and supplement['retained_meaningful_controls'] == 52
             and type(supplement.get('expected_meaningful_controls')) is int
-            and supplement['expected_meaningful_controls'] == 7
+            and supplement['expected_meaningful_controls'] == 11
             and supplement.get('tests') == list(PQ_SYSTEM_SUPPLEMENTAL_NAMES)
             and not set(PQ_SYSTEM_SUPPLEMENTAL_NAMES) & (
                 set(names) | set(retained['child_process_harnesses_not_counted']))
             and all(supplement.get(key) is False for key in (
                 'whole_chain_quantum_security_qualified', 'original_business_budgets_changed')),
-            'PQ system supplement must require all seven distinct reviewed full-name controls')
+            'PQ system supplement must require all eleven distinct reviewed full-name controls')
 
     text = (root / PQ_RELEASE_WORKFLOW).read_text()
     header, separator, body = text.partition('\njobs:\n')
@@ -1978,9 +1983,9 @@ def check_pq_system_required_controls(root: Path) -> dict:
         require(job.count(step) == text.count(step) == 1,
                 'PQ system build and both exact execution/readback steps must remain complete')
     require(PQ_SYSTEM_BUILD_STEP + PQ_SYSTEM_REQUIRED_STEP + PQ_SYSTEM_SUPPLEMENTAL_STEP in job,
-            'PQ system build must precede the retained 52 and separate seven exact control runs')
-    return {'retained_meaningful_controls': 52, 'supplemental_meaningful_controls': 7,
-            'selected_meaningful_controls': 59, 'tests_executed': False}
+            'PQ system build must precede the retained 52 and separate eleven exact control runs')
+    return {'retained_meaningful_controls': 52, 'supplemental_meaningful_controls': 11,
+            'selected_meaningful_controls': 63, 'tests_executed': False}
 
 
 def validate(root: Path = ROOT) -> dict:

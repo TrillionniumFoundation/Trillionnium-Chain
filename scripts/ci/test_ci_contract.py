@@ -2994,10 +2994,10 @@ class PqSystemSupplementalControlTests(unittest.TestCase):
     def write_manifest(self, relative, value):
         (self.root / relative).write_text(json.dumps(value, indent=2) + '\n')
 
-    def test_retains_52_and_separately_requires_seven_without_claiming_execution(self):
+    def test_retains_52_and_separately_requires_eleven_without_claiming_execution(self):
         self.assertEqual(check_pq_system_required_controls(self.root), {
-            'retained_meaningful_controls': 52, 'supplemental_meaningful_controls': 7,
-            'selected_meaningful_controls': 59, 'tests_executed': False})
+            'retained_meaningful_controls': 52, 'supplemental_meaningful_controls': 11,
+            'selected_meaningful_controls': 63, 'tests_executed': False})
 
     def test_original_roster_name_count_order_and_scope_cannot_change(self):
         mutations = (
@@ -3036,6 +3036,18 @@ class PqSystemSupplementalControlTests(unittest.TestCase):
                 value = json.loads(json.dumps(self.supplement))
                 mutate(value)
                 self.write_manifest(PQ_SYSTEM_SUPPLEMENTAL_MANIFEST, value)
+                with self.assertRaisesRegex(ValueError, 'PQ system supplement'):
+                    check_pq_system_required_controls(self.root)
+
+    def test_prior_seven_only_cannot_satisfy_extended_pq_account_roster(self):
+        # Preserve the old observation scope: neither its seven-name list nor
+        # a matching old counter proves execution of the four added controls.
+        prior = json.loads(json.dumps(self.supplement))
+        prior['tests'] = prior['tests'][:7]
+        for count in (7, 11):
+            with self.subTest(declared_count=count):
+                prior['expected_meaningful_controls'] = count
+                self.write_manifest(PQ_SYSTEM_SUPPLEMENTAL_MANIFEST, prior)
                 with self.assertRaisesRegex(ValueError, 'PQ system supplement'):
                     check_pq_system_required_controls(self.root)
 
@@ -3110,7 +3122,7 @@ elif mode == 'ignored':
         result, calls, out = self.run_supplemental_shell()
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual([row['selector'] for row in calls], self.supplement['tests'])
-        self.assertEqual(len({row['label'] for row in calls}), 7)
+        self.assertEqual(len({row['label'] for row in calls}), 11)
         for row in calls:
             readback = json.loads((out / (row['label'] + '-execution.json')).read_text())
             self.assertEqual(readback['test'], row['selector'])
