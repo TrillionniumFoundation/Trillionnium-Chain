@@ -1,0 +1,40 @@
+{
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "/workspace/scratch/3069292387f3/liveness-canonical-reader/pq_root_campaign_readback.py",
+        "/workspace/scratch/3069292387f3/pon-native-53e1b98a-original.zip",
+        "--expected-head",
+        "53e1b98a7955898b9feff4778f7136c0fd0199c8",
+        "--expected-tree",
+        "094ccb0afc9e7ffbbcc83f85efb6ca4ad8d54aa0",
+        "--expected-artifact-sha256",
+        "9a2c2250205c6a5fe18524451addf56115aafbf951d9a5c2fd3f6056988e437e"
+      ],
+      "exit_code": 0,
+      "seconds": 5.885423898696899
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/workspace/scratch/3069292387f3/liveness-canonical-reader",
+        "-p",
+        "test_pq_root_campaign_readback.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 0.16489720344543457
+    }
+  ],
+  "correction": "remove one extra local-copy trailing LF from each reader input; exact upstream Git blobs verified",
+  "full_archive_output_byte_identical": true,
+  "native_execution_performed": false,
+  "previous_checkpoint": "40f81200522cbb751485a9043affcca3a9836497",
+  "qualification": "HOLD_NO_GO",
+  "schema": "chain-canonical-reader-verification-v1"
+}

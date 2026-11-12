@@ -89,11 +89,17 @@ python3 -m unittest discover \
 ```
 
 The retained reader and its test file are lossless gzip payloads of the exact
-upstream bytes, including their original trailing blank line. Their raw Git blob
-identities and both raw/compressed digests are recorded in
-[reader-payloads.json](reader-payloads.json). The initial precommit whitespace
-check returned exit 2 for those two trailing blank lines. Compression preserves
-the original files without changing the whitespace gate or rewriting the reader. Thirteen reader controls actually passed,
+upstream bytes. Their raw Git blob identities and raw/compressed digests are
+recorded in [reader-payloads.json](reader-payloads.json). The initial local text
+copies had one additional trailing LF each, and the precommit whitespace check
+correctly returned exit 2. The raw Git blob checks then identified that local
+copying error. Removing only those extra bytes exactly restored upstream blobs
+`1852ddb0d54cbccef4329db4c2acc6534a9fdff2` and
+`befefc24a7c27be725e8b912032b6285750782ed`; the complete original ZIP was read again,
+the output matched the retained readback byte-for-byte, and all thirteen reader
+controls passed again. The preceding local copies remain in checkpoint
+`40f81200522cbb751485a9043affcca3a9836497`; they are not labelled exact upstream
+bytes in this corrected record. Thirteen reader controls actually passed,
 as shown by [reader-tests.stderr](reader-tests.stderr). Those Python controls
 check the evidence reader. They are not a new native liveness campaign.
 

@@ -13,6 +13,6 @@ test_zip_manifest_integrity_and_mutated_member (test_pq_root_campaign_readback.E
 test_zip_member_not_listed_in_manifest_is_refused (test_pq_root_campaign_readback.EvidenceReaderTests.test_zip_member_not_listed_in_manifest_is_refused) ... ok
 
 ----------------------------------------------------------------------
-Ran 13 tests in 0.027s
+Ran 13 tests in 0.006s
 
 OK

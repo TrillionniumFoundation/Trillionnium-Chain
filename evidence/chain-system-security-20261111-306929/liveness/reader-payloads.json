@@ -3,21 +3,25 @@
   "payloads": [
     {
       "archive": "pq_root_campaign_readback.py.gz",
-      "archive_bytes": 4645,
-      "archive_sha256": "1e47df415313f3155b7bcbe20094deed9688a9bf6d9b1f50d608509ea6d7ec28",
+      "archive_bytes": 4644,
+      "archive_sha256": "fa69e56d9646f383eda3bafd84cb9f1379bd5e183801528bed73a2b695d59287",
       "original_name": "pq_root_campaign_readback.py",
-      "raw_bytes": 14486,
-      "raw_git_blob": "313644d2be8d523f74e203bdf5fe281819451a2f",
-      "raw_sha256": "4d25fcd753c4a09b45075f2162ff52a080b3426d0cc72d8951586941db3fc12c"
+      "previous_local_copy_git_blob": "313644d2be8d523f74e203bdf5fe281819451a2f",
+      "raw_bytes": 14485,
+      "raw_git_blob": "1852ddb0d54cbccef4329db4c2acc6534a9fdff2",
+      "raw_sha256": "5ba05caa83d334c1baf10a7b9b1134ed2aeaaa2dde917363e607847c07fd39e2",
+      "removed_extra_local_eof_bytes": 1
     },
     {
       "archive": "test_pq_root_campaign_readback.py.gz",
-      "archive_bytes": 2172,
-      "archive_sha256": "ff86932c7cea3963d8e68543a0182dcf5c0702480592d2abaccc28106b19a020",
+      "archive_bytes": 2171,
+      "archive_sha256": "f573e856f696a988d3db8291d2ad5512cbb15ce9311a7f4526eca78da679bcd1",
       "original_name": "test_pq_root_campaign_readback.py",
-      "raw_bytes": 6941,
-      "raw_git_blob": "f7a80f168aeef545c63814ca9ad0f7cbbd973f63",
-      "raw_sha256": "ac0d57b0357caf7441a5578b36168739e4cf2e50b70c7974952fec072a3d02c8"
+      "previous_local_copy_git_blob": "f7a80f168aeef545c63814ca9ad0f7cbbd973f63",
+      "raw_bytes": 6940,
+      "raw_git_blob": "befefc24a7c27be725e8b912032b6285750782ed",
+      "raw_sha256": "9aef73df014ec1bccfb0d03c966d42abeb4071c8c91f8d2dbfcd24c28d43af84",
+      "removed_extra_local_eof_bytes": 1
     }
   ],
   "schema": "chain-original-reader-payloads-v1"
