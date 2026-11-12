@@ -9,10 +9,12 @@ are frozen in each new run's manifest; this document is not an execution receipt
 
 ## Falsifiable contract
 
-For a fixed admitted task, legal header/nonce stream and complete packet bytes,
-retaining a `PreparedTask` and recreating it with the same implementation must
-produce the same Node admission, branch chainwork, canonical selection and
-branch reward state. A duplicate packet must not add another block or reward.
+For a fixed maintenance task and legal header/nonce stream, retaining a
+`PreparedTask` and recreating it at search boundaries with the same full-generation
+implementation must produce identical completed proof and packet bytes, Node
+admission, branch chainwork, canonical selection and branch reward state. Both
+policies reuse their preparation across misses within a search. A duplicate
+packet must not add another block or reward.
 Producer attempts that miss, are cancelled, or remain unfinished must remain in
 the cost history and cannot be converted into observed ledger credit.
 
@@ -58,7 +60,7 @@ the repository-pinned Rust toolchain. First run the normal boundary check:
 
 ```sh
 bash scripts/project-preflight.sh
-cargo test --manifest-path trillionnium/Cargo.toml --locked --release \
+cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml --locked -j2 \
   -p trnm-pon-node --lib --no-run --message-format=json > build.jsonl
 ```
 
@@ -70,7 +72,8 @@ compiler version, executable digest and complete build log. Then run:
 python3 scripts/research/sp27_01_native_credit.py \
   --repo /absolute/clean/checkout --binary /absolute/native/test-executable \
   --output /absolute/new/run-directory --run-id sp27-01-native-credit-run-01 \
-  --source-sha IMPLEMENTATION_SHA --source-tree IMPLEMENTATION_TREE
+  --source-sha IMPLEMENTATION_SHA --source-tree IMPLEMENTATION_TREE \
+  --timeout-seconds 1800
 ```
 
 The supervisor freezes four process modes before launch: full, cancel, fail
@@ -81,6 +84,45 @@ The unfinished mode first syncs a marker from inside an actual partial proof
 generation; the supervisor sends SIGTERM only to its own new child process
 group. An unfinished attempt has no fabricated end event or zero completion
 cost. Failed builds, unexpected exits and timeouts remain in the run record.
+
+## Recorded functional execution
+
+The first formal supervised execution is `sp27-01-native-6811a88764ac-01`:
+
+| Identity | Value |
+| --- | --- |
+| Experiment source | `6811a88764acc5f3cab73c7d2c18176370067ece` |
+| Experiment tree | `6661f20faa885061dcc6ea490a2b1badeded67bf` |
+| Executable SHA-256 | `569a229499f068d00c5a8115826686b3f030285ee8b40bd596f6af2660f42535` |
+| Supervisor manifest SHA-256 | `d4389678c316d1869915980b443e00101dc392eee689baf4c2ebfe4199f9163e` |
+| Execution receipt SHA-256 | `c22a980910dc236ce5ef196d9e45b655e9106336e2ddca702bfb0618e246582a` |
+
+The actual Cargo artifact uses the test profile with optimization level 3,
+debug assertions and overflow checks enabled. It is not a release-profile
+performance experiment. The three `full`, `cancel` and `fail` processes returned
+zero. The `unfinished` process durably reached the native partial-attempt marker
+and returned `-15` after the supervisor's planned SIGTERM. All four registered
+process outcomes matched the declared control, and source and executable
+identities were unchanged at the recorded bookends. `fail` is an expected native
+ROOT rejection control, not an unexpected process crash. The unfinished control
+does not perform a post-kill Node ledger readback.
+
+The original Papers consumer, SHA-256
+`09c20c73b91383b5740c0537d659240cc11d28b3da81168bb215db1524b9c82f`,
+read this actual run and returned zero on its first invocation. It also invoked
+the exact pinned SP27-06 reader. The full raw run, consumer outputs and their
+manifests belong under SP27-01's `native_credit_v1` evidence directory in the
+Papers delivery. A local reader pass is not an SP27-02/06 owner acknowledgment.
+
+The exact-source nine retained legal-attempt controls executed and passed.
+Formatting, strict Node library/test Clippy and 43 source-integrity rejection
+controls also passed. The remote experiment used a sparse checkout: its whole
+repository source guard refused the hidden entries, and that failure is retained.
+The separately declared materialized build-scope check covers 4,765 entries.
+A separate complete local checkout at the same experiment SHA passed the
+unmodified whole-source checker over 27,893 entries / 2,553,972,961 bytes.
+These are different source-check observations. Neither is a hosted-CI receipt;
+the draft PR's actual workflow runs and exact head must be reported separately.
 
 ## Consumption and research decision
 
