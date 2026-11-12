@@ -1,0 +1,57 @@
+{
+  "ai_reconstruction_assembly": {
+    "complete_pty_output_bytes": 284,
+    "complete_pty_output_path": "/home/qq/.local/state/hepta-runtime-mac-worker/terminals/dpty-c0c6ff25401e6d5e03353f267ba06fade008e15db6454c01db64ea8e4bbe5687/output.log",
+    "complete_pty_output_sha256": "d8e9665842690965fef4906ce9e3bb9c025dee0807ff992b45ffd36aba527926",
+    "complete_pty_output_utf8": "Traceback (most recent call last):\r\n  File \u001b[35m\"/tmp/chain-hash-cprime-assemble-review-976f.py\"\u001b[0m, line \u001b[35m299\u001b[0m, in \u001b[35m<module>\u001b[0m\r\n    assert \u001b[31mheading.startswith\u001b[0m\u001b[1;31m(\"# \")\u001b[0m\r\n           \u001b[31m~~~~~~~~~~~~~~~~~~\u001b[0m\u001b[1;31m^^^^^^\u001b[0m\r\n\u001b[1;35mAssertionError\u001b[0m\r\n",
+    "correction": "Prepend the new state section while retaining the complete original B plan bytes as an unchanged suffix.",
+    "driver_bytes": 27383,
+    "driver_path": "/tmp/chain-hash-cprime-assemble-review-976f.py",
+    "driver_sha256": "368e9e3b0f4f4def65ab030577d909c52db43b405c940777ce9c1a8a2e3403f0",
+    "extra_tests_or_native_gate_relaxation": false,
+    "first_attempt_exit_code": 1,
+    "new_checkout_clean_before_continuation": true,
+    "reason": "Overstrict helper assumption that the sole plan begins with a hash-prefixed heading; the original B plan begins with a bold historical status paragraph.",
+    "repo_or_index_write_reached": false,
+    "scope": "Separate AI preservation helper; not a native test or original-source-guard execution."
+  },
+  "ai_recovery_guard_failure_is_a_separate_scope": "recovery-observations.tar.xz",
+  "changed_files": 20,
+  "commit_published": false,
+  "commit_transferred_out": false,
+  "cprime_inherits_no_execution_identity_from_B_or_cloud_C": true,
+  "cprime_is_a_new_equivalent_preservation_change_not_a_byte_exact_recovery": true,
+  "events_in_order": [
+    {
+      "commit_created": false,
+      "event": "first_git_add",
+      "exit_code": 128,
+      "reason": "ENOSPC",
+      "staging_completed": false
+    },
+    {
+      "commit": "d3d8089eefb8425f1ee1c7f3d1feb7d1e5c10843",
+      "commit_created": true,
+      "event": "task_owned_target_cleanup_then_stage_and_commit",
+      "staging_completed": true,
+      "tree": "832183cb5b0a58cb17df81c8580eceaea2e465a0"
+    },
+    {
+      "bundle_created": false,
+      "event": "post_commit_bundle_and_preflight_invocation",
+      "post_commit_preflight_executed": false,
+      "processes_started": false,
+      "tool_error": "CreateProcess rejected: exec-server disconnected; recovery timed out after 45 seconds"
+    }
+  ],
+  "evidence_files": 16,
+  "exact_source_tests_executed": false,
+  "parent": "9fd6ee29a7a663cef547040d9d42cc36a371a17e",
+  "production_activation_authorized": false,
+  "rust_cargo_and_ci_workflows_unchanged_from_B": true,
+  "schema": "trnm-unpublished-cloud-c-observation-v1",
+  "scope": "Parent task's retained execution observation; lost cloud environment was not reread during this reconstruction.",
+  "source": "d3d8089eefb8425f1ee1c7f3d1feb7d1e5c10843",
+  "tree": "832183cb5b0a58cb17df81c8580eceaea2e465a0",
+  "whole_chain_quantum_security_qualified": false
+}

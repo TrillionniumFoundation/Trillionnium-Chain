@@ -1,0 +1,28 @@
+{
+  "candidate": "9fd6ee29a7a663cef547040d9d42cc36a371a17e",
+  "execution_host": "ai395",
+  "members": [
+    {
+      "bytes": 2209,
+      "path": "ai395-b-all-features-metadata/compact-summary.json",
+      "sha256": "233e88eab04a9ebfdd5ad3b74f84fb5cd763a69721f2516a168025c93bf59f92"
+    },
+    {
+      "bytes": 5622,
+      "path": "ai395-b-all-features-metadata/package-observation.py",
+      "sha256": "fbf7fa14e6efc5b25e33cde342c543463dd08f290028ebceaaa9b8249f55e11c"
+    },
+    {
+      "bytes": 2149,
+      "path": "ai395-b-all-features-metadata/records/b-ai395-workspace-all-features-metadata.json",
+      "sha256": "0a39a25a7524538e563a10a1b20769b28fc6aed896e25f2f67e50398226513c1"
+    },
+    {
+      "bytes": 860043,
+      "path": "ai395-b-all-features-metadata/records/b-ai395-workspace-all-features-metadata.log",
+      "sha256": "3e20abe0b42ebb9849b70e04d5c87d4c00d35c7aaf63707398f66eff8c661221"
+    }
+  ],
+  "schema": "trnm-evidence-member-sha256-v1",
+  "tree": "7351f83fa9ac5c0e7540fa64bce06ea6f328602f"
+}

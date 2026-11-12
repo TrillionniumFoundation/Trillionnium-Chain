@@ -1,0 +1,63 @@
+{
+  "argv": [
+    "cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--all-features",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--format-version",
+    "1"
+  ],
+  "before_after_equal": true,
+  "candidate": "9fd6ee29a7a663cef547040d9d42cc36a371a17e",
+  "cwd": "/home/qq/chain-hash-transitive-976f-20261111",
+  "elapsed_ns": 7582027716,
+  "execution_host": "ai395",
+  "exit_code": 0,
+  "label": "b-ai395-workspace-all-features-metadata",
+  "launch_environment_recorded_by_controller": {
+    "CARGO_HOME": "/home/qq/.cargo",
+    "RUSTUP_HOME": "/home/qq/.rustup",
+    "RUSTUP_TOOLCHAIN": "1.95.0",
+    "rust_bin_prepend": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin"
+  },
+  "log_bytes": 860043,
+  "log_sha256": "3e20abe0b42ebb9849b70e04d5c87d4c00d35c7aaf63707398f66eff8c661221",
+  "metadata_counts": {
+    "packages": 182,
+    "resolve_nodes": 182,
+    "workspace_members": 26
+  },
+  "production_activation_authorized": false,
+  "receipt_bytes": 2149,
+  "receipt_sha256": "0a39a25a7524538e563a10a1b20769b28fc6aed896e25f2f67e50398226513c1",
+  "retained_cloud_observation": {
+    "exit_code": 101,
+    "label": "b-cloud-workspace-all-features-metadata",
+    "preserved_in": "cloud-b-observations-976f.tar.gz",
+    "reason": "foreign-types 0.3.2 absent from the cloud offline cache",
+    "replaced_or_relabelled": false,
+    "status": "command_failed"
+  },
+  "schema": "trnm-b-all-features-metadata-observation-v1",
+  "scope": "Read-only Cargo metadata; not native tests or compiler/provider attestation.",
+  "source_guards": {
+    "base": null,
+    "candidate": "9fd6ee29a7a663cef547040d9d42cc36a371a17e",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "9fd6ee29a7a663cef547040d9d42cc36a371a17e",
+    "tested_tree": "7351f83fa9ac5c0e7540fa64bce06ea6f328602f",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2578874762,
+    "tracked_entries": 28334,
+    "tracked_worktree_verified": true
+  },
+  "started_utc": "2026-11-12T01:31:09.968660+00:00",
+  "status": "command_succeeded",
+  "tree": "7351f83fa9ac5c0e7540fa64bce06ea6f328602f",
+  "whole_chain_quantum_security_qualified": false
+}

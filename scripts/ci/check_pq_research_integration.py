@@ -968,6 +968,29 @@ NATIVE_REQUIRED_PATHS |= frozenset((
     "trillionnium/crates/trnm-pon-node/src/store/migration_history_v2/tests.rs",
 ))
 
+# Preserve complete original observations and recovery refusals as source bytes.
+# Mandatory presence is not native execution or security/authority acceptance.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "evidence/hash-content-closure-20261111-976f/README.md",
+    "evidence/hash-content-closure-20261111-976f/ai395-b-all-features-metadata-compact.json",
+    "evidence/hash-content-closure-20261111-976f/ai395-b-all-features-metadata-members.json",
+    "evidence/hash-content-closure-20261111-976f/ai395-b-all-features-metadata.tar.gz",
+    "evidence/hash-content-closure-20261111-976f/ai395-b-native-members.json",
+    "evidence/hash-content-closure-20261111-976f/ai395-b-native-observations.tar.xz",
+    "evidence/hash-content-closure-20261111-976f/ai395-b-native-summary.json",
+    "evidence/hash-content-closure-20261111-976f/ai395-b-python16-controls-compact.json",
+    "evidence/hash-content-closure-20261111-976f/ai395-b-python16-controls-members.json",
+    "evidence/hash-content-closure-20261111-976f/ai395-b-python16-controls.tar.gz",
+    "evidence/hash-content-closure-20261111-976f/cloud-b-observations-976f.archive.json",
+    "evidence/hash-content-closure-20261111-976f/cloud-b-observations-976f.tar.gz",
+    "evidence/hash-content-closure-20261111-976f/final-b-hash-purpose-preservation-review.json",
+    "evidence/hash-content-closure-20261111-976f/mac-pr927-body-update-public-summary.json",
+    "evidence/hash-content-closure-20261111-976f/mac-publication-public-summary-976f.json",
+    "evidence/hash-content-closure-20261111-976f/recovery-observations.tar.xz",
+    "evidence/hash-content-closure-20261111-976f/staging-manifest.json",
+    "evidence/hash-content-closure-20261111-976f/unpublished-cloud-c-observation.json",
+))
+
 # These are bounded source contracts, not results of a cryptographic audit.
 # In particular, an always-compiled provider is not default chain activation.
 NATIVE_V2_EXPECTED = {

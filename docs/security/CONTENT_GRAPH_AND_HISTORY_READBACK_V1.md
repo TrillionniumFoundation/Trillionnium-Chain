@@ -196,3 +196,7 @@ cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-
 The existing full-content workflow additionally retains complete component
 libraries, all-features tests, doc tests, exact-source checks, locked graphs,
 formatting and strict Clippy. A documented command is not an execution receipt.
+
+## Execution observations and preservation
+
+The [preserved B execution and C-prime recovery evidence](../../evidence/hash-content-closure-20261111-976f/README.md) records bounded native/readback observations, original failures, source identities and remaining limits. This documentation/corpus-retention checkpoint grants no authority or security qualification; later C-prime runs are bound to their own committed source.

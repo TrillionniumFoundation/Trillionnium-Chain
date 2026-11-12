@@ -1,3 +1,17 @@
+**C-prime recovery and retained B execution, 2026-11-12 UTC -- HOLD_NO_GO:**
+
+C-prime preserves the reviewed runtime A and source B with new evidence/documentation/corpus-retention bytes only. It changes no Rust, Cargo input, CI workflow, production owner selection, or 19-purpose hash qualification. Its source identity and subsequent exact-source execution are separate from B and the unpublished cloud C.
+
+B's selected native observations are now retained: TCG3 16/16; M06 history 11/11 in each configuration; Node history 7/7 in each configuration; five-package libraries default 1,259 passed/11 ignored and all-features 1,271 passed/11 ignored; documentation 24 passed; six-package strict all-target/all-feature Clippy exit 0. These configuration totals are not unique tests. The 16 Python commands executed 350 tests without skips; all 21 supporting requirements have successful B observations while the cloud offline-cache metadata failure remains preserved.
+
+Whole-chain HOLD_NO_GO and C5 overall FAIL (22/23 commands, 62/64 native controls) remain unchanged. Preliminary TCG3 15/16, the later ENOSPC build without tests, and its distinct B success remain visible. Post-run ELF hashes are not live executable attestation; optional SQLite hard-I/O observation is UNQUALIFIED. No historical truth, authority migration, production activation, or uniform quantum-bit estimate follows.
+
+TCG3 bounds declared typed dependencies (256 nodes/1,792 objects/1,536 edges/depth 32), without discovering arbitrary loader dependencies. CMH2 admits genesis through at most 32 non-genesis blocks/32 MiB and refuses longer histories; Node admits 128 MiB of source material with a cooperative 30-second deadline. Transaction/proof/receipt bodies, W1/effects, finality, key history and hidden external objects remain outside this readback scope.
+
+The cloud actually committed C but its executor then failed before bundle/preflight launch; C was never published or tested. AI recovery independently found 115 missing compressed evidence files behind skip-worktree flags. The old checkout/index were preserved. A separate complete B checkout passed the original full raw guards and preflight before C-prime assembly.
+
+[Preserved B observations and scoped C-prime recovery](../../evidence/hash-content-closure-20261111-976f/README.md) retain the original failures, source/host bindings and recovery records. New C-prime gates are recorded externally against its own committed source; B and unpublished C are not relabelled as C-prime executions.
+
 **Typed dependency and bounded State-history readback, 2026-11-11 America/New_York — HOLD:**
 
 Continue #908 at `6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d` in an isolated
