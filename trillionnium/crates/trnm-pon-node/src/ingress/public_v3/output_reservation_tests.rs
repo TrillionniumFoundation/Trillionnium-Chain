@@ -17,11 +17,11 @@ fn pq_identity(seed: u8) -> PqPublicIdentity {
 
 enum Client {
     Classical {
-        caller: DevelopmentIdentity,
+        caller: Box<DevelopmentIdentity>,
         server: String,
     },
     Pq {
-        caller: PqPublicIdentity,
+        caller: Box<PqPublicIdentity>,
         spki: Vec<u8>,
         id: Hash,
     },
@@ -50,7 +50,7 @@ impl Running {
         let (server, client) = if pq {
             let identity = pq_identity(61);
             let client = Client::Pq {
-                caller: pq_identity(62),
+                caller: Box::new(pq_identity(62)),
                 spki: identity.public_spki().to_vec(),
                 id: digest(identity.public_key()).unwrap(),
             };
@@ -61,7 +61,7 @@ impl Running {
         } else {
             let identity = classical(61);
             let client = Client::Classical {
-                caller: classical(62),
+                caller: Box::new(classical(62)),
                 server: identity.public_key().to_owned(),
             };
             (PublicServer::new(identity, policy).unwrap(), client)
@@ -182,8 +182,7 @@ fn full_output_pool_closes_without_signed_response_and_recovers_after_release() 
         // no output reservation, no response signature or bytes may be made.
         let error = run
             .call(&Request::Head)
-            .err()
-            .expect("unreserved output must close");
+            .expect_err("unreserved output must close");
         assert!(error.is(crate::ErrorCode::FrameEof), "{error}");
         run.wait_for_output(1, 0, MAX_OUTPUT_BYTES);
         let observed = run.metrics.lock().unwrap().clone();
@@ -257,8 +256,7 @@ fn refusal_borrows_only_bounded_original_headroom_and_preserves_control_service(
         .unwrap();
         let error = run
             .call(&history)
-            .err()
-            .expect("fallback headroom is bounded");
+            .expect_err("fallback headroom is bounded");
         assert!(error.is(crate::ErrorCode::FrameEof), "{error}");
         run.wait_for_output(1, 1, ordinary + REFUSAL_OUTPUT_HEADROOM);
         if pq {
