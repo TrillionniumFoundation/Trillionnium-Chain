@@ -1,3 +1,36 @@
+**System security combined source, 2026-11-12 UTC — HOLD:**
+
+Use immutable runtime checkpoint `813620f387199bef3eae2493e2af07c70444db58`
+to compose the original V5 witnessed historical provider-readback continuation,
+the five existing no-sidecar SQLite opener refusal repairs, and the native
+incentive/evaluation controls and documented counterexamples. The SQLite
+changes preserve path bytes and reject sidecar objects or metadata failures;
+they are not a dependency upgrade or a remote exploit reproduction, and do not
+establish general TOCTOU safety.
+
+Review the curated authority/effect register against all 44 immutable blobs at
+this checkpoint. Exactly two Settlement pins change; freeze the canonical
+source/revision table to
+`3eef9a9a1431914cae0f25f49a009a6103cf30caf0bc5f189918ad71fe91b71d`.
+Keep its seven effect scopes and all false qualification fields. The separate
+43-file Root map and 1,162 corpus pins already match this checkpoint and retain
+their existing reviewed bindings.
+
+Run the complete source, metadata and retained native gates on the resulting
+immutable metadata successor. Execute the default-feature incentive targets,
+then the 51 Root witness/provider methods with the required PQ feature, then
+the SQLite and strict Clippy gates, recording each actual feature set and
+source before/after. Do not promote earlier static checks, provider smoke,
+partial-source native observations or interrupted builds into a pass for this
+combined source. Later evidence-only merges retain their own distinct heads.
+
+The V5 witness constrains Root state and historical identity, not every provider
+journal head. Cold provider-journal rollback still requires external same-operation
+reconciliation; Unknown grants no redispatch authority. Independent custody,
+daemon/wire and ordinary M15 assembly, actual external effects, unknown common
+controllers, generalization and whole-chain guarantees remain open. Production
+activation and main-merge authorization remain closed.
+
 **V5 witnessed provider readback continuation, 2026-11-11 America/New_York — HOLD:**
 
 Continue #908 C5 `6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d` in an isolated

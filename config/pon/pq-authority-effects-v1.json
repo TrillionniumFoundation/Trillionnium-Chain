@@ -1,6 +1,6 @@
 {
   "schema": "trnm-pq-authority-effects-v1",
-  "source_revision": "de0271da2a339c75c38328c4678e15f515d43ce9",
+  "source_revision": "813620f387199bef3eae2493e2af07c70444db58",
   "purpose": "curated-source-consistency-only",
   "coverage_complete": false,
   "whole_chain_pq_qualified": false,

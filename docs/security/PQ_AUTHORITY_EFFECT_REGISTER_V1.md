@@ -4,7 +4,7 @@
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
 routes to the current reviewed source
-`8add285b6c0a91d8b7812efe2d02c9342f74c91b`. The
+`813620f387199bef3eae2493e2af07c70444db58`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -18,9 +18,34 @@ a signature, context comparison, downloaded artifact or certificate observation
 must not be recorded as a different downstream permission. That original source
 inventory did not itself establish a classical bypass of a PQ owner.
 
-## Joint-source continuation
+## Current combined candidate binding, 2026-11-12
 
-This review derives all 44 regular Git blobs from runtime checkpoint
+The reviewed source is `813620f387199bef3eae2493e2af07c70444db58`, tree
+`4670d4ca9354d862ed2a5b3061dcaa61c759004e`. All 44 regular-file blobs
+were read from that immutable checkpoint and compared with the actual checkout.
+The canonical lock SHA-256, including that source revision, is
+`3eef9a9a1431914cae0f25f49a009a6103cf30caf0bc5f189918ad71fe91b71d`.
+
+Forty-two file pins are unchanged from the prior fixed
+`7f83ea843d6d1578a475a7a0c4dc026da564a795` map. Only the portable
+Settlement `store.rs` and `tests.rs` pins change. The opener now uses
+`symlink_metadata`: an existing journal, WAL or SHM object, including a dangling
+symlink, is refused; only `NotFound` means absent, and other metadata errors
+are refused before SQLite opens the database. Its controls cover refused
+create/reopen without changing existing database, sidecar or target bytes,
+a real overlong-path metadata error, and clean create/reopen.
+
+This remains `portable-settlement-store-only`. It adds no Node consumer,
+PQ payment route, external-effect authority or general TOCTOU guarantee.
+All seven routes, the 44-path roster and false qualification fields remain
+unchanged. The checker and independent positive assertion bind this reviewed
+revision, while the existing stale-context control also rejects the prior
+`7f83ea8` revision. Older checkpoint identities and failures below remain
+historical records. This byte review does not execute or qualify native tests.
+
+## Retained joint-source continuation
+
+That review derived all 44 regular Git blobs from runtime checkpoint
 `8add285b6c0a91d8b7812efe2d02c9342f74c91b`, tree `8aaa486aa4ccd4e41e33241fb4e7e273d3c3d5f6`. The canonical lock SHA-256 is
 `da8d605dead05faa1302c96d8bba1ff4f1e07cd5423390a34679f02dc73cecb9`. Compared with the previous checkpoint, only
 `pon_executor.rs` and `store.rs` change within this declared scope. They enforce
@@ -84,9 +109,9 @@ The portable consumption settlement store is separately scoped. Substituting
 for its bilateral authorization and durable state sources is refused by this
 register. Those additional owners still require their own qualification work.
 
-## Current account-selector mapping, 2026-11-11
+## Retained account-selector mapping, 2026-11-11
 
-The active source map uses the exact 44 regular-file blobs from published
+That source map used the exact 44 regular-file blobs from published
 runtime checkpoint `ef6df12a042912664df64f2112c2b1c600dce9fa`, tree
 `5e89951169fe2d5ef7418c3dc23984babda172ce`. Each of those 44 blobs is identical
 at the later metadata candidate `1f82449191360bd26313fd716de361f1d52bc813`.
@@ -105,7 +130,7 @@ reviewed: 11b3aa9238c71996c883232cb741a20c783912e852117462299edc28236fc718
 The reviewed runtime now treats every present `account_authorization_profile`
 selector as excluding the classical route, and requires the selector to be
 absent when no native account owner is available. This source lock records
-that version; checking it does not execute native account tests. The active
+that version; checking it does not execute native account tests. That checkpoint's
 canonical table digest, including the runtime checkpoint revision, is:
 
 ```text
