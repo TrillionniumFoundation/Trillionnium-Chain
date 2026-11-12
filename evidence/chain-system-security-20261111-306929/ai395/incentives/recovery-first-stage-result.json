@@ -1,0 +1,12 @@
+{
+  "cargo_invoked": false,
+  "error": "[Errno 2] No such file or directory: '/home/qq/chain-system-security-20261112-306929/evidence/chain-incentive-counterexamples-20261112/node-genesis-split/native.json'",
+  "files_written": 14,
+  "finished_utc": "2026-11-12T02:39:39.091881+00:00",
+  "native_tests_started": false,
+  "python_scientific_methods_started": false,
+  "result": "FAIL",
+  "schema": "chain-incentive-ai395-recovery-stage-result-v1",
+  "stage": "/home/qq/chain-incentive-evidence-stage-20261112-306929",
+  "started_utc": "2026-11-12T02:39:38.164537+00:00"
+}

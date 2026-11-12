@@ -1,0 +1,128 @@
+{
+  "arithmetic_cases": 42,
+  "arithmetic_files": 1,
+  "claim_files": 3,
+  "native_run_id": "incentive-bac6b7659bd7e2d633e25c2da0add60f6a10c7fb-20261112-v1",
+  "observations": [
+    {
+      "arithmetic_case_count": 42,
+      "bytes": 1341075,
+      "kind": "arithmetic",
+      "name": "production",
+      "path": "arithmetic-production.json",
+      "run_id": "incentive-bac6b7659bd7e2d633e25c2da0add60f6a10c7fb-20261112-v1",
+      "sha256": "b736d9339b2a23dffbcbd9c7c5efb5de4210fcb062862a1692cf70e673b96f20"
+    },
+    {
+      "arithmetic_case_count": null,
+      "bytes": 595,
+      "kind": "claims",
+      "name": "asymmetric",
+      "path": "claims-asymmetric.json",
+      "run_id": "incentive-bac6b7659bd7e2d633e25c2da0add60f6a10c7fb-20261112-v1",
+      "sha256": "ba4bcf455aba79e12b977dbd28543daab7656949144b08b85d0a2c327f75da35"
+    },
+    {
+      "arithmetic_case_count": null,
+      "bytes": 601,
+      "kind": "claims",
+      "name": "first-generation",
+      "path": "claims-first-generation.json",
+      "run_id": "incentive-bac6b7659bd7e2d633e25c2da0add60f6a10c7fb-20261112-v1",
+      "sha256": "a1712fe6c72870505df4694cc285baf33d19f91134447ea0ed1009f9785bb9b3"
+    },
+    {
+      "arithmetic_case_count": null,
+      "bytes": 599,
+      "kind": "claims",
+      "name": "nonzero-parent",
+      "path": "claims-nonzero-parent.json",
+      "run_id": "incentive-bac6b7659bd7e2d633e25c2da0add60f6a10c7fb-20261112-v1",
+      "sha256": "e85412aba6a7d50c740cd76244a7681b0a2f383d77333669b677c22374cc6da8"
+    },
+    {
+      "arithmetic_case_count": null,
+      "bytes": 79948,
+      "kind": "release",
+      "name": "asymmetric",
+      "path": "release-asymmetric.json",
+      "run_id": "incentive-bac6b7659bd7e2d633e25c2da0add60f6a10c7fb-20261112-v1",
+      "sha256": "fa47ef9ffa72600c662fe0c0333384902becc504d9b120056c95aae67f86a0d4"
+    },
+    {
+      "arithmetic_case_count": null,
+      "bytes": 77278,
+      "kind": "release",
+      "name": "exact-but-weaker",
+      "path": "release-exact-but-weaker.json",
+      "run_id": "incentive-bac6b7659bd7e2d633e25c2da0add60f6a10c7fb-20261112-v1",
+      "sha256": "e65da116d4c41dbcf118e649ebde613165d136537281cc00af55c0bef3c64f72"
+    },
+    {
+      "arithmetic_case_count": null,
+      "bytes": 117446,
+      "kind": "release",
+      "name": "exact-cancelling-subset",
+      "path": "release-exact-cancelling-subset.json",
+      "run_id": "incentive-bac6b7659bd7e2d633e25c2da0add60f6a10c7fb-20261112-v1",
+      "sha256": "20289b50aff1030ce08926feb96c6a54f7c0e04b8bfd9b707b0f388c243c3577"
+    },
+    {
+      "arithmetic_case_count": null,
+      "bytes": 79951,
+      "kind": "release",
+      "name": "first-generation",
+      "path": "release-first-generation.json",
+      "run_id": "incentive-bac6b7659bd7e2d633e25c2da0add60f6a10c7fb-20261112-v1",
+      "sha256": "c246d52e00548cd18ab5932bd9cc961ecb9c15ac5c15f13d941ad3c4eb768556"
+    },
+    {
+      "arithmetic_case_count": null,
+      "bytes": 79939,
+      "kind": "release",
+      "name": "nonzero-parent",
+      "path": "release-nonzero-parent.json",
+      "run_id": "incentive-bac6b7659bd7e2d633e25c2da0add60f6a10c7fb-20261112-v1",
+      "sha256": "05c611743d509bb9dc6e3bd7ec0904539777e78ddabd36bb0b6928a2d1ef52a5"
+    },
+    {
+      "arithmetic_case_count": null,
+      "bytes": 77294,
+      "kind": "release",
+      "name": "precommitted-score-as-weight",
+      "path": "release-precommitted-score-as-weight.json",
+      "run_id": "incentive-bac6b7659bd7e2d633e25c2da0add60f6a10c7fb-20261112-v1",
+      "sha256": "85d9941b40427f81f97f8b4c1d48cbbc6ffadae6371b20f3c86cee2eaf8c8431"
+    },
+    {
+      "arithmetic_case_count": null,
+      "bytes": 77280,
+      "kind": "release",
+      "name": "source-cap",
+      "path": "release-source-cap.json",
+      "run_id": "incentive-bac6b7659bd7e2d633e25c2da0add60f6a10c7fb-20261112-v1",
+      "sha256": "ee95e19167cbd4f592afa926c0d106be5904e540bae97a79b0d6e5cdd5ae85bd"
+    },
+    {
+      "arithmetic_case_count": null,
+      "bytes": 77286,
+      "kind": "release",
+      "name": "unrelated-accurate",
+      "path": "release-unrelated-accurate.json",
+      "run_id": "incentive-bac6b7659bd7e2d633e25c2da0add60f6a10c7fb-20261112-v1",
+      "sha256": "96ca9b39b05d48c4358f21c758f41d7d5d574c2f61f982a7a798f2eb00ad0bd4"
+    },
+    {
+      "arithmetic_case_count": null,
+      "bytes": 97372,
+      "kind": "release",
+      "name": "zero-marginals",
+      "path": "release-zero-marginals.json",
+      "run_id": "incentive-bac6b7659bd7e2d633e25c2da0add60f6a10c7fb-20261112-v1",
+      "sha256": "b591b26cfa1b478c15d13ca1f106f90f7b138901c9c548bef20609a573bb5660"
+    }
+  ],
+  "release_files": 9,
+  "source_commit": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+  "unique_files": 13
+}

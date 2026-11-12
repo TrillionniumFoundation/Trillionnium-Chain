@@ -1,0 +1,1 @@
+{"executed_tests": 1, "result": "PASS", "scope": "named-libtest-execution-only", "test": "tests::crash_outcomes_reopen_to_exact_source_target_or_fence"}

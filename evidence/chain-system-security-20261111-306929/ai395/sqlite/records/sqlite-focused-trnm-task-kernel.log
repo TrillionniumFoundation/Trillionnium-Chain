@@ -1,0 +1,12 @@
+   Compiling trnm-task-kernel v0.1.0 (/home/qq/chain-system-security-20261112-306929/trillionnium/crates/trnm-task-kernel)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.98s
+     Running unittests src/lib.rs (trillionnium/target/debug/deps/trnm_task_kernel-ae4e1fff8461318b)
+
+running 4 tests
+test archive_store::tests::sqlite_archive_inspection_error_refuses_before_creating_database ... ok
+test archive_store::tests::sqlite_archive_sidecars_refuse_creation_and_reopen_without_file_effects ... ok
+test tests::sqlite_sidecar_inspection_error_refuses_before_database_creation ... ok
+test tests::sqlite_sidecar_objects_refuse_creation_and_reopen_without_file_effects ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 28 filtered out; finished in 0.01s
+

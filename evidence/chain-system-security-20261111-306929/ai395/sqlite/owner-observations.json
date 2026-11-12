@@ -1,0 +1,130 @@
+{
+  "schema": "sqlite-fixed-ai395-owner-observations-v1",
+  "source": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+  "start": {
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "host": "ai395",
+    "persistent_across_runtime_restart": true,
+    "reused": false,
+    "session_id": "dpty-094440708f8767c28d20b6a2a0ed3493146b50e5e8ecb16e60611607d97d2d22",
+    "status": {
+      "boot": "b1620269-aaef-43e7-bf47-bc6eb1c1a447",
+      "bytes_seen": 283,
+      "bytes_stored": 283,
+      "capture_error": null,
+      "created_unix_ms": 1794451619668,
+      "output_complete": false,
+      "owner_pid": 2403378,
+      "pid": 2403381,
+      "state": "running"
+    }
+  },
+  "terminal": {
+    "archive_path": "/home/qq/.local/state/hepta-runtime-mac-worker/terminals/dpty-094440708f8767c28d20b6a2a0ed3493146b50e5e8ecb16e60611607d97d2d22/output.log",
+    "available_end": 7425,
+    "bytes_hex": "7b226576656e74223a2022636f6d6d616e645f737563636565646564222c20226c6162656c223a202273716c6974652d7374726963742d666f75722d7061636b6167652d636c69707079222c202272656365697074223a20222f686f6d652f71712f636861696e2d73797374656d2d73656375726974792d6e61746976652d72656365697074732d32303236313131322d3330363932392f73716c6974652d66697865642d62616336623736352f73716c6974652d7374726963742d666f75722d7061636b6167652d636c697070792e6a736f6e227d0d0a7b226576656e74223a202266696e6973686564222c2022737461747573223a2022636f6d6d616e645f7365745f737563636565646564222c2022666f63757365645f706173736564223a2031372c202272657461696e65645f706173736564223a2031352c20227374726963745f636c697070795f706173736564223a20747275652c202273756d6d617279223a20222f686f6d652f71712f636861696e2d73797374656d2d73656375726974792d6e61746976652d72656365697074732d32303236313131322d3330363932392f73716c6974652d66697865642d62616336623736352f6472697665722d73756d6d6172792e6a736f6e222c2022616363657074616e63655f6772616e746564223a2066616c73657d0d0a",
+    "chunk_sha256": "c487e6f91145fcf85095c7c911a0612675e22a1293a7753c3be8047fbc4669ee",
+    "host": "ai395",
+    "next_offset": 7425,
+    "offset": 6928,
+    "output_complete": true,
+    "persistent_across_runtime_restart": true,
+    "session_id": "dpty-094440708f8767c28d20b6a2a0ed3493146b50e5e8ecb16e60611607d97d2d22",
+    "status": {
+      "boot": "b1620269-aaef-43e7-bf47-bc6eb1c1a447",
+      "bytes_seen": 7425,
+      "bytes_stored": 7425,
+      "capture_error": null,
+      "closed": false,
+      "created_unix_ms": 1794451619668,
+      "exit_code": 0,
+      "output_complete": true,
+      "owner_pid": 2403378,
+      "pid": 2403381,
+      "state": "exited"
+    },
+    "storage": "target_archive",
+    "text": "{\"event\": \"command_succeeded\", \"label\": \"sqlite-strict-four-package-clippy\", \"receipt\": \"/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/sqlite-strict-four-package-clippy.json\"}\r\n{\"event\": \"finished\", \"status\": \"command_set_succeeded\", \"focused_passed\": 17, \"retained_passed\": 15, \"strict_clippy_passed\": true, \"summary\": \"/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765/driver-summary.json\", \"acceptance_granted\": false}\r\n",
+    "text_is_lossy": false,
+    "truncated_before_offset": false,
+    "utf8_pending": false
+  },
+  "launcher_code": "import hashlib,json,os,pathlib\np=pathlib.Path(\"/home/qq/chain-system-security-native-receipts-20261112-306929/sqlite-fixed-bac6b765.launch-input.json\")\nbody=p.read_bytes()\nassert len(body)==2741 and hashlib.sha256(body).hexdigest()==\"2de84ffe0d960f4b6d0f20604090f86fa173bac3e4ebf0f7626875214bf7f63a\",'launch input changed'\nc=json.loads(body)\nassert c['source']=='bac6b7659bd7e2d633e25c2da0add60f6a10c7fb'\nchecks=[(c['args'][0],c['driver_sha256']),(c['args'][c['args'].index('--plan')+1],c['plan_sha256']),(c['provider_env_path'],c['provider_env_sha256'])]\nfor name,pin in checks:\n    assert hashlib.sha256(pathlib.Path(name).read_bytes()).hexdigest()==pin,'fixed input changed: '+name\nprovider={}\nfor line in pathlib.Path(c['provider_env_path']).read_text().splitlines():\n    key,value=line.split('=',1);provider[key]=value\nassert len(provider)==7 and all(c['env'].get(k)==v for k,v in provider.items()),'provider launch mismatch'\nenv=os.environ.copy()\nenv.update(c['env'])\nos.chdir(c['cwd'])\nprint(json.dumps({'event':'immutable_launch_inputs_verified','source':c['source'],'launch_input_sha256':hashlib.sha256(body).hexdigest(),'provider_env_sha256':c['provider_env_sha256']}),flush=True)\nos.execve(c['executable'],[c['executable'],*c['args']],env)\n",
+  "launch_input_write": {
+    "mode": 384,
+    "sha256": "2de84ffe0d960f4b6d0f20604090f86fa173bac3e4ebf0f7626875214bf7f63a",
+    "size": 2741,
+    "version": "66306:47490095:2741:1794450864783878880:1794450864784809807",
+    "written": 2741
+  },
+  "launch_input_read_failure": {
+    "content": [
+      {
+        "type": "text",
+        "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+      }
+    ],
+    "isError": true
+  },
+  "live_summary_read_failure": {
+    "content": [
+      {
+        "type": "text",
+        "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+      }
+    ],
+    "isError": true
+  },
+  "driver_prelaunch": {
+    "metadata": {
+      "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gid": 1000,
+      "link_count": 1,
+      "metadata_platform": "linux",
+      "mode": 384,
+      "uid": 1000,
+      "xattr_names": [],
+      "xattr_sha256": {}
+    },
+    "mode": 384,
+    "path": "/home/qq/chain-system-security-sqlite-fixed-driver-20261112-306929.py",
+    "sha256": "7fe40feffcc9553b310d2a8adc8ce2b1e67eb283d7bdda6667bd3e6f6d60001a",
+    "size": 14728,
+    "version": "66306:46053314:14728:1794445791703689631:1794445791705919338"
+  },
+  "plan_prelaunch": {
+    "metadata": {
+      "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gid": 1000,
+      "link_count": 1,
+      "metadata_platform": "linux",
+      "mode": 384,
+      "uid": 1000,
+      "xattr_names": [],
+      "xattr_sha256": {}
+    },
+    "mode": 384,
+    "path": "/home/qq/chain-system-security-sqlite-fixed-plan-20261112-306929.json",
+    "sha256": "b6cba7eba2f5403202237860a39bc8b846d2f082849448728424a372b1964bd3",
+    "size": 3742,
+    "version": "66306:46053316:3742:1794445799819354828:1794445799819607480"
+  },
+  "provider_env_prelaunch": {
+    "metadata": {
+      "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gid": 1000,
+      "link_count": 1,
+      "metadata_platform": "linux",
+      "mode": 384,
+      "uid": 1000,
+      "xattr_names": [],
+      "xattr_sha256": {}
+    },
+    "mode": 384,
+    "path": "/home/qq/chain-system-security-root-provider-20261112-306929/provider.env",
+    "sha256": "6de317bdd1826065aefeae7335a552dfae7b87e421a8f1aa66d32aa31adab2ed",
+    "size": 534,
+    "version": "66306:46053218:534:1794444701822515944:1794444701822515944"
+  }
+}

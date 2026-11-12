@@ -1,0 +1,6 @@
+
+running 1 test
+test archive_store::tests::schema_and_archive_row_tamper_fail_closed_before_reopen_or_retry ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 31 filtered out; finished in 0.01s
+

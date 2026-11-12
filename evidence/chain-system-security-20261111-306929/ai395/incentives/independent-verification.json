@@ -1,0 +1,332 @@
+{
+  "all_member_hashes_verified": true,
+  "archive_bytes": 1882840,
+  "archive_members": 109,
+  "archive_sha256": "3d543e24395320c860d342f396ad492baa76365128be1ee91a296ffc23ca09c9",
+  "arithmetic_cases": 42,
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "duration_seconds": 0.05795264011248946,
+      "exit_code": 0,
+      "name": "preflight"
+    },
+    {
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "duration_seconds": 0.1449052128009498,
+      "exit_code": 0,
+      "name": "cargo-metadata"
+    },
+    {
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-j",
+        "2",
+        "-p",
+        "trnm-mvcc-fee",
+        "--test",
+        "evaluation_quorum_v2",
+        "--test",
+        "model_evolution_v5",
+        "--",
+        "--nocapture"
+      ],
+      "duration_seconds": 50.180557826999575,
+      "exit_code": 0,
+      "name": "m06-quorum-evolution"
+    },
+    {
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-j",
+        "2",
+        "-p",
+        "trnm-mvcc-fee",
+        "--lib",
+        "model_composition_v4::",
+        "--",
+        "--nocapture"
+      ],
+      "duration_seconds": 32.097493052948266,
+      "exit_code": 0,
+      "name": "m06-composition-arithmetic"
+    },
+    {
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-j",
+        "2",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "public_evaluation",
+        "--test",
+        "model_composition_v4",
+        "--",
+        "--nocapture"
+      ],
+      "duration_seconds": 221.6630943340715,
+      "exit_code": 0,
+      "name": "node-public-evaluation-composition"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_model_composition"
+      ],
+      "duration_seconds": 0.8337205869611353,
+      "exit_code": 0,
+      "name": "composition-native-python"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentives-bac6b7659bd7-20261112-v1/helpers/verify_incentive_split_receipt.py",
+        "--repo",
+        "/home/qq/chain-system-security-20261112-306929",
+        "--receipt",
+        "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentives-bac6b7659bd7-20261112-v1/native-split.json"
+      ],
+      "duration_seconds": 0.2587527120485902,
+      "exit_code": 0,
+      "name": "split-independent"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentives-bac6b7659bd7-20261112-v1/helpers/check_receipt_mutations.py",
+        "--repo",
+        "/home/qq/chain-system-security-20261112-306929",
+        "--receipt",
+        "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentives-bac6b7659bd7-20261112-v1/native-split.json"
+      ],
+      "duration_seconds": 1.043280638055876,
+      "exit_code": 0,
+      "name": "split-independent-mutations"
+    },
+    {
+      "argv": [
+        "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentives-bac6b7659bd7-20261112-v1/python-pinned/environment/bin/python",
+        "-c",
+        "import json,sys,numpy,cryptography;assert numpy.__version__==\"1.26.4\";assert cryptography.__version__==\"50.0.2\";print(json.dumps({\"python\":sys.version,\"executable\":sys.executable,\"numpy\":numpy.__version__,\"cryptography\":cryptography.__version__},sort_keys=True))"
+      ],
+      "duration_seconds": 0.1400533269625157,
+      "exit_code": 0,
+      "name": "python-pinned/checks/versions"
+    },
+    {
+      "argv": [
+        "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentives-bac6b7659bd7-20261112-v1/python-pinned/environment/bin/python",
+        "formal/pon-nakamoto-v1/test_model_composition_oracle.py",
+        "-v"
+      ],
+      "duration_seconds": 0.09249916695989668,
+      "exit_code": 0,
+      "name": "python-pinned/checks/composition-oracle"
+    },
+    {
+      "argv": [
+        "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentives-bac6b7659bd7-20261112-v1/python-pinned/environment/bin/python",
+        "formal/pon-nakamoto-v1/test_model_composition.py",
+        "-v"
+      ],
+      "duration_seconds": 1.1866170410066843,
+      "exit_code": 0,
+      "name": "python-pinned/checks/composition-native-python"
+    },
+    {
+      "argv": [
+        "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentives-bac6b7659bd7-20261112-v1/python-pinned/environment/bin/python",
+        "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentives-bac6b7659bd7-20261112-v1/helpers/verify_incentive_split_receipt.py",
+        "--repo",
+        "/home/qq/chain-system-security-20261112-306929",
+        "--receipt",
+        "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentives-bac6b7659bd7-20261112-v1/native-split.json"
+      ],
+      "duration_seconds": 0.32906079408712685,
+      "exit_code": 0,
+      "name": "python-pinned/checks/split-independent"
+    },
+    {
+      "argv": [
+        "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentives-bac6b7659bd7-20261112-v1/python-pinned/environment/bin/python",
+        "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentives-bac6b7659bd7-20261112-v1/helpers/check_receipt_mutations.py",
+        "--repo",
+        "/home/qq/chain-system-security-20261112-306929",
+        "--receipt",
+        "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentives-bac6b7659bd7-20261112-v1/native-split.json"
+      ],
+      "duration_seconds": 1.4482541258912534,
+      "exit_code": 0,
+      "name": "python-pinned/checks/split-independent-mutations"
+    }
+  ],
+  "economic_security_qualified": false,
+  "extracted_files": 0,
+  "full_source_bytes": 2578801275,
+  "full_source_files": 28327,
+  "independent_split_mutations": [
+    {
+      "exception": "InvalidSignature",
+      "mutation": "tamper_signature",
+      "reason": "",
+      "rejected": true
+    },
+    {
+      "exception": "ValueError",
+      "mutation": "tamper_complete_model",
+      "reason": "complete derivation",
+      "rejected": true
+    },
+    {
+      "exception": "ValueError",
+      "mutation": "tamper_claim",
+      "reason": "actual claimed payouts",
+      "rejected": true
+    },
+    {
+      "exception": "ValueError",
+      "mutation": "tamper_source_reservation",
+      "reason": "actual source reservations",
+      "rejected": true
+    },
+    {
+      "exception": "ValueError",
+      "mutation": "tamper_account",
+      "reason": "actual account balances",
+      "rejected": true
+    },
+    {
+      "exception": "ValueError",
+      "mutation": "remove_reveal",
+      "reason": "contiguous nonce",
+      "rejected": true
+    }
+  ],
+  "native_and_pinned_source_bytes_unchanged": true,
+  "native_observation_files": 13,
+  "native_observation_kinds": {
+    "arithmetic": 1,
+    "claims": 3,
+    "release": 9
+  },
+  "native_run_id": "incentive-bac6b7659bd7e2d633e25c2da0add60f6a10c7fb-20261112-v1",
+  "native_tests_started_by_this_reader": false,
+  "pinned_python_native_differential_tests": 5,
+  "pinned_python_pure_tests": 8,
+  "pinned_python_versions": {
+    "cryptography": "50.0.2",
+    "executable": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/chain-system-security-receipts/incentives-bac6b7659bd7-20261112-v1/python-pinned/environment/bin/python",
+    "numpy": "1.26.4",
+    "python": "3.12.16 (main, Oct 26 2026, 14:08:45) [Clang 23.1.3 ]"
+  },
+  "previous_split_comparison": {
+    "new_bytes": 195038,
+    "new_sha256": "2a790986b2106b288f1e0343f7b25b2391702dbb5a75b313b951c1ab04fc71fd",
+    "parsed_json_equal": true,
+    "previous_bytes": 199212,
+    "previous_sha256": "07c11a04880eab6303a66000d23082748a8f8568f8e1defe92d91c0a8b30db40",
+    "previous_source": "8197606d844e9d4c79c068a07746fabf2506fed4",
+    "scope": "same counterexample data; distinct execution sources and byte serializations"
+  },
+  "prior_system_python_qualifies_pinned_gate": false,
+  "production_activation": false,
+  "pty_streams": [
+    {
+      "bytes": 10208,
+      "exit_code": 0,
+      "label": "native",
+      "sha256": "30e9c624fe5e376a98b91bda0e0e1bd355448a224879966bdad14ca662296004"
+    },
+    {
+      "bytes": 3017,
+      "exit_code": 0,
+      "label": "python-setup",
+      "sha256": "5532eee3a56b9f1cd3492427bcc0c414a807164fb801dfd425a0b4b75ea4819f"
+    },
+    {
+      "bytes": 3531,
+      "exit_code": 0,
+      "label": "python-pinned",
+      "sha256": "39696a0790dcb841ce54f15abd170f8e6cb4f0f81a6cdfe1d17543983bd4a917"
+    }
+  ],
+  "result": "PASS",
+  "rust_test_counts": {
+    "m06-composition-arithmetic": [
+      5
+    ],
+    "m06-quorum-evolution": [
+      9,
+      4
+    ],
+    "node-public-evaluation-composition": [
+      5,
+      8
+    ]
+  },
+  "rust_tests": 31,
+  "same_native_input_bytes": true,
+  "schema": "chain-incentive-archive-independent-verification-v1",
+  "scope": "archive identity and retained observations; no signature/model/native re-execution",
+  "source_commit": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+  "source_tree": "371c3f55de7940e276496efe2008b537ba4d8268",
+  "split_counterexample": {
+    "all_real_world_costs_measured": false,
+    "economic_security_qualified": false,
+    "observations": {
+      "alias_net_account_increase": 26814,
+      "original": {
+        "alias_fees": 6615,
+        "alias_gross": 66666,
+        "alias_net_account_change": 60051,
+        "dust": 1,
+        "total_claimed": 99999,
+        "verified_signatures": 20,
+        "zero_subset_checks": 1
+      },
+      "split": {
+        "alias_fees": 9686,
+        "alias_gross": 96551,
+        "alias_net_account_change": 86865,
+        "dust": 1,
+        "total_claimed": 99999,
+        "verified_signatures": 26,
+        "zero_subset_checks": 4
+      }
+    },
+    "production_activation": false,
+    "receipt_sha256": "2a790986b2106b288f1e0343f7b25b2391702dbb5a75b313b951c1ab04fc71fd",
+    "result": "COUNTEREXAMPLE_REPRODUCED",
+    "schema": "independent-v4-split-receipt-check-v1",
+    "scope": "native-receipt-arithmetic-signatures-and-charged-fixture-account-fees-not-complete-chain-replay"
+  },
+  "uncompressed_bytes": 28288909,
+  "whole_protocol_contract_lane_qualified": false
+}

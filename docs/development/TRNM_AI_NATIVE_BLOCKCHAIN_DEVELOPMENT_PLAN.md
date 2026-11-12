@@ -1,35 +1,68 @@
-**System security combined source, 2026-11-12 UTC — HOLD:**
+**System security combined source and retained execution, 2026-11-12 UTC — HOLD:**
 
-Use immutable runtime checkpoint `813620f387199bef3eae2493e2af07c70444db58`
-to compose the original V5 witnessed historical provider-readback continuation,
-the five existing no-sidecar SQLite opener refusal repairs, and the native
-incentive/evaluation controls and documented counterexamples. The SQLite
-changes preserve path bytes and reject sidecar objects or metadata failures;
-they are not a dependency upgrade or a remote exploit reproduction, and do not
-establish general TOCTOU safety.
+The immutable runtime composition checkpoint is
+`813620f387199bef3eae2493e2af07c70444db58`. Its metadata successor
+`bac6b7659bd7e2d633e25c2da0add60f6a10c7fb`, tree
+`371c3f55de7940e276496efe2008b537ba4d8268`, is the actual source for the new
+component executions. Preserve it as the native source when adding evidence-only
+successors; verify that trillionnium, formal and scripts/ci bytes stay identical.
 
-Review the curated authority/effect register against all 44 immutable blobs at
-this checkpoint. Exactly two Settlement pins change; freeze the canonical
-source/revision table to
+The V5 witnessed historical provider-readback continuation and the five strict
+SQLite opener repairs are implemented. The latter preserves OS path bytes and
+rejects sidecar objects or inspection errors; it is neither a dependency upgrade
+nor a remote exploit reproduction and does not establish general TOCTOU safety.
+
+At this frozen source, 37 V5 controls and the complete original 29-method V4
+runner passed; the earlier scoped provider14 run overlaps and is counted only
+once in the 66 distinct Root methods. Preserve its missing outer-timeout scope
+and its original raw field meanings. The complete original V4 runner retained
+its 1,200-second per-target timeout. SQLite's 17 focused + 15 retained controls
+and the 31 incentive Rust methods also passed, for 129 distinct Rust methods.
+Whole-workspace/all-targets/all-features strict Clippy and the separately
+recorded four SQLite package checks returned zero.
+
+The pinned Python 3.12 environment used NumPy 1.26.4 and cryptography 50.0.2
+from the original requirements: 8 oracle + 5 native differential controls and
+the independent split checks passed; six mutations were rejected. Preserve
+the same 13 native input identities and do not count repeated reading as a new
+native execution. Earlier system-Python observations have a different scope.
+
+The known-source V4 split is retained, not repaired: the same complete model and
+100,000-unit authorized budget pay that source 66,666 versus 96,551 gross, and
+60,051 versus 86,865 after its charged fees. Source intake and reward caps remain
+enforced. Specify a successor that aggregates complete parent-relative updates
+by known source before omission/allocation, with authorized payee/intra-source
+rules and fresh namespaces. Equivalent partitions of the same source update
+must preserve its gross entitlement and source-level budget reservation. Define
+source-level rounding and dust conservation before authorized intra-source
+allocation. Do not silently rewrite the old profile or claim that summing
+post-omission component weights repairs it.
+
+Keep the 44 reviewed authority/effect blobs anchored to the runtime checkpoint
+and canonical table digest
 `3eef9a9a1431914cae0f25f49a009a6103cf30caf0bc5f189918ad71fe91b71d`.
-Keep its seven effect scopes and all false qualification fields. The separate
-43-file Root map and 1,162 corpus pins already match this checkpoint and retain
-their existing reviewed bindings.
+Retain all seven effect scopes and false qualification fields. The separate
+43-file Root map retains its reviewed binding. New evidence and only explicitly
+reviewed changed documentation must receive exact current corpus pins without
+rewriting unrelated pins, inventories or reader limits.
 
-Run the complete source, metadata and retained native gates on the resulting
-immutable metadata successor. Execute the default-feature incentive targets,
-then the 51 Root witness/provider methods with the required PQ feature, then
-the SQLite and strict Clippy gates, recording each actual feature set and
-source before/after. Do not promote earlier static checks, provider smoke,
-partial-source native observations or interrupted builds into a pass for this
-combined source. Later evidence-only merges retain their own distinct heads.
+Run final source-only gates on a committed evidence successor: complete physical
+source before/after, positive authority/Root/corpus, 65 authority/Root/V5-runner
+controls, 43 source-integrity rejection controls, links, formatting and both
+locked graphs. Archive that actual source and raw receipts separately; a later
+receipt-only child must keep its own identity and pass physical-source,
+preflight, corpus/link and protected-source equality checks. Do not relabel
+earlier source gates or native results with that later head.
 
 The V5 witness constrains Root state and historical identity, not every provider
-journal head. Cold provider-journal rollback still requires external same-operation
-reconciliation; Unknown grants no redispatch authority. Independent custody,
-daemon/wire and ordinary M15 assembly, actual external effects, unknown common
-controllers, generalization and whole-chain guarantees remain open. Production
-activation and main-merge authorization remain closed.
+journal head. Cold provider-history loss still needs external same-operation
+reconciliation; Unknown grants no redispatch authority. Independently surviving
+freshness custody, recovery entropy, daemon/wire and ordinary M15/effect-sink
+assembly, actual external effects, service liveness under the original resource
+bounds, unknown common control, independent model value and whole-chain
+guarantees remain open. The original service archive and inherited C5 PNQ2
+failures remain failed observations. Production activation and main-merge
+authorization remain closed.
 
 **V5 witnessed provider readback continuation, 2026-11-11 America/New_York — HOLD:**
 

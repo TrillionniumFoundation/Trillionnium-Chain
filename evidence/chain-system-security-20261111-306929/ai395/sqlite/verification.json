@@ -1,0 +1,478 @@
+{
+  "acceptance_granted": false,
+  "all_twenty_commands_full_source_before_after_equal": true,
+  "artifact_integrity": "PASS",
+  "build_jobs": 1,
+  "default_cargo_features": true,
+  "default_cargo_profiles": true,
+  "excluded_non_evidence_files": [],
+  "focused_passed": 17,
+  "full_source_identity": {
+    "base": null,
+    "candidate": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+    "tested_tree": "371c3f55de7940e276496efe2008b537ba4d8268",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2578801275,
+    "tracked_entries": 28327,
+    "tracked_worktree_verified": true
+  },
+  "native_owner_exit_code": 0,
+  "native_owner_output_complete": true,
+  "native_test_executables": [
+    {
+      "bytes": 125141304,
+      "executable_bytes_packaged": false,
+      "matches_after_clippy": true,
+      "package": "trnm-data-availability",
+      "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/debug/deps/trnm_data_availability-8a3d1b05ab724693",
+      "sha256": "ae189750f816cb7d4e069e2700691a83df8260e85ebfad6cf2a2ef3f2027fde0"
+    },
+    {
+      "bytes": 84315792,
+      "executable_bytes_packaged": false,
+      "matches_after_clippy": true,
+      "package": "trnm-mvcc-fee",
+      "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/debug/deps/trnm_mvcc_fee-1a85f62fc4a0b328",
+      "sha256": "5315101bc85b577514a0e21ffabc45b33bb33f3da9fa53713ff6a8072ef52e20"
+    },
+    {
+      "bytes": 36486184,
+      "executable_bytes_packaged": false,
+      "matches_after_clippy": true,
+      "package": "trnm-service-settlement",
+      "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/debug/deps/trnm_service_settlement-e8b26e34e4187bec",
+      "sha256": "7ec06c6437de9bc6ada25f61622d3039c3784238cc061c5b6448d1d42481b1cd"
+    },
+    {
+      "bytes": 26921552,
+      "executable_bytes_packaged": false,
+      "matches_after_clippy": true,
+      "package": "trnm-task-kernel",
+      "path": "/home/qq/chain-system-security-20261112-306929/trillionnium/target/debug/deps/trnm_task_kernel-ae4e1fff8461318b",
+      "sha256": "0530a0cf7c8b19106d98c6ed5e7c8026242ebb989dd72b9b99c5a1b3f0dfc90a"
+    }
+  ],
+  "observations": [
+    {
+      "package": "trnm-data-availability",
+      "passed": true,
+      "selection": "focused",
+      "test": "cell::discovery::pq::epoch_directory::tests::sqlite_writer_and_commit_contention_preserve_deadline_clock_high_water_and_epoch_retirement"
+    },
+    {
+      "package": "trnm-data-availability",
+      "passed": true,
+      "selection": "focused",
+      "test": "cell::retention::tests::repair_intent_and_charge_must_survive_sqlite_suppression_before_payload"
+    },
+    {
+      "package": "trnm-data-availability",
+      "passed": true,
+      "selection": "focused",
+      "test": "cell::retention::tests::sqlite_like_wildcard_cannot_hide_a_user_trigger_at_repair_or_reopen"
+    },
+    {
+      "package": "trnm-data-availability",
+      "passed": true,
+      "selection": "focused",
+      "test": "tests::certified_batch_and_da_head_share_one_fresh_sqlite_snapshot"
+    },
+    {
+      "package": "trnm-data-availability",
+      "passed": true,
+      "selection": "focused",
+      "test": "tests::sqlite_dangling_sidecars_refuse_creation_before_database_exists"
+    },
+    {
+      "package": "trnm-data-availability",
+      "passed": true,
+      "selection": "focused",
+      "test": "tests::sqlite_dangling_sidecars_refuse_existing_store_without_touching_files"
+    },
+    {
+      "package": "trnm-data-availability",
+      "passed": true,
+      "selection": "focused",
+      "test": "tests::sqlite_sidecar_inspection_error_refuses_before_database_creation"
+    },
+    {
+      "package": "trnm-data-availability",
+      "passed": true,
+      "selection": "focused",
+      "test": "tests::sqlite_sidecar_names_preserve_non_utf8_database_bytes"
+    },
+    {
+      "package": "trnm-mvcc-fee",
+      "passed": true,
+      "selection": "focused",
+      "test": "store::object_delta_tests::object_delta_sqlite_full_after_partial_writes_rolls_back_exactly_v1"
+    },
+    {
+      "package": "trnm-mvcc-fee",
+      "passed": true,
+      "selection": "focused",
+      "test": "tests::sqlite_sidecar_inspection_error_refuses_before_database_creation"
+    },
+    {
+      "package": "trnm-mvcc-fee",
+      "passed": true,
+      "selection": "focused",
+      "test": "tests::sqlite_sidecar_objects_refuse_creation_and_reopen_without_file_effects"
+    },
+    {
+      "package": "trnm-service-settlement",
+      "passed": true,
+      "selection": "focused",
+      "test": "tests::sqlite_sidecar_inspection_error_refuses_before_database_creation"
+    },
+    {
+      "package": "trnm-service-settlement",
+      "passed": true,
+      "selection": "focused",
+      "test": "tests::sqlite_sidecar_objects_refuse_creation_and_reopen_without_file_effects"
+    },
+    {
+      "package": "trnm-task-kernel",
+      "passed": true,
+      "selection": "focused",
+      "test": "archive_store::tests::sqlite_archive_inspection_error_refuses_before_creating_database"
+    },
+    {
+      "package": "trnm-task-kernel",
+      "passed": true,
+      "selection": "focused",
+      "test": "archive_store::tests::sqlite_archive_sidecars_refuse_creation_and_reopen_without_file_effects"
+    },
+    {
+      "package": "trnm-task-kernel",
+      "passed": true,
+      "selection": "focused",
+      "test": "tests::sqlite_sidecar_inspection_error_refuses_before_database_creation"
+    },
+    {
+      "package": "trnm-task-kernel",
+      "passed": true,
+      "selection": "focused",
+      "test": "tests::sqlite_sidecar_objects_refuse_creation_and_reopen_without_file_effects"
+    },
+    {
+      "package": "trnm-data-availability",
+      "passed": true,
+      "selection": "retained",
+      "test": "tests::schema_drift_and_sidecar_are_fail_closed_without_migration"
+    },
+    {
+      "package": "trnm-data-availability",
+      "passed": true,
+      "selection": "retained",
+      "test": "tests::row_tamper_is_rejected_on_reopen"
+    },
+    {
+      "package": "trnm-data-availability",
+      "passed": true,
+      "selection": "retained",
+      "test": "tests::open_existing_requires_precreated_regular_nonsymlink_store"
+    },
+    {
+      "package": "trnm-mvcc-fee",
+      "passed": true,
+      "selection": "retained",
+      "test": "tests::schema_sidecar_and_self_consistent_row_tamper_fail_closed"
+    },
+    {
+      "package": "trnm-mvcc-fee",
+      "passed": true,
+      "selection": "retained",
+      "test": "tests::open_existing_requires_precreated_regular_nonsymlink_store"
+    },
+    {
+      "package": "trnm-mvcc-fee",
+      "passed": true,
+      "selection": "retained",
+      "test": "tests::crash_outcomes_reopen_to_exact_source_target_or_fence"
+    },
+    {
+      "package": "trnm-service-settlement",
+      "passed": true,
+      "selection": "retained",
+      "test": "tests::schema_sidecar_row_and_self_consistent_state_substitution_fail_closed"
+    },
+    {
+      "package": "trnm-service-settlement",
+      "passed": true,
+      "selection": "retained",
+      "test": "tests::open_existing_requires_precreated_regular_nonsymlink_store"
+    },
+    {
+      "package": "trnm-service-settlement",
+      "passed": true,
+      "selection": "retained",
+      "test": "tests::commit_uncertainty_reopens_to_exact_source_target_or_permanent_fence"
+    },
+    {
+      "package": "trnm-task-kernel",
+      "passed": true,
+      "selection": "retained",
+      "test": "tests::schema_sidecar_row_and_journal_tamper_fail_closed_without_migration"
+    },
+    {
+      "package": "trnm-task-kernel",
+      "passed": true,
+      "selection": "retained",
+      "test": "tests::open_existing_requires_precreated_regular_nonsymlink_store"
+    },
+    {
+      "package": "trnm-task-kernel",
+      "passed": true,
+      "selection": "retained",
+      "test": "tests::crash_outcomes_are_exact_and_third_state_is_permanently_fenced"
+    },
+    {
+      "package": "trnm-task-kernel",
+      "passed": true,
+      "selection": "retained",
+      "test": "archive_store::tests::initialization_handles_long_final_names_and_concurrent_publishers"
+    },
+    {
+      "package": "trnm-task-kernel",
+      "passed": true,
+      "selection": "retained",
+      "test": "archive_store::tests::archive_delete_moves_rows_and_reopen_preserves_proof"
+    },
+    {
+      "package": "trnm-task-kernel",
+      "passed": true,
+      "selection": "retained",
+      "test": "archive_store::tests::schema_and_archive_row_tamper_fail_closed_before_reopen_or_retry"
+    }
+  ],
+  "original_zero_byte_stdout_stderr_preserved": true,
+  "production_activation": false,
+  "provider_env_unchanged_from_startup": true,
+  "provider_inputs_match_preparation_receipt_after_execution": [
+    {
+      "bytes": 8985944,
+      "matches_preparation_receipt_after_sqlite": true,
+      "path": "/home/qq/chain-system-security-root-provider-20261112-306929/trnm-pq-provider-3.5.9.6hHYb0FI/install/bin/openssl",
+      "sha256": "09362cd9a4f5ef29e9cdd9fe26092a706ffe589f1e52c8c5572bd74df7ccdc1d"
+    },
+    {
+      "bytes": 3449,
+      "matches_preparation_receipt_after_sqlite": true,
+      "path": "/home/qq/chain-system-security-root-provider-20261112-306929/trnm-pq-provider-3.5.9.6hHYb0FI/install/include/openssl/opensslv.h",
+      "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+    },
+    {
+      "bytes": 4729,
+      "matches_preparation_receipt_after_sqlite": true,
+      "path": "/home/qq/chain-system-security-root-provider-20261112-306929/trnm-pq-provider-3.5.9.6hHYb0FI/install/include/openssl/configuration.h",
+      "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+    },
+    {
+      "bytes": 12442320,
+      "matches_preparation_receipt_after_sqlite": true,
+      "path": "/home/qq/chain-system-security-root-provider-20261112-306929/trnm-pq-provider-3.5.9.6hHYb0FI/install/lib/libcrypto.a",
+      "sha256": "9e3232524a29957630f725badc1d671137761aa22669135527bd30c9d5435d4e"
+    },
+    {
+      "bytes": 2149026,
+      "matches_preparation_receipt_after_sqlite": true,
+      "path": "/home/qq/chain-system-security-root-provider-20261112-306929/trnm-pq-provider-3.5.9.6hHYb0FI/install/lib/libssl.a",
+      "sha256": "d7cddef12614789118f792fb4b07748c9a413d241895c1501fe12e3998658d90"
+    }
+  ],
+  "receipts": [
+    {
+      "exit_code": 0,
+      "label": "sqlite-focused-trnm-data-availability",
+      "native_pin_observed": false,
+      "raw_log": "records/sqlite-focused-trnm-data-availability.log",
+      "raw_log_sha256": "17fff50ba55e5fa9f18dcab1660105a132dc33d26db71721edc0c69ccdd348b2",
+      "receipt": "records/sqlite-focused-trnm-data-availability.json",
+      "receipt_sha256": "6202f34ea805aba031bf51e666e9715f1f8bf4427422811925139f879701b94d"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-focused-trnm-mvcc-fee",
+      "native_pin_observed": false,
+      "raw_log": "records/sqlite-focused-trnm-mvcc-fee.log",
+      "raw_log_sha256": "70aa6e74b8fad7569cd955ef9344679a7869a41a3fa062c94d2016b00509c172",
+      "receipt": "records/sqlite-focused-trnm-mvcc-fee.json",
+      "receipt_sha256": "8b572565c69fa44d5b3cafe02a574ab4e9d0d9f767696bdd62321b4563292f9a"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-focused-trnm-service-settlement",
+      "native_pin_observed": false,
+      "raw_log": "records/sqlite-focused-trnm-service-settlement.log",
+      "raw_log_sha256": "2dbfff0061057783a46e03bbcf37043702bd1ca7219694cfaec36ae98cd90a14",
+      "receipt": "records/sqlite-focused-trnm-service-settlement.json",
+      "receipt_sha256": "4bbcdde361382195ff2a012703b91f4be4fd3e725295dbeaa8f252442aa5bb70"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-focused-trnm-task-kernel",
+      "native_pin_observed": false,
+      "raw_log": "records/sqlite-focused-trnm-task-kernel.log",
+      "raw_log_sha256": "27625b3e6d927445853c9674a4c8841dd95d444155884e1751027159455d17a3",
+      "receipt": "records/sqlite-focused-trnm-task-kernel.json",
+      "receipt_sha256": "40e96601a02a697d9f700ed231d0c5b9b62210b1f68e63f1ef4110ff3f31e9ad"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-retained-trnm-data-availability-1",
+      "native_pin_observed": true,
+      "raw_log": "records/sqlite-retained-trnm-data-availability-1.log",
+      "raw_log_sha256": "bb661d365f4b9a59306e43beb0e16f5badd8790e56fec5835556e0bd191881c9",
+      "receipt": "records/sqlite-retained-trnm-data-availability-1.json",
+      "receipt_sha256": "01ddc7e9210593f13578b3a9a6ece904a39da51a5ac7ef4db1e0b6ce32ed3cfd"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-retained-trnm-data-availability-2",
+      "native_pin_observed": true,
+      "raw_log": "records/sqlite-retained-trnm-data-availability-2.log",
+      "raw_log_sha256": "30478d0a123c1b28a1913c4b92e53477eb0abce94dfcbe95be928c55ca6c84a2",
+      "receipt": "records/sqlite-retained-trnm-data-availability-2.json",
+      "receipt_sha256": "a3ae4ed8ec0f3f5bea82154b47e59782519297dbc7e36c9cb3c35798a2118e98"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-retained-trnm-data-availability-3",
+      "native_pin_observed": true,
+      "raw_log": "records/sqlite-retained-trnm-data-availability-3.log",
+      "raw_log_sha256": "8f3c9834da72cf1f9669d14b9c61519623aae56624364d85e10a672912e3d092",
+      "receipt": "records/sqlite-retained-trnm-data-availability-3.json",
+      "receipt_sha256": "0341c5caec87a579cb6e76b0e8dd07c9fc86ff528bfa8e80752c73ac55a888e3"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-retained-trnm-mvcc-fee-1",
+      "native_pin_observed": true,
+      "raw_log": "records/sqlite-retained-trnm-mvcc-fee-1.log",
+      "raw_log_sha256": "68722f7659c45eea779c996de4d917d33250f91fae1e1ed4e3e2a87a62770697",
+      "receipt": "records/sqlite-retained-trnm-mvcc-fee-1.json",
+      "receipt_sha256": "d47839b2eaef4ab20dc23199b670c31debc232fb4e04c16022b19f8604bd5b0d"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-retained-trnm-mvcc-fee-2",
+      "native_pin_observed": true,
+      "raw_log": "records/sqlite-retained-trnm-mvcc-fee-2.log",
+      "raw_log_sha256": "91b95e998df72f23727f0e9ecc956dc9699cfb9cff0ae4b7fe06499243632465",
+      "receipt": "records/sqlite-retained-trnm-mvcc-fee-2.json",
+      "receipt_sha256": "eb3df25f5390a8021baee85e7bc2e72b334a35d9ce78f42fe19840893da9560a"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-retained-trnm-mvcc-fee-3",
+      "native_pin_observed": true,
+      "raw_log": "records/sqlite-retained-trnm-mvcc-fee-3.log",
+      "raw_log_sha256": "e0aa3d051cf49486f2fb152e4a46480890c265af1cbfb14ef709e666c50df162",
+      "receipt": "records/sqlite-retained-trnm-mvcc-fee-3.json",
+      "receipt_sha256": "a0d9ea6b36bbb378d898c55c0744d49529cde418a19300339be41f152056f7cf"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-retained-trnm-service-settlement-1",
+      "native_pin_observed": true,
+      "raw_log": "records/sqlite-retained-trnm-service-settlement-1.log",
+      "raw_log_sha256": "d0848ee2b2a2e9a4a8bc051c8db748ac9aa91ef5007f96bb1d8c5abb685a7d82",
+      "receipt": "records/sqlite-retained-trnm-service-settlement-1.json",
+      "receipt_sha256": "b34889b25700cb4e93eb79319144814f7d3ffff5655b6644efd343613296f723"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-retained-trnm-service-settlement-2",
+      "native_pin_observed": true,
+      "raw_log": "records/sqlite-retained-trnm-service-settlement-2.log",
+      "raw_log_sha256": "1cddd88dc52ea7c60f1d37ea5902d0b746c3069d1e72659b2e1a9d173f4d109e",
+      "receipt": "records/sqlite-retained-trnm-service-settlement-2.json",
+      "receipt_sha256": "1ec07e6b34b8d4fa5614c4d31c5bafeef3aa0937bb232bdd36026cf11c02abe8"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-retained-trnm-service-settlement-3",
+      "native_pin_observed": true,
+      "raw_log": "records/sqlite-retained-trnm-service-settlement-3.log",
+      "raw_log_sha256": "ff5b843d4b18d5ff0711c8e16074d79849c20769a338790aceebb068acad170a",
+      "receipt": "records/sqlite-retained-trnm-service-settlement-3.json",
+      "receipt_sha256": "a93315d82b5dbca09c203d6934955216e5635830d8346a74463376300308f9b9"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-retained-trnm-task-kernel-1",
+      "native_pin_observed": true,
+      "raw_log": "records/sqlite-retained-trnm-task-kernel-1.log",
+      "raw_log_sha256": "d622c580b7cd565b552bfd3aa842331ecc12ba7502bdc0181253a717c6cd3d76",
+      "receipt": "records/sqlite-retained-trnm-task-kernel-1.json",
+      "receipt_sha256": "c5072a84e1a8fecee9a86428a99492deba647bb09a25252a1eff8cbd6d21a3c6"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-retained-trnm-task-kernel-2",
+      "native_pin_observed": true,
+      "raw_log": "records/sqlite-retained-trnm-task-kernel-2.log",
+      "raw_log_sha256": "db08b01c1ef24d6488cea7ab6c88475c9eed9c27453baf736ed6fcadeca987a4",
+      "receipt": "records/sqlite-retained-trnm-task-kernel-2.json",
+      "receipt_sha256": "de87879fd723dfd58ef8300066f0e3f1fc886e5db9f6acc470ac88274572929e"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-retained-trnm-task-kernel-3",
+      "native_pin_observed": true,
+      "raw_log": "records/sqlite-retained-trnm-task-kernel-3.log",
+      "raw_log_sha256": "af72545829ac0ac1e2b4a50bee06350c396985638087f67735ce428d2993ee89",
+      "receipt": "records/sqlite-retained-trnm-task-kernel-3.json",
+      "receipt_sha256": "a99a26e672175b71991245ecc467e2a0933c92455a93a3fc65929708e716ca20"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-retained-trnm-task-kernel-4",
+      "native_pin_observed": true,
+      "raw_log": "records/sqlite-retained-trnm-task-kernel-4.log",
+      "raw_log_sha256": "91ee71be5d5128f8ef8751d1df72e36dde2a5153296c7979152dfd84513538e7",
+      "receipt": "records/sqlite-retained-trnm-task-kernel-4.json",
+      "receipt_sha256": "d64a78d3be4d7608a579ca6d8a2cdd26b0cdd2dd746f9256bae02ad63b9c5de6"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-retained-trnm-task-kernel-5",
+      "native_pin_observed": true,
+      "raw_log": "records/sqlite-retained-trnm-task-kernel-5.log",
+      "raw_log_sha256": "3468549d0f6cb0745a923b97898e116f6230ecd71909ef4c9ce90fd75aa66656",
+      "receipt": "records/sqlite-retained-trnm-task-kernel-5.json",
+      "receipt_sha256": "93f110ac0426d76e1656fc615767366a7f6dd9013ce8636285f6a9f57a571228"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-retained-trnm-task-kernel-6",
+      "native_pin_observed": true,
+      "raw_log": "records/sqlite-retained-trnm-task-kernel-6.log",
+      "raw_log_sha256": "10ec6cdfe8891a7e9eb57d70900627a45c64c257b5cbcd201822a22fbccc5392",
+      "receipt": "records/sqlite-retained-trnm-task-kernel-6.json",
+      "receipt_sha256": "0ed99cc009317b3feb97cb59cdd3034f5ee9917ec3a9189081dd5e0b734b3e60"
+    },
+    {
+      "exit_code": 0,
+      "label": "sqlite-strict-four-package-clippy",
+      "native_pin_observed": false,
+      "raw_log": "records/sqlite-strict-four-package-clippy.log",
+      "raw_log_sha256": "d95c965e4d2a25f213f3adfa283d6043ce0d717f3163bb2eeae6c7bd784ee77d",
+      "receipt": "records/sqlite-strict-four-package-clippy.json",
+      "receipt_sha256": "f4e673201fba41fbe5bd129aa94b4308ef2fb9ff02a7ff81db27ff28feda00c4"
+    }
+  ],
+  "recorded_commands_verified": 20,
+  "retained_passed": 15,
+  "schema": "sqlite-ai395-independent-artifact-verification-v1",
+  "strict_four_package_clippy": "PASS",
+  "tested_source": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+  "this_curation_reran_native_tests": false,
+  "unique_crate_test_pairs": 32,
+  "whole_chain_quantum_security_qualified": false
+}

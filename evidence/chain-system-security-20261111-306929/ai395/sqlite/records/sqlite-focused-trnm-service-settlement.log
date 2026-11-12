@@ -1,0 +1,24 @@
+   Compiling typenum v1.20.1
+   Compiling generic-array v0.14.7
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling zeroize v1.9.1
+   Compiling serde_core v1.0.228
+   Compiling curve25519-dalek v4.1.3
+   Compiling sha2 v0.10.9
+   Compiling ed25519-dalek v2.2.0
+   Compiling getrandom v0.4.2
+   Compiling serde_json v1.0.149
+   Compiling tempfile v3.27.0
+   Compiling trnm-task-kernel v0.1.0 (/home/qq/chain-system-security-20261112-306929/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-service-settlement v0.1.0 (/home/qq/chain-system-security-20261112-306929/trillionnium/crates/trnm-service-settlement)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.82s
+     Running unittests src/lib.rs (trillionnium/target/debug/deps/trnm_service_settlement-e8b26e34e4187bec)
+
+running 2 tests
+test tests::sqlite_sidecar_inspection_error_refuses_before_database_creation ... ok
+test tests::sqlite_sidecar_objects_refuse_creation_and_reopen_without_file_effects ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 71 filtered out; finished in 0.00s
+
