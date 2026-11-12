@@ -73,6 +73,10 @@ def fixed(value, expected, label):
     if type(expected) is list:
         for i, item in enumerate(expected):
             fixed(value[i], item, label + f"[{i}]")
+    elif type(expected) is dict:
+        common.exact(value, expected, label)
+        for key, item in expected.items():
+            fixed(value[key], item, label + "." + key)
 
 
 def timing(value, label):

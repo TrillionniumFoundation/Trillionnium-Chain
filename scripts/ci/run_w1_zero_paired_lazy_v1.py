@@ -80,6 +80,8 @@ def main():
     try:
         if platform.system() != "Linux" or platform.machine() != spec["machine"]:
             raise ValueError("ZERO_LAZY_NATIVE_LINUX_ARCHITECTURE_REQUIRED")
+        if any(not hasattr(os, name) for name in ("wait4", "waitid", "WNOWAIT", "killpg")):
+            raise ValueError("ZERO_LAZY_SOLE_REAPER_PLATFORM_REQUIRED")
         report["source_before"] = checked_source(args.expected_commit)
         report["host"] = host(output)
         overrides = build_environment_overrides(dict(os.environ))

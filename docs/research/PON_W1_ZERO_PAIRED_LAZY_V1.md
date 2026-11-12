@@ -132,7 +132,7 @@ python3 scripts/ci/test_pon_w1_zero_paired_lazy_v1.py
 
 Native controls exercise exact ticket and ticket-minus-one boundaries, eager
 and lazy bytes against the original producer and both verifiers, all transcript
-tiles and cancellation stages, changed task/challenge, complete operand
+tiles and cancellation stages, changed task binding, complete operand
 validation and zero-target refusal. Reader mutation controls distinguish
 synthetic record grammar from actual native execution. Finite passing controls
 and a complete local grid cannot establish all-algorithm optimality.

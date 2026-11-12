@@ -8,7 +8,8 @@ tiles, original target/canonical refusals and full production/reference
 verification. The five fixed arms include the original eager producer and
 sparse-prepared FullLimb eager/lazy controls. Six registered shards retain eight
 samples, every miss/exhaustion, actual preparation, complete begin/finish
-observations and all source/binary/process costs. The reader and source pins must
+observations, source/binary identities and scoped process costs. Missing resources
+remain unknown. The reader and source pins must
 refuse missing or contradictory observations. A successful component run is an
 achievable legal strategy cost, never an attacker lower bound, task-demand proof,
 current admission, receiver-service qualification or production activation.

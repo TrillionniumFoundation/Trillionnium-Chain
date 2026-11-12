@@ -366,6 +366,40 @@ class SyntheticReadback(unittest.TestCase):
         changed[0]["status"] = "INCOMPLETE"
         self.assertEqual(reader.campaign(changed)["status"], "INCOMPLETE")
 
+    def test_campaign_cost_ratio_rejects_equal_float_and_boolean_integers(self):
+        # A synthetic summary-only type fixture: one winner and seven exhausted
+        # searches per arm. No native execution or W1 trace is claimed. Integer
+        # zero CPU costs allow False == 0 to exercise the actual nested-dict bug;
+        # a denominator of one likewise exercises True == 1.
+        report = read(self.cost)
+        attempts = 7 * reader.LIMIT + 3
+        for arm in report["arms"]:
+            arm.update(accepted_winners=1, attempts=attempts, misses=attempts - 1,
+                       exhausted=7, materialized=attempts if arm["arm"] in (0, 2, 3) else 1)
+            arm["producer_total"]["cpu_ns"] = 0
+            arm["paid_setup"]["cpu_ns"] = 0
+            for sample in arm["samples"]:
+                sample["accepted_winners"] = int(sample["sample"] == 0)
+                sample["producer_total"]["cpu_ns"] = 0
+            for axis in reader.AXES:
+                arm["cost_per_accepted_winner"][axis] = {
+                    "numerator": arm["producer_total"][axis], "denominator": 1}
+        report["counts"].update(attempts=5 * attempts, hits=5, misses=5 * (attempts - 1),
+                                exhausted=35, materialized=3 * attempts + 2, verification_calls=20)
+        report["records_checked"] = 2 + 3 * 40 + 4 * 40 + 2 * 5 * attempts + 2 * 20
+        # The one valid-structure shard is incomplete only because the other
+        # five campaign shards are absent; type mutation must make it INVALID.
+        self.assertEqual(reader.campaign([report])["status"], "INCOMPLETE")
+        for field, value in (("numerator", 0.0), ("numerator", False),
+                             ("denominator", 1.0), ("denominator", True)):
+            with self.subTest(field=field, type=type(value).__name__):
+                changed = copy.deepcopy(report)
+                changed["arms"][0]["cost_per_accepted_winner"]["cpu_ns"][field] = value
+                result = reader.campaign([changed])
+                self.assertEqual(result["status"], "INVALID", result)
+                self.assertIn("cost ratio." + field, result["error"])
+                self.assertFalse(result["source_execution_authenticated"])
+
     def test_cli_exit_codes_and_missing_input(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "synthetic.jsonl"

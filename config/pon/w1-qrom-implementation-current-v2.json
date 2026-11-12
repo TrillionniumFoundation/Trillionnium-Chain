@@ -1,7 +1,7 @@
 {
   "schema": "TRNM-W1-QROM-IMPLEMENTATION-CONTRACT2",
   "scope": "Offline research mapping only. Does not authorize consensus or production admission.",
-  "source_base_commit": "7f83ea843d6d1578a475a7a0c4dc026da564a795",
+  "source_base_commit": "0eab349d7e6123b458cb98540f36fd273ee24f21",
   "profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
   "project_source_scope": "Selected entry, relation, framing, native work and locked dependency files; not all transitive source or compiled feature semantics.",
   "project_files": [
@@ -460,6 +460,11 @@
         "sha256": "a5bd50b96e51f6c63fdf4ee996d47bcdf4b177a046d632365ee24398cdd91e48"
       },
       {
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_zero_paired_lazy_v1.rs",
+        "bytes": 18694,
+        "sha256": "758f2954bc572a45900c3e653438f6d763643e5c4acb1f0f0fbf84489ae8855e"
+      },
+      {
         "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work.rs",
         "bytes": 2953,
         "sha256": "af443df76b65018d287874d22866ce873e283a3ca3526d5be6f9508da5af517a"
@@ -576,8 +581,8 @@
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs",
-        "bytes": 22281,
-        "sha256": "0c9c4ddb772292efd0cf92dc174e8b2353b1e0f16f36df484a5e16b280316a0f"
+        "bytes": 34628,
+        "sha256": "cb3d908e1a88e599d6f17b7678271cf9e93fe8b8dc973be30ff031abcc140b96"
       },
       {
         "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs",
@@ -943,6 +948,7 @@
     "root_storage_integration_20261109": "Reviewed merge 44e96b1a841a50613d0b93484c5e576caec9f81f retains all 16 selected project files, saved fixtures, parameters and unresolved obligations. The local closure adds the three pq_root_v3 Rust source/test files and rebinds only the crypto module export and workspace lock among the prior 134 inputs. Optional root exports, the release OpenSSL dependency edge and the storage getrandom edge do not establish native execution, external dependency closure, a new proof or any security qualification.",
     "sqlite_dependency_security_20261109": "Reviewed dependency checkpoint 189b9b5959d836ef6ae96e14fb285948e4920aa9 rebinds only trillionnium/Cargo.lock within the existing 137 local-closure files. The fixed package graph upgrades bundled rusqlite/libsqlite3-sys to 0.41.0/0.39.0 with their required hashlink/hashbrown resolution. All 16 selected project files, saved proof materials, historical reader/contract, helpers, proof parameters and 15 unresolved obligations are unchanged. This mapping supplies no native execution, third-party dependency closure or security qualification.",
     "from_zero_filter_cost_inventory_20261110": "Reviewed source 39336622c63df1ae746d83a76bb53202cd01ba17 adds only the finite pon_from_zero_filter_cost_v1.rs diagnostic example to the existing 137 local-closure inputs, producing 138. All original closure records, all 16 selected project files, saved proof materials, historical reader/contract, helpers, proof parameters and 15 unresolved obligations retain their bytes. The example calls the existing native PNW1 components; this source inventory does not change the selected RISC Zero proof relation or establish a minimum legal work cost. Preserve the earlier local Rust source inventory refusal. The 138 inputs retain the original crate-root and literal-data inventory scope; this reader does not enumerate Rust #[path] imports outside those roots. The new example, like the older expensive-verifier example, imports trnm-pon-node/examples/support/w1_from_zero.rs, which is outside this selected inventory. The separate native experiment guards the whole tracked source and does not turn this mapping into a complete Rust include/build graph. Native observations remain bound to source 39336622; this mapping supplies no new native execution, cryptographic verification or security qualification.",
-    "rustix_dependency_security_20261111": "Reviewed source 7f83ea843d6d1578a475a7a0c4dc026da564a795 rebinds only trillionnium/Cargo.lock and trillionnium/crates/trnm-crypto-primitives/Cargo.toml among the existing 138 local-closure files. The dependency update selects rustix 1.1.6 for RUSTSEC-2026-0486; all other locked package records and dependency features are unchanged. The other 136 closure inputs, all 16 selected project files, saved proof materials, historical reader/contract, helpers, proof parameters and 15 unresolved obligations retain their bytes. Node ingress and rollback-witness changes in that commit are outside this selected mapping scope. Preserve the earlier exact lock-pin refusal. This mapping supplies no native execution, external dependency implementation review, whole-chain proof or security qualification."
+    "rustix_dependency_security_20261111": "Reviewed source 7f83ea843d6d1578a475a7a0c4dc026da564a795 rebinds only trillionnium/Cargo.lock and trillionnium/crates/trnm-crypto-primitives/Cargo.toml among the existing 138 local-closure files. The dependency update selects rustix 1.1.6 for RUSTSEC-2026-0486; all other locked package records and dependency features are unchanged. The other 136 closure inputs, all 16 selected project files, saved proof materials, historical reader/contract, helpers, proof parameters and 15 unresolved obligations retain their bytes. Node ingress and rollback-witness changes in that commit are outside this selected mapping scope. Preserve the earlier exact lock-pin refusal. This mapping supplies no native execution, external dependency implementation review, whole-chain proof or security qualification.",
+    "zero_paired_lazy_20261111": "Reviewed source 0eab349d7e6123b458cb98540f36fd273ee24f21 rebinds only trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs among the prior 138 local-closure inputs and adds examples/pon_w1_zero_paired_lazy_v1.rs to that crate, bringing the inventory to 139. The existing zero integer-paired transcript kernel and original producer APIs remain byte-identical; a target-aware unverified attempt API composes the same kernel with optional winner-only proof materialization. The native example compares five fixed producer arms over six preregistered target/reuse cells, retains failures and verifier controls, and grants no consensus credit. The other 137 closure inputs, all 16 selected project files, saved proof materials, historical reader/contract, helpers, proof parameters and 15 unresolved obligations retain their bytes. This mapping supplies no native execution, whole-chain proof, minimum adversarial cost, ideal-ticket independence or security qualification."
   }
 }
