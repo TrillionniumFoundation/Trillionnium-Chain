@@ -1,0 +1,15 @@
+
+running 1 test
+test ingress::public_v3::output_reservation_tests::full_output_pool_closes_without_signed_response_and_recovers_after_release ... 
+thread 'ingress::public_v3::output_reservation_tests::full_output_pool_closes_without_signed_response_and_recovers_after_release' (36736) panicked at crates/trnm-pon-node/src/ingress/public_v3/output_reservation_tests.rs:185:14:
+unreserved output must close: PublicReply { ok: false, value: Object {"error": String("PUBLIC_BUFFER_CAPACITY")}, solve_trials: 243, solve_elapsed_ns: 44518, body_bytes_sent: 13, public_network_ready: false, identity_authority: false }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    ingress::public_v3::output_reservation_tests::full_output_pool_closes_without_signed_response_and_recovers_after_release
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1425 filtered out; finished in 0.02s
+

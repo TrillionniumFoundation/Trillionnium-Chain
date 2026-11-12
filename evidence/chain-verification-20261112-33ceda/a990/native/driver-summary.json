@@ -1,0 +1,450 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "-Vv"
+      ],
+      "elapsed_ns": 3335244643,
+      "label": "rustc-version",
+      "pid": 4134597,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "-V"
+      ],
+      "elapsed_ns": 3330741206,
+      "label": "cargo-version",
+      "pid": 4134728,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "elapsed_ns": 3381451288,
+      "label": "locked-default-graph",
+      "pid": 4134999,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "elapsed_ns": 3429066940,
+      "label": "locked-all-feature-graph",
+      "pid": 4135206,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "elapsed_ns": 10320628309,
+      "label": "cargo-fmt",
+      "pid": 4135507,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "elapsed_ns": 262048791012,
+      "label": "node-all-feature-test-build",
+      "pid": 4135969,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/candidate-a990-native-v1/trnm_pon_node-libtest",
+        "ingress::public_v3::output_reservation_tests::",
+        "--list",
+        "--format",
+        "pretty",
+        "--include-ignored"
+      ],
+      "elapsed_ns": 3470129543,
+      "label": "output-reservation-list",
+      "pid": 4160332,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/candidate-a990-native-v1/trnm_pon_node-libtest",
+        "ingress::public_v3::output_reservation_tests::",
+        "--test-threads=1",
+        "--nocapture",
+        "--format",
+        "pretty",
+        "--include-ignored"
+      ],
+      "elapsed_ns": 3771653383,
+      "label": "output-reservation",
+      "pid": 4160652,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/candidate-a990-native-v1/trnm_pon_node-libtest",
+        "ingress::tests::authenticated_activation_recovery::",
+        "--list",
+        "--format",
+        "pretty",
+        "--include-ignored"
+      ],
+      "elapsed_ns": 3374515570,
+      "label": "auth-recovery-list",
+      "pid": 4161433,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/candidate-a990-native-v1/trnm_pon_node-libtest",
+        "ingress::tests::authenticated_activation_recovery::",
+        "--test-threads=1",
+        "--nocapture",
+        "--format",
+        "pretty",
+        "--include-ignored"
+      ],
+      "elapsed_ns": 25656246032,
+      "label": "auth-recovery",
+      "pid": 4161960,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/candidate-a990-native-v1/trnm_pon_node-libtest",
+        "ingress::public_v3::completion_deadline_tests::",
+        "--list",
+        "--format",
+        "pretty",
+        "--include-ignored"
+      ],
+      "elapsed_ns": 3419181461,
+      "label": "completion-deadline-list",
+      "pid": 4163858,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/candidate-a990-native-v1/trnm_pon_node-libtest",
+        "ingress::public_v3::completion_deadline_tests::",
+        "--test-threads=1",
+        "--nocapture",
+        "--format",
+        "pretty",
+        "--include-ignored"
+      ],
+      "elapsed_ns": 3419852497,
+      "label": "completion-deadline",
+      "pid": 4164338,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/candidate-a990-native-v1/trnm_pon_node-libtest",
+        "ingress::public_v3::growth::tests::",
+        "--list",
+        "--format",
+        "pretty",
+        "--include-ignored"
+      ],
+      "elapsed_ns": 3420656088,
+      "label": "growth-list",
+      "pid": 4164951,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/candidate-a990-native-v1/trnm_pon_node-libtest",
+        "ingress::public_v3::growth::tests::",
+        "--test-threads=1",
+        "--nocapture",
+        "--format",
+        "pretty",
+        "--include-ignored"
+      ],
+      "elapsed_ns": 4273010888,
+      "label": "growth",
+      "pid": 4165384,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/candidate-a990-native-v1/trnm_pon_node-libtest",
+        "ingress::public_v3::work_arithmetic::tests::",
+        "--list",
+        "--format",
+        "pretty",
+        "--include-ignored"
+      ],
+      "elapsed_ns": 3370106380,
+      "label": "work-arithmetic-list",
+      "pid": 4165956,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/candidate-a990-native-v1/trnm_pon_node-libtest",
+        "ingress::public_v3::work_arithmetic::tests::",
+        "--test-threads=1",
+        "--nocapture",
+        "--format",
+        "pretty",
+        "--include-ignored"
+      ],
+      "elapsed_ns": 3469320943,
+      "label": "work-arithmetic",
+      "pid": 4166617,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/candidate-a990-native-v1/trnm_pon_node-libtest",
+        "ingress::public_v3::tests::",
+        "--list",
+        "--format",
+        "pretty",
+        "--include-ignored"
+      ],
+      "elapsed_ns": 3420355618,
+      "label": "public-v3-retained-list",
+      "pid": 4167064,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/chain-verification-validation-33ceda-20261112/candidate-a990-native-v1/trnm_pon_node-libtest",
+        "ingress::public_v3::tests::",
+        "--test-threads=1",
+        "--nocapture",
+        "--format",
+        "pretty",
+        "--include-ignored"
+      ],
+      "elapsed_ns": 17546965076,
+      "label": "public-v3-retained",
+      "pid": 4167969,
+      "recorder_exit_code": 0,
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "elapsed_ns": 107469305803,
+      "label": "strict-workspace-clippy",
+      "pid": 4170074,
+      "recorder_exit_code": 101,
+      "timed_out": false
+    }
+  ],
+  "error": "command failed; retained original observation: strict-workspace-clippy",
+  "executed_tests": 89,
+  "groups": [
+    {
+      "executed_tests": 2,
+      "label": "output-reservation",
+      "result": "PASS",
+      "scope": "native-libtest-transcript-and-process-exit-only",
+      "tests": [
+        "ingress::public_v3::output_reservation_tests::full_output_pool_closes_without_signed_response_and_recovers_after_release",
+        "ingress::public_v3::output_reservation_tests::refusal_borrows_only_bounded_original_headroom_and_preserves_control_service"
+      ]
+    },
+    {
+      "executed_tests": 6,
+      "label": "auth-recovery",
+      "result": "PASS",
+      "scope": "native-libtest-transcript-and-process-exit-only",
+      "tests": [
+        "ingress::tests::authenticated_activation_recovery::authenticated_context_retry_requires_exact_local_identity_and_kind",
+        "ingress::tests::authenticated_activation_recovery::authenticated_dispatch_retry_is_confined_to_local_queue_and_cancellation",
+        "ingress::tests::authenticated_activation_recovery::signed_socket_exact_pending_frame_resumes_only_its_original_committed_intent",
+        "ingress::tests::authenticated_activation_recovery::signed_socket_local_queue_busy_keeps_exact_nonce_for_retry_and_invalid_work_terminal",
+        "ingress::tests::authenticated_activation_recovery::signed_socket_missing_parent_preserves_exact_nonce_until_parent_arrives",
+        "ingress::tests::authenticated_activation_recovery::withheld_original_frame_must_not_stall_a_different_honest_signed_mutation"
+      ]
+    },
+    {
+      "executed_tests": 10,
+      "label": "completion-deadline",
+      "result": "PASS",
+      "scope": "native-libtest-transcript-and-process-exit-only",
+      "tests": [
+        "ingress::public_v3::completion_deadline_tests::completion_at_or_after_work_deadline_cannot_start_output_or_rewrite_native_outcome",
+        "ingress::public_v3::completion_deadline_tests::completion_for_closed_connection_releases_only_its_output_reservation",
+        "ingress::public_v3::completion_deadline_tests::completion_gate_enforces_original_total_service_stop_and_cancel_before_encoding_error",
+        "ingress::public_v3::completion_deadline_tests::completion_gate_keeps_live_serialization_and_orphan_outcomes_distinct",
+        "ingress::public_v3::completion_deadline_tests::late_completion_cannot_revive_work_deadline_or_lose_native_outcome",
+        "ingress::public_v3::completion_deadline_tests::queued_completion_expiry_keeps_worker_reservations_until_actual_release",
+        "ingress::public_v3::completion_deadline_tests::rejected_completion_releases_output_before_connection_slot_and_close_observation",
+        "ingress::public_v3::completion_deadline_tests::timely_completion_keeps_output_bytes_and_original_total_deadline",
+        "ingress::public_v3::completion_deadline_tests::timely_completion_transfers_output_under_original_total_and_service_caps",
+        "ingress::public_v3::completion_deadline_tests::unreserved_completion_bytes_close_without_output_or_native_outcome_rewrite"
+      ]
+    },
+    {
+      "executed_tests": 7,
+      "label": "growth",
+      "result": "PASS",
+      "scope": "native-libtest-transcript-and-process-exit-only",
+      "tests": [
+        "ingress::public_v3::growth::tests::growth_paid_dispatch_charges_joined_preparation_workers_and_fences_unknown_cpu",
+        "ingress::public_v3::growth::tests::growth_signed_tcp_uses_paid_parallel_preparation_and_rejects_unknown_child_cpu",
+        "ingress::public_v3::growth::tests::public_growth_v1_control_output_reserve_serves_head_but_not_paid_operations",
+        "ingress::public_v3::growth::tests::public_growth_v1_raw_new_ops_are_refused_by_legacy_and_arithmetic_listeners",
+        "ingress::public_v3::growth::tests::public_growth_v1_real_listener_lost_ack_exact_query_reorg_and_cold_reopen",
+        "ingress::public_v3::growth::tests::public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation",
+        "ingress::public_v3::growth::tests::public_growth_v1_wire_profile_namespace_and_free_lane_cannot_be_confused"
+      ]
+    },
+    {
+      "executed_tests": 5,
+      "label": "work-arithmetic",
+      "result": "PASS",
+      "scope": "native-libtest-transcript-and-process-exit-only",
+      "tests": [
+        "ingress::public_v3::work_arithmetic::tests::actual_paid_arithmetic_tcp_rejects_current_bad_products_then_activates_exact_valid_packet",
+        "ingress::public_v3::work_arithmetic::tests::arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challenges",
+        "ingress::public_v3::work_arithmetic::tests::explicit_arithmetic_setup_preserves_the_exact_cpu_owner_and_cold_start_credit",
+        "ingress::public_v3::work_arithmetic::tests::original_observer_json_has_no_arithmetic_claim_and_opt_in_unfinished_is_unknown",
+        "ingress::public_v3::work_arithmetic::tests::warm_arithmetic_dispatch_cannot_bypass_original_abandonment_or_current_context"
+      ]
+    },
+    {
+      "executed_tests": 59,
+      "label": "public-v3-retained",
+      "result": "PASS",
+      "scope": "native-libtest-transcript-and-process-exit-only",
+      "tests": [
+        "ingress::public_v3::tests::abandoned_public_work_preserves_cancel_then_deadline_order_without_admission",
+        "ingress::public_v3::tests::accepted_setup_error_closes_socket_before_releasing_slot_and_observation",
+        "ingress::public_v3::tests::aggregate_scoped_cpu_charges_real_parallel_intervals_once_and_preserves_state",
+        "ingress::public_v3::tests::canonical_streaming_rejects_escaped_packets_and_extra_fields",
+        "ingress::public_v3::tests::client_stage_identity_preserves_observation_labels_and_exact_failed_phase_accounting",
+        "ingress::public_v3::tests::completed_input_boundary_rejects_tail_without_consuming_pending_frame",
+        "ingress::public_v3::tests::connection_is_not_observed_closed_before_its_original_slot_releases",
+        "ingress::public_v3::tests::cookie_binds_every_authority_and_resource_field_and_restart_epoch",
+        "ingress::public_v3::tests::cpu_budget_missing_measurement_or_dropped_permit_disables_future_starts",
+        "ingress::public_v3::tests::cpu_budget_missing_start_clock_refuses_before_full_verification",
+        "ingress::public_v3::tests::cpu_budget_reserves_two_starts_and_carries_actual_debt_before_refill",
+        "ingress::public_v3::tests::cpu_budget_signed_native_success_survives_clock_failure_and_reads_survive_debt",
+        "ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work",
+        "ingress::public_v3::tests::dropped_queue_task_is_not_observed_closed_before_its_last_grant_releases",
+        "ingress::public_v3::tests::early_complete_body_waiting_for_ready_preserves_signed_native_submission",
+        "ingress::public_v3::tests::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline",
+        "ingress::public_v3::tests::failed_output_closes_only_that_connection_and_later_honest_request_succeeds",
+        "ingress::public_v3::tests::failed_scoped_previews_and_parallel_requests_keep_separate_complete_cpu",
+        "ingress::public_v3::tests::finished_queue_and_failed_send_keep_output_owned_until_request_closes",
+        "ingress::public_v3::tests::fixed_preface_checks_all_bounds_before_paid_body_allocation",
+        "ingress::public_v3::tests::hmac_sha256_matches_rfc4231_and_fixed_32_byte_oracle_vectors",
+        "ingress::public_v3::tests::honest_fragmented_small_frames_and_body_100_to_300_ms_need_no_retry",
+        "ingress::public_v3::tests::live_cpu_cancels_real_scoped_preparation_and_joins_all_started_threads",
+        "ingress::public_v3::tests::live_cpu_partial_debits_and_residual_settlement_do_not_charge_twice",
+        "ingress::public_v3::tests::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock",
+        "ingress::public_v3::tests::live_cpu_unknown_sample_and_overflow_disable_future_without_zero_refund",
+        "ingress::public_v3::tests::live_owner_cpu_is_observed_before_finish_and_full_interval_remains_authority",
+        "ingress::public_v3::tests::live_pool_budget_cancellation_does_not_classify_or_commit_abandoned_bundle",
+        "ingress::public_v3::tests::paid_envelope_malformed_body_is_accounted_before_signed_refusal",
+        "ingress::public_v3::tests::paid_envelope_resource_profile_has_fresh_exact_signed_commitment",
+        "ingress::public_v3::tests::paid_mutation_body_budget_preserves_signed_read_service_with_rotating_callers",
+        "ingress::public_v3::tests::paid_mutation_grants_are_global_across_identity_rotation_and_release_on_eof",
+        "ingress::public_v3::tests::paid_wrong_product_is_fully_rejected_and_the_preserved_valid_packet_is_activated",
+        "ingress::public_v3::tests::pool_body_guard_checks_shape_before_vector_allocation_and_closed_metadata",
+        "ingress::public_v3::tests::public_submit_and_pool_paths_keep_thread_observer_scope_and_refuse_precommit_child_clock_failure",
+        "ingress::public_v3::tests::queue_backpressure_preserves_deadline_and_releases_permits_on_drop",
+        "ingress::public_v3::tests::r4_challenge_burst_waits_with_existing_read_reserve_and_actual_shutdown",
+        "ingress::public_v3::tests::r4_cookie_time_refusal_counts_expiry_only_after_original_deadline",
+        "ingress::public_v3::tests::r4_correctly_signed_old_and_new_challenges_are_incompatible_both_directions",
+        "ingress::public_v3::tests::r4_paid_pending_eof_original_expiry_and_shutdown_never_create_body_or_work",
+        "ingress::public_v3::tests::r4_pending_early_stop_eof_and_cancelled_errors_are_not_expiry",
+        "ingress::public_v3::tests::r4_pending_heads_use_validated_readiness_and_original_expiry_boundaries",
+        "ingress::public_v3::tests::r4_pending_stage_deadline_error_counts_expiry_once_and_releases_connection",
+        "ingress::public_v3::tests::r4_real_paid_fifo_read_service_and_native_admission_after_holder_release",
+        "ingress::public_v3::tests::r4_typed_full_and_poison_keep_lane_body_reservations_atomic",
+        "ingress::public_v3::tests::r4_unrelated_eof_after_deadline_keeps_its_original_error_class",
+        "ingress::public_v3::tests::request_observer_matches_independent_client_received_signed_frame_lengths",
+        "ingress::public_v3::tests::request_observer_records_actual_partial_read_eof_and_quantum_writes",
+        "ingress::public_v3::tests::request_observer_retains_partial_output_bytes_after_actual_write_error",
+        "ingress::public_v3::tests::reservations_survive_queues_and_release_on_disconnect_and_dropped_output",
+        "ingress::public_v3::tests::resource_revision_r14_rejects_signed_old_cookies_and_preserves_control_output_reserve",
+        "ingress::public_v3::tests::shutdown_joins_all_workers_and_releases_queued_permits_before_returning_first_error",
+        "ingress::public_v3::tests::slow_initial_frames_cannot_occupy_read_worker_or_renew_absolute_deadline",
+        "ingress::public_v3::tests::spent_cache_never_evicts_live_tokens_when_full",
+        "ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work",
+        "ingress::public_v3::tests::v2_magic_profile_and_signature_domains_are_rejected_exactly",
+        "ingress::public_v3::tests::w1_negative_cache_explicit_settings_are_bounded_before_service_startup",
+        "ingress::public_v3::tests::worker_clock_unknown_and_incomplete_or_overflowed_intervals_disable_new_starts",
+        "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work"
+      ]
+    }
+  ],
+  "performance_qualified": false,
+  "source": "a9909fe579dd938005b9d17074f7937c8fa8eb98",
+  "status": "FAILED_OR_INCOMPLETE",
+  "whole_chain_quantum_security_qualified": false
+}

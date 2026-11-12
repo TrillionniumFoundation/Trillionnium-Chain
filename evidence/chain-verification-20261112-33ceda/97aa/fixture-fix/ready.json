@@ -1,0 +1,16 @@
+{
+  "head": "97aa8539aad3ee7f497136c6d2f64e420605c1fa",
+  "tree": "ff4a423084e02e438b0bb9f8d238cd7e32ff2e3d",
+  "parent": "a9909fe579dd938005b9d17074f7937c8fa8eb98",
+  "production_code_changed": false,
+  "changed_paths": [
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/output_reservation_tests.rs",
+    "config/pon/pq-cross-branch-corpus-v1.json"
+  ],
+  "test_blob": "0c90eec073d298dd0b69fc43c3ed8810f1975ba9",
+  "test_sha256": "803324ac7430049177b92d1fa62365bdd5d0dc0625d4511c34ce7c656b1202a6",
+  "prior_clippy_failure_preserved": true,
+  "budgets_deadlines_and_assertions_unchanged": true,
+  "fixture_only_boxed_both_client_identity_payloads": true,
+  "exact_frame_eof_and_pq_attempts_preserved": true
+}

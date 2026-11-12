@@ -1,0 +1,13 @@
+{
+  "cwd": "/home/qq/chain-verification-counterfactual-v4-33ceda-20261112",
+  "argv": [
+    "git",
+    "--no-lazy-fetch",
+    "--no-replace-objects",
+    "cat-file",
+    "commit",
+    "570801af9995a65f3f6c12a339bbca935e32282b"
+  ],
+  "stdout": "counterfactual.commit.raw",
+  "stdin_sha256": null
+}

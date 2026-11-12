@@ -1,0 +1,10 @@
+{
+  "source": "e974fd617e0e2c0d1fc88584b1301a7ffb714a73",
+  "commands": 19,
+  "failed_commands": [
+    "distributed-inventory-check"
+  ],
+  "source_after_passed": true,
+  "git_after_clean_exact": true,
+  "result": "FAIL"
+}

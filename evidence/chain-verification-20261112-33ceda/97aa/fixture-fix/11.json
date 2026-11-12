@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "git",
+    "show",
+    "-s",
+    "--format=%an%n%ae%n%cn%n%ce",
+    "a9909fe579dd938005b9d17074f7937c8fa8eb98"
+  ],
+  "exit_code": 0,
+  "stdout": "Codex\ncodex@openai.com\nCodex\ncodex@openai.com\n",
+  "stderr": ""
+}

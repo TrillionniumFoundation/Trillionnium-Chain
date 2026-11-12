@@ -1,0 +1,9 @@
+{
+  "cwd": "/home/qq/chain-verification-validation-33ceda-20261112/review-evidence-staging",
+  "argv": [
+    "sha256sum",
+    "--check",
+    "--strict",
+    "SHA256SUMS"
+  ]
+}

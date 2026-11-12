@@ -11915,3 +11915,41 @@ same-process native calls retain nonpreemptible segments and lack a killable con
 confined killable workers and original pressure-campaign completion remain
 unqualified until their own observations close those gates. No activation,
 cryptographic-hardness or whole-chain post-quantum claim follows from this fix.
+
+### 2026-11-12 receiver-path regression evidence and publication closure
+
+The receiver output-ownership and exact authenticated-request recovery changes
+are frozen in implementation revision
+`97aa8539aad3ee7f497136c6d2f64e420605c1fa`. The evidence under
+`evidence/chain-verification-20261112-33ceda/` preserves each observed source
+identity and result rather than transferring a result to a different commit.
+
+- The original `e974fd6` source-inventory failure is retained.
+- The `a878584` native failures exposed an incorrect test expectation for the
+  existing response-frame EOF type. The exact `FrameEof` assertions replace
+  `PublicEof`; the remaining socket, pool, state, and PQ attempt assertions
+  remain intact.
+- At `a9909fe`, all 89 retained/native regression executions passed, while
+  strict workspace Clippy failed on the test fixture's enum size and two
+  `err().expect()` calls. The raw failed gate remains attached to that source.
+- The subsequent fixture-only correction boxes both client identity payloads
+  and uses `expect_err`. It does not change production code, deadlines,
+  server resource limits, proof semantics, or the `2/3/5/8` PQ expectations.
+- At `97aa853`, the complete retained 89-test native suite, the locked default/all-feature Cargo graphs, formatting, and strict workspace/all-targets/all-features Clippy passed with the original profiles and budgets.
+- Five exact native controls fail as intended on `570801af9995a65f3f6c12a339bbca935e32282b`, which retains the final test bytes and restores only the three prior production function bodies. Its build succeeds; each control actually executes once and exits 101 without timeout or ignored tests. The refusal-count control stops at its first accounting assertion; the signed unreserved reply and retained owner connection are independently observed by the other controls.
+- The latest complete intermediate Python/source gate is bound to `a9909fe`:
+  19 commands passed, with 742 actual unittest executions across 16 entry
+  files. These are execution counts and can include tests imported by more than
+  one entry point. Its Markdown gate checked 6,877 local links.
+
+The publication commit adds the evidence snapshot and this plan update. It must
+receive the original exact-commit Cargo graph/lock, formatting, retained native
+tests, strict Clippy, negative source-integrity, and Markdown gates. Closing
+receipts for that final commit stay outside this snapshot and are identified in
+the PR, so recording a result does not create another untested source commit.
+
+Complete-path CPU accounting, killable confined native workers, and sustained
+honest-service goodput/tail-latency/worst-refusal-cost qualification remain HOLD.
+Production activation and complete-chain post-quantum qualification remain
+false. Local queue, resource, and deadline outcomes do not define deterministic
+block invalidity.

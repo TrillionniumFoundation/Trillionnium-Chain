@@ -1,0 +1,7 @@
+
+running 2 tests
+test ingress::public_v3::output_reservation_tests::full_output_pool_closes_without_signed_response_and_recovers_after_release ... ok
+test ingress::public_v3::output_reservation_tests::refusal_borrows_only_bounded_original_headroom_and_preserves_control_service ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 1424 filtered out; finished in 0.33s
+
