@@ -13,7 +13,7 @@ use std::{
 const HEALTH_REPEATS: usize = 3;
 const WINDOW_NS: u64 = PRESSURE_MS * 1_000_000;
 
-fn write_new_json(path: &Path, value: &Value) -> std::io::Result<()> {
+pub(super) fn write_new_json(path: &Path, value: &Value) -> std::io::Result<()> {
     let mut file = fs::OpenOptions::new()
         .write(true)
         .create_new(true)
@@ -24,7 +24,7 @@ fn write_new_json(path: &Path, value: &Value) -> std::io::Result<()> {
     file.sync_all()
 }
 
-fn sha256_file(path: &Path) -> std::io::Result<String> {
+pub(super) fn sha256_file(path: &Path) -> std::io::Result<String> {
     let mut file = fs::File::open(path)?;
     let mut digest = Sha256::new();
     let mut buffer = [0_u8; 65536];
@@ -37,7 +37,7 @@ fn sha256_file(path: &Path) -> std::io::Result<String> {
     }
 }
 
-fn identity_record() -> Value {
+pub(super) fn identity_record() -> Value {
     let executable = std::env::current_exe();
     let binary = executable
         .as_ref()
@@ -63,7 +63,7 @@ fn identity_record() -> Value {
     })
 }
 
-fn host_record() -> Value {
+pub(super) fn host_record() -> Value {
     use trnm_pon_node::host_kernel_parent::{
         require_host_kernel_budget, FIXED_PUBLIC_KERNEL_PARENT,
     };
@@ -105,7 +105,7 @@ fn planned_controls() -> Value {
          "variable": "rejection before full W1 replay",
          "legality": "well-defined invalid input with native precheck rejection; not an accepted proof",
          "arrival_load": "same negotiated connection policy and recorded bytes/rate as late-reject",
-         "validation_stage": "prove full_work_started=false with complete observer coverage",
+         "validation_stage": "record the exact native cheap-check rejection branch; pre-W1 context rejection requires full_work_started=false; use work_rejection.cache.full_replay_started to distinguish cache and native replay",
          "stop": "unexpected acceptance, unhealthy no-pressure control, Host/coverage error, or four-second end"},
         {"stratum": "late-reject", "status": "PLANNED_NOT_EXECUTED",
          "variable": "full W1 replay before false-transcript rejection",
@@ -122,7 +122,7 @@ fn planned_controls() -> Value {
     ])
 }
 
-fn healthy(phase: &Value) -> bool {
+pub(super) fn healthy(phase: &Value) -> bool {
     // The final native gate is authoritative. A logged endpoint smaller than T
     // cannot convert a false/missing native final gate into confirmation.
     phase["requested_window_ns"].as_u64() == Some(WINDOW_NS)
@@ -140,7 +140,7 @@ fn healthy(phase: &Value) -> bool {
         && phase["full_native_state_equal"].as_bool() == Some(true)
 }
 
-fn first_divergence(phase: &Value, index: usize) -> Value {
+pub(super) fn first_divergence(phase: &Value, index: usize) -> Value {
     let mut events = Vec::new();
     for field in ["honest_submissions", "honest_history"] {
         if let Some(rows) = phase[field].as_array() {
@@ -196,7 +196,7 @@ fn panic_text(payload: &(dyn Any + Send)) -> &str {
         .unwrap_or("non-string Rust panic payload")
 }
 
-fn prepare_business(path: &Path) -> (Settings, Vec<Packet>, Value) {
+pub(super) fn prepare_business(path: &Path) -> (Settings, Vec<Packet>, Value) {
     let settings = Settings::development(Some(1_750_000_000)).unwrap();
     let mut producer = Node::open(&path.join("producer"), settings.clone(), 1).unwrap();
     let target = producer.expected_target(settings.genesis()).unwrap();

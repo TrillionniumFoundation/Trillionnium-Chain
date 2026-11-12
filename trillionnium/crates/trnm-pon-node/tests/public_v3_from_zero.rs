@@ -1668,6 +1668,12 @@ mod fresh_challenge;
 #[path = "public_v3_from_zero/sp27_receiver_controls.rs"]
 mod sp27_receiver_controls;
 
+#[path = "public_v3_from_zero/sp27_receiver_strata.rs"]
+mod sp27_receiver_strata;
+
+#[path = "public_v3_from_zero/sp27_receiver_campaign.rs"]
+mod sp27_receiver_campaign;
+
 #[test]
 fn from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline(
 ) {
