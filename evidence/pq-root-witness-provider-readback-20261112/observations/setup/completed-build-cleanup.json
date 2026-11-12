@@ -1,0 +1,27 @@
+{
+  "utc": "2026-11-12T00:06:05.937502+00:00",
+  "reason": "parent-authorized cleanup of completed own rebuildable OpenSSL source/object tree under disk pressure",
+  "completed_provider_receipt": "setup/pq-provider/provider.json",
+  "removed_directory": "/workspace/scratch/3069292387f3/root-build-setup/trnm-pq-provider-3.5.9.XUcDSuPf/openssl-3.5.9",
+  "source_archive_retained": "/workspace/scratch/3069292387f3/root-build-setup/trnm-pq-provider-3.5.9.XUcDSuPf/openssl-3.5.9.tar.gz",
+  "source_archive_sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+  "retained_binary_identities": [
+    {
+      "removed_rebuildable_duplicate": "/workspace/scratch/3069292387f3/root-build-setup/trnm-pq-provider-3.5.9.XUcDSuPf/openssl-3.5.9/apps/openssl",
+      "retained_exact_binary": "/workspace/scratch/3069292387f3/root-build-setup/trnm-pq-provider-3.5.9.XUcDSuPf/install/bin/openssl",
+      "sha256": "0de47e592b2163e2bbbb078301192d91a6ae933ba32dca1f4e1e23a593ef97a1"
+    },
+    {
+      "removed_rebuildable_duplicate": "/workspace/scratch/3069292387f3/root-build-setup/trnm-pq-provider-3.5.9.XUcDSuPf/openssl-3.5.9/libcrypto.a",
+      "retained_exact_binary": "/workspace/scratch/3069292387f3/root-build-setup/trnm-pq-provider-3.5.9.XUcDSuPf/install/lib/libcrypto.a",
+      "sha256": "430bf97677f3635ab2fafe6ac683911bf4e7df232e82746e3567ce90698bc24c"
+    },
+    {
+      "removed_rebuildable_duplicate": "/workspace/scratch/3069292387f3/root-build-setup/trnm-pq-provider-3.5.9.XUcDSuPf/openssl-3.5.9/libssl.a",
+      "retained_exact_binary": "/workspace/scratch/3069292387f3/root-build-setup/trnm-pq-provider-3.5.9.XUcDSuPf/install/lib/libssl.a",
+      "sha256": "ce766975e2748030cdcab09302cae4a2e774130dff9376e42e1bef4f9918a490"
+    }
+  ],
+  "active_native_source_modified": false,
+  "other_session_files_modified": false
+}
