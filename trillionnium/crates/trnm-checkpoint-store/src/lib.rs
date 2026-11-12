@@ -925,8 +925,12 @@ impl ExternalCheckpointAuthorityV2 {
     ) -> Result<(), ExternalCheckpointAuthorityErrorV2> {
         self.require_recovery_admission_v1()?;
         let owner = socket_owner_v1::SocketOwnerV1::bind(socket_path.as_ref())?;
+        // A connection-only liveness probe carries no request. Defer the
+        // socket-owner fence until a complete bounded frame is received:
+        // handle_connection_v2 calls owner.revalidate() before dispatching
+        // any request or effect. Otherwise a copied lease can force the
+        // live owner to exit merely by probing its listener.
         for stream in owner.listener().incoming() {
-            owner.revalidate()?;
             match stream {
                 Ok(stream) => {
                     if let Err(error) = self.handle_connection_v2(stream, &owner) {
