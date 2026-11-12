@@ -341,23 +341,37 @@ class BinarySelectionTests(unittest.TestCase):
             root = Path(directory)
             source = root / 'source/tests/public_v3_from_zero.rs'
             support = root / 'source/examples/support/w1_from_zero.rs'
-            fresh = source.parent / 'public_v3_from_zero/fresh_challenge.rs'
+            modules = {
+                'public_v3_from_zero/fresh_challenge.rs': b'pub fn fresh_trial() {}\n',
+                'public_v3_from_zero/sp27_receiver_controls.rs': b'pub fn controls_trial() {}\n',
+                'public_v3_from_zero/sp27_receiver_strata.rs': b'pub fn strata_trial() {}\n',
+                'public_v3_from_zero/sp27_receiver_campaign.rs': b'pub fn campaign_trial() {}\n',
+            }
             source.parent.mkdir(parents=True)
             support.parent.mkdir(parents=True)
-            fresh.parent.mkdir()
-            source.write_text('#[path = "../examples/support/w1_from_zero.rs"]\n'
-                              'mod w1_from_zero;\n'
-                              '#[path = "public_v3_from_zero/fresh_challenge.rs"]\n'
-                              'mod fresh_challenge;\n')
-            support.write_text('pub fn trial() {}\n')
-            fresh.write_text('pub fn fresh_trial() {}\n')
+            (source.parent / 'public_v3_from_zero').mkdir()
+            source.write_bytes(b'#[path = "../examples/support/w1_from_zero.rs"]\n'
+                               b'mod w1_from_zero;\n'
+                               b'#[path = "public_v3_from_zero/fresh_challenge.rs"]\n'
+                               b'mod fresh_challenge;\n'
+                               b'#[path = "public_v3_from_zero/sp27_receiver_controls.rs"]\n'
+                               b'mod sp27_receiver_controls;\n'
+                               b'#[path = "public_v3_from_zero/sp27_receiver_strata.rs"]\n'
+                               b'mod sp27_receiver_strata;\n'
+                               b'#[path = "public_v3_from_zero/sp27_receiver_campaign.rs"]\n'
+                               b'mod sp27_receiver_campaign;\n')
+            support.write_bytes(b'pub fn trial() {}\n')
+            for relative, content in modules.items():
+                (source.parent / relative).write_bytes(content)
             out = root / 'observations'
             out.mkdir()
             flattened = out / 'formatted.rs'
             flattened.write_bytes(source.read_bytes())
             self.assertFalse((flattened.parent / '../examples/support/w1_from_zero.rs').is_file())
-            original_source, original_support, original_fresh = (
-                source.read_bytes(), support.read_bytes(), fresh.read_bytes())
+            original_source, original_support = source.read_bytes(), support.read_bytes()
+            original_modules = {
+                relative: (source.parent / relative).read_bytes() for relative in modules
+            }
 
             staged = driver.stage_format_copy(source, support, out)
             self.assertEqual(staged, out / 'format-copy-source/tests/public_v3_from_zero.rs')
@@ -365,12 +379,12 @@ class BinarySelectionTests(unittest.TestCase):
             self.assertEqual(
                 (staged.parent / '../examples/support/w1_from_zero.rs').resolve().read_bytes(),
                 original_support)
-            self.assertEqual(
-                (staged.parent / 'public_v3_from_zero/fresh_challenge.rs').read_bytes(),
-                original_fresh)
+            for relative, original in original_modules.items():
+                with self.subTest(relative=relative):
+                    self.assertEqual((staged.parent / relative).read_bytes(), original)
+                    self.assertEqual((source.parent / relative).read_bytes(), original)
             self.assertEqual(source.read_bytes(), original_source)
             self.assertEqual(support.read_bytes(), original_support)
-            self.assertEqual(fresh.read_bytes(), original_fresh)
 
     def test_format_copy_covers_every_current_explicit_module_path(self):
         source = driver.ROOT / driver.SOURCE
