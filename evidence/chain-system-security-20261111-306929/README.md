@@ -208,3 +208,37 @@ The repository hooks and Git whitespace settings were not changed. See the
 [continuation driver](ai395/final-integration/integration-continuation.py).
 The failed operation and its command receipts are retained with the final
 source-gate provenance; this formatting observation is not a native test failure.
+
+## Final committed source-gate observation
+
+The full source-only run executed at `2d72fa3293989b01596ec8ce0ba3ff370dc4c584`
+(tree `ebc11e05eb0015ae5be58ca85ed764e06f4386be`). All ten recorded
+commands returned zero: positive authority/Root/corpus checks, 65 authority,
+Root and V5-runner controls, 43 source-integrity controls, repository links,
+Cargo formatting, and default/all-features locked dependency graphs, including
+preflight. Each command recorded the complete physical source before and after.
+The 108 controls belong to this exact F commit; they are not new native tests.
+
+The original outer driver returned 1 and retained all_gates_passed=false:
+its parser incorrectly required the entire unittest log to end at OK. The 43
+source-integrity methods each passed and their single OK summary was followed
+by six expected fixture receipt JSON lines. A separate derived qualification
+hash-binds and rereads those original bytes, the 65/43 exact test inventories
+and all ten command/source receipts. It verifies 108 controls without rerunning
+them or changing the original failed aggregate receipt. Both observations and
+the corrected reader are retained in the final source evidence.
+
+The [final source evidence](ai395/final-source/README.md) preserves the raw
+commands and the initially failed evidence integration plus its successful
+continuation. This evidence-only successor keeps trillionnium, formal and
+scripts/ci bytes identical to the actual native source `bac6b7659bd7e2d633e25c2da0add60f6a10c7fb`.
+Its separate final identity, restricted corpus delta and source/link checks are
+recorded by the publication process; those checks do not relabel the F control
+run or the 129 native Rust methods. Status remains **HOLD**.
+
+The first evidence-child admission stopped before any repository mutation because
+an optional transient Cargo lock file was absent. Its clean F snapshot, actual
+exit 1, inputs, driver and complete output are preserved in the
+[admission failure record](ai395/final-source/failed-admission-v2-README.md).
+After all native/source owners released the checkout, the continuation used a
+dedicated outside integration lock; no build or test was rerun.
