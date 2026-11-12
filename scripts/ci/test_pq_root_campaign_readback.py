@@ -194,12 +194,13 @@ class EvidenceReaderTests(unittest.TestCase):
                  final_receiver_tip='a' * 64, final_client_tip='a' * 64,
                  depletion_at_ns=20_000_000_000,
                  depletion_meter={'Ok': {
-                     'depleted': True,
+                     'depleted': True, 'clock_failures': 0,
                      'meter': {'accounting_unavailable': False,
                                'schema': 'public-v3-local-stored-cpu-budget-v1',
                                'burst_ns': 2_000_000_000,
                                'refill_ns_per_second': 250_000_000,
                                'start_reserve_ns': 100_000_000,
+                               'worker_limit': 2,
                                'stored_credit_ns': 49_999_999},
                      'actual_flow': {
                          'balance_identity_verified': True,
@@ -207,7 +208,13 @@ class EvidenceReaderTests(unittest.TestCase):
                          'initial_credit_ns': 2_000_000_000,
                          'credited_refill_ns': 0,
                          'paid_cpu_debit_ns': 1_950_000_001,
+                         'live_debited_cpu_ns': 1_950_000_001,
+                         'settlement_residual_cpu_ns': 0,
+                         'settlement_discard_ns': 0,
                          'booked_reservation_ns': 0,
+                         'live_owners': 0,
+                         'unsettled_known_live_cpu_ns': 0,
+                         'settled_full_cpu_ns': 1_950_000_001,
                          'stored_credit_ns': 49_999_999,
                          'remaining_paid_credit_ns': 49_999_999,
                      },
@@ -313,6 +320,57 @@ class EvidenceReaderTests(unittest.TestCase):
                 data = self.ready_attack_phase()
                 data[1][0]['phases'][1][field] = invalid
                 self.assert_refused(data, 'nonboolean claims cannot be coerced')
+
+    def test_booked_but_unspent_credit_cannot_fake_paid_depletion(self):
+        # On #933 this passed: stored=0, booked=2B, debit=0, remaining=2B.
+        # It satisfies the weak previous stored-credit identity, but not
+        # the original paid-CPU or remaining-credit requirements.
+        data = self.ready_attack_phase()
+        obj = data[1][0]['phases'][1]['depletion_meter']['Ok']
+        obj['meter']['stored_credit_ns'] = 0
+        flow = obj['actual_flow']
+        flow.update(paid_cpu_debit_ns=0, live_debited_cpu_ns=0,
+                    settled_full_cpu_ns=0, booked_reservation_ns=2_000_000_000,
+                    live_owners=20, remaining_paid_credit_ns=2_000_000_000,
+                    stored_credit_ns=0)
+        self.assert_refused(data, 'booked reservation is not actually paid')
+
+    def test_original_paid_threshold_must_be_strict(self):
+        data = self.ready_attack_phase()
+        obj = data[1][0]['phases'][1]['depletion_meter']['Ok']
+        obj['actual_flow'].update(
+            paid_cpu_debit_ns=1_900_000_000,
+            live_debited_cpu_ns=1_900_000_000,
+            settled_full_cpu_ns=1_900_000_000,
+            settlement_discard_ns=50_000_001)
+        self.assert_refused(data, '1.9B precisely is not > 1.9B')
+
+    def test_original_settlement_discard_is_accounted_not_omitted(self):
+        # Positive value is possible under the original conservation
+        # equation; earlier #933 verifier refused it without justification.
+        data = self.ready_attack_phase()
+        obj = data[1][0]['phases'][1]['depletion_meter']['Ok']
+        obj['actual_flow'].update(
+            paid_cpu_debit_ns=1_900_000_001,
+            live_debited_cpu_ns=1_900_000_001,
+            settled_full_cpu_ns=1_900_000_001,
+            settlement_discard_ns=50_000_000)
+        self.assertTrue(reader.summarize(*data)['phases'][1]['phase_criteria_met'])
+
+    def test_original_live_owner_and_clock_witness_are_required(self):
+        for field, value in [('live_owners', 1),
+                             ('unsettled_known_live_cpu_ns', 1),
+                             ('live_debited_cpu_ns', 1)]:
+            data = self.ready_attack_phase()
+            data[1][0]['phases'][1]['depletion_meter']['Ok']['actual_flow'][field] = value
+            self.assert_refused(data, field)
+        for key, value in [('clock_failures', 1), ('clock_failures', True)]:
+            data = self.ready_attack_phase()
+            data[1][0]['phases'][1]['depletion_meter']['Ok'][key] = value
+            self.assert_refused(data, key)
+        data = self.ready_attack_phase()
+        data[1][0]['phases'][1]['depletion_meter']['Ok']['meter']['worker_limit'] = 3
+        self.assert_refused(data, 'worker_limit changed')
 
     def test_zip_manifest_integrity_and_mutated_member(self):
         def make_archive(manifest_digest=None, path='body.txt'):
