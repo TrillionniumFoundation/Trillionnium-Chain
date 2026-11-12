@@ -73,8 +73,45 @@ impl SocketOwnerV1 {
                         "checkpoint socket is unleased or replaced",
                     ));
                 }
-                // No live conforming owner can hold this inode's lease. A fresh
-                // or empty lease never authorizes removing a pre-existing socket.
+                // Lock ownership is on the lease inode, not its pathname.
+                // A copied record at a replacement inode can therefore pass
+                // the lock and record checks while the original owner lives.
+                // Never unlink a socket merely because the current lease inode
+                // is unlocked: a reachable listener is still a live owner.
+                //
+                // Only an explicit connection refusal permits stale-socket
+                // recovery. Busy, inaccessible and ambiguous probes fail
+                // closed; none is evidence that the listener has exited.
+                match UnixStream::connect(path) {
+                    Ok(_) => {
+                        return Err(ExternalCheckpointAuthorityErrorV2::Io {
+                            stage: "lock checkpoint socket owner",
+                            source: io::Error::new(
+                                io::ErrorKind::AddrInUse,
+                                "checkpoint socket listener is still live",
+                            ),
+                        });
+                    }
+                    Err(source) if source.kind() == io::ErrorKind::ConnectionRefused => {}
+                    Err(source) => {
+                        return Err(ExternalCheckpointAuthorityErrorV2::Io {
+                            stage: "lock checkpoint socket owner",
+                            source,
+                        });
+                    }
+                }
+                // A successful dead-listener probe is not an authority token:
+                // recheck the exact socket object before removing its name.
+                let current = fs::symlink_metadata(path)?;
+                if !valid_socket(&current)
+                    || !CheckpointPathIdentityV2::from_metadata(&current)
+                        .same_object(CheckpointPathIdentityV2::from_metadata(&metadata))
+                    || socket_record(&current) != previous
+                {
+                    return Err(ExternalCheckpointAuthorityErrorV2::InvalidConfig(
+                        "checkpoint socket changed after liveness probe",
+                    ));
+                }
                 fs::remove_file(path)?;
             }
             Err(error) if error.kind() == io::ErrorKind::NotFound => {}
