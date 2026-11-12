@@ -174,25 +174,48 @@ def verify_phase_claim_witnesses(p: dict) -> None:
                 meter.get('start_reserve_ns') == 100_000_000 and
                 actual.get('initial_credit_ns') == 2_000_000_000,
                 'DEPLETION_CLAIM_METER_PROFILE_MISMATCH')
-        fields = ('credited_refill_ns', 'paid_cpu_debit_ns',
-                  'booked_reservation_ns', 'stored_credit_ns',
-                  'remaining_paid_credit_ns')
+        # Mirror the original native campaign's complete numeric predicate
+        # (scripts/read_original_native_campaign.py:depletion).  In particular,
+        # stored credit can be low solely because it is BOOKED, not PAID.
+        # Settlement discard must not be silently omitted from conservation.
+        nonnegative = (
+            'initial_credit_ns', 'credited_refill_ns', 'paid_cpu_debit_ns',
+            'live_debited_cpu_ns', 'settlement_residual_cpu_ns',
+            'settlement_discard_ns', 'booked_reservation_ns', 'live_owners',
+            'unsettled_known_live_cpu_ns', 'settled_full_cpu_ns',
+        )
+        signed = ('remaining_paid_credit_ns', 'stored_credit_ns')
         require(all(type(actual.get(k)) is int and actual[k] >= 0
-                    for k in fields) and
+                    for k in nonnegative) and
+                all(type(actual.get(k)) is int for k in signed) and
                 type(meter.get('stored_credit_ns')) is int and
-                meter['stored_credit_ns'] >= 0,
-                'DEPLETION_CLAIM_METER_VALUE_TYPE')
-        stored = actual['stored_credit_ns']
-        booked = actual['booked_reservation_ns']
-        require(actual['initial_credit_ns'] +
+                meter.get('worker_limit') == 2 and
+                type(result.get('clock_failures')) is int and
+                result['clock_failures'] == 0,
+                'DEPLETION_CLAIM_INCOMPLETE_ORIGINAL_CPU_FIELDS')
+        require(actual['paid_cpu_debit_ns'] ==
+                actual['live_debited_cpu_ns'] +
+                actual['settlement_residual_cpu_ns'] and
+                actual['remaining_paid_credit_ns'] ==
+                actual['initial_credit_ns'] +
                 actual['credited_refill_ns'] -
-                actual['paid_cpu_debit_ns'] - booked == stored and
-                actual['remaining_paid_credit_ns'] == stored + booked,
+                actual['paid_cpu_debit_ns'] -
+                actual['settlement_discard_ns'] and
+                actual['stored_credit_ns'] ==
+                actual['remaining_paid_credit_ns'] -
+                actual['booked_reservation_ns'] and
+                actual['booked_reservation_ns'] ==
+                actual['live_owners'] * meter['start_reserve_ns'] and
+                actual['unsettled_known_live_cpu_ns'] ==
+                actual['paid_cpu_debit_ns'] -
+                actual['settled_full_cpu_ns'],
                 'DEPLETION_CLAIM_UNBALANCED_PAID_LEDGER')
-        require(meter['stored_credit_ns'] == stored,
+        require(meter['stored_credit_ns'] == actual['stored_credit_ns'],
                 'DEPLETION_CLAIM_SNAPSHOT_CREDIT_DIVERGENCE')
-        require(stored < meter['start_reserve_ns'],
-                'DEPLETION_CLAIM_NOT_BELOW_ORIGINAL_START_RESERVE')
+        require(actual['remaining_paid_credit_ns'] < meter['start_reserve_ns']
+                and actual['paid_cpu_debit_ns'] >
+                meter['burst_ns'] - meter['start_reserve_ns'],
+                'DEPLETION_CLAIM_NOT_ACTUALLY_PAID_AND_EXHAUSTED')
 
 
 def summarize(results: dict, reports: list[dict], host_before: list[dict]) -> dict:
