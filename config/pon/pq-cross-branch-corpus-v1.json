@@ -589,6 +589,11 @@
     "evidence/crypto-profile-20261104/recompute_benchmark.py": "e9a873baa73d60f578b9723a9cf11cdf84a44c15",
     "evidence/crypto-profile-20261104/recompute_profile_ids.py": "ca5334fba301046c9f89132b62a4e10872c8d5cd",
     "evidence/pon-pq-account-native-20261028/README.md": "2885a560883ff59e67411e8bec5813d2f132587a",
+    "evidence/pon-pq-boundary-closure-20261112/README.md": "e7efd9ee9ebe4d4c98a1b8cd03be5ff93ba718ad",
+    "evidence/pon-pq-boundary-closure-20261112/archive-manifest.json": "c717383735b3d498872a67625cbd28195abbf9e8",
+    "evidence/pon-pq-boundary-closure-20261112/observations.json": "560e0864dd36c9cf1a430f226e5bcf88cca02149",
+    "evidence/pon-pq-boundary-closure-20261112/original-files.json": "6963fe5a90a0fb29b2b2399815fb846f8bda5859",
+    "evidence/pon-pq-boundary-closure-20261112/raw-evidence.tar.gz": "0fa90aeaa37ef58e79f88e820b492729ab4a3a63",
     "evidence/pon-pq-cell-deadline-native-v1/README.md": "76b74547693d7ee09845776b440c24cd960417a8",
     "evidence/pon-pq-cell-deadline-native-v1/baseline-real-tcp.log": "f8c5894587a4a239d7b83b36d8062682c4e4bb90",
     "evidence/pon-pq-cell-deadline-native-v1/fixed-python.log": "b7223a755a4b6b588451e7da94393daaa4a6be4c",
@@ -3284,7 +3289,12 @@
     "evidence/chain-system-security-20261111-306929/ai395/final-source/verify_archive.py",
     "docs/development/specs/pon/CELL_CONTENT_LINEAGE_CLOSURE_V3.md",
     "trillionnium/crates/trnm-data-availability/src/cell/version_content_closure_v3.rs",
-    "trillionnium/crates/trnm-data-availability/src/cell/version_content_closure_v3/tests.rs"
+    "trillionnium/crates/trnm-data-availability/src/cell/version_content_closure_v3/tests.rs",
+    "evidence/pon-pq-boundary-closure-20261112/README.md",
+    "evidence/pon-pq-boundary-closure-20261112/archive-manifest.json",
+    "evidence/pon-pq-boundary-closure-20261112/observations.json",
+    "evidence/pon-pq-boundary-closure-20261112/original-files.json",
+    "evidence/pon-pq-boundary-closure-20261112/raw-evidence.tar.gz"
   ],
   "schema": "trnm-pq-cross-branch-corpus-v1",
   "source_composition": {
