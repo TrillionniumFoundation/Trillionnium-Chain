@@ -50,11 +50,15 @@ def synthetic():
                 'all_signed_rounds_confirmed_in_window': False,
                 'receiver_client_state_equal': False,
                 'genuine_budget_depletion_observed': False,
+                'attacker_processes_ready': attackers,
+                'actor_reports_successful_without_cap_or_kill': True,
+                'full_work_failed': 0,
                 'confirmations': [c], 'history': [{
                     'status': 'ok', 'response': {'ok': True},
                     'client_import': {'succeeded': True},
                 }]}
-    reports = [{'phases': [phase(mode, count) for mode, count in
+    reports = [{'finite_experiment_criteria_met': False,
+                'phases': [phase(mode, count) for mode, count in
                            zip(reader.EXPECTED_INPUTS['modes'], [0, 24, 24])]}
                for _ in range(3)]
     return result, reports, [deepcopy(host) for _ in range(9)]
@@ -166,6 +170,56 @@ class EvidenceReaderTests(unittest.TestCase):
         data = synthetic()
         data[1][0]['phases'][0]['all_signed_rounds_confirmed_in_window'] = True
         self.assert_refused(data, 'three signed rounds required')
+
+    def ready_attack_phase(self):
+        """Construct an isolated positive phase; never label a whole run PASS."""
+        data = synthetic()
+        p = data[1][0]['phases'][1]
+        base = deepcopy(data[1][0]['phases'][0]['confirmations'][0])
+        rounds = []
+        for i in range(3):
+            c = deepcopy(base)
+            c['round'] = i
+            c['started_ns'] = 1_000_000_000 + i * 9_000_000_000
+            c['ended_ns'] = c['started_ns'] + 2_000_000_000
+            c['transaction'] = f'synthetic-independent-round-{i}'
+            c['observation']['transaction'] = c['transaction']
+            rounds.append(c)
+        p.update(confirmations=rounds, all_signed_rounds_confirmed_in_window=True,
+                 finite_phase_criteria_met=True, receiver_client_state_equal=True,
+                 observer_complete=True, genuine_budget_depletion_observed=True,
+                 attacker_processes_ready=24, full_work_failed=100)
+        return data
+
+    def test_fully_ready_attack_phase_has_only_local_report_scope(self):
+        observation = reader.summarize(*self.ready_attack_phase())
+        self.assertEqual(observation['attack_phases'], 6)
+        self.assertEqual(observation['attack_phases_with_genuine_budget_depletion'], 1)
+        self.assertEqual(observation['attack_phases_with_full_actor_readiness'], 6)
+        self.assertTrue(observation['phases'][1]['phase_criteria_met'])
+        self.assertEqual(observation['complete_original_campaigns'], 0)
+        self.assertEqual(observation['status'], 'HOLD_NO_GO')
+
+    def test_attack_phase_cannot_pass_with_missing_depletion(self):
+        data = self.ready_attack_phase()
+        data[1][0]['phases'][1]['genuine_budget_depletion_observed'] = False
+        self.assert_refused(data, 'original hostile depletion missing')
+
+    def test_attack_phase_cannot_pass_with_missing_hostile_actor(self):
+        data = self.ready_attack_phase()
+        data[1][0]['phases'][1]['attacker_processes_ready'] = 23
+        self.assert_refused(data, '23 instead of 24')
+
+    def test_attack_phase_cannot_pass_with_incomplete_actor_report(self):
+        data = self.ready_attack_phase()
+        data[1][0]['phases'][1]['actor_reports_successful_without_cap_or_kill'] = False
+        self.assert_refused(data, 'actor report failure')
+
+    def test_negative_or_noninteger_original_work_count_is_refused(self):
+        for value in (-1, True, '100'):
+            data = self.ready_attack_phase()
+            data[1][0]['phases'][1]['full_work_failed'] = value
+            self.assert_refused(data, 'forged work count')
 
     def test_zip_manifest_integrity_and_mutated_member(self):
         def make_archive(manifest_digest=None, path='body.txt'):
