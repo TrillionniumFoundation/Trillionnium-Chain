@@ -1,0 +1,621 @@
+{
+  "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+  "tests": [
+    {
+      "package": "trnm-data-availability",
+      "test": "tests::schema_drift_and_sidecar_are_fail_closed_without_migration",
+      "argv": [
+        "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_data_availability-8a3d1b05ab724693",
+        "--exact",
+        "tests::schema_drift_and_sidecar_are_fail_closed_without_migration",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+      "source_scope": "selected actual crate sources, manifests and workspace lock; partial checkout, not complete repository source qualification",
+      "build_receipt": "positive-owners-trnm-data-availability.json",
+      "binary": {
+        "path": "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_data_availability-8a3d1b05ab724693",
+        "bytes": 124768592,
+        "sha256": "43dcf7d8ac6d6b8935a761db57cd21a48304c9bc639b097bd08dd0f61fd7db25"
+      },
+      "elapsed_seconds": 1.1444530487060547,
+      "exit_code": 0,
+      "native_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ]
+      ],
+      "selected_source_and_binary_unchanged": true,
+      "passed": true,
+      "stdout": {
+        "path": "retained-trnm-data-availability-1.stdout",
+        "bytes": 192,
+        "sha256": "6cfbdaa166824d9c6fca395af3f04d52f18edb8c176c0d032dd866141d3e292f"
+      },
+      "stderr": {
+        "path": "retained-trnm-data-availability-1.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "package": "trnm-data-availability",
+      "test": "tests::row_tamper_is_rejected_on_reopen",
+      "argv": [
+        "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_data_availability-8a3d1b05ab724693",
+        "--exact",
+        "tests::row_tamper_is_rejected_on_reopen",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+      "source_scope": "selected actual crate sources, manifests and workspace lock; partial checkout, not complete repository source qualification",
+      "build_receipt": "positive-owners-trnm-data-availability.json",
+      "binary": {
+        "path": "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_data_availability-8a3d1b05ab724693",
+        "bytes": 124768592,
+        "sha256": "43dcf7d8ac6d6b8935a761db57cd21a48304c9bc639b097bd08dd0f61fd7db25"
+      },
+      "elapsed_seconds": 0.6638267040252686,
+      "exit_code": 0,
+      "native_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ]
+      ],
+      "selected_source_and_binary_unchanged": true,
+      "passed": true,
+      "stdout": {
+        "path": "retained-trnm-data-availability-2.stdout",
+        "bytes": 166,
+        "sha256": "ae5793bf104c6026cff48b8b0796f92dc3298abd888ee278e4718c5f51be3c52"
+      },
+      "stderr": {
+        "path": "retained-trnm-data-availability-2.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "package": "trnm-data-availability",
+      "test": "tests::open_existing_requires_precreated_regular_nonsymlink_store",
+      "argv": [
+        "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_data_availability-8a3d1b05ab724693",
+        "--exact",
+        "tests::open_existing_requires_precreated_regular_nonsymlink_store",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+      "source_scope": "selected actual crate sources, manifests and workspace lock; partial checkout, not complete repository source qualification",
+      "build_receipt": "positive-owners-trnm-data-availability.json",
+      "binary": {
+        "path": "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_data_availability-8a3d1b05ab724693",
+        "bytes": 124768592,
+        "sha256": "43dcf7d8ac6d6b8935a761db57cd21a48304c9bc639b097bd08dd0f61fd7db25"
+      },
+      "elapsed_seconds": 0.7918241024017334,
+      "exit_code": 0,
+      "native_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ]
+      ],
+      "selected_source_and_binary_unchanged": true,
+      "passed": true,
+      "stdout": {
+        "path": "retained-trnm-data-availability-3.stdout",
+        "bytes": 192,
+        "sha256": "a61cbac34a7c780cfa9e99936a4c2e66fa24b4ce88b69d888d1917b3c90b223a"
+      },
+      "stderr": {
+        "path": "retained-trnm-data-availability-3.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "package": "trnm-mvcc-fee",
+      "test": "tests::schema_sidecar_and_self_consistent_row_tamper_fail_closed",
+      "argv": [
+        "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_mvcc_fee-1a85f62fc4a0b328",
+        "--exact",
+        "tests::schema_sidecar_and_self_consistent_row_tamper_fail_closed",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+      "source_scope": "selected actual crate sources, manifests and workspace lock; partial checkout, not complete repository source qualification",
+      "build_receipt": "positive-owners-trnm-mvcc-fee.json",
+      "binary": {
+        "path": "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_mvcc_fee-1a85f62fc4a0b328",
+        "bytes": 83777512,
+        "sha256": "f2c8cfdc0e81db15ac973660c7ec1c3a783fd83afb5ea31a663bbc0a933e4bf2"
+      },
+      "elapsed_seconds": 0.6370689868927002,
+      "exit_code": 0,
+      "native_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ]
+      ],
+      "selected_source_and_binary_unchanged": true,
+      "passed": true,
+      "stdout": {
+        "path": "retained-trnm-mvcc-fee-1.stdout",
+        "bytes": 191,
+        "sha256": "10ed61e68861db544b55ea3fdd594cafac8e3e69fb66ae6afaea868b3aba812b"
+      },
+      "stderr": {
+        "path": "retained-trnm-mvcc-fee-1.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "package": "trnm-mvcc-fee",
+      "test": "tests::open_existing_requires_precreated_regular_nonsymlink_store",
+      "argv": [
+        "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_mvcc_fee-1a85f62fc4a0b328",
+        "--exact",
+        "tests::open_existing_requires_precreated_regular_nonsymlink_store",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+      "source_scope": "selected actual crate sources, manifests and workspace lock; partial checkout, not complete repository source qualification",
+      "build_receipt": "positive-owners-trnm-mvcc-fee.json",
+      "binary": {
+        "path": "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_mvcc_fee-1a85f62fc4a0b328",
+        "bytes": 83777512,
+        "sha256": "f2c8cfdc0e81db15ac973660c7ec1c3a783fd83afb5ea31a663bbc0a933e4bf2"
+      },
+      "elapsed_seconds": 0.40073227882385254,
+      "exit_code": 0,
+      "native_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ]
+      ],
+      "selected_source_and_binary_unchanged": true,
+      "passed": true,
+      "stdout": {
+        "path": "retained-trnm-mvcc-fee-2.stdout",
+        "bytes": 192,
+        "sha256": "19a26e75b09b5019cd3a2ac3a4321ef7199e27021746a8897b8fc54c0d95296a"
+      },
+      "stderr": {
+        "path": "retained-trnm-mvcc-fee-2.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "package": "trnm-mvcc-fee",
+      "test": "tests::crash_outcomes_reopen_to_exact_source_target_or_fence",
+      "argv": [
+        "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_mvcc_fee-1a85f62fc4a0b328",
+        "--exact",
+        "tests::crash_outcomes_reopen_to_exact_source_target_or_fence",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+      "source_scope": "selected actual crate sources, manifests and workspace lock; partial checkout, not complete repository source qualification",
+      "build_receipt": "positive-owners-trnm-mvcc-fee.json",
+      "binary": {
+        "path": "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_mvcc_fee-1a85f62fc4a0b328",
+        "bytes": 83777512,
+        "sha256": "f2c8cfdc0e81db15ac973660c7ec1c3a783fd83afb5ea31a663bbc0a933e4bf2"
+      },
+      "elapsed_seconds": 0.7300240993499756,
+      "exit_code": 0,
+      "native_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ]
+      ],
+      "selected_source_and_binary_unchanged": true,
+      "passed": true,
+      "stdout": {
+        "path": "retained-trnm-mvcc-fee-3.stdout",
+        "bytes": 187,
+        "sha256": "23408e115a6ec64bd1f3d64f253345cf4a3d3a6bcb77b0a7ba7bebc6f6f9b534"
+      },
+      "stderr": {
+        "path": "retained-trnm-mvcc-fee-3.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "package": "trnm-service-settlement",
+      "test": "tests::schema_sidecar_row_and_self_consistent_state_substitution_fail_closed",
+      "argv": [
+        "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_service_settlement-e8b26e34e4187bec",
+        "--exact",
+        "tests::schema_sidecar_row_and_self_consistent_state_substitution_fail_closed",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+      "source_scope": "selected actual crate sources, manifests and workspace lock; partial checkout, not complete repository source qualification",
+      "build_receipt": "positive-owners-trnm-service-settlement.json",
+      "binary": {
+        "path": "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_service_settlement-e8b26e34e4187bec",
+        "bytes": 36281664,
+        "sha256": "e176dd801f83387fe4a5c86d5cf67b31d0b708ef81aed65f542f8f5742500a99"
+      },
+      "elapsed_seconds": 0.40943479537963867,
+      "exit_code": 0,
+      "native_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ]
+      ],
+      "selected_source_and_binary_unchanged": true,
+      "passed": true,
+      "stdout": {
+        "path": "retained-trnm-service-settlement-1.stdout",
+        "bytes": 202,
+        "sha256": "174483291a2bd405a439b05f3d40de2484c381f6c2911e663dd7d13cdf722442"
+      },
+      "stderr": {
+        "path": "retained-trnm-service-settlement-1.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "package": "trnm-service-settlement",
+      "test": "tests::open_existing_requires_precreated_regular_nonsymlink_store",
+      "argv": [
+        "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_service_settlement-e8b26e34e4187bec",
+        "--exact",
+        "tests::open_existing_requires_precreated_regular_nonsymlink_store",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+      "source_scope": "selected actual crate sources, manifests and workspace lock; partial checkout, not complete repository source qualification",
+      "build_receipt": "positive-owners-trnm-service-settlement.json",
+      "binary": {
+        "path": "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_service_settlement-e8b26e34e4187bec",
+        "bytes": 36281664,
+        "sha256": "e176dd801f83387fe4a5c86d5cf67b31d0b708ef81aed65f542f8f5742500a99"
+      },
+      "elapsed_seconds": 0.29148054122924805,
+      "exit_code": 0,
+      "native_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ]
+      ],
+      "selected_source_and_binary_unchanged": true,
+      "passed": true,
+      "stdout": {
+        "path": "retained-trnm-service-settlement-2.stdout",
+        "bytes": 191,
+        "sha256": "a3fa2aef3c7a7394ddc830e176d4913128ef33b515d9f6937e710410e529a0a1"
+      },
+      "stderr": {
+        "path": "retained-trnm-service-settlement-2.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "package": "trnm-service-settlement",
+      "test": "tests::commit_uncertainty_reopens_to_exact_source_target_or_permanent_fence",
+      "argv": [
+        "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_service_settlement-e8b26e34e4187bec",
+        "--exact",
+        "tests::commit_uncertainty_reopens_to_exact_source_target_or_permanent_fence",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+      "source_scope": "selected actual crate sources, manifests and workspace lock; partial checkout, not complete repository source qualification",
+      "build_receipt": "positive-owners-trnm-service-settlement.json",
+      "binary": {
+        "path": "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_service_settlement-e8b26e34e4187bec",
+        "bytes": 36281664,
+        "sha256": "e176dd801f83387fe4a5c86d5cf67b31d0b708ef81aed65f542f8f5742500a99"
+      },
+      "elapsed_seconds": 0.2631707191467285,
+      "exit_code": 0,
+      "native_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ]
+      ],
+      "selected_source_and_binary_unchanged": true,
+      "passed": true,
+      "stdout": {
+        "path": "retained-trnm-service-settlement-3.stdout",
+        "bytes": 201,
+        "sha256": "1d00f274a0a749f36dd5cbe36f8b3a5391a0a4ba2619df7ace16bf83da0cea24"
+      },
+      "stderr": {
+        "path": "retained-trnm-service-settlement-3.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "package": "trnm-task-kernel",
+      "test": "tests::schema_sidecar_row_and_journal_tamper_fail_closed_without_migration",
+      "argv": [
+        "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_task_kernel-ae4e1fff8461318b",
+        "--exact",
+        "tests::schema_sidecar_row_and_journal_tamper_fail_closed_without_migration",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+      "source_scope": "selected actual crate sources, manifests and workspace lock; partial checkout, not complete repository source qualification",
+      "build_receipt": "positive-owners-trnm-task-kernel.json",
+      "binary": {
+        "path": "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_task_kernel-ae4e1fff8461318b",
+        "bytes": 26741136,
+        "sha256": "81aa4bd3f3b4f45e4240fc67306156334e9b4fea35417c0274b75d8aef4b3e2c"
+      },
+      "elapsed_seconds": 0.23949599266052246,
+      "exit_code": 0,
+      "native_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ]
+      ],
+      "selected_source_and_binary_unchanged": true,
+      "passed": true,
+      "stdout": {
+        "path": "retained-trnm-task-kernel-1.stdout",
+        "bytes": 200,
+        "sha256": "67ab63b3bc2db5326fd32a2362f7ded67abd68eb01fe2055fa9265bd94b6c3f6"
+      },
+      "stderr": {
+        "path": "retained-trnm-task-kernel-1.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "package": "trnm-task-kernel",
+      "test": "tests::open_existing_requires_precreated_regular_nonsymlink_store",
+      "argv": [
+        "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_task_kernel-ae4e1fff8461318b",
+        "--exact",
+        "tests::open_existing_requires_precreated_regular_nonsymlink_store",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+      "source_scope": "selected actual crate sources, manifests and workspace lock; partial checkout, not complete repository source qualification",
+      "build_receipt": "positive-owners-trnm-task-kernel.json",
+      "binary": {
+        "path": "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_task_kernel-ae4e1fff8461318b",
+        "bytes": 26741136,
+        "sha256": "81aa4bd3f3b4f45e4240fc67306156334e9b4fea35417c0274b75d8aef4b3e2c"
+      },
+      "elapsed_seconds": 0.3249838352203369,
+      "exit_code": 0,
+      "native_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ]
+      ],
+      "selected_source_and_binary_unchanged": true,
+      "passed": true,
+      "stdout": {
+        "path": "retained-trnm-task-kernel-2.stdout",
+        "bytes": 191,
+        "sha256": "dfbe9ac56cbd1a67d342c2079eca2e0beef3e80bd903c1894a9e801f25eb5d2b"
+      },
+      "stderr": {
+        "path": "retained-trnm-task-kernel-2.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "package": "trnm-task-kernel",
+      "test": "tests::crash_outcomes_are_exact_and_third_state_is_permanently_fenced",
+      "argv": [
+        "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_task_kernel-ae4e1fff8461318b",
+        "--exact",
+        "tests::crash_outcomes_are_exact_and_third_state_is_permanently_fenced",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+      "source_scope": "selected actual crate sources, manifests and workspace lock; partial checkout, not complete repository source qualification",
+      "build_receipt": "positive-owners-trnm-task-kernel.json",
+      "binary": {
+        "path": "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_task_kernel-ae4e1fff8461318b",
+        "bytes": 26741136,
+        "sha256": "81aa4bd3f3b4f45e4240fc67306156334e9b4fea35417c0274b75d8aef4b3e2c"
+      },
+      "elapsed_seconds": 0.35846638679504395,
+      "exit_code": 0,
+      "native_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ]
+      ],
+      "selected_source_and_binary_unchanged": true,
+      "passed": true,
+      "stdout": {
+        "path": "retained-trnm-task-kernel-3.stdout",
+        "bytes": 195,
+        "sha256": "168f95010a7a5c657fa94e4b2dbb2983ec205b7661af124635a409f962a05149"
+      },
+      "stderr": {
+        "path": "retained-trnm-task-kernel-3.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "package": "trnm-task-kernel",
+      "test": "archive_store::tests::initialization_handles_long_final_names_and_concurrent_publishers",
+      "argv": [
+        "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_task_kernel-ae4e1fff8461318b",
+        "--exact",
+        "archive_store::tests::initialization_handles_long_final_names_and_concurrent_publishers",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+      "source_scope": "selected actual crate sources, manifests and workspace lock; partial checkout, not complete repository source qualification",
+      "build_receipt": "positive-owners-trnm-task-kernel.json",
+      "binary": {
+        "path": "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_task_kernel-ae4e1fff8461318b",
+        "bytes": 26741136,
+        "sha256": "81aa4bd3f3b4f45e4240fc67306156334e9b4fea35417c0274b75d8aef4b3e2c"
+      },
+      "elapsed_seconds": 0.2743549346923828,
+      "exit_code": 0,
+      "native_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ]
+      ],
+      "selected_source_and_binary_unchanged": true,
+      "passed": true,
+      "stdout": {
+        "path": "retained-trnm-task-kernel-4.stdout",
+        "bytes": 213,
+        "sha256": "b18508c22b620aee6541b214a69f7241a9860dc61823d4fb5e0f0d05b84f5be6"
+      },
+      "stderr": {
+        "path": "retained-trnm-task-kernel-4.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "package": "trnm-task-kernel",
+      "test": "archive_store::tests::archive_delete_moves_rows_and_reopen_preserves_proof",
+      "argv": [
+        "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_task_kernel-ae4e1fff8461318b",
+        "--exact",
+        "archive_store::tests::archive_delete_moves_rows_and_reopen_preserves_proof",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+      "source_scope": "selected actual crate sources, manifests and workspace lock; partial checkout, not complete repository source qualification",
+      "build_receipt": "positive-owners-trnm-task-kernel.json",
+      "binary": {
+        "path": "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_task_kernel-ae4e1fff8461318b",
+        "bytes": 26741136,
+        "sha256": "81aa4bd3f3b4f45e4240fc67306156334e9b4fea35417c0274b75d8aef4b3e2c"
+      },
+      "elapsed_seconds": 0.22301936149597168,
+      "exit_code": 0,
+      "native_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ]
+      ],
+      "selected_source_and_binary_unchanged": true,
+      "passed": true,
+      "stdout": {
+        "path": "retained-trnm-task-kernel-5.stdout",
+        "bytes": 200,
+        "sha256": "ca82e972c60c7c094d9c1fbff218fdc04e4d157aa38221954ae0ecc3a52f5658"
+      },
+      "stderr": {
+        "path": "retained-trnm-task-kernel-5.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "package": "trnm-task-kernel",
+      "test": "archive_store::tests::schema_and_archive_row_tamper_fail_closed_before_reopen_or_retry",
+      "argv": [
+        "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_task_kernel-ae4e1fff8461318b",
+        "--exact",
+        "archive_store::tests::schema_and_archive_row_tamper_fail_closed_before_reopen_or_retry",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "source_commit": "9021d15ffe1dfdfb1358a2372b5a472babbf80ac",
+      "source_scope": "selected actual crate sources, manifests and workspace lock; partial checkout, not complete repository source qualification",
+      "build_receipt": "positive-owners-trnm-task-kernel.json",
+      "binary": {
+        "path": "/workspace/scratch/3069292387f3/sqlite-target/debug/deps/trnm_task_kernel-ae4e1fff8461318b",
+        "bytes": 26741136,
+        "sha256": "81aa4bd3f3b4f45e4240fc67306156334e9b4fea35417c0274b75d8aef4b3e2c"
+      },
+      "elapsed_seconds": 0.20046162605285645,
+      "exit_code": 0,
+      "native_summaries": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ]
+      ],
+      "selected_source_and_binary_unchanged": true,
+      "passed": true,
+      "stdout": {
+        "path": "retained-trnm-task-kernel-6.stdout",
+        "bytes": 212,
+        "sha256": "43cada60752e01f70b43edffc11b586e9858ad36ab9225da76f40f274830a3b6"
+      },
+      "stderr": {
+        "path": "retained-trnm-task-kernel-6.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "all_passed": true
+}

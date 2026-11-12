@@ -1,0 +1,153 @@
+{
+  "receipts_verified": [
+    {
+      "prefix": "negative-native",
+      "exit_code": 101,
+      "summary": [
+        [
+          "FAILED",
+          "4",
+          "3",
+          "0"
+        ]
+      ]
+    },
+    {
+      "prefix": "negative-owners-trnm-mvcc-fee",
+      "exit_code": 101,
+      "summary": [
+        [
+          "FAILED",
+          "1",
+          "2",
+          "0"
+        ]
+      ]
+    },
+    {
+      "prefix": "negative-owners-trnm-service-settlement",
+      "exit_code": 101,
+      "summary": [
+        [
+          "FAILED",
+          "0",
+          "2",
+          "0"
+        ]
+      ]
+    },
+    {
+      "prefix": "negative-owners-trnm-task-kernel",
+      "exit_code": 101,
+      "summary": [
+        [
+          "FAILED",
+          "1",
+          "3",
+          "0"
+        ]
+      ]
+    },
+    {
+      "prefix": "positive-owners-trnm-data-availability",
+      "exit_code": 0,
+      "summary": [
+        [
+          "ok",
+          "8",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    {
+      "prefix": "positive-owners-trnm-mvcc-fee",
+      "exit_code": 0,
+      "summary": [
+        [
+          "ok",
+          "3",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    {
+      "prefix": "positive-owners-trnm-service-settlement",
+      "exit_code": 0,
+      "summary": [
+        [
+          "ok",
+          "2",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    {
+      "prefix": "positive-owners-trnm-task-kernel",
+      "exit_code": 0,
+      "summary": [
+        [
+          "ok",
+          "4",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    {
+      "prefix": "gate-format",
+      "exit_code": 0,
+      "summary": []
+    },
+    {
+      "prefix": "gate-metadata",
+      "exit_code": 0,
+      "summary": []
+    },
+    {
+      "prefix": "gate-source-integrity",
+      "exit_code": 0,
+      "summary": []
+    }
+  ],
+  "retained_verified": 15,
+  "selected_current_source_files_verified": 297,
+  "clippy_terminal_receipt_present": false,
+  "clippy_raw_stderr_sha256": "c7e2752ce8921876a6351089e86cdb2fdcdb627c0c6c13fefed44cd5b9a7924a",
+  "clippy_observed_compile_errors": [
+    "error: could not compile `trnm-mvcc-fee` (lib test)",
+    "error: could not compile `trnm-data-availability` (lib test)"
+  ],
+  "clippy_sigkill_count": 2,
+  "gzip_receipt_present": false,
+  "partial_gzip_files": [],
+  "positive_elfs_current": [
+    {
+      "package": "trnm-data-availability",
+      "exists": true,
+      "matches": true
+    },
+    {
+      "package": "trnm-mvcc-fee",
+      "exists": true,
+      "matches": true
+    },
+    {
+      "package": "trnm-service-settlement",
+      "exists": true,
+      "matches": true
+    },
+    {
+      "package": "trnm-task-kernel",
+      "exists": true,
+      "matches": true
+    }
+  ],
+  "bundle_bytes": 10377,
+  "bundle_sha256": "1867f362393ab85cfda7618c3f079111f26525e04f850b39b9214668a3aa8796",
+  "verification_kind": "read-only recovery check; no native compilation or test re-execution",
+  "source_scope": "297 selected source and manifest bytes; not a complete physical tracked-worktree scan",
+  "packaged_at_utc": "2026-11-12T00:47:04.151Z"
+}
