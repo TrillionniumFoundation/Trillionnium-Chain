@@ -4,7 +4,7 @@
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
 routes to the current reviewed source
-`0f0592ace4b08a1d39e1ffad31beee76ddc4fd66`. The
+`8dc744e03d95b0adcf65fc87471b41e89f1287c3`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -70,12 +70,13 @@ register. Those additional owners still require their own qualification work.
 
 ## Current source mapping and original record
 
-The [composition review](PQ_COMPOSITION_SOURCE_LOCK_REVIEW_20261108.md) preserves the old lock's actual refusal,
-reviews every changed curated path against exact Git blobs, and fixes the
-current table digest to:
+The [BT source review](PQ_AUTHORITY_BT_SOURCE_LOCK_REVIEW_20261112.md) preserves the old lock's actual refusal and the earlier [composition review](PQ_COMPOSITION_SOURCE_LOCK_REVIEW_20261108.md).
+It compares all 44 exact Git blobs and reviews the three changed paths without
+expanding any route, dependency-coverage claim or qualification. The current
+fixed table digest is:
 
 ```text
-4638bd340c2456dd735418f74ec27e01953432c2495b3db596f57d9fc31acb04
+921d25105565e9464d164c4985c7c7da839e7ad69aa7249938d8497d96115e4a
 ```
 
 All seven route definitions and all 44 required paths are retained. The
