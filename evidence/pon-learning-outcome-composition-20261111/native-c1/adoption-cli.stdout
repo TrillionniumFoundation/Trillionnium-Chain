@@ -1,0 +1,18 @@
+
+running 13 tests
+test cli_evidence_references_do_not_authenticate_claims_or_select_a_candidate ... ok
+test cli_historical_request_replay_exports_current_floor_and_conflicts_refuse ... ok
+test cli_init_and_observe_select_nothing_and_all_four_decisions_are_explicit ... ok
+test cli_latest_independent_floor_rejects_a_rolled_back_database ... ok
+test cli_nodes_can_adopt_or_defer_the_same_candidate_independently ... ok
+test cli_operator_inputs_require_private_files_parents_and_single_link_identity ... ok
+test cli_operator_paths_must_be_absolute_with_canonical_parent_directories ... ok
+test cli_proposal_retention_refuses_substituted_parent_evidence_and_extra_authority ... ok
+test cli_refuses_symlink_inputs_and_create_never_resets_an_existing_owner ... ok
+test cli_requires_floor_review_expected_snapshot_and_rejects_extra_arguments ... ok
+test cli_same_proposal_allows_adopt_defer_and_parent_retention_without_relabelling ... ok
+test cli_selected_readback_rejects_changed_execution_pins_and_corrupted_cache_bytes ... ok
+test cli_strict_policy_rejects_unknown_authority_fields_roles_and_noncanonical_hex ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.02s
+

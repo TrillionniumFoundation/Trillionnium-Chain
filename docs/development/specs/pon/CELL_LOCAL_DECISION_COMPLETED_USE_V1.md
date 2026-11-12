@@ -1,4 +1,4 @@
-# Qualified local decisions and original acknowledged use
+# Qualified local decisions and original completed use
 
 Status: engineering readback; no production or portable authorization.
 
@@ -13,7 +13,7 @@ need not be the same account.
 
 The HEPLCP04 choice is qualified `AdoptCandidate`, `DeferCandidate` or
 `RetainParent`. It does not rewrite Evaluation or Proposal as `NoUpdate`.
-Both Defer and Retain select the parent, but their signed local-choice bytes
+Both Defer and Retain select the parent, but their local-choice signing payloads
 remain different. The native use export's `retained_model` field identifies
 the object used, not why that object was selected.
 
@@ -43,7 +43,7 @@ the original request, receipt prefix or cross-material consistency checks.
 The historical HEPLCP02 and HEPLCP03 profiles are not silently upgraded. The
 new profile accepts only HEPLCP04. The original structural-only
 [`cell_learning_local_decision_join.py`](../../../../scripts/cell_learning_local_decision_join.py)
-still cannot report acknowledged use. Neither profile changes a learning
+still cannot report completed use. Neither profile changes a learning
 coordinator, model owner, payment account or local adoption database.
 
 ## Output and claim boundaries
@@ -57,17 +57,21 @@ no_update = false
 ```
 
 `retained_model` is true for Defer/Retain and false for Adopt. Only after the
-actual exported ACK state and exact final receipt match may the report set
-`acknowledged_use_observed=true` and
+actual exported pending state and exact final receipt match may the report set
+`completed_use_observed=true`, `pending_work_and_delivery_clear=true` and
 `final_next_use_matches_original_actor=true`. These describe consistency among
-the pinned materials. They do not authenticate their origin.
+the pinned materials. They do not authenticate their origin. An empty pending
+queue does not distinguish a task with no output from an explicit output ACK,
+so `output_ack_event_verified=false` remains explicit. The local actor fixtures
+use empty output deltas; pending-output mutations test the refusal boundary,
+not an observed ACK event.
 
 The report retains `DENY_ALL`, `NOT_EXPORTED` and `HOLD_NO_GO`. Receipt and grant
 signature verification, initial-freeze custody, Root scope authentication,
 independent evaluator/consumer control, actual training, complete costs,
 physical installation, settlement, full-state recovery and production
 qualification all remain unestablished by this reader. Model STOP is reported
-separately; an acknowledged advanced step is not relabelled a stopped model.
+separately; a completed advanced step is not relabelled a stopped model.
 
 Native actor fixtures exercise actual journals, CURRENT, publication and
 FinalUse mechanisms with controlled evidence. Their expectation pins remain

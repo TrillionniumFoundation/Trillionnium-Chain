@@ -1,4 +1,4 @@
-"""Bind original HEPLCP04 local decisions to acknowledged native next-task use.
+"""Bind original HEPLCP04 local decisions to completed native next-task use.
 
 This explicit profile joins the original Selection and completed checkpoint cuts
 to the existing production use export. Qualified Defer/Retain keep the parent
@@ -22,12 +22,14 @@ REPORT_SCHEMA = "trnm-cell-learning-local-decision-completed-use-review-v1"
 def review_native_local_learning_completion(
         selection_raw, completed_raw, readback_raw, *, expected_selection_sha256,
         expected_completed_sha256, expected_readback_sha256, frozen, expected):
-    """Check original request, exact receipt continuation, selected model and ACK.
+    """Check request, receipt continuation, selected model and clear pending state.
 
     Expectations must be retained by the invoking owner independently of the
     submitted materials. Fixture-derived pins only support engineering tests.
     This reader does not authenticate a Root scope profile, receipt signatures,
     independent evaluator/consumer, real training, or current permission.
+    No pending work or delivery cannot distinguish no output from an explicit
+    output acknowledgement; an output-ACK event is not verified here.
     """
     decoded = []
     for raw, pin in ((selection_raw, expected_selection_sha256),
@@ -78,7 +80,7 @@ def review_native_local_learning_completion(
     native.require((payload["disposition"] == "retained_model") == retained,
                    "LOCAL_USE_READBACK_DISPOSITION")
     native.require(not original["pending_work"] and not original["pending_delivery"],
-                   "LOCAL_USE_ACK_PENDING")
+                   "LOCAL_USE_PENDING_WORK_OR_DELIVERY")
     observed = dict(tag=7 if retained else 6, state_partition=dict(
         principal_id=native.native_digest(scope["principal_digest"]),
         agent_id=scope["agent_id"], cell_id=scope["cell_id"], run_id=scope["run_id"]))
@@ -91,7 +93,7 @@ def review_native_local_learning_completion(
                    "LOCAL_USE_ORIGINAL_NEXT_USE")
     choice = replay["local_decision"]
     return dict(
-        schema=REPORT_SCHEMA, scope="pinned-heplcp04-receipts-and-acknowledged-native-use-only",
+        schema=REPORT_SCHEMA, scope="pinned-heplcp04-receipts-and-completed-native-use-only",
         checkpoint_schema=local.MAGIC.decode("ascii"),
         selection_checkpoint_sha256=expected_selection_sha256,
         completed_checkpoint_sha256=expected_completed_sha256,
@@ -100,9 +102,12 @@ def review_native_local_learning_completion(
         local_disposition=local.CHOICES[choice["disposition"]], local_decision=copy.deepcopy(choice),
         evaluation_disposition="qualified", proposal_disposition="update_candidates", no_update=False,
         retained_model=retained, selected_bundle_digest=replay["next_task_bundle"],
+        next_use_evidence_digest=final["evidence_digest"],
+        next_use_observed_unix_seconds=final["observed_unix_seconds"],
         final_observation=observed, original_receipt_prefix_preserved=True,
         native_receipt_chain_complete=True, final_next_use_matches_original_actor=True,
-        acknowledged_use_observed=True, model_stop_observed=original["model_stop_observed"],
+        completed_use_observed=True, pending_work_and_delivery_clear=True, output_ack_event_verified=False,
+        model_stop_observed=original["model_stop_observed"],
         terminal_episode_observed=original["terminal_episode_observed"], native_readback_review=original,
         authority="DENY_ALL", current_permission="NOT_EXPORTED", qualification="HOLD_NO_GO",
         full_learning_iteration_completed=False, native_origin_authenticated=False,

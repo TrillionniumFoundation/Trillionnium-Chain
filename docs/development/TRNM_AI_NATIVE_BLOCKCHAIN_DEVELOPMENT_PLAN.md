@@ -6,12 +6,15 @@ must retain their exact identities and the actual merge parents.
 Keep valid W1 work independent of model gain, actual training `NoUpdate`
 independent of qualified node-local Defer/Retain, and miner/author/provider
 accounts independent. The [completed-use profile](specs/pon/CELL_LOCAL_DECISION_COMPLETED_USE_V1.md)
-joins original HEPLCP04 Selection and completion cuts with the native ACKed
-use export, without upgrading their authority. The
+joins original HEPLCP04 Selection and completion cuts with the native completed
+use export, requiring no pending work or delivery without inferring an explicit
+output ACK event or upgrading their authority. The
 [proposal-retention entry point](specs/pon/CELL_PROPOSAL_RETENTION_V1.md) binds
 the separately reviewed TCV1 proposal to ordinary Retain(parent), preserving
 TCA1 storage and replay semantics. It requires the original request for typed
 retry and cannot attest historical execution of that typed entry point.
+The [source and observation record](../../evidence/pon-learning-outcome-composition-20261111/README.md)
+retains original failures and the separately bound native sources.
 Run the new native role/payment, retention, CLI, original actor/SGD and
 cross-material refusal controls on their own fixed sources. Pending or failed
 executions remain pending or failed; no source-only pass grants model benefit,

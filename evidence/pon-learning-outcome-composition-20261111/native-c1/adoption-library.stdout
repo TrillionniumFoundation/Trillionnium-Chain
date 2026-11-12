@@ -1,0 +1,30 @@
+
+running 25 tests
+test cell::adoption::tests::a_retained_child_can_be_explicitly_readopted_after_rollback_at_a_new_revision ... ok
+test cell::adoption::tests::a_surviving_recovery_floor_rejects_whole_database_restore ... ok
+test cell::adoption::tests::all_four_actions_rollback_with_a_new_revision_and_exact_cold_readback ... ok
+test cell::adoption::tests::an_exact_nonorigin_anchor_bootstraps_without_claiming_historical_reverification ... ok
+test cell::adoption::tests::complete_parent_bytes_and_local_selection_history_are_required ... ok
+test cell::adoption::tests::execution_boundary_changes_and_unselected_versions_never_enter_consumer ... ok
+test cell::adoption::tests::finite_history_survives_reopen_and_idempotence_never_spends_another_slot ... ok
+test cell::adoption::tests::lost_reply_reconciles_the_original_request_and_precommit_cut_rolls_back ... ok
+test cell::adoption::tests::model_evidence_cannot_change_immutable_policy_or_bootstrap_another_origin ... ok
+test cell::adoption::tests::observations_and_same_candidate_two_node_choices_do_not_force_adoption ... ok
+test cell::adoption::tests::observed_committed_floor_survives_consumer_and_request_failure ... ok
+test cell::adoption::tests::replacement_and_hard_link_alias_refusal_are_latched ... ok
+test cell::adoption::tests::retention::legacy_retention_does_not_gain_a_proposal_binding_on_retry ... ok
+test cell::adoption::tests::retention::matching_raw_retention_does_not_attest_historical_typed_validation ... ok
+test cell::adoption::tests::retention::proposal_removal_refuses_typed_replay_without_reinterpreting_legacy_history ... ok
+test cell::adoption::tests::retention::proposal_retention_exact_retry_survives_new_evidence_cold_open_and_later_choice ... ok
+test cell::adoption::tests::retention::proposal_retention_idempotence_binds_proposal_evidence_review_and_snapshot ... ok
+test cell::adoption::tests::retention::proposal_retention_journal_tampering_refuses_recovery_and_consumer ... ok
+test cell::adoption::tests::retention::proposal_retention_keeps_original_atomicity_and_lost_reply_reconciliation ... ok
+test cell::adoption::tests::retention::proposal_retention_preserves_v1_target_and_binds_the_separate_proposal ... ok
+test cell::adoption::tests::retention::proposal_retention_rejects_unknown_unobserved_current_and_wrong_parent ... ok
+test cell::adoption::tests::schema_history_and_reference_tampering_refuse_before_use ... ok
+test cell::adoption::tests::selected_callback_excludes_cooperating_writer_without_wait_or_deadlock ... ok
+test cell::adoption::tests::snapshot_roundtrip_is_exact_but_does_not_authenticate_a_floor ... ok
+test cell::adoption::tests::stale_snapshot_and_changed_request_bytes_refuse_without_state_effects ... ok
+
+test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 736 filtered out; finished in 18.93s
+
