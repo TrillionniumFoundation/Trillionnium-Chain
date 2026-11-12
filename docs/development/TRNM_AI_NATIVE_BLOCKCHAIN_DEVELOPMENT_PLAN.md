@@ -1,3 +1,53 @@
+**Renewed execution on published C, 2026-11-12 UTC — HOLD:**
+
+The newly executed source is `b5c193ad6695bd883c0554da3bc9365364bb4478`,
+tree `9c62b7aa114f1f3cf68b8136b75de3ccb64c0490`. The original exact-source
+recorder verified all 28,789 tracked entries and 2,597,343,749 physical bytes
+before and after each local command. The original OpenSSL 3.5.9 preparation
+script verified its pinned source digest and ML-DSA smoke controls; preparation
+alone is not cryptographic or whole-chain acceptance.
+
+On C, all seven selected Node suites passed: 24 tests, no failures or ignored
+cases, including the unchanged five-method V4 suite and all five new V6 methods.
+M06 passed 159 tests with its nine existing ignored cases. Strict workspace /
+all-targets / all-features Clippy with `-D warnings`, formatting and both locked
+workspace and fuzz dependency graphs passed. The new Python observations are
+269 source/research controls plus a separate fresh 188-method original CI-contract
+suite, for 457 passing methods without skips. The earlier 188/233/269 observations
+keep their own source identities and are not counted as these executions.
+
+The unfiltered M12 library on the desktop also passed all 79 tests with no
+failed, ignored or filtered methods. Its original native stdout/stderr, receipt,
+exit and witness records were read back and hash-checked; all three source
+inventories bind the same clean C and 28,789 physical files. The first preparation
+attempt stopped at the original preflight because the driver chose detached
+HEAD; its exit-2 refusal and zero-test outcome remain preserved. The second
+attempt selected an allowed local test branch at the same C and passed. This
+component execution does not qualify the original malicious-traffic campaign.
+
+The executed V6 two-, three- and four-component cases paid the same known source
+66,666 gross each, the other source 33,333, and retained one unit of refund dust.
+The target source's net after its actual fees was respectively 60,051, 56,980
+and 53,941. Duplicate-claim, expiry/refund, wrong-payee, legacy-domain and intake
+cold-reopen controls passed. The unchanged V4 split counterexample also ran;
+its extra reward remains preserved as a failure of that old policy instance.
+
+These are finite signed-M06 partition, funding and state observations. The V6
+partition/claim/refund fixtures start from zero genesis; a nonzero parent is
+covered by the derivation unit control, not yet a complete second-generation
+V6 tag-8/tag-9 funding trace. The Node cold-reopen control covers an admitted
+contribution and deliberately keeps the current model unadopted. Neither result
+establishes a complete PNW1 release/adoption chain, independent future-task gain,
+unknown common control, maximum coalition profit or service liveness. The whole
+workspace native test matrix has not been rerun here. The full receiver campaign,
+ordinary Hepta closure and the remaining W0–W7 obligations stay open.
+
+The evidence-only successor records these observations under C, without relabeling
+them as executions of that successor. Its final source readers must also confirm
+that the tested Rust, formal models, CI scripts/workflows, and all other protected
+runtime inputs remain byte-identical. See the
+[renewed observation record](../../evidence/chain-source-composition-v6-20261112-6478/README.md).
+
 **Published runtime recovery and renewed acceptance, 2026-11-12 UTC — HOLD:**
 
 The published runtime checkpoint is `523bee8709645e7dbc3455f1dc74737f7067af62`.
@@ -103,8 +153,8 @@ The retained 100,000-unit V4 counterexample paid the same known source 66,666
 versus 96,551 gross, and 60,051 versus 86,865 after its fees. The V6 regression
 requires equivalent two-, three- and four-leaf partitions of the same complete
 bundle to reserve and pay 66,666 + 33,333, leaving one unit of original refund
-dust; extra split transactions still pay their real fees. These are asserted
-exit conditions until the exact new native execution is recorded.
+dust; extra split transactions still pay their real fees. The exact-source C observation above executes these finite partition
+exit conditions; the broader economic obligations remain open.
 
 Complete evaluation evidence is stored at
 `model-source-composition-v6:<bundle-id>`, with the release retaining a strict

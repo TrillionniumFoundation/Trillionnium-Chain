@@ -6,6 +6,54 @@ tree `5fdd5f7073a91d210c82411a37c8982d4159f29b`, above #940
 local runtime A tree, but has its own commit identity. Its source-binding
 successors and new native executions must be identified separately.
 
+## Renewed exact-C observations
+
+The actual newly tested commit is
+`b5c193ad6695bd883c0554da3bc9365364bb4478`, tree
+`9c62b7aa114f1f3cf68b8136b75de3ccb64c0490`. The final evidence-only successor
+does not acquire a new native execution identity from these results.
+
+| Evidence | Actual execution on C |
+| --- | --- |
+| `C-native-final-observation.tar.gz` | Seven Node suites: 24 passed, zero failed/ignored; M06: 159 passed and nine existing ignored. Strict workspace/all-targets/all-features Clippy with `-D warnings`, format and both locked dependency graphs passed. Includes original command receipts/logs, 28,789-entry physical source checks, pinned provider preparation, and a separately scoped fresh exact-rational Pearl C.5 scalar check. |
+| `final-C-python-gates-observation.tar.gz` | Fresh 269 methods: corpus 62, source integrity 43, authority 18, Root 43, lifetime 58, upstream 14 and proof binding 31; no skips. Eighteen original commands/readers include precise current-use refusals, corpus HOLD, repository/Markdown links and CI contract readers. |
+| `C-M12-full-observation.tar.xz` | Complete unfiltered M12 library: 79 passed, no failed/ignored/filtered methods; original native logs, source-bound receipt, exit/witness and failed first preparation retained. The [M12 manifest](C-M12-full-observation.manifest.json) states the exact-byte inventory recovery and the separate unknown control operations. |
+| `C-CI-contract-observation.tar.gz` | An additional fresh 188 methods through the unchanged original CI contract test suite, no skips, recorded on the same clean C. This is separate from the earlier 188-method observation. |
+
+The complete M12 library was executed separately on the desktop, where the
+Unix-socket fixtures are supported. All 79 methods passed without failed,
+ignored or filtered tests in the original Cargo profile. Native stdout/stderr,
+receipt, exit and witness records were read back and hash-verified. The first
+preparation's detached-HEAD preflight refusal is retained; it executed zero
+tests. The second preparation used an allowed local test branch at exactly C.
+
+All three M12 source inventories have 28,789 entries, 9,639,722 encoded bytes
+and SHA256 `790d926dbf76c374397546f1503bdccc6ee88ccd17a2276ec61ea54774aa7183`.
+Their exact bytes were recovered from C Git blobs / verified identical physical
+files and matched the original sealed receipt hashes. This deterministic
+inventory recovery is explicit; native logs and exit witnesses were retrieved
+as originals. The original remote gzip archives remain preserved. An uncertain
+remote recompression operation is not reinterpreted as a successful job.
+
+The V6 partition observation uses the original signed-M06 contiguous heights
+1–76 and unchanged 4,096-byte row limit. With 2, 3 and 4 total components, the
+known source receives 66,666 gross in every case, the other source receives
+33,333, and one unit remains as refund dust. After the source's actual fees,
+its net is 60,051, 56,980 and 53,941 respectively. It does not discover unknown
+common control or prove independent model benefit. All five V6 methods and the
+unchanged five V4 methods executed; a passing V4 counterexample test preserves
+the old policy's economic failure.
+
+The nonzero-parent V6 control is a derivation unit test. A full second-generation
+V6 signed funding/claim/refund trace remains open. The Node cold-reopen test
+proves retained contribution state and explicitly leaves the current model
+unadopted. A complete PNW1 release/adoption chain and the full workspace native
+test matrix remain unqualified. Local native command timings include source
+verification and are not a miner/attacker full-cost comparison.
+
+The [combined C observation manifest](C-observation-manifest.json) records every
+archive hash and member digest, qualification limits and source identity.
+
 ## Recovered original observations
 
 | Archive | Actual retained scope |
@@ -64,6 +112,6 @@ The W7 reader rejects current use of the withdrawn profile. Source controls do
 not qualify replacement circuits, regenerated receipts, useful learning,
 unseen common control, whole-chain security, production activation or merge.
 The original V4 failure and service campaign 0/3, phase 0/9 remain preserved.
-New exact-source native and source-gate evidence will be appended separately.
+The exact-C observations above are appended separately from all earlier results.
 
 See the [sole development plan](../../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
