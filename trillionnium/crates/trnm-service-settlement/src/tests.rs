@@ -1083,3 +1083,85 @@ fn open_existing_requires_precreated_regular_nonsymlink_store() {
         );
     }
 }
+
+#[cfg(unix)]
+#[test]
+fn sqlite_sidecar_objects_refuse_creation_and_reopen_without_file_effects() {
+    use std::os::unix::fs::symlink;
+
+    for existing in [false, true] {
+        let harness = Harness::new();
+        let database = harness.path.clone();
+        if existing {
+            drop(ConsumptionSettlementStoreV1::open(harness.config()).expect("initial store"));
+        }
+        let original = fs::read(&database).ok();
+        for suffix in ["-wal", "-shm", "-journal"] {
+            let mut name = database.as_os_str().to_os_string();
+            name.push(suffix);
+            let sidecar = std::path::PathBuf::from(name);
+            let target = database.parent().unwrap().join(format!("missing{suffix}"));
+            for dangling in [true, false] {
+                if dangling {
+                    symlink(&target, &sidecar).unwrap();
+                } else {
+                    fs::write(&sidecar, b"unresolved sidecar bytes").unwrap();
+                }
+                let error = ConsumptionSettlementStoreV1::open(harness.config())
+                    .expect_err("sidecar object must refuse before SQLite is opened");
+                assert_eq!(
+                    error.code(),
+                    ConsumptionSettlementErrorCodeV1::SidecarPresent
+                );
+                if existing {
+                    let error = ConsumptionSettlementStoreV1::open_existing(harness.config())
+                        .expect_err("existing opener must enforce the same sidecar boundary");
+                    assert_eq!(
+                        error.code(),
+                        ConsumptionSettlementErrorCodeV1::SidecarPresent
+                    );
+                }
+                assert_eq!(
+                    fs::read(&database).ok(),
+                    original,
+                    "database must remain unchanged"
+                );
+                if dangling {
+                    assert_eq!(fs::read_link(&sidecar).unwrap(), target);
+                    assert!(
+                        !target.exists(),
+                        "refusal must not create the symlink target"
+                    );
+                } else {
+                    assert_eq!(fs::read(&sidecar).unwrap(), b"unresolved sidecar bytes");
+                }
+                fs::remove_file(&sidecar).unwrap();
+            }
+        }
+        drop(
+            ConsumptionSettlementStoreV1::open(harness.config())
+                .expect("clean store remains available"),
+        );
+        ConsumptionSettlementStoreV1::open_existing(harness.config())
+            .expect("clean reopen remains available");
+    }
+}
+
+#[cfg(unix)]
+#[test]
+fn sqlite_sidecar_inspection_error_refuses_before_database_creation() {
+    let harness = Harness::new();
+    let mut config = harness.config();
+    config.path = config.path.with_file_name("a".repeat(255));
+    let database = config.path.clone();
+    let mut probe = database.as_os_str().to_os_string();
+    probe.push("-journal");
+    let cause = fs::symlink_metadata(&probe).expect_err("overlong sidecar fixture");
+    assert_ne!(cause.kind(), std::io::ErrorKind::NotFound);
+    let error = ConsumptionSettlementStoreV1::open(config)
+        .expect_err("inspection failure cannot be treated as sidecar absence");
+    assert_eq!(error.code(), ConsumptionSettlementErrorCodeV1::StoreFailure);
+    assert!(error.message().starts_with("cannot inspect SQLite sidecar"));
+    assert!(!database.exists(), "refusal must precede database creation");
+    assert_eq!(fs::read_dir(database.parent().unwrap()).unwrap().count(), 0);
+}

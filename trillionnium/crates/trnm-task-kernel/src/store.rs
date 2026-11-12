@@ -3867,14 +3867,26 @@ fn reject_sidecars(path: &Path) -> AgentMarketResultV1<()> {
         let mut sidecar_name = path.as_os_str().to_os_string();
         sidecar_name.push(suffix);
         let sidecar = PathBuf::from(sidecar_name);
-        if sidecar.exists() {
-            return Err(error(
-                AgentMarketErrorCodeV1::SidecarPresent,
-                format!(
-                    "unresolved SQLite sidecar is fail-closed: {}",
-                    sidecar.display()
-                ),
-            ));
+        match fs::symlink_metadata(&sidecar) {
+            Ok(_) => {
+                return Err(error(
+                    AgentMarketErrorCodeV1::SidecarPresent,
+                    format!(
+                        "unresolved SQLite sidecar is fail-closed: {}",
+                        sidecar.display()
+                    ),
+                ))
+            }
+            Err(cause) if cause.kind() == std::io::ErrorKind::NotFound => {}
+            Err(cause) => {
+                return Err(error(
+                    AgentMarketErrorCodeV1::StoreFailure,
+                    format!(
+                        "cannot inspect SQLite sidecar {}: {cause}",
+                        sidecar.display()
+                    ),
+                ))
+            }
         }
     }
     Ok(())
