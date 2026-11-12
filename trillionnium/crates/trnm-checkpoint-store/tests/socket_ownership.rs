@@ -284,7 +284,10 @@ fn complete_checkpoint_request_rejects_a_copied_lease_replacement() {
         );
         thread::sleep(Duration::from_millis(10));
     }
-    assert_eq!(fs::symlink_metadata(&socket).unwrap().ino(), original_socket);
+    assert_eq!(
+        fs::symlink_metadata(&socket).unwrap().ino(),
+        original_socket
+    );
     assert_eq!(fs::read(&log).unwrap(), original_journal);
     assert_eq!(fs::read(&lease).unwrap(), record);
 }

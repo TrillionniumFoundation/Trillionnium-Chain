@@ -1,3 +1,26 @@
+**Checkpoint formatter follow-up, 2026-11-12 UTC — HOLD:**
+
+Continue the published socket-probe evidence for source
+`7d4303f1a9ba3c259b92e58b85126eef3c5378a1` on its exact admitted evidence child.
+That source completed all fourteen native commands: thirteen returned zero and
+`cargo fmt --check` returned one for a single multiline assertion layout.
+The complete checkpoint package passed 58 tests, including the three original
+socket controls and the new complete-request rejection control; strict whole-
+workspace Clippy also returned zero. Preserve those observations on their
+original source and retain the earlier missing-target admission failure.
+
+Apply only the formatter-emitted wrapping of the new test's final socket-inode
+assertion. Keep all four socket tests, every assertion, the complete-request
+pathname fence and every other product source unchanged. The immediate source
+delta is this test, this plan prepend and the corresponding two existing
+corpus pins; preserve every earlier archive byte and pin.
+
+Run the same complete fourteen-command native gate on the new committed source,
+with the same test list, compiler/provider profile, resource limits and command
+budgets. Previous passing observations are not qualifications of the new source.
+The evidence child records the new results and updates the same Draft by an
+ordinary fast-forward. This remains HOLD, with no merge or production activation.
+
 **Checkpoint socket connect-only probe continuation, 2026-11-12 UTC — HOLD:**
 
 Preserve the Root continuation's original S879 socket observation (2 passed,
