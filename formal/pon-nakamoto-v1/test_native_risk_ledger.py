@@ -11,7 +11,7 @@ import tempfile
 import unittest
 from unittest import mock
 
-from native_execution_certificate import CertificateError
+from native_execution_certificate import CertificateError, canonical
 from native_owner_journal import DOMAIN as NATIVE_DOMAIN, MAGIC as NATIVE_MAGIC
 import native_risk_ledger as risk
 from native_risk_ledger import DOMAIN, MAGIC, read_frames, read_risk_ledger, read_run
@@ -293,6 +293,47 @@ class ActualNativeRiskLedgerTests(unittest.TestCase):
         def action(rows):
             outcomes = [f["payload"] for f in rows if f["payload"]["kind"] == "outcome"]
             outcomes[3]["confirmation_wrapper_result"] = copy.deepcopy(outcomes[1]["confirmation_wrapper_result"])
+        self.refused(self.mutated(action), "R_NATIVE_OUTCOME_BINDING")
+
+    def test_native_outcome_preserves_boolean_integer_and_float_types(self):
+        # The retained native results stay unchanged. Each independently
+        # rehashed bank copy has a different typed value that Python equality
+        # nevertheless considers equal to that original terminal result.
+        aliases = (
+            (0, "confirmed", 0),
+            (0, "confirmed", 0.0),
+            (0, "confirmed", -0.0),
+            (1, "confirmed", 1),
+            (1, "confirmed", 1.0),
+            (0, "included_height", 1.0),
+            (0, "included_height", True),
+            (0, "observed_now", 100.0),
+            (0, "depth", -0.0),
+            (0, "depth", False),
+            (0, "execution_authority", 0),
+        )
+        for index, field, changed in aliases:
+            def action(rows, index=index, field=field, changed=changed):
+                outcomes = [f["payload"] for f in rows if f["payload"]["kind"] == "outcome"]
+                result = outcomes[index]["confirmation_wrapper_result"]
+                self.assertIs(result["ok"], True)
+                original = copy.deepcopy(result)
+                result["value"][field] = changed
+                self.assertEqual(original, result)
+                self.assertNotEqual(canonical(original), canonical(result))
+            with self.subTest(outcome=index, field=field, value=repr(changed)):
+                bank = self.mutated(action)
+                self.refused(bank, "R_NATIVE_OUTCOME_BINDING")
+                if index == 0 and field == "confirmed" and type(changed) is int:
+                    # An independently retained original pin already rejected
+                    # this rewrite. The fix strengthens the inner binding;
+                    # it neither bypasses that pin nor attests current custody.
+                    self.refused(bank, "R_CHECKPOINT_MISMATCH", expected_checkpoint=self.bank_pin)
+
+    def test_native_outcome_binding_still_rejects_extra_nested_fields(self):
+        def action(rows):
+            outcome = next(f["payload"] for f in rows if f["payload"]["kind"] == "outcome")
+            outcome["confirmation_wrapper_result"]["value"]["additional_authority"] = False
         self.refused(self.mutated(action), "R_NATIVE_OUTCOME_BINDING")
 
     def test_refund_after_unconfirmed_result_is_not_a_wire_operation(self):

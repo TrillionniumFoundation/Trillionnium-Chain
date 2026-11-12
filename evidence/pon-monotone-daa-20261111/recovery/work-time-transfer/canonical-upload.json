@@ -1,0 +1,902 @@
+{
+  "acknowledged_ranges": [
+    {
+      "ack_file": "chunk-0000000.json",
+      "chunk_sha256": "945ccaafccd19133476a0e617b319e79934f7694f87faa602da22768ffdfcc4e",
+      "length": 65536,
+      "offset": 0
+    },
+    {
+      "ack_file": "chunk-0065536.json",
+      "chunk_sha256": "e559275276dabeddaa1d40f93857f85ebd7b25ff29f5d1a53bed5c9cd44066d6",
+      "length": 262144,
+      "offset": 65536
+    },
+    {
+      "ack_file": "chunk-0327680-reconcile-1.json",
+      "chunk_sha256": "4b709e9ac6da9389b4b8f50517a8cf8124650f306c3af0b82b1fb4748773cac8",
+      "length": 262144,
+      "offset": 327680
+    },
+    {
+      "ack_file": "chunk-0589824-attempt-0.json",
+      "chunk_sha256": "ecb11b39c6171a2376dc7e46bea6a1819af0059ffe28f4ec90b34044639d99e8",
+      "length": 262144,
+      "offset": 589824
+    },
+    {
+      "ack_file": "chunk-0851968-attempt-0.json",
+      "chunk_sha256": "f13b8aeca2072fec91a1b9408119cacba08e5de60409ba7fbb8fbe56b1dd8448",
+      "length": 262144,
+      "offset": 851968
+    },
+    {
+      "ack_file": "chunk-1114112-attempt-0.json",
+      "chunk_sha256": "6ae3e7dab721e0bce64bd849171e3c7d290e2cc114f9432e5fd4625dc14e84c1",
+      "length": 262144,
+      "offset": 1114112
+    },
+    {
+      "ack_file": "chunk-1376256-attempt-1.json",
+      "chunk_sha256": "673f21447fd93daaa42ba5ace9b78c783dd91ec03322356b0e1e1688c5b2babb",
+      "length": 262144,
+      "offset": 1376256
+    },
+    {
+      "ack_file": "chunk-1638400-attempt-0.json",
+      "chunk_sha256": "f844714354f902ca0b5fbba37d7c45160253b73adcf69234984313ecd6783370",
+      "length": 262144,
+      "offset": 1638400
+    },
+    {
+      "ack_file": "chunk-1900544-attempt-0.json",
+      "chunk_sha256": "be09a3ad1da0735aa3ab5aa69cdbbc70f508a42e8774424fd19c5516c829857a",
+      "length": 262144,
+      "offset": 1900544
+    },
+    {
+      "ack_file": "chunk-2162688-resume-v2.json",
+      "chunk_sha256": "40eeb190610d4edb73a53cdd72bd048c2d5f308bd4e22af9eb88aa57a8875eb8",
+      "length": 262144,
+      "offset": 2162688
+    },
+    {
+      "ack_file": "chunk-2424832-resume-v2.json",
+      "chunk_sha256": "6f5096a78df75211cc85a555e9c0e7a76561ca49b9958577e64948a3391a4b74",
+      "length": 262144,
+      "offset": 2424832
+    },
+    {
+      "ack_file": "chunk-2686976-resume-v2.json",
+      "chunk_sha256": "7003ef9012fa4c01fcd46de29e451e6f754a788f1b9e997b4a4e75fd2390aa39",
+      "length": 262144,
+      "offset": 2686976
+    },
+    {
+      "ack_file": "chunk-2949120-resume-v2.json",
+      "chunk_sha256": "ad2161c035e91d05017c244fc74010f7ddb54f8666668bb9b9102c485f4201c1",
+      "length": 262144,
+      "offset": 2949120
+    },
+    {
+      "ack_file": "chunk-3211264-resume-v2.json",
+      "chunk_sha256": "76ad69c80b1a2d717b71639110a8938b108588a82d52c5413c30d0b17719f2e7",
+      "length": 262144,
+      "offset": 3211264
+    },
+    {
+      "ack_file": "chunk-3473408-resume-v2.json",
+      "chunk_sha256": "27455f0983fd2130e5a9c3f321be28d552562f29c3f799c5807b20b80adb3d5f",
+      "length": 262144,
+      "offset": 3473408
+    },
+    {
+      "ack_file": "chunk-3735552-resume-v2.json",
+      "chunk_sha256": "6bc9be177f500890e2355b7cc71c1392de55548731ae89212af7085c42185377",
+      "length": 262144,
+      "offset": 3735552
+    },
+    {
+      "ack_file": "chunk-3997696-resume-v3.json",
+      "chunk_sha256": "2f5059b2b9a5c921587723cc01bccbea0ff4f58c64542add4792df87f7893304",
+      "length": 262144,
+      "offset": 3997696
+    },
+    {
+      "ack_file": "chunk-4259840-resume-v3.json",
+      "chunk_sha256": "d8c29a6a0a5b1b92f9b7d8a719afe345abe4270e43934f72ed7adf86253e75cc",
+      "length": 262144,
+      "offset": 4259840
+    },
+    {
+      "ack_file": "chunk-4521984-resume-v3.json",
+      "chunk_sha256": "33d4aa3b5e86325671c2e7cb7b99c4bf59914a5a8983a770bc7d2bdcd6ec4a74",
+      "length": 262144,
+      "offset": 4521984
+    },
+    {
+      "ack_file": "chunk-4784128-resume-v3.json",
+      "chunk_sha256": "f77bd53d855c9ed5efe1fb90c009341fdb8d33624b8746a541978f28a539b581",
+      "length": 209250,
+      "offset": 4784128
+    }
+  ],
+  "commit_verified": true,
+  "destination": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+  "destination_version": "2050:55904519:4993378:1794446904412631961:1794446917362221707",
+  "independent_file_info_verified": true,
+  "notes": [
+    "Chunk retries use the same upload ID, offset and data. No base64 payload is duplicated in this receipt.",
+    "An earlier client-controlled interruption left the next offset 2162688 effect uncertain; identical-offset resumption is recorded. No commit was dispatched by that interrupted client.",
+    "A later local-read guard stopped before dispatching offset 3997696; its underlying local result was not retained, so the cause remains unclassified.",
+    "The original 900 KiB direct-write part attempts were not used for this canonical archive. Their errors and later read-only probe remain separate observations."
+  ],
+  "raw_observations": {
+    "chunk-0000000.json": {
+      "chunk_sha256": "945ccaafccd19133476a0e617b319e79934f7694f87faa602da22768ffdfcc4e",
+      "length": 65536,
+      "offset": 0,
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":65536,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    "chunk-0065536.json": {
+      "chunk_sha256": "e559275276dabeddaa1d40f93857f85ebd7b25ff29f5d1a53bed5c9cd44066d6",
+      "length": 262144,
+      "offset": 65536,
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":327680,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    "chunk-0327680-reconcile-1.json": {
+      "chunk_sha256": "4b709e9ac6da9389b4b8f50517a8cf8124650f306c3af0b82b1fb4748773cac8",
+      "length": 262144,
+      "offset": 327680,
+      "reconciliation_attempt": 1,
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":589824,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    "chunk-0327680.json": {
+      "chunk_sha256": "4b709e9ac6da9389b4b8f50517a8cf8124650f306c3af0b82b1fb4748773cac8",
+      "length": 262144,
+      "offset": 327680,
+      "result": {
+        "content": [
+          {
+            "text": "tool call error: tool call failed for `codex_apps/h.binary_upload`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+            "type": "text"
+          }
+        ],
+        "isError": true
+      }
+    },
+    "chunk-0589824-attempt-0.json": {
+      "attempt": 0,
+      "chunk_sha256": "ecb11b39c6171a2376dc7e46bea6a1819af0059ffe28f4ec90b34044639d99e8",
+      "length": 262144,
+      "offset": 589824,
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":851968,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    "chunk-0851968-attempt-0.json": {
+      "attempt": 0,
+      "chunk_sha256": "f13b8aeca2072fec91a1b9408119cacba08e5de60409ba7fbb8fbe56b1dd8448",
+      "length": 262144,
+      "offset": 851968,
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":1114112,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    "chunk-1114112-attempt-0.json": {
+      "attempt": 0,
+      "chunk_sha256": "6ae3e7dab721e0bce64bd849171e3c7d290e2cc114f9432e5fd4625dc14e84c1",
+      "length": 262144,
+      "offset": 1114112,
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":1376256,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    "chunk-1376256-attempt-0.json": {
+      "attempt": 0,
+      "chunk_sha256": "673f21447fd93daaa42ba5ace9b78c783dd91ec03322356b0e1e1688c5b2babb",
+      "length": 262144,
+      "offset": 1376256,
+      "result": {
+        "content": [
+          {
+            "text": "tool call error: tool call failed for `codex_apps/h.binary_upload`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+            "type": "text"
+          }
+        ],
+        "isError": true
+      }
+    },
+    "chunk-1376256-attempt-1.json": {
+      "attempt": 1,
+      "chunk_sha256": "673f21447fd93daaa42ba5ace9b78c783dd91ec03322356b0e1e1688c5b2babb",
+      "length": 262144,
+      "offset": 1376256,
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":1638400,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    "chunk-1638400-attempt-0.json": {
+      "attempt": 0,
+      "chunk_sha256": "f844714354f902ca0b5fbba37d7c45160253b73adcf69234984313ecd6783370",
+      "length": 262144,
+      "offset": 1638400,
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":1900544,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    "chunk-1900544-attempt-0.json": {
+      "attempt": 0,
+      "chunk_sha256": "be09a3ad1da0735aa3ab5aa69cdbbc70f508a42e8774424fd19c5516c829857a",
+      "length": 262144,
+      "offset": 1900544,
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":2162688,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      }
+    },
+    "chunk-2162688-resume-v2-request.json": {
+      "attempt": "resume-v2",
+      "chunk_sha256": "40eeb190610d4edb73a53cdd72bd048c2d5f308bd4e22af9eb88aa57a8875eb8",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 2162688,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "reconciliation_note": "Last confirmed next_offset after client control interruption; any uncertain same-offset request uses identical bytes and upload ID.",
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "source_fingerprint": [
+        "27",
+        "1337717",
+        "4993378",
+        "1794443812341260572",
+        "1794443812677246190"
+      ],
+      "started_utc": "2026-11-12T01:18:57.634Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-2162688-resume-v2.json": {
+      "attempt": "resume-v2",
+      "chunk_sha256": "40eeb190610d4edb73a53cdd72bd048c2d5f308bd4e22af9eb88aa57a8875eb8",
+      "finished_utc": "2026-11-12T01:19:18.949Z",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 2162688,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "reconciliation_note": "Last confirmed next_offset after client control interruption; any uncertain same-offset request uses identical bytes and upload ID.",
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":2424832,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      },
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "source_fingerprint": [
+        "27",
+        "1337717",
+        "4993378",
+        "1794443812341260572",
+        "1794443812677246190"
+      ],
+      "started_utc": "2026-11-12T01:18:57.634Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-2424832-resume-v2-request.json": {
+      "attempt": "resume-v2",
+      "chunk_sha256": "6f5096a78df75211cc85a555e9c0e7a76561ca49b9958577e64948a3391a4b74",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 2424832,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "source_fingerprint": [
+        "27",
+        "1337717",
+        "4993378",
+        "1794443812341260572",
+        "1794443812677246190"
+      ],
+      "started_utc": "2026-11-12T01:19:19.594Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-2424832-resume-v2.json": {
+      "attempt": "resume-v2",
+      "chunk_sha256": "6f5096a78df75211cc85a555e9c0e7a76561ca49b9958577e64948a3391a4b74",
+      "finished_utc": "2026-11-12T01:20:33.920Z",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 2424832,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":2686976,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      },
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "source_fingerprint": [
+        "27",
+        "1337717",
+        "4993378",
+        "1794443812341260572",
+        "1794443812677246190"
+      ],
+      "started_utc": "2026-11-12T01:19:19.594Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-2686976-resume-v2-request.json": {
+      "attempt": "resume-v2",
+      "chunk_sha256": "7003ef9012fa4c01fcd46de29e451e6f754a788f1b9e997b4a4e75fd2390aa39",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 2686976,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "source_fingerprint": [
+        "27",
+        "1337717",
+        "4993378",
+        "1794443812341260572",
+        "1794443812677246190"
+      ],
+      "started_utc": "2026-11-12T01:20:34.560Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-2686976-resume-v2.json": {
+      "attempt": "resume-v2",
+      "chunk_sha256": "7003ef9012fa4c01fcd46de29e451e6f754a788f1b9e997b4a4e75fd2390aa39",
+      "finished_utc": "2026-11-12T01:22:29.641Z",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 2686976,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":2949120,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      },
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "source_fingerprint": [
+        "27",
+        "1337717",
+        "4993378",
+        "1794443812341260572",
+        "1794443812677246190"
+      ],
+      "started_utc": "2026-11-12T01:20:34.560Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-2949120-resume-v2-request.json": {
+      "attempt": "resume-v2",
+      "chunk_sha256": "ad2161c035e91d05017c244fc74010f7ddb54f8666668bb9b9102c485f4201c1",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 2949120,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "source_fingerprint": [
+        "27",
+        "1337717",
+        "4993378",
+        "1794443812341260572",
+        "1794443812677246190"
+      ],
+      "started_utc": "2026-11-12T01:22:30.283Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-2949120-resume-v2.json": {
+      "attempt": "resume-v2",
+      "chunk_sha256": "ad2161c035e91d05017c244fc74010f7ddb54f8666668bb9b9102c485f4201c1",
+      "finished_utc": "2026-11-12T01:22:49.580Z",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 2949120,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":3211264,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      },
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "source_fingerprint": [
+        "27",
+        "1337717",
+        "4993378",
+        "1794443812341260572",
+        "1794443812677246190"
+      ],
+      "started_utc": "2026-11-12T01:22:30.283Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-3211264-resume-v2-request.json": {
+      "attempt": "resume-v2",
+      "chunk_sha256": "76ad69c80b1a2d717b71639110a8938b108588a82d52c5413c30d0b17719f2e7",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 3211264,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "source_fingerprint": [
+        "27",
+        "1337717",
+        "4993378",
+        "1794443812341260572",
+        "1794443812677246190"
+      ],
+      "started_utc": "2026-11-12T01:22:50.199Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-3211264-resume-v2.json": {
+      "attempt": "resume-v2",
+      "chunk_sha256": "76ad69c80b1a2d717b71639110a8938b108588a82d52c5413c30d0b17719f2e7",
+      "finished_utc": "2026-11-12T01:24:06.457Z",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 3211264,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":3473408,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      },
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "source_fingerprint": [
+        "27",
+        "1337717",
+        "4993378",
+        "1794443812341260572",
+        "1794443812677246190"
+      ],
+      "started_utc": "2026-11-12T01:22:50.199Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-3473408-resume-v2-request.json": {
+      "attempt": "resume-v2",
+      "chunk_sha256": "27455f0983fd2130e5a9c3f321be28d552562f29c3f799c5807b20b80adb3d5f",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 3473408,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "source_fingerprint": [
+        "27",
+        "1337717",
+        "4993378",
+        "1794443812341260572",
+        "1794443812677246190"
+      ],
+      "started_utc": "2026-11-12T01:24:07.109Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-3473408-resume-v2.json": {
+      "attempt": "resume-v2",
+      "chunk_sha256": "27455f0983fd2130e5a9c3f321be28d552562f29c3f799c5807b20b80adb3d5f",
+      "finished_utc": "2026-11-12T01:24:47.694Z",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 3473408,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":3735552,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      },
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "source_fingerprint": [
+        "27",
+        "1337717",
+        "4993378",
+        "1794443812341260572",
+        "1794443812677246190"
+      ],
+      "started_utc": "2026-11-12T01:24:07.109Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-3735552-resume-v2-request.json": {
+      "attempt": "resume-v2",
+      "chunk_sha256": "6bc9be177f500890e2355b7cc71c1392de55548731ae89212af7085c42185377",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 3735552,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "source_fingerprint": [
+        "27",
+        "1337717",
+        "4993378",
+        "1794443812341260572",
+        "1794443812677246190"
+      ],
+      "started_utc": "2026-11-12T01:24:48.379Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-3735552-resume-v2.json": {
+      "attempt": "resume-v2",
+      "chunk_sha256": "6bc9be177f500890e2355b7cc71c1392de55548731ae89212af7085c42185377",
+      "finished_utc": "2026-11-12T01:25:26.532Z",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 3735552,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":3997696,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      },
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "source_fingerprint": [
+        "27",
+        "1337717",
+        "4993378",
+        "1794443812341260572",
+        "1794443812677246190"
+      ],
+      "started_utc": "2026-11-12T01:24:48.379Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-3997696-resume-v3-request.json": {
+      "attempt": "resume-v3",
+      "chunk_sha256": "2f5059b2b9a5c921587723cc01bccbea0ff4f58c64542add4792df87f7893304",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 3997696,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "started_utc": "2026-11-12T01:26:35.652Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-3997696-resume-v3.json": {
+      "attempt": "resume-v3",
+      "chunk_sha256": "2f5059b2b9a5c921587723cc01bccbea0ff4f58c64542add4792df87f7893304",
+      "finished_utc": "2026-11-12T01:27:13.712Z",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 3997696,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":4259840,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      },
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "started_utc": "2026-11-12T01:26:35.652Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-4259840-resume-v3-request.json": {
+      "attempt": "resume-v3",
+      "chunk_sha256": "d8c29a6a0a5b1b92f9b7d8a719afe345abe4270e43934f72ed7adf86253e75cc",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 4259840,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "started_utc": "2026-11-12T01:27:14.576Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-4259840-resume-v3.json": {
+      "attempt": "resume-v3",
+      "chunk_sha256": "d8c29a6a0a5b1b92f9b7d8a719afe345abe4270e43934f72ed7adf86253e75cc",
+      "finished_utc": "2026-11-12T01:27:39.147Z",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 4259840,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":4521984,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      },
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "started_utc": "2026-11-12T01:27:14.576Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-4521984-resume-v3-request.json": {
+      "attempt": "resume-v3",
+      "chunk_sha256": "33d4aa3b5e86325671c2e7cb7b99c4bf59914a5a8983a770bc7d2bdcd6ec4a74",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 4521984,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "started_utc": "2026-11-12T01:27:39.776Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-4521984-resume-v3.json": {
+      "attempt": "resume-v3",
+      "chunk_sha256": "33d4aa3b5e86325671c2e7cb7b99c4bf59914a5a8983a770bc7d2bdcd6ec4a74",
+      "finished_utc": "2026-11-12T01:28:19.479Z",
+      "host": "desktop",
+      "length": 262144,
+      "offset": 4521984,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":4784128,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      },
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "started_utc": "2026-11-12T01:27:39.776Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-4784128-resume-v3-request.json": {
+      "attempt": "resume-v3",
+      "chunk_sha256": "f77bd53d855c9ed5efe1fb90c009341fdb8d33624b8746a541978f28a539b581",
+      "host": "desktop",
+      "length": 209250,
+      "offset": 4784128,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "started_utc": "2026-11-12T01:28:20.127Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "chunk-4784128-resume-v3.json": {
+      "attempt": "resume-v3",
+      "chunk_sha256": "f77bd53d855c9ed5efe1fb90c009341fdb8d33624b8746a541978f28a539b581",
+      "finished_utc": "2026-11-12T01:28:28.974Z",
+      "host": "desktop",
+      "length": 209250,
+      "offset": 4784128,
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "result": {
+        "content": [
+          {
+            "text": "{\"next_offset\":4993378,\"upload_id\":\"work-time-recovery-upload-v1-7f73\",\"visible\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      },
+      "source": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+      "started_utc": "2026-11-12T01:28:20.127Z",
+      "total_bytes": 4993378,
+      "total_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+      "upload_id": "work-time-recovery-upload-v1-7f73"
+    },
+    "client-fingerprint-refusal.json": {
+      "diagnosis": "Nanosecond metadata had crossed JSON into JavaScript Number and was not safely representable. Full source size/SHA is rechecked before capturing a string-valued fingerprint. No chunk after offset zero had been sent at this refusal.",
+      "exit_code": 1,
+      "offset": 65536,
+      "output": "Traceback (most recent call last):\n  File \"<stdin>\", line 5, in <module>\nAssertionError\n",
+      "stage": "local chunk read before remote mutation"
+    },
+    "client-local-read-interruption-v2.json": {
+      "commit_sent": false,
+      "last_acknowledged_next_offset": 3997696,
+      "limitation": "The guard lacked handling for a local execution result without exit_code; the underlying result was not retained. Cause remains unclassified. A later small local read returned exit_code 0 and confirmed source and last ACK files still present.",
+      "next_chunk_sent": false,
+      "observed_error": "Script error: Error at exec_main.mjs:11:32",
+      "stage": "local next-chunk read before remote mutation"
+    },
+    "commit-request.json": {
+      "attempt": 1,
+      "request": {
+        "action": "commit",
+        "expected_version": "absent",
+        "host": "desktop",
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+        "sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+        "size": 4993378,
+        "upload_id": "work-time-recovery-upload-v1-7f73"
+      },
+      "started_utc": "2026-11-12T01:28:34.588Z"
+    },
+    "commit-result.json": {
+      "attempt": 1,
+      "finished_utc": "2026-11-12T01:29:16.405Z",
+      "request": {
+        "action": "commit",
+        "expected_version": "absent",
+        "host": "desktop",
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+        "sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+        "size": 4993378,
+        "upload_id": "work-time-recovery-upload-v1-7f73"
+      },
+      "result": {
+        "content": [
+          {
+            "text": "{\"committed\":true,\"mode\":384,\"reused\":false,\"sha256\":\"6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea\",\"size\":4993378,\"version\":\"2050:55904519:4993378:1794446904412631961:1794446917362221707\"}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      },
+      "started_utc": "2026-11-12T01:28:34.588Z"
+    },
+    "file-info.json": {
+      "finished_utc": "2026-11-12T01:29:31.083Z",
+      "request": {
+        "host": "desktop",
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz"
+      },
+      "result": {
+        "content": [
+          {
+            "text": "{\"metadata\":{\"acl_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"gid\":1000,\"link_count\":1,\"metadata_platform\":\"linux\",\"mode\":384,\"uid\":1000,\"xattr_names\":[],\"xattr_sha256\":{}},\"mode\":384,\"path\":\"/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz\",\"sha256\":\"6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea\",\"size\":4993378,\"version\":\"2050:55904519:4993378:1794446904412631961:1794446917362221707\"}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": null
+      },
+      "started_utc": "2026-11-12T01:29:23.906Z"
+    }
+  },
+  "recorded_client_boundary_events": [
+    "client-fingerprint-refusal.json",
+    "client-local-read-interruption-v2.json"
+  ],
+  "recorded_upload_error_files": [
+    "chunk-0327680.json",
+    "chunk-1376256-attempt-0.json"
+  ],
+  "schema": "pon-work-time-canonical-upload-v1",
+  "sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+  "size": 4993378,
+  "source_archive": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz",
+  "source_sha256_rechecked_at_summary": true,
+  "summary_utc": "2026-11-12T01:30:16.943261+00:00",
+  "unique_bytes_acknowledged": 4993378,
+  "unique_chunks": 20,
+  "upload_id": "work-time-recovery-upload-v1-7f73",
+  "visible_after_commit": true
+}

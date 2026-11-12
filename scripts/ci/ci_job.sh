@@ -320,6 +320,9 @@ PY
       export TRNM_JOINT_DAA_EVIDENCE_DIR="$trnm_model_receipt_root/joint-daa"
       test ! -e "$TRNM_JOINT_DAA_EVIDENCE_DIR"
       test ! -L "$TRNM_JOINT_DAA_EVIDENCE_DIR"
+      export TRNM_MONOTONE_DAA_EVIDENCE_DIR="$trnm_model_receipt_root/monotone-daa"
+      test ! -e "$TRNM_MONOTONE_DAA_EVIDENCE_DIR"
+      test ! -L "$TRNM_MONOTONE_DAA_EVIDENCE_DIR"
       export TRNM_WORK_SCHEDULE_RESEARCH_DIR="$trnm_model_receipt_root/branch-work-schedule"
       test ! -e "$TRNM_WORK_SCHEDULE_RESEARCH_DIR"
       test ! -L "$TRNM_WORK_SCHEDULE_RESEARCH_DIR"
@@ -342,6 +345,11 @@ PY
       python3 scripts/pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth" --expected-report-sha256 "$(sha256sum "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth/joint-daa.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/joint-daa-pgh2-python.json"
       python3 scripts/ci/test_pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth"
       unset TRNM_JOINT_DAA_EVIDENCE_DIR
+      python3 scripts/pon_monotone_daa_reader.py --raw-dir "$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pnh1-authenticated" --expected-report-sha256 "$(sha256sum "$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pnh1-authenticated/monotone-daa.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/monotone-daa-pnh1-python.json"
+      python3 scripts/ci/test_pon_monotone_daa_reader.py --raw-dir "$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pnh1-authenticated"
+      python3 scripts/pon_monotone_daa_reader.py --raw-dir "$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pgh2-growth" --expected-report-sha256 "$(sha256sum "$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pgh2-growth/monotone-daa.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/monotone-daa-pgh2-python.json"
+      python3 scripts/ci/test_pon_monotone_daa_reader.py --raw-dir "$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pgh2-growth"
+      unset TRNM_MONOTONE_DAA_EVIDENCE_DIR
       python3 formal/pon-nakamoto-v1/test_zero_work.py --verify-prefix-export "$trnm_model_receipt_root/zero-paired-prefix" --output "$trnm_model_receipt_root/zero-paired-prefix-python"
       python3 formal/pon-nakamoto-v1/test_model_composition_oracle.py -v
       python3 formal/pon-nakamoto-v1/test_model_composition.py -v

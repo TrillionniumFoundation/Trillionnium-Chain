@@ -770,17 +770,27 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             check_independent_conformance(moved, self.lanes)
 
-    def test_native_joint_daa_requires_both_fresh_profiles_and_current_report_digests(self):
+    def _assert_native_daa_requires_both_fresh_profiles_and_current_report_digests(
+            self, selector, report_filename):
         lines = [line + '\n' for line in self.script.splitlines()
-                 if 'TRNM_JOINT_DAA_EVIDENCE_DIR' in line]
+                 if selector in line]
         self.assertEqual(len(lines), 8)
         for command in lines:
             for replacement in ('', command * 2):
                 with self.subTest(command=command, replacement=replacement), self.assertRaises(ValueError):
                     check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+            moved = self.script.replace(command, '').replace(
+                '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
+            with self.subTest(command=command, moved=True), self.assertRaises(ValueError):
+                check_independent_conformance(moved, self.lanes)
+        for leaked in ('    export ' + selector + '=/tmp/stale-other-run\n',
+                       '    unset ' + selector + '\n'):
+            changed = self.script.replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + leaked)
+            with self.subTest(leaked=leaked), self.assertRaises(ValueError):
+                check_independent_conformance(changed, self.lanes)
         for profile, other in [('pnh1-authenticated', 'pgh2-growth'),
                                ('pgh2-growth', 'pnh1-authenticated')]:
-            raw_argument = '--raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/' + profile + '"'
+            raw_argument = '--raw-dir "$' + selector + '/' + profile + '"'
             commands = [line for line in lines if 'python3 ' in line and raw_argument in line]
             self.assertEqual(len(commands), 2)
             for command in commands:
@@ -789,15 +799,15 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                     '      if false; then\n' + command + '      fi\n',
                     command.rstrip() + ' || true\n',
                     command.replace(raw_argument, '--raw-dir "/tmp/stale-other-run"'),
-                    command.replace(raw_argument, '--raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR"'),
+                    command.replace(raw_argument, '--raw-dir "$' + selector + '"'),
                     command.replace(raw_argument, raw_argument.replace(profile, other)),
                 )
                 for replacement in replacements:
                     with self.subTest(profile=profile, replacement=replacement), self.assertRaises(ValueError):
                         check_independent_conformance(self.script.replace(command, replacement), self.lanes)
             reader = next(command for command in commands if '--expected-report-sha256' in command)
-            digest = ('$(sha256sum "$TRNM_JOINT_DAA_EVIDENCE_DIR/' + profile
-                      + '/joint-daa.json" | cut -d \' \' -f 1)')
+            digest = ('$(sha256sum "$' + selector + '/' + profile
+                      + '/' + report_filename + '" | cut -d \' \' -f 1)')
             self.assertIn(digest, reader)
             replacements = [reader.replace(digest, value)
                             for value in ('0' * 64, '$(printf stale-prior-report)',
@@ -806,6 +816,14 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             for replacement in replacements:
                 with self.subTest(profile=profile, replacement=replacement), self.assertRaises(ValueError):
                     check_independent_conformance(self.script.replace(reader, replacement), self.lanes)
+
+    def test_native_joint_daa_requires_both_fresh_profiles_and_current_report_digests(self):
+        self._assert_native_daa_requires_both_fresh_profiles_and_current_report_digests(
+            'TRNM_JOINT_DAA_EVIDENCE_DIR', 'joint-daa.json')
+
+    def test_native_monotone_daa_requires_both_fresh_profiles_and_current_report_digests(self):
+        self._assert_native_daa_requires_both_fresh_profiles_and_current_report_digests(
+            'TRNM_MONOTONE_DAA_EVIDENCE_DIR', 'monotone-daa.json')
 
     def test_cost_counterexamples_require_their_real_input_arguments(self):
         for command in [COST_BOUNDARY_READERS.splitlines(keepends=True)[0],

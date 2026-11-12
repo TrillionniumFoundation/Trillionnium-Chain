@@ -357,6 +357,116 @@ class TemporalRuleTests(unittest.TestCase):
             view.requirement(header.record_id)
 
 
+class PeriodicCompressionRegressionTests(unittest.TestCase):
+    """Exact legacy arithmetic contrast; no native packets or mining clocks."""
+
+    def branching_view(self):
+        rules = schedule(())
+        view = BranchTimeDaa(rules)
+        receipts = {}
+
+        def record(parent_id, height, timestamp, label):
+            header = view.candidate(parent_id, timestamp,
+                                    identity(f"{label}:{height}:{parent_id}"))
+            self.assertEqual(header.height, height)
+            # These are explicit logical observations, not measured completion
+            # times or an assumption that the proof can be mined by this time.
+            receipts[header.record_id] = view.append(
+                header, rules.genesis_timestamp + height * rules.legacy.spacing)
+            return header.record_id
+
+        common = view.genesis_id
+        for height in range(1, 16):
+            common = record(common, height, rules.genesis_timestamp + height * 10, "common")
+        ordinary = common
+        for height in range(16, 66):
+            ordinary = record(ordinary, height, rules.genesis_timestamp + height * 10, "ordinary")
+        compressed = common
+        for height in range(16, 65):
+            compressed = record(compressed, height, view.header(compressed).timestamp + 1,
+                                "strictly-increasing-compressed")
+        return rules, view, common, ordinary, compressed, receipts
+
+    @staticmethod
+    def required_credit(view, tip):
+        # Recompute from the selected ancestry, excluding the genesis record.
+        return sum((1 << 256) // (header.target + 1)
+                   for header in view.ancestry(tip) if header.height)
+
+    def test_strictly_increasing_legacy_branch_reaches_793_with_positive_spans(self):
+        rules, view, common, ordinary, compressed, receipts = self.branching_view()
+        self.assertEqual(rules.upgrades, ())
+        self.assertEqual(view.header(common).height, 15)
+        ordinary_branch = view.ancestry(ordinary)
+        compressed_branch = view.ancestry(compressed)
+        ordinary_ids = {header.record_id for header in ordinary_branch if header.height}
+        compressed_ids = {header.record_id for header in compressed_branch if header.height}
+        common_ids = {header.record_id for header in view.ancestry(common) if header.height}
+        self.assertEqual(ordinary_ids & compressed_ids, common_ids)
+        self.assertEqual(len(ordinary_ids | compressed_ids), 114)
+        self.assertEqual(set(receipts), ordinary_ids | compressed_ids)
+        self.assertEqual(len(json.loads(view.snapshot())["records"]), 114)
+        self.assertEqual((view.header(ordinary).height, self.required_credit(view, ordinary)),
+                         (65, 130))
+        self.assertEqual((view.header(compressed).height, self.required_credit(view, compressed)),
+                         (64, 793))
+        for branch in (ordinary_branch, compressed_branch):
+            self.assertTrue(all(child.timestamp > parent.timestamp
+                                for child, parent in zip(branch, branch[1:])))
+            self.assertEqual(sum(receipts[header.record_id].required_work
+                                 for header in branch if header.height),
+                             self.required_credit(view, branch[0].record_id))
+
+        by_height = {header.height: header for header in compressed_branch}
+        for height in range(16, 65):
+            self.assertEqual(by_height[height].timestamp - by_height[height - 1].timestamp, 1)
+        self.assertEqual([receipts[by_height[h].record_id].required_work
+                          for h in (16, 32, 48, 64)], [2, 7, 31, 123])
+        signed_spans, clamped_spans = [], []
+        for height in (32, 48, 64):
+            first, last = by_height[height - 16], by_height[height - 1]
+            signed_span = last.timestamp - first.timestamp
+            desired = (rules.legacy.interval - 1) * rules.legacy.spacing
+            clamped = min(4 * desired, max((desired + 3) // 4, max(1, signed_span)))
+            signed_spans.append(signed_span)
+            clamped_spans.append(clamped)
+            self.assertEqual(by_height[height].target,
+                             retained_periodic_retarget(last.target, first.timestamp,
+                                                        last.timestamp, 16, 10, LIMIT))
+        self.assertEqual(signed_spans, [15, 15, 15])
+        self.assertEqual(clamped_spans, [38, 38, 38])
+        self.assertIs(qualification()["mixed_consensus_security_proved"], False)
+        self.assertIs(qualification()["complete_work_relation_verified"], False)
+
+    def test_compressed_legacy_replay_preserves_credit_and_current_clock_refusal(self):
+        rules, warm, _, ordinary, compressed, receipts = self.branching_view()
+        snapshot = warm.snapshot()
+        cold = BranchTimeDaa.restore(snapshot, rules, snapshot_id(snapshot))
+        self.assertEqual(cold.snapshot(), snapshot)
+        for tip, expected_credit in ((ordinary, 130), (compressed, 793)):
+            self.assertEqual(cold.ancestry(tip), warm.ancestry(tip))
+            self.assertEqual(cold.requirement(tip), warm.requirement(tip))
+            for state in (warm, cold):
+                header = state.header(tip)
+                earliest_clock = header.timestamp - rules.legacy.future_skew
+                self.assertEqual(self.required_credit(state, tip), expected_credit)
+                with self.assertRaisesRegex(TimeDeferred, "ACTIVATION_TIME_DEFERRED"):
+                    state.check_activation_clock(tip, earliest_clock - 1)
+                with self.assertRaisesRegex(TimeDeferred, "TIME_DEFERRED"):
+                    state.append(header, earliest_clock - 1)
+                self.assertEqual(state.snapshot(), snapshot)
+                state.check_activation_clock(tip, earliest_clock)
+                # A later duplicate supplies the original arithmetic receipt;
+                # it cannot create another record or increase branch credit.
+                self.assertEqual(state.append(header, earliest_clock), receipts[tip])
+                self.assertEqual(state.snapshot(), snapshot)
+                self.assertEqual(self.required_credit(state, tip), expected_credit)
+        for name, value in qualification().items():
+            if name not in ("schema", "scope"):
+                with self.subTest(qualification=name):
+                    self.assertIs(value, False)
+
+
 class ColdReplayTests(unittest.TestCase):
     def branching_view(self):
         rules = schedule((Upgrade(16, 10, 160, 120), Upgrade(32, 20, 80, 60)))

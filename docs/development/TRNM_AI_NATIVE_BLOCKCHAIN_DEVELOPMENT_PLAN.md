@@ -10769,3 +10769,26 @@ no qualification source pin, threshold, signed domain or stored schema changes.
 New-candidate Rust graph/format/Clippy/native gates require their own execution;
 the original source runtime successes are not reassigned to this fix. All
 thirteen actual joint proof obligations remain open and HOLD_NO_GO remains.
+
+## Strictly increasing DAA compression and exact evidence binding (2026-11-11)
+
+Continue the #863 research candidate at
+`249f772cc2a2ace5e363fd5fbfec4241a26f4d4d` in an isolated task branch. Extend
+the existing periodic reference and native DAA fixture with a common-prefix,
+strict `parent.timestamp + 1` branch: positive epoch spans 15 still clamp to
+38 and yield height 64 / required work 793 against ordinary height 65 / 130.
+Preserve the negative-span experiment and require separately named PNH1 and
+PGH2 exports, complete W1 replay, current-clock activation and cold readback.
+Register the new controls in the existing exact work/time roster and the
+original native observation lane; missing exports or skipped readers refuse.
+
+Bind the native risk-ledger wrapper to the terminal's exact parsed JSON types
+and values, retaining the original byte/checkpoint contracts and all rejected
+observations. The [joint audit](../protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_DAA_AUDIT_20261108.md)
+and [execution record](../../evidence/pon-monotone-daa-20261111/README.md) distinguish
+arithmetic replay, actual native execution and the evidence-reader repair.
+Native production rules and confirmation thresholds remain as specified;
+common prefix, chain growth, chain quality, the six-successor failure bound
+and lifetime composition still need their joint-model proofs. Neither a
+timestamp monotonicity rule nor either square-root scoring suggestion is
+activated by this continuation. All original HOLD / NO-GO gates remain.

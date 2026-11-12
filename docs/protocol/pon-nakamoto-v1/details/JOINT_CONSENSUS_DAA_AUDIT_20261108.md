@@ -247,3 +247,58 @@ audit in `evidence/pon-joint-consensus-daa-20261108`. They distinguish source
 checks, native execution, independent relation replay and conditional cost
 arithmetic. Any failed command remains in that record. A successful finite
 fixture does not close the physical work or whole-network security obligations.
+
+## Strictly increasing compression control (2026-11-11)
+
+The continuation on #863 at `249f772cc2a2ace5e363fd5fbfec4241a26f4d4d`
+makes the monotone-compression limitation executable without changing the
+installed timestamp, target, fork-choice or confirmation rules. The existing
+`BranchTimeDaa` periodic reference shares heights 0 through 15 between two
+branches. Ordinary timestamps continue at ten seconds per height; the other
+branch uses exactly `parent.timestamp + 1` from height 16. Every timestamp is
+strictly greater than its immediate parent as well as its branch's MTP.
+
+| New-target height | Compressed first endpoint | Compressed last endpoint | Signed span | Effective span | New block work |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 16 | 0 | 150 | 150 | 150 | 2 |
+| 32 | 151 | 166 | 15 | 38 | 7 |
+| 48 | 167 | 182 | 15 | 38 | 31 |
+| 64 | 183 | 198 | 15 | 38 | 123 |
+
+Endpoints in the table are seconds after genesis. Exact accumulated work,
+excluding genesis, is again 130 at ordinary height 65 and 793 at compressed
+height 64. Thus negative epoch spans are not necessary for this finite
+lower-clamp behavior. A strict-parent timestamp proposal would reject the old
+negative-span trajectory while still permitting this one. This observation
+does not establish that the more expensive classical branch can be produced
+within an adversary's budget, or that an honest confirmation is reversed under
+a real network schedule.
+
+The two new tests in `daa_joint_consensus.rs` exercise this schedule through
+the existing PNH1 and PGH2 owners. They require actual complete PNW1 generation,
+admission, observed-clock activation and cold readback, with a separate
+`pon-native-monotone-daa-v1` export. The old negative-span tests and their
+`pon-native-joint-daa-v1` reader retain their original contracts. The new
+`scripts/pon_monotone_daa_reader.py` independently recomputes all 114 packet
+relations and the exact positive-span trajectory; it does not execute M06,
+SQLite or a native cold reopen itself. Execution status and original logs
+belong to the [continuation evidence](../../../../evidence/pon-monotone-daa-20261111/README.md).
+
+Each run contains 15 common, 50 ordinary and 49 compressed packets. These are
+114 unique packets within that run, not 114 independent attack samples. Some
+PNH1 common/ordinary packets can be byte-identical to the previous experiment.
+Logical validation clocks and native execution duration remain distinct; no
+ten-second wall-clock mining cadence, quantum cost or profitability is inferred.
+
+The same continuation tightens the existing native risk-ledger reader's
+outcome binding. A bank wrapper must match the separately checked native
+terminal's parsed JSON types and values: `false` cannot stand for integer `0`,
+nor integer `1` for floating-point `1.0`. An external checkpoint still binds
+the original bank bytes. This repairs an offline evidence comparison; native
+confirmation results, probability bounds and release authority are unchanged.
+
+The existing [joint qualification contract](JOINT_CONSENSUS_QUALIFICATION_V1.md)
+continues to require one justified model and native refinement for common
+prefix, chain growth, both chain-quality notions and the installed confirmation
+event. Its 18 unknown inputs, 13 open proof obligations and null confirmation
+and lifetime bounds cannot be filled by either of these finite regressions.

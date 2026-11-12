@@ -1,0 +1,389 @@
+{
+  "schema": "pon-ci-diagnosis-bounded-transfer-v1",
+  "started_utc": "2026-11-12T01:18:23.491Z",
+  "authorization_scope": "New parent-authorized transfer; separate from preceding read-only CI diagnosis. Source, PR and all other archives unchanged.",
+  "host": "desktop",
+  "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/source-head-diagnosis.tar.gz",
+  "upload_id": "daa-source-ci-diagnosis-upload-v1-7f73",
+  "chunk_bytes": 262144,
+  "expected_version_at_commit": "absent",
+  "source": {
+    "path": "/workspace/scratch/7f73fe002713/daa-evidence-stage/ci/source-head-diagnosis.tar.gz",
+    "bytes": 1027003,
+    "sha256": "32d47db9ae014badf460c086d993a678f3eb5492f276ac356ae14884095594e7",
+    "fingerprint": {
+      "mtime_ns": "1794446126246116264",
+      "ctime_ns": "1794446126246116264",
+      "inode": "1336478",
+      "device": "27",
+      "size": "1027003"
+    },
+    "chunks": [
+      {
+        "offset": 0,
+        "bytes": 262144,
+        "sha256": "5b5d85285168524467ef46b4b7044b96d8289890013491562442591670a83197"
+      },
+      {
+        "offset": 262144,
+        "bytes": 262144,
+        "sha256": "6c0207778f6da330d0ec4d4fbe6c8e7cd423f10cb2ffcdba8c13cfecde41914f"
+      },
+      {
+        "offset": 524288,
+        "bytes": 262144,
+        "sha256": "4603ca5c2b928730a3b9fb58909152f38e1054bd26013224f1711a327cea68a0"
+      },
+      {
+        "offset": 786432,
+        "bytes": 240571,
+        "sha256": "e7ca6df207c3f2c19172c71605609668a166e911b99177d35be764e4f3e3e37a"
+      }
+    ]
+  },
+  "last_acknowledged_offset": 1027003,
+  "remote_published": true,
+  "completion_status": "COMPLETE_VERIFIED",
+  "actions": [
+    {
+      "kind": "chunk",
+      "attempt": 1,
+      "offset": 0,
+      "bytes": 262144,
+      "sha256": "5b5d85285168524467ef46b4b7044b96d8289890013491562442591670a83197",
+      "request": {
+        "action": "chunk",
+        "host": "desktop",
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/source-head-diagnosis.tar.gz",
+        "upload_id": "daa-source-ci-diagnosis-upload-v1-7f73",
+        "offset": 0,
+        "data_base64_omitted": true,
+        "encoded_characters": 349528
+      },
+      "started_utc": "2026-11-12T01:19:08.074Z",
+      "observed_status": "TOOL_ERROR_REMOTE_EFFECT_UNDETERMINED",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "chunk requires expected version and bounded base64 data"
+          }
+        ],
+        "structuredContent": {
+          "error_code": "INVALID_ARGUMENT"
+        },
+        "isError": true
+      },
+      "completed_utc": "2026-11-12T01:19:23.202Z"
+    },
+    {
+      "kind": "chunk",
+      "attempt": 2,
+      "offset": 0,
+      "bytes": 262144,
+      "sha256": "5b5d85285168524467ef46b4b7044b96d8289890013491562442591670a83197",
+      "reason": "Add required expected_version after previous INVALID_ARGUMENT; same upload ID, offset and payload.",
+      "request": {
+        "action": "chunk",
+        "host": "desktop",
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/source-head-diagnosis.tar.gz",
+        "upload_id": "daa-source-ci-diagnosis-upload-v1-7f73",
+        "offset": 0,
+        "expected_version": "absent",
+        "data_base64_omitted": true,
+        "encoded_characters": 349528
+      },
+      "started_utc": "2026-11-12T01:19:52.617Z",
+      "observed_status": "TOOL_ERROR_REMOTE_EFFECT_UNDETERMINED",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "tool call error: tool call failed for `codex_apps/h.binary_upload`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+          }
+        ],
+        "isError": true
+      },
+      "completed_utc": "2026-11-12T01:21:53.155Z"
+    },
+    {
+      "kind": "chunk",
+      "attempt": 3,
+      "offset": 0,
+      "bytes": 262144,
+      "sha256": "5b5d85285168524467ef46b4b7044b96d8289890013491562442591670a83197",
+      "reason": "One bounded identical replay after MCP timeout; same upload ID, offset, payload and expected_version.",
+      "request": {
+        "action": "chunk",
+        "host": "desktop",
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/source-head-diagnosis.tar.gz",
+        "upload_id": "daa-source-ci-diagnosis-upload-v1-7f73",
+        "offset": 0,
+        "expected_version": "absent",
+        "data_base64_omitted": true,
+        "encoded_characters": 349528
+      },
+      "started_utc": "2026-11-12T01:22:13.617Z",
+      "observed_status": "ACKNOWLEDGED",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"next_offset\":262144,\"upload_id\":\"daa-source-ci-diagnosis-upload-v1-7f73\",\"visible\":false}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      },
+      "completed_utc": "2026-11-12T01:22:30.764Z"
+    },
+    {
+      "kind": "chunk",
+      "attempt": 1,
+      "offset": 262144,
+      "bytes": 262144,
+      "sha256": "6c0207778f6da330d0ec4d4fbe6c8e7cd423f10cb2ffcdba8c13cfecde41914f",
+      "request": {
+        "action": "chunk",
+        "host": "desktop",
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/source-head-diagnosis.tar.gz",
+        "upload_id": "daa-source-ci-diagnosis-upload-v1-7f73",
+        "offset": 262144,
+        "expected_version": "absent",
+        "data_base64_omitted": true,
+        "encoded_characters": 349528
+      },
+      "started_utc": "2026-11-12T01:23:07.607Z",
+      "observed_status": "ACKNOWLEDGED",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"next_offset\":524288,\"upload_id\":\"daa-source-ci-diagnosis-upload-v1-7f73\",\"visible\":false}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      },
+      "completed_utc": "2026-11-12T01:24:07.496Z"
+    },
+    {
+      "kind": "chunk",
+      "attempt": 1,
+      "offset": 524288,
+      "bytes": 262144,
+      "sha256": "4603ca5c2b928730a3b9fb58909152f38e1054bd26013224f1711a327cea68a0",
+      "request": {
+        "action": "chunk",
+        "host": "desktop",
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/source-head-diagnosis.tar.gz",
+        "upload_id": "daa-source-ci-diagnosis-upload-v1-7f73",
+        "offset": 524288,
+        "expected_version": "absent",
+        "data_base64_omitted": true,
+        "encoded_characters": 349528
+      },
+      "started_utc": "2026-11-12T01:24:07.845Z",
+      "observed_status": "ACKNOWLEDGED",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"next_offset\":786432,\"upload_id\":\"daa-source-ci-diagnosis-upload-v1-7f73\",\"visible\":false}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      },
+      "completed_utc": "2026-11-12T01:24:47.810Z"
+    },
+    {
+      "kind": "chunk",
+      "attempt": 1,
+      "offset": 786432,
+      "bytes": 240571,
+      "sha256": "e7ca6df207c3f2c19172c71605609668a166e911b99177d35be764e4f3e3e37a",
+      "request": {
+        "action": "chunk",
+        "host": "desktop",
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/source-head-diagnosis.tar.gz",
+        "upload_id": "daa-source-ci-diagnosis-upload-v1-7f73",
+        "offset": 786432,
+        "expected_version": "absent",
+        "data_base64_omitted": true,
+        "encoded_characters": 320764
+      },
+      "started_utc": "2026-11-12T01:24:48.160Z",
+      "observed_status": "ACKNOWLEDGED",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"next_offset\":1027003,\"upload_id\":\"daa-source-ci-diagnosis-upload-v1-7f73\",\"visible\":false}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      },
+      "completed_utc": "2026-11-12T01:25:26.532Z"
+    },
+    {
+      "kind": "commit",
+      "attempt": 1,
+      "request": {
+        "action": "commit",
+        "host": "desktop",
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/source-head-diagnosis.tar.gz",
+        "upload_id": "daa-source-ci-diagnosis-upload-v1-7f73",
+        "size": 1027003,
+        "sha256": "32d47db9ae014badf460c086d993a678f3eb5492f276ac356ae14884095594e7",
+        "expected_version": "absent"
+      },
+      "started_utc": "2026-11-12T01:26:07.784Z",
+      "observed_status": "TOOL_ERROR_REMOTE_EFFECT_UNDETERMINED",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "tool call error: tool call failed for `codex_apps/h.binary_upload`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+          }
+        ],
+        "isError": true
+      },
+      "completed_utc": "2026-11-12T01:28:08.232Z"
+    },
+    {
+      "kind": "commit",
+      "attempt": 2,
+      "reason": "One bounded identical commit replay after MCP timeout; fixed upload ID, size, SHA256 and expected_version=absent.",
+      "request": {
+        "action": "commit",
+        "host": "desktop",
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/source-head-diagnosis.tar.gz",
+        "upload_id": "daa-source-ci-diagnosis-upload-v1-7f73",
+        "size": 1027003,
+        "sha256": "32d47db9ae014badf460c086d993a678f3eb5492f276ac356ae14884095594e7",
+        "expected_version": "absent"
+      },
+      "started_utc": "2026-11-12T01:28:31.949Z",
+      "observed_status": "RESPONSE_OBSERVED",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"committed\":true,\"mode\":384,\"reused\":false,\"sha256\":\"32d47db9ae014badf460c086d993a678f3eb5492f276ac356ae14884095594e7\",\"size\":1027003,\"version\":\"2050:55904023:1027003:1794446716019614405:1794446917300223671\"}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      },
+      "completed_utc": "2026-11-12T01:29:17.683Z"
+    },
+    {
+      "kind": "independent_file_info",
+      "attempt": 1,
+      "request": {
+        "host": "desktop",
+        "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/source-head-diagnosis.tar.gz"
+      },
+      "started_utc": "2026-11-12T01:29:42.319Z",
+      "observed_status": "VERIFIED_MATCH",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"metadata\":{\"acl_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"gid\":1000,\"link_count\":1,\"metadata_platform\":\"linux\",\"mode\":384,\"uid\":1000,\"xattr_names\":[],\"xattr_sha256\":{}},\"mode\":384,\"path\":\"/home/qian-qi/chain-daa-monotone-20261111-7f73/source-head-diagnosis.tar.gz\",\"sha256\":\"32d47db9ae014badf460c086d993a678f3eb5492f276ac356ae14884095594e7\",\"size\":1027003,\"version\":\"2050:55904023:1027003:1794446716019614405:1794446917300223671\"}"
+          }
+        ],
+        "structuredContent": null,
+        "isError": false
+      },
+      "completed_utc": "2026-11-12T01:29:47.558Z"
+    }
+  ],
+  "local_payload_preparation": {
+    "completed_utc": "2026-11-12T01:18:47.949Z",
+    "source_fingerprint_checked_before_after_each_read": true,
+    "maximum_read_bytes": 24576,
+    "chunks": [
+      {
+        "offset": 0,
+        "bytes": 262144,
+        "sha256": "5b5d85285168524467ef46b4b7044b96d8289890013491562442591670a83197",
+        "bounded_reads": 11
+      },
+      {
+        "offset": 262144,
+        "bytes": 262144,
+        "sha256": "6c0207778f6da330d0ec4d4fbe6c8e7cd423f10cb2ffcdba8c13cfecde41914f",
+        "bounded_reads": 11
+      },
+      {
+        "offset": 524288,
+        "bytes": 262144,
+        "sha256": "4603ca5c2b928730a3b9fb58909152f38e1054bd26013224f1711a327cea68a0",
+        "bounded_reads": 11
+      },
+      {
+        "offset": 786432,
+        "bytes": 240571,
+        "sha256": "e7ca6df207c3f2c19172c71605609668a166e911b99177d35be764e4f3e3e37a",
+        "bounded_reads": 10
+      }
+    ]
+  },
+  "chunk_expected_version": "absent",
+  "commit_attempted": true,
+  "destination_independently_verified": true,
+  "commit_acknowledged": {
+    "committed": true,
+    "mode": 384,
+    "reused": false,
+    "sha256": "32d47db9ae014badf460c086d993a678f3eb5492f276ac356ae14884095594e7",
+    "size": 1027003,
+    "version": "2050:55904023:1027003:1794446716019614405:1794446917300223671"
+  },
+  "final_file_info_attempted": true,
+  "destination_info": {
+    "metadata": {
+      "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gid": 1000,
+      "link_count": 1,
+      "metadata_platform": "linux",
+      "mode": 384,
+      "uid": 1000,
+      "xattr_names": [],
+      "xattr_sha256": {}
+    },
+    "mode": 384,
+    "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/source-head-diagnosis.tar.gz",
+    "sha256": "32d47db9ae014badf460c086d993a678f3eb5492f276ac356ae14884095594e7",
+    "size": 1027003,
+    "version": "2050:55904023:1027003:1794446716019614405:1794446917300223671"
+  },
+  "source_after": {
+    "path": "/workspace/scratch/7f73fe002713/daa-evidence-stage/ci/source-head-diagnosis.tar.gz",
+    "bytes": 1027003,
+    "sha256": "32d47db9ae014badf460c086d993a678f3eb5492f276ac356ae14884095594e7",
+    "fingerprint": {
+      "mtime_ns": "1794446126246116264",
+      "ctime_ns": "1794446126246116264",
+      "inode": "1336478",
+      "device": "27",
+      "size": "1027003"
+    },
+    "observed_utc": "2026-11-12T01:30:11.653Z",
+    "same_bytes_and_sha256": true,
+    "same_fingerprint": true
+  },
+  "completed_utc": "2026-11-12T01:30:11.653Z",
+  "result": {
+    "delivered": true,
+    "all_chunk_offsets_acknowledged": true,
+    "commit_acknowledged": true,
+    "independent_destination_size_sha256_and_version_match": true,
+    "local_archive_unchanged": true,
+    "source_or_pr_modified": false,
+    "prior_errors_retained": true
+  }
+}

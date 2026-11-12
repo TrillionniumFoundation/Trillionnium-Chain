@@ -1,4 +1,4 @@
-//! Joint native evidence for repeated nonmonotone retarget endpoints.
+//! Joint native evidence for nonmonotone and strictly increasing compressed times.
 //! Every accepted block carries a real PNW1 proof and crosses its actual storage
 //! owner's admission path. Logical clocks do not measure attack profitability.
 use serde_json::{json, Value};
@@ -13,6 +13,31 @@ const GENESIS_TIME: u64 = 1_750_000_000;
 const INTERVAL: u64 = 16;
 const SPACING: u64 = 10;
 const ATTEMPTS: u64 = 4096;
+
+#[derive(Clone, Copy)]
+enum TimestampSchedule {
+    NegativeEndpoints,
+    StrictMonotone,
+}
+impl TimestampSchedule {
+    fn is_monotone(self) -> bool {
+        matches!(self, Self::StrictMonotone)
+    }
+    fn name(self) -> &'static str {
+        match self {
+            Self::NegativeEndpoints => "repeated-negative-endpoints",
+            Self::StrictMonotone => "strict-monotone-compressed",
+        }
+    }
+    fn activate(self, backend: Backend, node: &mut Node, id: Hash, now: u64) -> Hash {
+        match self {
+            Self::NegativeEndpoints => backend.activate(node, id, now),
+            // The new experiment checks complete ancestry at the declared
+            // logical activation clock for both native storage profiles.
+            Self::StrictMonotone => node.activate_observed(id, now).unwrap(),
+        }
+    }
+}
 
 #[derive(Clone, Copy)]
 enum Backend {
@@ -80,8 +105,8 @@ impl Backend {
     fn activate(self, node: &mut Node, id: Hash, now: u64) -> Hash {
         match self {
             Self::Pnh1 => node.activate_observed(id, now).unwrap(),
-            // Growth has its own PNP2 history and journal path. Its activation
-            // API does not accept a clock; all timestamps were checked at admission.
+            // The historical negative-endpoint PGH2 fixture intentionally keeps
+            // non-observed activation; admission checked its timestamp clocks.
             Self::Pgh2 => node.activate(id).unwrap(),
         }
     }
@@ -233,7 +258,32 @@ impl Evidence {
         accumulated
     }
     fn retain(&self, backend: Backend, report: &Value) {
-        if let Some(root) = std::env::var_os("TRNM_JOINT_DAA_EVIDENCE_DIR") {
+        self.retain_profile(
+            backend,
+            report,
+            "TRNM_JOINT_DAA_EVIDENCE_DIR",
+            "joint-daa.json",
+            "pon_native_joint_daa_v1",
+        );
+    }
+    fn retain_monotone(&self, backend: Backend, report: &Value) {
+        self.retain_profile(
+            backend,
+            report,
+            "TRNM_MONOTONE_DAA_EVIDENCE_DIR",
+            "monotone-daa.json",
+            "pon_native_monotone_daa_v1",
+        );
+    }
+    fn retain_profile(
+        &self,
+        backend: Backend,
+        report: &Value,
+        environment: &str,
+        filename: &str,
+        label: &str,
+    ) {
+        if let Some(root) = std::env::var_os(environment) {
             let root = std::path::PathBuf::from(root);
             fs::create_dir_all(&root).unwrap();
             // Two tests may share a root; each exact profile remains create-only.
@@ -252,22 +302,34 @@ impl Evidence {
             fs::OpenOptions::new()
                 .write(true)
                 .create_new(true)
-                .open(path.join("joint-daa.json"))
+                .open(path.join(filename))
                 .unwrap()
                 .write_all(&serde_json::to_vec_pretty(report).unwrap())
                 .unwrap();
         }
-        eprintln!(
-            "pon_native_joint_daa_v1 {}",
-            serde_json::to_string(report).unwrap()
-        );
+        eprintln!("{label} {}", serde_json::to_string(report).unwrap());
     }
 }
 
 fn run(backend: Backend) {
+    run_schedule(backend, TimestampSchedule::NegativeEndpoints);
+}
+
+fn run_schedule(backend: Backend, schedule: TimestampSchedule) {
     let temporary = tempfile::tempdir().unwrap();
     let path = temporary.path().join("node");
-    let settings = backend.settings();
+    let settings = if schedule.is_monotone() && matches!(backend, Backend::Pgh2) {
+        Settings::development_with_profiles(
+            Some(GENESIS_TIME),
+            "native-public-evaluation-dev-v1",
+            continuity_v1::PROFILE,
+        )
+        .unwrap()
+        .with_permanent_account_growth_v2("joint-daa-monotone-endpoints-v1")
+        .unwrap()
+    } else {
+        backend.settings()
+    };
     let mut node = backend.open(&path, settings.clone());
     let initial = node.expected_target(settings.genesis()).unwrap();
     let mut limit = [255; 32];
@@ -291,10 +353,12 @@ fn run(backend: Backend) {
     let mut previous_target = initial;
     let mut retargets = Vec::new();
     let mut final_packet = None;
-    // At 16/32/48 the altered branch places one fresh wall-clock spike. The
-    // remaining fifteen timestamps are MTP+1. The period endpoints reverse
-    // while each individual timestamp remains valid. Height 64 consumes the
-    // third consecutive lower clamp; the honest branch then extends to 65.
+    // The original schedule puts a logical-clock spike at 16/32/48 and uses
+    // MTP+1 between them. Its negative spans and original assertions remain.
+    // The new schedule instead uses parent+1 at every altered block, including
+    // epoch seams. Its positive 15-second spans still consume the same lower
+    // clamp. Both use actual target-bound W1, but neither prices real mining
+    // cadence or an adversary's physical resource share.
     for height in INTERVAL..=4 * INTERVAL {
         let now = GENESIS_TIME + height * SPACING;
         for arm in 0..2 {
@@ -302,7 +366,14 @@ fn run(backend: Backend) {
             if arm == 1 && height > INTERVAL && height.is_multiple_of(INTERVAL) {
                 let first = period_first.unwrap();
                 let last = period_last.unwrap();
-                assert!(last < first, "endpoint reversal must be strict");
+                match schedule {
+                    TimestampSchedule::NegativeEndpoints => {
+                        assert!(last < first, "endpoint reversal must be strict");
+                    }
+                    TimestampSchedule::StrictMonotone => {
+                        assert_eq!(last.checked_sub(first), Some(INTERVAL - 1));
+                    }
+                }
                 let expected =
                     consensus::retarget(previous_target, first, last, INTERVAL, SPACING, limit)
                         .unwrap();
@@ -320,12 +391,20 @@ fn run(backend: Backend) {
             if arm == 0 {
                 assert_eq!(target, initial);
             }
-            let timestamp = if arm == 0 || height.is_multiple_of(INTERVAL) {
+            let timestamp = if arm == 0 {
                 now
             } else {
-                median(&recent(&node, backend, tips[arm]))
-                    .checked_add(1)
-                    .unwrap()
+                match schedule {
+                    TimestampSchedule::NegativeEndpoints if height.is_multiple_of(INTERVAL) => now,
+                    TimestampSchedule::NegativeEndpoints => {
+                        median(&recent(&node, backend, tips[arm]))
+                            .checked_add(1)
+                            .unwrap()
+                    }
+                    TimestampSchedule::StrictMonotone => {
+                        recent(&node, backend, tips[arm])[0].checked_add(1).unwrap()
+                    }
+                }
             };
             let packet = backend.make(&node, tips[arm], timestamp, arm as u64);
             assert_eq!(packet.header().target, target);
@@ -334,7 +413,11 @@ fn run(backend: Backend) {
                 &mut node,
                 backend,
                 &packet,
-                ["ordinary", "repeated-negative-endpoints"][arm],
+                if arm == 0 {
+                    "ordinary"
+                } else {
+                    schedule.name()
+                },
                 now,
                 weights[arm],
             );
@@ -355,15 +438,38 @@ fn run(backend: Backend) {
     assert_eq!(ordinary.header().height, 65);
     weights[0] = evidence.admit(&mut node, backend, &ordinary, "ordinary", now, weights[0]);
     tips[0] = ordinary.id();
+    assert_eq!(evidence.rows.len(), 114);
+    assert_eq!(evidence.packets.len(), 114);
+    for (actual, expected) in weights.iter().zip([130_u64, 793]) {
+        let mut expected_bytes = [0; 64];
+        expected_bytes[56..].copy_from_slice(&expected.to_be_bytes());
+        assert_eq!(actual.bytes(), expected_bytes);
+    }
+    if schedule.is_monotone() {
+        // Check every recorded real packet, including common and ordinary
+        // blocks. The hypothetical monotonicity restriction is only a fixture
+        // condition; the installed consensus is not changed by this test.
+        for row in &evidence.rows {
+            let parent = row["ancestor_timestamps_parent_first"][0].as_u64().unwrap();
+            let timestamp = row["timestamp"].as_u64().unwrap();
+            assert!(timestamp > parent);
+            if row["schedule"] == schedule.name() {
+                assert_eq!(timestamp, parent.checked_add(1).unwrap());
+            }
+        }
+    }
     assert!(weights[1] > weights[0]);
     let mut activations = Vec::new();
     for arm in [0, 1] {
-        assert_eq!(backend.activate(&mut node, tips[arm], now), tips[arm]);
+        assert_eq!(
+            schedule.activate(backend, &mut node, tips[arm], now),
+            tips[arm]
+        );
         assert_eq!(work(&backend.head(&node)), weights[arm]);
         activations.push(backend.head(&node));
     }
     assert_eq!(backend.head(&node)["height"], json!(64));
-    assert_eq!(backend.activate(&mut node, tips[0], now), tips[1]);
+    assert_eq!(schedule.activate(backend, &mut node, tips[0], now), tips[1]);
 
     let final_packet = final_packet.unwrap();
     let mut binding_rejections = Vec::new();
@@ -423,8 +529,9 @@ fn run(backend: Backend) {
     for (id, bytes) in &evidence.packets {
         assert_eq!(backend.stored(&reopened, *id).encode(), *bytes);
     }
-    let report = json!({
-        "schema":"pon-native-joint-daa-v1","backend":backend.name(),"header_profile":backend.header_profile(),"work_profile":"PNW1",
+    let mut report = json!({
+        "schema":if schedule.is_monotone() {"pon-native-monotone-daa-v1"} else {"pon-native-joint-daa-v1"},
+        "backend":backend.name(),"header_profile":backend.header_profile(),"work_profile":"PNW1",
         "network":hex::encode(settings.network()),"parameters":hex::encode(settings.parameters()),
         "genesis":hex::encode(settings.genesis()),"genesis_timestamp":GENESIS_TIME,
         "genesis_chainwork_hex":hex::encode(genesis_work.bytes()),"initial_target":hex::encode(initial),"pow_limit":hex::encode(limit),
@@ -434,13 +541,18 @@ fn run(backend: Backend) {
         "ordinary_tip":hex::encode(tips[0]),"altered_tip":hex::encode(tips[1]),
         "ordinary_chainwork_hex":hex::encode(weights[0].bytes()),"altered_chainwork_hex":hex::encode(weights[1].bytes()),
         "after_cold_reopen":backend.head(&reopened),"shorter_higher_work_branch_selected":true,
-        "activation_observed_clock_api":matches!(backend,Backend::Pnh1),
-        "growth_activation_clock_checked":false,
+        "activation_observed_clock_api":schedule.is_monotone() || matches!(backend,Backend::Pnh1),
+        "growth_activation_clock_checked":schedule.is_monotone() && matches!(backend,Backend::Pgh2),
         "default_consensus_rules_changed":false,"logical_validation_clock_schedule":true,
         "wall_clock_cadence_measured":false,"attacker_work_fraction_measured":false,
         "quantum_attack_profitability_measured":false,"public_network_qualification":false
     });
-    evidence.retain(backend, &report);
+    if schedule.is_monotone() {
+        report["parent_monotonicity_enforced_by_schedule"] = json!(true);
+        evidence.retain_monotone(backend, &report);
+    } else {
+        evidence.retain(backend, &report);
+    }
 }
 
 #[test]
@@ -451,4 +563,14 @@ fn pnh1_three_negative_endpoint_periods_keep_real_w1_and_select_higher_work() {
 #[test]
 fn pgh2_three_negative_endpoint_periods_keep_real_w1_and_select_higher_work() {
     run(Backend::Pgh2);
+}
+
+#[test]
+fn pnh1_strictly_monotone_compressed_periods_keep_real_w1_and_select_higher_work() {
+    run_schedule(Backend::Pnh1, TimestampSchedule::StrictMonotone);
+}
+
+#[test]
+fn pgh2_strictly_monotone_compressed_periods_keep_real_w1_and_select_higher_work() {
+    run_schedule(Backend::Pgh2, TimestampSchedule::StrictMonotone);
 }
