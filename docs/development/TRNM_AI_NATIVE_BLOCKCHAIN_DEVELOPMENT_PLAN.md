@@ -1,3 +1,52 @@
+**Source-normalized incentive continuation, 2026-11-12 UTC — HOLD:**
+
+Continue from #939 at `4a59131acdf9b8c3210c9b6cd728aeb6c48291fc` in an isolated
+candidate. Preserve the V4 signed source-split counterexample and its exact
+60,051 versus 86,865 net-account observation. The opt-in
+`linear-source-composition-dev-v6` profile uses revision 17 and fresh policy,
+plan, source/evidence, allocation-leaf and release domains. It does not change
+the historical V4 rule or authorize production adoption.
+
+M06 now normalizes complete parent-relative integer updates by the installed
+known-source map before source omission, positive-part scoring, source caps,
+budget rounding and internal payment. The canonical source-game identity binds
+the actual parent, full source deltas, evaluation plan/tasks, policy, budget and
+frozen remaining source caps. Component packaging and payee aliases are not game
+identity. Source entitlements are divided by a fixed internal rule among
+already signed contribution owners; tag9 reads and checks the exact native
+payment record. Transaction fees remain separate. Equivalence is limited to
+registered integer representations which both pass admission and produce the
+same complete canonical source game.
+
+Every source counterfactual must be materializable and actually evaluated.
+An out-of-range or otherwise invalid counterfactual returns
+`MODEL_SOURCE_INSUFFICIENT_EVIDENCE`; it is never assigned zero utility.
+The source record has a policy-bound 2,700-byte ceiling within the unchanged
+4,096-byte state-value limit. Zero source value and cap truncation retain
+unallocated funded budget for the existing deadline refund.
+
+The M10 additions exercise existing SQLite collateral exclusion across multiple
+outstanding leases, stale handles, ACK loss, reopen and exact replay. They do
+not manufacture a new collateral ledger or imply that M10, M12 and M06 already
+share an audited slash/maturity/exit lifecycle. A complete bonded-service
+profile must use the existing native monetary owner, supply conservation and
+mandatory transitions, and must reserve real audit/adjudication resources.
+
+Validation must use the exact new source: old V4 regression, V6 source/claim
+controls, signed full-path release/claim, two nonzero-parent generations,
+ordinary Node reorg/reopen, the M10 shared-bond controls, independent receipt
+arithmetic, retained affected suites, locked graphs, formatting, strict Clippy
+and source-integrity/link gates. A source change after execution needs its own
+scope; no old native result is relabeled as this candidate.
+
+See [source incentive research contract](SOURCE_INCENTIVE_RESEARCH_CONTRACT_20261112.md)
+and [liability boundaries](INCENTIVE_LIABILITY_BOUNDARIES_20261112.md).
+Native results and original command logs will be retained separately from the
+stdlib model-only reference checks. Untouched prospective model value, unknown
+common control, collusion, truthful bidding, deployed penalties and a qualified
+post-quantum unbiased audit random source remain unqualified. Original service,
+PQ, recovery and performance failures retain their previous status.
+
 **System security combined source and retained execution, 2026-11-12 UTC — HOLD:**
 
 The immutable runtime composition checkpoint is

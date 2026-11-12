@@ -104,6 +104,24 @@ error_codes! {
     ModelCompositionState => ("MODEL_COMPOSITION_STATE", ProtocolInvalid),
     ModelCompositionWeight => ("MODEL_COMPOSITION_WEIGHT", ProtocolInvalid),
     ModelCompositionRedundantSubset => ("MODEL_COMPOSITION_REDUNDANT_SUBSET", PolicyRefusal),
+    ModelSourceArithmetic => ("MODEL_SOURCE_ARITHMETIC", ProtocolInvalid),
+    ModelSourceBudget => ("MODEL_SOURCE_BUDGET", Capacity),
+    ModelSourceCap => ("MODEL_SOURCE_CAP", ProtocolInvalid),
+    ModelSourceClaim => ("MODEL_SOURCE_CLAIM", ProtocolInvalid),
+    ModelSourceConfig => ("MODEL_SOURCE_CONFIG", StaleContext),
+    ModelSourceCount => ("MODEL_SOURCE_COUNT", ProtocolInvalid),
+    ModelSourceDerivation => ("MODEL_SOURCE_DERIVATION", ProtocolInvalid),
+    ModelSourceEvidence => ("MODEL_SOURCE_EVIDENCE", ProtocolInvalid),
+    ModelSourceGain => ("MODEL_SOURCE_GAIN", PolicyRefusal),
+    ModelSourceIdentity => ("MODEL_SOURCE_IDENTITY", IdentityConflict),
+    ModelSourceInsufficientEvidence => ("MODEL_SOURCE_INSUFFICIENT_EVIDENCE", PolicyRefusal),
+    ModelSourceMarker => ("MODEL_SOURCE_MARKER", ProtocolInvalid),
+    ModelSourceOrder => ("MODEL_SOURCE_ORDER", ProtocolInvalid),
+    ModelSourceParent => ("MODEL_SOURCE_PARENT", StaleContext),
+    ModelSourceProfile => ("MODEL_SOURCE_PROFILE", StaleContext),
+    ModelSourceRecord => ("MODEL_SOURCE_RECORD", ProtocolInvalid),
+    ModelSourceRecordSize => ("MODEL_SOURCE_RECORD_SIZE", Capacity),
+    ModelSourceState => ("MODEL_SOURCE_STATE", ProtocolInvalid),
     FrameEof => ("FRAME_EOF", Transport),
     FrameDeadline => ("FRAME_DEADLINE", Cancelled),
     PublicEof => ("PUBLIC_EOF", Transport),
@@ -698,5 +716,42 @@ mod tests {
             "REMOTE_TERMINAL:REMOTE_RETRYABLE: misleading text"
         );
         assert!(!terminal.requires_owner_stop());
+    }
+    #[test]
+    fn source_composition_errors_keep_exact_identity_without_owner_stop() {
+        for (wire, expected_kind) in [
+            ("MODEL_SOURCE_ARITHMETIC", ErrorKind::ProtocolInvalid),
+            ("MODEL_SOURCE_BUDGET", ErrorKind::Capacity),
+            ("MODEL_SOURCE_CAP", ErrorKind::ProtocolInvalid),
+            ("MODEL_SOURCE_CLAIM", ErrorKind::ProtocolInvalid),
+            ("MODEL_SOURCE_CONFIG", ErrorKind::StaleContext),
+            ("MODEL_SOURCE_COUNT", ErrorKind::ProtocolInvalid),
+            ("MODEL_SOURCE_DERIVATION", ErrorKind::ProtocolInvalid),
+            ("MODEL_SOURCE_EVIDENCE", ErrorKind::ProtocolInvalid),
+            ("MODEL_SOURCE_GAIN", ErrorKind::PolicyRefusal),
+            ("MODEL_SOURCE_IDENTITY", ErrorKind::IdentityConflict),
+            (
+                "MODEL_SOURCE_INSUFFICIENT_EVIDENCE",
+                ErrorKind::PolicyRefusal,
+            ),
+            ("MODEL_SOURCE_MARKER", ErrorKind::ProtocolInvalid),
+            ("MODEL_SOURCE_ORDER", ErrorKind::ProtocolInvalid),
+            ("MODEL_SOURCE_PARENT", ErrorKind::StaleContext),
+            ("MODEL_SOURCE_PROFILE", ErrorKind::StaleContext),
+            ("MODEL_SOURCE_RECORD", ErrorKind::ProtocolInvalid),
+            ("MODEL_SOURCE_RECORD_SIZE", ErrorKind::Capacity),
+            ("MODEL_SOURCE_STATE", ErrorKind::ProtocolInvalid),
+        ] {
+            let code = ErrorCode::parse(wire).expect("registered source-composition error");
+            let error = Error::from(wire);
+            assert_eq!(error.code(), Some(code), "{wire}");
+            assert_eq!(error.kind(), expected_kind, "{wire}");
+            assert_eq!(error.to_string(), wire);
+            assert!(!error.requires_owner_stop(), "{wire}");
+            let quoted = Error::from(format!("{wire}: quoted diagnostic"));
+            assert_eq!(quoted.code(), None);
+            assert_eq!(quoted.kind(), ErrorKind::Unclassified);
+            assert!(!quoted.requires_owner_stop());
+        }
     }
 }

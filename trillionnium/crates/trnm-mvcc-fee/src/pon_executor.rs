@@ -559,8 +559,13 @@ impl Config {
             public_evaluation::PROFILE | public_evaluation::QUORUM_PROFILE => {
                 let quorum_profile = policy == public_evaluation::QUORUM_PROFILE;
                 let evolution_profile = model_profile == crate::model_evolution_v5::PROFILE;
+                let source_profile = model_profile == crate::model_composition_v6::PROFILE;
                 let policy: Value = serde_json::from_str(if quorum_profile && evolution_profile {
                     include_str!("../../../../config/pon/public-evaluation-model-evolution-v5.json")
+                } else if quorum_profile && source_profile {
+                    include_str!(
+                        "../../../../config/pon/public-evaluation-source-composition-v6.json"
+                    )
                 } else if quorum_profile {
                     include_str!("../../../../config/pon/public-evaluation-quorum-v2.json")
                 } else {
@@ -593,6 +598,8 @@ impl Config {
                             && policy["native_model_profiles"]
                                 == if evolution_profile {
                                     json!([crate::model_evolution_v5::PROFILE])
+                                } else if source_profile {
+                                    json!([crate::model_composition_v6::PROFILE])
                                 } else {
                                     json!([
                                         crate::model_evidence_v3::PROFILE,
@@ -611,6 +618,7 @@ impl Config {
                             model_profile,
                             crate::model_evidence_v3::PROFILE
                                 | crate::model_composition_v4::PROFILE
+                                | crate::model_composition_v6::PROFILE
                                 | crate::model_evolution_v5::PROFILE
                         ),
                         "PUBLIC_EVAL_NATIVE_REPLAY_REQUIRED",
@@ -789,7 +797,8 @@ impl Config {
             }
             crate::integer_factor_candidate_v2::PROFILE
             | crate::model_evidence_v3::PROFILE
-            | crate::model_composition_v4::PROFILE => {
+            | crate::model_composition_v4::PROFILE
+            | crate::model_composition_v6::PROFILE => {
                 require(
                     matches!(
                         policy,
@@ -803,6 +812,7 @@ impl Config {
                             model_profile,
                             crate::model_evidence_v3::PROFILE
                                 | crate::model_composition_v4::PROFILE
+                                | crate::model_composition_v6::PROFILE
                         ) && task_profile == "consensus-maintenance-continuity-dev-v1"),
                     "MODEL_PROFILE_TASK",
                 )?;
@@ -844,8 +854,10 @@ impl Config {
                     require(factor_policy[key] == expected, "CONFIG")?;
                 }
                 params["consensus_revision"] = json!(if model_profile
-                    == crate::model_composition_v4::PROFILE
+                    == crate::model_composition_v6::PROFILE
                 {
+                    crate::model_composition_v6::REVISION.max(field(&params, "consensus_revision")?)
+                } else if model_profile == crate::model_composition_v4::PROFILE {
                     crate::model_composition_v4::REVISION.max(field(&params, "consensus_revision")?)
                 } else if model_profile == crate::model_evidence_v3::PROFILE {
                     crate::model_evidence_v3::REVISION.max(field(&params, "consensus_revision")?)
@@ -865,6 +877,9 @@ impl Config {
                 .map_err(|_| "CONFIG")?;
                 if model_profile == crate::model_evidence_v3::PROFILE {
                     crate::model_evidence_v3::install(&mut params)?;
+                    model["native_admission_profile"] = json!(model_profile);
+                } else if model_profile == crate::model_composition_v6::PROFILE {
+                    crate::model_composition_v6::install(&mut params)?;
                     model["native_admission_profile"] = json!(model_profile);
                 } else if model_profile == crate::model_composition_v4::PROFILE {
                     crate::model_composition_v4::install(&mut params)?;
@@ -902,6 +917,7 @@ impl Config {
             crate::integer_factor_candidate_v2::PROFILE
                 | crate::model_evidence_v3::PROFILE
                 | crate::model_composition_v4::PROFILE
+                | crate::model_composition_v6::PROFILE
                 | crate::model_evolution_v5::PROFILE
         ) {
             let evolution = model_profile == crate::model_evolution_v5::PROFILE;
@@ -1000,6 +1016,19 @@ impl Config {
                     &hash32(text(&params, "model_evidence_policy_hash")?)?,
                     &hash32(text(&params, "model_evidence_tasks_hash")?)?,
                     &hash32(text(&params, "model_evolution_policy_hash")?)?,
+                ],
+            )
+        } else if model_profile == crate::model_composition_v6::PROFILE {
+            hash(
+                b"plan",
+                &[
+                    b"native-integer-source-composition-plan-v6",
+                    &family,
+                    &hash32(text(&params, "factor_candidate_policy_hash")?)?,
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_tasks_hash")?)?,
+                    &hash32(text(&params, "model_source_policy_hash")?)?,
                 ],
             )
         } else if model_profile == crate::model_composition_v4::PROFILE {
@@ -1436,6 +1465,16 @@ impl<'a> Payload<'a> {
 }
 fn allocation_leaf(cid: Hash, payee: Hash, score: u64) -> Hash {
     hash(b"allocation-leaf", &[&cid, &payee, &score.to_le_bytes()])
+}
+fn allocation_leaf_for(cfg: &Config, cid: Hash, payee: Hash, score: u64) -> Hash {
+    if crate::model_composition_v6::enabled(cfg) {
+        hash(
+            b"source-allocation-leaf-v6",
+            &[&cid, &payee, &score.to_le_bytes()],
+        )
+    } else {
+        allocation_leaf(cid, payee, score)
+    }
 }
 fn pair(a: Hash, b: Hash) -> Hash {
     if a < b {
@@ -2137,6 +2176,12 @@ fn apply_authenticated_application(
                     "MODEL_COMPOSITION_COUNT",
                 )?;
             }
+            if crate::model_composition_v6::enabled(cfg) {
+                require(
+                    (1..=crate::model_composition_v6::MAX_COMPONENTS).contains(&usize::from(count)),
+                    "MODEL_SOURCE_COUNT",
+                )?;
+            }
             if crate::model_evolution_v5::enabled(cfg) {
                 require(count == 1, "EVOLUTION_SELF_ALLOCATION")?;
             }
@@ -2189,7 +2234,9 @@ fn apply_authenticated_application(
                     )?);
                     let evaluation =
                         public_evaluation::hydrate(&o["public_evaluation"], cid, &records)?;
-                    if crate::model_composition_v4::enabled(cfg) {
+                    if crate::model_composition_v4::enabled(cfg)
+                        || crate::model_composition_v6::enabled(cfg)
+                    {
                         crate::model_composition_v4::component_allowed(
                             &evaluation,
                             height,
@@ -2207,11 +2254,17 @@ fn apply_authenticated_application(
                     text(&o, "status")? == "evaluated"
                         && o["parent"] == current
                         && (crate::model_composition_v4::enabled(cfg)
+                            || crate::model_composition_v6::enabled(cfg)
                             || field(&o, "score")? == score)
                         && score > 0,
                     "EVIDENCE",
                 )?;
-                leaves.push(allocation_leaf(cid, hash32(text(&o, "owner")?)?, score));
+                leaves.push(allocation_leaf_for(
+                    cfg,
+                    cid,
+                    hash32(text(&o, "owner")?)?,
+                    score,
+                ));
                 total = add(total, score)?;
                 if crate::model_evidence_v3::enabled(cfg) {
                     evidence_allocations.push((cid, o.clone(), score));
@@ -2235,7 +2288,11 @@ fn apply_authenticated_application(
             require(
                 release
                     == hash(
-                        b"release",
+                        if crate::model_composition_v6::enabled(cfg) {
+                            b"source-release-v6"
+                        } else {
+                            b"release"
+                        },
                         &[
                             &parent,
                             &bundle_id,
@@ -2257,7 +2314,12 @@ fn apply_authenticated_application(
             s.debit(&sender, budget)?;
             let mut release_record = json!({"owner":sender,"remaining":budget,"budget":budget,"total":total,"root":hex::encode(supplied_root),"maturity":add(height,cfg.limit("reward_maturity_blocks")?)?,"bundle":hex::encode(bundle_id),"artifact":bundle["artifact"].clone(),"family":bundle["family"].clone(),"components_root":bundle["components_root"].clone(),"parent":hex::encode(parent),"leaf_count":count,"claims":{},"deadline":expiry,"status":"open"});
             if let Some(record) = composition_record {
-                release_record["model_composition_v4"] = record;
+                let key = if crate::model_composition_v6::enabled(cfg) {
+                    "model_composition_v6"
+                } else {
+                    "model_composition_v4"
+                };
+                release_record[key] = record;
             }
             s.put(rk, release_record);
             for (k, o) in adopted {
@@ -2283,16 +2345,24 @@ fn apply_authenticated_application(
             let leaves = field(&rel, "leaf_count")?;
             require(leaves > 0, "ROOT")?;
             require(count as u32 == 64 - (leaves - 1).leading_zeros(), "ROOT")?;
-            let mut leaf = allocation_leaf(cid, tx.sender, score);
+            let mut leaf = allocation_leaf_for(cfg, cid, tx.sender, score);
             for _ in 0..count {
                 leaf = pair(leaf, p.h()?);
             }
             require(leaf == hash32(text(&rel, "root")?)?, "ROOT")?;
             let total = field(&rel, "total")?;
             require(total > 0, "ROOT")?;
-            let amount =
+            let amount = if crate::model_composition_v6::enabled(cfg) {
+                let record = &rel["model_composition_v6"];
+                require(
+                    field(record, "budget")? == field(&rel, "budget")?,
+                    "MODEL_SOURCE_RECORD",
+                )?;
+                crate::model_composition_v6::claim_amount(record, cid, tx.sender, score)?
+            } else {
                 u64::try_from((field(&rel, "budget")? as u128) * (score as u128) / (total as u128))
-                    .map_err(|_| "RANGE")?;
+                    .map_err(|_| "RANGE")?
+            };
             require(amount <= field(&rel, "remaining")?, "FUNDS")?;
             s.credit(&sender, amount)?;
             rel["remaining"] = json!(field(&rel, "remaining")? - amount);
