@@ -3,12 +3,18 @@
     "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37",
+    "trillionnium/crates/trnm-data-availability/src/cell.rs": "09c762107f4ff5d05bf40fa556e0892084fabbf87c381767a82188dcb3ba5f84",
     "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs": "cf945af731b8172d6b093bded63d546ac3f3a15756524e739a50187dcdaebdc5",
     "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs": "6311b100634a1358e2d1aad2d9b71300e75f599326f9f5c61d4eff8149ac3915",
     "trillionnium/crates/trnm-data-availability/src/cell/pq.rs": "7326da0ad2c31fe599300d928fde84129ce83de0b072ef3bb46799d424aca3eb",
+    "trillionnium/crates/trnm-data-availability/src/cell/retained.rs": "e9b4e6e1dde309ec644e0a80ed702eb098c3a5cb788f9153ffa1de0c78354128",
+    "trillionnium/crates/trnm-data-availability/src/cell/version.rs": "e0d11e7cddbb670af8411bed97612e738edf9a7c89b161e1ee4cdd9178cda832",
+    "trillionnium/crates/trnm-data-availability/src/cell/version_content.rs": "ccdef45238de25e772114c457240fe152ac8cc32a1e32cac8d550c124b49958c",
+    "trillionnium/crates/trnm-data-availability/src/cell/version_content_closure_v3.rs": "65bd7171aa9f70d8c2c426f9e024d47e0c98728d804896f3bd41c807e254227a",
     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs": "c26d0f9838628a0a254e803f231dee8781c31899b2d5de6f7e9f8b18af3aec3d",
     "trillionnium/crates/trnm-pon-node/src/consensus.rs": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d",
-    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs": "30588f9757dab5a781fca0ef3c8f2ae76fb93006b4ba5eac8547e31e558dead3",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs": "2a9811bf0ef41a64e31a5f3909a7b8777d3b8e2ebe68b9f34759c14c2c0991f5",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "cf292b343bddf3f543ea4beab3b6cc62b91d5c6f3472504bbae9f5cb8fee59a9",
     "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": "1e23d8da17c4e1c32627fb96af0088587296810a51e90588d3122a2249902b4f",
     "trillionnium/crates/trnm-pon-node/src/store.rs": "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca",
     "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs": "14f10ec0fa8a4c6cd017b79f72f6fd2a2dafec6002ddfbffe34fd455bfdf3ab5",
@@ -17,5 +23,5 @@
     "trillionnium/crates/trnm-service-settlement/src/native_budget.rs": "1fd964a4bfb3dec372c04a32853d9b08a3b80773d3182099d80705ab916ace38"
   },
   "schema": "trnm-pq128-source-lock-v1",
-  "source_revision": "7f83ea843d6d1578a475a7a0c4dc026da564a795"
+  "source_revision": "65a223f011d61cbb0e5d4178394b6f07321c95b7"
 }
