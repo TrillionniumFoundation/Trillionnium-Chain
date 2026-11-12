@@ -156,6 +156,7 @@ def summarize(results: dict, reports: list[dict], host_before: list[dict]) -> di
     phases = []
     observed_confirmations = []
     history_rpc_ok = history_import_ok = history_import_failed = 0
+    attack_ready_phases = attack_depletion_phases = attack_full_work_failures = 0
     for run_number, report in enumerate(reports, 1):
         run_phases = report['phases']
         require(len(run_phases) == 3 and
@@ -200,24 +201,44 @@ def summarize(results: dict, reports: list[dict], host_before: list[dict]) -> di
             if p['all_signed_rounds_confirmed_in_window'] is True:
                 require(n_window == 3,
                         'CLAIMED_ALL_SIGNED_ROUNDS_WITHOUT_THREE_DISTINCT_CONFIRMATIONS')
+            # The attack phases additionally require the ORIGINAL hostile actors
+            # to be present and the paid budget actually to deplete. Otherwise
+            # a fabricated 3/3 confirmation trace could be counted as a pass.
+            hostile = index != 0
+            ready = (type(p.get('attacker_processes_ready')) is int and
+                     p['attacker_processes_ready'] == p['attacker_processes_requested'])
+            depleted = p['genuine_budget_depletion_observed'] is True
+            if hostile:
+                attack_ready_phases += int(ready)
+                attack_depletion_phases += int(depleted)
+                require(type(p['full_work_failed']) is int and p['full_work_failed'] >= 0,
+                        'INVALID_ATTACK_WORK_COUNT')
+                attack_full_work_failures += p['full_work_failed']
             if p['finite_phase_criteria_met'] is True:
                 require(n_window == 3 and p['all_signed_rounds_confirmed_in_window'] is True
                         and p['receiver_client_state_equal'] is True
-                        and p['observer_complete'] is True,
-                        'CLAIMED_PHASE_PASS_WITHOUT_REQUIRED_CONFIRMED_STATE')
+                        and p['observer_complete'] is True
+                        and ready
+                        and p['actor_reports_successful_without_cap_or_kill'] is True
+                        and (not hostile or depleted),
+                        'CLAIMED_PHASE_PASS_WITHOUT_ORIGINAL_ATTACK_AND_CONFIRMATION_CRITERIA')
             phases.append({
                 'run': run_number, 'mode': mode,
                 'attacker_processes_requested': p['attacker_processes_requested'],
                 'in_window_confirmations': n_window, 'planned_confirmations': 3,
                 'phase_criteria_met': p['finite_phase_criteria_met'] is True,
                 'receiver_client_state_equal': p['receiver_client_state_equal'] is True,
-                'budget_depletion_observed': p['genuine_budget_depletion_observed'] is True,
+                'budget_depletion_observed': depleted,
+                'attacker_processes_ready': p.get('attacker_processes_ready'),
+                'actor_reports_successful_without_cap_or_kill':
+                    p['actor_reports_successful_without_cap_or_kill'] is True,
             })
     for i, attempt in enumerate(attempts):
         if attempt['complete_success'] is True or attempt['original_criteria_met'] is True:
             require(attempt['complete_success'] is True and
                     attempt['original_criteria_met'] is True and
                     attempt['step']['returncode'] == 0 and
+                    reports[i]['finite_experiment_criteria_met'] is True and
                     all(p['phase_criteria_met'] for p in phases[i * 3:(i + 1) * 3]),
                     'CLAIMED_CAMPAIGN_PASS_WITHOUT_THREE_PHASES')
     complete_campaigns = sum(a['complete_success'] is True and
@@ -235,6 +256,10 @@ def summarize(results: dict, reports: list[dict], host_before: list[dict]) -> di
         'window_confirmations': len(observed_confirmations),
         'planned_window_confirmations': 27,
         'receiver_client_equal_phases': sum(p['receiver_client_state_equal'] for p in phases),
+        'attack_phases': 6,
+        'attack_phases_with_full_actor_readiness': attack_ready_phases,
+        'attack_phases_with_genuine_budget_depletion': attack_depletion_phases,
+        'attack_full_work_failed_count': attack_full_work_failures,
         'history_rpc_ok': history_rpc_ok,
         'history_import_succeeded': history_import_ok,
         'history_import_failed': history_import_failed,
