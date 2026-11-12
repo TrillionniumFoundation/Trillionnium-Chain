@@ -1,7 +1,5 @@
 //! Experimental native composition; never imports Python or activates production.
 #![forbid(unsafe_code)]
-#[cfg(test)]
-mod sp27_cost_attribution_tests;
 mod ancestry_index;
 /// Explicit bounded native Cell replay; never installs a consensus work rule.
 pub mod cell_native_v1;
@@ -45,6 +43,8 @@ pub mod release_owner;
 pub mod research_work_schedule;
 #[cfg(all(target_os = "linux", feature = "pq-root-v3"))]
 pub mod root_recovery_v3;
+#[cfg(test)]
+mod sp27_cost_attribution_tests;
 mod store;
 pub use error::{Error, ErrorCode, ErrorKind};
 use serde_json::{json, Value};
