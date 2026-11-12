@@ -1,0 +1,40 @@
+{
+  "schema": "sp27-03.chain-evidence-assembly-observation.v1",
+  "scope": "Evidence-copy assembly only; no adapter, consumer or native gate was rerun or changed by this correction.",
+  "source_checkpoint": "1e5667354f6fa17170202416b9d24562e6c72496",
+  "intermediate_evidence_commit": "d3545fa68bc80ed57a6ca886d8e2fed4c1e71d3f",
+  "initial_diff_check": {
+    "command": "git diff --cached --check",
+    "exit_code": 2,
+    "status": "FAILED",
+    "observed_diagnostics": [
+      "research/sp2027/03_reorg_safe_model_adoption/evidence/native-validation/affected-tests-initial.stdout:56: new blank line at EOF.",
+      "research/sp2027/03_reorg_safe_model_adoption/evidence/native-validation/frozen-1e5667354/retained-tests.stdout:51: new blank line at EOF."
+    ],
+    "diagnostic_record_type": "transcription of the observed command result",
+    "command_control_error": "A following shell command list proceeded to the successful staged preflight and intermediate local commit despite the failed diff check.",
+    "initial_check_pass_claimed": false
+  },
+  "initial_copy_omission": {
+    "cause": "Repository ignore rules excluded copied .log files from ordinary git add.",
+    "files_present_on_disk_but_absent_from_intermediate_commit": [
+      "native-validation/frozen-1e5667354/locked-build.log",
+      "native-validation/frozen-1e5667354/locked-graph.log",
+      "native-validation/frozen-1e5667354/workspace-format.log",
+      "native-validation/frozen-1e5667354/source-integrity-negatives.log",
+      "native-validation/frozen-1e5667354/retained-and-clippy.log"
+    ]
+  },
+  "correction": {
+    "method": "Normal descendant commit; retain intermediate history, explicitly stage the five ignored logs, and use a local attributes file naming only seven immutable captured outputs.",
+    "raw_output_attributes": "-text -whitespace",
+    "attribute_precedent": "The repository root .gitattributes already uses these attributes for hash-bound captured command output.",
+    "original_output_bytes_normalized": false,
+    "original_build_receipt_modified": false,
+    "native_adapter_source_modified": false,
+    "original_native_validation_file_count": 33,
+    "verification_basis": "Compare each staged original to both SOURCE_AND_DELIVERY.json SHA-256 and its original local file; require all files to be tracked. Run staged and full-delivery diff checks with the strictly scoped attributes.",
+    "native_gates_rerun": false,
+    "final_commit_reference": "Read back from Git after the correction commit; intentionally not embedded in its own tree."
+  }
+}

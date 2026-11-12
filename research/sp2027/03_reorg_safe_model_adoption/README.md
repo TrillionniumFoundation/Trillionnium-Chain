@@ -39,6 +39,12 @@ Their local execution paths are historical provenance, not new execution
 locations. The separate initial compilation logs retain their development
 scope and the original build receipt's relative paths.
 
+The [evidence assembly observation](evidence/EVIDENCE_ASSEMBLY_OBSERVATION.json)
+also retains the first whitespace-check failure and the intermediate copy's
+five ignored log omissions. A normal descendant commit includes those original
+logs and applies narrowly scoped raw-output attributes without changing their
+bytes; the failure is not reported as an initial pass.
+
 ## Executable boundary
 
 The new

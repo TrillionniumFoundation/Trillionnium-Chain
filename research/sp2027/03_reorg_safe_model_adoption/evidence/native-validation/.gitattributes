@@ -1,0 +1,9 @@
+# These exact captured outputs are hash-bound evidence; preserve every raw byte.
+# Source files and generated documentation retain normal whitespace checks.
+affected-tests-initial.stdout -text -whitespace
+frozen-1e5667354/retained-tests.stdout -text -whitespace
+frozen-1e5667354/locked-build.log -text -whitespace
+frozen-1e5667354/locked-graph.log -text -whitespace
+frozen-1e5667354/workspace-format.log -text -whitespace
+frozen-1e5667354/source-integrity-negatives.log -text -whitespace
+frozen-1e5667354/retained-and-clippy.log -text -whitespace
