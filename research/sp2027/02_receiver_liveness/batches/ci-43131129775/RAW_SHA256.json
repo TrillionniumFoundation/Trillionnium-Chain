@@ -1,0 +1,258 @@
+{
+  "available-cpus.txt": {
+    "bytes": 4,
+    "sha256": "b2f03f42d35e331b1b8f8b03648dab495a27d703b10d8df4fe5c3346f34de4cc"
+  },
+  "controller-cgroup.txt": {
+    "bytes": 46,
+    "sha256": "0dcb3ba0655f52452a0222c39d59295eae59ff9f296a86539ce24ffef1387abd"
+  },
+  "kernel.txt": {
+    "bytes": 40,
+    "sha256": "771248a24fa95b65311b5e3442aae1b5325e04ea7d64a1ee77e0fb1f79b1f0fa"
+  },
+  "lscpu.json": {
+    "bytes": 4761,
+    "sha256": "b17c87726ddbb2a0447deee27e087c49590e05ce6b42c1168940c7ff8b6feffe"
+  },
+  "processes-before.txt": {
+    "bytes": 5473,
+    "sha256": "5c64a7e1bc0a44fa1bf54998e80f5a6ca8d77362eef98f453c9f24ccd415a4f9"
+  },
+  "public-fixture-parent.json": {
+    "bytes": 3244,
+    "sha256": "0367328bf5704d086a7e0d3d77a2c2502c60c4e5d4dc3f9b9d0b44c73dcc9105"
+  },
+  "source.json": {
+    "bytes": 423,
+    "sha256": "acc2c877d3714271b9bee3fb0379f51e225d5a0a2f39220a36e8ee2c48408ece"
+  },
+  "sp27-receiver-controls-host/actual-systemd-parent-after.log": {
+    "bytes": 200,
+    "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3"
+  },
+  "sp27-receiver-controls-host/actual-systemd-parent.log": {
+    "bytes": 200,
+    "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3"
+  },
+  "sp27-receiver-controls-host/after-provision.json": {
+    "bytes": 1617,
+    "sha256": "4c2179880d3b642de9701bf20b3f5afb6aa907f81394b48be61b1651e623d869"
+  },
+  "sp27-receiver-controls-host/before-provision.json": {
+    "bytes": 2784,
+    "sha256": "47a9ece17a1d74477aca107429b7ee1d768f93d71c9be10477a476d81b0480d1"
+  },
+  "sp27-receiver-controls-host/child-final-load-state.log": {
+    "bytes": 10,
+    "sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76"
+  },
+  "sp27-receiver-controls-host/child-load-state.log": {
+    "bytes": 10,
+    "sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76"
+  },
+  "sp27-receiver-controls-host/child-result.json": {
+    "bytes": 352,
+    "sha256": "426a20bed9192d926102e04de0d7fcd9d72d313fe1b8a2000299710d4a66d71d"
+  },
+  "sp27-receiver-controls-host/controller-result.json": {
+    "bytes": 8952,
+    "sha256": "b445c859d635ff373389457b832048aa67140828206b4285c0516a0f704e22d0"
+  },
+  "sp27-receiver-controls-host/inside-after.json": {
+    "bytes": 1677,
+    "sha256": "426a5a1abec8cfa218b5a68d6431c5e0337e47e2c9fe1837597ba8d753154861"
+  },
+  "sp27-receiver-controls-host/inside-before.json": {
+    "bytes": 1666,
+    "sha256": "4d446f3c7901faa10be272a62b18c08d77be351ea6b450f6dbcba8aeff6397a4"
+  },
+  "sp27-receiver-controls-host/install-reviewed-unit.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sp27-receiver-controls-host/outside-after.json": {
+    "bytes": 1650,
+    "sha256": "c30bbddcf096b259da57fad0660354d4a1fd164a20c1422f45b9eaa551a5dc24"
+  },
+  "sp27-receiver-controls-host/parent-properties.log": {
+    "bytes": 146,
+    "sha256": "313ae0beb72fab5cfa2506271e7b1bab522a702995c7be248e46b91311afe343"
+  },
+  "sp27-receiver-controls-host/seal-parent-directory.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sp27-receiver-controls-host/seal-parent-receipt.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sp27-receiver-controls-host/start-fixed-parent.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sp27-receiver-controls-host/systemd-reload.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sp27-receiver-controls-host/systemd-run.log": {
+    "bytes": 7761,
+    "sha256": "21433edff5b87a1ac280c2ce45395670dbac516b9084f745e1981b1a200b9499"
+  },
+  "sp27-receiver-controls-host/unprovisioned-parent.json": {
+    "bytes": 229,
+    "sha256": "8141d0f99d8dde3a4ebd71cdd60aabe3fd6528da8a8e126ab36ac94264db1d22"
+  },
+  "sp27-receiver-controls/build/process.json": {
+    "bytes": 921,
+    "sha256": "cf1e8e5b58d17a8188f3f3f7065cd11142608a6393f77df20bdb14d26f225aa3"
+  },
+  "sp27-receiver-controls/build/stderr": {
+    "bytes": 7177,
+    "sha256": "c77185329e872d32c04fb29c034263e1a4d46f07ba233b8c4cf9d69ae7ae947e"
+  },
+  "sp27-receiver-controls/build/stdout": {
+    "bytes": 110225,
+    "sha256": "bdd218743350b57e6f3794ae217cd12655f3e68e42d77b048f66a250c106b699"
+  },
+  "sp27-receiver-controls/execution-start.json": {
+    "bytes": 160,
+    "sha256": "b6bb6ebb053f4d7e3d735617a503de6ac78218ee8e5d30a5e3407ab627bbd580"
+  },
+  "sp27-receiver-controls/manifest.json": {
+    "bytes": 8426,
+    "sha256": "14e9dbf1db8485338ed0e64a92523934b618780ebd23d6c067d56092bf55df02"
+  },
+  "sp27-receiver-controls/native/acquisition-started.json": {
+    "bytes": 128,
+    "sha256": "c9a102de62ff8aaeee353ebf31510a132f501ecfd18e12e61799eb05d2de0715"
+  },
+  "sp27-receiver-controls/native/acquisition.json": {
+    "bytes": 694983,
+    "sha256": "71c92293fa73976832bb00c5bf319ed6dee9560c3e6917178b86013e65904cf1"
+  },
+  "sp27-receiver-controls/native/health-000/independent-client/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b"
+  },
+  "sp27-receiver-controls/native/health-000/independent-client/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sp27-receiver-controls/native/health-000/receiver/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc"
+  },
+  "sp27-receiver-controls/native/health-000/receiver/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sp27-receiver-controls/native/health-001/independent-client/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b"
+  },
+  "sp27-receiver-controls/native/health-001/independent-client/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sp27-receiver-controls/native/health-001/receiver/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc"
+  },
+  "sp27-receiver-controls/native/health-001/receiver/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sp27-receiver-controls/native/health-002/independent-client/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b"
+  },
+  "sp27-receiver-controls/native/health-002/independent-client/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sp27-receiver-controls/native/health-002/receiver/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc"
+  },
+  "sp27-receiver-controls/native/health-002/receiver/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sp27-receiver-controls/native/host-after.json": {
+    "bytes": 450,
+    "sha256": "db65c00d90f39efbda9a9ae083af364e9bbd652f51afb864410a4c78646895c7"
+  },
+  "sp27-receiver-controls/native/host-before.json": {
+    "bytes": 450,
+    "sha256": "b34e8149ead638e44850fac2a656c1732db64666360f8afbf6add01cec9bc0b8"
+  },
+  "sp27-receiver-controls/native/identity-after.json": {
+    "bytes": 1026,
+    "sha256": "c12a21d3e159e336e8053ad4d4320eae86926f6c4a49e7f3e8fb7a79fee00e60"
+  },
+  "sp27-receiver-controls/native/identity-before.json": {
+    "bytes": 1026,
+    "sha256": "c12a21d3e159e336e8053ad4d4320eae86926f6c4a49e7f3e8fb7a79fee00e60"
+  },
+  "sp27-receiver-controls/native/plan.json": {
+    "bytes": 3427,
+    "sha256": "be9ecaaa44cbc9c4e345735d78846733786ed6b26d4435636c12d56b7be1f6bf"
+  },
+  "sp27-receiver-controls/native/producer/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "2372f2898610a77f9aa8b42f208a29d5789d858c5067074e75ca57831db849d0"
+  },
+  "sp27-receiver-controls/native/producer/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sp27-receiver-controls/native/raw/health-000-started.json": {
+    "bytes": 182,
+    "sha256": "4b904bd9983fee7dec102d6074d54c9d5fa78b4e276a7cf4ed7e4d63975ca05c"
+  },
+  "sp27-receiver-controls/native/raw/health-000.json": {
+    "bytes": 1908736,
+    "sha256": "f1ef9bfaa3138e8352633ff6ad63e41576b6eef5943ed17a2442bc01aaa0e857"
+  },
+  "sp27-receiver-controls/native/raw/health-001-started.json": {
+    "bytes": 182,
+    "sha256": "7c6efd067d295ccad9e4ae7406fab4e9f4d3005a3daec442673bf376a43ec60d"
+  },
+  "sp27-receiver-controls/native/raw/health-001.json": {
+    "bytes": 1908796,
+    "sha256": "ff0fcb75ae59b006402c4d2db0f26f2b7bd6be6a64995c84344d86c3010d04e9"
+  },
+  "sp27-receiver-controls/native/raw/health-002-started.json": {
+    "bytes": 182,
+    "sha256": "c1087fc3ed9ecad30578cc88eeb7835cc1ec7dc69981ac2277cfa690dfc93186"
+  },
+  "sp27-receiver-controls/native/raw/health-002.json": {
+    "bytes": 1958173,
+    "sha256": "0d0c9d26c8968bcfec6f1347fb2eea12fd28451b643beaf85471f5246313a5d1"
+  },
+  "sp27-receiver-controls/native/report.json": {
+    "bytes": 4324,
+    "sha256": "609481529e64ca56b167b1b9bc516126da7806c51c29e9bc832742a57693c447"
+  },
+  "sp27-receiver-controls/preparation.json": {
+    "bytes": 4254,
+    "sha256": "69922e02a8905f256aaf41251b07f804a00f0a93a98b722bd2ffb3bb65117033"
+  },
+  "sp27-receiver-controls/public_v3_from_zero": {
+    "bytes": 12504464,
+    "sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5"
+  },
+  "sp27-receiver-controls/run/process.json": {
+    "bytes": 952,
+    "sha256": "58aa0a8ad0edab79f7fcd9ac973df2fd2a91899271dc4ddcdddaa367cd67b548"
+  },
+  "sp27-receiver-controls/run/stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sp27-receiver-controls/run/stdout": {
+    "bytes": 674,
+    "sha256": "ce5128f6d85647c597779ff53c50c0317f4c47b262de9d9cec5652acc0f783ee"
+  }
+}

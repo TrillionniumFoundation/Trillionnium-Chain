@@ -1,0 +1,24 @@
+{
+  "actor": "root in current SP27-02 task",
+  "all_observed_bytes_match_agent_receipt": true,
+  "confirmation_ended_ns": [
+    1800867959,
+    1792501261,
+    1801097967
+  ],
+  "native_final_gates": [
+    true,
+    true,
+    true
+  ],
+  "native_readback_files_count": 8,
+  "new_native_experiments": 0,
+  "original_agent06_owner_or_coordinator_ack": "NOT_OBSERVED",
+  "qualification": "HEALTH_GATE_PASSED_CONTROLS_PENDING",
+  "raw_inputs_rewritten": false,
+  "read_health_actual_call_completed": true,
+  "report_sha256": "609481529e64ca56b167b1b9bc516126da7806c51c29e9bc832742a57693c447",
+  "schema": "sp27-02-health-v2-root-reconsume-v1",
+  "source_reader_sha256": "8fa2fff07e15eab9bc724c30c14bac3d7325168197d5dea544c5118864e34084",
+  "source_receipt_sha256": "208f9cd7784af0866896abf61460140d2d2b181ccc0c936fd51254329430f256"
+}

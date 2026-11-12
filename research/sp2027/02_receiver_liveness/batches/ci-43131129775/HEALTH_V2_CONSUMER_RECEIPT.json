@@ -1,0 +1,184 @@
+{
+  "archive_identity": {
+    "artifact_id": 13907325153,
+    "job_id": 130895251212,
+    "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129775/artifact-13907325153.verified.zip",
+    "run_id": 43131129775,
+    "sha256": "a426ab09abffc6aa128dd5875be6ec33d72da55ca538bdd9867d0b56feaee073",
+    "size_bytes": 5536414
+  },
+  "consumer": {
+    "execution_schema_for_future_runs": "sp27-native-health-execution-v2",
+    "path": "scripts/ci/run_sp27_receiver_controls.py",
+    "sha256": "8fa2fff07e15eab9bc724c30c14bac3d7325168197d5dea544c5118864e34084"
+  },
+  "inputs": {
+    "execution_manifest": {
+      "ctime_ns": 1794446661945604936,
+      "device": 27,
+      "inode": 2264935,
+      "mtime_ns": 1794446661945604936,
+      "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129775/verified/originals/sp27-receiver-controls/manifest.json",
+      "sha256": "14e9dbf1db8485338ed0e64a92523934b618780ebd23d6c067d56092bf55df02",
+      "size_bytes": 8426
+    },
+    "preparation": {
+      "ctime_ns": 1794446662189958520,
+      "device": 27,
+      "inode": 2265917,
+      "mtime_ns": 1794446662189958520,
+      "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129775/verified/originals/sp27-receiver-controls/preparation.json",
+      "sha256": "69922e02a8905f256aaf41251b07f804a00f0a93a98b722bd2ffb3bb65117033",
+      "size_bytes": 4254
+    },
+    "readback_files": {
+      "acquisition.json": {
+        "ctime_ns": 1794446661951155220,
+        "device": 27,
+        "inode": 2264971,
+        "mtime_ns": 1794446661947155391,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129775/verified/originals/sp27-receiver-controls/native/acquisition.json",
+        "sha256": "71c92293fa73976832bb00c5bf319ed6dee9560c3e6917178b86013e65904cf1",
+        "size_bytes": 694983
+      },
+      "host-after.json": {
+        "ctime_ns": 1794446661986422076,
+        "device": 27,
+        "inode": 2265582,
+        "mtime_ns": 1794446661986422076,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129775/verified/originals/sp27-receiver-controls/native/host-after.json",
+        "sha256": "db65c00d90f39efbda9a9ae083af364e9bbd652f51afb864410a4c78646895c7",
+        "size_bytes": 450
+      },
+      "host-before.json": {
+        "ctime_ns": 1794446661986986965,
+        "device": 27,
+        "inode": 2265685,
+        "mtime_ns": 1794446661986986965,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129775/verified/originals/sp27-receiver-controls/native/host-before.json",
+        "sha256": "b34e8149ead638e44850fac2a656c1732db64666360f8afbf6add01cec9bc0b8",
+        "size_bytes": 450
+      },
+      "identity-after.json": {
+        "ctime_ns": 1794446661987491714,
+        "device": 27,
+        "inode": 2265716,
+        "mtime_ns": 1794446661987491714,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129775/verified/originals/sp27-receiver-controls/native/identity-after.json",
+        "sha256": "c12a21d3e159e336e8053ad4d4320eae86926f6c4a49e7f3e8fb7a79fee00e60",
+        "size_bytes": 1026
+      },
+      "identity-before.json": {
+        "ctime_ns": 1794446661987665212,
+        "device": 27,
+        "inode": 2265722,
+        "mtime_ns": 1794446661987665212,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129775/verified/originals/sp27-receiver-controls/native/identity-before.json",
+        "sha256": "c12a21d3e159e336e8053ad4d4320eae86926f6c4a49e7f3e8fb7a79fee00e60",
+        "size_bytes": 1026
+      },
+      "raw/health-000.json": {
+        "ctime_ns": 1794446662007152823,
+        "device": 27,
+        "inode": 2265827,
+        "mtime_ns": 1794446662003152994,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129775/verified/originals/sp27-receiver-controls/native/raw/health-000.json",
+        "sha256": "f1ef9bfaa3138e8352633ff6ad63e41576b6eef5943ed17a2442bc01aaa0e857",
+        "size_bytes": 1908736
+      },
+      "raw/health-001.json": {
+        "ctime_ns": 1794446662023152138,
+        "device": 27,
+        "inode": 2265847,
+        "mtime_ns": 1794446662019152310,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129775/verified/originals/sp27-receiver-controls/native/raw/health-001.json",
+        "sha256": "ff0fcb75ae59b006402c4d2db0f26f2b7bd6be6a64995c84344d86c3010d04e9",
+        "size_bytes": 1908796
+      },
+      "raw/health-002.json": {
+        "ctime_ns": 1794446662039151454,
+        "device": 27,
+        "inode": 2265848,
+        "mtime_ns": 1794446662035151626,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129775/verified/originals/sp27-receiver-controls/native/raw/health-002.json",
+        "sha256": "0d0c9d26c8968bcfec6f1347fb2eea12fd28451b643beaf85471f5246313a5d1",
+        "size_bytes": 1958173
+      }
+    },
+    "report": {
+      "ctime_ns": 1794446662043201443,
+      "device": 27,
+      "inode": 2265886,
+      "mtime_ns": 1794446662043201443,
+      "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129775/verified/originals/sp27-receiver-controls/native/report.json",
+      "sha256": "609481529e64ca56b167b1b9bc516126da7806c51c29e9bc832742a57693c447",
+      "size_bytes": 4324
+    },
+    "retained_binary": {
+      "ctime_ns": 1794446662183145293,
+      "device": 27,
+      "inode": 2265891,
+      "mtime_ns": 1794446662179145464,
+      "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129775/verified/originals/sp27-receiver-controls/public_v3_from_zero",
+      "sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+      "size_bytes": 12504464
+    }
+  },
+  "limitations": [
+    "Actual source/binary/compiled-module/run declarations are cross-bound to preparation and original producer manifest; independent ZIP/source/Host provenance audit remains separate",
+    "Acquisition binding verifies recorded bytes and seven packet/ID inventory, not an additional cryptographic replay",
+    "This separate health batch contains no executed pressure stratum and is not pooled with the prior 43125548321 health batch or original pair",
+    "Three no-pressure outcomes do not establish an attack mechanism or predict the separately queued strata campaign result"
+  ],
+  "manifest_cross_read": {
+    "actual_stdout_stderr_sha_match": true,
+    "all_native_readback_sha_and_sizes_match": true,
+    "binary_before_after_bound_to_preparation": true,
+    "process": {
+      "exit_code": 0,
+      "timed_out": false
+    },
+    "producer_report_sha_matches": true,
+    "retained_binary_sha_matches": true,
+    "source_before_after_bound_to_preparation": true
+  },
+  "producer": {
+    "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+    "job": {
+      "GITHUB_JOB": "health",
+      "GITHUB_RUN_ATTEMPT": "1",
+      "GITHUB_RUN_ID": "43131129775"
+    },
+    "native_compiled_sources_sha256": {
+      "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+      "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_controls.rs": "9a41160291790aa9f77f9893197f0cc49e27153b1e8dd1b64cb00115fa8e8101"
+    },
+    "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+    "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+  },
+  "result": {
+    "attempted": 3,
+    "causal_mechanism_status": "UNKNOWN",
+    "completed": 3,
+    "confirmation_ended_ns": [
+      1800867959,
+      1792501261,
+      1801097967
+    ],
+    "first_divergence": null,
+    "incomplete": 0,
+    "native_final_gates": [
+      true,
+      true,
+      true
+    ],
+    "not_executed": 0,
+    "planned": 3,
+    "pressure_controls_executed": 0,
+    "qualification": "HEALTH_GATE_PASSED_CONTROLS_PENDING",
+    "read_health_completed": true,
+    "strict_original_window_ns": 4000000000
+  },
+  "schema": "sp27-02-health-v2-original-consumer-receipt-v1",
+  "scope": "Read-only actual consumption of original health records by frozen strict Python v2; producer v2 manifest cross-read; no new native experiment; no pooling with previous health batch"
+}

@@ -1,0 +1,47 @@
+{
+  "actual_native_consumer_receipt_at_freeze": null,
+  "actual_native_consumption_at_freeze": "AWAITING_ORIGINALS",
+  "adapter_version": "sp27-02-strata-analysis-v1",
+  "audit_version": "sp27-02-strata-ci-audit-v1",
+  "files": [
+    {
+      "bytes": 34461,
+      "path": "research/sp2027/02_receiver_liveness/audit_strata_ci.py",
+      "sha256": "8f684b5aabb7b759f910c2cc7c78ec3b79013ee1f59065101629f54ed3fc5f7b"
+    },
+    {
+      "bytes": 13986,
+      "path": "research/sp2027/02_receiver_liveness/strata_analysis_v1/adapter.py",
+      "sha256": "04378a888cad5555afc76e38dd63f2cad50fcde6d91f2417e67ac6b902bbe2c5"
+    },
+    {
+      "bytes": 9026,
+      "path": "research/sp2027/02_receiver_liveness/strata_analysis_v1/CONTRACT.md",
+      "sha256": "90505bc6595b675784447bb0162df71000e8d4387363b9fcfcdd48e801a97ca3"
+    },
+    {
+      "bytes": 9613,
+      "path": "research/sp2027/02_receiver_liveness/strata_analysis_v1/test_adapter.py",
+      "sha256": "d320a11a35d94f51ef40b729c62e99977db74a83d06c7a24ab52e4738380fcfe"
+    },
+    {
+      "bytes": 1250,
+      "path": "research/sp2027/02_receiver_liveness/strata_analysis_v1/validation_synthetic_v1/RECEIPT.json",
+      "sha256": "a31bf4be1f429e4ca51a53b1b09195d38805539aa2f886f111d2101afcbf09dc"
+    }
+  ],
+  "frozen_06_analyzer_sha256": "9719f822394e6295a7787be0be2c8d394d25ab19e8d17be543e4145f6bae9acc",
+  "historical_agent_06_author_ack": "NOT_OBSERVED",
+  "mechanism_status": "UNKNOWN",
+  "native_schema": "sp27-receiver-strata-campaign-v1",
+  "native_source_binding": "actual original preparation/source hashes, binary and compiled-module run identities; no expected producer result",
+  "new_native_experiments": 0,
+  "original_frozen_reader_files_modified": false,
+  "schema": "sp27-02-strata-analysis-contract-freeze-v1",
+  "strict_campaign_reader_sha256": "7b7437402b19d63e22e48174ce0c24a63c8e0de8272ad2597ea7f268cc751653",
+  "synthetic_validation": {
+    "receipt": "research/sp2027/02_receiver_liveness/strata_analysis_v1/validation_synthetic_v1/RECEIPT.json",
+    "scope": "SYNTHETIC_ONLY_NOT_NATIVE_EXPERIMENT",
+    "tests_passed": 15
+  }
+}

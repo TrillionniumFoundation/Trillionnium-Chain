@@ -1,0 +1,3432 @@
+{
+  "actual_control_canonical_body_bytes_sum": 12677504,
+  "actual_process": {
+    "command": [
+      "/home/runner/work/_temp/target-sp27/release/deps/public_v3_from_zero-29386b5fc1c68c9c",
+      "sp27_receiver_campaign::balanced_native_stage_controls_stop_on_unhealthy_sentinel",
+      "--exact",
+      "--ignored",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "cpu_ns": 9483126000,
+    "cpu_scope": "entire child, not apportioned to nested wall intervals",
+    "exit_code": 0,
+    "involuntary_switches": 1657,
+    "major_faults": 0,
+    "max_rss_kib": 57160,
+    "minor_faults": 16524,
+    "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "30e5889520c438d3f4b40b6b3bdc05c3b3a5f5c593dead742cac5399521a4d7a",
+    "system_cpu_ns": 6789056000,
+    "timed_out": false,
+    "user_cpu_ns": 2694070000,
+    "voluntary_switches": 163877,
+    "wait4_cpu_resolution_ns": 1000,
+    "wall_ns": 54134029355
+  },
+  "analysis_qualification": "COLLECTED_CONTROL_SERIES",
+  "arm_summaries": [
+    {
+      "actual_calls_started": 32,
+      "arm": "transport",
+      "confirmed_business_operations": 2,
+      "matched_body_checked_count": 32,
+      "n_phases": 2,
+      "numeric_summaries": {
+        "business_release_to_confirmation_latency_ns": {
+          "complete_sum": 5581359005,
+          "known": 2,
+          "maximum": 2860321090,
+          "mean": 2790679502.5,
+          "minimum": 2721037915,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 5581359005,
+          "values": [
+            2860321090,
+            2721037915
+          ]
+        },
+        "confirmation_endpoint_ns": {
+          "complete_sum": 5583091907,
+          "known": 2,
+          "maximum": 2861468990,
+          "mean": 2791545953.5,
+          "minimum": 2721622917,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 5583091907,
+          "values": [
+            2861468990,
+            2721622917
+          ]
+        },
+        "dispatch_calling_thread_cpu_sum_ns": {
+          "complete_sum": 8762050,
+          "known": 2,
+          "maximum": 4547451,
+          "mean": 4381025.0,
+          "minimum": 4214599,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 8762050,
+          "values": [
+            4547451,
+            4214599
+          ]
+        },
+        "full_work_calling_thread_cpu_sum_ns": {
+          "complete_sum": null,
+          "known": 0,
+          "maximum": null,
+          "mean": null,
+          "minimum": null,
+          "missing": 2,
+          "n": 2,
+          "observed_sum": 0,
+          "values": [
+            null,
+            null
+          ]
+        },
+        "independent_replay_calling_thread_cpu_ns": {
+          "complete_sum": 948342164,
+          "known": 2,
+          "maximum": 475922293,
+          "mean": 474171082.0,
+          "minimum": 472419871,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 948342164,
+          "values": [
+            475922293,
+            472419871
+          ]
+        },
+        "paid_task_queue_wait_sum_ns": {
+          "complete_sum": 580870348,
+          "known": 2,
+          "maximum": 414420502,
+          "mean": 290435174.0,
+          "minimum": 166449846,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 580870348,
+          "values": [
+            414420502,
+            166449846
+          ]
+        }
+      },
+      "phase_ids_in_execution_order": [
+        "control-000-transport",
+        "control-007-transport"
+      ],
+      "reverse_minus_forward": {
+        "business_release_to_confirmation_latency_ns": -139283175,
+        "confirmation_endpoint_ns": -139846073,
+        "dispatch_calling_thread_cpu_sum_ns": -332852,
+        "full_work_calling_thread_cpu_sum_ns": null,
+        "independent_replay_calling_thread_cpu_ns": -3502422,
+        "paid_task_queue_wait_sum_ns": -247970656
+      },
+      "target_stage_attained": 32
+    },
+    {
+      "actual_calls_started": 32,
+      "arm": "early-reject",
+      "confirmed_business_operations": 2,
+      "matched_body_checked_count": 32,
+      "n_phases": 2,
+      "numeric_summaries": {
+        "business_release_to_confirmation_latency_ns": {
+          "complete_sum": 5591673089,
+          "known": 2,
+          "maximum": 2797580952,
+          "mean": 2795836544.5,
+          "minimum": 2794092137,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 5591673089,
+          "values": [
+            2797580952,
+            2794092137
+          ]
+        },
+        "confirmation_endpoint_ns": {
+          "complete_sum": 5592787769,
+          "known": 2,
+          "maximum": 2798110260,
+          "mean": 2796393884.5,
+          "minimum": 2794677509,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 5592787769,
+          "values": [
+            2798110260,
+            2794677509
+          ]
+        },
+        "dispatch_calling_thread_cpu_sum_ns": {
+          "complete_sum": 12811844,
+          "known": 2,
+          "maximum": 6413068,
+          "mean": 6405922.0,
+          "minimum": 6398776,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 12811844,
+          "values": [
+            6413068,
+            6398776
+          ]
+        },
+        "full_work_calling_thread_cpu_sum_ns": {
+          "complete_sum": null,
+          "known": 0,
+          "maximum": null,
+          "mean": null,
+          "minimum": null,
+          "missing": 2,
+          "n": 2,
+          "observed_sum": 0,
+          "values": [
+            null,
+            null
+          ]
+        },
+        "independent_replay_calling_thread_cpu_ns": {
+          "complete_sum": 947737851,
+          "known": 2,
+          "maximum": 475372504,
+          "mean": 473868925.5,
+          "minimum": 472365347,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 947737851,
+          "values": [
+            475372504,
+            472365347
+          ]
+        },
+        "paid_task_queue_wait_sum_ns": {
+          "complete_sum": 163719350,
+          "known": 2,
+          "maximum": 98962136,
+          "mean": 81859675.0,
+          "minimum": 64757214,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 163719350,
+          "values": [
+            64757214,
+            98962136
+          ]
+        }
+      },
+      "phase_ids_in_execution_order": [
+        "control-001-early-reject",
+        "control-006-early-reject"
+      ],
+      "reverse_minus_forward": {
+        "business_release_to_confirmation_latency_ns": -3488815,
+        "confirmation_endpoint_ns": -3432751,
+        "dispatch_calling_thread_cpu_sum_ns": -14292,
+        "full_work_calling_thread_cpu_sum_ns": null,
+        "independent_replay_calling_thread_cpu_ns": -3007157,
+        "paid_task_queue_wait_sum_ns": 34204922
+      },
+      "target_stage_attained": 32
+    },
+    {
+      "actual_calls_started": 32,
+      "arm": "late-reject",
+      "confirmed_business_operations": 2,
+      "matched_body_checked_count": 32,
+      "n_phases": 2,
+      "numeric_summaries": {
+        "business_release_to_confirmation_latency_ns": {
+          "complete_sum": 5801145854,
+          "known": 2,
+          "maximum": 2900736710,
+          "mean": 2900572927.0,
+          "minimum": 2900409144,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 5801145854,
+          "values": [
+            2900736710,
+            2900409144
+          ]
+        },
+        "confirmation_endpoint_ns": {
+          "complete_sum": 5802238781,
+          "known": 2,
+          "maximum": 2901255562,
+          "mean": 2901119390.5,
+          "minimum": 2900983219,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 5802238781,
+          "values": [
+            2901255562,
+            2900983219
+          ]
+        },
+        "dispatch_calling_thread_cpu_sum_ns": {
+          "complete_sum": 52399769,
+          "known": 2,
+          "maximum": 27360106,
+          "mean": 26199884.5,
+          "minimum": 25039663,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 52399769,
+          "values": [
+            27360106,
+            25039663
+          ]
+        },
+        "full_work_calling_thread_cpu_sum_ns": {
+          "complete_sum": 38844340,
+          "known": 2,
+          "maximum": 20501315,
+          "mean": 19422170.0,
+          "minimum": 18343025,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 38844340,
+          "values": [
+            20501315,
+            18343025
+          ]
+        },
+        "independent_replay_calling_thread_cpu_ns": {
+          "complete_sum": 945248240,
+          "known": 2,
+          "maximum": 472662910,
+          "mean": 472624120.0,
+          "minimum": 472585330,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 945248240,
+          "values": [
+            472585330,
+            472662910
+          ]
+        },
+        "paid_task_queue_wait_sum_ns": {
+          "complete_sum": 555329475,
+          "known": 2,
+          "maximum": 353541680,
+          "mean": 277664737.5,
+          "minimum": 201787795,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 555329475,
+          "values": [
+            201787795,
+            353541680
+          ]
+        }
+      },
+      "phase_ids_in_execution_order": [
+        "control-002-late-reject",
+        "control-005-late-reject"
+      ],
+      "reverse_minus_forward": {
+        "business_release_to_confirmation_latency_ns": -327566,
+        "confirmation_endpoint_ns": -272343,
+        "dispatch_calling_thread_cpu_sum_ns": -2320443,
+        "full_work_calling_thread_cpu_sum_ns": -2158290,
+        "independent_replay_calling_thread_cpu_ns": 77580,
+        "paid_task_queue_wait_sum_ns": 151753885
+      },
+      "target_stage_attained": 32
+    },
+    {
+      "actual_calls_started": 32,
+      "arm": "valid-expensive",
+      "confirmed_business_operations": 2,
+      "matched_body_checked_count": 32,
+      "n_phases": 2,
+      "numeric_summaries": {
+        "business_release_to_confirmation_latency_ns": {
+          "complete_sum": 6101399099,
+          "known": 2,
+          "maximum": 3081237746,
+          "mean": 3050699549.5,
+          "minimum": 3020161353,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 6101399099,
+          "values": [
+            3020161353,
+            3081237746
+          ]
+        },
+        "confirmation_endpoint_ns": {
+          "complete_sum": 6102721347,
+          "known": 2,
+          "maximum": 3081921311,
+          "mean": 3051360673.5,
+          "minimum": 3020800036,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 6102721347,
+          "values": [
+            3020800036,
+            3081921311
+          ]
+        },
+        "dispatch_calling_thread_cpu_sum_ns": {
+          "complete_sum": 144228325,
+          "known": 2,
+          "maximum": 72793202,
+          "mean": 72114162.5,
+          "minimum": 71435123,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 144228325,
+          "values": [
+            71435123,
+            72793202
+          ]
+        },
+        "full_work_calling_thread_cpu_sum_ns": {
+          "complete_sum": 43695217,
+          "known": 2,
+          "maximum": 22145594,
+          "mean": 21847608.5,
+          "minimum": 21549623,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 43695217,
+          "values": [
+            21549623,
+            22145594
+          ]
+        },
+        "independent_replay_calling_thread_cpu_ns": {
+          "complete_sum": 943664714,
+          "known": 2,
+          "maximum": 473464149,
+          "mean": 471832357.0,
+          "minimum": 470200565,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 943664714,
+          "values": [
+            470200565,
+            473464149
+          ]
+        },
+        "paid_task_queue_wait_sum_ns": {
+          "complete_sum": 2347481171,
+          "known": 2,
+          "maximum": 1209631479,
+          "mean": 1173740585.5,
+          "minimum": 1137849692,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 2347481171,
+          "values": [
+            1137849692,
+            1209631479
+          ]
+        }
+      },
+      "phase_ids_in_execution_order": [
+        "control-003-valid-expensive",
+        "control-004-valid-expensive"
+      ],
+      "reverse_minus_forward": {
+        "business_release_to_confirmation_latency_ns": 61076393,
+        "confirmation_endpoint_ns": 61121275,
+        "dispatch_calling_thread_cpu_sum_ns": 1358079,
+        "full_work_calling_thread_cpu_sum_ns": 595971,
+        "independent_replay_calling_thread_cpu_ns": 3263584,
+        "paid_task_queue_wait_sum_ns": 71781787
+      },
+      "target_stage_attained": 32
+    }
+  ],
+  "causal_mechanism_status": "UNKNOWN",
+  "confidence_interval_estimated": false,
+  "confirmed_business_operations": 13,
+  "control_requests_started": 128,
+  "coordinator_ack": "NOT_OBSERVED",
+  "experiment_id": "ci-43131129970-job-130895252279-artifact-13906427974",
+  "health_and_sentinel_confirmations": 5,
+  "historical_agent_06_author_ack": "NOT_OBSERVED",
+  "input_acquisition_costs": {
+    "canonical_submit_body_bytes_each": 99043,
+    "complete_acquisition_process_cpu_ns": 174794390,
+    "complete_acquisition_wall_ns": 732009246,
+    "cost_scope": "all process threads from public context setup through negative construction, valid producer histories, encoding and raw writes; output Value serialization occurs after the measured interval",
+    "input_legality": [
+      "valid paid Submit wrapper; invalid first PNH1 codec byte",
+      "valid codec; same late header/challenge/target/ticket, one canonical A element changes task ID",
+      "from-zero target-hit false transcript; original native verifier must actually reject after replay",
+      "native mine-returned valid empty genesis siblings; may activate competing state and require explicit final-state control"
+    ],
+    "negative_preparation_process_cpu_ns": 23207168,
+    "negative_preparation_wall_ns": 37613168,
+    "nested_cost_intervals_are_not_additive": true,
+    "schema": "sp27-strata-input-acquisition-v1",
+    "valid_expensive_is_not_a_pure_W1_intervention": true
+  },
+  "input_files": [
+    {
+      "bytes": 15584,
+      "member": "phase_table.json",
+      "sha256": "d287da40852043ce1076cb1b92f3afe8890878214e6572cdd0f0c84d5dde5518"
+    },
+    {
+      "bytes": 15538510,
+      "member": "phase_ledger.json",
+      "sha256": "a47b652b04653073244dd5454ff91c9f19f7b446334cba9c4582f95b325a813b"
+    },
+    {
+      "bytes": 7404965,
+      "member": "connection_records.jsonl",
+      "sha256": "1472ef67a0ec1f83c94a93c49670ae6eac2268df6f0dc992cd37e8e5aff67f7a"
+    }
+  ],
+  "native_collector_qualification": "COLLECTED_CONTROL_SERIES",
+  "native_counts": {
+    "attempted_phases": 13,
+    "completed_phases": 13,
+    "healthy_completed_phases": 5,
+    "helper_invoked_phases": 13,
+    "incomplete_phases": 0,
+    "planned_phases": 13,
+    "pressure_controls_attempted": 8,
+    "pressure_controls_executed": 8,
+    "pressure_controls_planned": 8,
+    "pressure_controls_unstarted": 0,
+    "unstarted_phases": 0
+  },
+  "new_native_experiments": 0,
+  "phase_details": [
+    {
+      "actual_calls_started": 0,
+      "actual_calls_started_inside_window": 0,
+      "actual_recorded_canonical_body_bytes_sum": 0,
+      "arm": null,
+      "business_release_to_confirmation_latency_ns": 2673388307,
+      "business_started_ns": 114393,
+      "cache_replay_classification_unknown": null,
+      "cached_rejections_observed": null,
+      "call_start_ns": {
+        "complete_sum": 0,
+        "known": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing": 0,
+        "n": 0,
+        "observed_sum": 0,
+        "values": []
+      },
+      "call_status_counts": {},
+      "confirmation_endpoint_ns": 2673502700,
+      "confirmed": true,
+      "control_body_bytes_per_request": null,
+      "control_integrity_met": null,
+      "deadline_and_cancellation": {
+        "actual_native_metrics": {
+          "abandoned_tasks": 0,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "connections_closed_on_shutdown": 0,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "executor_refusals": 0,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "lane_capacity_refusals": 0,
+          "mutation_cpu_refusals": 0,
+          "paid_body_capacity_refusals": 0,
+          "parse_refusals": 0,
+          "pending_challenge_closed": 0,
+          "pending_grant_closed": 0,
+          "preface_refusals": 0,
+          "queue_refusals": 0,
+          "replay_refusals": 0,
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0
+        },
+        "calls_deadline_flag_unknown": 0,
+        "calls_returned_after_deadline": 0,
+        "cancellation_cause_inferred": false,
+        "original_window_ns": 4000000000,
+        "queue_depth_inferred_from_wait_time": false
+      },
+      "dispatch_calling_thread_cpu_sum_ns": null,
+      "full_work_calling_thread_cpu_sum_ns": null,
+      "independent_history_replay_count": 7,
+      "independent_history_replay_results": {
+        "accepted": 7
+      },
+      "independent_replay_calling_thread_cpu_ns": 472470462,
+      "kind": "initial-health",
+      "matched_body_checked_count": null,
+      "matched_control_dispatch_accepted": null,
+      "matched_control_work_spans_explicitly_unstarted": null,
+      "matched_queue_distributions": {
+        "challenge_wait": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        },
+        "grant_wait": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        },
+        "paid_task_queue_wait": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        },
+        "response_write": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        }
+      },
+      "native_final_gate": true,
+      "native_full_replay_observed": null,
+      "observer_accepted_ns": {
+        "complete_sum": 0,
+        "known": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing": 0,
+        "n": 0,
+        "observed_sum": 0,
+        "values": []
+      },
+      "offering_lateness_ns": {
+        "complete_sum": 0,
+        "known": 0,
+        "maximum": null,
+        "minimum": null,
+        "observations": 0,
+        "observed_sum": 0,
+        "unknown": 0
+      },
+      "paid_task_queue_wait_sum_ns": null,
+      "phase_id": "health-000",
+      "planned_index": 0,
+      "raw_sha256": "ec78fdd1cff0b07abf1885a527f69804890cf185716b6a73b45d93d5a8baf84c",
+      "remaining_original_window_at_endpoint_ns": 1326497300,
+      "service_peak_counters": {
+        "peak_connections": 2,
+        "peak_mutating_grants": 1,
+        "peak_output_reserved_bytes": 8404992,
+        "peak_paid_body_bytes": 298374,
+        "peak_pending_challenge": 2,
+        "peak_pending_enqueue": 1,
+        "peak_pending_grant": 2,
+        "peak_read_grants": 1,
+        "peak_spent": 41
+      },
+      "stage_counts": null,
+      "target_stage_attained": null
+    },
+    {
+      "actual_calls_started": 0,
+      "actual_calls_started_inside_window": 0,
+      "actual_recorded_canonical_body_bytes_sum": 0,
+      "arm": null,
+      "business_release_to_confirmation_latency_ns": 2617770967,
+      "business_started_ns": 90937,
+      "cache_replay_classification_unknown": null,
+      "cached_rejections_observed": null,
+      "call_start_ns": {
+        "complete_sum": 0,
+        "known": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing": 0,
+        "n": 0,
+        "observed_sum": 0,
+        "values": []
+      },
+      "call_status_counts": {},
+      "confirmation_endpoint_ns": 2617861904,
+      "confirmed": true,
+      "control_body_bytes_per_request": null,
+      "control_integrity_met": null,
+      "deadline_and_cancellation": {
+        "actual_native_metrics": {
+          "abandoned_tasks": 0,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "connections_closed_on_shutdown": 0,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "executor_refusals": 0,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "lane_capacity_refusals": 0,
+          "mutation_cpu_refusals": 0,
+          "paid_body_capacity_refusals": 0,
+          "parse_refusals": 0,
+          "pending_challenge_closed": 0,
+          "pending_grant_closed": 0,
+          "preface_refusals": 0,
+          "queue_refusals": 0,
+          "replay_refusals": 0,
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0
+        },
+        "calls_deadline_flag_unknown": 0,
+        "calls_returned_after_deadline": 0,
+        "cancellation_cause_inferred": false,
+        "original_window_ns": 4000000000,
+        "queue_depth_inferred_from_wait_time": false
+      },
+      "dispatch_calling_thread_cpu_sum_ns": null,
+      "full_work_calling_thread_cpu_sum_ns": null,
+      "independent_history_replay_count": 7,
+      "independent_history_replay_results": {
+        "accepted": 7
+      },
+      "independent_replay_calling_thread_cpu_ns": 470437404,
+      "kind": "initial-health",
+      "matched_body_checked_count": null,
+      "matched_control_dispatch_accepted": null,
+      "matched_control_work_spans_explicitly_unstarted": null,
+      "matched_queue_distributions": {
+        "challenge_wait": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        },
+        "grant_wait": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        },
+        "paid_task_queue_wait": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        },
+        "response_write": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        }
+      },
+      "native_final_gate": true,
+      "native_full_replay_observed": null,
+      "observer_accepted_ns": {
+        "complete_sum": 0,
+        "known": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing": 0,
+        "n": 0,
+        "observed_sum": 0,
+        "values": []
+      },
+      "offering_lateness_ns": {
+        "complete_sum": 0,
+        "known": 0,
+        "maximum": null,
+        "minimum": null,
+        "observations": 0,
+        "observed_sum": 0,
+        "unknown": 0
+      },
+      "paid_task_queue_wait_sum_ns": null,
+      "phase_id": "health-001",
+      "planned_index": 1,
+      "raw_sha256": "dc56158b46afacf6d9731fffbd0bc1722d5d6b235827214cc677643c5f6d9718",
+      "remaining_original_window_at_endpoint_ns": 1382138096,
+      "service_peak_counters": {
+        "peak_connections": 2,
+        "peak_mutating_grants": 1,
+        "peak_output_reserved_bytes": 8404992,
+        "peak_paid_body_bytes": 298374,
+        "peak_pending_challenge": 2,
+        "peak_pending_enqueue": 1,
+        "peak_pending_grant": 2,
+        "peak_read_grants": 2,
+        "peak_spent": 42
+      },
+      "stage_counts": null,
+      "target_stage_attained": null
+    },
+    {
+      "actual_calls_started": 0,
+      "actual_calls_started_inside_window": 0,
+      "actual_recorded_canonical_body_bytes_sum": 0,
+      "arm": null,
+      "business_release_to_confirmation_latency_ns": 2857738835,
+      "business_started_ns": 67972,
+      "cache_replay_classification_unknown": null,
+      "cached_rejections_observed": null,
+      "call_start_ns": {
+        "complete_sum": 0,
+        "known": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing": 0,
+        "n": 0,
+        "observed_sum": 0,
+        "values": []
+      },
+      "call_status_counts": {},
+      "confirmation_endpoint_ns": 2857806807,
+      "confirmed": true,
+      "control_body_bytes_per_request": null,
+      "control_integrity_met": null,
+      "deadline_and_cancellation": {
+        "actual_native_metrics": {
+          "abandoned_tasks": 0,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "connections_closed_on_shutdown": 0,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "executor_refusals": 0,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "lane_capacity_refusals": 0,
+          "mutation_cpu_refusals": 0,
+          "paid_body_capacity_refusals": 0,
+          "parse_refusals": 0,
+          "pending_challenge_closed": 0,
+          "pending_grant_closed": 0,
+          "preface_refusals": 0,
+          "queue_refusals": 0,
+          "replay_refusals": 0,
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0
+        },
+        "calls_deadline_flag_unknown": 0,
+        "calls_returned_after_deadline": 0,
+        "cancellation_cause_inferred": false,
+        "original_window_ns": 4000000000,
+        "queue_depth_inferred_from_wait_time": false
+      },
+      "dispatch_calling_thread_cpu_sum_ns": null,
+      "full_work_calling_thread_cpu_sum_ns": null,
+      "independent_history_replay_count": 7,
+      "independent_history_replay_results": {
+        "accepted": 7
+      },
+      "independent_replay_calling_thread_cpu_ns": 475052843,
+      "kind": "initial-health",
+      "matched_body_checked_count": null,
+      "matched_control_dispatch_accepted": null,
+      "matched_control_work_spans_explicitly_unstarted": null,
+      "matched_queue_distributions": {
+        "challenge_wait": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        },
+        "grant_wait": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        },
+        "paid_task_queue_wait": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        },
+        "response_write": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        }
+      },
+      "native_final_gate": true,
+      "native_full_replay_observed": null,
+      "observer_accepted_ns": {
+        "complete_sum": 0,
+        "known": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing": 0,
+        "n": 0,
+        "observed_sum": 0,
+        "values": []
+      },
+      "offering_lateness_ns": {
+        "complete_sum": 0,
+        "known": 0,
+        "maximum": null,
+        "minimum": null,
+        "observations": 0,
+        "observed_sum": 0,
+        "unknown": 0
+      },
+      "paid_task_queue_wait_sum_ns": null,
+      "phase_id": "health-002",
+      "planned_index": 2,
+      "raw_sha256": "5b2ff8d08c6c140c10230e5c45501f1be5b78a83565634b131e2b9596eb3838e",
+      "remaining_original_window_at_endpoint_ns": 1142193193,
+      "service_peak_counters": {
+        "peak_connections": 2,
+        "peak_mutating_grants": 1,
+        "peak_output_reserved_bytes": 8404992,
+        "peak_paid_body_bytes": 298374,
+        "peak_pending_challenge": 1,
+        "peak_pending_enqueue": 1,
+        "peak_pending_grant": 1,
+        "peak_read_grants": 1,
+        "peak_spent": 39
+      },
+      "stage_counts": null,
+      "target_stage_attained": null
+    },
+    {
+      "actual_calls_started": 16,
+      "actual_calls_started_inside_window": 16,
+      "actual_recorded_canonical_body_bytes_sum": 1584688,
+      "arm": "transport",
+      "business_release_to_confirmation_latency_ns": 2860321090,
+      "business_started_ns": 1147900,
+      "cache_replay_classification_unknown": 16,
+      "cached_rejections_observed": 0,
+      "call_start_ns": {
+        "complete_sum": 1994251621,
+        "known": 16,
+        "maximum": 156551784,
+        "mean": 124640726.3125,
+        "minimum": 100085867,
+        "missing": 0,
+        "n": 16,
+        "observed_sum": 1994251621,
+        "values": [
+          100744716,
+          155657822,
+          100085867,
+          100894521,
+          100737034,
+          100143760,
+          156551784,
+          100575045,
+          155802786,
+          155880352,
+          100138913,
+          155197263,
+          100139523,
+          155189426,
+          101315546,
+          155197263
+        ]
+      },
+      "call_status_counts": {
+        "refused": 16
+      },
+      "confirmation_endpoint_ns": 2861468990,
+      "confirmed": true,
+      "control_body_bytes_per_request": [
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043
+      ],
+      "control_integrity_met": true,
+      "deadline_and_cancellation": {
+        "actual_native_metrics": {
+          "abandoned_tasks": 0,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "connections_closed_on_shutdown": 0,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "executor_refusals": 16,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "lane_capacity_refusals": 0,
+          "mutation_cpu_refusals": 0,
+          "paid_body_capacity_refusals": 0,
+          "parse_refusals": 0,
+          "pending_challenge_closed": 0,
+          "pending_grant_closed": 0,
+          "preface_refusals": 0,
+          "queue_refusals": 0,
+          "replay_refusals": 0,
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0
+        },
+        "calls_deadline_flag_unknown": 0,
+        "calls_returned_after_deadline": 0,
+        "cancellation_cause_inferred": false,
+        "original_window_ns": 4000000000,
+        "queue_depth_inferred_from_wait_time": false
+      },
+      "dispatch_calling_thread_cpu_sum_ns": 4547451,
+      "full_work_calling_thread_cpu_sum_ns": null,
+      "independent_history_replay_count": 7,
+      "independent_history_replay_results": {
+        "accepted": 7
+      },
+      "independent_replay_calling_thread_cpu_ns": 475922293,
+      "kind": "pressure-control",
+      "matched_body_checked_count": 16,
+      "matched_control_dispatch_accepted": 0,
+      "matched_control_work_spans_explicitly_unstarted": 16,
+      "matched_queue_distributions": {
+        "challenge_wait": {
+          "complete_sum": 73225210,
+          "known": 16,
+          "maximum": 7908379,
+          "minimum": 1125617,
+          "observations": 16,
+          "observed_sum": 73225210,
+          "unknown": 0
+        },
+        "grant_wait": {
+          "complete_sum": 127241296,
+          "known": 16,
+          "maximum": 10970123,
+          "minimum": 1501463,
+          "observations": 16,
+          "observed_sum": 127241296,
+          "unknown": 0
+        },
+        "paid_task_queue_wait": {
+          "complete_sum": 414420502,
+          "known": 16,
+          "maximum": 79973861,
+          "minimum": 1574609,
+          "observations": 16,
+          "observed_sum": 414420502,
+          "unknown": 0
+        },
+        "response_write": {
+          "complete_sum": 641569,
+          "known": 16,
+          "maximum": 96516,
+          "minimum": 15574,
+          "observations": 16,
+          "observed_sum": 641569,
+          "unknown": 0
+        }
+      },
+      "native_final_gate": true,
+      "native_full_replay_observed": 0,
+      "observer_accepted_ns": {
+        "complete_sum": 2016119847,
+        "known": 16,
+        "maximum": 158348983,
+        "mean": 126007490.4375,
+        "minimum": 101695669,
+        "missing": 0,
+        "n": 16,
+        "observed_sum": 2016119847,
+        "values": [
+          101695669,
+          101702849,
+          101708087,
+          101713716,
+          101719044,
+          101723741,
+          101729039,
+          101734447,
+          102824650,
+          155689344,
+          156785647,
+          156794450,
+          156800339,
+          156806087,
+          158343755,
+          158348983
+        ]
+      },
+      "offering_lateness_ns": {
+        "complete_sum": 393240243,
+        "known": 16,
+        "maximum": 56486125,
+        "minimum": 71050,
+        "observations": 16,
+        "observed_sum": 393240243,
+        "unknown": 0
+      },
+      "paid_task_queue_wait_sum_ns": 414420502,
+      "phase_id": "control-000-transport",
+      "planned_index": 3,
+      "raw_sha256": "3fa5f154302971d60fabcd95ef9e8e7df4cfcf792798ee6b2b1ee470b7609619",
+      "remaining_original_window_at_endpoint_ns": 1138531010,
+      "service_peak_counters": {
+        "peak_connections": 18,
+        "peak_mutating_grants": 8,
+        "peak_output_reserved_bytes": 8404992,
+        "peak_paid_body_bytes": 2377071,
+        "peak_pending_challenge": 7,
+        "peak_pending_enqueue": 3,
+        "peak_pending_grant": 8,
+        "peak_read_grants": 2,
+        "peak_spent": 57
+      },
+      "stage_counts": {
+        "admission": {
+          "accepted": 0,
+          "completed": 0,
+          "started": 0
+        },
+        "body_decode": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "context": {
+          "accepted": 0,
+          "completed": 0,
+          "started": 0
+        },
+        "decode": {
+          "accepted": 0,
+          "completed": 16,
+          "started": 16
+        },
+        "submit_result": {
+          "accepted": 0,
+          "completed": 0,
+          "started": 0
+        },
+        "work": {
+          "accepted": 0,
+          "completed": 0,
+          "started": 0
+        }
+      },
+      "target_stage_attained": 16
+    },
+    {
+      "actual_calls_started": 16,
+      "actual_calls_started_inside_window": 16,
+      "actual_recorded_canonical_body_bytes_sum": 1584688,
+      "arm": "early-reject",
+      "business_release_to_confirmation_latency_ns": 2797580952,
+      "business_started_ns": 529308,
+      "cache_replay_classification_unknown": 16,
+      "cached_rejections_observed": 0,
+      "call_start_ns": {
+        "complete_sum": 1614572855,
+        "known": 16,
+        "maximum": 102457472,
+        "mean": 100910803.4375,
+        "minimum": 100084657,
+        "missing": 0,
+        "n": 16,
+        "observed_sum": 1614572855,
+        "values": [
+          100088091,
+          100084657,
+          100088106,
+          101064177,
+          102101626,
+          100570028,
+          101074157,
+          101069761,
+          100579322,
+          102457472,
+          101529534,
+          101544947,
+          100580719,
+          100575145,
+          100095472,
+          101069641
+        ]
+      },
+      "call_status_counts": {
+        "refused": 16
+      },
+      "confirmation_endpoint_ns": 2798110260,
+      "confirmed": true,
+      "control_body_bytes_per_request": [
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043
+      ],
+      "control_integrity_met": true,
+      "deadline_and_cancellation": {
+        "actual_native_metrics": {
+          "abandoned_tasks": 0,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "connections_closed_on_shutdown": 0,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "executor_refusals": 16,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "lane_capacity_refusals": 0,
+          "mutation_cpu_refusals": 0,
+          "paid_body_capacity_refusals": 0,
+          "parse_refusals": 0,
+          "pending_challenge_closed": 0,
+          "pending_grant_closed": 0,
+          "preface_refusals": 0,
+          "queue_refusals": 0,
+          "replay_refusals": 0,
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0
+        },
+        "calls_deadline_flag_unknown": 0,
+        "calls_returned_after_deadline": 0,
+        "cancellation_cause_inferred": false,
+        "original_window_ns": 4000000000,
+        "queue_depth_inferred_from_wait_time": false
+      },
+      "dispatch_calling_thread_cpu_sum_ns": 6413068,
+      "full_work_calling_thread_cpu_sum_ns": null,
+      "independent_history_replay_count": 7,
+      "independent_history_replay_results": {
+        "accepted": 7
+      },
+      "independent_replay_calling_thread_cpu_ns": 475372504,
+      "kind": "pressure-control",
+      "matched_body_checked_count": 16,
+      "matched_control_dispatch_accepted": 0,
+      "matched_control_work_spans_explicitly_unstarted": 16,
+      "matched_queue_distributions": {
+        "challenge_wait": {
+          "complete_sum": 155227009,
+          "known": 16,
+          "maximum": 18346440,
+          "minimum": 1132797,
+          "observations": 16,
+          "observed_sum": 155227009,
+          "unknown": 0
+        },
+        "grant_wait": {
+          "complete_sum": 423286609,
+          "known": 16,
+          "maximum": 77768437,
+          "minimum": 1134990,
+          "observations": 16,
+          "observed_sum": 423286609,
+          "unknown": 0
+        },
+        "paid_task_queue_wait": {
+          "complete_sum": 64757214,
+          "known": 16,
+          "maximum": 8603346,
+          "minimum": 1254080,
+          "observations": 16,
+          "observed_sum": 64757214,
+          "unknown": 0
+        },
+        "response_write": {
+          "complete_sum": 368505,
+          "known": 16,
+          "maximum": 47011,
+          "minimum": 9104,
+          "observations": 16,
+          "observed_sum": 368505,
+          "unknown": 0
+        }
+      },
+      "native_final_gate": true,
+      "native_full_replay_observed": 0,
+      "observer_accepted_ns": {
+        "complete_sum": 1635232022,
+        "known": 16,
+        "maximum": 102811106,
+        "mean": 102202001.375,
+        "minimum": 101588853,
+        "missing": 0,
+        "n": 16,
+        "observed_sum": 1635232022,
+        "values": [
+          101588853,
+          101597156,
+          101603295,
+          101609535,
+          101616095,
+          101622074,
+          101628623,
+          101634853,
+          102767630,
+          102775712,
+          102782763,
+          102790815,
+          102796063,
+          102801401,
+          102806048,
+          102811106
+        ]
+      },
+      "offering_lateness_ns": {
+        "complete_sum": 14208498,
+        "known": 16,
+        "maximum": 2445885,
+        "minimum": 71286,
+        "observations": 16,
+        "observed_sum": 14208498,
+        "unknown": 0
+      },
+      "paid_task_queue_wait_sum_ns": 64757214,
+      "phase_id": "control-001-early-reject",
+      "planned_index": 4,
+      "raw_sha256": "0a7105ac963ada28813b4e90295aa54f9ffa66605c78da01208ee6d2da61a96d",
+      "remaining_original_window_at_endpoint_ns": 1201889740,
+      "service_peak_counters": {
+        "peak_connections": 17,
+        "peak_mutating_grants": 8,
+        "peak_output_reserved_bytes": 8404992,
+        "peak_paid_body_bytes": 2377032,
+        "peak_pending_challenge": 15,
+        "peak_pending_enqueue": 4,
+        "peak_pending_grant": 6,
+        "peak_read_grants": 1,
+        "peak_spent": 56
+      },
+      "stage_counts": {
+        "admission": {
+          "accepted": 0,
+          "completed": 0,
+          "started": 0
+        },
+        "body_decode": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "context": {
+          "accepted": 0,
+          "completed": 16,
+          "started": 16
+        },
+        "decode": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "submit_result": {
+          "accepted": 0,
+          "completed": 0,
+          "started": 0
+        },
+        "work": {
+          "accepted": 0,
+          "completed": 0,
+          "started": 0
+        }
+      },
+      "target_stage_attained": 16
+    },
+    {
+      "actual_calls_started": 16,
+      "actual_calls_started_inside_window": 16,
+      "actual_recorded_canonical_body_bytes_sum": 1584688,
+      "arm": "late-reject",
+      "business_release_to_confirmation_latency_ns": 2900736710,
+      "business_started_ns": 518852,
+      "cache_replay_classification_unknown": 0,
+      "cached_rejections_observed": 0,
+      "call_start_ns": {
+        "complete_sum": 1627853069,
+        "known": 16,
+        "maximum": 104064869,
+        "mean": 101740816.8125,
+        "minimum": 100084610,
+        "missing": 0,
+        "n": 16,
+        "observed_sum": 1627853069,
+        "values": [
+          101541266,
+          101659313,
+          100085697,
+          100221807,
+          102158105,
+          101241153,
+          104064869,
+          101228394,
+          102074229,
+          102159142,
+          100084610,
+          101713730,
+          103131407,
+          102630552,
+          101235499,
+          102623296
+        ]
+      },
+      "call_status_counts": {
+        "refused": 16
+      },
+      "confirmation_endpoint_ns": 2901255562,
+      "confirmed": true,
+      "control_body_bytes_per_request": [
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043
+      ],
+      "control_integrity_met": true,
+      "deadline_and_cancellation": {
+        "actual_native_metrics": {
+          "abandoned_tasks": 0,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "connections_closed_on_shutdown": 0,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "executor_refusals": 16,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "lane_capacity_refusals": 0,
+          "mutation_cpu_refusals": 0,
+          "paid_body_capacity_refusals": 0,
+          "parse_refusals": 0,
+          "pending_challenge_closed": 0,
+          "pending_grant_closed": 0,
+          "preface_refusals": 0,
+          "queue_refusals": 0,
+          "replay_refusals": 0,
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0
+        },
+        "calls_deadline_flag_unknown": 0,
+        "calls_returned_after_deadline": 0,
+        "cancellation_cause_inferred": false,
+        "original_window_ns": 4000000000,
+        "queue_depth_inferred_from_wait_time": false
+      },
+      "dispatch_calling_thread_cpu_sum_ns": 27360106,
+      "full_work_calling_thread_cpu_sum_ns": 20501315,
+      "independent_history_replay_count": 7,
+      "independent_history_replay_results": {
+        "accepted": 7
+      },
+      "independent_replay_calling_thread_cpu_ns": 472585330,
+      "kind": "pressure-control",
+      "matched_body_checked_count": 16,
+      "matched_control_dispatch_accepted": 0,
+      "matched_control_work_spans_explicitly_unstarted": 0,
+      "matched_queue_distributions": {
+        "challenge_wait": {
+          "complete_sum": 396862303,
+          "known": 16,
+          "maximum": 98666363,
+          "minimum": 1181721,
+          "observations": 16,
+          "observed_sum": 396862303,
+          "unknown": 0
+        },
+        "grant_wait": {
+          "complete_sum": 101469047,
+          "known": 16,
+          "maximum": 83003186,
+          "minimum": 1162713,
+          "observations": 16,
+          "observed_sum": 101469047,
+          "unknown": 0
+        },
+        "paid_task_queue_wait": {
+          "complete_sum": 201787795,
+          "known": 16,
+          "maximum": 89676314,
+          "minimum": 1342783,
+          "observations": 16,
+          "observed_sum": 201787795,
+          "unknown": 0
+        },
+        "response_write": {
+          "complete_sum": 444191,
+          "known": 16,
+          "maximum": 67512,
+          "minimum": 12729,
+          "observations": 16,
+          "observed_sum": 444191,
+          "unknown": 0
+        }
+      },
+      "native_final_gate": true,
+      "native_full_replay_observed": 16,
+      "observer_accepted_ns": {
+        "complete_sum": 1649197152,
+        "known": 16,
+        "maximum": 105388955,
+        "mean": 103074822.0,
+        "minimum": 101835539,
+        "missing": 0,
+        "n": 16,
+        "observed_sum": 1649197152,
+        "values": [
+          101835539,
+          101844372,
+          101849791,
+          101855009,
+          101860727,
+          101866356,
+          102961486,
+          102966814,
+          102971862,
+          102976930,
+          102982838,
+          104144369,
+          104151680,
+          104157929,
+          105382495,
+          105388955
+        ]
+      },
+      "offering_lateness_ns": {
+        "complete_sum": 27497033,
+        "known": 16,
+        "maximum": 4053231,
+        "minimum": 53303,
+        "observations": 16,
+        "observed_sum": 27497033,
+        "unknown": 0
+      },
+      "paid_task_queue_wait_sum_ns": 201787795,
+      "phase_id": "control-002-late-reject",
+      "planned_index": 5,
+      "raw_sha256": "64e70f6eaef94e53d2195fdac1f26ea2b36a1ae4dc5c4a8a9b27044da377b0b7",
+      "remaining_original_window_at_endpoint_ns": 1098744438,
+      "service_peak_counters": {
+        "peak_connections": 18,
+        "peak_mutating_grants": 8,
+        "peak_output_reserved_bytes": 8404992,
+        "peak_paid_body_bytes": 2079903,
+        "peak_pending_challenge": 13,
+        "peak_pending_enqueue": 2,
+        "peak_pending_grant": 2,
+        "peak_read_grants": 2,
+        "peak_spent": 54
+      },
+      "stage_counts": {
+        "admission": {
+          "accepted": 0,
+          "completed": 0,
+          "started": 0
+        },
+        "body_decode": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "context": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "decode": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "submit_result": {
+          "accepted": 0,
+          "completed": 0,
+          "started": 0
+        },
+        "work": {
+          "accepted": 0,
+          "completed": 16,
+          "started": 16
+        }
+      },
+      "target_stage_attained": 16
+    },
+    {
+      "actual_calls_started": 16,
+      "actual_calls_started_inside_window": 16,
+      "actual_recorded_canonical_body_bytes_sum": 1584688,
+      "arm": "valid-expensive",
+      "business_release_to_confirmation_latency_ns": 3020161353,
+      "business_started_ns": 638683,
+      "cache_replay_classification_unknown": 0,
+      "cached_rejections_observed": 0,
+      "call_start_ns": {
+        "complete_sum": 1616108142,
+        "known": 16,
+        "maximum": 102220955,
+        "mean": 101006758.875,
+        "minimum": 100077650,
+        "missing": 0,
+        "n": 16,
+        "observed_sum": 1616108142,
+        "values": [
+          101974474,
+          100598330,
+          100587304,
+          101473840,
+          100103494,
+          101534691,
+          100106599,
+          101063661,
+          101576844,
+          100077650,
+          100616137,
+          102220955,
+          100918813,
+          101246997,
+          100107911,
+          101900442
+        ]
+      },
+      "call_status_counts": {
+        "ok": 16
+      },
+      "confirmation_endpoint_ns": 3020800036,
+      "confirmed": true,
+      "control_body_bytes_per_request": [
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043
+      ],
+      "control_integrity_met": true,
+      "deadline_and_cancellation": {
+        "actual_native_metrics": {
+          "abandoned_tasks": 0,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "connections_closed_on_shutdown": 0,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "executor_refusals": 0,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "lane_capacity_refusals": 0,
+          "mutation_cpu_refusals": 0,
+          "paid_body_capacity_refusals": 0,
+          "parse_refusals": 0,
+          "pending_challenge_closed": 0,
+          "pending_grant_closed": 0,
+          "preface_refusals": 0,
+          "queue_refusals": 0,
+          "replay_refusals": 0,
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0
+        },
+        "calls_deadline_flag_unknown": 0,
+        "calls_returned_after_deadline": 0,
+        "cancellation_cause_inferred": false,
+        "original_window_ns": 4000000000,
+        "queue_depth_inferred_from_wait_time": false
+      },
+      "dispatch_calling_thread_cpu_sum_ns": 71435123,
+      "full_work_calling_thread_cpu_sum_ns": 21549623,
+      "independent_history_replay_count": 7,
+      "independent_history_replay_results": {
+        "accepted": 7
+      },
+      "independent_replay_calling_thread_cpu_ns": 470200565,
+      "kind": "pressure-control",
+      "matched_body_checked_count": 16,
+      "matched_control_dispatch_accepted": 16,
+      "matched_control_work_spans_explicitly_unstarted": 0,
+      "matched_queue_distributions": {
+        "challenge_wait": {
+          "complete_sum": 564200513,
+          "known": 16,
+          "maximum": 99024492,
+          "minimum": 1195712,
+          "observations": 16,
+          "observed_sum": 564200513,
+          "unknown": 0
+        },
+        "grant_wait": {
+          "complete_sum": 440586161,
+          "known": 16,
+          "maximum": 106571006,
+          "minimum": 1138836,
+          "observations": 16,
+          "observed_sum": 440586161,
+          "unknown": 0
+        },
+        "paid_task_queue_wait": {
+          "complete_sum": 1137849692,
+          "known": 16,
+          "maximum": 105166275,
+          "minimum": 1865502,
+          "observations": 16,
+          "observed_sum": 1137849692,
+          "unknown": 0
+        },
+        "response_write": {
+          "complete_sum": 366362,
+          "known": 16,
+          "maximum": 57887,
+          "minimum": 15123,
+          "observations": 16,
+          "observed_sum": 366362,
+          "unknown": 0
+        }
+      },
+      "native_final_gate": true,
+      "native_full_replay_observed": 16,
+      "observer_accepted_ns": {
+        "complete_sum": 1649441281,
+        "known": 16,
+        "maximum": 104763587,
+        "mean": 103090080.0625,
+        "minimum": 102415528,
+        "missing": 0,
+        "n": 16,
+        "observed_sum": 1649441281,
+        "values": [
+          102415528,
+          102426936,
+          102434076,
+          102441458,
+          102448278,
+          102454738,
+          102461368,
+          102467697,
+          103562777,
+          103572202,
+          103578661,
+          103586623,
+          103599453,
+          103610930,
+          103616969,
+          104763587
+        ]
+      },
+      "offering_lateness_ns": {
+        "complete_sum": 15723502,
+        "known": 16,
+        "maximum": 2207114,
+        "minimum": 68066,
+        "observations": 16,
+        "observed_sum": 15723502,
+        "unknown": 0
+      },
+      "paid_task_queue_wait_sum_ns": 1137849692,
+      "phase_id": "control-003-valid-expensive",
+      "planned_index": 6,
+      "raw_sha256": "c88b30675e691f59e092746a824efb513ec4aebbc729d55cf58569ec4f7df999",
+      "remaining_original_window_at_endpoint_ns": 979199964,
+      "service_peak_counters": {
+        "peak_connections": 18,
+        "peak_mutating_grants": 8,
+        "peak_output_reserved_bytes": 8404992,
+        "peak_paid_body_bytes": 2377071,
+        "peak_pending_challenge": 15,
+        "peak_pending_enqueue": 5,
+        "peak_pending_grant": 7,
+        "peak_read_grants": 1,
+        "peak_spent": 56
+      },
+      "stage_counts": {
+        "admission": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "body_decode": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "context": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "decode": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "submit_result": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "work": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        }
+      },
+      "target_stage_attained": 16
+    },
+    {
+      "actual_calls_started": 0,
+      "actual_calls_started_inside_window": 0,
+      "actual_recorded_canonical_body_bytes_sum": 0,
+      "arm": null,
+      "business_release_to_confirmation_latency_ns": 2616450238,
+      "business_started_ns": 83465,
+      "cache_replay_classification_unknown": null,
+      "cached_rejections_observed": null,
+      "call_start_ns": {
+        "complete_sum": 0,
+        "known": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing": 0,
+        "n": 0,
+        "observed_sum": 0,
+        "values": []
+      },
+      "call_status_counts": {},
+      "confirmation_endpoint_ns": 2616533703,
+      "confirmed": true,
+      "control_body_bytes_per_request": null,
+      "control_integrity_met": null,
+      "deadline_and_cancellation": {
+        "actual_native_metrics": {
+          "abandoned_tasks": 0,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "connections_closed_on_shutdown": 0,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "executor_refusals": 0,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "lane_capacity_refusals": 0,
+          "mutation_cpu_refusals": 0,
+          "paid_body_capacity_refusals": 0,
+          "parse_refusals": 0,
+          "pending_challenge_closed": 0,
+          "pending_grant_closed": 0,
+          "preface_refusals": 0,
+          "queue_refusals": 0,
+          "replay_refusals": 0,
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0
+        },
+        "calls_deadline_flag_unknown": 0,
+        "calls_returned_after_deadline": 0,
+        "cancellation_cause_inferred": false,
+        "original_window_ns": 4000000000,
+        "queue_depth_inferred_from_wait_time": false
+      },
+      "dispatch_calling_thread_cpu_sum_ns": null,
+      "full_work_calling_thread_cpu_sum_ns": null,
+      "independent_history_replay_count": 7,
+      "independent_history_replay_results": {
+        "accepted": 7
+      },
+      "independent_replay_calling_thread_cpu_ns": 470135394,
+      "kind": "midpoint-sentinel",
+      "matched_body_checked_count": null,
+      "matched_control_dispatch_accepted": null,
+      "matched_control_work_spans_explicitly_unstarted": null,
+      "matched_queue_distributions": {
+        "challenge_wait": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        },
+        "grant_wait": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        },
+        "paid_task_queue_wait": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        },
+        "response_write": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        }
+      },
+      "native_final_gate": true,
+      "native_full_replay_observed": null,
+      "observer_accepted_ns": {
+        "complete_sum": 0,
+        "known": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing": 0,
+        "n": 0,
+        "observed_sum": 0,
+        "values": []
+      },
+      "offering_lateness_ns": {
+        "complete_sum": 0,
+        "known": 0,
+        "maximum": null,
+        "minimum": null,
+        "observations": 0,
+        "observed_sum": 0,
+        "unknown": 0
+      },
+      "paid_task_queue_wait_sum_ns": null,
+      "phase_id": "health-003",
+      "planned_index": 7,
+      "raw_sha256": "df17f4eb8c023f1a60148efdc6d65aaea397e2ca0b2f0514e0e7273cb9429f39",
+      "remaining_original_window_at_endpoint_ns": 1383466297,
+      "service_peak_counters": {
+        "peak_connections": 2,
+        "peak_mutating_grants": 1,
+        "peak_output_reserved_bytes": 8404992,
+        "peak_paid_body_bytes": 298374,
+        "peak_pending_challenge": 2,
+        "peak_pending_enqueue": 1,
+        "peak_pending_grant": 2,
+        "peak_read_grants": 2,
+        "peak_spent": 41
+      },
+      "stage_counts": null,
+      "target_stage_attained": null
+    },
+    {
+      "actual_calls_started": 16,
+      "actual_calls_started_inside_window": 16,
+      "actual_recorded_canonical_body_bytes_sum": 1584688,
+      "arm": "valid-expensive",
+      "business_release_to_confirmation_latency_ns": 3081237746,
+      "business_started_ns": 683565,
+      "cache_replay_classification_unknown": 0,
+      "cached_rejections_observed": 0,
+      "call_start_ns": {
+        "complete_sum": 1786011179,
+        "known": 16,
+        "maximum": 158986942,
+        "mean": 111625698.6875,
+        "minimum": 100082742,
+        "missing": 0,
+        "n": 16,
+        "observed_sum": 1786011179,
+        "values": [
+          101039844,
+          100568133,
+          158986942,
+          100082742,
+          100560076,
+          101026980,
+          158676745,
+          100902327,
+          100590737,
+          100149222,
+          100089107,
+          101937507,
+          100089963,
+          101476347,
+          158348270,
+          101486237
+        ]
+      },
+      "call_status_counts": {
+        "ok": 16
+      },
+      "confirmation_endpoint_ns": 3081921311,
+      "confirmed": true,
+      "control_body_bytes_per_request": [
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043
+      ],
+      "control_integrity_met": true,
+      "deadline_and_cancellation": {
+        "actual_native_metrics": {
+          "abandoned_tasks": 0,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "connections_closed_on_shutdown": 0,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "executor_refusals": 0,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "lane_capacity_refusals": 0,
+          "mutation_cpu_refusals": 0,
+          "paid_body_capacity_refusals": 0,
+          "parse_refusals": 0,
+          "pending_challenge_closed": 0,
+          "pending_grant_closed": 0,
+          "preface_refusals": 0,
+          "queue_refusals": 0,
+          "replay_refusals": 0,
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0
+        },
+        "calls_deadline_flag_unknown": 0,
+        "calls_returned_after_deadline": 0,
+        "cancellation_cause_inferred": false,
+        "original_window_ns": 4000000000,
+        "queue_depth_inferred_from_wait_time": false
+      },
+      "dispatch_calling_thread_cpu_sum_ns": 72793202,
+      "full_work_calling_thread_cpu_sum_ns": 22145594,
+      "independent_history_replay_count": 7,
+      "independent_history_replay_results": {
+        "accepted": 7
+      },
+      "independent_replay_calling_thread_cpu_ns": 473464149,
+      "kind": "pressure-control",
+      "matched_body_checked_count": 16,
+      "matched_control_dispatch_accepted": 16,
+      "matched_control_work_spans_explicitly_unstarted": 0,
+      "matched_queue_distributions": {
+        "challenge_wait": {
+          "complete_sum": 157369739,
+          "known": 16,
+          "maximum": 18722565,
+          "minimum": 1193929,
+          "observations": 16,
+          "observed_sum": 157369739,
+          "unknown": 0
+        },
+        "grant_wait": {
+          "complete_sum": 592566032,
+          "known": 16,
+          "maximum": 185428214,
+          "minimum": 1146799,
+          "observations": 16,
+          "observed_sum": 592566032,
+          "unknown": 0
+        },
+        "paid_task_queue_wait": {
+          "complete_sum": 1209631479,
+          "known": 16,
+          "maximum": 177371142,
+          "minimum": 2042037,
+          "observations": 16,
+          "observed_sum": 1209631479,
+          "unknown": 0
+        },
+        "response_write": {
+          "complete_sum": 308875,
+          "known": 16,
+          "maximum": 26911,
+          "minimum": 10976,
+          "observations": 16,
+          "observed_sum": 308875,
+          "unknown": 0
+        }
+      },
+      "native_final_gate": true,
+      "native_full_replay_observed": 16,
+      "observer_accepted_ns": {
+        "complete_sum": 2542224394,
+        "known": 16,
+        "maximum": 160571961,
+        "mean": 158889024.625,
+        "minimum": 158180227,
+        "missing": 0,
+        "n": 16,
+        "observed_sum": 2542224394,
+        "values": [
+          158180227,
+          158199175,
+          158208229,
+          158216521,
+          158223792,
+          158230462,
+          158238244,
+          158245655,
+          159395618,
+          159402909,
+          159408467,
+          159414036,
+          159421056,
+          159431152,
+          159436890,
+          160571961
+        ]
+      },
+      "offering_lateness_ns": {
+        "complete_sum": 185798388,
+        "known": 16,
+        "maximum": 58967222,
+        "minimum": 71500,
+        "observations": 16,
+        "observed_sum": 185798388,
+        "unknown": 0
+      },
+      "paid_task_queue_wait_sum_ns": 1209631479,
+      "phase_id": "control-004-valid-expensive",
+      "planned_index": 8,
+      "raw_sha256": "7aa1aa5f756e890158b7407ace7247f0597da3565b8fd0808c6f2cdaec36450b",
+      "remaining_original_window_at_endpoint_ns": 918078689,
+      "service_peak_counters": {
+        "peak_connections": 18,
+        "peak_mutating_grants": 8,
+        "peak_output_reserved_bytes": 8404992,
+        "peak_paid_body_bytes": 2377071,
+        "peak_pending_challenge": 15,
+        "peak_pending_enqueue": 4,
+        "peak_pending_grant": 7,
+        "peak_read_grants": 2,
+        "peak_spent": 53
+      },
+      "stage_counts": {
+        "admission": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "body_decode": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "context": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "decode": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "submit_result": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "work": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        }
+      },
+      "target_stage_attained": 16
+    },
+    {
+      "actual_calls_started": 16,
+      "actual_calls_started_inside_window": 16,
+      "actual_recorded_canonical_body_bytes_sum": 1584688,
+      "arm": "late-reject",
+      "business_release_to_confirmation_latency_ns": 2900409144,
+      "business_started_ns": 574075,
+      "cache_replay_classification_unknown": 0,
+      "cached_rejections_observed": 0,
+      "call_start_ns": {
+        "complete_sum": 1613799796,
+        "known": 16,
+        "maximum": 101886351,
+        "mean": 100862487.25,
+        "minimum": 100090054,
+        "missing": 0,
+        "n": 16,
+        "observed_sum": 1613799796,
+        "values": [
+          100599172,
+          100574629,
+          101363478,
+          100092853,
+          101012229,
+          100097325,
+          100091857,
+          101886351,
+          101070392,
+          101564466,
+          100611079,
+          101282932,
+          101789200,
+          100605030,
+          100090054,
+          101068749
+        ]
+      },
+      "call_status_counts": {
+        "refused": 16
+      },
+      "confirmation_endpoint_ns": 2900983219,
+      "confirmed": true,
+      "control_body_bytes_per_request": [
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043
+      ],
+      "control_integrity_met": true,
+      "deadline_and_cancellation": {
+        "actual_native_metrics": {
+          "abandoned_tasks": 0,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "connections_closed_on_shutdown": 0,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "executor_refusals": 16,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "lane_capacity_refusals": 0,
+          "mutation_cpu_refusals": 0,
+          "paid_body_capacity_refusals": 0,
+          "parse_refusals": 0,
+          "pending_challenge_closed": 0,
+          "pending_grant_closed": 0,
+          "preface_refusals": 0,
+          "queue_refusals": 0,
+          "replay_refusals": 0,
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0
+        },
+        "calls_deadline_flag_unknown": 0,
+        "calls_returned_after_deadline": 0,
+        "cancellation_cause_inferred": false,
+        "original_window_ns": 4000000000,
+        "queue_depth_inferred_from_wait_time": false
+      },
+      "dispatch_calling_thread_cpu_sum_ns": 25039663,
+      "full_work_calling_thread_cpu_sum_ns": 18343025,
+      "independent_history_replay_count": 7,
+      "independent_history_replay_results": {
+        "accepted": 7
+      },
+      "independent_replay_calling_thread_cpu_ns": 472662910,
+      "kind": "pressure-control",
+      "matched_body_checked_count": 16,
+      "matched_control_dispatch_accepted": 0,
+      "matched_control_work_spans_explicitly_unstarted": 0,
+      "matched_queue_distributions": {
+        "challenge_wait": {
+          "complete_sum": 156128565,
+          "known": 16,
+          "maximum": 18121271,
+          "minimum": 1189192,
+          "observations": 16,
+          "observed_sum": 156128565,
+          "unknown": 0
+        },
+        "grant_wait": {
+          "complete_sum": 46071892,
+          "known": 16,
+          "maximum": 8320019,
+          "minimum": 1144214,
+          "observations": 16,
+          "observed_sum": 46071892,
+          "unknown": 0
+        },
+        "paid_task_queue_wait": {
+          "complete_sum": 353541680,
+          "known": 16,
+          "maximum": 88161086,
+          "minimum": 1264245,
+          "observations": 16,
+          "observed_sum": 353541680,
+          "unknown": 0
+        },
+        "response_write": {
+          "complete_sum": 367585,
+          "known": 16,
+          "maximum": 55103,
+          "minimum": 13130,
+          "observations": 16,
+          "observed_sum": 367585,
+          "unknown": 0
+        }
+      },
+      "native_final_gate": true,
+      "native_full_replay_observed": 16,
+      "observer_accepted_ns": {
+        "complete_sum": 1644495211,
+        "known": 16,
+        "maximum": 103374824,
+        "mean": 102780950.6875,
+        "minimum": 102183078,
+        "missing": 0,
+        "n": 16,
+        "observed_sum": 1644495211,
+        "values": [
+          102183078,
+          102190389,
+          102195417,
+          102200955,
+          102206494,
+          102219283,
+          102224601,
+          102229689,
+          103336026,
+          103341795,
+          103346712,
+          103353142,
+          103358490,
+          103364499,
+          103369817,
+          103374824
+        ]
+      },
+      "offering_lateness_ns": {
+        "complete_sum": 13568698,
+        "known": 16,
+        "maximum": 1874113,
+        "minimum": 69904,
+        "observations": 16,
+        "observed_sum": 13568698,
+        "unknown": 0
+      },
+      "paid_task_queue_wait_sum_ns": 353541680,
+      "phase_id": "control-005-late-reject",
+      "planned_index": 9,
+      "raw_sha256": "4ee5f8905b2d32303dcdd3d44591c572f7a294a318e8579cd6b10c34bd89e190",
+      "remaining_original_window_at_endpoint_ns": 1099016781,
+      "service_peak_counters": {
+        "peak_connections": 17,
+        "peak_mutating_grants": 8,
+        "peak_output_reserved_bytes": 8404992,
+        "peak_paid_body_bytes": 2079903,
+        "peak_pending_challenge": 15,
+        "peak_pending_enqueue": 3,
+        "peak_pending_grant": 8,
+        "peak_read_grants": 1,
+        "peak_spent": 54
+      },
+      "stage_counts": {
+        "admission": {
+          "accepted": 0,
+          "completed": 0,
+          "started": 0
+        },
+        "body_decode": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "context": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "decode": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "submit_result": {
+          "accepted": 0,
+          "completed": 0,
+          "started": 0
+        },
+        "work": {
+          "accepted": 0,
+          "completed": 16,
+          "started": 16
+        }
+      },
+      "target_stage_attained": 16
+    },
+    {
+      "actual_calls_started": 16,
+      "actual_calls_started_inside_window": 16,
+      "actual_recorded_canonical_body_bytes_sum": 1584688,
+      "arm": "early-reject",
+      "business_release_to_confirmation_latency_ns": 2794092137,
+      "business_started_ns": 585372,
+      "cache_replay_classification_unknown": 16,
+      "cached_rejections_observed": 0,
+      "call_start_ns": {
+        "complete_sum": 1617139187,
+        "known": 16,
+        "maximum": 102272264,
+        "mean": 101071199.1875,
+        "minimum": 100084898,
+        "missing": 0,
+        "n": 16,
+        "observed_sum": 1617139187,
+        "values": [
+          102052713,
+          101890138,
+          101594302,
+          100094046,
+          100084907,
+          101281320,
+          100597305,
+          100093921,
+          101081700,
+          101078470,
+          102272264,
+          101569004,
+          100594986,
+          101903839,
+          100084898,
+          100865374
+        ]
+      },
+      "call_status_counts": {
+        "refused": 16
+      },
+      "confirmation_endpoint_ns": 2794677509,
+      "confirmed": true,
+      "control_body_bytes_per_request": [
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043
+      ],
+      "control_integrity_met": true,
+      "deadline_and_cancellation": {
+        "actual_native_metrics": {
+          "abandoned_tasks": 0,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "connections_closed_on_shutdown": 0,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "executor_refusals": 16,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "lane_capacity_refusals": 0,
+          "mutation_cpu_refusals": 0,
+          "paid_body_capacity_refusals": 0,
+          "parse_refusals": 0,
+          "pending_challenge_closed": 0,
+          "pending_grant_closed": 0,
+          "preface_refusals": 0,
+          "queue_refusals": 0,
+          "replay_refusals": 0,
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0
+        },
+        "calls_deadline_flag_unknown": 0,
+        "calls_returned_after_deadline": 0,
+        "cancellation_cause_inferred": false,
+        "original_window_ns": 4000000000,
+        "queue_depth_inferred_from_wait_time": false
+      },
+      "dispatch_calling_thread_cpu_sum_ns": 6398776,
+      "full_work_calling_thread_cpu_sum_ns": null,
+      "independent_history_replay_count": 7,
+      "independent_history_replay_results": {
+        "accepted": 7
+      },
+      "independent_replay_calling_thread_cpu_ns": 472365347,
+      "kind": "pressure-control",
+      "matched_body_checked_count": 16,
+      "matched_control_dispatch_accepted": 0,
+      "matched_control_work_spans_explicitly_unstarted": 16,
+      "matched_queue_distributions": {
+        "challenge_wait": {
+          "complete_sum": 160849050,
+          "known": 16,
+          "maximum": 19131038,
+          "minimum": 1167349,
+          "observations": 16,
+          "observed_sum": 160849050,
+          "unknown": 0
+        },
+        "grant_wait": {
+          "complete_sum": 90246665,
+          "known": 16,
+          "maximum": 71981012,
+          "minimum": 1169793,
+          "observations": 16,
+          "observed_sum": 90246665,
+          "unknown": 0
+        },
+        "paid_task_queue_wait": {
+          "complete_sum": 98962136,
+          "known": 16,
+          "maximum": 72363924,
+          "minimum": 1537682,
+          "observations": 16,
+          "observed_sum": 98962136,
+          "unknown": 0
+        },
+        "response_write": {
+          "complete_sum": 310147,
+          "known": 16,
+          "maximum": 46550,
+          "minimum": 12078,
+          "observations": 16,
+          "observed_sum": 310147,
+          "unknown": 0
+        }
+      },
+      "native_final_gate": true,
+      "native_full_replay_observed": 0,
+      "observer_accepted_ns": {
+        "complete_sum": 1645733004,
+        "known": 16,
+        "maximum": 103453124,
+        "mean": 102858312.75,
+        "minimum": 102260626,
+        "missing": 0,
+        "n": 16,
+        "observed_sum": 1645733004,
+        "values": [
+          102260626,
+          102268358,
+          102273986,
+          102279665,
+          102285153,
+          102291232,
+          102296601,
+          102301919,
+          103413263,
+          103419623,
+          103427255,
+          103432543,
+          103438171,
+          103443179,
+          103448306,
+          103453124
+        ]
+      },
+      "offering_lateness_ns": {
+        "complete_sum": 16905183,
+        "known": 16,
+        "maximum": 2259985,
+        "minimum": 66550,
+        "observations": 16,
+        "observed_sum": 16905183,
+        "unknown": 0
+      },
+      "paid_task_queue_wait_sum_ns": 98962136,
+      "phase_id": "control-006-early-reject",
+      "planned_index": 10,
+      "raw_sha256": "21d3cd742e140e6f80b4571d97bb76a1ab492d97285dd13010184008a532d361",
+      "remaining_original_window_at_endpoint_ns": 1205322491,
+      "service_peak_counters": {
+        "peak_connections": 18,
+        "peak_mutating_grants": 7,
+        "peak_output_reserved_bytes": 8404992,
+        "peak_paid_body_bytes": 1782774,
+        "peak_pending_challenge": 15,
+        "peak_pending_enqueue": 2,
+        "peak_pending_grant": 2,
+        "peak_read_grants": 1,
+        "peak_spent": 56
+      },
+      "stage_counts": {
+        "admission": {
+          "accepted": 0,
+          "completed": 0,
+          "started": 0
+        },
+        "body_decode": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "context": {
+          "accepted": 0,
+          "completed": 16,
+          "started": 16
+        },
+        "decode": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "submit_result": {
+          "accepted": 0,
+          "completed": 0,
+          "started": 0
+        },
+        "work": {
+          "accepted": 0,
+          "completed": 0,
+          "started": 0
+        }
+      },
+      "target_stage_attained": 16
+    },
+    {
+      "actual_calls_started": 16,
+      "actual_calls_started_inside_window": 16,
+      "actual_recorded_canonical_body_bytes_sum": 1584688,
+      "arm": "transport",
+      "business_release_to_confirmation_latency_ns": 2721037915,
+      "business_started_ns": 585002,
+      "cache_replay_classification_unknown": 16,
+      "cached_rejections_observed": 0,
+      "call_start_ns": {
+        "complete_sum": 1614166413,
+        "known": 16,
+        "maximum": 102097068,
+        "mean": 100885400.8125,
+        "minimum": 100091271,
+        "missing": 0,
+        "n": 16,
+        "observed_sum": 1614166413,
+        "values": [
+          100093760,
+          101787131,
+          100530237,
+          101798849,
+          100531314,
+          100093088,
+          100592301,
+          101355631,
+          100091271,
+          100094460,
+          100963475,
+          101033205,
+          102097068,
+          101025884,
+          100611951,
+          101466788
+        ]
+      },
+      "call_status_counts": {
+        "refused": 16
+      },
+      "confirmation_endpoint_ns": 2721622917,
+      "confirmed": true,
+      "control_body_bytes_per_request": [
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043,
+        99043
+      ],
+      "control_integrity_met": true,
+      "deadline_and_cancellation": {
+        "actual_native_metrics": {
+          "abandoned_tasks": 0,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "connections_closed_on_shutdown": 0,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "executor_refusals": 16,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "lane_capacity_refusals": 0,
+          "mutation_cpu_refusals": 0,
+          "paid_body_capacity_refusals": 0,
+          "parse_refusals": 0,
+          "pending_challenge_closed": 0,
+          "pending_grant_closed": 0,
+          "preface_refusals": 0,
+          "queue_refusals": 0,
+          "replay_refusals": 0,
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0
+        },
+        "calls_deadline_flag_unknown": 0,
+        "calls_returned_after_deadline": 0,
+        "cancellation_cause_inferred": false,
+        "original_window_ns": 4000000000,
+        "queue_depth_inferred_from_wait_time": false
+      },
+      "dispatch_calling_thread_cpu_sum_ns": 4214599,
+      "full_work_calling_thread_cpu_sum_ns": null,
+      "independent_history_replay_count": 7,
+      "independent_history_replay_results": {
+        "accepted": 7
+      },
+      "independent_replay_calling_thread_cpu_ns": 472419871,
+      "kind": "pressure-control",
+      "matched_body_checked_count": 16,
+      "matched_control_dispatch_accepted": 0,
+      "matched_control_work_spans_explicitly_unstarted": 16,
+      "matched_queue_distributions": {
+        "challenge_wait": {
+          "complete_sum": 156271188,
+          "known": 16,
+          "maximum": 18804568,
+          "minimum": 1163463,
+          "observations": 16,
+          "observed_sum": 156271188,
+          "unknown": 0
+        },
+        "grant_wait": {
+          "complete_sum": 19243350,
+          "known": 16,
+          "maximum": 1242913,
+          "minimum": 1133668,
+          "observations": 16,
+          "observed_sum": 19243350,
+          "unknown": 0
+        },
+        "paid_task_queue_wait": {
+          "complete_sum": 166449846,
+          "known": 16,
+          "maximum": 72952783,
+          "minimum": 1151300,
+          "observations": 16,
+          "observed_sum": 166449846,
+          "unknown": 0
+        },
+        "response_write": {
+          "complete_sum": 388487,
+          "known": 16,
+          "maximum": 77256,
+          "minimum": 9595,
+          "observations": 16,
+          "observed_sum": 388487,
+          "unknown": 0
+        }
+      },
+      "native_final_gate": true,
+      "native_full_replay_observed": 0,
+      "observer_accepted_ns": {
+        "complete_sum": 1631612365,
+        "known": 16,
+        "maximum": 102560371,
+        "mean": 101975772.8125,
+        "minimum": 101383057,
+        "missing": 0,
+        "n": 16,
+        "observed_sum": 1631612365,
+        "values": [
+          101383057,
+          101393763,
+          101399792,
+          101406503,
+          101413133,
+          101420774,
+          101427594,
+          101434935,
+          102521172,
+          102527852,
+          102533291,
+          102539670,
+          102544918,
+          102550126,
+          102555414,
+          102560371
+        ]
+      },
+      "offering_lateness_ns": {
+        "complete_sum": 13813312,
+        "known": 16,
+        "maximum": 2083658,
+        "minimum": 67490,
+        "observations": 16,
+        "observed_sum": 13813312,
+        "unknown": 0
+      },
+      "paid_task_queue_wait_sum_ns": 166449846,
+      "phase_id": "control-007-transport",
+      "planned_index": 11,
+      "raw_sha256": "b969347cf3d860ad6d31150aba1294e05f80a60caacf11d1ea365e7954febe35",
+      "remaining_original_window_at_endpoint_ns": 1278377083,
+      "service_peak_counters": {
+        "peak_connections": 17,
+        "peak_mutating_grants": 6,
+        "peak_output_reserved_bytes": 8404992,
+        "peak_paid_body_bytes": 1485645,
+        "peak_pending_challenge": 15,
+        "peak_pending_enqueue": 1,
+        "peak_pending_grant": 2,
+        "peak_read_grants": 2,
+        "peak_spent": 55
+      },
+      "stage_counts": {
+        "admission": {
+          "accepted": 0,
+          "completed": 0,
+          "started": 0
+        },
+        "body_decode": {
+          "accepted": 16,
+          "completed": 16,
+          "started": 16
+        },
+        "context": {
+          "accepted": 0,
+          "completed": 0,
+          "started": 0
+        },
+        "decode": {
+          "accepted": 0,
+          "completed": 16,
+          "started": 16
+        },
+        "submit_result": {
+          "accepted": 0,
+          "completed": 0,
+          "started": 0
+        },
+        "work": {
+          "accepted": 0,
+          "completed": 0,
+          "started": 0
+        }
+      },
+      "target_stage_attained": 16
+    },
+    {
+      "actual_calls_started": 0,
+      "actual_calls_started_inside_window": 0,
+      "actual_recorded_canonical_body_bytes_sum": 0,
+      "arm": null,
+      "business_release_to_confirmation_latency_ns": 2700915975,
+      "business_started_ns": 78518,
+      "cache_replay_classification_unknown": null,
+      "cached_rejections_observed": null,
+      "call_start_ns": {
+        "complete_sum": 0,
+        "known": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing": 0,
+        "n": 0,
+        "observed_sum": 0,
+        "values": []
+      },
+      "call_status_counts": {},
+      "confirmation_endpoint_ns": 2700994493,
+      "confirmed": true,
+      "control_body_bytes_per_request": null,
+      "control_integrity_met": null,
+      "deadline_and_cancellation": {
+        "actual_native_metrics": {
+          "abandoned_tasks": 0,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "connections_closed_on_shutdown": 0,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "executor_refusals": 0,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "lane_capacity_refusals": 0,
+          "mutation_cpu_refusals": 0,
+          "paid_body_capacity_refusals": 0,
+          "parse_refusals": 0,
+          "pending_challenge_closed": 0,
+          "pending_grant_closed": 0,
+          "preface_refusals": 0,
+          "queue_refusals": 0,
+          "replay_refusals": 0,
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0
+        },
+        "calls_deadline_flag_unknown": 0,
+        "calls_returned_after_deadline": 0,
+        "cancellation_cause_inferred": false,
+        "original_window_ns": 4000000000,
+        "queue_depth_inferred_from_wait_time": false
+      },
+      "dispatch_calling_thread_cpu_sum_ns": null,
+      "full_work_calling_thread_cpu_sum_ns": null,
+      "independent_history_replay_count": 7,
+      "independent_history_replay_results": {
+        "accepted": 7
+      },
+      "independent_replay_calling_thread_cpu_ns": 474142308,
+      "kind": "terminal-sentinel",
+      "matched_body_checked_count": null,
+      "matched_control_dispatch_accepted": null,
+      "matched_control_work_spans_explicitly_unstarted": null,
+      "matched_queue_distributions": {
+        "challenge_wait": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        },
+        "grant_wait": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        },
+        "paid_task_queue_wait": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        },
+        "response_write": {
+          "complete_sum": null,
+          "known": null,
+          "maximum": null,
+          "minimum": null,
+          "observations": null,
+          "observed_sum": null,
+          "unknown": null
+        }
+      },
+      "native_final_gate": true,
+      "native_full_replay_observed": null,
+      "observer_accepted_ns": {
+        "complete_sum": 0,
+        "known": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing": 0,
+        "n": 0,
+        "observed_sum": 0,
+        "values": []
+      },
+      "offering_lateness_ns": {
+        "complete_sum": 0,
+        "known": 0,
+        "maximum": null,
+        "minimum": null,
+        "observations": 0,
+        "observed_sum": 0,
+        "unknown": 0
+      },
+      "paid_task_queue_wait_sum_ns": null,
+      "phase_id": "health-004",
+      "planned_index": 12,
+      "raw_sha256": "cfd8ab9a85798f61ec25b14762d7e3d2d7188b4f078a8c45767ee5f5d4eebce8",
+      "remaining_original_window_at_endpoint_ns": 1299005507,
+      "service_peak_counters": {
+        "peak_connections": 2,
+        "peak_mutating_grants": 1,
+        "peak_output_reserved_bytes": 8404992,
+        "peak_paid_body_bytes": 298374,
+        "peak_pending_challenge": 1,
+        "peak_pending_enqueue": 1,
+        "peak_pending_grant": 1,
+        "peak_read_grants": 2,
+        "peak_spent": 40
+      },
+      "stage_counts": null,
+      "target_stage_attained": null
+    }
+  ],
+  "pressure_control_confirmations": 8,
+  "primary_consumer_receipt_sha256": "51e0e351a93f3fe70fef3e809c0e2204a1eb7dcfbe5c5fd9d7c3e03f8e66c8f1",
+  "schema": "sp27-strata-descriptive-statistics-v1",
+  "scope": [
+    "Two phases per arm from one balanced campaign, not independent randomized replications",
+    "Four-second deadline, 0.25 CPU and 2 GiB resource gates are unchanged",
+    "Same count and canonical body bytes do not establish identical actual arrival timing or instantaneous load",
+    "Endpoints use each phase's traffic epoch; release-to-confirmation latencies use the separately recorded release",
+    "Queue sums add per-request waits; they are not a critical-path duration or queue depth",
+    "Dispatch and full-work CPU are calling-thread counters and have nested intervals; scoped-worker CPU is excluded",
+    "Missing pre-work full-work CPU is retained null, even when an explicit native Work span says unstarted",
+    "No cost total adds full-work, dispatch, independent replay, input-acquisition or whole-child counters together",
+    "Valid inputs also exercise admission, execution, fork choice and storage",
+    "The bounded 16-single-attempt schedule differs from the prior sustained-pressure pair; neither batch overwrites the other"
+  ],
+  "statistical_significance_claimed": false,
+  "within_execution_half_contrasts": [
+    {
+      "alignment": "execution half, first T/E/L/V then V/L/E/T; not randomized matched pairs",
+      "causal_estimator": false,
+      "contrast": "late-reject minus early-reject",
+      "numeric_differences": {
+        "business_release_to_confirmation_latency_ns": {
+          "complete_sum": 209472765,
+          "known": 2,
+          "maximum": 106317007,
+          "mean": 104736382.5,
+          "minimum": 103155758,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 209472765,
+          "values": [
+            103155758,
+            106317007
+          ]
+        },
+        "confirmation_endpoint_ns": {
+          "complete_sum": 209451012,
+          "known": 2,
+          "maximum": 106305710,
+          "mean": 104725506.0,
+          "minimum": 103145302,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 209451012,
+          "values": [
+            103145302,
+            106305710
+          ]
+        },
+        "dispatch_calling_thread_cpu_sum_ns": {
+          "complete_sum": 39587925,
+          "known": 2,
+          "maximum": 20947038,
+          "mean": 19793962.5,
+          "minimum": 18640887,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 39587925,
+          "values": [
+            20947038,
+            18640887
+          ]
+        },
+        "full_work_calling_thread_cpu_sum_ns": {
+          "complete_sum": null,
+          "known": 0,
+          "maximum": null,
+          "mean": null,
+          "minimum": null,
+          "missing": 2,
+          "n": 2,
+          "observed_sum": 0,
+          "values": [
+            null,
+            null
+          ]
+        },
+        "independent_replay_calling_thread_cpu_ns": {
+          "complete_sum": -2489611,
+          "known": 2,
+          "maximum": 297563,
+          "mean": -1244805.5,
+          "minimum": -2787174,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": -2489611,
+          "values": [
+            -2787174,
+            297563
+          ]
+        },
+        "paid_task_queue_wait_sum_ns": {
+          "complete_sum": 391610125,
+          "known": 2,
+          "maximum": 254579544,
+          "mean": 195805062.5,
+          "minimum": 137030581,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 391610125,
+          "values": [
+            137030581,
+            254579544
+          ]
+        }
+      },
+      "phase_pairs": [
+        [
+          "control-002-late-reject",
+          "control-001-early-reject"
+        ],
+        [
+          "control-005-late-reject",
+          "control-006-early-reject"
+        ]
+      ]
+    },
+    {
+      "alignment": "execution half, first T/E/L/V then V/L/E/T; not randomized matched pairs",
+      "causal_estimator": false,
+      "contrast": "valid-expensive minus late-reject",
+      "numeric_differences": {
+        "business_release_to_confirmation_latency_ns": {
+          "complete_sum": 300253245,
+          "known": 2,
+          "maximum": 180828602,
+          "mean": 150126622.5,
+          "minimum": 119424643,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 300253245,
+          "values": [
+            119424643,
+            180828602
+          ]
+        },
+        "confirmation_endpoint_ns": {
+          "complete_sum": 300482566,
+          "known": 2,
+          "maximum": 180938092,
+          "mean": 150241283.0,
+          "minimum": 119544474,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 300482566,
+          "values": [
+            119544474,
+            180938092
+          ]
+        },
+        "dispatch_calling_thread_cpu_sum_ns": {
+          "complete_sum": 91828556,
+          "known": 2,
+          "maximum": 47753539,
+          "mean": 45914278.0,
+          "minimum": 44075017,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 91828556,
+          "values": [
+            44075017,
+            47753539
+          ]
+        },
+        "full_work_calling_thread_cpu_sum_ns": {
+          "complete_sum": 4850877,
+          "known": 2,
+          "maximum": 3802569,
+          "mean": 2425438.5,
+          "minimum": 1048308,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 4850877,
+          "values": [
+            1048308,
+            3802569
+          ]
+        },
+        "independent_replay_calling_thread_cpu_ns": {
+          "complete_sum": -1583526,
+          "known": 2,
+          "maximum": 801239,
+          "mean": -791763.0,
+          "minimum": -2384765,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": -1583526,
+          "values": [
+            -2384765,
+            801239
+          ]
+        },
+        "paid_task_queue_wait_sum_ns": {
+          "complete_sum": 1792151696,
+          "known": 2,
+          "maximum": 936061897,
+          "mean": 896075848.0,
+          "minimum": 856089799,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 1792151696,
+          "values": [
+            936061897,
+            856089799
+          ]
+        }
+      },
+      "phase_pairs": [
+        [
+          "control-003-valid-expensive",
+          "control-002-late-reject"
+        ],
+        [
+          "control-004-valid-expensive",
+          "control-005-late-reject"
+        ]
+      ]
+    },
+    {
+      "alignment": "execution half, first T/E/L/V then V/L/E/T; not randomized matched pairs",
+      "causal_estimator": false,
+      "contrast": "early-reject minus transport",
+      "numeric_differences": {
+        "business_release_to_confirmation_latency_ns": {
+          "complete_sum": 10314084,
+          "known": 2,
+          "maximum": 73054222,
+          "mean": 5157042.0,
+          "minimum": -62740138,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 10314084,
+          "values": [
+            -62740138,
+            73054222
+          ]
+        },
+        "confirmation_endpoint_ns": {
+          "complete_sum": 9695862,
+          "known": 2,
+          "maximum": 73054592,
+          "mean": 4847931.0,
+          "minimum": -63358730,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 9695862,
+          "values": [
+            -63358730,
+            73054592
+          ]
+        },
+        "dispatch_calling_thread_cpu_sum_ns": {
+          "complete_sum": 4049794,
+          "known": 2,
+          "maximum": 2184177,
+          "mean": 2024897.0,
+          "minimum": 1865617,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": 4049794,
+          "values": [
+            1865617,
+            2184177
+          ]
+        },
+        "full_work_calling_thread_cpu_sum_ns": {
+          "complete_sum": null,
+          "known": 0,
+          "maximum": null,
+          "mean": null,
+          "minimum": null,
+          "missing": 2,
+          "n": 2,
+          "observed_sum": 0,
+          "values": [
+            null,
+            null
+          ]
+        },
+        "independent_replay_calling_thread_cpu_ns": {
+          "complete_sum": -604313,
+          "known": 2,
+          "maximum": -54524,
+          "mean": -302156.5,
+          "minimum": -549789,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": -604313,
+          "values": [
+            -549789,
+            -54524
+          ]
+        },
+        "paid_task_queue_wait_sum_ns": {
+          "complete_sum": -417150998,
+          "known": 2,
+          "maximum": -67487710,
+          "mean": -208575499.0,
+          "minimum": -349663288,
+          "missing": 0,
+          "n": 2,
+          "observed_sum": -417150998,
+          "values": [
+            -349663288,
+            -67487710
+          ]
+        }
+      },
+      "phase_pairs": [
+        [
+          "control-001-early-reject",
+          "control-000-transport"
+        ],
+        [
+          "control-006-early-reject",
+          "control-007-transport"
+        ]
+      ]
+    }
+  ]
+}

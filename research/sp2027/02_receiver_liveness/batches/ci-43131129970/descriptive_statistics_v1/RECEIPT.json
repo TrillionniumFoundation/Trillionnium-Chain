@@ -1,0 +1,43 @@
+{
+  "command_arguments": [
+    "research/sp2027/02_receiver_liveness/batches/ci-43131129970/summarize_strata_descriptive_v1.py",
+    "--analysis-dir",
+    "research/sp2027/02_receiver_liveness/batches/ci-43131129970/strata_analysis_v1",
+    "--out-dir",
+    "research/sp2027/02_receiver_liveness/batches/ci-43131129970/descriptive_statistics_v1"
+  ],
+  "input_files": [
+    {
+      "bytes": 15584,
+      "member": "phase_table.json",
+      "sha256": "d287da40852043ce1076cb1b92f3afe8890878214e6572cdd0f0c84d5dde5518"
+    },
+    {
+      "bytes": 15538510,
+      "member": "phase_ledger.json",
+      "sha256": "a47b652b04653073244dd5454ff91c9f19f7b446334cba9c4582f95b325a813b"
+    },
+    {
+      "bytes": 7404965,
+      "member": "connection_records.jsonl",
+      "sha256": "1472ef67a0ec1f83c94a93c49670ae6eac2268df6f0dc992cd37e8e5aff67f7a"
+    }
+  ],
+  "mechanism_status": "UNKNOWN",
+  "new_native_experiments": 0,
+  "outputs": [
+    {
+      "bytes": 6321,
+      "file": "DESCRIPTIVE_RESULT.md",
+      "sha256": "2c505ccd32a5b37449efd853b8aff5b3914f9a75c8971fc204b00815f5905a35"
+    },
+    {
+      "bytes": 100148,
+      "file": "STATISTICS.json",
+      "sha256": "dc954c9549a8846385ff87bc9e7bb30d5aa91bf1dd34c5bce1851433b0c26b40"
+    }
+  ],
+  "primary_consumer_receipt_sha256": "51e0e351a93f3fe70fef3e809c0e2204a1eb7dcfbe5c5fd9d7c3e03f8e66c8f1",
+  "schema": "sp27-strata-descriptive-statistics-freeze-v1",
+  "script_sha256": "f820ec4584b20f5726cdea7d0b705af270caef9847b7dae3186835a56261a1a9"
+}

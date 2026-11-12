@@ -1,0 +1,2129 @@
+{
+  "evidence_scope": "archival_reanalysis",
+  "identical_event_replays_deduplicated": 0,
+  "new_native_experiments_executed_by_analyzer": 0,
+  "no_cryptographic_or_observer_authentication_claim": true,
+  "no_pooling_across_runs": true,
+  "runs": [
+    {
+      "administratively_censored_count": 0,
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-000-transport/fresh-native-ledger",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "confirmed_operations": 1,
+      "content": {
+        "complete_unique_count": 1,
+        "known_operations": 1,
+        "known_unique": 1,
+        "missing_operations": 0
+      },
+      "deadline_before_window_success_fraction": 1.0,
+      "goodput": {
+        "denominator_window_ns": 4000000000,
+        "interpretation": "fixed-workload finite-window goodput; not saturated capacity",
+        "numerator_confirmed_operations": 1,
+        "operations_per_second": 0.25
+      },
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "identity_missing": [
+        "config_sha256"
+      ],
+      "latency_from_actual_start_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": 2860321090,
+        "n_missing_among_successes": 0,
+        "n_observed": 1,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": 2860321090,
+        "p90": 2860321090,
+        "p95": 2860321090,
+        "p99": 2860321090,
+        "planned_denominator": 1
+      },
+      "latency_from_schedule_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": null,
+        "n_missing_among_successes": 1,
+        "n_observed": 0,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "planned_denominator": 1
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "control-000-transport",
+        "planned_index": 3,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "new_useful_computation": {
+        "claim_depends_on_external_usefulness_evidence": true,
+        "complete_unique_count": null,
+        "known_operations": 0,
+        "known_unique": 0,
+        "missing_operations": 1
+      },
+      "operation_slo": {
+        "complete_coverage": true,
+        "declared_operations": 1,
+        "over_all_planned": 1.0,
+        "successful": 1
+      },
+      "outcome_counts": {
+        "confirmed": 1
+      },
+      "planned_arrival_missing": 1,
+      "planned_denominator_cdf": [],
+      "planned_operations": 1,
+      "profile_id": "strata/transport",
+      "recovery": {
+        "reason": "NO_PREDECLARED_RECOVERY_CRITERION",
+        "recovery_time_ns": null,
+        "status": "not_measured"
+      },
+      "rejected_confirmation_events": [],
+      "resources": {
+        "all_costs_measured": false,
+        "coverage_note": "Observed scoped costs are partial unless both the owner inventory and every required record are complete.",
+        "inclusive_nested_records_excluded": 0,
+        "inclusive_observations": [],
+        "metrics": {
+          "cpu_ns": {
+            "complete_total": null,
+            "coverage_complete": false,
+            "exact_window_total": null,
+            "gauge_peaks_are_not_summed": false,
+            "observed_cost_per_confirmation": 525998694.0,
+            "observed_disjoint_total": 525998694,
+            "owners": {
+              "business-reader-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 32017352,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "control-worker-total": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 18059049,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "independent-replay-caller-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 475922293,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              }
+            }
+          }
+        },
+        "no_wall_fraction_cpu_imputation": true,
+        "records": 3
+      },
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-000-transport",
+      "telemetry_counts": {
+        "confirmation": 1,
+        "request_start": 1,
+        "resource": 3
+      },
+      "unique_confirmed_transaction_ids": 1,
+      "window_ns": 4000000000,
+      "window_success_fraction": 1.0
+    },
+    {
+      "administratively_censored_count": 0,
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-001-early-reject/fresh-native-ledger",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "confirmed_operations": 1,
+      "content": {
+        "complete_unique_count": 1,
+        "known_operations": 1,
+        "known_unique": 1,
+        "missing_operations": 0
+      },
+      "deadline_before_window_success_fraction": 1.0,
+      "goodput": {
+        "denominator_window_ns": 4000000000,
+        "interpretation": "fixed-workload finite-window goodput; not saturated capacity",
+        "numerator_confirmed_operations": 1,
+        "operations_per_second": 0.25
+      },
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "identity_missing": [
+        "config_sha256"
+      ],
+      "latency_from_actual_start_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": 2797580952,
+        "n_missing_among_successes": 0,
+        "n_observed": 1,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": 2797580952,
+        "p90": 2797580952,
+        "p95": 2797580952,
+        "p99": 2797580952,
+        "planned_denominator": 1
+      },
+      "latency_from_schedule_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": null,
+        "n_missing_among_successes": 1,
+        "n_observed": 0,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "planned_denominator": 1
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "control-001-early-reject",
+        "planned_index": 4,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "new_useful_computation": {
+        "claim_depends_on_external_usefulness_evidence": true,
+        "complete_unique_count": null,
+        "known_operations": 0,
+        "known_unique": 0,
+        "missing_operations": 1
+      },
+      "operation_slo": {
+        "complete_coverage": true,
+        "declared_operations": 1,
+        "over_all_planned": 1.0,
+        "successful": 1
+      },
+      "outcome_counts": {
+        "confirmed": 1
+      },
+      "planned_arrival_missing": 1,
+      "planned_denominator_cdf": [],
+      "planned_operations": 1,
+      "profile_id": "strata/early-reject",
+      "recovery": {
+        "reason": "NO_PREDECLARED_RECOVERY_CRITERION",
+        "recovery_time_ns": null,
+        "status": "not_measured"
+      },
+      "rejected_confirmation_events": [],
+      "resources": {
+        "all_costs_measured": false,
+        "coverage_note": "Observed scoped costs are partial unless both the owner inventory and every required record are complete.",
+        "inclusive_nested_records_excluded": 0,
+        "inclusive_observations": [],
+        "metrics": {
+          "cpu_ns": {
+            "complete_total": null,
+            "coverage_complete": false,
+            "exact_window_total": null,
+            "gauge_peaks_are_not_summed": false,
+            "observed_cost_per_confirmation": 519363478.0,
+            "observed_disjoint_total": 519363478,
+            "owners": {
+              "business-reader-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 28985273,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "control-worker-total": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 15005701,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "independent-replay-caller-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 475372504,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              }
+            }
+          }
+        },
+        "no_wall_fraction_cpu_imputation": true,
+        "records": 3
+      },
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-001-early-reject",
+      "telemetry_counts": {
+        "confirmation": 1,
+        "request_start": 1,
+        "resource": 3
+      },
+      "unique_confirmed_transaction_ids": 1,
+      "window_ns": 4000000000,
+      "window_success_fraction": 1.0
+    },
+    {
+      "administratively_censored_count": 0,
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-002-late-reject/fresh-native-ledger",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "confirmed_operations": 1,
+      "content": {
+        "complete_unique_count": 1,
+        "known_operations": 1,
+        "known_unique": 1,
+        "missing_operations": 0
+      },
+      "deadline_before_window_success_fraction": 1.0,
+      "goodput": {
+        "denominator_window_ns": 4000000000,
+        "interpretation": "fixed-workload finite-window goodput; not saturated capacity",
+        "numerator_confirmed_operations": 1,
+        "operations_per_second": 0.25
+      },
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "identity_missing": [
+        "config_sha256"
+      ],
+      "latency_from_actual_start_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": 2900736710,
+        "n_missing_among_successes": 0,
+        "n_observed": 1,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": 2900736710,
+        "p90": 2900736710,
+        "p95": 2900736710,
+        "p99": 2900736710,
+        "planned_denominator": 1
+      },
+      "latency_from_schedule_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": null,
+        "n_missing_among_successes": 1,
+        "n_observed": 0,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "planned_denominator": 1
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "control-002-late-reject",
+        "planned_index": 5,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "new_useful_computation": {
+        "claim_depends_on_external_usefulness_evidence": true,
+        "complete_unique_count": null,
+        "known_operations": 0,
+        "known_unique": 0,
+        "missing_operations": 1
+      },
+      "operation_slo": {
+        "complete_coverage": true,
+        "declared_operations": 1,
+        "over_all_planned": 1.0,
+        "successful": 1
+      },
+      "outcome_counts": {
+        "confirmed": 1
+      },
+      "planned_arrival_missing": 1,
+      "planned_denominator_cdf": [],
+      "planned_operations": 1,
+      "profile_id": "strata/late-reject",
+      "recovery": {
+        "reason": "NO_PREDECLARED_RECOVERY_CRITERION",
+        "recovery_time_ns": null,
+        "status": "not_measured"
+      },
+      "rejected_confirmation_events": [],
+      "resources": {
+        "all_costs_measured": false,
+        "coverage_note": "Observed scoped costs are partial unless both the owner inventory and every required record are complete.",
+        "inclusive_nested_records_excluded": 0,
+        "inclusive_observations": [],
+        "metrics": {
+          "cpu_ns": {
+            "complete_total": null,
+            "coverage_complete": false,
+            "exact_window_total": null,
+            "gauge_peaks_are_not_summed": false,
+            "observed_cost_per_confirmation": 517993468.0,
+            "observed_disjoint_total": 517993468,
+            "owners": {
+              "business-reader-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 29289307,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "control-worker-total": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 16118831,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "independent-replay-caller-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 472585330,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              }
+            }
+          }
+        },
+        "no_wall_fraction_cpu_imputation": true,
+        "records": 3
+      },
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-002-late-reject",
+      "telemetry_counts": {
+        "confirmation": 1,
+        "request_start": 1,
+        "resource": 3
+      },
+      "unique_confirmed_transaction_ids": 1,
+      "window_ns": 4000000000,
+      "window_success_fraction": 1.0
+    },
+    {
+      "administratively_censored_count": 0,
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-003-valid-expensive/fresh-native-ledger",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "confirmed_operations": 1,
+      "content": {
+        "complete_unique_count": 1,
+        "known_operations": 1,
+        "known_unique": 1,
+        "missing_operations": 0
+      },
+      "deadline_before_window_success_fraction": 1.0,
+      "goodput": {
+        "denominator_window_ns": 4000000000,
+        "interpretation": "fixed-workload finite-window goodput; not saturated capacity",
+        "numerator_confirmed_operations": 1,
+        "operations_per_second": 0.25
+      },
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "identity_missing": [
+        "config_sha256"
+      ],
+      "latency_from_actual_start_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": 3020161353,
+        "n_missing_among_successes": 0,
+        "n_observed": 1,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": 3020161353,
+        "p90": 3020161353,
+        "p95": 3020161353,
+        "p99": 3020161353,
+        "planned_denominator": 1
+      },
+      "latency_from_schedule_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": null,
+        "n_missing_among_successes": 1,
+        "n_observed": 0,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "planned_denominator": 1
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "control-003-valid-expensive",
+        "planned_index": 6,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "new_useful_computation": {
+        "claim_depends_on_external_usefulness_evidence": true,
+        "complete_unique_count": null,
+        "known_operations": 0,
+        "known_unique": 0,
+        "missing_operations": 1
+      },
+      "operation_slo": {
+        "complete_coverage": true,
+        "declared_operations": 1,
+        "over_all_planned": 1.0,
+        "successful": 1
+      },
+      "outcome_counts": {
+        "confirmed": 1
+      },
+      "planned_arrival_missing": 1,
+      "planned_denominator_cdf": [],
+      "planned_operations": 1,
+      "profile_id": "strata/valid-expensive",
+      "recovery": {
+        "reason": "NO_PREDECLARED_RECOVERY_CRITERION",
+        "recovery_time_ns": null,
+        "status": "not_measured"
+      },
+      "rejected_confirmation_events": [],
+      "resources": {
+        "all_costs_measured": false,
+        "coverage_note": "Observed scoped costs are partial unless both the owner inventory and every required record are complete.",
+        "inclusive_nested_records_excluded": 0,
+        "inclusive_observations": [],
+        "metrics": {
+          "cpu_ns": {
+            "complete_total": null,
+            "coverage_complete": false,
+            "exact_window_total": null,
+            "gauge_peaks_are_not_summed": false,
+            "observed_cost_per_confirmation": 514565471.0,
+            "observed_disjoint_total": 514565471,
+            "owners": {
+              "business-reader-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 29872850,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "control-worker-total": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 14492056,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "independent-replay-caller-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 470200565,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              }
+            }
+          }
+        },
+        "no_wall_fraction_cpu_imputation": true,
+        "records": 3
+      },
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-003-valid-expensive",
+      "telemetry_counts": {
+        "confirmation": 1,
+        "request_start": 1,
+        "resource": 3
+      },
+      "unique_confirmed_transaction_ids": 1,
+      "window_ns": 4000000000,
+      "window_success_fraction": 1.0
+    },
+    {
+      "administratively_censored_count": 0,
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-004-valid-expensive/fresh-native-ledger",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "confirmed_operations": 1,
+      "content": {
+        "complete_unique_count": 1,
+        "known_operations": 1,
+        "known_unique": 1,
+        "missing_operations": 0
+      },
+      "deadline_before_window_success_fraction": 1.0,
+      "goodput": {
+        "denominator_window_ns": 4000000000,
+        "interpretation": "fixed-workload finite-window goodput; not saturated capacity",
+        "numerator_confirmed_operations": 1,
+        "operations_per_second": 0.25
+      },
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "identity_missing": [
+        "config_sha256"
+      ],
+      "latency_from_actual_start_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": 3081237746,
+        "n_missing_among_successes": 0,
+        "n_observed": 1,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": 3081237746,
+        "p90": 3081237746,
+        "p95": 3081237746,
+        "p99": 3081237746,
+        "planned_denominator": 1
+      },
+      "latency_from_schedule_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": null,
+        "n_missing_among_successes": 1,
+        "n_observed": 0,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "planned_denominator": 1
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "control-004-valid-expensive",
+        "planned_index": 8,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "new_useful_computation": {
+        "claim_depends_on_external_usefulness_evidence": true,
+        "complete_unique_count": null,
+        "known_operations": 0,
+        "known_unique": 0,
+        "missing_operations": 1
+      },
+      "operation_slo": {
+        "complete_coverage": true,
+        "declared_operations": 1,
+        "over_all_planned": 1.0,
+        "successful": 1
+      },
+      "outcome_counts": {
+        "confirmed": 1
+      },
+      "planned_arrival_missing": 1,
+      "planned_denominator_cdf": [],
+      "planned_operations": 1,
+      "profile_id": "strata/valid-expensive",
+      "recovery": {
+        "reason": "NO_PREDECLARED_RECOVERY_CRITERION",
+        "recovery_time_ns": null,
+        "status": "not_measured"
+      },
+      "rejected_confirmation_events": [],
+      "resources": {
+        "all_costs_measured": false,
+        "coverage_note": "Observed scoped costs are partial unless both the owner inventory and every required record are complete.",
+        "inclusive_nested_records_excluded": 0,
+        "inclusive_observations": [],
+        "metrics": {
+          "cpu_ns": {
+            "complete_total": null,
+            "coverage_complete": false,
+            "exact_window_total": null,
+            "gauge_peaks_are_not_summed": false,
+            "observed_cost_per_confirmation": 513736242.0,
+            "observed_disjoint_total": 513736242,
+            "owners": {
+              "business-reader-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 26000627,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "control-worker-total": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 14271466,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "independent-replay-caller-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 473464149,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              }
+            }
+          }
+        },
+        "no_wall_fraction_cpu_imputation": true,
+        "records": 3
+      },
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-004-valid-expensive",
+      "telemetry_counts": {
+        "confirmation": 1,
+        "request_start": 1,
+        "resource": 3
+      },
+      "unique_confirmed_transaction_ids": 1,
+      "window_ns": 4000000000,
+      "window_success_fraction": 1.0
+    },
+    {
+      "administratively_censored_count": 0,
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-005-late-reject/fresh-native-ledger",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "confirmed_operations": 1,
+      "content": {
+        "complete_unique_count": 1,
+        "known_operations": 1,
+        "known_unique": 1,
+        "missing_operations": 0
+      },
+      "deadline_before_window_success_fraction": 1.0,
+      "goodput": {
+        "denominator_window_ns": 4000000000,
+        "interpretation": "fixed-workload finite-window goodput; not saturated capacity",
+        "numerator_confirmed_operations": 1,
+        "operations_per_second": 0.25
+      },
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "identity_missing": [
+        "config_sha256"
+      ],
+      "latency_from_actual_start_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": 2900409144,
+        "n_missing_among_successes": 0,
+        "n_observed": 1,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": 2900409144,
+        "p90": 2900409144,
+        "p95": 2900409144,
+        "p99": 2900409144,
+        "planned_denominator": 1
+      },
+      "latency_from_schedule_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": null,
+        "n_missing_among_successes": 1,
+        "n_observed": 0,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "planned_denominator": 1
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "control-005-late-reject",
+        "planned_index": 9,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "new_useful_computation": {
+        "claim_depends_on_external_usefulness_evidence": true,
+        "complete_unique_count": null,
+        "known_operations": 0,
+        "known_unique": 0,
+        "missing_operations": 1
+      },
+      "operation_slo": {
+        "complete_coverage": true,
+        "declared_operations": 1,
+        "over_all_planned": 1.0,
+        "successful": 1
+      },
+      "outcome_counts": {
+        "confirmed": 1
+      },
+      "planned_arrival_missing": 1,
+      "planned_denominator_cdf": [],
+      "planned_operations": 1,
+      "profile_id": "strata/late-reject",
+      "recovery": {
+        "reason": "NO_PREDECLARED_RECOVERY_CRITERION",
+        "recovery_time_ns": null,
+        "status": "not_measured"
+      },
+      "rejected_confirmation_events": [],
+      "resources": {
+        "all_costs_measured": false,
+        "coverage_note": "Observed scoped costs are partial unless both the owner inventory and every required record are complete.",
+        "inclusive_nested_records_excluded": 0,
+        "inclusive_observations": [],
+        "metrics": {
+          "cpu_ns": {
+            "complete_total": null,
+            "coverage_complete": false,
+            "exact_window_total": null,
+            "gauge_peaks_are_not_summed": false,
+            "observed_cost_per_confirmation": 516680575.0,
+            "observed_disjoint_total": 516680575,
+            "owners": {
+              "business-reader-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 29069637,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "control-worker-total": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 14948028,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "independent-replay-caller-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 472662910,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              }
+            }
+          }
+        },
+        "no_wall_fraction_cpu_imputation": true,
+        "records": 3
+      },
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-005-late-reject",
+      "telemetry_counts": {
+        "confirmation": 1,
+        "request_start": 1,
+        "resource": 3
+      },
+      "unique_confirmed_transaction_ids": 1,
+      "window_ns": 4000000000,
+      "window_success_fraction": 1.0
+    },
+    {
+      "administratively_censored_count": 0,
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-006-early-reject/fresh-native-ledger",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "confirmed_operations": 1,
+      "content": {
+        "complete_unique_count": 1,
+        "known_operations": 1,
+        "known_unique": 1,
+        "missing_operations": 0
+      },
+      "deadline_before_window_success_fraction": 1.0,
+      "goodput": {
+        "denominator_window_ns": 4000000000,
+        "interpretation": "fixed-workload finite-window goodput; not saturated capacity",
+        "numerator_confirmed_operations": 1,
+        "operations_per_second": 0.25
+      },
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "identity_missing": [
+        "config_sha256"
+      ],
+      "latency_from_actual_start_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": 2794092137,
+        "n_missing_among_successes": 0,
+        "n_observed": 1,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": 2794092137,
+        "p90": 2794092137,
+        "p95": 2794092137,
+        "p99": 2794092137,
+        "planned_denominator": 1
+      },
+      "latency_from_schedule_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": null,
+        "n_missing_among_successes": 1,
+        "n_observed": 0,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "planned_denominator": 1
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "control-006-early-reject",
+        "planned_index": 10,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "new_useful_computation": {
+        "claim_depends_on_external_usefulness_evidence": true,
+        "complete_unique_count": null,
+        "known_operations": 0,
+        "known_unique": 0,
+        "missing_operations": 1
+      },
+      "operation_slo": {
+        "complete_coverage": true,
+        "declared_operations": 1,
+        "over_all_planned": 1.0,
+        "successful": 1
+      },
+      "outcome_counts": {
+        "confirmed": 1
+      },
+      "planned_arrival_missing": 1,
+      "planned_denominator_cdf": [],
+      "planned_operations": 1,
+      "profile_id": "strata/early-reject",
+      "recovery": {
+        "reason": "NO_PREDECLARED_RECOVERY_CRITERION",
+        "recovery_time_ns": null,
+        "status": "not_measured"
+      },
+      "rejected_confirmation_events": [],
+      "resources": {
+        "all_costs_measured": false,
+        "coverage_note": "Observed scoped costs are partial unless both the owner inventory and every required record are complete.",
+        "inclusive_nested_records_excluded": 0,
+        "inclusive_observations": [],
+        "metrics": {
+          "cpu_ns": {
+            "complete_total": null,
+            "coverage_complete": false,
+            "exact_window_total": null,
+            "gauge_peaks_are_not_summed": false,
+            "observed_cost_per_confirmation": 515406030.0,
+            "observed_disjoint_total": 515406030,
+            "owners": {
+              "business-reader-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 28583598,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "control-worker-total": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 14457085,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "independent-replay-caller-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 472365347,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              }
+            }
+          }
+        },
+        "no_wall_fraction_cpu_imputation": true,
+        "records": 3
+      },
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-006-early-reject",
+      "telemetry_counts": {
+        "confirmation": 1,
+        "request_start": 1,
+        "resource": 3
+      },
+      "unique_confirmed_transaction_ids": 1,
+      "window_ns": 4000000000,
+      "window_success_fraction": 1.0
+    },
+    {
+      "administratively_censored_count": 0,
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-007-transport/fresh-native-ledger",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "confirmed_operations": 1,
+      "content": {
+        "complete_unique_count": 1,
+        "known_operations": 1,
+        "known_unique": 1,
+        "missing_operations": 0
+      },
+      "deadline_before_window_success_fraction": 1.0,
+      "goodput": {
+        "denominator_window_ns": 4000000000,
+        "interpretation": "fixed-workload finite-window goodput; not saturated capacity",
+        "numerator_confirmed_operations": 1,
+        "operations_per_second": 0.25
+      },
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "identity_missing": [
+        "config_sha256"
+      ],
+      "latency_from_actual_start_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": 2721037915,
+        "n_missing_among_successes": 0,
+        "n_observed": 1,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": 2721037915,
+        "p90": 2721037915,
+        "p95": 2721037915,
+        "p99": 2721037915,
+        "planned_denominator": 1
+      },
+      "latency_from_schedule_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": null,
+        "n_missing_among_successes": 1,
+        "n_observed": 0,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "planned_denominator": 1
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "control-007-transport",
+        "planned_index": 11,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "new_useful_computation": {
+        "claim_depends_on_external_usefulness_evidence": true,
+        "complete_unique_count": null,
+        "known_operations": 0,
+        "known_unique": 0,
+        "missing_operations": 1
+      },
+      "operation_slo": {
+        "complete_coverage": true,
+        "declared_operations": 1,
+        "over_all_planned": 1.0,
+        "successful": 1
+      },
+      "outcome_counts": {
+        "confirmed": 1
+      },
+      "planned_arrival_missing": 1,
+      "planned_denominator_cdf": [],
+      "planned_operations": 1,
+      "profile_id": "strata/transport",
+      "recovery": {
+        "reason": "NO_PREDECLARED_RECOVERY_CRITERION",
+        "recovery_time_ns": null,
+        "status": "not_measured"
+      },
+      "rejected_confirmation_events": [],
+      "resources": {
+        "all_costs_measured": false,
+        "coverage_note": "Observed scoped costs are partial unless both the owner inventory and every required record are complete.",
+        "inclusive_nested_records_excluded": 0,
+        "inclusive_observations": [],
+        "metrics": {
+          "cpu_ns": {
+            "complete_total": null,
+            "coverage_complete": false,
+            "exact_window_total": null,
+            "gauge_peaks_are_not_summed": false,
+            "observed_cost_per_confirmation": 515615899.0,
+            "observed_disjoint_total": 515615899,
+            "owners": {
+              "business-reader-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 28842176,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "control-worker-total": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 14353852,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "independent-replay-caller-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 472419871,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              }
+            }
+          }
+        },
+        "no_wall_fraction_cpu_imputation": true,
+        "records": 3
+      },
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-007-transport",
+      "telemetry_counts": {
+        "confirmation": 1,
+        "request_start": 1,
+        "resource": 3
+      },
+      "unique_confirmed_transaction_ids": 1,
+      "window_ns": 4000000000,
+      "window_success_fraction": 1.0
+    },
+    {
+      "administratively_censored_count": 0,
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-000/fresh-native-ledger",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "confirmed_operations": 1,
+      "content": {
+        "complete_unique_count": 1,
+        "known_operations": 1,
+        "known_unique": 1,
+        "missing_operations": 0
+      },
+      "deadline_before_window_success_fraction": 1.0,
+      "goodput": {
+        "denominator_window_ns": 4000000000,
+        "interpretation": "fixed-workload finite-window goodput; not saturated capacity",
+        "numerator_confirmed_operations": 1,
+        "operations_per_second": 0.25
+      },
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "identity_missing": [
+        "config_sha256"
+      ],
+      "latency_from_actual_start_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": 2673388307,
+        "n_missing_among_successes": 0,
+        "n_observed": 1,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": 2673388307,
+        "p90": 2673388307,
+        "p95": 2673388307,
+        "p99": 2673388307,
+        "planned_denominator": 1
+      },
+      "latency_from_schedule_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": null,
+        "n_missing_among_successes": 1,
+        "n_observed": 0,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "planned_denominator": 1
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "health-000",
+        "planned_index": 0,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "new_useful_computation": {
+        "claim_depends_on_external_usefulness_evidence": true,
+        "complete_unique_count": null,
+        "known_operations": 0,
+        "known_unique": 0,
+        "missing_operations": 1
+      },
+      "operation_slo": {
+        "complete_coverage": true,
+        "declared_operations": 1,
+        "over_all_planned": 1.0,
+        "successful": 1
+      },
+      "outcome_counts": {
+        "confirmed": 1
+      },
+      "planned_arrival_missing": 1,
+      "planned_denominator_cdf": [],
+      "planned_operations": 1,
+      "profile_id": "strata/initial-health",
+      "recovery": {
+        "reason": "NO_PREDECLARED_RECOVERY_CRITERION",
+        "recovery_time_ns": null,
+        "status": "not_measured"
+      },
+      "rejected_confirmation_events": [],
+      "resources": {
+        "all_costs_measured": false,
+        "coverage_note": "Observed scoped costs are partial unless both the owner inventory and every required record are complete.",
+        "inclusive_nested_records_excluded": 0,
+        "inclusive_observations": [],
+        "metrics": {
+          "cpu_ns": {
+            "complete_total": null,
+            "coverage_complete": false,
+            "exact_window_total": null,
+            "gauge_peaks_are_not_summed": false,
+            "observed_cost_per_confirmation": 502144173.0,
+            "observed_disjoint_total": 502144173,
+            "owners": {
+              "business-reader-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 29673711,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "control-worker-total": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 0,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "independent-replay-caller-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 472470462,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              }
+            }
+          }
+        },
+        "no_wall_fraction_cpu_imputation": true,
+        "records": 3
+      },
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-000",
+      "telemetry_counts": {
+        "confirmation": 1,
+        "request_start": 1,
+        "resource": 3
+      },
+      "unique_confirmed_transaction_ids": 1,
+      "window_ns": 4000000000,
+      "window_success_fraction": 1.0
+    },
+    {
+      "administratively_censored_count": 0,
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-001/fresh-native-ledger",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "confirmed_operations": 1,
+      "content": {
+        "complete_unique_count": 1,
+        "known_operations": 1,
+        "known_unique": 1,
+        "missing_operations": 0
+      },
+      "deadline_before_window_success_fraction": 1.0,
+      "goodput": {
+        "denominator_window_ns": 4000000000,
+        "interpretation": "fixed-workload finite-window goodput; not saturated capacity",
+        "numerator_confirmed_operations": 1,
+        "operations_per_second": 0.25
+      },
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "identity_missing": [
+        "config_sha256"
+      ],
+      "latency_from_actual_start_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": 2617770967,
+        "n_missing_among_successes": 0,
+        "n_observed": 1,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": 2617770967,
+        "p90": 2617770967,
+        "p95": 2617770967,
+        "p99": 2617770967,
+        "planned_denominator": 1
+      },
+      "latency_from_schedule_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": null,
+        "n_missing_among_successes": 1,
+        "n_observed": 0,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "planned_denominator": 1
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "health-001",
+        "planned_index": 1,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "new_useful_computation": {
+        "claim_depends_on_external_usefulness_evidence": true,
+        "complete_unique_count": null,
+        "known_operations": 0,
+        "known_unique": 0,
+        "missing_operations": 1
+      },
+      "operation_slo": {
+        "complete_coverage": true,
+        "declared_operations": 1,
+        "over_all_planned": 1.0,
+        "successful": 1
+      },
+      "outcome_counts": {
+        "confirmed": 1
+      },
+      "planned_arrival_missing": 1,
+      "planned_denominator_cdf": [],
+      "planned_operations": 1,
+      "profile_id": "strata/initial-health",
+      "recovery": {
+        "reason": "NO_PREDECLARED_RECOVERY_CRITERION",
+        "recovery_time_ns": null,
+        "status": "not_measured"
+      },
+      "rejected_confirmation_events": [],
+      "resources": {
+        "all_costs_measured": false,
+        "coverage_note": "Observed scoped costs are partial unless both the owner inventory and every required record are complete.",
+        "inclusive_nested_records_excluded": 0,
+        "inclusive_observations": [],
+        "metrics": {
+          "cpu_ns": {
+            "complete_total": null,
+            "coverage_complete": false,
+            "exact_window_total": null,
+            "gauge_peaks_are_not_summed": false,
+            "observed_cost_per_confirmation": 499694227.0,
+            "observed_disjoint_total": 499694227,
+            "owners": {
+              "business-reader-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 29256823,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "control-worker-total": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 0,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "independent-replay-caller-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 470437404,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              }
+            }
+          }
+        },
+        "no_wall_fraction_cpu_imputation": true,
+        "records": 3
+      },
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-001",
+      "telemetry_counts": {
+        "confirmation": 1,
+        "request_start": 1,
+        "resource": 3
+      },
+      "unique_confirmed_transaction_ids": 1,
+      "window_ns": 4000000000,
+      "window_success_fraction": 1.0
+    },
+    {
+      "administratively_censored_count": 0,
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-002/fresh-native-ledger",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "confirmed_operations": 1,
+      "content": {
+        "complete_unique_count": 1,
+        "known_operations": 1,
+        "known_unique": 1,
+        "missing_operations": 0
+      },
+      "deadline_before_window_success_fraction": 1.0,
+      "goodput": {
+        "denominator_window_ns": 4000000000,
+        "interpretation": "fixed-workload finite-window goodput; not saturated capacity",
+        "numerator_confirmed_operations": 1,
+        "operations_per_second": 0.25
+      },
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "identity_missing": [
+        "config_sha256"
+      ],
+      "latency_from_actual_start_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": 2857738835,
+        "n_missing_among_successes": 0,
+        "n_observed": 1,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": 2857738835,
+        "p90": 2857738835,
+        "p95": 2857738835,
+        "p99": 2857738835,
+        "planned_denominator": 1
+      },
+      "latency_from_schedule_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": null,
+        "n_missing_among_successes": 1,
+        "n_observed": 0,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "planned_denominator": 1
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "health-002",
+        "planned_index": 2,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "new_useful_computation": {
+        "claim_depends_on_external_usefulness_evidence": true,
+        "complete_unique_count": null,
+        "known_operations": 0,
+        "known_unique": 0,
+        "missing_operations": 1
+      },
+      "operation_slo": {
+        "complete_coverage": true,
+        "declared_operations": 1,
+        "over_all_planned": 1.0,
+        "successful": 1
+      },
+      "outcome_counts": {
+        "confirmed": 1
+      },
+      "planned_arrival_missing": 1,
+      "planned_denominator_cdf": [],
+      "planned_operations": 1,
+      "profile_id": "strata/initial-health",
+      "recovery": {
+        "reason": "NO_PREDECLARED_RECOVERY_CRITERION",
+        "recovery_time_ns": null,
+        "status": "not_measured"
+      },
+      "rejected_confirmation_events": [],
+      "resources": {
+        "all_costs_measured": false,
+        "coverage_note": "Observed scoped costs are partial unless both the owner inventory and every required record are complete.",
+        "inclusive_nested_records_excluded": 0,
+        "inclusive_observations": [],
+        "metrics": {
+          "cpu_ns": {
+            "complete_total": null,
+            "coverage_complete": false,
+            "exact_window_total": null,
+            "gauge_peaks_are_not_summed": false,
+            "observed_cost_per_confirmation": 504092652.0,
+            "observed_disjoint_total": 504092652,
+            "owners": {
+              "business-reader-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 29039809,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "control-worker-total": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 0,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "independent-replay-caller-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 475052843,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              }
+            }
+          }
+        },
+        "no_wall_fraction_cpu_imputation": true,
+        "records": 3
+      },
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-002",
+      "telemetry_counts": {
+        "confirmation": 1,
+        "request_start": 1,
+        "resource": 3
+      },
+      "unique_confirmed_transaction_ids": 1,
+      "window_ns": 4000000000,
+      "window_success_fraction": 1.0
+    },
+    {
+      "administratively_censored_count": 0,
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-003/fresh-native-ledger",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "confirmed_operations": 1,
+      "content": {
+        "complete_unique_count": 1,
+        "known_operations": 1,
+        "known_unique": 1,
+        "missing_operations": 0
+      },
+      "deadline_before_window_success_fraction": 1.0,
+      "goodput": {
+        "denominator_window_ns": 4000000000,
+        "interpretation": "fixed-workload finite-window goodput; not saturated capacity",
+        "numerator_confirmed_operations": 1,
+        "operations_per_second": 0.25
+      },
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "identity_missing": [
+        "config_sha256"
+      ],
+      "latency_from_actual_start_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": 2616450238,
+        "n_missing_among_successes": 0,
+        "n_observed": 1,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": 2616450238,
+        "p90": 2616450238,
+        "p95": 2616450238,
+        "p99": 2616450238,
+        "planned_denominator": 1
+      },
+      "latency_from_schedule_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": null,
+        "n_missing_among_successes": 1,
+        "n_observed": 0,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "planned_denominator": 1
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "health-003",
+        "planned_index": 7,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "new_useful_computation": {
+        "claim_depends_on_external_usefulness_evidence": true,
+        "complete_unique_count": null,
+        "known_operations": 0,
+        "known_unique": 0,
+        "missing_operations": 1
+      },
+      "operation_slo": {
+        "complete_coverage": true,
+        "declared_operations": 1,
+        "over_all_planned": 1.0,
+        "successful": 1
+      },
+      "outcome_counts": {
+        "confirmed": 1
+      },
+      "planned_arrival_missing": 1,
+      "planned_denominator_cdf": [],
+      "planned_operations": 1,
+      "profile_id": "strata/midpoint-sentinel",
+      "recovery": {
+        "reason": "NO_PREDECLARED_RECOVERY_CRITERION",
+        "recovery_time_ns": null,
+        "status": "not_measured"
+      },
+      "rejected_confirmation_events": [],
+      "resources": {
+        "all_costs_measured": false,
+        "coverage_note": "Observed scoped costs are partial unless both the owner inventory and every required record are complete.",
+        "inclusive_nested_records_excluded": 0,
+        "inclusive_observations": [],
+        "metrics": {
+          "cpu_ns": {
+            "complete_total": null,
+            "coverage_complete": false,
+            "exact_window_total": null,
+            "gauge_peaks_are_not_summed": false,
+            "observed_cost_per_confirmation": 500388781.0,
+            "observed_disjoint_total": 500388781,
+            "owners": {
+              "business-reader-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 30253387,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "control-worker-total": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 0,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "independent-replay-caller-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 470135394,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              }
+            }
+          }
+        },
+        "no_wall_fraction_cpu_imputation": true,
+        "records": 3
+      },
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-003",
+      "telemetry_counts": {
+        "confirmation": 1,
+        "request_start": 1,
+        "resource": 3
+      },
+      "unique_confirmed_transaction_ids": 1,
+      "window_ns": 4000000000,
+      "window_success_fraction": 1.0
+    },
+    {
+      "administratively_censored_count": 0,
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-004/fresh-native-ledger",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "confirmed_operations": 1,
+      "content": {
+        "complete_unique_count": 1,
+        "known_operations": 1,
+        "known_unique": 1,
+        "missing_operations": 0
+      },
+      "deadline_before_window_success_fraction": 1.0,
+      "goodput": {
+        "denominator_window_ns": 4000000000,
+        "interpretation": "fixed-workload finite-window goodput; not saturated capacity",
+        "numerator_confirmed_operations": 1,
+        "operations_per_second": 0.25
+      },
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "identity_missing": [
+        "config_sha256"
+      ],
+      "latency_from_actual_start_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": 2700915975,
+        "n_missing_among_successes": 0,
+        "n_observed": 1,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": 2700915975,
+        "p90": 2700915975,
+        "p95": 2700915975,
+        "p99": 2700915975,
+        "planned_denominator": 1
+      },
+      "latency_from_schedule_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": null,
+        "n_missing_among_successes": 1,
+        "n_observed": 0,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "planned_denominator": 1
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "health-004",
+        "planned_index": 12,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "new_useful_computation": {
+        "claim_depends_on_external_usefulness_evidence": true,
+        "complete_unique_count": null,
+        "known_operations": 0,
+        "known_unique": 0,
+        "missing_operations": 1
+      },
+      "operation_slo": {
+        "complete_coverage": true,
+        "declared_operations": 1,
+        "over_all_planned": 1.0,
+        "successful": 1
+      },
+      "outcome_counts": {
+        "confirmed": 1
+      },
+      "planned_arrival_missing": 1,
+      "planned_denominator_cdf": [],
+      "planned_operations": 1,
+      "profile_id": "strata/terminal-sentinel",
+      "recovery": {
+        "reason": "NO_PREDECLARED_RECOVERY_CRITERION",
+        "recovery_time_ns": null,
+        "status": "not_measured"
+      },
+      "rejected_confirmation_events": [],
+      "resources": {
+        "all_costs_measured": false,
+        "coverage_note": "Observed scoped costs are partial unless both the owner inventory and every required record are complete.",
+        "inclusive_nested_records_excluded": 0,
+        "inclusive_observations": [],
+        "metrics": {
+          "cpu_ns": {
+            "complete_total": null,
+            "coverage_complete": false,
+            "exact_window_total": null,
+            "gauge_peaks_are_not_summed": false,
+            "observed_cost_per_confirmation": 504075319.0,
+            "observed_disjoint_total": 504075319,
+            "owners": {
+              "business-reader-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 29933011,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "control-worker-total": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 0,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "independent-replay-caller-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 474142308,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              }
+            }
+          }
+        },
+        "no_wall_fraction_cpu_imputation": true,
+        "records": 3
+      },
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-004",
+      "telemetry_counts": {
+        "confirmation": 1,
+        "request_start": 1,
+        "resource": 3
+      },
+      "unique_confirmed_transaction_ids": 1,
+      "window_ns": 4000000000,
+      "window_success_fraction": 1.0
+    }
+  ],
+  "schema": "sp27-confirmed-goodput-analysis-v1"
+}

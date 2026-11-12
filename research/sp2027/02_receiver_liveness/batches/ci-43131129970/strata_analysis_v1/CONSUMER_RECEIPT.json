@@ -1,0 +1,2891 @@
+{
+  "actual_valid_input_generation": [
+    {
+      "cost_scope": "fresh producer open, all mine attempts, execution, storage and packet encoding; enclosing process CPU, not a pure prover clock",
+      "generation_process_cpu_ns": 9648674,
+      "generation_wall_ns": 11900566,
+      "packet_id": "13479567872b7843c76df33fe4a383933668acf18ea8dae84b4d303543bdcfeb",
+      "producer_mine_returned": true,
+      "worker": 0
+    },
+    {
+      "cost_scope": "fresh producer open, all mine attempts, execution, storage and packet encoding; enclosing process CPU, not a pure prover clock",
+      "generation_process_cpu_ns": 8933549,
+      "generation_wall_ns": 10903613,
+      "packet_id": "9716fcfca1e51ab201ab47034cbdf3b2ec9d51bf92cdb3b69c997d236e5093a2",
+      "producer_mine_returned": true,
+      "worker": 1
+    },
+    {
+      "cost_scope": "fresh producer open, all mine attempts, execution, storage and packet encoding; enclosing process CPU, not a pure prover clock",
+      "generation_process_cpu_ns": 7494943,
+      "generation_wall_ns": 9493047,
+      "packet_id": "cbe9dbf83efa9951b83456e4cf5b0f172b7339659c68d27db83ffa56e87637da",
+      "producer_mine_returned": true,
+      "worker": 2
+    },
+    {
+      "cost_scope": "fresh producer open, all mine attempts, execution, storage and packet encoding; enclosing process CPU, not a pure prover clock",
+      "generation_process_cpu_ns": 7434743,
+      "generation_wall_ns": 75700360,
+      "packet_id": "4a90da1f4a804e2679e52abf74712f53dc37a98d4814cf726b926535c55084ce",
+      "producer_mine_returned": true,
+      "worker": 3
+    },
+    {
+      "cost_scope": "fresh producer open, all mine attempts, execution, storage and packet encoding; enclosing process CPU, not a pure prover clock",
+      "generation_process_cpu_ns": 7275559,
+      "generation_wall_ns": 9365886,
+      "packet_id": "974a92c554a35c83f9c063b5d91a85ff2819c0eec82a19fb3ecae26f6e5fe46e",
+      "producer_mine_returned": true,
+      "worker": 4
+    },
+    {
+      "cost_scope": "fresh producer open, all mine attempts, execution, storage and packet encoding; enclosing process CPU, not a pure prover clock",
+      "generation_process_cpu_ns": 7087798,
+      "generation_wall_ns": 8915186,
+      "packet_id": "ddc3ea3415265a19b51b34dd51a5ca9a8f6a41e979896be3a6b774970ce59f5f",
+      "producer_mine_returned": true,
+      "worker": 5
+    },
+    {
+      "cost_scope": "fresh producer open, all mine attempts, execution, storage and packet encoding; enclosing process CPU, not a pure prover clock",
+      "generation_process_cpu_ns": 7329677,
+      "generation_wall_ns": 75419587,
+      "packet_id": "4a29b472d741b645728fb9ce425c30526e365aec46ab767513d21b398e7c616b",
+      "producer_mine_returned": true,
+      "worker": 6
+    },
+    {
+      "cost_scope": "fresh producer open, all mine attempts, execution, storage and packet encoding; enclosing process CPU, not a pure prover clock",
+      "generation_process_cpu_ns": 8374267,
+      "generation_wall_ns": 10492874,
+      "packet_id": "4bea962e69100c551b43548940b2df03bb6acb5c4ff3655170a4b815041fa210",
+      "producer_mine_returned": true,
+      "worker": 7
+    },
+    {
+      "cost_scope": "fresh producer open, all mine attempts, execution, storage and packet encoding; enclosing process CPU, not a pure prover clock",
+      "generation_process_cpu_ns": 7473564,
+      "generation_wall_ns": 9760320,
+      "packet_id": "d0d566ab59dbedccd0f16062bebdd8d611d5da3af3e29d132d67f5c7a3256bcc",
+      "producer_mine_returned": true,
+      "worker": 8
+    },
+    {
+      "cost_scope": "fresh producer open, all mine attempts, execution, storage and packet encoding; enclosing process CPU, not a pure prover clock",
+      "generation_process_cpu_ns": 8098973,
+      "generation_wall_ns": 74300321,
+      "packet_id": "f5b4f7c623d150236c0a1efebc9aedb7af4f8b7c33f8330a2a627956aa68cb16",
+      "producer_mine_returned": true,
+      "worker": 9
+    },
+    {
+      "cost_scope": "fresh producer open, all mine attempts, execution, storage and packet encoding; enclosing process CPU, not a pure prover clock",
+      "generation_process_cpu_ns": 7264603,
+      "generation_wall_ns": 9213336,
+      "packet_id": "010076019ef745f06ebd489b86a944144713bd1dd14e3a059016781d77d22183",
+      "producer_mine_returned": true,
+      "worker": 10
+    },
+    {
+      "cost_scope": "fresh producer open, all mine attempts, execution, storage and packet encoding; enclosing process CPU, not a pure prover clock",
+      "generation_process_cpu_ns": 8679802,
+      "generation_wall_ns": 10603651,
+      "packet_id": "e4848f3de9f91475213938bc1175b3e13b0ad5de48044a5c4fc15a671efdea2f",
+      "producer_mine_returned": true,
+      "worker": 11
+    },
+    {
+      "cost_scope": "fresh producer open, all mine attempts, execution, storage and packet encoding; enclosing process CPU, not a pure prover clock",
+      "generation_process_cpu_ns": 8072076,
+      "generation_wall_ns": 76918462,
+      "packet_id": "95b8454b03abd7bdb08d314e7760d25140e01b0eef451f2d2658f88ef074f467",
+      "producer_mine_returned": true,
+      "worker": 12
+    },
+    {
+      "cost_scope": "fresh producer open, all mine attempts, execution, storage and packet encoding; enclosing process CPU, not a pure prover clock",
+      "generation_process_cpu_ns": 9408549,
+      "generation_wall_ns": 11389916,
+      "packet_id": "0888e8356cc682f4a115b79557eb6672b8508471b3f3c34ea63a8d4ff2186f58",
+      "producer_mine_returned": true,
+      "worker": 13
+    },
+    {
+      "cost_scope": "fresh producer open, all mine attempts, execution, storage and packet encoding; enclosing process CPU, not a pure prover clock",
+      "generation_process_cpu_ns": 7523557,
+      "generation_wall_ns": 9332525,
+      "packet_id": "42e9af067fd3777f176464810217eed5712db839000577ae9ec5f51ba32d0417",
+      "producer_mine_returned": true,
+      "worker": 14
+    },
+    {
+      "cost_scope": "fresh producer open, all mine attempts, execution, storage and packet encoding; enclosing process CPU, not a pure prover clock",
+      "generation_process_cpu_ns": 7992371,
+      "generation_wall_ns": 76349720,
+      "packet_id": "680e1080f8f8b1c299ee991f5afc065db93acc9c8d558c97ce47120380d1f31c",
+      "producer_mine_returned": true,
+      "worker": 15
+    }
+  ],
+  "analysis_first_evidence_gap": {
+    "consumer_rejection": null,
+    "first_planned_without_complete_raw": null,
+    "first_started_without_complete_raw": null,
+    "is_native_collector_first_divergence": false,
+    "reader_rejection": null
+  },
+  "analysis_python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "analysis_qualification": "COLLECTED_CONTROL_SERIES",
+  "balanced_execution_is_randomized": false,
+  "diagnostic_observed_counts": {
+    "declared_plan_phase_count": 13,
+    "declared_plan_source": "pinned collector source; actual native plan separately retained",
+    "invoked_files": 13,
+    "missing_start_file_proves_unstarted_without_validated_report": false,
+    "native_plan_observed": true,
+    "no_start_file_observed": 0,
+    "raw_json_objects": 13,
+    "started_files": 13
+  },
+  "experiment_id": "ci-43131129970-job-130895252279-artifact-13906427974",
+  "frozen_06_consumer": {
+    "analyzer_sha256": "9719f822394e6295a7787be0be2c8d394d25ab19e8d17be543e4145f6bae9acc",
+    "error": null,
+    "import_scope": "entire validated planned campaign, including explicit unstarted phases",
+    "status": "CONSUMED"
+  },
+  "full_lifecycle_cost_known": false,
+  "input_acquisition_costs": {
+    "canonical_submit_body_bytes_each": 99043,
+    "complete_acquisition_process_cpu_ns": 174794390,
+    "complete_acquisition_wall_ns": 732009246,
+    "cost_scope": "all process threads from public context setup through negative construction, valid producer histories, encoding and raw writes; output Value serialization occurs after the measured interval",
+    "input_legality": [
+      "valid paid Submit wrapper; invalid first PNH1 codec byte",
+      "valid codec; same late header/challenge/target/ticket, one canonical A element changes task ID",
+      "from-zero target-hit false transcript; original native verifier must actually reject after replay",
+      "native mine-returned valid empty genesis siblings; may activate competing state and require explicit final-state control"
+    ],
+    "negative_preparation_process_cpu_ns": 23207168,
+    "negative_preparation_wall_ns": 37613168,
+    "nested_cost_intervals_are_not_additive": true,
+    "schema": "sp27-strata-input-acquisition-v1",
+    "valid_expensive_is_not_a_pure_W1_intervention": true
+  },
+  "input_directory": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata",
+  "input_files": [
+    {
+      "bytes": 4899,
+      "member": "preparation.json",
+      "sha256": "003be12c20f13dbb494f5456625794bb2bf2eed6fed539a68bc1ab948aa8ff84"
+    },
+    {
+      "bytes": 63720,
+      "member": "manifest.json",
+      "sha256": "a52c95660608cc6da4d1265e3dc350e23fffd667c86c3baa07144c21086b5fb6"
+    },
+    {
+      "bytes": 26667,
+      "member": "native/report.json",
+      "sha256": "1b3cf90df86740e14dc194d1c92552ab454af0fe2d1d8fff704a11ef5e534064"
+    },
+    {
+      "bytes": 6074,
+      "member": "native/plan.json",
+      "sha256": "9da6830b66eacf59fb53d0695aa25f6b4ecfcb723c19a004599be049e32625c5"
+    },
+    {
+      "bytes": 1234,
+      "member": "native/identity-before.json",
+      "sha256": "5b51f80f13a7d0232a45ef7fc92b95158b4400304223ca94df236669a56c2f02"
+    },
+    {
+      "bytes": 1234,
+      "member": "native/identity-after.json",
+      "sha256": "5b51f80f13a7d0232a45ef7fc92b95158b4400304223ca94df236669a56c2f02"
+    },
+    {
+      "bytes": 450,
+      "member": "native/host-before.json",
+      "sha256": "6bdb7762e52bc8bf83da6883f2542a7c1eaa8ce134396e1f7ff6009840154c9a"
+    },
+    {
+      "bytes": 452,
+      "member": "native/host-after.json",
+      "sha256": "30b58dc9301d6bbc4beee3cedc37ff8c311699e0836b27903248c5ddac2ce46a"
+    },
+    {
+      "bytes": 694983,
+      "member": "native/business-acquisition.json",
+      "sha256": "7a5a464285e2cc8a674da23146eada5c9b4c3cb5803812836988a5221223d03b"
+    },
+    {
+      "bytes": 147,
+      "member": "native/business-acquisition-started.json",
+      "sha256": "78b02ce231ac4fd5cc96269adf782c94b5a323636605eca0aaa6fe4f15726666"
+    },
+    {
+      "bytes": 280,
+      "member": "native/strata-acquisition-started.json",
+      "sha256": "d53c078d2f5874e59fcbee169700ce580a6d77c6dfe7967354d1e9424d9f9e21"
+    },
+    {
+      "bytes": 1199,
+      "member": "native/strata-inputs-index.json",
+      "sha256": "512ce3825f37b507ed1be7cf1ae141020d5cacdca8b75ba7662ea4b98b6c027e"
+    },
+    {
+      "bytes": 9563023,
+      "member": "native/strata-input-acquisition-native.json",
+      "sha256": "0b0efc8c2abe37d04f332dc48bbb2d64e4236f687134bccc0efd021d124cbb2e"
+    },
+    {
+      "bytes": 1584865,
+      "member": "native/inputs/arm-000.json",
+      "sha256": "1a0b822cad04c315897dc9581255cde0b702c04530e084c3645fd57a502d05a9"
+    },
+    {
+      "bytes": 1584868,
+      "member": "native/inputs/arm-001.json",
+      "sha256": "81f3e3e8c2c07a4e0160ba1d2750de7f4543e00de602a9a84110a5c02eed6b4f"
+    },
+    {
+      "bytes": 1584867,
+      "member": "native/inputs/arm-002.json",
+      "sha256": "7551ca5fd9aabf12e8c6ff770adb5a202cd16d9985b0638c66250ce2efa686b9"
+    },
+    {
+      "bytes": 1584871,
+      "member": "native/inputs/arm-003.json",
+      "sha256": "085912b09e424eac2456fe0751ad10cd3cd3a9f27934886c87fb7dfa13fa2a3f"
+    },
+    {
+      "bytes": 637,
+      "member": "native/raw/health-000-started.json",
+      "sha256": "4e799b630172a2c6a9016091333ba2ca0ee535c2a516cb3bc0e6bd98f48d53aa"
+    },
+    {
+      "bytes": 847,
+      "member": "native/raw/health-000-index.json",
+      "sha256": "c7c98ae22830f9f6e3c9fb184848368f631a000283c03abad3726d17fd698888"
+    },
+    {
+      "bytes": 450,
+      "member": "native/raw/health-000-host-before.json",
+      "sha256": "cbf61d18596141f642b455a800793ee12203206ff06a567d348eeb4997e9649f"
+    },
+    {
+      "bytes": 450,
+      "member": "native/raw/health-000-host-after.json",
+      "sha256": "8bab24d868fb8caf84abe5da9e270129e0de6d0be4b2791c4c79cc835e09c1de"
+    },
+    {
+      "bytes": 171,
+      "member": "native/raw/health-000-invoked.json",
+      "sha256": "16a189a6240919a852dba3360e5b0a1fe8d1d68abec51c3f7022085838a68997"
+    },
+    {
+      "bytes": 1809893,
+      "member": "native/raw/health-000.json",
+      "sha256": "ec78fdd1cff0b07abf1885a527f69804890cf185716b6a73b45d93d5a8baf84c"
+    },
+    {
+      "bytes": 637,
+      "member": "native/raw/health-001-started.json",
+      "sha256": "06ed1791e2f4b62187063365c9d96165a144cfb4c5d5b23081af60cced06e122"
+    },
+    {
+      "bytes": 847,
+      "member": "native/raw/health-001-index.json",
+      "sha256": "241893ef78d441d6b89a89357c2ef97880f14e120454ee682bd86817c1886087"
+    },
+    {
+      "bytes": 450,
+      "member": "native/raw/health-001-host-before.json",
+      "sha256": "fff9a09661be4f5c58707a28cc36d354fedb9333310cd15e71edb02c604fa224"
+    },
+    {
+      "bytes": 450,
+      "member": "native/raw/health-001-host-after.json",
+      "sha256": "ea4320b89eec00bb3db74213534861a1c549f2a6128e2f065ddc8163eebbc934"
+    },
+    {
+      "bytes": 171,
+      "member": "native/raw/health-001-invoked.json",
+      "sha256": "106ccd8dbe72479ffe92b4d1f1d189fceccb9b38f5dc7dd059388b97a920c4f5"
+    },
+    {
+      "bytes": 1822114,
+      "member": "native/raw/health-001.json",
+      "sha256": "dc56158b46afacf6d9731fffbd0bc1722d5d6b235827214cc677643c5f6d9718"
+    },
+    {
+      "bytes": 637,
+      "member": "native/raw/health-002-started.json",
+      "sha256": "1132aadb26c41adc2d66543b94e25d94cbeb084e2381e8e5e3640ae3616d4e18"
+    },
+    {
+      "bytes": 847,
+      "member": "native/raw/health-002-index.json",
+      "sha256": "f65f995fe2d6be4346a642ef5711c0bccd68997f334b0e033076b9401f6a5dd3"
+    },
+    {
+      "bytes": 450,
+      "member": "native/raw/health-002-host-before.json",
+      "sha256": "84951210c4ff2a921f54b6a3d552b6fb371a79eee6ffdbdb2f3235dfa7a62613"
+    },
+    {
+      "bytes": 450,
+      "member": "native/raw/health-002-host-after.json",
+      "sha256": "13cdb058cb0a045d29d0fbb13a447f6724989bbfe4234bb9e29aebcdbc69dcf3"
+    },
+    {
+      "bytes": 171,
+      "member": "native/raw/health-002-invoked.json",
+      "sha256": "dec9897dbd7d87fe4848c3db990b163a17f1cc124bd50ac074bc6d64cbade194"
+    },
+    {
+      "bytes": 1785082,
+      "member": "native/raw/health-002.json",
+      "sha256": "5b2ff8d08c6c140c10230e5c45501f1be5b78a83565634b131e2b9596eb3838e"
+    },
+    {
+      "bytes": 663,
+      "member": "native/raw/control-000-transport-started.json",
+      "sha256": "6434a3995b65f79c4a433fcc8fb6aaecabc57a5392e3a3b6805e9a8dcd235454"
+    },
+    {
+      "bytes": 864,
+      "member": "native/raw/control-000-transport-index.json",
+      "sha256": "3ad9155465dd4766f39795993b7ab8025e0e3776b0faacf99ecbf315fbd4e947"
+    },
+    {
+      "bytes": 451,
+      "member": "native/raw/control-000-transport-host-before.json",
+      "sha256": "3b48b3e04d99d9f1c9b87b39d0e00d747df61aacf5aa3c80bdcf3e867b3e979f"
+    },
+    {
+      "bytes": 451,
+      "member": "native/raw/control-000-transport-host-after.json",
+      "sha256": "e8deee1917a65f33939fb7a577a3d1e292d054d49395ad77d1c7b75dac118ad7"
+    },
+    {
+      "bytes": 182,
+      "member": "native/raw/control-000-transport-invoked.json",
+      "sha256": "5c823deb5c390f5ee868f7fbc467493d885b304b574256ace0e619f64a1e0450"
+    },
+    {
+      "bytes": 2137684,
+      "member": "native/raw/control-000-transport.json",
+      "sha256": "3fa5f154302971d60fabcd95ef9e8e7df4cfcf792798ee6b2b1ee470b7609619"
+    },
+    {
+      "bytes": 669,
+      "member": "native/raw/control-001-early-reject-started.json",
+      "sha256": "589f57d70cf180362ecba5bca5b84af75ed945bb494569c5afe32c9f14df99c0"
+    },
+    {
+      "bytes": 873,
+      "member": "native/raw/control-001-early-reject-index.json",
+      "sha256": "149fcd7172ea8771db1df1004aaad72ce6cc930a76ddee194e2674108303cee9"
+    },
+    {
+      "bytes": 451,
+      "member": "native/raw/control-001-early-reject-host-before.json",
+      "sha256": "9c6051efc7a3d44d969dfbd9bc824c839d35cc107361810216121e13e416e3b6"
+    },
+    {
+      "bytes": 451,
+      "member": "native/raw/control-001-early-reject-host-after.json",
+      "sha256": "8faf1ab259b267c39bde531933ece2a84c0a0f1329ee032e4f63bec46d2d1c5e"
+    },
+    {
+      "bytes": 185,
+      "member": "native/raw/control-001-early-reject-invoked.json",
+      "sha256": "6df0ebf62988a11024e8c22d0cc9f087a62597c96a1e10d4d982baaaf9517a77"
+    },
+    {
+      "bytes": 2126280,
+      "member": "native/raw/control-001-early-reject.json",
+      "sha256": "0a7105ac963ada28813b4e90295aa54f9ffa66605c78da01208ee6d2da61a96d"
+    },
+    {
+      "bytes": 667,
+      "member": "native/raw/control-002-late-reject-started.json",
+      "sha256": "b8b0eb132e092ef1b2c62cbc557e0078d2721dc6ddbb7a7e5408ce452eb619ef"
+    },
+    {
+      "bytes": 870,
+      "member": "native/raw/control-002-late-reject-index.json",
+      "sha256": "337166ddcd68c4c560d916ad85f21a24c15551b6b3e627f5492d13b38b19d15d"
+    },
+    {
+      "bytes": 451,
+      "member": "native/raw/control-002-late-reject-host-before.json",
+      "sha256": "86486f706c5b84ec5f85cca40939b52e291f111a34e244ba472a241a7d424213"
+    },
+    {
+      "bytes": 452,
+      "member": "native/raw/control-002-late-reject-host-after.json",
+      "sha256": "04c8832154e10212ac8d20dc1343b8ba977823b4b8d358866a8009eda59955c6"
+    },
+    {
+      "bytes": 184,
+      "member": "native/raw/control-002-late-reject-invoked.json",
+      "sha256": "aecf0d22b6a5c0dfe3b33df6fa8d4f8f26a88e067f5121b3f7c2da749ff9dc20"
+    },
+    {
+      "bytes": 2136647,
+      "member": "native/raw/control-002-late-reject.json",
+      "sha256": "64e70f6eaef94e53d2195fdac1f26ea2b36a1ae4dc5c4a8a9b27044da377b0b7"
+    },
+    {
+      "bytes": 675,
+      "member": "native/raw/control-003-valid-expensive-started.json",
+      "sha256": "796f3738cc8d2722b70a1364b8e1120b610ebae015749dcc1a4004cac2bd0e80"
+    },
+    {
+      "bytes": 882,
+      "member": "native/raw/control-003-valid-expensive-index.json",
+      "sha256": "4bb67fa3ce275227e61c1d629c9ab35152e085b8c096ec6372cd9b3ac2257d52"
+    },
+    {
+      "bytes": 452,
+      "member": "native/raw/control-003-valid-expensive-host-before.json",
+      "sha256": "8d9a4f1067c25adb695352125bae3ee78f2c5d12bf96777d4290aeca54909a5f"
+    },
+    {
+      "bytes": 452,
+      "member": "native/raw/control-003-valid-expensive-host-after.json",
+      "sha256": "c5340956f305a8b9a4e626f2c2d7da483cc2421de0f08788ef4de11cf2bc75c3"
+    },
+    {
+      "bytes": 188,
+      "member": "native/raw/control-003-valid-expensive-invoked.json",
+      "sha256": "1b85b22e772335155f31d5e88bba27fbd47d3e3d8bd73ba1ab434a08ad56f3ea"
+    },
+    {
+      "bytes": 2165540,
+      "member": "native/raw/control-003-valid-expensive.json",
+      "sha256": "c88b30675e691f59e092746a824efb513ec4aebbc729d55cf58569ec4f7df999"
+    },
+    {
+      "bytes": 640,
+      "member": "native/raw/health-003-started.json",
+      "sha256": "667ce5575cb0135373af3cc1d9ff216e38f756a1663415d748e436365d0dbd9a"
+    },
+    {
+      "bytes": 850,
+      "member": "native/raw/health-003-index.json",
+      "sha256": "bed53bed11ab332c75b66a4c8642419ce7d929a65ffb5e03740977f5a712c9c1"
+    },
+    {
+      "bytes": 452,
+      "member": "native/raw/health-003-host-before.json",
+      "sha256": "d6012e80c289ea1e2ed4d2c0a0d06f94454cd303fc8fb820544166b686388537"
+    },
+    {
+      "bytes": 452,
+      "member": "native/raw/health-003-host-after.json",
+      "sha256": "2a7be956b75f842bf2f7085c51390f7d46a69a9888bfbbbdd5b210758f3812c7"
+    },
+    {
+      "bytes": 171,
+      "member": "native/raw/health-003-invoked.json",
+      "sha256": "ad549f03d8c7de1d9079638f6e367dcdbaef8c656002a6350b9b4f70fcab3613"
+    },
+    {
+      "bytes": 1846862,
+      "member": "native/raw/health-003.json",
+      "sha256": "df17f4eb8c023f1a60148efdc6d65aaea397e2ca0b2f0514e0e7273cb9429f39"
+    },
+    {
+      "bytes": 675,
+      "member": "native/raw/control-004-valid-expensive-started.json",
+      "sha256": "67ffb36ea6e7892425b40ff95a2967c1f0a0b414be59c143573fc05fdb5f0268"
+    },
+    {
+      "bytes": 882,
+      "member": "native/raw/control-004-valid-expensive-index.json",
+      "sha256": "91983a159916068114aa61f8f7859ccb0acf90065ee0a21f3caf869695b3c6ad"
+    },
+    {
+      "bytes": 452,
+      "member": "native/raw/control-004-valid-expensive-host-before.json",
+      "sha256": "3a8108aaea5259bf1068e720ead7f8df748fd241f6ceba920eb7ad3e4a421a6c"
+    },
+    {
+      "bytes": 452,
+      "member": "native/raw/control-004-valid-expensive-host-after.json",
+      "sha256": "3608cad2772d769fe7f1b9e28db89fa92ef511504741ba35b813ce509a13cbe6"
+    },
+    {
+      "bytes": 188,
+      "member": "native/raw/control-004-valid-expensive-invoked.json",
+      "sha256": "86ea0df40f5a93e2a9685735825dd80b33ed5fc227a834d60f91f01e5bc299fe"
+    },
+    {
+      "bytes": 2077920,
+      "member": "native/raw/control-004-valid-expensive.json",
+      "sha256": "7aa1aa5f756e890158b7407ace7247f0597da3565b8fd0808c6f2cdaec36450b"
+    },
+    {
+      "bytes": 667,
+      "member": "native/raw/control-005-late-reject-started.json",
+      "sha256": "51c85af714ff24fd0944a8363875ff3245961cdc8d1b8467d4f07af053f2f6c4"
+    },
+    {
+      "bytes": 870,
+      "member": "native/raw/control-005-late-reject-index.json",
+      "sha256": "ff92cf866cd379b828c0fa600176be06f3edf8caed2665aa8e8388a9873d0ca4"
+    },
+    {
+      "bytes": 452,
+      "member": "native/raw/control-005-late-reject-host-before.json",
+      "sha256": "5eaa2ab2fb7a4b865baaeccf085de0452913f1f61c9bac5ccac33e0a6855025f"
+    },
+    {
+      "bytes": 452,
+      "member": "native/raw/control-005-late-reject-host-after.json",
+      "sha256": "e7ebdcc77481fc23aa1bc633cba75d58bcc7b0dee3514a2610b174a84f6bd4aa"
+    },
+    {
+      "bytes": 184,
+      "member": "native/raw/control-005-late-reject-invoked.json",
+      "sha256": "e8a0a3f5e5a5440dcaf513b0ce149dfce881920775380f22684e887c8083cbaa"
+    },
+    {
+      "bytes": 2149018,
+      "member": "native/raw/control-005-late-reject.json",
+      "sha256": "4ee5f8905b2d32303dcdd3d44591c572f7a294a318e8579cd6b10c34bd89e190"
+    },
+    {
+      "bytes": 670,
+      "member": "native/raw/control-006-early-reject-started.json",
+      "sha256": "32f3938f6157a6a42ac423117df1a7cd562d0083e7710db76f5158e8c7e32f11"
+    },
+    {
+      "bytes": 874,
+      "member": "native/raw/control-006-early-reject-index.json",
+      "sha256": "e2d92ce3a531fbbf3db4486560ea259ce386a435426721a6826e7be526cf2ba1"
+    },
+    {
+      "bytes": 452,
+      "member": "native/raw/control-006-early-reject-host-before.json",
+      "sha256": "020d8490433eef620abde85189df6ed56d73206cc7a10872fb3a652a9e969403"
+    },
+    {
+      "bytes": 452,
+      "member": "native/raw/control-006-early-reject-host-after.json",
+      "sha256": "2ef5fbb9c5abc8faa5b91d6f65ba0899d4cb82d680b13df24753acf59ece7ae7"
+    },
+    {
+      "bytes": 186,
+      "member": "native/raw/control-006-early-reject-invoked.json",
+      "sha256": "b91a24c8c2fe58f876f663b16c5e41c98ae2176f1b71cb56faa37299171cd7f8"
+    },
+    {
+      "bytes": 2138667,
+      "member": "native/raw/control-006-early-reject.json",
+      "sha256": "21d3cd742e140e6f80b4571d97bb76a1ab492d97285dd13010184008a532d361"
+    },
+    {
+      "bytes": 664,
+      "member": "native/raw/control-007-transport-started.json",
+      "sha256": "10062e7526c95ec528a1a252a6451f7c30afb537be5635eb2a72458fcd33d6f8"
+    },
+    {
+      "bytes": 865,
+      "member": "native/raw/control-007-transport-index.json",
+      "sha256": "b6ce6a5314b9fe21c5b628add74b9be9501b097e9a6bd50643e80169e9603d6a"
+    },
+    {
+      "bytes": 452,
+      "member": "native/raw/control-007-transport-host-before.json",
+      "sha256": "ef9c0db843a7fb62f30532545aaff305068ab09014a7276e6f506be9b481d20d"
+    },
+    {
+      "bytes": 452,
+      "member": "native/raw/control-007-transport-host-after.json",
+      "sha256": "579cb2f5e80abb95c6841e3685dc861d8bb783056da915df3e4e69492d0c3320"
+    },
+    {
+      "bytes": 183,
+      "member": "native/raw/control-007-transport-invoked.json",
+      "sha256": "510c34c7dfb7fbfd8f6ad465bab00bf3e7dfefba27521f74de3d78dfef887df6"
+    },
+    {
+      "bytes": 2126228,
+      "member": "native/raw/control-007-transport.json",
+      "sha256": "b969347cf3d860ad6d31150aba1294e05f80a60caacf11d1ea365e7954febe35"
+    },
+    {
+      "bytes": 641,
+      "member": "native/raw/health-004-started.json",
+      "sha256": "c0d71e9ca5d4cd038947b011e397e81bf086e259636ff9ba3df8ccf2040303bb"
+    },
+    {
+      "bytes": 851,
+      "member": "native/raw/health-004-index.json",
+      "sha256": "943224b5a4674f62cf5f137011bd7e62c31d6e482c133aa86f850d000619cc53"
+    },
+    {
+      "bytes": 452,
+      "member": "native/raw/health-004-host-before.json",
+      "sha256": "1c372210a9a02f7b9473b08c4145c45383580da7761ba9fcf33934b40be06763"
+    },
+    {
+      "bytes": 452,
+      "member": "native/raw/health-004-host-after.json",
+      "sha256": "33bf4e4ec1d2aa4c07e21c9ac993ca8da728066465d509ecda993a084f5ce366"
+    },
+    {
+      "bytes": 172,
+      "member": "native/raw/health-004-invoked.json",
+      "sha256": "ae127187c225d2dd29c20436b11320312b782ceb3de87f76a1edb40967a7338e"
+    },
+    {
+      "bytes": 1822103,
+      "member": "native/raw/health-004.json",
+      "sha256": "cfd8ab9a85798f61ec25b14762d7e3d2d7188b4f078a8c45767ee5f5d4eebce8"
+    },
+    {
+      "bytes": 100671,
+      "member": "native/strata-acquisition/negative-000.json",
+      "sha256": "46e3767a1f8d0b7c8a445b784db422f80e68043b268e9035897923ec781c042d"
+    },
+    {
+      "bytes": 100895,
+      "member": "native/strata-acquisition/negative-001.json",
+      "sha256": "8882c6ed4711f59a59f1c46d26d9fc88989f041bc658073782a7c71b486a981b"
+    },
+    {
+      "bytes": 100895,
+      "member": "native/strata-acquisition/negative-002.json",
+      "sha256": "bad1be4f16c4a574470f0fd3ab57618938f079b792962265ac827351eebad1de"
+    },
+    {
+      "bytes": 100895,
+      "member": "native/strata-acquisition/negative-003.json",
+      "sha256": "3d24361222171eaf1b0e9ddc8cfa85284855cacb4815fd8d6da84cb101416067"
+    },
+    {
+      "bytes": 100895,
+      "member": "native/strata-acquisition/negative-004.json",
+      "sha256": "359384844485792f15c1095bd0a8408476862721573b3061176cf47d58624e14"
+    },
+    {
+      "bytes": 100671,
+      "member": "native/strata-acquisition/negative-005.json",
+      "sha256": "0b16f1e2ad9b8fb2ac3a42ecd42d447a3f53dc448a65f875b950d4ffa059d2db"
+    },
+    {
+      "bytes": 100671,
+      "member": "native/strata-acquisition/negative-006.json",
+      "sha256": "d8cd2dd444b1ceca978407717fc5af0d67ceff002fc03adfabcea2541989622d"
+    },
+    {
+      "bytes": 100671,
+      "member": "native/strata-acquisition/negative-007.json",
+      "sha256": "72142ca9b7b030cb4367c9ebcb1b083eaae91c5169b3b974cdc352b5a28e6c7b"
+    },
+    {
+      "bytes": 100671,
+      "member": "native/strata-acquisition/negative-008.json",
+      "sha256": "86956dfe79b258bc53ee91aa6304fd94aa3c2ce4bc5ff7b4087e96fccb00ff17"
+    },
+    {
+      "bytes": 100671,
+      "member": "native/strata-acquisition/negative-009.json",
+      "sha256": "630e3182f4e527bb46b1e592ec953e9eeaa46d0da8d3de456fd0bb6b09c20c48"
+    },
+    {
+      "bytes": 100895,
+      "member": "native/strata-acquisition/negative-010.json",
+      "sha256": "e076c51900f09953db3003fe3b89b17e0e8671e27b56786633ec2c8e5e5d7490"
+    },
+    {
+      "bytes": 100895,
+      "member": "native/strata-acquisition/negative-011.json",
+      "sha256": "315455c6b39a177373ad695dc85aecacf7836010b6a57246c74158d4b8c16a08"
+    },
+    {
+      "bytes": 101343,
+      "member": "native/strata-acquisition/negative-012.json",
+      "sha256": "18134be710296e349c34fbcebd63eaa05ce35b8d2a8e1b7279c678001ba70c13"
+    },
+    {
+      "bytes": 102465,
+      "member": "native/strata-acquisition/negative-013.json",
+      "sha256": "01117e77daa1f07ab0097e60d690fee56469d0a7f0c3a3e28c32483e198bca1d"
+    },
+    {
+      "bytes": 100671,
+      "member": "native/strata-acquisition/negative-014.json",
+      "sha256": "01e5462471e1f34c2f9ee28ab9601ac2058dd06407bdbfa39cabcbc4dbe13454"
+    },
+    {
+      "bytes": 100671,
+      "member": "native/strata-acquisition/negative-015.json",
+      "sha256": "b300eb21d81fecb27e7e9bca888df4eaad0eef17f45761f1f62a2cdf56360a76"
+    },
+    {
+      "bytes": 67,
+      "member": "native/strata-acquisition/valid-000-started.json",
+      "sha256": "989fe7037f7ced08a485afd6d9bd247bd72b35af0c35d64f77e2781b9f4cfdd1"
+    },
+    {
+      "bytes": 99387,
+      "member": "native/strata-acquisition/valid-000.json",
+      "sha256": "afddefbb9468eac72e1ba298171e48cec9824af9290bf3979223cc12d22f1286"
+    },
+    {
+      "bytes": 67,
+      "member": "native/strata-acquisition/valid-001-started.json",
+      "sha256": "06d611efb58d35bb3330e490deec3bafce440cebeb0f857e5f31f73e7b01f719"
+    },
+    {
+      "bytes": 99387,
+      "member": "native/strata-acquisition/valid-001.json",
+      "sha256": "8ca16e881d08c6b33e619960ca46c890fe6c8def3643c495b1aa6e5f2c335f36"
+    },
+    {
+      "bytes": 67,
+      "member": "native/strata-acquisition/valid-002-started.json",
+      "sha256": "d43cceac567d14f23ba8d31537c39e669a40bd1bb4ed5d1cd07ffbdbfd9855a9"
+    },
+    {
+      "bytes": 99386,
+      "member": "native/strata-acquisition/valid-002.json",
+      "sha256": "c6c2b0357ea1195cd6db55b4b8677f2acf4134dd23f8aa550e2a0f24ac15adae"
+    },
+    {
+      "bytes": 67,
+      "member": "native/strata-acquisition/valid-003-started.json",
+      "sha256": "7aa7c19972daf1fc174b6b89aca216df7e6fdd34dd662761a71fa7b2f94e84bf"
+    },
+    {
+      "bytes": 99387,
+      "member": "native/strata-acquisition/valid-003.json",
+      "sha256": "676f540191b3cef41ef7c08c41f457d89b22b3d9a5eb0071450ca69f96234ab3"
+    },
+    {
+      "bytes": 67,
+      "member": "native/strata-acquisition/valid-004-started.json",
+      "sha256": "88b8abe659d232f12500ad6772f1efaf77c4329cf89924416548d5e723a762c2"
+    },
+    {
+      "bytes": 99386,
+      "member": "native/strata-acquisition/valid-004.json",
+      "sha256": "9afce1a616d0c982cf6888dc9dc4e0ba05567b6568e8db354babd37ab4ee8275"
+    },
+    {
+      "bytes": 67,
+      "member": "native/strata-acquisition/valid-005-started.json",
+      "sha256": "619a7816fd64215ffe54669982b8419151be06033cdfc6f2f9842581f9ccf7ee"
+    },
+    {
+      "bytes": 99386,
+      "member": "native/strata-acquisition/valid-005.json",
+      "sha256": "be0e7c1459e48b8452408d68aa8c8b9fb236aec8024269080e37f52cb747bdcf"
+    },
+    {
+      "bytes": 67,
+      "member": "native/strata-acquisition/valid-006-started.json",
+      "sha256": "8fe7aaaceda1fb0ae85f00c0dbf85ad1db6863bc93691b4eb2bee2e8b8ab81d5"
+    },
+    {
+      "bytes": 99387,
+      "member": "native/strata-acquisition/valid-006.json",
+      "sha256": "a9a3ef2e9b43fc53e13ba6bf2c380ffd306a3fd8531ab23107149ea8b0b7e736"
+    },
+    {
+      "bytes": 67,
+      "member": "native/strata-acquisition/valid-007-started.json",
+      "sha256": "051456257a18e44f2c9aa032ee4cbf173e7c320fa4c3ad247e733543ae7d1ef1"
+    },
+    {
+      "bytes": 99387,
+      "member": "native/strata-acquisition/valid-007.json",
+      "sha256": "a32d20586428b0b45b9c909a0b254196a821ffaea08dc20f99476bebae2f9120"
+    },
+    {
+      "bytes": 67,
+      "member": "native/strata-acquisition/valid-008-started.json",
+      "sha256": "8af3cb848bdc0398b4123ee2304a5e1a42cd8c4dbd5de3ab0f884f1a55b34e95"
+    },
+    {
+      "bytes": 99386,
+      "member": "native/strata-acquisition/valid-008.json",
+      "sha256": "370812be5b5303a14073363bc4a8e7ac996502441c1b111c7f39c9db6662288f"
+    },
+    {
+      "bytes": 67,
+      "member": "native/strata-acquisition/valid-009-started.json",
+      "sha256": "56308e99c0753c2bb68e93ab02ea48bd4e6186e35154e0ec5ebd9b8deb92265b"
+    },
+    {
+      "bytes": 99387,
+      "member": "native/strata-acquisition/valid-009.json",
+      "sha256": "83010e330d976729acb2b7340c9bf3f4a6d6e5cdda8d3041a1275d4c53833c6b"
+    },
+    {
+      "bytes": 68,
+      "member": "native/strata-acquisition/valid-010-started.json",
+      "sha256": "e2f3d9cd2cd1fb5159e71d0017f49f2e572356d4d3f606ad960dac1045d59fe9"
+    },
+    {
+      "bytes": 99387,
+      "member": "native/strata-acquisition/valid-010.json",
+      "sha256": "aedc798a75f8485d77dad19ade150076079c8a8f5b0c9652feb4c7d574468bc3"
+    },
+    {
+      "bytes": 68,
+      "member": "native/strata-acquisition/valid-011-started.json",
+      "sha256": "37a09dc79cb93b6686da33aef076b9436ef4527cc95cf338d40a08876ce6c649"
+    },
+    {
+      "bytes": 99388,
+      "member": "native/strata-acquisition/valid-011.json",
+      "sha256": "54eb3c17c92a59afa363f647f4499219924ec58abd5d085db095d9adf192e730"
+    },
+    {
+      "bytes": 68,
+      "member": "native/strata-acquisition/valid-012-started.json",
+      "sha256": "bb6732d4841424545512078c1caebb85f4578630d886da4b9813c3031afbfc65"
+    },
+    {
+      "bytes": 99388,
+      "member": "native/strata-acquisition/valid-012.json",
+      "sha256": "15694a5676c14adbc3ba510268f7365446758e6b4c66da5eddb5bcdb0e57c976"
+    },
+    {
+      "bytes": 68,
+      "member": "native/strata-acquisition/valid-013-started.json",
+      "sha256": "5b3aa82b57376302eec2761cf63ee1574828774b774b4046ee4120946a5ba821"
+    },
+    {
+      "bytes": 99388,
+      "member": "native/strata-acquisition/valid-013.json",
+      "sha256": "55819ab458fc3feb153e64f946f29d0b0e5a81bc622d08c5c3f1fecc8d4eccd0"
+    },
+    {
+      "bytes": 68,
+      "member": "native/strata-acquisition/valid-014-started.json",
+      "sha256": "0a1e610211a6973fe306f449a5e84bf927c2ffa7a5904f1401160766c7956b29"
+    },
+    {
+      "bytes": 99387,
+      "member": "native/strata-acquisition/valid-014.json",
+      "sha256": "fe724305a21f0dac3c41d508078212c8d617daa9f6a290d4ebe659cb6219e682"
+    },
+    {
+      "bytes": 68,
+      "member": "native/strata-acquisition/valid-015-started.json",
+      "sha256": "6095c36cc6663eab575cc3632e9e84ef727349d529c899890081436ecd047a58"
+    },
+    {
+      "bytes": 99388,
+      "member": "native/strata-acquisition/valid-015.json",
+      "sha256": "30ad0ef02cef388ed68e09545ee6ab85019fd6ff1cfd86d4bca520ffaf207443"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/control-000-transport/independent-client/native.sqlite",
+      "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b"
+    },
+    {
+      "bytes": 0,
+      "member": "native/control-000-transport/independent-client/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/control-000-transport/receiver/native.sqlite",
+      "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc"
+    },
+    {
+      "bytes": 0,
+      "member": "native/control-000-transport/receiver/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/control-001-early-reject/independent-client/native.sqlite",
+      "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b"
+    },
+    {
+      "bytes": 0,
+      "member": "native/control-001-early-reject/independent-client/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/control-001-early-reject/receiver/native.sqlite",
+      "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc"
+    },
+    {
+      "bytes": 0,
+      "member": "native/control-001-early-reject/receiver/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/control-002-late-reject/independent-client/native.sqlite",
+      "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b"
+    },
+    {
+      "bytes": 0,
+      "member": "native/control-002-late-reject/independent-client/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/control-002-late-reject/receiver/native.sqlite",
+      "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc"
+    },
+    {
+      "bytes": 0,
+      "member": "native/control-002-late-reject/receiver/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/control-003-valid-expensive/independent-client/native.sqlite",
+      "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b"
+    },
+    {
+      "bytes": 0,
+      "member": "native/control-003-valid-expensive/independent-client/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1310720,
+      "member": "native/control-003-valid-expensive/receiver/native.sqlite",
+      "sha256": "8a0d635a2ff6756b88f66586a34d3e4f95dde6aa6562f36bf9754771c8355376"
+    },
+    {
+      "bytes": 0,
+      "member": "native/control-003-valid-expensive/receiver/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/control-004-valid-expensive/independent-client/native.sqlite",
+      "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b"
+    },
+    {
+      "bytes": 0,
+      "member": "native/control-004-valid-expensive/independent-client/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1310720,
+      "member": "native/control-004-valid-expensive/receiver/native.sqlite",
+      "sha256": "82e2c3bf28e5d161fa34c77daa823499e8600aa33fc0ea828e18609a7382cf1d"
+    },
+    {
+      "bytes": 0,
+      "member": "native/control-004-valid-expensive/receiver/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/control-005-late-reject/independent-client/native.sqlite",
+      "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b"
+    },
+    {
+      "bytes": 0,
+      "member": "native/control-005-late-reject/independent-client/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/control-005-late-reject/receiver/native.sqlite",
+      "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc"
+    },
+    {
+      "bytes": 0,
+      "member": "native/control-005-late-reject/receiver/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/control-006-early-reject/independent-client/native.sqlite",
+      "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b"
+    },
+    {
+      "bytes": 0,
+      "member": "native/control-006-early-reject/independent-client/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/control-006-early-reject/receiver/native.sqlite",
+      "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc"
+    },
+    {
+      "bytes": 0,
+      "member": "native/control-006-early-reject/receiver/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/control-007-transport/independent-client/native.sqlite",
+      "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b"
+    },
+    {
+      "bytes": 0,
+      "member": "native/control-007-transport/independent-client/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/control-007-transport/receiver/native.sqlite",
+      "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc"
+    },
+    {
+      "bytes": 0,
+      "member": "native/control-007-transport/receiver/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/health-000/independent-client/native.sqlite",
+      "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b"
+    },
+    {
+      "bytes": 0,
+      "member": "native/health-000/independent-client/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/health-000/receiver/native.sqlite",
+      "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc"
+    },
+    {
+      "bytes": 0,
+      "member": "native/health-000/receiver/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/health-001/independent-client/native.sqlite",
+      "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b"
+    },
+    {
+      "bytes": 0,
+      "member": "native/health-001/independent-client/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/health-001/receiver/native.sqlite",
+      "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc"
+    },
+    {
+      "bytes": 0,
+      "member": "native/health-001/receiver/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/health-002/independent-client/native.sqlite",
+      "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b"
+    },
+    {
+      "bytes": 0,
+      "member": "native/health-002/independent-client/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/health-002/receiver/native.sqlite",
+      "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc"
+    },
+    {
+      "bytes": 0,
+      "member": "native/health-002/receiver/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/health-003/independent-client/native.sqlite",
+      "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b"
+    },
+    {
+      "bytes": 0,
+      "member": "native/health-003/independent-client/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/health-003/receiver/native.sqlite",
+      "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc"
+    },
+    {
+      "bytes": 0,
+      "member": "native/health-003/receiver/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/health-004/independent-client/native.sqlite",
+      "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b"
+    },
+    {
+      "bytes": 0,
+      "member": "native/health-004/independent-client/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/health-004/receiver/native.sqlite",
+      "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc"
+    },
+    {
+      "bytes": 0,
+      "member": "native/health-004/receiver/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 499712,
+      "member": "native/producer/native.sqlite",
+      "sha256": "2372f2898610a77f9aa8b42f208a29d5789d858c5067074e75ca57831db849d0"
+    },
+    {
+      "bytes": 0,
+      "member": "native/producer/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 147456,
+      "member": "native/strata-acquisition/context/native.sqlite",
+      "sha256": "1f6187ae8c4827ec1d5351930e09b981cd802b494a0d45671a6573c1d105caa1"
+    },
+    {
+      "bytes": 0,
+      "member": "native/strata-acquisition/context/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196608,
+      "member": "native/strata-acquisition/valid-producer-000/native.sqlite",
+      "sha256": "0e76dc33c606a22138f2b0d348d6e84096f5949c261460c98bacb3ff75dc4556"
+    },
+    {
+      "bytes": 0,
+      "member": "native/strata-acquisition/valid-producer-000/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196608,
+      "member": "native/strata-acquisition/valid-producer-001/native.sqlite",
+      "sha256": "4ba95e4975fb65a6acbdcad976c8e67e10621634e1b26800c7718e7d8e81a502"
+    },
+    {
+      "bytes": 0,
+      "member": "native/strata-acquisition/valid-producer-001/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196608,
+      "member": "native/strata-acquisition/valid-producer-002/native.sqlite",
+      "sha256": "379b791da32f7db81eed84d204b186fccdae9d154f54faf4c0118e24e3997f54"
+    },
+    {
+      "bytes": 0,
+      "member": "native/strata-acquisition/valid-producer-002/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196608,
+      "member": "native/strata-acquisition/valid-producer-003/native.sqlite",
+      "sha256": "6fbd23cdd7a660011fa3401b837bae5091f1db0afff66f87020db1428f0ee382"
+    },
+    {
+      "bytes": 0,
+      "member": "native/strata-acquisition/valid-producer-003/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196608,
+      "member": "native/strata-acquisition/valid-producer-004/native.sqlite",
+      "sha256": "52e04a4ddac4ba343c57db90e1597ba2e1355a3433a2b32824ba2d3e3a8494b6"
+    },
+    {
+      "bytes": 0,
+      "member": "native/strata-acquisition/valid-producer-004/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196608,
+      "member": "native/strata-acquisition/valid-producer-005/native.sqlite",
+      "sha256": "d32009fa794cd2aceb10803898e48b0ba7d93a3d8cc27ec4f779571a6c3fc316"
+    },
+    {
+      "bytes": 0,
+      "member": "native/strata-acquisition/valid-producer-005/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196608,
+      "member": "native/strata-acquisition/valid-producer-006/native.sqlite",
+      "sha256": "9497e20649f2dd0e212b12f5429bfe8dfdfd2fc14f645603e1753dfe06f9c06f"
+    },
+    {
+      "bytes": 0,
+      "member": "native/strata-acquisition/valid-producer-006/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196608,
+      "member": "native/strata-acquisition/valid-producer-007/native.sqlite",
+      "sha256": "e74ded30bf86bc7042bb75a608407d452444890852655a94c453b458a920205b"
+    },
+    {
+      "bytes": 0,
+      "member": "native/strata-acquisition/valid-producer-007/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196608,
+      "member": "native/strata-acquisition/valid-producer-008/native.sqlite",
+      "sha256": "5724395c693451ac22546677d95fd46dbbbdcee760f5b608c294e148f395888c"
+    },
+    {
+      "bytes": 0,
+      "member": "native/strata-acquisition/valid-producer-008/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196608,
+      "member": "native/strata-acquisition/valid-producer-009/native.sqlite",
+      "sha256": "7482e8e8bf740e702cf629798d56147365d7861e2ee3d3951e394adb5ad4394d"
+    },
+    {
+      "bytes": 0,
+      "member": "native/strata-acquisition/valid-producer-009/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196608,
+      "member": "native/strata-acquisition/valid-producer-010/native.sqlite",
+      "sha256": "dab2eb4837fe46dfaada59627b1b6f1270a517d43c13e5f96f444a890d902a6d"
+    },
+    {
+      "bytes": 0,
+      "member": "native/strata-acquisition/valid-producer-010/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196608,
+      "member": "native/strata-acquisition/valid-producer-011/native.sqlite",
+      "sha256": "7062389d3b4d42fbe52832229324477879f2ef45f5cd4a9d1c8bf3f0d2eaf82c"
+    },
+    {
+      "bytes": 0,
+      "member": "native/strata-acquisition/valid-producer-011/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196608,
+      "member": "native/strata-acquisition/valid-producer-012/native.sqlite",
+      "sha256": "38572bb240fc838e601526728dff2f838999393c63aecaf8304dc691de033ff8"
+    },
+    {
+      "bytes": 0,
+      "member": "native/strata-acquisition/valid-producer-012/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196608,
+      "member": "native/strata-acquisition/valid-producer-013/native.sqlite",
+      "sha256": "9e20b482ad05e25fcf7b2f74a38b1bf894142718ce5dcd687ac00d9231683bd6"
+    },
+    {
+      "bytes": 0,
+      "member": "native/strata-acquisition/valid-producer-013/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196608,
+      "member": "native/strata-acquisition/valid-producer-014/native.sqlite",
+      "sha256": "6d490163dc6c444e5c6b78f84be2a83e00cc2c2cc5b615e847d540436c8f8f83"
+    },
+    {
+      "bytes": 0,
+      "member": "native/strata-acquisition/valid-producer-014/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196608,
+      "member": "native/strata-acquisition/valid-producer-015/native.sqlite",
+      "sha256": "bc3a317f2b1590b026b240f1f5ee014f7a703135ac5b50b52a76ea6978d96237"
+    },
+    {
+      "bytes": 0,
+      "member": "native/strata-acquisition/valid-producer-015/owner.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 110225,
+      "member": "build/stdout",
+      "sha256": "c1c76874f9b890f269f0c37c77a36f1b5c4f9ba95ea2961bdb3c835d64b1ee15"
+    },
+    {
+      "bytes": 7177,
+      "member": "build/stderr",
+      "sha256": "388a8daffbe01901c88585e0f30d8056580933f8f998a5e1aa97f1e7c0c22b30"
+    },
+    {
+      "bytes": 12504464,
+      "member": "public_v3_from_zero",
+      "sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5"
+    },
+    {
+      "bytes": 611,
+      "member": "run/stdout",
+      "sha256": "30e5889520c438d3f4b40b6b3bdc05c3b3a5f5c593dead742cac5399521a4d7a"
+    },
+    {
+      "bytes": 0,
+      "member": "run/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "mechanism_inference_from_n_two_per_arm": false,
+  "mechanism_status": "UNKNOWN",
+  "native_collector_first_divergence": null,
+  "native_collector_qualification": "COLLECTED_CONTROL_SERIES",
+  "native_records_rewritten": false,
+  "native_report_first_divergence": null,
+  "native_run_identities": {
+    "after": {
+      "binary_identity_error": null,
+      "binary_path": "/home/runner/work/_temp/target-sp27/release/deps/public_v3_from_zero-29386b5fc1c68c9c",
+      "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+      "boot_id": "36bd2fe4-42b9-44b3-adb8-4cfb340b6021",
+      "compiled_campaign_module_sha256": "402ae6e53d4cfaa78f5a6ce359c8bec556cbafcdd127614e54ff4f9f733c9ba9",
+      "compiled_health_module_sha256": "9a41160291790aa9f77f9893197f0cc49e27153b1e8dd1b64cb00115fa8e8101",
+      "compiled_strata_module_sha256": "747aa3ebe2d1714bef7c8f1eeb72ffc5ea3b35ab33f70c6266f1b879bc4ee473",
+      "compiled_test_source_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+      "github_run_attempt": "1",
+      "github_run_id": "43131129970",
+      "hostname": "runnervm7aw5e",
+      "identity_scope": "actual executable bytes, compiled source bytes and local process facts; declared runner/git identities require independent runner readback",
+      "pid": 5057,
+      "process_cgroup": "0::/trnmponpublic.slice/trnm-from-zero-43131129970-1-health-4650.service",
+      "runner_declared_run_id": "43131129970-1-health",
+      "runner_declared_source_sha": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+      "schema": "sp27-receiver-run-identity-v1"
+    },
+    "before": {
+      "binary_identity_error": null,
+      "binary_path": "/home/runner/work/_temp/target-sp27/release/deps/public_v3_from_zero-29386b5fc1c68c9c",
+      "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+      "boot_id": "36bd2fe4-42b9-44b3-adb8-4cfb340b6021",
+      "compiled_campaign_module_sha256": "402ae6e53d4cfaa78f5a6ce359c8bec556cbafcdd127614e54ff4f9f733c9ba9",
+      "compiled_health_module_sha256": "9a41160291790aa9f77f9893197f0cc49e27153b1e8dd1b64cb00115fa8e8101",
+      "compiled_strata_module_sha256": "747aa3ebe2d1714bef7c8f1eeb72ffc5ea3b35ab33f70c6266f1b879bc4ee473",
+      "compiled_test_source_sha256": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+      "github_run_attempt": "1",
+      "github_run_id": "43131129970",
+      "hostname": "runnervm7aw5e",
+      "identity_scope": "actual executable bytes, compiled source bytes and local process facts; declared runner/git identities require independent runner readback",
+      "pid": 5057,
+      "process_cgroup": "0::/trnmponpublic.slice/trnm-from-zero-43131129970-1-health-4650.service",
+      "runner_declared_run_id": "43131129970-1-health",
+      "runner_declared_source_sha": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+      "schema": "sp27-receiver-run-identity-v1"
+    }
+  },
+  "new_native_experiments": 0,
+  "original_read_errors": [],
+  "outer_execution": {
+    "actual_process_record": {
+      "command": [
+        "/home/runner/work/_temp/target-sp27/release/deps/public_v3_from_zero-29386b5fc1c68c9c",
+        "sp27_receiver_campaign::balanced_native_stage_controls_stop_on_unhealthy_sentinel",
+        "--exact",
+        "--ignored",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "cpu_ns": 9483126000,
+      "cpu_scope": "entire child, not apportioned to nested wall intervals",
+      "exit_code": 0,
+      "involuntary_switches": 1657,
+      "major_faults": 0,
+      "max_rss_kib": 57160,
+      "minor_faults": 16524,
+      "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "30e5889520c438d3f4b40b6b3bdc05c3b3a5f5c593dead742cac5399521a4d7a",
+      "system_cpu_ns": 6789056000,
+      "timed_out": false,
+      "user_cpu_ns": 2694070000,
+      "voluntary_switches": 163877,
+      "wait4_cpu_resolution_ns": 1000,
+      "wall_ns": 54134029355
+    },
+    "all_checks_verified": true,
+    "checks": {
+      "build_completed": true,
+      "build_stderr_sha_matches": true,
+      "build_stdout_sha_matches": true,
+      "execution_complete": true,
+      "execution_source_binary_match_preparation": true,
+      "execution_stderr_sha_matches": true,
+      "execution_stdout_sha_matches": true,
+      "preparation_complete": true,
+      "preparation_source_stable": true,
+      "process_completed": true,
+      "retained_binary_sha_matches_prepared": true
+    },
+    "native_process_fields_not_reconstructed": true
+  },
+  "outputs": [
+    {
+      "bytes": 7404965,
+      "member": "connection_records.jsonl",
+      "sha256": "1472ef67a0ec1f83c94a93c49670ae6eac2268df6f0dc992cd37e8e5aff67f7a"
+    },
+    {
+      "bytes": 8660,
+      "member": "frozen_06_consumption/consumer/operations.csv",
+      "sha256": "d624e81067311ee5ad8494910661a5cd9ddd857f0725f82c6e4dfcc150d9dd50"
+    },
+    {
+      "bytes": 76081,
+      "member": "frozen_06_consumption/consumer/summary.json",
+      "sha256": "62608533f1d4ae0da36f0bc3b6c8be327dda2991c63ccbb6f6bdc76074c97a70"
+    },
+    {
+      "bytes": 603,
+      "member": "frozen_06_consumption/consumer/validated_input_manifest.json",
+      "sha256": "9ebd71dc543f565e3178545ae45f200088b88a985862b986e29c063005990375"
+    },
+    {
+      "bytes": 25787,
+      "member": "frozen_06_consumption/contract.json",
+      "sha256": "bce2a0f5207df21bbc01f59b36dae35ebbbb02727eee1fca3f3ffd1ac41ab247"
+    },
+    {
+      "bytes": 6899,
+      "member": "frozen_06_consumption/decisions.json",
+      "sha256": "b224a2c1bdf20456cf70c0af5545beaff875e570c2603802d3b09865d029aa64"
+    },
+    {
+      "bytes": 61176,
+      "member": "frozen_06_consumption/events.jsonl",
+      "sha256": "fd9f5dc78ad1a215b7902b33bb71ea1c738fcd8085aa2c4d3974856a932018e4"
+    },
+    {
+      "bytes": 754,
+      "member": "frozen_06_consumption/prepared_business_identity.json",
+      "sha256": "a13b3a62c11afaee539fe77b211017117890270832e778f960913bae58be5d4c"
+    },
+    {
+      "bytes": 9944,
+      "member": "frozen_06_consumption/schedule.jsonl",
+      "sha256": "fda6a0e2ca20302c9fba4a3f5e811cb828cd19f92c34d47d6c2129561de2b9e8"
+    },
+    {
+      "bytes": 15538510,
+      "member": "phase_ledger.json",
+      "sha256": "a47b652b04653073244dd5454ff91c9f19f7b446334cba9c4582f95b325a813b"
+    },
+    {
+      "bytes": 5081,
+      "member": "phase_table.csv",
+      "sha256": "d176d82ba04a04fdf659b20380e7b79ef85b60b12b112cc89f790e40347eb73b"
+    },
+    {
+      "bytes": 15584,
+      "member": "phase_table.json",
+      "sha256": "d287da40852043ce1076cb1b92f3afe8890878214e6572cdd0f0c84d5dde5518"
+    }
+  ],
+  "pool_with_other_batches": false,
+  "producer_preparation_identity": {
+    "binary": {
+      "ctime_ns": 1794446758109918507,
+      "device": 66305,
+      "inode": 9962695,
+      "mtime_ns": 1794446758106918434,
+      "path": "/home/runner/work/_temp/target-sp27/release/deps/public_v3_from_zero-29386b5fc1c68c9c",
+      "sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+      "size_bytes": 12504464
+    },
+    "job": {
+      "GITHUB_JOB": "health",
+      "GITHUB_RUN_ATTEMPT": "1",
+      "GITHUB_RUN_ID": "43131129970"
+    },
+    "source_after": {
+      "commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+      "files_sha256": {
+        "config/systemd/trnmponpublic.slice": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+        "scripts/ci/run_sp27_strata_controls.py": "7b7437402b19d63e22e48174ce0c24a63c8e0de8272ad2597ea7f268cc751653",
+        "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d",
+        "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+        "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_campaign.rs": "402ae6e53d4cfaa78f5a6ce359c8bec556cbafcdd127614e54ff4f9f733c9ba9",
+        "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_controls.rs": "9a41160291790aa9f77f9893197f0cc49e27153b1e8dd1b64cb00115fa8e8101",
+        "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_strata.rs": "747aa3ebe2d1714bef7c8f1eeb72ffc5ea3b35ab33f70c6266f1b879bc4ee473"
+      },
+      "tracked_source_identity": {
+        "base": null,
+        "candidate": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "tested_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2554250398,
+        "tracked_entries": 27909,
+        "tracked_worktree_verified": true
+      },
+      "tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+    },
+    "source_before": {
+      "commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+      "files_sha256": {
+        "config/systemd/trnmponpublic.slice": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+        "scripts/ci/run_sp27_strata_controls.py": "7b7437402b19d63e22e48174ce0c24a63c8e0de8272ad2597ea7f268cc751653",
+        "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d",
+        "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs": "c20a1d34bcb4ad9d0f37a9b65815aac3c9e50b267edb9a65e856b3acd954064f",
+        "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_campaign.rs": "402ae6e53d4cfaa78f5a6ce359c8bec556cbafcdd127614e54ff4f9f733c9ba9",
+        "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_controls.rs": "9a41160291790aa9f77f9893197f0cc49e27153b1e8dd1b64cb00115fa8e8101",
+        "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_strata.rs": "747aa3ebe2d1714bef7c8f1eeb72ffc5ea3b35ab33f70c6266f1b879bc4ee473"
+      },
+      "tracked_source_identity": {
+        "base": null,
+        "candidate": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "tested_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2554250398,
+        "tracked_entries": 27909,
+        "tracked_worktree_verified": true
+      },
+      "tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+    }
+  },
+  "reader_imported_source_sha256": {
+    "scripts/ci/check_required_native_test.py": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28",
+    "scripts/ci/public_fixture_host_lease.py": "c6abe7ac89aa479917d0d39cac40c7550e37b2dc25f34d02e28f6d19fcfc76cf",
+    "scripts/ci/public_host_ci_observation.py": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de",
+    "scripts/ci/replay_pinned_native.py": "d14d2f61ab98bb30b5932530437064dce5d3a330c05a9530988fe776cefea44a",
+    "scripts/ci/run_from_zero_native.py": "b0ae7569f18585dbd566aadf9f003a9ee23982ab9a986e70c13b482167e57028",
+    "scripts/ci/run_history_native.py": "35ca32bbf23d33242b88a2edf994739ff804fbd7b33b5b7ac2e090b4ffce4797",
+    "scripts/ci/verify_ci_source.py": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+  },
+  "schema": "sp27-02-strata-ci-audit-v1",
+  "source_digests": {
+    "research/sp2027/02_receiver_liveness/audit_strata_ci.py": "8f684b5aabb7b759f910c2cc7c78ec3b79013ee1f59065101629f54ed3fc5f7b",
+    "research/sp2027/02_receiver_liveness/reader_v2/frozen/analyzer_06_v1.py": "9719f822394e6295a7787be0be2c8d394d25ab19e8d17be543e4145f6bae9acc",
+    "research/sp2027/02_receiver_liveness/reader_v2/native_reader_v2.py": "e9d49be7d060d71c4b13ef43b32568028f26fdc6e737587fc47a78457a8c1a28",
+    "research/sp2027/02_receiver_liveness/strata_analysis_v1/CONTRACT.md": "90505bc6595b675784447bb0162df71000e8d4387363b9fcfcdd48e801a97ca3",
+    "research/sp2027/02_receiver_liveness/strata_analysis_v1/adapter.py": "04378a888cad5555afc76e38dd63f2cad50fcde6d91f2417e67ac6b902bbe2c5",
+    "scripts/ci/run_sp27_strata_controls.py": "7b7437402b19d63e22e48174ce0c24a63c8e0de8272ad2597ea7f268cc751653"
+  },
+  "statistical_scope": "descriptive only; eight predeclared forward/reverse control phases; no p-values or significance claim",
+  "strict_campaign_reader": {
+    "accepted": true,
+    "error": null,
+    "readback_files": {
+      "business-acquisition-started.json": {
+        "ctime_ns": 1794446949995889438,
+        "device": 27,
+        "inode": 2266019,
+        "mtime_ns": 1794446949995889438,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/business-acquisition-started.json",
+        "sha256": "78b02ce231ac4fd5cc96269adf782c94b5a323636605eca0aaa6fe4f15726666",
+        "size_bytes": 147
+      },
+      "business-acquisition.json": {
+        "ctime_ns": 1794446950000310287,
+        "device": 27,
+        "inode": 2266020,
+        "mtime_ns": 1794446949996246587,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/business-acquisition.json",
+        "sha256": "7a5a464285e2cc8a674da23146eada5c9b4c3cb5803812836988a5221223d03b",
+        "size_bytes": 694983
+      },
+      "host-after.json": {
+        "ctime_ns": 1794446950111750192,
+        "device": 27,
+        "inode": 2266160,
+        "mtime_ns": 1794446950111750192,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/host-after.json",
+        "sha256": "30b58dc9301d6bbc4beee3cedc37ff8c311699e0836b27903248c5ddac2ce46a",
+        "size_bytes": 452
+      },
+      "host-before.json": {
+        "ctime_ns": 1794446950111883483,
+        "device": 27,
+        "inode": 2266161,
+        "mtime_ns": 1794446950111883483,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/host-before.json",
+        "sha256": "6bdb7762e52bc8bf83da6883f2542a7c1eaa8ce134396e1f7ff6009840154c9a",
+        "size_bytes": 450
+      },
+      "identity-after.json": {
+        "ctime_ns": 1794446950112096869,
+        "device": 27,
+        "inode": 2266166,
+        "mtime_ns": 1794446950112096869,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/identity-after.json",
+        "sha256": "5b51f80f13a7d0232a45ef7fc92b95158b4400304223ca94df236669a56c2f02",
+        "size_bytes": 1234
+      },
+      "identity-before.json": {
+        "ctime_ns": 1794446950111994482,
+        "device": 27,
+        "inode": 2266165,
+        "mtime_ns": 1794446950111994482,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/identity-before.json",
+        "sha256": "5b51f80f13a7d0232a45ef7fc92b95158b4400304223ca94df236669a56c2f02",
+        "size_bytes": 1234
+      },
+      "inputs/arm-000.json": {
+        "ctime_ns": 1794446950138827066,
+        "device": 27,
+        "inode": 2266176,
+        "mtime_ns": 1794446950138827066,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/inputs/arm-000.json",
+        "sha256": "1a0b822cad04c315897dc9581255cde0b702c04530e084c3645fd57a502d05a9",
+        "size_bytes": 1584865
+      },
+      "inputs/arm-001.json": {
+        "ctime_ns": 1794446950122827749,
+        "device": 27,
+        "inode": 2266173,
+        "mtime_ns": 1794446950120090926,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/inputs/arm-001.json",
+        "sha256": "81f3e3e8c2c07a4e0160ba1d2750de7f4543e00de602a9a84110a5c02eed6b4f",
+        "size_bytes": 1584868
+      },
+      "inputs/arm-002.json": {
+        "ctime_ns": 1794446950130827408,
+        "device": 27,
+        "inode": 2266175,
+        "mtime_ns": 1794446950130827408,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/inputs/arm-002.json",
+        "sha256": "7551ca5fd9aabf12e8c6ff770adb5a202cd16d9985b0638c66250ce2efa686b9",
+        "size_bytes": 1584867
+      },
+      "inputs/arm-003.json": {
+        "ctime_ns": 1794446950150826553,
+        "device": 27,
+        "inode": 2266177,
+        "mtime_ns": 1794446950146826724,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/inputs/arm-003.json",
+        "sha256": "085912b09e424eac2456fe0751ad10cd3cd3a9f27934886c87fb7dfa13fa2a3f",
+        "size_bytes": 1584871
+      },
+      "plan.json": {
+        "ctime_ns": 1794446950155091690,
+        "device": 27,
+        "inode": 2266178,
+        "mtime_ns": 1794446950155091690,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/plan.json",
+        "sha256": "9da6830b66eacf59fb53d0695aa25f6b4ecfcb723c19a004599be049e32625c5",
+        "size_bytes": 6074
+      },
+      "raw/control-000-transport-host-after.json": {
+        "ctime_ns": 1794446950159466848,
+        "device": 27,
+        "inode": 2266188,
+        "mtime_ns": 1794446950159466848,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-000-transport-host-after.json",
+        "sha256": "e8deee1917a65f33939fb7a577a3d1e292d054d49395ad77d1c7b75dac118ad7",
+        "size_bytes": 451
+      },
+      "raw/control-000-transport-host-before.json": {
+        "ctime_ns": 1794446950159593165,
+        "device": 27,
+        "inode": 2266189,
+        "mtime_ns": 1794446950159593165,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-000-transport-host-before.json",
+        "sha256": "3b48b3e04d99d9f1c9b87b39d0e00d747df61aacf5aa3c80bdcf3e867b3e979f",
+        "size_bytes": 451
+      },
+      "raw/control-000-transport-index.json": {
+        "ctime_ns": 1794446950159728930,
+        "device": 27,
+        "inode": 2266190,
+        "mtime_ns": 1794446950159728930,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-000-transport-index.json",
+        "sha256": "3ad9155465dd4766f39795993b7ab8025e0e3776b0faacf99ecbf315fbd4e947",
+        "size_bytes": 864
+      },
+      "raw/control-000-transport-invoked.json": {
+        "ctime_ns": 1794446950159868489,
+        "device": 27,
+        "inode": 2266194,
+        "mtime_ns": 1794446950159868489,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-000-transport-invoked.json",
+        "sha256": "5c823deb5c390f5ee868f7fbc467493d885b304b574256ace0e619f64a1e0450",
+        "size_bytes": 182
+      },
+      "raw/control-000-transport-started.json": {
+        "ctime_ns": 1794446950159958040,
+        "device": 27,
+        "inode": 2266198,
+        "mtime_ns": 1794446950159958040,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-000-transport-started.json",
+        "sha256": "6434a3995b65f79c4a433fcc8fb6aaecabc57a5392e3a3b6805e9a8dcd235454",
+        "size_bytes": 663
+      },
+      "raw/control-000-transport.json": {
+        "ctime_ns": 1794446950170825699,
+        "device": 27,
+        "inode": 2266202,
+        "mtime_ns": 1794446950170825699,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-000-transport.json",
+        "sha256": "3fa5f154302971d60fabcd95ef9e8e7df4cfcf792798ee6b2b1ee470b7609619",
+        "size_bytes": 2137684
+      },
+      "raw/control-001-early-reject-host-after.json": {
+        "ctime_ns": 1794446950176416832,
+        "device": 27,
+        "inode": 2266203,
+        "mtime_ns": 1794446950176416832,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-001-early-reject-host-after.json",
+        "sha256": "8faf1ab259b267c39bde531933ece2a84c0a0f1329ee032e4f63bec46d2d1c5e",
+        "size_bytes": 451
+      },
+      "raw/control-001-early-reject-host-before.json": {
+        "ctime_ns": 1794446950176551047,
+        "device": 27,
+        "inode": 2266204,
+        "mtime_ns": 1794446950176551047,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-001-early-reject-host-before.json",
+        "sha256": "9c6051efc7a3d44d969dfbd9bc824c839d35cc107361810216121e13e416e3b6",
+        "size_bytes": 451
+      },
+      "raw/control-001-early-reject-index.json": {
+        "ctime_ns": 1794446950176856789,
+        "device": 27,
+        "inode": 2266205,
+        "mtime_ns": 1794446950176856789,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-001-early-reject-index.json",
+        "sha256": "149fcd7172ea8771db1df1004aaad72ce6cc930a76ddee194e2674108303cee9",
+        "size_bytes": 873
+      },
+      "raw/control-001-early-reject-invoked.json": {
+        "ctime_ns": 1794446950176986730,
+        "device": 27,
+        "inode": 2266211,
+        "mtime_ns": 1794446950176986730,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-001-early-reject-invoked.json",
+        "sha256": "6df0ebf62988a11024e8c22d0cc9f087a62597c96a1e10d4d982baaaf9517a77",
+        "size_bytes": 185
+      },
+      "raw/control-001-early-reject-started.json": {
+        "ctime_ns": 1794446950177093130,
+        "device": 27,
+        "inode": 2266218,
+        "mtime_ns": 1794446950177093130,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-001-early-reject-started.json",
+        "sha256": "589f57d70cf180362ecba5bca5b84af75ed945bb494569c5afe32c9f14df99c0",
+        "size_bytes": 669
+      },
+      "raw/control-001-early-reject.json": {
+        "ctime_ns": 1794446950186825015,
+        "device": 27,
+        "inode": 2266219,
+        "mtime_ns": 1794446950186825015,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-001-early-reject.json",
+        "sha256": "0a7105ac963ada28813b4e90295aa54f9ffa66605c78da01208ee6d2da61a96d",
+        "size_bytes": 2126280
+      },
+      "raw/control-002-late-reject-host-after.json": {
+        "ctime_ns": 1794446950191103184,
+        "device": 27,
+        "inode": 2266220,
+        "mtime_ns": 1794446950191103184,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-002-late-reject-host-after.json",
+        "sha256": "04c8832154e10212ac8d20dc1343b8ba977823b4b8d358866a8009eda59955c6",
+        "size_bytes": 452
+      },
+      "raw/control-002-late-reject-host-before.json": {
+        "ctime_ns": 1794446950191230727,
+        "device": 27,
+        "inode": 2266222,
+        "mtime_ns": 1794446950191230727,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-002-late-reject-host-before.json",
+        "sha256": "86486f706c5b84ec5f85cca40939b52e291f111a34e244ba472a241a7d424213",
+        "size_bytes": 451
+      },
+      "raw/control-002-late-reject-index.json": {
+        "ctime_ns": 1794446950191435279,
+        "device": 27,
+        "inode": 2266227,
+        "mtime_ns": 1794446950191435279,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-002-late-reject-index.json",
+        "sha256": "337166ddcd68c4c560d916ad85f21a24c15551b6b3e627f5492d13b38b19d15d",
+        "size_bytes": 870
+      },
+      "raw/control-002-late-reject-invoked.json": {
+        "ctime_ns": 1794446950191315042,
+        "device": 27,
+        "inode": 2266226,
+        "mtime_ns": 1794446950191315042,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-002-late-reject-invoked.json",
+        "sha256": "aecf0d22b6a5c0dfe3b33df6fa8d4f8f26a88e067f5121b3f7c2da749ff9dc20",
+        "size_bytes": 184
+      },
+      "raw/control-002-late-reject-started.json": {
+        "ctime_ns": 1794446950203602275,
+        "device": 27,
+        "inode": 2266229,
+        "mtime_ns": 1794446950203602275,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-002-late-reject-started.json",
+        "sha256": "b8b0eb132e092ef1b2c62cbc557e0078d2721dc6ddbb7a7e5408ce452eb619ef",
+        "size_bytes": 667
+      },
+      "raw/control-002-late-reject.json": {
+        "ctime_ns": 1794446950199143702,
+        "device": 27,
+        "inode": 2266228,
+        "mtime_ns": 1794446950199143702,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-002-late-reject.json",
+        "sha256": "64e70f6eaef94e53d2195fdac1f26ea2b36a1ae4dc5c4a8a9b27044da377b0b7",
+        "size_bytes": 2136647
+      },
+      "raw/control-003-valid-expensive-host-after.json": {
+        "ctime_ns": 1794446950203708554,
+        "device": 27,
+        "inode": 2266231,
+        "mtime_ns": 1794446950203708554,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-003-valid-expensive-host-after.json",
+        "sha256": "c5340956f305a8b9a4e626f2c2d7da483cc2421de0f08788ef4de11cf2bc75c3",
+        "size_bytes": 452
+      },
+      "raw/control-003-valid-expensive-host-before.json": {
+        "ctime_ns": 1794446950203858134,
+        "device": 27,
+        "inode": 2266232,
+        "mtime_ns": 1794446950203858134,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-003-valid-expensive-host-before.json",
+        "sha256": "8d9a4f1067c25adb695352125bae3ee78f2c5d12bf96777d4290aeca54909a5f",
+        "size_bytes": 452
+      },
+      "raw/control-003-valid-expensive-index.json": {
+        "ctime_ns": 1794446950204020492,
+        "device": 27,
+        "inode": 2266233,
+        "mtime_ns": 1794446950204020492,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-003-valid-expensive-index.json",
+        "sha256": "4bb67fa3ce275227e61c1d629c9ab35152e085b8c096ec6372cd9b3ac2257d52",
+        "size_bytes": 882
+      },
+      "raw/control-003-valid-expensive-invoked.json": {
+        "ctime_ns": 1794446950204102337,
+        "device": 27,
+        "inode": 2266235,
+        "mtime_ns": 1794446950204102337,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-003-valid-expensive-invoked.json",
+        "sha256": "1b85b22e772335155f31d5e88bba27fbd47d3e3d8bd73ba1ab434a08ad56f3ea",
+        "size_bytes": 188
+      },
+      "raw/control-003-valid-expensive-started.json": {
+        "ctime_ns": 1794446950204216320,
+        "device": 27,
+        "inode": 2266236,
+        "mtime_ns": 1794446950204216320,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-003-valid-expensive-started.json",
+        "sha256": "796f3738cc8d2722b70a1364b8e1120b610ebae015749dcc1a4004cac2bd0e80",
+        "size_bytes": 675
+      },
+      "raw/control-003-valid-expensive.json": {
+        "ctime_ns": 1794446950214823819,
+        "device": 27,
+        "inode": 2266237,
+        "mtime_ns": 1794446950214823819,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-003-valid-expensive.json",
+        "sha256": "c88b30675e691f59e092746a824efb513ec4aebbc729d55cf58569ec4f7df999",
+        "size_bytes": 2165540
+      },
+      "raw/control-004-valid-expensive-host-after.json": {
+        "ctime_ns": 1794446950219684389,
+        "device": 27,
+        "inode": 2266238,
+        "mtime_ns": 1794446950219684389,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-004-valid-expensive-host-after.json",
+        "sha256": "3608cad2772d769fe7f1b9e28db89fa92ef511504741ba35b813ce509a13cbe6",
+        "size_bytes": 452
+      },
+      "raw/control-004-valid-expensive-host-before.json": {
+        "ctime_ns": 1794446950219790823,
+        "device": 27,
+        "inode": 2266239,
+        "mtime_ns": 1794446950219790823,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-004-valid-expensive-host-before.json",
+        "sha256": "3a8108aaea5259bf1068e720ead7f8df748fd241f6ceba920eb7ad3e4a421a6c",
+        "size_bytes": 452
+      },
+      "raw/control-004-valid-expensive-index.json": {
+        "ctime_ns": 1794446950219944243,
+        "device": 27,
+        "inode": 2266240,
+        "mtime_ns": 1794446950219944243,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-004-valid-expensive-index.json",
+        "sha256": "91983a159916068114aa61f8f7859ccb0acf90065ee0a21f3caf869695b3c6ad",
+        "size_bytes": 882
+      },
+      "raw/control-004-valid-expensive-invoked.json": {
+        "ctime_ns": 1794446950220029269,
+        "device": 27,
+        "inode": 2266241,
+        "mtime_ns": 1794446950220029269,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-004-valid-expensive-invoked.json",
+        "sha256": "86ea0df40f5a93e2a9685735825dd80b33ed5fc227a834d60f91f01e5bc299fe",
+        "size_bytes": 188
+      },
+      "raw/control-004-valid-expensive-started.json": {
+        "ctime_ns": 1794446950220124156,
+        "device": 27,
+        "inode": 2266242,
+        "mtime_ns": 1794446950220124156,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-004-valid-expensive-started.json",
+        "sha256": "67ffb36ea6e7892425b40ff95a2967c1f0a0b414be59c143573fc05fdb5f0268",
+        "size_bytes": 675
+      },
+      "raw/control-004-valid-expensive.json": {
+        "ctime_ns": 1794446950226823307,
+        "device": 27,
+        "inode": 2266243,
+        "mtime_ns": 1794446950222823478,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-004-valid-expensive.json",
+        "sha256": "7aa1aa5f756e890158b7407ace7247f0597da3565b8fd0808c6f2cdaec36450b",
+        "size_bytes": 2077920
+      },
+      "raw/control-005-late-reject-host-after.json": {
+        "ctime_ns": 1794446950233201054,
+        "device": 27,
+        "inode": 2266244,
+        "mtime_ns": 1794446950233201054,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-005-late-reject-host-after.json",
+        "sha256": "e7ebdcc77481fc23aa1bc633cba75d58bcc7b0dee3514a2610b174a84f6bd4aa",
+        "size_bytes": 452
+      },
+      "raw/control-005-late-reject-host-before.json": {
+        "ctime_ns": 1794446950233503586,
+        "device": 27,
+        "inode": 2266245,
+        "mtime_ns": 1794446950233503586,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-005-late-reject-host-before.json",
+        "sha256": "5eaa2ab2fb7a4b865baaeccf085de0452913f1f61c9bac5ccac33e0a6855025f",
+        "size_bytes": 452
+      },
+      "raw/control-005-late-reject-index.json": {
+        "ctime_ns": 1794446950233718056,
+        "device": 27,
+        "inode": 2266246,
+        "mtime_ns": 1794446950233718056,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-005-late-reject-index.json",
+        "sha256": "ff92cf866cd379b828c0fa600176be06f3edf8caed2665aa8e8388a9873d0ca4",
+        "size_bytes": 870
+      },
+      "raw/control-005-late-reject-invoked.json": {
+        "ctime_ns": 1794446950233857744,
+        "device": 27,
+        "inode": 2266247,
+        "mtime_ns": 1794446950233857744,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-005-late-reject-invoked.json",
+        "sha256": "e8a0a3f5e5a5440dcaf513b0ce149dfce881920775380f22684e887c8083cbaa",
+        "size_bytes": 184
+      },
+      "raw/control-005-late-reject-started.json": {
+        "ctime_ns": 1794446950233956810,
+        "device": 27,
+        "inode": 2266248,
+        "mtime_ns": 1794446950233956810,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-005-late-reject-started.json",
+        "sha256": "51c85af714ff24fd0944a8363875ff3245961cdc8d1b8467d4f07af053f2f6c4",
+        "size_bytes": 667
+      },
+      "raw/control-005-late-reject.json": {
+        "ctime_ns": 1794446950242822623,
+        "device": 27,
+        "inode": 2266249,
+        "mtime_ns": 1794446950242822623,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-005-late-reject.json",
+        "sha256": "4ee5f8905b2d32303dcdd3d44591c572f7a294a318e8579cd6b10c34bd89e190",
+        "size_bytes": 2149018
+      },
+      "raw/control-006-early-reject-host-after.json": {
+        "ctime_ns": 1794446950247343881,
+        "device": 27,
+        "inode": 2266250,
+        "mtime_ns": 1794446950247343881,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-006-early-reject-host-after.json",
+        "sha256": "2ef5fbb9c5abc8faa5b91d6f65ba0899d4cb82d680b13df24753acf59ece7ae7",
+        "size_bytes": 452
+      },
+      "raw/control-006-early-reject-host-before.json": {
+        "ctime_ns": 1794446950247469366,
+        "device": 27,
+        "inode": 2266251,
+        "mtime_ns": 1794446950247469366,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-006-early-reject-host-before.json",
+        "sha256": "020d8490433eef620abde85189df6ed56d73206cc7a10872fb3a652a9e969403",
+        "size_bytes": 452
+      },
+      "raw/control-006-early-reject-index.json": {
+        "ctime_ns": 1794446950247799399,
+        "device": 27,
+        "inode": 2266254,
+        "mtime_ns": 1794446950247799399,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-006-early-reject-index.json",
+        "sha256": "e2d92ce3a531fbbf3db4486560ea259ce386a435426721a6826e7be526cf2ba1",
+        "size_bytes": 874
+      },
+      "raw/control-006-early-reject-invoked.json": {
+        "ctime_ns": 1794446950247596494,
+        "device": 27,
+        "inode": 2266253,
+        "mtime_ns": 1794446950247596494,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-006-early-reject-invoked.json",
+        "sha256": "b91a24c8c2fe58f876f663b16c5e41c98ae2176f1b71cb56faa37299171cd7f8",
+        "size_bytes": 186
+      },
+      "raw/control-006-early-reject-started.json": {
+        "ctime_ns": 1794446950247935241,
+        "device": 27,
+        "inode": 2266261,
+        "mtime_ns": 1794446950247935241,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-006-early-reject-started.json",
+        "sha256": "32f3938f6157a6a42ac423117df1a7cd562d0083e7710db76f5158e8c7e32f11",
+        "size_bytes": 670
+      },
+      "raw/control-006-early-reject.json": {
+        "ctime_ns": 1794446950258821940,
+        "device": 27,
+        "inode": 2266263,
+        "mtime_ns": 1794446950254822111,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-006-early-reject.json",
+        "sha256": "21d3cd742e140e6f80b4571d97bb76a1ab492d97285dd13010184008a532d361",
+        "size_bytes": 2138667
+      },
+      "raw/control-007-transport-host-after.json": {
+        "ctime_ns": 1794446950262179286,
+        "device": 27,
+        "inode": 2266264,
+        "mtime_ns": 1794446950262179286,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-007-transport-host-after.json",
+        "sha256": "579cb2f5e80abb95c6841e3685dc861d8bb783056da915df3e4e69492d0c3320",
+        "size_bytes": 452
+      },
+      "raw/control-007-transport-host-before.json": {
+        "ctime_ns": 1794446950262326543,
+        "device": 27,
+        "inode": 2266265,
+        "mtime_ns": 1794446950262326543,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-007-transport-host-before.json",
+        "sha256": "ef9c0db843a7fb62f30532545aaff305068ab09014a7276e6f506be9b481d20d",
+        "size_bytes": 452
+      },
+      "raw/control-007-transport-index.json": {
+        "ctime_ns": 1794446950262638736,
+        "device": 27,
+        "inode": 2266267,
+        "mtime_ns": 1794446950262638736,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-007-transport-index.json",
+        "sha256": "b6ce6a5314b9fe21c5b628add74b9be9501b097e9a6bd50643e80169e9603d6a",
+        "size_bytes": 865
+      },
+      "raw/control-007-transport-invoked.json": {
+        "ctime_ns": 1794446950262739366,
+        "device": 27,
+        "inode": 2266269,
+        "mtime_ns": 1794446950262739366,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-007-transport-invoked.json",
+        "sha256": "510c34c7dfb7fbfd8f6ad465bab00bf3e7dfefba27521f74de3d78dfef887df6",
+        "size_bytes": 183
+      },
+      "raw/control-007-transport-started.json": {
+        "ctime_ns": 1794446950262921698,
+        "device": 27,
+        "inode": 2266272,
+        "mtime_ns": 1794446950262921698,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-007-transport-started.json",
+        "sha256": "10062e7526c95ec528a1a252a6451f7c30afb537be5635eb2a72458fcd33d6f8",
+        "size_bytes": 664
+      },
+      "raw/control-007-transport.json": {
+        "ctime_ns": 1794446950270821427,
+        "device": 27,
+        "inode": 2266274,
+        "mtime_ns": 1794446950270821427,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/control-007-transport.json",
+        "sha256": "b969347cf3d860ad6d31150aba1294e05f80a60caacf11d1ea365e7954febe35",
+        "size_bytes": 2126228
+      },
+      "raw/health-000-host-after.json": {
+        "ctime_ns": 1794446950274821256,
+        "device": 27,
+        "inode": 2266275,
+        "mtime_ns": 1794446950274821256,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-000-host-after.json",
+        "sha256": "8bab24d868fb8caf84abe5da9e270129e0de6d0be4b2791c4c79cc835e09c1de",
+        "size_bytes": 450
+      },
+      "raw/health-000-host-before.json": {
+        "ctime_ns": 1794446950278308445,
+        "device": 27,
+        "inode": 2266276,
+        "mtime_ns": 1794446950278308445,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-000-host-before.json",
+        "sha256": "cbf61d18596141f642b455a800793ee12203206ff06a567d348eeb4997e9649f",
+        "size_bytes": 450
+      },
+      "raw/health-000-index.json": {
+        "ctime_ns": 1794446950278558983,
+        "device": 27,
+        "inode": 2266277,
+        "mtime_ns": 1794446950278558983,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-000-index.json",
+        "sha256": "c7c98ae22830f9f6e3c9fb184848368f631a000283c03abad3726d17fd698888",
+        "size_bytes": 847
+      },
+      "raw/health-000-invoked.json": {
+        "ctime_ns": 1794446950278649899,
+        "device": 27,
+        "inode": 2266278,
+        "mtime_ns": 1794446950278649899,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-000-invoked.json",
+        "sha256": "16a189a6240919a852dba3360e5b0a1fe8d1d68abec51c3f7022085838a68997",
+        "size_bytes": 171
+      },
+      "raw/health-000-started.json": {
+        "ctime_ns": 1794446950278771461,
+        "device": 27,
+        "inode": 2266279,
+        "mtime_ns": 1794446950278771461,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-000-started.json",
+        "sha256": "4e799b630172a2c6a9016091333ba2ca0ee535c2a516cb3bc0e6bd98f48d53aa",
+        "size_bytes": 637
+      },
+      "raw/health-000.json": {
+        "ctime_ns": 1794446950286820744,
+        "device": 27,
+        "inode": 2266281,
+        "mtime_ns": 1794446950282820914,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-000.json",
+        "sha256": "ec78fdd1cff0b07abf1885a527f69804890cf185716b6a73b45d93d5a8baf84c",
+        "size_bytes": 1809893
+      },
+      "raw/health-001-host-after.json": {
+        "ctime_ns": 1794446950278904249,
+        "device": 27,
+        "inode": 2266280,
+        "mtime_ns": 1794446950278904249,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-001-host-after.json",
+        "sha256": "ea4320b89eec00bb3db74213534861a1c549f2a6128e2f065ddc8163eebbc934",
+        "size_bytes": 450
+      },
+      "raw/health-001-host-before.json": {
+        "ctime_ns": 1794446950291651349,
+        "device": 27,
+        "inode": 2266282,
+        "mtime_ns": 1794446950291651349,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-001-host-before.json",
+        "sha256": "fff9a09661be4f5c58707a28cc36d354fedb9333310cd15e71edb02c604fa224",
+        "size_bytes": 450
+      },
+      "raw/health-001-index.json": {
+        "ctime_ns": 1794446950291792484,
+        "device": 27,
+        "inode": 2266283,
+        "mtime_ns": 1794446950291792484,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-001-index.json",
+        "sha256": "241893ef78d441d6b89a89357c2ef97880f14e120454ee682bd86817c1886087",
+        "size_bytes": 847
+      },
+      "raw/health-001-invoked.json": {
+        "ctime_ns": 1794446950292056501,
+        "device": 27,
+        "inode": 2266288,
+        "mtime_ns": 1794446950292056501,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-001-invoked.json",
+        "sha256": "106ccd8dbe72479ffe92b4d1f1d189fceccb9b38f5dc7dd059388b97a920c4f5",
+        "size_bytes": 171
+      },
+      "raw/health-001-started.json": {
+        "ctime_ns": 1794446950291957540,
+        "device": 27,
+        "inode": 2266287,
+        "mtime_ns": 1794446950291957540,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-001-started.json",
+        "sha256": "06ed1791e2f4b62187063365c9d96165a144cfb4c5d5b23081af60cced06e122",
+        "size_bytes": 637
+      },
+      "raw/health-001.json": {
+        "ctime_ns": 1794446950298820231,
+        "device": 27,
+        "inode": 2266292,
+        "mtime_ns": 1794446950294820402,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-001.json",
+        "sha256": "dc56158b46afacf6d9731fffbd0bc1722d5d6b235827214cc677643c5f6d9718",
+        "size_bytes": 1822114
+      },
+      "raw/health-002-host-after.json": {
+        "ctime_ns": 1794446950303731432,
+        "device": 27,
+        "inode": 2266293,
+        "mtime_ns": 1794446950303731432,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-002-host-after.json",
+        "sha256": "13cdb058cb0a045d29d0fbb13a447f6724989bbfe4234bb9e29aebcdbc69dcf3",
+        "size_bytes": 450
+      },
+      "raw/health-002-host-before.json": {
+        "ctime_ns": 1794446950303881843,
+        "device": 27,
+        "inode": 2266294,
+        "mtime_ns": 1794446950303881843,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-002-host-before.json",
+        "sha256": "84951210c4ff2a921f54b6a3d552b6fb371a79eee6ffdbdb2f3235dfa7a62613",
+        "size_bytes": 450
+      },
+      "raw/health-002-index.json": {
+        "ctime_ns": 1794446950304010458,
+        "device": 27,
+        "inode": 2266296,
+        "mtime_ns": 1794446950304010458,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-002-index.json",
+        "sha256": "f65f995fe2d6be4346a642ef5711c0bccd68997f334b0e033076b9401f6a5dd3",
+        "size_bytes": 847
+      },
+      "raw/health-002-invoked.json": {
+        "ctime_ns": 1794446950304110802,
+        "device": 27,
+        "inode": 2266297,
+        "mtime_ns": 1794446950304110802,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-002-invoked.json",
+        "sha256": "dec9897dbd7d87fe4848c3db990b163a17f1cc124bd50ac074bc6d64cbade194",
+        "size_bytes": 171
+      },
+      "raw/health-002-started.json": {
+        "ctime_ns": 1794446950304244832,
+        "device": 27,
+        "inode": 2266298,
+        "mtime_ns": 1794446950304244832,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-002-started.json",
+        "sha256": "1132aadb26c41adc2d66543b94e25d94cbeb084e2381e8e5e3640ae3616d4e18",
+        "size_bytes": 637
+      },
+      "raw/health-002.json": {
+        "ctime_ns": 1794446950310819718,
+        "device": 27,
+        "inode": 2266301,
+        "mtime_ns": 1794446950306868597,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-002.json",
+        "sha256": "5b2ff8d08c6c140c10230e5c45501f1be5b78a83565634b131e2b9596eb3838e",
+        "size_bytes": 1785082
+      },
+      "raw/health-003-host-after.json": {
+        "ctime_ns": 1794446950316788435,
+        "device": 27,
+        "inode": 2266302,
+        "mtime_ns": 1794446950316788435,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-003-host-after.json",
+        "sha256": "2a7be956b75f842bf2f7085c51390f7d46a69a9888bfbbbdd5b210758f3812c7",
+        "size_bytes": 452
+      },
+      "raw/health-003-host-before.json": {
+        "ctime_ns": 1794446950316964415,
+        "device": 27,
+        "inode": 2266303,
+        "mtime_ns": 1794446950316964415,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-003-host-before.json",
+        "sha256": "d6012e80c289ea1e2ed4d2c0a0d06f94454cd303fc8fb820544166b686388537",
+        "size_bytes": 452
+      },
+      "raw/health-003-index.json": {
+        "ctime_ns": 1794446950317099153,
+        "device": 27,
+        "inode": 2266304,
+        "mtime_ns": 1794446950317099153,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-003-index.json",
+        "sha256": "bed53bed11ab332c75b66a4c8642419ce7d929a65ffb5e03740977f5a712c9c1",
+        "size_bytes": 850
+      },
+      "raw/health-003-invoked.json": {
+        "ctime_ns": 1794446950317258112,
+        "device": 27,
+        "inode": 2266305,
+        "mtime_ns": 1794446950317258112,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-003-invoked.json",
+        "sha256": "ad549f03d8c7de1d9079638f6e367dcdbaef8c656002a6350b9b4f70fcab3613",
+        "size_bytes": 171
+      },
+      "raw/health-003-started.json": {
+        "ctime_ns": 1794446950317338355,
+        "device": 27,
+        "inode": 2266306,
+        "mtime_ns": 1794446950317338355,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-003-started.json",
+        "sha256": "667ce5575cb0135373af3cc1d9ff216e38f756a1663415d748e436365d0dbd9a",
+        "size_bytes": 640
+      },
+      "raw/health-003.json": {
+        "ctime_ns": 1794446950322819206,
+        "device": 27,
+        "inode": 2266307,
+        "mtime_ns": 1794446950319660338,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-003.json",
+        "sha256": "df17f4eb8c023f1a60148efdc6d65aaea397e2ca0b2f0514e0e7273cb9429f39",
+        "size_bytes": 1846862
+      },
+      "raw/health-004-host-after.json": {
+        "ctime_ns": 1794446950329373154,
+        "device": 27,
+        "inode": 2266308,
+        "mtime_ns": 1794446950329373154,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-004-host-after.json",
+        "sha256": "33bf4e4ec1d2aa4c07e21c9ac993ca8da728066465d509ecda993a084f5ce366",
+        "size_bytes": 452
+      },
+      "raw/health-004-host-before.json": {
+        "ctime_ns": 1794446950329606656,
+        "device": 27,
+        "inode": 2266311,
+        "mtime_ns": 1794446950329606656,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-004-host-before.json",
+        "sha256": "1c372210a9a02f7b9473b08c4145c45383580da7761ba9fcf33934b40be06763",
+        "size_bytes": 452
+      },
+      "raw/health-004-index.json": {
+        "ctime_ns": 1794446950329812762,
+        "device": 27,
+        "inode": 2266312,
+        "mtime_ns": 1794446950329812762,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-004-index.json",
+        "sha256": "943224b5a4674f62cf5f137011bd7e62c31d6e482c133aa86f850d000619cc53",
+        "size_bytes": 851
+      },
+      "raw/health-004-invoked.json": {
+        "ctime_ns": 1794446950329989152,
+        "device": 27,
+        "inode": 2266314,
+        "mtime_ns": 1794446950329989152,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-004-invoked.json",
+        "sha256": "ae127187c225d2dd29c20436b11320312b782ceb3de87f76a1edb40967a7338e",
+        "size_bytes": 172
+      },
+      "raw/health-004-started.json": {
+        "ctime_ns": 1794446950330139542,
+        "device": 27,
+        "inode": 2266315,
+        "mtime_ns": 1794446950330139542,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-004-started.json",
+        "sha256": "c0d71e9ca5d4cd038947b011e397e81bf086e259636ff9ba3df8ccf2040303bb",
+        "size_bytes": 641
+      },
+      "raw/health-004.json": {
+        "ctime_ns": 1794446950334818693,
+        "device": 27,
+        "inode": 2266316,
+        "mtime_ns": 1794446950332048471,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/raw/health-004.json",
+        "sha256": "cfd8ab9a85798f61ec25b14762d7e3d2d7188b4f078a8c45767ee5f5d4eebce8",
+        "size_bytes": 1822103
+      },
+      "report.json": {
+        "ctime_ns": 1794446950341046481,
+        "device": 27,
+        "inode": 2266317,
+        "mtime_ns": 1794446950341046481,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/report.json",
+        "sha256": "1b3cf90df86740e14dc194d1c92552ab454af0fe2d1d8fff704a11ef5e534064",
+        "size_bytes": 26667
+      },
+      "strata-acquisition-started.json": {
+        "ctime_ns": 1794446950399500038,
+        "device": 27,
+        "inode": 2266740,
+        "mtime_ns": 1794446950399500038,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition-started.json",
+        "sha256": "d53c078d2f5874e59fcbee169700ce580a6d77c6dfe7967354d1e9424d9f9e21",
+        "size_bytes": 280
+      },
+      "strata-acquisition/negative-000.json": {
+        "ctime_ns": 1794446950342676858,
+        "device": 27,
+        "inode": 2266322,
+        "mtime_ns": 1794446950342676858,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/negative-000.json",
+        "sha256": "46e3767a1f8d0b7c8a445b784db422f80e68043b268e9035897923ec781c042d",
+        "size_bytes": 100671
+      },
+      "strata-acquisition/negative-001.json": {
+        "ctime_ns": 1794446950343557786,
+        "device": 27,
+        "inode": 2266323,
+        "mtime_ns": 1794446950343557786,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/negative-001.json",
+        "sha256": "8882c6ed4711f59a59f1c46d26d9fc88989f041bc658073782a7c71b486a981b",
+        "size_bytes": 100895
+      },
+      "strata-acquisition/negative-002.json": {
+        "ctime_ns": 1794446950344287864,
+        "device": 27,
+        "inode": 2266324,
+        "mtime_ns": 1794446950344287864,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/negative-002.json",
+        "sha256": "bad1be4f16c4a574470f0fd3ab57618938f079b792962265ac827351eebad1de",
+        "size_bytes": 100895
+      },
+      "strata-acquisition/negative-003.json": {
+        "ctime_ns": 1794446950345176002,
+        "device": 27,
+        "inode": 2266325,
+        "mtime_ns": 1794446950345176002,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/negative-003.json",
+        "sha256": "3d24361222171eaf1b0e9ddc8cfa85284855cacb4815fd8d6da84cb101416067",
+        "size_bytes": 100895
+      },
+      "strata-acquisition/negative-004.json": {
+        "ctime_ns": 1794446950345921463,
+        "device": 27,
+        "inode": 2266326,
+        "mtime_ns": 1794446950345921463,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/negative-004.json",
+        "sha256": "359384844485792f15c1095bd0a8408476862721573b3061176cf47d58624e14",
+        "size_bytes": 100895
+      },
+      "strata-acquisition/negative-005.json": {
+        "ctime_ns": 1794446950346565766,
+        "device": 27,
+        "inode": 2266327,
+        "mtime_ns": 1794446950346565766,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/negative-005.json",
+        "sha256": "0b16f1e2ad9b8fb2ac3a42ecd42d447a3f53dc448a65f875b950d4ffa059d2db",
+        "size_bytes": 100671
+      },
+      "strata-acquisition/negative-006.json": {
+        "ctime_ns": 1794446950347513625,
+        "device": 27,
+        "inode": 2266329,
+        "mtime_ns": 1794446950347513625,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/negative-006.json",
+        "sha256": "d8cd2dd444b1ceca978407717fc5af0d67ceff002fc03adfabcea2541989622d",
+        "size_bytes": 100671
+      },
+      "strata-acquisition/negative-007.json": {
+        "ctime_ns": 1794446950348354460,
+        "device": 27,
+        "inode": 2266330,
+        "mtime_ns": 1794446950348354460,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/negative-007.json",
+        "sha256": "72142ca9b7b030cb4367c9ebcb1b083eaae91c5169b3b974cdc352b5a28e6c7b",
+        "size_bytes": 100671
+      },
+      "strata-acquisition/negative-008.json": {
+        "ctime_ns": 1794446950349045108,
+        "device": 27,
+        "inode": 2266331,
+        "mtime_ns": 1794446950349045108,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/negative-008.json",
+        "sha256": "86956dfe79b258bc53ee91aa6304fd94aa3c2ce4bc5ff7b4087e96fccb00ff17",
+        "size_bytes": 100671
+      },
+      "strata-acquisition/negative-009.json": {
+        "ctime_ns": 1794446950349998613,
+        "device": 27,
+        "inode": 2266332,
+        "mtime_ns": 1794446950349998613,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/negative-009.json",
+        "sha256": "630e3182f4e527bb46b1e592ec953e9eeaa46d0da8d3de456fd0bb6b09c20c48",
+        "size_bytes": 100671
+      },
+      "strata-acquisition/negative-010.json": {
+        "ctime_ns": 1794446950350624298,
+        "device": 27,
+        "inode": 2266335,
+        "mtime_ns": 1794446950350624298,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/negative-010.json",
+        "sha256": "e076c51900f09953db3003fe3b89b17e0e8671e27b56786633ec2c8e5e5d7490",
+        "size_bytes": 100895
+      },
+      "strata-acquisition/negative-011.json": {
+        "ctime_ns": 1794446950351357249,
+        "device": 27,
+        "inode": 2266336,
+        "mtime_ns": 1794446950351357249,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/negative-011.json",
+        "sha256": "315455c6b39a177373ad695dc85aecacf7836010b6a57246c74158d4b8c16a08",
+        "size_bytes": 100895
+      },
+      "strata-acquisition/negative-012.json": {
+        "ctime_ns": 1794446950352025750,
+        "device": 27,
+        "inode": 2266338,
+        "mtime_ns": 1794446950352025750,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/negative-012.json",
+        "sha256": "18134be710296e349c34fbcebd63eaa05ce35b8d2a8e1b7279c678001ba70c13",
+        "size_bytes": 101343
+      },
+      "strata-acquisition/negative-013.json": {
+        "ctime_ns": 1794446950352858065,
+        "device": 27,
+        "inode": 2266339,
+        "mtime_ns": 1794446950352858065,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/negative-013.json",
+        "sha256": "01117e77daa1f07ab0097e60d690fee56469d0a7f0c3a3e28c32483e198bca1d",
+        "size_bytes": 102465
+      },
+      "strata-acquisition/negative-014.json": {
+        "ctime_ns": 1794446950353443748,
+        "device": 27,
+        "inode": 2266341,
+        "mtime_ns": 1794446950353443748,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/negative-014.json",
+        "sha256": "01e5462471e1f34c2f9ee28ab9601ac2058dd06407bdbfa39cabcbc4dbe13454",
+        "size_bytes": 100671
+      },
+      "strata-acquisition/negative-015.json": {
+        "ctime_ns": 1794446950354105630,
+        "device": 27,
+        "inode": 2266342,
+        "mtime_ns": 1794446950354105630,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/negative-015.json",
+        "sha256": "b300eb21d81fecb27e7e9bca888df4eaad0eef17f45761f1f62a2cdf56360a76",
+        "size_bytes": 100671
+      },
+      "strata-acquisition/valid-000-started.json": {
+        "ctime_ns": 1794446950354616808,
+        "device": 27,
+        "inode": 2266343,
+        "mtime_ns": 1794446950354616808,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-000-started.json",
+        "sha256": "989fe7037f7ced08a485afd6d9bd247bd72b35af0c35d64f77e2781b9f4cfdd1",
+        "size_bytes": 67
+      },
+      "strata-acquisition/valid-000.json": {
+        "ctime_ns": 1794446950354803054,
+        "device": 27,
+        "inode": 2266344,
+        "mtime_ns": 1794446950354803054,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-000.json",
+        "sha256": "afddefbb9468eac72e1ba298171e48cec9824af9290bf3979223cc12d22f1286",
+        "size_bytes": 99387
+      },
+      "strata-acquisition/valid-001-started.json": {
+        "ctime_ns": 1794446950355472517,
+        "device": 27,
+        "inode": 2266345,
+        "mtime_ns": 1794446950355472517,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-001-started.json",
+        "sha256": "06d611efb58d35bb3330e490deec3bafce440cebeb0f857e5f31f73e7b01f719",
+        "size_bytes": 67
+      },
+      "strata-acquisition/valid-001.json": {
+        "ctime_ns": 1794446950355779469,
+        "device": 27,
+        "inode": 2266350,
+        "mtime_ns": 1794446950355779469,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-001.json",
+        "sha256": "8ca16e881d08c6b33e619960ca46c890fe6c8def3643c495b1aa6e5f2c335f36",
+        "size_bytes": 99387
+      },
+      "strata-acquisition/valid-002-started.json": {
+        "ctime_ns": 1794446950355560556,
+        "device": 27,
+        "inode": 2266346,
+        "mtime_ns": 1794446950355560556,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-002-started.json",
+        "sha256": "d43cceac567d14f23ba8d31537c39e669a40bd1bb4ed5d1cd07ffbdbfd9855a9",
+        "size_bytes": 67
+      },
+      "strata-acquisition/valid-002.json": {
+        "ctime_ns": 1794446950356486688,
+        "device": 27,
+        "inode": 2266354,
+        "mtime_ns": 1794446950356486688,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-002.json",
+        "sha256": "c6c2b0357ea1195cd6db55b4b8677f2acf4134dd23f8aa550e2a0f24ac15adae",
+        "size_bytes": 99386
+      },
+      "strata-acquisition/valid-003-started.json": {
+        "ctime_ns": 1794446950357041117,
+        "device": 27,
+        "inode": 2266357,
+        "mtime_ns": 1794446950357041117,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-003-started.json",
+        "sha256": "7aa7c19972daf1fc174b6b89aca216df7e6fdd34dd662761a71fa7b2f94e84bf",
+        "size_bytes": 67
+      },
+      "strata-acquisition/valid-003.json": {
+        "ctime_ns": 1794446950357256349,
+        "device": 27,
+        "inode": 2266358,
+        "mtime_ns": 1794446950357256349,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-003.json",
+        "sha256": "676f540191b3cef41ef7c08c41f457d89b22b3d9a5eb0071450ca69f96234ab3",
+        "size_bytes": 99387
+      },
+      "strata-acquisition/valid-004-started.json": {
+        "ctime_ns": 1794446950357849643,
+        "device": 27,
+        "inode": 2266359,
+        "mtime_ns": 1794446950357849643,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-004-started.json",
+        "sha256": "88b8abe659d232f12500ad6772f1efaf77c4329cf89924416548d5e723a762c2",
+        "size_bytes": 67
+      },
+      "strata-acquisition/valid-004.json": {
+        "ctime_ns": 1794446950359275947,
+        "device": 27,
+        "inode": 2266362,
+        "mtime_ns": 1794446950359275947,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-004.json",
+        "sha256": "9afce1a616d0c982cf6888dc9dc4e0ba05567b6568e8db354babd37ab4ee8275",
+        "size_bytes": 99386
+      },
+      "strata-acquisition/valid-005-started.json": {
+        "ctime_ns": 1794446950358563517,
+        "device": 27,
+        "inode": 2266361,
+        "mtime_ns": 1794446950358563517,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-005-started.json",
+        "sha256": "619a7816fd64215ffe54669982b8419151be06033cdfc6f2f9842581f9ccf7ee",
+        "size_bytes": 67
+      },
+      "strata-acquisition/valid-005.json": {
+        "ctime_ns": 1794446950358031384,
+        "device": 27,
+        "inode": 2266360,
+        "mtime_ns": 1794446950358031384,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-005.json",
+        "sha256": "be0e7c1459e48b8452408d68aa8c8b9fb236aec8024269080e37f52cb747bdcf",
+        "size_bytes": 99386
+      },
+      "strata-acquisition/valid-006-started.json": {
+        "ctime_ns": 1794446950359818351,
+        "device": 27,
+        "inode": 2266363,
+        "mtime_ns": 1794446950359818351,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-006-started.json",
+        "sha256": "8fe7aaaceda1fb0ae85f00c0dbf85ad1db6863bc93691b4eb2bee2e8b8ab81d5",
+        "size_bytes": 67
+      },
+      "strata-acquisition/valid-006.json": {
+        "ctime_ns": 1794446950360434413,
+        "device": 27,
+        "inode": 2266364,
+        "mtime_ns": 1794446950360434413,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-006.json",
+        "sha256": "a9a3ef2e9b43fc53e13ba6bf2c380ffd306a3fd8531ab23107149ea8b0b7e736",
+        "size_bytes": 99387
+      },
+      "strata-acquisition/valid-007-started.json": {
+        "ctime_ns": 1794446950361885073,
+        "device": 27,
+        "inode": 2266368,
+        "mtime_ns": 1794446950361885073,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-007-started.json",
+        "sha256": "051456257a18e44f2c9aa032ee4cbf173e7c320fa4c3ad247e733543ae7d1ef1",
+        "size_bytes": 67
+      },
+      "strata-acquisition/valid-007.json": {
+        "ctime_ns": 1794446950361150630,
+        "device": 27,
+        "inode": 2266366,
+        "mtime_ns": 1794446950361150630,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-007.json",
+        "sha256": "a32d20586428b0b45b9c909a0b254196a821ffaea08dc20f99476bebae2f9120",
+        "size_bytes": 99387
+      },
+      "strata-acquisition/valid-008-started.json": {
+        "ctime_ns": 1794446950362053800,
+        "device": 27,
+        "inode": 2266372,
+        "mtime_ns": 1794446950362053800,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-008-started.json",
+        "sha256": "8af3cb848bdc0398b4123ee2304a5e1a42cd8c4dbd5de3ab0f884f1a55b34e95",
+        "size_bytes": 67
+      },
+      "strata-acquisition/valid-008.json": {
+        "ctime_ns": 1794446950362236964,
+        "device": 27,
+        "inode": 2266390,
+        "mtime_ns": 1794446950362236964,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-008.json",
+        "sha256": "370812be5b5303a14073363bc4a8e7ac996502441c1b111c7f39c9db6662288f",
+        "size_bytes": 99386
+      },
+      "strata-acquisition/valid-009-started.json": {
+        "ctime_ns": 1794446950362737812,
+        "device": 27,
+        "inode": 2266394,
+        "mtime_ns": 1794446950362737812,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-009-started.json",
+        "sha256": "56308e99c0753c2bb68e93ab02ea48bd4e6186e35154e0ec5ebd9b8deb92265b",
+        "size_bytes": 67
+      },
+      "strata-acquisition/valid-009.json": {
+        "ctime_ns": 1794446950362939652,
+        "device": 27,
+        "inode": 2266399,
+        "mtime_ns": 1794446950362939652,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-009.json",
+        "sha256": "83010e330d976729acb2b7340c9bf3f4a6d6e5cdda8d3041a1275d4c53833c6b",
+        "size_bytes": 99387
+      },
+      "strata-acquisition/valid-010-started.json": {
+        "ctime_ns": 1794446950363389959,
+        "device": 27,
+        "inode": 2266400,
+        "mtime_ns": 1794446950363389959,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-010-started.json",
+        "sha256": "e2f3d9cd2cd1fb5159e71d0017f49f2e572356d4d3f606ad960dac1045d59fe9",
+        "size_bytes": 68
+      },
+      "strata-acquisition/valid-010.json": {
+        "ctime_ns": 1794446950363548349,
+        "device": 27,
+        "inode": 2266410,
+        "mtime_ns": 1794446950363548349,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-010.json",
+        "sha256": "aedc798a75f8485d77dad19ade150076079c8a8f5b0c9652feb4c7d574468bc3",
+        "size_bytes": 99387
+      },
+      "strata-acquisition/valid-011-started.json": {
+        "ctime_ns": 1794446950364265293,
+        "device": 27,
+        "inode": 2266415,
+        "mtime_ns": 1794446950364265293,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-011-started.json",
+        "sha256": "37a09dc79cb93b6686da33aef076b9436ef4527cc95cf338d40a08876ce6c649",
+        "size_bytes": 68
+      },
+      "strata-acquisition/valid-011.json": {
+        "ctime_ns": 1794446950364585601,
+        "device": 27,
+        "inode": 2266443,
+        "mtime_ns": 1794446950364585601,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-011.json",
+        "sha256": "54eb3c17c92a59afa363f647f4499219924ec58abd5d085db095d9adf192e730",
+        "size_bytes": 99388
+      },
+      "strata-acquisition/valid-012-started.json": {
+        "ctime_ns": 1794446950364383394,
+        "device": 27,
+        "inode": 2266426,
+        "mtime_ns": 1794446950364383394,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-012-started.json",
+        "sha256": "bb6732d4841424545512078c1caebb85f4578630d886da4b9813c3031afbfc65",
+        "size_bytes": 68
+      },
+      "strata-acquisition/valid-012.json": {
+        "ctime_ns": 1794446950366089798,
+        "device": 27,
+        "inode": 2266475,
+        "mtime_ns": 1794446950366089798,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-012.json",
+        "sha256": "15694a5676c14adbc3ba510268f7365446758e6b4c66da5eddb5bcdb0e57c976",
+        "size_bytes": 99388
+      },
+      "strata-acquisition/valid-013-started.json": {
+        "ctime_ns": 1794446950366618546,
+        "device": 27,
+        "inode": 2266479,
+        "mtime_ns": 1794446950366618546,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-013-started.json",
+        "sha256": "5b3aa82b57376302eec2761cf63ee1574828774b774b4046ee4120946a5ba821",
+        "size_bytes": 68
+      },
+      "strata-acquisition/valid-013.json": {
+        "ctime_ns": 1794446950366873301,
+        "device": 27,
+        "inode": 2266490,
+        "mtime_ns": 1794446950366873301,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-013.json",
+        "sha256": "55819ab458fc3feb153e64f946f29d0b0e5a81bc622d08c5c3f1fecc8d4eccd0",
+        "size_bytes": 99388
+      },
+      "strata-acquisition/valid-014-started.json": {
+        "ctime_ns": 1794446950367439591,
+        "device": 27,
+        "inode": 2266497,
+        "mtime_ns": 1794446950367439591,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-014-started.json",
+        "sha256": "0a1e610211a6973fe306f449a5e84bf927c2ffa7a5904f1401160766c7956b29",
+        "size_bytes": 68
+      },
+      "strata-acquisition/valid-014.json": {
+        "ctime_ns": 1794446950367633491,
+        "device": 27,
+        "inode": 2266502,
+        "mtime_ns": 1794446950367633491,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-014.json",
+        "sha256": "fe724305a21f0dac3c41d508078212c8d617daa9f6a290d4ebe659cb6219e682",
+        "size_bytes": 99387
+      },
+      "strata-acquisition/valid-015-started.json": {
+        "ctime_ns": 1794446950368563309,
+        "device": 27,
+        "inode": 2266506,
+        "mtime_ns": 1794446950368563309,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-015-started.json",
+        "sha256": "6095c36cc6663eab575cc3632e9e84ef727349d529c899890081436ecd047a58",
+        "size_bytes": 68
+      },
+      "strata-acquisition/valid-015.json": {
+        "ctime_ns": 1794446950368765777,
+        "device": 27,
+        "inode": 2266519,
+        "mtime_ns": 1794446950368765777,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-acquisition/valid-015.json",
+        "sha256": "30ad0ef02cef388ed68e09545ee6ab85019fd6ff1cfd86d4bca520ffaf207443",
+        "size_bytes": 99388
+      },
+      "strata-input-acquisition-native.json": {
+        "ctime_ns": 1794446950450813738,
+        "device": 27,
+        "inode": 2266746,
+        "mtime_ns": 1794446950446813909,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-input-acquisition-native.json",
+        "sha256": "0b0efc8c2abe37d04f332dc48bbb2d64e4236f687134bccc0efd021d124cbb2e",
+        "size_bytes": 9563023
+      },
+      "strata-inputs-index.json": {
+        "ctime_ns": 1794446950454348037,
+        "device": 27,
+        "inode": 2266756,
+        "mtime_ns": 1794446950454348037,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata/native/strata-inputs-index.json",
+        "sha256": "512ce3825f37b507ed1be7cf1ae141020d5cacdca8b75ba7662ea4b98b6c027e",
+        "size_bytes": 1199
+      }
+    },
+    "source_sha256": "7b7437402b19d63e22e48174ce0c24a63c8e0de8272ad2597ea7f268cc751653"
+  },
+  "valid_expensive_is_pure_verifier_cost_control": false,
+  "validated_native_counts": {
+    "attempted_phases": 13,
+    "completed_phases": 13,
+    "healthy_completed_phases": 5,
+    "helper_invoked_phases": 13,
+    "incomplete_phases": 0,
+    "planned_phases": 13,
+    "pressure_controls_attempted": 8,
+    "pressure_controls_executed": 8,
+    "pressure_controls_planned": 8,
+    "pressure_controls_unstarted": 0,
+    "unstarted_phases": 0
+  }
+}

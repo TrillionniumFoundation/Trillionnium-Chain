@@ -1,0 +1,404 @@
+{
+  "acquisition": {
+    "honest_chain_acquisition_wall_ns": 190514822,
+    "honest_chain_process_cpu_ns": 41769970,
+    "process_cpu_scope": "all process threads during seven-block mining; excludes earlier producer open/setup and later service; not pure W1 or exclusive actor CPU"
+  },
+  "archive_crc_verified": true,
+  "artifact_bytes": 5389637,
+  "artifact_id": 13902664465,
+  "artifact_sha256": "db8960d8388dadb29450e525de1e3eaa71a2ae87d5d897c0e1ce9afb711bf312",
+  "attempted": 3,
+  "audit_script_sha256": "a0efd596c1f5483520b1093e252997c90e69428963992221ff24edf57f6bc42e",
+  "binary": {
+    "bytes": 12125656,
+    "sha256": "81c19f2dbfc709b87160cda7cdbb995842d83c445f0097dd6f485fd125cfd67f"
+  },
+  "completed": 3,
+  "cooperative_parent_lease": {
+    "consensus_or_model_authority": false,
+    "creator_service": "trnm-from-zero-43125548321-1-health-5375.service",
+    "current_service": "trnm-from-zero-43125548321-1-health-5375.service",
+    "host_readiness_only": true,
+    "parent_identity": {
+      "boot_id": "f0aabebf-265d-4b1b-8e0f-a5c5a242e809",
+      "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+      "limits": {
+        "cpu.max": "25000 100000",
+        "cpu.max.burst": "0",
+        "memory.max": "2147483648",
+        "memory.swap.max": "0",
+        "pids.max": "256"
+      },
+      "parent": {
+        "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+        "device": 31,
+        "directory": true,
+        "gid": 0,
+        "inode": 7343,
+        "mode": 493,
+        "symlink": false,
+        "uid": 0
+      },
+      "unit_file": {
+        "ctime_ns": 1794442646691753220,
+        "device": 29,
+        "inode": 1660,
+        "mtime_ns": 1794442646691753220,
+        "path": "/run/systemd/system/trnmponpublic.slice",
+        "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+        "size_bytes": 325
+      }
+    },
+    "schema": "trnm-ci-public-fixture-parent-binding-v1",
+    "seal_file": {
+      "ctime_ns": 1794442650179682683,
+      "device": 29,
+      "inode": 1706,
+      "mtime_ns": 1794442650179682683,
+      "path": "/run/trnm-public-fixture-43125548321-1-health/parent.json",
+      "sha256": "4c76fc2f2c36510bc59e29be9f876b0c6f9525b7fca43515706fa19a8869ed82",
+      "size_bytes": 3244
+    },
+    "seal_sha256": "4c76fc2f2c36510bc59e29be9f876b0c6f9525b7fca43515706fa19a8869ed82"
+  },
+  "first_divergence": null,
+  "incomplete": 0,
+  "independently_confirmed": 3,
+  "job_id": 130876572920,
+  "mechanism_status": "UNKNOWN",
+  "members_checked": 64,
+  "native_child_timeout_seconds": 90,
+  "native_host_after": {
+    "error": null,
+    "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+    "sample": {
+      "cpu_nr_periods": 399,
+      "cpu_nr_throttled": 360,
+      "cpu_throttled_usec": 38141912,
+      "cpu_usage_usec": 9312890,
+      "memory_current_bytes": 88027136,
+      "pids_current": 4
+    },
+    "schema": "sp27-receiver-host-readback-v1",
+    "scope": "native bounded-parent eligibility; exact runner limits and exclusivity need runner receipts",
+    "verified": true
+  },
+  "native_host_before": {
+    "error": null,
+    "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+    "sample": {
+      "cpu_nr_periods": 275,
+      "cpu_nr_throttled": 273,
+      "cpu_throttled_usec": 23850641,
+      "cpu_usage_usec": 6827360,
+      "memory_current_bytes": 58699776,
+      "pids_current": 4
+    },
+    "schema": "sp27-receiver-host-readback-v1",
+    "scope": "native bounded-parent eligibility; exact runner limits and exclusivity need runner receipts",
+    "verified": true
+  },
+  "native_identity_before_and_after": {
+    "binary_identity_error": null,
+    "binary_path": "/home/runner/work/_temp/target-sp27/release/deps/public_v3_from_zero-29386b5fc1c68c9c",
+    "binary_sha256": "81c19f2dbfc709b87160cda7cdbb995842d83c445f0097dd6f485fd125cfd67f",
+    "boot_id": "f0aabebf-265d-4b1b-8e0f-a5c5a242e809",
+    "compiled_health_module_sha256": "37ccfdeb41ba15b4c911f1d843bf456938474d98691956433a4deb01359d7fe4",
+    "compiled_test_source_sha256": "b86f7b73f06720727fa63caaf1bac679c8bb4b2747e45ec90d2413e22288e328",
+    "github_run_attempt": "1",
+    "github_run_id": "43125548321",
+    "hostname": "runnervm7aw5e",
+    "identity_scope": "actual executable bytes, compiled source bytes and local process facts; declared runner/git identities require independent runner readback",
+    "pid": 5807,
+    "process_cgroup": "0::/trnmponpublic.slice/trnm-from-zero-43125548321-1-health-5375.service",
+    "runner_declared_run_id": "43125548321-1-health",
+    "runner_declared_source_sha": "0bc51795a978494af1b4659712ecf78c290c1a88",
+    "schema": "sp27-receiver-run-identity-v1"
+  },
+  "native_process": {
+    "command": [
+      "/home/runner/work/_temp/target-sp27/release/deps/public_v3_from_zero-29386b5fc1c68c9c",
+      "sp27_receiver_controls::repeated_unpressured_confirmation_stops_before_pressure_on_first_divergence",
+      "--exact",
+      "--ignored",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "cpu_ns": 2474753000,
+    "cpu_scope": "entire child, not apportioned to nested wall intervals",
+    "exit_code": 0,
+    "involuntary_switches": 445,
+    "major_faults": 0,
+    "max_rss_kib": 49888,
+    "minor_faults": 6112,
+    "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "6dca11e13ed55ba1c3edc19b2fda99780383d5094284a07a5b8fd9a7c0a2fd06",
+    "system_cpu_ns": 1734652000,
+    "timed_out": false,
+    "user_cpu_ns": 740101000,
+    "voluntary_switches": 33363,
+    "wait4_cpu_resolution_ns": 1000,
+    "wall_ns": 12587443240
+  },
+  "native_timeout_scope": "run_child around the named native executable; excludes earlier/later Python source-identity and Host-wrapper work",
+  "new_native_runs_executed_by_audit": 0,
+  "packet_sizes": [
+    {
+      "canonical_submit_json_bytes": 99445,
+      "index": 0,
+      "packet_bytes": 49709,
+      "proof_bytes": 49188,
+      "transaction_bytes": [
+        199
+      ],
+      "transactions": 1
+    },
+    {
+      "canonical_submit_json_bytes": 99043,
+      "index": 1,
+      "packet_bytes": 49508,
+      "proof_bytes": 49188,
+      "transaction_bytes": [],
+      "transactions": 0
+    },
+    {
+      "canonical_submit_json_bytes": 99043,
+      "index": 2,
+      "packet_bytes": 49508,
+      "proof_bytes": 49188,
+      "transaction_bytes": [],
+      "transactions": 0
+    },
+    {
+      "canonical_submit_json_bytes": 99043,
+      "index": 3,
+      "packet_bytes": 49508,
+      "proof_bytes": 49188,
+      "transaction_bytes": [],
+      "transactions": 0
+    },
+    {
+      "canonical_submit_json_bytes": 99043,
+      "index": 4,
+      "packet_bytes": 49508,
+      "proof_bytes": 49188,
+      "transaction_bytes": [],
+      "transactions": 0
+    },
+    {
+      "canonical_submit_json_bytes": 99043,
+      "index": 5,
+      "packet_bytes": 49508,
+      "proof_bytes": 49188,
+      "transaction_bytes": [],
+      "transactions": 0
+    },
+    {
+      "canonical_submit_json_bytes": 99043,
+      "index": 6,
+      "packet_bytes": 49508,
+      "proof_bytes": 49188,
+      "transaction_bytes": [],
+      "transactions": 0
+    }
+  ],
+  "parent_reused": false,
+  "phases": [
+    {
+      "business_started_ns": 152537,
+      "confirmation_ended_ns": 3182777296,
+      "confirmed": 1,
+      "history_calls": 7,
+      "honest_submit_calls": 7,
+      "independent_replay_attempts": 7,
+      "index": 0,
+      "native_final_gate": true,
+      "observer_dropped": 0,
+      "observer_measurement_failures": 0,
+      "observer_records": 67,
+      "raw_member": "sp27-receiver-controls/native/raw/health-000.json",
+      "raw_sha256": "c1427ce79cbdcdca101ca44e61751be01dcd8a926fd5024c63bde99ef307fcde",
+      "recorded_business_anomalies": [],
+      "remaining_window_ns": 817222704,
+      "requested_window_ns": 4000000000,
+      "state_equal": true,
+      "verification_errors": [],
+      "workers": 0
+    },
+    {
+      "business_started_ns": 95730,
+      "confirmation_ended_ns": 3093116433,
+      "confirmed": 1,
+      "history_calls": 7,
+      "honest_submit_calls": 7,
+      "independent_replay_attempts": 7,
+      "index": 1,
+      "native_final_gate": true,
+      "observer_dropped": 0,
+      "observer_measurement_failures": 0,
+      "observer_records": 69,
+      "raw_member": "sp27-receiver-controls/native/raw/health-001.json",
+      "raw_sha256": "ecd11e5ca3f7b59158861db9b17063ec0b1dd5e207da8c524bf920634e771977",
+      "recorded_business_anomalies": [],
+      "remaining_window_ns": 906883567,
+      "requested_window_ns": 4000000000,
+      "state_equal": true,
+      "verification_errors": [],
+      "workers": 0
+    },
+    {
+      "business_started_ns": 102201,
+      "confirmation_ended_ns": 3099623590,
+      "confirmed": 1,
+      "history_calls": 7,
+      "honest_submit_calls": 7,
+      "independent_replay_attempts": 7,
+      "index": 2,
+      "native_final_gate": true,
+      "observer_dropped": 0,
+      "observer_measurement_failures": 0,
+      "observer_records": 69,
+      "raw_member": "sp27-receiver-controls/native/raw/health-002.json",
+      "raw_sha256": "bb5b62420659c4140c1dc37f3189956ed432027cb11700fa2504dcabc6f2db9e",
+      "recorded_business_anomalies": [],
+      "remaining_window_ns": 900376410,
+      "requested_window_ns": 4000000000,
+      "state_equal": true,
+      "verification_errors": [],
+      "workers": 0
+    }
+  ],
+  "physical_cpu_exclusivity": "NOT_ESTABLISHED; cooperative fixed-parent lease and resource eligibility are verified",
+  "planned": 3,
+  "pressure_controls_executed": 0,
+  "qualification": "HEALTH_GATE_PASSED_CONTROLS_PENDING",
+  "raw_archive_member_index": "RAW_SHA256.json",
+  "run_id": 43125548321,
+  "runner_host_after": {
+    "boot_id": "f0aabebf-265d-4b1b-8e0f-a5c5a242e809",
+    "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+    "consensus_or_model_authority": false,
+    "counters": {
+      "cgroup.events": "populated 1\nfrozen 0",
+      "cpu.stat": "usage_usec 12671558\nuser_usec 7954658\nsystem_usec 4716900\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 534\nnr_throttled 495\nthrottled_usec 49826328\nnr_bursts 0\nburst_usec 0",
+      "memory.current": "40030208",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+      "pids.current": "1"
+    },
+    "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+    "gid": 1001,
+    "host_readiness_only": true,
+    "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+    "limits": {
+      "cpu.max": "25000 100000",
+      "cpu.max.burst": "0",
+      "memory.max": "2147483648",
+      "memory.swap.max": "0",
+      "pids.max": "256"
+    },
+    "observed_utc": "2026-11-12T00:18:26.515083+00:00",
+    "parent": {
+      "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+      "device": 31,
+      "directory": true,
+      "gid": 0,
+      "inode": 7343,
+      "mode": 493,
+      "symlink": false,
+      "uid": 0
+    },
+    "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+    "phase": "inside-after-native",
+    "pid": 5674,
+    "read_errors": {},
+    "schema": "trnm-ci-original-public-host-observation-v1",
+    "service": "trnm-from-zero-43125548321-1-health-5375.service",
+    "thread_cgroup": "0::/trnmponpublic.slice/trnm-from-zero-43125548321-1-health-5375.service",
+    "thread_privileges": {
+      "CapBnd": "0000000000000000",
+      "NoNewPrivs": "1"
+    },
+    "uid": 1001
+  },
+  "runner_host_before": {
+    "boot_id": "f0aabebf-265d-4b1b-8e0f-a5c5a242e809",
+    "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+    "consensus_or_model_authority": false,
+    "counters": {
+      "cgroup.events": "populated 1\nfrozen 0",
+      "cpu.stat": "usage_usec 122758\nuser_usec 109888\nsystem_usec 12869\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 6\nnr_throttled 4\nthrottled_usec 278612\nnr_bursts 0\nburst_usec 0",
+      "memory.current": "17539072",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+      "pids.current": "1"
+    },
+    "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+    "gid": 1001,
+    "host_readiness_only": true,
+    "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+    "limits": {
+      "cpu.max": "25000 100000",
+      "cpu.max.burst": "0",
+      "memory.max": "2147483648",
+      "memory.swap.max": "0",
+      "pids.max": "256"
+    },
+    "observed_utc": "2026-11-12T00:17:33.733464+00:00",
+    "parent": {
+      "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+      "device": 31,
+      "directory": true,
+      "gid": 0,
+      "inode": 7343,
+      "mode": 493,
+      "symlink": false,
+      "uid": 0
+    },
+    "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+    "phase": "inside-before-native",
+    "pid": 5674,
+    "read_errors": {},
+    "schema": "trnm-ci-original-public-host-observation-v1",
+    "service": "trnm-from-zero-43125548321-1-health-5375.service",
+    "thread_cgroup": "0::/trnmponpublic.slice/trnm-from-zero-43125548321-1-health-5375.service",
+    "thread_privileges": {
+      "CapBnd": "0000000000000000",
+      "NoNewPrivs": "1"
+    },
+    "uid": 1001
+  },
+  "runner_inside_snapshot_interval_ns": 52781619000,
+  "schema": "sp27-02-original-health-ci-audit-v1",
+  "sixteen_distinct_valid_sibling_cost": "NOT_MEASURED by this batch",
+  "source_commit": "0bc51795a978494af1b4659712ecf78c290c1a88",
+  "source_files": {
+    "config/systemd/trnmponpublic.slice": {
+      "bytes": 325,
+      "git_blob": "8981b6aeed4c08c21679664940366b36a991444a",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622"
+    },
+    "scripts/ci/run_sp27_receiver_controls.py": {
+      "bytes": 13275,
+      "git_blob": "fef0343701f927348ee45803058235f2f48090b4",
+      "sha256": "6d064bfcfae745adbb5cc4acd6ddc3290a7b515960c58ec7ef9d5ea54c841d74"
+    },
+    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs": {
+      "bytes": 53670,
+      "git_blob": "7089e961965af9209f2d588061c8526c5acba161",
+      "sha256": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs": {
+      "bytes": 79154,
+      "git_blob": "f430907da743785c61214dcf84501ecfefd27fc7",
+      "sha256": "b86f7b73f06720727fa63caaf1bac679c8bb4b2747e45ec90d2413e22288e328"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_controls.rs": {
+      "bytes": 24078,
+      "git_blob": "858e09e1e0452717f63cef6e5972a45cbbfdcab8",
+      "sha256": "37ccfdeb41ba15b4c911f1d843bf456938474d98691956433a4deb01359d7fe4"
+    }
+  },
+  "source_tree": "adb6ee5208cc2e8d9f8afd374ccb9a336c3a1d1c",
+  "unstarted": 0
+}

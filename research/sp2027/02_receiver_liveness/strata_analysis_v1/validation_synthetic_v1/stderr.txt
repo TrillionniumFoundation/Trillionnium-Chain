@@ -1,0 +1,20 @@
+test_attempted_without_raw_is_unknown_not_unstarted (test_adapter.AdapterTests.test_attempted_without_raw_is_unknown_not_unstarted) ... ok
+test_cache_hit_is_not_native_replay_and_absence_is_unknown (test_adapter.AdapterTests.test_cache_hit_is_not_native_replay_and_absence_is_unknown) ... ok
+test_endpoint_below_t_false_native_gate_stays_unconfirmed (test_adapter.AdapterTests.test_endpoint_below_t_false_native_gate_stays_unconfirmed) ... ok
+test_host_attestation_missing_is_refused (test_adapter.AdapterTests.test_host_attestation_missing_is_refused) ... ok
+test_missing_control_input_map_does_not_create_zero_load_or_cost (test_adapter.AdapterTests.test_missing_control_input_map_does_not_create_zero_load_or_cost) ... ok
+test_missing_cpu_not_imputed_zero (test_adapter.AdapterTests.test_missing_cpu_not_imputed_zero) ... ok
+test_positive_ack_cannot_substitute_native_replay (test_adapter.AdapterTests.test_positive_ack_cannot_substitute_native_replay) ... ok
+test_positive_summary_without_observation_is_refused (test_adapter.AdapterTests.test_positive_summary_without_observation_is_refused) ... ok
+test_strict_campaign_rejection_blocks_import (test_adapter.AdapterTests.test_strict_campaign_rejection_blocks_import) ... ok
+test_t_and_t_plus_one_with_false_gate_are_late_not_timely (test_adapter.AdapterTests.test_t_and_t_plus_one_with_false_gate_are_late_not_timely) ... ok
+test_t_minus_one_and_unstarted_denominator_really_consumed (test_adapter.AdapterTests.test_t_minus_one_and_unstarted_denominator_really_consumed) ... ok
+test_timeout_missing_report_retains_diagnosis_without_native_fabrication (test_adapter.AdapterTests.test_timeout_missing_report_retains_diagnosis_without_native_fabrication) ... ok
+test_true_native_gate_at_t_refused (test_adapter.AdapterTests.test_true_native_gate_at_t_refused) ... ok
+test_writer_uses_real_frozen_analyzer_output (test_adapter.AdapterTests.test_writer_uses_real_frozen_analyzer_output) ... ok
+test_wrong_prepared_transaction_is_refused (test_adapter.AdapterTests.test_wrong_prepared_transaction_is_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.172s
+
+OK

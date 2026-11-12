@@ -1,0 +1,135 @@
+{
+  "classification": "Both specified first-failure predicates already exist in unchanged common-base bytes; no native SP27 modification is implicated by these diagnostics.",
+  "common_base": "5b591754b426c6f88bea6d399fafcd77e31255d8",
+  "head": "0bc51795a978494af1b4659712ecf78c290c1a88",
+  "jobs": [
+    {
+      "cause": "w1_qrom_implementation_audit.AuditError: input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+      "checkout_kind": "prospective-merge",
+      "decoded_log_bytes": 225104,
+      "decoded_log_sha256": "226be9d30269516748006cb9a90d6f1bae6a3181bbcf251a8940c8e1c7485c06",
+      "first_traceback": "2026-11-12T00:13:24.6982453Z Traceback (most recent call last):\n2026-11-12T00:13:24.6983815Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/test_w1_qrom_implementation_audit.py\", line 56, in test_actual_saved_v2_mapping_keeps_all_security_claims_unqualified\n2026-11-12T00:13:24.6985297Z     report = audit.build_report(audit.ROOT)\n2026-11-12T00:13:24.6985793Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n2026-11-12T00:13:24.6987103Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/w1_qrom_implementation_audit.py\", line 289, in build_report\n2026-11-12T00:13:24.6988288Z     project = load_pinned_files(root, contract['project_files'])\n2026-11-12T00:13:24.6988914Z               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n2026-11-12T00:13:24.6990003Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/w1_qrom_implementation_audit.py\", line 119, in load_pinned_files\n2026-11-12T00:13:24.6991118Z     data = bounded_file(root, path, item['bytes'])\n2026-11-12T00:13:24.6991638Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n2026-11-12T00:13:24.6992662Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/w1_qrom_implementation_audit.py\", line 95, in bounded_file\n2026-11-12T00:13:24.6993826Z     require(len(data) <= limit, f'input exceeds bound: {relative}')\n2026-11-12T00:13:24.6994943Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/w1_qrom_implementation_audit.py\", line 57, in require\n2026-11-12T00:13:24.6996162Z     raise AuditError(reason)\n2026-11-12T00:13:24.6997038Z w1_qrom_implementation_audit.AuditError: input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+      "first_traceback_line": 1439,
+      "job_conclusion": "failure",
+      "job_id": 130876622889,
+      "kind": "implementation",
+      "log_file": "qrom-job-130876622889.decoded.log",
+      "run_id": 43125562453,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43125562453/job/130876622889"
+    },
+    {
+      "cause": "w1_qrom_implementation_audit.AuditError: input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+      "checkout_kind": "head",
+      "decoded_log_bytes": 224180,
+      "decoded_log_sha256": "b07d70f05878317cf0fba1a75cc5acfe6cbb73fb850ea3ee4b732659be73a1b6",
+      "first_traceback": "2026-11-12T00:13:20.7214233Z Traceback (most recent call last):\n2026-11-12T00:13:20.7215228Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/test_w1_qrom_implementation_audit.py\", line 56, in test_actual_saved_v2_mapping_keeps_all_security_claims_unqualified\n2026-11-12T00:13:20.7216227Z     report = audit.build_report(audit.ROOT)\n2026-11-12T00:13:20.7216585Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n2026-11-12T00:13:20.7217299Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/w1_qrom_implementation_audit.py\", line 289, in build_report\n2026-11-12T00:13:20.7218112Z     project = load_pinned_files(root, contract['project_files'])\n2026-11-12T00:13:20.7218551Z               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n2026-11-12T00:13:20.7219315Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/w1_qrom_implementation_audit.py\", line 119, in load_pinned_files\n2026-11-12T00:13:20.7220093Z     data = bounded_file(root, path, item['bytes'])\n2026-11-12T00:13:20.7220456Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n2026-11-12T00:13:20.7221152Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/w1_qrom_implementation_audit.py\", line 95, in bounded_file\n2026-11-12T00:13:20.7221948Z     require(len(data) <= limit, f'input exceeds bound: {relative}')\n2026-11-12T00:13:20.7222708Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/w1_qrom_implementation_audit.py\", line 57, in require\n2026-11-12T00:13:20.7223395Z     raise AuditError(reason)\n2026-11-12T00:13:20.7224133Z w1_qrom_implementation_audit.AuditError: input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+      "first_traceback_line": 1436,
+      "job_conclusion": "failure",
+      "job_id": 130876623123,
+      "kind": "implementation",
+      "log_file": "qrom-job-130876623123.decoded.log",
+      "run_id": 43125562453,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43125562453/job/130876623123"
+    },
+    {
+      "cause": "tested_w1_lifetime_ledger.LedgerError: source identity mismatch: trillionnium/crates/trnm-pon-node/src/consensus.rs",
+      "checkout_kind": "prospective-merge",
+      "decoded_log_bytes": 200257,
+      "decoded_log_sha256": "fa03eb563a160482223af55347787971e52b31dbcae9466d991f652bd7f476c9",
+      "first_traceback": "2026-11-12T00:13:20.4505713Z Traceback (most recent call last):\n2026-11-12T00:13:20.4506458Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/test_w1_lifetime_ledger.py\", line 58, in setUpClass\n2026-11-12T00:13:20.4507267Z     cls.survey = ledger.source_survey(cls.sources)\n2026-11-12T00:13:20.4507659Z                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n2026-11-12T00:13:20.4508379Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/w1_lifetime_ledger.py\", line 504, in source_survey\n2026-11-12T00:13:20.4509328Z     require(hashlib.sha256(value).hexdigest() == expected, \"source identity mismatch: \" + path)\n2026-11-12T00:13:20.4510248Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/w1_lifetime_ledger.py\", line 146, in require\n2026-11-12T00:13:20.4511338Z     raise LedgerError(message)\n2026-11-12T00:13:20.4511997Z tested_w1_lifetime_ledger.LedgerError: source identity mismatch: trillionnium/crates/trnm-pon-node/src/consensus.rs",
+      "first_traceback_line": 1225,
+      "job_conclusion": "failure",
+      "job_id": 130876619595,
+      "kind": "closure",
+      "log_file": "qrom-job-130876619595.decoded.log",
+      "run_id": 43125561958,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43125561958/job/130876619595"
+    },
+    {
+      "cause": "tested_w1_lifetime_ledger.LedgerError: source identity mismatch: trillionnium/crates/trnm-pon-node/src/consensus.rs",
+      "checkout_kind": "head",
+      "decoded_log_bytes": 199385,
+      "decoded_log_sha256": "cc46b230315eb2d93229dc4c2cc8de677dc6b6f212faa2e0a08cd0d5606334c4",
+      "first_traceback": "2026-11-12T00:13:15.9033800Z Traceback (most recent call last):\n2026-11-12T00:13:15.9034495Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/test_w1_lifetime_ledger.py\", line 58, in setUpClass\n2026-11-12T00:13:15.9035227Z     cls.survey = ledger.source_survey(cls.sources)\n2026-11-12T00:13:15.9035633Z                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n2026-11-12T00:13:15.9036298Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/w1_lifetime_ledger.py\", line 504, in source_survey\n2026-11-12T00:13:15.9037163Z     require(hashlib.sha256(value).hexdigest() == expected, \"source identity mismatch: \" + path)\n2026-11-12T00:13:15.9038003Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/w1_lifetime_ledger.py\", line 146, in require\n2026-11-12T00:13:15.9038657Z     raise LedgerError(message)\n2026-11-12T00:13:15.9039163Z tested_w1_lifetime_ledger.LedgerError: source identity mismatch: trillionnium/crates/trnm-pon-node/src/consensus.rs",
+      "first_traceback_line": 1222,
+      "job_conclusion": "failure",
+      "job_id": 130876620011,
+      "kind": "closure",
+      "log_file": "qrom-job-130876620011.decoded.log",
+      "run_id": 43125561958,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43125561958/job/130876620011"
+    }
+  ],
+  "schema": "sp27-02-sibling-qrom-ci-readback-v1",
+  "scope": "First recorded concrete failure in the four specified jobs only; no base CI was rerun, no pin or gate changed, no unrelated system repaired.",
+  "source_readback": {
+    "common_base": "5b591754b426c6f88bea6d399fafcd77e31255d8",
+    "files": [
+      {
+        "base_bytes": 11172,
+        "base_sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7",
+        "head_bytes": 11172,
+        "head_sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7",
+        "implementation_contract_pin": {
+          "bytes": 9233,
+          "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+          "sha256": "07415e8e3bb53f3e81dd489e4ebda63368170efbe4a217ae6b0dd6cc0af14128"
+        },
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+        "unchanged_from_common_base": true
+      },
+      {
+        "base_bytes": 20510,
+        "base_sha256": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d",
+        "head_bytes": 20510,
+        "head_sha256": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d",
+        "lifetime_source_pin": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62",
+        "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+        "unchanged_from_common_base": true
+      },
+      {
+        "base_bytes": 6875,
+        "base_sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22",
+        "head_bytes": 6875,
+        "head_sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22",
+        "path": "config/pon/w1-qrom-implementation-v1.json",
+        "unchanged_from_common_base": true
+      },
+      {
+        "base_bytes": 37814,
+        "base_sha256": "a09b37a7187ceaee515ee37cceef09df6a6d337f670862d7cf2f3d75368c8303",
+        "head_bytes": 37814,
+        "head_sha256": "a09b37a7187ceaee515ee37cceef09df6a6d337f670862d7cf2f3d75368c8303",
+        "path": "scripts/w1_lifetime_ledger.py",
+        "unchanged_from_common_base": true
+      },
+      {
+        "base_bytes": 21678,
+        "base_sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354",
+        "head_bytes": 21678,
+        "head_sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354",
+        "lifetime_source_pin": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354",
+        "path": "scripts/w1_qrom_implementation_audit.py",
+        "unchanged_from_common_base": true
+      },
+      {
+        "base_bytes": 18262,
+        "base_sha256": "6be1706c1ded1a8efa02ee5c3ca04352fa989dbcf728d6f041192200921a5fa6",
+        "head_bytes": 18262,
+        "head_sha256": "6be1706c1ded1a8efa02ee5c3ca04352fa989dbcf728d6f041192200921a5fa6",
+        "path": "scripts/ci/test_w1_lifetime_ledger.py",
+        "unchanged_from_common_base": true
+      },
+      {
+        "base_bytes": 10834,
+        "base_sha256": "56cb5f923e3082118ac71fee5ead5dedc8bcf29330320333a3d5a1f39eb0faf2",
+        "head_bytes": 10834,
+        "head_sha256": "56cb5f923e3082118ac71fee5ead5dedc8bcf29330320333a3d5a1f39eb0faf2",
+        "path": "scripts/ci/test_w1_qrom_implementation_audit.py",
+        "unchanged_from_common_base": true
+      }
+    ],
+    "head": "0bc51795a978494af1b4659712ecf78c290c1a88",
+    "schema": "sp27-02-qrom-source-readback-v1"
+  }
+}

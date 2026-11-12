@@ -1,0 +1,577 @@
+{
+  "evidence_scope": "archival_reanalysis",
+  "identical_event_replays_deduplicated": 0,
+  "new_native_experiments_executed_by_analyzer": 0,
+  "no_cryptographic_or_observer_authentication_claim": true,
+  "no_pooling_across_runs": true,
+  "runs": [
+    {
+      "administratively_censored_count": 0,
+      "chain_instance_id": "ci-43052900246-13871459353/confirmation/attack-free-baseline/fresh-ledger",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "confirmed_operations": 1,
+      "content": {
+        "complete_unique_count": 1,
+        "known_operations": 1,
+        "known_unique": 1,
+        "missing_operations": 0
+      },
+      "deadline_before_window_success_fraction": 1.0,
+      "goodput": {
+        "denominator_window_ns": 4000000000,
+        "interpretation": "fixed-workload finite-window goodput; not saturated capacity",
+        "numerator_confirmed_operations": 1,
+        "operations_per_second": 0.25
+      },
+      "identity": {
+        "binary_sha256": "03d0dada775a2531876ce796192b59d27d78f86848e053de554ee70e281eb387",
+        "config_sha256": null,
+        "source_commit": "8ebcdb01016946a131f9067ebe1ace39b9c4f260",
+        "source_tree": "1b887f5fe57c6c3875ad28b8cc26bd83a8f77b83"
+      },
+      "identity_missing": [
+        "config_sha256"
+      ],
+      "latency_from_actual_start_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": 2704248795,
+        "n_missing_among_successes": 0,
+        "n_observed": 1,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": 2704248795,
+        "p90": 2704248795,
+        "p95": 2704248795,
+        "p99": 2704248795,
+        "planned_denominator": 1
+      },
+      "latency_from_schedule_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": null,
+        "n_missing_among_successes": 1,
+        "n_observed": 0,
+        "n_successes": 1,
+        "nonconfirmation_count": 0,
+        "nonconfirmation_fraction": 0.0,
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "planned_denominator": 1
+      },
+      "metadata": {
+        "archive_key": "ci-43052900246-13871459353",
+        "causal_mechanism_established": false,
+        "ci_artifact_id": 13871459353,
+        "ci_job_id": 130634539770,
+        "ci_run_id": 43052900246,
+        "clock_error_bound_ns": null,
+        "clock_resolution_ns": null,
+        "collector_analysis_contract_version": "sp27-02-collector-analysis-v2",
+        "config_freeze_complete": false,
+        "confirmation_attestation_scope": "positive native independent endpoint plus source path; cryptography not reexecuted by Python",
+        "event_coverage_scope": "all fixture planned round starts and recorded native observations, not all physical activity",
+        "exclusive_resources_established": false,
+        "host_after": {
+          "boot_id": "e4467231-e96e-4736-9409-b547a3dc1666",
+          "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+          "consensus_or_model_authority": false,
+          "counters": {
+            "cgroup.events": "populated 1\nfrozen 0",
+            "cpu.stat": "usage_usec 22481178\nuser_usec 18476191\nsystem_usec 4004987\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 921\nnr_throttled 851\nthrottled_usec 83160407\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "69513216",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "1"
+          },
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "gid": 1001,
+          "host_readiness_only": true,
+          "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "observed_utc": "2026-11-11T16:13:54.838720+00:00",
+          "parent": {
+            "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+            "device": 31,
+            "directory": true,
+            "gid": 0,
+            "inode": 7066,
+            "mode": 493,
+            "symlink": false,
+            "uid": 0
+          },
+          "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+          "phase": "inside-after-native",
+          "pid": 4968,
+          "read_errors": {},
+          "schema": "trnm-ci-original-public-host-observation-v1",
+          "service": "trnm-from-zero-43052900246-1-native-priorities-2395.service",
+          "thread_cgroup": "0::/trnmponpublic.slice/trnm-from-zero-43052900246-1-native-priorities-2395.service",
+          "thread_privileges": {
+            "CapBnd": "0000000000000000",
+            "NoNewPrivs": "1"
+          },
+          "uid": 1001
+        },
+        "host_before": {
+          "boot_id": "e4467231-e96e-4736-9409-b547a3dc1666",
+          "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+          "consensus_or_model_authority": false,
+          "counters": {
+            "cgroup.events": "populated 1\nfrozen 0",
+            "cpu.stat": "usage_usec 101977\nuser_usec 80196\nsystem_usec 21781\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 6\nnr_throttled 4\nthrottled_usec 287044\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "17121280",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "1"
+          },
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "gid": 1001,
+          "host_readiness_only": true,
+          "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "observed_utc": "2026-11-11T16:12:23.331326+00:00",
+          "parent": {
+            "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+            "device": 31,
+            "directory": true,
+            "gid": 0,
+            "inode": 7066,
+            "mode": 493,
+            "symlink": false,
+            "uid": 0
+          },
+          "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+          "phase": "inside-before-native",
+          "pid": 4968,
+          "read_errors": {},
+          "schema": "trnm-ci-original-public-host-observation-v1",
+          "service": "trnm-from-zero-43052900246-1-native-priorities-2395.service",
+          "thread_cgroup": "0::/trnmponpublic.slice/trnm-from-zero-43052900246-1-native-priorities-2395.service",
+          "thread_privileges": {
+            "CapBnd": "0000000000000000",
+            "NoNewPrivs": "1"
+          },
+          "uid": 1001
+        },
+        "host_child_errors": [],
+        "host_controller_errors": [],
+        "independent_operational_domains": false,
+        "mode": "attack-free-baseline",
+        "new_useful_computation_evidence": null,
+        "observed_config_view": {
+          "policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+          "public_resource_policy": null,
+          "settings_profile": null,
+          "state_backend": null
+        },
+        "observed_config_view_sha256": "ed600e99b93a2095db44d7659703e1d6c8084e30149dff9e3cb0b769a60bab89",
+        "original_gate_unchanged": true,
+        "original_pair_phase_index": 0,
+        "original_phase_order": [
+          "attack-free-baseline",
+          "from-zero-pressure"
+        ],
+        "plan_provenance": "frozen fixture source; retrospective import",
+        "previous_local_failure_verified": false,
+        "prospective_registration": false,
+        "randomized_order": false,
+        "report_member": "from-zero-native/confirmation/report.json",
+        "report_sha256": "4a4ec5d92810f51df792a2f1f08e4af4c9cb47c107c5ed3e3a8e2ef71dae9a1d",
+        "same_host_only": true,
+        "saturation_capacity_measured": false,
+        "zip_sha256": "8b21d753e0ac85ffdca7bc3e0a5f953d4dfffb24c7a10cc9ae394dcfe6590307"
+      },
+      "new_useful_computation": {
+        "claim_depends_on_external_usefulness_evidence": true,
+        "complete_unique_count": null,
+        "known_operations": 0,
+        "known_unique": 0,
+        "missing_operations": 1
+      },
+      "operation_slo": {
+        "complete_coverage": true,
+        "declared_operations": 1,
+        "over_all_planned": 1.0,
+        "successful": 1
+      },
+      "outcome_counts": {
+        "confirmed": 1
+      },
+      "planned_arrival_missing": 1,
+      "planned_denominator_cdf": [],
+      "planned_operations": 1,
+      "profile_id": "original-four-second-pair",
+      "recovery": {
+        "reason": "NO_PREDECLARED_RECOVERY_CRITERION",
+        "recovery_time_ns": null,
+        "status": "not_measured"
+      },
+      "rejected_confirmation_events": [],
+      "resources": {
+        "all_costs_measured": false,
+        "coverage_note": "Observed scoped costs are partial unless both the owner inventory and every required record are complete.",
+        "inclusive_nested_records_excluded": 0,
+        "inclusive_observations": [],
+        "metrics": {
+          "cpu_ns": {
+            "complete_total": null,
+            "coverage_complete": false,
+            "exact_window_total": null,
+            "gauge_peaks_are_not_summed": false,
+            "observed_cost_per_confirmation": 508380435.0,
+            "observed_disjoint_total": 508380435,
+            "owners": {
+              "attacker-worker-total": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 0,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "client-reader": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 34385643,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "independent-replay-caller-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 473994792,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              }
+            }
+          }
+        },
+        "no_wall_fraction_cpu_imputation": true,
+        "records": 3
+      },
+      "run_id": "ci-43052900246-13871459353/confirmation/attack-free-baseline",
+      "telemetry_counts": {
+        "ack": 7,
+        "confirmation": 1,
+        "head": 62,
+        "observer_end": 1,
+        "request_start": 1,
+        "resource": 3
+      },
+      "unique_confirmed_transaction_ids": 1,
+      "window_ns": 4000000000,
+      "window_success_fraction": 1.0
+    },
+    {
+      "administratively_censored_count": 1,
+      "chain_instance_id": "ci-43052900246-13871459353/confirmation/from-zero-pressure/fresh-ledger",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "confirmed_operations": 0,
+      "content": {
+        "complete_unique_count": 0,
+        "known_operations": 0,
+        "known_unique": 0,
+        "missing_operations": 0
+      },
+      "deadline_before_window_success_fraction": 0.0,
+      "goodput": {
+        "denominator_window_ns": 4000000000,
+        "interpretation": "fixed-workload finite-window goodput; not saturated capacity",
+        "numerator_confirmed_operations": 0,
+        "operations_per_second": 0.0
+      },
+      "identity": {
+        "binary_sha256": "03d0dada775a2531876ce796192b59d27d78f86848e053de554ee70e281eb387",
+        "config_sha256": null,
+        "source_commit": "8ebcdb01016946a131f9067ebe1ace39b9c4f260",
+        "source_tree": "1b887f5fe57c6c3875ad28b8cc26bd83a8f77b83"
+      },
+      "identity_missing": [
+        "config_sha256"
+      ],
+      "latency_from_actual_start_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": null,
+        "n_missing_among_successes": 0,
+        "n_observed": 0,
+        "n_successes": 0,
+        "nonconfirmation_count": 1,
+        "nonconfirmation_fraction": 1.0,
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "planned_denominator": 1
+      },
+      "latency_from_schedule_ns": {
+        "definition": "nearest-rank, conditional on timely valid confirmation and observed latency",
+        "max": null,
+        "n_missing_among_successes": 0,
+        "n_observed": 0,
+        "n_successes": 0,
+        "nonconfirmation_count": 1,
+        "nonconfirmation_fraction": 1.0,
+        "p50": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "planned_denominator": 1
+      },
+      "metadata": {
+        "archive_key": "ci-43052900246-13871459353",
+        "causal_mechanism_established": false,
+        "ci_artifact_id": 13871459353,
+        "ci_job_id": 130634539770,
+        "ci_run_id": 43052900246,
+        "clock_error_bound_ns": null,
+        "clock_resolution_ns": null,
+        "collector_analysis_contract_version": "sp27-02-collector-analysis-v2",
+        "config_freeze_complete": false,
+        "confirmation_attestation_scope": "positive native independent endpoint plus source path; cryptography not reexecuted by Python",
+        "event_coverage_scope": "all fixture planned round starts and recorded native observations, not all physical activity",
+        "exclusive_resources_established": false,
+        "host_after": {
+          "boot_id": "e4467231-e96e-4736-9409-b547a3dc1666",
+          "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+          "consensus_or_model_authority": false,
+          "counters": {
+            "cgroup.events": "populated 1\nfrozen 0",
+            "cpu.stat": "usage_usec 22481178\nuser_usec 18476191\nsystem_usec 4004987\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 921\nnr_throttled 851\nthrottled_usec 83160407\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "69513216",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "1"
+          },
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "gid": 1001,
+          "host_readiness_only": true,
+          "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "observed_utc": "2026-11-11T16:13:54.838720+00:00",
+          "parent": {
+            "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+            "device": 31,
+            "directory": true,
+            "gid": 0,
+            "inode": 7066,
+            "mode": 493,
+            "symlink": false,
+            "uid": 0
+          },
+          "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+          "phase": "inside-after-native",
+          "pid": 4968,
+          "read_errors": {},
+          "schema": "trnm-ci-original-public-host-observation-v1",
+          "service": "trnm-from-zero-43052900246-1-native-priorities-2395.service",
+          "thread_cgroup": "0::/trnmponpublic.slice/trnm-from-zero-43052900246-1-native-priorities-2395.service",
+          "thread_privileges": {
+            "CapBnd": "0000000000000000",
+            "NoNewPrivs": "1"
+          },
+          "uid": 1001
+        },
+        "host_before": {
+          "boot_id": "e4467231-e96e-4736-9409-b547a3dc1666",
+          "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+          "consensus_or_model_authority": false,
+          "counters": {
+            "cgroup.events": "populated 1\nfrozen 0",
+            "cpu.stat": "usage_usec 101977\nuser_usec 80196\nsystem_usec 21781\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 6\nnr_throttled 4\nthrottled_usec 287044\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "17121280",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "1"
+          },
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "gid": 1001,
+          "host_readiness_only": true,
+          "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "observed_utc": "2026-11-11T16:12:23.331326+00:00",
+          "parent": {
+            "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+            "device": 31,
+            "directory": true,
+            "gid": 0,
+            "inode": 7066,
+            "mode": 493,
+            "symlink": false,
+            "uid": 0
+          },
+          "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+          "phase": "inside-before-native",
+          "pid": 4968,
+          "read_errors": {},
+          "schema": "trnm-ci-original-public-host-observation-v1",
+          "service": "trnm-from-zero-43052900246-1-native-priorities-2395.service",
+          "thread_cgroup": "0::/trnmponpublic.slice/trnm-from-zero-43052900246-1-native-priorities-2395.service",
+          "thread_privileges": {
+            "CapBnd": "0000000000000000",
+            "NoNewPrivs": "1"
+          },
+          "uid": 1001
+        },
+        "host_child_errors": [],
+        "host_controller_errors": [],
+        "independent_operational_domains": false,
+        "mode": "from-zero-pressure",
+        "new_useful_computation_evidence": null,
+        "observed_config_view": {
+          "policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+          "public_resource_policy": null,
+          "settings_profile": null,
+          "state_backend": null
+        },
+        "observed_config_view_sha256": "ed600e99b93a2095db44d7659703e1d6c8084e30149dff9e3cb0b769a60bab89",
+        "original_gate_unchanged": true,
+        "original_pair_phase_index": 1,
+        "original_phase_order": [
+          "attack-free-baseline",
+          "from-zero-pressure"
+        ],
+        "plan_provenance": "frozen fixture source; retrospective import",
+        "previous_local_failure_verified": false,
+        "prospective_registration": false,
+        "randomized_order": false,
+        "report_member": "from-zero-native/confirmation/report.json",
+        "report_sha256": "4a4ec5d92810f51df792a2f1f08e4af4c9cb47c107c5ed3e3a8e2ef71dae9a1d",
+        "same_host_only": true,
+        "saturation_capacity_measured": false,
+        "zip_sha256": "8b21d753e0ac85ffdca7bc3e0a5f953d4dfffb24c7a10cc9ae394dcfe6590307"
+      },
+      "new_useful_computation": {
+        "claim_depends_on_external_usefulness_evidence": true,
+        "complete_unique_count": 0,
+        "known_operations": 0,
+        "known_unique": 0,
+        "missing_operations": 0
+      },
+      "operation_slo": {
+        "complete_coverage": true,
+        "declared_operations": 1,
+        "over_all_planned": 0.0,
+        "successful": 0
+      },
+      "outcome_counts": {
+        "unconfirmed": 1
+      },
+      "planned_arrival_missing": 1,
+      "planned_denominator_cdf": [],
+      "planned_operations": 1,
+      "profile_id": "original-four-second-pair",
+      "recovery": {
+        "reason": "NO_PREDECLARED_RECOVERY_CRITERION",
+        "recovery_time_ns": null,
+        "status": "not_measured"
+      },
+      "rejected_confirmation_events": [],
+      "resources": {
+        "all_costs_measured": false,
+        "coverage_note": "Observed scoped costs are partial unless both the owner inventory and every required record are complete.",
+        "inclusive_nested_records_excluded": 0,
+        "inclusive_observations": [],
+        "metrics": {
+          "cpu_ns": {
+            "complete_total": null,
+            "coverage_complete": false,
+            "exact_window_total": null,
+            "gauge_peaks_are_not_summed": false,
+            "observed_cost_per_confirmation": null,
+            "observed_disjoint_total": 574507717,
+            "owners": {
+              "attacker-worker-total": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 340417763,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "client-reader": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 15504804,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              },
+              "independent-replay-caller-thread": {
+                "coverage_complete": false,
+                "intervals_unambiguous": true,
+                "max_observed_gauge": null,
+                "observed_total": 218585150,
+                "records": 1,
+                "scopes": [
+                  "whole_lifecycle"
+                ]
+              }
+            }
+          }
+        },
+        "no_wall_fraction_cpu_imputation": true,
+        "records": 3
+      },
+      "run_id": "ci-43052900246-13871459353/confirmation/from-zero-pressure",
+      "telemetry_counts": {
+        "ack": 7,
+        "head": 27,
+        "observer_end": 1,
+        "request_start": 1,
+        "resource": 3
+      },
+      "unique_confirmed_transaction_ids": 0,
+      "window_ns": 4000000000,
+      "window_success_fraction": 0.0
+    }
+  ],
+  "schema": "sp27-confirmed-goodput-analysis-v1"
+}
