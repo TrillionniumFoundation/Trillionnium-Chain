@@ -1,0 +1,133 @@
+{
+  "adapter_binary_sha256": "0d01d50cdfca9883b5830ad10804c4b116dc109b3a3fe9c24c38c5a6018dbd20",
+  "cases": [
+    {
+      "case": "01-revoke-before-first-effect",
+      "classification": "PRESERVED",
+      "database_sha256": "997f988b25a2435da68216bfda30a30c93a627a32e02e9f73d9e88988b12882b",
+      "effect_count": 0
+    },
+    {
+      "case": "01b-precheck-control",
+      "classification": "VIOLATION",
+      "database_sha256": "b6c132280969ab337bb28a0fa30a952ef3e4677065882f2b177da4103e6da8c9",
+      "effect_count": 1
+    },
+    {
+      "case": "02-lost-ack-owner-transfer",
+      "classification": "PRESERVED",
+      "database_sha256": "2c58c8bf93ce44126302d7fc6ea69de77c21df0006c32fa7ce68fc888706bd9f",
+      "effect_count": 1
+    },
+    {
+      "case": "02b-epoch-key-control",
+      "classification": "VIOLATION",
+      "database_sha256": "63556673df8c3879683bcb4d4548a75ccb7a8c28f19ecd051980ebb58561b078",
+      "effect_count": 2
+    },
+    {
+      "case": "03-same-content-fresh-authorization",
+      "classification": "PRESERVED",
+      "database_sha256": "f105fb38016264a721f06bac46de361dd3efd0a7e28e0684c2a3522aa3465f57",
+      "effect_count": 2
+    }
+  ],
+  "development_run": false,
+  "external_provider_outcome_without_query": "UNKNOWN",
+  "finished": {
+    "monotonic_ns": 4281911346950,
+    "pid": 58,
+    "utc": "2026-11-12T00:01:09.804991+00:00"
+  },
+  "go_integrate_no_go": "INTEGRATE",
+  "host": {
+    "boot_id": "eae41e3e-ceed-45ed-b7de-de032391302f",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+  },
+  "live_agent05_ack_observed": false,
+  "native_calls": {
+    "fixture_sign": 9,
+    "verify": 9
+  },
+  "native_library_adapter_executed": true,
+  "native_process_exit_codes": [
+    0
+  ],
+  "new_controlled_effect_sink_executed": true,
+  "new_joint_schedule_classifications": {
+    "PRESERVED": 3,
+    "VIOLATION": 2
+  },
+  "new_model_forwards": 0,
+  "new_native_end_to_end_executions": 0,
+  "new_native_recovery_executions": 0,
+  "opaque_provider_boundary": {
+    "classification": "UNKNOWN",
+    "native_chain_verifier_used": false,
+    "new_native_end_to_end_executions": 0,
+    "schema": "sp27-03.opaque-effect-boundary.v1",
+    "scope": "controlled opaque API boundary; researcher oracle never substituted into consumer result",
+    "worlds": [
+      {
+        "client_observation": {
+          "ack_received": false,
+          "authoritative_query_available": false,
+          "logical_operation_id": "stable-opaque-operation",
+          "new_effect_permission": false,
+          "redispatch_performed": false,
+          "safe_retry_authorized": false,
+          "status": "UNKNOWN"
+        },
+        "researcher_oracle_effects": 0
+      },
+      {
+        "client_observation": {
+          "ack_received": false,
+          "authoritative_query_available": false,
+          "logical_operation_id": "stable-opaque-operation",
+          "new_effect_permission": false,
+          "redispatch_performed": false,
+          "safe_retry_authorized": false,
+          "status": "UNKNOWN"
+        },
+        "researcher_oracle_effects": 1
+      }
+    ]
+  },
+  "prior_confirmation": {
+    "classifications": {
+      "ASSUMPTION_VIOLATED": 1,
+      "PRESERVED": 18,
+      "UNKNOWN": 3,
+      "VIOLATION": 6
+    },
+    "implementation_commit": "f7875030d9ef7cc3f1513d3372ae47d7784144ee",
+    "process_cases": 28
+  },
+  "production_qualification": false,
+  "same_transaction_domain_assumed": true,
+  "schema": "sp27-03.joint-summary.v1",
+  "source": {
+    "chain": {
+      "branch": "test/chain-sp27-03-recovery-effects-20261111-297a",
+      "head": "1e5667354f6fa17170202416b9d24562e6c72496",
+      "path": "/workspace/scratch/297a393433ba/chain-work",
+      "status_porcelain": "",
+      "tree": "584b16d72f0e1030c51d9beb931d9bc4bc4ba746"
+    },
+    "papers": {
+      "branch": "codex/sp27-03-recovery-effects-20261111-297a",
+      "head": "303f3358e8b36f4c6e9453ea5cf3c40e822154e9",
+      "path": "/workspace/scratch/297a393433ba/papers-work",
+      "status_porcelain": "",
+      "tree": "cedbad49062a253038b9e86cd6d2f4d2bfc4ea31"
+    }
+  },
+  "standalone_submission": "NO_GO",
+  "started": {
+    "monotonic_ns": 4263288593642,
+    "pid": 58,
+    "utc": "2026-11-12T00:00:51.182235+00:00"
+  }
+}

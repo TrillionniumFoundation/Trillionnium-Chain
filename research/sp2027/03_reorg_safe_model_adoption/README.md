@@ -1,5 +1,11 @@
 # SP27-03: actual admission adapter and controlled effect boundary
 
+**Disposition: INTEGRATE into the SP27-03/05 supporting chapter and artifact;
+independent submission NO_GO on this evidence.** The joint run exercises an
+actual native admission-library adapter and a controlled effect sink. It
+supports the stated composition boundaries, without establishing a new
+unbounded mechanism or a native Node/FinalUse product path.
+
 This research continuation starts from `docs/chain-sp2027` at
 `5b591754b426c6f88bea6d399fafcd77e31255d8`. It accompanies the restored
 hepta-papers SP27-03 delivery `f72d0fc5277aedec768913d7f53b7a18b0e5986f` and its
@@ -7,6 +13,31 @@ original execution `f7875030d9ef7cc3f1513d3372ae47d7784144ee`. It is an evidence
 and reproduction note under the existing
 [development plan](../../../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md),
 not another product development plan.
+
+## Execution source and evidence delivery
+
+| Identity | Frozen value |
+| --- | --- |
+| Chain adapter execution source | `1e5667354f6fa17170202416b9d24562e6c72496` |
+| Chain execution tree | `584b16d72f0e1030c51d9beb931d9bc4bc4ba746` |
+| Papers consumer execution source | `303f3358e8b36f4c6e9453ea5cf3c40e822154e9` |
+| Papers execution tree | `cedbad49062a253038b9e86cd6d2f4d2bfc4ea31` |
+| Adapter source SHA-256 | `67e35ac1089421d020dc823914ee5e2c410c4bbea0b69d306fd52340ff54a7dc` |
+| Adapter ELF SHA-256 | `0d01d50cdfca9883b5830ad10804c4b116dc109b3a3fe9c24c38c5a6018dbd20` |
+
+This delivery is an **evidence-only child** of the Chain execution source.
+The adapter's bytes are unchanged. The source checkpoints above, rather than
+the later evidence commit, identify the code used for execution. No native
+result is reassigned to the evidence child's complete tree, and no native gate
+was rerun merely to copy its records. The final evidence commit is obtained by
+Git readback; its own hash is intentionally absent from the committed metadata.
+
+The [delivery map](evidence/SOURCE_AND_DELIVERY.json) preserves the copied-file
+identities, scope and decision. All original native gate receipts and logs are
+retained under [native validation](evidence/native-validation/frozen-1e5667354/BUILD_RECEIPT.json).
+Their local execution paths are historical provenance, not new execution
+locations. The separate initial compilation logs retain their development
+scope and the original build receipt's relative paths.
 
 ## Executable boundary
 
@@ -63,9 +94,71 @@ counter command. The separately named effect digest commits the actual
 counter mutation record. Original completion owner/incarnation and verifier
 provenance remain separate from that business identity.
 
+## Observed joint cases
+
+The exact-source run `confirmation-303f335-1e5667354` recorded the following
+outcomes. Its byte-identical [summary](evidence/joint-result-reference/summary.json)
+and [interface-consumption receipt](evidence/joint-result-reference/interface-consumption-receipt.json)
+are included here. The [upstream manifest index](evidence/joint-result-reference/UPSTREAM_MANIFEST_SHA256.json)
+identifies the complete raw run retained by the companion Papers delivery;
+this index copy does not assert that every listed database/event file is
+duplicated in this Chain directory.
+
+| Schedule | Classification | Committed counter effects |
+| --- | --- | ---: |
+| Revocation before the first effect, protected boundary | PRESERVED | 0 |
+| Cached precheck unsafe control | VIOLATION | 1 |
+| Committed effect, lost ACK, then owner transfer, stable operation key | PRESERVED | 1 |
+| Incarnation-dependent key unsafe control | VIOLATION | 2 |
+| Same content under a fresh authorization and new business operation | PRESERVED | 2 |
+
+These are **3 PRESERVED and 2 VIOLATION**, with the unsafe observations retained.
+A separate paired opaque-provider experiment has two indistinguishable client
+observations, both **UNKNOWN**. Its researcher-only oracle sees zero versus one
+effect; neither oracle value is substituted for the client's result or used to
+authorize redispatch. This is one paired experiment, not two additional safe
+joint schedules.
+
+The joint run made nine fresh fixture-sign calls and nine fresh verify calls
+to the actual Rust library adapter. Reading the two archived Agent 05 request
+observations added **zero native recovery runs, zero model forwards and zero
+native end-to-end runs**. No live Agent 05 acknowledgment was observed; the
+consumer freezes the delivered producer contract without claiming bilateral
+approval.
+
+The protected counter, current authority and completion share one SQLite
+writer transaction. The lost-ACK child exits after commit and before response;
+the original runner parent then reopens the closed database through a new
+connection. This is a different process from the effect committer, not a claim
+that a newly launched observer had no prior context. The returned completion
+keeps the original owner/incarnation and grants no current execution authority.
+
+## Native gate outcomes
+
+The original repository command observer verified the entire committed source
+before and after each recorded gate: **27,889 entries, 2,553,900,018 bytes**,
+always the Chain execution source and tree listed above. The
+[build receipt](evidence/native-validation/frozen-1e5667354/BUILD_RECEIPT.json)
+binds the raw receipts, logs, Cargo lock, toolchain and ELF identity.
+
+| Gate | Exact-source result |
+| --- | --- |
+| Locked offline adapter build | exit 0; existing independent target reused |
+| Locked affected-crate Cargo graph | exit 0 |
+| Retained `trnm-research-protocol` tests | 35 passed, 0 failed, 1 ignored |
+| Affected-crate Clippy, all targets/features, `-D warnings` | exit 0 |
+| Workspace formatting check | exit 0 |
+| Original source-integrity negative controls | 43 tests passed |
+
+The ignored test is the retained `print_golden_fixture_for_regeneration` helper.
+The exact-source build is cached, not a fresh-target build. These records do
+not claim that all workspace native tests or all workspace Clippy targets ran.
+Passing retained PQ component tests does not change the V1 Ed25519 adapter's
+explicitly non-PQ experiment scope.
+
 ## Reproduction
 
-Use a clean, frozen copy of this branch and the companion paper branch. Run
+Use clean isolated worktrees at the two execution checkpoints above. Run
 the repository preflight before builds. The existing workspace lock is used;
 no new package or dependency is introduced.
 
@@ -74,9 +167,9 @@ bash scripts/project-preflight.sh
 cargo build --locked --manifest-path trillionnium/Cargo.toml \
   -p trnm-research-protocol --example sp27_03_authorization_adapter
 cargo test --locked --manifest-path trillionnium/Cargo.toml \
-  -p trnm-research-protocol --all-targets
+  -p trnm-research-protocol --lib --tests --all-features
 cargo clippy --locked --manifest-path trillionnium/Cargo.toml \
-  -p trnm-research-protocol --all-targets -- -D warnings
+  -p trnm-research-protocol --all-targets --all-features -- -D warnings
 cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
 ```
 
@@ -93,6 +186,9 @@ The runner refuses a dirty source unless `--allow-dirty-development` is
 explicitly supplied. Development runs remain separate from the committed-source
 confirmation. Native inputs, outputs, stderr, process return codes and binary
 hashes are retained alongside the event journal and SQLite databases.
+The recorded build/test commands used Rust/Cargo 1.95.0 and `--offline` with a
+prepared private dependency cache; their exact argv and environment are in the
+original receipts. Store new outputs outside the clean source worktrees.
 
 ## Claim boundary
 
@@ -112,6 +208,21 @@ CapLease-style confirmation/budget ledger against arbitrary fresh-ID
 reissuance. The test concerns the observed revocation barrier, not exact
 wall-clock expiration at a later physical effect. Completion disclosure
 authorization is outside the trusted local-reader experiment.
+
+The record field `valid_at_commit` is the consumer's current authorization
+snapshot predicate; it does not assert that a wall-clock expiration boundary
+was sampled at SQLite's exact physical commit instant. A saved pretty JSON
+request file and the compact canonical JSON actually written to native stdin
+also have distinct byte hashes. Native `input_sha256` refers to the latter.
+
+The result supports the combined 03/05 artifact and its boundary analysis.
+CTA's reauthorization boundary, RIFL's stable operation/completion principle,
+and CapLease's confirmation/budget constraints remain the relevant comparison.
+This experiment does not establish an independently new mechanism beyond
+their correct, explicitly limited composition; standalone SP27-03 remains
+NO_GO while the supporting contribution is INTEGRATE. The
+[frozen original-literature recheck](https://github.com/TrillionniumFoundation/hepta-papers/blob/303f3358e8b36f4c6e9453ea5cf3c40e822154e9/research/sp2027/03_reorg_safe_model_adoption/joint/LITERATURE_RECHECK_20261111.md)
+records the primary references and the comparison's limits.
 
 The original 28 schedules remain 6 `VIOLATION`, 18 `PRESERVED`, 3 `UNKNOWN`
 and 1 `ASSUMPTION_VIOLATED`. Their results are not replaced or pooled with

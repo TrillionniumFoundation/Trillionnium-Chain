@@ -1,0 +1,56 @@
+{
+  "schema": "sp27-03.native-validation-batch.v1",
+  "source_binding": "parent original record_pq_native_command before/after receipt",
+  "steps": [
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-research-protocol",
+        "--lib",
+        "--tests",
+        "--all-features"
+      ],
+      "elapsed_ns": 10264044247,
+      "ended_utc": "2026-11-12T00:00:48.508692+00:00",
+      "exit_code": 0,
+      "label": "retained-tests",
+      "started_utc": "2026-11-12T00:00:38.244659+00:00",
+      "stderr_file": "retained-tests.stderr",
+      "stderr_sha256": "dea9380810e688394d6c453cfbeb42ec6ef2ad96824d70b7782c23602954acc2",
+      "stdout_file": "retained-tests.stdout",
+      "stdout_sha256": "68e626eb89e8d169ca6c1ce49497d287a68663a82effafced6809734c39a59de"
+    },
+    {
+      "argv": [
+        "cargo",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-research-protocol",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "elapsed_ns": 244438250425,
+      "ended_utc": "2026-11-12T00:04:52.947993+00:00",
+      "exit_code": 0,
+      "label": "strict-clippy",
+      "started_utc": "2026-11-12T00:00:48.510192+00:00",
+      "stderr_file": "strict-clippy.stderr",
+      "stderr_sha256": "caa4519a81ba7eb29854a38c087bc832420d097dc145b7e25d103107ae1186c5",
+      "stdout_file": "strict-clippy.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}
