@@ -8,6 +8,17 @@ owns integration. These changes do not activate a protocol or qualify the
 whole chain. A frozen report's reproducibility is independent of whether its
 upstream implementation remains eligible for current use.
 
+The completed observations are bound to frozen B commit
+`523a4f431b65f8a52128962f5880c4030e3e05db`, tree
+`51b57df779e46bb16518c5c6c7aef90e48faa06d`. The
+[execution record](EXECUTION_RECORD.md) and
+[machine-readable summary](execution-summary.json) retain actual results and
+the separate C archival-successor scope. B has 272 completed scoped Python
+methods, 105 QROM control executions and 293 CI outer methods; these counts
+overlap and are not a combined unique-test total. Three strict-Clippy
+attempts did not complete successfully, and regular Rust/doc tests were not
+run. Whole-chain qualification remains HOLD.
+
 ## The complete reversible construction remains an existing result
 
 The [original construction](../pon-quantum-construction-20261104/README.md)
@@ -160,7 +171,19 @@ successful current eligibility checks. CI requires the new controls and tests
 that deleting, relocating, duplicating or suppressing them is rejected.
 
 The implementation checkpoint is a source identity, not a claim that every
-retained suite passed on that commit. Exact committed-source verification,
-raw command outcomes and any failed observations are recorded separately in
-the execution record when the frozen successor is tested. No earlier native
-PASS is transferred to this successor.
+retained suite passed on that commit. The [execution record](EXECUTION_RECORD.md)
+now binds the complete scoped and CI runs to B and preserves the incomplete
+formal exploration that began before B and crossed HEAD changes, both
+environment interruptions and all three native attempts. The third
+strict-Clippy attempt returned 101 after a compiler-child
+SIGKILL; its cause remains unknown. The earlier two attempts were stopped by
+the owner's resource guard. Regular Rust and doc tests remain `NOT_RUN`.
+
+The [2,377,812-byte archive](validation-evidence.tar.xz),
+[159-member manifest](validation-evidence.members.json) and
+[packaging record](validation-evidence.packaging.json) retain the original
+streams, receipts, observers and source guards. Before/recovered/after physical
+B snapshots matched 28,341 tracked entries and 2,578,941,912 bytes. The archive
+fits the unchanged 4 MiB reader cap. This C evidence/documentation successor
+does not relabel B executions as tests on C, and no earlier native PASS is
+transferred to either source.

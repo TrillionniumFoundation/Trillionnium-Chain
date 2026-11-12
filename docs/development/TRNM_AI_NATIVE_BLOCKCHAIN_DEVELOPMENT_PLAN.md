@@ -1,3 +1,56 @@
+**Frozen B execution and C lossless evidence, 2026-11-12 UTC — HOLD:**
+
+The tested successor is B `523a4f431b65f8a52128962f5880c4030e3e05db`,
+tree `51b57df779e46bb16518c5c6c7aef90e48faa06d`. Its before, recovered
+and final physical source snapshots matched all 28,341 tracked entries and
+2,578,941,912 bytes; the final source guard returned 0. These snapshot checks
+do not prove continuous exclusion of writes. The later C successor contains
+only archive/documentation and necessary corpus-pin changes; B executions
+are not relabeled as executions on C.
+
+The [execution record](../../evidence/pon-quantum-lifetime-20261111-e464/EXECUTION_RECORD.md)
+and [summary](../../evidence/pon-quantum-lifetime-20261111-e464/execution-summary.json)
+separately retain 272 complete scoped Python method executions, 105 QROM
+controls and 293 complete CI outer methods. The QROM roster repeats the
+19 lifetime-ledger tests. Nested CI fixture summaries are not added to the
+counts, and no combined unique-test total is claimed. Report reproductions
+and verifications matched their full canonical JSON. Current-proof and
+unproved-quantum qualification commands retained actual refusal exits 2, 2
+and 3. Two environment interruptions retain their partial streams and unknown
+terminal outcomes; only complete suite observations contribute completed-suite
+counts.
+
+The broad formal exploration started before B and crossed HEAD changes. It
+remains INCOMPLETE: 542 `ok`, 10 `FAIL` and 2 `ERROR` method lines, plus one
+fixture error, without a final unittest summary or runtime import inventory.
+Its source scope and original failure
+records remain separate from B. Native graph/format observations and the
+separate provider-SDK smoke implemented in C succeeded. Strict Clippy did not:
+the first two attempts were resource-guard stops; the third returned Cargo 101 after a child
+SIGKILL while compiling `trnm-pon-node` library tests. The signal cause remains
+unknown; neither OOM nor the retained SQLite-loader UNQUALIFIED warning is
+established as the cause. Regular Rust/doc tests were NOT_RUN. Failed and
+nonterminal cache-relocation records retain their original statuses.
+
+The [complete archive](../../evidence/pon-quantum-lifetime-20261111-e464/validation-evidence.tar.xz)
+is 2,377,812 bytes / SHA-256
+`82e3f7e88b83cde4bc3edff7db6b28f0cd81724978ca6929c51cb46192b43467`,
+with 159 members and full byte readback. Its
+[member manifest](../../evidence/pon-quantum-lifetime-20261111-e464/validation-evidence.members.json)
+and [packaging record](../../evidence/pon-quantum-lifetime-20261111-e464/validation-evidence.packaging.json)
+retain the complete failure, interruption, observer and final-source evidence.
+It fits the existing 4,194,304-byte reader limit without splitting or raising
+the cap. The archive excludes only the review prose draft. A prior packaging
+candidate's member-set-change refusal is preserved without promoting that
+draft to final evidence.
+
+The existing reversible oracle construction and finite posterior policy keep
+their declared scopes. Lifetime security bits/error bounds remain null;
+authorization, complete-relation and quantum-work qualifications remain
+false. No native baseline PASS, quantum hardware execution, attacker lower
+bound, joint W1/DAA/timestamp/chainwork proof or production activation is
+inferred. Later committed-C checks must record their own source and outcomes.
+
 **Persistent-domain policies and upstream proof withdrawal, 2026-11-11 UTC — HOLD:**
 
 Continue from #908 at `6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d` with
