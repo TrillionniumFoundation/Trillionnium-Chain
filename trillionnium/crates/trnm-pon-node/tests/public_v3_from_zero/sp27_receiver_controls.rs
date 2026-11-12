@@ -212,7 +212,11 @@ fn prepare_business(path: &Path) -> (Settings, Vec<Packet>, Value) {
     for height in 1..=7 {
         let packet = producer
             .mine(
-                if height == 1 { vec![tx.clone()] } else { vec![] },
+                if height == 1 {
+                    vec![tx.clone()]
+                } else {
+                    vec![]
+                },
                 settings.genesis_time() + height * 10,
                 ingress::now().unwrap(),
             )
@@ -274,10 +278,14 @@ fn repeated_unpressured_confirmation_stops_before_pressure_on_first_divergence()
             "health_phases": "NOT_EXECUTED", "pressure_controls": "NOT_EXECUTED",
             "causal_status": "environment/identity eligibility failure; no attack experiment"}));
     } else {
-        write_new_json(&path.join("acquisition-started.json"), &json!({
-            "schema": "sp27-receiver-acquisition-started-v1", "planned_packets": 7,
-            "status": "STARTED_NOT_YET_OBSERVED_COMPLETE"
-        })).unwrap();
+        write_new_json(
+            &path.join("acquisition-started.json"),
+            &json!({
+                "schema": "sp27-receiver-acquisition-started-v1", "planned_packets": 7,
+                "status": "STARTED_NOT_YET_OBSERVED_COMPLETE"
+            }),
+        )
+        .unwrap();
         match catch_unwind(AssertUnwindSafe(|| prepare_business(&path))) {
             Ok((settings, packets, acquisition)) => {
                 write_new_json(&path.join("acquisition.json"), &acquisition).unwrap();
@@ -288,14 +296,20 @@ fn repeated_unpressured_confirmation_stops_before_pressure_on_first_divergence()
                 });
                 for index in 0..HEALTH_REPEATS {
                     attempted += 1;
-                    write_new_json(&path.join(format!("raw/health-{index:03}-started.json")),
+                    write_new_json(
+                        &path.join(format!("raw/health-{index:03}-started.json")),
                         &json!({"schema": "sp27-receiver-health-started-v1", "health_index": index,
                             "status": "STARTED_NOT_YET_OBSERVED_COMPLETE", "pressure_workers": 0,
-                            "requested_window_ns": WINDOW_NS})).unwrap();
+                            "requested_window_ns": WINDOW_NS}),
+                    )
+                    .unwrap();
                     let phase = catch_unwind(AssertUnwindSafe(|| {
                         signed_confirmation_phase_with_builder(
-                            &path.join(format!("health-{index:03}")), &settings,
-                            &packets, unused.clone(), false,
+                            &path.join(format!("health-{index:03}")),
+                            &settings,
+                            &packets,
+                            unused.clone(),
+                            false,
                         )
                     }));
                     match phase {
@@ -345,8 +359,8 @@ fn repeated_unpressured_confirmation_stops_before_pressure_on_first_divergence()
     write_new_json(&path.join("host-after.json"), &host_after).unwrap();
     let after = identity_record();
     write_new_json(&path.join("identity-after.json"), &after).unwrap();
-    let binary_unchanged = before["binary_sha256"].is_string()
-        && before["binary_sha256"] == after["binary_sha256"];
+    let binary_unchanged =
+        before["binary_sha256"].is_string() && before["binary_sha256"] == after["binary_sha256"];
     if failure.is_none() && (host_after["verified"] != true || !binary_unchanged) {
         failure = Some(json!({"schema": "sp27-receiver-first-divergence-v1",
             "qualification": "NO_GO", "stage": "post-execution-identity-or-host",
@@ -376,8 +390,11 @@ fn repeated_unpressured_confirmation_stops_before_pressure_on_first_divergence()
         "publication_qualified": false, "public_network_ready": false, "production_activation": false,
     });
     write_new_json(&path.join("report.json"), &report).unwrap();
-    println!("{}", json!({"schema": report["schema"], "qualification": report["qualification"],
-        "report_path": path.join("report.json")}));
+    println!(
+        "{}",
+        json!({"schema": report["schema"], "qualification": report["qualification"],
+        "report_path": path.join("report.json")})
+    );
 }
 
 #[test]
@@ -392,7 +409,10 @@ fn health_gate_requires_native_final_gate_and_strict_original_deadline() {
     assert!(healthy(&value));
     value["client_confirmed_before_original_window_end"] = json!(false);
     assert!(!healthy(&value));
-    value.as_object_mut().unwrap().remove("client_confirmed_before_original_window_end");
+    value
+        .as_object_mut()
+        .unwrap()
+        .remove("client_confirmed_before_original_window_end");
     assert!(!healthy(&value));
     value["client_confirmed_before_original_window_end"] = json!(true);
     for end in [WINDOW_NS, WINDOW_NS + 1] {
@@ -412,7 +432,9 @@ fn raw_health_report_is_create_only() {
     write_new_json(&path, &original).unwrap();
     let before = fs::read(&path).unwrap();
     assert_eq!(
-        write_new_json(&path, &json!({"native_final_gate": true})).unwrap_err().kind(),
+        write_new_json(&path, &json!({"native_final_gate": true}))
+            .unwrap_err()
+            .kind(),
         std::io::ErrorKind::AlreadyExists
     );
     assert_eq!(fs::read(path).unwrap(), before);
