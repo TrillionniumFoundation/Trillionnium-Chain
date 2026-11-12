@@ -1,0 +1,45 @@
+{
+  "argv": [
+    "/workspace/scratch/747d27b1ca86/build-setup/rust195/bin/rustc",
+    "--edition=2021",
+    "/workspace/scratch/3069292387f3/incentive-split-probe.rs",
+    "-L",
+    "dependency=/workspace/scratch/3069292387f3/incentive-target/debug/deps",
+    "-o",
+    "/workspace/scratch/3069292387f3/incentive-split-probe",
+    "--extern",
+    "serde_json=/workspace/scratch/3069292387f3/incentive-target/debug/deps/libserde_json-f0d4891802ba697c.rlib",
+    "--extern",
+    "hex=/workspace/scratch/3069292387f3/incentive-target/debug/deps/libhex-1558f6adc06e3fa8.rlib",
+    "--extern",
+    "trnm_crypto_primitives=/workspace/scratch/3069292387f3/incentive-target/debug/deps/libtrnm_crypto_primitives-b52ff7262d87649d.rlib",
+    "--extern",
+    "trnm_protocol=/workspace/scratch/3069292387f3/incentive-target/debug/deps/libtrnm_protocol-4f825df8a29583b1.rlib",
+    "--extern",
+    "trnm_mvcc_fee=/workspace/scratch/3069292387f3/incentive-target/debug/deps/libtrnm_mvcc_fee-a961e3c06b1ab788.rlib"
+  ],
+  "source_sha256": "f717491838af04a57b95e8159b9a8d9a39595123291572741a90e7a777719180",
+  "linked_native_rlibs": {
+    "serde_json": {
+      "path": "/workspace/scratch/3069292387f3/incentive-target/debug/deps/libserde_json-f0d4891802ba697c.rlib",
+      "sha256": "ba3a44df03dff21e3b30b4ff997fa5d4b3808a482266fe6b3a8f757a90ea3358"
+    },
+    "hex": {
+      "path": "/workspace/scratch/3069292387f3/incentive-target/debug/deps/libhex-1558f6adc06e3fa8.rlib",
+      "sha256": "c922ddadfec50858e9ba665371dd5afcc8ccb01e731d01e02057fefa6ad466f5"
+    },
+    "trnm_crypto_primitives": {
+      "path": "/workspace/scratch/3069292387f3/incentive-target/debug/deps/libtrnm_crypto_primitives-b52ff7262d87649d.rlib",
+      "sha256": "862f896ef9100450b7d7502acda19300b3884289c46550800be0cb894fb2572c"
+    },
+    "trnm_protocol": {
+      "path": "/workspace/scratch/3069292387f3/incentive-target/debug/deps/libtrnm_protocol-4f825df8a29583b1.rlib",
+      "sha256": "df61b1102436ca53422a43348c5aa3b020033923c1f281f35c23f9801b7c5315"
+    },
+    "trnm_mvcc_fee": {
+      "path": "/workspace/scratch/3069292387f3/incentive-target/debug/deps/libtrnm_mvcc_fee-a961e3c06b1ab788.rlib",
+      "sha256": "67541630beac48b1461b2ad1c8fd01c8ce9bf18ed5f50c36b8272eca5cf13e93"
+    }
+  },
+  "scope": "preliminary-native-M06-legacy-task-profile-probe-not-ordinary-Node-genesis"
+}

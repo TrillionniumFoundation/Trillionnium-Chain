@@ -1,0 +1,10 @@
+{
+  "native_reexecuted": false,
+  "not_a_combined_candidate_acceptance": true,
+  "original_local_files_sha256_checked": 54,
+  "readme_relative_links_checked": 22,
+  "recorded_utc": "2026-11-12T00:50:53.343711+00:00",
+  "schema": "incentive-evidence-copy-validation-v1",
+  "source_slice_before_819_and_after_restoration_equal": true,
+  "source_slice_pre_post_3b_equal": true
+}
