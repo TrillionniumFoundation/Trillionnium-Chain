@@ -100,10 +100,11 @@ cohort interval ends before its own output record, which is included only by the
 outer process receipt. Prepared-object teardown occurs between the last complete
 search and cohort completion; a missing cohort end cannot assume zero teardown.
 
-Every winner is accepted by the original production and scalar-reference full
-verifiers. Both must reject the canonical last-product-word mutation as `Product`.
-Every exhaustion-control miss is reconstructed and fully replayed by both
-verifiers at maximum target, retaining its original-target miss identity.
+A completed observation requires every winner to be accepted by the original
+production and scalar-reference full verifiers. Both must reject the canonical
+last-product-word mutation as `Product`. Every miss in an exhausted control
+search is reconstructed and fully replayed by both verifiers at maximum target,
+retaining its original-target miss identity.
 Verifier records bind the actual target and complete proof digest.
 
 The [reader](../../scripts/pon_w1_zero_paired_lazy_v1.py) checks the fixed roster,
@@ -125,6 +126,7 @@ deadline, original campaign or failed observation is weakened.
 
 ```sh
 bash scripts/project-preflight.sh
+export CARGO_TARGET_DIR=/absolute/w1-build-target
 python3 scripts/ci/run_w1_zero_paired_lazy_v1.py --arch x64 \
   --expected-commit "$(git rev-parse HEAD)" --output /absolute/new-observation
 python3 scripts/ci/test_pon_w1_zero_paired_lazy_v1.py
@@ -159,6 +161,9 @@ The tested material is zero. Existing sparse, low-rank, diagonal, maintenance,
 false-transcript and finite-lifecycle evidence retain their own source scopes.
 Actual short-column extraction, shared preparation across miners/epochs,
 GPU/ASIC/energy costs, self-selected demand, current admission, joint DAA and
-chainwork security remain distinct obligations. Arithmetic-output counting,
+chainwork security remain distinct obligations. This grid does not measure
+maintenance costs when real demand is absent, sponsor self-traffic, repeated
+reward collection, or false-transcript search and receiver rejection costs.
+Arithmetic-output counting,
 consensus credit, mining subsidy, model contribution and service fees must not
 be conflated. This observer grants zero consensus credit or economic payment.
