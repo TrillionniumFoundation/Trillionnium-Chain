@@ -431,7 +431,8 @@ jobs:
           done
           for selector in \
             rejected_nonprivate_socket_parent_does_not_unlink_existing_listener \
-            different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint; do
+            different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint \
+            copied_lease_record_cannot_replace_a_live_checkpoint_endpoint; do
             label="checkpoint-$selector"
             if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store --test socket_ownership "$selector" -- --exact --show-output --test-threads=1; then
               failed=1
