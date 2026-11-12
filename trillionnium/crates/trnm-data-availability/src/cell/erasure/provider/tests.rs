@@ -11,6 +11,8 @@ use crate::cell::{
     CellRs46ShardInputV1, MAX_CHUNK_BYTES,
 };
 
+mod observation;
+
 fn deadline() -> Instant {
     Instant::now() + Duration::from_secs(20)
 }

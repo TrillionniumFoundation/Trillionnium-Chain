@@ -3,6 +3,8 @@ use std::time::Duration;
 use super::*;
 use crate::cell::{CellCacheConfigV4, CellContextV1};
 
+mod observation;
+
 fn deadline() -> Instant {
     Instant::now() + Duration::from_secs(10)
 }
