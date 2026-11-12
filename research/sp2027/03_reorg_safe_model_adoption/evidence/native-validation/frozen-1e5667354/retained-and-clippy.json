@@ -1,0 +1,62 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "1e5667354f6fa17170202416b9d24562e6c72496",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "1e5667354f6fa17170202416b9d24562e6c72496",
+    "tested_tree": "584b16d72f0e1030c51d9beb931d9bc4bc4ba746",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2553900018,
+    "tracked_entries": 27889,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "python3",
+    "-c",
+    "import datetime, hashlib, json, pathlib, subprocess, sys, time\nout = pathlib.Path(\"/workspace/scratch/297a393433ba/native-validation/frozen-1e5667354\")\nsteps = [\n (\"retained-tests\", [\"cargo\", \"test\", \"--offline\", \"--locked\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-research-protocol\", \"--lib\", \"--tests\", \"--all-features\"]),\n (\"strict-clippy\", [\"cargo\", \"clippy\", \"--offline\", \"--locked\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-research-protocol\", \"--all-targets\", \"--all-features\", \"--\", \"-D\", \"warnings\"])\n]\nrecords = []\nfor label, argv in steps:\n    started = datetime.datetime.now(datetime.timezone.utc).isoformat()\n    monotonic_start = time.monotonic_ns()\n    stdout, stderr = out / (label + \".stdout\"), out / (label + \".stderr\")\n    with stdout.open(\"xb\") as so, stderr.open(\"xb\") as se:\n        result = subprocess.run(argv, stdout=so, stderr=se, check=False)\n    records.append({\"label\":label,\"argv\":argv,\"exit_code\":result.returncode,\n                    \"started_utc\":started,\"ended_utc\":datetime.datetime.now(datetime.timezone.utc).isoformat(),\n                    \"elapsed_ns\":time.monotonic_ns()-monotonic_start,\n                    \"stdout_file\":stdout.name,\"stdout_sha256\":hashlib.sha256(stdout.read_bytes()).hexdigest(),\n                    \"stderr_file\":stderr.name,\"stderr_sha256\":hashlib.sha256(stderr.read_bytes()).hexdigest()})\nsummary={\"schema\":\"sp27-03.native-validation-batch.v1\",\"source_binding\":\"parent original record_pq_native_command before/after receipt\", \"steps\":records}\nwith (out/\"retained-and-clippy-step-results.json\").open(\"x\") as f:\n    json.dump(summary,f,sort_keys=True,indent=2)\n    f.write(\"\\n\")\nprint(json.dumps(summary,sort_keys=True))\nsys.exit(0 if all(r[\"exit_code\"] == 0 for r in records) else 1)"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "1e5667354f6fa17170202416b9d24562e6c72496",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "1e5667354f6fa17170202416b9d24562e6c72496",
+    "tested_tree": "584b16d72f0e1030c51d9beb931d9bc4bc4ba746",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2553900018,
+    "tracked_entries": 27889,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/workspace/scratch/297a393433ba/chain-work",
+  "elapsed_ns": 445338727359,
+  "environment": {
+    "CARGO_BUILD_JOBS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": null,
+    "CARGO_TARGET_DIR": "/workspace/scratch/297a393433ba/native-target",
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 0,
+  "log_bytes": 1344,
+  "log_file": "retained-and-clippy.log",
+  "log_sha256": "6dc22374df136d292a595cc3b33850b44a1f625987468bcdda0f4a6709cdb903",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-11T23:58:33.584803+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}

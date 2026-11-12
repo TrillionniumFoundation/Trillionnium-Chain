@@ -1,0 +1,51 @@
+
+running 4 tests
+test types::tests::external_id_mapping_rejects_aliasing_whitespace ... ok
+test canonical::tests::integers_use_rfc8949_shortest_forms ... ok
+test canonical::tests::hashing_length_frames_domain_and_message ... ok
+test types::tests::uuid_mapping_is_strict_and_domain_separated ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 6 tests
+test chain_and_fresh_hepta_owner_context_cannot_be_reused ... ok
+test no_classical_signature_or_algorithm_negotiation_is_accepted ... ok
+test real_pq_signature_and_bounded_canonical_wire_round_trip ... ok
+test malformed_oversize_noncanonical_and_extra_bytes_fail_before_authorization ... ok
+test one_pq_signing_key_cannot_claim_multiple_independent_dids ... ok
+test pin_lifetime_generation_and_revocation_are_freshly_enforced ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.22s
+
+
+running 26 tests
+test every_typed_command_strictly_round_trips ... ok
+test hepta_admission_rejects_missing_parent_and_unbounded_payload ... ok
+test canonical_bytes_match_cross_implementation_golden_fixture ... ok
+test every_signed_envelope_strictly_round_trips ... ok
+test print_golden_fixture_for_regeneration ... ignored, fixture regeneration helper
+test hepta_handoff_limits_wire_before_decode_and_requires_its_signature_domain ... ok
+test rejected_evaluation_cannot_mint_accepted_workload ... ok
+test complete_state_machine_handles_idempotency_challenge_and_resolution ... ok
+test hepta_admission_requires_owner_facts_and_authority ... ok
+test nakama_is_limited_to_match_fact_commitments ... ok
+test protocol_state_rejects_self_asserted_unregistered_authorities ... ok
+test altered_replay_is_rejected_even_when_new_payload_is_validly_signed ... ok
+test security_cases::exhausted_claim_version_refuses_challenge_without_partial_mutation_or_panic ... ok
+test signed_command_detects_payload_and_identity_tampering ... ok
+test security_cases::unbound_state_and_unbound_snapshot_cannot_accept_commands ... ok
+test security_cases::oversized_collections_refuse_from_the_header_before_reading_elements ... ok
+test security_cases::signed_envelope_rejects_wrong_signature_length_in_decoder ... ok
+test strict_decoder_rejects_noncanonical_unknown_and_trailing_forms ... ok
+test state_rejects_signed_commands_for_another_chain ... ok
+test security_cases::snapshot_rejects_broken_open_challenge_links_and_overflow ... ok
+test security_cases::snapshot_rejects_broken_resolution_links_and_future_historical_refs ... ok
+test security_cases::exhausted_claim_version_refuses_resolution_without_partial_mutation_or_panic ... ok
+test workload_requires_sorted_unique_contributors_and_exact_accepted_units ... ok
+test hepta_handoff_rechecks_the_destination_and_fresh_owner_snapshot ... ok
+test snapshots_round_trip_and_fail_closed_on_corruption ... ok
+test state_machine_rejects_missing_and_stale_references ... ok
+
+test result: ok. 25 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
