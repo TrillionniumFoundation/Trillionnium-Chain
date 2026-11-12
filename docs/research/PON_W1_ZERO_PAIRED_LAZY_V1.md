@@ -167,3 +167,7 @@ reward collection, or false-transcript search and receiver rejection costs.
 Arithmetic-output counting,
 consensus credit, mining subsidy, model contribution and service fees must not
 be conflated. This observer grants zero consensus credit or economic payment.
+
+## Recorded native observation
+
+The [frozen-source results and complete strategy-coverage ledger](../../evidence/pon-w1-zero-paired-lazy-20261112/README.md) retain all six registered shards on source `165d286b687e0a73d7fe68148d2179274fc0c0b8`. The four cost cells observed the same fixed `full-limb-sparse-lazy` arm below the new `zero-paired-lazy` arm in aggregate CPU and wall cost per accepted winner. The new composition is a measured legal alternative, not the fastest measured arm or an attacker lower bound. The original OpenSSL compile failure, source-index refusal and separate successful pinned-provider supplement remain distinct. The evidence child keeps the measurement source unchanged; production and work-security qualification remain HOLD.

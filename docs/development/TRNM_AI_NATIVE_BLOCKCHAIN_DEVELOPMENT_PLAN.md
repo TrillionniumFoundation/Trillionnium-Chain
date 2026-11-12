@@ -1,3 +1,9 @@
+**W1 measured legal-strategy baseline, 2026-11-11 America/New_York — HOLD:**
+
+The [source-bound observation](../../evidence/pon-w1-zero-paired-lazy-20261112/README.md) completed all six registered zero-paired/lazy shards on frozen source `165d286b687e0a73d7fe68148d2179274fc0c0b8`: 240 preparations, 800 searches, 12,840 attempts, 12,080 misses, 760 hits and 3,280 full verifier calls. The same fixed FullLimb sparse lazy strategy has the lowest observed aggregate CPU/wall cost in all four cost cells. The new zero-paired lazy composition did not lower that measured baseline. Preserve the negative comparison and all five arms; do not turn the 152,832 operation count into a timing or hardness claim.
+
+The ledger maps every requested strategy class to existing code and open obligations. Only zero material, actual H1/H8 preparation reuse and winner-only proof construction were measured here. Hardware, cross-miner/epoch reuse, actual padded input provenance, false-search/receiver costs, self-traffic/rewards and maintenance costs remain separate. Keep the original workspace Clippy failure, the later source-index refusal and exact-file restoration, and the separately successful strict command with the pinned provider. The evidence/docs/corpus child requires its own source-bound checks; the native campaign remains labeled `165d`. Parent #908 C5 remains FAIL at 62/64 named controls. Ticket independence, cheapest-strategy optimality, resource ownership, joint DAA/chainwork and production qualification remain unresolved.
+
 **W1 specialized arithmetic and winner-only proofs, 2026-11-11 America/New_York — HOLD:**
 
 Continue the fixed #908 source `6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d` in an

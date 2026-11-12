@@ -1,5 +1,7 @@
 # W1 implementation equivalence and cost comparison
 
+The [zero-paired plus winner-only experiment](../../../research/PON_W1_ZERO_PAIRED_LAZY_V1.md) now composes two legal choices previously tested separately. Its [source-bound native results and attacker-strategy ledger](../../../../evidence/pon-w1-zero-paired-lazy-20261112/README.md) retain the slower observations: on the recorded x64 zero-material grid, the same fixed FullLimb sparse lazy arm has lower aggregate CPU and wall cost per accepted winner than zero-paired lazy in all four cost cells. Scalar-product counts do not select the fastest implementation or prove a security floor.
+
 The [same-target producer and receiver budget report](W1_SAME_TARGET_BUDGET_REPORT.md)
 provides a bounded native interface for complete legal/false-trace searches, all
 misses, full verifier outcomes and one original shared CPU domain.
