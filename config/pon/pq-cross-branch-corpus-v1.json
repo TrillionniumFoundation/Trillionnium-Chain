@@ -1538,7 +1538,14 @@
     "evidence/sqlite-open-boundary-20261112/sqlite900-quality-13843531543.zip": "50b9385a28b0aa81c7069190c39124b4456e9832",
     "evidence/sqlite-open-boundary-20261112/sqlite900-quality-independent-readback.json": "948a4345cb99de0d2c4b85b3eedcb360c76e4d9f",
     "evidence/sqlite-open-boundary-20261112/toolchain.json": "6b0efde67a137071dbe0cc7e7d1852b5b991d468",
-    "evidence/sqlite-open-boundary-20261112/verify.py": "e04f16b5514727ba03dae80d7f57426568f695cc"
+    "evidence/sqlite-open-boundary-20261112/verify.py": "e04f16b5514727ba03dae80d7f57426568f695cc",
+    "evidence/chain-system-security-20261111-306929/ai395/source-freeze/README.md": "04c88babc0edcacf9354c2207e167dcf5c6627ac",
+    "evidence/chain-system-security-20261111-306929/ai395/source-freeze/archive-result.json": "2d875caaeb6776846d5d8793851de72dd52f6510",
+    "evidence/chain-system-security-20261111-306929/ai395/source-freeze/download-receipt.json": "a2bbeeb225fc0dc3a92f1508f4acf5126c5dae42",
+    "evidence/chain-system-security-20261111-306929/ai395/source-freeze/manifest.json": "3cd0a1402be1895cc47cbba4090272cf5184d2cc",
+    "evidence/chain-system-security-20261111-306929/ai395/source-freeze/metadata-freeze-original-observations-20261112-306929.tar.gz": "d2f94e299edf42a30b1fb09e91bb76c4ddbb212d",
+    "evidence/chain-system-security-20261111-306929/ai395/source-freeze/verification.json": "ff0b2faf19259d9c3cef409b5c5f071a2a28fe43",
+    "evidence/chain-system-security-20261111-306929/cloud-inactive-cache-cleanup.json": "32e1345e6d69d16824d2b1017664bc597f86d3e4"
   },
   "pql11b_module_ancestry": {
     "exact_isolated_failures": 0,
@@ -2858,7 +2865,14 @@
     "evidence/sqlite-open-boundary-20261112/sqlite900-quality-13843531543.zip",
     "evidence/sqlite-open-boundary-20261112/sqlite900-quality-independent-readback.json",
     "evidence/sqlite-open-boundary-20261112/toolchain.json",
-    "evidence/sqlite-open-boundary-20261112/verify.py"
+    "evidence/sqlite-open-boundary-20261112/verify.py",
+    "evidence/chain-system-security-20261111-306929/ai395/source-freeze/README.md",
+    "evidence/chain-system-security-20261111-306929/ai395/source-freeze/archive-result.json",
+    "evidence/chain-system-security-20261111-306929/ai395/source-freeze/download-receipt.json",
+    "evidence/chain-system-security-20261111-306929/ai395/source-freeze/manifest.json",
+    "evidence/chain-system-security-20261111-306929/ai395/source-freeze/metadata-freeze-original-observations-20261112-306929.tar.gz",
+    "evidence/chain-system-security-20261111-306929/ai395/source-freeze/verification.json",
+    "evidence/chain-system-security-20261111-306929/cloud-inactive-cache-cleanup.json"
   ],
   "schema": "trnm-pq-cross-branch-corpus-v1",
   "source_composition": {
