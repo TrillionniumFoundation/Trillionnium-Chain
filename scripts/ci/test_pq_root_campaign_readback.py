@@ -50,6 +50,8 @@ def synthetic():
                 'all_signed_rounds_confirmed_in_window': False,
                 'receiver_client_state_equal': False,
                 'genuine_budget_depletion_observed': False,
+                'depletion_at_ns': None, 'depletion_meter': None,
+                'final_receiver_tip': 'a' * 64, 'final_client_tip': 'b' * 64,
                 'attacker_processes_ready': attackers,
                 'actor_reports_successful_without_cap_or_kill': True,
                 'full_work_failed': 0,
@@ -188,7 +190,14 @@ class EvidenceReaderTests(unittest.TestCase):
         p.update(confirmations=rounds, all_signed_rounds_confirmed_in_window=True,
                  finite_phase_criteria_met=True, receiver_client_state_equal=True,
                  observer_complete=True, genuine_budget_depletion_observed=True,
-                 attacker_processes_ready=24, full_work_failed=100)
+                 attacker_processes_ready=24, full_work_failed=100,
+                 final_receiver_tip='a' * 64, final_client_tip='a' * 64,
+                 depletion_at_ns=20_000_000_000,
+                 depletion_meter={'Ok': {
+                     'depleted': True,
+                     'meter': {'accounting_unavailable': False},
+                     'actual_flow': {'balance_identity_verified': True},
+                 }})
         return data
 
     def test_fully_ready_attack_phase_has_only_local_report_scope(self):
@@ -220,6 +229,42 @@ class EvidenceReaderTests(unittest.TestCase):
             data = self.ready_attack_phase()
             data[1][0]['phases'][1]['full_work_failed'] = value
             self.assert_refused(data, 'forged work count')
+
+    def test_equal_state_claim_refuses_different_final_tips(self):
+        data = self.ready_attack_phase()
+        data[1][0]['phases'][1]['final_client_tip'] = 'b' * 64
+        self.assert_refused(data, 'one state-equal flag cannot hide divergent tips')
+
+    def test_equal_state_claim_requires_real_hex_tip_bytes(self):
+        for invalid in (None, 'short', 'g' * 64):
+            data = self.ready_attack_phase()
+            data[1][0]['phases'][1]['final_receiver_tip'] = invalid
+            self.assert_refused(data, 'missing or malformed final receiver tip')
+
+    def test_depletion_claim_without_raw_meter_is_refused(self):
+        data = self.ready_attack_phase()
+        data[1][0]['phases'][1]['depletion_meter'] = None
+        self.assert_refused(data, 'boolean cannot replace an actual meter')
+
+    def test_depletion_meter_must_have_paid_accounting_identity(self):
+        for key, value in [('depleted', False), ('actual_flow', {'balance_identity_verified': False}),
+                           ('meter', {'accounting_unavailable': True})]:
+            data = self.ready_attack_phase()
+            data[1][0]['phases'][1]['depletion_meter']['Ok'][key] = value
+            self.assert_refused(data, 'depletion without complete meter corroboration')
+
+    def test_depletion_timestamp_must_be_inside_original_window(self):
+        for invalid in (None, True, 30_000_000_001, -1):
+            data = self.ready_attack_phase()
+            data[1][0]['phases'][1]['depletion_at_ns'] = invalid
+            self.assert_refused(data, 'depletion outside 30s, missing or bool clock')
+
+    def test_raw_success_claim_flags_must_have_boolean_types(self):
+        for field in ('receiver_client_state_equal', 'genuine_budget_depletion_observed'):
+            for invalid in (1, 'true', None):
+                data = self.ready_attack_phase()
+                data[1][0]['phases'][1][field] = invalid
+                self.assert_refused(data, 'nonboolean claims cannot be coerced')
 
     def test_zip_manifest_integrity_and_mutated_member(self):
         def make_archive(manifest_digest=None, path='body.txt'):
