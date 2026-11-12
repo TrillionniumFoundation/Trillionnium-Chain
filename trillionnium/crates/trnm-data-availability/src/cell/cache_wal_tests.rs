@@ -713,16 +713,16 @@ fn paired_manifest_chunk_batch_preserves_original_deadline_atomicity() {
     assert!(matches!(result, Err(CellErrorV1::CacheWriterBusy)));
     assert_eq!(cache.cache_usage().unwrap(), before);
     assert_paired_cells_absent(&cache, &cells);
-    let expected = crate::cell::network::remaining(deadline)
+    match cache
+        .put_manifest_chunk_batch_with_deadline(&batch, Some(deadline))
         .unwrap_err()
-        .to_string();
-    assert_eq!(
-        cache
-            .put_manifest_chunk_batch_with_deadline(&batch, Some(deadline))
-            .unwrap_err()
-            .to_string(),
-        expected
-    );
+    {
+        CellErrorV1::Io(error) => {
+            assert_eq!(error.kind(), std::io::ErrorKind::TimedOut);
+            assert_eq!(error.to_string(), "cell absolute deadline");
+        }
+        error => panic!("expected original deadline I/O error, received {error:?}"),
+    }
     assert_eq!(cache.cache_usage().unwrap(), before);
     assert_paired_cells_absent(&cache, &cells);
     limits(&path);

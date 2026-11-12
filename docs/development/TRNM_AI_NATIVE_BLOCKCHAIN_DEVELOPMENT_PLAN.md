@@ -1,3 +1,54 @@
+**Bounded retained-cache population and fixture corrections, 2026-11-12 — HOLD:**
+
+The original complete C3 observation on
+`f0fa8c3c0372d0c5dafccd2683b31fda322e42f2` remains retained. Its default DA
+library reported 741 passed and one failed. The unchanged 65/128 capacity
+control passed in that lane. Its all-features DA library reported 739 passed
+and three failed, including the same capacity control with
+Invalid("RS46 provider deadline"). A source-visible transaction reduction did
+not establish success in both configurations or the exact physical latency
+cause. C1/C2/C3 failures are never rewritten by a later successful observation.
+
+Use the existing chunk batch in retained populate_cache, bounded by its original
+eight-member limit and by the maximum single-chunk payload size. Keep fresh
+arena reads, complete payload prevalidation, every original deadline check,
+manifest publication, the existing hash/writer/WAL/quota boundary, and final
+complete verification/readback. The cold capacity fixture still uses model
+N-1 chunks plus one environment chunk, six slots and the original ten-second
+absolute deadline. Its source-derived transaction counts change from 132/258
+to 76/147 for 65/128 original chunks; these are not measured speedups or proof
+of the particular C3 deadline-return branch.
+
+Both C3 DA lanes failed the new paired-cache expired-entry test's comparison
+of the CellErrorV1 wrapper with the bare underlying I/O display. Correct only
+that expectation: require the typed I/O error, TimedOut kind and original
+underlying message. Preserve the preceding real 250 ms writer wait, 750 ms
+elapsed bound, two-table expiry/rollback and all no-write assertions.
+
+C3's all-features short-TTL control failed its meaningful fixture phase guard:
+the real request arrived just before signed expiry, and the backend frame became
+ready after expiry. The later error/no-output assertions were not executed and
+must not be credited. Before minting the same two-second signed TTL, wait for
+one selected next wall-second within the original setup deadline. A missed
+window or signing across that second refuses the fixture; there is no new
+selected window, future issue time, network retry or renewed request budget.
+A late wake still leaves only the selected second's actual remaining time;
+the original transfer/expiry/no-publication guards decide admissibility.
+Retain the original request/overall deadlines and every actual network action.
+
+The new candidate must independently pass the same complete ninety-command
+gate. Each DA lane also requires the existing retention writer-contention,
+cold-cache real-peer, eight-chunk reader-refusal, and short-TTL controls by
+exact name, alongside all earlier required methods. Workloads and production
+budgets remain unchanged.
+
+Re-anchor the same twenty-one directly registered implementation objects to
+this checkpoint with unchanged bytes and unchanged Root dependency register.
+All eight lifetime terms remain unknown/null. This partial direct inventory
+does not prove transitive composition, historical migration, public WAN,
+independent custody, W1/DAA hardness or whole-chain qualification. Ordinary
+TCV3 caller integration and production qualification remain unchanged and unqualified.
+
 **Bounded peer cleanup and atomic retained-cache staging, 2026-11-12 — HOLD:**
 
 The complete single-threaded observation on
