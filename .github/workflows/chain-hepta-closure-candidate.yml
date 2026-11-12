@@ -61,7 +61,7 @@ jobs:
             proof-profile)
               python3 scripts/ci/test_pq_proof_profile_binding.py -v
               python3 scripts/ci/pq_proof_profile_binding.py \
-                --expected-profile-descriptor-sha256 dd77d2a89bbeb0c308e49d1680020b6cb9eea82f745ac4623f9cf906d8a4bded
+                --expected-profile-descriptor-sha256 0d47e23d395d6332a0bdf1c9093cf5b19816aad9841e3db6e8cb24f53e0f18b3
               ;;
             campaign-reader)
               python3 scripts/ci/test_audit_native_campaign_outcomes.py -v

@@ -182,6 +182,34 @@ class ProofProfileBindingTests(unittest.TestCase):
         with self.assertRaisesRegex(binding.ProfileError, 'source pin differs'):
             binding.inspect(root)
 
+    def test_grown_mapping_retains_the_exact_original_byte_bound(self):
+        root = self.checkout()
+        path = root / binding.MAPPING
+        path.write_bytes(path.read_bytes() + b'\n')
+        with self.assertRaisesRegex(binding.SourceReadError, 'nonregular/oversize source'):
+            binding.inspect(root)
+
+    def test_shrunken_mapping_is_refused_without_a_pin_refresh(self):
+        root = self.checkout()
+        path = root / binding.MAPPING
+        original = path.read_bytes()
+        self.assertTrue(original.endswith(b'\n'))
+        path.write_bytes(original[:-1])
+        with self.assertRaisesRegex(binding.ProfileError, 'source pin differs'):
+            binding.inspect(root)
+
+    def test_same_length_mapping_substitution_is_refused(self):
+        root = self.checkout()
+        path = root / binding.MAPPING
+        original = path.read_bytes()
+        changed = original.replace(b'Offline research mapping only.',
+                                   b'offline research mapping only.', 1)
+        self.assertNotEqual(changed, original)
+        self.assertEqual(len(changed), len(original))
+        path.write_bytes(changed)
+        with self.assertRaisesRegex(binding.ProfileError, 'source pin differs'):
+            binding.inspect(root)
+
     def test_expected_v1_guest_cannot_replace_v2_identity(self):
         root = self.checkout()
         changed = copy.deepcopy(self.contract)

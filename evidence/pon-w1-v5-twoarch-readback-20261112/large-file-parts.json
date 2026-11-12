@@ -1,0 +1,46 @@
+{
+  "entries": [
+    {
+      "ordered_parts": [
+        {
+          "bytes": 4194304,
+          "path": "arm64/metadata/campaign/manifest.json.rawpart-000",
+          "sha256": "413384480a61b0b7987ea1262d4a5aba547f6512fa20bcc6f935a3accdbb4fbf"
+        },
+        {
+          "bytes": 1870776,
+          "path": "arm64/metadata/campaign/manifest.json.rawpart-001",
+          "sha256": "d6bfcdee3d28068ea848e292b6131afaf939d48fd789cd977489310bbc4f5c6d"
+        }
+      ],
+      "original_identity": {
+        "bytes": 6065080,
+        "sha256": "277f0b69972003c52c679731c2631704c050e41d92d02e865cbb4d30800c3538"
+      },
+      "original_path": "arm64/metadata/campaign/manifest.json"
+    },
+    {
+      "ordered_parts": [
+        {
+          "bytes": 4194304,
+          "path": "x64/metadata/campaign/manifest.json.rawpart-000",
+          "sha256": "1838bcecd7bcf2c1688fc40119cd2dd6af5292165d34c326b131c4b34cd2d301"
+        },
+        {
+          "bytes": 1870610,
+          "path": "x64/metadata/campaign/manifest.json.rawpart-001",
+          "sha256": "831fe36b791b33cfc40299efe8e55fdb5a6b4a72e1c54e0da98703a3bdf7ecc6"
+        }
+      ],
+      "original_identity": {
+        "bytes": 6064914,
+        "sha256": "9ac8a5537c9f262de55d49cbfa9ead0f726342455ae951dde6b55073afe1c373"
+      },
+      "original_path": "x64/metadata/campaign/manifest.json"
+    }
+  ],
+  "external_originals_unchanged": true,
+  "maximum_part_bytes": 4194304,
+  "original_packet_duplicates_removed_only_after_full_reconstruction_validation": true,
+  "schema": "ordered-large-packet-file-parts-v1"
+}

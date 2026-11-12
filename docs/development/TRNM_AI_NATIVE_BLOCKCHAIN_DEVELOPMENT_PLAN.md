@@ -1,3 +1,44 @@
+**W1 current-source strategy evidence and profile repair, 2026-11-12 America/New_York — HOLD:**
+
+The [two-architecture V5 readback](../../evidence/pon-w1-v5-twoarch-readback-20261112/README.md)
+independently reproduces all 66 original shards on each of x64 and ARM64 at
+`229b14c2d366a257f51f287d502a550df2332338`. It preserves both complete ZIPs,
+440 file identities, all 17 arms in each of 44 cost cells per architecture and
+22 controls per architecture. Eleven synthetic materials include nonzero
+low-rank, full-rank, sparse diagonal and maintenance cases. Matched streams and
+correlated horizons are not independent extra samples. These are existing
+native executions, not executions of the later binding/evidence candidate.
+
+Use complete paid producer costs and separate CPU/wall resource axes. At T1/H8,
+batch4 has the lowest observed aggregate wall cost in all eleven materials on
+both hosts, but increases CPU relative to the fixed rank8-lazy arm: ARM64
+21.6302–25.0970 percent; x64 74.1873–80.6710 percent. The full fixed-arm tables
+retain all comparisons; post-sample minima and cross-host differences do not
+prove stable advantages or an adversarial lower bound. No earlier zero-only
+timing is relabelled or used as a paired speedup baseline.
+
+The [profile repair](../../evidence/pon-w1-profile-binding-20261112/README.md)
+updates stale exact mapping/descriptor pins after adding the zero-paired
+observer. It preserves the original reader and adds three substitution
+negatives. Original profile failures and the stricter local 300-second corpus
+timeout remain separate; the committed candidate requires its own original
+600-second controls and exact-source checks.
+
+The [failed native service readback](../../evidence/pon-w1-service-readback-20261112/README.md)
+retains original/fresh pressure confirmation counts of 0/0 despite 7/7 accepted
+submissions in each phase. The independent client replayed only 4/7 and 2/7
+History pages before PUBLIC_REQUEST_DEADLINE. Preserve the four-second/six-depth
+target, complete W1 verification and original CPU/worker limits. Full-controller
+throttling counters do not establish per-request causality.
+
+Next engineering work must close V5 pre-emission interruption accounting and
+dual full replay for exhausted misses under a new schema. Actual short-column
+provenance, GPU/ASIC/energy, cross-miner/epoch reuse and ownership, shared caches,
+early screening, independent task demand, self-traffic/reward uniqueness and
+complete maintenance economics remain distinct obligations. Uniform independent
+tickets, all-algorithm minimum cost and joint DAA/chainwork security remain
+unproved. No production activation or security lower bound is granted.
+
 **W1 measured legal-strategy baseline, 2026-11-11 America/New_York — HOLD:**
 
 The [source-bound observation](../../evidence/pon-w1-zero-paired-lazy-20261112/README.md) completed all six registered zero-paired/lazy shards on frozen source `165d286b687e0a73d7fe68148d2179274fc0c0b8`: 240 preparations, 800 searches, 12,840 attempts, 12,080 misses, 760 hits and 3,280 full verifier calls. The same fixed FullLimb sparse lazy strategy has the lowest observed aggregate CPU/wall cost in all four cost cells. The new zero-paired lazy composition did not lower that measured baseline. Preserve the negative comparison and all five arms; do not turn the 152,832 operation count into a timing or hardness claim.
