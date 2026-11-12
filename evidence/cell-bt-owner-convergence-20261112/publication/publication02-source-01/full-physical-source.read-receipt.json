@@ -1,0 +1,15 @@
+{
+  "actual_read": {
+    "chunk_sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902",
+    "data_base64": "ewogICJiYXNlIjogbnVsbCwKICAiY2FuZGlkYXRlIjogIjAzMWQ0NDJkZDBhY2I2OTNhZmNmYWY0MmY5Y2M0ZGI0NDZiYTUyY2IiLAogICJraW5kIjogImhlYWQiLAogICJwcm9zcGVjdGl2ZV9tZXJnZSI6IG51bGwsCiAgInNjaGVtYSI6ICJ0cm5tLWNpLXNvdXJjZS12MSIsCiAgInRlc3RlZF9jb21taXQiOiAiMDMxZDQ0MmRkMGFjYjY5M2FmY2ZhZjQyZjljYzRkYjQ0NmJhNTJjYiIsCiAgInRlc3RlZF90cmVlIjogImE4OTdiYTRjNzQ4OTdhMDVjZWIzNjRmMDk4YjFiZmUzMmM4NTAyMTMiLAogICJ0ZXN0c19leGVjdXRlZF9ieV9pZGVudGl0eV9jaGVjayI6IGZhbHNlLAogICJ0cmFja2VkX2J5dGVzIjogMjU1MjY2MDU2MCwKICAidHJhY2tlZF9lbnRyaWVzIjogMjc2ODYsCiAgInRyYWNrZWRfd29ya3RyZWVfdmVyaWZpZWQiOiB0cnVlCn0K",
+    "eof": true,
+    "next_offset": 423,
+    "offset": 0,
+    "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/publication02-source-01/full-physical-source.stdout",
+    "size": 423,
+    "version": "2050:16165870:423:1794480152161333779:1794480152161333779"
+  },
+  "expected_bytes": 423,
+  "expected_sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902",
+  "schema": "trnm.bt.binary-read-receipt.v1"
+}

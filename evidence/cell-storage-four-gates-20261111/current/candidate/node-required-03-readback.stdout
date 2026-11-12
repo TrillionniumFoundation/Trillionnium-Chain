@@ -1,0 +1,1 @@
+{"executed_tests": 1, "result": "PASS", "scope": "named-libtest-execution-only", "test": "store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source"}

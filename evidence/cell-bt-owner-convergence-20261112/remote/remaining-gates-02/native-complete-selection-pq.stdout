@@ -1,0 +1,6 @@
+
+running 1 test
+test cell_native_shard_research_v2::tests::native_callback_requires_complete_current_release_selection_after_recovery ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 8.30s
+

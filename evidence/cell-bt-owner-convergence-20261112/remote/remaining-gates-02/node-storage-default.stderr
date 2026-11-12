@@ -1,0 +1,7 @@
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-release-bundle v0.1.0 (/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/trillionnium/crates/trnm-release-bundle)
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-pon-node v0.1.0 (/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 3m 35s
+     Running unittests src/lib.rs (/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-target/release/deps/trnm_pon_node-04d6aa691017a176)

@@ -163,9 +163,10 @@ pub use release_snapshot::{
     MAX_CELL_RELEASE_SNAPSHOT_BYTES_V1,
 };
 pub use residency::{
-    CellLocalSelectionV1, CellResidencyConfigV1, CellResidencyPrepareReportV1,
-    CellResidencyUsageV1, CellResidencyV1, CellResidentFileV1, CellResidentTensorFileV1,
-    CellResidentTensorModelV1, CellResidentTensorV1, CellResidentViewV1, CellResidentWorkingSetV1,
+    CellLocalReleaseSelectionV1, CellLocalSelectionStateV1, CellLocalSelectionV1,
+    CellResidencyConfigV1, CellResidencyPrepareReportV1, CellResidencyUsageV1, CellResidencyV1,
+    CellResidentFileV1, CellResidentTensorFileV1, CellResidentTensorModelV1, CellResidentTensorV1,
+    CellResidentViewV1, CellResidentWorkingSetV1,
 };
 pub use residency::{CellResidentVersionV1, CellResidentVersionViewV1};
 pub use retained::{

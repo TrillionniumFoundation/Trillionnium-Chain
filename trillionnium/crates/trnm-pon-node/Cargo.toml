@@ -41,6 +41,9 @@ zeroize = "=1.9.1"
 tempfile = "3"
 
 [dev-dependencies]
+# The explicit native research example reuses the original sealed research owner.
+# This package is already pinned in the existing DA dependency graph.
+getrandom = "=0.2.17"
 # Test-only safe executed-SQL observation. Production features stay unchanged;
 # this uses the existing pinned rusqlite package and adds no lockfile package.
 rusqlite = { version = "=0.39.0", features = ["trace"] }

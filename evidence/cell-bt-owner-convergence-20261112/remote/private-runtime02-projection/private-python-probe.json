@@ -1,0 +1,529 @@
+{
+  "configuration_after": {
+    "base_exec_prefix": "/home/qq/work/chain-bt-4a0b-runtime02/python",
+    "base_prefix": "/home/qq/work/chain-bt-4a0b-runtime02/python",
+    "exec_prefix": "/home/qq/work/chain-bt-4a0b-runtime02/env",
+    "paths": {
+      "data": "/home/qq/work/chain-bt-4a0b-runtime02/env",
+      "include": "/home/qq/work/chain-bt-4a0b-runtime02/python/include/python3.12",
+      "platinclude": "/home/qq/work/chain-bt-4a0b-runtime02/python/include/python3.12",
+      "platlib": "/home/qq/work/chain-bt-4a0b-runtime02/env/lib/python3.12/site-packages",
+      "platstdlib": "/home/qq/work/chain-bt-4a0b-runtime02/env/lib/python3.12",
+      "purelib": "/home/qq/work/chain-bt-4a0b-runtime02/env/lib/python3.12/site-packages",
+      "scripts": "/home/qq/work/chain-bt-4a0b-runtime02/env/bin",
+      "stdlib": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12"
+    },
+    "prefix": "/home/qq/work/chain-bt-4a0b-runtime02/env",
+    "sys_path": [
+      "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12",
+      "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/lib-dynload",
+      "/home/qq/work/chain-bt-4a0b-runtime02/env/lib/python3.12/site-packages",
+      "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts"
+    ],
+    "variables": {
+      "LDLIBRARY": "libpython3.12.so",
+      "LIBDIR": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/lib",
+      "SOABI": "cpython-312-x86_64-linux-gnu",
+      "base": "/home/qq/work/chain-bt-4a0b-runtime02/env",
+      "exec_prefix": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu",
+      "installed_base": "/home/qq/work/chain-bt-4a0b-runtime02/python",
+      "prefix": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu"
+    }
+  },
+  "configuration_before": {
+    "base_exec_prefix": "/home/qq/work/chain-bt-4a0b-runtime02/python",
+    "base_prefix": "/home/qq/work/chain-bt-4a0b-runtime02/python",
+    "exec_prefix": "/home/qq/work/chain-bt-4a0b-runtime02/python",
+    "paths": {
+      "data": "/home/qq/work/chain-bt-4a0b-runtime02/python",
+      "include": "/home/qq/work/chain-bt-4a0b-runtime02/python/include/python3.12",
+      "platinclude": "/home/qq/work/chain-bt-4a0b-runtime02/python/include/python3.12",
+      "platlib": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/site-packages",
+      "platstdlib": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12",
+      "purelib": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/site-packages",
+      "scripts": "/home/qq/work/chain-bt-4a0b-runtime02/python/bin",
+      "stdlib": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12"
+    },
+    "prefix": "/home/qq/work/chain-bt-4a0b-runtime02/python",
+    "sys_path": [
+      "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python312.zip",
+      "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12",
+      "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/lib-dynload"
+    ],
+    "variables": {
+      "LDLIBRARY": "libpython3.12.so",
+      "LIBDIR": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/lib",
+      "SOABI": "cpython-312-x86_64-linux-gnu",
+      "base": "/home/qq/work/chain-bt-4a0b-runtime02/python",
+      "exec_prefix": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu",
+      "installed_base": "/home/qq/work/chain-bt-4a0b-runtime02/python",
+      "prefix": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu"
+    }
+  },
+  "elapsed_seconds": 1.3375914520584047,
+  "executable_mappings": [
+    "/home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12",
+    "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+    "/usr/lib/x86_64-linux-gnu/libc.so.6",
+    "/usr/lib/x86_64-linux-gnu/libdl.so.2",
+    "/usr/lib/x86_64-linux-gnu/libm.so.6",
+    "/usr/lib/x86_64-linux-gnu/libpthread.so.0",
+    "/usr/lib/x86_64-linux-gnu/librt.so.1",
+    "/usr/lib/x86_64-linux-gnu/libutil.so.1"
+  ],
+  "full_sealed_runtime_import_admission_performed": false,
+  "hepta_final_use": false,
+  "historical_probe_map_not_used_as_actual_mapping_evidence": true,
+  "model_executed": false,
+  "model_loaded": false,
+  "module_origins": [
+    {
+      "module": "_collections_abc",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/_collections_abc.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/_collections_abc.py",
+      "sha256": "d4945c8410c4bab351741b04bca3de066f7c27ed7e38df89e206a96617102ffb"
+    },
+    {
+      "module": "_compression",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/_compression.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/_compression.py",
+      "sha256": "3ad5d60627477a60939ee44fc1bb3a05dbe8fb52f0f75039b8f5d8f1a278b981"
+    },
+    {
+      "module": "_frozen_importlib",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/_bootstrap.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/_bootstrap.py",
+      "sha256": "d112d54b7831cf4a818d4841d5ff8003b54df220a6dabafa61f67d7c7a5603f7"
+    },
+    {
+      "module": "_frozen_importlib_external",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/_bootstrap_external.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/_bootstrap_external.py",
+      "sha256": "e6ad72f3f0f9b65c99ab52598cd02ab748511dcdce1dd51f18dace9be9a680c6"
+    },
+    {
+      "module": "_sysconfigdata__linux_x86_64-linux-gnu",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/_sysconfigdata__linux_x86_64-linux-gnu.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/_sysconfigdata__linux_x86_64-linux-gnu.py",
+      "sha256": "eb120be487ac10996f38d2969825048c5cf37f61130d66f7884f9816a1cba12a"
+    },
+    {
+      "module": "_weakrefset",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/_weakrefset.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/_weakrefset.py",
+      "sha256": "91895a451d06e9f521a1171b31b9b19bc9740f35af00d4fa106338ab7167c9ac"
+    },
+    {
+      "module": "abc",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/abc.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/abc.py",
+      "sha256": "e558702a95cdce3febd289da021715d2b92bc43995b8a1bc58dfa1c3d8010287"
+    },
+    {
+      "module": "ast",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/ast.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/ast.py",
+      "sha256": "b515c23dbbc459329d3b802a3aac742cc456d7472e66f7ed6e9dc97e40596d7d"
+    },
+    {
+      "module": "bisect",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/bisect.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/bisect.py",
+      "sha256": "f1cf7b85fc36b5da249813fc5ab97d9464f8cc1bc817f7146206fa2713e35999"
+    },
+    {
+      "module": "bz2",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/bz2.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/bz2.py",
+      "sha256": "76ab3252924e71e859d7d90e8d3db13b6554975cfcac0fdadced4de7f8779330"
+    },
+    {
+      "module": "codecs",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/codecs.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/codecs.py",
+      "sha256": "7b7839e53a77961153240aecfe11edc8054d05b1dedd83894450dae21ec05785"
+    },
+    {
+      "module": "collections",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/collections/__init__.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/collections/__init__.py",
+      "sha256": "7fdb04dd248ab37909f46d2085bfee56b32d7e91e49ad3a2fad99c453295659b"
+    },
+    {
+      "module": "collections.abc",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/collections/abc.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/collections/abc.py",
+      "sha256": "9cb4208f99128a0489b6c8e6c61637617dd7d4250c59e065491957eda084dd10"
+    },
+    {
+      "module": "contextlib",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/contextlib.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/contextlib.py",
+      "sha256": "8b7a477f978a8532852fd81e241c78182516bc4975d672d580a5848a76e11eb6"
+    },
+    {
+      "module": "copyreg",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/copyreg.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/copyreg.py",
+      "sha256": "c8eda41f05c6bf95a4da4726a530409d2485ae060b8d019b3a8034389a15d3e9"
+    },
+    {
+      "module": "dis",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/dis.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/dis.py",
+      "sha256": "44c0b389c96124d8fb5cb0bc41c7a2aa7a6848ef4001b4000dcbd858efa4a1a2"
+    },
+    {
+      "module": "encodings",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/encodings/__init__.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/encodings/__init__.py",
+      "sha256": "78c4744d407690f321565488710b5aaf6486b5afa8d185637aa1e7633ab59cd8"
+    },
+    {
+      "module": "encodings.aliases",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/encodings/aliases.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/encodings/aliases.py",
+      "sha256": "6fdcc49ba23a0203ae6cf28e608f8e6297d7c4d77d52e651db3cb49b9564c6d2"
+    },
+    {
+      "module": "encodings.utf_8",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/encodings/utf_8.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/encodings/utf_8.py",
+      "sha256": "ba0cac060269583523ca9506473a755203037c57d466a11aa89a30a5f6756f3d"
+    },
+    {
+      "module": "enum",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/enum.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/enum.py",
+      "sha256": "f35e542d8c4c1d2b5e910138d726fa48774925f3c4dc5462793ebcb66aa55501"
+    },
+    {
+      "module": "fnmatch",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/fnmatch.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/fnmatch.py",
+      "sha256": "6683da36e47af523f3f41e18ad244d837783e19e98911cc0b7415dea81494ebc"
+    },
+    {
+      "module": "functools",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/functools.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/functools.py",
+      "sha256": "de4a1d37c795e2a065124b5c49357893433bc6bb111b41277ccc9930ef08d4c9"
+    },
+    {
+      "module": "genericpath",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/genericpath.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/genericpath.py",
+      "sha256": "2b0b35d2206778af4081cf81dd9b513876e72c35a55bec941402e1fa62b1f1aa"
+    },
+    {
+      "module": "hashlib",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/hashlib.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/hashlib.py",
+      "sha256": "6dbdebf270868b391080e21dc9687eddfaf321c965ad979f68d3f5c423c613ab"
+    },
+    {
+      "module": "importlib",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/__init__.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/__init__.py",
+      "sha256": "d540b5ac137fcb3e26a8d5f2939649e34373c6685f98a30a9f682cf231be5854"
+    },
+    {
+      "module": "importlib._abc",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/_abc.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/_abc.py",
+      "sha256": "80aab7931dc999dee581c8b8b56fcd973fe156335a96ceeaf6acfc03cebf10e8"
+    },
+    {
+      "module": "importlib._bootstrap",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/_bootstrap.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/_bootstrap.py",
+      "sha256": "d112d54b7831cf4a818d4841d5ff8003b54df220a6dabafa61f67d7c7a5603f7"
+    },
+    {
+      "module": "importlib._bootstrap_external",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/_bootstrap_external.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/_bootstrap_external.py",
+      "sha256": "e6ad72f3f0f9b65c99ab52598cd02ab748511dcdce1dd51f18dace9be9a680c6"
+    },
+    {
+      "module": "importlib.abc",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/abc.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/abc.py",
+      "sha256": "5f9cb36ca1bce9d5df00bc8d4d7f46b7ea2353dfa99292ad7f099affddfb5d03"
+    },
+    {
+      "module": "importlib.machinery",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/machinery.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/machinery.py",
+      "sha256": "d045cd7ecf2a12b6ecbfbef79eb114e87ef2ebd756f5b705f73e6f3266e3dede"
+    },
+    {
+      "module": "importlib.resources",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/resources/__init__.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/resources/__init__.py",
+      "sha256": "4146e1d00d56a783d4087f15257f0c284fae52e71fa3f20613fa268d911bf6d5"
+    },
+    {
+      "module": "importlib.resources._adapters",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/resources/_adapters.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/resources/_adapters.py",
+      "sha256": "be9ac919b51e1db6a35fa5c2b8c3fa27794caea0a2f8ffcc4e5ce225447b8df9"
+    },
+    {
+      "module": "importlib.resources._common",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/resources/_common.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/resources/_common.py",
+      "sha256": "a0de4a899a2aa787b052f92f516b39f80b183c3f0d409d1305cc6dc374f18870"
+    },
+    {
+      "module": "importlib.resources._legacy",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/resources/_legacy.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/resources/_legacy.py",
+      "sha256": "79c566fdf1a61129683e38e8c11a660d6233dd84422456ae5dd230e658a7857f"
+    },
+    {
+      "module": "importlib.resources.abc",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/resources/abc.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/importlib/resources/abc.py",
+      "sha256": "a726c48590b21ba5532f0c654735991571bc0ecafe88145cb8891d82cd364e5e"
+    },
+    {
+      "module": "inspect",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/inspect.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/inspect.py",
+      "sha256": "5c54ebf0bfdc25397750e5d0f63800751650ee50e65325ff3ea4069c9bfa5f75"
+    },
+    {
+      "module": "io",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/io.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/io.py",
+      "sha256": "7cec3cb8ac004058dd0a5af246e6d950fb59c7ddd0058fda48bcb3fcb98d8822"
+    },
+    {
+      "module": "ipaddress",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/ipaddress.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/ipaddress.py",
+      "sha256": "ba8d3389ff084fcb232b48204ec04f2b3ea4bd0eadf7b18c814947d185de2c64"
+    },
+    {
+      "module": "json",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/json/__init__.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/json/__init__.py",
+      "sha256": "d5d41e2c29049515d295d81a6d40b4890fbec8d8482cfb401630f8ef2f77e4d5"
+    },
+    {
+      "module": "json.decoder",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/json/decoder.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/json/decoder.py",
+      "sha256": "382cd02af6f7efede5a6d4abbcda1015e5c7a75794b0016022878f9cf32a24f6"
+    },
+    {
+      "module": "json.encoder",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/json/encoder.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/json/encoder.py",
+      "sha256": "52bfb1b66029cc70fa3bd7fe11df9f2e03922d413407a341b387a22c987f24f8"
+    },
+    {
+      "module": "json.scanner",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/json/scanner.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/json/scanner.py",
+      "sha256": "572958017eae8842eeddd0e3d18d3c56cc0a197348224915e1d87ce937841764"
+    },
+    {
+      "module": "keyword",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/keyword.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/keyword.py",
+      "sha256": "18c2be738c04ad20ad375f6a71db34b3823c7f40b0340f5294d0e89f3c9b093b"
+    },
+    {
+      "module": "linecache",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/linecache.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/linecache.py",
+      "sha256": "9eb9194707991b49f9fea67a5222b0e6a0e49c865cdffc69fbc80a1f829e77fb"
+    },
+    {
+      "module": "lzma",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/lzma.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/lzma.py",
+      "sha256": "58fb9d2fdc8a8af7b25e218f17ea3b51bdfa53bdf40f440ab33c605974ca5c2e"
+    },
+    {
+      "module": "ntpath",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/ntpath.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/ntpath.py",
+      "sha256": "6c0d55ee892f98ef87b1ed3c50c9dfc7e267a98d2db47e08d3dc67529af56725"
+    },
+    {
+      "module": "opcode",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/opcode.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/opcode.py",
+      "sha256": "192f6008508f28d3273bff42eaea9b01c8394dab1607cd36aea778bdd166c3a6"
+    },
+    {
+      "module": "operator",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/operator.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/operator.py",
+      "sha256": "b2af20f67667203c1730e686cc5d0427becc94db4c97f1d3efe3ed2158473f6a"
+    },
+    {
+      "module": "os",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/os.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/os.py",
+      "sha256": "6f3888d1a5bd4f1333116dd75ca8f1d2d951e38c8c8426179417aea097a1eef0"
+    },
+    {
+      "module": "os.path",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/posixpath.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/posixpath.py",
+      "sha256": "03825681086638649a43480954f7f6a16b4da3bd41ece956864ae96e4f795cd9"
+    },
+    {
+      "module": "pathlib",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/pathlib.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/pathlib.py",
+      "sha256": "10ba48ae8063cfe7589436041d0d4628c05f427c7709cf8e75e486f8930cc32c"
+    },
+    {
+      "module": "posixpath",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/posixpath.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/posixpath.py",
+      "sha256": "03825681086638649a43480954f7f6a16b4da3bd41ece956864ae96e4f795cd9"
+    },
+    {
+      "module": "random",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/random.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/random.py",
+      "sha256": "de48263a837339c7e01cf9f3c4d756696e0e0775f7778eb9cf81ad5b00134569"
+    },
+    {
+      "module": "re",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/re/__init__.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/re/__init__.py",
+      "sha256": "8ff3c37c63b917fcf8dc8d50993a502292a3dc159e41de4f4018c72a53d1c07b"
+    },
+    {
+      "module": "re._casefix",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/re/_casefix.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/re/_casefix.py",
+      "sha256": "1b12d9136f23db6c3f6f26053fefc15ca964b886838c7b9c1fabf8d2efc1e5c8"
+    },
+    {
+      "module": "re._compiler",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/re/_compiler.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/re/_compiler.py",
+      "sha256": "c75620761098a70ed75b9accef63ef2881d8abb6d4e5cbfd10074bd165eefe4d"
+    },
+    {
+      "module": "re._constants",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/re/_constants.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/re/_constants.py",
+      "sha256": "fa4fdb200f238f9e7817b63892b0d69833d8165134801e775e10cc113348a375"
+    },
+    {
+      "module": "re._parser",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/re/_parser.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/re/_parser.py",
+      "sha256": "a51a85b37cf3f44ba7ff25754da5f31306e4ccfa6eb3c017f9d37bdf4e770840"
+    },
+    {
+      "module": "reprlib",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/reprlib.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/reprlib.py",
+      "sha256": "e177bc70da83a7fbcde6fd261dc15da34e8a20873b1cccd4f9a1f8f27cca3779"
+    },
+    {
+      "module": "shutil",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/shutil.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/shutil.py",
+      "sha256": "cf66ce85b08ad910dcf69a3aacba077b59c8f1902debe95ceae1167656ca6aef"
+    },
+    {
+      "module": "stat",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/stat.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/stat.py",
+      "sha256": "052af0327eae6941b69b05c088b3e748f79995635f80ac4cc7125eb333eb4c77"
+    },
+    {
+      "module": "sysconfig",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/sysconfig.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/sysconfig.py",
+      "sha256": "ce56212ba89be181fb90fe62496e6d2e436befaf2dffd10e87ce37d1685271a8"
+    },
+    {
+      "module": "tempfile",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/tempfile.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/tempfile.py",
+      "sha256": "3ec83814c27f9f99f97a3c016baa398616111d50d0627d99612c8376c69447f1"
+    },
+    {
+      "module": "threading",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/threading.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/threading.py",
+      "sha256": "846f450ae794e4aab823a163f8c71d27751148af33e91dd3de886686a4e8ebfb"
+    },
+    {
+      "module": "token",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/token.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/token.py",
+      "sha256": "1a4d994ce9744f4bfe2d964fc24d112a1e76796a08c2e45a2d73c82a8587f922"
+    },
+    {
+      "module": "tokenize",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/tokenize.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/tokenize.py",
+      "sha256": "026f566ac63e60d69c8185a3880831b657accc5eac984fadf271fc99a5e5825d"
+    },
+    {
+      "module": "types",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/types.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/types.py",
+      "sha256": "345474ef027a1273f353da9bdc1f7c18f65335e72e681bcc0376774cc51f2405"
+    },
+    {
+      "module": "typing",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/typing.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/typing.py",
+      "sha256": "be92d60fb8382bb29ead21c128825d7c96d0e8c915b44f840791e49f5a8d554c"
+    },
+    {
+      "module": "urllib",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/urllib/__init__.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/urllib/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "module": "urllib.parse",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/urllib/parse.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/urllib/parse.py",
+      "sha256": "e6af7f475262f1de335bb2e41e26adb94d6103977cf5fe1ddc430dc6a3b1623f"
+    },
+    {
+      "module": "warnings",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/warnings.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/warnings.py",
+      "sha256": "6405e281882932205eae641b2d31fba7776f94517a206d289465a1caffbf310e"
+    },
+    {
+      "module": "weakref",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/weakref.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/weakref.py",
+      "sha256": "56f8d313fb74019e53eb9287400702fbce788b7fe30e097b0b6e06296f3f080c"
+    },
+    {
+      "module": "zipimport",
+      "origin": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/zipimport.py",
+      "resolved": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12/zipimport.py",
+      "sha256": "a96f1d7a7b6aaf421a3cf382b94b1422f4f0ad452fdd0bb61d635b560d7a4e91"
+    }
+  ],
+  "native_operation_started": false,
+  "original_configure_and_verify_files_passed": true,
+  "original_contract_sha256": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc",
+  "passed": true,
+  "production_activation": false,
+  "python_executable": "/home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12",
+  "python_sha256": "23bc148d2b48964b621c5561ff2b81c1d9c7b717967a7491efbf12f4304882b5",
+  "python_version": "3.12.16 (main, Oct 26 2026, 14:08:45) [Clang 23.1.3 ]",
+  "schema": "trnm.bt-private-runtime-physical-probe.v1",
+  "snapshot_sha256": "1085538a9d5901bf8e724347c97166669d8dd1ac5815c3e8825cfaa1ba3dd11a"
+}

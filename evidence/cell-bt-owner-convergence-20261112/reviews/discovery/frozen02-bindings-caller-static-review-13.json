@@ -1,0 +1,176 @@
+{
+  "all_four_gates_passed": false,
+  "blocking_finding": false,
+  "final_model_observer_boundary": {
+    "actual_cpu_quota_required": "4 * period",
+    "actual_memory_max_required": 8589934592,
+    "generation_2_research_pool_is_not_a_persistent_CURRENT_upgrade": true,
+    "model_seconds": 300,
+    "only_REPO_assignment_changed": true,
+    "original_13639_byte_observer_sha256": "120c70fb52909072eacf84251a44ff6c62f777479685db2cacf8cc1846a9e139",
+    "strict_custody_roster": [
+      79,
+      760,
+      791,
+      36,
+      12
+    ],
+    "two_actual_forward_receipts_and_complete_typed_model_environment_selection_required": true
+  },
+  "hepta_final_use": false,
+  "independent_expected_artifacts": [
+    {
+      "bytes": 9984,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/discovery-reviewer/frozen02-independent-expectations/source-inputs.native-v2-env2.expected.json",
+      "sha256": "3d4b4bbd30f1c37dc9986a5e512d13ae4d93a330a00fde904bd9b3fcf381083e"
+    },
+    {
+      "bytes": 13842,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/discovery-reviewer/frozen02-independent-expectations/source-inputs.native-v2-env2.verification.expected.json",
+      "sha256": "2a5db7a61d5340511895cdc6b2e2675b2cc87aaa2a38b2a8815c8bc4059edd47"
+    },
+    {
+      "bytes": 2304,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/discovery-reviewer/frozen02-independent-expectations/normal-main-copy.expected.json",
+      "sha256": "614686d6f0088592fc6858cc97ea6a1254b363cf8b47d3cf249b7566dd49f1d2"
+    },
+    {
+      "bytes": 1277,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/discovery-reviewer/frozen02-independent-expectations/build-environment.expected.json",
+      "sha256": "e8f94a5436a05c1d8508253281ca00bd4f6791384efed80328237aeee803edbf"
+    },
+    {
+      "bytes": 13622,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/discovery-reviewer/frozen02-independent-expectations/run_model.expected.py",
+      "sha256": "46329982d1de9e3e7dac3bcbc9cb7fcf1455ab3ceb514637097cbad8e0b9d313"
+    }
+  ],
+  "native_model_run_claimed": false,
+  "new_actual_results_not_reviewed_in_this_record": true,
+  "normal_release_elf_copy_review": {
+    "bounded_count_header_and_exact_hash_checked": true,
+    "bytes": 19752832,
+    "cargo_profile_test": false,
+    "features": [
+      "default",
+      "pq-native-openssl"
+    ],
+    "new_destination_create_only_and_rehashed": true,
+    "old_cargo_artifact_paths_preserved": true,
+    "original_accepted_receipt_expected_sha256": "b13585218eaf08c051c593ea699aae380322ab19fb8e021b9609a51ff47b8b09",
+    "original_receipt_exact_hash_will_be_compared_in_actual_readback": true,
+    "profile": "release",
+    "recompiled": false,
+    "same_fd_regular_file_read_and_stable_metadata_required": true,
+    "sha256": "ef4d33be1574c27852187546f4393f301eb175b8246f647ce3d15a5d21fd2155"
+  },
+  "operation": {
+    "domain": "trnm.bt.full-worktree-recovery.operation.v1\u0000",
+    "identity_and_preimage_record": {
+      "bytes": 20840,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/discovery-reviewer/frozen02-independent-expectations/operation-and-source.expected.json",
+      "sha256": "80a541ca52407f958e7face659c63c1ca6d19fda4166d4d301e67b3671763805"
+    },
+    "preimage_order": [
+      "domain",
+      "previous source SHA256 raw bytes",
+      "frozen B SHA1 raw bytes",
+      "new root UTF8 length as u64be",
+      "new root UTF8",
+      "environment generation 2 as u64be"
+    ],
+    "value": "bf34a669dc4b3617d97bee356f1cadf3504f3c5993999c5136ce1d6b0cd6f9c2"
+  },
+  "production_activation": false,
+  "remote_execution_not_performed_by_reviewer": true,
+  "runtime_caller_review": {
+    "attempt_number_scope": "attempt 1 is within new frozen02 namespace; it does not erase prior namespace failures",
+    "ci_utility_interpreter_role": "Original pinned 3.12.16 utility runs unchanged original CI verifier; changing its locator is not a diagnosis or remedy for the old missing tracked source files.",
+    "clean_environment_keys": [
+      "LANG",
+      "LC_ALL",
+      "TMPDIR"
+    ],
+    "helper_elapsed_limit_seconds": 180,
+    "helper_guard_logic_unchanged_from_reviewed_env2_helper": true,
+    "new_elf_and_copy_receipt_added_to_before_after_pins": true,
+    "old_full_runtime_failures_preserved": true,
+    "original_false_fields_retained": [
+      "cts1_or_chb1_admission_performed",
+      "model_loaded",
+      "model_executed",
+      "native_operation_started",
+      "original_hepta_owner_used",
+      "hepta_final_use",
+      "production_activation",
+      "whole_job_memory_cap_qualified",
+      "aggregate_process_tree_memory_qualified"
+    ],
+    "original_functions": [
+      "prepare_runtime",
+      "runtime_import",
+      "verify_runtime_ready"
+    ],
+    "runtime_argv_flags": [
+      "-I",
+      "-S",
+      "-B",
+      "-X pycache_prefix=<new fresh absolute unused cache>",
+      "-c <exact held helper bytes>"
+    ],
+    "runtime_child_timeout_seconds": 180,
+    "runtime_python": "/home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12",
+    "source_and_audit_and_producer_hashes_rebound": true,
+    "source_before_and_after_require_original_full_physical_result": true
+  },
+  "runtime_import_admitted": false,
+  "schema": "trnm.bt-independent-review.frozen02-binding-runtime-callers.v1",
+  "scripts": [
+    {
+      "bytes": 16174,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote_prepare_frozen02_bindings_v1.py",
+      "sha256": "3e9014eae617eda8dc875b756ed4b2f7ae8cd9850f02fa555590a4f13d69a95b"
+    },
+    {
+      "bytes": 7990,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote_full_preflight_frozen02_v1.py",
+      "sha256": "d29aa959df9625df90b379a15e4d98dfd41da6cb5d715ddf1b32aab3e9d84633"
+    },
+    {
+      "bytes": 11890,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote_observe_full_preflight_frozen02_v1.py",
+      "sha256": "5796427a97a27cfaf976344cb499c098e09868fd5129f0ff6bfa3d708729b061"
+    }
+  ],
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_and_audit_review": {
+    "all_31_input_sha_and_sizes_unchanged": true,
+    "audit_rows_rebuilt_with_immediate_previous_path": true,
+    "changed_environment_locator_count": 17,
+    "chunks": 95,
+    "environment_generation": 2,
+    "model_generation": 1,
+    "old_snapshot_previous_sha_and_size_not_misrepresented_as_immediate_predecessor": true,
+    "old_source_audit_outputs_not_overwritten": true,
+    "only_source_changes": [
+      "operation",
+      "fresh output",
+      "17 environment Input.path values component-wise beneath old ROOT"
+    ],
+    "original_actual_audit_sha256": "61f300cf7dd7eb7e455fcec6ada78a1cb392431ac3f8df40a1b36e7aa4781e7c",
+    "original_actual_source_sha256": "d2fb314ef4f8d2e4dfd05076ddd7d8e0465880d935cf8812e3b9b8785d1a6bae",
+    "original_limits": [
+      300,
+      536870912,
+      8589934592,
+      4
+    ],
+    "original_wrapper_inputs_function_executes_all_31_checks": true,
+    "payload_bytes": 279627268,
+    "payload_files": 30,
+    "same_independent_bytes_scope": "D2 env2 predecessor to new full-worktree locator only; not original C3 snapshot identity",
+    "snapshot_sibling_path_not_remapped": true
+  },
+  "static_review_only": true,
+  "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+}

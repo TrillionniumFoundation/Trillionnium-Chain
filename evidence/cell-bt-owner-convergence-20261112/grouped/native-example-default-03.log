@@ -1,0 +1,7 @@
+    Blocking waiting for file lock on artifact directory
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/4a0b199bc6c0/chain-work/trillionnium/crates/trnm-protocol)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/4a0b199bc6c0/chain-work/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/4a0b199bc6c0/chain-work/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/4a0b199bc6c0/chain-work/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/workspace/scratch/4a0b199bc6c0/chain-work/trillionnium/crates/trnm-verification-profiles)
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/4a0b199bc6c0/chain-work/trillionnium/crates/trnm-mvcc-fee)

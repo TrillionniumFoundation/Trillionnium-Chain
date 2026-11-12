@@ -1,0 +1,8 @@
+    Finished `release` profile [optimized] target(s) in 0.03s
+     Running unittests src/lib.rs (/home/qq/work/chain-cell-four-gates-2bfb-target-before/release/deps/trnm_data_availability-005cca701b2d81ac)
+authenticated-v3 all-withholding: elapsed=2.018328126s, query_counts=[1, 0], failure=CellDiscoveryFailureV3 { cause: Invalid("discovery absolute deadline"), discovery: CellDiscoveryObservationV3 { connection_attempts: 1, received_response_bytes: 0, record_validation_attempts: 0, bootstrap_validation_attempts: 1, announcement_signature_attempts: 0, rejected_records: 0, capacity_rejections: 0, rejected_bootstraps: 1, ineligible_bootstraps: 0 }, total_connection_attempts: 1, total_received_response_bytes: Some(0) }
+
+thread 'cell::discovery::pq::auth::tests::time_fairness::authenticated_v3_all_withholding_sources_refuse_with_original_deadline_and_counters' (1260042) panicked at crates/trnm-data-availability/src/cell/discovery/pq/auth_time_fairness_tests.rs:218:5:
+assertion failed: finished < original_deadline
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+error: test failed, to rerun pass `-p trnm-data-availability --lib`

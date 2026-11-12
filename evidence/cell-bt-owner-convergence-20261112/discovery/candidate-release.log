@@ -1,0 +1,97 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/4a0b199bc6c0/chain-work/trillionnium/crates/trnm-data-availability)
+    Finished `release` profile [optimized] target(s) in 9m 35s
+     Running unittests src/lib.rs (/workspace/scratch/4a0b199bc6c0/target-discovery/release/deps/trnm_data_availability-005cca701b2d81ac)
+
+running 5 tests
+test cell::discovery::equivocation_history_tests::tcp_complete_conflict_receipts_exclude_owner_before_any_provider_dial ... cell_discovery phase=exchange ordinal=1 kind=1 last_stage=complete elapsed_ns=1188853 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=0 source=0 elapsed_ns=1229401 complete=true failure=None
+cell_discovery phase=exchange ordinal=2 kind=1 last_stage=complete elapsed_ns=1268621 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=0 source=1 elapsed_ns=1294505 complete=true failure=None
+cell_discovery phase=exchange ordinal=3 kind=1 last_stage=complete elapsed_ns=702905 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=0 source=2 elapsed_ns=739492 complete=true failure=None
+cell_discovery phase=record_validation round=0 source=0 slot=0 accepted=true failure=None
+cell_discovery phase=record_validation round=0 source=1 slot=0 accepted=true failure=None
+cell_discovery phase=record_validation round=0 source=2 slot=0 accepted=true failure=None
+cell_discovery phase=verified_equivocation round=0 source=2 slot=0
+cell_discovery phase=exchange ordinal=4 kind=1 last_stage=complete elapsed_ns=886860 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=1 source=0 elapsed_ns=904237 complete=true failure=None
+cell_discovery phase=exchange ordinal=5 kind=1 last_stage=complete elapsed_ns=362846 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=1 source=1 elapsed_ns=385493 complete=true failure=None
+cell_discovery phase=exchange ordinal=6 kind=1 last_stage=complete elapsed_ns=796361 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=1 source=2 elapsed_ns=818004 complete=true failure=None
+cell_discovery phase=record_validation round=1 source=0 slot=0 accepted=true failure=None
+cell_discovery phase=record_validation round=1 source=1 slot=0 accepted=true failure=None
+cell_discovery phase=record_validation round=1 source=2 slot=0 accepted=true failure=None
+cell_discovery phase=verified_equivocation round=1 source=2 slot=0
+cell_discovery phase=selection candidates=0 observation=CellDiscoveryObservationV1 { connection_attempts: 6, received_response_bytes: 2070, record_validation_attempts: 6, rejected_records: 4, capacity_rejections: 0, rejected_bootstraps: 0 }
+cell_equivocation_wire case=CompleteConflict success=false discovery=CellDiscoveryObservationV1 { connection_attempts: 6, received_response_bytes: 2070, record_validation_attempts: 6, rejected_records: 4, capacity_rejections: 0, rejected_bootstraps: 0 } dials=[0, 0, 0] servers=[WireReplyReport { requests: 2, sent_response_bytes: 690 }, WireReplyReport { requests: 2, sent_response_bytes: 690 }, WireReplyReport { requests: 2, sent_response_bytes: 690 }]
+ok
+test cell::discovery::equivocation_history_tests::tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation ... cell_discovery phase=exchange ordinal=1 kind=2 last_stage=complete elapsed_ns=5481408 received_bytes=41 failure=None
+cell_discovery phase=exchange ordinal=1 kind=2 last_stage=complete elapsed_ns=5531859 received_bytes=41 failure=None
+cell_discovery phase=exchange ordinal=1 kind=2 last_stage=complete elapsed_ns=7640362 received_bytes=41 failure=None
+cell_discovery phase=exchange ordinal=1 kind=1 last_stage=complete elapsed_ns=2608217 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=0 source=0 elapsed_ns=2632942 complete=true failure=None
+cell_discovery phase=exchange ordinal=2 kind=1 last_stage=complete elapsed_ns=57050518 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=0 source=1 elapsed_ns=57078708 complete=true failure=None
+cell_discovery phase=exchange ordinal=3 kind=1 last_stage=complete elapsed_ns=4344252 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=0 source=2 elapsed_ns=4388294 complete=true failure=None
+cell_discovery phase=record_validation round=0 source=0 slot=0 accepted=true failure=None
+cell_discovery phase=record_validation round=0 source=1 slot=0 accepted=true failure=None
+cell_discovery phase=record_validation round=0 source=2 slot=0 accepted=true failure=None
+cell_discovery phase=verified_equivocation round=0 source=2 slot=0
+cell_discovery phase=exchange ordinal=4 kind=1 last_stage=complete elapsed_ns=3861216 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=1 source=0 elapsed_ns=3882773 complete=true failure=None
+cell_discovery phase=exchange ordinal=5 kind=1 last_stage=complete elapsed_ns=5958178 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=1 source=1 elapsed_ns=5979816 complete=true failure=None
+cell_discovery phase=exchange ordinal=6 kind=1 last_stage=complete elapsed_ns=6466219 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=1 source=2 elapsed_ns=6487423 complete=true failure=None
+cell_discovery phase=record_validation round=1 source=0 slot=0 accepted=true failure=None
+cell_discovery phase=record_validation round=1 source=1 slot=0 accepted=true failure=None
+cell_discovery phase=record_validation round=1 source=2 slot=0 accepted=true failure=None
+cell_discovery phase=verified_equivocation round=1 source=2 slot=0
+cell_discovery phase=selection candidates=0 observation=CellDiscoveryObservationV1 { connection_attempts: 6, received_response_bytes: 2070, record_validation_attempts: 6, rejected_records: 4, capacity_rejections: 0, rejected_bootstraps: 0 }
+cell_equivocation success=false discovery=CellDiscoveryObservationV1 { connection_attempts: 6, received_response_bytes: 2070, record_validation_attempts: 6, rejected_records: 4, capacity_rejections: 0, rejected_bootstraps: 0 }
+cell_equivocation server=CellRendezvousReportV1 { connections: 3, rejected_requests: 0, record_validation_attempts: 3 }
+cell_equivocation server=CellRendezvousReportV1 { connections: 3, rejected_requests: 0, record_validation_attempts: 3 }
+cell_equivocation server=CellRendezvousReportV1 { connections: 3, rejected_requests: 0, record_validation_attempts: 3 }
+ok
+test cell::discovery::equivocation_history_tests::tcp_invalid_signature_cannot_turn_received_bytes_into_equivocation ... cell_discovery phase=exchange ordinal=1 kind=1 last_stage=complete elapsed_ns=2444359 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=0 source=0 elapsed_ns=2498797 complete=true failure=None
+cell_discovery phase=exchange ordinal=2 kind=1 last_stage=complete elapsed_ns=688329 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=0 source=1 elapsed_ns=705649 complete=true failure=None
+cell_discovery phase=exchange ordinal=3 kind=1 last_stage=complete elapsed_ns=876715 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=0 source=2 elapsed_ns=893080 complete=true failure=None
+cell_discovery phase=record_validation round=0 source=0 slot=0 accepted=true failure=None
+cell_discovery phase=record_validation round=0 source=1 slot=0 accepted=true failure=None
+cell_discovery phase=record_validation round=0 source=2 slot=0 accepted=false failure=Some(("invalid", None, None))
+cell_discovery phase=selection candidates=1 observation=CellDiscoveryObservationV1 { connection_attempts: 3, received_response_bytes: 1035, record_validation_attempts: 3, rejected_records: 1, capacity_rejections: 0, rejected_bootstraps: 0 }
+cell_equivocation_wire case=InvalidConflictSignature success=false discovery=CellDiscoveryObservationV1 { connection_attempts: 3, received_response_bytes: 1035, record_validation_attempts: 3, rejected_records: 1, capacity_rejections: 0, rejected_bootstraps: 0 } dials=[0, 1, 0] servers=[WireReplyReport { requests: 1, sent_response_bytes: 345 }, WireReplyReport { requests: 1, sent_response_bytes: 345 }, WireReplyReport { requests: 1, sent_response_bytes: 345 }]
+ok
+test cell::discovery::equivocation_history_tests::tcp_truncated_conflict_reply_does_not_establish_observed_equivocation ... cell_discovery phase=exchange ordinal=1 kind=1 last_stage=complete elapsed_ns=3697292 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=0 source=0 elapsed_ns=4114130 complete=true failure=None
+cell_discovery phase=exchange ordinal=2 kind=1 last_stage=complete elapsed_ns=10486547 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=0 source=1 elapsed_ns=10507431 complete=true failure=None
+cell_discovery phase=exchange ordinal=3 kind=1 last_stage=reply_body elapsed_ns=836186 received_bytes=344 failure=Some(("io", Some(UnexpectedEof), None))
+cell_discovery phase=bootstrap round=0 source=2 elapsed_ns=869961 complete=false failure=Some(("io", Some(UnexpectedEof), None))
+cell_discovery phase=record_validation round=0 source=0 slot=0 accepted=true failure=None
+cell_discovery phase=record_validation round=0 source=1 slot=0 accepted=true failure=None
+cell_discovery phase=selection candidates=1 observation=CellDiscoveryObservationV1 { connection_attempts: 3, received_response_bytes: 1034, record_validation_attempts: 2, rejected_records: 0, capacity_rejections: 0, rejected_bootstraps: 1 }
+cell_equivocation_wire case=TruncatedConflict success=false discovery=CellDiscoveryObservationV1 { connection_attempts: 3, received_response_bytes: 1034, record_validation_attempts: 2, rejected_records: 0, capacity_rejections: 0, rejected_bootstraps: 1 } dials=[0, 1, 0] servers=[WireReplyReport { requests: 1, sent_response_bytes: 345 }, WireReplyReport { requests: 1, sent_response_bytes: 345 }, WireReplyReport { requests: 1, sent_response_bytes: 344 }]
+ok
+test cell::discovery::equivocation_history_tests::tcp_truncated_first_reply_does_not_establish_observed_equivocation ... cell_discovery phase=exchange ordinal=1 kind=1 last_stage=reply_body elapsed_ns=1567537 received_bytes=344 failure=Some(("io", Some(UnexpectedEof), None))
+cell_discovery phase=bootstrap round=0 source=0 elapsed_ns=1612866 complete=false failure=Some(("io", Some(UnexpectedEof), None))
+cell_discovery phase=exchange ordinal=2 kind=1 last_stage=complete elapsed_ns=1757148 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=0 source=1 elapsed_ns=1776432 complete=true failure=None
+cell_discovery phase=exchange ordinal=3 kind=1 last_stage=complete elapsed_ns=1395907 received_bytes=345 failure=None
+cell_discovery phase=bootstrap round=0 source=2 elapsed_ns=1418084 complete=true failure=None
+cell_discovery phase=record_validation round=0 source=1 slot=0 accepted=true failure=None
+cell_discovery phase=record_validation round=0 source=2 slot=0 accepted=true failure=None
+cell_discovery phase=selection candidates=1 observation=CellDiscoveryObservationV1 { connection_attempts: 3, received_response_bytes: 1034, record_validation_attempts: 2, rejected_records: 1, capacity_rejections: 0, rejected_bootstraps: 1 }
+cell_equivocation_wire case=TruncatedFirst success=false discovery=CellDiscoveryObservationV1 { connection_attempts: 3, received_response_bytes: 1034, record_validation_attempts: 2, rejected_records: 1, capacity_rejections: 0, rejected_bootstraps: 1 } dials=[0, 1, 0] servers=[WireReplyReport { requests: 1, sent_response_bytes: 344 }, WireReplyReport { requests: 1, sent_response_bytes: 345 }, WireReplyReport { requests: 1, sent_response_bytes: 345 }]
+ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 784 filtered out; finished in 1.00s
+

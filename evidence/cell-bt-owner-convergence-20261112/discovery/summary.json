@@ -1,0 +1,204 @@
+{
+  "schema": "chain-discovery-receipt-diagnostics-20261112-v1",
+  "historical_hosted_failure": {
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43149864315/job/130956234453",
+    "tested_commit": "c4aea02cc7b4ad6644e4e41d6d7221f192adcaba",
+    "head_commit": "040fb0cf460a6db568f0b4ec5ba581add3f2d2ba",
+    "tree": "5d5182edcbb1c95ca69505e511b042fe423f948f",
+    "profile": "release",
+    "test": "cell::discovery::equivocation_history_tests::tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation",
+    "expected_dials": [
+      0,
+      0,
+      0
+    ],
+    "observed_dials": [
+      0,
+      1,
+      0
+    ],
+    "suite_passed": 784,
+    "suite_failed": 1,
+    "decoded_api_log": "original-hosted-job-130956234453.log",
+    "log_bytes": 411684,
+    "log_sha256": "9bda7b6e6753c66eaebe16b4ad4a1235f39b47b2d12dd351ab706b7a0504c58d"
+  },
+  "runs": [
+    {
+      "name": "baseline",
+      "scope": "shared-tree dependency diagnostic before baseline isolation",
+      "profile": "debug",
+      "exit_code": 101,
+      "log": "baseline.log",
+      "log_sha256": "61b846827f47759bd96326020a6ddf2ebeb880edbdec3eb65492a45099abbad5",
+      "log_bytes": 408,
+      "test_summaries": [],
+      "compiler_sigkill": false
+    },
+    {
+      "name": "baseline-online",
+      "scope": "shared-tree locked-graph diagnostic before baseline isolation",
+      "profile": "debug",
+      "exit_code": 101,
+      "log": "baseline-online.log",
+      "log_sha256": "8bf68848c592dbcd8b88d07f2191d0107110f96e61985b38695ebcf7c1f88e7c",
+      "log_bytes": 290,
+      "test_summaries": [],
+      "compiler_sigkill": false
+    },
+    {
+      "name": "baseline-clean",
+      "scope": "clean original 040fb0cf targeted test",
+      "profile": "debug",
+      "exit_code": 0,
+      "log": "baseline-clean.log",
+      "log_sha256": "c3121b6ab8b4a77e15f56e246c017030fa58841f85742483cca21527855fc731",
+      "log_bytes": 4554,
+      "test_summaries": [
+        {
+          "outcome": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 784,
+          "test_seconds": 0.17
+        }
+      ],
+      "compiler_sigkill": false
+    },
+    {
+      "name": "baseline-full-lib",
+      "scope": "clean original 040fb0cf full library tests; different profile from hosted failure",
+      "profile": "debug",
+      "exit_code": 101,
+      "log": "baseline-full-lib.log",
+      "log_sha256": "18dd7561bd73b905a42001b964068023a993ce1cb4bf7cf759aa42e7510783a7",
+      "log_bytes": 88754,
+      "test_summaries": [
+        {
+          "outcome": "FAILED",
+          "passed": 784,
+          "failed": 1,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "test_seconds": 617.89
+        }
+      ],
+      "compiler_sigkill": false
+    },
+    {
+      "name": "baseline-release",
+      "scope": "clean original 040fb0cf targeted test; compilation killed before tests",
+      "profile": "release",
+      "exit_code": 101,
+      "log": "baseline-release.log",
+      "log_sha256": "bc8caf931133ef6e75f82805fe22b2eac63e54464d8cb986bcba36a7da88c0a1",
+      "log_bytes": 5825,
+      "test_summaries": [],
+      "compiler_sigkill": true
+    },
+    {
+      "name": "candidate-release",
+      "scope": "working-tree component diagnostic; original strengthened test plus four new TCP controls",
+      "profile": "release",
+      "exit_code": 0,
+      "log": "candidate-release.log",
+      "log_sha256": "33b9a537916a6243ffee62afcabc545856effcaaab99b9ffa6f945b8dd4e1d3b",
+      "log_bytes": 11804,
+      "test_summaries": [
+        {
+          "outcome": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 784,
+          "test_seconds": 1.0
+        }
+      ],
+      "compiler_sigkill": false
+    }
+  ],
+  "candidate_selected_source_after": {
+    "head": "8dc744e03d95b0adcf65fc87471b41e89f1287c3",
+    "scope": "selected source files only; final full committed-source gate is run by parent",
+    "files": {
+      "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs": "ce9efc2dc6160bcd1fc47163167deffb5b1f51926e98405bba7f7344fbdf179e",
+      "trillionnium/crates/trnm-data-availability/src/cell/discovery/equivocation_history_tests.rs": "35ace44907af0580609799cf54aadd4b4002800672a3370cedec67756e847e32",
+      "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "trillionnium/Cargo.lock": "9a09acd113a1db1918ff81922e9f3f9a91ddae94b873d75951bca2fd5f6868b3"
+    },
+    "selected_files_equal_before": true
+  },
+  "wire_cases": [
+    {
+      "case": "complete_conflict",
+      "discovery_response_bytes": 2070,
+      "validation_attempts": 6,
+      "rejected_records": 4,
+      "rejected_bootstraps": 0,
+      "provider_dials": [
+        0,
+        0,
+        0
+      ],
+      "output_exists": false
+    },
+    {
+      "case": "truncated_first_reply",
+      "discovery_response_bytes": 1034,
+      "validation_attempts": 2,
+      "rejected_records": 1,
+      "rejected_bootstraps": 1,
+      "provider_dials": [
+        0,
+        1,
+        0
+      ],
+      "output_exists": false
+    },
+    {
+      "case": "truncated_conflict_reply",
+      "discovery_response_bytes": 1034,
+      "validation_attempts": 2,
+      "rejected_records": 0,
+      "rejected_bootstraps": 1,
+      "provider_dials": [
+        0,
+        1,
+        0
+      ],
+      "output_exists": false
+    },
+    {
+      "case": "invalid_conflict_signature",
+      "discovery_response_bytes": 1035,
+      "validation_attempts": 3,
+      "rejected_records": 1,
+      "rejected_bootstraps": 0,
+      "provider_dials": [
+        0,
+        1,
+        0
+      ],
+      "output_exists": false
+    }
+  ],
+  "interpretation": {
+    "historical_hosted_root_cause_identified": false,
+    "historical_failure_erased_or_reclassified": false,
+    "original_deadlines_and_budgets_changed": false,
+    "selection_or_authentication_rules_changed": false,
+    "new_controls_used_real_tcp_and_provider_dial_traps": true,
+    "failed_discovery_observations_preserved": true,
+    "original_release_baseline_completed": false,
+    "complete_candidate_release_suite_executed_in_this_component_run": false,
+    "debug_pq_failure_is_distinct": true,
+    "debug_pq_failure_method": "cell::discovery::pq::auth::tests::authenticated_v3_real_tcp_receipt_time_equivocation_survives_later_source_expiry",
+    "debug_pq_failure_message": "expired receipt-time conflict was forgotten",
+    "compiler_sigkill_cause_known": false,
+    "full_committed_source_qualification": "separate parent-run gate, not established by this component record"
+  }
+}

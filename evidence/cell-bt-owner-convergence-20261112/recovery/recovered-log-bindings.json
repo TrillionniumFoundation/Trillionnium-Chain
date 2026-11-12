@@ -1,0 +1,32 @@
+{
+  "archive_sha256": "b8ca4b885d89e19065e31766a0001bf9f1a941a02812e562f782119f637b360b",
+  "command_stream_reviews": [
+    {
+      "matched_stream_count": 90,
+      "mismatches": 0,
+      "summary": "validation/frozen-candidate-01/summary.json",
+      "summary_sha256": "64ee04d0f1ca821278c71ae3c04be69ae62da8cd5eeb76d7906007f6ae50da1c"
+    },
+    {
+      "matched_stream_count": 10,
+      "mismatches": 0,
+      "summary": "validation/frozen-candidate-dependency-recheck-01/summary.json",
+      "summary_sha256": "0432e3602630b15e2a3116318e3b3245313f175a9acfe257b9ef359df5fdcf5b"
+    }
+  ],
+  "controlled_interruption_original_summary_hash_checked": true,
+  "current_source_checkout_reverified_during_recovery": false,
+  "discovery_run_logs_checked": 6,
+  "historical_hosted_log_checked": true,
+  "meaning": "Recovered bytes match their retained recorded hashes. This is evidence integrity review, not a new test or model result.",
+  "observer_only_repo_line_change_rechecked": true,
+  "original_preparation_manifest_checked": {
+    "bytes": 67483,
+    "sha256": "bb0ef4a26a40d5062d42d4f33a5fb7f890bbed4e6f0a41e85d49d45e5e2703c5"
+  },
+  "patch_applied": false,
+  "schema": "trnm-bt-recovered-log-binding-review-v1",
+  "session_restored_original_documentation_patch_sha256": "769d1ed515132ac84f6c09c1c47b92fd2a12e195dda9856bc1387be7e9b8aa26",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "tests_or_model_executed_during_recovery": false
+}

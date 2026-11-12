@@ -70,7 +70,7 @@ class AuthorityEffectTests(unittest.TestCase):
         self.assertEqual({row['id']: row['effect_scope'] for row in result['routes']},
                          EXPECTED_SCOPES)
         self.assertEqual(result['source_revision'],
-                         '0f0592ace4b08a1d39e1ffad31beee76ddc4fd66')
+                         '8dc744e03d95b0adcf65fc87471b41e89f1287c3')
         self.assertEqual(result['source_files_sha256'], self.original['source_files_sha256'])
         for name in ('coverage_complete', 'whole_chain_pq_qualified', 'production_activation',
                      'provenance_authenticated', 'call_graph_proved',
@@ -148,7 +148,11 @@ class AuthorityEffectTests(unittest.TestCase):
         self.refused('curated source set mismatch')
 
     def test_source_revision_schema_purpose_and_route_context_drift_refuse(self):
-        for field, value in (('source_revision', '0' * 40), ('schema', 'future-schema'),
+        for field, value in (('source_revision', '0' * 40),
+                             ('source_revision', '0f0592ace4b08a1d39e1ffad31beee76ddc4fd66'),
+                             ('source_revision', '040fb0cf460a6db568f0b4ec5ba581add3f2d2ba'),
+                             ('source_revision', 'a67d83a05d6ff4c2fdc4a5fd5c23fc38d38b563d'),
+                             ('schema', 'future-schema'),
                              ('purpose', 'production-qualification')):
             with self.subTest(field=field):
                 self.data = deepcopy(self.original)

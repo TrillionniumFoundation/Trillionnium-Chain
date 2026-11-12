@@ -1,0 +1,45 @@
+{
+  "actual_factory_execution_reviewed": false,
+  "actual_native_operation_reviewed": false,
+  "factory": {
+    "bytes": 15678,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote_prepare_model_config_frozen02_v1.py",
+    "sha256": "23a71c5c8a69630fd55ef07e3dca117d0f4842b714db28fd431d2ec032cea8ad"
+  },
+  "findings": [
+    "The factory does not call the wrapper main, normal native ELF or any model. Its only subprocess is the original current physical-source verifier. It extracts only the original sha/check/inputs function definitions from the exact wrapper to verify the source/audit payload files.",
+    "Config creation requires actual successful full-runtime observer/source reports with fixed helper/observer SHA, unchanged before/after pins, the three original guard booleans true, actual Torch4/1, elapsed<180 and matching new source/audit/operation/environment2/model1. Original model/owner/FinalUse/production flags remain false.",
+    "The original normal release main and its exact copy receipt are independently fixed by ef4d33be1574c27852187546f4393f301eb175b8246f647ce3d15a5d21fd2155 /19752832 bytes, ELF magic, release/test=false, and original build receipt b13585218eaf08c051c593ea699aae380322ab19fb8e021b9609a51ff47b8b09. The locator copy is not labelled recompilation.",
+    "Original tail02 and fresh static summaries and command stdout/stderr are re-read at exact independent SHA/size. The 74-command index stays explicitly separate-observation coverage and does not qualify model execution.",
+    "Before any config exists, the factory reruns original verify_ci_source against B and requires the exact423-byte/418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902 output. It then freshly reads all31 independent inputs/30 payload members/279627268bytes/95chunks, the accepted ELF and all gate pins before exclusive config creation.",
+    "The original wrapper consumes exactly ten direct config keys; the factory provides them. The wrapper reads config with json.loads(read_text) and has no explicit schema or config-byte-ceiling gate. New schema/required-memory/required-CPU/requires_root_explicit_model_go fields are descriptive metadata, not additional checks implemented by the original wrapper.",
+    "Real resource admission remains the unchanged original wrapper checks of actual memory.max=8589934592, cpu quota=4*period, source tuple300/536870912/8589934592/4, and native completion/deadline/roster checks. Root external explicit GO plus CONFIG_PATH --execute controls the actual future launch; the factory does not execute it.",
+    "Actual config and its hash, full runtime raw results, current source/ELF readback, launcher/request and authoritative job completion remain for subsequent result review. No extra tests, source changes or original-guard changes are requested by this review."
+  ],
+  "new_expected_wrapper": {
+    "bytes": 13622,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/discovery-reviewer/frozen02-independent-expectations/run_model.expected.py",
+    "sha256": "46329982d1de9e3e7dac3bcbc9cb7fcf1455ab3ceb514637097cbad8e0b9d313"
+  },
+  "original_wrapper": {
+    "bytes": 13639,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/checkpoints/discovery-reviewer/run_model.original-a67d83.py.txt",
+    "sha256": "120c70fb52909072eacf84251a44ff6c62f777479685db2cacf8cc1846a9e139"
+  },
+  "review_only": true,
+  "reviewer": "release_acceptance",
+  "schema": "trnm.bt-final-model-config-factory-source-independent-review.v1",
+  "source_review_passed": true,
+  "wrapper_directly_consumed_config_keys": [
+    "audit",
+    "audit_sha256",
+    "binary",
+    "binary_sha256",
+    "gate_artifacts",
+    "head",
+    "source",
+    "source_sha256",
+    "tree",
+    "wrapper_sha256"
+  ]
+}

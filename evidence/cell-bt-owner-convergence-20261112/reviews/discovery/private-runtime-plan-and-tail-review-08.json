@@ -1,0 +1,136 @@
+{
+  "plan": {
+    "bytes": 3742,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/private-runtime02-plan.json",
+    "sha256": "7815143286363d39eefa85dd882bac11b733351e2dcf1e2352c38bf3817db9f2"
+  },
+  "plan_status": "Identity plan is consistent with existing schema; concrete projection, source, audit, runtime admission and ELF binding remain pending.",
+  "qualification": {
+    "all_four_gates_passed": false,
+    "native_model_run_claimed": false,
+    "new_environment_admission_claimed": false,
+    "old_failures_reclassified": false,
+    "performance_qualification_inherited": false
+  },
+  "review_mode": "read-only; new derivative review only; no remote calls, Cargo, source changes or model execution",
+  "schema": "trnm.independent-private-runtime-plan-and-tail-authority-review.v1",
+  "source_commit": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "specific_required_bindings": [
+    "Project only declared absolute paths in the complete old snapshot structure. Preserve schema, all non-path values, the complete original file digest mapping and managed inventory membership; serialize deterministically and retain original/new/independently expected metadata byte identities.",
+    "Bind a fresh domain-separated operation to the original source hash, actual new snapshot hash, environment generation 2 and frozen B; verify distinct previous operations and absent output and wrapper.",
+    "Run the original pinned source-v1 preparer with environment generation 2. Keep all captured fields while adding the original v2 snapshot/network fields. Final context and model-parent fields must equal the old source.",
+    "If parent envelope or request files are derived from the old pinned source for preparer input, identify them as newly derived create-only metadata; do not claim their bytes were recovered originals.",
+    "Independently read every one of 31 source/audit entries: 11 model, 19 environment, one Python. Only runtime snapshot payload digest may differ; original Python bytes and other 29 payload digests remain exact. Record previous_source_sha256 as fb6fe559317f7c3cd6ef504581b89e7d8229a7c700d3c71b61099a32d443cec9 and same_independent_bytes=false.",
+    "Compute new payload bytes as 272530091 plus actual new snapshot bytes and compute actual chunk count. Do not inherit old total, pad metadata, remove members or alter original strict roster.",
+    "Use new preflight helper/observer binding to the new source/audit/snapshot and new canonical Python; old preparation-success.json points to old 03aa source and cannot be a substitute. Use fresh output/report/cache identities.",
+    "Final model config must bind actual successful new environment preflight, complete tail02 raw receipts, unique normal release main artifact with profile.test=false, source B, observer and new inputs. Root authorizes the final concrete launch."
+  ],
+  "supported_update": {
+    "environment_generation": 2,
+    "mapping": [
+      {
+        "new": "/home/qq/work/chain-bt-4a0b-runtime02/env",
+        "old": "/home/qq/hepta-smollm2-weight-research-20261103/ci-env"
+      },
+      {
+        "new": "/home/qq/work/chain-bt-4a0b-runtime02/python",
+        "old": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu"
+      }
+    ],
+    "model_parent_generation": 1,
+    "new_root": "/home/qq/work/chain-bt-4a0b-runtime02",
+    "old_runtime_snapshot_sha256": "e87a3658675836c130ba2a97a805bc6d86cc435135e72f4b6e40747e9271b9eb",
+    "old_source_sha256": "fb6fe559317f7c3cd6ef504581b89e7d8229a7c700d3c71b61099a32d443cec9",
+    "original_schema_or_worker_change_needed": false,
+    "persistent_current_upgrade": false
+  },
+  "tail02_observation": {
+    "all_completed_commands_zero_and_no_timeout": true,
+    "authoritative_status": {
+      "bytes": 732,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/tail02-authoritative/status.json",
+      "sha256": "556f8f9b8c3d577b1bd75442bf2a29bd87b25ac069992d05b0a61d872e119bcd"
+    },
+    "cancelled": false,
+    "completed_command_count": 37,
+    "completed_command_names": [
+      "preflight",
+      "source-before",
+      "sealed-research-python-controls",
+      "sealed-research-python-readback",
+      "native-grouped-example-pq",
+      "native-complete-selection-pq",
+      "native-complete-selection-pq-readback",
+      "node-storage-default",
+      "node-required-01",
+      "node-required-01-readback",
+      "node-required-02",
+      "node-required-02-readback",
+      "node-required-03",
+      "node-required-03-readback",
+      "node-required-04",
+      "node-required-04-readback",
+      "node-required-05",
+      "node-required-05-readback",
+      "node-required-06",
+      "node-required-06-readback",
+      "node-required-07",
+      "node-required-07-readback",
+      "node-required-08",
+      "node-required-08-readback",
+      "node-required-09",
+      "node-required-09-readback",
+      "node-required-10",
+      "node-required-10-readback",
+      "node-required-11",
+      "node-required-11-readback",
+      "node-required-12",
+      "node-required-12-readback",
+      "node-required-13",
+      "node-required-13-readback",
+      "node-storage",
+      "native-release-main-build",
+      "source-after"
+    ],
+    "controller_final_completed": true,
+    "controller_final_passed": true,
+    "exit_code": 0,
+    "job_id": "1a1cee42efb-2564-18e0",
+    "native_operation_started": false,
+    "nested_full_raw_test_and_artifact_report_reviewed_in_this_record": false,
+    "output_complete": true,
+    "output_durable": true,
+    "qualifying_ELF_bytes_or_artifact_metadata_reviewed_in_this_record": false,
+    "readback_full_byte_chain_verified": true,
+    "state": "succeeded",
+    "status_sdk": {
+      "bytes": 910,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/tail02-authoritative/status-native-sdk.json",
+      "sha256": "1c2eb26d2970280806f2aa3cc8e4b8576f384537dfaa73805f388bc3d1c27e22"
+    },
+    "stdout": {
+      "bytes": 6560,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/tail02-authoritative/tail02.stdout",
+      "sha256": "28362d035dc5cfae82be9119a671250732d30b8596c60329da2a4f809bfd419a"
+    },
+    "stdout_read_sdks": [
+      {
+        "bytes": 13990,
+        "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/tail02-authoritative/stdout-read-0-native-sdk.json",
+        "sha256": "6f154c060a810b50dbed7d9124faea942dcddf3310373cdc2208340b515b732a"
+      },
+      {
+        "bytes": 8620,
+        "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/tail02-authoritative/stdout-read-1-native-sdk.json",
+        "sha256": "3b011d9de7a87330af946f87a448faff34de362cdab00e4573aa9053e1a984eb"
+      }
+    ],
+    "timed_out": false
+  },
+  "wording_correction_required": {
+    "accurate_scope": "Original 300-second acceptance; actual outer 8-GiB cgroup memory limit and four-CPU quota; four Torch intraop threads and one interop thread. This does not establish a four-process-worker topology.",
+    "guard_modified": false,
+    "original_plan_phrase": "original 300s/8GiB/4workers model budgets",
+    "original_plan_preserved": true
+  }
+}

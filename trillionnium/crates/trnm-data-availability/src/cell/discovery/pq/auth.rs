@@ -378,7 +378,29 @@ fn discover(
                 continue;
             }
             let query = Query::fresh(options.request, *bootstrap, transport, Vec::new())?;
-            let reply = match exchange(&query, &options.bootstrap_keys, transport, observation) {
+            // An eligible source can accept a query and withhold its reply.
+            // Share the remaining time with every later configured source and
+            // retain one share for verification and payload work. This only
+            // shortens this exchange's request cap: the original operation,
+            // signed query/reply lifetimes and shared reservations do not move.
+            // Pins and fair time allocation do not establish independent or
+            // honest sources, nor guarantee service within a depleted budget.
+            let shares = (options.bootstraps.len() - source + 1) as u32;
+            let source_transport = RequestContext {
+                timeout: transport
+                    .timeout
+                    .min(network::remaining(transport.overall)? / shares),
+                overall: transport.overall,
+                requests_left: transport.requests_left,
+                responses: transport.responses,
+                cancelled: transport.cancelled,
+            };
+            let reply = match exchange(
+                &query,
+                &options.bootstrap_keys,
+                &source_transport,
+                observation,
+            ) {
                 Ok(reply) => reply,
                 Err(_) => {
                     observation.rejected_bootstraps += 1;

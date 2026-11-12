@@ -37,3 +37,10 @@ evidence/pon-client-confirmation-v1/**/*.log -text -whitespace
 
 # Preserve byte-exact successful and failed proof-chain observations.
 /evidence/pon-w1-qrom-proof-chain-20261108/*.log -text -whitespace
+
+# Preserve byte-exact raw output and captured artifacts for this model-storage observation.
+/evidence/cell-bt-owner-convergence-20261112/**/*.log -text -whitespace
+/evidence/cell-bt-owner-convergence-20261112/**/*.stdout -text -whitespace
+/evidence/cell-bt-owner-convergence-20261112/**/*.stderr -text -whitespace
+/evidence/cell-bt-owner-convergence-20261112/pending-patches/documentation-resource-scope.patch -text -whitespace
+/evidence/cell-bt-owner-convergence-20261112/remote/private-runtime02-projection/private-python-probe.maps -text -whitespace

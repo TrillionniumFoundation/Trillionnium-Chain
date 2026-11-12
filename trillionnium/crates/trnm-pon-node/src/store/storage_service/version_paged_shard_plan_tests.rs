@@ -592,3 +592,7 @@ fn native_paged_shard_plan_counts_retired_provider_history_before_first_new_effe
         );
     }
 }
+
+#[cfg(target_os = "linux")]
+#[path = "version_grouped_shard_v3_tests.rs"]
+mod grouped_v3_tests;

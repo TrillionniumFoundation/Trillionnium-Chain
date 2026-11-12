@@ -1,0 +1,167 @@
+{
+  "cause": "unknown",
+  "completed": true,
+  "existing_files_overwritten": false,
+  "finished_ns": 1794454066467506592,
+  "index_listing_sha256": "5a80999e5503e665514135d46c5f42bbbdd80ef6c27e1b9adfa6c0c1ab90ac59",
+  "missing_regular_files": [
+    {
+      "blob": "d57a91a2fe54e6c51c3f4865e2731a71c7ba39e0",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/220e442f50a050710a07b21646787a9b32514b9fb5e32ca885de495eba766712.bin.gz"
+    },
+    {
+      "blob": "8f9728a5d97603ebf6d522a763e05d984cd1a33c",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/3966b856d13c087b16c12d090846e10e7a045de5c24d2f99586896d00a4b6753.bin.gz"
+    },
+    {
+      "blob": "6013bb195b77eb85d0caa931f1f8d7babe305eee",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/4b3026a679046faa1962ee10236d0124e0dce352582653850dfaeeba85a94d6e.bin.gz"
+    },
+    {
+      "blob": "3e08a5f26d161902bc7014c9e2c8ee6b43d4823e",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/51789aa5919accd5d8a4a0cb2117413ddb823dbbdcf09504af30354fd7f78d6b.bin.gz"
+    },
+    {
+      "blob": "63e50fd49f0aee11efeed97bb9ba3414a5aa5337",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/71ea441516048ce01c7ed7daa22196a45185a6017063659d040eada76cc318f4.bin.gz"
+    },
+    {
+      "blob": "16e432a42c875b594eee8637138424e284100aed",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c.bin.gz"
+    },
+    {
+      "blob": "f0250ed899b9b2d5f733e35c42e87b9a60fdc952",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/cf6e0d63088e1194e37fe29c573a52794c436ac60e18fbb11d56f0d29a11157d.bin.gz"
+    },
+    {
+      "blob": "337b7455e2ed2dc5af5bc09ad51c7de20e744468",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/ef3652b06e74251c78b7983ca1589321c6a62ff5203683ff9888fd98048ddde0.bin.gz"
+    },
+    {
+      "blob": "6ed442c651783bc03340d3485196fa59adf1c093",
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/resource_pressure/node-pressure-evidence-final.tar.gz"
+    }
+  ],
+  "prior_attempt": {
+    "completed": false,
+    "error": "FileExistsError(17, 'File exists')",
+    "restored_count": 93,
+    "sha256": "2cde4f449872ecab257e30ed7c3bdd59dfcf482afffb811378d06acb9ea9cbb8",
+    "summary": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/final-publication/physical-restoration/summary.json"
+  },
+  "restored": [
+    {
+      "blob": "d57a91a2fe54e6c51c3f4865e2731a71c7ba39e0",
+      "bytes": 4458529,
+      "cache_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/final-publication/physical-restoration/d57a91a2fe54e6c51c3f4865e2731a71c7ba39e0.blob",
+      "cache_reused_after_verification": true,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/220e442f50a050710a07b21646787a9b32514b9fb5e32ca885de495eba766712.bin.gz",
+      "sha256": "958bd9ff3e9b4f228246bec3a3558395c2bb443fbc6edde34dd740b928fb5bd8"
+    },
+    {
+      "blob": "8f9728a5d97603ebf6d522a763e05d984cd1a33c",
+      "bytes": 4458529,
+      "cache_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/final-publication/physical-restoration/8f9728a5d97603ebf6d522a763e05d984cd1a33c.blob",
+      "cache_reused_after_verification": true,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/3966b856d13c087b16c12d090846e10e7a045de5c24d2f99586896d00a4b6753.bin.gz",
+      "sha256": "392cc659119c9be7e06c8039798d704f9432c142c55ade5b4fb97bb4c90e090d"
+    },
+    {
+      "blob": "6013bb195b77eb85d0caa931f1f8d7babe305eee",
+      "bytes": 4458529,
+      "cache_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/final-publication/physical-restoration/6013bb195b77eb85d0caa931f1f8d7babe305eee.blob",
+      "cache_reused_after_verification": true,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/4b3026a679046faa1962ee10236d0124e0dce352582653850dfaeeba85a94d6e.bin.gz",
+      "sha256": "facd31e72aca7f64d2672f53a3208bb1b038c291ca0869a60fdd07df1aa58056"
+    },
+    {
+      "blob": "3e08a5f26d161902bc7014c9e2c8ee6b43d4823e",
+      "bytes": 4465731,
+      "cache_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/final-publication/physical-restoration/3e08a5f26d161902bc7014c9e2c8ee6b43d4823e.blob",
+      "cache_reused_after_verification": true,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/51789aa5919accd5d8a4a0cb2117413ddb823dbbdcf09504af30354fd7f78d6b.bin.gz",
+      "sha256": "6e387a333fa70b4a802d60e5d8f46433d288c8103351303cdeab40f5e9aa6354"
+    },
+    {
+      "blob": "63e50fd49f0aee11efeed97bb9ba3414a5aa5337",
+      "bytes": 4348426,
+      "cache_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/final-publication/physical-restoration/63e50fd49f0aee11efeed97bb9ba3414a5aa5337.blob",
+      "cache_reused_after_verification": true,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/71ea441516048ce01c7ed7daa22196a45185a6017063659d040eada76cc318f4.bin.gz",
+      "sha256": "d22017a96835745df478982a935b5320c3b284216807e9ebc8af4ba87910f09c"
+    },
+    {
+      "blob": "16e432a42c875b594eee8637138424e284100aed",
+      "bytes": 4347050,
+      "cache_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/final-publication/physical-restoration/16e432a42c875b594eee8637138424e284100aed.blob",
+      "cache_reused_after_verification": true,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/ca4867c63de4f0d247930944d4c47d87342a4945a399abe9f8a57eba2502e33c.bin.gz",
+      "sha256": "357fbe8e39dae404bea36372ae4e1da41d954c435324a1af7cf5604d06b9f27e"
+    },
+    {
+      "blob": "f0250ed899b9b2d5f733e35c42e87b9a60fdc952",
+      "bytes": 4458529,
+      "cache_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/final-publication/physical-restoration/f0250ed899b9b2d5f733e35c42e87b9a60fdc952.blob",
+      "cache_reused_after_verification": true,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/cf6e0d63088e1194e37fe29c573a52794c436ac60e18fbb11d56f0d29a11157d.bin.gz",
+      "sha256": "8bc3bcb8432203eabb82eed1214134a1ea8ae53810f8b6a6377a32d1e08d9a83"
+    },
+    {
+      "blob": "337b7455e2ed2dc5af5bc09ad51c7de20e744468",
+      "bytes": 4458528,
+      "cache_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/final-publication/physical-restoration/337b7455e2ed2dc5af5bc09ad51c7de20e744468.blob",
+      "cache_reused_after_verification": true,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/ef3652b06e74251c78b7983ca1589321c6a62ff5203683ff9888fd98048ddde0.bin.gz",
+      "sha256": "938c984cb25b47b692de3a163d1072a340e890fc7d6807015fa1058002c6b0f0"
+    },
+    {
+      "blob": "6ed442c651783bc03340d3485196fa59adf1c093",
+      "bytes": 2944501,
+      "cache_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/final-publication/physical-restoration-v2/6ed442c651783bc03340d3485196fa59adf1c093.blob",
+      "cache_reused_after_verification": false,
+      "create_only": true,
+      "git_blob_verified": true,
+      "mode": "100644",
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/resource_pressure/node-pressure-evidence-final.tar.gz",
+      "sha256": "c928d3bbac5d2bfb47e3f2e9dcd7be0989b2b8f631e5d3b85793c60c483c0bf7"
+    }
+  ],
+  "schema": "missing-tracked-original-restoration-v1",
+  "source": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "started_ns": 1794454064961015447,
+  "tracked_entries": 27100,
+  "unexpected_missing_modes": []
+}

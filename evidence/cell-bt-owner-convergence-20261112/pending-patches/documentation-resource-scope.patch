@@ -1,0 +1,17 @@
+--- a/docs/development/specs/pon/CELL_BT_OWNER_CONVERGENCE_V1.md
++++ b/docs/development/specs/pon/CELL_BT_OWNER_CONVERGENCE_V1.md
+@@ -108,7 +108,13 @@
+ | CTS1 tensor codec | Dense safetensors F32/F16/BF16; no implicit 4-bit loader |
+ | Native grouped research input | At most 128 original chunks and 512 MiB input |
+ | V3 temporary wire cache | 768 manifests, 2,048 chunks and 512 MiB logical bytes |
+-| Real-model research operation | Original 300-second, 8-GiB, four-worker limits |
++| Real-model research operation | Original 300-second acceptance, 8-GiB outer cgroup and four-CPU quota; four Torch intraop threads and one interop thread |
++
++The original outer observer must verify the actual operation cgroup's 8-GiB
++memory limit and four-CPU quota. The internal supervisor's worker RSS sampling
++and `wait4` receipt measure a different scope and do not establish a hard limit
++for the whole process tree. Compiler memory is outside the model-operation
++grant. A dependency-import preflight is not model execution or loader admission.
+ 
+ Paging does not divide one complete release into unrelated independently
+ admissible versions. Larger models and quantized formats require explicit

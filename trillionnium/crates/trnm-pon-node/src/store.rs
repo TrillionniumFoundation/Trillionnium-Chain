@@ -9249,3 +9249,15 @@ mod fixed_blob_read_tests {
         );
     }
 }
+
+#[cfg(target_os = "linux")]
+pub use storage_service::{
+    native_cell_shard_parent_group_subject_v3, NativeCellGroupedChildCpuV3,
+    NativeCellGroupedShardPlanReadbackV3, NativeCellGroupedShardRecoveryBudgetV3,
+    NativeCellGroupedShardRecoveryFailureV3, NativeCellGroupedShardRecoveryReadbackV3,
+    NativeCellGroupedShardRepairRequestV3, NativeCellGroupedShardStorageRequestV3,
+    NativeCellShardGroupChildV3, NativeCellShardGroupJournalConfigV3,
+    NativeCellShardGroupJournalV3, NativeCellShardGroupKindV3,
+    NativeCellShardParentGroupReadbackV3, NativeCellShardParentGroupV3,
+    NATIVE_CELL_SHARD_PARENT_GROUP_WIDTH_V3,
+};

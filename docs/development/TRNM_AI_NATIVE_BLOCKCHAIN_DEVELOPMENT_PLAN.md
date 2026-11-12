@@ -1,4 +1,121 @@
-**Paged real-model research bridge — NOT_RUN; qualification HOLD:**
+**BT storage owner convergence, 2026-11-12 UTC — local composed-source research PASS; qualification HOLD:**
+
+Compose the original complete-release selection source
+`040fb0cf460a6db568f0b4ec5ba581add3f2d2ba` with the original native M12/CGJ3
+owners from `a67d83a05d6ff4c2fdc4a5fd5c23fc38d38b563d` under the
+[convergence contract](specs/pon/CELL_BT_OWNER_CONVERGENCE_V1.md).
+Runtime source is `031d442dd0acb693afcfaf42f9cc4db446ba52cb`, tree
+`a897ba4c74897a05ceb364f098b1bfe32c850213`; later publication metadata does
+not relabel its tests, normal ELF or model receipts.
+
+All 74 original candidate command requirements have separately bound successful
+observations: 839 DA cases, 60 Node storage tests in each default/PQ configuration,
+14 native example tests in each configuration, 11 in each original sealed/paged
+example, all 24 actual Python controls, exact selectors/readers, locked graphs,
+formatting, source/negative/PQ/inventory gates and original strict Clippy.
+The original incomplete campaign, missing-dependency and compiler/Python
+failures remain original failures; the [complete evidence](../../evidence/cell-bt-owner-convergence-20261112/README.md)
+retains source/runtime preflight refusals and recovered-local raw-data gaps.
+The historical hosted higher-sequence failure's cause is not established.
+Real-TCP complete/truncated/bad-signature controls retain the original budgets,
+authentication/selection rules and conflict latch with consumer observations.
+The original higher-sequence test and complete authenticated-conflict control
+require provider dials `[0,0,0]`; truncated/bad-signature controls require
+`[0,1,0]` at the sole independently verified candidate's provider trap and no
+output file. Unverified data cannot fabricate an observed conflict.
+
+Actual operation `bf34a669dc4b3617d97bee356f1cadf3504f3c5993999c5136ce1d6b0cd6f9c2`
+transported 30 members / 279,627,268 bytes / 95 chunks, completed the original
+79-parent/760-child development-funded native cycle, repaired 190 damaged
+original shard targets and reconstructed all chunks from original slots 0–3.
+It selected the complete typed model/environment pair at revision 1, retained
+paired admission through sealed handoff and completed two forwards. Native wall
+time was 77.268108463 seconds under the original 300-second bound. Actual outer
+8-GiB/four-CPU cgroup peak was 3,176,267,776 bytes, with no OOM.
+Cumulative cold recovery, selected typed release and two-forward receipt times
+were 66.144535560, 67.491774971 and 77.228412679 seconds; they are not additive,
+first-token/WAN latency or a paired comparison with S3/C3. The environment
+snapshot moved to generation 2 with unchanged model bytes and parent generation 1.
+
+Copy/native retain original V2 source inputs; independently pinned paged custody
+retains its wrapper. No second ledger, synthetic paged owner or new CURRENT
+store is introduced. The original V3 wire metadata grant remains distinct from
+the earlier failed 128-row temporary-cache gate. Direct root/member current
+payload readback after deliberate TCA3 overwrite and future retention/payment
+qualification remain false. Current development funding is not real payment.
+
+Independent bootstrap/provider administrators and failure domains, remote
+challenges, paid renewal/settlement, original PN1–PN4 entry, pre-registered
+72-hour PN5 WAN service, ordinary original-owner durable CURRENT/FinalUse,
+installation, model efficacy and production activation remain **HOLD**.
+The 16-GiB/4,096-chunk complete profile and dense F32/F16/BF16 CTS1 boundary
+remain; this run does not qualify 70B, 4-bit or per-token WAN weight fetching.
+
+**Cell storage four-gate continuation, 2026-11-12 UTC — local native PASS; qualification HOLD:**
+
+Continue #879 at `30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6` under the
+[four-gate contract](specs/pon/CELL_STORAGE_FOUR_GATE_CONTINUATION_V1.md).
+Keep authenticated V3 discovery, complete identities, original resource
+limits, funding duties, failed observations and production refusal.
+
+Reserve time for later pinned bootstrap sources and downstream byte work
+inside the original absolute deadline. Select one complete resident CTS1
+through a manager-bound increasing CAS ticket; validate model/environment,
+tensor schema and current contexts before one assignment. Reject stale,
+ABA and foreign tickets, prevent legacy paths from splitting the selection,
+protect both closures and retain paired admission across actual research
+sealing. This process-local ticket is not durable Hepta CURRENT or FinalUse.
+
+Reuse bounded retention schema/arena/repair-ledger checks before admission,
+reconciliation and physical copy. Preserve a durable debit on later refusal.
+Open CPS1 without blocking on nonregular input while retaining original
+regular-file, pin and deadline checks. These defenses are not an executed
+metadata-corruption exploit or noncooperating-writer atomicity proof.
+
+Runtime C3 `030de92be05bfd4f73e199098c12dfeaedf29b17` passed 68/68 candidate
+commands and 7/7 observer/build commands: 835 DA cases; 44 Node storage cases
+in each default and pq-native-openssl configuration; 11 in each sealed
+example; all 24 actual sealed-worker Python controls and original strict
+readers, locked graphs, source/link gates and strict Clippy.
+The same three TCP controls actually failed on the test-only #879 predecessor
+and passed on C3 under original windows. Sparse-source refusals, incomplete
+local diagnostics and C2 FIFO-API compilation errors remain recorded in the
+[complete observations](../../evidence/cell-storage-four-gates-20261111/README.md).
+
+The fresh actual paged-model operation retained 280,269,602 payload bytes,
+95 chunks, all original pins and the 300-second/8-GiB limits. Cumulative cold
+recovery, complete selected typed release and verified two-forward receipt
+occurred at 62.318658435, 66.401049437 and 103.736029521 seconds.
+Native elapsed time was 103.804071986 seconds without watchdog termination.
+These are local observations, not first-token/WAN latency. The historical
+36.047064473-second run is unpaired and supports no speedup or causal comparison.
+
+After completed native/source-after checks, packaging found the original
+test source root absent; cause unknown. The used runner was recovered from
+its immutable C3 blob and matched its original SHA256. A separate complete
+publication checkout subsequently passed the original physical source guard
+for all 27,100 C3 tracked entries. The later local review workspace also
+became unavailable during an incomplete space-migration attempt. Preserve
+these distinct observations and use remote originals for final publication;
+do not claim a migration or a test completed without its receipt.
+
+Publication adds evidence/documentation and two narrow CI repairs:
+the exact current base branch in CodeQL local-SARIF triggers, and portable
+next-architecture log filename stems with corresponding strict CI bindings.
+Original native selectors, budgets, guards and failure criteria remain.
+Rust/Cargo/native-model runner bytes and native execution attribution stay C3.
+CodeQL upload: never stays unchanged, so local-SARIF cannot qualify the
+separate Advanced Security API exporter. Six observed C3 hosted failures
+remain failures, including QROM frozen-input inconsistencies, API export,
+native campaign/fresh-challenge service criteria and artifact upload.
+The final published head's hosted CI remains a separate gate.
+
+Independent bootstrap administration, approved replacement-domain repair
+ownership, actual remote read challenges, paid renewal/settlement, the
+original 72-hour PN5 WAN duty and durable original CURRENT/FinalUse remain
+open. Local code and research evidence do not promote qualification flags.
+
+**Historical paged real-model research bridge — NOT_RUN at that checkpoint; superseded by executed observations above:**
 
 An explicit [paged sealed research route](specs/pon/CELL_SEALED_PAGED_RESEARCH_NEXT_USE_V1.md)
 keeps the original model/environment version and strict V2 source wire while

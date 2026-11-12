@@ -1,0 +1,44 @@
+{
+  "archives": [
+    {
+      "bytes": 286100,
+      "label": "current",
+      "manifest_files_verified": 205,
+      "manifest_sha256": "2512a6d43341d7a95e0ab8cbb1a288e7e53090dffd913889267ca7b7e9f6e51e",
+      "members": 206,
+      "prefix": "remote-current-records/",
+      "raw_bytes_preserved": true,
+      "sha256": "38519564908a3bd7afbaed914c866f06331b4b421532dbce86b2ebef145b0954",
+      "source_path": "/home/qian-qi/work/chain-cell-four-gates-2bfb-recovered-original-current.tar.gz",
+      "streams_verified": 165
+    }
+  ],
+  "assembly_completed": false,
+  "base_head": "30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6",
+  "commands": [
+    {
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "elapsed_seconds": 0.09916262002661824,
+      "exit_code": 0,
+      "name": "preflight",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 180,
+      "stdout_sha256": "64d4a324a23bd14342da6eb90d43634651470c35bb7978b645ef64e9df0b624c",
+      "timed_out": false
+    }
+  ],
+  "completed": false,
+  "error": "KeyError('path')",
+  "github_write": false,
+  "native_rerun": false,
+  "runtime_head": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "schema": "cell-four-gate-final-publication-v1",
+  "start_head": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "start_tree": "21e970bfdb11ab64403d2af5f3c56536a2961f80",
+  "status": "assembly_failed"
+}
