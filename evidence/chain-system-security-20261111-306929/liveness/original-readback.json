@@ -1,0 +1,121 @@
+{
+  "actual_lifetime_failure_bound": null,
+  "all_observed_window_confirmations_have_execution_authority": false,
+  "all_observed_window_confirmations_have_finality": false,
+  "artifact_sha256": "9a2c2250205c6a5fe18524451addf56115aafbf951d9a5c2fd3f6056988e437e",
+  "complete_original_campaigns": 0,
+  "complete_phases": 0,
+  "distinct_fixture_transactions": 1,
+  "history_import_failed": 6,
+  "history_import_succeeded": 41,
+  "history_rpc_ok": 47,
+  "manifest_payload_bytes": 522609424,
+  "manifest_payload_entries": 1765,
+  "observed_window_transaction_ids": [
+    "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+  ],
+  "phases": [
+    {
+      "attacker_processes_requested": 0,
+      "budget_depletion_observed": false,
+      "in_window_confirmations": 1,
+      "mode": "baseline",
+      "phase_criteria_met": false,
+      "planned_confirmations": 3,
+      "receiver_client_state_equal": false,
+      "run": 1
+    },
+    {
+      "attacker_processes_requested": 24,
+      "budget_depletion_observed": false,
+      "in_window_confirmations": 0,
+      "mode": "from-zero",
+      "phase_criteria_met": false,
+      "planned_confirmations": 3,
+      "receiver_client_state_equal": false,
+      "run": 1
+    },
+    {
+      "attacker_processes_requested": 24,
+      "budget_depletion_observed": false,
+      "in_window_confirmations": 0,
+      "mode": "late-product",
+      "phase_criteria_met": false,
+      "planned_confirmations": 3,
+      "receiver_client_state_equal": false,
+      "run": 1
+    },
+    {
+      "attacker_processes_requested": 0,
+      "budget_depletion_observed": false,
+      "in_window_confirmations": 1,
+      "mode": "baseline",
+      "phase_criteria_met": false,
+      "planned_confirmations": 3,
+      "receiver_client_state_equal": false,
+      "run": 2
+    },
+    {
+      "attacker_processes_requested": 24,
+      "budget_depletion_observed": false,
+      "in_window_confirmations": 0,
+      "mode": "from-zero",
+      "phase_criteria_met": false,
+      "planned_confirmations": 3,
+      "receiver_client_state_equal": false,
+      "run": 2
+    },
+    {
+      "attacker_processes_requested": 24,
+      "budget_depletion_observed": false,
+      "in_window_confirmations": 0,
+      "mode": "late-product",
+      "phase_criteria_met": false,
+      "planned_confirmations": 3,
+      "receiver_client_state_equal": false,
+      "run": 2
+    },
+    {
+      "attacker_processes_requested": 0,
+      "budget_depletion_observed": false,
+      "in_window_confirmations": 1,
+      "mode": "baseline",
+      "phase_criteria_met": false,
+      "planned_confirmations": 3,
+      "receiver_client_state_equal": false,
+      "run": 3
+    },
+    {
+      "attacker_processes_requested": 24,
+      "budget_depletion_observed": false,
+      "in_window_confirmations": 0,
+      "mode": "from-zero",
+      "phase_criteria_met": false,
+      "planned_confirmations": 3,
+      "receiver_client_state_equal": false,
+      "run": 3
+    },
+    {
+      "attacker_processes_requested": 24,
+      "budget_depletion_observed": false,
+      "in_window_confirmations": 0,
+      "mode": "late-product",
+      "phase_criteria_met": false,
+      "planned_confirmations": 3,
+      "receiver_client_state_equal": false,
+      "run": 3
+    }
+  ],
+  "planned_original_campaigns": 3,
+  "planned_phases": 9,
+  "planned_window_confirmations": 27,
+  "production_activation": false,
+  "receiver_client_equal_phases": 0,
+  "schema": "pq-root-native-independent-readback-v1",
+  "scope": "Original native same-host evidence readback only: not independent real effects, WAN, custody or formal security bound",
+  "source_head": "53e1b98a7955898b9feff4778f7136c0fd0199c8",
+  "source_tree": "094ccb0afc9e7ffbbcc83f85efb6ca4ad8d54aa0",
+  "status": "HOLD_NO_GO",
+  "window_confirmations": 3,
+  "zip_members": 1766
+}
