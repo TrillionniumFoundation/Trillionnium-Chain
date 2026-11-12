@@ -1,3 +1,36 @@
+**PQ retained-control synchronization and CI harness alignment, 2026-11-12 — HOLD:**
+
+The first joint source `921acc94fa7af15cb1728ab2718c62f48ad93c89`
+completed its observations with three failed commands retained: each complete
+DA library lane passed 733 methods and failed the existing 65/128-chunk capacity
+control at its original ten-second absolute deadline; the checkpoint package
+exposed a copied-lease test scheduling race. All fifteen new TCV3 methods ran
+successfully in both lanes, and the 63 exact PQ controls and strict Clippy
+passed. Those successes do not replace the retained full-library failures.
+
+The copied-lease test assumed an idle first owner while the second owner's
+live-listener probe wakes it. The existing production guard correctly rejects
+the replaced lease inode. Synchronize the test with a confirmed POSIX stop,
+retain its live listener and original lock, restore the original lease before
+resuming the positive case, and require actual service afterward. Add a separate
+negative case that resumes before restoration and requires actual fencing with
+unchanged journal bytes. Keep production guards, the original three selectors,
+Cargo graphs and protocol formats unchanged; require the new fourth selector
+in the hosted checkpoint step and its failure-propagation controls.
+
+The first local harness omitted the repository CI's existing
+`RUST_TEST_THREADS=1`. Subsequent observations use that setting and explicit
+single-threaded DA/checkpoint invocation while retaining the original deadlines
+and workloads. This is a new observation on its own committed source, not a
+rewrite of the prior results or proof that every parallel failure was caused
+by scheduling. Preserve both complete observation sets.
+
+Re-anchor the same twenty-one declared implementation objects to this source
+checkpoint. Their byte identities and all eight unknown/null probability terms
+remain unchanged, as do the Root register's frozen scope and unproved bounds.
+Ordinary callers, public WAN qualification, historical migration, independent
+custody, W1/DAA hardness, FinalUse and production gates remain unqualified.
+
 **PQ entry configuration and declared content-lineage continuation, 2026-11-12 America/New_York — HOLD:**
 
 Continue the copied-lease/V5 integration at #940, retaining the complete #939

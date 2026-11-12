@@ -1832,6 +1832,39 @@ PQ_SYSTEM_SUPPLEMENTAL_STEP = r'''      - name: Execute supplemental account sco
           test "$failed" = 0
 '''
 
+# Pin the original ownership controls and the actual probe-induced fencing case.
+# This source contract does not qualify any native execution or security bound.
+PQ_CHECKPOINT_OWNERSHIP_STEP = r'''      - name: Require admitted migration handoff and checkpoint endpoint ownership
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          failed=0
+          for selector in \
+            store::pq_migration_inventory::handoff_tests::admitted_restricted_source_handoff_preserves_nonce_liability_and_claim_on_cold_open \
+            store::pq_migration_inventory::handoff_tests::admitted_source_handoff_refuses_wrong_registry_pins_and_unsupported_source_rows; do
+            label="migration-${selector##*::}"
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done
+          for selector in \
+            rejected_nonprivate_socket_parent_does_not_unlink_existing_listener \
+            different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint \
+            copied_lease_record_cannot_replace_a_live_checkpoint_endpoint \
+            copied_lease_probe_fences_owner_before_lease_restoration; do
+            label="checkpoint-$selector"
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store --test socket_ownership "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done
+          test "$failed" = 0
+'''
+
 def check_pq_release_authority_controls(root: Path) -> dict:
     """Pin the complete release roster and its actual hosted execution wiring.
 
@@ -1984,6 +2017,11 @@ def check_pq_system_required_controls(root: Path) -> dict:
                 'PQ system build and both exact execution/readback steps must remain complete')
     require(PQ_SYSTEM_BUILD_STEP + PQ_SYSTEM_REQUIRED_STEP + PQ_SYSTEM_SUPPLEMENTAL_STEP in job,
             'PQ system build must precede the retained 52 and separate eleven exact control runs')
+    require(job.count(PQ_CHECKPOINT_OWNERSHIP_STEP)
+            == text.count(PQ_CHECKPOINT_OWNERSHIP_STEP) == 1,
+            'PQ checkpoint controls require all four exact runs and failure readback')
+    require(PQ_SYSTEM_SUPPLEMENTAL_STEP + PQ_CHECKPOINT_OWNERSHIP_STEP in job,
+            'PQ checkpoint controls must follow the unchanged 52-plus-eleven runs')
     return {'retained_meaningful_controls': 52, 'supplemental_meaningful_controls': 11,
             'selected_meaningful_controls': 63, 'tests_executed': False}
 

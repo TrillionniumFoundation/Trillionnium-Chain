@@ -38,7 +38,7 @@ from check_ci_contract import (check_pq_release_authority_controls, PQ_RELEASE_W
                                PQ_RELEASE_MANIFEST, PQ_RELEASE_GROUPS, PQ_ROOT_HARNESS_FILES)
 from check_ci_contract import (check_pq_system_required_controls, PQ_SYSTEM_REQUIRED_MANIFEST,
                                PQ_SYSTEM_SUPPLEMENTAL_MANIFEST, PQ_SYSTEM_REQUIRED_STEP,
-                               PQ_SYSTEM_SUPPLEMENTAL_STEP)
+                               PQ_SYSTEM_SUPPLEMENTAL_STEP, PQ_CHECKPOINT_OWNERSHIP_STEP)
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
                                    cost_job_budget_seconds, rejection_job_budget_seconds)
 from report_current_implementation import DESTINATION, markdown, projection, validate as current_validate
@@ -2993,6 +2993,100 @@ class PqSystemSupplementalControlTests(unittest.TestCase):
 
     def write_manifest(self, relative, value):
         (self.root / relative).write_text(json.dumps(value, indent=2) + '\n')
+
+    # Independent expectations for the actual hosted step, including its
+    # unchanged two migration controls. These shell doubles never execute Rust.
+    CHECKPOINT_CASES = (
+        'rejected_nonprivate_socket_parent_does_not_unlink_existing_listener',
+        'different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint',
+        'copied_lease_record_cannot_replace_a_live_checkpoint_endpoint',
+        'copied_lease_probe_fences_owner_before_lease_restoration',
+    )
+    HANDOFF_CASES = (
+        'store::pq_migration_inventory::handoff_tests::admitted_restricted_source_handoff_preserves_nonce_liability_and_claim_on_cold_open',
+        'store::pq_migration_inventory::handoff_tests::admitted_source_handoff_refuses_wrong_registry_pins_and_unsupported_source_rows',
+    )
+
+    def test_checkpoint_step_cannot_drop_original_or_new_controls_or_ignore_failure(self):
+        step = PQ_CHECKPOINT_OWNERSHIP_STEP
+        changes = [
+            ('missing-step', ''),
+            ('duplicate-step', step + step),
+            ('disabled', step.replace(
+                "!cancelled() && steps.pq_build.outcome == 'success'", 'false')),
+            ('substring', step.replace(' -- --exact ', ' -- ')),
+            ('readback', step.replace('python3 scripts/ci/check_required_native_test.py', 'true')),
+            ('swallow', step.replace('failed=1', 'failed=0')),
+        ]
+        changes.extend((name, step.replace(name, 'renamed_' + name, 1))
+                       for name in self.CHECKPOINT_CASES)
+        for label, changed_step in changes:
+            with self.subTest(label=label):
+                changed = self.workflow.replace(step, changed_step, 1)
+                self.assertNotEqual(changed, self.workflow)
+                (self.root / PQ_RELEASE_WORKFLOW).write_text(changed)
+                with self.assertRaisesRegex(ValueError, 'PQ checkpoint'):
+                    check_pq_system_required_controls(self.root)
+
+    def run_checkpoint_shell(self, mode='pass'):
+        out = self.root / ('synthetic-checkpoint-' + mode)
+        out.mkdir()
+        (out / 'selection.json').write_text(json.dumps(
+            [*self.HANDOFF_CASES, *self.CHECKPOINT_CASES]))
+        (out / 'run-command.sh').write_text(
+            'set -euo pipefail\npython3 "$PQ_OUT/synthetic-command.py" "$@"\n')
+        (out / 'synthetic-command.py').write_text(r'''
+import json, os, sys
+from pathlib import Path
+out = Path(os.environ['PQ_OUT'])
+names = json.loads((out / 'selection.json').read_text())
+label, *command = sys.argv[1:]
+selector = command[10]
+migration = selector in names[:2]
+target = ['trnm-pon-node', '--lib', '--all-features'] if migration else [
+    'trnm-checkpoint-store', '--test', 'socket_ownership']
+expected = ['cargo', '+1.95.0', 'test', '--locked', '--manifest-path',
+            'trillionnium/Cargo.toml', '-p', *target, selector,
+            '--', '--exact', '--show-output', '--test-threads=1']
+assert command == expected and selector in names
+assert label == ('migration-' + selector.rsplit('::', 1)[-1] if migration
+                 else 'checkpoint-' + selector)
+with (out / 'calls.jsonl').open('a') as calls:
+    calls.write(json.dumps({'label': label, 'selector': selector}) + '\n')
+mode = os.environ['TRNM_PQ_SYNTHETIC_MODE'] if selector == names[-1] else 'pass'
+if mode == 'failed-command':
+    raise SystemExit(1)
+name = 'wrong_control' if mode == 'wrong-name' else selector
+raw = f'running 1 test\ntest {name} ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s\n'
+if mode == 'zero':
+    raw = 'running 0 tests\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s\n'
+(out / (label + '.log')).write_text(raw)
+''')
+        body = textwrap.dedent(PQ_CHECKPOINT_OWNERSHIP_STEP.split('        run: |\n', 1)[1])
+        result = subprocess.run(
+            ['bash', '-c', body], cwd=self.root, capture_output=True, text=True,
+            env={**os.environ, 'PQ_OUT': str(out), 'TRNM_PQ_SYNTHETIC_MODE': mode})
+        calls = [json.loads(line) for line in (out / 'calls.jsonl').read_text().splitlines()]
+        return result, calls, out
+
+    def test_checkpoint_shell_selects_original_three_and_new_fencing_control_once(self):
+        result, calls, out = self.run_checkpoint_shell()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual([row['selector'] for row in calls],
+                         [*self.HANDOFF_CASES, *self.CHECKPOINT_CASES])
+        for row in calls:
+            readback = json.loads((out / (row['label'] + '-execution.json')).read_text())
+            self.assertEqual(readback['test'], row['selector'])
+            self.assertEqual(readback['executed_tests'], 1)
+            self.assertEqual(readback['scope'], 'named-libtest-execution-only')
+
+    def test_checkpoint_new_fencing_command_or_readback_failure_is_fatal(self):
+        for mode in ('zero', 'wrong-name', 'failed-command'):
+            with self.subTest(mode=mode):
+                result, calls, _ = self.run_checkpoint_shell(mode)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual([row['selector'] for row in calls],
+                                 [*self.HANDOFF_CASES, *self.CHECKPOINT_CASES])
 
     def test_retains_52_and_separately_requires_eleven_without_claiming_execution(self):
         self.assertEqual(check_pq_system_required_controls(self.root), {
