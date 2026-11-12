@@ -11876,3 +11876,42 @@ intended mutated path. Keep the historical contract and its 9,233-byte verifier
 source bound unchanged. The current tree's rejection by that historical
 contract and the corresponding hosted workflow blockage remain explicit;
 the separate current-v2 mapping does not make the old invocation pass.
+
+### 2026-11-12 receiver output ownership and exact deferred-request recovery
+
+Continue the existing security integration lineage at #940
+`8970e2c81abbf48e2a4d3f0802d79624ab20fadd`. The independently reviewed source
+contained an output-budget bypass: after the first output reservation failed,
+Public V3 still serialized and signed a refusal without an output owner. The
+r15 candidate reserves the smaller refusal in the same original 32-MiB pool
+before encoding. At most 64 KiB of the original 512-KiB control reservation is
+available above the ordinary ceiling; 448 KiB remains for control output.
+Classical/PQ refusal frames are bounded to 2/8 KiB with the existing fourfold
+allocation allowance. If that reservation is unavailable, close the local
+request without response encoding or signing. Final delivery also rejects
+response bytes with no permit. Output admission and serialization failures
+remain separate observations, and the original native outcome is preserved.
+
+Keep all r10-r14 raw policy vectors and r13-r14 arithmetic vectors. Fresh r15
+identities cover the new local resource policy; an observer schema does not
+relabel a historical service execution. The aggregate CPU, byte, connection,
+deadline, work and confirmation requirements otherwise remain unchanged.
+
+In the existing authenticated request owner, exact local `UnknownParent`,
+`TimeDeferred` and `AdmissionHeaderEpochChanged` retain their original pending
+payload and nonce for a later explicit retry. A signed terminal response must
+not make these incomplete context checks irreversible for that operation.
+This is request recovery, not evidence of a consensus split. Local-integrity
+overrides, remote lookalikes, other capacity/state errors and mathematical Work
+failures retain their prior authority and terminal rules.
+
+Run the added real signed-socket and original-owner resource controls against
+both the pre-fix implementation and the fixed candidate. Preserve the exact
+source, invocation, all failures and full retained test rosters. The component
+checks do not establish sustained honest confirmations. Continue the separate
+correctness/resource/service requirements in
+[admission security](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md):
+same-process native calls retain nonpreemptible segments and lack a killable confined worker boundary; full-path actual CPU,
+confined killable workers and original pressure-campaign completion remain
+unqualified until their own observations close those gates. No activation,
+cryptographic-hardness or whole-chain post-quantum claim follows from this fix.

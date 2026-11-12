@@ -56,6 +56,126 @@ counts. If the no-attack baseline fails, repair and measure it before attributin
 the whole deficit to adversarial W1. A local passing test cannot close the
 independent or computational-security gates.
 
+### Current safety amendment: r15 fixes and separate qualification gates
+
+This amendment records the current candidate's narrow implementation changes
+and the remaining requirements under the sole plan. It adds no activation,
+executed-test claim or replacement acceptance campaign. Earlier source-bound
+observations and failures below retain their original meaning.
+
+| Qualification | Required conclusion | Insufficient evidence |
+| --- | --- | --- |
+| Deterministic validity | The complete specified relation, encoding and current owner/context checks accept valid statements and reject invalid ones consistently. | A local timeout, queue refusal, resource reservation or partial arithmetic check. |
+| Receiver resource bound | All reachable intake, verification, execution and cleanup paths fit one declared aggregate resource envelope, with actual cost reconciled. | A per-connection limit, a reserved-cost ledger entry, or one fast proof verification. |
+| Honest service | The frozen offered honest workload achieves its required independent confirmations and tails under the declared hostile load and shared bottlenecks. | Correct rejection, bounded memory, accepted Submit counts or receiver ACKs alone. |
+
+**Local inability to finish is Deferred/Busy/Unavailable, not a block-invalidity
+fact.** Missing context may be fetched and retried; exhausted local CPU, full
+queues, cancellation and verification deadlines cannot define consensus
+validity. An invalid result requires completion of the deterministic checks
+that establish it. If a future consensus proof uses randomized checks, its
+commitment order, canonical transcript, common challenge derivation, soundness
+parameters and challenge-grinding analysis must be specified together. Nodes
+cannot substitute independently sampled local checks for that relation.
+
+The authenticated-request change preserves retryability for the exact signed
+request and durable nonce on typed `UnknownParent`, `TimeDeferred` and
+`AdmissionHeaderEpochChanged` errors with `StaleContext` kind, alongside the
+existing cancellation and exact `PublicQueueBusy` cases. It does not make all
+capacity/context errors retryable or trust remote error text. This corrects
+request recoverability; it neither changes block validity nor establishes that
+the prior behavior caused a consensus split. Current admission and replay
+checks remain required on retry.
+
+The public V3 **r15** output change reserves refusal bytes before constructing
+or signing them. Only failure of the initial output reservation with the exact
+local `PublicBufferCapacity` code can use the small refusal allowance; it does
+not dispatch native work. Classical/PQ refusal frames are capped at 2/8 KiB
+and reserve 4 times that amount in the original shared 32 MiB output pool.
+Refusals may use at most 64 KiB above the ordinary-output ceiling, leaving
+448 KiB of the original 512 KiB control reservation available to control
+responses. This partitions the existing total; it does not add capacity.
+No available refusal reservation means no response serialization/signature and
+a local connection close. A materialized successful completion without an
+output permit is also refused at the final receiver owner. Output admission
+refusals remain distinct from serialization failures and native outcomes.
+PQ response signing continues through the original shared authentication
+attempt/byte/actual-thread-CPU budget. The r15 signed resource digest commits
+these changed limits; prior signed-policy vectors remain historical.
+
+Full-path CPU qualification remains **OPEN**. In particular, classical refusal
+serialization/signing without an acquired mutation CPU permit is not thereby
+charged to that permit. Bound and account for parsing, decompression where
+enabled, authentication, proof arithmetic, native FFI, logging, I/O, result
+encoding, cancellation and cleanup, including work rejected before dispatch.
+Retain actual CPU separately from wall wait, reservation amounts and byte
+limits; unknown measurements cannot be replaced with zero. This output-memory
+fix does not establish a hard CPU bound or sustained honest service.
+
+#### Confined, killable W1 worker requirement — not implemented qualification
+
+Current same-process cooperative workers remain **HOLD** for hard interruption
+of nonpreemptible native work. An outer timeout is not a bound on executing
+CPU. [Wasmtime's official Config documentation](https://docs.wasmtime.dev/api/wasmtime/struct.Config.html)
+explicitly excludes blocking host calls from fuel/epoch interruption; epoch
+interruption is also nondeterministic. These mechanisms cannot replace the
+following native-worker integration and its retained evidence:
+
+1. Freeze a bounded, versioned IPC grammar before spawning or allocating large
+   payloads. Bind the network/protocol and work-relation version, canonical
+   complete statement/packet digest, challenge, task, target, exact input
+   lengths and one dispatch generation to the original operation identity.
+   Specify byte caps for requests, responses and diagnostics; reject malformed
+   lengths/encodings before expensive parsing or decompression. A new relation
+   or proof system requires its own pinned parameters and verification key.
+2. Reserve every child and its input/output memory in the existing aggregate
+   service domain. Charge actual child and descendant CPU to the same original
+   operation, including failures, late return, termination and reaping; retain
+   unresolved samples as Unknown. Replacement processes, retries, listeners and
+   cancellation cannot mint fresh credit or prematurely release live ownership.
+   Demonstrate OS-enforced aggregate limits and termination of the whole worker
+   process tree; a timeout that merely stops waiting is insufficient.
+3. Give the worker only bounded verification inputs and bounded result IPC.
+   Remove signing keys, State/database write access, commit capabilities,
+   unrestricted network access and inherited authority-bearing descriptors.
+   Worker completion is an operation-bound verification result, never an
+   authorization, state transition or durable acknowledgement.
+4. The current parent owner validates the complete reply and its dispatched
+   identity, rejects stale/duplicate/late generations, then rechecks current
+   parent/state, permissions, original deadline and remaining budget before
+   the existing atomic commit. Termination cannot undo an already committed
+   native outcome or turn an uncompleted verification into Invalid.
+5. Retain meaningful fault controls for oversized/malformed IPC, forged or
+   duplicate replies, blocked native execution, worker death, cancellation,
+   stale parent/owner and cleanup. Demonstrate no unauthorized state effects,
+   no orphaned charged work and measured recovery of honest service. These are
+   required integration checks, not evidence supplied by this amendment.
+
+#### Proof-system research boundary and service acceptance
+
+| Approach | Scope and remaining qualification |
+| --- | --- |
+| Deterministic replay / matrix checks | Preserve the complete original relation. A product check alone does not authenticate its transcript; randomized alternatives need the common challenge and grinding contract above, plus measured rejection cost. |
+| zkML / SNARK | [zkGPT, USENIX Security 2025](https://www.usenix.org/system/files/usenixsecurity25-qu-zkgpt.pdf) reports a specified GPT inference implementation using GKR/Lasso and Hyrax over BN254. Its inference and reported server experiments do not establish complete training verification, post-quantum security or this service's cost envelope. |
+| STARK | Freeze the execution relation, parameters, hash/commitment dependencies, proof bytes and any claimed Fiat–Shamir/QROM security argument. Evaluate complete prover/verifier and intake costs; the family name alone supplies no deployment qualification. |
+| Post-quantum folding | The [full Neo/SuperNeo paper](https://www.microsoft.com/en-us/research/wp-content/uploads/2026/10/Neo-and-SuperNeo.pdf) presents folding using Ajtai commitments and Module-SIS assumptions. Folding, final compression and the complete noninteractive security argument require separate examination. [Sonobe](https://github.com/ethereum/sonobe) marks its SuperNeo/Ajtai work as WIP; this is a research candidate, not a qualified complete deployment. |
+
+An outer post-quantum signature cannot repair a quantum-vulnerable inner proof.
+Any proof replacement must bind the entire required computation and preserve
+current authorization/commit checks; do not infer whole-system security or
+training coverage from one component or its fastest verification time.
+
+Keep this contract's original native campaign and capacity/churn supplement unchanged.
+Before execution, freeze honest **offered**, receiver **accepted**, and
+independently **confirmed** denominators and deadlines, attack resources and
+arrival rates. Retain every Busy, timeout, cancellation, Unknown, invalid and
+missing confirmation. Report honest confirmed goodput, p95/p99 with sample
+counts and censored requests, and the worst observed rejection CPU, wall time,
+bytes, memory and cleanup cost by failure stage; distinguish observations from
+proved hard bounds. Include all scoped/child work and shared storage/owner
+bottlenecks. Keep failed runs and original windows; source checks, synthetic
+pool filling and a passing component test cannot close these service gates.
+
 ### PN1 identity-capacity and sustained-pressure acceptance target
 
 This supplements, and never changes, the original campaign and the fixed-seed

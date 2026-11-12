@@ -601,11 +601,22 @@ fn begin_authenticated_dispatch(
 }
 
 fn authenticated_dispatch_needs_retry(error: &Error) -> bool {
-    // Only this local capacity refusal leaves native admission incomplete.
-    // Other Capacity codes can express an actual profile/state limit, and a
-    // local-integrity override must never become a retry from its wire text.
+    // These local refusals leave the exact request's admission incomplete.
+    // A missing parent, future timestamp or changed admission epoch can become
+    // admissible without changing the signed request. Caching that observation
+    // as terminal would prevent its original durable nonce from recovering.
+    // Other Capacity/StaleContext codes retain their original policy; neither
+    // a local-integrity override nor remote text grants retry authority.
     error.kind() == crate::ErrorKind::Cancelled
         || (error.kind() == crate::ErrorKind::Capacity && error.is(ErrorCode::PublicQueueBusy))
+        || (error.kind() == crate::ErrorKind::StaleContext
+            && [
+                ErrorCode::UnknownParent,
+                ErrorCode::TimeDeferred,
+                ErrorCode::AdmissionHeaderEpochChanged,
+            ]
+            .into_iter()
+            .any(|code| error.is(code)))
 }
 
 fn verify_authenticated_response(
