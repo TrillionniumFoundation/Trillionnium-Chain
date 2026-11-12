@@ -127,7 +127,6 @@ fn different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint() {
     client.journal_checkpoint_v1().unwrap();
 }
 
-
 #[test]
 fn copied_lease_record_cannot_replace_a_live_checkpoint_endpoint() {
     use std::io::Write;
@@ -142,8 +141,15 @@ fn copied_lease_record_cannot_replace_a_live_checkpoint_endpoint() {
         .with_timeout(Duration::from_millis(50));
     let deadline = Instant::now() + Duration::from_secs(5);
     while client.journal_checkpoint_v1().is_err() {
-        assert!(first.child.try_wait().unwrap().is_none(), "{}", first.stderr());
-        assert!(Instant::now() < deadline, "first daemon did not become ready");
+        assert!(
+            first.child.try_wait().unwrap().is_none(),
+            "{}",
+            first.stderr()
+        );
+        assert!(
+            Instant::now() < deadline,
+            "first daemon did not become ready"
+        );
         thread::sleep(Duration::from_millis(10));
     }
     let original = fs::symlink_metadata(&socket).unwrap().ino();
@@ -162,7 +168,10 @@ fn copied_lease_record_cannot_replace_a_live_checkpoint_endpoint() {
     replacement.write_all(&record).unwrap();
     replacement.sync_all().unwrap();
     drop(replacement);
-    fs::File::open(directory.path()).unwrap().sync_all().unwrap();
+    fs::File::open(directory.path())
+        .unwrap()
+        .sync_all()
+        .unwrap();
     assert_ne!(fs::symlink_metadata(&lease).unwrap().ino(), original_lease);
     assert_eq!(fs::read(&lease).unwrap(), record);
 
@@ -186,7 +195,10 @@ fn copied_lease_record_cannot_replace_a_live_checkpoint_endpoint() {
             );
             break;
         }
-        assert!(Instant::now() < deadline, "second owner did not fail closed");
+        assert!(
+            Instant::now() < deadline,
+            "second owner did not fail closed"
+        );
         thread::sleep(Duration::from_millis(10));
     }
     assert!(first.child.try_wait().unwrap().is_none());
