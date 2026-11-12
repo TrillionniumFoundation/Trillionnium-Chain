@@ -23,7 +23,7 @@ from quantum_network_sim import (  # noqa: E402
 )
 from quantum_daa_model import common_history  # noqa: E402
 
-SCHEMA = "trnm-quantum-network-campaign-v1"
+SCHEMA = "trnm-quantum-network-campaign-v3"
 SOURCE_FILES = (
     "config/pon/devnet-v1.json",
     "trillionnium/crates/trnm-pon-node/src/consensus.rs",

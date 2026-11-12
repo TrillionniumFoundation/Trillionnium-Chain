@@ -10792,3 +10792,23 @@ common prefix, chain growth, chain quality, the six-successor failure bound
 and lifetime composition still need their joint-model proofs. Neither a
 timestamp monotonicity rule nor either square-root scoring suggestion is
 activated by this continuation. All original HOLD / NO-GO gates remain.
+
+## Fixed-target and equal-capacity DAA continuation (2026-11-12)
+
+Continue #920 at `df2a4f59edf1a181c2968eda131a2ddb0e5f33a1` in the existing
+joint-consensus lineage. Repair the inherited 53-bit measurement sampling
+floor in network and literal-domain paths, with new observation namespaces
+and exact random-word controls. Preserve historical reports and marked-set
+census identities. Add a fixed-target network research control without
+changing native timestamps, difficulty, chainwork or confirmation rules.
+
+Execute the [declared-capacity study](../protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_DAA_AUDIT_20261108.md)
+with its frozen 128-run roster and 3,600-second model horizons. Retain full
+source-bound observations and independent resource/credit readback. Run both
+new control suites in the existing repository-truth lane, with omission,
+relocation, duplication and failure-propagation negatives. Report outcomes
+only on their executed source. Do not infer physical resource parity, task
+supply, network byte budgets or CP/CG/CQ and confirmation probability bounds
+from these finite simulations. Preserve the existing Fast DAA arithmetic
+component and refusal for its complete backend. All production qualification
+gates remain separately open.

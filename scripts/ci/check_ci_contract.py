@@ -680,6 +680,8 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_oracle_resources.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_network_sim.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_probability_sampling.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_joint_resource_competition_campaign.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_candidate_check_clock.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_adversarial_search.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_resource_clock.py' -v

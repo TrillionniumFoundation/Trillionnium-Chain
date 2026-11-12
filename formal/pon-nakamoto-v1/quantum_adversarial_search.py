@@ -30,7 +30,7 @@ MAX_CLOCK_SECONDS = 1e30
 MAX_EFFECTIVE_CLOCK_SECONDS = 1e40
 
 ADVERSARIAL_ASSUMPTIONS = {
-    "schema": "trnm-quantum-adversarial-assumptions-v1",
+    "schema": "trnm-quantum-adversarial-assumptions-v3",
     "optimizer": "finite candidate set; fixed-target renewal throughput, not profit or global optimum",
     "optimizer_information": "public target, declared prior, clocks and processor count; no sampled M",
     "finite_domain": "frozen candidate/header and shared marked count across retries and processors",
@@ -40,6 +40,7 @@ ADVERSARIAL_ASSUMPTIONS = {
     "fresh_domain": "explicit template/domain salt and paid setup; W1 realizability unproved",
     "binomial_optimizer_support": MAX_EXACT_BINOMIAL_SIZE,
     "binomial_weights": "exact rational; finite Grover probabilities and rates use float64",
+    "measurement_sampler": "exact Bernoulli for the represented binary64 probability; at most 1074 random bits",
     "parallelism": "independent measurements conditional on one shared domain M; all processors paid",
     "persistent_domain_optimality": "not claimed; no BBHT or posterior-optimal policy implemented",
     "release_information": "private branch plus miner-delayed public messages; no observer/global tip",
@@ -111,6 +112,23 @@ def finite_domain_success(size: int, marked: int, iterations: int, processors: i
     integer(size, "DOMAIN_SIZE", MAX_DOMAIN_SIZE, 1)
     integer(marked, "MARKED_COUNT", size)
     return batch_success(marked / size, iterations, processors)
+
+
+def sample_binary_probability(rng: Any, probability: float) -> bool:
+    """Sample the represented probability without a 53-bit random() floor.
+
+    Binary64 probabilities are dyadic rationals. A uniform integer over their
+    denominator makes the comparison exact, including subnormal probabilities.
+    This does not remove rounding in the preceding Grover amplitude calculation.
+    The seeded simulation PRNG is not evidence of quantum hardware randomness.
+    """
+    if (type(probability) not in (int, float) or not 0 <= probability <= 1
+            or not math.isfinite(probability)):
+        raise ValueError("PROBABILITY")
+    if probability == 0 or probability == 1:
+        return bool(probability)
+    numerator, denominator = float(probability).as_integer_ratio()
+    return rng.getrandbits(denominator.bit_length() - 1) < numerator
 
 
 def sample_marked_count(rng: Any, size: int, target: int) -> int:
