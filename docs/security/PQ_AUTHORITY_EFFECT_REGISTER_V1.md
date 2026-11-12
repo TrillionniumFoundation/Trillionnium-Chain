@@ -4,7 +4,7 @@
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
 routes to the current reviewed source
-`8add285b6c0a91d8b7812efe2d02c9342f74c91b`. The
+`55c0d0ea1330d80120754718f2f47f6a4a709aa3`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -18,7 +18,27 @@ a signature, context comparison, downloaded artifact or certificate observation
 must not be recorded as a different downstream permission. That original source
 inventory did not itself establish a classical bypass of a PQ owner.
 
-## Joint-source continuation
+## Current CMH2 export mapping, 2026-11-11
+
+The 44 curated regular-file blobs were read with `git show` at runtime
+checkpoint `55c0d0ea1330d80120754718f2f47f6a4a709aa3`, tree
+`cd8c5c44bf2bd6a8eaa6dd350c0fe0238837c33a`, and compared with their actual checkout bytes.
+The canonical revision-plus-file lock is
+`5f2f63ef2e33951cfe8774c50cd15d0c9630cc9b130aeab1ed7d6342e078c8a6`. Forty-three file pins retain the previous reviewed values.
+Only `trnm-pon-node/src/store.rs` changes: one public module declaration
+exports the separate read-only CMH2 adapter. The seven route definitions,
+44-path roster, effect scopes, profile boundaries and false qualification
+fields remain unchanged. The old source lock actually refused that changed
+file; that observation is retained separately from this reviewed rebind.
+
+The new child module and its tests are covered by the content/history and
+corpus contracts. Their export does not turn this curated register into a
+complete call graph or give a readback migration, cutover or finality authority.
+The sections below retain earlier mappings and execution observations under
+their original source identities. This binding follow-up does not supply a
+native execution or change any original result.
+
+## Retained joint-source continuation
 
 This review derives all 44 regular Git blobs from runtime checkpoint
 `8add285b6c0a91d8b7812efe2d02c9342f74c91b`, tree `8aaa486aa4ccd4e41e33241fb4e7e273d3c3d5f6`. The canonical lock SHA-256 is
@@ -84,7 +104,7 @@ The portable consumption settlement store is separately scoped. Substituting
 for its bilateral authorization and durable state sources is refused by this
 register. Those additional owners still require their own qualification work.
 
-## Current account-selector mapping, 2026-11-11
+## Retained account-selector mapping, 2026-11-11
 
 The active source map uses the exact 44 regular-file blobs from published
 runtime checkpoint `ef6df12a042912664df64f2112c2b1c600dce9fa`, tree
