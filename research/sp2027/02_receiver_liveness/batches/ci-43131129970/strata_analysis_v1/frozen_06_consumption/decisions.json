@@ -1,0 +1,223 @@
+[
+  {
+    "phase_id": "health-000",
+    "status": "RECORDED",
+    "window_decision": {
+      "confirmed_in_window": true,
+      "endpoint_alone_is_not_native_final_gate": true,
+      "endpoint_before_window_end": true,
+      "exclusion_reasons": [],
+      "native_window_gate": true,
+      "observed_confirmed": true,
+      "reader_version": "sp27-02-native-reader-v2",
+      "recorded_endpoint_ns": 2673502700,
+      "status": "CONFIRMED",
+      "window_end_ns": 4000000000,
+      "window_end_rule": "exclusive"
+    }
+  },
+  {
+    "phase_id": "health-001",
+    "status": "RECORDED",
+    "window_decision": {
+      "confirmed_in_window": true,
+      "endpoint_alone_is_not_native_final_gate": true,
+      "endpoint_before_window_end": true,
+      "exclusion_reasons": [],
+      "native_window_gate": true,
+      "observed_confirmed": true,
+      "reader_version": "sp27-02-native-reader-v2",
+      "recorded_endpoint_ns": 2617861904,
+      "status": "CONFIRMED",
+      "window_end_ns": 4000000000,
+      "window_end_rule": "exclusive"
+    }
+  },
+  {
+    "phase_id": "health-002",
+    "status": "RECORDED",
+    "window_decision": {
+      "confirmed_in_window": true,
+      "endpoint_alone_is_not_native_final_gate": true,
+      "endpoint_before_window_end": true,
+      "exclusion_reasons": [],
+      "native_window_gate": true,
+      "observed_confirmed": true,
+      "reader_version": "sp27-02-native-reader-v2",
+      "recorded_endpoint_ns": 2857806807,
+      "status": "CONFIRMED",
+      "window_end_ns": 4000000000,
+      "window_end_rule": "exclusive"
+    }
+  },
+  {
+    "phase_id": "control-000-transport",
+    "status": "RECORDED",
+    "window_decision": {
+      "confirmed_in_window": true,
+      "endpoint_alone_is_not_native_final_gate": true,
+      "endpoint_before_window_end": true,
+      "exclusion_reasons": [],
+      "native_window_gate": true,
+      "observed_confirmed": true,
+      "reader_version": "sp27-02-native-reader-v2",
+      "recorded_endpoint_ns": 2861468990,
+      "status": "CONFIRMED",
+      "window_end_ns": 4000000000,
+      "window_end_rule": "exclusive"
+    }
+  },
+  {
+    "phase_id": "control-001-early-reject",
+    "status": "RECORDED",
+    "window_decision": {
+      "confirmed_in_window": true,
+      "endpoint_alone_is_not_native_final_gate": true,
+      "endpoint_before_window_end": true,
+      "exclusion_reasons": [],
+      "native_window_gate": true,
+      "observed_confirmed": true,
+      "reader_version": "sp27-02-native-reader-v2",
+      "recorded_endpoint_ns": 2798110260,
+      "status": "CONFIRMED",
+      "window_end_ns": 4000000000,
+      "window_end_rule": "exclusive"
+    }
+  },
+  {
+    "phase_id": "control-002-late-reject",
+    "status": "RECORDED",
+    "window_decision": {
+      "confirmed_in_window": true,
+      "endpoint_alone_is_not_native_final_gate": true,
+      "endpoint_before_window_end": true,
+      "exclusion_reasons": [],
+      "native_window_gate": true,
+      "observed_confirmed": true,
+      "reader_version": "sp27-02-native-reader-v2",
+      "recorded_endpoint_ns": 2901255562,
+      "status": "CONFIRMED",
+      "window_end_ns": 4000000000,
+      "window_end_rule": "exclusive"
+    }
+  },
+  {
+    "phase_id": "control-003-valid-expensive",
+    "status": "RECORDED",
+    "window_decision": {
+      "confirmed_in_window": true,
+      "endpoint_alone_is_not_native_final_gate": true,
+      "endpoint_before_window_end": true,
+      "exclusion_reasons": [],
+      "native_window_gate": true,
+      "observed_confirmed": true,
+      "reader_version": "sp27-02-native-reader-v2",
+      "recorded_endpoint_ns": 3020800036,
+      "status": "CONFIRMED",
+      "window_end_ns": 4000000000,
+      "window_end_rule": "exclusive"
+    }
+  },
+  {
+    "phase_id": "health-003",
+    "status": "RECORDED",
+    "window_decision": {
+      "confirmed_in_window": true,
+      "endpoint_alone_is_not_native_final_gate": true,
+      "endpoint_before_window_end": true,
+      "exclusion_reasons": [],
+      "native_window_gate": true,
+      "observed_confirmed": true,
+      "reader_version": "sp27-02-native-reader-v2",
+      "recorded_endpoint_ns": 2616533703,
+      "status": "CONFIRMED",
+      "window_end_ns": 4000000000,
+      "window_end_rule": "exclusive"
+    }
+  },
+  {
+    "phase_id": "control-004-valid-expensive",
+    "status": "RECORDED",
+    "window_decision": {
+      "confirmed_in_window": true,
+      "endpoint_alone_is_not_native_final_gate": true,
+      "endpoint_before_window_end": true,
+      "exclusion_reasons": [],
+      "native_window_gate": true,
+      "observed_confirmed": true,
+      "reader_version": "sp27-02-native-reader-v2",
+      "recorded_endpoint_ns": 3081921311,
+      "status": "CONFIRMED",
+      "window_end_ns": 4000000000,
+      "window_end_rule": "exclusive"
+    }
+  },
+  {
+    "phase_id": "control-005-late-reject",
+    "status": "RECORDED",
+    "window_decision": {
+      "confirmed_in_window": true,
+      "endpoint_alone_is_not_native_final_gate": true,
+      "endpoint_before_window_end": true,
+      "exclusion_reasons": [],
+      "native_window_gate": true,
+      "observed_confirmed": true,
+      "reader_version": "sp27-02-native-reader-v2",
+      "recorded_endpoint_ns": 2900983219,
+      "status": "CONFIRMED",
+      "window_end_ns": 4000000000,
+      "window_end_rule": "exclusive"
+    }
+  },
+  {
+    "phase_id": "control-006-early-reject",
+    "status": "RECORDED",
+    "window_decision": {
+      "confirmed_in_window": true,
+      "endpoint_alone_is_not_native_final_gate": true,
+      "endpoint_before_window_end": true,
+      "exclusion_reasons": [],
+      "native_window_gate": true,
+      "observed_confirmed": true,
+      "reader_version": "sp27-02-native-reader-v2",
+      "recorded_endpoint_ns": 2794677509,
+      "status": "CONFIRMED",
+      "window_end_ns": 4000000000,
+      "window_end_rule": "exclusive"
+    }
+  },
+  {
+    "phase_id": "control-007-transport",
+    "status": "RECORDED",
+    "window_decision": {
+      "confirmed_in_window": true,
+      "endpoint_alone_is_not_native_final_gate": true,
+      "endpoint_before_window_end": true,
+      "exclusion_reasons": [],
+      "native_window_gate": true,
+      "observed_confirmed": true,
+      "reader_version": "sp27-02-native-reader-v2",
+      "recorded_endpoint_ns": 2721622917,
+      "status": "CONFIRMED",
+      "window_end_ns": 4000000000,
+      "window_end_rule": "exclusive"
+    }
+  },
+  {
+    "phase_id": "health-004",
+    "status": "RECORDED",
+    "window_decision": {
+      "confirmed_in_window": true,
+      "endpoint_alone_is_not_native_final_gate": true,
+      "endpoint_before_window_end": true,
+      "exclusion_reasons": [],
+      "native_window_gate": true,
+      "observed_confirmed": true,
+      "reader_version": "sp27-02-native-reader-v2",
+      "recorded_endpoint_ns": 2700994493,
+      "status": "CONFIRMED",
+      "window_end_ns": 4000000000,
+      "window_end_rule": "exclusive"
+    }
+  }
+]

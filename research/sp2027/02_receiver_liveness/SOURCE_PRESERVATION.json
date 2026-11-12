@@ -1,0 +1,27 @@
+{
+  "claim_scope": "Source preservation, not run eligibility or physical CPU dedication",
+  "exact_files": [
+    {
+      "base_git_blob": "7089e961965af9209f2d588061c8526c5acba161",
+      "byte_identical": true,
+      "bytes": 53670,
+      "head_git_blob": "7089e961965af9209f2d588061c8526c5acba161",
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "sha256": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d"
+    },
+    {
+      "base_git_blob": "8981b6aeed4c08c21679664940366b36a991444a",
+      "byte_identical": true,
+      "bytes": 325,
+      "head_git_blob": "8981b6aeed4c08c21679664940366b36a991444a",
+      "path": "config/systemd/trnmponpublic.slice",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622"
+    }
+  ],
+  "native_runtime_contract_changed": false,
+  "new_collector_source": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+  "original_pair_and_helper_byte_preserved": true,
+  "original_source": "8ebcdb01016946a131f9067ebe1ace39b9c4f260",
+  "parent_test_diff": "Exactly three new test module declarations; removing those declarations reproduces the original file byte-for-byte",
+  "schema": "sp27-original-runtime-contract-preservation-v1"
+}

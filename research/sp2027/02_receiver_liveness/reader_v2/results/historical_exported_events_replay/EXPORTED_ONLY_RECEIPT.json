@@ -1,0 +1,38 @@
+{
+  "analyzer_sha256": "9719f822394e6295a7787be0be2c8d394d25ab19e8d17be543e4145f6bae9acc",
+  "confirmed_operations": 13,
+  "exported_confirmation_events": 13,
+  "exported_endpoints_at_T": 0,
+  "exported_positive_endpoints_before_T_with_false_gate": 0,
+  "input_files": {
+    "contract.json": {
+      "bytes": 95646,
+      "sha256": "b4f95c4be83e6b2e07e492282b2c6f20d525d3be7d69580596eef89d3ffe3c1a"
+    },
+    "events.jsonl": {
+      "bytes": 388298,
+      "sha256": "6b042ec6f4abb6dcdfd6f59985c4aaae8aeb88b79018005c2eac96ede95a28ba"
+    },
+    "schedule.jsonl": {
+      "bytes": 54735,
+      "sha256": "96c7ccbc5edb58abb60cdbfa6e7258cf0f3f0fb31c0809e4c7f569bd86bff0c7"
+    }
+  },
+  "old_raw_corpus_boundary_impact": "UNKNOWN pending raw capsule",
+  "original_analyzer_consumption_complete": true,
+  "original_schemas_unchanged": true,
+  "outcomes": {
+    "confirmed": 13,
+    "unconfirmed": 32,
+    "unstarted": 48
+  },
+  "phase_runs": 35,
+  "planned_operations": 93,
+  "raw_capsule_available_at_this_attempt": false,
+  "raw_corpus_reverified": false,
+  "replay_is_not_new_trial_or_pair": true,
+  "schema": "sp27-02-exported-event-consumption-receipt-v1",
+  "scope": "Only existing exported contract/schedule/events consumed; no new native experiment",
+  "source_papers_commit": "c49c769fb3b08ee8f60c993c8ca6be2a4600246f",
+  "summary_sha256": "28902d688c6d81147aac2a0940dea8a1f4c268b52e9374248ea5513718a6b5eb"
+}

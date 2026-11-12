@@ -1,0 +1,70 @@
+{
+  "audit_file": "../SIBLING_CI_READBACK.json",
+  "audit_sha256": "c247ac23592dfc2c319a9794defb3659416730eebd8f03190ed7ecb34f28a022",
+  "current_log_format": "GitHub connector decoded UTF-8 job log; complete returned text preserved",
+  "existing_validation_after": {
+    "MANIFEST.json": "2104befc6bf4fe9aeac1978c135a6f24bc6db71a84dee8f4d0dbdf6306e1d611",
+    "validation-records.zip": "74a74c783f80aa55f7781b4f2a4381e9d934519e5521647ced23ff3db74f2aef"
+  },
+  "existing_validation_before": {
+    "MANIFEST.json": "2104befc6bf4fe9aeac1978c135a6f24bc6db71a84dee8f4d0dbdf6306e1d611",
+    "validation-records.zip": "74a74c783f80aa55f7781b4f2a4381e9d934519e5521647ced23ff3db74f2aef"
+  },
+  "existing_validation_unchanged": true,
+  "files": {
+    "audit_sibling_ci_ff354.py": {
+      "bytes": 9015,
+      "sha256": "8ab7d9d249cb6bea1cce9aaa03dc9b4c72420ccf39705c75a37a6651f1a75216"
+    },
+    "current/jobs-43131136371.json": {
+      "bytes": 4634,
+      "sha256": "a4ec308a34224e201c63ebe4bb15178a384bfd3e9d8a580ebfedea23488715ee"
+    },
+    "current/jobs-43131136548.json": {
+      "bytes": 5834,
+      "sha256": "c2f33f2de126a40cb74e0f1faac80c0b3d35f528267ab82aaf7a5fe8411ebc84"
+    },
+    "current/qrom-job-130895273579.decoded.log": {
+      "bytes": 200870,
+      "sha256": "3def47ca081e026f3fbb0bb23ea2404cc8e9ac032f9b2456cc875c42b7808d1f"
+    },
+    "current/qrom-job-130895273690.decoded.log": {
+      "bytes": 201615,
+      "sha256": "01dd9962012e320320516d1dc61033dffc92543120b5bac848c57e1131995c14"
+    },
+    "current/qrom-job-130895273873.decoded.log": {
+      "bytes": 226677,
+      "sha256": "e83f58d59dc6ccf1aa06a8fcd1a8b0f67da33d73502c2eb05bd71b3c5d714bae"
+    },
+    "current/qrom-job-130895274729.decoded.log": {
+      "bytes": 225757,
+      "sha256": "50c94945695999d74fb5ca47553b746848e3180a9dcfd3d2d4c37103ed2d61b9"
+    },
+    "current/run-43131136371.json": {
+      "bytes": 16692,
+      "sha256": "97362d35436e41a867763d0ef2e1622933736547c3d76392200067a27cf686dd"
+    },
+    "current/run-43131136548.json": {
+      "bytes": 16706,
+      "sha256": "07edaa966a63b3d908ab20ff21212cceadc3eca4eb0c1bbfb7af1f0f4e16ded0"
+    },
+    "prior-0bc/qrom-job-130876619595.decoded.log": {
+      "bytes": 200257,
+      "sha256": "fa03eb563a160482223af55347787971e52b31dbcae9466d991f652bd7f476c9"
+    },
+    "prior-0bc/qrom-job-130876620011.decoded.log": {
+      "bytes": 199385,
+      "sha256": "cc46b230315eb2d93229dc4c2cc8de677dc6b6f212faa2e0a08cd0d5606334c4"
+    },
+    "prior-0bc/qrom-job-130876622889.decoded.log": {
+      "bytes": 225104,
+      "sha256": "226be9d30269516748006cb9a90d6f1bae6a3181bbcf251a8940c8e1c7485c06"
+    },
+    "prior-0bc/qrom-job-130876623123.decoded.log": {
+      "bytes": 224180,
+      "sha256": "b07d70f05878317cf0fba1a75cc5acfe6cbb73fb850ea3ee4b732659be73a1b6"
+    }
+  },
+  "prior_log_comparison": "all four old decoded log hashes exactly match the previously retained original audit",
+  "schema": "sp27-sibling-ci-original-log-delivery-v1"
+}

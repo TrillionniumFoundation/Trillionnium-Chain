@@ -1,0 +1,15 @@
+test_booleans_floats_and_numeric_gate_are_not_clocks_or_booleans (test_native_reader_v2.NativeEndpointV2.test_booleans_floats_and_numeric_gate_are_not_clocks_or_booleans) ... ok
+test_endpoint_before_t_does_not_override_false_final_gate (test_native_reader_v2.NativeEndpointV2.test_endpoint_before_t_does_not_override_false_final_gate) ... ok
+test_existing_identity_and_policy_checks_still_refuse_substitution (test_native_reader_v2.NativeEndpointV2.test_existing_identity_and_policy_checks_still_refuse_substitution) ... ok
+test_frozen_06_consumer_agrees_for_all_required_edge_cases (test_native_reader_v2.NativeEndpointV2.test_frozen_06_consumer_agrees_for_all_required_edge_cases) ... ok
+test_impossible_positive_gate_is_refused (test_native_reader_v2.NativeEndpointV2.test_impossible_positive_gate_is_refused) ... ok
+test_missing_final_gate_remains_unknown_without_credit (test_native_reader_v2.NativeEndpointV2.test_missing_final_gate_remains_unknown_without_credit) ... ok
+test_original_inclusive_behavior_remains_replayable (test_native_reader_v2.NativeEndpointV2.test_original_inclusive_behavior_remains_replayable) ... ok
+test_original_reader_bytes_are_retained_exactly (test_native_reader_v2.NativeEndpointV2.test_original_reader_bytes_are_retained_exactly) ... ok
+test_resource_interval_endpoint_is_not_a_confirmation_endpoint (test_native_reader_v2.NativeEndpointV2.test_resource_interval_endpoint_is_not_a_confirmation_endpoint) ... ok
+test_t_minus_one_t_and_t_plus_one_with_native_gate (test_native_reader_v2.NativeEndpointV2.test_t_minus_one_t_and_t_plus_one_with_native_gate) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.144s
+
+OK

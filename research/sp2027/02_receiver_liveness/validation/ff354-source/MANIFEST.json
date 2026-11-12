@@ -1,0 +1,1094 @@
+{
+  "all_recorded_commands_exit_zero": true,
+  "archive": {
+    "bytes": 97582,
+    "members": {
+      "strata-source-publish-v2/branch.log": {
+        "bytes": 50,
+        "sha256": "f478bf231c96aae16e1c5513e8f7e60f384cd94612185c8d802497c7f1a21505"
+      },
+      "strata-source-publish-v2/clean.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "strata-source-publish-v2/draft-pr-readback.log": {
+        "bytes": 279,
+        "sha256": "646781f6d4542861039cf847944a973aec614d744557df843a6d245d1655c64c"
+      },
+      "strata-source-publish-v2/exact-push-boundary.log": {
+        "bytes": 181,
+        "sha256": "8c84c799b3a28815dc1a1065b694685f1cc73e604cb0f57cc3dcad65f281679a"
+      },
+      "strata-source-publish-v2/formatted-bundle.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "strata-source-publish-v2/github-identity.log": {
+        "bytes": 10,
+        "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+      },
+      "strata-source-publish-v2/head.log": {
+        "bytes": 41,
+        "sha256": "0db681c62125202f739b6b917c6f980e876c5b67dcc92d93b2b8367b82e36bfc"
+      },
+      "strata-source-publish-v2/ledger.jsonl": {
+        "bytes": 5184,
+        "sha256": "196cd9d54befd08adff70f28e4e854c198503997c37bb81cf08b6bf41dc6eff9"
+      },
+      "strata-source-publish-v2/preflight-before-push.log": {
+        "bytes": 180,
+        "sha256": "2290b6c2897f0cd046a12928a1aabf36499371af30277ef1a915b7b6d755c67c"
+      },
+      "strata-source-publish-v2/push.log": {
+        "bytes": 159,
+        "sha256": "144793da3a77189e474f1d0ff018c056762b7806c8779e1bad32e05fdaba5eac"
+      },
+      "strata-source-publish-v2/remote-head.log": {
+        "bytes": 41,
+        "sha256": "0db681c62125202f739b6b917c6f980e876c5b67dcc92d93b2b8367b82e36bfc"
+      },
+      "strata-source-publish-v2/runs-readback.log": {
+        "bytes": 6074,
+        "sha256": "5542abf91244f999c3fbe099709d5a5cfa662b7c8250ab608360eb0495fa465d"
+      },
+      "strata-source-validation-v1/bundle-fetch.log": {
+        "bytes": 136,
+        "sha256": "d06eb6bd6c85490333d49e27d907be488df419831b08a216a82f900c19616e95"
+      },
+      "strata-source-validation-v1/bundle-verify.log": {
+        "bytes": 279,
+        "sha256": "8865199bcd68fe4234b50cc5ecfa351b7e395030675b8f9e777c7537cba8e3d1"
+      },
+      "strata-source-validation-v1/committed-head.log": {
+        "bytes": 41,
+        "sha256": "0db681c62125202f739b6b917c6f980e876c5b67dcc92d93b2b8367b82e36bfc"
+      },
+      "strata-source-validation-v1/committed-tree.log": {
+        "bytes": 41,
+        "sha256": "e5b1b9a3dae27814cb480fbc209cbc9e6ef8a06f361720e8979cfd11b2a086f7"
+      },
+      "strata-source-validation-v1/draft-pr-readback.log": {
+        "bytes": 279,
+        "sha256": "646781f6d4542861039cf847944a973aec614d744557df843a6d245d1655c64c"
+      },
+      "strata-source-validation-v1/exact-native-build.log": {
+        "bytes": 107140,
+        "sha256": "b3e9c482dfa1f02713057a1d4efbe72d667143d08275f1f3ecdf6a251f733391"
+      },
+      "strata-source-validation-v1/format-all-check.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "strata-source-validation-v1/format-changed-files.log": {
+        "bytes": 170,
+        "sha256": "47784b8a763a9543b244dd7634c5b0e0f98d5ee5f83c622eb7ef1e421aa14d2e"
+      },
+      "strata-source-validation-v1/format-commit.log": {
+        "bytes": 170,
+        "sha256": "8947a01a1e6e93bd94e0751d965333123423df58f420df30fc3fd8213ff6d9e4"
+      },
+      "strata-source-validation-v1/format-native-modules.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "strata-source-validation-v1/format-whitespace.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "strata-source-validation-v1/frozen-reader-controls.log": {
+        "bytes": 109,
+        "sha256": "bc91528583971519aabce74aee528d488c26b3e656d1828a3523fe1d7817d1dc"
+      },
+      "strata-source-validation-v1/github-identity.log": {
+        "bytes": 10,
+        "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+      },
+      "strata-source-validation-v1/health-negative-controls.log": {
+        "bytes": 115,
+        "sha256": "a847800e179cc74e53e44b92da2afaee1f38384d9be418dee25ad86820cf06e9"
+      },
+      "strata-source-validation-v1/host-negative-controls.log": {
+        "bytes": 178,
+        "sha256": "5fd53c11d8b4bd3a243c345cd8d71d560b5c378853d2368b112d0a96797cda9d"
+      },
+      "strata-source-validation-v1/initial-branch.log": {
+        "bytes": 50,
+        "sha256": "f478bf231c96aae16e1c5513e8f7e60f384cd94612185c8d802497c7f1a21505"
+      },
+      "strata-source-validation-v1/initial-clean.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "strata-source-validation-v1/initial-head.log": {
+        "bytes": 41,
+        "sha256": "53cb467bf7c3e921ea0484ce217f4e97e0892d07ae0ca350eded0ca64ff5e83b"
+      },
+      "strata-source-validation-v1/input-head.log": {
+        "bytes": 41,
+        "sha256": "10a4dac545af74ed50a62663fd2cd68de2b4f03a236b056a284a71b78206c937"
+      },
+      "strata-source-validation-v1/ledger.jsonl": {
+        "bytes": 17885,
+        "sha256": "4bdc8c356a430ed043fa64f8fc2c28341f342363cd5dcacdfd5ef5a27d79b9bb"
+      },
+      "strata-source-validation-v1/locked-graph.log": {
+        "bytes": 843131,
+        "sha256": "e3e650e0b9867bb3de4ddb6c634b77b920b289e75d03e84041475102ce75c19f"
+      },
+      "strata-source-validation-v1/native-unit-0.log": {
+        "bytes": 532,
+        "sha256": "296e25e0872362e72398b00afd46dffe7d89c5b9563b60e3433816183a041c38"
+      },
+      "strata-source-validation-v1/native-unit-1.log": {
+        "bytes": 462,
+        "sha256": "61438efe292217f3eb365bff00bed3964a2de1d593ab84dac660dc44c3b3232f"
+      },
+      "strata-source-validation-v1/native-unit-2.log": {
+        "bytes": 510,
+        "sha256": "b0f41710aa401d20565af20dc59e1a338f202b8bf0370f6fac10d144ae21f22d"
+      },
+      "strata-source-validation-v1/native-unit-3.log": {
+        "bytes": 552,
+        "sha256": "5007a7449b55dd38e565cf6d2bc448f2bf6b347c0f552d7640fca649b9ecf0e1"
+      },
+      "strata-source-validation-v1/preflight-before-build.log": {
+        "bytes": 182,
+        "sha256": "c1a90bb2647cbcc7bd23da4f4493d3d43555f4b57b1d0c5a95d12d8c5c6ffda1"
+      },
+      "strata-source-validation-v1/preflight-before-fast-forward.log": {
+        "bytes": 180,
+        "sha256": "2290b6c2897f0cd046a12928a1aabf36499371af30277ef1a915b7b6d755c67c"
+      },
+      "strata-source-validation-v1/preflight-before-format-commit.log": {
+        "bytes": 180,
+        "sha256": "2290b6c2897f0cd046a12928a1aabf36499371af30277ef1a915b7b6d755c67c"
+      },
+      "strata-source-validation-v1/preflight-before-format.log": {
+        "bytes": 180,
+        "sha256": "2290b6c2897f0cd046a12928a1aabf36499371af30277ef1a915b7b6d755c67c"
+      },
+      "strata-source-validation-v1/preflight-before-push.log": {
+        "bytes": 180,
+        "sha256": "2290b6c2897f0cd046a12928a1aabf36499371af30277ef1a915b7b6d755c67c"
+      },
+      "strata-source-validation-v1/push-boundary.log": {
+        "bytes": 181,
+        "sha256": "8c84c799b3a28815dc1a1065b694685f1cc73e604cb0f57cc3dcad65f281679a"
+      },
+      "strata-source-validation-v1/push-runs-readback.log": {
+        "bytes": 3,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      },
+      "strata-source-validation-v1/push-task-branch.log": {
+        "bytes": 614,
+        "sha256": "41f2bab406773bb8a37c0f8fb3377a7d6327a6a58bf02246115033f8991fb2e0"
+      },
+      "strata-source-validation-v1/source-fast-forward.log": {
+        "bytes": 1230,
+        "sha256": "7e17f9786a5213a94a1e080aca536cd2f4f7188887115d6cde8e803bf2ab78a7"
+      },
+      "strata-source-validation-v1/source-negative-controls.log": {
+        "bytes": 6898,
+        "sha256": "6be3e642b9e6106b0ff23e64f7976e4ba6094919a4b6b7821bd422ee36d71807"
+      },
+      "strata-source-validation-v1/source-readback.log": {
+        "bytes": 423,
+        "sha256": "acc2c877d3714271b9bee3fb0379f51e225d5a0a2f39220a36e8ee2c48408ece"
+      },
+      "strata-source-validation-v1/source.json": {
+        "bytes": 423,
+        "sha256": "acc2c877d3714271b9bee3fb0379f51e225d5a0a2f39220a36e8ee2c48408ece"
+      },
+      "strata-source-validation-v1/stage-format.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "strata-source-validation-v1/strata-negative-controls.log": {
+        "bytes": 119,
+        "sha256": "9759c8d82a590ba4cb420fc652fa3f31f6295b47f78c87a39b04e2128e759433"
+      },
+      "strata-source-validation-v1/strict-target-clippy.log": {
+        "bytes": 170,
+        "sha256": "dd5a3cf487f36bf753b802074f43be201e1ecd94a88caacd830d5171a3bc02af"
+      },
+      "strata-source-validation-v1/tracked-clean.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "sha256": "74a74c783f80aa55f7781b4f2a4381e9d934519e5521647ced23ff3db74f2aef"
+  },
+  "causal_mechanism_status": "UNKNOWN",
+  "command_ledgers": {
+    "strata-source-publish-v2/ledger.jsonl": [
+      {
+        "argv": [
+          "gh",
+          "api",
+          "user",
+          "--jq",
+          ".login"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794445205700604801,
+        "exit_code": 0,
+        "label": "github-identity",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-publish-v2/github-identity.log",
+        "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+        "started_unix_ns": 1794445204468070198,
+        "stdin_sha256": null
+      },
+      {
+        "argv": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794445205723133112,
+        "exit_code": 0,
+        "label": "head",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-publish-v2/head.log",
+        "sha256": "0db681c62125202f739b6b917c6f980e876c5b67dcc92d93b2b8367b82e36bfc",
+        "started_unix_ns": 1794445205707055940,
+        "stdin_sha256": null
+      },
+      {
+        "argv": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794445205738936811,
+        "exit_code": 0,
+        "label": "branch",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-publish-v2/branch.log",
+        "sha256": "f478bf231c96aae16e1c5513e8f7e60f384cd94612185c8d802497c7f1a21505",
+        "started_unix_ns": 1794445205729071141,
+        "stdin_sha256": null
+      },
+      {
+        "argv": [
+          "git",
+          "status",
+          "--porcelain"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794445206223798430,
+        "exit_code": 0,
+        "label": "clean",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-publish-v2/clean.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "started_unix_ns": 1794445205744912937,
+        "stdin_sha256": null
+      },
+      {
+        "argv": [
+          "gh",
+          "api",
+          "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/test/chain-sp27-02-native-mechanism-20261111-e815",
+          "--jq",
+          ".object.sha"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794445207890433517,
+        "exit_code": 0,
+        "label": "remote-head",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-publish-v2/remote-head.log",
+        "sha256": "0db681c62125202f739b6b917c6f980e876c5b67dcc92d93b2b8367b82e36bfc",
+        "started_unix_ns": 1794445206252402556,
+        "stdin_sha256": null
+      },
+      {
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794445207995704722,
+        "exit_code": 0,
+        "label": "preflight-before-push",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-publish-v2/preflight-before-push.log",
+        "sha256": "2290b6c2897f0cd046a12928a1aabf36499371af30277ef1a915b7b6d755c67c",
+        "started_unix_ns": 1794445207900100237,
+        "stdin_sha256": null
+      },
+      {
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh",
+          "--push",
+          "origin",
+          "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794445208216808573,
+        "exit_code": 0,
+        "label": "exact-push-boundary",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-publish-v2/exact-push-boundary.log",
+        "sha256": "8c84c799b3a28815dc1a1065b694685f1cc73e604cb0f57cc3dcad65f281679a",
+        "started_unix_ns": 1794445208001153436,
+        "stdin_sha256": "0678aacdd31e9d6e67dd0f129cf9387e52cc6743f8b6c896b41a81d5fdca55d6"
+      },
+      {
+        "argv": [
+          "git",
+          "-c",
+          "credential.helper=",
+          "-c",
+          "credential.helper=!gh auth git-credential",
+          "push",
+          "--set-upstream",
+          "origin",
+          "test/chain-sp27-02-native-mechanism-20261111-e815"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794445211325449496,
+        "exit_code": 0,
+        "label": "push",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-publish-v2/push.log",
+        "sha256": "144793da3a77189e474f1d0ff018c056762b7806c8779e1bad32e05fdaba5eac",
+        "started_unix_ns": 1794445208222383865,
+        "stdin_sha256": null
+      },
+      {
+        "argv": [
+          "gh",
+          "pr",
+          "view",
+          "919",
+          "--repo",
+          "TrillionniumFoundation/Trillionnium-Chain",
+          "--json",
+          "number,url,state,isDraft,headRefOid,baseRefName,headRefName"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794445212809962646,
+        "exit_code": 0,
+        "label": "draft-pr-readback",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-publish-v2/draft-pr-readback.log",
+        "sha256": "646781f6d4542861039cf847944a973aec614d744557df843a6d245d1655c64c",
+        "started_unix_ns": 1794445211334985826,
+        "stdin_sha256": null
+      },
+      {
+        "argv": [
+          "gh",
+          "run",
+          "list",
+          "--repo",
+          "TrillionniumFoundation/Trillionnium-Chain",
+          "--commit",
+          "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+          "--limit",
+          "50",
+          "--json",
+          "databaseId,name,status,conclusion,event,headSha,url"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794445217798266116,
+        "exit_code": 0,
+        "label": "runs-readback",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-publish-v2/runs-readback.log",
+        "sha256": "5542abf91244f999c3fbe099709d5a5cfa662b7c8250ab608360eb0495fa465d",
+        "started_unix_ns": 1794445212819770156,
+        "stdin_sha256": null
+      },
+      {
+        "argv": [
+          "git",
+          "bundle",
+          "create",
+          "/home/qian-qi/work/sp27-02-e815/chain-strata-formatted-v1.bundle",
+          "11201add18184a9dcd95dd4d33d417a388061891..HEAD"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794445217837097810,
+        "exit_code": 0,
+        "label": "formatted-bundle",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-publish-v2/formatted-bundle.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "started_unix_ns": 1794445217808487050,
+        "stdin_sha256": null
+      }
+    ],
+    "strata-source-validation-v1/ledger.jsonl": [
+      {
+        "argv": [
+          "gh",
+          "api",
+          "user",
+          "--jq",
+          ".login"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444420719096827,
+        "exit_code": 0,
+        "label": "github-identity",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/github-identity.log",
+        "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+        "started_unix_ns": 1794444419482218162
+      },
+      {
+        "argv": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444420727608998,
+        "exit_code": 0,
+        "label": "initial-head",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/initial-head.log",
+        "sha256": "53cb467bf7c3e921ea0484ce217f4e97e0892d07ae0ca350eded0ca64ff5e83b",
+        "started_unix_ns": 1794444420721015466
+      },
+      {
+        "argv": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444420733091069,
+        "exit_code": 0,
+        "label": "initial-branch",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/initial-branch.log",
+        "sha256": "f478bf231c96aae16e1c5513e8f7e60f384cd94612185c8d802497c7f1a21505",
+        "started_unix_ns": 1794444420729031665
+      },
+      {
+        "argv": [
+          "git",
+          "status",
+          "--porcelain"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444421260427507,
+        "exit_code": 0,
+        "label": "initial-clean",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/initial-clean.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "started_unix_ns": 1794444420734754422
+      },
+      {
+        "argv": [
+          "git",
+          "bundle",
+          "verify",
+          "/home/qian-qi/work/sp27-02-e815/chain-strata-source-v1.bundle"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444421284219595,
+        "exit_code": 0,
+        "label": "bundle-verify",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/bundle-verify.log",
+        "sha256": "8865199bcd68fe4234b50cc5ecfa351b7e395030675b8f9e777c7537cba8e3d1",
+        "started_unix_ns": 1794444421262897523
+      },
+      {
+        "argv": [
+          "git",
+          "fetch",
+          "/home/qian-qi/work/sp27-02-e815/chain-strata-source-v1.bundle",
+          "HEAD:refs/sp27-inputs/strata-v1"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444421362771933,
+        "exit_code": 0,
+        "label": "bundle-fetch",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/bundle-fetch.log",
+        "sha256": "d06eb6bd6c85490333d49e27d907be488df419831b08a216a82f900c19616e95",
+        "started_unix_ns": 1794444421285789998
+      },
+      {
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444421465053906,
+        "exit_code": 0,
+        "label": "preflight-before-fast-forward",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/preflight-before-fast-forward.log",
+        "sha256": "2290b6c2897f0cd046a12928a1aabf36499371af30277ef1a915b7b6d755c67c",
+        "started_unix_ns": 1794444421364485272
+      },
+      {
+        "argv": [
+          "git",
+          "merge",
+          "--ff-only",
+          "refs/sp27-inputs/strata-v1"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444421575176922,
+        "exit_code": 0,
+        "label": "source-fast-forward",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/source-fast-forward.log",
+        "sha256": "7e17f9786a5213a94a1e080aca536cd2f4f7188887115d6cde8e803bf2ab78a7",
+        "started_unix_ns": 1794444421466983265
+      },
+      {
+        "argv": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444421580998796,
+        "exit_code": 0,
+        "label": "input-head",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/input-head.log",
+        "sha256": "10a4dac545af74ed50a62663fd2cd68de2b4f03a236b056a284a71b78206c937",
+        "started_unix_ns": 1794444421576968477
+      },
+      {
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444421688602396,
+        "exit_code": 0,
+        "label": "preflight-before-format",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/preflight-before-format.log",
+        "sha256": "2290b6c2897f0cd046a12928a1aabf36499371af30277ef1a915b7b6d755c67c",
+        "started_unix_ns": 1794444421582748813
+      },
+      {
+        "argv": [
+          "rustfmt",
+          "+1.95.0",
+          "--edition",
+          "2021",
+          "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444421812964322,
+        "exit_code": 0,
+        "label": "format-native-modules",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/format-native-modules.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "started_unix_ns": 1794444421690225796
+      },
+      {
+        "argv": [
+          "git",
+          "diff",
+          "--name-only"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444421839817629,
+        "exit_code": 0,
+        "label": "format-changed-files",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/format-changed-files.log",
+        "sha256": "47784b8a763a9543b244dd7634c5b0e0f98d5ee5f83c622eb7ef1e421aa14d2e",
+        "started_unix_ns": 1794444421815246081
+      },
+      {
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444421931684326,
+        "exit_code": 0,
+        "label": "preflight-before-format-commit",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/preflight-before-format-commit.log",
+        "sha256": "2290b6c2897f0cd046a12928a1aabf36499371af30277ef1a915b7b6d755c67c",
+        "started_unix_ns": 1794444421841459893
+      },
+      {
+        "argv": [
+          "git",
+          "add",
+          "--",
+          "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_campaign.rs",
+          "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_strata.rs"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444422000551453,
+        "exit_code": 0,
+        "label": "stage-format",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/stage-format.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "started_unix_ns": 1794444421933676572
+      },
+      {
+        "argv": [
+          "git",
+          "diff",
+          "--cached",
+          "--check"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444422018240318,
+        "exit_code": 0,
+        "label": "format-whitespace",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/format-whitespace.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "started_unix_ns": 1794444422002490250
+      },
+      {
+        "argv": [
+          "git",
+          "commit",
+          "-m",
+          "style(chain): format balanced native receiver controls"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444422105462435,
+        "exit_code": 0,
+        "label": "format-commit",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/format-commit.log",
+        "sha256": "8947a01a1e6e93bd94e0751d965333123423df58f420df30fc3fd8213ff6d9e4",
+        "started_unix_ns": 1794444422020082792
+      },
+      {
+        "argv": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444422112227383,
+        "exit_code": 0,
+        "label": "committed-head",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/committed-head.log",
+        "sha256": "0db681c62125202f739b6b917c6f980e876c5b67dcc92d93b2b8367b82e36bfc",
+        "started_unix_ns": 1794444422107479888
+      },
+      {
+        "argv": [
+          "git",
+          "rev-parse",
+          "HEAD^{tree}"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444422119386840,
+        "exit_code": 0,
+        "label": "committed-tree",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/committed-tree.log",
+        "sha256": "e5b1b9a3dae27814cb480fbc209cbc9e6ef8a06f361720e8979cfd11b2a086f7",
+        "started_unix_ns": 1794444422114009483
+      },
+      {
+        "argv": [
+          "python3",
+          "scripts/ci/verify_ci_source.py",
+          "--kind",
+          "head",
+          "--expected-head",
+          "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+          "--output",
+          "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/source.json"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444443295275532,
+        "exit_code": 0,
+        "label": "source-readback",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/source-readback.log",
+        "sha256": "acc2c877d3714271b9bee3fb0379f51e225d5a0a2f39220a36e8ee2c48408ece",
+        "started_unix_ns": 1794444422121351189
+      },
+      {
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh",
+          "--audit"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444443396352560,
+        "exit_code": 0,
+        "label": "preflight-before-build",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/preflight-before-build.log",
+        "sha256": "c1a90bb2647cbcc7bd23da4f4493d3d43555f4b57b1d0c5a95d12d8c5c6ffda1",
+        "started_unix_ns": 1794444443297288205
+      },
+      {
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444465476833398,
+        "exit_code": 0,
+        "label": "format-all-check",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/format-all-check.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "started_unix_ns": 1794444443398319962
+      },
+      {
+        "argv": [
+          "python3",
+          "scripts/ci/test_sp27_strata_controls.py"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444467772922504,
+        "exit_code": 0,
+        "label": "strata-negative-controls",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/strata-negative-controls.log",
+        "sha256": "9759c8d82a590ba4cb420fc652fa3f31f6295b47f78c87a39b04e2128e759433",
+        "started_unix_ns": 1794444465572881203
+      },
+      {
+        "argv": [
+          "python3",
+          "scripts/ci/test_sp27_receiver_controls.py"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444468090837846,
+        "exit_code": 0,
+        "label": "health-negative-controls",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/health-negative-controls.log",
+        "sha256": "a847800e179cc74e53e44b92da2afaee1f38384d9be418dee25ad86820cf06e9",
+        "started_unix_ns": 1794444467775412812
+      },
+      {
+        "argv": [
+          "python3",
+          "scripts/ci/test_from_zero_host_ci.py"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444470449447927,
+        "exit_code": 0,
+        "label": "host-negative-controls",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/host-negative-controls.log",
+        "sha256": "5fd53c11d8b4bd3a243c345cd8d71d560b5c378853d2368b112d0a96797cda9d",
+        "started_unix_ns": 1794444468092811997
+      },
+      {
+        "argv": [
+          "python3",
+          "scripts/ci/test_ci_source_integrity.py"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444476920212151,
+        "exit_code": 0,
+        "label": "source-negative-controls",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/source-negative-controls.log",
+        "sha256": "6be3e642b9e6106b0ff23e64f7976e4ba6094919a4b6b7821bd422ee36d71807",
+        "started_unix_ns": 1794444470451505077
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "research/sp2027/02_receiver_liveness/reader_v2",
+          "-p",
+          "test_native_reader_v2.py"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444477145257966,
+        "exit_code": 0,
+        "label": "frozen-reader-controls",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/frozen-reader-controls.log",
+        "sha256": "bc91528583971519aabce74aee528d488c26b3e656d1828a3523fe1d7817d1dc",
+        "started_unix_ns": 1794444476922418161
+      },
+      {
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_from_zero",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444490763353466,
+        "exit_code": 0,
+        "label": "exact-native-build",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/exact-native-build.log",
+        "sha256": "b3e9c482dfa1f02713057a1d4efbe72d667143d08275f1f3ecdf6a251f733391",
+        "started_unix_ns": 1794444477147089235
+      },
+      {
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_from_zero",
+          "sp27_receiver_controls::health_gate_requires_native_final_gate_and_strict_original_deadline",
+          "--",
+          "--exact",
+          "--show-output"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444490921249362,
+        "exit_code": 0,
+        "label": "native-unit-0",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/native-unit-0.log",
+        "sha256": "296e25e0872362e72398b00afd46dffe7d89c5b9563b60e3433816183a041c38",
+        "started_unix_ns": 1794444490765938642
+      },
+      {
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_from_zero",
+          "sp27_receiver_controls::raw_health_report_is_create_only",
+          "--",
+          "--exact",
+          "--show-output"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444491104791344,
+        "exit_code": 0,
+        "label": "native-unit-1",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/native-unit-1.log",
+        "sha256": "61438efe292217f3eb365bff00bed3964a2de1d593ab84dac660dc44c3b3232f",
+        "started_unix_ns": 1794444490923301862
+      },
+      {
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_from_zero",
+          "sp27_receiver_campaign::balanced_campaign_plan_keeps_sentinels_and_reversed_arms",
+          "--",
+          "--exact",
+          "--show-output"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444491255681266,
+        "exit_code": 0,
+        "label": "native-unit-2",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/native-unit-2.log",
+        "sha256": "b0f41710aa401d20565af20dc59e1a338f202b8bf0370f6fac10d144ae21f22d",
+        "started_unix_ns": 1794444491106955120
+      },
+      {
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_from_zero",
+          "sp27_receiver_campaign::pressure_business_failure_or_valid_acceptance_is_not_itself_integrity_failure",
+          "--",
+          "--exact",
+          "--show-output"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444491428822266,
+        "exit_code": 0,
+        "label": "native-unit-3",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/native-unit-3.log",
+        "sha256": "5007a7449b55dd38e565cf6d2bc448f2bf6b347c0f552d7640fca649b9ecf0e1",
+        "started_unix_ns": 1794444491257719708
+      },
+      {
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "clippy",
+          "--locked",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_from_zero",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444493432824507,
+        "exit_code": 0,
+        "label": "strict-target-clippy",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/strict-target-clippy.log",
+        "sha256": "dd5a3cf487f36bf753b802074f43be201e1ecd94a88caacd830d5171a3bc02af",
+        "started_unix_ns": 1794444491430932762
+      },
+      {
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "metadata",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--format-version",
+          "1"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444493671322337,
+        "exit_code": 0,
+        "label": "locked-graph",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/locked-graph.log",
+        "sha256": "e3e650e0b9867bb3de4ddb6c634b77b920b289e75d03e84041475102ce75c19f",
+        "started_unix_ns": 1794444493434802116
+      },
+      {
+        "argv": [
+          "git",
+          "diff",
+          "--exit-code"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444493707863162,
+        "exit_code": 0,
+        "label": "tracked-clean",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/tracked-clean.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "started_unix_ns": 1794444493685392371
+      },
+      {
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794444493815021688,
+        "exit_code": 0,
+        "label": "preflight-before-push",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/preflight-before-push.log",
+        "sha256": "2290b6c2897f0cd046a12928a1aabf36499371af30277ef1a915b7b6d755c67c",
+        "started_unix_ns": 1794444493709430215
+      },
+      {
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh",
+          "--push",
+          "origin",
+          "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794445071074543547,
+        "exit_code": 0,
+        "label": "push-boundary",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/push-boundary.log",
+        "sha256": "8c84c799b3a28815dc1a1065b694685f1cc73e604cb0f57cc3dcad65f281679a",
+        "started_unix_ns": 1794444493816946961
+      },
+      {
+        "argv": [
+          "git",
+          "-c",
+          "credential.helper=",
+          "-c",
+          "credential.helper=!gh auth git-credential",
+          "push",
+          "--set-upstream",
+          "origin",
+          "test/chain-sp27-02-native-mechanism-20261111-e815"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794445077016318731,
+        "exit_code": 0,
+        "label": "push-task-branch",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/push-task-branch.log",
+        "sha256": "41f2bab406773bb8a37c0f8fb3377a7d6327a6a58bf02246115033f8991fb2e0",
+        "started_unix_ns": 1794445071083645272
+      },
+      {
+        "argv": [
+          "gh",
+          "pr",
+          "view",
+          "919",
+          "--repo",
+          "TrillionniumFoundation/Trillionnium-Chain",
+          "--json",
+          "number,url,state,isDraft,headRefOid,baseRefName,headRefName"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794445078661185404,
+        "exit_code": 0,
+        "label": "draft-pr-readback",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/draft-pr-readback.log",
+        "sha256": "646781f6d4542861039cf847944a973aec614d744557df843a6d245d1655c64c",
+        "started_unix_ns": 1794445077022019352
+      },
+      {
+        "argv": [
+          "gh",
+          "run",
+          "list",
+          "--repo",
+          "TrillionniumFoundation/Trillionnium-Chain",
+          "--commit",
+          "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+          "--limit",
+          "40",
+          "--json",
+          "databaseId,name,status,conclusion,event,headSha,url"
+        ],
+        "cwd": "/home/qian-qi/work/sp27-02-e815/chain",
+        "ended_unix_ns": 1794445080167612739,
+        "exit_code": 0,
+        "label": "push-runs-readback",
+        "log": "/home/qian-qi/work/sp27-02-e815/strata-source-validation-v1/push-runs-readback.log",
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "started_unix_ns": 1794445078674896834
+      }
+    ]
+  },
+  "new_native_service_experiments": 0,
+  "schema": "sp27-source-validation-originals-v1",
+  "scope": "Actual source formatting, build, unit/negative controls, strict target Clippy, locked graph and authorized fast-forward publication; no native service experiment in this archive",
+  "source": {
+    "base": null,
+    "candidate": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+    "tested_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2554250398,
+    "tracked_entries": 27909,
+    "tracked_worktree_verified": true
+  }
+}

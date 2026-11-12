@@ -1,0 +1,89 @@
+name: SP27-02 fixed-window healthy controls
+on:
+  push:
+    branches: [test/chain-sp27-02-native-mechanism-20261111-e815]
+    paths:
+      - .github/workflows/sp27-receiver-controls.yml
+      - scripts/ci/run_sp27_receiver_controls.py
+      - scripts/ci/run_from_zero_host.py
+      - scripts/ci/run_from_zero_native.py
+      - trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs
+      - trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_controls.rs
+permissions:
+  contents: read
+concurrency:
+  group: sp27-receiver-controls-${{ github.sha }}
+  cancel-in-progress: false
+env:
+  CI: 'true'
+  CARGO_INCREMENTAL: '0'
+  CARGO_BUILD_JOBS: '2'
+  RUST_TEST_THREADS: '1'
+  PYTHONDONTWRITEBYTECODE: '1'
+jobs:
+  health:
+    name: Three original 4s controls, stop on first divergence
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}
+    steps:
+      - name: Checkout immutable execution source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Freeze source and separate evidence directory
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TRNM_CI_RECEIPT_DIR="$RUNNER_TEMP/sp27-receiver-evidence"
+          mkdir "$TRNM_CI_RECEIPT_DIR"
+          printf 'TRNM_CI_RECEIPT_DIR=%s\n' "$TRNM_CI_RECEIPT_DIR" >> "$GITHUB_ENV"
+          printf 'CARGO_HOME=%s/cargo-sp27\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-sp27\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$GITHUB_SHA" --output "$TRNM_CI_RECEIPT_DIR/source.json"
+          bash scripts/project-preflight.sh --audit
+          lscpu --json > "$TRNM_CI_RECEIPT_DIR/lscpu.json"
+          uname -srmo > "$TRNM_CI_RECEIPT_DIR/kernel.txt"
+          cat /proc/self/cgroup > "$TRNM_CI_RECEIPT_DIR/controller-cgroup.txt"
+          cat /sys/fs/cgroup/cpuset.cpus.effective > "$TRNM_CI_RECEIPT_DIR/available-cpus.txt"
+          ps -eo pid,ppid,comm > "$TRNM_CI_RECEIPT_DIR/processes-before.txt"
+      - name: Install source-pinned Rust
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Check reader boundaries and Host refusal contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/test_sp27_receiver_controls.py
+          python3 scripts/ci/test_from_zero_host_ci.py
+          python3 -m unittest discover -s research/sp2027/02_receiver_liveness/reader_v2 -p 'test*.py'
+      - name: Prepare exact native executable outside measured quota
+        id: build
+        run: python3 scripts/ci/run_sp27_receiver_controls.py --prepare --out "$TRNM_CI_RECEIPT_DIR/sp27-receiver-controls"
+      - name: Execute sequential healthy controls in original fixed Host
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_sp27_receiver_controls.py --out "$TRNM_CI_RECEIPT_DIR/sp27-receiver-controls"
+      - name: Read scientific health decision separately from collector exit
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ['TRNM_CI_RECEIPT_DIR'])
+          report = json.loads((root / 'sp27-receiver-controls/native/report.json').read_text())
+          print(json.dumps({'qualification': report['qualification'],
+                            'causal_mechanism_established': False,
+                            'pressure_controls_executed': False}, sort_keys=True))
+          assert report['qualification'] == 'HEALTH_GATE_PASSED_CONTROLS_PENDING', 'NO_GO: retain first divergence; do not start pressure'
+          PY
+      - name: Preserve every outcome and actual executable
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sp27-receiver-health-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/sp27-receiver-evidence
+          if-no-files-found: error
+          retention-days: 30

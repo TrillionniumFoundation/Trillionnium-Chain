@@ -1,0 +1,78 @@
+{
+  "artifact_id": 13907325153,
+  "files": {
+    "ARTIFACT_PARTS.json": {
+      "bytes": 816,
+      "sha256": "c71730c188b20793eb9378db9fe5df575cc3e33c3a33a95234b77f7747e0f5fc"
+    },
+    "HEALTH_CI_AUDIT.json": {
+      "bytes": 14906,
+      "sha256": "30228aae6a3b2728a753c72f07ebdf10744b58c6c145b006e9d53818dff1facc"
+    },
+    "HEALTH_V2_CONSUMER_RECEIPT.json": {
+      "bytes": 8108,
+      "sha256": "208f9cd7784af0866896abf61460140d2d2b181ccc0c936fd51254329430f256"
+    },
+    "INTAKE_RECEIPT.json": {
+      "bytes": 2069,
+      "sha256": "118b848a915d02bb942300281c8327dd2ceea1b194faaad4953c3c2c812d69e3"
+    },
+    "RAW_SHA256.json": {
+      "bytes": 10220,
+      "sha256": "14c20ff0fdaad072e8d3282b10cc1631ea23c461e4d905dfb07595b0d16d88e5"
+    },
+    "README.md": {
+      "bytes": 4714,
+      "sha256": "ff8f6b33125bc5402886d8ebbc6ae4b40bf0d79ba139178f565cbb44df66517f"
+    },
+    "RECONSTRUCTION_RECEIPT.json": {
+      "bytes": 420,
+      "sha256": "8c30ea35800f357bcedc98a26a8454f04ad754f72531499e4c84d5cc40922aa4"
+    },
+    "ZIP_MEMBER_SHA256.json": {
+      "bytes": 12076,
+      "sha256": "7635a79b22816649a31e96c70a32a226c699c5088e315960e71973041408cc54"
+    },
+    "artifact-13907325153.zip.part00": {
+      "bytes": 4000000,
+      "sha256": "031f03a87d95da29b8629243aa9b1a04f3522a736a12496fc7f86e71200da4ee"
+    },
+    "artifact-13907325153.zip.part01": {
+      "bytes": 1536414,
+      "sha256": "b91865b11f832cde7cee3b8adf3d160e0fd8aa22b6d6e146daaf923d980a50d5"
+    },
+    "artifact-metadata.json": {
+      "bytes": 954,
+      "sha256": "ce14dd91379ff76d87ae8b7613bc055f642143166ddf41f5b7340ade3d7574ef"
+    },
+    "audit_original.py": {
+      "bytes": 11781,
+      "sha256": "5cb3ff608e5cfd8df0cf08c1e31575cc2ce7ec1a2798cbeb01881d83123f2405"
+    },
+    "intake_original_zip.py": {
+      "bytes": 7954,
+      "sha256": "d4c6e505026e5387c405c80198eac49881746461c0d901b2a082fc852f54c362"
+    },
+    "job-130895251212.decoded.log": {
+      "bytes": 183112,
+      "sha256": "418b8c96e9dd4ff16511c50deed071f59df6747fdc6b01c8ab00e1cb5511f801"
+    },
+    "jobs.json": {
+      "bytes": 2166,
+      "sha256": "fd3db73b7248bc2abed70e2a9bc5e50610ed3beb5bb53822e54f760ea73d7a87"
+    },
+    "reconstruct_archive.py": {
+      "bytes": 1893,
+      "sha256": "064212bb4d6cd3124adf6daf907b97efb1a62b430e74763079f7781be0ae0980"
+    },
+    "run.json": {
+      "bytes": 16675,
+      "sha256": "95a4eaaf8494b6a7e96d12ee756efe9ba6500e275ac96d1757e06eb69ec6d089"
+    }
+  },
+  "original_zip_sha256": "a426ab09abffc6aa128dd5875be6ec33d72da55ca538bdd9867d0b56feaee073",
+  "run_id": 43131129775,
+  "schema": "sp27-02-append-only-delivery-batch-manifest-v1",
+  "self_excluded": "BATCH_MANIFEST.json",
+  "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9"
+}

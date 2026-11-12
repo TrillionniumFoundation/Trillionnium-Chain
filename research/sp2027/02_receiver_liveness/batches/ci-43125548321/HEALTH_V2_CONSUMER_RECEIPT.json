@@ -1,0 +1,144 @@
+{
+  "consumer": {
+    "execution_schema_for_future_runs": "sp27-native-health-execution-v2",
+    "path": "scripts/ci/run_sp27_receiver_controls.py",
+    "sha256": "8fa2fff07e15eab9bc724c30c14bac3d7325168197d5dea544c5118864e34084"
+  },
+  "inputs": {
+    "preparation": {
+      "ctime_ns": 1794443062995068282,
+      "device": 27,
+      "inode": 2269999,
+      "mtime_ns": 1794443062995068282,
+      "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43125548321/verified-raw/sp27-receiver-controls/preparation.json",
+      "sha256": "9d20c1c24cf4ae04241d95d70128812fb0a65e39b5f3bd7dac66f0ec8d6eb25e",
+      "size_bytes": 4254
+    },
+    "readback_files": {
+      "acquisition.json": {
+        "ctime_ns": 1794443062869351453,
+        "device": 27,
+        "inode": 2269928,
+        "mtime_ns": 1794443062869351453,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43125548321/verified-raw/sp27-receiver-controls/native/acquisition.json",
+        "sha256": "f8ab3cdb67998e472e6a971bd9aef6afc55f70e123dce3f7392f26f8791b5966",
+        "size_bytes": 694983
+      },
+      "host-after.json": {
+        "ctime_ns": 1794443062897092967,
+        "device": 27,
+        "inode": 2269968,
+        "mtime_ns": 1794443062897092967,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43125548321/verified-raw/sp27-receiver-controls/native/host-after.json",
+        "sha256": "7d918ab5355386a38b55f376bab421ec206a42ab174218edb1a9eeadac31367b",
+        "size_bytes": 450
+      },
+      "host-before.json": {
+        "ctime_ns": 1794443062897209652,
+        "device": 27,
+        "inode": 2269969,
+        "mtime_ns": 1794443062897209652,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43125548321/verified-raw/sp27-receiver-controls/native/host-before.json",
+        "sha256": "4421e38824775eb207072c188b3ecba4f3a731397e56cca6af15e7e4c9c9230a",
+        "size_bytes": 450
+      },
+      "identity-after.json": {
+        "ctime_ns": 1794443062897394264,
+        "device": 27,
+        "inode": 2269972,
+        "mtime_ns": 1794443062897394264,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43125548321/verified-raw/sp27-receiver-controls/native/identity-after.json",
+        "sha256": "d6a93943990dd38af20798c047bf5c2115252fba82844ca377581ca67dd1ed4d",
+        "size_bytes": 1026
+      },
+      "identity-before.json": {
+        "ctime_ns": 1794443062897481228,
+        "device": 27,
+        "inode": 2269974,
+        "mtime_ns": 1794443062897481228,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43125548321/verified-raw/sp27-receiver-controls/native/identity-before.json",
+        "sha256": "d6a93943990dd38af20798c047bf5c2115252fba82844ca377581ca67dd1ed4d",
+        "size_bytes": 1026
+      },
+      "raw/health-000.json": {
+        "ctime_ns": 1794443062933348714,
+        "device": 27,
+        "inode": 2269993,
+        "mtime_ns": 1794443062933348714,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43125548321/verified-raw/sp27-receiver-controls/native/raw/health-000.json",
+        "sha256": "c1427ce79cbdcdca101ca44e61751be01dcd8a926fd5024c63bde99ef307fcde",
+        "size_bytes": 1710913
+      },
+      "raw/health-001.json": {
+        "ctime_ns": 1794443062981346659,
+        "device": 27,
+        "inode": 2269995,
+        "mtime_ns": 1794443062981346659,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43125548321/verified-raw/sp27-receiver-controls/native/raw/health-001.json",
+        "sha256": "ecd11e5ca3f7b59158861db9b17063ec0b1dd5e207da8c524bf920634e771977",
+        "size_bytes": 1735607
+      },
+      "raw/health-002.json": {
+        "ctime_ns": 1794443062993346146,
+        "device": 27,
+        "inode": 2269997,
+        "mtime_ns": 1794443062993346146,
+        "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43125548321/verified-raw/sp27-receiver-controls/native/raw/health-002.json",
+        "sha256": "bb5b62420659c4140c1dc37f3189956ed432027cb11700fa2504dcabc6f2db9e",
+        "size_bytes": 1735585
+      }
+    },
+    "report": {
+      "ctime_ns": 1794443062994939755,
+      "device": 27,
+      "inode": 2269998,
+      "mtime_ns": 1794443062994939755,
+      "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43125548321/verified-raw/sp27-receiver-controls/native/report.json",
+      "sha256": "ed766cbd87e34479012e41470de1892fcfcae95cb7c39b90c89165151f0fec01",
+      "size_bytes": 4189
+    }
+  },
+  "limitations": [
+    "Source/binary declarations are cross-bound to original preparation; independent raw ZIP and host provenance audit is separate",
+    "The acquisition binding verifies the actual recorded bytes and seven packet/ID inventory, not an additional cryptographic replay",
+    "No pressure/stratum was executed in this source; three controls do not establish a causal attack mechanism"
+  ],
+  "producer": {
+    "binary_sha256": "81c19f2dbfc709b87160cda7cdbb995842d83c445f0097dd6f485fd125cfd67f",
+    "job": {
+      "GITHUB_JOB": "health",
+      "GITHUB_RUN_ATTEMPT": "1",
+      "GITHUB_RUN_ID": "43125548321"
+    },
+    "native_compiled_sources_sha256": {
+      "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs": "b86f7b73f06720727fa63caaf1bac679c8bb4b2747e45ec90d2413e22288e328",
+      "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/sp27_receiver_controls.rs": "37ccfdeb41ba15b4c911f1d843bf456938474d98691956433a4deb01359d7fe4"
+    },
+    "source_commit": "0bc51795a978494af1b4659712ecf78c290c1a88"
+  },
+  "result": {
+    "attempted": 3,
+    "causal_mechanism_status": "UNKNOWN",
+    "completed": 3,
+    "confirmation_ended_ns": [
+      3182777296,
+      3093116433,
+      3099623590
+    ],
+    "first_divergence": null,
+    "incomplete": 0,
+    "native_final_gates": [
+      true,
+      true,
+      true
+    ],
+    "not_executed": 0,
+    "planned": 3,
+    "pressure_controls_executed": 0,
+    "qualification": "HEALTH_GATE_PASSED_CONTROLS_PENDING",
+    "read_health_completed": true,
+    "strict_original_window_ns": 4000000000
+  },
+  "schema": "sp27-02-health-v2-original-consumer-receipt-v1",
+  "scope": "Read-only consumption of original v1 native health records by strict Python v2; no new native experiment; original producer manifest unchanged"
+}

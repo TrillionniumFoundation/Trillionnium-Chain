@@ -1,0 +1,44 @@
+{
+  "causal_claim": false,
+  "clock_domains_combined": false,
+  "command_arguments": [
+    "research/sp2027/02_receiver_liveness/figures/plot_original_pair_timing.py",
+    "--input",
+    "/workspace/scratch/e8159a5f91bf/provenance/ci-43052900246-13871459353/from-zero-native/confirmation/report.json",
+    "--out-dir",
+    "research/sp2027/02_receiver_liveness/figures"
+  ],
+  "matplotlib": "3.10.8",
+  "new_native_experiments": 0,
+  "outputs": [
+    {
+      "bytes": 26330,
+      "file": "original_pair_timing.svg",
+      "sha256": "3e10a33fd6c43d6b438344801b28468f06f1419729bdfedb5c9d3dd19c064480"
+    },
+    {
+      "bytes": 306654,
+      "file": "original_pair_timing.png",
+      "sha256": "a584c1b91eef01081410404f8367078f76fa9c5d8d8924a8729218aa592cbb8e"
+    },
+    {
+      "bytes": 5581,
+      "file": "original_pair_timing.data.json",
+      "sha256": "6ac22dc31a870363e389fd5f9c92885121691ddcfe56f67a708956443ced2fb9"
+    },
+    {
+      "bytes": 2347,
+      "file": "original_pair_timing.caption.md",
+      "sha256": "e9422b2e93c0d9aa0f94a445ebff64ee310286942e8853e5eb42b4d5b88d586b"
+    }
+  ],
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "raw_record_rewritten": false,
+  "schema": "sp27-original-pair-timing-figure-receipt-v1",
+  "script_sha256": "1a43fbc99a9269b4e1349f92d8c43d2a42953aeed80139a2b682b7114d70967f",
+  "source_report": {
+    "bytes": 11152091,
+    "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43052900246-13871459353/from-zero-native/confirmation/report.json",
+    "sha256": "4a4ec5d92810f51df792a2f1f08e4af4c9cb47c107c5ed3e3a8e2ef71dae9a1d"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "research/sp2027/02_receiver_liveness/reader_v2",
+    "-p",
+    "test_native_reader_v2.py",
+    "-v"
+  ],
+  "declared_cases": 10,
+  "native_experiments": 0,
+  "reader_sha256": "e9d49be7d060d71c4b13ef43b32568028f26fdc6e737587fc47a78457a8c1a28",
+  "returncode": 0,
+  "schema": "sp27-02-reader-v2-synthetic-tests-v1",
+  "stderr_sha256": "05ddf5d7b45f259534ac62e54193dd5d43fcf03cb624221580bfe4370bbec721",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "suite_sha256": "58e91d15ff4c202800bd33fcd45b2f5685f0e88d5efcc630029f95ba9b3ef85f"
+}

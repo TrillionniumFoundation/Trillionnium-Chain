@@ -1,0 +1,373 @@
+{
+  "collector_analysis_contract_version": "sp27-02-collector-analysis-v2",
+  "evidence_scope": "archival_reanalysis",
+  "experiment_id": "ci-43052900246-13871459353",
+  "input_identity": {
+    "archive_read_members": {
+      "from-zero-native-host/child-result.json": {
+        "bytes": 339,
+        "sha256": "65506802659d241946c0d8e17f0926e5cc25715a2f4a73c695fe84db934b6d03"
+      },
+      "from-zero-native-host/controller-result.json": {
+        "bytes": 7645,
+        "sha256": "3dc5e8c36731efead98f19221213ba75189f12fa69ae804b0464b697c3a53dca"
+      },
+      "from-zero-native-host/inside-after.json": {
+        "bytes": 1700,
+        "sha256": "cde41157499d69618b5042b86b51f2c208ff27af2c151467676b57a6e86f312d"
+      },
+      "from-zero-native-host/inside-before.json": {
+        "bytes": 1688,
+        "sha256": "d159643991fb6a39e78a429a627aee1fcf2bdf033c53a4f94c58a1c6ba542d36"
+      },
+      "from-zero-native/confirmation/report.json": {
+        "bytes": 11152091,
+        "sha256": "4a4ec5d92810f51df792a2f1f08e4af4c9cb47c107c5ed3e3a8e2ef71dae9a1d"
+      },
+      "from-zero-native/manifest.json": {
+        "bytes": 72941,
+        "sha256": "82e6566b63abb6f4ed23f4cb2693798825baabab899c209478d09a0fc66f5ecd"
+      },
+      "from-zero-native/public_v3_from_zero": {
+        "bytes": 11849144,
+        "sha256": "03d0dada775a2531876ce796192b59d27d78f86848e053de554ee70e281eb387"
+      }
+    },
+    "artifact_id": 13871459353,
+    "binary_member": "from-zero-native/public_v3_from_zero",
+    "binary_sha256": "03d0dada775a2531876ce796192b59d27d78f86848e053de554ee70e281eb387",
+    "job_id": 130634539770,
+    "key": "ci-43052900246-13871459353",
+    "report_member": "from-zero-native/confirmation/report.json",
+    "report_sha256": "4a4ec5d92810f51df792a2f1f08e4af4c9cb47c107c5ed3e3a8e2ef71dae9a1d",
+    "run_id": 43052900246,
+    "source_commit": "8ebcdb01016946a131f9067ebe1ace39b9c4f260",
+    "source_tree": "1b887f5fe57c6c3875ad28b8cc26bd83a8f77b83",
+    "zip_bytes": 8297569,
+    "zip_sha256": "8b21d753e0ac85ffdca7bc3e0a5f953d4dfffb24c7a10cc9ae394dcfe6590307"
+  },
+  "joint_freeze_status": "current_02_measurement_consumer_executed; prior_Agent06_human_ack_not_observed",
+  "new_native_experiments": 0,
+  "runs": [
+    {
+      "chain_instance_id": "ci-43052900246-13871459353/confirmation/attack-free-baseline/fresh-ledger",
+      "clock_id": "ci-43052900246-13871459353/confirmation/attack-free-baseline/traffic-epoch",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "event_coverage_complete": true,
+      "identity": {
+        "binary_sha256": "03d0dada775a2531876ce796192b59d27d78f86848e053de554ee70e281eb387",
+        "config_sha256": null,
+        "source_commit": "8ebcdb01016946a131f9067ebe1ace39b9c4f260",
+        "source_tree": "1b887f5fe57c6c3875ad28b8cc26bd83a8f77b83"
+      },
+      "metadata": {
+        "archive_key": "ci-43052900246-13871459353",
+        "causal_mechanism_established": false,
+        "ci_artifact_id": 13871459353,
+        "ci_job_id": 130634539770,
+        "ci_run_id": 43052900246,
+        "clock_error_bound_ns": null,
+        "clock_resolution_ns": null,
+        "collector_analysis_contract_version": "sp27-02-collector-analysis-v2",
+        "config_freeze_complete": false,
+        "confirmation_attestation_scope": "positive native independent endpoint plus source path; cryptography not reexecuted by Python",
+        "event_coverage_scope": "all fixture planned round starts and recorded native observations, not all physical activity",
+        "exclusive_resources_established": false,
+        "host_after": {
+          "boot_id": "e4467231-e96e-4736-9409-b547a3dc1666",
+          "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+          "consensus_or_model_authority": false,
+          "counters": {
+            "cgroup.events": "populated 1\nfrozen 0",
+            "cpu.stat": "usage_usec 22481178\nuser_usec 18476191\nsystem_usec 4004987\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 921\nnr_throttled 851\nthrottled_usec 83160407\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "69513216",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "1"
+          },
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "gid": 1001,
+          "host_readiness_only": true,
+          "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "observed_utc": "2026-11-11T16:13:54.838720+00:00",
+          "parent": {
+            "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+            "device": 31,
+            "directory": true,
+            "gid": 0,
+            "inode": 7066,
+            "mode": 493,
+            "symlink": false,
+            "uid": 0
+          },
+          "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+          "phase": "inside-after-native",
+          "pid": 4968,
+          "read_errors": {},
+          "schema": "trnm-ci-original-public-host-observation-v1",
+          "service": "trnm-from-zero-43052900246-1-native-priorities-2395.service",
+          "thread_cgroup": "0::/trnmponpublic.slice/trnm-from-zero-43052900246-1-native-priorities-2395.service",
+          "thread_privileges": {
+            "CapBnd": "0000000000000000",
+            "NoNewPrivs": "1"
+          },
+          "uid": 1001
+        },
+        "host_before": {
+          "boot_id": "e4467231-e96e-4736-9409-b547a3dc1666",
+          "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+          "consensus_or_model_authority": false,
+          "counters": {
+            "cgroup.events": "populated 1\nfrozen 0",
+            "cpu.stat": "usage_usec 101977\nuser_usec 80196\nsystem_usec 21781\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 6\nnr_throttled 4\nthrottled_usec 287044\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "17121280",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "1"
+          },
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "gid": 1001,
+          "host_readiness_only": true,
+          "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "observed_utc": "2026-11-11T16:12:23.331326+00:00",
+          "parent": {
+            "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+            "device": 31,
+            "directory": true,
+            "gid": 0,
+            "inode": 7066,
+            "mode": 493,
+            "symlink": false,
+            "uid": 0
+          },
+          "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+          "phase": "inside-before-native",
+          "pid": 4968,
+          "read_errors": {},
+          "schema": "trnm-ci-original-public-host-observation-v1",
+          "service": "trnm-from-zero-43052900246-1-native-priorities-2395.service",
+          "thread_cgroup": "0::/trnmponpublic.slice/trnm-from-zero-43052900246-1-native-priorities-2395.service",
+          "thread_privileges": {
+            "CapBnd": "0000000000000000",
+            "NoNewPrivs": "1"
+          },
+          "uid": 1001
+        },
+        "host_child_errors": [],
+        "host_controller_errors": [],
+        "independent_operational_domains": false,
+        "mode": "attack-free-baseline",
+        "new_useful_computation_evidence": null,
+        "observed_config_view": {
+          "policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+          "public_resource_policy": null,
+          "settings_profile": null,
+          "state_backend": null
+        },
+        "observed_config_view_sha256": "ed600e99b93a2095db44d7659703e1d6c8084e30149dff9e3cb0b769a60bab89",
+        "original_gate_unchanged": true,
+        "original_pair_phase_index": 0,
+        "original_phase_order": [
+          "attack-free-baseline",
+          "from-zero-pressure"
+        ],
+        "plan_provenance": "frozen fixture source; retrospective import",
+        "previous_local_failure_verified": false,
+        "prospective_registration": false,
+        "randomized_order": false,
+        "report_member": "from-zero-native/confirmation/report.json",
+        "report_sha256": "4a4ec5d92810f51df792a2f1f08e4af4c9cb47c107c5ed3e3a8e2ef71dae9a1d",
+        "same_host_only": true,
+        "saturation_capacity_measured": false,
+        "zip_sha256": "8b21d753e0ac85ffdca7bc3e0a5f953d4dfffb24c7a10cc9ae394dcfe6590307"
+      },
+      "observer_id": "ci-43052900246-13871459353/confirmation/attack-free-baseline/independent-native-client",
+      "profile_id": "original-four-second-pair",
+      "recovery": null,
+      "resource_inventory_complete": false,
+      "run_id": "ci-43052900246-13871459353/confirmation/attack-free-baseline",
+      "window_end_ns": 4000000000,
+      "window_start_ns": 0
+    },
+    {
+      "chain_instance_id": "ci-43052900246-13871459353/confirmation/from-zero-pressure/fresh-ledger",
+      "clock_id": "ci-43052900246-13871459353/confirmation/from-zero-pressure/traffic-epoch",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "event_coverage_complete": true,
+      "identity": {
+        "binary_sha256": "03d0dada775a2531876ce796192b59d27d78f86848e053de554ee70e281eb387",
+        "config_sha256": null,
+        "source_commit": "8ebcdb01016946a131f9067ebe1ace39b9c4f260",
+        "source_tree": "1b887f5fe57c6c3875ad28b8cc26bd83a8f77b83"
+      },
+      "metadata": {
+        "archive_key": "ci-43052900246-13871459353",
+        "causal_mechanism_established": false,
+        "ci_artifact_id": 13871459353,
+        "ci_job_id": 130634539770,
+        "ci_run_id": 43052900246,
+        "clock_error_bound_ns": null,
+        "clock_resolution_ns": null,
+        "collector_analysis_contract_version": "sp27-02-collector-analysis-v2",
+        "config_freeze_complete": false,
+        "confirmation_attestation_scope": "positive native independent endpoint plus source path; cryptography not reexecuted by Python",
+        "event_coverage_scope": "all fixture planned round starts and recorded native observations, not all physical activity",
+        "exclusive_resources_established": false,
+        "host_after": {
+          "boot_id": "e4467231-e96e-4736-9409-b547a3dc1666",
+          "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+          "consensus_or_model_authority": false,
+          "counters": {
+            "cgroup.events": "populated 1\nfrozen 0",
+            "cpu.stat": "usage_usec 22481178\nuser_usec 18476191\nsystem_usec 4004987\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 921\nnr_throttled 851\nthrottled_usec 83160407\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "69513216",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "1"
+          },
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "gid": 1001,
+          "host_readiness_only": true,
+          "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "observed_utc": "2026-11-11T16:13:54.838720+00:00",
+          "parent": {
+            "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+            "device": 31,
+            "directory": true,
+            "gid": 0,
+            "inode": 7066,
+            "mode": 493,
+            "symlink": false,
+            "uid": 0
+          },
+          "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+          "phase": "inside-after-native",
+          "pid": 4968,
+          "read_errors": {},
+          "schema": "trnm-ci-original-public-host-observation-v1",
+          "service": "trnm-from-zero-43052900246-1-native-priorities-2395.service",
+          "thread_cgroup": "0::/trnmponpublic.slice/trnm-from-zero-43052900246-1-native-priorities-2395.service",
+          "thread_privileges": {
+            "CapBnd": "0000000000000000",
+            "NoNewPrivs": "1"
+          },
+          "uid": 1001
+        },
+        "host_before": {
+          "boot_id": "e4467231-e96e-4736-9409-b547a3dc1666",
+          "cgroup_controllers": "cpuset cpu io memory hugetlb pids rdma misc dmem",
+          "consensus_or_model_authority": false,
+          "counters": {
+            "cgroup.events": "populated 1\nfrozen 0",
+            "cpu.stat": "usage_usec 101977\nuser_usec 80196\nsystem_usec 21781\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 6\nnr_throttled 4\nthrottled_usec 287044\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "17121280",
+            "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+            "pids.current": "1"
+          },
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "gid": 1001,
+          "host_readiness_only": true,
+          "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "observed_utc": "2026-11-11T16:12:23.331326+00:00",
+          "parent": {
+            "canonical_path": "/sys/fs/cgroup/trnmponpublic.slice",
+            "device": 31,
+            "directory": true,
+            "gid": 0,
+            "inode": 7066,
+            "mode": 493,
+            "symlink": false,
+            "uid": 0
+          },
+          "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+          "phase": "inside-before-native",
+          "pid": 4968,
+          "read_errors": {},
+          "schema": "trnm-ci-original-public-host-observation-v1",
+          "service": "trnm-from-zero-43052900246-1-native-priorities-2395.service",
+          "thread_cgroup": "0::/trnmponpublic.slice/trnm-from-zero-43052900246-1-native-priorities-2395.service",
+          "thread_privileges": {
+            "CapBnd": "0000000000000000",
+            "NoNewPrivs": "1"
+          },
+          "uid": 1001
+        },
+        "host_child_errors": [],
+        "host_controller_errors": [],
+        "independent_operational_domains": false,
+        "mode": "from-zero-pressure",
+        "new_useful_computation_evidence": null,
+        "observed_config_view": {
+          "policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+          "public_resource_policy": null,
+          "settings_profile": null,
+          "state_backend": null
+        },
+        "observed_config_view_sha256": "ed600e99b93a2095db44d7659703e1d6c8084e30149dff9e3cb0b769a60bab89",
+        "original_gate_unchanged": true,
+        "original_pair_phase_index": 1,
+        "original_phase_order": [
+          "attack-free-baseline",
+          "from-zero-pressure"
+        ],
+        "plan_provenance": "frozen fixture source; retrospective import",
+        "previous_local_failure_verified": false,
+        "prospective_registration": false,
+        "randomized_order": false,
+        "report_member": "from-zero-native/confirmation/report.json",
+        "report_sha256": "4a4ec5d92810f51df792a2f1f08e4af4c9cb47c107c5ed3e3a8e2ef71dae9a1d",
+        "same_host_only": true,
+        "saturation_capacity_measured": false,
+        "zip_sha256": "8b21d753e0ac85ffdca7bc3e0a5f953d4dfffb24c7a10cc9ae394dcfe6590307"
+      },
+      "observer_id": "ci-43052900246-13871459353/confirmation/from-zero-pressure/independent-native-client",
+      "profile_id": "original-four-second-pair",
+      "recovery": null,
+      "resource_inventory_complete": false,
+      "run_id": "ci-43052900246-13871459353/confirmation/from-zero-pressure",
+      "window_end_ns": 4000000000,
+      "window_start_ns": 0
+    }
+  ],
+  "schema": "sp27-confirmed-goodput-contract-v1",
+  "shared_with_sp27_02": true
+}

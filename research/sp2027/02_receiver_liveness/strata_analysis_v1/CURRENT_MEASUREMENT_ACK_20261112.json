@@ -1,0 +1,199 @@
+{
+  "actor": "measurement_contract agent in current SP27-02 task",
+  "actual_consumer_receipts": [
+    {
+      "bytes": 8108,
+      "path": "research/sp2027/02_receiver_liveness/batches/ci-43131129775/HEALTH_V2_CONSUMER_RECEIPT.json",
+      "sha256": "208f9cd7784af0866896abf61460140d2d2b181ccc0c936fd51254329430f256"
+    },
+    {
+      "bytes": 129192,
+      "path": "research/sp2027/02_receiver_liveness/batches/ci-43131129970/strata_analysis_v1/CONSUMER_RECEIPT.json",
+      "sha256": "51e0e351a93f3fe70fef3e809c0e2204a1eb7dcfbe5c5fd9d7c3e03f8e66c8f1"
+    }
+  ],
+  "consumer_sources": {
+    "frozen_06_analyzer_sha256": "9719f822394e6295a7787be0be2c8d394d25ab19e8d17be543e4145f6bae9acc",
+    "health_reader_sha256": "8fa2fff07e15eab9bc724c30c14bac3d7325168197d5dea544c5118864e34084",
+    "strata_adapter_sha256": "04378a888cad5555afc76e38dd63f2cad50fcde6d91f2417e67ac6b902bbe2c5",
+    "strata_audit_sha256": "8f684b5aabb7b759f910c2cc7c78ec3b79013ee1f59065101629f54ed3fc5f7b"
+  },
+  "current_collaborator": "root in current SP27-02 task",
+  "current_contracts": [
+    {
+      "freeze": {
+        "bytes": 4926,
+        "path": "research/sp2027/02_receiver_liveness/reader_v2/CONTRACT_FREEZE.json",
+        "sha256": "fd063440ee6d10ccaaf28ca70a0fc371e1a1a77cd67ac52f95f1cef885863920"
+      },
+      "status": "PRESERVED_UNCHANGED",
+      "version": "sp27-02-collector-analysis-v2"
+    },
+    {
+      "audit_version": "sp27-02-strata-ci-audit-v1",
+      "freeze": {
+        "bytes": 2108,
+        "path": "research/sp2027/02_receiver_liveness/strata_analysis_v1/CONTRACT_FREEZE.json",
+        "sha256": "fa048f1c0f92b421c34738bfee05e88d0923aed0ab5f3787ef6a411c2cb8e2f3"
+      },
+      "status": "FROZEN_SOURCE_HASHES_MATCH_AND_ACTUALLY_CONSUMED",
+      "version": "sp27-02-strata-analysis-v1"
+    }
+  ],
+  "current_root_acknowledgments": [
+    {
+      "bytes": 830,
+      "path": "research/sp2027/02_receiver_liveness/batches/ci-43131129775/ROOT_ACK.json",
+      "sha256": "15a3527e6ae652fc365a3bb74f95b4d12a4fee1fec0a67d9a7a6596c10ede5cb"
+    },
+    {
+      "bytes": 4786,
+      "path": "research/sp2027/02_receiver_liveness/batches/ci-43131129970/ROOT_ACK.json",
+      "sha256": "14cc31d7a6514f822fcfee8679091951809918c3edf75f685e1c2af38fe3d8af"
+    }
+  ],
+  "frozen_source_modified_for_outcome": false,
+  "historical_agent06_author_acknowledgment": "NOT_OBSERVED",
+  "mechanism_status": "UNKNOWN",
+  "native_extra_health_batch": {
+    "artifact_id": 13907325153,
+    "business_confirmed": 3,
+    "completed": 3,
+    "job_id": 130895251212,
+    "planned": 3,
+    "pressure_executed": 0,
+    "run_id": 43131129775
+  },
+  "native_raw_modified": false,
+  "native_source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+  "native_strata_batch": {
+    "artifact_id": 13906427974,
+    "business_confirmed": 13,
+    "completed": 13,
+    "job_id": 130895252279,
+    "phases_per_pressure_arm": 2,
+    "planned": 13,
+    "pressure_arms": 4,
+    "run_id": 43131129970,
+    "unstarted": 0
+  },
+  "new_native_experiments": 0,
+  "original_portfolio_coordinator_acknowledgment": "NOT_OBSERVED",
+  "recorded_utc": "2026-11-12T01:39:30.667530+00:00",
+  "root_actual_health_read_completed": true,
+  "root_actual_strata_exit_code": 0,
+  "root_health_observed_hashes_match": true,
+  "root_strata_outputs_actual_byte_comparison": [
+    {
+      "actual_both_files_read": true,
+      "byte_identical": true,
+      "bytes": 129192,
+      "member": "CONSUMER_RECEIPT.json",
+      "sha256": "51e0e351a93f3fe70fef3e809c0e2204a1eb7dcfbe5c5fd9d7c3e03f8e66c8f1"
+    },
+    {
+      "actual_both_files_read": true,
+      "byte_identical": true,
+      "bytes": 7404965,
+      "member": "connection_records.jsonl",
+      "sha256": "1472ef67a0ec1f83c94a93c49670ae6eac2268df6f0dc992cd37e8e5aff67f7a"
+    },
+    {
+      "actual_both_files_read": true,
+      "byte_identical": true,
+      "bytes": 8660,
+      "member": "frozen_06_consumption/consumer/operations.csv",
+      "sha256": "d624e81067311ee5ad8494910661a5cd9ddd857f0725f82c6e4dfcc150d9dd50"
+    },
+    {
+      "actual_both_files_read": true,
+      "byte_identical": true,
+      "bytes": 76081,
+      "member": "frozen_06_consumption/consumer/summary.json",
+      "sha256": "62608533f1d4ae0da36f0bc3b6c8be327dda2991c63ccbb6f6bdc76074c97a70"
+    },
+    {
+      "actual_both_files_read": true,
+      "byte_identical": true,
+      "bytes": 603,
+      "member": "frozen_06_consumption/consumer/validated_input_manifest.json",
+      "sha256": "9ebd71dc543f565e3178545ae45f200088b88a985862b986e29c063005990375"
+    },
+    {
+      "actual_both_files_read": true,
+      "byte_identical": true,
+      "bytes": 25787,
+      "member": "frozen_06_consumption/contract.json",
+      "sha256": "bce2a0f5207df21bbc01f59b36dae35ebbbb02727eee1fca3f3ffd1ac41ab247"
+    },
+    {
+      "actual_both_files_read": true,
+      "byte_identical": true,
+      "bytes": 6899,
+      "member": "frozen_06_consumption/decisions.json",
+      "sha256": "b224a2c1bdf20456cf70c0af5545beaff875e570c2603802d3b09865d029aa64"
+    },
+    {
+      "actual_both_files_read": true,
+      "byte_identical": true,
+      "bytes": 61176,
+      "member": "frozen_06_consumption/events.jsonl",
+      "sha256": "fd9f5dc78ad1a215b7902b33bb71ea1c738fcd8085aa2c4d3974856a932018e4"
+    },
+    {
+      "actual_both_files_read": true,
+      "byte_identical": true,
+      "bytes": 754,
+      "member": "frozen_06_consumption/prepared_business_identity.json",
+      "sha256": "a13b3a62c11afaee539fe77b211017117890270832e778f960913bae58be5d4c"
+    },
+    {
+      "actual_both_files_read": true,
+      "byte_identical": true,
+      "bytes": 9944,
+      "member": "frozen_06_consumption/schedule.jsonl",
+      "sha256": "fda6a0e2ca20302c9fba4a3f5e811cb828cd19f92c34d47d6c2129561de2b9e8"
+    },
+    {
+      "actual_both_files_read": true,
+      "byte_identical": true,
+      "bytes": 15538510,
+      "member": "phase_ledger.json",
+      "sha256": "a47b652b04653073244dd5454ff91c9f19f7b446334cba9c4582f95b325a813b"
+    },
+    {
+      "actual_both_files_read": true,
+      "byte_identical": true,
+      "bytes": 5081,
+      "member": "phase_table.csv",
+      "sha256": "d176d82ba04a04fdf659b20380e7b79ef85b60b12b112cc89f790e40347eb73b"
+    },
+    {
+      "actual_both_files_read": true,
+      "byte_identical": true,
+      "bytes": 15584,
+      "member": "phase_table.json",
+      "sha256": "d287da40852043ce1076cb1b92f3afe8890878214e6572cdd0f0c84d5dde5518"
+    }
+  ],
+  "schema": "sp27-current-measurement-collaboration-ack-v1",
+  "scope": "Actual read-back of both current root acknowledgment files and all 13 root repeated-analysis output files, compared byte-for-byte with the measurement consumer outputs; same immutable native inputs; not independent native replication",
+  "statistical_significance_claimed": false,
+  "strata_descriptive_entrypoint": {
+    "bytes": 2651,
+    "path": "research/sp2027/02_receiver_liveness/batches/ci-43131129970/descriptive_statistics_v1/README.md",
+    "sha256": "d1d46eecfb62fc00759f634eb6be915597f9ffa26c1352a2bd24dfd9ff8b4e72"
+  },
+  "strata_descriptive_statistics_freeze": {
+    "bytes": 1494,
+    "path": "research/sp2027/02_receiver_liveness/batches/ci-43131129970/descriptive_statistics_v1/RECEIPT.json",
+    "sha256": "4b552c5899185f49f2d9096eb71ef53f13c73c48a5f32b2c94070790dc081db9"
+  },
+  "strata_descriptive_summarizer": {
+    "bytes": 18925,
+    "path": "research/sp2027/02_receiver_liveness/batches/ci-43131129970/summarize_strata_descriptive_v1.py",
+    "sha256": "f820ec4584b20f5726cdea7d0b705af270caef9847b7dae3186835a56261a1a9"
+  },
+  "strata_frozen_06_summary_sha256": "62608533f1d4ae0da36f0bc3b6c8be327dda2991c63ccbb6f6bdc76074c97a70",
+  "this_ack_is_cryptographic_authentication": false
+}
