@@ -1,0 +1,18 @@
+   Compiling typenum v1.20.1
+   Compiling libc v0.2.184
+   Compiling serde_core v1.0.228
+   Compiling zeroize v1.9.1
+   Compiling generic-array v0.14.7
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling curve25519-dalek v4.1.3
+   Compiling sha2 v0.10.9
+   Compiling ed25519-dalek v2.2.0
+   Compiling getrandom v0.4.2
+   Compiling tempfile v3.27.0
+   Compiling trnm-task-kernel v0.1.0 (/home/qq/work/chain-sqlite-advisory-20261110/trillionnium/crates/trnm-task-kernel)
+   Compiling serde_json v1.0.149
+   Compiling trnm-service-settlement v0.1.0 (/home/qq/work/chain-sqlite-advisory-20261110/trillionnium/crates/trnm-service-settlement)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.16s
+     Running unittests src/lib.rs (/home/qq/work/chain-sqlite-advisory-20261110-checks/native-target/debug/deps/trnm_service_settlement-1c820b1a83d5d13f)

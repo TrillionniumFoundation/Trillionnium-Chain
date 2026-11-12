@@ -1,7 +1,7 @@
 {
   "schema": "TRNM-W1-QROM-IMPLEMENTATION-CONTRACT2",
   "scope": "Offline research mapping only. Does not authorize consensus or production admission.",
-  "source_base_commit": "e8e2fcb8d811638eb5fa757d28590fbe8e408e61",
+  "source_base_commit": "f6edf2d549ab2a6b83bda3945daf71aa0b025c80",
   "profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
   "project_source_scope": "Selected entry, relation, framing, native work and locked dependency files; not all transitive source or compiled feature semantics.",
   "project_files": [
@@ -366,8 +366,8 @@
       },
       {
         "path": "trillionnium/Cargo.lock",
-        "bytes": 40332,
-        "sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c"
+        "bytes": 40564,
+        "sha256": "9e553749f03f3a849af9562d1a62f20181c6ce3594c99283eaadecb918f4a25e"
       },
       {
         "path": "trillionnium/Cargo.toml",

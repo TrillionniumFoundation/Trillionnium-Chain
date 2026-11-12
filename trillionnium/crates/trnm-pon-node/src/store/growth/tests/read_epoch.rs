@@ -76,7 +76,7 @@ impl EpochReadProbe {
 // later table, after the first blocks query has established the real read view.
 // Progress tests supply no table and commit from ObservationReady instead.
 fn install_epoch_probe(
-    node: &Node,
+    node: &mut Node,
     path: &Path,
     table: Option<&'static str>,
     snapshot: bool,
@@ -131,7 +131,7 @@ fn install_epoch_probe(
     probe
 }
 
-fn remove_epoch_probe(node: &Node) {
+fn remove_epoch_probe(node: &mut Node) {
     node.db
         .authorizer(None::<fn(AuthContext<'_>) -> Authorization>)
         .unwrap();
@@ -186,16 +186,17 @@ fn native_growth_v2_account_queries_refuse_foreign_commit_inside_read_snapshot()
     for kind in 0..3 {
         let directory = tempfile::tempdir().unwrap();
         let settings = settings();
-        let node = Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone())
-            .unwrap();
+        let mut node =
+            Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone())
+                .unwrap();
         let expected = query(&node, kind).unwrap();
         let before = rows(&node.db);
         let changes = node.db.total_changes();
         let version = data_version(&node);
         let path = directory.path().join("native.sqlite");
-        let probe = install_epoch_probe(&node, &path, Some("archive_nodes"), true);
+        let probe = install_epoch_probe(&mut node, &path, Some("archive_nodes"), true);
         let result = query(&node, kind);
-        remove_epoch_probe(&node);
+        remove_epoch_probe(&mut node);
         assert_epoch_error(result);
         probe.assert_snapshot_checks();
         let events = probe.events.lock().unwrap();
@@ -255,20 +256,21 @@ fn native_growth_v2_working_queries_refuse_foreign_commit_inside_read_snapshot()
     for kind in 0..3 {
         let directory = tempfile::tempdir().unwrap();
         let settings = settings();
-        let node = Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone())
-            .unwrap();
+        let mut node =
+            Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone())
+                .unwrap();
         let expected = working_query(&node, kind).unwrap();
         let before = rows(&node.db);
         let changes = node.db.total_changes();
         let version = data_version(&node);
         let probe = install_epoch_probe(
-            &node,
+            &mut node,
             &directory.path().join("native.sqlite"),
             Some("growth_states"),
             true,
         );
         let result = working_query(&node, kind);
-        remove_epoch_probe(&node);
+        remove_epoch_probe(&mut node);
         assert_epoch_error(result);
         probe.assert_snapshot_checks();
         assert!(node.db.is_autocommit());
@@ -320,7 +322,7 @@ fn native_growth_v2_head_and_exact_observations_refuse_foreign_commit_at_ready()
         let changes = node.db.total_changes();
         let version = data_version(&node);
         let path = directory.path().join("native.sqlite");
-        let probe = install_epoch_probe(&node, &path, None, true);
+        let probe = install_epoch_probe(&mut node, &path, None, true);
         let result = progress_observation(&node, &packet, kind, &|point| {
             if matches!(point, GrowthProgress::ObservationReady) {
                 // Exact observation has completed real retained W1/M06/proof
@@ -329,7 +331,7 @@ fn native_growth_v2_head_and_exact_observations_refuse_foreign_commit_at_ready()
             }
             Ok(())
         });
-        remove_epoch_probe(&node);
+        remove_epoch_probe(&mut node);
         assert_epoch_error(result);
         probe.assert_snapshot_checks();
         assert!(node.db.is_autocommit());
@@ -375,13 +377,13 @@ fn native_growth_v2_autocommit_queries_recheck_foreign_epoch_after_read() {
         let changes = node.db.total_changes();
         let version = data_version(&node);
         let probe = install_epoch_probe(
-            &node,
+            &mut node,
             &directory.path().join("native.sqlite"),
             Some("blocks"),
             false,
         );
         let result = autocommit_query(&node, block, kind);
-        remove_epoch_probe(&node);
+        remove_epoch_probe(&mut node);
         assert_epoch_error(result);
         assert!(probe.committed.load(Ordering::Relaxed));
         assert_eq!(
@@ -455,13 +457,13 @@ fn native_growth_v2_successful_payment_rechecks_epoch_after_read_snapshot() {
     let changes = node.db.total_changes();
     let version = data_version(&node);
     let probe = install_epoch_probe(
-        &node,
+        &mut node,
         &directory.path().join("native.sqlite"),
         Some("growth_states"),
         true,
     );
     let result = node.native_payment_observation(&query);
-    remove_epoch_probe(&node);
+    remove_epoch_probe(&mut node);
     assert_epoch_error(result);
     // Reaching the fresh check proves the original success path completed its
     // transition replay and explicit rollback, rather than an early error drop.

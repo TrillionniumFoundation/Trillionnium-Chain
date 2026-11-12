@@ -33,7 +33,7 @@ fn fixture() -> (
 impl DurableWitness {
     // Test-only access to the real SQLite COMMIT boundary, also used by the
     // store fixture. No injected result substitutes for a durable COMMIT.
-    pub(crate) fn fixture_commit_hook<F>(&self, hook: Option<F>)
+    pub(crate) fn fixture_commit_hook<F>(&mut self, hook: Option<F>)
     where
         F: FnMut() -> bool + Send + 'static,
     {
@@ -293,7 +293,7 @@ fn service_expiry_after_update_before_commit_keeps_original_checkpoint() {
     let commits = Arc::new(AtomicUsize::new(0));
     let until = Instant::now() + Duration::from_millis(200);
     {
-        let service = owner.lock().unwrap();
+        let mut service = owner.lock().unwrap();
         let observed_updates = updates.clone();
         service
             .db
@@ -482,7 +482,7 @@ fn active_owner_requires_its_known_head_for_current_and_cas() {
 
 #[test]
 fn failed_local_commit_fences_owner_until_explicit_reopen() {
-    let (_diagnostics, directory, policy, owner) = fixture();
+    let (_diagnostics, directory, policy, mut owner) = fixture();
     owner.db.commit_hook(Some(|| true)).unwrap();
     let owner = Arc::new(Mutex::new(owner));
     let mut first = shared_client(&policy, &owner);
@@ -491,7 +491,7 @@ fn failed_local_commit_fences_owner_until_explicit_reopen() {
         .advance(initial, Checkpoint::new(2, [2; 64]).unwrap())
         .is_err());
     {
-        let service = owner.lock().unwrap();
+        let mut service = owner.lock().unwrap();
         assert!(service.commit_uncertain);
         service.db.commit_hook(None::<fn() -> bool>).unwrap();
     }

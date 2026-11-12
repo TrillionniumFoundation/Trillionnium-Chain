@@ -251,13 +251,19 @@ class RouteAuditTests(unittest.TestCase):
         self.reject()
 
     def test_rejects_source_and_json_pin_changed_together(self):
-        relative = audit.P3 + "/src/tagged_sha3.rs"
-        target = self.root / relative
-        changed = target.read_bytes() + b"\n"
-        target.write_bytes(changed)
-        pin = next(row for row in self.request["source_inputs"] if row["path"] == relative)
-        pin.update(bytes=len(changed), sha256=audit.sha256(changed))
-        self.reject()
+        for relative in (audit.P3 + "/src/tagged_sha3.rs", audit.QROM_MAPPING):
+            with self.subTest(relative=relative):
+                self.request = copy.deepcopy(self.registry)
+                target = self.root / relative
+                original = target.read_bytes()
+                changed = original + b"\n"
+                target.write_bytes(changed)
+                pin = next(row for row in self.request["source_inputs"] if row["path"] == relative)
+                pin.update(bytes=len(changed), sha256=audit.sha256(changed))
+                try:
+                    self.reject()
+                finally:
+                    target.write_bytes(original)
 
     def test_rejects_missing_source(self):
         (self.root / audit.PROOF_CHAIN).unlink()

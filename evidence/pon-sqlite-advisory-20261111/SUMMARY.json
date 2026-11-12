@@ -1,0 +1,80 @@
+{
+  "schema": "pon-sqlite-compatibility-observation-v1",
+  "implementation": "f6edf2d549ab2a6b83bda3945daf71aa0b025c80",
+  "tree": "143808a1f697539d2a153c99c97421931743a13c",
+  "commands": 23,
+  "all_command_exits_zero": true,
+  "node_selected": {
+    "passed": 79,
+    "failed": 0,
+    "ignored": 3
+  },
+  "component_parent_harnesses": {
+    "trnm-data-availability": [
+      450,
+      0,
+      0
+    ],
+    "trnm-mvcc-fee": [
+      153,
+      0,
+      9
+    ],
+    "trnm-service-settlement": [
+      71,
+      0,
+      0
+    ],
+    "trnm-sqlite-io-boundary": [
+      13,
+      0,
+      0
+    ],
+    "trnm-state-import": [
+      17,
+      0,
+      0
+    ],
+    "trnm-task-kernel": [
+      28,
+      0,
+      0
+    ]
+  },
+  "counts_order": [
+    "passed",
+    "failed",
+    "ignored"
+  ],
+  "nested_children_counted_again": false,
+  "whole_workspace_runtime_tested": false,
+  "native_business_campaign_run": false,
+  "four_proven": [
+    false,
+    false,
+    false,
+    false
+  ],
+  "all_authority": false,
+  "all_algorithm_cost_bound": null,
+  "mu1_universal_bounds": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  ],
+  "unknown_gpu": null,
+  "qualification": "HOLD_NO_GO"
+}

@@ -34,7 +34,7 @@ fs2 = "0.4"
 libc = "0.2"
 rustix = { version = "1.1.4", features = ["fs", "net", "process", "time"] }
 sha2 = "0.10"
-rusqlite = { version = "=0.39.0", features = ["bundled", "fallible_uint", "hooks"] }
+rusqlite = { version = "=0.41.1", features = ["bundled", "fallible_uint", "hooks"] }
 openssl = { version = "=0.10.81", optional = true }
 zeroize = "=1.9.1"
 
@@ -43,7 +43,7 @@ tempfile = "3"
 [dev-dependencies]
 # Test-only safe executed-SQL observation. Production features stay unchanged;
 # this uses the existing pinned rusqlite package and adds no lockfile package.
-rusqlite = { version = "=0.39.0", features = ["trace"] }
+rusqlite = { version = "=0.41.1", features = ["trace"] }
 
 # Explicit Linux sealed-object profile; no path-exec/platform fallback.
 [target.'cfg(target_os = "linux")'.dependencies]

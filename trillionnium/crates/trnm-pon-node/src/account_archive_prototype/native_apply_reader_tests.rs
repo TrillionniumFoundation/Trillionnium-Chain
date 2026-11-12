@@ -511,6 +511,7 @@ struct SqlObservation {
 struct TraceState {
     observation: RefCell<SqlObservation>,
     capture: bool,
+    active: std::cell::Cell<bool>,
     failed: std::cell::Cell<bool>,
 }
 thread_local! {
@@ -520,14 +521,15 @@ thread_local! {
 }
 
 struct SqlTrace<'db> {
-    db: &'db Connection,
+    db: &'db mut Connection,
     state: std::rc::Rc<TraceState>,
 }
 impl<'db> SqlTrace<'db> {
-    fn new(db: &'db Connection, capture: bool) -> Self {
+    fn new(db: &'db mut Connection, capture: bool) -> Self {
         let state = std::rc::Rc::new(TraceState {
             observation: RefCell::default(),
             capture,
+            active: std::cell::Cell::new(false),
             failed: std::cell::Cell::new(false),
         });
         ACTIVE_SQL_TRACE.with(|slot| {
@@ -538,11 +540,25 @@ impl<'db> SqlTrace<'db> {
         // These test-owned connections never have a TransactionScope observer
         // or Node owner. The dependency's safe wrapper owns the SQLite ABI.
         let guard = Self { db, state };
-        db.trace_v2(
-            rusqlite::trace::TraceEventCodes::SQLITE_TRACE_STMT,
-            Some(sql_trace),
-        );
         guard
+            .db
+            .trace_v2(
+                rusqlite::trace::TraceEventCodes::SQLITE_TRACE_STMT,
+                Some(sql_trace),
+            )
+            .expect("test owns the connection when installing its SQL trace");
+        guard
+    }
+    // Installation owns &mut Connection before any Transaction exists. Only
+    // the original run interval is observed; BEGIN, inspection and rollback
+    // remain outside it. A failed observer is never reset into valid evidence.
+    fn start(&self) {
+        assert!(!self.state.failed.get(), "SQL trace must be complete");
+        assert!(!self.state.active.replace(true), "SQL trace already active");
+        *self.state.observation.borrow_mut() = SqlObservation::default();
+    }
+    fn pause(&self) {
+        assert!(self.state.active.replace(false), "SQL trace was not active");
     }
     fn observation(&self) -> SqlObservation {
         assert!(!self.state.failed.get(), "SQL trace must be complete");
@@ -552,7 +568,11 @@ impl<'db> SqlTrace<'db> {
 impl Drop for SqlTrace<'_> {
     fn drop(&mut self) {
         self.db
-            .trace_v2(rusqlite::trace::TraceEventCodes::empty(), None);
+            .trace_v2(
+                rusqlite::trace::TraceEventCodes::empty(),
+                None::<fn(rusqlite::trace::TraceEvent<'_>)>,
+            )
+            .expect("test owns the connection when removing its SQL trace");
         ACTIVE_SQL_TRACE.with(|slot| {
             let mut slot = slot.borrow_mut();
             if slot
@@ -574,6 +594,9 @@ fn sql_trace(event: rusqlite::trace::TraceEvent<'_>) {
     let Some(state) = state else {
         return;
     };
+    if !state.active.get() {
+        return;
+    }
     // The wrapper catches ABI unwinds. Mark our observation failed as well so
     // a swallowed diagnostic failure can never look like complete evidence.
     let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
@@ -605,6 +628,7 @@ fn sql_trace(event: rusqlite::trace::TraceEvent<'_>) {
 }
 
 fn observed(
+    trace: &SqlTrace<'_>,
     arm: Arm,
     db: &Connection,
     root: &Root,
@@ -613,7 +637,7 @@ fn observed(
     mut checkpoint: impl FnMut(usize) -> Result<()>,
 ) -> (Verdict, usize, SqlObservation, Stored) {
     let mut calls = 0;
-    let trace = SqlTrace::new(db, true);
+    trace.start();
     let result = verdict(run(
         arm,
         db,
@@ -626,15 +650,103 @@ fn observed(
         cache,
     ));
     let sql = trace.observation();
-    drop(trace);
+    trace.pause();
     (result, calls, sql, stored(db))
+}
+
+#[test]
+fn sqlite_hook_trace_interval_excludes_transaction_setup_and_teardown() {
+    let mut db = Connection::open_in_memory().unwrap();
+    db.execute_batch("CREATE TABLE trace_interval(value INTEGER)")
+        .unwrap();
+    let trace = SqlTrace::new(&mut db, true);
+    let tx = trace.db.unchecked_transaction().unwrap();
+    tx.execute("INSERT INTO trace_interval VALUES(1)", [])
+        .unwrap();
+    trace.start();
+    tx.execute("INSERT INTO trace_interval VALUES(2)", [])
+        .unwrap();
+    assert_eq!(
+        tx.query_row("SELECT count(*) FROM trace_interval", [], |r| r
+            .get::<_, u64>(0))
+            .unwrap(),
+        2
+    );
+    let observed = trace.observation();
+    trace.pause();
+    tx.execute("INSERT INTO trace_interval VALUES(3)", [])
+        .unwrap();
+    tx.rollback().unwrap();
+    assert_eq!(trace.observation(), observed);
+    assert_eq!(observed.statements, 2);
+    assert_eq!(observed.writes, 1);
+    assert_eq!(observed.selects, 1);
+    assert_eq!(
+        observed.sequence,
+        [
+            "INSERT INTO trace_interval VALUES(2)",
+            "SELECT count(*) FROM trace_interval"
+        ]
+    );
+    drop(trace);
+    assert!(db.is_autocommit());
+    assert_eq!(
+        db.query_row("SELECT count(*) FROM trace_interval", [], |r| r
+            .get::<_, u64>(0))
+            .unwrap(),
+        0
+    );
+}
+
+#[test]
+fn sqlite_hook_trace_failed_observation_and_unwind_keep_cleanup_fail_closed() {
+    use std::panic::{catch_unwind, AssertUnwindSafe};
+    let mut db = Connection::open_in_memory().unwrap();
+    db.execute_batch("CREATE TABLE trace_cleanup(value INTEGER)")
+        .unwrap();
+    {
+        let trace = SqlTrace::new(&mut db, true);
+        trace.start();
+        trace
+            .db
+            .query_row("PRAGMA user_version", [], |r| r.get::<_, u64>(0))
+            .unwrap();
+        assert!(catch_unwind(AssertUnwindSafe(|| trace.observation())).is_err());
+        assert!(catch_unwind(AssertUnwindSafe(|| trace.start())).is_err());
+    }
+    assert!(ACTIVE_SQL_TRACE.with(|slot| slot.borrow().is_none()));
+    let result = catch_unwind(AssertUnwindSafe(|| {
+        let trace = SqlTrace::new(&mut db, true);
+        let tx = trace.db.unchecked_transaction().unwrap();
+        trace.start();
+        tx.execute("INSERT INTO trace_cleanup VALUES(1)", [])
+            .unwrap();
+        panic!("test-only unwind through transaction and exclusive hook owner");
+    }));
+    assert!(result.is_err());
+    assert!(db.is_autocommit());
+    assert!(ACTIVE_SQL_TRACE.with(|slot| slot.borrow().is_none()));
+    let trace = SqlTrace::new(&mut db, true);
+    trace.start();
+    assert_eq!(
+        trace
+            .db
+            .query_row("SELECT count(*) FROM trace_cleanup", [], |r| r
+                .get::<_, u64>(0))
+            .unwrap(),
+        0
+    );
+    assert_eq!(trace.observation().statements, 1);
+    trace.pause();
 }
 
 #[test]
 fn native_apply_reader_cold_warm_and_fallback_match_original_batch_bytes_and_sql_order() {
     for count in [0, 1, 31, 257] {
-        let db = Connection::open_in_memory().unwrap();
-        let (state, parent) = fixture(&db, count);
+        let mut connection = Connection::open_in_memory().unwrap();
+        let trace = SqlTrace::new(&mut connection, true);
+        let db = &*trace.db;
+        let (state, parent) = fixture(db, count);
         let (mut after, mut changes) = change(&state, (count as usize).div_ceil(3));
         let inserted_key = format!("account:{}", hex::encode(owner(count + 10)));
         let inserted_value = json!({"balance":17,"nonce":0});
@@ -645,16 +757,19 @@ fn native_apply_reader_cold_warm_and_fallback_match_original_batch_bytes_and_sql
         ));
         after.insert(inserted_key, inserted_value);
         changes.sort_by(|a, b| a.0.cmp(&b.0));
-        let original = stored(&db);
+        let original = stored(db);
         let mut expected = None;
         for warm in [false, true] {
             for arm in [Arm::Reference, Arm::Uncached, Arm::Cached, Arm::Growth] {
                 let cache = LiftCache::default();
                 if warm {
-                    verify_with_lifts(&db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
+                    verify_with_lifts(db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
                 }
                 let transaction = db.unchecked_transaction().unwrap();
-                let observed = observed(arm, &transaction, &parent, &changes, &cache, |_| Ok(()));
+                let observed =
+                    observed(&trace, arm, &transaction, &parent, &changes, &cache, |_| {
+                        Ok(())
+                    });
                 let next = observed.0.as_ref().unwrap();
                 verify(&transaction, next, &after, &mut || Ok(())).unwrap();
                 if let Some(expected) = &expected {
@@ -663,7 +778,7 @@ fn native_apply_reader_cold_warm_and_fallback_match_original_batch_bytes_and_sql
                     expected = Some(observed);
                 }
                 transaction.rollback().unwrap();
-                assert_eq!(stored(&db), original);
+                assert_eq!(stored(db), original);
             }
         }
         // Persist the already-derived successor, then apply the same original
@@ -672,13 +787,15 @@ fn native_apply_reader_cold_warm_and_fallback_match_original_batch_bytes_and_sql
         let transaction = db.unchecked_transaction().unwrap();
         let next = apply(&transaction, &parent, &changes, &mut || Ok(())).unwrap();
         transaction.commit().unwrap();
-        let repeated_rows = stored(&db);
+        let repeated_rows = stored(db);
         let cache = LiftCache::default();
-        verify_with_lifts(&db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
+        verify_with_lifts(db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
         let mut repeated = None;
         for arm in [Arm::Reference, Arm::Uncached, Arm::Cached, Arm::Growth] {
             let transaction = db.unchecked_transaction().unwrap();
-            let result = observed(arm, &transaction, &parent, &changes, &cache, |_| Ok(()));
+            let result = observed(&trace, arm, &transaction, &parent, &changes, &cache, |_| {
+                Ok(())
+            });
             assert_eq!(result.0.as_ref().unwrap(), &next);
             assert_eq!(result.3, repeated_rows);
             assert!(result.2.selects > expected.as_ref().unwrap().2.selects);
@@ -688,11 +805,13 @@ fn native_apply_reader_cold_warm_and_fallback_match_original_batch_bytes_and_sql
                 repeated = Some(result);
             }
             transaction.rollback().unwrap();
-            assert_eq!(stored(&db), repeated_rows);
+            assert_eq!(stored(db), repeated_rows);
         }
     }
     // Empty roots still require no table, no SQL or new prepare prerequisite.
-    let db = Connection::open_in_memory().unwrap();
+    let mut connection = Connection::open_in_memory().unwrap();
+    let trace = SqlTrace::new(&mut connection, true);
+    let db = &*trace.db;
     let root = Root {
         node: None,
         digest: empty_hashes()[0],
@@ -706,11 +825,11 @@ fn native_apply_reader_cold_warm_and_fallback_match_original_batch_bytes_and_sql
     ] {
         let mut visits = [0; 2];
         for (index, arm) in [Arm::Reference, Arm::Cached].into_iter().enumerate() {
-            let trace = SqlTrace::new(&db, true);
+            trace.start();
             assert_eq!(
                 run(
                     arm,
-                    &db,
+                    db,
                     &root,
                     &changes,
                     &mut || {
@@ -723,6 +842,7 @@ fn native_apply_reader_cold_warm_and_fallback_match_original_batch_bytes_and_sql
                 root
             );
             assert_eq!(trace.observation(), SqlObservation::default());
+            trace.pause();
         }
         assert_eq!(visits[0], visits[1]);
     }
@@ -748,12 +868,14 @@ fn native_apply_reader_warm_cache_observes_current_child_mutation_and_missing_ro
         Damage::AddColumn,
         Damage::Rename,
     ] {
-        let db = Connection::open_in_memory().unwrap();
-        let (state, parent) = fixture(&db, 8);
+        let mut connection = Connection::open_in_memory().unwrap();
+        let trace = SqlTrace::new(&mut connection, true);
+        let db = &*trace.db;
+        let (state, parent) = fixture(db, 8);
         let (_, changes) = change(&state, 2);
         let cache = LiftCache::default();
-        verify_with_lifts(&db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
-        let original = stored(&db);
+        verify_with_lifts(db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
+        let original = stored(db);
         for cut in [1, 2] {
             let (owner, prior) =
                 account(&changes[cut - 1].0, changes[cut - 1].1.as_ref().unwrap()).unwrap();
@@ -761,49 +883,57 @@ fn native_apply_reader_warm_cache_observes_current_child_mutation_and_missing_ro
             let mut expected = None;
             for arm in [Arm::Reference, Arm::Uncached, Arm::Cached] {
                 let transaction = db.unchecked_transaction().unwrap();
-                let observed = observed(arm, &transaction, &parent, &changes, &cache, |call| {
-                    if call == cut {
-                        match damage {
-                            Damage::Missing => {
-                                transaction.execute(
-                                    "DELETE FROM archive_nodes WHERE id=?",
-                                    [leaf.id.as_slice()],
-                                )?;
-                            }
-                            Damage::Changed => {
-                                let mut bytes = leaf.encode();
-                                bytes[40] ^= 0x80;
-                                transaction.execute(
-                                    "UPDATE archive_nodes SET data=? WHERE id=?",
-                                    params![bytes, leaf.id.as_slice()],
-                                )?;
-                            }
-                            Damage::Text => {
-                                transaction.execute(
-                                    "UPDATE archive_nodes SET data='not-a-blob' WHERE id=?",
-                                    [leaf.id.as_slice()],
-                                )?;
-                            }
-                            Damage::Oversize => {
-                                transaction.execute(
+                let observed = observed(
+                    &trace,
+                    arm,
+                    &transaction,
+                    &parent,
+                    &changes,
+                    &cache,
+                    |call| {
+                        if call == cut {
+                            match damage {
+                                Damage::Missing => {
+                                    transaction.execute(
+                                        "DELETE FROM archive_nodes WHERE id=?",
+                                        [leaf.id.as_slice()],
+                                    )?;
+                                }
+                                Damage::Changed => {
+                                    let mut bytes = leaf.encode();
+                                    bytes[40] ^= 0x80;
+                                    transaction.execute(
+                                        "UPDATE archive_nodes SET data=? WHERE id=?",
+                                        params![bytes, leaf.id.as_slice()],
+                                    )?;
+                                }
+                                Damage::Text => {
+                                    transaction.execute(
+                                        "UPDATE archive_nodes SET data='not-a-blob' WHERE id=?",
+                                        [leaf.id.as_slice()],
+                                    )?;
+                                }
+                                Damage::Oversize => {
+                                    transaction.execute(
                                     "UPDATE archive_nodes SET data=zeroblob(1048576) WHERE id=?",
                                     [leaf.id.as_slice()],
                                 )?;
-                            }
-                            Damage::AddColumn => {
-                                transaction.execute_batch(
-                                    "ALTER TABLE archive_nodes ADD COLUMN extra INTEGER",
-                                )?;
-                            }
-                            // Keep a replacement table so post-result row observations
-                            // work while the next current SQL read still sees absence.
-                            Damage::Rename => {
-                                transaction.execute_batch("ALTER TABLE archive_nodes RENAME TO removed_nodes; CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,data BLOB NOT NULL)")?;
+                                }
+                                Damage::AddColumn => {
+                                    transaction.execute_batch(
+                                        "ALTER TABLE archive_nodes ADD COLUMN extra INTEGER",
+                                    )?;
+                                }
+                                // Keep a replacement table so post-result row observations
+                                // work while the next current SQL read still sees absence.
+                                Damage::Rename => {
+                                    transaction.execute_batch("ALTER TABLE archive_nodes RENAME TO removed_nodes; CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,data BLOB NOT NULL)")?;
+                                }
                             }
                         }
-                    }
-                    Ok(())
-                });
+                        Ok(())
+                    },
+                );
                 if matches!(damage, Damage::AddColumn) {
                     assert!(observed.0.is_ok());
                 } else {
@@ -818,24 +948,27 @@ fn native_apply_reader_warm_cache_observes_current_child_mutation_and_missing_ro
                     expected = Some(observed);
                 }
                 transaction.rollback().unwrap();
-                assert_eq!(stored(&db), original);
+                assert_eq!(stored(db), original);
             }
         }
         // Same arithmetic remains harmless after rollback restores exact rows.
-        verify_with_lifts(&db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
+        verify_with_lifts(db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
     }
 }
 
 #[test]
 fn native_apply_reader_cancellation_at_every_original_checkpoint_keeps_partial_writes() {
-    let db = Connection::open_in_memory().unwrap();
-    let (state, parent) = fixture(&db, 8);
+    let mut connection = Connection::open_in_memory().unwrap();
+    let trace = SqlTrace::new(&mut connection, true);
+    let db = &*trace.db;
+    let (state, parent) = fixture(db, 8);
     let (_, changes) = change(&state, 3);
     let cache = LiftCache::default();
-    verify_with_lifts(&db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
-    let original = stored(&db);
+    verify_with_lifts(db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
+    let original = stored(db);
     let transaction = db.unchecked_transaction().unwrap();
     let (_, checkpoints, _, _) = observed(
+        &trace,
         Arm::Reference,
         &transaction,
         &parent,
@@ -849,15 +982,24 @@ fn native_apply_reader_cancellation_at_every_original_checkpoint_keeps_partial_w
         let mut expected = None;
         for arm in [Arm::Reference, Arm::Uncached, Arm::Cached] {
             let transaction = db.unchecked_transaction().unwrap();
-            let result = observed(arm, &transaction, &parent, &changes, &cache, |call| {
-                if call == cut {
-                    // A competing next-read failure may not preempt cancellation.
-                    transaction
-                        .execute_batch("ALTER TABLE archive_nodes ADD COLUMN cancelled INTEGER")?;
-                    return Err(Error::new(ErrorCode::PublicRequestCancelled));
-                }
-                Ok(())
-            });
+            let result = observed(
+                &trace,
+                arm,
+                &transaction,
+                &parent,
+                &changes,
+                &cache,
+                |call| {
+                    if call == cut {
+                        // A competing next-read failure may not preempt cancellation.
+                        transaction.execute_batch(
+                            "ALTER TABLE archive_nodes ADD COLUMN cancelled INTEGER",
+                        )?;
+                        return Err(Error::new(ErrorCode::PublicRequestCancelled));
+                    }
+                    Ok(())
+                },
+            );
             assert_eq!(result.1, cut);
             assert_eq!(
                 result.0.as_ref().unwrap_err().1,
@@ -870,7 +1012,7 @@ fn native_apply_reader_cancellation_at_every_original_checkpoint_keeps_partial_w
                 expected = Some(result);
             }
             transaction.rollback().unwrap();
-            assert_eq!(stored(&db), original);
+            assert_eq!(stored(db), original);
         }
     }
     assert!(after_write);
@@ -878,11 +1020,13 @@ fn native_apply_reader_cancellation_at_every_original_checkpoint_keeps_partial_w
 
 #[test]
 fn native_apply_reader_preserves_nonce_deletion_duplicate_and_growth_limits() {
-    let db = Connection::open_in_memory().unwrap();
-    let (state, parent) = fixture(&db, 8);
+    let mut connection = Connection::open_in_memory().unwrap();
+    let trace = SqlTrace::new(&mut connection, true);
+    let db = &*trace.db;
+    let (state, parent) = fixture(db, 8);
     let (_, good) = change(&state, 2);
     let cache = LiftCache::default();
-    verify_with_lifts(&db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
+    verify_with_lifts(db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
     let mut cases = Vec::new();
     let mut deletion = good.clone();
     deletion[0].2 = None;
@@ -905,7 +1049,9 @@ fn native_apply_reader_preserves_nonce_deletion_duplicate_and_growth_limits() {
         let mut expected = None;
         for arm in [Arm::Reference, Arm::Uncached, Arm::Cached, Arm::Growth] {
             let transaction = db.unchecked_transaction().unwrap();
-            let result = observed(arm, &transaction, &parent, &changes, &cache, |_| Ok(()));
+            let result = observed(&trace, arm, &transaction, &parent, &changes, &cache, |_| {
+                Ok(())
+            });
             assert!(result.0.is_err());
             if let Some(expected) = &expected {
                 assert_eq!(&result, expected);
@@ -921,14 +1067,14 @@ fn native_apply_reader_preserves_nonce_deletion_duplicate_and_growth_limits() {
     oversized.count = 65_537;
     for arm in [Arm::Reference, Arm::Uncached, Arm::Cached] {
         assert_eq!(
-            run(arm, &db, &oversized, &[], &mut || Ok(()), &cache)
+            run(arm, db, &oversized, &[], &mut || Ok(()), &cache)
                 .unwrap_err()
                 .to_string(),
             "NATIVE_ACCOUNT_ROOT"
         );
     }
     let expected = reference::apply_bounded(
-        &db,
+        db,
         &oversized,
         &[],
         &mut || Ok(()),
@@ -936,7 +1082,7 @@ fn native_apply_reader_preserves_nonce_deletion_duplicate_and_growth_limits() {
     )
     .unwrap();
     assert_eq!(
-        apply_growth(&db, &oversized, &[], &mut || Ok(())).unwrap(),
+        apply_growth(db, &oversized, &[], &mut || Ok(())).unwrap(),
         expected
     );
 }
@@ -945,12 +1091,14 @@ fn native_apply_reader_preserves_nonce_deletion_duplicate_and_growth_limits() {
 fn native_apply_reader_keeps_insert_refusal_collision_rollback_and_cold_reopen() {
     let directory = tempfile::tempdir().unwrap();
     let path = directory.path().join("native-apply.sqlite");
-    let db = Connection::open(&path).unwrap();
-    let (state, parent) = fixture(&db, 8);
+    let mut connection = Connection::open(&path).unwrap();
+    let trace = SqlTrace::new(&mut connection, true);
+    let db = &*trace.db;
+    let (state, parent) = fixture(db, 8);
     let (after, changes) = change(&state, 3);
     let cache = LiftCache::default();
-    verify_with_lifts(&db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
-    let original = stored(&db);
+    verify_with_lifts(db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
+    let original = stored(db);
     for collision in [false, true] {
         let mut expected = None;
         for arm in [Arm::Reference, Arm::Uncached, Arm::Cached] {
@@ -968,7 +1116,9 @@ fn native_apply_reader_keeps_insert_refusal_collision_rollback_and_cold_reopen()
             } else {
                 transaction.execute_batch("CREATE TEMP TRIGGER refuse_native_apply BEFORE INSERT ON archive_nodes WHEN substr(NEW.data,1,1)=X'01' BEGIN SELECT RAISE(ABORT,'native apply write refused'); END").unwrap();
             }
-            let result = observed(arm, &transaction, &parent, &changes, &cache, |_| Ok(()));
+            let result = observed(&trace, arm, &transaction, &parent, &changes, &cache, |_| {
+                Ok(())
+            });
             assert_eq!(result.0.as_ref().unwrap_err().0, ErrorKind::LocalStructure);
             if let Some(expected) = &expected {
                 assert_eq!(&result, expected);
@@ -976,15 +1126,16 @@ fn native_apply_reader_keeps_insert_refusal_collision_rollback_and_cold_reopen()
                 expected = Some(result);
             }
             transaction.rollback().unwrap();
-            assert_eq!(stored(&db), original);
+            assert_eq!(stored(db), original);
         }
     }
     let transaction = db.unchecked_transaction().unwrap();
     let next = candidate::apply_with_lifts(&transaction, &parent, &changes, &mut || Ok(()), &cache)
         .unwrap();
     transaction.commit().unwrap();
-    let committed = stored(&db);
-    drop(db);
+    let committed = stored(db);
+    drop(trace);
+    drop(connection);
     let reopened = Connection::open(&path).unwrap();
     assert_eq!(stored(&reopened), committed);
     verify(&reopened, &parent, &state, &mut || Ok(())).unwrap();
@@ -1023,7 +1174,7 @@ struct Sample {
 #[cfg(unix)]
 fn sample(
     arm: Arm,
-    db: &Connection,
+    db: &mut Connection,
     state: &State,
     root: &Root,
     changes: &[crate::store::Delta],
@@ -1072,8 +1223,9 @@ fn sample(
     if warm {
         verify_with_lifts(db, root, state, &mut || Ok(()), Some(&diagnostic_cache)).unwrap();
     }
-    let transaction = db.unchecked_transaction().unwrap();
-    let trace = SqlTrace::new(&transaction, false);
+    let trace = SqlTrace::new(db, false);
+    let transaction = trace.db.unchecked_transaction().unwrap();
+    trace.start();
     let mut diagnostic_progress = 0;
     let diagnostic_result = verdict(run(
         arm,
@@ -1087,11 +1239,12 @@ fn sample(
         &diagnostic_cache,
     ));
     let sql = trace.observation();
-    drop(trace);
+    trace.pause();
     let diagnostic_equal = diagnostic_result == result
         && diagnostic_progress == progress
         && stored(&transaction) == rows;
     transaction.rollback().unwrap();
+    drop(trace);
     Sample {
         elapsed_ns,
         cpu_ns,
@@ -1124,7 +1277,7 @@ fn native_apply_reader_paired_complete_apply_cost_observation() {
     );
     let mut all_cells_qualified = true;
     for count in [512u64, 1024] {
-        let db = Connection::open_in_memory().unwrap();
+        let mut db = Connection::open_in_memory().unwrap();
         let (state, parent) = fixture(&db, count);
         let original = stored(&db);
         for changes_count in [1, count as usize / 4] {
@@ -1138,7 +1291,7 @@ fn native_apply_reader_paired_complete_apply_cost_observation() {
                     let mut samples: [Option<Sample>; 3] = std::array::from_fn(|_| None);
                     for (position, index) in order.into_iter().enumerate() {
                         let arm = [Arm::Reference, Arm::Cached, Arm::Uncached][index];
-                        let value = sample(arm, &db, &state, &parent, &changes, warm);
+                        let value = sample(arm, &mut db, &state, &parent, &changes, warm);
                         elapsed[index].push(value.elapsed_ns);
                         if let Some(value) = value.cpu_ns {
                             cpu[index].push(value);
@@ -1229,20 +1382,22 @@ fn native_apply_reader_paired_complete_apply_cost_observation() {
 fn native_apply_reader_pinned_statement_does_not_hide_foreign_wal_commit() {
     let directory = tempfile::tempdir().unwrap();
     let path = directory.path().join("native-apply-wal.sqlite");
-    let db = Connection::open(&path).unwrap();
+    let mut connection = Connection::open(&path).unwrap();
+    let trace = SqlTrace::new(&mut connection, true);
+    let db = &*trace.db;
     db.execute_batch("PRAGMA journal_mode=WAL").unwrap();
-    let (state, parent) = fixture(&db, 8);
+    let (state, parent) = fixture(db, 8);
     let (_, changes) = change(&state, 2);
     let (owner, value) = account(&changes[0].0, changes[0].1.as_ref().unwrap()).unwrap();
     let leaf = Node::account(owner, value);
     let cache = LiftCache::default();
-    verify_with_lifts(&db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
-    let original = stored(&db);
+    verify_with_lifts(db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
+    let original = stored(db);
     let foreign = Connection::open(&path).unwrap();
     let mut expected = None;
     for arm in [Arm::Reference, Arm::Uncached, Arm::Cached] {
         let mut committed = false;
-        let result = observed(arm, &db, &parent, &changes, &cache, |call| {
+        let result = observed(&trace, arm, db, &parent, &changes, &cache, |call| {
             if call == 1 {
                 // The current root read has completed, but its first descendant
                 // has not been read. A live cursor would hide this WAL commit.
@@ -1268,16 +1423,18 @@ fn native_apply_reader_pinned_statement_does_not_hide_foreign_wal_commit() {
                 params![leaf.id.as_slice(), leaf.encode()],
             )
             .unwrap();
-        assert_eq!(stored(&db), original);
+        assert_eq!(stored(db), original);
     }
 }
 
 #[test]
 fn native_apply_reader_warm_root_read_and_root_binding_precede_progress() {
-    let db = Connection::open_in_memory().unwrap();
-    let (state, parent) = fixture(&db, 8);
+    let mut connection = Connection::open_in_memory().unwrap();
+    let trace = SqlTrace::new(&mut connection, true);
+    let db = &*trace.db;
+    let (state, parent) = fixture(db, 8);
     let cache = LiftCache::default();
-    verify_with_lifts(&db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
+    verify_with_lifts(db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
     for case in 0..4 {
         let mut expected = None;
         for arm in [Arm::Reference, Arm::Uncached, Arm::Cached] {
@@ -1308,7 +1465,7 @@ fn native_apply_reader_warm_root_read_and_root_binding_precede_progress() {
                 }
                 _ => unreachable!(),
             }
-            let result = observed(arm, &transaction, &root, &[], &cache, |_| {
+            let result = observed(&trace, arm, &transaction, &root, &[], &cache, |_| {
                 Err(Error::new(ErrorCode::PublicRequestCancelled))
             });
             assert_eq!(result.1, 0, "original root errors precede callbacks");
@@ -1325,13 +1482,15 @@ fn native_apply_reader_warm_root_read_and_root_binding_precede_progress() {
 
 #[test]
 fn native_apply_reader_cached_valid_bytes_keep_side_prefix_depth_and_edge_hash_checks() {
-    let db = Connection::open_in_memory().unwrap();
-    let (state, parent) = fixture(&db, 64);
+    let mut connection = Connection::open_in_memory().unwrap();
+    let trace = SqlTrace::new(&mut connection, true);
+    let db = &*trace.db;
+    let (state, parent) = fixture(db, 64);
     let cache = LiftCache::default();
-    verify_with_lifts(&db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
+    verify_with_lifts(db, &parent, &state, &mut || Ok(()), Some(&cache)).unwrap();
     // A real non-root fork with a fork on its left lets the prefix case alter
     // encoded path bits without changing the child digest or its lifted hash.
-    let original = stored(&db)
+    let original = stored(db)
         .into_iter()
         .find_map(|(id, value)| {
             let rusqlite::types::Value::Blob(bytes) = value else {
@@ -1343,7 +1502,7 @@ fn native_apply_reader_cached_valid_bytes_keep_side_prefix_depth_and_edge_hash_c
             };
             (node.depth > 0
                 && matches!(
-                    archive::load_node(&db, left).unwrap().kind,
+                    archive::load_node(db, left).unwrap().kind,
                     Kind::Fork { .. }
                 ))
             .then_some(node)
@@ -1427,7 +1586,9 @@ fn native_apply_reader_cached_valid_bytes_keep_side_prefix_depth_and_edge_hash_c
         };
         let mut expected = None;
         for arm in [Arm::Reference, Arm::Uncached, Arm::Cached] {
-            let result = observed(arm, &transaction, &root, &changes, &cache, |_| Ok(()));
+            let result = observed(&trace, arm, &transaction, &root, &changes, &cache, |_| {
+                Ok(())
+            });
             assert_eq!(
                 result.1, 1,
                 "{case}: must reach original first edge boundary"

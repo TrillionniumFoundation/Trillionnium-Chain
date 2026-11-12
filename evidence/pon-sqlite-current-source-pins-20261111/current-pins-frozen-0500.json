@@ -1,0 +1,61 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "6a749936ff53c3c344669290893ec89229923a37",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "6a749936ff53c3c344669290893ec89229923a37",
+    "tested_tree": "94dac78a9990b8e59f84f26e0edbf0a1cd8893ad",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2548336101,
+    "tracked_entries": 26709,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "python3",
+    "/home/qq/work/chain-sqlite-advisory-20261110-checks/run-current-pins-frozen-0500.py"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "6a749936ff53c3c344669290893ec89229923a37",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "6a749936ff53c3c344669290893ec89229923a37",
+    "tested_tree": "94dac78a9990b8e59f84f26e0edbf0a1cd8893ad",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2548336101,
+    "tracked_entries": 26709,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/home/qq/work/chain-sqlite-advisory-20261110",
+  "elapsed_ns": 240146109871,
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/qq/work/chain-sqlite-advisory-20261110-checks/native-target",
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 0,
+  "log_bytes": 537,
+  "log_file": "current-pins-frozen-0500.log",
+  "log_sha256": "be6cae243d1caffdf08f2739a9c45073835e5e54a752ee97a4a9637bb88faaf9",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-11T04:44:50.730132+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}
