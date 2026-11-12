@@ -302,3 +302,78 @@ continues to require one justified model and native refinement for common
 prefix, chain growth, both chain-quality notions and the installed confirmation
 event. Its 18 unknown inputs, 13 open proof obligations and null confirmation
 and lifetime bounds cannot be filled by either of these finite regressions.
+
+## Equal-capacity network continuation (2026-11-12)
+
+This continuation starts from #920 at
+`df2a4f59edf1a181c2968eda131a2ddb0e5f33a1`. The separate
+[paired campaign](../../../../formal/pon-nakamoto-v1/experiments/joint_resource_competition_campaign.py)
+compares fixed-target and periodic-target network controls from the same
+arithmetic prefix. The fixed control retains the first post-prefix target.
+Both controls retain ordinary MTP/future-time validation, proof clocks,
+required integer work and fork choice. Short honest epochs remain admissible.
+These research controls do not change installed native consensus.
+
+The inherited measurement predicate `random() < p` uses a 53-bit grid. For
+positive `p < 2^-53`, its event mass is at least `2^-53`; at `p = 2^-60`
+the inflation is 128-fold. The successor sampler converts the represented
+binary64 probability to an exact dyadic fraction and compares a uniform
+integer word. It preserves subnormal probabilities and uses no random bits
+for probabilities zero or one. This does not remove floating-point error in
+the preceding Grover amplitude calculation or authenticate physical
+randomness. Both network and literal W1-domain measurements use the repair.
+Marked-set census semantics and historical evidence remain unchanged. The
+new network/adversarial/literal namespaces are V3, and resource-clock is V2;
+historical random streams are not relabeled as successor executions.
+
+The preregistered roster contains four seeds, two hypothetical iteration
+clocks, four environments, two target policies and two mining strategies:
+128 runs, each with a 3,600-second model horizon. The environments cover a
+baseline, longer propagation, participation shocks and longer proof
+construction. Each strategy pair has identical offered capacities, clock
+costs, delivery delays and participation schedules. Actual paid consumption
+may differ because of cancellation, stale work and proof construction.
+The quantum miner follows the public tip or builds a private branch using
+`parent.timestamp + 1`, publishing at three quarters of the horizon.
+No observed seed or strategy is selected after viewing outcomes.
+
+Retain the roster before execution, complete event traces, every per-case
+report, exact source identities and actual Python wall/CPU duration. Preserve
+losing work and terminal right-censored costs. Independently recompute
+target/credit arithmetic and charged search/proof/check/iteration costs,
+then re-execute the same seeded cases. Early stops or incomplete traces stay
+in the planned denominator and cannot count as complete comparisons.
+Model time, Python runtime and physical W1 or quantum mining time remain
+three distinct quantities.
+
+Equal offered model capacities are not a physical equality between classical
+and quantum machines. This campaign does not bind the hypothetical 0.15/0.05
+second iteration clocks to a complete reversible W1 circuit or physical
+error correction. Fixed complete-bundle delivery delay supplies no byte
+budget, bandwidth, validation queue or eclipse model. Participation and
+proof-cost sensitivity are not task-supply experiments. Private-vs-honest
+adopted quantum credit is a descriptive policy comparison, not a probability
+of defeating the complete honest chain. The compressed-only policy omits
+difficulty restoration, optimal attack search and the separate #893
+receipt-triggered measurement continuation. Its negative results cannot
+exclude those strategies. All unknown joint inputs, proof obligations and
+HOLD/NO-GO decisions remain.
+
+### Literature boundary rechecked on 2026-11-12
+
+[Bailey and Sattath, arXiv v2](https://arxiv.org/html/2403.08023v2) explicitly
+idealize Grover cost and ignore its constants and stochastic outcomes. Their
+gradual-retarget variant shows why a per-epoch clamp alone does not resolve
+that model's attack. The paper does not calibrate W1 oracle cost or prove this
+simulator's native refinement.
+
+[Fast DAA's September revision](https://eprint.iacr.org/2026/1116) and its
+[published notes](https://link.springer.com/chapter/10.1007/978-3-032-35428-0_4)
+describe parallel chains and approximate agreement. Constant time is measured
+in rounds relative to the security parameter; expected-constant liveness is
+not a deterministic wall-clock deadline. The existing author-slide
+[arithmetic component](../../../../formal/pon-nakamoto-v1/fast_daa_reference_component.py)
+remains a component. The complete revised paper was not obtained in this
+review. Parameter conditions, cross-chain authentication, epoch/ledger
+composition, network refinement and quantum assumptions remain unverified.
+The complete `fast-daa-2026` network backend still refuses as unimplemented.

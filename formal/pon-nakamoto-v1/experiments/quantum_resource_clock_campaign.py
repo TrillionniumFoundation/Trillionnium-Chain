@@ -24,7 +24,7 @@ from quantum_network_sim import NetworkScenario, ParticipationShock  # noqa: E40
 from quantum_oracle_resources import SCHEMA as REQUEST_SCHEMA, load_request  # noqa: E402
 from quantum_resource_clock import canonical, run_resource_bound, source_fingerprint  # noqa: E402
 
-SCHEMA = "trnm-quantum-resource-clock-campaign-v1"
+SCHEMA = "trnm-quantum-resource-clock-campaign-v2"
 MAX_RECEIPT_BYTES = 8_000_000
 
 

@@ -24,20 +24,22 @@ from reference import retarget, timestamp_state, work
 from quantum_adversarial_search import (
     ADVERSARIAL_ASSUMPTIONS, MAX_CLOCK_SECONDS, MAX_DOMAIN_SIZE,
     MAX_EXACT_BINOMIAL_SIZE, TrialCosts, bounded_throughput_choice,
-    finite_domain_success, sample_marked_count, upward_float, validate_candidates,
+    finite_domain_success, sample_binary_probability, sample_marked_count,
+    upward_float, validate_candidates,
 )
 
 WORK_MAX = (1 << 512) - 1
 PROFILE = "conditional-w1-lottery-dev-profile-v1"
-POLICIES = ("periodic-target", "asert-raw", "asert-mtp11")
+POLICIES = ("fixed-target", "periodic-target", "asert-raw", "asert-mtp11")
 UNAVAILABLE_BACKENDS = {
     "fast-daa-2026": "UNIMPLEMENTED: full parallel-chain protocol and parameter mapping required",
 }
 ASSUMPTIONS = {
-    "schema": "trnm-quantum-network-assumptions-v1",
+    "schema": "trnm-quantum-network-assumptions-v3",
     "model": "finite discrete events; arithmetic prefix; abstract successful lottery predicates",
     "classical": "independent Poisson winner arrivals; query equivalents are assumed rate times elapsed",
     "quantum": "finite Grover trials with float64 sin^2 probability; no monotone success approximation",
+    "measurement_sampler": "exact dyadic Bernoulli of the binary64 probability; no 53-bit random() floor",
     "quantum_trial_policy": "fixed iterations or capped first probability peak; not optimal cost/throughput or cheapest miner",
     "timing_inputs": "synthetic conditional rate and latency premises, not W1/hardware measurements",
     "private_future_parents": "private mining may continue on time-deferred parents; each receiver independently defers future imports",
@@ -374,7 +376,8 @@ class Simulator:
         self.anchor = Header(history[-1].height + 1, self.start_timestamp + 10, initial)
         self.anchor_clock = (sorted(h.timestamp for h in history[-11:])[5]
                              if case.policy == "asert-mtp11" else self.start_timestamp)
-        self.daa = Scenario(case.name, case.policy, "quantum-search", half_life=case.half_life)
+        self.daa = (None if case.policy == "fixed-target" else
+                    Scenario(case.name, case.policy, "quantum-search", half_life=case.half_life))
         profile_input = [case.profile, case.policy, case.half_life,
                          [asdict(h) for h in history]]
         self.profile = hashlib.sha256(json.dumps(profile_input, sort_keys=True).encode()).hexdigest()
@@ -463,6 +466,10 @@ class Simulator:
         heapq.heappush(self.events, (at, self.event_serial, kind, payload))
 
     def target_for(self, parent: str) -> int:
+        if self.case.policy == "fixed-target":
+            if parent not in self.tails:
+                raise KeyError(parent)
+            return self.initial_target
         return required(list(self.tails[parent]), self.daa, self.anchor,
                         self.anchor_clock, self.initial_target)[0]
 
@@ -882,7 +889,7 @@ class Simulator:
             if self.quantum_domain is None or self.quantum_domain.domain_id != trial.domain_id:
                 raise ValueError("ACTIVE_DOMAIN_MISMATCH")
             self.quantum_domain.completed_batches += 1
-        won = miner != "q" or self.rngs[miner].random() < trial.success_probability
+        won = miner != "q" or sample_binary_probability(self.rngs[miner], trial.success_probability)
         if not won:
             self.counts[miner]["searches_failed"] += 1
             self._charge_search(trial, "failed")

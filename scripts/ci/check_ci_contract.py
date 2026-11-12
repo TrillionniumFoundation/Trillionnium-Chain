@@ -183,6 +183,11 @@ JOINT_CONSENSUS_QUALIFICATION_COMMANDS = (
     'python3 formal/pon-nakamoto-v1/test_joint_production_tail_v1.py',
 )
 
+JOINT_RESOURCE_COMPETITION_COMMANDS = (
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_probability_sampling.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_joint_resource_competition_campaign.py' -v",
+)
+
 # Anchor these controls at the start of the lane. Presence/count alone accepts
 # a false branch or an if-condition that suppresses Bash's errexit behavior.
 # The outer lane dispatch is checked independently below.
@@ -680,6 +685,8 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_oracle_resources.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_network_sim.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_probability_sampling.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_joint_resource_competition_campaign.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_candidate_check_clock.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_adversarial_search.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_resource_clock.py' -v
@@ -1353,6 +1360,10 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'joint consensus qualification controls must execute exactly once in repository-truth')
+    for command in JOINT_RESOURCE_COMPETITION_COMMANDS:
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'joint resource competition controls must execute exactly once in repository-truth')
     require(code_lines(lanes['protocol-contract']).count(W1_LIFECYCLE_NATIVE_CONTROLS) == 1
             and code_lines(script).count(W1_LIFECYCLE_NATIVE_CONTROLS) == 1,
             'native lifecycle cost controls must execute exactly once in protocol-contract')

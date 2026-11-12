@@ -1,0 +1,11 @@
+{
+  "error": "EVIDENCE_REPORT_COMPARISON",
+  "new_tests_or_simulator_executions_by_collector": 0,
+  "packet_root": "/home/qian-qi/work/chain-daa-evidence-final-600e/packet",
+  "partial_packet_publishable": false,
+  "result": "FAIL",
+  "schema": "trnm-joint-resource-evidence-packet-review-v1",
+  "source_A": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "source_A2": "17449baa42429ac98b55c100b1c523ff0abe40d0",
+  "source_mutations_by_collector": false
+}

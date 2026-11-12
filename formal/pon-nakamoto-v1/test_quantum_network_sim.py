@@ -27,6 +27,12 @@ class ControlledRandom:
             return self.outcomes.pop(0)
         return self.outcomes[0]
 
+    def getrandbits(self, width):
+        # Keep the existing controlled success/failure outcomes on the integer
+        # sampler's valid [0, 2**width) support. This is not a PRNG model.
+        point = Fraction(self.random()) * (1 << width)
+        return min((1 << width) - 1, point.numerator // point.denominator)
+
     def expovariate(self, rate):
         self.rates.append(rate)
         return self.delay

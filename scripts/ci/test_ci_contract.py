@@ -2629,6 +2629,11 @@ class MergedQualificationLaneTests(unittest.TestCase):
             '    python3 formal/pon-nakamoto-v1/test_dynamic_participation_v1.py\n',
             '    python3 formal/pon-nakamoto-v1/test_joint_production_tail_v1.py\n',
         ), '    python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v\n'),
+        'joint_resource_competition': ('repository-truth',
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_network_sim.py' -v\n", (
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_probability_sampling.py' -v\n",
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_joint_resource_competition_campaign.py' -v\n",
+        ), "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_candidate_check_clock.py' -v\n"),
         'completion': ('external-evidence-contract', '    python3 scripts/ci/test_invariant_evidence.py\n', (
             '    python3 scripts/ci/check_completion_evidence.py --historical\n',
             '    python3 scripts/ci/test_completion_evidence.py\n',
@@ -2695,6 +2700,9 @@ class MergedQualificationLaneTests(unittest.TestCase):
 
     def test_joint_consensus_qualification_commands_cannot_be_omitted_moved_or_skipped(self):
         self.reject_command_mutations('joint_consensus_qualification')
+
+    def test_joint_resource_commands_cannot_be_omitted_moved_or_skipped(self):
+        self.reject_command_mutations('joint_resource_competition')
 
     def test_completion_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('completion')
