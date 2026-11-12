@@ -11,6 +11,7 @@
 //! that can replace both this directory and its independently retained anchor.
 
 mod catalog;
+mod chunk_read;
 mod codec;
 mod inventory;
 mod owner;

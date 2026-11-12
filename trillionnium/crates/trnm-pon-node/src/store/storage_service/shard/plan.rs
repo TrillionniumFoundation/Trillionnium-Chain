@@ -9,13 +9,21 @@ use trnm_data_availability::cell::{
 };
 use trnm_service_settlement::native_budget::NativeBudgetAnchorV1;
 
+#[path = "plan/paged.rs"]
+mod paged;
 #[path = "plan/recovery.rs"]
 mod recovery;
+pub use paged::{
+    NativeCellPagedRetainedShardPlanReadbackV2, NativeCellPagedRetainedShardPlanTargetsV2,
+    NativeCellRetainedShardPageReadbackV2,
+};
 pub use recovery::{
-    NativeCellShardDamageV1, NativeCellShardRecoveryActionV1, NativeCellShardRecoveryBudgetV1,
-    NativeCellShardRecoveryCpuV1, NativeCellShardRecoveryFailureV1,
-    NativeCellShardRecoveryLimitsV1, NativeCellShardRecoveryReadbackV1,
-    NativeCellShardRecoveryRequestV1, NativeCellShardRecoveryUsageV1,
+    NativeCellPagedShardRecoveryBudgetV2, NativeCellPagedShardRecoveryReadbackV2,
+    NativeCellPagedShardRecoveryRequestV2, NativeCellShardDamageV1,
+    NativeCellShardRecoveryActionV1, NativeCellShardRecoveryBudgetV1, NativeCellShardRecoveryCpuV1,
+    NativeCellShardRecoveryFailureV1, NativeCellShardRecoveryLimitsV1,
+    NativeCellShardRecoveryReadbackV1, NativeCellShardRecoveryRequestV1,
+    NativeCellShardRecoveryUsageV1,
 };
 
 #[derive(Clone, Debug)]

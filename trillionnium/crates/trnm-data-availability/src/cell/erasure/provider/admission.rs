@@ -3,6 +3,86 @@
 use super::*;
 
 impl CellRs46ShardProviderV1 {
+    /// Read-only global descriptor/history/extent admission. Actual reserves
+    /// still check each original target under its original writer.
+    pub fn check_reservations(
+        &self,
+        contracts: &[&CellRs46ShardContractV1],
+        deadline: Instant,
+    ) -> CellResultV1<()> {
+        check(deadline)?;
+        require(
+            !contracts.is_empty() && contracts.len() <= self.config.maximum_obligations as usize,
+            "RS46 provider preflight count",
+        )?;
+        let mut count = self.descriptor_count(Some(deadline))?;
+        let mut operations = std::collections::BTreeSet::new();
+        let mut physical = Vec::with_capacity(contracts.len());
+        for contract in contracts {
+            check(deadline)?;
+            self.check_contract(contract, contract.operation())?;
+            require(
+                operations.insert(contract.operation()),
+                "RS46 provider preflight duplicate",
+            )?;
+            let path = self.descriptors_path.join(digest_hex(contract.operation()));
+            match fs::symlink_metadata(path) {
+                Ok(_) => require(
+                    self.descriptor(contract.binding(), contract.operation(), deadline)?
+                        == **contract,
+                    "RS46 provider descriptor changed",
+                )?,
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+                    count = count
+                        .checked_add(1)
+                        .ok_or(CellErrorV1::Invalid("RS46 provider descriptor capacity"))?;
+                    require(
+                        count <= self.config.maximum_obligations,
+                        "RS46 provider descriptor capacity",
+                    )?;
+                }
+                Err(error) => return Err(error.into()),
+            }
+            physical.push(contract.retention_contract());
+        }
+        self.arena.check_reservations(&physical, deadline)?;
+        self.check_descriptor_directory()?;
+        check(deadline)
+    }
+
+    /// Read-only whole-composition repair-history/byte admission. The boolean
+    /// requests a fresh copy; false permits only original-target reconciliation.
+    /// Exact descriptors and existing arena contracts are required in both cases.
+    pub fn check_repair_reservations(
+        &self,
+        repairs: &[(&CellRs46ShardContractV1, CellDigestV1, bool)],
+        deadline: Instant,
+    ) -> CellResultV1<()> {
+        check(deadline)?;
+        require(
+            repairs.len() <= self.config.maximum_obligations as usize,
+            "RS46 provider repair preflight count",
+        )?;
+        self.descriptor_count(Some(deadline))?;
+        let mut physical = Vec::with_capacity(repairs.len());
+        for (contract, repair_operation, requires_new_copy) in repairs {
+            check(deadline)?;
+            self.check_contract(contract, contract.operation())?;
+            require(
+                self.descriptor(contract.binding(), contract.operation(), deadline)? == **contract,
+                "RS46 provider descriptor changed",
+            )?;
+            physical.push((
+                contract.retention_contract(),
+                *repair_operation,
+                *requires_new_copy,
+            ));
+        }
+        self.arena.check_repair_reservations(&physical, deadline)?;
+        self.check_descriptor_directory()?;
+        check(deadline)
+    }
+
     pub fn configuration(&self) -> &CellRs46ShardProviderConfigV1 {
         &self.config
     }

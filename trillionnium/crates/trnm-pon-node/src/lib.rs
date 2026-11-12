@@ -88,7 +88,10 @@ pub use store::storage_service::{
     NativeCellRepairRequestV1, NativeCellRetentionRequestV1,
 };
 pub use store::storage_service::{
-    native_cell_shard_repair_subject_v1, NativeCellRetainedShardPlanReadbackV1,
+    native_cell_shard_repair_subject_v1, NativeCellPagedRetainedShardPlanReadbackV2,
+    NativeCellPagedRetainedShardPlanTargetsV2, NativeCellPagedShardRecoveryBudgetV2,
+    NativeCellPagedShardRecoveryReadbackV2, NativeCellPagedShardRecoveryRequestV2,
+    NativeCellRetainedShardPageReadbackV2, NativeCellRetainedShardPlanReadbackV1,
     NativeCellRetainedShardPlanRequestV1, NativeCellRetainedShardPlanTargetsV1,
     NativeCellRetainedShardSlotReadbackV1, NativeCellRetainedShardVerificationBudgetV1,
     NativeCellShardDamageV1, NativeCellShardEffectReadbackV1, NativeCellShardRecoveryActionV1,

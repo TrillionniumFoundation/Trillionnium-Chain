@@ -102,6 +102,9 @@ pub struct CellRetentionReadbackV1 {
     pub retired: bool,
 }
 
+mod repair_preflight;
+mod reservation_preflight;
+
 struct Row {
     contract: CellRetentionContractV1,
     offset: u64,

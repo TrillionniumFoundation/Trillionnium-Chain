@@ -1809,3 +1809,46 @@ fn repair_post_commit_zero_byte_reconciliation_keeps_exact_identity() {
 fn repair_post_commit_completion_refusal_reopens_without_copy_or_charge() {
     repair_post_commit_refusal(RepairPostCommitCase::Completion);
 }
+
+#[test]
+fn reservation_preflight_composes_live_capacity_without_changing_original_rows() {
+    let dir = tempfile::tempdir().unwrap();
+    let (_, manifest, _) = material(dir.path(), 1234);
+    let mut store =
+        CellRetentionStoreV1::create(&dir.path().join("arena"), config(91, 8192)).unwrap();
+    let first = contract(11, &manifest);
+    let second = contract(12, &manifest);
+    let third = contract(13, &manifest);
+    let count = |owner: &CellRetentionStoreV1| -> u64 {
+        owner
+            .connection
+            .query_row("SELECT count(*) FROM obligations", [], |row| row.get(0))
+            .unwrap()
+    };
+    store
+        .check_reservations(&[first.clone(), second.clone()], deadline())
+        .unwrap();
+    assert_eq!(count(&store), 0);
+    assert!(store
+        .check_reservations(&[first.clone(), second.clone(), third.clone()], deadline())
+        .is_err());
+    assert_eq!(count(&store), 0);
+    let retained = store.reserve(first.clone()).unwrap();
+    assert!(!retained.acknowledged);
+    store
+        .check_reservations(&[first.clone(), second.clone()], deadline())
+        .unwrap();
+    assert!(store
+        .check_reservations(&[second.clone(), third], deadline())
+        .is_err());
+    let mut alias = second.clone();
+    alias.funding_operation = first.funding_operation;
+    assert!(store.check_reservations(&[alias], deadline()).is_err());
+    assert!(store
+        .check_reservations(&[first.clone(), first.clone()], deadline())
+        .is_err());
+    assert_eq!(count(&store), 1);
+    assert_eq!(store.reserve(first).unwrap(), retained);
+    store.reserve(second).unwrap();
+    assert_eq!(count(&store), 2);
+}
