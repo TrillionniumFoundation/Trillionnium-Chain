@@ -1,6 +1,6 @@
 {
   "schema": "trnm-pq-authority-effects-v1",
-  "source_revision": "813620f387199bef3eae2493e2af07c70444db58",
+  "source_revision": "523bee8709645e7dbc3455f1dc74737f7067af62",
   "purpose": "curated-source-consistency-only",
   "coverage_complete": false,
   "whole_chain_pq_qualified": false,
@@ -201,7 +201,7 @@
     "trillionnium/crates/trnm-data-availability/src/cell/network.rs": "45b50bff63873c4897fca011fc009b229af618d5cc9e0cd8dcc14da5387d97db",
     "trillionnium/crates/trnm-data-availability/src/cell/store.rs": "b3f1f62fcc984ffdbdbb8118dc6df8094bc62fba57fcde109a32133a62b54330",
     "trillionnium/crates/trnm-data-availability/src/types.rs": "9251274c47edc1ddc5fef34c0130f5341d6977681a4e07c2eab89a235c6d55f1",
-    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": "4ed0629cd9a543ae58402a1fabc459993c8e0037fe47fd53dd29efa619516fb4",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": "80b0295131ce48f2fdbd429e7d8cdcf56b37d4c610068dba8d6d4e15ae7829fb",
     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts.rs": "1254678a5f4db4b7b7e6aa7c97bc6c6baca74cb663b65acc1593f4786f7287c5",
     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs": "7c404502cbcc358b95cbf4f5ae88a1582e144562790913266eba599e5da8341d",
     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs": "c4b6248c8cee8d2ad31110fcc6e87e9d6306fdf34981c0a428341b5f9c3b6751",

@@ -1,3 +1,57 @@
+**Published runtime recovery and renewed acceptance, 2026-11-12 UTC — HOLD:**
+
+The published runtime checkpoint is `523bee8709645e7dbc3455f1dc74737f7067af62`.
+Its complete tree `5fdd5f7073a91d210c82411a37c8982d4159f29b` is byte-identical
+to the original local runtime A, `b3bc526b96d3a8e2ad0be7faa4f00f11d9f7ea53`.
+The commit identities are distinct. Rebind reviewed source metadata to the
+published checkpoint and run renewed gates on the actual successor; do not
+transfer earlier execution qualification merely because the tree is equal.
+The original runtime is independently recoverable from its exact Git bundle.
+
+A second execution-environment replacement cleared the former workspace.
+Three original agent archives were recovered byte-for-byte: W7's preliminary
+233 controls, the 76 authority/lifetime controls and Git-blob review, and the
+269 exact-B final Python controls. Local B `4d291c4d90e862498303ae2b4f2677b19b482faf`
+retains its recorded historical identity, but its full Git commit and several
+local native/build/source logs were not recovered. The preliminary V6 three-test
+archive is also lost. Preserve these omissions explicitly; new observations
+must not recreate old raw logs or relabel their source. See the
+[recovery manifest](../../evidence/chain-source-composition-v6-20261112-6478/recovery-and-archive-manifest.json)
+and [current observation record](../../evidence/chain-source-composition-v6-20261112-6478/README.md).
+
+### Finite economic and independent-task research contract
+
+For the current three-source installed development policy, pre-register k=1,2,3
+colluding sources and a finite strategy family before executing a new campaign.
+Include equivalent within-source partitions, aliases, zero-sum and near-zero
+cross-source components, payee omission, leaf/order/weight changes, repeated
+release/claim, expiry, reorganization, exit and concurrent reservation attempts.
+Bind every strategy to the exact source/payee map, complete parent-relative
+models, transaction bytes, funding owner, original limits and recorded costs.
+The V6 two-/three-/four-leaf regression addresses only its named partition
+family. It does not estimate undiscovered common control or maximum collusion
+profit.
+
+For each declared strategy, report the counterfactual change in source/coalition
+receipts minus actual additional transaction fees, setup, generation,
+verification, communication and exit liabilities. Missing cost dimensions are
+unknown, not zero. State the horizon, reference strategy, attribution-error
+model and finite attack-family coverage. A measured maximum is only a maximum
+over the executed family. A claimed universal bound additionally needs an
+argument covering omitted strategies and the declared source-estimation error.
+Any positive gain violating the preregistered tolerance, duplicate credit or
+newly funded claim without the original reservation rejects that instance.
+
+Independent future-task evaluation must freeze candidate and baseline before
+revealing held-out tasks, name the original B and C evaluators, retain every
+trial/seed/cancellation and define error control across repeated candidate
+searches. Selection must not tune on C and then report C as independent.
+A complete failed metric, missing evidence, a non-executable model and an
+incomplete evaluation are distinct results; missing evidence cannot be silently
+upgraded to NoUpdate, and failed inference cannot become zero-score credit.
+Preregister task-distribution and complete-cost rejection thresholds. Actual
+ordinary adoption and cold recovery remain separate owner-route obligations.
+
 **W0–W7 source aggregation, complete evaluation and composed withdrawal, 2026-11-12 UTC — HOLD:**
 
 Continue the existing PN0–PN6 gates and the owners recorded in
@@ -77,6 +131,20 @@ they do not establish a general race-free filesystem boundary. Existing
 per-liability money reservations and persisted pre-send uncertainty are
 retained, rather than replaced by aggregate balances or redispatch authority.
 
+The next W3 implementation must join the original request-wide CPU owner
+with a same-release isolated verifier. The present public V3 path acquires its
+paid mutation permit before work verification and shared admission. Moving M06
+execution outside the Node mutex does not make it terminable. A child process
+needs a private lease in the original budget, cumulative child CPU accounting,
+live debits and a final reaped usage delta; kill must be followed by reap before
+the permit is released. Unknown clock or reap state must deny further work.
+The return channel must bind the exact admitted packet and preserve the private
+VerifiedWork and prepared-execution/commit-fence boundaries. Giving each child
+a new timeout, trusting arbitrary deserialized verified state, or moving CPU
+outside the original owner would invalidate this acceptance. This requires
+coordinated M05/M08 and budget-owner changes; it is not delivered by the M12
+path hardening. Original service 0/3 and phase 0/9 remain open.
+
 The W7 withdrawal source is reviewed from #931
 `bf36ac9d6db98646e414048edc3d1c8bd73f079c`. Its original mapping remains
 43,170 bytes, SHA256
@@ -132,9 +200,11 @@ Lambda=-1153/64 is below -18. Counting Shat against an upper cap is
 conservative. This is a specification-level counterexample, not an executed
 full tile, CUDA kernel, native verifier or Chain exploit.
 
-Freeze the current Hepta integration separately: #6135
+The earlier Hepta route review was frozen separately at #6135
 `c1e4fab7fa13e705d1ebf32b87e3a758f33d7e60`, including #5981
-`dd4b6c17344986a3a9379e372bf19d282f812a30`. The ordinary launcher still calls
+`dd4b6c17344986a3a9379e372bf19d282f812a30`. These are observations of that
+source and must not qualify a newer Hepta integration. At that source the
+ordinary launcher calls
 `with_root_learning_inputs`; the actual route to
 `with_root_learning_stage_owners` is missing, and the resident stage owner
 explicitly reports CandidateSelection/NextUse unavailable. Ordinary Adopt,

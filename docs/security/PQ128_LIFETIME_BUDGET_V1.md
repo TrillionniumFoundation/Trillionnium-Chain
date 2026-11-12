@@ -214,7 +214,66 @@ Its source hashes describe the bytes read for the example only. All security,
 theorem-applicability, composition-coverage, and activation flags remain false
 in both modes, and the actual lifetime failure bound remains null.
 
-### Current joint-source mapping
+### Published runtime source mapping, 2026-11-12
+
+The source lock and `experiment.source_revision` now both name published
+runtime checkpoint
+[`523bee8709645e7dbc3455f1dc74737f7067af62`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/523bee8709645e7dbc3455f1dc74737f7067af62),
+tree `5fdd5f7073a91d210c82411a37c8982d4159f29b`. The 15 exact regular Git
+blobs were read again at this revision and compared with the working regular
+files. All 15 file hashes remain identical to the local Runtime A review below.
+The new lock-byte SHA-256 is
+`5714721c9ebc841d04e88c923cc649fbe061cc25c3b0497bce3b6f8d1b887405`.
+
+Only the revision fields change. Event sets, numerical allocations, assumptions,
+eight unknown terms, four unknown query budgets and false qualification fields
+are unchanged. The actual lifetime bound remains null and the result remains
+HOLD. The Root register is unchanged. The published runtime has Runtime A's
+tree but a distinct commit identity; tree equality and the retained former
+Metadata B observation are not new execution evidence. The metadata successor
+must pass its own source and execution gates. The original local review and
+its failure observations remain below with their original identities.
+
+### Retained local Runtime A source mapping, 2026-11-12
+
+The 15 declared source paths are reviewed against Runtime A,
+`b3bc526b96d3a8e2ad0be7faa4f00f11d9f7ea53`,
+tree `5fdd5f7073a91d210c82411a37c8982d4159f29b`. For each path, review checked
+the exact regular Git blob and compared `git show` bytes with the working
+regular file. The source lock and `experiment.source_revision` both name
+Runtime A. The lock-byte SHA-256 is
+`40e4035ffd1641288fc18c0fe18733f51c7c930a85212d570cef1fdf85d8bd27`.
+
+Fourteen pins retain the preceding `7f83ea843d6d1578a475a7a0c4dc026da564a795`
+mapping. The only changed pin is
+`trillionnium/crates/trnm-service-settlement/src/native_budget.rs`:
+
+```text
+prior:    1fd964a4bfb3dec372c04a32853d9b08a3b80773d3182099d80705ab916ace38
+reviewed: 04f10f76d9f3bcdbe2df1b0bf3182d3e5d66a8f3974982a3491f156e50ba7c68
+```
+
+The reviewed change adds the native journal path check and calls it before the
+original budget store opens SQLite. It inspects the original OS path and its
+`-journal`, `-wal` and `-shm` sidecars using `symlink_metadata`; existing objects
+must be regular files, only `NotFound` means absent, and other inspection errors
+are returned. Regular recovery sidecars remain permitted. The containing
+directory is still a trusted boundary; this does not prevent a concurrent path
+swap or qualify currency backing, service delivery or external effects. Other
+modules that call the helper are not automatically included in these 15 paths.
+
+The lifetime manifest differs only at `experiment.source_revision`. Its event
+sets, numerical allocations, assumptions, eight unknown event terms, four
+unknown query budgets and all false qualification fields remain unchanged.
+The actual lifetime failure bound remains null and the result remains HOLD.
+The reader executed before this update returned exit 2 with
+`source lock hash mismatch` for `native_budget.rs`; that old-mapping refusal is
+retained. This metadata successor supplies a reviewed declared-path binding,
+not a native execution result or a complete dependency closure, and still
+requires final-source validation. The separate 43-path Root register is
+unchanged by this review.
+
+### Retained joint-source mapping
 
 The 15 declared paths are bound to `8add285b6c0a91d8b7812efe2d02c9342f74c91b`, tree `8aaa486aa4ccd4e41e33241fb4e7e273d3c3d5f6`.
 Only `trnm-pon-node/src/store.rs` differs from the preceding 15-path lock: the

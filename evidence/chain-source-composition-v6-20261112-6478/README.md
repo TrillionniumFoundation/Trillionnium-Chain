@@ -1,0 +1,69 @@
+# Source aggregation V6 continuation — HOLD
+
+The published runtime checkpoint is `523bee8709645e7dbc3455f1dc74737f7067af62`,
+tree `5fdd5f7073a91d210c82411a37c8982d4159f29b`, above #940
+`8970e2c81abbf48e2a4d3f0802d79624ab20fadd`. It restores the exact original
+local runtime A tree, but has its own commit identity. Its source-binding
+successors and new native executions must be identified separately.
+
+## Recovered original observations
+
+| Archive | Actual retained scope |
+| --- | --- |
+| `w7-recovered-python-observation.tar.gz` | 14 upstream + 31 binding + 188 CI-contract methods passed, with no skips, on their recorded precommit selected source. Both current-use requests emitted full diagnostics and specifically refused the revoked profile. The recorder's initial false negative and its separate reviewed interpretation are retained. |
+| `authority-lifetime-A-review-observation.tar.gz` | Exact 44 authority + 15 lifetime Git-blob review at local A. Only pon_executor.rs and native_budget.rs respectively changed. The stale-pin refusals are retained; the subsequent 18 authority and 58 lifetime controls passed. Null bounds and false qualifications were unchanged. |
+| `final-B-python-gates-observation.tar.gz` | On local B `4d291c4d90e862498303ae2b4f2677b19b482faf`, 62 corpus + 43 source-integrity + 18 authority + 43 Root + 58 lifetime + 14 upstream + 31 binding methods passed: 269, no skips. The complete 18-command record includes precise current-use refusals, corpus HOLD, repository/link and CI readers. This is not execution on the new published checkpoint. |
+
+Every recovered archive was reopened and its members verified. The
+[recovery and archive manifest](recovery-and-archive-manifest.json) records
+original bytes, hashes, Git blobs, retained identities and missing material.
+
+## Fresh published-source binding observation
+
+`published-runtime-rebind-observation.tar.gz` records a new 59-file Git-blob
+review against published runtime `523bee8709645e7dbc3455f1dc74737f7067af62`,
+with 18 authority and 58 lifetime controls passing without skips. The 59 source
+file pins are unchanged from local A; only the source revision and its derived
+metadata digests changed. Both readers and the upstream binding remain HOLD.
+This selected-source observation precedes C and is not execution on C.
+
+## Failure and loss boundaries
+
+The first environment interruption lost earlier `/tmp` logs and left an
+interrupted sparse checkout unsuitable as complete physical source. A fresh
+full #940 checkout was used for local A/B. A later replacement cleared that
+entire workspace. The local A source was recovered exactly from its separately
+saved Git bundle; local B's full commit and several local native/build/format/
+graph/raw source records were not recovered. No missing log is reconstructed.
+
+The prior terminal observations were local A's M06 159 passed / 9 existing
+ignored, and M12 78 passed / 1 failed. M12's failing fixture could not create a
+Unix socket in the cloud environment, before the production opener ran. The
+two subsequent Node build attempts exited 101 after compiler SIGKILL, without
+executing Node tests; the last build's terminal status is UNKNOWN. These known
+outcomes and missing complete raw records remain explicit. The lost preliminary
+V6 three-test archive is recorded separately in
+[its loss record](v6-slice-archive-loss.json); the retained B suite does not
+replace those old raw bytes.
+
+## Acceptance boundaries
+
+The V6 profile aggregates all complete parent-relative components by known
+source before valuation and rounding. Its original tag-8/tag-9 owners retain
+the release funding, source quota, claims, maturity and expiry paths. Complete
+evaluation evidence occupies an independently keyed, digest-bound state record
+under the unchanged 4,096-byte limit. The old V4 split test is unchanged.
+
+The three additional M12 database openers reject untrusted path objects and
+inspection errors while permitting real regular WAL/SHM files. This is not a
+general TOCTOU guarantee, a terminable-verifier implementation or proof of
+honest-service liveness. Original reservations and durable Unknown operation
+semantics remain the funding/effect owners.
+
+The W7 reader rejects current use of the withdrawn profile. Source controls do
+not qualify replacement circuits, regenerated receipts, useful learning,
+unseen common control, whole-chain security, production activation or merge.
+The original V4 failure and service campaign 0/3, phase 0/9 remain preserved.
+New exact-source native and source-gate evidence will be appended separately.
+
+See the [sole development plan](../../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).

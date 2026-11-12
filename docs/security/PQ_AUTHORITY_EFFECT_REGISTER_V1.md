@@ -4,7 +4,7 @@
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
 routes to the current reviewed source
-`813620f387199bef3eae2493e2af07c70444db58`. The
+`523bee8709645e7dbc3455f1dc74737f7067af62`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -18,7 +18,67 @@ a signature, context comparison, downloaded artifact or certificate observation
 must not be recorded as a different downstream permission. That original source
 inventory did not itself establish a classical bypass of a PQ owner.
 
-## Current combined candidate binding, 2026-11-12
+## Published runtime binding, 2026-11-12
+
+The active reviewed source is the published runtime checkpoint
+[`523bee8709645e7dbc3455f1dc74737f7067af62`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/523bee8709645e7dbc3455f1dc74737f7067af62),
+tree `5fdd5f7073a91d210c82411a37c8982d4159f29b`. Its commit identity differs
+from local Runtime A below, although their complete tree identities match.
+All 44 regular Git blobs were read again from this published revision and
+matched the working regular files. Every individual source pin is unchanged.
+The revision and canonical table digest are the only manifest/checker binding
+changes; the seven routes, their scopes, the source roster and false
+qualification fields remain unchanged.
+
+The active canonical table SHA-256 is
+`55a8c300eaefddacfd812956cb445438501e6c91f76ae9bc87e0a33436c2e6c6`.
+The independent positive assertion selects the published revision, and the
+stale-context control now also rejects local Runtime A's `b3bc526` label.
+This is a fresh source review, not a new native execution result.
+
+The archived Python observation for former local Metadata B,
+`4d291c4d90e862498303ae2b4f2677b19b482faf`, retains that original identity.
+Its complete commit object and the former local native raw logs were lost
+when the old workspace was replaced. Neither that observation nor equality
+of Runtime A's tree transfers execution qualification to this published
+checkpoint or its metadata successor. The retained review below records
+the original local source and hashes without relabeling them.
+
+## Retained local Runtime A binding, 2026-11-12
+
+The retained local runtime checkpoint is
+`b3bc526b96d3a8e2ad0be7faa4f00f11d9f7ea53`,
+tree `5fdd5f7073a91d210c82411a37c8982d4159f29b`. Review checked the regular
+Git entry and `git show` bytes for all 44 declared paths against the working
+regular files. Forty-three pins retain the preceding
+`813620f387199bef3eae2493e2af07c70444db58` mapping. Only
+`trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs` changes:
+
+```text
+prior:    4ed0629cd9a543ae58402a1fabc459993c8e0037fe47fd53dd29efa619516fb4
+reviewed: 80b0295131ce48f2fdbd429e7d8cdcf56b37d4c610068dba8d6d4e15ae7829fb
+```
+
+That owner adds explicit V6 model-profile selection, policy and plan bindings,
+and V6 allocation/release checks within the existing release and reward
+application branches. The new V6 module, policies and related model owners are
+outside this 44-path register; binding the caller does not add those dependencies
+to its coverage or establish their correctness. Account and network selection,
+the seven curated routes and their declared effect scopes retain their existing
+boundaries.
+
+The canonical table SHA-256, including Runtime A's revision, is
+`b4abb4e57ebdb128e29e5ec202597dbd3c6a72a168a72b7017cb44d177d4d78a`.
+The checker and independent positive assertion fix this revision; the existing
+stale-context test also rejects the preceding `813620f` label. Before this
+metadata update, the actual reader on Runtime A returned exit 2 with
+`source lock hash mismatch` for `pon_executor.rs`. That refusal remains a failed
+observation of the old mapping. The metadata successor changes neither the
+44-path roster nor any qualification flag, and requires its own final-source
+checks. This review does not execute native tests, authenticate a deployed
+binary or establish complete authority coverage.
+
+## Retained combined candidate binding, 2026-11-12
 
 The reviewed source is `813620f387199bef3eae2493e2af07c70444db58`, tree
 `4670d4ca9354d862ed2a5b3061dcaa61c759004e`. All 44 regular-file blobs
