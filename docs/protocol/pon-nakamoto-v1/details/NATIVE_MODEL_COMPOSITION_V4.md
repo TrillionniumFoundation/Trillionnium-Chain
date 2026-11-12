@@ -204,6 +204,77 @@ their actual execution status; source presence alone is not a successful native 
 cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test model_composition_v4
 ```
 
+### Retained known-source splitting counterexample
+
+`same_full_bundle_admits_split_reward_redistribution_with_known_aliases` preserves
+an admitted V4 counterexample. It is a test that expects the attribution weakness
+to remain observable, not a claim that V4 prevents splitting. The ordinary Node
+opens the development genesis state; two alternative signed M06 executions start
+from that same state and advance every height from 1 through 76, using `native-public-evaluation-dev-v1`,
+`consensus-maintenance-continuity-dev-v1` and `linear-factor-composition-dev-v4`.
+This scope does not include ordinary Node
+transaction submission, PNW1 block verification or independent History confirmation.
+
+Let `A` and `B` be the public perceptron models above, with 24 and 23 correct rows.
+The complete model `D = A + B` has 25 correct rows. The baseline uses authors 0 and
+2. Split the same `A` into `(A + Z, -Z)`, assigned to authors 0 and 1, and keep the
+same author 2 contribution `B`. Both author keys 0 and 1 already map to the same
+installed source. `Z` changes only the two expert-zero class-bias coefficients by
+`+1000` and `-1000`; all other coefficients are zero. The resulting complete model,
+its artifact ID and the actual common parent are byte-identical across the two
+cases. The modified components are all genuinely admitted and fully evaluated.
+
+| Observation | Original `(A, B)` | Split `(A + Z, -Z, B)` |
+| --- | --- | --- |
+| Individual correct rows | 24, 23 | 2, 20, 23 |
+| Correct rows after each individual omission | 23, 24 | 20, 2, 24 |
+| Native allocation weights | 80000, 40000 | 200000, 920000, 40000 |
+| Actual claim payments from a 100000-unit budget | 66666, 33333 | 17241, 79310, 3448 |
+| Aggregate payment to the known source of authors 0 and 1 | 66666 | 96551 |
+| That source's component intakes | 1 | 2 |
+| Charged transaction fees to authors 0 and 1 across the transcript | 6615 | 9686 |
+| Combined account increase for authors 0 and 1 after those fees | 60051 | 86865 |
+| Claimed total / retained rounding dust | 99999 / 1 | 99999 / 1 |
+
+All required exact-zero-subset checks pass: there is one baseline check and four
+split checks. The combined increment `(A + Z) + (-Z) = A` is nonzero, so forbidding
+an exactly cancelling subset does not rule out this construction. Every measured
+individual omission harms `D`; removing `-Z` exposes an intentionally damaging
+component and inflates that component's measured marginal.
+
+The admitted split raises the source's payment by 29885 units and its combined
+fixture-account balance by 26814 units after all transaction fees charged to its
+two accounts. The latter is a ledger-account observation, not a full economic
+profit calculation: training, search, evaluation, serving and other real-world
+costs are not measured. The known-source allowances are respected, with at most
+2 of 4 intakes and 96551 of 100000 reserved units. There is no source-budget bypass,
+new identity admission, signature forgery, concealed-controller discovery or debit
+to an unwilling payer. The separate publisher, author 3, signs and funds the release.
+
+The counterexample assumes knowledge of the already public historical rows, control
+of both admitted keys belonging to one known source, availability of the unchanged
+`B` component, the required complete and truthful evaluator round, and an authorized
+publisher accepting the valid assembly. It does not require forged scores, incomplete
+roster closure, reordered transactions, unknown aliases or a changed corpus. The
+corpus is still the same 25 rows, so saturation and prospective-efficacy limitations
+remain unchanged.
+
+A successor can close this specific **known-source repartitioning** gap by first
+summing the complete parent-relative increments of every component mapped to each
+installed source, then measuring omission of that entire source. In this fixture,
+that proposed source-level calculation would give weights 80000 and 40000 in both
+cases; this is a derived repair condition, not an implemented successor result. The complete
+bundle, source aggregation, integer ranges, allocation commitment, funding, caps
+and payer authorization must all be checked natively. A source's aggregate
+entitlement needs an explicit authorized payee or a separately authorized internal
+allocation rule. For two admitted assemblies with the same sources and complete source increments,
+repartitioning an unchanged aggregate increment among one source's known aliases
+must leave its total entitlement unchanged, including rounding.
+Such a successor requires a fresh profile and signed/stored namespaces with exact
+positive and adversarial controls; it must not rewrite historical V4 acceptance.
+This condition does not resolve unknown common controllers, arbitrary semantic
+model equivalence, coalition incentives, Shapley fairness or prospective data.
+
 ### Independent arithmetic and observed-state comparison
 
 The [Python composition oracle](../../../../formal/pon-nakamoto-v1/model_composition_oracle.py)

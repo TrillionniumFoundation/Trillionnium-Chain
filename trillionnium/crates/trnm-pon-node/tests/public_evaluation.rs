@@ -140,46 +140,88 @@ fn prepared() -> (Config, State, Hash, Hash) {
 fn every_arrival_order_closes_identically_and_missing_is_abort() {
     let (cfg, base, cid, _) = prepared();
     let scores = [10, 100, 100];
-    for order in [
+    let orders = [
         [0, 1, 2],
         [0, 2, 1],
         [1, 0, 2],
         [1, 2, 0],
         [2, 0, 1],
         [2, 1, 0],
-    ] {
-        let e = &object(&base, cid)["public_evaluation"];
-        let mut s = step(
-            &base,
-            &order
-                .iter()
-                .map(|&i| commit_tx(&cfg, cid, e, i, scores[i as usize], 1))
-                .collect::<Vec<_>>(),
-            16,
+    ];
+    let execute = |state: &State, txs: &[Vec<u8>], height, workers| {
+        pon_executor::execute(
+            state,
+            txs,
+            height,
+            development_public(3).unwrap(),
+            [4; 32],
+            workers,
             &cfg,
-        );
-        let e = &object(&s, cid)["public_evaluation"];
-        s = step(
-            &s,
-            &order
-                .iter()
-                .map(|&i| reveal_tx(&cfg, cid, e, i, scores[i as usize], 2))
-                .collect::<Vec<_>>(),
-            32,
-            &cfg,
-        );
-        assert_eq!(object(&s, cid)["status"], "submitted");
-        s = step(&s, &[], 48, &cfg);
-        assert_eq!(object(&s, cid)["score"], 10);
-        assert_eq!(object(&s, cid)["status"], "evaluated");
-        assert!(
-            evaluation::adoption_allowed(&evaluation::read_evaluation(&s, cid).unwrap(), 55)
-                .is_err()
-        );
-        assert!(
-            evaluation::adoption_allowed(&evaluation::read_evaluation(&s, cid).unwrap(), 56)
-                .is_ok()
-        );
+        )
+        .unwrap()
+    };
+    let mut expected = None;
+    // Commit and reveal arrival orders are independent. Equality of the score
+    // alone would miss changed retained records, fees, nonces or state roots.
+    for commit_order in orders {
+        for reveal_order in orders {
+            for workers in [1, 2, 4, 8] {
+                let e = &object(&base, cid)["public_evaluation"];
+                let commits = commit_order
+                    .iter()
+                    .map(|&i| commit_tx(&cfg, cid, e, i, scores[i as usize], 1))
+                    .collect::<Vec<_>>();
+                let committed = execute(&base, &commits, 16, workers).state;
+                let e = &object(&committed, cid)["public_evaluation"];
+                let reveals = reveal_order
+                    .iter()
+                    .map(|&i| reveal_tx(&cfg, cid, e, i, scores[i as usize], 2))
+                    .collect::<Vec<_>>();
+                let revealed = execute(&committed, &reveals, 32, workers).state;
+                assert_eq!(object(&revealed, cid)["status"], "submitted");
+                let closed = execute(&revealed, &[], 48, workers);
+                assert_eq!(object(&closed.state, cid)["score"], 10);
+                assert_eq!(object(&closed.state, cid)["status"], "evaluated");
+                let evaluation = evaluation::read_evaluation(&closed.state, cid).unwrap();
+                assert!(evaluation::adoption_allowed(&evaluation, 55).is_err());
+                assert!(evaluation::adoption_allowed(&evaluation, 56).is_ok());
+                let actual = (closed.state, closed.root);
+                if let Some(ref expected) = expected {
+                    assert_eq!(
+                        &actual, expected,
+                        "commit={commit_order:?}, reveal={reveal_order:?}, workers={workers}"
+                    );
+                } else {
+                    expected = Some(actual);
+                }
+            }
+        }
+    }
+    // In particular, two fast high scores cannot suppress the missing low
+    // score. Each possible omitted member aborts the complete-roster profile.
+    for missing in 0..3 {
+        for workers in [1, 2, 4, 8] {
+            let e = &object(&base, cid)["public_evaluation"];
+            let commits = (0..3)
+                .map(|i| commit_tx(&cfg, cid, e, i, scores[i as usize], 1))
+                .collect::<Vec<_>>();
+            let committed = execute(&base, &commits, 16, workers).state;
+            let e = &object(&committed, cid)["public_evaluation"];
+            let reveals = (0..3)
+                .filter(|i| *i != missing)
+                .map(|i| reveal_tx(&cfg, cid, e, i, scores[i as usize], 2))
+                .collect::<Vec<_>>();
+            let revealed = execute(&committed, &reveals, 32, workers).state;
+            assert_eq!(object(&revealed, cid)["status"], "submitted");
+            let closed = execute(&revealed, &[], 48, workers).state;
+            assert_eq!(object(&closed, cid)["status"], "evaluation-aborted");
+            assert_eq!(object(&closed, cid)["score"], 0);
+            let evaluation = evaluation::read_evaluation(&closed, cid).unwrap();
+            assert_eq!(evaluation["closed"]["missing_reveal_count"], 1);
+            assert!(evaluation::adoption_allowed(&evaluation, 56).is_err());
+            assert_eq!(closed["model:current"], base["model:current"]);
+            assert!(!closed.keys().any(|key| key.starts_with("release:")));
+        }
     }
     let s = step(&base, &[], 48, &cfg);
     assert_eq!(object(&s, cid)["status"], "evaluation-aborted");
