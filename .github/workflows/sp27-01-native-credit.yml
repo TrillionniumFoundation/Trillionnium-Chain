@@ -1,0 +1,185 @@
+name: SP27-01 native credit and lifecycle observations
+on:
+  pull_request:
+    paths:
+      - .github/workflows/sp27-01-native-credit.yml
+      - trillionnium/**
+      - scripts/research/sp27_01_native_credit.py
+      - scripts/ci/verify_ci_source.py
+      - scripts/ci/test_ci_source_integrity.py
+      - scripts/project-preflight.sh
+      - config/**
+      - rust-toolchain.toml
+      - AGENTS.md
+      - PROJECT_ID
+      - PROJECT_BOUNDARY.json
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: sp27-01-native-credit-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  CARGO_BUILD_JOBS: "2"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  RUST_TEST_THREADS: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+  SP27_EXPECTED_SOURCE: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+jobs:
+  exact-source-functional-accounting:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    steps:
+      - name: Checkout exact source without persisted credentials
+        timeout-minutes: 10
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SP27_EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Reserve evidence and verify exact source
+        id: source
+        timeout-minutes: 5
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/sp27-01-native-credit-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$out"
+          printf 'SP27_OUT=%s\n' "$out" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/sp27-01-target\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          # The supervisor enforces the normal development-branch boundary.
+          # This local branch has the exact checked-out source and is never pushed.
+          git switch -c "test/chain-sp27-01-ci-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          bash scripts/project-preflight.sh 2>&1 | tee "$out/preflight.log"
+          python3 scripts/ci/verify_ci_source.py --kind head \
+            --expected-head "$SP27_EXPECTED_SOURCE" --output "$out/source-before.json" \
+            2>&1 | tee "$out/source-before.log"
+          printf '%s\n' \
+            'Functional/accounting observations only; no performance or production qualification.' \
+            'No independent business demand, external payment, finality or Agent 02/06 owner acknowledgment.' \
+            'The separate Papers consumer must read the retained events; its acceptance is not inferred here.' \
+            > "$out/SCOPE.txt"
+      - name: Install and identify the pinned toolchain
+        id: toolchain
+        timeout-minutes: 10
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy \
+            2>&1 | tee "$SP27_OUT/toolchain-install.log"
+          rustc +1.95.0 -Vv > "$SP27_OUT/rustc-version.txt"
+          cargo +1.95.0 -Vv > "$SP27_OUT/cargo-version.txt"
+          python3 --version > "$SP27_OUT/python-version.txt"
+      - name: Verify locked graph and formatting
+        timeout-minutes: 5
+        if: always() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success'
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml \
+            --format-version 1 > "$SP27_OUT/cargo-metadata.json" 2> "$SP27_OUT/cargo-metadata.stderr"
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all --check \
+            2>&1 | tee "$SP27_OUT/format.log"
+      - name: Run source integrity rejection controls
+        timeout-minutes: 3
+        if: always() && steps.source.outcome == 'success'
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/test_ci_source_integrity.py \
+            2>&1 | tee "$SP27_OUT/source-negative-controls.log"
+      - name: Run strict Node library and test Clippy
+        timeout-minutes: 20
+        if: always() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success'
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml \
+            -p trnm-pon-node --lib --tests -- -D warnings \
+            2>&1 | tee "$SP27_OUT/clippy.log"
+      - name: Run retained attempt and native context controls
+        timeout-minutes: 20
+        if: always() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success'
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml \
+            -p trnm-crypto-primitives --lib pon_work::legal_attempt::tests:: -- --test-threads=1 \
+            2>&1 | tee "$SP27_OUT/retained-attempt-tests.log"
+          python3 - <<'PY'
+          import os, re
+          from pathlib import Path
+          text = (Path(os.environ['SP27_OUT']) / 'retained-attempt-tests.log').read_text()
+          names = {
+              'boundary_target_is_inclusive_and_zero_target_refuses_before_work',
+              'changed_challenge_and_task_never_gain_acceptance_from_cached_product',
+              'every_stage_cancellation_returns_no_attempt_and_does_not_poison_retry',
+              'factorial_kernels_match_independent_reference_for_full_and_structured_fields',
+              'losing_attempt_still_replays_every_transcript_tile_without_lazy_serialization',
+              'preparation_never_reduces_noncanonical_fields_or_wrong_shapes',
+              'sparse_preparation_matches_dense_and_independent_full_field_proofs',
+              'sparse_preparation_rejects_hidden_noncanonical_words_and_wrong_lengths',
+              'sparse_setup_keeps_complete_misses_callbacks_and_cancelled_retry',
+          }
+          rows = re.findall(r'^test (\S+) \.\.\. (.+)$', text, re.M)
+          expected = {('pon_work::legal_attempt::tests::' + name, 'ok') for name in names}
+          if (len(rows) != 9 or set(rows) != expected
+                  or len(re.findall(r'^test result: ok\. 9 passed; 0 failed; 0 ignored;', text, re.M)) != 1):
+              raise SystemExit('all nine retained legal-attempt controls must execute')
+          PY
+          cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml \
+            -p trnm-pon-node --test native_full_relation_context \
+            --test work_header_binding --test growth_persistence_cancellation \
+            -- --test-threads=1 2>&1 | tee "$SP27_OUT/retained-native-tests.log"
+      - name: Build the exact native library test executable
+        timeout-minutes: 25
+        if: always() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success'
+        id: build
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml \
+            -p trnm-pon-node --lib --no-run --message-format=json \
+            > "$SP27_OUT/build.jsonl" 2> "$SP27_OUT/build.stderr"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ['SP27_OUT'])
+          candidates = []
+          for line in (root / 'build.jsonl').read_text().splitlines():
+              row = json.loads(line)
+              if (row.get('reason') == 'compiler-artifact'
+                      and row.get('target', {}).get('name') == 'trnm_pon_node'
+                      and row.get('target', {}).get('kind') == ['lib']
+                      and row.get('profile', {}).get('test') is True
+                      and row.get('executable')):
+                  candidates.append(row)
+          if len(candidates) != 1:
+              raise SystemExit('expected exactly one Node library-test executable')
+          (root / 'selected-artifact.json').write_text(json.dumps(candidates[0], indent=2) + '\n')
+          with open(os.environ['GITHUB_ENV'], 'a') as stream:
+              stream.write('SP27_TEST_BINARY=' + candidates[0]['executable'] + '\n')
+          PY
+      - name: Execute the explicit full, cancel, rejection and unfinished roster
+        timeout-minutes: 25
+        if: always() && steps.source.outcome == 'success' && steps.build.outcome == 'success'
+        run: |
+          set -euo pipefail
+          python3 scripts/research/sp27_01_native_credit.py \
+            --repo "$GITHUB_WORKSPACE" --binary "$SP27_TEST_BINARY" \
+            --output "$SP27_OUT/native" \
+            --run-id "sp27-01-ci-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --source-sha "$SP27_EXPECTED_SOURCE" --source-tree "$(git rev-parse HEAD^{tree})" \
+            --timeout-seconds 300 2>&1 | tee "$SP27_OUT/supervisor.log"
+      - name: Verify source after every outcome
+        timeout-minutes: 5
+        if: always() && steps.source.outcome == 'success'
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head \
+            --expected-head "$SP27_EXPECTED_SOURCE" --output "$SP27_OUT/source-after.json" \
+            2>&1 | tee "$SP27_OUT/source-after.log"
+      - name: Preserve original successful, failed and incomplete observations
+        timeout-minutes: 10
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sp27-01-native-credit-${{ env.SP27_EXPECTED_SOURCE }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/sp27-01-native-credit-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30
