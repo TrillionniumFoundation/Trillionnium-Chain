@@ -209,3 +209,82 @@ fn copied_lease_record_cannot_replace_a_live_checkpoint_endpoint() {
     fs::rename(&displaced, &lease).unwrap();
     client.journal_checkpoint_v1().unwrap();
 }
+
+#[test]
+fn complete_checkpoint_request_rejects_a_copied_lease_replacement() {
+    use std::io::Write;
+    use std::os::unix::fs::OpenOptionsExt;
+
+    let directory = private_directory();
+    let socket = directory.path().join("owner.sock");
+    let log = directory.path().join("first.log");
+    let binary = env!("CARGO_BIN_EXE_trnm-external-node-checkpoint-v2");
+    let mut first = Daemon::spawn(binary, &socket, &log);
+    let client = UnixExternalCheckpointStoreV2::new(&socket)
+        .unwrap()
+        .with_timeout(Duration::from_millis(50));
+    let deadline = Instant::now() + Duration::from_secs(5);
+    while client.journal_checkpoint_v1().is_err() {
+        assert!(
+            first.child.try_wait().unwrap().is_none(),
+            "{}",
+            first.stderr()
+        );
+        assert!(
+            Instant::now() < deadline,
+            "first daemon did not become ready"
+        );
+        thread::sleep(Duration::from_millis(10));
+    }
+    let original_socket = fs::symlink_metadata(&socket).unwrap().ino();
+    let original_journal = fs::read(&log).unwrap();
+    let lease = directory.path().join(".owner.sock.socket-owner-v1");
+    let record = fs::read(&lease).unwrap();
+    assert_eq!(record.len(), 56);
+    let original_lease = fs::symlink_metadata(&lease).unwrap().ino();
+    fs::rename(&lease, directory.path().join("retained-lease")).unwrap();
+    let mut replacement = fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .mode(0o600)
+        .open(&lease)
+        .unwrap();
+    replacement.write_all(&record).unwrap();
+    replacement.sync_all().unwrap();
+    drop(replacement);
+    fs::File::open(directory.path())
+        .unwrap()
+        .sync_all()
+        .unwrap();
+    assert_ne!(fs::symlink_metadata(&lease).unwrap().ino(), original_lease);
+    assert!(first.child.try_wait().unwrap().is_none());
+
+    // This public API sends a complete, valid framed request. Unlike the
+    // connect-only probe, it must fence before reading the journal checkpoint.
+    assert!(
+        client.journal_checkpoint_v1().is_err(),
+        "a complete request was authorized after lease replacement"
+    );
+    let deadline = Instant::now() + Duration::from_secs(5);
+    loop {
+        if let Some(status) = first.child.try_wait().unwrap() {
+            assert!(!status.success(), "the displaced owner did not fail closed");
+            assert!(
+                first
+                    .stderr()
+                    .contains("checkpoint endpoint pathname identity changed"),
+                "the complete request did not trip the pathname fence: {}",
+                first.stderr()
+            );
+            break;
+        }
+        assert!(
+            Instant::now() < deadline,
+            "the complete request did not fence the displaced owner"
+        );
+        thread::sleep(Duration::from_millis(10));
+    }
+    assert_eq!(fs::symlink_metadata(&socket).unwrap().ino(), original_socket);
+    assert_eq!(fs::read(&log).unwrap(), original_journal);
+    assert_eq!(fs::read(&lease).unwrap(), record);
+}

@@ -1,3 +1,25 @@
+**Checkpoint socket connect-only probe continuation, 2026-11-12 UTC — HOLD:**
+
+Preserve the Root continuation's original S879 socket observation (2 passed,
+1 failed, exit 101) and its evidence. The copied-lease fixture exposed an actual
+ordering conflict: a competing owner's successful connect-only liveness probe
+woke the incumbent's accept-time pathname check before the original lease was
+restored. The competitor refused without replacing the socket, but the incumbent
+exited.
+
+Move no authority past a missing fence. The candidate removes only the redundant
+accept-time socket-owner check; the existing complete-frame check remains before
+all journal checkpoint export, lookup and compare-and-advance paths. Preserve
+all three original socket regressions and add a complete-request negative control
+that requires pathname fencing and unchanged socket identity/journal bytes after
+lease replacement. Keep original transport timeouts, schemas and failure handling.
+
+This is a separate follow-up on the actual evidence parent. Run project preflight,
+exact source verification, retained package tests, locked Cargo graphs, strict
+Clippy, formatting, source-integrity rejection controls and Markdown links on
+its own committed source. Prepared or static-reviewed text is not native
+qualification. Prior Root suite timeouts and other HOLD boundaries remain.
+
 **Root runner process ownership, 2026-11-12 UTC — HOLD:**
 
 Continue exact native source `92934b64f80ee9b20bcc070a08ca0966b7c5741d`
