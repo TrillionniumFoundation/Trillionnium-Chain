@@ -1,0 +1,1461 @@
+{
+  "created_at_utc": "2026-11-12T00:34:35.630193+00:00",
+  "directories": [
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c1-gates",
+      "bytes": 4020,
+      "file_count": 5,
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c1-gates"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-gates",
+      "bytes": 4071,
+      "file_count": 5,
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-gates"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates",
+      "bytes": 18195,
+      "file_count": 17,
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates",
+      "bytes": 1826862,
+      "file_count": 137,
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-preparation",
+      "bytes": 444,
+      "file_count": 10,
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-preparation"
+    }
+  ],
+  "excluded_directories": [
+    "/home/qq/work/chain-cell-four-gates-2bfb-c1-gates/tmp",
+    "/home/qq/work/chain-cell-four-gates-2bfb-before-gates/tmp",
+    "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/tmp",
+    "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/tmp"
+  ],
+  "exclusion_rule": "Exclude only directories with exact basename tmp,temp,.cache,cache,__pycache__,target,.cargo; preserve every other regular file byte-for-byte.",
+  "extra_files": [
+    "run-cell-four-gates-2bfb-v2.py",
+    "cell-four-2bfb-discovery-test-only.patch"
+  ],
+  "files": [
+    {
+      "archive_path": "cell-four-2bfb-discovery-test-only.patch",
+      "bytes": 12347,
+      "mode": 432,
+      "mtime_ns": 1794440853012504364,
+      "sha256": "f7087de6996642c28e7ed3dd4bafd4574a8aeeb0d346311ed391d220a52d6521",
+      "source_path": "/home/qq/work/cell-four-2bfb-discovery-test-only.patch"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates/authenticated_v3_all_withholding_sources_refuse_with_original_deadline_and_counters.stderr",
+      "bytes": 1169,
+      "mode": 384,
+      "mtime_ns": 1794442070701198384,
+      "sha256": "d771281f8f9a13bea60eb092b77c93cb4870c46af6f9f0f6edeb61e7f409d76f",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/authenticated_v3_all_withholding_sources_refuse_with_original_deadline_and_counters.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates/authenticated_v3_all_withholding_sources_refuse_with_original_deadline_and_counters.stdout",
+      "bytes": 426,
+      "mode": 384,
+      "mtime_ns": 1794442070700198420,
+      "sha256": "9f22b3ce025dbcdb23dc3636259a83227e3bf2200d7e2c5e55808eade3d88dad",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/authenticated_v3_all_withholding_sources_refuse_with_original_deadline_and_counters.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates/authenticated_v3_three_withholding_sources_leave_time_for_honest_fourth_cold_fetch.stderr",
+      "bytes": 4543,
+      "mode": 384,
+      "mtime_ns": 1794442068593273454,
+      "sha256": "d29b9c412e3b3c2e3b7499c014f6addd9a65a5ba49d9ae476e3aa905534e2fea",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/authenticated_v3_three_withholding_sources_leave_time_for_honest_fourth_cold_fetch.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates/authenticated_v3_three_withholding_sources_leave_time_for_honest_fourth_cold_fetch.stdout",
+      "bytes": 424,
+      "mode": 384,
+      "mtime_ns": 1794442068593273454,
+      "sha256": "2decb4fc3835c0810e87ce2c9d31f0c67d387974d7062dcba229e302d81f7ccd",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/authenticated_v3_three_withholding_sources_leave_time_for_honest_fourth_cold_fetch.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates/authenticated_v3_time_sharing_never_refunds_exhausted_connection_budget.stderr",
+      "bytes": 645,
+      "mode": 384,
+      "mtime_ns": 1794442072815129992,
+      "sha256": "67c1d760a2379cba954d93804edf4ced4d94c783527f11719273072010fea2c4",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/authenticated_v3_time_sharing_never_refunds_exhausted_connection_budget.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates/authenticated_v3_time_sharing_never_refunds_exhausted_connection_budget.stdout",
+      "bytes": 402,
+      "mode": 384,
+      "mtime_ns": 1794442072815129992,
+      "sha256": "188f8f8cb17e1802b5f386e38a1fa38d799669bd9a5595660e305fba48dc3194",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/authenticated_v3_time_sharing_never_refunds_exhausted_connection_budget.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates/cargo-version.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794441981723660396,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/cargo-version.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates/cargo-version.stdout",
+      "bytes": 36,
+      "mode": 384,
+      "mtime_ns": 1794441981725350477,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/cargo-version.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates/preflight.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794441975911031934,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/preflight.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates/preflight.stdout",
+      "bytes": 175,
+      "mode": 384,
+      "mtime_ns": 1794441975936554301,
+      "sha256": "4da534a362b9c64365090813b2f5b76b95f9296d5d14aeb39bb82c933af128e0",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/preflight.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates/rustc-version.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794441981715814847,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/rustc-version.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates/rustc-version.stdout",
+      "bytes": 196,
+      "mode": 384,
+      "mtime_ns": 1794441981719350688,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/rustc-version.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates/source-after.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442072863640827,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/source-after.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates/source-after.stdout",
+      "bytes": 423,
+      "mode": 384,
+      "mtime_ns": 1794442077293963481,
+      "sha256": "929b6363caf6122d40c7e22211ebd33e62219ed5eeadbc5d52411feb490feb0e",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/source-after.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates/source-before.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794441975943405776,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/source-before.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates/source-before.stdout",
+      "bytes": 423,
+      "mode": 384,
+      "mtime_ns": 1794441981699351393,
+      "sha256": "929b6363caf6122d40c7e22211ebd33e62219ed5eeadbc5d52411feb490feb0e",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/source-before.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-full-gates/summary.json",
+      "bytes": 9333,
+      "mode": 384,
+      "mtime_ns": 1794442077348947353,
+      "sha256": "dec008511fd9cb7318887b057114c92a721e1d15656de4e08d26e047f755a5ec",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-full-gates/summary.json"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-gates/preflight.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794441504366233500,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-gates/preflight.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-gates/preflight.stdout",
+      "bytes": 175,
+      "mode": 384,
+      "mtime_ns": 1794441504391396529,
+      "sha256": "4da534a362b9c64365090813b2f5b76b95f9296d5d14aeb39bb82c933af128e0",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-gates/preflight.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-gates/source-before.stderr",
+      "bytes": 754,
+      "mode": 384,
+      "mtime_ns": 1794441504467394141,
+      "sha256": "66dc4854d9d5e969594dc369942a7cd8229d56cab3dc890057eb1f9fbe642e64",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-gates/source-before.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-gates/source-before.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794441504398593505,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-gates/source-before.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-before-gates/summary.json",
+      "bytes": 3142,
+      "mode": 384,
+      "mtime_ns": 1794441504512804662,
+      "sha256": "3c03a32bcf11fa052b89e171bf5504eeefb8be1b3f4f4c6fa5fab79a679928a9",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-before-gates/summary.json"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c1-gates/preflight.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794441468127047180,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c1-gates/preflight.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c1-gates/preflight.stdout",
+      "bytes": 178,
+      "mode": 384,
+      "mtime_ns": 1794441468147527275,
+      "sha256": "b584e2947115895dbe77bbfdfca6a99e0acab0a888dc04eede00d54555c691de",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c1-gates/preflight.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c1-gates/source-before.stderr",
+      "bytes": 726,
+      "mode": 384,
+      "mtime_ns": 1794441468220525015,
+      "sha256": "6a9ef0196105fed9c8423e008de0916c47d2811c7f74a3c4c494334179756e72",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c1-gates/source-before.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c1-gates/source-before.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794441468159557645,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c1-gates/source-before.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c1-gates/summary.json",
+      "bytes": 3116,
+      "mode": 384,
+      "mtime_ns": 1794441468273731985,
+      "sha256": "f7f95feb0759e2f0adf47fd57c550dff634d84bc9eee38756078c730119aeecc",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c1-gates/summary.json"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/cargo-version.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442329419629360,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/cargo-version.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/cargo-version.stdout",
+      "bytes": 36,
+      "mode": 384,
+      "mtime_ns": 1794442329420868309,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/cargo-version.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/cell_complete_version_vector.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442399181797389,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/cell_complete_version_vector.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/cell_complete_version_vector.stdout",
+      "bytes": 43,
+      "mode": 384,
+      "mtime_ns": 1794442399209319627,
+      "sha256": "a52fe4645753dc3f3f7bbb47038dee80d69e9c30465a2596fa1d1130d7be4f9d",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/cell_complete_version_vector.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/cell_discovery_epoch_v3_vector.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442399215656632,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/cell_discovery_epoch_v3_vector.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/cell_discovery_epoch_v3_vector.stdout",
+      "bytes": 73,
+      "mode": 384,
+      "mtime_ns": 1794442399237318602,
+      "sha256": "a6ca19954096c6a820b444e3179152046c13d8ab82d50dfc53d6dd225d1d2f19",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/cell_discovery_epoch_v3_vector.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/cell_sealed_research_next_use_v2-tests.stderr",
+      "bytes": 388,
+      "mode": 384,
+      "mtime_ns": 1794442473965578038,
+      "sha256": "8cf1639f9c825db639a3baa0c45f07a186d5b2ded87203da6c70b09deea453c4",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/cell_sealed_research_next_use_v2-tests.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/cell_sealed_research_next_use_v2-tests.stdout",
+      "bytes": 1186,
+      "mode": 384,
+      "mtime_ns": 1794442478376415940,
+      "sha256": "908a6f90da6fa39e7aecd0e3c10eee9d61ca84d2b9b0899b5f3d4766579d1a98",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/cell_sealed_research_next_use_v2-tests.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/cell_sealed_research_paged_next_use_v1-tests.stderr",
+      "bytes": 400,
+      "mode": 384,
+      "mtime_ns": 1794442481399304828,
+      "sha256": "e13d930e65d8a4dc7733f4d01c95838c8c3108cba08f5eb66951c3a385c67f77",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/cell_sealed_research_paged_next_use_v1-tests.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/cell_sealed_research_paged_next_use_v1-tests.stdout",
+      "bytes": 1186,
+      "mode": 384,
+      "mtime_ns": 1794442485750144876,
+      "sha256": "a3e170460c0211dc3cca8e3b0efa62f116bbbbc4fb8c728acaaea545557c98d0",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/cell_sealed_research_paged_next_use_v1-tests.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/cell_storage_descriptor_reference.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442399346245180,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/cell_storage_descriptor_reference.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/cell_storage_descriptor_reference.stdout",
+      "bytes": 56,
+      "mode": 384,
+      "mtime_ns": 1794442399380313369,
+      "sha256": "90353ba0c059abdd0726859f829cb54cf36cf42cc6ad7c760708aa39996db779",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/cell_storage_descriptor_reference.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/cell_version_content_vector.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442399248211343,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/cell_version_content_vector.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/cell_version_content_vector.stdout",
+      "bytes": 39,
+      "mode": 384,
+      "mtime_ns": 1794442399281316992,
+      "sha256": "5b4677d887d5c61a5a0753fcf0dac8f61c81722511e7ac57e93611a903a5cd82",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/cell_version_content_vector.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/cell_version_retention_v3_vector.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442399312749384,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/cell_version_retention_v3_vector.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/cell_version_retention_v3_vector.stdout",
+      "bytes": 29,
+      "mode": 384,
+      "mtime_ns": 1794442399335315016,
+      "sha256": "aa65247be491ddce8016c901ffda8c25320f55ad68ca4e84549b549b6650e7c0",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/cell_version_retention_v3_vector.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/check_pq_research_integration.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442338504821954,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/check_pq_research_integration.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/check_pq_research_integration.stdout",
+      "bytes": 557,
+      "mode": 384,
+      "mtime_ns": 1794442338638532326,
+      "sha256": "be8c32a5af43419155e594f8f11c5c1eb5892079027c59736737a43205125667",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/check_pq_research_integration.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/check_repository.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442392452798831,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/check_repository.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/check_repository.stdout",
+      "bytes": 307,
+      "mode": 384,
+      "mtime_ns": 1794442398861332362,
+      "sha256": "f55b34e49fff0ffa0009ec1b79aa1e3973e81aef3a044025ebd1a87a3f7c8fdc",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/check_repository.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/clippy-default-trnm-data-availability.stderr",
+      "bytes": 3791,
+      "mode": 384,
+      "mtime_ns": 1794442941790235692,
+      "sha256": "22281fb871e8c89026ece0a79c33f6c03ab8b0a925619dd6b37a171c31041b93",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/clippy-default-trnm-data-availability.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/clippy-default-trnm-data-availability.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442925283301111,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/clippy-default-trnm-data-availability.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/clippy-default-trnm-pon-node.stderr",
+      "bytes": 2016,
+      "mode": 384,
+      "mtime_ns": 1794442974525013981,
+      "sha256": "1e3456f7c146744dae8b77ef6a8dbf56ed084fb35a912cd7e9088f3fa041a029",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/clippy-default-trnm-pon-node.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/clippy-default-trnm-pon-node.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442942078735077,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/clippy-default-trnm-pon-node.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/counterexample-fixture.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442399115323067,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/counterexample-fixture.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/counterexample-fixture.stdout",
+      "bytes": 110,
+      "mode": 384,
+      "mtime_ns": 1794442399157321530,
+      "sha256": "7a941affd4a8bb4da8185cda32a027ecf7b4c9df67933bcf80657874b6af5f71",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/counterexample-fixture.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-complete.stderr",
+      "bytes": 3791,
+      "mode": 384,
+      "mtime_ns": 1794442437661910808,
+      "sha256": "8e5efb5f9c66d02a2f2f600a065d6390c880cef972f56d4bfe500dafaa5051bb",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-complete.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-complete.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442399860312459,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-complete.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-01-readback.stderr",
+      "bytes": 54,
+      "mode": 384,
+      "mtime_ns": 1794442452742357484,
+      "sha256": "834ae99dd06177897f22165046e71ac729a2e0e968ce90da7bbbd2fd2c0f8437",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-01-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-01-readback.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442452719358329,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-01-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-01.stderr",
+      "bytes": 979,
+      "mode": 384,
+      "mtime_ns": 1794442452699359063,
+      "sha256": "1ed15f5ae35b0469bb853f260d8ed40db79a0d1fab093665be75770163dcb2e6",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-01.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-01.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442448248516564,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-01.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-02-readback.stderr",
+      "bytes": 54,
+      "mode": 384,
+      "mtime_ns": 1794442457299190201,
+      "sha256": "834ae99dd06177897f22165046e71ac729a2e0e968ce90da7bbbd2fd2c0f8437",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-02-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-02-readback.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442457276191046,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-02-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-02.stderr",
+      "bytes": 979,
+      "mode": 384,
+      "mtime_ns": 1794442457253191890,
+      "sha256": "1ed15f5ae35b0469bb853f260d8ed40db79a0d1fab093665be75770163dcb2e6",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-02.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-02.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442452753119480,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-02.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-03-readback.stderr",
+      "bytes": 54,
+      "mode": 384,
+      "mtime_ns": 1794442461857022842,
+      "sha256": "834ae99dd06177897f22165046e71ac729a2e0e968ce90da7bbbd2fd2c0f8437",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-03-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-03-readback.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442461833023723,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-03-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-03.stderr",
+      "bytes": 979,
+      "mode": 384,
+      "mtime_ns": 1794442461808024641,
+      "sha256": "1ed15f5ae35b0469bb853f260d8ed40db79a0d1fab093665be75770163dcb2e6",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-03.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-03.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442457309245790,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-03.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-04-readback.stderr",
+      "bytes": 54,
+      "mode": 384,
+      "mtime_ns": 1794442466412855517,
+      "sha256": "834ae99dd06177897f22165046e71ac729a2e0e968ce90da7bbbd2fd2c0f8437",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-04-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-04-readback.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442466388856398,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-04-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-04.stderr",
+      "bytes": 979,
+      "mode": 384,
+      "mtime_ns": 1794442466327858639,
+      "sha256": "1ed15f5ae35b0469bb853f260d8ed40db79a0d1fab093665be75770163dcb2e6",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-04.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-04.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442461866037037,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-04.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-05-readback.stderr",
+      "bytes": 54,
+      "mode": 384,
+      "mtime_ns": 1794442470967688190,
+      "sha256": "834ae99dd06177897f22165046e71ac729a2e0e968ce90da7bbbd2fd2c0f8437",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-05-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-05-readback.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442470944820149,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-05-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-05.stderr",
+      "bytes": 979,
+      "mode": 384,
+      "mtime_ns": 1794442470888691092,
+      "sha256": "1ed15f5ae35b0469bb853f260d8ed40db79a0d1fab093665be75770163dcb2e6",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-05.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/da-required-05.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442466422855149,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/da-required-05.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/format.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442329602333064,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/format.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/format.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442329602333064,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/format.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/inventory.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442336425993888,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/inventory.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/inventory.stdout",
+      "bytes": 35,
+      "mode": 384,
+      "mtime_ns": 1794442336466611511,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/inventory.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/locked-all-feature-graph.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442329537784543,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/locked-all-feature-graph.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/locked-all-feature-graph.stdout",
+      "bytes": 852192,
+      "mode": 384,
+      "mtime_ns": 1794442329588862188,
+      "sha256": "5def5df5f5ab15f765ba026323f9acdcedfe636b29639d37c220dfd7a601e656",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/locked-all-feature-graph.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/locked-graph.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442329423147614,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/locked-graph.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/locked-graph.stdout",
+      "bytes": 837458,
+      "mode": 384,
+      "mtime_ns": 1794442329506865176,
+      "sha256": "e3099fda69a738bdf2c6c303f4c8756e6d5d9dd056c65fbb078fe817083ee139",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/locked-graph.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/next-architecture-python.stderr",
+      "bytes": 4997,
+      "mode": 384,
+      "mtime_ns": 1794442399100323616,
+      "sha256": "c5865200a5466f37a84009956526f3272fa6d4b935eab34b0d26b482481cafde",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/next-architecture-python.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/next-architecture-python.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442398899330972,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/next-architecture-python.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-01-readback.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442703709034906,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-01-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-01-readback.stdout",
+      "bytes": 218,
+      "mode": 384,
+      "mtime_ns": 1794442703730093104,
+      "sha256": "a548544b2f9c2c89575145e7dcdc13b4c8898800a0544a98860f6d6cc3513dbe",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-01-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-01.stderr",
+      "bytes": 193,
+      "mode": 384,
+      "mtime_ns": 1794442703449103525,
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-01.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-01.stdout",
+      "bytes": 253,
+      "mode": 384,
+      "mtime_ns": 1794442703671095292,
+      "sha256": "3112f8ff9f7ae70c104a45ff63f0d5bcb2687b9288676e24b71db4f5a6deb69d",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-01.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-02-readback.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442704259096643,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-02-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-02-readback.stdout",
+      "bytes": 221,
+      "mode": 384,
+      "mtime_ns": 1794442704281072671,
+      "sha256": "714b28f5619508b1d97f4a8b278259c0e5b1b8d413a2d8fdf2a48a493a6a4d11",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-02-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-02.stderr",
+      "bytes": 193,
+      "mode": 384,
+      "mtime_ns": 1794442703789090917,
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-02.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-02.stdout",
+      "bytes": 256,
+      "mode": 384,
+      "mtime_ns": 1794442704203075563,
+      "sha256": "1537af72ac2f2c86f870d7cd8f81449348144df90324ae7aa0bad829d705084e",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-02.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-03-readback.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442704457703460,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-03-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-03-readback.stdout",
+      "bytes": 207,
+      "mode": 384,
+      "mtime_ns": 1794442704480065291,
+      "sha256": "413f01c133c6a3b5485c9b4b057bf4af4560349d5c6cf9cd78a70dc89b4fb8c4",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-03-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-03.stderr",
+      "bytes": 193,
+      "mode": 384,
+      "mtime_ns": 1794442704342070409,
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-03.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-03.stdout",
+      "bytes": 242,
+      "mode": 384,
+      "mtime_ns": 1794442704435066959,
+      "sha256": "7fda0f705f41ad0db6cbdba672b493f544482a67e27217a6c652e12644ee2241",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-03.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-04-readback.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442704656089185,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-04-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-04-readback.stdout",
+      "bytes": 209,
+      "mode": 384,
+      "mtime_ns": 1794442704678057948,
+      "sha256": "fced046989210e115f71efd362824af4dead383742bbbfd2b2a174e3d476ea83",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-04-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-04.stderr",
+      "bytes": 193,
+      "mode": 384,
+      "mtime_ns": 1794442704540063066,
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-04.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-04.stdout",
+      "bytes": 244,
+      "mode": 384,
+      "mtime_ns": 1794442704609060507,
+      "sha256": "efd76c99c13e4c716eebc8821315f50f110f46ae0415119387aff1b8afc31913",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-04.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-05-readback.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442704856081871,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-05-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-05-readback.stdout",
+      "bytes": 198,
+      "mode": 384,
+      "mtime_ns": 1794442704877050568,
+      "sha256": "3e97ded24981cc613b098615e76fa3f1db42b316744f659e9936a31e43c2d48e",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-05-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-05.stderr",
+      "bytes": 193,
+      "mode": 384,
+      "mtime_ns": 1794442704737055760,
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-05.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-05.stdout",
+      "bytes": 233,
+      "mode": 384,
+      "mtime_ns": 1794442704811053015,
+      "sha256": "1b988225df73334152d755ce73390b54d5c98e016c2be1a98bf8c79333b4137f",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-05.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-06-readback.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442705053655565,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-06-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-06-readback.stdout",
+      "bytes": 204,
+      "mode": 384,
+      "mtime_ns": 1794442705077043151,
+      "sha256": "a1c74f74a73a8446e1758b528262abb67b00254bba29dad0f3c1fffd38958a9d",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-06-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-06.stderr",
+      "bytes": 193,
+      "mode": 384,
+      "mtime_ns": 1794442704933048491,
+      "sha256": "f9544e65566406cd83df3f730cc5522eaa808c0c9b0161da25cbd5ee40683edb",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-06.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-06.stdout",
+      "bytes": 239,
+      "mode": 384,
+      "mtime_ns": 1794442705011693693,
+      "sha256": "4a0881ca82f81cd6feffd92b31d960ff650affb3de793074a9bb646387e33d91",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-06.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-07-readback.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442705201447222,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-07-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-07-readback.stdout",
+      "bytes": 207,
+      "mode": 384,
+      "mtime_ns": 1794442705223037736,
+      "sha256": "5fcccbfa4673241d941605f8e47d5e5828c0b61e3400118072154bdb03acf00a",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-07-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-07.stderr",
+      "bytes": 193,
+      "mode": 384,
+      "mtime_ns": 1794442705133041074,
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-07.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-07.stdout",
+      "bytes": 242,
+      "mode": 384,
+      "mtime_ns": 1794442705188039034,
+      "sha256": "19b4f4b87e2c45e3e99835e6986ce6e18150de71adbd2fdd82964bcc2af3751a",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-07.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-08-readback.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442705399450991,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-08-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-08-readback.stdout",
+      "bytes": 205,
+      "mode": 384,
+      "mtime_ns": 1794442705420030430,
+      "sha256": "449dc4e1875e3a7ee4f1924f07646d1f042f105ccf490f8cc49c6be4d98a5685",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-08-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-08.stderr",
+      "bytes": 193,
+      "mode": 384,
+      "mtime_ns": 1794442705282035548,
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-08.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-08.stdout",
+      "bytes": 240,
+      "mode": 384,
+      "mtime_ns": 1794442705354032878,
+      "sha256": "40903bc62d7f776e2af721b6218942364ecd00a818335866fde76cc9b2e152c1",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-08.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-09-readback.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442706349231248,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-09-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-09-readback.stdout",
+      "bytes": 235,
+      "mode": 384,
+      "mtime_ns": 1794442706370995159,
+      "sha256": "61db2fc0fde87096ebafdde208d47deecaeb57d13ee9121208d9cb203be8763e",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-09-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-09.stderr",
+      "bytes": 193,
+      "mode": 384,
+      "mtime_ns": 1794442705482028131,
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-09.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-09.stdout",
+      "bytes": 270,
+      "mode": 384,
+      "mtime_ns": 1794442706340996272,
+      "sha256": "20e14515f1047a947585f6d65c97051ea5811f8c0d98b4506123c18c7b6eb8f9",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-09.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-10-readback.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442707398897155,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-10-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-10-readback.stdout",
+      "bytes": 239,
+      "mode": 384,
+      "mtime_ns": 1794442707421956180,
+      "sha256": "6f33f4d33ed724ed59b54dce9542695d4988850d7212032e544835e4fce04426",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-10-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-10.stderr",
+      "bytes": 193,
+      "mode": 384,
+      "mtime_ns": 1794442706429992971,
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-10.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-10.stdout",
+      "bytes": 274,
+      "mode": 384,
+      "mtime_ns": 1794442707347958924,
+      "sha256": "ea5138fc2e061ba2317d7a194b41c62fe7f0b0eb4e4c742a68416a5f60860c87",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-10.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-11-readback.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442708299973764,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-11-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-11-readback.stdout",
+      "bytes": 252,
+      "mode": 384,
+      "mtime_ns": 1794442708321922799,
+      "sha256": "f62079ec7243b2897baae189174bac21dbec29cce7499f659cadca2874515ebd",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-11-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-11.stderr",
+      "bytes": 193,
+      "mode": 384,
+      "mtime_ns": 1794442707480953991,
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-11.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-11.stdout",
+      "bytes": 287,
+      "mode": 384,
+      "mtime_ns": 1794442708244975548,
+      "sha256": "bdf49d3e3beeeaa9136ec4fa287942933f133073f8f756db33fb33a128fc1839",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-11.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-12-readback.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442709350884632,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-12-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-12-readback.stdout",
+      "bytes": 239,
+      "mode": 384,
+      "mtime_ns": 1794442709373883779,
+      "sha256": "735d7c3e87d404d56c88551364e164679b57b3320d5b691cb445a8396c62d271",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-12-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-12.stderr",
+      "bytes": 193,
+      "mode": 384,
+      "mtime_ns": 1794442708382920536,
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-12.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-12.stdout",
+      "bytes": 274,
+      "mode": 384,
+      "mtime_ns": 1794442709321885708,
+      "sha256": "6dfca4575a266c9d67694b7211359b4060e7b2495ef54aa64cafb51de2788416",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-12.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-13-readback.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442710352137572,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-13-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-13-readback.stdout",
+      "bytes": 242,
+      "mode": 384,
+      "mtime_ns": 1794442710375846613,
+      "sha256": "c1dafc4f2690e09a92e7c0a0e747ee9d680e2139455949899faabc5569ef0db2",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-13-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-13.stderr",
+      "bytes": 193,
+      "mode": 384,
+      "mtime_ns": 1794442709433881554,
+      "sha256": "7444ab8272969aa605019a1c32d10737afd27ef8db0e06428b630242db83e378",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-13.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-required-13.stdout",
+      "bytes": 277,
+      "mode": 384,
+      "mtime_ns": 1794442710295849580,
+      "sha256": "0af145ffe3214530256237a614a73c3f2136c2b76aee41851b0a6e16acd2883a",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-required-13.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-storage-default.stderr",
+      "bytes": 2137,
+      "mode": 384,
+      "mtime_ns": 1794442687412698101,
+      "sha256": "77f4a07275e9f303a4496de31805841d2e983c036c7f735f275e557f875ee0b0",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-storage-default.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-storage-default.stdout",
+      "bytes": 6247,
+      "mode": 384,
+      "mtime_ns": 1794442703361106789,
+      "sha256": "c9f7be864847208167df2def9dc3974e6013a32b690495fe799944acff93e1a9",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-storage-default.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-storage.stderr",
+      "bytes": 1016,
+      "mode": 384,
+      "mtime_ns": 1794442908085492777,
+      "sha256": "4aabe19853e6677bb04165fcb8761074051f980085f12c9106578b48a792a22e",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-storage.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/node-storage.stdout",
+      "bytes": 6247,
+      "mode": 384,
+      "mtime_ns": 1794442925247852781,
+      "sha256": "391ea307b8aca48c00fded4d1d513b3e9dccffe271fa6916105247e89ff12cd9",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/node-storage.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/preflight.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442323557212338,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/preflight.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/preflight.stdout",
+      "bytes": 180,
+      "mode": 384,
+      "mtime_ns": 1794442323576081244,
+      "sha256": "64d4a324a23bd14342da6eb90d43634651470c35bb7978b645ef64e9df0b624c",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/preflight.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/rustc-version.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442329411400044,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/rustc-version.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/rustc-version.stdout",
+      "bytes": 196,
+      "mode": 384,
+      "mtime_ns": 1794442329415868492,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/rustc-version.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/sealed-research-python-controls.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442399410876758,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/sealed-research-python-controls.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/sealed-research-python-controls.stdout",
+      "bytes": 4701,
+      "mode": 384,
+      "mtime_ns": 1794442399786816240,
+      "sha256": "50e5cd6a4283b4d0ae3ed7d934540d67b1d1081b607fc76aadcb5c9ea0edca84",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/sealed-research-python-controls.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/sealed-research-python-readback.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442399826951827,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/sealed-research-python-readback.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/sealed-research-python-readback.stdout",
+      "bytes": 1787,
+      "mode": 384,
+      "mtime_ns": 1794442399850296168,
+      "sha256": "bacf7286ca2fa0a95929dbe730e65fd7abc14221f4017e747760ac41243300ee",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/sealed-research-python-readback.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/source-after.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794443022547417263,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/source-after.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/source-after.stdout",
+      "bytes": 423,
+      "mode": 384,
+      "mtime_ns": 1794443024040164609,
+      "sha256": "8b289a65b03b4d0aba2255ecccacc78ce6c85f1f8bcfc0d400ccd38891b88370",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/source-after.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/source-before.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442323589541272,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/source-before.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/source-before.stdout",
+      "bytes": 423,
+      "mode": 384,
+      "mtime_ns": 1794442329374869985,
+      "sha256": "8b289a65b03b4d0aba2255ecccacc78ce6c85f1f8bcfc0d400ccd38891b88370",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/source-before.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/strict-clippy.stderr",
+      "bytes": 6326,
+      "mode": 384,
+      "mtime_ns": 1794443022505221962,
+      "sha256": "a5b06526d163a93ab31bec7b2179449b561a5d9892d6b0109a572a0fe79f00bb",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/strict-clippy.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/strict-clippy.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442974654009165,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/strict-clippy.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/summary.json",
+      "bytes": 67006,
+      "mode": 384,
+      "mtime_ns": 1794443024069245335,
+      "sha256": "c77ec94b831757e8acd3c2f9f5b9032648536965f9575f2f729a42fc6d24fdcb",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/summary.json"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/test_cell_discovery_v3_ci.stderr",
+      "bytes": 103,
+      "mode": 384,
+      "mtime_ns": 1794442336516609688,
+      "sha256": "6273232de4d3ef7acd4ecafa5c86beeeb974f56586b21089a2990b3f72facbe6",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/test_cell_discovery_v3_ci.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/test_cell_discovery_v3_ci.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442336490974963,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/test_cell_discovery_v3_ci.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/test_cell_storage_convergence_ci.stderr",
+      "bytes": 118,
+      "mode": 384,
+      "mtime_ns": 1794442336578607428,
+      "sha256": "502ae3e0ddeccf80e35d851da10c563e90c99f65c5592ee750f32648500762a6",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/test_cell_storage_convergence_ci.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/test_cell_storage_convergence_ci.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442336523362903,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/test_cell_storage_convergence_ci.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/test_ci_source_integrity.stderr",
+      "bytes": 6414,
+      "mode": 384,
+      "mtime_ns": 1794442338453108655,
+      "sha256": "e03f30604e7e64b359193a09d4de7f315794829e4a2f21c95aad158a7c915dac",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/test_ci_source_integrity.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/test_ci_source_integrity.stdout",
+      "bytes": 808,
+      "mode": 384,
+      "mtime_ns": 1794442338453108655,
+      "sha256": "91ca28cb155beee21e61ef9dd0303fb2cbae1794730f3e2be423795e46262d1c",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/test_ci_source_integrity.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/test_pq_research_integration.stderr",
+      "bytes": 159,
+      "mode": 384,
+      "mtime_ns": 1794442392393754582,
+      "sha256": "d518ab8d7e7670b2f47ec3e57a3e4a37948bdb93ba7faceef2f7e802cd2534c4",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/test_pq_research_integration.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-c2-full-gates/test_pq_research_integration.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794442338670531160,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-c2-full-gates/test_pq_research_integration.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-preparation/base-pq-inspector.stderr",
+      "bytes": 91,
+      "mode": 384,
+      "mtime_ns": 1794441982853496949,
+      "sha256": "50840b5fce9aaf1a3d23ea0a6efb6af9ef48c7e5c77619fcfb7682a6436fd301",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-preparation/base-pq-inspector.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-preparation/base-pq-inspector.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794441982852310778,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-preparation/base-pq-inspector.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-preparation/before-hydrate.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794441904765046335,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-preparation/before-hydrate.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-preparation/before-hydrate.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794441904765046335,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-preparation/before-hydrate.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-preparation/before-preflight.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794441902923747642,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-preparation/before-preflight.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-preparation/before-preflight.stdout",
+      "bytes": 175,
+      "mode": 384,
+      "mtime_ns": 1794441902923747642,
+      "sha256": "4da534a362b9c64365090813b2f5b76b95f9296d5d14aeb39bb82c933af128e0",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-preparation/before-preflight.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-preparation/candidate-hydrate.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794441902314131669,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-preparation/candidate-hydrate.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-preparation/candidate-hydrate.stdout",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794441902314131669,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-preparation/candidate-hydrate.stdout"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-preparation/candidate-preflight.stderr",
+      "bytes": 0,
+      "mode": 384,
+      "mtime_ns": 1794441899913762369,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-preparation/candidate-preflight.stderr"
+    },
+    {
+      "archive_path": "chain-cell-four-gates-2bfb-preparation/candidate-preflight.stdout",
+      "bytes": 178,
+      "mode": 384,
+      "mtime_ns": 1794441899913762369,
+      "sha256": "b584e2947115895dbe77bbfdfca6a99e0acab0a888dc04eede00d54555c691de",
+      "source_path": "/home/qq/work/chain-cell-four-gates-2bfb-preparation/candidate-preflight.stdout"
+    },
+    {
+      "archive_path": "run-cell-four-gates-2bfb-v2.py",
+      "bytes": 11181,
+      "mode": 384,
+      "mtime_ns": 1794441433794882452,
+      "sha256": "73557997a8ccb1c461081499ba2bbfa346723b30f754a55d6430c185d3622fa2",
+      "source_path": "/home/qq/work/run-cell-four-gates-2bfb-v2.py"
+    }
+  ],
+  "original_files_unchanged": true,
+  "schema": "cell-four-gates-prior-records-snapshot-v1",
+  "source_bytes": 1877120,
+  "source_file_count": 176,
+  "source_host": "ai395"
+}

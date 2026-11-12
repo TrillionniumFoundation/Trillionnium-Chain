@@ -1,0 +1,31 @@
+{"started": "source-head"}
+{"completed": "source-head", "exit_code": 0, "timed_out": false}
+{"started": "source-branch"}
+{"completed": "source-branch", "exit_code": 0, "timed_out": false}
+{"started": "source-clean"}
+{"completed": "source-clean", "exit_code": 0, "timed_out": false}
+{"started": "origin-fetch"}
+{"completed": "origin-fetch", "exit_code": 0, "timed_out": false}
+{"started": "origin-push"}
+{"completed": "origin-push", "exit_code": 0, "timed_out": false}
+{"started": "github-identity"}
+{"completed": "github-identity", "exit_code": 0, "timed_out": false}
+{"started": "preflight"}
+{"completed": "preflight", "exit_code": 0, "timed_out": false}
+{"started": "normal-push-c3"}
+{"completed": "normal-push-c3", "exit_code": 0, "timed_out": false}
+{"started": "remote-head"}
+{"completed": "remote-head", "exit_code": 0, "timed_out": false}
+{"started": "existing-prs"}
+{"completed": "existing-prs", "exit_code": 0, "timed_out": false}
+{"started": "create-draft"}
+{"completed": "create-draft", "exit_code": 0, "timed_out": false}
+{"started": "reconcile-pr-1"}
+{"completed": "reconcile-pr-1", "exit_code": 0, "timed_out": false}
+{"started": "pr-readback"}
+{"completed": "pr-readback", "exit_code": 0, "timed_out": false}
+{"started": "final-local-head"}
+{"completed": "final-local-head", "exit_code": 0, "timed_out": false}
+{"started": "final-local-clean"}
+{"completed": "final-local-clean", "exit_code": 0, "timed_out": false}
+{"url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/923", "pr_number": 923, "draft": true, "actual_head": "030de92be05bfd4f73e199098c12dfeaedf29b17", "actual_base": "fix/chain-cell-paged-release-34e09-20261110", "author": "ProfHepta", "publication_verified": true, "receipt": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/summary.json", "receipt_sha256": "b5a8863d5a176e3f54ba82f7e49b81041ab3ad8666142f37b23412d0356b0cea"}

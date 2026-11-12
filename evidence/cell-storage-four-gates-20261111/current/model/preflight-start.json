@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh",
+    "--audit"
+  ],
+  "cwd": "/home/qq/work/chain-cell-four-gates-20261111-2bfb",
+  "scope": "outside native operation",
+  "started_unix_ns": 1794445178249794493,
+  "timeout_seconds": 300
+}

@@ -1,6 +1,6 @@
 # Cell storage discovery, selected release, repair and first use
 
-Status: implementation candidate; native execution is recorded separately.
+Status: local native execution recorded on C3; production qualification HOLD.
 This continuation starts from storage PR #879 at
 `30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6`. It preserves that branch's
 signed profiles, original budgets, prior failed observations and production
@@ -138,6 +138,53 @@ model/environment ready, and verified two-forward receipt. Unreached stages
 remain null on failure. These cumulative values must not be summed.
 Selected typed release readiness is a byte/type-admission milestone, not
 first-token latency. The original overall operation deadline remains fixed.
+
+## Recorded execution and publication
+
+Runtime C3 `030de92be05bfd4f73e199098c12dfeaedf29b17` passed all 68 candidate
+commands and seven observer/build commands. Complete DA execution passed
+785 unit, 34 integration and 16 documentation cases. Default and
+pq-native-openssl Node storage each passed 44; each sealed example passed 11;
+all 24 actual sealed-worker Python controls and strict readbacks passed.
+Locked graphs, formatting, original source/CI checks and strict Clippy passed.
+These suite counts overlap and are not a count of unique behaviors.
+
+Identical actual TCP tests failed on the test-only #879 predecessor and
+passed on C3 under original four-/two-second windows. The before exhausted
+budget case fails its deadline assertion before counter assertions and is
+not evidence of a refund or overrun. C2's unavailable mkfifo test API caused
+real compile failures; C3 uses pinned mkfifoat(CWD, ...), without relaxed gates.
+
+The fresh 30-file, 280,269,602-byte, 95-chunk research operation preserved
+all original identities and the 300-second limit. Cold recovery, complete
+typed release readiness and the two-forward receipt occurred cumulatively
+at 62.318658435, 66.401049437 and 103.736029521 seconds. Native elapsed
+was 103.804071986 seconds without timeout/interruption. This local run and
+the different historical 36.047064473-second run are not a paired benchmark.
+The second numeric probe was wrong; completed execution is not model efficacy.
+
+After all source-after checks, packaging found the original source root
+absent, for unknown cause. Raw failure/probe records and recovery of the
+exact executed runner from its C3 blob are retained. The independent
+publication checkout passed original full physical source verification of
+all 27,100 C3 entries. Later local review-environment loss interrupted a
+planned space migration; it is not labeled complete. Source receipts remain
+point-in-time observations, and native execution remains attributed to C3.
+
+The publication descendant changes only documentation/evidence, two CI
+workflow seams, the corresponding strict CI contract and source pins.
+It enables the exact stacked PR base in the existing CodeQL local-SARIF
+trigger, keeping upload: never, all matrix/permission/source/retention rules.
+That does not satisfy the separate unchanged Advanced Security API exporter.
+It also normalizes colons only in next-architecture log filename stems and
+matching reader paths, preserving exact Rust selectors and acceptance criteria.
+
+Six C3 hosted workflow failures remain separate from the passing continuation:
+QROM verifier/frozen-lock bindings, the API exporter, original native campaign,
+fresh-challenge service criteria and next-architecture artifact upload.
+Final-head source and hosted-CI observations have their own identities.
+See the [complete observations](../../../../evidence/cell-storage-four-gates-20261111/README.md)
+for raw evidence, original failures and measurement boundaries.
 
 ## Acceptance boundaries
 

@@ -1,0 +1,19 @@
+{
+  "cargo_selectors_unchanged": true,
+  "codeql_added_pr_base": "fix/chain-cell-paged-release-34e09-20261110",
+  "patches": [
+    {
+      "new_sha256": "f74ac4720072c6a47b20b999d16628c600bca51c55bb16ec146069c94bc3ecea",
+      "old_sha256": "616d152f4191250eadf07c563b45a8b0336cc9d76083d12175c85bfbf416d181",
+      "path": ".github/workflows/pon-next-architecture-security.yml",
+      "storage_stems_added": 2
+    },
+    {
+      "new_sha256": "a148d028b5f261204d48b799826d83dfd9d2cce2ec5597e83ffe454b9b40bd25",
+      "old_sha256": "3f5aff5a6d01699a6d1b463fd17513e6ce9e272453f48f8096c54efb70a68001",
+      "path": "scripts/ci/test_cell_storage_convergence_ci.py",
+      "storage_stems_added": 2
+    }
+  ],
+  "run_command_sh_unchanged": true
+}

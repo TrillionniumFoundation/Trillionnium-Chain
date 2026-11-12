@@ -9,7 +9,7 @@ embedded inventory are included together with three new Rust files.
 
 The local checkout is sparse: its actual corpus inspector refused a physically
 absent historical evidence file, and its separate 180-second diagnostic launch
-of the 45-control PQ suite did not complete. These observations neither qualify
+of the PQ control suite suite did not complete. These observations neither qualify
 nor disqualify the full remote source. Exact-source execution and complete raw
 logs are recorded separately. The local complete discovery/storage/source
 control suites passed 5/19/43 cases before freeze.

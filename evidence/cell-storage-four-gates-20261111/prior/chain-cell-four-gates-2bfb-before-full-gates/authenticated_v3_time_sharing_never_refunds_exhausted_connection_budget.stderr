@@ -1,0 +1,7 @@
+    Finished `release` profile [optimized] target(s) in 0.03s
+     Running unittests src/lib.rs (/home/qq/work/chain-cell-four-gates-2bfb-target-before/release/deps/trnm_data_availability-005cca701b2d81ac)
+
+thread 'cell::discovery::pq::auth::tests::time_fairness::authenticated_v3_time_sharing_never_refunds_exhausted_connection_budget' (1261352) panicked at crates/trnm-data-availability/src/cell/discovery/pq/auth_time_fairness_tests.rs:276:5:
+assertion failed: Instant::now() < original_deadline
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+error: test failed, to rerun pass `-p trnm-data-availability --lib`

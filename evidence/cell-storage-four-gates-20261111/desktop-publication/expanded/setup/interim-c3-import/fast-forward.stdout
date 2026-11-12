@@ -1,0 +1,32 @@
+更新 30ce6e99c..030de92be
+Fast-forward
+ config/pon/pq-cross-branch-corpus-v1.json          |  60 ++-
+ .../TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md  |  36 ++
+ .../pon/CELL_STORAGE_FOUR_GATE_CONTINUATION_V1.md  | 154 ++++++
+ .../precommit-maintenance/README.md                |  15 +
+ .../inherited-binding-repair.json                  | 223 +++++++++
+ .../precommit-maintenance/maintenance.json         |  73 +++
+ scripts/ci/run_cell_storage_four_gates_v1.py       | 277 +++++++++++
+ .../examples/cell_residency_observer.rs            |  55 +-
+ .../examples/cell_sealed_research_v2/mod.rs        |  41 +-
+ .../crates/trnm-data-availability/src/cell.rs      |   7 +-
+ .../src/cell/discovery/pq/auth.rs                  |  24 +-
+ .../src/cell/discovery/pq/auth_tests.rs            |   3 +
+ .../cell/discovery/pq/auth_time_fairness_tests.rs  | 285 +++++++++++
+ .../trnm-data-availability/src/cell/residency.rs   |  23 +-
+ .../src/cell/residency/release_selection.rs        | 184 +++++++
+ .../src/cell/residency/release_selection/tests.rs  | 552 +++++++++++++++++++++
+ .../src/cell/residency/tensor.rs                   |   2 +-
+ .../trnm-data-availability/src/cell/retention.rs   |  33 +-
+ .../src/cell/snapshot_schedule.rs                  |   2 +-
+ .../src/cell/snapshot_schedule/tests.rs            |  40 ++
+ .../support/distributed_source_inventory.rs        | 224 +++++++++
+ 21 files changed, 2268 insertions(+), 45 deletions(-)
+ create mode 100644 docs/development/specs/pon/CELL_STORAGE_FOUR_GATE_CONTINUATION_V1.md
+ create mode 100644 evidence/cell-storage-four-gates-20261111/precommit-maintenance/README.md
+ create mode 100644 evidence/cell-storage-four-gates-20261111/precommit-maintenance/inherited-binding-repair.json
+ create mode 100644 evidence/cell-storage-four-gates-20261111/precommit-maintenance/maintenance.json
+ create mode 100644 scripts/ci/run_cell_storage_four_gates_v1.py
+ create mode 100644 trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_time_fairness_tests.rs
+ create mode 100644 trillionnium/crates/trnm-data-availability/src/cell/residency/release_selection.rs
+ create mode 100644 trillionnium/crates/trnm-data-availability/src/cell/residency/release_selection/tests.rs

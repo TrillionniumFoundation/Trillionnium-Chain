@@ -12,6 +12,7 @@ on:
     branches:
       - main
       - fix/chain-six-axis-performance-20261103
+      - fix/chain-cell-paged-release-34e09-20261110
 permissions:
   contents: read
 jobs:

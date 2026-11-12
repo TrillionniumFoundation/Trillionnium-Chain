@@ -1,40 +1,68 @@
-**Cell storage four-gate continuation, 2026-11-11 America/New_York — HOLD:**
+**Cell storage four-gate continuation, 2026-11-12 UTC — local native PASS; qualification HOLD:**
 
-Continue the exact #879 storage head
-`30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6` under the
-[four-gate continuation contract](specs/pon/CELL_STORAGE_FOUR_GATE_CONTINUATION_V1.md).
-Keep authenticated discovery V3, complete TCA3/TCV1/CTS1 identities, original
-four-second discovery control and 300-second model operation, finite funding,
-all historical failures and production refusal.
+Continue #879 at `30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6` under the
+[four-gate contract](specs/pon/CELL_STORAGE_FOUR_GATE_CONTINUATION_V1.md).
+Keep authenticated V3 discovery, complete identities, original resource
+limits, funding duties, failed observations and production refusal.
 
-Reserve bounded time for later pinned bootstrap sources and downstream byte
-work without extending any original lease or resource reservation. Select
-one complete local CTS1 with a manager-bound increasing CAS ticket; validate
-both actual resident closures, tensor schema and current contexts before one
-assignment. Legacy selected-closure routes cannot split that complete choice,
-and both selected closures remain protected from eviction. The actual sealed
-research entry uses this complete selection and holds paired admission across
-sealing both closures. This local routing ticket is not durable Hepta CURRENT
-or FinalUse authority.
+Reserve time for later pinned bootstrap sources and downstream byte work
+inside the original absolute deadline. Select one complete resident CTS1
+through a manager-bound increasing CAS ticket; validate model/environment,
+tensor schema and current contexts before one assignment. Reject stale,
+ABA and foreign tickets, prevent legacy paths from splitting the selection,
+protect both closures and retain paired admission across actual research
+sealing. This process-local ticket is not durable Hepta CURRENT or FinalUse.
 
-Reuse bounded global retention layout and repair-ledger checks before repair
-admission/reconciliation and before physical copy; preserve durable debits on
-later refusal. Open CPS1 policy files without blocking on nonregular input,
-retaining all original checks. Keep these defensive changes distinct from an
-unexecuted metadata-corruption reproduction. Measure actual first verified
-local byte use, explicit prefetch, warm disk and resident reuse, and retain
-cumulative real-model readiness milestones without calling them first-token
-latency or WAN measurements.
+Reuse bounded retention schema/arena/repair-ledger checks before admission,
+reconciliation and physical copy. Preserve a durable debit on later refusal.
+Open CPS1 without blocking on nonregular input while retaining original
+regular-file, pin and deadline checks. These defenses are not an executed
+metadata-corruption exploit or noncooperating-writer atomicity proof.
 
-Freeze and execute the complete affected native suites, the unchanged
-slow-source test against its predecessor and repaired source, exact locked
-graphs, strict Clippy, formatting, source-integrity/CI controls and repository
-links. Preserve all failures and exact source identities. Independent provider
-administration and fault domains, replacement-domain repair ownership, actual
-paid renewal, authenticated remote read challenges, the original 72-hour PN5
-WAN duty and ordinary Hepta CURRENT/FinalUse remain separate open gates.
+Runtime C3 `030de92be05bfd4f73e199098c12dfeaedf29b17` passed 68/68 candidate
+commands and 7/7 observer/build commands: 835 DA cases; 44 Node storage cases
+in each default and pq-native-openssl configuration; 11 in each sealed
+example; all 24 actual sealed-worker Python controls and original strict
+readers, locked graphs, source/link gates and strict Clippy.
+The same three TCP controls actually failed on the test-only #879 predecessor
+and passed on C3 under original windows. Sparse-source refusals, incomplete
+local diagnostics and C2 FIFO-API compilation errors remain recorded in the
+[complete observations](../../evidence/cell-storage-four-gates-20261111/README.md).
 
-**Paged real-model research bridge — NOT_RUN; qualification HOLD:**
+The fresh actual paged-model operation retained 280,269,602 payload bytes,
+95 chunks, all original pins and the 300-second/8-GiB limits. Cumulative cold
+recovery, complete selected typed release and verified two-forward receipt
+occurred at 62.318658435, 66.401049437 and 103.736029521 seconds.
+Native elapsed time was 103.804071986 seconds without watchdog termination.
+These are local observations, not first-token/WAN latency. The historical
+36.047064473-second run is unpaired and supports no speedup or causal comparison.
+
+After completed native/source-after checks, packaging found the original
+test source root absent; cause unknown. The used runner was recovered from
+its immutable C3 blob and matched its original SHA256. A separate complete
+publication checkout subsequently passed the original physical source guard
+for all 27,100 C3 tracked entries. The later local review workspace also
+became unavailable during an incomplete space-migration attempt. Preserve
+these distinct observations and use remote originals for final publication;
+do not claim a migration or a test completed without its receipt.
+
+Publication adds evidence/documentation and two narrow CI repairs:
+the exact current base branch in CodeQL local-SARIF triggers, and portable
+next-architecture log filename stems with corresponding strict CI bindings.
+Original native selectors, budgets, guards and failure criteria remain.
+Rust/Cargo/native-model runner bytes and native execution attribution stay C3.
+CodeQL upload: never stays unchanged, so local-SARIF cannot qualify the
+separate Advanced Security API exporter. Six observed C3 hosted failures
+remain failures, including QROM frozen-input inconsistencies, API export,
+native campaign/fresh-challenge service criteria and artifact upload.
+The final published head's hosted CI remains a separate gate.
+
+Independent bootstrap administration, approved replacement-domain repair
+ownership, actual remote read challenges, paid renewal/settlement, the
+original 72-hour PN5 WAN duty and durable original CURRENT/FinalUse remain
+open. Local code and research evidence do not promote qualification flags.
+
+**Historical paged real-model research bridge — NOT_RUN at that checkpoint; superseded by executed observations above:**
 
 An explicit [paged sealed research route](specs/pon/CELL_SEALED_PAGED_RESEARCH_NEXT_USE_V1.md)
 keeps the original model/environment version and strict V2 source wire while

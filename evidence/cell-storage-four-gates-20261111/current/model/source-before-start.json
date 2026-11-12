@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "030de92be05bfd4f73e199098c12dfeaedf29b17"
+  ],
+  "cwd": "/home/qq/work/chain-cell-four-gates-20261111-2bfb",
+  "scope": "outside native operation",
+  "started_unix_ns": 1794445178366348696,
+  "timeout_seconds": 300
+}

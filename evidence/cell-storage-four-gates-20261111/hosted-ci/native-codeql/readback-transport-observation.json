@@ -1,0 +1,17 @@
+{
+  "schema": "ci-recovery-readback-transport-observation-v1",
+  "local_execution_environment_unavailable": true,
+  "pending_read": {
+    "host": "desktop",
+    "session_id": "dpty-0ee56f96638dd66afa75aa84e7649bf1f3e7991850122c8573618f69e96c1de3",
+    "offset": 667,
+    "limit": 8192,
+    "error": "tool call error: tool call failed for `codex_apps/h.pty_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+  },
+  "same_background_operation_restarted": false,
+  "recovery_result_read_with": "h_view targeted fields on completed recovery-result.json",
+  "recovery_completed": true,
+  "recovery_passed": true,
+  "transport_failure_does_not_relabel_native_campaign_failures": true,
+  "new_archive_sha256": "e5cb5c7cffebf9c48ba0f414ac4b6e2c31af39ce403bdf2a99dbcaeffb459da0"
+}

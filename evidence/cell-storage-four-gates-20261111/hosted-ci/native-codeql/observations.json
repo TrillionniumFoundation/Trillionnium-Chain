@@ -1,0 +1,1166 @@
+{
+  "artifacts": [
+    {
+      "artifact_id": 13907637512,
+      "bytes": 188967,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131212704/artifacts/13907637512",
+      "original_zip": "codeql-analysis-export-43131212704-1.zip",
+      "run_id": 43131212704,
+      "selected_members": 205,
+      "sha256": "b4fd7c45c887a989385351e2420e40926ec69ad0c6884326b80fdd6c2be253f0"
+    },
+    {
+      "artifact_id": 13771988503,
+      "bytes": 173123,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42812987744/artifacts/13771988503",
+      "original_zip": "codeql-analysis-export-42812987744-1.zip",
+      "run_id": 42812987744,
+      "selected_members": 205,
+      "sha256": "d390cba3b2376ef2895ee0c7540a730278ff535c8cb8e8ce4c2bf79c3a6ab677"
+    },
+    {
+      "artifact_id": 13908385566,
+      "bytes": 75824870,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131213399/artifacts/13908385566",
+      "original_zip": "pon-native-campaign-43131213399-1.zip",
+      "run_id": 43131213399,
+      "selected_members": 56,
+      "sha256": "5f9e198666160d366c27c95be45bc119aa565dbfb2a6a57d960beeed62271d1c"
+    },
+    {
+      "artifact_id": 13764479890,
+      "bytes": 70312435,
+      "github_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42798575923/artifacts/13764479890",
+      "original_zip": "pon-native-campaign-42798575923-1.zip",
+      "run_id": 42798575923,
+      "selected_members": 56,
+      "sha256": "0d67e7bd3a775ab655a3c0c191c30c16942108e0a9ab23451016c5f6e4f9f780"
+    }
+  ],
+  "baseline": "30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6",
+  "candidate": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+  "codeql": {
+    "baseline/codeql": {
+      "all_polls_empty_analyses_and_checks": true,
+      "base_ref": "fix/chain-cell-paged-model-34e09-20261110",
+      "head_ref": "fix/chain-cell-paged-release-34e09-20261110",
+      "poll_count": 39,
+      "result": {
+        "all_branch_historical_alerts": false,
+        "analyses": [],
+        "check_annotations": [],
+        "complete": false,
+        "error": "CodeQL analyses/checks did not complete and stabilize before the deadline",
+        "finished_utc": "2026-11-10T14:22:45.047759+00:00",
+        "full_original_sarif_upload": false,
+        "last_checks": [],
+        "schema": "codeql-exact-source-analysis-export-v2",
+        "scope": "All API-available exact PR source analyses/categories after the existing CodeQL check completes; SARIF is the API-provided subset. Source-only check annotations may lack a PR association; complete export does not qualify the PR security gate.",
+        "security_gate_changed": false,
+        "started_utc": "2026-11-10T14:02:49.632804+00:00",
+        "target": {
+          "base": "8dee97636e2b6932fb7a22b1b54f2cab09ae8406",
+          "event": "pull_request",
+          "head": "30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6",
+          "head_ref": "refs/pull/879/head",
+          "merge": "7fc2167b2649fb8ea8b3265d831f8869d431f837",
+          "pr": 879,
+          "ref": "refs/pull/879/merge"
+        },
+        "target_pr_gate_authenticated": false,
+        "target_pr_gate_verdict": null
+      }
+    },
+    "c3/codeql": {
+      "all_polls_empty_analyses_and_checks": true,
+      "base_ref": "fix/chain-cell-paged-release-34e09-20261110",
+      "head_ref": "fix/chain-cell-storage-four-gates-20261111-2bfb",
+      "poll_count": 39,
+      "result": {
+        "all_branch_historical_alerts": false,
+        "analyses": [],
+        "check_annotations": [],
+        "complete": false,
+        "error": "CodeQL analyses/checks did not complete and stabilize before the deadline",
+        "finished_utc": "2026-11-12T01:47:00.725425+00:00",
+        "full_original_sarif_upload": false,
+        "last_checks": [],
+        "schema": "codeql-exact-source-analysis-export-v2",
+        "scope": "All API-available exact PR source analyses/categories after the existing CodeQL check completes; SARIF is the API-provided subset. Source-only check annotations may lack a PR association; complete export does not qualify the PR security gate.",
+        "security_gate_changed": false,
+        "started_utc": "2026-11-12T01:27:05.985949+00:00",
+        "target": {
+          "base": "30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6",
+          "event": "pull_request",
+          "head": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+          "head_ref": "refs/pull/923/head",
+          "merge": "348a24fa9d6359ef720b4b3c6a694964f168e6ce",
+          "pr": 923,
+          "ref": "refs/pull/923/merge"
+        },
+        "target_pr_gate_authenticated": false,
+        "target_pr_gate_verdict": null
+      }
+    }
+  },
+  "conclusions": {
+    "api_export": "Exact-source API analyses/checks absent for all39 polls on C3 and exact #879; original1200s deadline; upstream absence cause unconfirmed.",
+    "local_interruption": "Local execution environment became unavailable before publication integration. Original review-only attachment/recipe are not restored; this recovery has a new actual archive identity.",
+    "local_sarif": "Inherited branch trigger gap excluded current stacked base. upload: never local lane is distinct from Advanced Security API export qualification.",
+    "native": "Real original finite-experiment failure on C3; same failed capability already present on source-equivalent predecessor. Not an infrastructure-only exclusion or paired performance comparison."
+  },
+  "job_logs": [
+    {
+      "bytes": 173715,
+      "earlier_expected_bytes": 173715,
+      "earlier_expected_sha256": "37c10371c77638401329678fc7bb6782332249751172b321f0538e5568613f2a",
+      "job_id": 130895528586,
+      "matches_earlier_connector_decoded_log_bytes": true,
+      "sha256": "37c10371c77638401329678fc7bb6782332249751172b321f0538e5568613f2a"
+    },
+    {
+      "bytes": 226641,
+      "earlier_expected_bytes": 226641,
+      "earlier_expected_sha256": "f812ecbb218950c35bc4d73b67776d9d644068d5510e4b08b6032903584fdfce",
+      "job_id": 130895531125,
+      "matches_earlier_connector_decoded_log_bytes": true,
+      "sha256": "f812ecbb218950c35bc4d73b67776d9d644068d5510e4b08b6032903584fdfce"
+    },
+    {
+      "bytes": 164689,
+      "earlier_expected_bytes": 164689,
+      "earlier_expected_sha256": "b3041b68f6b9c623b32db4057c7c1808c327e3fb2dafd62a2e9d01ed8a192eb5",
+      "job_id": 129818848318,
+      "matches_earlier_connector_decoded_log_bytes": true,
+      "sha256": "b3041b68f6b9c623b32db4057c7c1808c327e3fb2dafd62a2e9d01ed8a192eb5"
+    },
+    {
+      "bytes": 217143,
+      "earlier_expected_bytes": 217143,
+      "earlier_expected_sha256": "9d7a4276e09fda1d3487ef4c1344b8b8b328ee52021df0b3a3ea8422629347c1",
+      "job_id": 129769944910,
+      "matches_earlier_connector_decoded_log_bytes": true,
+      "sha256": "9d7a4276e09fda1d3487ef4c1344b8b8b328ee52021df0b3a3ea8422629347c1"
+    }
+  ],
+  "native": {
+    "ancestor/native": {
+      "attempts": [
+        {
+          "complete_success": false,
+          "number": 1,
+          "original_criteria_met": false,
+          "phase_startup_errors": [],
+          "report_directory": "run-1-raw",
+          "report_sha256": "129f7232a86e8dca4394036b69db927bc65b1bf9d9c215802124d3f2a72261d0",
+          "report_validation_failure": null,
+          "step": {
+            "command": [
+              "/home/runner/.cargo/bin/cargo",
+              "+1.95.0",
+              "test",
+              "--locked",
+              "--offline",
+              "--release",
+              "--manifest-path",
+              "trillionnium/Cargo.toml",
+              "-p",
+              "trnm-pon-node",
+              "--test",
+              "public_v3_multiprocess",
+              "separate_process_work_and_signed_confirmation_campaign",
+              "--",
+              "--exact",
+              "--ignored",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "complete_success": false,
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 113588950417,
+            "elapsed_seconds": 113.588950417,
+            "error": null,
+            "name": "run-1",
+            "outer_stage_timeout_seconds": 600,
+            "returncode": 101,
+            "stderr": "run-1.stderr.log",
+            "stderr_bytes": 1615,
+            "stderr_sha256": "e8e9fdcd0d10af99ca624b1fde8c6c93dbd264a5fdc491d77500a8ee3c6f485e",
+            "stderr_truncated": false,
+            "stdout": "run-1.stdout.log",
+            "stdout_bytes": 271,
+            "stdout_sha256": "34fc576c28e242c4ad292b41985e1ebedd124737fa22d7661e905e439194a332",
+            "stdout_truncated": false
+          }
+        },
+        {
+          "complete_success": false,
+          "number": 2,
+          "original_criteria_met": false,
+          "phase_startup_errors": [],
+          "report_directory": "run-2-raw",
+          "report_sha256": "8f4bc2f11bac1d7ccf6ef007d6becc7839c4eb9865d3b3ae5ce0a36c1690f95a",
+          "report_validation_failure": null,
+          "step": {
+            "command": [
+              "/home/runner/.cargo/bin/cargo",
+              "+1.95.0",
+              "test",
+              "--locked",
+              "--offline",
+              "--release",
+              "--manifest-path",
+              "trillionnium/Cargo.toml",
+              "-p",
+              "trnm-pon-node",
+              "--test",
+              "public_v3_multiprocess",
+              "separate_process_work_and_signed_confirmation_campaign",
+              "--",
+              "--exact",
+              "--ignored",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "complete_success": false,
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 113601516759,
+            "elapsed_seconds": 113.601516759,
+            "error": null,
+            "name": "run-2",
+            "outer_stage_timeout_seconds": 600,
+            "returncode": 101,
+            "stderr": "run-2.stderr.log",
+            "stderr_bytes": 1615,
+            "stderr_sha256": "f6f932b36a098ce56d07bbb3889250e2293ce5395b63ab6d281a88510ca75cc5",
+            "stderr_truncated": false,
+            "stdout": "run-2.stdout.log",
+            "stdout_bytes": 271,
+            "stdout_sha256": "ba5cb52cf68e410fc94d3c654c6a0ec62eb92cd33d690abcb80d82f3b0e8fa73",
+            "stdout_truncated": false
+          }
+        },
+        {
+          "complete_success": false,
+          "number": 3,
+          "original_criteria_met": false,
+          "phase_startup_errors": [],
+          "report_directory": "run-3-raw",
+          "report_sha256": "09e712b11790a0691c241d75ee214020f0292a30822ad067031ebd42c382ff05",
+          "report_validation_failure": null,
+          "step": {
+            "command": [
+              "/home/runner/.cargo/bin/cargo",
+              "+1.95.0",
+              "test",
+              "--locked",
+              "--offline",
+              "--release",
+              "--manifest-path",
+              "trillionnium/Cargo.toml",
+              "-p",
+              "trnm-pon-node",
+              "--test",
+              "public_v3_multiprocess",
+              "separate_process_work_and_signed_confirmation_campaign",
+              "--",
+              "--exact",
+              "--ignored",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "complete_success": false,
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 113460148969,
+            "elapsed_seconds": 113.460148969,
+            "error": null,
+            "name": "run-3",
+            "outer_stage_timeout_seconds": 600,
+            "returncode": 101,
+            "stderr": "run-3.stderr.log",
+            "stderr_bytes": 1615,
+            "stderr_sha256": "48018089ce505de57ce37f049df909e7dc46d4e7f42ae1e5f137395c1b6156f0",
+            "stderr_truncated": false,
+            "stdout": "run-3.stdout.log",
+            "stdout_bytes": 271,
+            "stdout_sha256": "363d351d6bcebbf41a53111293dc7ce3484f7144c41aa54881b5c4516003c00b",
+            "stdout_truncated": false
+          }
+        }
+      ],
+      "binary": {
+        "actual_compiler_artifact_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": true
+        },
+        "build_artifact": "/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-079dadaec9e55cb9",
+        "build_separate_from_measured_campaign": true,
+        "bytes": 12623912,
+        "execution": "original cargo test command using the checked build artifact",
+        "retained": "public_v3_multiprocess.bin",
+        "sha256_after": "739d630f2afdfa856990d3aef50264eb08c6d88a7169a9c23b3256b1ecdc89de",
+        "sha256_before": "739d630f2afdfa856990d3aef50264eb08c6d88a7169a9c23b3256b1ecdc89de"
+      },
+      "build": {
+        "command": [
+          "/home/runner/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_multiprocess",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "complete_success": true,
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "elapsed_ns": 223780164620,
+        "elapsed_seconds": 223.78016462,
+        "error": null,
+        "name": "build",
+        "outer_stage_timeout_seconds": 1800,
+        "returncode": 0,
+        "stderr": "build.stderr.log",
+        "stderr_bytes": 4215,
+        "stderr_sha256": "2ea2b8e1dfc02aac8e66a116707bb26432bcbd0264bae75205ac22f9665b35b5",
+        "stderr_truncated": false,
+        "stdout": "build.stdout.log",
+        "stdout_bytes": 115338,
+        "stdout_sha256": "6204c7e66ff6d28775636d78efbcd265ec92cc23a5c72e5122bcd0777ec56d71",
+        "stdout_truncated": false
+      },
+      "complete_success": false,
+      "expected_head": "8dee97636e2b6932fb7a22b1b54f2cab09ae8406",
+      "expected_resources": {
+        "cpu_max": "400000 100000",
+        "memory_max": "17179869184",
+        "nice": 10
+      },
+      "expected_tree": "237a733df7d91c4eb2206014e0f5408e34565e12",
+      "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+      "original_inputs": {
+        "attacker_processes": [
+          0,
+          24,
+          24
+        ],
+        "business_blocks": 21,
+        "modes": [
+          "baseline",
+          "from-zero",
+          "late-product"
+        ],
+        "phase_seconds": 30,
+        "seed_blocks": 4,
+        "seed_transfers": 1024
+      },
+      "profile": "release",
+      "public_phase_placement": {
+        "attacker_processes_remain_in_original_controller_domain": true,
+        "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+        "original_3x3_workload_and_depletion_predicates_changed": false,
+        "profile": "fixed-public-phase-external-actors-v1",
+        "receiver_and_verifier_cpu_max": "25000 100000",
+        "receiver_and_verifier_memory_max": "2147483648"
+      },
+      "reports": [
+        {
+          "economics_complete": true,
+          "finite_experiment_criteria_met": false,
+          "phases": [
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "confirmations": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 28081077474,
+                  "round": 0
+                },
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30002000698,
+                  "round": 1
+                }
+              ],
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 13,
+              "full_work_failed": 0,
+              "genuine_budget_depletion_observed": false,
+              "mode": "baseline",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": []
+            },
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "confirmations": [
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30059353182,
+                  "round": 0
+                }
+              ],
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 7,
+              "full_work_failed": 2283,
+              "genuine_budget_depletion_observed": false,
+              "mode": "from-zero",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            },
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "confirmations": [
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30010126042,
+                  "round": 0
+                }
+              ],
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 7,
+              "full_work_failed": 2261,
+              "genuine_budget_depletion_observed": false,
+              "mode": "late-product",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            }
+          ],
+          "report_sha256": "129f7232a86e8dca4394036b69db927bc65b1bf9d9c215802124d3f2a72261d0",
+          "run": 1
+        },
+        {
+          "economics_complete": true,
+          "finite_experiment_criteria_met": false,
+          "phases": [
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "confirmations": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 28098855084,
+                  "round": 0
+                },
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30004390228,
+                  "round": 1
+                }
+              ],
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 13,
+              "full_work_failed": 0,
+              "genuine_budget_depletion_observed": false,
+              "mode": "baseline",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": []
+            },
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "confirmations": [
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30084736889,
+                  "round": 0
+                }
+              ],
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 7,
+              "full_work_failed": 2290,
+              "genuine_budget_depletion_observed": false,
+              "mode": "from-zero",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            },
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "confirmations": [
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30083440306,
+                  "round": 0
+                }
+              ],
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 7,
+              "full_work_failed": 2246,
+              "genuine_budget_depletion_observed": false,
+              "mode": "late-product",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            }
+          ],
+          "report_sha256": "8f4bc2f11bac1d7ccf6ef007d6becc7839c4eb9865d3b3ae5ce0a36c1690f95a",
+          "run": 2
+        },
+        {
+          "economics_complete": true,
+          "finite_experiment_criteria_met": false,
+          "phases": [
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "confirmations": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 27993454979,
+                  "round": 0
+                },
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30001347252,
+                  "round": 1
+                }
+              ],
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 14,
+              "full_work_failed": 0,
+              "genuine_budget_depletion_observed": false,
+              "mode": "baseline",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": []
+            },
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "confirmations": [
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30075892908,
+                  "round": 0
+                }
+              ],
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 7,
+              "full_work_failed": 2274,
+              "genuine_budget_depletion_observed": false,
+              "mode": "from-zero",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            },
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "confirmations": [
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30083895849,
+                  "round": 0
+                }
+              ],
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 7,
+              "full_work_failed": 2215,
+              "genuine_budget_depletion_observed": false,
+              "mode": "late-product",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            }
+          ],
+          "report_sha256": "09e712b11790a0691c241d75ee214020f0292a30822ad067031ebd42c382ff05",
+          "run": 3
+        }
+      ],
+      "runner_sha256": "c1dfb715aaf8c0c86d66c9ebee6cf64c4a829b89fdf93767e2ce9f847b8534c0",
+      "source_after": {
+        "base": null,
+        "candidate": "8dee97636e2b6932fb7a22b1b54f2cab09ae8406",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "8dee97636e2b6932fb7a22b1b54f2cab09ae8406",
+        "tested_tree": "237a733df7d91c4eb2206014e0f5408e34565e12",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2519399337,
+        "tracked_entries": 27032,
+        "tracked_worktree_verified": true
+      },
+      "state_backend": "authenticated-v1",
+      "toolchain": "1.95.0"
+    },
+    "c3/native": {
+      "attempts": [
+        {
+          "complete_success": false,
+          "number": 1,
+          "original_criteria_met": false,
+          "phase_startup_errors": [],
+          "report_directory": "run-1-raw",
+          "report_sha256": "d88f1f0fbecdca0fb8445aa6904dac17954b692301aa334c4bd97d50b7e7968f",
+          "report_validation_failure": null,
+          "step": {
+            "command": [
+              "/home/runner/.cargo/bin/cargo",
+              "+1.95.0",
+              "test",
+              "--locked",
+              "--offline",
+              "--release",
+              "--manifest-path",
+              "trillionnium/Cargo.toml",
+              "-p",
+              "trnm-pon-node",
+              "--test",
+              "public_v3_multiprocess",
+              "separate_process_work_and_signed_confirmation_campaign",
+              "--",
+              "--exact",
+              "--ignored",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "complete_success": false,
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 112891071775,
+            "elapsed_seconds": 112.891071775,
+            "error": null,
+            "name": "run-1",
+            "outer_stage_timeout_seconds": 600,
+            "returncode": 101,
+            "stderr": "run-1.stderr.log",
+            "stderr_bytes": 1615,
+            "stderr_sha256": "deaa7e3186b15af49a11207a47e7e491d5faec2ae7e1b4ba3b02b5c9cf2efbfc",
+            "stderr_truncated": false,
+            "stdout": "run-1.stdout.log",
+            "stdout_bytes": 271,
+            "stdout_sha256": "db29e95cb85f2c0e16a55228830d88022ae6cd2d71aa42172956c235fb799f96",
+            "stdout_truncated": false
+          }
+        },
+        {
+          "complete_success": false,
+          "number": 2,
+          "original_criteria_met": false,
+          "phase_startup_errors": [],
+          "report_directory": "run-2-raw",
+          "report_sha256": "280393d31663128c73adff56bf9ca445b3b3a3386b5b91d60f00c17dac9ae94e",
+          "report_validation_failure": null,
+          "step": {
+            "command": [
+              "/home/runner/.cargo/bin/cargo",
+              "+1.95.0",
+              "test",
+              "--locked",
+              "--offline",
+              "--release",
+              "--manifest-path",
+              "trillionnium/Cargo.toml",
+              "-p",
+              "trnm-pon-node",
+              "--test",
+              "public_v3_multiprocess",
+              "separate_process_work_and_signed_confirmation_campaign",
+              "--",
+              "--exact",
+              "--ignored",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "complete_success": false,
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 112045515871,
+            "elapsed_seconds": 112.045515871,
+            "error": null,
+            "name": "run-2",
+            "outer_stage_timeout_seconds": 600,
+            "returncode": 101,
+            "stderr": "run-2.stderr.log",
+            "stderr_bytes": 1615,
+            "stderr_sha256": "78a8d9c1d69f9cbf0810cdefff7d97882b33877799e330bb4056f416e7d20ad1",
+            "stderr_truncated": false,
+            "stdout": "run-2.stdout.log",
+            "stdout_bytes": 271,
+            "stdout_sha256": "adbfa7caaa258cad96deab325cbf24d1aa04b63eea3b3f854f48ec28044d8087",
+            "stdout_truncated": false
+          }
+        },
+        {
+          "complete_success": false,
+          "number": 3,
+          "original_criteria_met": false,
+          "phase_startup_errors": [],
+          "report_directory": "run-3-raw",
+          "report_sha256": "d895383373b670fc033028490f18892545e82a4a4f345a0b6d746f4d307e48b9",
+          "report_validation_failure": null,
+          "step": {
+            "command": [
+              "/home/runner/.cargo/bin/cargo",
+              "+1.95.0",
+              "test",
+              "--locked",
+              "--offline",
+              "--release",
+              "--manifest-path",
+              "trillionnium/Cargo.toml",
+              "-p",
+              "trnm-pon-node",
+              "--test",
+              "public_v3_multiprocess",
+              "separate_process_work_and_signed_confirmation_campaign",
+              "--",
+              "--exact",
+              "--ignored",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "complete_success": false,
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "elapsed_ns": 112256056184,
+            "elapsed_seconds": 112.256056184,
+            "error": null,
+            "name": "run-3",
+            "outer_stage_timeout_seconds": 600,
+            "returncode": 101,
+            "stderr": "run-3.stderr.log",
+            "stderr_bytes": 1615,
+            "stderr_sha256": "0308959dbe8547e01db0ba2478e4841fd3a92901b4f2a396b656bb20d28dc054",
+            "stderr_truncated": false,
+            "stdout": "run-3.stdout.log",
+            "stdout_bytes": 271,
+            "stdout_sha256": "644d3bbf5cb225a8edffdf1d2341fd5f24abd9992c150848757124c294e8a432",
+            "stdout_truncated": false
+          }
+        }
+      ],
+      "binary": {
+        "actual_compiler_artifact_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": true
+        },
+        "build_artifact": "/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-079dadaec9e55cb9",
+        "build_separate_from_measured_campaign": true,
+        "bytes": 12537088,
+        "execution": "original cargo test command using the checked build artifact",
+        "retained": "public_v3_multiprocess.bin",
+        "sha256_after": "95d1f63d5fa18e6e2b690b21a0f030daa9cd8193af04dba920291d128348ae69",
+        "sha256_before": "95d1f63d5fa18e6e2b690b21a0f030daa9cd8193af04dba920291d128348ae69"
+      },
+      "build": {
+        "command": [
+          "/home/runner/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_multiprocess",
+          "--no-run",
+          "--message-format=json"
+        ],
+        "complete_success": true,
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "elapsed_ns": 194579447270,
+        "elapsed_seconds": 194.57944727,
+        "error": null,
+        "name": "build",
+        "outer_stage_timeout_seconds": 1800,
+        "returncode": 0,
+        "stderr": "build.stderr.log",
+        "stderr_bytes": 4215,
+        "stderr_sha256": "74854da9857114199a235648468ee1b830c08bad0544e6e4bfcb503b3c941788",
+        "stderr_truncated": false,
+        "stdout": "build.stdout.log",
+        "stdout_bytes": 115338,
+        "stdout_sha256": "8c32a7705cd91dabc10ad48ff9aab0d4c54ef7db893add671800506ae3496549",
+        "stdout_truncated": false
+      },
+      "complete_success": false,
+      "expected_head": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+      "expected_resources": {
+        "cpu_max": "400000 100000",
+        "memory_max": "17179869184",
+        "nice": 10
+      },
+      "expected_tree": "21e970bfdb11ab64403d2af5f3c56536a2961f80",
+      "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+      "original_inputs": {
+        "attacker_processes": [
+          0,
+          24,
+          24
+        ],
+        "business_blocks": 21,
+        "modes": [
+          "baseline",
+          "from-zero",
+          "late-product"
+        ],
+        "phase_seconds": 30,
+        "seed_blocks": 4,
+        "seed_transfers": 1024
+      },
+      "profile": "release",
+      "public_phase_placement": {
+        "attacker_processes_remain_in_original_controller_domain": true,
+        "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+        "original_3x3_workload_and_depletion_predicates_changed": false,
+        "profile": "fixed-public-phase-external-actors-v1",
+        "receiver_and_verifier_cpu_max": "25000 100000",
+        "receiver_and_verifier_memory_max": "2147483648"
+      },
+      "reports": [
+        {
+          "economics_complete": true,
+          "finite_experiment_criteria_met": false,
+          "phases": [
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "confirmations": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 23917923829,
+                  "round": 0
+                },
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30001744179,
+                  "round": 1
+                }
+              ],
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 14,
+              "full_work_failed": 0,
+              "genuine_budget_depletion_observed": false,
+              "mode": "baseline",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            },
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "confirmations": [
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30054048601,
+                  "round": 0
+                }
+              ],
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 7,
+              "full_work_failed": 2665,
+              "genuine_budget_depletion_observed": false,
+              "mode": "from-zero",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            },
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "confirmations": [
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30003004029,
+                  "round": 0
+                }
+              ],
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 7,
+              "full_work_failed": 2614,
+              "genuine_budget_depletion_observed": false,
+              "mode": "late-product",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            }
+          ],
+          "report_sha256": "d88f1f0fbecdca0fb8445aa6904dac17954b692301aa334c4bd97d50b7e7968f",
+          "run": 1
+        },
+        {
+          "economics_complete": true,
+          "finite_experiment_criteria_met": false,
+          "phases": [
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "confirmations": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 23800843905,
+                  "round": 0
+                },
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30001248968,
+                  "round": 1
+                }
+              ],
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 14,
+              "full_work_failed": 0,
+              "genuine_budget_depletion_observed": false,
+              "mode": "baseline",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            },
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "confirmations": [
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30001875957,
+                  "round": 0
+                }
+              ],
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 7,
+              "full_work_failed": 2667,
+              "genuine_budget_depletion_observed": false,
+              "mode": "from-zero",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            },
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "confirmations": [
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30075041831,
+                  "round": 0
+                }
+              ],
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 7,
+              "full_work_failed": 2606,
+              "genuine_budget_depletion_observed": false,
+              "mode": "late-product",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            }
+          ],
+          "report_sha256": "280393d31663128c73adff56bf9ca445b3b3a3386b5b91d60f00c17dac9ae94e",
+          "run": 2
+        },
+        {
+          "economics_complete": true,
+          "finite_experiment_criteria_met": false,
+          "phases": [
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "confirmations": [
+                {
+                  "confirmed_inside_pressure_window": true,
+                  "ended_ns": 24215011694,
+                  "round": 0
+                },
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30001667489,
+                  "round": 1
+                }
+              ],
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 14,
+              "full_work_failed": 0,
+              "genuine_budget_depletion_observed": false,
+              "mode": "baseline",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            },
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "confirmations": [
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30083017102,
+                  "round": 0
+                }
+              ],
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 7,
+              "full_work_failed": 2654,
+              "genuine_budget_depletion_observed": false,
+              "mode": "from-zero",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            },
+            {
+              "actor_reports_successful_without_cap_or_kill": true,
+              "all_signed_rounds_confirmed_in_window": false,
+              "confirmations": [
+                {
+                  "confirmed_inside_pressure_window": false,
+                  "ended_ns": 30089659603,
+                  "round": 0
+                }
+              ],
+              "finite_phase_criteria_met": false,
+              "full_work_accepted": 7,
+              "full_work_failed": 2622,
+              "genuine_budget_depletion_observed": false,
+              "mode": "late-product",
+              "observer_complete": true,
+              "receiver_client_state_equal": false,
+              "verifier_errors": [
+                "PUBLIC_REQUEST_DEADLINE"
+              ]
+            }
+          ],
+          "report_sha256": "d895383373b670fc033028490f18892545e82a4a4f345a0b6d746f4d307e48b9",
+          "run": 3
+        }
+      ],
+      "runner_sha256": "c1dfb715aaf8c0c86d66c9ebee6cf64c4a829b89fdf93767e2ce9f847b8534c0",
+      "source_after": {
+        "base": null,
+        "candidate": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "030de92be05bfd4f73e199098c12dfeaedf29b17",
+        "tested_tree": "21e970bfdb11ab64403d2af5f3c56536a2961f80",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2521527652,
+        "tracked_entries": 27100,
+        "tracked_worktree_verified": true
+      },
+      "state_backend": "authenticated-v1",
+      "toolchain": "1.95.0"
+    }
+  },
+  "native_ancestor": "8dee97636e2b6932fb7a22b1b54f2cab09ae8406",
+  "native_ancestor_to_baseline_changed_paths": [
+    "evidence/cell-paged-model-release-34e09-20261110/MANIFEST.json",
+    "evidence/cell-paged-model-release-34e09-20261110/README.md",
+    "evidence/cell-paged-model-release-34e09-20261110/SUMMARY.json",
+    "evidence/cell-paged-model-release-34e09-20261110/paged-source-inputs.operation02.release.v1.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/cargo-graph-observation.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/cargo-graph-start.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/cargo-graph.log",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/da-crate-observation.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/da-crate-start.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/da-crate.log",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/exact-source-end-observation.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/exact-source-end-start.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/exact-source-end.log",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/exact-source-observation.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/exact-source-start.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/exact-source.log",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/fmt-observation.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/fmt-start.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/fmt.log",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/new-paged-entry-observation.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/new-paged-entry-start.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/new-paged-entry.log",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/new-restore-cases-observation.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/new-restore-cases-start.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/new-restore-cases.log",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/node-storage-observation.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/node-storage-start.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/node-storage.log",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/observation.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/old-copy-entry-observation.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/old-copy-entry-start.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/old-copy-entry.log",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/preflight-observation.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/preflight-start.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/preflight.log",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/repository-and-links-observation.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/repository-and-links-start.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/repository-and-links.log",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/source-integrity-negatives-observation.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/source-integrity-negatives-start.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/source-integrity-negatives.log",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/sources-end.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/sources-start.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/start.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/strict-clippy-observation.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/strict-clippy-start.json",
+    "evidence/cell-paged-model-release-34e09-20261110/qualification/strict-clippy.log",
+    "evidence/cell-paged-model-release-34e09-20261110/real-model/admission.json",
+    "evidence/cell-paged-model-release-34e09-20261110/real-model/build.json",
+    "evidence/cell-paged-model-release-34e09-20261110/real-model/build.log",
+    "evidence/cell-paged-model-release-34e09-20261110/real-model/execution-result.json",
+    "evidence/cell-paged-model-release-34e09-20261110/real-model/execution-start.json",
+    "evidence/cell-paged-model-release-34e09-20261110/real-model/independent-catalog-anchor.cva3",
+    "evidence/cell-paged-model-release-34e09-20261110/real-model/native-result.json",
+    "evidence/cell-paged-model-release-34e09-20261110/real-model/native.stderr",
+    "evidence/cell-paged-model-release-34e09-20261110/real-model/native.stdout",
+    "evidence/cell-paged-model-release-34e09-20261110/real-model/original-paged-source-inputs.json",
+    "evidence/cell-paged-model-release-34e09-20261110/real-model/owner-paged-custody.json",
+    "evidence/cell-paged-model-release-34e09-20261110/run_paged_model_release_v1.py",
+    "evidence/cell-paged-model-release-34e09-20261110/runner-release-v1.py"
+  ],
+  "native_qualification_inputs_match": {
+    "expected_resources": true,
+    "original_inputs": true,
+    "profile": true,
+    "public_phase_placement": true,
+    "runner_sha256": true,
+    "state_backend": true,
+    "toolchain": true
+  },
+  "recovered_source_kind": "same four original Actions ZIPs; new metadata GET capture; independent new archive",
+  "schema": "recovered-original-ci-observations-v1"
+}

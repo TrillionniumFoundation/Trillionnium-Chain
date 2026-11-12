@@ -1,0 +1,6 @@
+
+running 1 test
+test store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1318 filtered out; finished in 0.09s
+
