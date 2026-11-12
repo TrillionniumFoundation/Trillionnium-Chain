@@ -133,6 +133,38 @@ def verify_signed_rounds(confirmations: list[dict]) -> None:
                     'SIX_DEPTH_OR_SIGNED_INCLUSION_READBACK_MISMATCH')
 
 
+def verify_phase_claim_witnesses(p: dict) -> None:
+    """Necessary raw witness checks, not a proof of genuine work or finality.
+
+    The phase report's boolean claims are insufficient on their own. This
+    rejects a self-asserted success paired with contradictory final tips or
+    missing depletion meter bytes. It does NOT authenticate a meter operator,
+    prove an independently paid budget, or turn a test fixture into production.
+    """
+    require(type(p.get('receiver_client_state_equal')) is bool,
+            'INVALID_RECEIVER_CLIENT_CLAIM_TYPE')
+    if p['receiver_client_state_equal'] is True:
+        receiver, client = p.get('final_receiver_tip'), p.get('final_client_tip')
+        require(type(receiver) is str and type(client) is str and
+                len(receiver) == len(client) == 64 and
+                all(c in '0123456789abcdef' for c in receiver + client) and
+                receiver == client,
+                'RECEIVER_CLIENT_TIP_WITNESS_MISMATCH')
+
+    require(type(p.get('genuine_budget_depletion_observed')) is bool,
+            'INVALID_DEPLETION_CLAIM_TYPE')
+    if p['genuine_budget_depletion_observed'] is True:
+        at_ns, evidence = p.get('depletion_at_ns'), p.get('depletion_meter')
+        result = evidence.get('Ok') if type(evidence) is dict else None
+        meter = result.get('meter') if type(result) is dict else None
+        actual = result.get('actual_flow') if type(result) is dict else None
+        require(type(at_ns) is int and 0 <= at_ns <= 30_000_000_000 and
+                type(result) is dict and result.get('depleted') is True and
+                type(meter) is dict and meter.get('accounting_unavailable') is False and
+                type(actual) is dict and actual.get('balance_identity_verified') is True,
+                'DEPLETION_CLAIM_WITHOUT_ACTUAL_METER_WITNESS')
+
+
 def summarize(results: dict, reports: list[dict], host_before: list[dict]) -> dict:
     """Pure reporting, independently testable without large fixture files."""
     require(results['original_inputs'] == EXPECTED_INPUTS, 'ORIGINAL_WORKLOAD_CHANGED')
@@ -168,6 +200,7 @@ def summarize(results: dict, reports: list[dict], host_before: list[dict]) -> di
                     p['attacker_processes_requested'] == EXPECTED_INPUTS['attacker_processes'][index],
                     'ORIGINAL_PHASE_WORKLOAD_CHANGED')
             verify_signed_rounds(p['confirmations'])
+            verify_phase_claim_witnesses(p)
             n_window = 0
             for c in p['confirmations']:
                 if c['confirmed_inside_pressure_window'] is True:
