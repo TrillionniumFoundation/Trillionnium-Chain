@@ -710,11 +710,23 @@ fn reject_sidecars(path: &Path) -> ConsumptionSettlementResultV1<()> {
     for suffix in ["-wal", "-shm", "-journal"] {
         let mut sidecar: OsString = path.as_os_str().to_os_string();
         sidecar.push(suffix);
-        if Path::new(&sidecar).exists() {
-            return Err(error(
-                ConsumptionSettlementErrorCodeV1::SidecarPresent,
-                "SQLite sidecar is present",
-            ));
+        match fs::symlink_metadata(Path::new(&sidecar)) {
+            Ok(_) => {
+                return Err(error(
+                    ConsumptionSettlementErrorCodeV1::SidecarPresent,
+                    "SQLite sidecar is present",
+                ))
+            }
+            Err(cause) if cause.kind() == std::io::ErrorKind::NotFound => {}
+            Err(cause) => {
+                return Err(error(
+                    ConsumptionSettlementErrorCodeV1::StoreFailure,
+                    format!(
+                        "cannot inspect SQLite sidecar {}: {cause}",
+                        Path::new(&sidecar).display()
+                    ),
+                ))
+            }
         }
     }
     Ok(())

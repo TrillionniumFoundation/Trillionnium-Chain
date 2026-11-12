@@ -2968,15 +2968,29 @@ fn decode_u64(bytes: &[u8]) -> DaResultV1<u64> {
 
 fn reject_sidecars(path: &Path) -> DaResultV1<()> {
     for suffix in ["-wal", "-shm", "-journal"] {
-        let sidecar = PathBuf::from(format!("{}{suffix}", path.display()));
-        if sidecar.exists() {
-            return Err(error(
-                DaErrorCodeV1::StoreFailure,
-                format!(
-                    "unresolved SQLite sidecar is fail-closed: {}",
-                    sidecar.display()
-                ),
-            ));
+        let mut name = path.as_os_str().to_os_string();
+        name.push(suffix);
+        let sidecar = PathBuf::from(name);
+        match fs::symlink_metadata(&sidecar) {
+            Ok(_) => {
+                return Err(error(
+                    DaErrorCodeV1::StoreFailure,
+                    format!(
+                        "unresolved SQLite sidecar is fail-closed: {}",
+                        sidecar.display()
+                    ),
+                ))
+            }
+            Err(cause) if cause.kind() == std::io::ErrorKind::NotFound => {}
+            Err(cause) => {
+                return Err(error(
+                    DaErrorCodeV1::StoreFailure,
+                    format!(
+                        "cannot inspect SQLite sidecar {}: {cause}",
+                        sidecar.display()
+                    ),
+                ))
+            }
         }
     }
     Ok(())

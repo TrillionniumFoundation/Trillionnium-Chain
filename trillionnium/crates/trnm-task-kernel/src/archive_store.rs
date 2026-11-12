@@ -801,11 +801,23 @@ fn reject_sidecars(path: &Path) -> AgentMarketResultV1<()> {
         let mut sidecar = path.as_os_str().to_os_string();
         sidecar.push(suffix);
         let sidecar = PathBuf::from(sidecar);
-        if fs::symlink_metadata(&sidecar).is_ok() {
-            return Err(error(
-                AgentMarketErrorCodeV1::SidecarPresent,
-                "TaskV1 archive sidecar is present",
-            ));
+        match fs::symlink_metadata(&sidecar) {
+            Ok(_) => {
+                return Err(error(
+                    AgentMarketErrorCodeV1::SidecarPresent,
+                    "TaskV1 archive sidecar is present",
+                ))
+            }
+            Err(cause) if cause.kind() == std::io::ErrorKind::NotFound => {}
+            Err(cause) => {
+                return Err(error(
+                    AgentMarketErrorCodeV1::StoreFailure,
+                    format!(
+                        "cannot inspect SQLite sidecar {}: {cause}",
+                        sidecar.display()
+                    ),
+                ))
+            }
         }
     }
     Ok(())
