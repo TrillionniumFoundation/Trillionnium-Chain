@@ -1210,7 +1210,7 @@
     "formal/pon-nakamoto-v1/vectors/cell-model-root-v1.json": "cbabc0747dacd024fd771feb409157ae63f3c50a",
     "formal/pon-nakamoto-v1/w1_native_cost/Cargo.lock": "8b8f188c7c0d70521736277fafc5c2036c92e328",
     "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml": "50443c0fbc0169c400b9106ec3a22fa069d70b3b",
-    "scripts/ci/check_ci_contract.py": "8c84ca65e93b8cccdbd0311a3c35dd70b366b5fd",
+    "scripts/ci/check_ci_contract.py": "37505979d7a3ebe7ffc8191965c8edc18e0854c9",
     "scripts/ci/check_cpq1_parameter_observation.py": "335f25c09eeac7123f58af53b60f2d0943fab3cc",
     "scripts/ci/check_growth_scale_observation.py": "0a239b85ffd00bc3ce5609f7dd190fc2562c00b8",
     "scripts/ci/check_native_constants_roster.py": "22921da3bac06cde78319b5b9492a56751f4c6ae",
