@@ -1,0 +1,36 @@
+{
+  "bytes": 196,
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "-Vv"
+  ],
+  "cwd": "/data/chain-checkpoint-probe-format-20261112-df05",
+  "elapsed_ns": 12749099625,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+  "log": "rustc-version.log",
+  "name": "rustc-version",
+  "process_exit_code": 0,
+  "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+  "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "target_after_identity": {
+    "device": 2067,
+    "gid": 1000,
+    "inode": 26345745,
+    "mode": 448,
+    "uid": 1000
+  },
+  "target_before_identity": {
+    "device": 2067,
+    "gid": 1000,
+    "inode": 26345745,
+    "mode": 448,
+    "uid": 1000
+  },
+  "target_identity_error": null,
+  "timed_out": false
+}

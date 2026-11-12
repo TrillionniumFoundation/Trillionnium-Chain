@@ -1,0 +1,10 @@
+{
+  "driver_sha256": "8c158e2396381c1e5cbab41ec57111356cde131300fc71ff3f9f874f13114126",
+  "input_sha256": "e9d158514078680ccba9886206adedde1e4c4f396af01f8de876b9b281c7bdfd",
+  "operation_key": "chain-checkpoint-probe-format-native-validation-20261112-df05-v1",
+  "parent_evidence": "b62cb86d22405dd9e5b441970639b6e5dd44a8b8",
+  "parent_tree": "5608b314520cf25068aff5627043d6f8cedd4a41",
+  "scope": "three-path formatter follow-up only; no Root V3/V4/V5 suite rerun or publication",
+  "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+  "tree": "e3428012a36210087f5a260f2cf1720d0086fa9e"
+}
