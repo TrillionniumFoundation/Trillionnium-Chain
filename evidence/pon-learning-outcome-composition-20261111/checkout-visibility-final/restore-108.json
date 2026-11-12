@@ -1,0 +1,24 @@
+{
+  "actual_oid": "337b7455e2ed2dc5af5bc09ad51c7de20e744468",
+  "bytes": 4458528,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "337b7455e2ed2dc5af5bc09ad51c7de20e744468"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 4458528,
+  "expected_oid": "337b7455e2ed2dc5af5bc09ad51c7de20e744468",
+  "finished_at": "2026-11-12T01:55:21.648184+00:00",
+  "path": "formal/pon-nakamoto-v1/p3_shared_primitive_qualification/evidence/native-v2-base-sync/objects/ef3652b06e74251c78b7983ca1589321c6a62ff5203683ff9888fd98048ddde0.bin.gz",
+  "path_base64": "Zm9ybWFsL3Bvbi1uYWthbW90by12MS9wM19zaGFyZWRfcHJpbWl0aXZlX3F1YWxpZmljYXRpb24vZXZpZGVuY2UvbmF0aXZlLXYyLWJhc2Utc3luYy9vYmplY3RzL2VmMzY1MmIwNmU3NDI1MWM3OGI3OTgzY2ExNTg5MzIxYzZhNjJmZjUyMDM2ODNmZjk4ODhmZDk4MDQ4ZGRkZTAuYmluLmd6",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "938c984cb25b47b692de3a163d1072a340e890fc7d6807015fa1058002c6b0f0",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:55:21.594952+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,24 @@
+{
+  "actual_oid": "dfde52ea5ea8cc82f1c584c6c1540be3bf2e91e6",
+  "bytes": 5823146,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "dfde52ea5ea8cc82f1c584c6c1540be3bf2e91e6"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 5823146,
+  "expected_oid": "dfde52ea5ea8cc82f1c584c6c1540be3bf2e91e6",
+  "finished_at": "2026-11-12T01:55:18.114557+00:00",
+  "path": "evidence/pon-open-consensus-continuation-20261110-2334/hosted-readback/originals/fresh-service-head.zip",
+  "path_base64": "ZXZpZGVuY2UvcG9uLW9wZW4tY29uc2Vuc3VzLWNvbnRpbnVhdGlvbi0yMDI2MTExMC0yMzM0L2hvc3RlZC1yZWFkYmFjay9vcmlnaW5hbHMvZnJlc2gtc2VydmljZS1oZWFkLnppcA==",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "50d19f5690bbac21e5a7a6c8e9d6578f26acb57437e77dfde9ba64a231e966de",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:55:18.026432+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

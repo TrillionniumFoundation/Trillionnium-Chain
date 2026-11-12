@@ -1,0 +1,24 @@
+{
+  "actual_oid": "f3f6c0e23807ddbca67577acf4706a362146c953",
+  "bytes": 1066112,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "f3f6c0e23807ddbca67577acf4706a362146c953"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 1066112,
+  "expected_oid": "f3f6c0e23807ddbca67577acf4706a362146c953",
+  "finished_at": "2026-11-12T01:55:19.945112+00:00",
+  "path": "evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/observations.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLXcxLXFyb20tY2xvc3VyZS0yMDI2MTEwNy9jYW5kaWRhdGUtMWU0Yi1uYXRpdmUvb2JzZXJ2YXRpb25zLnRhci5neg==",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "787ecdea6f3dfb11f03b61dd20f2484b763453f390b3d9802ca37e0cc5ec89c0",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:55:19.919253+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

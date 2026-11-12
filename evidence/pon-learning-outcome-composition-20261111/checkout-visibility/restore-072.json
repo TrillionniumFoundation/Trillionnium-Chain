@@ -1,0 +1,24 @@
+{
+  "actual_oid": "b3c7fa058c1b5d081bcda13b908e4222471d8ca4",
+  "bytes": 1258676,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "b3c7fa058c1b5d081bcda13b908e4222471d8ca4"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 1258676,
+  "expected_oid": "b3c7fa058c1b5d081bcda13b908e4222471d8ca4",
+  "finished_at": "2026-11-12T01:41:56.726753+00:00",
+  "path": "evidence/pon-upgrade-implementation-20261018/native-rounds/pn-convergence-20261023/closure-receipts/pn1-root-final-execute/raw/report.json.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLXVwZ3JhZGUtaW1wbGVtZW50YXRpb24tMjAyNjEwMTgvbmF0aXZlLXJvdW5kcy9wbi1jb252ZXJnZW5jZS0yMDI2MTAyMy9jbG9zdXJlLXJlY2VpcHRzL3BuMS1yb290LWZpbmFsLWV4ZWN1dGUvcmF3L3JlcG9ydC5qc29uLmd6",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "dd53e14763318c520ad604d394fea6e3384eda7d3d2ce331e4f5e1404ffb22fa",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:56.693930+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

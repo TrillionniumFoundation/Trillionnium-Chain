@@ -1,0 +1,24 @@
+{
+  "actual_oid": "da74bf21960fe89d273209a5e441c6696f68db7c",
+  "bytes": 5525534,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "da74bf21960fe89d273209a5e441c6696f68db7c"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 5525534,
+  "expected_oid": "da74bf21960fe89d273209a5e441c6696f68db7c",
+  "finished_at": "2026-11-12T01:41:47.237174+00:00",
+  "path": "evidence/pon-business-gates-819309-final-20261107/ci-819/archives/13586581750.zip",
+  "path_base64": "ZXZpZGVuY2UvcG9uLWJ1c2luZXNzLWdhdGVzLTgxOTMwOS1maW5hbC0yMDI2MTEwNy9jaS04MTkvYXJjaGl2ZXMvMTM1ODY1ODE3NTAuemlw",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "5bcae89f4f14aa35bd7cf6ca84fd329bb4e648ac45cc49d91c74f77cb5b27451",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:47.115250+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,24 @@
+{
+  "actual_oid": "dd1714c4c62fab972c7ac502744f20a45d1aea5e",
+  "bytes": 1049864,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "dd1714c4c62fab972c7ac502744f20a45d1aea5e"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 1049864,
+  "expected_oid": "dd1714c4c62fab972c7ac502744f20a45d1aea5e",
+  "finished_at": "2026-11-12T01:41:55.731414+00:00",
+  "path": "evidence/pon-resource-transfer-20261107/history/fanout-smoke-05.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLXJlc291cmNlLXRyYW5zZmVyLTIwMjYxMTA3L2hpc3RvcnkvZmFub3V0LXNtb2tlLTA1LnRhci5neg==",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "2aba53c6a1545abb69d52ce0f7725180691b9aeaf19336b41b23a9c08384d313",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:55.702492+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -21,6 +21,15 @@ executions remain pending or failed; no source-only pass grants model benefit,
 ordinary daemon assembly, independent B/C, portable FinalUse, current payment
 authority, whole-chain PQ qualification or production activation.
 
+Final component qualification on `04f5b5515774aab6663bb80cf7831fe07367ba81` passed 26 commands:
+42 native tests, six Python reader suites (110 tests), 43/16 negative
+controls and strict whole-workspace Clippy with the original pinned provider.
+Hepta's separate executed source `93fc43f6` passed seven original selected tests
+plus the real trainer/retained-task cold-recovery control; Draft #6062 binds its
+published evidence. The [exact-source qualification](../../evidence/pon-learning-outcome-composition-20261111/QUALIFICATION.json)
+preserves earlier failed runs and all existing authority/production HOLDs.
+The eighth Hepta test still has pending C output and is not an output-ACK proof.
+
 **Throughput budget continuation, 2026-11-10 America/New_York — HOLD:**
 
 Continue #895 without changing the original Host, paid CPU, PQ command limits

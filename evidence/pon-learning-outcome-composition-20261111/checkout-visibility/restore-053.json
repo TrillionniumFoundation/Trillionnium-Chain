@@ -1,0 +1,24 @@
+{
+  "actual_oid": "e5735302d1d45e16e10b34cbbb5dc7f4f03835cf",
+  "bytes": 5557454,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "e5735302d1d45e16e10b34cbbb5dc7f4f03835cf"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 5557454,
+  "expected_oid": "e5735302d1d45e16e10b34cbbb5dc7f4f03835cf",
+  "finished_at": "2026-11-12T01:41:55.295933+00:00",
+  "path": "evidence/pon-open-consensus-continuation-20261110-2334/hosted-readback/originals/arm64.zip",
+  "path_base64": "ZXZpZGVuY2UvcG9uLW9wZW4tY29uc2Vuc3VzLWNvbnRpbnVhdGlvbi0yMDI2MTExMC0yMzM0L2hvc3RlZC1yZWFkYmFjay9vcmlnaW5hbHMvYXJtNjQuemlw",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "57025dd4c0516cfb7d090d140e6bc9b20193773fa639faac9b15254dec12060a",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:55.170899+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

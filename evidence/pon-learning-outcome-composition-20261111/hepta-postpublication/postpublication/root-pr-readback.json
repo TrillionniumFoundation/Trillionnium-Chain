@@ -1,0 +1,15 @@
+{
+  "method": "GitHub connector fetch_pr; selected original metadata",
+  "recorded_at": "2026-11-12 01:21:12 UTC",
+  "repository": "TrillionniumFoundation/hepta-private-ci",
+  "number": 6062,
+  "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/pull/6062",
+  "state": "open",
+  "draft": true,
+  "merged": false,
+  "head": "codex/pon-outcome-readback-20261111-7612",
+  "head_sha": "ef3a398d460574813957a25f5455e12c60db6d5d",
+  "base": "codex/ordinary-owner-assembly-20261111-af52",
+  "base_sha": "3c8dabe46598599e91b2b8b80081e09069ff9426",
+  "author": "ProfHepta"
+}

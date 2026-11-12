@@ -1,0 +1,11 @@
+{"result": "PASS", "mode": "--dev", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-pon-learning-outcome-composition-20261111-7612", "remote_policy_mutated": false}
+
+C2_PROVIDER2_STARTING 04f5b5515774aab6663bb80cf7831fe07367ba81 01fcfb229fba3f6dae4d8709e18a23992c472b2eb3844880b5d301ee904d2ba6
+BEGIN project-boundary-before 2026-11-12T01:18:13.767321+00:00
+END project-boundary-before 0 accepted True
+BEGIN source-before 2026-11-12T01:18:13.885003+00:00
+END source-before 1 accepted False
+RUNNER_FAILURE RuntimeError: required command or execution boundary failed: source-before
+BEGIN source-after 2026-11-12T01:18:14.152613+00:00
+END source-after 1 accepted False
+C2_GATES_FINISHED {"failed_commands": ["source-before", "source-after"], "failure": "RuntimeError: required command or execution boundary failed: source-before", "missing_commands": ["locate-rustc", "locate-rustdoc", "toolchain", "cargo-version", "prepare-pq-provider", "locked-metadata", "format", "source-integrity-negatives", "project-boundary-negatives", "repository-and-links", "reader-cell_adoption_readback", "reader-cell_learning_scope_join", "reader-cell_learning_completion_join", "reader-cell_learning_iteration_join", "reader-cell_learning_local_decision_join", "reader-cell_learning_local_use_join", "adoption-library", "adoption-cli", "outcome-role-separation", "crypto-fixed-product-meter", "node-single-output-owner", "crypto-fresh-challenge-refusal", "workspace-strict-clippy"], "model_efficacy_certified": false, "native_test_total_required": 42, "planned_commands": 26, "production_activation": false, "provider_prepared_and_unchanged": false, "reader_suites_required": 6, "recorded_commands": 3, "result": "FAIL", "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81"}

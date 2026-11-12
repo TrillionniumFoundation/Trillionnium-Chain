@@ -1,0 +1,44 @@
+{
+  "accepted": true,
+  "command": [
+    "python3",
+    "-B",
+    "scripts/test_cell_learning_local_decision_join.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+  "elapsed_seconds": 0.767618,
+  "execution_error": null,
+  "exit_code": 0,
+  "expected_python_tests": null,
+  "expected_rust_tests": null,
+  "finished_utc": "2026-11-12T01:46:29.376647+00:00",
+  "interrupted": false,
+  "label": "reader-cell_learning_local_decision_join",
+  "observations": {
+    "build_script_events": [],
+    "cargo_json_errors": [],
+    "python_ok": true,
+    "python_tests": [
+      14
+    ],
+    "rust_tests": [],
+    "unqualified": false
+  },
+  "openssl_package_id": "registry+https://github.com/rust-lang/crates.io-index#openssl-sys@0.9.117",
+  "openssl_witness_required": false,
+  "openssl_witnesses": [],
+  "provider_environment_sha256": "8e23f109b0497a2fc245f1e7cdea1dd211cd6d303ac0dede95d5cc8360da1f32",
+  "python_suite_required": true,
+  "rejections": [],
+  "source_snapshot_sha256": null,
+  "sqlite_package_id": "path+file:///home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-sqlite-io-boundary#0.1.0",
+  "sqlite_witness_required": false,
+  "sqlite_witnesses": [],
+  "started_utc": "2026-11-12T01:46:28.609035+00:00",
+  "stderr": "reader-cell_learning_local_decision_join.stderr",
+  "stderr_sha256": "09c8dbb80be3f89bf6859444731079acce3517b79c6362f9777e276483a28770",
+  "stdout": "reader-cell_learning_local_decision_join.stdout",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "timed_out": false
+}

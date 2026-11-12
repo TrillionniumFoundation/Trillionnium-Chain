@@ -1,0 +1,24 @@
+{
+  "actual_oid": "b8ffe24a326fbf31eb99de73cad0ad2551297f7a",
+  "bytes": 4771258,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "b8ffe24a326fbf31eb99de73cad0ad2551297f7a"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 4771258,
+  "expected_oid": "b8ffe24a326fbf31eb99de73cad0ad2551297f7a",
+  "finished_at": "2026-11-12T01:41:54.419349+00:00",
+  "path": "evidence/pon-fc23-native-host-20261028/fc23-artifact-12783021727.zip",
+  "path_base64": "ZXZpZGVuY2UvcG9uLWZjMjMtbmF0aXZlLWhvc3QtMjAyNjEwMjgvZmMyMy1hcnRpZmFjdC0xMjc4MzAyMTcyNy56aXA=",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "28fd8eb823511681bb81e0111f4e0573e7fdd704965559b27f929aabb8b530be",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:54.341337+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

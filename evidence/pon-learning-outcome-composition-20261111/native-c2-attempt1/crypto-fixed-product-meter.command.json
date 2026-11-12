@@ -1,0 +1,204 @@
+{
+  "accepted": true,
+  "command": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--message-format=json",
+    "-p",
+    "trnm-crypto-primitives",
+    "--test",
+    "qualified_work_task",
+    "repeated_challenges_bind_one_product_meter_and_maintenance_produces_no_learning_credit",
+    "--",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+  "elapsed_seconds": 0.218034,
+  "execution_error": null,
+  "exit_code": 0,
+  "expected_python_tests": null,
+  "expected_rust_tests": 1,
+  "finished_utc": "2026-11-12T01:01:22.765171+00:00",
+  "interrupted": false,
+  "label": "crypto-fixed-product-meter",
+  "observations": {
+    "build_script_events": [
+      {
+        "cfgs": [
+          "wrap_proc_macro",
+          "proc_macro_span_location",
+          "proc_macro_span_file"
+        ],
+        "env": [],
+        "linked_libs": [],
+        "linked_paths": [],
+        "out_dir": "/home/qian-qi/work/chain-pon-outcome-7612-qualified-target/debug/build/proc-macro2-4a599ed645bc3058/out",
+        "package_id": "registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.106",
+        "reason": "build-script-executed"
+      },
+      {
+        "cfgs": [],
+        "env": [],
+        "linked_libs": [],
+        "linked_paths": [],
+        "out_dir": "/home/qian-qi/work/chain-pon-outcome-7612-qualified-target/debug/build/quote-0570cbb96c29a4e7/out",
+        "package_id": "registry+https://github.com/rust-lang/crates.io-index#quote@1.0.45",
+        "reason": "build-script-executed"
+      },
+      {
+        "cfgs": [
+          "relaxed_coherence"
+        ],
+        "env": [],
+        "linked_libs": [],
+        "linked_paths": [],
+        "out_dir": "/home/qian-qi/work/chain-pon-outcome-7612-qualified-target/debug/build/generic-array-8dfb2b39765de00e/out",
+        "package_id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+        "reason": "build-script-executed"
+      },
+      {
+        "cfgs": [],
+        "env": [],
+        "linked_libs": [],
+        "linked_paths": [],
+        "out_dir": "/home/qian-qi/work/chain-pon-outcome-7612-qualified-target/debug/build/serde_core-e9531bdb6193ba06/out",
+        "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.228",
+        "reason": "build-script-executed"
+      },
+      {
+        "cfgs": [],
+        "env": [],
+        "linked_libs": [
+          "static=sha512",
+          "static=sha256"
+        ],
+        "linked_paths": [
+          "native=/home/qian-qi/work/chain-pon-outcome-7612-qualified-target/debug/build/sha2-asm-5496e21e45cba969/out",
+          "native=/home/qian-qi/work/chain-pon-outcome-7612-qualified-target/debug/build/sha2-asm-5496e21e45cba969/out"
+        ],
+        "out_dir": "/home/qian-qi/work/chain-pon-outcome-7612-qualified-target/debug/build/sha2-asm-5496e21e45cba969/out",
+        "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha2-asm@0.6.4",
+        "reason": "build-script-executed"
+      },
+      {
+        "cfgs": [
+          "has_total_cmp"
+        ],
+        "env": [],
+        "linked_libs": [],
+        "linked_paths": [],
+        "out_dir": "/home/qian-qi/work/chain-pon-outcome-7612-qualified-target/debug/build/num-traits-021b026d3beb07e5/out",
+        "package_id": "registry+https://github.com/rust-lang/crates.io-index#num-traits@0.2.19",
+        "reason": "build-script-executed"
+      },
+      {
+        "cfgs": [
+          "if_docsrs_then_no_serde_core"
+        ],
+        "env": [],
+        "linked_libs": [],
+        "linked_paths": [],
+        "out_dir": "/home/qian-qi/work/chain-pon-outcome-7612-qualified-target/debug/build/serde-be62b92d4562b0f4/out",
+        "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.228",
+        "reason": "build-script-executed"
+      },
+      {
+        "cfgs": [],
+        "env": [],
+        "linked_libs": [],
+        "linked_paths": [],
+        "out_dir": "/home/qian-qi/work/chain-pon-outcome-7612-qualified-target/debug/build/zmij-3e9c54f9d8e35349/out",
+        "package_id": "registry+https://github.com/rust-lang/crates.io-index#zmij@1.0.21",
+        "reason": "build-script-executed"
+      },
+      {
+        "cfgs": [],
+        "env": [],
+        "linked_libs": [],
+        "linked_paths": [],
+        "out_dir": "/home/qian-qi/work/chain-pon-outcome-7612-qualified-target/debug/build/thiserror-55ba6e71ece5289f/out",
+        "package_id": "registry+https://github.com/rust-lang/crates.io-index#thiserror@1.0.69",
+        "reason": "build-script-executed"
+      },
+      {
+        "cfgs": [
+          "curve25519_dalek_bits=\"64\"",
+          "curve25519_dalek_backend=\"simd\""
+        ],
+        "env": [],
+        "linked_libs": [],
+        "linked_paths": [],
+        "out_dir": "/home/qian-qi/work/chain-pon-outcome-7612-qualified-target/debug/build/curve25519-dalek-6a336085fd84cc17/out",
+        "package_id": "registry+https://github.com/rust-lang/crates.io-index#curve25519-dalek@4.1.3",
+        "reason": "build-script-executed"
+      },
+      {
+        "cfgs": [],
+        "env": [],
+        "linked_libs": [],
+        "linked_paths": [],
+        "out_dir": "/home/qian-qi/work/chain-pon-outcome-7612-qualified-target/debug/build/anyhow-0f85b58ad6563fc7/out",
+        "package_id": "registry+https://github.com/rust-lang/crates.io-index#anyhow@1.0.103",
+        "reason": "build-script-executed"
+      },
+      {
+        "cfgs": [
+          "fast_arithmetic=\"64\""
+        ],
+        "env": [],
+        "linked_libs": [],
+        "linked_paths": [],
+        "out_dir": "/home/qian-qi/work/chain-pon-outcome-7612-qualified-target/debug/build/serde_json-556b6cf5c302a042/out",
+        "package_id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.149",
+        "reason": "build-script-executed"
+      },
+      {
+        "cfgs": [
+          "static_assertions",
+          "lower_upper_exp_for_non_zero",
+          "rustc_diagnostics",
+          "linux_raw_dep",
+          "linux_raw",
+          "linux_like",
+          "linux_kernel"
+        ],
+        "env": [],
+        "linked_libs": [],
+        "linked_paths": [],
+        "out_dir": "/home/qian-qi/work/chain-pon-outcome-7612-qualified-target/debug/build/rustix-d6ec53f5b3a92967/out",
+        "package_id": "registry+https://github.com/rust-lang/crates.io-index#rustix@1.1.4",
+        "reason": "build-script-executed"
+      }
+    ],
+    "cargo_json_errors": [],
+    "python_ok": false,
+    "python_tests": [],
+    "rust_tests": [
+      [
+        "ok",
+        1,
+        0,
+        0
+      ]
+    ],
+    "unqualified": false
+  },
+  "python_suite_required": false,
+  "rejections": [],
+  "source_snapshot_sha256": null,
+  "sqlite_package_id": "path+file:///home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-sqlite-io-boundary#0.1.0",
+  "sqlite_witness_required": false,
+  "sqlite_witnesses": [],
+  "started_utc": "2026-11-12T01:01:22.547145+00:00",
+  "stderr": "crypto-fixed-product-meter.stderr",
+  "stderr_sha256": "802a6b6e0d541fc0ac74b191b5dcf5fd0a17f47e407ac0e8e44da7313fbf659d",
+  "stdout": "crypto-fixed-product-meter.stdout",
+  "stdout_sha256": "99aeb6ba4b2130b90fa1e6cb34bb76bff2373076bb89b3dcb19085b8597887ca",
+  "timed_out": false
+}

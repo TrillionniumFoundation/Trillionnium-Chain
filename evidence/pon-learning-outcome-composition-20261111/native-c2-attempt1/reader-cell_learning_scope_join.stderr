@@ -1,0 +1,18 @@
+test_cell_and_organ_predicates_preserve_the_opposite_adapter (__main__.ScopedCompletedLearningTests.test_cell_and_organ_predicates_preserve_the_opposite_adapter) ... ok
+test_cli_requires_the_original_profile_and_its_pin (__main__.ScopedCompletedLearningTests.test_cli_requires_the_original_profile_and_its_pin) ... ok
+test_each_preserved_component_is_checked_even_after_no_update (__main__.ScopedCompletedLearningTests.test_each_preserved_component_is_checked_even_after_no_update) ... ok
+test_initial_profile_cannot_be_late_foreign_or_legacy (__main__.ScopedCompletedLearningTests.test_initial_profile_cannot_be_late_foreign_or_legacy) ... ok
+test_json_duplicate_fields_are_refused_before_scope_interpretation (__main__.ScopedCompletedLearningTests.test_json_duplicate_fields_are_refused_before_scope_interpretation) ... ok
+test_legacy_unknown_or_unscoped_profiles_are_explicit_refusals (__main__.ScopedCompletedLearningTests.test_legacy_unknown_or_unscoped_profiles_are_explicit_refusals) ... ok
+test_local_decision_tag_cannot_masquerade_as_old_selection (__main__.ScopedCompletedLearningTests.test_local_decision_tag_cannot_masquerade_as_old_selection) ... ok
+test_new_checkpoint_headers_cannot_enter_the_old_scoped_join (__main__.ScopedCompletedLearningTests.test_new_checkpoint_headers_cannot_enter_the_old_scoped_join) ... ok
+test_original_adopt_and_no_update_joins_preserve_every_authority_limit (__main__.ScopedCompletedLearningTests.test_original_adopt_and_no_update_joins_preserve_every_authority_limit) ... ok
+test_original_profile_bytes_need_their_independent_pin (__main__.ScopedCompletedLearningTests.test_original_profile_bytes_need_their_independent_pin) ... ok
+test_scope_kind_binding_and_original_rule_are_all_required (__main__.ScopedCompletedLearningTests.test_scope_kind_binding_and_original_rule_are_all_required) ... ok
+test_scope_types_do_not_accept_boolean_or_collection_aliases (__main__.ScopedCompletedLearningTests.test_scope_types_do_not_accept_boolean_or_collection_aliases) ... ok
+test_selected_717_layout_refuses_b8e_and_mixed_scope_fields (__main__.ScopedCompletedLearningTests.test_selected_717_layout_refuses_b8e_and_mixed_scope_fields) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 1.907s
+
+OK

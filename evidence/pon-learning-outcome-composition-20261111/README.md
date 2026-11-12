@@ -38,6 +38,59 @@ are the service credit and model allocation, not net account gains after fees.
 The author does not need a miner or storage-provider role to use the tested
 contribution/claim path.
 
+## Final committed-source component qualification
+
+Exact Chain source `04f5b5515774aab6663bb80cf7831fe07367ba81` (tree `895c77972eb0a923d10115fbd167209fdd0cd8cc`) completed all
+26 recorded commands. The [original final run](native-c2/summary.json),
+[command records](native-c2/commands.json) and
+[terminal observation](native-c2/terminal-observation.json) bind 42 native
+tests, six Python reader suites (110 tests), 43 source-negative
+and 16 project-boundary controls. All selected native tests had zero failures
+and zero ignored entries. Formatting, the locked all-features graph, complete
+repository links and workspace/all-targets/all-features Clippy with `-D warnings`
+passed. Source identities before and after are identical.
+
+| Reader suite | Executed tests |
+| --- | ---: |
+| reader-cell_adoption_readback | 26 |
+| reader-cell_learning_scope_join | 13 |
+| reader-cell_learning_completion_join | 13 |
+| reader-cell_learning_iteration_join | 25 |
+| reader-cell_learning_local_decision_join | 14 |
+| reader-cell_learning_local_use_join | 19 |
+
+The preceding [same-source attempt](native-c2-attempt1/summary.json) remains
+`FAIL`: system OpenSSL 3.0.13 could not compile the existing optional PQ test
+API. The final run used the unchanged original provider preparation, fixed
+OpenSSL 3.5.9 archive, fresh static build and real sign/verify/wrong-message
+smoke. [Provider observations](native-c2/provider-observation-before.json)
+and this Clippy invocation's Cargo event bind its actual install prefix.
+No repository gate, loader path or qualification cfg was weakened. Cached
+Cargo artifacts can be used; this is not a claim that every Rust crate was
+recompiled from scratch.
+
+The second [attempt](native-c2-attempt2/summary.json) stopped at the original
+source checks before provider preparation or native tests. A later readback
+found 109 historical archive entries marked skip-worktree. The original
+refusals and that separately timed diagnostic remain intact. The final pass
+requires the complete physical source and an index with no hidden entries;
+absent files are never treated as checked bytes.
+
+Hepta [Draft #6062](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/6062)
+publishes `ef3a398d460574813957a25f5455e12c60db6d5d`, whose runtime code tree
+equals executed `93fc43f6e87c4514485adcb01a7ffec8ad3b632f`. All seven initial
+selected tests and the separate eighth actual trainer/retained-task/cold-recovery
+test passed, as did scoped fmt/fix/final-fmt. The eighth test leaves the distinct
+input C output pending; it is not a completed-delivery or output-ACK positive.
+The [read-only postpublication result](hepta-postpublication/postpublication/postpublication-readback.json)
+binds original logs to published blobs and exact PR head/base. Its first gh
+field-compatibility failure is preserved. It cannot retrospectively prove the
+original publisher's optimization mode or historical Git push identity.
+The [hosted CI snapshot](hepta-postpublication/postpublication/hosted-ci-observation.json)
+is separately timed and was still pending; local passes do not imply all hosted
+checks completed. This evidence-only commit does not change the executed Rust,
+Python readers, CI workflow or pinned native corpus.
+
 ## Retained observations
 
 ### C1 native controls

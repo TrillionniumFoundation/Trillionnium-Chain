@@ -1,0 +1,24 @@
+{
+  "actual_oid": "87a8576426497244637adce4155b22f2b6923c4f",
+  "bytes": 1556336,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "87a8576426497244637adce4155b22f2b6923c4f"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 1556336,
+  "expected_oid": "87a8576426497244637adce4155b22f2b6923c4f",
+  "finished_at": "2026-11-12T01:41:54.007306+00:00",
+  "path": "evidence/pon-business-gates-readback-20261107/ci-d26/w1-observer-attempts/w1-component-artifact-read-v1/13578793210/w1-legal-strategy-v2/manifest.json.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLWJ1c2luZXNzLWdhdGVzLXJlYWRiYWNrLTIwMjYxMTA3L2NpLWQyNi93MS1vYnNlcnZlci1hdHRlbXB0cy93MS1jb21wb25lbnQtYXJ0aWZhY3QtcmVhZC12MS8xMzU3ODc5MzIxMC93MS1sZWdhbC1zdHJhdGVneS12Mi9tYW5pZmVzdC5qc29uLmd6",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "3a27f7562ee27a495a405282c9818b149f9893b16cbbe947e086922f852cd757",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:53.974607+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

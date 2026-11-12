@@ -1,0 +1,24 @@
+{
+  "actual_oid": "fd0814759a70dfd7ec1328b9d9e90a5ab25864d4",
+  "bytes": 1288352,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "fd0814759a70dfd7ec1328b9d9e90a5ab25864d4"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 1288352,
+  "expected_oid": "fd0814759a70dfd7ec1328b9d9e90a5ab25864d4",
+  "finished_at": "2026-11-12T01:41:55.170281+00:00",
+  "path": "evidence/pon-native-profile-closure-20261107/ci-source-pin-repair-v1/ci-pq-head-failure-v1.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLW5hdGl2ZS1wcm9maWxlLWNsb3N1cmUtMjAyNjExMDcvY2ktc291cmNlLXBpbi1yZXBhaXItdjEvY2ktcHEtaGVhZC1mYWlsdXJlLXYxLnRhci5neg==",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "21b784d4cc3222450fcc21edf1c9881bee61e5747f3c9ff48e0504d108c6973d",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:55.140631+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
