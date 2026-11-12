@@ -1,0 +1,358 @@
+{
+  "additional_part_reads_by_this_agent": 0,
+  "all_parts_excluded_from_final_publication": true,
+  "canonical_archive_path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+  "canonical_archive_result": "PENDING_SEPARATE_OWNER_VERIFICATION; not inferred from any part receipt",
+  "canonical_archive_transfer_owner": "/root/daa_native_audit",
+  "canonical_archive_upload_id": "work-time-recovery-upload-v1-7f73",
+  "independent_part00_observation": {
+    "host": "desktop",
+    "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part00",
+    "raw_result": {
+      "content": [
+        {
+          "text": "remote helper on desktop-ts failed with 1\nstdout:\n\nstderr:\nFileNotFoundError: [Errno 2] No such file or directory: 'work-time-recovery-transfer-v1.part00'",
+          "type": "text"
+        }
+      ],
+      "isError": true,
+      "structuredContent": {
+        "error_code": "INVALID_ARGUMENT"
+      }
+    },
+    "scope": "File was absent at this read observation; this does not prove an in-flight original write could not publish later.",
+    "source": "message from /root/daa_native_audit; independent h_file_info only, no write or retry"
+  },
+  "initial_remote_file_info": [
+    {
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "text": "remote helper on desktop-ts failed with 1\nstdout:\n\nstderr:\nFileNotFoundError: [Errno 2] No such file or directory: 'work-time-recovery.tar.gz'",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "error_code": "INVALID_ARGUMENT"
+          }
+        }
+      }
+    },
+    {
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part00",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "text": "remote helper on desktop-ts failed with 1\nstdout:\n\nstderr:\nFileNotFoundError: [Errno 2] No such file or directory: 'work-time-recovery-transfer-v1.part00'",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "error_code": "INVALID_ARGUMENT"
+          }
+        }
+      }
+    },
+    {
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part01",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "text": "remote helper on desktop-ts failed with 1\nstdout:\n\nstderr:\nFileNotFoundError: [Errno 2] No such file or directory: 'work-time-recovery-transfer-v1.part01'",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "error_code": "INVALID_ARGUMENT"
+          }
+        }
+      }
+    },
+    {
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part02",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "text": "remote helper on desktop-ts failed with 1\nstdout:\n\nstderr:\nFileNotFoundError: [Errno 2] No such file or directory: 'work-time-recovery-transfer-v1.part02'",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "error_code": "INVALID_ARGUMENT"
+          }
+        }
+      }
+    },
+    {
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part03",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "text": "remote helper on desktop-ts failed with 1\nstdout:\n\nstderr:\nFileNotFoundError: [Errno 2] No such file or directory: 'work-time-recovery-transfer-v1.part03'",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "error_code": "INVALID_ARGUMENT"
+          }
+        }
+      }
+    },
+    {
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part04",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "text": "remote helper on desktop-ts failed with 1\nstdout:\n\nstderr:\nFileNotFoundError: [Errno 2] No such file or directory: 'work-time-recovery-transfer-v1.part04'",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "error_code": "INVALID_ARGUMENT"
+          }
+        }
+      }
+    },
+    {
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part05",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "text": "remote helper on desktop-ts failed with 1\nstdout:\n\nstderr:\nFileNotFoundError: [Errno 2] No such file or directory: 'work-time-recovery-transfer-v1.part05'",
+              "type": "text"
+            }
+          ],
+          "isError": true,
+          "structuredContent": {
+            "error_code": "INVALID_ARGUMENT"
+          }
+        }
+      }
+    }
+  ],
+  "manifest": {
+    "archive_bytes": 4993378,
+    "archive_name": "work-time-recovery.tar.gz",
+    "archive_sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea",
+    "maximum_part_bytes": 921600,
+    "parts": [
+      {
+        "bytes": 921600,
+        "index": 0,
+        "local_path": "/workspace/scratch/7f73fe002713/daa-work-time-recovery-transfer-v1/work-time-recovery-transfer-v1.part00",
+        "name": "work-time-recovery-transfer-v1.part00",
+        "offset": 0,
+        "remote_path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part00",
+        "sha256": "b982fd3781ed6d938da80bc8abb72c1850c7e838a55605719762f03fea903b57"
+      },
+      {
+        "bytes": 921600,
+        "index": 1,
+        "local_path": "/workspace/scratch/7f73fe002713/daa-work-time-recovery-transfer-v1/work-time-recovery-transfer-v1.part01",
+        "name": "work-time-recovery-transfer-v1.part01",
+        "offset": 921600,
+        "remote_path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part01",
+        "sha256": "356c1e79108e125f80eecb144ab486a80159348a6921eb3c67dc2c3f4956f2f1"
+      },
+      {
+        "bytes": 921600,
+        "index": 2,
+        "local_path": "/workspace/scratch/7f73fe002713/daa-work-time-recovery-transfer-v1/work-time-recovery-transfer-v1.part02",
+        "name": "work-time-recovery-transfer-v1.part02",
+        "offset": 1843200,
+        "remote_path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part02",
+        "sha256": "70b2428c12362a99751ad1ae80253444eef3fa49c74cc7b9a973bc73fa4525b5"
+      },
+      {
+        "bytes": 921600,
+        "index": 3,
+        "local_path": "/workspace/scratch/7f73fe002713/daa-work-time-recovery-transfer-v1/work-time-recovery-transfer-v1.part03",
+        "name": "work-time-recovery-transfer-v1.part03",
+        "offset": 2764800,
+        "remote_path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part03",
+        "sha256": "f7911da5ae6d8e82a797034f3ea4e52022dfd69db881d03cc64624b966c19555"
+      },
+      {
+        "bytes": 921600,
+        "index": 4,
+        "local_path": "/workspace/scratch/7f73fe002713/daa-work-time-recovery-transfer-v1/work-time-recovery-transfer-v1.part04",
+        "name": "work-time-recovery-transfer-v1.part04",
+        "offset": 3686400,
+        "remote_path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part04",
+        "sha256": "4a841131a8d13c3c7553116db1f98014612f326845e22daf57deb416c773ea99"
+      },
+      {
+        "bytes": 385378,
+        "index": 5,
+        "local_path": "/workspace/scratch/7f73fe002713/daa-work-time-recovery-transfer-v1/work-time-recovery-transfer-v1.part05",
+        "name": "work-time-recovery-transfer-v1.part05",
+        "offset": 4608000,
+        "remote_path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part05",
+        "sha256": "63671f8ebb7b8eb5776a97e43bbb7cf7e9ab3ba826325885a3291dcaf2b58b40"
+      }
+    ],
+    "publication_policy": "create-only; on uncertain acknowledgement inspect the same path size and SHA256 before any retry",
+    "remote_archive_path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery.tar.gz",
+    "schema": "pon-work-time-recovery-transfer-v1",
+    "source_path": "/workspace/scratch/7f73fe002713/daa-evidence-stage/python/work-time-recovery.tar.gz"
+  },
+  "post_write_retry_count": 0,
+  "repository_mutations": false,
+  "schema": "pon-work-time-large-part-transfer-observations-v1",
+  "write_receipts": [
+    {
+      "expected_bytes": 921600,
+      "expected_sha256": "b982fd3781ed6d938da80bc8abb72c1850c7e838a55605719762f03fea903b57",
+      "expected_version": "absent",
+      "local_read_started_at_utc": "2026-11-12T00:40:48.243Z",
+      "part": "work-time-recovery-transfer-v1.part00",
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part00",
+      "remote_write_returned_at_utc": "2026-11-12T00:43:56.691Z",
+      "remote_write_started_at_utc": "2026-11-12T00:41:56.268Z",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "text": "tool call error: tool call failed for `codex_apps/h.binary_write`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+              "type": "text"
+            }
+          ],
+          "isError": true
+        }
+      }
+    },
+    {
+      "expected_bytes": 921600,
+      "expected_sha256": "356c1e79108e125f80eecb144ab486a80159348a6921eb3c67dc2c3f4956f2f1",
+      "expected_version": "absent",
+      "local_read_started_at_utc": "2026-11-12T00:40:48.243Z",
+      "part": "work-time-recovery-transfer-v1.part01",
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part01",
+      "remote_write_returned_at_utc": "2026-11-12T00:45:57.474Z",
+      "remote_write_started_at_utc": "2026-11-12T00:41:56.483Z",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "text": "tool call error: tool call failed for `codex_apps/h.binary_write`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+              "type": "text"
+            }
+          ],
+          "isError": true
+        }
+      }
+    },
+    {
+      "expected_bytes": 921600,
+      "expected_sha256": "70b2428c12362a99751ad1ae80253444eef3fa49c74cc7b9a973bc73fa4525b5",
+      "expected_version": "absent",
+      "local_read_started_at_utc": "2026-11-12T00:40:48.243Z",
+      "part": "work-time-recovery-transfer-v1.part02",
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part02",
+      "remote_write_returned_at_utc": "2026-11-12T00:47:57.582Z",
+      "remote_write_started_at_utc": "2026-11-12T00:41:56.537Z",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "text": "tool call error: tool call failed for `codex_apps/h.binary_write`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+              "type": "text"
+            }
+          ],
+          "isError": true
+        }
+      }
+    },
+    {
+      "expected_bytes": 921600,
+      "expected_sha256": "f7911da5ae6d8e82a797034f3ea4e52022dfd69db881d03cc64624b966c19555",
+      "expected_version": "absent",
+      "local_read_started_at_utc": "2026-11-12T00:40:48.243Z",
+      "part": "work-time-recovery-transfer-v1.part03",
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part03",
+      "remote_write_returned_at_utc": "2026-11-12T00:47:57.807Z",
+      "remote_write_started_at_utc": "2026-11-12T00:43:57.344Z",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "text": "tool call error: tool call failed for `codex_apps/h.binary_write`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+              "type": "text"
+            }
+          ],
+          "isError": true
+        }
+      }
+    },
+    {
+      "expected_bytes": 921600,
+      "expected_sha256": "4a841131a8d13c3c7553116db1f98014612f326845e22daf57deb416c773ea99",
+      "expected_version": "absent",
+      "local_read_started_at_utc": "2026-11-12T00:40:48.243Z",
+      "part": "work-time-recovery-transfer-v1.part04",
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part04",
+      "remote_write_returned_at_utc": "2026-11-12T00:45:57.693Z",
+      "remote_write_started_at_utc": "2026-11-12T00:43:57.323Z",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "text": "tool call error: tool call failed for `codex_apps/h.binary_write`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+              "type": "text"
+            }
+          ],
+          "isError": true
+        }
+      }
+    },
+    {
+      "expected_bytes": 385378,
+      "expected_sha256": "63671f8ebb7b8eb5776a97e43bbb7cf7e9ab3ba826325885a3291dcaf2b58b40",
+      "expected_version": "absent",
+      "local_read_started_at_utc": "2026-11-12T00:40:48.243Z",
+      "part": "work-time-recovery-transfer-v1.part05",
+      "path": "/home/qian-qi/chain-daa-monotone-20261111-7f73/work-time-recovery-transfer-v1.part05",
+      "remote_write_returned_at_utc": "2026-11-12T00:41:48.342Z",
+      "remote_write_started_at_utc": "2026-11-12T00:40:53.973Z",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "text": "{\"mode\":384,\"sha256\":\"63671f8ebb7b8eb5776a97e43bbb7cf7e9ab3ba826325885a3291dcaf2b58b40\",\"size\":385378,\"version\":\"2050:55904514:385378:1794444088700514929:1794444088925471325\",\"written\":385378}",
+              "type": "text"
+            }
+          ],
+          "isError": false,
+          "structuredContent": null
+        }
+      }
+    }
+  ]
+}

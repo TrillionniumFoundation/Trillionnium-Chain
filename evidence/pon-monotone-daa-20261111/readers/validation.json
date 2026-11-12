@@ -1,0 +1,305 @@
+{
+  "execution_site": "local managed /workspace runtime",
+  "finished_utc": "2026-11-12T01:22:13.284128+00:00",
+  "input_file_bytes_and_sha256_unchanged": true,
+  "input_files_after": 460,
+  "input_files_before": 460,
+  "inputs_after_manifest": {
+    "bytes": 99585,
+    "sha256": "ef4a42d2cded02f81c2da37f52103a4e44b6035b759dd9d0ef1486d8d2ea0af6"
+  },
+  "inputs_before_manifest": {
+    "bytes": 99585,
+    "sha256": "ef4a42d2cded02f81c2da37f52103a4e44b6035b759dd9d0ef1486d8d2ea0af6"
+  },
+  "local_runtime": {
+    "actual_cgroup_root_files": {
+      "cpu.max": {
+        "unavailable": "[Errno 2] No such file or directory: '/sys/fs/cgroup/cpu.max'"
+      },
+      "memory.max": {
+        "unavailable": "[Errno 2] No such file or directory: '/sys/fs/cgroup/memory.max'"
+      },
+      "pids.max": {
+        "unavailable": "[Errno 2] No such file or directory: '/sys/fs/cgroup/pids.max'"
+      }
+    },
+    "commands_run_sequentially": true,
+    "limits": {
+      "address_space": {
+        "after": [
+          8589934592,
+          8589934592
+        ],
+        "before": [
+          -1,
+          -1
+        ]
+      },
+      "cpu_seconds": {
+        "after": [
+          1800,
+          1800
+        ],
+        "before": [
+          -1,
+          -1
+        ]
+      }
+    },
+    "physical_cost_or_security_bound_claimed": false,
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "proc_self_cgroup": "0::/\n",
+    "python_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "reader_is_scalar_python": true,
+    "remote_resource_scope_executed": false
+  },
+  "native_archive": {
+    "bytes": 4657951,
+    "path": "/workspace/scratch/7f73fe002713/daa-native-archive-recovery-v1/native-run-d23488c5-v1.tar.gz",
+    "sha256": "6c33da56842862608e365acb7c69d72175538556a2a76b74254f7b0357de9c81"
+  },
+  "native_archive_inputs_match": true,
+  "native_archive_unchanged": true,
+  "outer_driver_exit_code": 0,
+  "profiles": [
+    {
+      "backend": "pnh1-authenticated",
+      "full_python_transcript_and_product_recomputed": true,
+      "header_profile": "PNH1",
+      "host_and_source_provenance_checked_by_reader": false,
+      "observations": 114,
+      "ordinary": {
+        "height": 65,
+        "required_chainwork": 130
+      },
+      "public_network_qualification": false,
+      "reader_exit_code": 0,
+      "reader_performed_native_admission": false,
+      "reader_reopened_native_database": false,
+      "reader_schema": "pon-native-monotone-daa-reader-v1",
+      "reader_stdout": {
+        "bytes": 25511,
+        "sha256": "31f3fe344618b7bb5924c88bba2192df07f48374b4b5b5815dd5cd71bd7cc25a"
+      },
+      "reader_verified_aam1_account_proofs": false,
+      "result": "PASS",
+      "schedule": "monotone-daa",
+      "selected": {
+        "height": 64,
+        "required_chainwork": 793
+      },
+      "signed_spans_seconds": [
+        "15",
+        "15",
+        "15"
+      ],
+      "suite": {
+        "methods_executed": 26,
+        "passed": 25,
+        "seconds": "15.968",
+        "skip_lines": [
+          "test_growth_witness_bytes_cannot_change_under_the_same_commitment (__main__.RetainedMonotoneDaaCounterexamples.test_growth_witness_bytes_cannot_change_under_the_same_commitment) ... skipped 'AAM1 witness commitment exists only in the separate PGH2 profile'"
+        ],
+        "skipped": 1
+      },
+      "suite_exit_code": 0,
+      "suite_stderr": {
+        "bytes": 4818,
+        "sha256": "ca0682e44b27955b1c2a51ac8e8883713c0f31a38b937a3cfebb0b0840f763db"
+      },
+      "unique_full_python_verified_proofs_within_profile": 114
+    },
+    {
+      "backend": "pgh2-growth",
+      "full_python_transcript_and_product_recomputed": true,
+      "header_profile": "PGH2",
+      "host_and_source_provenance_checked_by_reader": false,
+      "observations": 114,
+      "ordinary": {
+        "height": 65,
+        "required_chainwork": 130
+      },
+      "public_network_qualification": false,
+      "reader_exit_code": 0,
+      "reader_performed_native_admission": false,
+      "reader_reopened_native_database": false,
+      "reader_schema": "pon-native-monotone-daa-reader-v1",
+      "reader_stdout": {
+        "bytes": 25505,
+        "sha256": "0b6e5823fef62672cb1368b05e82aa6b8120940f1145e005c1d08a50f2edf9c3"
+      },
+      "reader_verified_aam1_account_proofs": false,
+      "result": "PASS",
+      "schedule": "monotone-daa",
+      "selected": {
+        "height": 64,
+        "required_chainwork": 793
+      },
+      "signed_spans_seconds": [
+        "15",
+        "15",
+        "15"
+      ],
+      "suite": {
+        "methods_executed": 26,
+        "passed": 26,
+        "seconds": "17.912",
+        "skip_lines": [],
+        "skipped": 0
+      },
+      "suite_exit_code": 0,
+      "suite_stderr": {
+        "bytes": 4734,
+        "sha256": "db5f32dce2d66ef611212753861434aa26d860eddbcd2eee5b839df4ef847fc8"
+      },
+      "unique_full_python_verified_proofs_within_profile": 114
+    },
+    {
+      "backend": "pnh1-authenticated",
+      "full_python_transcript_and_product_recomputed": true,
+      "header_profile": "PNH1",
+      "host_and_source_provenance_checked_by_reader": false,
+      "observations": 114,
+      "ordinary": {
+        "height": 65,
+        "required_chainwork": 130
+      },
+      "public_network_qualification": false,
+      "reader_exit_code": 0,
+      "reader_performed_native_admission": false,
+      "reader_reopened_native_database": false,
+      "reader_schema": "pon-native-joint-daa-reader-v1",
+      "reader_stdout": {
+        "bytes": 25143,
+        "sha256": "0480bb5ef0389f4c82bc3d19af1aa2c9ba73d1ab9a3aa7a934c03ab167e2b9fb"
+      },
+      "reader_verified_aam1_account_proofs": false,
+      "result": "PASS",
+      "schedule": "joint-daa",
+      "selected": {
+        "height": 64,
+        "required_chainwork": 793
+      },
+      "signed_spans_seconds": [
+        "-42",
+        "-199",
+        "-356"
+      ],
+      "suite": {
+        "methods_executed": 22,
+        "passed": 21,
+        "seconds": "15.530",
+        "skip_lines": [
+          "test_growth_witness_bytes_cannot_change_under_the_same_commitment (__main__.RetainedJointDaaCounterexamples.test_growth_witness_bytes_cannot_change_under_the_same_commitment) ... skipped 'AAM1 witness commitment exists only in the separate PGH2 profile'"
+        ],
+        "skipped": 1
+      },
+      "suite_exit_code": 0,
+      "suite_stderr": {
+        "bytes": 3956,
+        "sha256": "07e427856b06222fb12371b54045d9263e81dd29343bdcc31794454b0300f43d"
+      },
+      "unique_full_python_verified_proofs_within_profile": 114
+    },
+    {
+      "backend": "pgh2-growth",
+      "full_python_transcript_and_product_recomputed": true,
+      "header_profile": "PGH2",
+      "host_and_source_provenance_checked_by_reader": false,
+      "observations": 114,
+      "ordinary": {
+        "height": 65,
+        "required_chainwork": 130
+      },
+      "public_network_qualification": false,
+      "reader_exit_code": 0,
+      "reader_performed_native_admission": false,
+      "reader_reopened_native_database": false,
+      "reader_schema": "pon-native-joint-daa-reader-v1",
+      "reader_stdout": {
+        "bytes": 25139,
+        "sha256": "da0eb6857fcdef497124d48d6977033d6d44b154e9029e226928c5bbbc4f616a"
+      },
+      "reader_verified_aam1_account_proofs": false,
+      "result": "PASS",
+      "schedule": "joint-daa",
+      "selected": {
+        "height": 64,
+        "required_chainwork": 793
+      },
+      "signed_spans_seconds": [
+        "-42",
+        "-199",
+        "-356"
+      ],
+      "suite": {
+        "methods_executed": 22,
+        "passed": 22,
+        "seconds": "24.689",
+        "skip_lines": [],
+        "skipped": 0
+      },
+      "suite_exit_code": 0,
+      "suite_stderr": {
+        "bytes": 3872,
+        "sha256": "c6a1dfdc0772a238ecd87150eb04221ce4e4f9879de42463b5fb039dfb497cb9"
+      },
+      "unique_full_python_verified_proofs_within_profile": 114
+    }
+  ],
+  "profiles_are_replays_not_independent_attack_trials": true,
+  "recovery": {
+    "archive_git_blob": "ff602d470bff8cc2516a7ef33d4308eb4ef2ae42",
+    "archive_git_path": "evidence/pon-monotone-daa-20261111/native/native-run-d23488c5-v1.tar.gz",
+    "complete_archive_route": "normal Git fetch and git show, then full SHA256 and saved-chunk checks",
+    "fence_sha256": "b9c1336fe41972e9cba1f0e8bfeb1ea5072347ec82a2650bad249ddcc934cbfe",
+    "late_original_driver_blocked_by_verified_exclusive_fence": true,
+    "original_remote_launch_outcome": "UNKNOWN after two MCP request timeouts",
+    "partial_rpc_chunks_saved_and_matched": 36,
+    "publication_commit": "31f7740ed57eb3bca2e17f7e0a5f4f63cb320f5f",
+    "read_only_rpc_requests_unknown_at_controller_stop": 8,
+    "recorded_rpc_timeouts": 13,
+    "remote_reader_execution_observed": false
+  },
+  "result": "PASS",
+  "schema": "pon-four-profile-reader-recovery-validation-v2",
+  "scope": {
+    "actual_lifetime_failure_bound": null,
+    "chain_growth_failure_bound": null,
+    "chain_quality_failure_bound": null,
+    "common_prefix_failure_bound": null,
+    "independent_host_authentication": false,
+    "mathematically_independent_scalar_implementation": true,
+    "production_activation": false,
+    "public_network_qualification": false,
+    "qualification": "HOLD_NO_GO",
+    "quantum_attack_profitability_established": false,
+    "real_time_honest_network_attack_demonstrated": false,
+    "six_confirmations_failure_bound": null,
+    "uncomputed_bounds_are_unknown_not_zero": true
+  },
+  "source_after": {
+    "bytes": 423,
+    "sha256": "7af1abc8f8729c03cb8f8c544cdd4d7ddab60b746352eb8a732ece2789461336",
+    "tested_commit": "d23488c5f9b4a6696c3799b12f14b8af0a1b81fc",
+    "tested_tree": "72b106b4458299c37da146b0218b8f5276195b6d",
+    "tracked_bytes": 2530888134,
+    "tracked_entries": 26619,
+    "tracked_worktree_verified": true
+  },
+  "source_after_verified": true,
+  "source_before": {
+    "bytes": 423,
+    "sha256": "7af1abc8f8729c03cb8f8c544cdd4d7ddab60b746352eb8a732ece2789461336",
+    "tested_commit": "d23488c5f9b4a6696c3799b12f14b8af0a1b81fc",
+    "tested_tree": "72b106b4458299c37da146b0218b8f5276195b6d",
+    "tracked_bytes": 2530888134,
+    "tracked_entries": 26619,
+    "tracked_worktree_verified": true
+  },
+  "source_commit": "d23488c5f9b4a6696c3799b12f14b8af0a1b81fc",
+  "source_tree": "72b106b4458299c37da146b0218b8f5276195b6d",
+  "started_utc": "2026-11-12T01:18:41.697799+00:00"
+}

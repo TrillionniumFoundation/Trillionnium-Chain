@@ -1,0 +1,39 @@
+{
+  "actual_probability_law_authenticated": false,
+  "after_original_archived_fixture": {
+    "error": "missing-empty-directory foreign-native/packets",
+    "errors": 1,
+    "exit_code": 1,
+    "log": "after-tests.log",
+    "tests_run": 27
+  },
+  "after_restored_fixture_copy": {
+    "errors": 0,
+    "exit_code": 0,
+    "failures": 0,
+    "fixture_restoration": "fixture-restoration.json",
+    "log": "after-restored-fixture-tests.log",
+    "tests_run": 27
+  },
+  "exact_roster_registration_required": false,
+  "existing_file_bytes_unchanged_in_restored_fixture_copy": true,
+  "global_failure_probability": null,
+  "native_conditional_risk_certified": false,
+  "new_native_execution": false,
+  "new_reader_all_nine_mutants_refused": true,
+  "old_reader_new_regression_tests": {
+    "exit_code": 1,
+    "log": "before-tests.log",
+    "subcase_failures": 11,
+    "tests_run": 2
+  },
+  "old_reader_numeric_aliases_accepted_without_original_pin": 8,
+  "original_bank_pin_still_refuses_all_nine": true,
+  "physical_attack_demonstrated": false,
+  "production_activation": false,
+  "schema": "pon-risk-wrapper-typed-binding-summary-v1",
+  "scope": "local-reader-typed-binding-regression-against-retained-native-fixture",
+  "source_after_sha256": "2444750cf32a584b48b1a8f6c9afc1849d643b9ca1dadbd2a48076f68ae4bd4d",
+  "source_before_sha256": "cb18be8a6642b6981c28797928c58a45152ae7b39c11b162a1afea1fc4c3dfce",
+  "test_source_sha256": "28b2f1e88c60e4b143b3195cd13e700eed59af60839e979319b90bee28d19aff"
+}

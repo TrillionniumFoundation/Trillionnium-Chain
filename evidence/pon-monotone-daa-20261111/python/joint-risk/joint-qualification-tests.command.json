@@ -1,0 +1,46 @@
+{
+  "actual_relevant_env": {
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "NATIVE_RISK_LEDGER_RUN": null,
+    "PYTHONDONTWRITEBYTECODE": null,
+    "PYTHONHASHSEED": null,
+    "PYTHONHOME": null,
+    "PYTHONNOUSERSITE": null,
+    "PYTHONPATH": "/workspace/scratch/7f73fe002713/chain-daa/formal/pon-nakamoto-v1",
+    "TZ": null,
+    "VIRTUAL_ENV": null
+  },
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-m",
+    "unittest",
+    "-v",
+    "test_joint_consensus_qualification"
+  ],
+  "completed_at_utc": "2026-11-11T23:59:20.273698+00:00",
+  "cwd": "/workspace/scratch/7f73fe002713/chain-daa",
+  "elapsed_wall_ns": 6196168285,
+  "env_overrides": {
+    "PYTHONPATH": "/workspace/scratch/7f73fe002713/chain-daa/formal/pon-nakamoto-v1"
+  },
+  "environment_capture_scope": "execution-relevant-nonsensitive-variables; inherited environment otherwise retained",
+  "exit_code": 0,
+  "exit_matches_expectation": true,
+  "expected_exit": 0,
+  "expected_tests": 34,
+  "name": "joint-qualification-tests",
+  "started_at_utc": "2026-11-11T23:59:14.074383+00:00",
+  "stderr": {
+    "bytes": 5867,
+    "path": "joint-qualification-tests.stderr.log",
+    "sha256": "d1e2848fe5810ef853433e3b279c70cdf494934f2b2c03af0fe3cf6293d8659d"
+  },
+  "stdout": {
+    "bytes": 0,
+    "path": "joint-qualification-tests.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "tests_match_expectation": true,
+  "tests_run": 34
+}
