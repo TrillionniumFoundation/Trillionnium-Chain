@@ -425,3 +425,384 @@ fn killed_supported_writer_keeps_committed_prefix_and_retries_original_batch_aft
     );
     limits(&path);
 }
+
+fn paired_cell(byte: u8, size: usize) -> (CellManifestV1, Vec<u8>) {
+    let (chunk, payload) = chunk(byte, size);
+    let manifest = CellManifestV1::new(
+        CellContextV1 {
+            family: "paired-batch".into(),
+            base: [1; 32],
+            parent: [2; 32],
+            tokenizer: [3; 32],
+            layout: [4; 32],
+            runtime: [5; 32],
+        },
+        size as u64,
+        chunk.sha256,
+        MAX_CHUNK_BYTES,
+        vec![chunk],
+    )
+    .unwrap();
+    (manifest, payload)
+}
+
+fn paired_inputs<'a>(
+    cells: &'a [(CellManifestV1, Vec<u8>)],
+    wires: &'a [Vec<u8>],
+) -> Vec<(CellDigestV1, &'a [u8], &'a [u8])> {
+    assert_eq!(cells.len(), wires.len());
+    cells
+        .iter()
+        .zip(wires)
+        .map(|((manifest, payload), wire)| (manifest.id(), wire.as_slice(), payload.as_slice()))
+        .collect()
+}
+
+fn assert_paired_cells_absent(cache: &CellStoreV1, cells: &[(CellManifestV1, Vec<u8>)]) {
+    for (manifest, _) in cells {
+        assert!(cache.manifest(manifest.id()).unwrap().is_none());
+        for chunk in manifest.chunks() {
+            assert!(cache.chunk(chunk.sha256).unwrap().is_none());
+        }
+    }
+}
+
+#[test]
+fn paired_manifest_chunk_batch_rejects_invalid_late_member_without_prefix() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("paired-invalid.sqlite");
+    let cache = CellStoreV1::open(&path, config()).unwrap();
+    let cells = [paired_cell(1, 1024), paired_cell(2, 1024)];
+    let wires: Vec<_> = cells
+        .iter()
+        .map(|(manifest, _)| manifest.encode())
+        .collect();
+    let before = cache.cache_usage().unwrap();
+    let wal_before = bytes(&path, "-wal");
+
+    let mut wrong_pin = cells[1].0.id();
+    wrong_pin[0] ^= 1;
+    let mut bad_wire = wires[1].clone();
+    bad_wire.push(0);
+    let mut bad_payload = cells[1].1.clone();
+    bad_payload[0] ^= 1;
+    let mut short_payload = cells[1].1.clone();
+    short_payload.pop();
+    let inconsistent = CellManifestV1::new(
+        cells[1].0.context().clone(),
+        cells[1].0.size(),
+        [99; 32],
+        MAX_CHUNK_BYTES,
+        cells[1].0.chunks().to_vec(),
+    )
+    .unwrap();
+    let (part, _) = chunk(9, 16_384);
+    let multiple_payload = vec![9; 32_768];
+    let multiple = CellManifestV1::new(
+        cells[1].0.context().clone(),
+        multiple_payload.len() as u64,
+        Sha256::digest(&multiple_payload).into(),
+        16_384,
+        vec![part.clone(), part],
+    )
+    .unwrap();
+    let invalid = [
+        (
+            wrong_pin,
+            wires[1].clone(),
+            cells[1].1.clone(),
+            "manifest digest",
+        ),
+        (
+            cells[1].0.id(),
+            bad_wire,
+            cells[1].1.clone(),
+            "manifest coverage",
+        ),
+        (
+            cells[1].0.id(),
+            wires[1].clone(),
+            bad_payload,
+            "chunk digest",
+        ),
+        (
+            cells[1].0.id(),
+            wires[1].clone(),
+            short_payload,
+            "chunk length",
+        ),
+        (
+            inconsistent.id(),
+            inconsistent.encode(),
+            cells[1].1.clone(),
+            "single-chunk manifest payload",
+        ),
+        (
+            multiple.id(),
+            multiple.encode(),
+            multiple_payload,
+            "single-chunk manifest payload",
+        ),
+    ];
+    for (pinned, wire, payload, reason) in invalid {
+        let batch = [
+            (cells[0].0.id(), wires[0].as_slice(), cells[0].1.as_slice()),
+            (pinned, wire.as_slice(), payload.as_slice()),
+        ];
+        assert!(
+            matches!(
+                cache.put_manifest_chunk_batch_with_deadline(&batch, None),
+                Err(CellErrorV1::Invalid(actual)) if actual == reason
+            ),
+            "late member must fail its exact validation: {reason}"
+        );
+        assert_eq!(cache.cache_usage().unwrap(), before);
+        assert_eq!(bytes(&path, "-wal"), wal_before);
+        assert!(cache.manifest(pinned).unwrap().is_none());
+        assert_paired_cells_absent(&cache, &cells);
+        limits(&path);
+    }
+}
+
+#[test]
+fn paired_manifest_chunk_batch_obeys_member_and_byte_bounds() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("paired-bounds.sqlite");
+    let cache = CellStoreV1::open(&path, config()).unwrap();
+    let before = cache.cache_usage().unwrap();
+    assert!(matches!(
+        cache.put_manifest_chunk_batch_with_deadline(&[], None),
+        Err(CellErrorV1::Invalid("manifest chunk commit batch bound"))
+    ));
+    let (manifest, payload) = paired_cell(3, 1024);
+    let wire = manifest.encode();
+    let too_many =
+        vec![(manifest.id(), wire.as_slice(), payload.as_slice()); MAX_CHUNK_COMMIT_BATCH + 1];
+    assert!(matches!(
+        cache.put_manifest_chunk_batch_with_deadline(&too_many, None),
+        Err(CellErrorV1::Invalid("manifest chunk commit batch bound"))
+    ));
+    let (large, large_payload) = paired_cell(4, MAX_CHUNK_BYTES as usize);
+    let large_wire = large.encode();
+    let too_large =
+        vec![(large.id(), large_wire.as_slice(), large_payload.as_slice()); MAX_CHUNK_COMMIT_BATCH];
+    // The payloads alone equal the old 32 MiB cap. Metadata also counts in
+    // this new paired API, so the complete input must be refused before SQL.
+    assert!(matches!(
+        cache.put_manifest_chunk_batch_with_deadline(&too_large, None),
+        Err(CellErrorV1::Invalid("manifest chunk commit batch bytes"))
+    ));
+    assert_eq!(cache.cache_usage().unwrap(), before);
+    assert!(cache.manifest(manifest.id()).unwrap().is_none());
+    assert!(cache.manifest(large.id()).unwrap().is_none());
+    assert!(cache.chunk(manifest.chunks()[0].sha256).unwrap().is_none());
+    assert!(cache.chunk(large.chunks()[0].sha256).unwrap().is_none());
+    limits(&path);
+}
+
+#[test]
+fn paired_manifest_chunk_batch_rolls_back_late_quota_failure() {
+    let seed = paired_cell(7, 1024);
+    let cells = [paired_cell(8, 1024), paired_cell(9, 1024)];
+    let seed_wire = seed.0.encode();
+    let wires: Vec<_> = cells
+        .iter()
+        .map(|(manifest, _)| manifest.encode())
+        .collect();
+    let batch = paired_inputs(&cells, &wires);
+    let seed_cost = (seed_wire.len() + seed.1.len() + 64) as u64;
+    let first_cost = (wires[0].len() + cells[0].1.len() + 64) as u64;
+    for exhausted in ["bytes", "chunks", "manifests"] {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("paired-quota.sqlite");
+        let mut bounded = config();
+        match exhausted {
+            "bytes" => {
+                // Seed and the first complete pair fit, as does the next
+                // manifest. Only the final payload exceeds this exact quota.
+                bounded.max_logical_bytes = seed_cost + first_cost + wires[1].len() as u64 + 32;
+            }
+            "chunks" => bounded.max_chunk_rows = 2,
+            "manifests" => bounded.max_manifest_rows = 2,
+            _ => unreachable!(),
+        }
+        let cache = CellStoreV1::open(&path, bounded).unwrap();
+        cache.put_manifest(seed.0.id(), &seed_wire).unwrap();
+        cache.put_chunk(&seed.0.chunks()[0], &seed.1).unwrap();
+        let before = cache.cache_usage().unwrap();
+        assert_eq!(before.logical_bytes, seed_cost);
+        assert!(matches!(
+            cache.put_manifest_chunk_batch_with_deadline(&batch, None),
+            Err(CellErrorV1::CacheQuotaExceeded)
+        ));
+        assert_eq!(cache.cache_usage().unwrap(), before, "{exhausted}");
+        assert_paired_cells_absent(&cache, &cells);
+        assert_eq!(cache.manifest(seed.0.id()).unwrap(), Some(seed.0.clone()));
+        assert_eq!(
+            cache.chunk(seed.0.chunks()[0].sha256).unwrap(),
+            Some(seed.1.clone())
+        );
+        limits(&path);
+        drop(cache);
+        let reopened = CellStoreV1::open_read_only(&path).unwrap();
+        assert_eq!(reopened.cache_usage().unwrap(), before);
+        assert_paired_cells_absent(&reopened, &cells);
+        assert_eq!(
+            reopened.manifest(seed.0.id()).unwrap(),
+            Some(seed.0.clone())
+        );
+        assert_eq!(
+            reopened.chunk(seed.0.chunks()[0].sha256).unwrap(),
+            Some(seed.1.clone())
+        );
+    }
+}
+
+#[test]
+fn paired_manifest_chunk_batch_preserves_original_deadline_atomicity() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("paired-deadline.sqlite");
+    let cache = CellStoreV1::open(&path, config()).unwrap();
+    let cells = [paired_cell(11, 1024), paired_cell(12, 1024)];
+    let wires: Vec<_> = cells
+        .iter()
+        .map(|(manifest, _)| manifest.encode())
+        .collect();
+    let batch = paired_inputs(&cells, &wires);
+    let before = cache.cache_usage().unwrap();
+    {
+        let (_, held_identity) = crate::cell::cache_wal::writer_identity(&path).unwrap();
+        let _held = crate::cell::cache_wal::acquire(
+            &held_identity,
+            Instant::now() + crate::cell::cache_wal::WRITER_BUDGET,
+        )
+        .unwrap();
+        let started = Instant::now();
+        let caller_deadline = started + Duration::from_millis(250);
+        // The new entry must propagate this live caller interval into writer
+        // acquisition. Dropping it would wait the standalone five seconds.
+        let result = cache.put_manifest_chunk_batch_with_deadline(&batch, Some(caller_deadline));
+        assert!(matches!(result, Err(CellErrorV1::CacheWriterBusy)));
+        assert!(Instant::now() >= caller_deadline);
+        assert!(started.elapsed() < Duration::from_millis(750));
+        assert_eq!(cache.cache_usage().unwrap(), before);
+        assert_paired_cells_absent(&cache, &cells);
+        // Keep the actual writer permit until the refused call and all state
+        // observations complete. No released-lock retry receives a new budget.
+    }
+    let deadline = Instant::now() + Duration::from_millis(250);
+    let mut entered = false;
+    // Exercise the unchanged writer boundary with actual uncommitted rows in
+    // both tables, then reuse that same expired interval at the paired entry.
+    let result = cache.write_with_deadline(Some(deadline), |transaction| {
+        transaction.execute(
+            "INSERT INTO cell_manifests_v1(id, wire) VALUES (?1, ?2)",
+            params![cells[0].0.id().as_slice(), &wires[0]],
+        )?;
+        transaction.execute(
+            "INSERT INTO cell_chunks_v1(hash, bytes) VALUES (?1, ?2)",
+            params![cells[0].0.chunks()[0].sha256.as_slice(), &cells[0].1],
+        )?;
+        entered = true;
+        while let Some(left) = deadline.checked_duration_since(Instant::now()) {
+            std::thread::sleep(left);
+        }
+        Ok(())
+    });
+    assert!(entered, "the fixture must insert both rows before expiry");
+    assert!(matches!(result, Err(CellErrorV1::CacheWriterBusy)));
+    assert_eq!(cache.cache_usage().unwrap(), before);
+    assert_paired_cells_absent(&cache, &cells);
+    let expected = crate::cell::network::remaining(deadline)
+        .unwrap_err()
+        .to_string();
+    assert_eq!(
+        cache
+            .put_manifest_chunk_batch_with_deadline(&batch, Some(deadline))
+            .unwrap_err()
+            .to_string(),
+        expected
+    );
+    assert_eq!(cache.cache_usage().unwrap(), before);
+    assert_paired_cells_absent(&cache, &cells);
+    limits(&path);
+}
+
+#[test]
+fn paired_manifest_chunk_batch_reader_refusal_and_cold_reopen() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("paired-reader.sqlite");
+    let cache = CellStoreV1::open(&path, config()).unwrap();
+    let seed = paired_cell(20, 1024);
+    cache.put_manifest(seed.0.id(), &seed.0.encode()).unwrap();
+    cache.put_chunk(&seed.0.chunks()[0], &seed.1).unwrap();
+    let before = cache.cache_usage().unwrap();
+    let snapshot = reader(&path);
+    let wal_before = bytes(&path, "-wal");
+    let cells: Vec<_> = (21..=26).map(|byte| paired_cell(byte, 1024)).collect();
+    let wires: Vec<_> = cells
+        .iter()
+        .map(|(manifest, _)| manifest.encode())
+        .collect();
+    let batch = paired_inputs(&cells, &wires);
+    let deadline = Instant::now() + Duration::from_secs(5);
+    assert!(matches!(
+        cache.put_manifest_chunk_batch_with_deadline(&batch, Some(deadline)),
+        Err(CellErrorV1::CacheWriterBusy)
+    ));
+    assert_eq!(cache.cache_usage().unwrap(), before);
+    assert_eq!(bytes(&path, "-wal"), wal_before);
+    assert_paired_cells_absent(&cache, &cells);
+    let saved: Vec<u8> = snapshot
+        .query_row(
+            "SELECT bytes FROM cell_chunks_v1 WHERE hash=?1",
+            [seed.0.chunks()[0].sha256.as_slice()],
+            |row| row.get(0),
+        )
+        .unwrap();
+    assert_eq!(saved, seed.1);
+    snapshot.execute_batch("ROLLBACK").unwrap();
+    // Both the original retry and its idempotent replay retain the same
+    // caller interval. Releasing the reader does not mint a fresh deadline.
+    cache
+        .put_manifest_chunk_batch_with_deadline(&batch, Some(deadline))
+        .unwrap();
+    cache
+        .put_manifest_chunk_batch_with_deadline(&batch, Some(deadline))
+        .unwrap();
+    let expected = CellCacheUsageV2 {
+        logical_bytes: before.logical_bytes
+            + wires
+                .iter()
+                .zip(&cells)
+                .map(|(wire, (_, payload))| (wire.len() + payload.len() + 64) as u64)
+                .sum::<u64>(),
+        chunk_rows: before.chunk_rows + cells.len() as u64,
+        manifest_rows: before.manifest_rows + cells.len() as u64,
+    };
+    assert_eq!(cache.cache_usage().unwrap(), expected);
+    limits(&path);
+    drop(cache);
+    for cache in [
+        CellStoreV1::open_read_only(&path).unwrap(),
+        CellStoreV1::open(&path, config()).unwrap(),
+    ] {
+        assert_eq!(cache.cache_usage().unwrap(), expected);
+        assert_eq!(cache.manifest(seed.0.id()).unwrap(), Some(seed.0.clone()));
+        assert_eq!(
+            cache.chunk(seed.0.chunks()[0].sha256).unwrap(),
+            Some(seed.1.clone())
+        );
+        for (manifest, payload) in &cells {
+            assert_eq!(
+                cache.manifest(manifest.id()).unwrap(),
+                Some(manifest.clone())
+            );
+            assert_eq!(
+                cache.chunk(manifest.chunks()[0].sha256).unwrap(),
+                Some(payload.clone())
+            );
+            cache.verify_complete(manifest).unwrap();
+        }
+    }
+}

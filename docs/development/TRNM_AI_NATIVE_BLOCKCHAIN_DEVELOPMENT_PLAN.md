@@ -1,3 +1,50 @@
+**Bounded peer cleanup and atomic retained-cache staging, 2026-11-12 — HOLD:**
+
+The complete single-threaded observation on
+`13bdc38023d57607a9ba81f52e123f7fb556bec3` retained three unsuccessful commands.
+The default DA command was explicitly interrupted by the operator after a
+read-only join/accept wait observation; it had no complete native summary.
+The all-features DA library reported 733 passed and one failed, with
+CacheWriterBusy from the original 65/128 capacity control. That error can also
+mean an expired deadline and does not prove another writer existed. PQ exact
+control 41 exhausted the unchanged production 250 ms witness exchange budget;
+without an authenticated matching receipt, the node refused local commit.
+Checkpoint's 58 methods including four socket controls and the other recorded
+checks remain separate observations. All original failures and source/provider
+receipts are retained; none is rewritten as a success.
+
+The existing slow fragmented-handshake fixture could reject before dialing and
+then wait indefinitely for its peer. Bound fixture cleanup while preserving the
+original full fetch entry and its 120 ms / 600 ms / unchanged-deadline / byte
+assertions. Add a separate actual production socket-handshake observation and an
+explicit no-connection cleanup control. Required-connection fixtures still
+reject a missing connection.
+
+The retained-plan path previously staged each of six verified shards through
+separate manifest and chunk transactions. Add a narrow paired cache batch with
+at most eight members and 32 MiB of complete inputs, checking every canonical
+single-chunk manifest, content pin and payload before the existing writer
+boundary. Group the six slots of each original chunk into one such transaction
+in build and catalog staging. Keep the existing FULL pager, WAL/reader refusal,
+quota triggers, writer identity and caller deadline; publish a plan only after
+its full build succeeds. Preserve the original cold empty cache, source-file
+deletion, 65/128 workloads, six slots and ten-second absolute deadline.
+The source-derived transaction count falls from 13N+2 to 2N+2; this is not yet a
+runtime performance claim. Require the unchanged capacity control plus new late
+invalid-input, quota rollback, actual deadline propagation, reader refusal and
+cold-reopen observations on the new source.
+
+The PQ exchange cap, fail-closed path and receipt requirement are unchanged.
+A later successful control is a new source-bound observation and cannot erase
+the prior measured budget refusal or establish its physical timing cause.
+
+Re-anchor the same twenty-one directly registered implementation objects to
+this source checkpoint. Their bytes and the Root dependency register remain
+unchanged; this partial direct inventory is not the complete call graph. All
+eight lifetime terms stay unknown/null. Ordinary callers, public WAN,
+historical migration, independent custody, W1/DAA hardness, FinalUse and
+whole-chain production qualification remain unproved.
+
 **PQ retained-control synchronization and CI harness alignment, 2026-11-12 — HOLD:**
 
 The first joint source `921acc94fa7af15cb1728ab2718c62f48ad93c89`
