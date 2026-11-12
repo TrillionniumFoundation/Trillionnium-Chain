@@ -195,8 +195,22 @@ class EvidenceReaderTests(unittest.TestCase):
                  depletion_at_ns=20_000_000_000,
                  depletion_meter={'Ok': {
                      'depleted': True,
-                     'meter': {'accounting_unavailable': False},
-                     'actual_flow': {'balance_identity_verified': True},
+                     'meter': {'accounting_unavailable': False,
+                               'schema': 'public-v3-local-stored-cpu-budget-v1',
+                               'burst_ns': 2_000_000_000,
+                               'refill_ns_per_second': 250_000_000,
+                               'start_reserve_ns': 100_000_000,
+                               'stored_credit_ns': 49_999_999},
+                     'actual_flow': {
+                         'balance_identity_verified': True,
+                         'schema': 'public-v3-local-actual-cpu-flow-v1',
+                         'initial_credit_ns': 2_000_000_000,
+                         'credited_refill_ns': 0,
+                         'paid_cpu_debit_ns': 1_950_000_001,
+                         'booked_reservation_ns': 0,
+                         'stored_credit_ns': 49_999_999,
+                         'remaining_paid_credit_ns': 49_999_999,
+                     },
                  }})
         return data
 
@@ -253,6 +267,40 @@ class EvidenceReaderTests(unittest.TestCase):
             data[1][0]['phases'][1]['depletion_meter']['Ok'][key] = value
             self.assert_refused(data, 'depletion without complete meter corroboration')
 
+    def test_depletion_claim_rejects_nonatomic_meter_flow_credit(self):
+        data = self.ready_attack_phase()
+        data[1][0]['phases'][1]['depletion_meter']['Ok']['meter']['stored_credit_ns'] += 1
+        self.assert_refused(data, 'meter and accounted credit differ')
+
+    def test_depletion_claim_rejects_nonconserved_paid_flow(self):
+        for key, value in [('paid_cpu_debit_ns', 1_950_000_000),
+                           ('booked_reservation_ns', 100_000_000),
+                           ('remaining_paid_credit_ns', 49_999_998)]:
+            data = self.ready_attack_phase()
+            data[1][0]['phases'][1]['depletion_meter']['Ok']['actual_flow'][key] = value
+            self.assert_refused(data, 'paid ledger must balance')
+
+    def test_depletion_claim_rejects_nonoriginal_cpu_profile(self):
+        for field, value in [('refill_ns_per_second', 0), ('burst_ns', 1_000_000_000),
+                             ('start_reserve_ns', 1), ('schema', 'fake')]:
+            data = self.ready_attack_phase()
+            data[1][0]['phases'][1]['depletion_meter']['Ok']['meter'][field] = value
+            self.assert_refused(data, 'meter profile must be original')
+
+    def test_depletion_claim_requires_below_original_start_reserve(self):
+        data = self.ready_attack_phase()
+        obj = data[1][0]['phases'][1]['depletion_meter']['Ok']
+        obj['meter']['stored_credit_ns'] = 150_000_000
+        obj['actual_flow']['stored_credit_ns'] = 150_000_000
+        obj['actual_flow']['remaining_paid_credit_ns'] = 150_000_000
+        obj['actual_flow']['paid_cpu_debit_ns'] = 1_850_000_000
+        self.assert_refused(data, 'not depleted with credit above reserve')
+
+    def test_depletion_claim_rejects_noninteger_credit(self):
+        data = self.ready_attack_phase()
+        data[1][0]['phases'][1]['depletion_meter']['Ok']['actual_flow']['stored_credit_ns'] = True
+        self.assert_refused(data, 'boolean credit is invalid')
+
     def test_depletion_timestamp_must_be_inside_original_window(self):
         for invalid in (None, True, 30_000_000_001, -1):
             data = self.ready_attack_phase()
@@ -299,3 +347,4 @@ class EvidenceReaderTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
