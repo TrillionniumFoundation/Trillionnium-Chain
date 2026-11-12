@@ -73,60 +73,106 @@ pub fn fetch_discovered_cell_to_file(
     original_deadline: Instant,
     output: &Path,
 ) -> CellResultV1<(CellManifestV1, CellDiscoveryFetchReportV1)> {
-    options.validate()?;
-    limits.validate()?;
-    let overall = original_deadline.min(Instant::now() + limits.overall_timeout);
-    check_deadline(overall)?;
-    let requests_left = AtomicU64::new(limits.max_connections);
-    let responses = ResponseBudget::new(limits.max_response_bytes);
-    let transport = RequestContext {
-        cancelled: None,
-        timeout: limits.request_timeout,
-        overall,
-        requests_left: &requests_left,
-        responses: &responses,
-    };
+    fetch_discovered_cell_to_file_observed(
+        store,
+        directory,
+        options,
+        limits,
+        original_deadline,
+        output,
+    )
+    .0
+}
+
+// Keep failure observations on the same path as the public fetch. A server-side
+// connection or successful reply write does not establish that this consumer
+// received and verified an advertisement. This creates no second session and
+// does not replenish the original deadline, connection or byte allowances.
+pub(super) fn fetch_discovered_cell_to_file_observed(
+    store: &CellStoreV1,
+    directory: &CellProviderDirectoryV1,
+    options: &CellDiscoveryOptionsV1,
+    limits: CellPeerLimitsV1,
+    original_deadline: Instant,
+    output: &Path,
+) -> (
+    CellResultV1<(CellManifestV1, CellDiscoveryFetchReportV1)>,
+    CellDiscoveryObservationV1,
+) {
     let mut observation = CellDiscoveryObservationV1::default();
-    let (peers, expires) = discover(directory, options, &transport, &mut observation)?;
-    let transport = RequestContext {
-        overall: overall.min(expires),
-        ..transport
-    };
-    check_deadline(transport.overall)?;
-    // Validate the owner-pinned context before any create-only output is
-    // published. The second access rechecks the actual content-addressed cache.
-    let (manifest, manifest_rejected, manifest_initial_cache_hit) =
-        network::fetch_manifest_observed(
+    let result = (|| {
+        options.validate()?;
+        limits.validate()?;
+        let overall = original_deadline.min(Instant::now() + limits.overall_timeout);
+        check_deadline(overall)?;
+        let requests_left = AtomicU64::new(limits.max_connections);
+        let responses = ResponseBudget::new(limits.max_response_bytes);
+        let transport = RequestContext {
+            cancelled: None,
+            timeout: limits.request_timeout,
+            overall,
+            requests_left: &requests_left,
+            responses: &responses,
+        };
+        let (peers, expires) = discover(directory, options, &transport, &mut observation)?;
+        let transport = RequestContext {
+            overall: overall.min(expires),
+            ..transport
+        };
+        check_deadline(transport.overall)?;
+        // Validate the owner-pinned context before any create-only output is
+        // published. The second access rechecks the actual content-addressed cache.
+        let (manifest, manifest_rejected, manifest_initial_cache_hit) =
+            network::fetch_manifest_observed(
+                store,
+                options.request.manifest,
+                &peers,
+                limits,
+                &transport,
+            )?;
+        require(
+            cell_discovery_context_digest(manifest.context())? == options.request.cell_context,
+            "discovered cell context",
+        )?;
+        let (manifest, mut fetch) = network::fetch_cell_in_session(
             store,
             options.request.manifest,
             &peers,
             limits,
             &transport,
+            Some(output),
         )?;
-    require(
-        cell_discovery_context_digest(manifest.context())? == options.request.cell_context,
-        "discovered cell context",
-    )?;
-    let (manifest, mut fetch) = network::fetch_cell_in_session(
-        store,
-        options.request.manifest,
-        &peers,
-        limits,
-        &transport,
-        Some(output),
-    )?;
-    // The shared counters already include the first manifest request; only its
-    // separately returned rejection count needs carrying across the cache hit.
-    fetch.rejected_responses += manifest_rejected;
-    Ok((
-        manifest,
-        CellDiscoveryFetchReportV1 {
-            discovery: observation,
-            discovered_providers: peers,
-            manifest_initial_cache_hit,
-            fetch,
-        },
-    ))
+        // The shared counters already include the first manifest request; only its
+        // separately returned rejection count needs carrying across the cache hit.
+        fetch.rejected_responses += manifest_rejected;
+        Ok((
+            manifest,
+            CellDiscoveryFetchReportV1 {
+                discovery: observation.clone(),
+                discovered_providers: peers,
+                manifest_initial_cache_hit,
+                fetch,
+            },
+        ))
+    })();
+    (result, observation)
+}
+
+// Bounded test diagnostics contain phase/status/counters only, never keys,
+// signatures, request bodies, advertised addresses or arbitrary error text.
+#[cfg(test)]
+fn diagnostic_failure(error: &CellErrorV1) -> (&'static str, Option<io::ErrorKind>, Option<i32>) {
+    match error {
+        CellErrorV1::Io(error) => ("io", Some(error.kind()), error.raw_os_error()),
+        CellErrorV1::Invalid("discovery absolute deadline") => ("absolute_deadline", None, None),
+        CellErrorV1::Invalid("discovery expired/future record") => ("record_time", None, None),
+        CellErrorV1::Invalid(_) => ("invalid", None, None),
+        CellErrorV1::Sql(_) => ("sql", None, None),
+        CellErrorV1::Unavailable => ("unavailable", None, None),
+        CellErrorV1::CacheQuotaExceeded => ("cache_quota", None, None),
+        CellErrorV1::CacheWriterBusy => ("cache_writer_busy", None, None),
+        CellErrorV1::ResponseByteBudgetExhausted { .. } => ("response_byte_budget", None, None),
+    }
 }
 
 struct ObservedAdvertisement {
@@ -170,6 +216,8 @@ pub(super) fn discover(
         for (source, bootstrap) in options.bootstraps.iter().enumerate() {
             // Do not stop at eight temporary endpoints: a later bootstrap in
             // this same bounded round may carry their newer signed high water.
+            #[cfg(test)]
+            let started = Instant::now();
             let response = exchange(
                 *bootstrap,
                 1,
@@ -177,6 +225,13 @@ pub(super) fn discover(
                 MAX_REPLY_BYTES,
                 transport,
                 observation,
+            );
+            #[cfg(test)]
+            eprintln!(
+                "cell_discovery phase=bootstrap round={_round} source={source} elapsed_ns={} complete={} failure={:?}",
+                started.elapsed().as_nanos(),
+                response.is_ok(),
+                response.as_ref().err().map(diagnostic_failure),
             );
             let wire = match response {
                 Ok(value) => value,
@@ -224,6 +279,12 @@ pub(super) fn discover(
                         .ok_or(CellErrorV1::Invalid("discovery expiry"))?;
                     Ok((record, *received_at + remaining))
                 })();
+                #[cfg(test)]
+                eprintln!(
+                    "cell_discovery phase=record_validation round={_round} source={source} slot={slot} accepted={} failure={:?}",
+                    checked.is_ok(),
+                    checked.as_ref().err().map(diagnostic_failure),
+                );
                 let (record, mut expiry) = match checked {
                     Ok(value) => value,
                     Err(_) => {
@@ -239,6 +300,10 @@ pub(super) fn discover(
                         equivocated.insert(owner);
                         observed.remove(&owner);
                         observation.rejected_records += 1;
+                        #[cfg(test)]
+                        eprintln!(
+                            "cell_discovery phase=verified_equivocation round={_round} source={source} slot={slot}"
+                        );
                         continue;
                     }
                 } else {
@@ -361,6 +426,11 @@ pub(super) fn discover(
         });
     }
     let candidates = selection::select(candidates)?;
+    #[cfg(test)]
+    eprintln!(
+        "cell_discovery phase=selection candidates={} observation={observation:?}",
+        candidates.len(),
+    );
     if candidates.is_empty() && observation.capacity_rejections > 0 {
         return Err(CellErrorV1::Invalid("discovery identity capacity"));
     }
@@ -448,43 +518,80 @@ pub(super) fn exchange(
         .map_err(|_| CellErrorV1::Invalid("connection budget exhausted"))?;
     observation.connection_attempts += 1;
     let deadline = transport.overall.min(Instant::now() + transport.timeout);
-    let mut stream = TcpStream::connect_timeout(&peer, network::remaining(deadline)?)?;
-    let mut query = b"CDQ1".to_vec();
-    query.push(kind);
-    query.extend((body.len() as u16).to_be_bytes());
-    query.extend(body);
-    network::write_deadline(&mut stream, &query, deadline)?;
-    let mut header = [0; 9];
-    read_response(
-        &mut stream,
-        &mut header,
-        deadline,
-        transport.responses,
-        observation,
-    )?;
-    require(&header[..4] == b"CDS1", "discovery invalid reply")?;
-    if header[4] == 2 {
-        return Err(CellErrorV1::Invalid("discovery identity capacity"));
-    }
-    require(header[4] == 0, "discovery denied reply")?;
-    let length = u32::from_be_bytes(
-        header[5..]
-            .try_into()
-            .map_err(|_| CellErrorV1::Invalid("discovery reply length"))?,
-    ) as usize;
-    require(
-        length > 0 && length <= maximum && length <= MAX_REPLY_BYTES,
-        "discovery reply bound",
-    )?;
-    let mut wire = vec![0; length];
-    read_response(
-        &mut stream,
-        &mut wire,
-        deadline,
-        transport.responses,
-        observation,
-    )?;
-    Ok(wire)
+    #[cfg(test)]
+    let started = Instant::now();
+    #[cfg(test)]
+    let received_before = observation.received_response_bytes;
+    #[cfg(test)]
+    let mut phase = "connect";
+    let response = (|| {
+        let mut stream = TcpStream::connect_timeout(&peer, network::remaining(deadline)?)?;
+        let mut query = b"CDQ1".to_vec();
+        query.push(kind);
+        query.extend((body.len() as u16).to_be_bytes());
+        query.extend(body);
+        #[cfg(test)]
+        {
+            phase = "query_write";
+        }
+        network::write_deadline(&mut stream, &query, deadline)?;
+        let mut header = [0; 9];
+        #[cfg(test)]
+        {
+            phase = "reply_header";
+        }
+        read_response(
+            &mut stream,
+            &mut header,
+            deadline,
+            transport.responses,
+            observation,
+        )?;
+        #[cfg(test)]
+        {
+            phase = "reply_envelope";
+        }
+        require(&header[..4] == b"CDS1", "discovery invalid reply")?;
+        if header[4] == 2 {
+            return Err(CellErrorV1::Invalid("discovery identity capacity"));
+        }
+        require(header[4] == 0, "discovery denied reply")?;
+        let length = u32::from_be_bytes(
+            header[5..]
+                .try_into()
+                .map_err(|_| CellErrorV1::Invalid("discovery reply length"))?,
+        ) as usize;
+        require(
+            length > 0 && length <= maximum && length <= MAX_REPLY_BYTES,
+            "discovery reply bound",
+        )?;
+        let mut wire = vec![0; length];
+        #[cfg(test)]
+        {
+            phase = "reply_body";
+        }
+        read_response(
+            &mut stream,
+            &mut wire,
+            deadline,
+            transport.responses,
+            observation,
+        )?;
+        #[cfg(test)]
+        {
+            phase = "complete";
+        }
+        Ok(wire)
+    })();
+    #[cfg(test)]
+    eprintln!(
+        "cell_discovery phase=exchange ordinal={} kind={kind} last_stage={phase} elapsed_ns={} received_bytes={} failure={:?}",
+        observation.connection_attempts,
+        started.elapsed().as_nanos(),
+        observation.received_response_bytes - received_before,
+        response.as_ref().err().map(diagnostic_failure),
+    );
+    response
 }
 fn read_response(
     stream: &mut TcpStream,

@@ -412,15 +412,50 @@ fn pack(
     Ok((manifests, files))
 }
 
-fn observe(spec: &Spec, report: &mut Value) -> Result<()> {
-    observe_with_custody(spec, report, None)
+/// Research-only replacement for the retained-byte stage. It consumes this
+/// operation's two new caches, keeps the original absolute deadline and returns
+/// the cold consumer readback used by the same complete CTS1 selection and
+/// sealed-worker path. This grants neither storage nor execution authority.
+#[allow(
+    dead_code,
+    reason = "Shared source also supports the separately selected Node/M12 research entry."
+)]
+pub struct CellResearchRetentionInputsV2<'a> {
+    pub operation: [u8; 32],
+    pub output: &'a Path,
+    pub deadline: Instant,
+    pub version: &'a CellVersionManifestV1,
+    pub snapshot: &'a CellReleaseSnapshotV1,
+    pub content: &'a CellVersionContentV2,
+    pub model_owner: &'a CellLoaderContextV1,
+    pub environment_owner: &'a CellLoaderContextV1,
+    pub source: CellStoreV1,
+    pub source_path: &'a Path,
+    pub received: CellStoreV1,
+    pub received_path: &'a Path,
+}
+
+type RetentionCallbackV2 =
+    for<'a> fn(CellResearchRetentionInputsV2<'a>, &mut Value) -> Result<CellStoreV1>;
+
+/// The original paged contract and the explicit native callback are different
+/// research routes. One operation must not execute both retention owners.
+#[derive(Clone, Copy)]
+enum ResearchCustodyRouteV2<'a> {
+    Copy,
+    Paged(&'a paged::Profile, &'a PagedExpected),
+    Native(RetentionCallbackV2),
 }
 
 fn observe_with_custody(
     spec: &Spec,
     report: &mut Value,
-    paged_route: Option<(&paged::Profile, &PagedExpected)>,
+    route: ResearchCustodyRouteV2<'_>,
 ) -> Result<()> {
+    let paged_route = match route {
+        ResearchCustodyRouteV2::Paged(profile, expected) => Some((profile, expected)),
+        ResearchCustodyRouteV2::Copy | ResearchCustodyRouteV2::Native(_) => None,
+    };
     check(
         (1..=300).contains(&spec.seconds),
         "original bounded research duration",
@@ -625,99 +660,119 @@ fn observe_with_custody(
         "bep52_plan": hex::encode(transport_plan),
     });
     report["latency_observation_v1"]["transport_complete_ns"] = json!(started.elapsed().as_nanos());
-    report["stage"] = json!("original TCA3 complete physical retention");
-    let config = CellVersionRetentionConfigV3 {
-        retention: CellRetentionConfigV1 {
-            store_id: id(&operation, b"store", &[]),
-            capacity_bytes: SNAPSHOT_BOUND,
-            maximum_obligations: 128,
-        },
-        maximum_versions: 16,
-        maximum_metadata_bytes: 64 << 20,
-    };
-    let contract = CellVersionRetentionContractV3 {
-        operation,
-        funding_operation: id(&operation, b"declared-local-funding", &[]),
-        responsible_owner: id(&operation, b"local-research-owner", &[]),
-        failure_domain: id(&operation, b"single-host-domain", &[]),
-        replica_index: 0,
-        required_replicas: 1,
-        retain_from_height: 1,
-        retain_until_height: 100,
-        repair_deadline_height: 90,
-        version: version.clone(),
-        model: CellVersionLoaderPinV3::from_context(&model_owner),
-        environment: CellVersionLoaderPinV3::from_context(&environment_owner),
-        tensor_model: Some(release_snapshot.tensors().clone()),
-        snapshot: None,
-        objects: version
-            .manifests()
-            .iter()
-            .map(|m| CellRetentionContractV1 {
-                operation: id(&operation, b"object", &m.id()),
-                funding_operation: id(&operation, b"object-funding", &m.id()),
-                manifest: m.clone(),
-                retain_from_height: 1,
-                retain_until_height: 100,
-                maximum_repair_bytes: m.size(),
-                successor: None,
-            })
-            .collect(),
-    };
-    let archive_path = spec.output.join("retained");
-    let mut archive = CellVersionRetentionStoreV3::create(&archive_path, config.clone())?;
-    archive.reserve_version(contract, archive.anchor(deadline)?, deadline)?;
-    archive.acknowledge_version(operation, &received, deadline)?;
-    let anchor = archive.anchor(deadline)?;
-    write_new(
-        &spec.output.join("independent-catalog-anchor.cva3"),
-        &anchor.encode(),
-    )?;
-    let consumer = if let Some((profile, _)) = paged_route {
-        paged::restore(
-            paged::Restore {
-                source,
-                received,
-                archive,
-                config,
-                anchor,
-                version: &version,
-                content: &content,
-                owner: &owner_view,
-                source_path: &source_path,
-                received_path: &received_path,
-                archive_path: &archive_path,
-                output: &spec.output,
+    let consumer = if let ResearchCustodyRouteV2::Native(retention) = route {
+        retention(
+            CellResearchRetentionInputsV2 {
                 operation,
+                output: &spec.output,
                 deadline,
-                started,
-                cancelled: &cancelled,
+                version: &version,
+                snapshot: &release_snapshot,
+                content: &content,
+                model_owner: &model_owner,
+                environment_owner: &environment_owner,
+                source,
+                source_path: &source_path,
+                received,
+                received_path: &received_path,
             },
-            profile,
             report,
         )?
     } else {
-        drop(archive);
-        drop(source);
-        drop(received);
-        remove_cache(&source_path)?;
-        remove_cache(&received_path)?;
-        report["stage"] = json!("reopen anchored owner and actual cold arena restore");
-        let mut archive = CellVersionRetentionStoreV3::open(&archive_path, config, anchor)?;
-        let consumer = cache(&spec.output.join("consumer.sqlite"))?;
-        check(
-            consumer.cache_usage()?.chunk_rows == 0,
-            "consumer must be actually cold",
+        report["stage"] = json!("original TCA3 complete physical retention");
+        let config = CellVersionRetentionConfigV3 {
+            retention: CellRetentionConfigV1 {
+                store_id: id(&operation, b"store", &[]),
+                capacity_bytes: SNAPSHOT_BOUND,
+                maximum_obligations: 128,
+            },
+            maximum_versions: 16,
+            maximum_metadata_bytes: 64 << 20,
+        };
+        let contract = CellVersionRetentionContractV3 {
+            operation,
+            funding_operation: id(&operation, b"declared-local-funding", &[]),
+            responsible_owner: id(&operation, b"local-research-owner", &[]),
+            failure_domain: id(&operation, b"single-host-domain", &[]),
+            replica_index: 0,
+            required_replicas: 1,
+            retain_from_height: 1,
+            retain_until_height: 100,
+            repair_deadline_height: 90,
+            version: version.clone(),
+            model: CellVersionLoaderPinV3::from_context(&model_owner),
+            environment: CellVersionLoaderPinV3::from_context(&environment_owner),
+            tensor_model: Some(release_snapshot.tensors().clone()),
+            snapshot: None,
+            objects: version
+                .manifests()
+                .iter()
+                .map(|m| CellRetentionContractV1 {
+                    operation: id(&operation, b"object", &m.id()),
+                    funding_operation: id(&operation, b"object-funding", &m.id()),
+                    manifest: m.clone(),
+                    retain_from_height: 1,
+                    retain_until_height: 100,
+                    maximum_repair_bytes: m.size(),
+                    successor: None,
+                })
+                .collect(),
+        };
+        let archive_path = spec.output.join("retained");
+        let mut archive = CellVersionRetentionStoreV3::create(&archive_path, config.clone())?;
+        archive.reserve_version(contract, archive.anchor(deadline)?, deadline)?;
+        archive.acknowledge_version(operation, &received, deadline)?;
+        let anchor = archive.anchor(deadline)?;
+        write_new(
+            &spec.output.join("independent-catalog-anchor.cva3"),
+            &anchor.encode(),
         )?;
-        archive.populate_cache(operation, &consumer, deadline)?;
-        report["cold_restore"] = json!({"source_cache_absent": !source_path.exists(),
+        if let Some((profile, _)) = paged_route {
+            paged::restore(
+                paged::Restore {
+                    source,
+                    received,
+                    archive,
+                    config,
+                    anchor,
+                    version: &version,
+                    content: &content,
+                    owner: &owner_view,
+                    source_path: &source_path,
+                    received_path: &received_path,
+                    archive_path: &archive_path,
+                    output: &spec.output,
+                    operation,
+                    deadline,
+                    started,
+                    cancelled: &cancelled,
+                },
+                profile,
+                report,
+            )?
+        } else {
+            drop(archive);
+            drop(source);
+            drop(received);
+            remove_cache(&source_path)?;
+            remove_cache(&received_path)?;
+            report["stage"] = json!("reopen anchored owner and actual cold arena restore");
+            let mut archive = CellVersionRetentionStoreV3::open(&archive_path, config, anchor)?;
+            let consumer = cache(&spec.output.join("consumer.sqlite"))?;
+            check(
+                consumer.cache_usage()?.chunk_rows == 0,
+                "consumer must be actually cold",
+            )?;
+            archive.populate_cache(operation, &consumer, deadline)?;
+            report["cold_restore"] = json!({"source_cache_absent": !source_path.exists(),
             "bep52_cache_absent": !received_path.exists(),
             "retained_from_bep52_received_cache": true,
             "anchored_reopen": true, "actual_target_readback": true,
             "consumer_chunks": consumer.cache_usage()?.chunk_rows,
             "m12_funding_admitted": false, "retention_heights_are_research_terms": true});
 
-        consumer
+            consumer
+        }
     };
 
     report["latency_observation_v1"]["cold_recovery_complete_ns"] =
@@ -1013,7 +1068,7 @@ fn observe_with_custody(
     Ok(())
 }
 
-pub fn run() -> Result<()> {
+fn run_source(retention: Option<RetentionCallbackV2>) -> Result<()> {
     let arguments: Vec<_> = std::env::args().collect();
     check(
         arguments.len() == 3,
@@ -1041,7 +1096,11 @@ pub fn run() -> Result<()> {
         "loopback_only": true, "typed_snapshot_admitted": false,
         "composition_worker_executed": false,
         "actual_model_run": "not_started"});
-    let result = observe(&spec, &mut report);
+    let route = match retention {
+        Some(retention) => ResearchCustodyRouteV2::Native(retention),
+        None => ResearchCustodyRouteV2::Copy,
+    };
+    let result = observe_with_custody(&spec, &mut report, route);
     report["passed"] = json!(result.is_ok());
     if let Err(error) = &result {
         report["error"] = json!(error.to_string());
@@ -1052,6 +1111,23 @@ pub fn run() -> Result<()> {
     )?;
     println!("{}", serde_json::to_string(&report)?);
     result
+}
+
+/// Preserve the original V2 complete-copy entry and every original bound.
+pub fn run() -> Result<()> {
+    run_source(None)
+}
+
+/// Explicit Node/M12 research entry. It accepts the original independently
+/// pinned V2 source input, never the different paged-source wrapper. Callback
+/// completion still requires the original content verification, complete
+/// selection, sealed bytes and actual two-forward receipt below.
+#[allow(
+    dead_code,
+    reason = "Shared source also supports the separately selected Node/M12 research entry."
+)]
+pub fn run_with_retention(retention: RetentionCallbackV2) -> Result<()> {
+    run_source(Some(retention))
 }
 
 #[allow(
@@ -1094,7 +1170,11 @@ pub fn run_paged() -> Result<()> {
         "worker_rss_limit": spec.runtime_rss_bytes, "threads": spec.threads,
     });
     let started = Instant::now();
-    let result = observe_with_custody(spec, &mut report, Some((&input.custody, &input.expected)));
+    let result = observe_with_custody(
+        spec,
+        &mut report,
+        ResearchCustodyRouteV2::Paged(&input.custody, &input.expected),
+    );
     report["entry_elapsed_ms"] = json!(started.elapsed().as_millis());
     report["passed"] = json!(result.is_ok());
     if let Err(error) = &result {

@@ -239,6 +239,20 @@ def main() -> int:
         for example in ('cell_sealed_research_next_use_v2', 'cell_sealed_research_paged_next_use_v1'):
             run(example + '-tests', tests + ['-p', 'trnm-data-availability', '--example', example,
                                            '--', '--test-threads=1'])
+        # The composed native callback must reach the same complete-release
+        # selector in both build profiles. Preserve the full example controls
+        # and separately require the new connection test to actually execute;
+        # an empty filtered Cargo success is not evidence of that connection.
+        selector = ('cell_native_shard_research_v2::tests::'
+                    'native_callback_requires_complete_current_release_selection_after_recovery')
+        for label, features in (('default', []), ('pq', ['--features', 'pq-native-openssl'])):
+            command = tests + ['-p', 'trnm-pon-node'] + features + [
+                '--example', 'cell_native_shard_research_next_use_v2']
+            run('native-grouped-example-' + label, command + ['--', '--test-threads=1'])
+            name = 'native-complete-selection-' + label
+            run(name, command + [selector, '--', '--exact', '--test-threads=1'])
+            run(name + '-readback', [python, '-B', 'scripts/ci/check_required_native_test.py',
+                                    str(args.output / (name + '.stdout')), '--test', selector], 600)
         run('node-storage-default', tests + ['-p', 'trnm-pon-node', '--lib',
                                             'store::storage_service::', '--', '--test-threads=1'])
         for index, selector in enumerate(REQUIRED_NODE_CONTROLS, 1):

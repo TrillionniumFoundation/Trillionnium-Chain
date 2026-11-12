@@ -1,3 +1,16 @@
+**BT storage owner convergence, 2026-11-12 UTC — implementation candidate; qualification HOLD:**
+
+Continue the complete-release selection source `040fb0cf460a6db568f0b4ec5ba581add3f2d2ba`
+with the original grouped M12/CGJ3 implementation from
+`a67d83a05d6ff4c2fdc4a5fd5c23fc38d38b563d`. Preserve the separate original input
+contracts, full model/environment selection and admission, absolute deadlines,
+resource debits, all historical failures and all false activation flags.
+The [convergence contract](specs/pon/CELL_BT_OWNER_CONVERGENCE_V1.md) records the
+composition and remaining original-owner, capacity and independent-service exits.
+Discovery keeps the original conflict latch and strict dial refusal, with
+consumer-side failure observations and real framed-TCP negative controls.
+The old local model runs are not new execution on this combined source.
+
 **Cell storage four-gate continuation, 2026-11-12 UTC — local native PASS; qualification HOLD:**
 
 Continue #879 at `30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6` under the

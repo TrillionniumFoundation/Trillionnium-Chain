@@ -792,6 +792,18 @@ pub fn development_public(i: u64) -> Result<Hash> {
     digest(&trnm_crypto_primitives::public_key_hex(&key))
 }
 
+#[cfg(target_os = "linux")]
+pub use store::{
+    native_cell_shard_parent_group_subject_v3, NativeCellGroupedChildCpuV3,
+    NativeCellGroupedShardPlanReadbackV3, NativeCellGroupedShardRecoveryBudgetV3,
+    NativeCellGroupedShardRecoveryFailureV3, NativeCellGroupedShardRecoveryReadbackV3,
+    NativeCellGroupedShardRepairRequestV3, NativeCellGroupedShardStorageRequestV3,
+    NativeCellShardGroupChildV3, NativeCellShardGroupJournalConfigV3,
+    NativeCellShardGroupJournalV3, NativeCellShardGroupKindV3,
+    NativeCellShardParentGroupReadbackV3, NativeCellShardParentGroupV3,
+    NATIVE_CELL_SHARD_PARENT_GROUP_WIDTH_V3,
+};
+
 #[cfg(all(test, target_os = "linux"))]
 mod operator_continuous_test_support;
 

@@ -4789,6 +4789,48 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_next_use_v2.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_next_use_v2.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/funding.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/funding.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/groups_v3.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/groups_v3.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/recovery.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/recovery.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/examples/continuous_pipeline.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -7288,6 +7330,41 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/engine.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/engine.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/journal.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/journal.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/mod.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/mod.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/recovery.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/recovery.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/types.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/types.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -7348,6 +7425,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/version.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_grouped_shard_v3_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/version_grouped_shard_v3_tests.rs"
         )),
     ),
     (
