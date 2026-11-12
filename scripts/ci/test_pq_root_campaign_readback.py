@@ -36,12 +36,19 @@ def synthetic():
     def phase(mode, attackers):
         c = {'round': 0, 'confirmed_inside_pressure_window': mode == 'baseline',
              'ended_ns': 28_000_000_000, 'transaction': TX,
-             'included_block': 'block-fixture',
+             'included_block': 'block-fixture', 'tip': 'tip-fixture',
+             'started_ns': 1_000_000_000,
              'observation': {'confirmed': mode == 'baseline', 'transaction': TX,
+                             'depth': 6, 'reorged': False,
+                             'included_height': 5, 'observed_height': 11,
+                             'included_block': 'block-fixture',
+                             'observed_tip': 'tip-fixture',
                              'finalized': False, 'execution_authority': False}}
         return {'mode': mode, 'duration_seconds': 30,
                 'attacker_processes_requested': attackers,
-                'finite_phase_criteria_met': False, 'receiver_client_state_equal': False,
+                'finite_phase_criteria_met': False,
+                'all_signed_rounds_confirmed_in_window': False,
+                'receiver_client_state_equal': False,
                 'genuine_budget_depletion_observed': False,
                 'confirmations': [c], 'history': [{
                     'status': 'ok', 'response': {'ok': True},
@@ -115,6 +122,50 @@ class EvidenceReaderTests(unittest.TestCase):
         data[0]['attempts'][0]['original_criteria_met'] = True
         data[0]['attempts'][0]['step']['returncode'] = 0
         self.assert_refused(data, 'forged campaign success')
+
+    def test_duplicate_round_zero_cannot_be_counted_as_three_signed_rounds(self):
+        data = synthetic()
+        phase = data[1][0]['phases'][0]
+        phase['confirmations'] *= 3
+        phase['all_signed_rounds_confirmed_in_window'] = True
+        phase['finite_phase_criteria_met'] = True
+        phase['receiver_client_state_equal'] = True
+        phase['observer_complete'] = True
+        self.assert_refused(data, 'duplicate round-zero')
+
+    def test_distinct_rounds_cannot_reuse_one_transaction(self):
+        data = synthetic()
+        phase = data[1][0]['phases'][0]
+        confirmations = []
+        for i in range(3):
+            c = deepcopy(phase['confirmations'][0])
+            c['round'] = i
+            c['started_ns'], c['ended_ns'] = i * 10 + 1, i * 10 + 9
+            confirmations.append(c)
+        phase['confirmations'] = confirmations
+        phase['all_signed_rounds_confirmed_in_window'] = True
+        phase['finite_phase_criteria_met'] = True
+        phase['receiver_client_state_equal'] = True
+        phase['observer_complete'] = True
+        self.assert_refused(data, 'one transaction across three rounds')
+
+    def test_malformed_confirmation_clock_is_refused(self):
+        data = synthetic()
+        c = data[1][0]['phases'][0]['confirmations'][0]
+        c['started_ns'] = c['ended_ns'] + 1
+        self.assert_refused(data, 'negative confirmation duration')
+
+    def test_six_depth_signed_inclusion_mismatch_is_refused(self):
+        for key, bad in [('depth', 5), ('included_block', 'other-block'),
+                         ('observed_tip', 'other-tip'), ('reorged', True)]:
+            data = synthetic()
+            data[1][0]['phases'][0]['confirmations'][0]['observation'][key] = bad
+            self.assert_refused(data, f'six-depth signed inclusion: {key}')
+
+    def test_claimed_three_signed_rounds_without_three_confirmations_is_refused(self):
+        data = synthetic()
+        data[1][0]['phases'][0]['all_signed_rounds_confirmed_in_window'] = True
+        self.assert_refused(data, 'three signed rounds required')
 
     def test_zip_manifest_integrity_and_mutated_member(self):
         def make_archive(manifest_digest=None, path='body.txt'):
