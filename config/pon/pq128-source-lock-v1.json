@@ -23,5 +23,5 @@
     "trillionnium/crates/trnm-service-settlement/src/native_budget.rs": "1fd964a4bfb3dec372c04a32853d9b08a3b80773d3182099d80705ab916ace38"
   },
   "schema": "trnm-pq128-source-lock-v1",
-  "source_revision": "25268d40b214cdae072ebb34f6c44cc1f058bccb"
+  "source_revision": "01d765e3c2636779ddc0982dff7e6e13f8a2e197"
 }

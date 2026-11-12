@@ -154,7 +154,7 @@
     "id": "trnm-pq128-proposed-lifetime-experiment-v1",
     "model": "quantum-adaptive-lifetime",
     "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
-    "source_revision": "25268d40b214cdae072ebb34f6c44cc1f058bccb"
+    "source_revision": "01d765e3c2636779ddc0982dff7e6e13f8a2e197"
   },
   "primitives": [
     {
