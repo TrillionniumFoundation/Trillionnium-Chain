@@ -677,7 +677,8 @@ fn periodic_snapshot_regular_policy_reopens_and_preexisting_fifo_is_refused() {
 
     let fifo_directory = directory.path().join("fifo");
     fs::create_dir(&fifo_directory).unwrap();
-    rustix::fs::mkfifo(
+    rustix::fs::mkfifoat(
+        rustix::fs::CWD,
         fifo_directory.join(POLICY_FILE),
         rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR,
     )
