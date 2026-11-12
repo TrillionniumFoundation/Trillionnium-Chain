@@ -184,7 +184,7 @@ fn full_output_pool_closes_without_signed_response_and_recovers_after_release() 
             .call(&Request::Head)
             .err()
             .expect("unreserved output must close");
-        assert!(error.is(crate::ErrorCode::PublicEof), "{error}");
+        assert!(error.is(crate::ErrorCode::FrameEof), "{error}");
         run.wait_for_output(1, 0, MAX_OUTPUT_BYTES);
         let observed = run.metrics.lock().unwrap().clone();
         assert_eq!(observed.tasks_dequeued, 1);
@@ -259,7 +259,7 @@ fn refusal_borrows_only_bounded_original_headroom_and_preserves_control_service(
             .call(&history)
             .err()
             .expect("fallback headroom is bounded");
-        assert!(error.is(crate::ErrorCode::PublicEof), "{error}");
+        assert!(error.is(crate::ErrorCode::FrameEof), "{error}");
         run.wait_for_output(1, 1, ordinary + REFUSAL_OUTPUT_HEADROOM);
         if pq {
             assert_eq!(run.intake.pq_authentication.usage().unwrap().attempts, 5);
