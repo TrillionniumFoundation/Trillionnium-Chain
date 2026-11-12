@@ -155,6 +155,78 @@ fn sp27_observation_final_callback_metadata_change_is_fatal() {
 }
 
 #[test]
+fn sp27_observation_final_callback_schema_change_is_fatal() {
+    let mut outer_errors = 0;
+    for corrupt in [false, true] {
+        let (dir, _fixture, contract, mut provider) = prepared(corrupt);
+        let total = count_callbacks(&mut provider, &contract, corrupt);
+        let path = dir.path().join("provider/retention.sqlite");
+        let mut calls = 0;
+        let result =
+            provider.read_observed_v2(&contract, contract.operation(), deadline(), &mut || {
+                calls += 1;
+                if calls == total {
+                    Connection::open(&path)
+                        .unwrap()
+                        .execute("CREATE TABLE unadmitted (value INTEGER)", [])
+                        .unwrap();
+                }
+                Ok(())
+            });
+        assert_eq!(calls, total);
+        record("final_callback_schema_change", corrupt, calls, &result);
+        outer_errors += usize::from(matches!(
+            result,
+            Err(CellErrorV1::Invalid("retention schema"))
+        ));
+    }
+    assert_eq!(
+        outer_errors, 2,
+        "terminal schema failure cannot become an erasure"
+    );
+}
+
+#[test]
+fn sp27_observation_final_callback_arena_capacity_change_is_fatal() {
+    let mut outer_errors = 0;
+    for corrupt in [false, true] {
+        let (dir, _fixture, contract, mut provider) = prepared(corrupt);
+        let total = count_callbacks(&mut provider, &contract, corrupt);
+        let path = dir.path().join("provider/payload.arena");
+        let before = fs::metadata(&path).unwrap().len();
+        let mut calls = 0;
+        let result =
+            provider.read_observed_v2(&contract, contract.operation(), deadline(), &mut || {
+                calls += 1;
+                if calls == total {
+                    OpenOptions::new()
+                        .write(true)
+                        .open(&path)
+                        .unwrap()
+                        .set_len(before - 1)
+                        .unwrap();
+                }
+                Ok(())
+            });
+        assert_eq!(calls, total);
+        record(
+            "final_callback_arena_capacity_change",
+            corrupt,
+            calls,
+            &result,
+        );
+        outer_errors += usize::from(matches!(
+            result,
+            Err(CellErrorV1::Invalid("retention physical capacity"))
+        ));
+    }
+    assert_eq!(
+        outer_errors, 2,
+        "terminal capacity failure cannot become an erasure"
+    );
+}
+
+#[test]
 fn sp27_observation_owner_scope_and_operation_errors_are_not_erasures() {
     let (dir, fixture, contract, mut provider) = prepared(true);
     let before = ledger(&dir.path().join("provider"), contract.operation());
