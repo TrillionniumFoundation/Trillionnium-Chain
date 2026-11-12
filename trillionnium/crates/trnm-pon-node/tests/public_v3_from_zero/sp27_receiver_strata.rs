@@ -2,19 +2,23 @@
 //! The business path is copied from its exact native helper and retains its
 //! original deadline and final gate. Only this new control's arrival plan and
 //! legal-input acceptance classification differ, as recorded in every report.
-use super::*;
 use super::sp27_receiver_controls::write_new_json;
+use super::*;
 
 fn request_identity(wire: &str) -> Value {
-    let bytes = serde_json::to_vec(&Request::Submit { packet: wire.to_owned() }).unwrap();
+    let bytes = serde_json::to_vec(&Request::Submit {
+        packet: wire.to_owned(),
+    })
+    .unwrap();
     json!({"packet_hex": wire, "request_bytes": bytes.len(),
         "body_digest": hex::encode(hash(b"public-request-body-v3", &[&bytes])),
         "recorded_request_digest": hex::encode(hash(b"pressure-recorded-request-v1", &[&bytes]))})
 }
 
-pub(super) fn prepare_strata_inputs(path: &std::path::Path, settings: &Settings)
-    -> (Vec<Arc<Vec<String>>>, Value)
-{
+pub(super) fn prepare_strata_inputs(
+    path: &std::path::Path,
+    settings: &Settings,
+) -> (Vec<Arc<Vec<String>>>, Value) {
     fs::create_dir(path).unwrap();
     let start = Instant::now();
     let cpu = process_cpu_ns();
@@ -27,10 +31,17 @@ pub(super) fn prepare_strata_inputs(path: &std::path::Path, settings: &Settings)
     let mut negative_history = Vec::new();
     for worker in 0..PRESSURE_WORKERS {
         let search = search_from_zero(
-            genesis_header(settings, target, 700_000 + worker as u64, task), &a, &b, SEARCH_BUDGET,
+            genesis_header(settings, target, 700_000 + worker as u64, task),
+            &a,
+            &b,
+            SEARCH_BUDGET,
         );
         // Preserve even an exhausted construction before deciding eligibility.
-        write_new_json(&path.join(format!("negative-{worker:03}.json")), &search.observation).unwrap();
+        write_new_json(
+            &path.join(format!("negative-{worker:03}.json")),
+            &search.observation,
+        )
+        .unwrap();
         negative_history.push(search.observation);
         let packet = search.packet.expect("SP27_NEGATIVE_CONSTRUCTION_EXHAUSTED");
         let late = packet.encode().unwrap();
@@ -46,15 +57,31 @@ pub(super) fn prepare_strata_inputs(path: &std::path::Path, settings: &Settings)
         arms[2].push(hex::encode(late));
     }
     let negative_preparation_ended_ns = ns(start);
-    let negative_preparation_process_cpu_ns = cpu.zip(process_cpu_ns()).and_then(|(a,b)| b.checked_sub(a));
+    let negative_preparation_process_cpu_ns = cpu
+        .zip(process_cpu_ns())
+        .and_then(|(a, b)| b.checked_sub(a));
     let mut valid_history = Vec::new();
     for worker in 0..PRESSURE_WORKERS {
-        write_new_json(&path.join(format!("valid-{worker:03}-started.json")),
-            &json!({"worker": worker, "status": "STARTED_NOT_YET_OBSERVED_COMPLETE"})).unwrap();
+        write_new_json(
+            &path.join(format!("valid-{worker:03}-started.json")),
+            &json!({"worker": worker, "status": "STARTED_NOT_YET_OBSERVED_COMPLETE"}),
+        )
+        .unwrap();
         let begin = Instant::now();
         let before = process_cpu_ns();
-        let mut producer = Node::open(&path.join(format!("valid-producer-{worker:03}")), settings.clone(), 1).unwrap();
-        let packet = producer.mine(vec![], settings.genesis_time() + 1 + worker as u64, ingress::now().unwrap()).unwrap();
+        let mut producer = Node::open(
+            &path.join(format!("valid-producer-{worker:03}")),
+            settings.clone(),
+            1,
+        )
+        .unwrap();
+        let packet = producer
+            .mine(
+                vec![],
+                settings.genesis_time() + 1 + worker as u64,
+                ingress::now().unwrap(),
+            )
+            .unwrap();
         assert_eq!(packet.header.parent, settings.genesis());
         assert_eq!(packet.header.height, 1);
         assert_eq!(packet.header.work_task, task);
@@ -70,7 +97,11 @@ pub(super) fn prepare_strata_inputs(path: &std::path::Path, settings: &Settings)
         valid_history.push(observation);
         arms[3].push(wire);
     }
-    let bytes = serde_json::to_vec(&Request::Submit { packet: arms[0][0].clone() }).unwrap().len();
+    let bytes = serde_json::to_vec(&Request::Submit {
+        packet: arms[0][0].clone(),
+    })
+    .unwrap()
+    .len();
     for wires in &arms {
         assert_eq!(wires.len(), PRESSURE_WORKERS);
         let mut identities = std::collections::BTreeSet::new();
@@ -80,7 +111,9 @@ pub(super) fn prepare_strata_inputs(path: &std::path::Path, settings: &Settings)
             assert!(identities.insert(identity["body_digest"].as_str().unwrap().to_owned()));
         }
     }
-    let complete_process_cpu_ns = cpu.zip(process_cpu_ns()).and_then(|(a,b)| b.checked_sub(a));
+    let complete_process_cpu_ns = cpu
+        .zip(process_cpu_ns())
+        .and_then(|(a, b)| b.checked_sub(a));
     let observation = json!({"schema": "sp27-strata-input-acquisition-v1",
         "arms": ["transport", "early-reject", "late-reject", "valid-expensive"],
         "workers_per_arm": PRESSURE_WORKERS, "calls_per_worker": 1,
@@ -101,16 +134,23 @@ pub(super) fn prepare_strata_inputs(path: &std::path::Path, settings: &Settings)
 }
 
 fn stage<'a>(record: &'a Value, name: &str) -> Option<&'a Value> {
-    record["submit_phases"].as_array()?.iter().find(|row| row["phase"] == name)
+    record["submit_phases"]
+        .as_array()?
+        .iter()
+        .find(|row| row["phase"] == name)
 }
 fn accepted(record: &Value, name: &str) -> bool {
-    stage(record, name).is_some_and(|row| row["started"] == true && row["completed"] == true && row["accepted"] == true)
+    stage(record, name).is_some_and(|row| {
+        row["started"] == true && row["completed"] == true && row["accepted"] == true
+    })
 }
 fn unstarted(record: &Value, name: &str) -> bool {
     stage(record, name).is_some_and(|row| row["started"] == false)
 }
 fn refused(record: &Value, name: &str) -> bool {
-    stage(record, name).is_some_and(|row| row["started"] == true && row["completed"] == true && row["accepted"] == false)
+    stage(record, name).is_some_and(|row| {
+        row["started"] == true && row["completed"] == true && row["accepted"] == false
+    })
 }
 fn message(record: &Value, expected: &str) -> bool {
     record["error_diagnostics"]["dispatch"]["message_prefix"] == expected
@@ -118,14 +158,24 @@ fn message(record: &Value, expected: &str) -> bool {
 }
 
 fn stage_readback(report: &Value, wires: &[String], arm: &str) -> Value {
-    let identities = wires.iter().map(|s| request_identity(s)).collect::<Vec<_>>();
+    let identities = wires
+        .iter()
+        .map(|s| request_identity(s))
+        .collect::<Vec<_>>();
     let mut matched = Vec::new();
     let mut attained = 0;
     let mut unexpected = false;
     for record in report["observations"]["records"].as_array().unwrap() {
-        let digest = serde_json::from_value::<Option<Hash>>(record["body_digest"].clone()).ok().flatten().map(hex::encode);
-        let index = digest.as_ref().and_then(|d| identities.iter().position(|v| v["body_digest"] == *d));
-        let Some(index) = index else { continue; };
+        let digest = serde_json::from_value::<Option<Hash>>(record["body_digest"].clone())
+            .ok()
+            .flatten()
+            .map(hex::encode);
+        let index = digest
+            .as_ref()
+            .and_then(|d| identities.iter().position(|v| v["body_digest"] == *d));
+        let Some(index) = index else {
+            continue;
+        };
         let cache = &record["work_rejection"]["cache"];
         let full = record["work_rejection"]["completed"] == true
             && cache["native_verifier_started"] == true
@@ -133,23 +183,42 @@ fn stage_readback(report: &Value, wires: &[String], arm: &str) -> Value {
             && cache["full_replay_started"] == true
             && cache["cached_rejection_returned"] == false;
         let body_checked = accepted(record, "body_decode");
-        let reached = body_checked && match arm {
-            "transport" => refused(record, "decode")
-                && stage(record, "decode").unwrap()["error_code"] == "HEADER_CODEC"
-                && unstarted(record, "context") && unstarted(record, "work"),
-            "early-reject" => accepted(record, "decode") && refused(record, "context")
-                && unstarted(record, "work") && record["full_work_started"] == false
-                && message(record, "WORK:Task"),
-            "late-reject" => accepted(record, "context") && refused(record, "work")
-                && full && message(record, "WORK:Transcript"),
-            "valid-expensive" => accepted(record, "work") && full
-                && record["full_work_accepted"] == true && record["dispatch_accepted"] == true
-                && accepted(record, "submit_result"),
-            _ => false,
-        };
-        if reached { attained += 1; }
+        let reached = body_checked
+            && match arm {
+                "transport" => {
+                    refused(record, "decode")
+                        && stage(record, "decode").unwrap()["error_code"] == "HEADER_CODEC"
+                        && unstarted(record, "context")
+                        && unstarted(record, "work")
+                }
+                "early-reject" => {
+                    accepted(record, "decode")
+                        && refused(record, "context")
+                        && unstarted(record, "work")
+                        && record["full_work_started"] == false
+                        && message(record, "WORK:Task")
+                }
+                "late-reject" => {
+                    accepted(record, "context")
+                        && refused(record, "work")
+                        && full
+                        && message(record, "WORK:Transcript")
+                }
+                "valid-expensive" => {
+                    accepted(record, "work")
+                        && full
+                        && record["full_work_accepted"] == true
+                        && record["dispatch_accepted"] == true
+                        && accepted(record, "submit_result")
+                }
+                _ => false,
+            };
+        if reached {
+            attained += 1;
+        }
         unexpected |= arm != "valid-expensive" && record["dispatch_accepted"] == true;
-        unexpected |= matches!(arm, "transport" | "early-reject") && record["full_work_started"] == true;
+        unexpected |=
+            matches!(arm, "transport" | "early-reject") && record["full_work_started"] == true;
         matched.push(json!({"packet_index": index, "connection_id": record["connection_id"],
             "body_digest": digest, "actual_body_checked": body_checked, "target_stage_attained": reached,
             "full_native_replay_observed": full, "dispatch_accepted": record["dispatch_accepted"],
@@ -157,8 +226,13 @@ fn stage_readback(report: &Value, wires: &[String], arm: &str) -> Value {
             "work_rejection": record["work_rejection"], "submit_phases": record["submit_phases"],
             "terminal_phase": record["terminal_phase"], "terminal_error_code": record["terminal_error_code"]}));
     }
-    let offered = report["attacks"].as_array().unwrap().iter().flat_map(|w| w["calls"].as_array().unwrap())
-        .filter(|row| row["started_ns"].as_u64().is_some()).count();
+    let offered = report["attacks"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .flat_map(|w| w["calls"].as_array().unwrap())
+        .filter(|row| row["started_ns"].as_u64().is_some())
+        .count();
     json!({"schema": "sp27-native-stage-readback-v1", "arm": arm,
         "planned_offerings": 16, "actual_calls_started": offered,
         "matched_claimed_body_connections": matched.len(), "target_stage_attained": attained,
@@ -234,7 +308,10 @@ pub(super) fn strata_phase(
     let mut attacks = Vec::new();
     for worker in 0..workers {
         let (client, barrier, wires, completed) = (
-            client.clone(), barrier.clone(), wires.clone(), completed.clone(),
+            client.clone(),
+            barrier.clone(),
+            wires.clone(),
+            completed.clone(),
         );
         attacks.push(thread::spawn(move || {
             barrier.wait();
@@ -243,10 +320,17 @@ pub(super) fn strata_phase(
             thread::sleep(scheduled.saturating_duration_since(Instant::now()));
             let arrival_started_ns = ns(epoch);
             let mut row = if Instant::now() < end {
-                let row = compact_pressure_call(client.call_before(
-                    "sp27_stratum_load", 80 + worker as u8,
-                    Request::Submit { packet: wires[worker].clone() }, Some(end),
-                ), Some(worker));
+                let row = compact_pressure_call(
+                    client.call_before(
+                        "sp27_stratum_load",
+                        80 + worker as u8,
+                        Request::Submit {
+                            packet: wires[worker].clone(),
+                        },
+                        Some(end),
+                    ),
+                    Some(worker),
+                );
                 completed.fetch_add(1, Ordering::AcqRel);
                 row
             } else {
@@ -435,16 +519,16 @@ pub(super) fn strata_phase(
         .collect();
     let overlap_end = confirmation_ended_ns.unwrap_or(PRESSURE_MS * 1_000_000);
     let overlapping_false_calls = call_rows
-            .iter()
-            .filter(|row| {
-                row["started_ns"]
+        .iter()
+        .filter(|row| {
+            row["started_ns"]
+                .as_u64()
+                .is_some_and(|started| started < overlap_end)
+                && row["ended_ns"]
                     .as_u64()
-                    .is_some_and(|started| started < overlap_end)
-                    && row["ended_ns"]
-                        .as_u64()
-                        .is_some_and(|finished| finished > business_started_ns)
-            })
-            .count();
+                    .is_some_and(|finished| finished > business_started_ns)
+        })
+        .count();
     let no_attack_accepted = call_rows.iter().all(|row| row["status"] != "ok");
     let attacker_workers_cpu_ns = attack_rows.iter().try_fold(0u64, |sum, worker| {
         sum.checked_add(worker["calling_thread_cpu_ns"].as_u64()?)
@@ -543,9 +627,11 @@ pub(super) fn strata_phase(
         "business_waits_for_pressure_completion": false,
         "equal_offered_plan_is_not_equal_observed_arrival_or_service_load": true});
     report["stage_readback"] = stage_readback(&report, &wires, arm);
-    report["control_integrity_met"] = json!(invariant_target_met
-        && report["stage_readback"]["input_stage_identifiable"] == true
-        && report["stage_readback"]["unexpected_stage_or_acceptance"] == false);
+    report["control_integrity_met"] = json!(
+        invariant_target_met
+            && report["stage_readback"]["input_stage_identifiable"] == true
+            && report["stage_readback"]["unexpected_stage_or_acceptance"] == false
+    );
     report["validity_control_scope"] = json!(if arm == "valid-expensive" {
         "native-valid empty genesis siblings; includes admission, execution, fork selection and storage, so not a pure verifier-cost intervention; final honest-prefix/state checks retain that confound"
     } else {
