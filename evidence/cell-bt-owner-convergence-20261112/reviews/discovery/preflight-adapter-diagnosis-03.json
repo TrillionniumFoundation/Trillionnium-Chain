@@ -1,0 +1,139 @@
+{
+  "confirmed_cause": {
+    "actual_arguments": [
+      "-I",
+      "-S",
+      "-B",
+      "-c",
+      "exact v2 preparation helper source"
+    ],
+    "component": "additional preparation adapter invocation",
+    "diagnosed": true,
+    "historical_discovery_failure_diagnosed": false,
+    "missing_argument": "-X pycache_prefix=<fresh absolute unused bytecode path>",
+    "model_execution_failure_demonstrated": false,
+    "original_guard": "The independently pinned runtime contract requires sys.pycache_prefix to be an absolute string and its path not to exist.",
+    "original_guard_rejected_correctly": true,
+    "original_source_or_worker_defect_demonstrated": false
+  },
+  "failure": {
+    "authoritative_status": {
+      "bytes": 731,
+      "path": "validation/durable-current-remote/attempt01-failure/authoritative-status.json",
+      "sha256": "9aaca74427283a46e8853d731b63f20a18fab5a9dd03b8431ea2c7bea88b1a2d"
+    },
+    "cancelled": false,
+    "elapsed_seconds": 0.16463321982882917,
+    "exception": "ValueError: NEURAL_RUNTIME_PRIVATE_UNUSED_BYTECODE_PATH",
+    "exit_code": 1,
+    "output_complete": true,
+    "output_durable": true,
+    "stack": [
+      "preflight adapter main line 62",
+      "original worker prepare_runtime line 377 calls helper.configure(snapshot)",
+      "original runtime contract configure line 108",
+      "original runtime contract require line 28"
+    ],
+    "state": "failed",
+    "stderr": {
+      "bytes": 684,
+      "path": "validation/durable-current-remote/attempt01-failure/runtime-original-environment-preflight.stderr",
+      "sha256": "9bee5ee60f083c5c57aab42369a9171b8d4763697ad6c495f57b844fa1484421"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "validation/durable-current-remote/attempt01-failure/runtime-original-environment-preflight.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tail_summary": {
+      "bytes": 15360,
+      "path": "validation/durable-current-remote/async-materials-read-01/tail-summary-observation-01.json",
+      "sha256": "b7244e43158fa05e40fc376cd79f6af99eb7a2ee21ace05e4345e068b5140ead"
+    },
+    "timed_out": false
+  },
+  "minimal_repair_scope": {
+    "cache_must_not_be_created": true,
+    "change_only_caller_arguments_and_new_attempt_names": true,
+    "corrected_launcher_not_yet_read_by_this_report": true,
+    "do_not_set_sys_pycache_prefix_by_bypassing_original_entry_contract": true,
+    "final_model_admission_still_requires_actual_original_tail_and_preflight_success": true,
+    "new_output_directory": "runtime-preflight-02",
+    "new_unused_cache_within_fresh_output": "runtime-preflight-02/unused-supervisor-bytecode",
+    "original_failed_attempt_preserved": true,
+    "original_tail_tests_may_run_separately": true,
+    "retain_clean_environment": true,
+    "retain_exact_pinned_worker_and_contract": true
+  },
+  "original_call_contract": {
+    "python_worker": {
+      "bytes": 45100,
+      "lines": "797-800",
+      "path": "validation/discovery-reviewer/pinned-source/llm_cell_sealed_worker_v1.py.txt",
+      "python_arguments": [
+        "-I",
+        "-S",
+        "-B",
+        "-X",
+        "pycache_prefix=<root>/unused-child-bytecode",
+        "-c",
+        "bootstrap",
+        "original descriptor arguments"
+      ],
+      "sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+    },
+    "runtime_contract": {
+      "bytes": 22751,
+      "lines": "103-109",
+      "path": "validation/discovery-reviewer/pinned-source/llm_python_runtime_contract.py.txt",
+      "sha256": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc",
+      "sha256_matches_actual_input_pin": true
+    },
+    "rust_supervisor": {
+      "bytes": 42088,
+      "environment_clear_then_keys": [
+        "LANG",
+        "LC_ALL",
+        "TMPDIR"
+      ],
+      "git_blob": "5bc8f3184443815f41756d11c8252f9bb6059863",
+      "lines": "928-942",
+      "path": "validation/discovery-reviewer/pinned-source/original-shared-sealed-040.mod.rs.txt",
+      "python_arguments": [
+        "-I",
+        "-S",
+        "-B",
+        "-X",
+        "pycache_prefix=<output>/unused-supervisor-bytecode",
+        "-c",
+        "BOOTSTRAP"
+      ],
+      "sha256": "4d266c2a94b0ef383a6ee2459976ee43ee290b97c30c6cc6328ea64e892b1bbc",
+      "source_revision": "040fb0cf460a6db568f0b4ec5ba581add3f2d2ba",
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/040fb0cf460a6db568f0b4ec5ba581add3f2d2ba/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs"
+    }
+  },
+  "original_observations_modified": false,
+  "qualification": {
+    "all_four_gates_passed": false,
+    "hepta_final_use": false,
+    "model_started_in_failed_attempt": false,
+    "native_model_run_claimed": false,
+    "original_24_controls_executed_in_failed_attempt": false,
+    "production_activation": false,
+    "qualifying_new_elf_available_from_failed_attempt": false,
+    "release_main_built_in_failed_attempt": false,
+    "rust_tests_executed_in_failed_attempt": false
+  },
+  "review_type": "Independent raw-stderr and pinned-source diagnosis",
+  "reviewer_actions": {
+    "model_execution": false,
+    "raw_artifacts_read_only": true,
+    "remote_calls": false,
+    "rust_compilation": false,
+    "worker_or_source_modified": false
+  },
+  "schema": "trnm-bt-runtime-preflight-adapter-cause-review-v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "supersedes_cause_pending_in": "validation/discovery-reviewer/actual-materials-review-02.json"
+}

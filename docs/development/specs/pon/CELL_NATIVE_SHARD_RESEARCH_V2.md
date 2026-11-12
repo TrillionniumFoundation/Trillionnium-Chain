@@ -1,10 +1,12 @@
 # Native paged shard research next use V2
 
-Status: **historical S3 local real-model research PASS; current composed-source qualification HOLD.**
-Production qualification remains **HOLD**. The entry name stays
-`cell_native_shard_research_next_use_v2`; its grouped funding owner
-has a separate V3 child-journal namespace. This records one known-key development
-ledger run, an independent 12/12 PASS-HOLD audit and preserved failed attempts.
+Status: **frozen-B local composed-source real-model research PASS; production
+and ordinary Hepta qualification HOLD.** The entry name stays
+`cell_native_shard_research_next_use_v2`; its grouped funding owner retains
+its V3 child-journal namespace. The historical S3 section keeps its original
+known-key development run, independent 12/12 PASS-HOLD audit and failed attempts.
+The separate composed-source operation below has its own source and receipts;
+the earlier audit is not relabeled as an audit of this new operation.
 
 ## Complete-release selection integration
 
@@ -21,6 +23,41 @@ The S3 observations below belong only to their stated historical source and
 operation. They are not execution receipts for the composed implementation.
 New controls and any new real-model operation require their own exact source,
 inputs, binary, result and before/after records.
+
+## Observed composed-source operation
+
+[Complete frozen-B records](../../../../evidence/cell-bt-owner-convergence-20261112/README.md)
+bind runtime `031d442dd0acb693afcfaf42f9cc4db446ba52cb`, tree
+`a897ba4c74897a05ceb364f098b1bfe32c850213`, to operation
+`bf34a669dc4b3617d97bee356f1cadf3504f3c5993999c5136ce1d6b0cd6f9c2`.
+This normal release executable is independently pinned by SHA256
+`ef4d33be1574c27852187546f4393f301eb175b8246f647ce3d15a5d21fd2155`;
+it is not a test harness. Its original build receipt and identical-byte locator
+copy remain separate. The original observer differs from #861 only in REPO.
+
+The new environment-generation-2 input carries 30 members, 279,627,268 bytes
+and 95 chunks. All model bytes and model parent generation 1 remain unchanged.
+The original native cycle admitted 79 development-funded parents and 760 V3
+children: 36 storage groups and 12 repair groups, 791 logical work items in all.
+It detected and repaired 190 damaged targets, restored all 95 original chunks
+using original slots 0–3, and passed full CTS1 model/environment CAS selection
+and paired admission before sealed handoff and two actual forwards.
+
+The native process finished in 77.268108463 seconds, below the original 300-second
+bound. The actual whole-job cgroup retained 8 GiB and four CPUs; its peak was
+3,176,267,776 bytes without OOM. Model source and input checks ran before and
+after execution. These are bounded local observations with separate cumulative
+readiness times, not first-token/WAN results or comparisons with historical S3.
+
+Current original development funding is not a service payment or continued
+custody verdict. The overwritten TCA3 payload remains unrepaired, and current
+direct root/member payload readback after that overwrite remains false. The
+V3 wire grant retains 768 manifest rows / 2,048 chunk rows / 512 MiB logical
+bytes; `original_128_temporary_wire_gate_passed=false` remains in the new receipt.
+Original 128-row input/consumer limits, all authority flags and production HOLD
+remain. Host files described by the runtime snapshot are still independently
+pinned dependencies,
+not all BT-delivered or sealed bytes.
 
 ## Observed S3 operation and limitations
 
@@ -267,9 +304,12 @@ composition compatibility.
 The source schema stays `trnm.cell-sealed-research-source.v2`. Its independently
 supplied SHA-256 fixes the input JSON, worker, model/environment, output and
 limits. The callback receives the original absolute deadline and owners. The
-original operation permits at most 300 seconds, 512 MiB captured payload,
-8 GiB worker RSS and four worker threads. Group/page boundaries do not renew
-these allowances or reset accumulated cost.
+original operation permits at most 300 seconds and 512 MiB captured payload.
+Its outer observer requires an actual 8-GiB memory cgroup and four-CPU quota;
+Torch uses four intraop threads and one interop thread. The worker RSS limit
+and owned-child wait4 peak are separate observations, not a whole-process-tree
+hard cap. Compiler memory lies outside the model-operation grant. Group/page
+boundaries do not renew these allowances or reset accumulated cost.
 
 The research callback retains its finite original-chunk, page, provider,
 physical arena and M12 limits. Input and consumer caches retain the original

@@ -1,0 +1,15 @@
+{
+  "archive_bytes": 72787,
+  "archive_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/checkpoints/pre-model-bindings-01/pre-model-bindings.tar.gz",
+  "archive_sha256": "9ce07f78a8d392e07d89154003e7ff4b896ee144c451a25d0cbd9075b5dc7ebb",
+  "completed": true,
+  "deferred_files": 7,
+  "included_files": 112,
+  "manifest_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/checkpoints/pre-model-bindings-01/manifest.json",
+  "manifest_sha256": "5684ab1391adc8355988fd4c66a651575a52f07e1b28131a77fb729b212f12bf",
+  "native_operation_started": false,
+  "passed": true,
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_and_original_files_unchanged": true,
+  "uncompressed_included_bytes": 486095
+}

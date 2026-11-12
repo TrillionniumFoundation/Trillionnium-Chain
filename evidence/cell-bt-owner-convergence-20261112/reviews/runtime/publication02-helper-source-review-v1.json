@@ -1,0 +1,70 @@
+{
+  "conclusion": "No blocking finding in the exact v1-to-v2 changes. This review does not establish clone, source-gate, commit, push or PR-edit execution success.",
+  "executed_helpers": false,
+  "findings": [],
+  "github_writes_performed": false,
+  "h_called": false,
+  "helpers": [
+    {
+      "ast_parse": true,
+      "exact_difference": "REPO assignment only",
+      "name": "stage",
+      "v1": {
+        "bytes": 18565,
+        "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/preparation/desktop_stage_publication_v1.py",
+        "sha256": "63811b5b00411af08012add5c904296c0a36e04773cb48cbc2d1761a0d211f6d"
+      },
+      "v2": {
+        "bytes": 18540,
+        "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/preparation/desktop_stage_publication_v2.py",
+        "sha256": "c3ccb96600daab5f3c95f9e0f1bff0285fe2071cecab68665e86649c0c359b1e"
+      }
+    },
+    {
+      "ast_parse": true,
+      "exact_difference": "REPO assignment only",
+      "name": "commit",
+      "v1": {
+        "bytes": 10937,
+        "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/preparation/desktop_commit_publication_v1.py",
+        "sha256": "c0168290931e59d9efcf377d94204bd29e37e987bb91d68f5605df95ba990f2b"
+      },
+      "v2": {
+        "bytes": 10912,
+        "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/preparation/desktop_commit_publication_v2.py",
+        "sha256": "6516e11d2906d5396b1cc0160b33afb003108b84ac53dd54306727f592b1c26b"
+      }
+    },
+    {
+      "ast_parse": true,
+      "exact_difference": "REPO assignment and exactly three lines requiring the only effective push URL to equal canonical HTTPS origin",
+      "name": "publish",
+      "v1": {
+        "bytes": 13854,
+        "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/preparation/desktop_publish_publication_v1.py",
+        "sha256": "52b58dd28da7134333489089c065d4efdfb131f69c7ae331386ade5ac60d8b9a"
+      },
+      "v2": {
+        "bytes": 14073,
+        "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/preparation/desktop_publish_publication_v2.py",
+        "sha256": "e22b9b5169b6735c7a037677c8feb656f2e727ada29ce77ebb4c57be7e198771"
+      }
+    }
+  ],
+  "preserved_conditions": [
+    "Original project preflight, full physical source verifier and push-boundary invocation remain present and unmodified.",
+    "Publisher obtains all effective push URLs after the original push boundary and before recording or attempting push; the list must contain exactly the canonical HTTPS repository.",
+    "Publisher sends the approved immutable commit SHA to the explicit existing remote branch using an ordinary push; no force, reset, merge or blind retry was added.",
+    "PR description uses previously held and SHA-verified body bytes through --body-file - stdin.",
+    "Actor ProfHepta, original remote predecessor/base/body, committed source identity and unchanged runtime subtree checks remain unchanged.",
+    "Uncertain push or body acknowledgements are reconciled by reads; no repeat writes were added."
+  ],
+  "reviewed_at_utc": "2026-11-12T10:42:50.929917+00:00",
+  "reviewer": "release_acceptance",
+  "schema": "release_acceptance_publication02_helper_source_review_v1",
+  "scope_limitations": [
+    "Pure REPO reassignment does not itself prove the fresh checkout has passed its original gates.",
+    "The effective push URL check is an observation immediately before push, not a claim of protection against arbitrary concurrent local configuration tampering."
+  ],
+  "source_only": true
+}

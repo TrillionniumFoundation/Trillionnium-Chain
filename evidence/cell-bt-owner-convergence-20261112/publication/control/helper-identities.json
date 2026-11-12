@@ -1,0 +1,26 @@
+{
+  "helpers": [
+    {
+      "bytes": 18540,
+      "name": "desktop_stage_publication_v2.py",
+      "sha256": "c3ccb96600daab5f3c95f9e0f1bff0285fe2071cecab68665e86649c0c359b1e"
+    },
+    {
+      "bytes": 10912,
+      "name": "desktop_commit_publication_v2.py",
+      "sha256": "6516e11d2906d5396b1cc0160b33afb003108b84ac53dd54306727f592b1c26b"
+    },
+    {
+      "bytes": 14073,
+      "name": "desktop_publish_publication_v2.py",
+      "sha256": "e22b9b5169b6735c7a037677c8feb656f2e727ada29ce77ebb4c57be7e198771"
+    },
+    {
+      "bytes": 6410,
+      "name": "build_reviewed_publication_packet.py",
+      "sha256": "1c5b3d223f748c97e6109e70c75b8e82a205b849d1b3b987646a5d32f924f995"
+    }
+  ],
+  "schema": "trnm.bt-publication-helper-identities.v1",
+  "writes_performed_by_helpers_at_record_creation": false
+}

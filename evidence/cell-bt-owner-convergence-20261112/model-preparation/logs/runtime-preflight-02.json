@@ -1,0 +1,41 @@
+{
+  "aggregate_process_tree_memory_qualified": false,
+  "cts1_or_chb1_admission_performed": false,
+  "dependencies_ready_cumulative_seconds": 24.894320070000504,
+  "elapsed_seconds": 36.16034676799973,
+  "environment_members_read": [
+    "runtime/runtime-snapshot.json",
+    "scripts/llm_base_material.py",
+    "scripts/llm_cell_sealed_worker_v1.py",
+    "scripts/llm_inherited_runtime.py",
+    "scripts/llm_neural_read_worker.py",
+    "scripts/llm_parent_material.py",
+    "scripts/llm_python_runtime_contract.py",
+    "scripts/llm_runtime_pilot.py"
+  ],
+  "full_inventory_and_bytes_verified": true,
+  "generated_source_verified": true,
+  "hepta_final_use": false,
+  "import_guard_verified": true,
+  "model_executed": false,
+  "model_loaded": false,
+  "native_operation_started": false,
+  "native_origins_verified": true,
+  "original_contract_sha256": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc",
+  "original_functions": [
+    "prepare_runtime",
+    "runtime_import",
+    "verify_runtime_ready"
+  ],
+  "original_hepta_owner_used": false,
+  "original_worker_sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b",
+  "passed": true,
+  "preparation_adapter_only": true,
+  "production_activation": false,
+  "python_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+  "runtime_prepared_seconds": 9.85308425600033,
+  "runtime_snapshot_sha256": "3696579e96a5dd2160cdda61b5f040c2ac0a8af02d860d90c56ac4fd1903c225",
+  "schema": "trnm-local-runtime-guard-preflight-v1",
+  "source_input_sha256": "09b809f40a1ff85631a9b035233890dce968fdcd7dc6b2b15c27bd006f56e2b3",
+  "whole_job_memory_cap_qualified": false
+}

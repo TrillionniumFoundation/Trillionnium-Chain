@@ -1,0 +1,169 @@
+{
+  "actual_old_checkout_diagnostic": {
+    "all_hidden_bytes_match_head": false,
+    "all_tracked_bytes_match_head": false,
+    "cancelled": false,
+    "diagnostic_success_is_not_source_qualification": true,
+    "exit_code": 0,
+    "expected_total_is_not_claimed_as_physically_verified_bytes": true,
+    "full_nonmatch_rows_not_yet_independently_read": true,
+    "head_expected_tracked_bytes": 2552660560,
+    "index_and_flags_unchanged": true,
+    "job_id": "1a1cf2c9afd-2564-19ba",
+    "known_v1_actual_missing_path": "evidence/cell-storage-convergence-f2568-20261109/preparations01.tar.gz",
+    "original_read_sdk": {
+      "bytes": 1708,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/source-index-diagnostic-02-authoritative/read.native-sdk.json",
+      "sha256": "419e4752b7dc9986f754098d0263f5dfec37cbed3fb0ff659164ecb394bf9d6c"
+    },
+    "original_sdk_envelope_base64_sha_offsets_eof_and_parsed_results_verified": true,
+    "original_status_sdk": {
+      "bytes": 908,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/source-index-diagnostic-02-authoritative/status.native-sdk.json",
+      "sha256": "c0de63c2b77e5dc01fc568d57a0b91be54017063c541d9c7c9077102609ca8fc"
+    },
+    "relevant_config_text": "",
+    "state": "succeeded",
+    "status": {
+      "bytes": 730,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/source-index-diagnostic-02-authoritative/status.json",
+      "sha256": "f8ee896972d9b665d05287d259fc5c7f67b8c0095a1d1b3f0e7f23af462aba0f"
+    },
+    "stderr": {
+      "bytes": 0,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/source-index-diagnostic-02-authoritative/diagnostic.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 385,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/source-index-diagnostic-02-authoritative/diagnostic.stdout",
+      "sha256": "1a45a10031cb209bdb9d376feda7cf6bf1c35251228fd70e9cef4da6ecb9f7ec"
+    },
+    "stdout_hex_bytes_match_local_raw": true,
+    "tag_counts": {
+      "H": 27584,
+      "S": 102
+    },
+    "timed_out": false,
+    "tracked_entries": 27686,
+    "tracked_nonmatch_count": 102,
+    "writer_or_deleter_attribution": "not diagnosed"
+  },
+  "all_four_gates_passed": false,
+  "expected_observer_change": "Only original observer REPO line changes; all 300-second, actual 8-GiB/four-CPU cgroup, original roster, complete native receipts and false authority gates remain unchanged.",
+  "hepta_final_use": false,
+  "independent_observer_expectation": {
+    "bytes": 13622,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/discovery-reviewer/frozen02-independent-expectations/run_model.expected.py",
+    "sha256": "46329982d1de9e3e7dac3bcbc9cb7fcf1455ab3ceb514637097cbad8e0b9d313"
+  },
+  "native_locator_static_boundary": {
+    "bootstrap": {
+      "bytes": 4640,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/discovery-reviewer/pinned-source/cell_sealed_bootstrap_v1.py.txt",
+      "sha256": "0f1f10fdae8a60725ff489bac367b31454eda9223a71d358488bed3603ea7962"
+    },
+    "cargo_manifest_dir_in_shared_module_only_embeds_bootstrap_at_compile_time": true,
+    "corroborating_native_callback_review": {
+      "bytes": 4823,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/release-acceptance-runtime-review/native-elf-relocation-source-review-v1.json",
+      "sha256": "1067f8cdc8e5cf99c821f3b198d400fdc0a0db769cd205020b43006c8c0af246"
+    },
+    "embedded_bootstrap_must_equal_independently_pinned_environment_member": true,
+    "model_and_environment_paths_supplied_by_source_inputs": true,
+    "normal_same_byte_elf_locator_copy_allowed_with_independent_copy_receipt": true,
+    "not_a_portability_or_execution_claim": true,
+    "project_module_names_derived_from_fresh_output_sealed_source_names": true,
+    "python_and_runtime_roots_supplied_by_input_and_snapshot": true,
+    "shared_mod": {
+      "bytes": 45417,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/preparation/shared-mod-frozen-B.rs",
+      "sha256": "eea76e23fa3151bbbf673aa60cbd3b330ad9f6043ff2cd077bb8504bd96ac92d"
+    },
+    "worker": {
+      "bytes": 45100,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/discovery-reviewer/pinned-source/llm_cell_sealed_worker_v1.py.txt",
+      "sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+    },
+    "worker_code_and_payload_received_through_authenticated_sealed_descriptors": true
+  },
+  "native_model_run_claimed": false,
+  "new_remote_source_preparation_result_observed": false,
+  "new_source_input_and_audit_not_yet_generated": true,
+  "preparation_script": {
+    "bytes": 13388,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote_prepare_frozen02_source_v1.py",
+    "sha256": "a8ed6d53914dc3c5edf74ae6745779c6ee5f2502b3256a219f9d84a9c92e2d6c"
+  },
+  "previous_review": {
+    "bytes": 10366,
+    "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/discovery-reviewer/actual-env2-input-elf-binding-review-11.json",
+    "sha256": "e2711e3a39b6b2780846d59aba3e27303817d67951318eb0fb40902c04fa2ee4"
+  },
+  "production_activation": false,
+  "review_role": "independent read-only reviewer; this record did not execute the remote preparation",
+  "runtime_import_admitted": false,
+  "schema": "trnm.bt-independent-review.frozen02-source-preparation.v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "static_input_preparer_followup": {
+    "causal_attribution_not_established": true,
+    "generator": {
+      "bytes": 16573,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote_prepare_env2_inputs_v1.py",
+      "sha256": "3ca9e59411bff4b0c7de8f7de124e6a88ec2c86e3b7332f73929bf67c39e3794"
+    },
+    "launcher": {
+      "bytes": 1493,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/remote_start_env2_inputs_v1.py",
+      "sha256": "63dd3ebd68ad2535f1ddc46c64df426480fe763ebef0c6cd1d1b509ad4f5ed30"
+    },
+    "no_explicit_index_config_or_tracked_file_deletion_calls": true,
+    "ordinary_git_status_can_refresh_index_stat_cache": true,
+    "original_preparer": {
+      "bytes": 8620,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/discovery-reviewer/pinned-source/prepare_cell_sealed_research_v1.py.txt",
+      "sha256": "4b919011b673a3a0ab738628b3c21ee7328a8a66ec86985f5843c5f4429a5ccc"
+    }
+  },
+  "static_review": {
+    "authorized_scope": "Root explicitly authorized a new independent complete B checkout while preserving the old rejected worktree, index, refs, files and previous failures.",
+    "blocking_finding": false,
+    "branch_head_tree_origin_and_index_flags_checked": true,
+    "clone_options": [
+      "--no-local",
+      "--no-hardlinks",
+      "--no-checkout",
+      "--single-branch",
+      "--no-tags",
+      "--branch fix/chain-bt-owner-convergence-20261112-4a0b"
+    ],
+    "does_not_prepare_input_or_copy_elf_or_start_model": true,
+    "expected_physical_result": {
+      "bytes": 2552660560,
+      "entries": 27686,
+      "stdout_bytes": 423,
+      "stdout_sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902"
+    },
+    "fresh_paths_checked": [
+      "root",
+      "root-control",
+      "root-validation",
+      "root-target"
+    ],
+    "new_only_force_checkout": true,
+    "new_only_local_configuration": {
+      "core.fsmonitor": "false",
+      "core.ignoreStat": "false",
+      "core.sparseCheckout": "false"
+    },
+    "new_root": "/home/qq/work/chain-bt-4a0b-frozen02",
+    "no_alternates_common_directory_or_shared_index_required": true,
+    "objects_not_worktree_are_clone_source": true,
+    "old_full_diagnostic_nonmatches_and_original_hashes_preserved": true,
+    "old_git_optional_locks_disabled": true,
+    "old_refs_and_index_stat_hash_compared_after": true,
+    "original_preflight_and_full_source_verifier_required": true,
+    "script_passed_does_not_establish_runtime_or_model_admission": true
+  },
+  "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+}

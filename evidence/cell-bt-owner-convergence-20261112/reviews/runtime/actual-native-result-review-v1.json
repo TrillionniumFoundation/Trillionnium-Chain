@@ -1,0 +1,275 @@
+{
+  "actual_next_use": {
+    "authority": {
+      "hepta_final_use": false,
+      "independent_accepted": false,
+      "installation_authorized": false,
+      "prospective_accepted": false,
+      "public_reward_eligible": false,
+      "selection_authorized": false
+    },
+    "connector_complete": true,
+    "content": "de2513121d9939187f154c92497df7bc2c94775f6539d60cd41d4c73741e355d6253af839e4167beee0e0a1855835fabdd5ef0f08756cb9218679f7016889bfc",
+    "descriptor": "277b15ce25ca159f853407942de24dcb169eb5b0f94c5b5541b7a3b84623114db74edce91a4b3ec726308881ab974441a71e1ec7211378c96366daa7c6223131",
+    "failures": [],
+    "interpreter_and_native_dependencies": "original independently pinned host snapshot; not sealed transport",
+    "observations": 2,
+    "schema": "trnm.cell-sealed-research-next-use.v1",
+    "supervisor": {
+      "budget": {
+        "rss_bytes": 8589934592,
+        "wall_seconds": 230
+      },
+      "child_cpu_ns": 9217223000,
+      "child_spawned": true,
+      "cleanup_method": "wait4",
+      "cpu_scope": "Exact owned-child Linux wait4 user-plus-system CPU; includes inherited waited-descendant accounting",
+      "exit_code": 0,
+      "memory_scope": "sampled_peak_rss_bytes is direct-child 50ms RSS; waited_child_peak_rss_bytes is exact owned-child Linux wait4 ru_maxrss in KiB times 1024, a maximum single-process high-water with inherited waited-descendant accounting; neither is simultaneous process-tree RSS",
+      "observed_wall_ns": 7776987419,
+      "observer_cpu_ns": 47294627,
+      "outcome": "success",
+      "owned_child_echild_observed": false,
+      "owned_child_exit_observed": true,
+      "owned_child_reap_resolved": true,
+      "rss_observation_gaps": [],
+      "sample_interval_ms": 50,
+      "sampled_peak_rss_bytes": 1446072320,
+      "stop_reason": null,
+      "terminal_reconciliation_profile": "linux-held-pidfd-irreversible-exit-v1",
+      "waited_child_observation_error": null,
+      "waited_child_peak_rss_bytes": 1462104064,
+      "waited_child_reaped": true
+    }
+  },
+  "actual_transport_and_recovery": {
+    "all_child_journal_done": true,
+    "catalog_arena_overwritten_bytes": 536870912,
+    "catalog_payload_used_for_restore": false,
+    "chunks": 95,
+    "complete_content_readback": true,
+    "damaged_and_repaired_shards": 190,
+    "logical_work_items": 791,
+    "loopback_only": true,
+    "m12_parent_claims": 79,
+    "original_restore_slots": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "payload_bytes": 279627268,
+    "payload_members": 30,
+    "repair_parent_groups": 12,
+    "restored_chunks": 95,
+    "retained_caches_absent": {
+      "bep52_cache_absent": true,
+      "consumer_cache_absent": true,
+      "original_source_materials_preserved": true,
+      "publisher_cache_absent": true
+    },
+    "storage_parent_groups": 36,
+    "storage_shards": 570,
+    "temporary_wire_metadata_profile": {
+      "original_128_temporary_wire_gate_passed": false,
+      "repair": {
+        "expected_chunk_rows": 190,
+        "expected_logical_bytes": 139892882,
+        "expected_manifest_rows": 190,
+        "full_payload_profile_not_unconditionally_supported": true,
+        "input_and_consumer_max_manifest_rows": 128,
+        "max_chunk_rows": 2048,
+        "max_database_bytes": 1073741824,
+        "max_logical_bytes": 536870912,
+        "max_manifest_rows": 768,
+        "new_temporary_wire_metadata_grant": true,
+        "original_128_temporary_wire_gate_passed": false,
+        "original_absolute_deadline": true,
+        "profile": "native-grouped-temporary-wire-cache-v3"
+      },
+      "storage": {
+        "expected_chunk_rows": 570,
+        "expected_logical_bytes": 419678646,
+        "expected_manifest_rows": 570,
+        "full_payload_profile_not_unconditionally_supported": true,
+        "input_and_consumer_max_manifest_rows": 128,
+        "max_chunk_rows": 2048,
+        "max_database_bytes": 1073741824,
+        "max_logical_bytes": 536870912,
+        "max_manifest_rows": 768,
+        "new_temporary_wire_metadata_grant": true,
+        "original_128_temporary_wire_gate_passed": false,
+        "original_absolute_deadline": true,
+        "profile": "native-grouped-temporary-wire-cache-v3"
+      }
+    },
+    "v3_children": 760
+  },
+  "bindings": {
+    "audit_sha256": "2a5db7a61d5340511895cdc6b2e2675b2cc87aaa2a38b2a8815c8bc4059edd47",
+    "config_sha256": "f0e314ac93b175ada1a56969cfef58fe4e0236ed8c3e6b1cb0c2764f8b230150",
+    "environment_generation": 2,
+    "head": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "model_generation": 1,
+    "normal_release_binary_sha256": "ef4d33be1574c27852187546f4393f301eb175b8246f647ce3d15a5d21fd2155",
+    "operation": "bf34a669dc4b3617d97bee356f1cadf3504f3c5993999c5136ce1d6b0cd6f9c2",
+    "operation_pins": {
+      "bep52_plan": "43db163072a392e46f46f4b53cd4df62eb88a4b5c29da734f8d5f3e817c421bcea77a4902d84902789ab730b55d562ab105075ea64382289ebe658fd17302452",
+      "chb1": "277b15ce25ca159f853407942de24dcb169eb5b0f94c5b5541b7a3b84623114db74edce91a4b3ec726308881ab974441a71e1ec7211378c96366daa7c6223131",
+      "cts1": "d62adc92ac74dd40d0b68b4f20e299d89f93d95c552ce9161f629c14d3db91822fc963a40985261a9e7e9934ae721aec3d6715b0ed5f27235432b1087705c2eb",
+      "operation": "bf34a669dc4b3617d97bee356f1cadf3504f3c5993999c5136ce1d6b0cd6f9c2",
+      "tcv1": "c17f3ed2df227108b805fc126fcb21ccb17edc0a48a433db338c55271d9de3139cc1a4317da76f26260fd3a6969bcb59ca3780a4d16af2203628f14271c73cd4",
+      "tcv2": "de2513121d9939187f154c92497df7bc2c94775f6539d60cd41d4c73741e355d6253af839e4167beee0e0a1855835fabdd5ef0f08756cb9218679f7016889bfc"
+    },
+    "source_sha256": "3d4b4bbd30f1c37dc9986a5e512d13ae4d93a330a00fde904bd9b3fcf381083e",
+    "start_and_end_clean_B": true,
+    "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213",
+    "wrapper_sha256": "46329982d1de9e3e7dac3bcbc9cb7fcf1455ab3ceb514637097cbad8e0b9d313"
+  },
+  "complete_selection": {
+    "cts1": "d62adc92ac74dd40d0b68b4f20e299d89f93d95c552ce9161f629c14d3db91822fc963a40985261a9e7e9934ae721aec3d6715b0ed5f27235432b1087705c2eb",
+    "durable_current": false,
+    "execution_authorized": false,
+    "revision": 1,
+    "tcv1": "c17f3ed2df227108b805fc126fcb21ccb17edc0a48a433db338c55271d9de3139cc1a4317da76f26260fd3a6969bcb59ca3780a4d16af2203628f14271c73cd4"
+  },
+  "conclusion": "Observed real-byte loopback recovery through native grouped V3 retention, complete local CTS1/TCV1 selection and sealed two-forward execution under the original deadline and actual cgroup limits. Development funding and completion do not establish the expressly false external or owner qualifications.",
+  "cumulative_milestones": {
+    "clock": "std::time::Instant monotonic wall clock",
+    "cold_recovery_complete_ns": 66144535560,
+    "first_use_scope": "complete CTS1/TCV1 selected and admitted for typed local byte use; not first token or first model output",
+    "loopback_only": true,
+    "origin": "custody observation entry after input-file read/parse and fresh output setup; before source checks, packing and transport",
+    "pinned_snapshot_ready_ns": 1720152126,
+    "sealed_model_environment_ready_ns": 67915802091,
+    "selected_typed_release_ready_ns": 67491774971,
+    "transport_complete_ns": 5297532725,
+    "two_forward_receipt_ns": 77228412679,
+    "values_are_cumulative_not_additive": true,
+    "wan_qualified": false
+  },
+  "findings": [],
+  "job": {
+    "exit_code": 0,
+    "job_id": "1a1cf4e5d08-2564-19e3",
+    "logs_complete_durable_untruncated": true,
+    "state": "succeeded",
+    "timed_out": false
+  },
+  "qualifications": {
+    "durable_current": false,
+    "forward_answers_independently_reviewed": false,
+    "future_retention_positive": false,
+    "group_settlement_qualified": false,
+    "hepta_final_use": false,
+    "independent_failure_domains": false,
+    "independent_real_money_funding": false,
+    "model_quality_improvement_proven": false,
+    "native_development_m12_funding_admitted": true,
+    "native_operation_passed": true,
+    "native_task_payment": false,
+    "original_hepta_owner_used": false,
+    "production_activation": false,
+    "service_fee_paid": false,
+    "two_forwards_observed": true,
+    "wan_qualified": false
+  },
+  "remaining_review": [
+    "The native result only records two observations, without per-question output text. Forward correctness must be assessed from the original worker/task output once retrieved.",
+    "The original full-import report and full archive manifest will be independently reviewed after their actual raw files are recovered; their authority-success receipt is already present."
+  ],
+  "resources": {
+    "actual_cpu_max": "400000 100000",
+    "actual_memory_max_bytes": 8589934592,
+    "cgroup_oom_events_start_and_end_zero": true,
+    "cgroup_peak_bytes": 3176267776,
+    "io_stat_available": false,
+    "native_internal_elapsed_ms": 77228,
+    "native_process": {
+      "elapsed_seconds": 77.26810846291482,
+      "exit_code": 0,
+      "system_seconds": 8.69755,
+      "user_seconds": 62.71589,
+      "wait4_ru_maxrss_kib": 1427836,
+      "watchdog_kill": false,
+      "watchdog_term": false
+    },
+    "scopes": "Whole-job cgroup memory.peak, outer native wait4 ru_maxrss and child supervisor sampled/wait4 RSS are different observations; none may be substituted for another.",
+    "wrapper_elapsed_seconds": 80.9540495260153
+  },
+  "reviewed_at_utc": "2026-11-12T10:44:06.516050+00:00",
+  "reviewer": "release_acceptance",
+  "schema": "release_acceptance_actual_native_result_review_v1",
+  "scope": "Independent local reads and SHA/byte comparisons of already retained original observations; no execution or h calls.",
+  "sources": {
+    "actual_config": {
+      "bytes": 40002,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/root-model-admission-review/model-config.actual.json",
+      "sha256": "f0e314ac93b175ada1a56969cfef58fe4e0236ed8c3e6b1cb0c2764f8b230150"
+    },
+    "authoritative_terminal_status": {
+      "bytes": 955,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-frozen02-authoritative/status-final.response.json",
+      "sha256": "a3cd2e9eb5f4abb7226eb3fcdd7722ff313e7fcdf063ec5c9dc6c67f3fc0fab0"
+    },
+    "chunk_reassembly": {
+      "chunks": [
+        {
+          "bytes": 32768,
+          "chunk_sha256": "37d2802cf9f3ba97ccd4758aba05937ca319fdb4b006295bce6a5fe615e632cd",
+          "offset": 0,
+          "source_response": {
+            "bytes": 44189,
+            "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-native-result-readback/chunk-00000.response.json",
+            "sha256": "fe7306da481908c80688ee84cfdb4520b231c5b8d88a9cd2bda482f7e79be5c5"
+          }
+        },
+        {
+          "bytes": 32768,
+          "chunk_sha256": "f98b854a1c1ff7d77dbd6659e149e204f944c431a436e2b2e8532573b1c8614c",
+          "offset": 32768,
+          "source_response": {
+            "bytes": 44193,
+            "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-native-result-readback/chunk-32768.response.json",
+            "sha256": "2da3e20fe8d137bc535755284936176fc1ca52fdfd2e9c09f446c4868aa18793"
+          }
+        },
+        {
+          "bytes": 16907,
+          "chunk_sha256": "46aa85b53e25df276e5c2784ed086ca2d20b664a9a05208f8962b3a3d5e8932d",
+          "offset": 65536,
+          "source_response": {
+            "bytes": 23044,
+            "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-native-result-readback/chunk-65536.response.json",
+            "sha256": "7f42d90396e96662fecb969270131d70380797d4445a20478407fa9a7ee5b5fc"
+          }
+        }
+      ],
+      "exact_reassembled_bytes_match": true,
+      "same_version": "66306:48807034:82443:1794479462697662696:1794479462697662696"
+    },
+    "native_result": {
+      "bytes": 82443,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-native-result-readback/native-result.json",
+      "sha256": "7e69ad30d35e984cf8e7d871bce91f7ec50f5e7c530a29c584454eab79c262a0"
+    },
+    "native_result_remote_path": "/home/qq/work/chain-bt-4a0b-frozen02-validation/real-native-env2-bf34a669dc4b3617-attempt01/native-result.json",
+    "wrapper_read_response": {
+      "bytes": 12314,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-frozen02-authoritative/read-final.response.json",
+      "sha256": "a3638ecce957cc9c725d41cf869a9ce70bc7dccb33c8bb4d67f2ad5099282216"
+    },
+    "wrapper_streams": {
+      "stderr": {
+        "bytes": 0,
+        "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-frozen02-authoritative/native.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 3710,
+        "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-frozen02-authoritative/native.stdout",
+        "sha256": "bf2e6e9a37e69e4ba6a4208cb73bf1fb164e6ce751ddf30d244336978e568a14"
+      }
+    }
+  }
+}

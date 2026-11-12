@@ -1,0 +1,259 @@
+{
+  "all_four_gates_passed": false,
+  "baseline_debug": {
+    "different_failed_test": "authenticated_v3_real_tcp_receipt_time_equivocation_survives_later_source_expiry",
+    "is_exact_hosted_profile_comparison": false,
+    "physical_source": {
+      "base": null,
+      "candidate": "040fb0cf460a6db568f0b4ec5ba581add3f2d2ba",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "040fb0cf460a6db568f0b4ec5ba581add3f2d2ba",
+      "tested_tree": "5d5182edcbb1c95ca69505e511b042fe423f948f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2552347203,
+      "tracked_entries": 27671,
+      "tracked_worktree_verified": true
+    },
+    "profile": "test / unoptimized + debuginfo",
+    "raw_log": {
+      "bytes": 88754,
+      "path": "recovered-originals/validation/discovery/baseline-full-lib.log",
+      "sha256": "18dd7561bd73b905a42001b964068023a993ce1cb4bf7cf759aa42e7510783a7"
+    },
+    "result": {
+      "failed": 1,
+      "passed": 784,
+      "seconds": 617.89
+    },
+    "root_cause_still_not_diagnosed": true,
+    "selected_lines": [
+      {
+        "line": 1,
+        "text": "    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.75s"
+      },
+      {
+        "line": 203,
+        "text": "test cell::discovery::pq::auth::tests::authenticated_v3_real_tcp_receipt_time_equivocation_survives_later_source_expiry ... FAILED"
+      },
+      {
+        "line": 797,
+        "text": "thread 'cell::discovery::pq::auth::tests::authenticated_v3_real_tcp_receipt_time_equivocation_survives_later_source_expiry' (316) panicked at crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs:1077:13:"
+      },
+      {
+        "line": 805,
+        "text": "test result: FAILED. 784 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 617.89s"
+      }
+    ]
+  },
+  "candidate_B": {
+    "campaign_summary": {
+      "bytes": 45429,
+      "path": "recovered-originals/validation/frozen-candidate-01/summary.json",
+      "sha256": "64ee04d0f1ca821278c71ae3c04be69ae62da8cd5eeb76d7906007f6ae50da1c"
+    },
+    "cargo_build_jobs_environment": "2",
+    "cargo_incremental_environment": "0",
+    "da_command": {
+      "argv": [
+        "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--release",
+        "--locked",
+        "--offline",
+        "--jobs",
+        "2",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/4a0b199bc6c0/chain-work",
+      "elapsed_ns": 269626003958,
+      "ended_unix_ns": 1794467166853277198,
+      "exit_code": 0,
+      "name": "da-complete",
+      "pid": 1202,
+      "started_unix_ns": 1794466897226122762,
+      "status": "completed",
+      "stderr_bytes": 1921,
+      "stderr_sha256": "ed834b62a2cd0c48dd0b4416f1fba9406f1398ed4823151b184ab1992a89a4bb",
+      "stdout_bytes": 94542,
+      "stdout_sha256": "9608b950a3e084c4e07a77b751e345572966db5aab7702076214b492e0beb466",
+      "timed_out": false,
+      "timeout_seconds": 1800
+    },
+    "default_features_enabled_by_cargo_cli": true,
+    "explicit_feature_selection_flags": [],
+    "key_results": [
+      {
+        "line": 180,
+        "text": "test cell::discovery::equivocation_history_tests::tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation ... ok"
+      },
+      {
+        "line": 205,
+        "text": "test cell::discovery::pq::auth::tests::authenticated_v3_real_tcp_receipt_time_equivocation_survives_later_source_expiry ... ok"
+      },
+      {
+        "line": 795,
+        "text": "test result: ok. 789 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 150.58s"
+      }
+    ],
+    "original_interrupted_summary_status_unchanged": "running",
+    "physical_source": {
+      "base": null,
+      "candidate": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+      "tested_tree": "a897ba4c74897a05ceb364f098b1bfe32c850213",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2552660560,
+      "tracked_entries": 27686,
+      "tracked_worktree_verified": true
+    },
+    "profile": "release",
+    "raw_stderr": {
+      "bytes": 1921,
+      "path": "recovered-originals/validation/frozen-candidate-01/da-complete.stderr",
+      "sha256": "ed834b62a2cd0c48dd0b4416f1fba9406f1398ed4823151b184ab1992a89a4bb"
+    },
+    "raw_stdout": {
+      "bytes": 94542,
+      "path": "recovered-originals/validation/frozen-candidate-01/da-complete.stdout",
+      "sha256": "9608b950a3e084c4e07a77b751e345572966db5aab7702076214b492e0beb466"
+    },
+    "rust_test_threads_environment": "1",
+    "rustc_version": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+    "test_threads_cli": 1
+  },
+  "comparison": {
+    "differences": [
+      "Candidate uses an absolute pinned Cargo binary rather than rustup +1.95.0 selector.",
+      "Candidate adds --offline and explicit --jobs 2; hosted environment already uses CARGO_BUILD_JOBS=2."
+    ],
+    "entire_host_hardware_scheduler_or_environment_equivalence_claimed": false,
+    "hosted_tree_equals_original040_tree": true,
+    "same_explicit_default_feature_selection": true,
+    "same_full_package_test_scope": true,
+    "same_release_profile": true,
+    "same_rustc_release_and_commit": "1.95.0 / 59807616e",
+    "same_single_test_thread_selection": true,
+    "source_change_is_candidate_change_not_hidden_profile_change": true,
+    "unreported_rustflags_proven_absent": false
+  },
+  "hosted": {
+    "candidate_head": "040fb0cf460a6db568f0b4ec5ba581add3f2d2ba",
+    "cargo_argv": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-data-availability",
+      "--",
+      "--test-threads=1"
+    ],
+    "cargo_build_jobs_environment": "2",
+    "cargo_incremental_environment": "0",
+    "command_line": 1513,
+    "default_features_enabled_by_cargo_cli": true,
+    "explicit_feature_selection_flags": [],
+    "higher_sequence_failure_not_diagnosed": true,
+    "profile": "release",
+    "raw_log": {
+      "bytes": 411684,
+      "path": "recovered-originals/validation/discovery/original-hosted-job-130956234453.log",
+      "sha256": "9bda7b6e6753c66eaebe16b4ad4a1235f39b47b2d12dd351ab706b7a0504c58d"
+    },
+    "result": {
+      "failed": 1,
+      "passed": 784,
+      "seconds": 100.01
+    },
+    "rust_test_threads_environment": "1",
+    "rustc_version_raw_line": {
+      "line": 1315,
+      "text": "  1.95.0-x86_64-unknown-linux-gnu installed - rustc 1.95.0 (59807616e 2026-04-14)"
+    },
+    "rustflags_or_profile_environment_overrides_reported_in_log": false,
+    "source_identity_raw_lines": [
+      {
+        "line": 1249,
+        "text": "{"
+      },
+      {
+        "line": 1250,
+        "text": "  \"base\": \"30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6\","
+      },
+      {
+        "line": 1251,
+        "text": "  \"candidate\": \"040fb0cf460a6db568f0b4ec5ba581add3f2d2ba\","
+      },
+      {
+        "line": 1252,
+        "text": "  \"kind\": \"prospective-merge\","
+      },
+      {
+        "line": 1253,
+        "text": "  \"prospective_merge\": \"c4aea02cc7b4ad6644e4e41d6d7221f192adcaba\","
+      },
+      {
+        "line": 1254,
+        "text": "  \"schema\": \"trnm-ci-source-v1\","
+      },
+      {
+        "line": 1255,
+        "text": "  \"tested_commit\": \"c4aea02cc7b4ad6644e4e41d6d7221f192adcaba\","
+      },
+      {
+        "line": 1256,
+        "text": "  \"tested_tree\": \"5d5182edcbb1c95ca69505e511b042fe423f948f\","
+      },
+      {
+        "line": 1257,
+        "text": "  \"tests_executed_by_identity_check\": false,"
+      },
+      {
+        "line": 1258,
+        "text": "  \"tracked_bytes\": 2552347203,"
+      },
+      {
+        "line": 1259,
+        "text": "  \"tracked_entries\": 27671,"
+      },
+      {
+        "line": 1260,
+        "text": "  \"tracked_worktree_verified\": true"
+      },
+      {
+        "line": 1261,
+        "text": "}"
+      }
+    ],
+    "source_kind": "prospective-merge",
+    "test_scope": "full trnm-data-availability package, no test selector",
+    "test_threads_cli": 1,
+    "tested_commit": "c4aea02cc7b4ad6644e4e41d6d7221f192adcaba",
+    "tested_tree": "5d5182edcbb1c95ca69505e511b042fe423f948f"
+  },
+  "native_model_run_claimed": false,
+  "recommendation": {
+    "additional_cargo_runs_required_for_profile_thread_feature_gap": [],
+    "extend_original_timeouts_or_leases": false,
+    "historical_flake_root_cause_repaired_claimed": false,
+    "modify_tests": false,
+    "original_invocation_mode_gap_observed": false,
+    "reason": "Completed frozen-B full release DA already covers the original release/default-feature/single-thread invocation; retain both historical failures and their undiagnosed causes. Do not add tests merely to repeat matched invocation coverage."
+  },
+  "rust_or_model_execution_by_reviewer": false,
+  "schema": "trnm-bt-hosted-candidate-da-invocation-review-v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+}

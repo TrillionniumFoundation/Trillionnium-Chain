@@ -1,0 +1,215 @@
+{
+  "all_four_gates_passed": false,
+  "hepta_final_use": false,
+  "independent_expected_input_binding": {
+    "actual_31_remote_payload_files_rehashed_by_this_review": false,
+    "admission_granted": false,
+    "all_31_sha_pins_equal_original861": true,
+    "all_four_gates_passed": false,
+    "environment_files": 19,
+    "fresh_operation": "03aa2878d0d5aa1be7308d719e822ad2a23313489a06010a9f22541609817b07",
+    "historical_source_pin_note": {
+      "new_audit_inner_source_sha256": "fb6fe559317f7c3cd6ef504581b89e7d8229a7c700d3c71b61099a32d443cec9",
+      "original_audit_inner_source_sha256": "488b838dfdf05ab9768fff18ee81c0874b7bb471cbceeefdf15ab42c5dde6d48",
+      "original_observer_uses_config_pins_for_source_and_audit": true,
+      "original_spec_actual_sha256": "83e4ab28cd84813c1a489c4c53222764b6437edf0eaad8924776c0777ff61835"
+    },
+    "historical_to_c3_path_changes": [
+      {
+        "category": "environment",
+        "logical": "config/pon/devnet-v1.json"
+      },
+      {
+        "category": "environment",
+        "logical": "config/pon/ledger-v1.json"
+      },
+      {
+        "category": "environment",
+        "logical": "config/pon/model-family-smollm2-135m-v1.json"
+      },
+      {
+        "category": "environment",
+        "logical": "config/pon/model-family-v1.json"
+      },
+      {
+        "category": "environment",
+        "logical": "config/pon/work-profile-v1.json"
+      },
+      {
+        "category": "environment",
+        "logical": "formal/pon-nakamoto-v1/contract_wire.py"
+      },
+      {
+        "category": "environment",
+        "logical": "formal/pon-nakamoto-v1/llm_adapter_contract.py"
+      },
+      {
+        "category": "environment",
+        "logical": "scripts/cell_sealed_bootstrap_v1.py"
+      },
+      {
+        "category": "environment",
+        "logical": "scripts/llm_base_material.py"
+      },
+      {
+        "category": "environment",
+        "logical": "scripts/llm_cell_sealed_worker_v1.py"
+      },
+      {
+        "category": "environment",
+        "logical": "scripts/llm_inherited_runtime.py"
+      },
+      {
+        "category": "environment",
+        "logical": "scripts/llm_neural_read_worker.py"
+      },
+      {
+        "category": "environment",
+        "logical": "scripts/llm_parent_material.py"
+      },
+      {
+        "category": "environment",
+        "logical": "scripts/llm_python_runtime_contract.py"
+      },
+      {
+        "category": "environment",
+        "logical": "scripts/llm_runtime_exit_observation.py"
+      },
+      {
+        "category": "environment",
+        "logical": "scripts/llm_runtime_pilot.py"
+      },
+      {
+        "category": "environment",
+        "logical": "scripts/llm_runtime_rss_diagnostics.py"
+      }
+    ],
+    "input_audit": {
+      "bytes": 13496,
+      "matches_reported_remote_digest": true,
+      "previous_paths_from_original861": true,
+      "selected_paths_from_c3": true,
+      "sha256": "59f49b99968bb41e6fa44c0cf59a18f08a5fce36bedb3fd5fcafec7487edfce6"
+    },
+    "model_files": 11,
+    "model_started_by_this_review": false,
+    "native_model_run_claimed": false,
+    "payload_bytes_from_original_independent_audit": 280269602,
+    "python_pins": 1,
+    "record_kind": "Independent offline derivation from retained original GitHub bytes and observed preparation operation/output; not remote file readback",
+    "remote_file_bytes_read_back_by_this_review": false,
+    "schema": "trnm-bt-independent-expected-input-binding-review-v1",
+    "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "source_input": {
+      "bytes": 10265,
+      "fields_changed": [
+        "operation",
+        "output"
+      ],
+      "matches_reported_remote_digest": true,
+      "sha256": "fb6fe559317f7c3cd6ef504581b89e7d8229a7c700d3c71b61099a32d443cec9"
+    }
+  },
+  "model_started_by_reviewer": false,
+  "native_model_run_claimed": false,
+  "not_model_admission": true,
+  "observer_change": "Only REPO line, exact original/candidate bytes independently rechecked",
+  "observer_sha256": "d6540d88b88341c94a2be72fc76b16261f0607e1fd9c2a98ed9096aa913435f4",
+  "preparation_job": {
+    "all_12_commands_exit_zero": true,
+    "convenience_copy_is_remote_file_readback": false,
+    "exit_code": 0,
+    "fresh_output_not_used_by_preparation": true,
+    "full_physical_source_success_reported": true,
+    "old_repository_before_after_equal": true,
+    "output_complete": true,
+    "output_durable": true,
+    "parsed_last_json_matches_convenience_copy": true,
+    "state": "succeeded",
+    "stderr_eof": true,
+    "stdout_eof": true,
+    "stdout_text_equals_bytes_hex": true
+  },
+  "production_activation": false,
+  "remaining_observations_required": [
+    "Exact remote preparation/source/audit/physical-source/build-environment file readback",
+    "Original required test outputs and strict readers",
+    "Release normal-main ELF bytes/profile=false test artifact/config binding",
+    "Actual outer cgroup limits and fresh original-deadline model operation receipts"
+  ],
+  "remote_calls_by_reviewer": false,
+  "review_kind": "Read-only intermediate source/input/observer binding review",
+  "schema": "trnm-bt-independent-preparation-input-review-v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_files": [
+    {
+      "bytes": 13640,
+      "path": "validation/durable-current-remote/remote_run_model.py",
+      "sha256": "d6540d88b88341c94a2be72fc76b16261f0607e1fd9c2a98ed9096aa913435f4"
+    },
+    {
+      "bytes": 14630,
+      "path": "validation/durable-current-remote/remote_validate_build_v2.py",
+      "sha256": "3ccf905b2590fc6959c4ef853d1a266550a0d55bddb4043433344de531e37d19"
+    },
+    {
+      "bytes": 5327,
+      "path": "validation/durable-current-remote/remote_runtime_preflight_v2.py",
+      "sha256": "34160ecf8a29351f1a4a26a2c87cada9e50a87aaca6db3d560ed313611cf4eb3"
+    },
+    {
+      "bytes": 2960,
+      "path": "validation/durable-current-remote/remote_start_validation_v2.py",
+      "sha256": "6a3b73a783b99d8e4ecb965f01c7a376d23ece312aa26d8fcfa218ccdef37247"
+    },
+    {
+      "bytes": 24162,
+      "path": "validation/durable-current-remote/remote-validation-run-request.json",
+      "sha256": "68fbcb99338cddefea159687223d6a0e3fdf0761eb004a3e6e8884bbae6865f1"
+    },
+    {
+      "bytes": 4339,
+      "path": "validation/durable-current-remote/remote-validation-run-start.json",
+      "sha256": "90e66e3b43fe3e25038c18e30464636378a8911a66130495c68e8929128fb627"
+    },
+    {
+      "bytes": 38890,
+      "path": "validation/durable-current-remote/remote-prepare-resume-read-001.json",
+      "sha256": "5eb93861ea74857657584a77224fd750ed0aa30b4f5992f14e3be9dd9bd37482"
+    },
+    {
+      "bytes": 956,
+      "path": "validation/durable-current-remote/remote-prepare-resume-status-001.json",
+      "sha256": "14d65a1d8b6c9f5844ebb62dbf2819cbf921a2c0eddcd972499eeb579e081483"
+    },
+    {
+      "bytes": 12989,
+      "path": "validation/durable-current-remote/remote-preparation-success.json",
+      "sha256": "5a9e4d3a91396bb067fe202695b3c48c1948b42fbf9b29e77f64384cf6ea85ff"
+    },
+    {
+      "bytes": 1596,
+      "path": "checkpoints/discovery-reviewer/source-input-review/sources.json",
+      "sha256": "a5df5f86571a0378cc41674670ef282e02cfb4dbdf5b62f755c4403167008a36"
+    },
+    {
+      "bytes": 3461,
+      "path": "checkpoints/discovery-reviewer/source-input-review/expected-input-binding-review.json",
+      "sha256": "8550f234cb0f26b33629ad87f4b3679676c8c97ff8179909d0429f7c12004c21"
+    }
+  ],
+  "source_modified_by_reviewer": false,
+  "source_tree": "a897ba4c74897a05ceb364f098b1bfe32c850213",
+  "validation_launcher": {
+    "embedded_helpers_exactly_match_reviewed_v2_bytes": true,
+    "embedded_launcher_sha256": "6a3b73a783b99d8e4ecb965f01c7a376d23ece312aa26d8fcfa218ccdef37247",
+    "fresh_output_and_wrapper_required": true,
+    "helpers_written_create_only": true,
+    "launch_receipt_reused": false,
+    "launch_record_is_completed_test_result": false,
+    "request_python_flags": [
+      "-B",
+      "-c"
+    ]
+  }
+}

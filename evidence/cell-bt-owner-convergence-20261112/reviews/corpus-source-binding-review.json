@@ -1,0 +1,90 @@
+{
+  "schema": "cell-bt-existing-corpus-binding-update-v1",
+  "existing_path_count": 994,
+  "required_path_count": 902,
+  "paths_added": 0,
+  "paths_removed": 0,
+  "assertions_unchanged": true,
+  "changes": [
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "old_blob": "54402b2cdd0da9148ef148b379116ccada93a9d6",
+      "new_blob": "92920126581b48889802a4e08280697870c22ed6"
+    },
+    {
+      "path": "config/pon/pq-authority-effects-v1.json",
+      "old_blob": "12c2138af21d7e97be16ff9789a5cd5cf4a9b2ec",
+      "new_blob": "c674e1b23822affaf592ccfd9ba2089fdc35ca22"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "old_blob": "2b8203f977fea7e6b49f891529c00adf20205a4f",
+      "new_blob": "3d534e78642fe82eef2bfd18f50d0af0ebf048bd"
+    },
+    {
+      "path": "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "old_blob": "a158dc7e5d7ce952f39d806a5af9607fd2fe4937",
+      "new_blob": "02b5fb207a37fd311c205c81b792802aebc90592"
+    },
+    {
+      "path": "scripts/ci/pq_authority_effect_register.py",
+      "old_blob": "318e9877f04966b4c7b2057bbe88091c007686f2",
+      "new_blob": "76fcd7ded99e51e4708fe5c271004358fc887218"
+    },
+    {
+      "path": "scripts/ci/test_pq_authority_effect_register.py",
+      "old_blob": "d0220443b532cbbbc31c61c840cff0b2cd01f0b5",
+      "new_blob": "5bae61acb2ca97552ba98f8721ccc70cbe9dc44c"
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "old_blob": "8f5e97705d57ce2fbce0ff14fc0d24367047cb67",
+      "new_blob": "3523a037e176f9f0b66b3fcab324a6517c70870e"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs",
+      "old_blob": "5bc8f3184443815f41756d11c8252f9bb6059863",
+      "new_blob": "f72dcbc0cebb0135c55f0a71ef39ef921a8d22ff"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+      "old_blob": "3e6b5d04f340abdcd2ae22934f1e855e34b5e4fa",
+      "new_blob": "a93843aa8e37bae81391ee21e5a22876ae66f578"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "old_blob": "b9c4f415548fd0e7b8d4accaa65fa765abbd6c64",
+      "new_blob": "a013f88b0af69cb804892dda74676139c502aaf3"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "old_blob": "7a6dc863dcb6db38a2e06ba3150f93cd84c04346",
+      "new_blob": "ccc31b88f0851e660344c7151f815b2f3c67d57d"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "old_blob": "e6ffd7f474d6d4c95a2333b22a0a1a3af21f3ad0",
+      "new_blob": "7708c21452ec7d86ac770f5d48e7fc18eebcbefc"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "old_blob": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+      "new_blob": "eb5ac74b5563dfecfec99b371657672d31c7404f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+      "old_blob": "128ae60031f1fc548031757b9a64bd78a3a5d506",
+      "new_blob": "245432ec69f4ec839ed16b84c6aef75529e20193"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs",
+      "old_blob": "ffcd4db38228c241cdff9e9d3dd81d4d44a542ec",
+      "new_blob": "c2c4741bd7614c530304b7957342b7d7ff6c3a72"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs",
+      "old_blob": "277445913b8ab60964c913ee7f41098e4049e6ca",
+      "new_blob": "a69e89bec827f7dfc6445d1985306948e38a8456"
+    }
+  ]
+}

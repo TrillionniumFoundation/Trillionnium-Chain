@@ -1,0 +1,211 @@
+{
+  "actual_readback": {
+    "all_six_files_exact_to_native_payload": true,
+    "atomic_snapshot": false,
+    "contiguous_offsets_verified": true,
+    "cross_file_integrity_basis": "Independently read files are bound by exact source/audit/preparation and command-output digests, not claimed to be one atomic filesystem snapshot.",
+    "files": [
+      {
+        "bytes": 12989,
+        "eof": true,
+        "path": "validation/durable-current-remote/async-materials-read-01/preparation-success.json",
+        "remote_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/preparation-success.json",
+        "sha256": "5a9e4d3a91396bb067fe202695b3c48c1948b42fbf9b29e77f64384cf6ea85ff",
+        "version": "66306:60603365:12989:1794470087260499020:1794470087260499020"
+      },
+      {
+        "bytes": 10265,
+        "eof": true,
+        "path": "validation/durable-current-remote/async-materials-read-01/source-inputs.native-v2.json",
+        "remote_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-control/source-inputs.native-v2.json",
+        "sha256": "fb6fe559317f7c3cd6ef504581b89e7d8229a7c700d3c71b61099a32d443cec9",
+        "version": "66306:60603362:10265:1794470087186420560:1794470087186420560"
+      },
+      {
+        "bytes": 13496,
+        "eof": true,
+        "path": "validation/durable-current-remote/async-materials-read-01/source-inputs.native-v2.verification.json",
+        "remote_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-control/source-inputs.native-v2.verification.json",
+        "sha256": "59f49b99968bb41e6fa44c0cf59a18f08a5fce36bedb3fd5fcafec7487edfce6",
+        "version": "66306:60603363:13496:1794470087187125344:1794470087187125344"
+      },
+      {
+        "bytes": 423,
+        "eof": true,
+        "path": "validation/durable-current-remote/async-materials-read-01/resume-full-physical-source.stdout",
+        "remote_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/resume-full-physical-source.stdout",
+        "sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902",
+        "version": "66306:60603348:423:1794470086529801462:1794470086529801462"
+      },
+      {
+        "bytes": 1313,
+        "eof": true,
+        "path": "validation/durable-current-remote/async-materials-read-01/build-environment.json",
+        "remote_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-control/build-environment.json",
+        "sha256": "2002591f8581d17848b5cc45c4990f69daf37f7db1cd822b2fae0e1c516155a1",
+        "version": "66306:60603360:1313:1794470086704829180:1794470086704829180"
+      },
+      {
+        "bytes": 15360,
+        "eof": true,
+        "path": "validation/durable-current-remote/async-materials-read-01/tail-summary-observation-01.json",
+        "remote_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-01/summary.json",
+        "sha256": "b7244e43158fa05e40fc376cd79f6af99eb7a2ee21ace05e4345e068b5140ead",
+        "version": "66306:60734083:15360:1794470458810770247:1794470458810918915"
+      }
+    ],
+    "page_count": 17,
+    "pages": {
+      "bytes": 91513,
+      "path": "validation/durable-current-remote/async-materials-read-01/verified-pages.json",
+      "sha256": "3e830180d5b5200f8b5967a2163cc4da3030e076f169d545eb6e62b232361327"
+    },
+    "sdk": {
+      "bytes": 65917,
+      "path": "validation/durable-current-remote/async-materials-read-01/original-native-sdk-payload.json",
+      "sha256": "d9234aa242656457df4037e3649c3cb6f8a13dbfd776ebb9aada222ee8158c88"
+    },
+    "sdk_complete_and_not_error": true,
+    "snapshot_scope": "independent_file"
+  },
+  "all_four_gates_passed": false,
+  "hepta_final_use": false,
+  "input_binding": {
+    "actual_audit_equals_independent_expected_bytes": true,
+    "actual_remote_payload_31_files_rehashed_by_this_reviewer": false,
+    "actual_source_equals_independent_expected_bytes": true,
+    "all_31_sha_pins_equal_original861": true,
+    "environment_files": 19,
+    "fresh_operation": "03aa2878d0d5aa1be7308d719e822ad2a23313489a06010a9f22541609817b07",
+    "fresh_output": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/real-native-03aa2878d0d5aa1b-attempt01",
+    "model_files": 11,
+    "only_source_fields_changed_from_c3": [
+      "operation",
+      "output"
+    ],
+    "payload_bytes": 280269602,
+    "preparation_records_real_rehashes": true,
+    "python_pins": 1
+  },
+  "native_model_run_claimed": false,
+  "physical_source": {
+    "base": null,
+    "candidate": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "tested_tree": "a897ba4c74897a05ceb364f098b1bfe32c850213",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2552660560,
+    "tracked_entries": 27686,
+    "tracked_worktree_verified": true
+  },
+  "pinned_source_support": [
+    {
+      "bytes": 45100,
+      "git_blob": "015d6cc4af9146cfd62967463614f27dc6945ee5",
+      "matches_actual_source_input_pin": true,
+      "path": "validation/discovery-reviewer/pinned-source/llm_cell_sealed_worker_v1.py.txt",
+      "repository_path": "scripts/llm_cell_sealed_worker_v1.py",
+      "sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b",
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/040fb0cf460a6db568f0b4ec5ba581add3f2d2ba/scripts/llm_cell_sealed_worker_v1.py"
+    },
+    {
+      "bytes": 22751,
+      "git_blob": "94f4e0d5e3ca47444ed87f5d087189765f39d584",
+      "matches_actual_source_input_pin": true,
+      "path": "validation/discovery-reviewer/pinned-source/llm_python_runtime_contract.py.txt",
+      "repository_path": "scripts/llm_python_runtime_contract.py",
+      "sha256": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc",
+      "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/040fb0cf460a6db568f0b4ec5ba581add3f2d2ba/scripts/llm_python_runtime_contract.py"
+    }
+  ],
+  "production_activation": false,
+  "reviewer_compiled_or_ran_model": false,
+  "reviewer_remote_calls": false,
+  "reviewer_source_modified": false,
+  "schema": "trnm-bt-independent-actual-materials-review-v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_tree": "a897ba4c74897a05ceb364f098b1bfe32c850213",
+  "static_preflight_interface_finding": {
+    "actual_caller_has_x_pycache_prefix": false,
+    "actual_python_options": [
+      "-I",
+      "-S",
+      "-B",
+      "-c"
+    ],
+    "confirmed_interface_mismatch": true,
+    "contract_lines": "103-109",
+    "contract_requirement": "sys.pycache_prefix must be an absolute string naming a path that does not exist; otherwise PRIVATE_UNUSED_BYTECODE_PATH",
+    "failure_cause_status": "Await exact 684-byte stderr before assigning this invocation to the statically proven interface mismatch.",
+    "minimal_candidate_fix_scope": "Supply original -X pycache_prefix option with a fresh absolute unused path in a separately named preparation attempt; preserve all original guards and failed artifacts. No source change proposed.",
+    "missing_x_option_is_confirmed_current_failure_cause": false,
+    "original_child_environment_preserved_exactly": [
+      "LANG",
+      "LC_ALL",
+      "TMPDIR"
+    ],
+    "original_contract_pin_matched": true,
+    "original_worker_pin_matched": true,
+    "worker_prepare_runtime_calls_helper_configure": true
+  },
+  "tail_result": {
+    "commands": [
+      {
+        "elapsed_seconds": 0.03246497712098062,
+        "exit_code": 0,
+        "name": "preflight",
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 177,
+        "stdout_sha256": "5dd7bd6b3ece115afdc4220006fed84a5520177cd662d725ac96ca585765d252",
+        "timed_out": false
+      },
+      {
+        "elapsed_seconds": 1.5667861739639193,
+        "exit_code": 0,
+        "name": "source-before",
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 423,
+        "stdout_sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902",
+        "timed_out": false
+      },
+      {
+        "elapsed_seconds": 0.16463321982882917,
+        "exit_code": 1,
+        "name": "runtime-original-environment-preflight",
+        "stderr_bytes": 684,
+        "stderr_sha256": "9bee5ee60f083c5c57aab42369a9171b8d4763697ad6c495f57b844fa1484421",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false
+      },
+      {
+        "elapsed_seconds": 1.5672479290515184,
+        "exit_code": 0,
+        "name": "source-after",
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 423,
+        "stdout_sha256": "418dec7ab64a0ef795f7e360ce9e6f311ae7ce6d34dafc0df73bee59ebbe0902",
+        "timed_out": false
+      }
+    ],
+    "completed": true,
+    "native_operation_started": false,
+    "original_24_controls_executed": false,
+    "original_runner_sha256": "8f82ae65d146be8513d0bc9fb14ed8f08e2df378f5db8e3471d99301d78fd3d9",
+    "passed": false,
+    "provider_and_python_unchanged": true,
+    "qualifying_new_elf_observed": false,
+    "real_model_observer_sha256": "d6540d88b88341c94a2be72fc76b16261f0607e1fd9c2a98ed9096aa913435f4",
+    "release_main_build_executed": false,
+    "runtime_preflight_sha256": "34160ecf8a29351f1a4a26a2c87cada9e50a87aaca6db3d560ed313611cf4eb3",
+    "rust_tests_executed": false,
+    "source_unchanged": true,
+    "tail_runner_observer_sha256": "3ccf905b2590fc6959c4ef853d1a266550a0d55bddb4043433344de531e37d19"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "cgroup_directory_present": false,
+  "named_unix_stream_creation": {
+    "available": false,
+    "errno": 1,
+    "error": "[Errno 1] Operation not permitted"
+  },
+  "native_operation_started": false,
+  "observed_at": "2026-11-12T07:04:00.787168+00:00",
+  "policy_modified": false,
+  "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+  "research_operation_admission": "blocked_host_named_unix_socket",
+  "schema": "cell-bt-research-host-capabilities-v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "unix_socket_pair": {
+    "available": true
+  },
+  "whole_job_memory_cap_verified": false
+}

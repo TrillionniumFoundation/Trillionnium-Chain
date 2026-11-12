@@ -1,0 +1,36 @@
+{
+  "code_identities": [
+    {
+      "bytes": 8088,
+      "path": "validation/durable-current-remote/remote_full_preflight_env2_v1.py",
+      "sha256": "d82a18f91d0bdf275b96a5c8de86976ba15a870d67bab00a442db6c9497f9338"
+    },
+    {
+      "bytes": 11466,
+      "path": "validation/durable-current-remote/remote_observe_full_preflight_env2_v1.py",
+      "sha256": "07152d3082cfc6e9a0d12bbfa8cdccd3f04023d44bc52780c16ac8b4624ec211"
+    }
+  ],
+  "findings": [
+    "No blocking issue found in the reviewed scope. Full source and AST were read/parsed; these are static findings, not execution results.",
+    "prepare_runtime, runtime_import and verify_runtime_ready execute unchanged and must succeed before the helper sets passed. Original stable-FD environment reads, independent interpreter pin, full file inventory/digests, source loader and generated-source/native origin guards remain mandatory.",
+    "The driver calls the fixed new canonical Python with -I -S -B -X an unused private bytecode path and only LANG/LC_ALL/TMPDIR, with the original 180-second import bound. It holds verified helper bytes for the actual -c invocation.",
+    "Actual raw module origins and executable maps are recorded after the original canonical-origin verifier. Virtual Torch markers and sealed-source-name anchors remain raw observations; they are not silently treated as ordinary on-disk runtime files.",
+    "Old runtime origins are explicitly refused; the original verifier additionally resolves origins and binds each runtime byte path to the projected file map, preventing new-path symlinks from authorizing old runtime payloads.",
+    "Torch thread counts and generated-source verification are observable result fields to review after execution. The helper does not equate this preparation to model execution, typed/CHB1 admission, Hepta owner authorization, FinalUse, production or whole-job memory qualification.",
+    "The observer checks actual four-CPU quota and nice10, retains before/after physical source checks and pins, records per-command exit/timeout/raw-log hashes, and requires matching successful runtime report and elapsed time below180 seconds.",
+    "New source/audit/operation/environment-generation pins are present; independent semantic review of their generation/roster construction belongs to discovery_fix."
+  ],
+  "h_called_by_reviewer": false,
+  "observed_runtime_execution": false,
+  "reviewer": "release_acceptance",
+  "schema": "trnm.private-runtime-full-preflight-source-review.v1",
+  "scope": [
+    "canonical interpreter and original runtime guard",
+    "module/native origin observations",
+    "isolated invocation and resource/qualification boundaries"
+  ],
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_modified": false,
+  "status": "SOURCE_REVIEW_PASSED_EXECUTION_PENDING"
+}

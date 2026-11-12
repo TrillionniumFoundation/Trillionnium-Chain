@@ -1,0 +1,1451 @@
+{
+  "dependencies": {
+    "copy_install": true,
+    "install": {
+      "commands": [
+        {
+          "argv": [
+            "uv",
+            "venv",
+            "--python",
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv"
+          ],
+          "elapsed_seconds": 0.1283888959997057,
+          "exit_code": 0
+        },
+        {
+          "argv": [
+            "uv",
+            "pip",
+            "sync",
+            "--native-tls",
+            "--python",
+            "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/bin/python",
+            "--require-hashes",
+            "--only-binary",
+            ":all:",
+            "--link-mode",
+            "copy",
+            "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-requirements.txt"
+          ],
+          "elapsed_seconds": 58.79627578700001,
+          "exit_code": 0
+        }
+      ],
+      "complete": true,
+      "model_executed": false,
+      "model_loaded": false
+    },
+    "installed_distributions": [
+      {
+        "name": "accelerate",
+        "version": "1.15.0",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "certifi",
+        "version": "2026.10.23",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "cffi",
+        "version": "2.0.0",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "charset-normalizer",
+        "version": "3.5.2",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "cryptography",
+        "version": "50.0.2",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "filelock",
+        "version": "4.2.4",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "fsspec",
+        "version": "2026.9.0",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "hf-xet",
+        "version": "1.7.0",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "huggingface_hub",
+        "version": "0.36.2",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "idna",
+        "version": "3.20",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "Jinja2",
+        "version": "3.1.6",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "MarkupSafe",
+        "version": "3.0.4",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "mpmath",
+        "version": "1.3.0",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "networkx",
+        "version": "3.7",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "numpy",
+        "version": "1.26.4",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "packaging",
+        "version": "26.3",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "peft",
+        "version": "0.18.0",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "psutil",
+        "version": "7.2.2",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "pycparser",
+        "version": "2.23",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "PyYAML",
+        "version": "6.0.3",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "regex",
+        "version": "2026.9.29",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "requests",
+        "version": "2.34.2",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "safetensors",
+        "version": "0.7.0",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "setuptools",
+        "version": "84.2.1",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "sympy",
+        "version": "1.14.0",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "tokenizers",
+        "version": "0.22.2",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "direct_url": {
+          "archive_info": {},
+          "url": "https://download-r2.pytorch.org/whl/cpu/torch-2.9.1%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl"
+        },
+        "name": "torch",
+        "version": "2.9.1+cpu",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "tqdm",
+        "version": "4.70.1",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "transformers",
+        "version": "4.57.3",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "typing_extensions",
+        "version": "4.16.0",
+        "version_is_not_executable_identity": true
+      },
+      {
+        "name": "urllib3",
+        "version": "2.8.0",
+        "version_is_not_executable_identity": true
+      }
+    ],
+    "lock": {
+      "bytes": 4678,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-requirements.txt",
+      "sha256": "178b2fe89a7bf58f2d127b195d82e4fa9b5c19d93cb3526d8789edf3df901017"
+    },
+    "only_binary": true,
+    "original_lock_description": "Repository CPU-only CPython 3.12 model-runtime unit-control wheel lock, reused unchanged for the independently admitted fresh environment; not claimed to be the old C3 environment.",
+    "original_repository_lock": {
+      "bytes": 4678,
+      "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/ci/model-runtime-cpu-requirements.txt",
+      "sha256": "178b2fe89a7bf58f2d127b195d82e4fa9b5c19d93cb3526d8789edf3df901017"
+    },
+    "registry_origin": "uv resolved the unchanged named requirements using its configured index and cache; per-wheel registry download URLs were not separately retained. Every accepted wheel had to match the original hash lock.",
+    "require_hashes": true,
+    "tls_verification_disabled": false,
+    "torch_direct_wheel_sha256": "7417d8c565f219d3455654cb431c6d892a3eb40246055e14d645422de13b9ea1",
+    "uv": {
+      "bytes": 37784096,
+      "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/uv",
+      "sha256": "23803452c0fbe125033054cd9ff245f1d649fb65b4b73f68429f4abda432436d"
+    },
+    "venv": "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv"
+  },
+  "flags": {
+    "actual_service_fee_paid": false,
+    "aggregate_process_tree_memory_qualified": false,
+    "hepta_final_use": false,
+    "independent_failure_domains": false,
+    "independent_operators": false,
+    "installation_authorized": false,
+    "model_executed": false,
+    "model_loaded": false,
+    "native_operation_started": false,
+    "original_c3_same_environment_replay": false,
+    "original_hepta_owner_used": false,
+    "policy_modified": false,
+    "production_activation": false,
+    "real_customer_demand_qualified": false,
+    "selection_authorized": false,
+    "whole_job_memory_cap_verified": false
+  },
+  "fresh_runtime": {
+    "byte_namespace_immutable_claim": false,
+    "external_executable_mappings": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+      "/usr/lib/x86_64-linux-gnu/libc.so.6",
+      "/usr/lib/x86_64-linux-gnu/libdl.so.2",
+      "/usr/lib/x86_64-linux-gnu/libgcc_s.so.1",
+      "/usr/lib/x86_64-linux-gnu/libm.so.6",
+      "/usr/lib/x86_64-linux-gnu/libpthread.so.0",
+      "/usr/lib/x86_64-linux-gnu/librt.so.1",
+      "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33",
+      "/usr/lib/x86_64-linux-gnu/libutil.so.1",
+      "/usr/lib/x86_64-linux-gnu/libz.so.1.3.1",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/charset_normalizer/cd.cpython-312-x86_64-linux-gnu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/charset_normalizer/md.cpython-312-x86_64-linux-gnu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/markupsafe/_speedups.cpython-312-x86_64-linux-gnu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/numpy.libs/libgfortran-040039e1.so.5.0.0",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/numpy.libs/libopenblas64_p-r0-0cf96a72.3.23.dev.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/numpy.libs/libquadmath-96973f99.so.0.0.0",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/numpy/core/_multiarray_tests.cpython-312-x86_64-linux-gnu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/numpy/core/_multiarray_umath.cpython-312-x86_64-linux-gnu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/numpy/fft/_pocketfft_internal.cpython-312-x86_64-linux-gnu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/numpy/linalg/_umath_linalg.cpython-312-x86_64-linux-gnu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/numpy/random/_bounded_integers.cpython-312-x86_64-linux-gnu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/numpy/random/_common.cpython-312-x86_64-linux-gnu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/numpy/random/_generator.cpython-312-x86_64-linux-gnu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/numpy/random/_mt19937.cpython-312-x86_64-linux-gnu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/numpy/random/_pcg64.cpython-312-x86_64-linux-gnu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/numpy/random/_philox.cpython-312-x86_64-linux-gnu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/numpy/random/_sfc64.cpython-312-x86_64-linux-gnu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/numpy/random/bit_generator.cpython-312-x86_64-linux-gnu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/numpy/random/mtrand.cpython-312-x86_64-linux-gnu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/regex/_regex.cpython-312-x86_64-linux-gnu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/safetensors/_safetensors_rust.abi3.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/tokenizers/tokenizers.abi3.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/torch/_C.cpython-312-x86_64-linux-gnu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/torch/lib/libc10.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/torch/lib/libgomp.so.1",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/torch/lib/libshm.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/torch/lib/libtorch.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/torch/lib/libtorch_cpu.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/torch/lib/libtorch_global_deps.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/torch/lib/libtorch_python.so",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/yaml/_yaml.cpython-312-x86_64-linux-gnu.so"
+    ],
+    "files_count": 19496,
+    "full_byte_import_and_native_origin_preflight_passed": true,
+    "generated_source_sha256": "8205b16956fb264841ecd8644784a0d157f87df79b17c16825dc1163433ce5d8",
+    "host_binding": "Actual canonical interpreter, exact sys.version/SOABI, absolute prefix/stdlib inventory and observed native mappings are pinned; this snapshot is not portable to arbitrary hosts.",
+    "managed_inventory_count": 19484,
+    "old_snapshot_relabelled": false,
+    "pinned_file_bytes": 1045883975,
+    "python": {
+      "abi": "cpython-312-x86_64-linux-gnu",
+      "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+    },
+    "python_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "snapshot": {
+      "bytes": 6709888,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/environment/runtime-snapshot.json",
+      "sha256": "3696579e96a5dd2160cdda61b5f040c2ac0a8af02d860d90c56ac4fd1903c225"
+    },
+    "torch_generated_sources": [
+      {
+        "bytes": 5510,
+        "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/torch/distributed/nn/jit/instantiator.py",
+        "sha256": "567d1314ee27ff0b3bd22e7c4d1157246469de25e7a3183d96debe167b193615"
+      },
+      {
+        "bytes": 3463,
+        "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/torch/distributed/nn/jit/templates/remote_module_template.py",
+        "sha256": "0ff1856bbd031b5298d46c06c0502abc20bd804f42c1949ed4127e8c773660cc"
+      },
+      {
+        "bytes": 31286,
+        "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/lib/python3.12/site-packages/torch/distributed/nn/api/remote_module.py",
+        "sha256": "d51779fdbafb1ca1d99d002e6f32cf17bc1fef730a6251e3ef0278d8078bd112"
+      }
+    ]
+  },
+  "generated_at": "2026-11-12T07:05:59.372864+00:00",
+  "historical_reference": {
+    "bytes": 11638,
+    "historical_observer_reason": "The original C3 observer permits only operation/output changes and pins its old environment and paged entry; this new native V2 input is independent.",
+    "historical_observer_reused": false,
+    "old_environment_generation": 1,
+    "old_python": {
+      "path": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+      "sha256": "23bc148d2b48964b621c5561ff2b81c1d9c7b717967a7491efbf12f4304882b5"
+    },
+    "old_snapshot": {
+      "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/runtime-snapshot.v2.json",
+      "sha256": "e87a3658675836c130ba2a97a805bc6d86cc435135e72f4b6e40747e9271b9eb"
+    },
+    "old_snapshot_bytes": 7739511,
+    "path": "/workspace/scratch/4a0b199bc6c0/chain-work/evidence/cell-storage-four-gates-20261111/current/model/fresh-input.json",
+    "sha256": "cfeb462afd142ba0c2dd29f722216161346810038e19c0ac1815b12f4828d107"
+  },
+  "host_capabilities": {
+    "bypass_or_policy_change_performed": false,
+    "observation": {
+      "cgroup_directory_present": false,
+      "named_unix_stream_creation": {
+        "available": false,
+        "errno": 1,
+        "error": "[Errno 1] Operation not permitted"
+      },
+      "native_operation_started": false,
+      "observed_at": "2026-11-12T07:04:00.787168+00:00",
+      "policy_modified": false,
+      "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "research_operation_admission": "blocked_host_named_unix_socket",
+      "schema": "cell-bt-research-host-capabilities-v1",
+      "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+      "unix_socket_pair": {
+        "available": true
+      },
+      "whole_job_memory_cap_verified": false
+    },
+    "original_controls": {
+      "command_records": [
+        {
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "scripts",
+            "-p",
+            "test_llm_cell_sealed_worker_v1.py",
+            "-v"
+          ],
+          "cwd": "/workspace/scratch/4a0b199bc6c0/chain-work",
+          "elapsed_ns": 617241348,
+          "ended_unix_ns": 1794466897105850248,
+          "exit_code": 1,
+          "name": "sealed-research-python-controls",
+          "pid": 1196,
+          "started_unix_ns": 1794466896487381553,
+          "status": "completed",
+          "stderr_bytes": 0,
+          "stderr_merged_into_stdout": true,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_bytes": 7170,
+          "stdout_sha256": "aca1edbae5f56594e1502dac1938dcfc9038c090865880ff3f361ee8df25166c",
+          "timed_out": false,
+          "timeout_seconds": 600
+        },
+        {
+          "argv": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "-B",
+            "scripts/ci/test_cell_storage_convergence_ci.py",
+            "--check-sealed-controls",
+            "/workspace/scratch/4a0b199bc6c0/validation/frozen-candidate-01/sealed-research-python-controls.stdout"
+          ],
+          "cwd": "/workspace/scratch/4a0b199bc6c0/chain-work",
+          "elapsed_ns": 116353326,
+          "ended_unix_ns": 1794466897224500757,
+          "exit_code": 1,
+          "name": "sealed-research-python-readback",
+          "pid": 1201,
+          "started_unix_ns": 1794466897107068405,
+          "status": "completed",
+          "stderr_bytes": 922,
+          "stderr_sha256": "27079a3d6a64a3b1ad9a82823e4862f67a8a249895a27284b3c5568af831778f",
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false,
+          "timeout_seconds": 600
+        }
+      ],
+      "errors": 2,
+      "passed": 22,
+      "stderr": {
+        "bytes": 0,
+        "path": "/workspace/scratch/4a0b199bc6c0/validation/frozen-candidate-01/sealed-research-python-controls.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 7170,
+        "path": "/workspace/scratch/4a0b199bc6c0/validation/frozen-candidate-01/sealed-research-python-controls.stdout",
+        "sha256": "aca1edbae5f56594e1502dac1938dcfc9038c090865880ff3f361ee8df25166c"
+      },
+      "strict_readback_stderr": {
+        "bytes": 922,
+        "path": "/workspace/scratch/4a0b199bc6c0/validation/frozen-candidate-01/sealed-research-python-readback.stderr",
+        "sha256": "27079a3d6a64a3b1ad9a82823e4862f67a8a249895a27284b3c5568af831778f"
+      },
+      "strict_readback_stdout": {
+        "bytes": 0,
+        "path": "/workspace/scratch/4a0b199bc6c0/validation/frozen-candidate-01/sealed-research-python-readback.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "total": 24
+    },
+    "original_probe": {
+      "bytes": 644,
+      "path": "/workspace/scratch/4a0b199bc6c0/validation/setup/research-host-capabilities.json",
+      "sha256": "13acd0409469b9e2d5ac7c7af7e4df25ef7ae7cce5dbc0472e73d1fb8607f2a8"
+    },
+    "required_original_interface": "socket(AF_UNIX, SOCK_STREAM), bind/listen/accept and connect for fd.sock and worker/model.sock; SCM_RIGHTS/socketpair alone is insufficient.",
+    "self_pidfd_capability_observation": {
+      "child_spawned": false,
+      "passed": true,
+      "source": "Agent exec result: os.pidfd_open(self) and signal.pidfd_send_signal(fd,0); not a full owned-child operation."
+    },
+    "status": "BLOCKED_HOST_NAMED_UNIX_SOCKET"
+  },
+  "input": {
+    "bytes": 8683,
+    "context": {
+      "base": "c320c094769446c21d7e4a33795d7f9310b5e4c8ca5a6fecca40207b1f735b7c",
+      "family": "smollm2-135m-cpu-dev-v1",
+      "layout": "c9b06f9a029a3257801844f89acb59b5f59f6a39087335af323f274e9152992f",
+      "parent": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba",
+      "runtime": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b",
+      "tokenizer": "a1883207efeacecee399f4dc699d2b547eb2d6ddb7500522933ed76c1521fb93"
+    },
+    "environment_generation": 2,
+    "legacy_paged_expected_roots_reused": false,
+    "manifest_count": 30,
+    "network": {
+      "consumer": {
+        "max_connections": 128,
+        "max_messages": 1000000,
+        "max_readback_attempts": 1,
+        "max_readback_bytes": 536870912,
+        "max_readback_chunks": 2048,
+        "max_received_bytes": 1073741824,
+        "max_sent_bytes": 1073741824
+      },
+      "publisher": {
+        "max_connections": 128,
+        "max_messages": 1000000,
+        "max_readback_attempts": 1,
+        "max_readback_bytes": 536870912,
+        "max_readback_chunks": 2048,
+        "max_received_bytes": 1073741824,
+        "max_sent_bytes": 1073741824
+      },
+      "request_timeout_ms": 30000,
+      "schema": "trnm.cell-sealed-research-network.v2",
+      "total": {
+        "max_connections": 256,
+        "max_messages": 2000000,
+        "max_readback_attempts": 2,
+        "max_readback_bytes": 1073741824,
+        "max_readback_chunks": 4096,
+        "max_received_bytes": 2147483648,
+        "max_sent_bytes": 2147483648
+      }
+    },
+    "operation": "6d8cab04f6365a9579edefa5d61266c1e3c6da44d7aec526903fb89ed78ae15e",
+    "original_c3_payload_bytes": 280269602,
+    "output": "/workspace/scratch/4a0b199bc6c0/model-preparation/native-operation-01",
+    "output_must_not_exist": true,
+    "output_observed_absent": true,
+    "parent": {
+      "adapter": "3b3128293a86570a47a72c7bf081f898de1682ed1118c5a440ad7478c0f22e42",
+      "contract": "c9b06f9a029a3257801844f89acb59b5f59f6a39087335af323f274e9152992f",
+      "file_sha256": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba",
+      "generation": 1,
+      "operation_id": "public-v2-material-derivation-no-execution"
+    },
+    "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/fresh-native-input-v2.json",
+    "payload_bytes": 279239979,
+    "payload_delta_bytes": -1029623,
+    "requests": [
+      {
+        "prompt": "Answer with only yes or no. Is 8517 greater than 8516?",
+        "request_id": "combined-native-6d8cab04f6365a9579ed-1"
+      },
+      {
+        "prompt": "Answer with only yes or no. Is 8517 greater than 8518?",
+        "request_id": "combined-native-6d8cab04f6365a9579ed-2"
+      }
+    ],
+    "schema": "trnm.cell-sealed-research-source.v2",
+    "sha256": "09b809f40a1ff85631a9b035233890dce968fdcd7dc6b2b15c27bd006f56e2b3",
+    "snapshot_profile": {
+      "composition_file": "adapter/target-contract.json",
+      "composition_profile": "sealed-smollm2-parent-lora-v1",
+      "environment_loader": "sealed-python-runtime-snapshot-v1",
+      "material_profile": "smollm2-public-v2-material-runtime-bridge-v1",
+      "model_loader": "sealed-smollm2-dense-v1",
+      "quantization": "none",
+      "schema": "trnm.cell-sealed-research-snapshot.v2",
+      "tensor_codec": "safetensors-dense-f32-f16-bf16-v1",
+      "worker_sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+    },
+    "version_roots_await_actual_new_operation": true
+  },
+  "launch": {
+    "argv": [
+      "/workspace/scratch/4a0b199bc6c0/target-discovery/release/examples/cell_native_shard_research_next_use_v2",
+      "/workspace/scratch/4a0b199bc6c0/model-preparation/fresh-native-input-v2.json",
+      "09b809f40a1ff85631a9b035233890dce968fdcd7dc6b2b15c27bd006f56e2b3"
+    ],
+    "binary_exists_at_manifest_time": false,
+    "binary_sha256": null,
+    "child_environment_behavior": "Original Rust Command uses env_clear then LANG=C.UTF-8, LC_ALL=C.UTF-8 and its own private output/python-tmp TMPDIR; original -I -S -B and unused pycache-prefix stay unchanged.",
+    "cwd": "/workspace/scratch/4a0b199bc6c0/chain-work",
+    "minimal_environment_qualification": "Source-derived handoff, not an executed full operation. Binary dynamic linkage and independent SHA256 remain to be admitted by the root runner.",
+    "minimal_native_environment": {
+      "LANG": "C.UTF-8",
+      "LC_ALL": "C.UTF-8",
+      "OPENSSL_CONF": "/dev/null",
+      "OPENSSL_MODULES": "/workspace/scratch/4a0b199bc6c0/provider-build/trnm-pq-provider-3.5.9.5Uq1QRNA/install/lib/ossl-modules"
+    },
+    "prerequisite_build": {
+      "argv": [
+        "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--offline",
+        "--jobs",
+        "2",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-native-openssl",
+        "--example",
+        "cell_native_shard_research_next_use_v2"
+      ],
+      "cwd": "/workspace/scratch/4a0b199bc6c0/chain-work",
+      "environment": {
+        "CARGO_BUILD_JOBS": "2",
+        "CARGO_HOME": "/workspace/scratch/6ea4184bb859/toolchain/cargo",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_TARGET_DIR": "/workspace/scratch/4a0b199bc6c0/target-discovery",
+        "LD_LIBRARY_PATH": "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+        "OPENSSL_CONF": "/dev/null",
+        "OPENSSL_DIR": "/workspace/scratch/4a0b199bc6c0/provider-build/trnm-pq-provider-3.5.9.5Uq1QRNA/install",
+        "OPENSSL_MODULES": "/workspace/scratch/4a0b199bc6c0/provider-build/trnm-pq-provider-3.5.9.5Uq1QRNA/install/lib/ossl-modules",
+        "OPENSSL_STATIC": "1",
+        "RUSTC": "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "RUSTDOC": "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+        "RUST_TEST_THREADS": "1",
+        "TMPDIR": "/workspace/scratch/4a0b199bc6c0/validation/frozen-candidate-01/tmp",
+        "TRNM_PQ_OPENSSL": "/workspace/scratch/4a0b199bc6c0/provider-build/trnm-pq-provider-3.5.9.5Uq1QRNA/install/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "f9b3b534df33ab646b68a41f940bb3f411519f6fb2bd7a23d9b5fc4827494974",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+      },
+      "expected_main": "/workspace/scratch/4a0b199bc6c0/target-discovery/release/examples/cell_native_shard_research_next_use_v2",
+      "performed_by_preparation": false,
+      "provider": {
+        "bytes": 2897,
+        "path": "/workspace/scratch/4a0b199bc6c0/validation/setup/pq-provider/provider.json",
+        "sha256": "789ca4ecfb0146ba981a829cac638cfe04e37eb0d8935c4d45ced23c895c1bf5"
+      }
+    },
+    "prerequisites": [
+      "Host must legitimately support the original named AF_UNIX stream interfaces; do not alter/bypass policy.",
+      "Required frozen-source gates must actually pass; current socket controls do not.",
+      "Build and independently pin the frozen-B native main ELF and its actual linkage; a cargo test harness does not qualify.",
+      "Recheck independent input hash and create-only output absence; preserve original 300s/8GiB worker RSS/4 threads/profile.",
+      "If moving hosts or interpreter/prefix/native libraries, create a new independently pinned runtime snapshot/input/operation through the unchanged contract; do not relabel this snapshot."
+    ],
+    "status": "DO_NOT_LAUNCH_ON_CURRENT_HOST",
+    "test_harness_is_not_operation_binary": true
+  },
+  "logs": [
+    {
+      "bytes": 2436,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/material-preparation.stdout",
+      "sha256": "9200a37b30e6645cbcbe4b6587f7e4c065810c3702f6d9bf9e460e8b5feb5e5e"
+    },
+    {
+      "bytes": 0,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/material-preparation.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3429,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/material-preparation.json",
+      "sha256": "fc1b9c166f2dad7f4b711f51736b43669662509db180e3a9e3cb704cc95acc00"
+    },
+    {
+      "bytes": 0,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/runtime-install-0.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 176,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/runtime-install-0.stderr",
+      "sha256": "eedc42f4eb4548d14979758dd422e6d8842bea4a6dabbcc1429c7aaa65900865"
+    },
+    {
+      "bytes": 0,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/runtime-install-1.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1363,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/runtime-install-1.stderr",
+      "sha256": "97cec402e052dfff96193fdc1596d6b79ef2209b97ea29bef093eb2618ed1c28"
+    },
+    {
+      "bytes": 878,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/runtime-install.json",
+      "sha256": "fd491032e2be4a9bac898500af562f76fdc30c0f65cf9c12f07037c66bd05eb1"
+    },
+    {
+      "bytes": 389,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/runtime-capture.stdout",
+      "sha256": "451d60d539f6c3314168180c999151f7c1c035a48ccd5a39d95172a463534e0c"
+    },
+    {
+      "bytes": 0,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/runtime-capture.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 7222,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/runtime-capture.json",
+      "sha256": "4d7eaf00ae9c908b4229b424cbc666be832d24c885807cb748beb79950da69f9"
+    },
+    {
+      "bytes": 530,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/original-prepare.stdout",
+      "sha256": "330e0e93907f899462e21e8a717aac1383084b8bc764f1f24f2b4cf370347bef"
+    },
+    {
+      "bytes": 0,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/original-prepare.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 388,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/input-preparation.stdout",
+      "sha256": "2e601de3e16af1d642c30826988b672e9f213c82f80511bbc3d8ae4b2546d460"
+    },
+    {
+      "bytes": 0,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/input-preparation.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 11240,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/input-preparation.json",
+      "sha256": "ff2d214e45a1c3082c4eb355f43c75d1afb72355247036b11840d75decf527dd"
+    },
+    {
+      "bytes": 0,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/runtime-preflight.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1237,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/runtime-preflight.stderr",
+      "sha256": "13447569fd6952e35bb254a5bef744d3f0929b3800341628bc6fb3eb9aca7c8e"
+    },
+    {
+      "bytes": 348,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/runtime-preflight-02.stdout",
+      "sha256": "23820dc2d296a67ab6b80f89e0817b94fde89269403dbab0fb8f5a22914c6c76"
+    },
+    {
+      "bytes": 0,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/runtime-preflight-02.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1668,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/runtime-preflight-02.json",
+      "sha256": "4db14c16f1f94cbc47425aac404c6170038910cafbbd1da030f5cbeaf7c58a10"
+    }
+  ],
+  "output_collection": {
+    "collect_on_failure": "Keep every actually written prefix, raw stderr, partial JSON/state and explicit missing-path list. Never synthesize absent successful receipts, reuse an output directory, or rerun a partially executed operation under the same identity.",
+    "failure_only_if_reached": [
+      "native-shards/native-recovery-failure.json"
+    ],
+    "mandatory_after_complete_success": [
+      "original-source-inputs.json",
+      "native-result.json",
+      "owner-release-snapshot.cts1",
+      "owner-content.tcv2",
+      "owner-authorization.cpv4",
+      "owner-handoff.chb1",
+      "independent-execution-inputs.json",
+      "bep52/owner-version.tcv1",
+      "bep52/owner-plan.json",
+      "native-shards/funding.jsonl",
+      "native-shards/storage-wire-cache-config.json",
+      "native-shards/repair-wire-cache-config.json",
+      "native-shards/native-initial.json",
+      "native-shards/native-final.json",
+      "native-shards/native-current-funding.json",
+      "supervisor.stdout",
+      "supervisor.stderr",
+      "next-use-result.json",
+      "next-use-observations.json",
+      "worker/process.log",
+      "worker/supervisor.json",
+      "worker/ready.json",
+      "worker/cost-events.jsonl"
+    ],
+    "mandatory_globs_after_complete_success": [
+      "bep52/*.cbm2"
+    ],
+    "not_started_on_current_host": true,
+    "outer_observer_files": [
+      "raw native stdout",
+      "raw native stderr",
+      "exact argv/env/source/binary/input admissions",
+      "started/ended UTC and monotonic time",
+      "actual exit/signal/timeout and owned cleanup observations",
+      "output hash inventory including explicit absent/not-reached files"
+    ],
+    "output_root": "/workspace/scratch/4a0b199bc6c0/model-preparation/native-operation-01",
+    "preserve_original_state_after_quiescence": [
+      "native-shards/node/**",
+      "native-shards/catalog/**",
+      "native-shards/provider-0/**",
+      "native-shards/provider-1/**",
+      "native-shards/provider-2/**",
+      "native-shards/provider-3/**",
+      "native-shards/provider-4/**",
+      "native-shards/provider-5/**",
+      "native-shards/paged-plan",
+      "native-shards/budgets.sqlite*",
+      "native-shards/children-v3.sqlite*",
+      "native-shards/repair-delivery.sqlite*",
+      "native-shards/delivery.sqlite*",
+      "publisher.sqlite*",
+      "bep52-received.sqlite*",
+      "consumer.sqlite*",
+      "python-tmp/**"
+    ],
+    "retain_presence_type_size_sha_for_all_regular_outputs": true,
+    "route_specific_absence": [
+      "independent-catalog-anchor.cva3 belongs to Copy/Paged, not this Native branch",
+      "owner-paged-custody.json and original-paged-source-inputs.json belong to PagedSpec, not this Native source.v2 entry"
+    ],
+    "sockets_and_processes": "Record fd.sock and worker/model.sock presence/type and actual child/reap/connector status; do not read socket paths as files or infer cleanup from missing logs."
+  },
+  "preparation_checks": {
+    "attempts": [
+      {
+        "attempt": 1,
+        "exit_code": 1,
+        "native_operation_started": false,
+        "original_implementation_changed": false,
+        "qualification": "PREPARATION_ADAPTER_TYPE_ERROR",
+        "reason": "Local preparation adapter passed source.python dict where original execution grant requires path string plus python_sha256; failed in original decode_runtime_snapshot before complete file admission.",
+        "script": {
+          "bytes": 4972,
+          "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/tools/runtime_preflight-attempt-01.py",
+          "sha256": "a6fdfdec9201e78a56c85af7173959a2f7893c6c7b1907e02d3cfc8b4c7abbfd"
+        },
+        "stderr": {
+          "bytes": 1237,
+          "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/runtime-preflight.stderr",
+          "sha256": "13447569fd6952e35bb254a5bef744d3f0929b3800341628bc6fb3eb9aca7c8e"
+        },
+        "stdout": {
+          "bytes": 0,
+          "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/runtime-preflight.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "attempt": 2,
+        "child_environment_keys": [
+          "LANG",
+          "LC_ALL",
+          "TMPDIR"
+        ],
+        "exit_code": 0,
+        "full_chb1_authorization_or_supervisor_socket_check": false,
+        "original_implementation_changed": false,
+        "qualification": "DEPENDENCY_BYTE_IMPORT_ORIGIN_PREFLIGHT_PASSED",
+        "reason": "Local adapter corrected to the original execution grant shape; unchanged prepare_runtime/runtime_import/verify_runtime_ready succeeded.",
+        "result": {
+          "aggregate_process_tree_memory_qualified": false,
+          "cts1_or_chb1_admission_performed": false,
+          "dependencies_ready_cumulative_seconds": 24.894320070000504,
+          "elapsed_seconds": 36.16034676799973,
+          "environment_members_read": [
+            "runtime/runtime-snapshot.json",
+            "scripts/llm_base_material.py",
+            "scripts/llm_cell_sealed_worker_v1.py",
+            "scripts/llm_inherited_runtime.py",
+            "scripts/llm_neural_read_worker.py",
+            "scripts/llm_parent_material.py",
+            "scripts/llm_python_runtime_contract.py",
+            "scripts/llm_runtime_pilot.py"
+          ],
+          "full_inventory_and_bytes_verified": true,
+          "generated_source_verified": true,
+          "hepta_final_use": false,
+          "import_guard_verified": true,
+          "model_executed": false,
+          "model_loaded": false,
+          "native_operation_started": false,
+          "native_origins_verified": true,
+          "original_contract_sha256": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc",
+          "original_functions": [
+            "prepare_runtime",
+            "runtime_import",
+            "verify_runtime_ready"
+          ],
+          "original_hepta_owner_used": false,
+          "original_worker_sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b",
+          "passed": true,
+          "preparation_adapter_only": true,
+          "production_activation": false,
+          "python_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+          "runtime_prepared_seconds": 9.85308425600033,
+          "runtime_snapshot_sha256": "3696579e96a5dd2160cdda61b5f040c2ac0a8af02d860d90c56ac4fd1903c225",
+          "schema": "trnm-local-runtime-guard-preflight-v1",
+          "source_input_sha256": "09b809f40a1ff85631a9b035233890dce968fdcd7dc6b2b15c27bd006f56e2b3",
+          "whole_job_memory_cap_qualified": false
+        },
+        "script": {
+          "bytes": 5077,
+          "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/tools/runtime_preflight.py",
+          "sha256": "defc643b34c0274d0f643dcbf80227c48fb708acbddabb84315b9204314f41ff"
+        },
+        "stderr": {
+          "bytes": 0,
+          "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/runtime-preflight-02.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 348,
+          "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/logs/runtime-preflight-02.stdout",
+          "sha256": "23820dc2d296a67ab6b80f89e0817b94fde89269403dbab0fb8f5a22914c6c76"
+        }
+      }
+    ],
+    "exit_status_provenance": "Preparation command exit codes observed by exec_command/write_stdin; immutable raw stdout/stderr are independently hashed here.",
+    "original_preparer": {
+      "conversion": "Only schema becomes native source.v2 and the unchanged original network/snapshot fields are added; no paged wrapper or historical expected roots are carried over.",
+      "exit_code": 0,
+      "result": {
+        "authority": {
+          "hepta_final_use": false,
+          "independent_accepted": false,
+          "installation_authorized": false,
+          "prospective_accepted": false,
+          "public_reward_eligible": false,
+          "selection_authorized": false
+        },
+        "manifest": "/workspace/scratch/4a0b199bc6c0/model-preparation/prepared-source-v1.json",
+        "manifest_count": 30,
+        "model_executed": false,
+        "native_executed": false,
+        "payload_bytes": 279239979,
+        "schema": "trnm.cell-sealed-research-input-preparation.v1",
+        "sha256": "35e7a7708e80d35786e56097e8b63163d2ef4d7b33f4f7e5c66a95514cd484b3"
+      },
+      "source_manifest": {
+        "bytes": 7505,
+        "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/prepared-source-v1.json",
+        "sha256": "35e7a7708e80d35786e56097e8b63163d2ef4d7b33f4f7e5c66a95514cd484b3"
+      }
+    }
+  },
+  "preparation_tools": [
+    {
+      "bytes": 5299,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/tools/prepare_materials.py",
+      "sha256": "344409699b5f2687bff4cb3520a61d36b66f4fe597e982562bda1cf86805d350"
+    },
+    {
+      "bytes": 6419,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/tools/capture_runtime.py",
+      "sha256": "be977ceb9e76d1ee25ab3fc1b4e5e316b5c26880defbcbe12364e120202ef3d1"
+    },
+    {
+      "bytes": 6153,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/tools/prepare_input.py",
+      "sha256": "87b6ff3b6962a1696abdde338ecd76a7c7f38a54438c0e9c7bef710f63b1859a"
+    },
+    {
+      "bytes": 4972,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/tools/runtime_preflight-attempt-01.py",
+      "sha256": "a6fdfdec9201e78a56c85af7173959a2f7893c6c7b1907e02d3cfc8b4c7abbfd"
+    },
+    {
+      "bytes": 5077,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/tools/runtime_preflight.py",
+      "sha256": "defc643b34c0274d0f643dcbf80227c48fb708acbddabb84315b9204314f41ff"
+    },
+    {
+      "bytes": 22739,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/tools/write_prep_manifest.py",
+      "sha256": "211502c4eb7fb34a4e936bf6b8d1d14129c705bba4422d9070bfe88ae3e24a4d"
+    }
+  ],
+  "public_materials": {
+    "all_seven_sizes_and_sha256_verified": true,
+    "base_manifest": {
+      "bytes": 1263,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/base/material-manifest.json",
+      "sha256": "6e6a76d478f28906566c1cc8db9ef767922b7a215c9f795da8d845e965c59f0c"
+    },
+    "files": [
+      {
+        "bytes": 6772,
+        "elapsed_seconds": 22.168568093999966,
+        "existing_verified": false,
+        "name": "README.md",
+        "sha256": "4f97533ad95b1b2fea15fbc075c01b94578ebdd7c8138888fa43fa3abd530dc4",
+        "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/resolve/12fd25f77366fa6b3b4b768ec3050bf629380bac/README.md"
+      },
+      {
+        "bytes": 861,
+        "elapsed_seconds": 20.161305339000137,
+        "existing_verified": false,
+        "name": "config.json",
+        "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a",
+        "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/resolve/12fd25f77366fa6b3b4b768ec3050bf629380bac/config.json"
+      },
+      {
+        "bytes": 132,
+        "elapsed_seconds": 20.307671747000313,
+        "existing_verified": false,
+        "name": "generation_config.json",
+        "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013",
+        "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/resolve/12fd25f77366fa6b3b4b768ec3050bf629380bac/generation_config.json"
+      },
+      {
+        "bytes": 269060552,
+        "elapsed_seconds": 43.955089297000086,
+        "existing_verified": false,
+        "name": "model.safetensors",
+        "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+        "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/resolve/12fd25f77366fa6b3b4b768ec3050bf629380bac/model.safetensors"
+      },
+      {
+        "bytes": 655,
+        "elapsed_seconds": 11.992561946000023,
+        "existing_verified": false,
+        "name": "special_tokens_map.json",
+        "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+        "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/resolve/12fd25f77366fa6b3b4b768ec3050bf629380bac/special_tokens_map.json"
+      },
+      {
+        "bytes": 2104556,
+        "elapsed_seconds": 14.65360189400053,
+        "existing_verified": false,
+        "name": "tokenizer.json",
+        "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+        "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/resolve/12fd25f77366fa6b3b4b768ec3050bf629380bac/tokenizer.json"
+      },
+      {
+        "bytes": 3764,
+        "elapsed_seconds": 10.103060368000115,
+        "existing_verified": false,
+        "name": "tokenizer_config.json",
+        "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+        "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/resolve/12fd25f77366fa6b3b4b768ec3050bf629380bac/tokenizer_config.json"
+      }
+    ],
+    "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+    "parent_descriptor": {
+      "bytes": 427,
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/parent/material.json",
+      "sha256": "44e950d455ae2e9c77cb43af7d647fa107e9ab60f6ada7e660f8ffe598cef397"
+    },
+    "parent_reconstruction": [
+      {
+        "bytes": 933664,
+        "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/parent/artifact.safetensors",
+        "sha256": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba"
+      },
+      {
+        "bytes": 20962,
+        "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/parent/wrapped-adapter.json",
+        "sha256": "b66cf58fc47319e4f7a54a47b952a51f13d98ba8c448651122d485b5ad2d6d1d"
+      }
+    ],
+    "parent_reconstruction_method": "Unchanged llm_initial_trainable_setup_v2.canonical_zero_parent + original wrapper/contract verification; no training and exact original artifact/wrapped SHA256.",
+    "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+  },
+  "resource_owner": {
+    "cgroup_kernel_owner_passed": false,
+    "cleanup": "Original cooperative TERM and exclusive wait4/pidfd child owner retain cleanup/reap truth. Rust retains sealed bundles until supervisor exits. Unknown owner/cleanup state remains failure, never a successful use or refund.",
+    "hard_memory_limit_installed": false,
+    "independent_failure_domains": false,
+    "local_provider_slots": 6,
+    "max_snapshot_bytes": 536870912,
+    "native_funding": "Only new local known-development-key Task sources/M12 admission; no real provider payment, external funding, customer demand or FinalUse.",
+    "new_wire_metadata_profile": {
+      "max_manifest_rows": 768,
+      "original_128_temporary_wire_gate_passed": false,
+      "original_input_and_consumer_manifest_rows": 128
+    },
+    "original_seconds": 300,
+    "required_cgroup_for_this_research_route": false,
+    "rss_scope": "Original llm_runtime_pilot.supervise observes direct child every 50ms and exact owned-child Linux wait4 ru_maxrss; stop on observed excess, plus post-reap peak check. Neither measures simultaneous whole process-tree RSS.",
+    "runtime_worker_rss_bytes": 8589934592,
+    "thread_field_is_worker_process_count": false,
+    "torch_interop_threads": 1,
+    "torch_intraop_threads": 4,
+    "wall_scope": "One original absolute native 300-second deadline; supervisor receives floored remaining allowance, never a fresh full window.",
+    "whole_job_8gib_qualification": false
+  },
+  "schema": "trnm-bt-native-model-preparation-manifest-v1",
+  "source": {
+    "baseline_commit": "040fb0cf460a6db568f0b4ec5ba581add3f2d2ba",
+    "checkout": "/workspace/scratch/4a0b199bc6c0/chain-work",
+    "frozen_commit": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "repository_modified_by_preparation": false,
+    "source_files": [
+      {
+        "bytes": 8620,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/prepare_cell_sealed_research_v1.py",
+        "repository_path": "scripts/prepare_cell_sealed_research_v1.py",
+        "sha256": "4b919011b673a3a0ab738628b3c21ee7328a8a66ec86985f5843c5f4429a5ccc"
+      },
+      {
+        "bytes": 4640,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/cell_sealed_bootstrap_v1.py",
+        "repository_path": "scripts/cell_sealed_bootstrap_v1.py",
+        "sha256": "0f1f10fdae8a60725ff489bac367b31454eda9223a71d358488bed3603ea7962"
+      },
+      {
+        "bytes": 45100,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_cell_sealed_worker_v1.py",
+        "repository_path": "scripts/llm_cell_sealed_worker_v1.py",
+        "sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+      },
+      {
+        "bytes": 22751,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_python_runtime_contract.py",
+        "repository_path": "scripts/llm_python_runtime_contract.py",
+        "sha256": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc"
+      },
+      {
+        "bytes": 125239,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_runtime_pilot.py",
+        "repository_path": "scripts/llm_runtime_pilot.py",
+        "sha256": "d2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7"
+      },
+      {
+        "bytes": 10405,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_base_material.py",
+        "repository_path": "scripts/llm_base_material.py",
+        "sha256": "10d4c21419dd297dcdee6bd128c7cc1fdc1d343e1a62017da61bc1787fde113b"
+      },
+      {
+        "bytes": 8041,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_parent_material.py",
+        "repository_path": "scripts/llm_parent_material.py",
+        "sha256": "c39877c2219c1417eee912f43b1af703b62b704d768ec6f76ccce9ece96fd98a"
+      },
+      {
+        "bytes": 16320,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_inherited_runtime.py",
+        "repository_path": "scripts/llm_inherited_runtime.py",
+        "sha256": "069ad93e4adde21761a3e5343a181128b36fe7697e881d2d41c5a6fbc06f155b"
+      },
+      {
+        "bytes": 24515,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_neural_read_worker.py",
+        "repository_path": "scripts/llm_neural_read_worker.py",
+        "sha256": "242cc3ce99b3187a2ee1de25dba77b6f0f699d5427b6e4198e6c77684b4963e9"
+      },
+      {
+        "bytes": 6867,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_runtime_rss_diagnostics.py",
+        "repository_path": "scripts/llm_runtime_rss_diagnostics.py",
+        "sha256": "d15f4ddc914475ecc8ab473a16f8916b7dd805d8b39d741e49a9d2f63d8fe320"
+      },
+      {
+        "bytes": 10742,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_runtime_exit_observation.py",
+        "repository_path": "scripts/llm_runtime_exit_observation.py",
+        "sha256": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086"
+      },
+      {
+        "bytes": 8924,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/formal/pon-nakamoto-v1/contract_wire.py",
+        "repository_path": "formal/pon-nakamoto-v1/contract_wire.py",
+        "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+      },
+      {
+        "bytes": 27789,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/formal/pon-nakamoto-v1/llm_adapter_contract.py",
+        "repository_path": "formal/pon-nakamoto-v1/llm_adapter_contract.py",
+        "sha256": "e46311a08584ad7becfc56cd0b699d9bc6921adcfe39319e50aa14faa984ced5"
+      },
+      {
+        "bytes": 959,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_next_use_v2.rs",
+        "repository_path": "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_next_use_v2.rs",
+        "sha256": "a3b56b022f17960220c781da8d4bf0911ddf907be0fdfe5bc4304bb7809e8b37"
+      },
+      {
+        "bytes": 28303,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs",
+        "repository_path": "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs",
+        "sha256": "6f6fb3397d6be92d851aa4ad631ea7ddba70247f80f5e6d1bf56311bf78e77b6"
+      },
+      {
+        "bytes": 11742,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/funding.rs",
+        "repository_path": "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/funding.rs",
+        "sha256": "c34feb23f683ab7e768f02a9a961fdb199dc23b01f50b69f0e9267ea9c075c7f"
+      },
+      {
+        "bytes": 14211,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/groups_v3.rs",
+        "repository_path": "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/groups_v3.rs",
+        "sha256": "23eb3f58582fe04b0ab2c10c3b135108e06e45d640b8b610ebe272da12293d85"
+      },
+      {
+        "bytes": 16707,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/recovery.rs",
+        "repository_path": "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/recovery.rs",
+        "sha256": "517e27e7d514d0469deab4004bcb76b224938712e09208cee58e211d2cdafdb4"
+      },
+      {
+        "bytes": 45417,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs",
+        "repository_path": "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs",
+        "sha256": "eea76e23fa3151bbbf673aa60cbd3b330ad9f6043ff2cd077bb8504bd96ac92d"
+      },
+      {
+        "bytes": 24307,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/bep52.rs",
+        "repository_path": "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/bep52.rs",
+        "sha256": "da8052153733abbeb489289c9b2217e9bb6a8eec4a595aa161df5462c8ca0dfa"
+      },
+      {
+        "bytes": 15610,
+        "path": "/workspace/scratch/4a0b199bc6c0/chain-work/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/snapshot.rs",
+        "repository_path": "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/snapshot.rs",
+        "sha256": "e56326e1a432c5008cbbd28a90cd2422ef170dfe90de79730283697da9f2df1c"
+      }
+    ]
+  },
+  "status": "BLOCKED_HOST_AF_UNIX",
+  "unchanged_original_pins": [
+    {
+      "bytes": 933664,
+      "current_sha256": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba",
+      "logical": "adapter/artifact.safetensors",
+      "original_sha256": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba",
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/parent/artifact.safetensors",
+      "same_bytes": true,
+      "scope": "model"
+    },
+    {
+      "bytes": 56809,
+      "current_sha256": "ebc8ac84999a91acb823d1bf8959a7dbc61fe20d7ba137f11affe426605d9852",
+      "logical": "adapter/target-contract.json",
+      "original_sha256": "ebc8ac84999a91acb823d1bf8959a7dbc61fe20d7ba137f11affe426605d9852",
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/parent/target-contract.json",
+      "same_bytes": true,
+      "scope": "model"
+    },
+    {
+      "bytes": 20962,
+      "current_sha256": "b66cf58fc47319e4f7a54a47b952a51f13d98ba8c448651122d485b5ad2d6d1d",
+      "logical": "adapter/wrapped-adapter.json",
+      "original_sha256": "b66cf58fc47319e4f7a54a47b952a51f13d98ba8c448651122d485b5ad2d6d1d",
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/parent/wrapped-adapter.json",
+      "same_bytes": true,
+      "scope": "model"
+    },
+    {
+      "bytes": 6772,
+      "current_sha256": "4f97533ad95b1b2fea15fbc075c01b94578ebdd7c8138888fa43fa3abd530dc4",
+      "logical": "base/README.md",
+      "original_sha256": "4f97533ad95b1b2fea15fbc075c01b94578ebdd7c8138888fa43fa3abd530dc4",
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/base/README.md",
+      "same_bytes": true,
+      "scope": "model"
+    },
+    {
+      "bytes": 861,
+      "current_sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a",
+      "logical": "base/config.json",
+      "original_sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a",
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/base/config.json",
+      "same_bytes": true,
+      "scope": "model"
+    },
+    {
+      "bytes": 132,
+      "current_sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013",
+      "logical": "base/generation_config.json",
+      "original_sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013",
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/base/generation_config.json",
+      "same_bytes": true,
+      "scope": "model"
+    },
+    {
+      "bytes": 1263,
+      "current_sha256": "6e6a76d478f28906566c1cc8db9ef767922b7a215c9f795da8d845e965c59f0c",
+      "logical": "base/material-manifest.json",
+      "original_sha256": "6e6a76d478f28906566c1cc8db9ef767922b7a215c9f795da8d845e965c59f0c",
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/base/material-manifest.json",
+      "same_bytes": true,
+      "scope": "model"
+    },
+    {
+      "bytes": 269060552,
+      "current_sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+      "logical": "base/model.safetensors",
+      "original_sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/base/model.safetensors",
+      "same_bytes": true,
+      "scope": "model"
+    },
+    {
+      "bytes": 655,
+      "current_sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+      "logical": "base/special_tokens_map.json",
+      "original_sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/base/special_tokens_map.json",
+      "same_bytes": true,
+      "scope": "model"
+    },
+    {
+      "bytes": 2104556,
+      "current_sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+      "logical": "base/tokenizer.json",
+      "original_sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/base/tokenizer.json",
+      "same_bytes": true,
+      "scope": "model"
+    },
+    {
+      "bytes": 3764,
+      "current_sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+      "logical": "base/tokenizer_config.json",
+      "original_sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/base/tokenizer_config.json",
+      "same_bytes": true,
+      "scope": "model"
+    },
+    {
+      "bytes": 1964,
+      "current_sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+      "logical": "config/pon/devnet-v1.json",
+      "original_sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+      "path": "/workspace/scratch/4a0b199bc6c0/chain-work/config/pon/devnet-v1.json",
+      "same_bytes": true,
+      "scope": "environment"
+    },
+    {
+      "bytes": 7793,
+      "current_sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+      "logical": "config/pon/ledger-v1.json",
+      "original_sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+      "path": "/workspace/scratch/4a0b199bc6c0/chain-work/config/pon/ledger-v1.json",
+      "same_bytes": true,
+      "scope": "environment"
+    },
+    {
+      "bytes": 5293,
+      "current_sha256": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52",
+      "logical": "config/pon/model-family-smollm2-135m-v1.json",
+      "original_sha256": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52",
+      "path": "/workspace/scratch/4a0b199bc6c0/chain-work/config/pon/model-family-smollm2-135m-v1.json",
+      "same_bytes": true,
+      "scope": "environment"
+    },
+    {
+      "bytes": 1383,
+      "current_sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+      "logical": "config/pon/model-family-v1.json",
+      "original_sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+      "path": "/workspace/scratch/4a0b199bc6c0/chain-work/config/pon/model-family-v1.json",
+      "same_bytes": true,
+      "scope": "environment"
+    },
+    {
+      "bytes": 1596,
+      "current_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+      "logical": "config/pon/work-profile-v1.json",
+      "original_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+      "path": "/workspace/scratch/4a0b199bc6c0/chain-work/config/pon/work-profile-v1.json",
+      "same_bytes": true,
+      "scope": "environment"
+    },
+    {
+      "bytes": 8924,
+      "current_sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+      "logical": "formal/pon-nakamoto-v1/contract_wire.py",
+      "original_sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+      "path": "/workspace/scratch/4a0b199bc6c0/chain-work/formal/pon-nakamoto-v1/contract_wire.py",
+      "same_bytes": true,
+      "scope": "environment"
+    },
+    {
+      "bytes": 27789,
+      "current_sha256": "e46311a08584ad7becfc56cd0b699d9bc6921adcfe39319e50aa14faa984ced5",
+      "logical": "formal/pon-nakamoto-v1/llm_adapter_contract.py",
+      "original_sha256": "e46311a08584ad7becfc56cd0b699d9bc6921adcfe39319e50aa14faa984ced5",
+      "path": "/workspace/scratch/4a0b199bc6c0/chain-work/formal/pon-nakamoto-v1/llm_adapter_contract.py",
+      "same_bytes": true,
+      "scope": "environment"
+    },
+    {
+      "bytes": 10739,
+      "current_sha256": "01ec1a644f37b9fc7a4c6616f589768df97f8eed7a289b5de86afadaa7ce6165",
+      "logical": "runtime/material-plan.json",
+      "original_sha256": "01ec1a644f37b9fc7a4c6616f589768df97f8eed7a289b5de86afadaa7ce6165",
+      "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/environment/material-plan.json",
+      "same_bytes": true,
+      "scope": "environment"
+    },
+    {
+      "bytes": 4640,
+      "current_sha256": "0f1f10fdae8a60725ff489bac367b31454eda9223a71d358488bed3603ea7962",
+      "logical": "scripts/cell_sealed_bootstrap_v1.py",
+      "original_sha256": "0f1f10fdae8a60725ff489bac367b31454eda9223a71d358488bed3603ea7962",
+      "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/cell_sealed_bootstrap_v1.py",
+      "same_bytes": true,
+      "scope": "environment"
+    },
+    {
+      "bytes": 10405,
+      "current_sha256": "10d4c21419dd297dcdee6bd128c7cc1fdc1d343e1a62017da61bc1787fde113b",
+      "logical": "scripts/llm_base_material.py",
+      "original_sha256": "10d4c21419dd297dcdee6bd128c7cc1fdc1d343e1a62017da61bc1787fde113b",
+      "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_base_material.py",
+      "same_bytes": true,
+      "scope": "environment"
+    },
+    {
+      "bytes": 45100,
+      "current_sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b",
+      "logical": "scripts/llm_cell_sealed_worker_v1.py",
+      "original_sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b",
+      "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_cell_sealed_worker_v1.py",
+      "same_bytes": true,
+      "scope": "environment"
+    },
+    {
+      "bytes": 16320,
+      "current_sha256": "069ad93e4adde21761a3e5343a181128b36fe7697e881d2d41c5a6fbc06f155b",
+      "logical": "scripts/llm_inherited_runtime.py",
+      "original_sha256": "069ad93e4adde21761a3e5343a181128b36fe7697e881d2d41c5a6fbc06f155b",
+      "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_inherited_runtime.py",
+      "same_bytes": true,
+      "scope": "environment"
+    },
+    {
+      "bytes": 24515,
+      "current_sha256": "242cc3ce99b3187a2ee1de25dba77b6f0f699d5427b6e4198e6c77684b4963e9",
+      "logical": "scripts/llm_neural_read_worker.py",
+      "original_sha256": "242cc3ce99b3187a2ee1de25dba77b6f0f699d5427b6e4198e6c77684b4963e9",
+      "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_neural_read_worker.py",
+      "same_bytes": true,
+      "scope": "environment"
+    },
+    {
+      "bytes": 8041,
+      "current_sha256": "c39877c2219c1417eee912f43b1af703b62b704d768ec6f76ccce9ece96fd98a",
+      "logical": "scripts/llm_parent_material.py",
+      "original_sha256": "c39877c2219c1417eee912f43b1af703b62b704d768ec6f76ccce9ece96fd98a",
+      "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_parent_material.py",
+      "same_bytes": true,
+      "scope": "environment"
+    },
+    {
+      "bytes": 22751,
+      "current_sha256": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc",
+      "logical": "scripts/llm_python_runtime_contract.py",
+      "original_sha256": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc",
+      "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_python_runtime_contract.py",
+      "same_bytes": true,
+      "scope": "environment"
+    },
+    {
+      "bytes": 10742,
+      "current_sha256": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086",
+      "logical": "scripts/llm_runtime_exit_observation.py",
+      "original_sha256": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086",
+      "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_runtime_exit_observation.py",
+      "same_bytes": true,
+      "scope": "environment"
+    },
+    {
+      "bytes": 125239,
+      "current_sha256": "d2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7",
+      "logical": "scripts/llm_runtime_pilot.py",
+      "original_sha256": "d2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7",
+      "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_runtime_pilot.py",
+      "same_bytes": true,
+      "scope": "environment"
+    },
+    {
+      "bytes": 6867,
+      "current_sha256": "d15f4ddc914475ecc8ab473a16f8916b7dd805d8b39d741e49a9d2f63d8fe320",
+      "logical": "scripts/llm_runtime_rss_diagnostics.py",
+      "original_sha256": "d15f4ddc914475ecc8ab473a16f8916b7dd805d8b39d741e49a9d2f63d8fe320",
+      "path": "/workspace/scratch/4a0b199bc6c0/chain-work/scripts/llm_runtime_rss_diagnostics.py",
+      "same_bytes": true,
+      "scope": "environment"
+    }
+  ]
+}

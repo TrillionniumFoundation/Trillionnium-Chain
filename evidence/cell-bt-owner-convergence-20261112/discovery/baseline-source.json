@@ -1,0 +1,10 @@
+{
+  "head": "040fb0cf460a6db568f0b4ec5ba581add3f2d2ba",
+  "scope": "local working-tree native baseline, full source qualification pending parent",
+  "files": {
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs": "97b0d3392d922bc2a5f62f38204a4b0157f49029dd61759ce69611867fc2d0b3",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/equivocation_history_tests.rs": "4d3066245a02147b331eee2d7cf4ef6561cdeb469ae0a0c09e400849caff1065",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/Cargo.lock": "3db3a086971106994f9e824df0bc64e8fa99cae22dc7bb8bd800643ee573b1ef"
+  }
+}

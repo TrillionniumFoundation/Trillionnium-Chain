@@ -1,0 +1,231 @@
+{
+  "actual_chunks": 95,
+  "after_identity": {
+    "head": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "status": "",
+    "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+  },
+  "all_31_content_pins_unchanged": true,
+  "before_identity": {
+    "head": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "status": "",
+    "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+  },
+  "build_environment": {
+    "bytes": 1277,
+    "path": "/home/qq/work/chain-bt-4a0b-frozen02-control/build-environment.json",
+    "sha256": "e8f94a5436a05c1d8508253281ca00bd4f6791384efed80328237aeee803edbf"
+  },
+  "candidate_gate_coverage": {
+    "bytes": 117420,
+    "path": "/home/qq/work/chain-bt-4a0b-frozen02-control/candidate-gate-coverage.json",
+    "sha256": "274c8356b6a0199501cbdbdbfff06d59a56133b75ab6873b06489c1daa40b30b"
+  },
+  "completed": true,
+  "elapsed_seconds": 1.104950006119907,
+  "environment_generation": 2,
+  "full_runtime_import_admitted": false,
+  "hepta_final_use": false,
+  "independent_inputs": 31,
+  "input_audit": {
+    "bytes": 13842,
+    "path": "/home/qq/work/chain-bt-4a0b-frozen02-validation/inputs-env2-01/source-inputs.native-v2-env2.verification.json",
+    "sha256": "2a5db7a61d5340511895cdc6b2e2675b2cc87aaa2a38b2a8815c8bc4059edd47"
+  },
+  "model_efficacy_qualified": false,
+  "model_executed": false,
+  "model_generation": 1,
+  "model_loaded": false,
+  "native_operation_started": false,
+  "normal_main_copy": {
+    "bytes": 19752832,
+    "cargo_artifact": {
+      "executable": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-target/release/examples/cell_native_shard_research_next_use_v2",
+      "features": [
+        "default",
+        "pq-native-openssl"
+      ],
+      "filenames": [
+        "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-target/release/examples/cell_native_shard_research_next_use_v2"
+      ],
+      "fresh": false,
+      "manifest_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "package_id": "path+file:///home/qq/work/chain-bt-owner-convergence-20261112-4a0b/trillionnium/crates/trnm-pon-node#0.1.0",
+      "profile": {
+        "debug_assertions": false,
+        "debuginfo": 0,
+        "opt_level": "3",
+        "overflow_checks": false,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2021",
+        "kind": [
+          "example"
+        ],
+        "name": "cell_native_shard_research_next_use_v2",
+        "src_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_next_use_v2.rs",
+        "test": false
+      }
+    },
+    "native_operation_started": false,
+    "original_build_receipt": {
+      "bytes": 2054,
+      "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/remaining-gates-02/accepted-release-main.json",
+      "sha256": "b13585218eaf08c051c593ea699aae380322ab19fb8e021b9609a51ff47b8b09"
+    },
+    "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-target/release/examples/cell_native_shard_research_next_use_v2",
+    "recompiled": false,
+    "schema": "trnm.bt-identical-normal-release-main-locator-copy.v1",
+    "selected_path": "/home/qq/work/chain-bt-4a0b-frozen02-target/release/examples/cell_native_shard_research_next_use_v2",
+    "selected_source_root": "/home/qq/work/chain-bt-4a0b-frozen02",
+    "sha256": "ef4d33be1574c27852187546f4393f301eb175b8246f647ce3d15a5d21fd2155",
+    "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "source_build_root": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b",
+    "test_harness": false,
+    "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+  },
+  "observer_sha256": "3e9014eae617eda8dc875b756ed4b2f7ae8cd9850f02fa555590a4f13d69a95b",
+  "operation": "bf34a669dc4b3617d97bee356f1cadf3504f3c5993999c5136ce1d6b0cd6f9c2",
+  "operation_preimage_hex": "74726e6d2e62742e66756c6c2d776f726b747265652d7265636f766572792e6f7065726174696f6e2e763100d2fb314ef4f8d2e4dfd05076ddd7d8e0465880d935cf8812e3b9b8785d1a6bae031d442dd0acb693afcfaf42f9cc4db446ba52cb00000000000000242f686f6d652f71712f776f726b2f636861696e2d62742d346130622d66726f7a656e30320000000000000002",
+  "original_hepta_owner_used": false,
+  "original_wrapper_input_function_verified": true,
+  "original_wrapper_only_repo_line_changed": true,
+  "output": "/home/qq/work/chain-bt-4a0b-frozen02-validation/real-native-env2-bf34a669dc4b3617-attempt01",
+  "passed": true,
+  "payload_bytes": 279627268,
+  "payload_files": 30,
+  "previous_audit_sha256": "61f300cf7dd7eb7e455fcec6ada78a1cb392431ac3f8df40a1b36e7aa4781e7c",
+  "previous_source_sha256": "d2fb314ef4f8d2e4dfd05076ddd7d8e0465880d935cf8812e3b9b8785d1a6bae",
+  "production_activation": false,
+  "schema": "trnm.bt-full-worktree-env2-bindings.v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_and_predecessor_inputs_unchanged": true,
+  "source_input": {
+    "bytes": 9984,
+    "path": "/home/qq/work/chain-bt-4a0b-frozen02-validation/inputs-env2-01/source-inputs.native-v2-env2.json",
+    "sha256": "3d4b4bbd30f1c37dc9986a5e512d13ae4d93a330a00fde904bd9b3fcf381083e"
+  },
+  "source_path_mapping": [
+    {
+      "logical": "config/pon/devnet-v1.json",
+      "previous_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/config/pon/devnet-v1.json",
+      "selected_path": "/home/qq/work/chain-bt-4a0b-frozen02/config/pon/devnet-v1.json",
+      "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+    },
+    {
+      "logical": "config/pon/ledger-v1.json",
+      "previous_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/config/pon/ledger-v1.json",
+      "selected_path": "/home/qq/work/chain-bt-4a0b-frozen02/config/pon/ledger-v1.json",
+      "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+    },
+    {
+      "logical": "config/pon/model-family-smollm2-135m-v1.json",
+      "previous_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/config/pon/model-family-smollm2-135m-v1.json",
+      "selected_path": "/home/qq/work/chain-bt-4a0b-frozen02/config/pon/model-family-smollm2-135m-v1.json",
+      "sha256": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52"
+    },
+    {
+      "logical": "config/pon/model-family-v1.json",
+      "previous_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/config/pon/model-family-v1.json",
+      "selected_path": "/home/qq/work/chain-bt-4a0b-frozen02/config/pon/model-family-v1.json",
+      "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1"
+    },
+    {
+      "logical": "config/pon/work-profile-v1.json",
+      "previous_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/config/pon/work-profile-v1.json",
+      "selected_path": "/home/qq/work/chain-bt-4a0b-frozen02/config/pon/work-profile-v1.json",
+      "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+    },
+    {
+      "logical": "formal/pon-nakamoto-v1/contract_wire.py",
+      "previous_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/formal/pon-nakamoto-v1/contract_wire.py",
+      "selected_path": "/home/qq/work/chain-bt-4a0b-frozen02/formal/pon-nakamoto-v1/contract_wire.py",
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+    },
+    {
+      "logical": "formal/pon-nakamoto-v1/llm_adapter_contract.py",
+      "previous_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/formal/pon-nakamoto-v1/llm_adapter_contract.py",
+      "selected_path": "/home/qq/work/chain-bt-4a0b-frozen02/formal/pon-nakamoto-v1/llm_adapter_contract.py",
+      "sha256": "e46311a08584ad7becfc56cd0b699d9bc6921adcfe39319e50aa14faa984ced5"
+    },
+    {
+      "logical": "scripts/cell_sealed_bootstrap_v1.py",
+      "previous_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/cell_sealed_bootstrap_v1.py",
+      "selected_path": "/home/qq/work/chain-bt-4a0b-frozen02/scripts/cell_sealed_bootstrap_v1.py",
+      "sha256": "0f1f10fdae8a60725ff489bac367b31454eda9223a71d358488bed3603ea7962"
+    },
+    {
+      "logical": "scripts/llm_base_material.py",
+      "previous_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_base_material.py",
+      "selected_path": "/home/qq/work/chain-bt-4a0b-frozen02/scripts/llm_base_material.py",
+      "sha256": "10d4c21419dd297dcdee6bd128c7cc1fdc1d343e1a62017da61bc1787fde113b"
+    },
+    {
+      "logical": "scripts/llm_cell_sealed_worker_v1.py",
+      "previous_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_cell_sealed_worker_v1.py",
+      "selected_path": "/home/qq/work/chain-bt-4a0b-frozen02/scripts/llm_cell_sealed_worker_v1.py",
+      "sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+    },
+    {
+      "logical": "scripts/llm_inherited_runtime.py",
+      "previous_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_inherited_runtime.py",
+      "selected_path": "/home/qq/work/chain-bt-4a0b-frozen02/scripts/llm_inherited_runtime.py",
+      "sha256": "069ad93e4adde21761a3e5343a181128b36fe7697e881d2d41c5a6fbc06f155b"
+    },
+    {
+      "logical": "scripts/llm_neural_read_worker.py",
+      "previous_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_neural_read_worker.py",
+      "selected_path": "/home/qq/work/chain-bt-4a0b-frozen02/scripts/llm_neural_read_worker.py",
+      "sha256": "242cc3ce99b3187a2ee1de25dba77b6f0f699d5427b6e4198e6c77684b4963e9"
+    },
+    {
+      "logical": "scripts/llm_parent_material.py",
+      "previous_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_parent_material.py",
+      "selected_path": "/home/qq/work/chain-bt-4a0b-frozen02/scripts/llm_parent_material.py",
+      "sha256": "c39877c2219c1417eee912f43b1af703b62b704d768ec6f76ccce9ece96fd98a"
+    },
+    {
+      "logical": "scripts/llm_python_runtime_contract.py",
+      "previous_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_python_runtime_contract.py",
+      "selected_path": "/home/qq/work/chain-bt-4a0b-frozen02/scripts/llm_python_runtime_contract.py",
+      "sha256": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc"
+    },
+    {
+      "logical": "scripts/llm_runtime_exit_observation.py",
+      "previous_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_runtime_exit_observation.py",
+      "selected_path": "/home/qq/work/chain-bt-4a0b-frozen02/scripts/llm_runtime_exit_observation.py",
+      "sha256": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086"
+    },
+    {
+      "logical": "scripts/llm_runtime_pilot.py",
+      "previous_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_runtime_pilot.py",
+      "selected_path": "/home/qq/work/chain-bt-4a0b-frozen02/scripts/llm_runtime_pilot.py",
+      "sha256": "d2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7"
+    },
+    {
+      "logical": "scripts/llm_runtime_rss_diagnostics.py",
+      "previous_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b/scripts/llm_runtime_rss_diagnostics.py",
+      "selected_path": "/home/qq/work/chain-bt-4a0b-frozen02/scripts/llm_runtime_rss_diagnostics.py",
+      "sha256": "d15f4ddc914475ecc8ab473a16f8916b7dd805d8b39d741e49a9d2f63d8fe320"
+    }
+  ],
+  "source_path_mapping_count": 17,
+  "source_preparation": {
+    "bytes": 32755,
+    "path": "/home/qq/work/chain-bt-4a0b-frozen02-validation/source-preparation-01/summary.json",
+    "sha256": "e00f8889fe59d6060c4007fc0dab32565378ed9fb7868dfcfd46b5ac97f8e3f9"
+  },
+  "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213",
+  "wrapper": {
+    "bytes": 13622,
+    "path": "/home/qq/work/chain-bt-4a0b-frozen02-control/run_model.py",
+    "sha256": "46329982d1de9e3e7dac3bcbc9cb7fcf1455ab3ceb514637097cbad8e0b9d313"
+  }
+}
