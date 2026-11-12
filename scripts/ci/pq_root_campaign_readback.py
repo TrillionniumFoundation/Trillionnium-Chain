@@ -100,6 +100,39 @@ def verify_zip(z: zipfile.ZipFile) -> dict:
             'manifest_payload_bytes': total, 'zip_members': len(entries)}
 
 
+def verify_signed_rounds(confirmations: list[dict]) -> None:
+    """Refuse repeated-round or broken six-depth evidence; not a finality proof."""
+    require(type(confirmations) is list and len(confirmations) <= 3 and
+            [c.get('round') for c in confirmations] == list(range(len(confirmations))),
+            'DUPLICATE_OR_OUT_OF_ORDER_CONFIRMATION_ROUNDS')
+    previous_end_ns = 0
+    seen_in_window = set()
+    for c in confirmations:
+        started_ns, ended_ns = c.get('started_ns'), c.get('ended_ns')
+        require(type(started_ns) is int and type(ended_ns) is int and
+                previous_end_ns <= started_ns <= ended_ns,
+                'INVALID_OR_OVERLAPPING_CONFIRMATION_CLOCKS')
+        previous_end_ns = ended_ns
+        if c.get('confirmed_inside_pressure_window') is True:
+            ob = c.get('observation')
+            tx = c.get('transaction')
+            require(type(ob) is dict and ob.get('confirmed') is True and
+                    ended_ns <= 30_000_000_000 and
+                    type(tx) is str and tx and ob.get('transaction') == tx,
+                    'INVALID_WINDOW_CONFIRMATION')
+            require(tx not in seen_in_window,
+                    'REPEATED_TRANSACTION_CANNOT_COMPLETE_DISTINCT_SIGNED_ROUNDS')
+            seen_in_window.add(tx)
+            require(type(ob.get('depth')) is int and ob['depth'] >= 6 and
+                    ob.get('reorged') is False and
+                    type(ob.get('included_height')) is int and
+                    type(ob.get('observed_height')) is int and
+                    ob['observed_height'] - ob['included_height'] >= 6 and
+                    ob.get('included_block') == c.get('included_block') and
+                    ob.get('observed_tip') == c.get('tip'),
+                    'SIX_DEPTH_OR_SIGNED_INCLUSION_READBACK_MISMATCH')
+
+
 def summarize(results: dict, reports: list[dict], host_before: list[dict]) -> dict:
     """Pure reporting, independently testable without large fixture files."""
     require(results['original_inputs'] == EXPECTED_INPUTS, 'ORIGINAL_WORKLOAD_CHANGED')
@@ -133,6 +166,7 @@ def summarize(results: dict, reports: list[dict], host_before: list[dict]) -> di
             require(p['duration_seconds'] == 30 and
                     p['attacker_processes_requested'] == EXPECTED_INPUTS['attacker_processes'][index],
                     'ORIGINAL_PHASE_WORKLOAD_CHANGED')
+            verify_signed_rounds(p['confirmations'])
             n_window = 0
             for c in p['confirmations']:
                 if c['confirmed_inside_pressure_window'] is True:
@@ -163,6 +197,9 @@ def summarize(results: dict, reports: list[dict], host_before: list[dict]) -> di
                         history_import_failed += 1
                     else:
                         raise EvidenceError('UNCLASSIFIED_CLIENT_IMPORT')
+            if p['all_signed_rounds_confirmed_in_window'] is True:
+                require(n_window == 3,
+                        'CLAIMED_ALL_SIGNED_ROUNDS_WITHOUT_THREE_DISTINCT_CONFIRMATIONS')
             if p['finite_phase_criteria_met'] is True:
                 require(n_window == 3 and p['all_signed_rounds_confirmed_in_window'] is True
                         and p['receiver_client_state_equal'] is True
