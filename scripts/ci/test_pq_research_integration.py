@@ -404,6 +404,50 @@ class CorpusGateTests(unittest.TestCase):
                 with self.assertRaisesRegex(IntegrityError, "PNQ2 bounded-profile"):
                     check(self.root)
 
+    def test_model_source_composition_v6_sources_cannot_be_dropped_and_repinned(self):
+        original = copy.deepcopy(self.manifest)
+        self.assertFalse(check(self.root)['cryptographic_acceptance'])
+        # Independent names include the V3 policy supplying sources and payees.
+        # These tests cover selected source integrity, not dependency closure.
+        for path in (
+            'config/pon/model-source-composition-v6.json',
+            'config/pon/public-evaluation-model-source-composition-v6.json',
+            'config/pon/model-evidence-v3.json',
+            'trillionnium/crates/trnm-mvcc-fee/src/model_source_composition_v6.rs',
+            'trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs',
+            'trillionnium/crates/trnm-pon-node/tests/model_source_composition_v6.rs',
+        ):
+            with self.subTest(path=path):
+                self.manifest = copy.deepcopy(original)
+                self.manifest['required_paths'].remove(path)
+                del self.manifest['pinned_blobs'][path]
+                self.save()
+                with self.assertRaisesRegex(IntegrityError, 'PNQ2 bounded-profile'):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        self.assertFalse(check(self.root)['cryptographic_acceptance'])
+
+    def test_upstream_withdrawal_sources_cannot_be_dropped_and_repinned(self):
+        original = copy.deepcopy(self.manifest)
+        self.assertFalse(check(self.root)['cryptographic_acceptance'])
+        # Literal names remain independent from the checker's required roster.
+        for path in (
+            'config/pon/w1-upstream-security-v1.json',
+            'scripts/ci/w1_upstream_security.py',
+            'scripts/ci/test_w1_upstream_security.py',
+        ):
+            with self.subTest(path=path):
+                self.manifest = copy.deepcopy(original)
+                self.manifest['required_paths'].remove(path)
+                del self.manifest['pinned_blobs'][path]
+                self.save()
+                with self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        self.assertFalse(check(self.root)['cryptographic_acceptance'])
+
     def test_native_wire_numeric_claims_refuse_bool_or_wrong_version(self):
         original = copy.deepcopy(self.manifest["native_network_owner_slice_v2"])
         for field, value in (("tpq1_peer_purpose", True), ("tpq1_peer_purpose", 1),

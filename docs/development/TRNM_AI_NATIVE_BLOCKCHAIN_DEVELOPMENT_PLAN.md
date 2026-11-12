@@ -1,3 +1,158 @@
+**W0–W7 source aggregation, complete evaluation and composed withdrawal, 2026-11-12 UTC — HOLD:**
+
+Continue the existing PN0–PN6 gates and the owners recorded in
+`config/portability-inventory-v1.json`. This is the same development plan, with
+no second qualification path. The immediate parent is #940
+`8970e2c81abbf48e2a4d3f0802d79624ab20fadd`, above #939
+`4a59131acdf9b8c3210c9b6cd728aeb6c48291fc`. Earlier executions retain their
+original identities; they do not qualify this changed source. Preserve every
+failed observation, including the original V4 split and the service campaign
+with 0/3 campaigns and 0/9 phases. Main merge and production activation remain
+closed.
+
+W0 distinguishes four guarantees: canonical relation and arithmetic
+correctness; bounded resources and adversarial cost; independently measured
+useful learning; and authorized state transitions and external effects. A
+passing result in one category does not establish another. Freeze complete
+task/model/state/funding identities, actual owner routes, admitted assumptions,
+source revisions and the original budgets before measuring each guarantee.
+
+| Work package | Existing gates and owners | Concrete implementation and remaining exit condition |
+| --- | --- | --- |
+| W0: contract and evidence | PN0, original M00–M17 ownership | Use fresh V6 schema, profile, plan, evidence, allocation and release identities. Bind current source separately from historical observations; retain UNKNOWN and false qualification fields. |
+| W1: work security | PN1; M01/M02/M03/M17 | Continue the exact W1 relation, attack matrix and conditional reduction. Cheapest measured implementations are upper bounds on achievable costs, not a proof of the cheapest possible legal work. |
+| W2: joint DAA | PN1/PN2; M01/M02/M07/M15/M17 | Couple work, actual budgets, timestamp rules, integer chainwork, delivery and recovery in one experiment. Equal physical budgets and confirmation-risk premises remain open. |
+| W3: verification and service | PN1/PN5; M04/M15 with M12 liability owners | Preserve receiver-wide budget accounting and original limits. SQLite/path inspection is hardened below; terminable isolation and honest-service survival under malicious traffic still need native evidence. |
+| W4: economics | PN3/PN4; M06/M10/M11/M12 | Aggregate every complete parent-relative component by known source before scoring source omissions. Reserve and round once per source, keep actual transaction fees and original refund/maturity rules. Unknown common control and independent model value remain open. |
+| W5: ordinary Hepta loop | PN3, original Hepta stage owners | Require actual A→B→Adopt/NoUpdate→C→cold recovery through ordinary owners, with independent evaluation. Current route gaps remain explicit below. |
+| W6: Root and effects | PN2/PN4/PN6; M07/M08/M12/M13/M15 | Retain witnessed Root checks, durable uncertainty, stable operation identity and per-liability reservations. Independent freshness custody, real effect reconciliation and daemon/wire assembly remain open. |
+| W7: composition | PN0/PN5/PN6 | Compose the upstream proof withdrawal into the same source and CI route. Current proof use is rejected. Reviewed replacement circuits, regenerated receipts, migration and lifetime assumptions remain unqualified. |
+
+The new opt-in development profile is
+`linear-factor-source-composition-dev-v6`, revision 18. Its fixed policy is
+[model-source-composition-v6.json](../../config/pon/model-source-composition-v6.json).
+The original V4 profile, test counterexample and funding owner remain intact.
+The implementation combines all components assigned to a known source,
+including zero-weight components, before computing the source's complete
+parent-relative aggregate and the model with that entire source omitted.
+Non-executable, incomplete or failed evaluation is an error, never a zero score.
+The actual installed task count must equal the completed observation count.
+The full bundle must beat the parent, frozen controls and each source aggregate.
+Exact-zero sums of any subset of two or more known sources reject this instance.
+
+Each positive source weight is its positive complete leave-one-source-out
+gain, scaled and floored once. A single authorized source payee owns the
+positive leaf at its smallest contribution identity; all other component
+leaves have weight zero. The original source quota receives exactly the
+resulting source allocation, not a sum of independently rounded omissions.
+The retained 100,000-unit V4 counterexample paid the same known source 66,666
+versus 96,551 gross, and 60,051 versus 86,865 after its fees. The V6 regression
+requires equivalent two-, three- and four-leaf partitions of the same complete
+bundle to reserve and pay 66,666 + 33,333, leaving one unit of original refund
+dust; extra split transactions still pay their real fees. These are asserted
+exit conditions until the exact new native execution is recorded.
+
+Complete evaluation evidence is stored at
+`model-source-composition-v6:<bundle-id>`, with the release retaining a strict
+schema/key/policy/digest reference. The full record binds network, parameters,
+family, plan, policy, bundle and parent artifacts, round, slot, task identity,
+completed row count, source membership/payee/weight, and the evaluated
+aggregate and omission artifacts. The original tag-8 transaction writes the
+record and release atomically; tag 9 loads and verifies the original record
+before any claim. Cleanup preserves referenced records, including after
+expiry, and rejects malformed references. The original 4,096-byte value and
+160-byte key limits remain unchanged. The conservative maximum-width fixture
+uses 3 sources, 4 components and 4 claims: 3,273 bytes for the evidence and
+1,751 bytes for the fully claimed release. This layout is a prerequisite for
+testing the original state boundary, not a new payment route.
+
+The three additional M12 SQLite openers now inspect the database and
+`-journal`, `-wal` and `-shm` paths before SQLite opens them. Only NotFound is
+absence; inspection errors, symlinks and nonregular objects fail closed.
+OS-string path suffixes preserve non-UTF-8 paths, while regular live WAL/SHM
+files and concurrent/cold reopen remain permitted. The new controls preserve
+pending reservations, Unknown operation status, the one-time owner start and
+generation liabilities. They assume the containing directory is trusted;
+they do not establish a general race-free filesystem boundary. Existing
+per-liability money reservations and persisted pre-send uncertainty are
+retained, rather than replaced by aggregate balances or redispatch authority.
+
+The W7 withdrawal source is reviewed from #931
+`bf36ac9d6db98646e414048edc3d1c8bd73f079c`. Its original mapping remains
+43,170 bytes, SHA256
+`ee41a559c91b613be46a80081dd45d87130d83d95e2d068352ea03a85240c93f`, and
+descriptor `dd77d2a89bbeb0c308e49d1680020b6cb9eea82f745ac4623f9cf906d8a4bded`.
+The composed reader reports `PROFILE_BOUND_UPSTREAM_REVOKED_HOLD`, with
+`current_proof_use_eligible=false`. Both `--require-current` routes must emit
+the complete diagnostic and specifically reject ineligibility; arbitrary
+nonzero exit status is not sufficient. The ordinary repository-truth CI job
+contains the upstream and binding checks and their negative controls. The 15
+affected locked package entries across three backends are dependency entries,
+not 15 independent vulnerabilities. RISC Zero's coordinated 3.1.0 upgrade and
+receipt regeneration requirement cannot be met by a version-string edit.
+
+The independently developed W1 #935 head
+`420a05acaec1d68f8a2b0b5bdf4658f3379e8abb` changes that mapping to 44,427 bytes
+and is not silently merged or qualified here. Its original zero/lazy
+measurement source remains `165d286b687e0a73d7fe68148d2179274fc0c0b8`.
+Pre-register sparse/prepared, exact-zero/one-zero, rank/batch, lazy proof,
+cross-task/epoch/miner reuse, early screening and false-transcript strategies.
+Charge setup, failed/cancelled/unpublished work, proof construction,
+verification, propagation and lost-tip work; keep CPU, wall time, memory and
+energy separate until a justified common budget exists. Preserve the actual
+observation that zero-paired-lazy was slower than full-limb-sparse-lazy in all
+four measured zero-material cost cells. Any accepted distinct-credit strategy
+below a claimed lower envelope falsifies that claim; duplicate credit or a
+work-identity collision rejects the instance.
+
+DAA #920 is `df2a4f59edf1a181c2968eda131a2ddb0e5f33a1`, with executed source
+`d23488c5f9b4a6696c3799b12f14b8af0a1b81fc`. Its retained monotonic-timestamp
+trace reaches ordinary height/work 65/130 versus compressed 64/793. This
+disproves parent-monotonicity sufficiency in that finite model, but is not an
+equal-real-budget profit or probability result. Preserve 18 unknown inputs,
+13 open obligations and null CP/CG/CQ/confirmation/lifetime bounds. Compare
+fixed-target budgets first, then the actual DAA/MTP/clock/withholding/delivery
+and recovery owners with one initial resource inventory. Classical and quantum
+cost models must state their algorithmic and physical assumptions separately.
+
+For FP8 work, bind device architecture, instruction and accumulation order,
+dtype, quantizer, operand commitment, kernel and compiler. Require specified
+CPU replay plus actual supported-GPU execution, complete accepted tiles and
+independent future task measurements against the unchanged baseline. One
+accepted-input miner/verifier bit mismatch rejects that arithmetic profile;
+prespecified complete-cost or learning degradation rejects useful-work adoption.
+Hawkeye's published formats and architectures do not establish universal
+floating-point consensus or useful learning. Pearl's quantized-subspace
+hardness remains an additional assumption. Its Appendix C.5 definitions
+`S={v<ulp^2}`, `Shat={Lambda<log2(ulp^2)}` and `Lambda<=log2(v)` imply
+`S` is a subset of `Shat`, opposite to the printed inclusion. For the exact
+rational values xA=sigmaA=129/128, xB=sigmaB=45/32 and ulp=1/512,
+v=33698025/8796093022208 exceeds ulp^2=1/262144 while
+Lambda=-1153/64 is below -18. Counting Shat against an upper cap is
+conservative. This is a specification-level counterexample, not an executed
+full tile, CUDA kernel, native verifier or Chain exploit.
+
+Freeze the current Hepta integration separately: #6135
+`c1e4fab7fa13e705d1ebf32b87e3a758f33d7e60`, including #5981
+`dd4b6c17344986a3a9379e372bf19d282f812a30`. The ordinary launcher still calls
+`with_root_learning_inputs`; the actual route to
+`with_root_learning_stage_owners` is missing, and the resident stage owner
+explicitly reports CandidateSelection/NextUse unavailable. Ordinary Adopt,
+complete ordinary NoUpdate, and daemon-plus-Root cold recovery remain zero
+demonstrated closures. Typed InsufficientEvidence is not NoUpdate. The
+source-derived minimum of 45 lanes and 180 frames per connection exceeds the
+original 128-frame limit; it is a structural bound, not a measured campaign.
+Resolve same-operation observations through original owners without raising
+that limit. Chain #909's older Hepta codec pin and #934's source-reader pass
+do not qualify this newer ordinary Hepta runtime.
+
+Research sources: [W1 zero/lazy contract](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/420a05acaec1d68f8a2b0b5bdf4658f3379e8abb/docs/research/PON_W1_ZERO_PAIRED_LAZY_V1.md);
+[joint native DAA audit](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/df2a4f59edf1a181c2968eda131a2ddb0e5f33a1/docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_DAA_AUDIT_20261108.md);
+[Bailey–Sattath v2](https://arxiv.org/html/2403.08023v2);
+[Pearl September 2026 specification](https://pearlresearch.ai/Pearl_Whitepaper.pdf);
+[Hawkeye MLSys 2026](https://proceedings.mlsys.org/paper_files/paper/2026/hash/e217c271a57c365a246b0ad39e668ba8-Abstract-Conference.html);
+[RISC Zero 3.1.0 release](https://github.com/risc0/risc0/releases/tag/v3.1.0).
+
 **System security combined source and retained execution, 2026-11-12 UTC — HOLD:**
 
 The immutable runtime composition checkpoint is

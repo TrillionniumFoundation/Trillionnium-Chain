@@ -9,9 +9,12 @@ on:
       - scripts/cell_learning_completion_join.py
       - scripts/ci/pq_proof_profile_binding.py
       - scripts/ci/test_pq_proof_profile_binding.py
+      - scripts/ci/w1_upstream_security.py
+      - scripts/ci/test_w1_upstream_security.py
       - scripts/ci/audit_native_campaign_outcomes.py
       - scripts/ci/test_audit_native_campaign_outcomes.py
       - config/pon/pq-proof-profile-binding-v1.json
+      - config/pon/w1-upstream-security-v1.json
       - config/pon/w1-qrom-implementation-current-v2.json
       - config/pon/pq128-lifetime-budget-v1.json
       - evidence/**

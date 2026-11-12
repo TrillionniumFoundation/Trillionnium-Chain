@@ -162,6 +162,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/model-source-composition-v6.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/model-source-composition-v6.json"
+        )),
+    ),
+    (
         "config/pon/module-contracts-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -330,6 +337,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/public-evaluation-model-source-composition-v6.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/public-evaluation-model-source-composition-v6.json"
+        )),
+    ),
+    (
         "config/pon/public-evaluation-native-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -425,6 +439,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../config/pon/w1-retained-disposition-v1.json"
+        )),
+    ),
+    (
+        "config/pon/w1-upstream-security-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/w1-upstream-security-v1.json"
         )),
     ),
     (
@@ -4061,6 +4082,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-mvcc-fee/src/model_source_composition_v6.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/src/model_source_composition_v6.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-mvcc-fee/src/model_task_windows_v1.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -7656,6 +7684,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/model_source_composition_v6.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/model_source_composition_v6.rs"
         )),
     ),
     (

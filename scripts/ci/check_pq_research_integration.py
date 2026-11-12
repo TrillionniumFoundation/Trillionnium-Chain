@@ -920,6 +920,26 @@ NATIVE_REQUIRED_PATHS |= frozenset((
 ))
 
 
+# Selected V6 owner and policy inputs require explicit pins even without PQ
+# names. This slice is source integrity, not the full dependency closure or
+# qualification of the source attribution and valuation model.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "config/pon/model-source-composition-v6.json",
+    "config/pon/public-evaluation-model-source-composition-v6.json",
+    "config/pon/model-evidence-v3.json",
+    "trillionnium/crates/trnm-mvcc-fee/src/model_source_composition_v6.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs",
+    "trillionnium/crates/trnm-pon-node/tests/model_source_composition_v6.rs",
+))
+
+# Current upstream withdrawal must remain in the original required inventory.
+# Source consistency does not approve migrated proofs or current use.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "config/pon/w1-upstream-security-v1.json",
+    "scripts/ci/w1_upstream_security.py",
+    "scripts/ci/test_w1_upstream_security.py",
+))
+
 # Account scope and durable retry provenance controls remain distinct from the
 # original 52-control PNQ2/PqWitnessV4 roster and its historical observations.
 NATIVE_REQUIRED_PATHS |= frozenset((
