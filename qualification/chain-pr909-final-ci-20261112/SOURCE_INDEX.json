@@ -1,0 +1,2704 @@
+{
+  "schema": "chain-pr909-terminal-ci-evidence-v1",
+  "observed_between_utc": [
+    "2026-11-12 06:00:57 UTC",
+    "2026-11-12 06:08:30 UTC"
+  ],
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "pr": 909,
+  "fixed_pr_head": "e338c000f26e9357ed33213624da787a3a009ed9",
+  "pr_base": "c84162378f34b9284e90587df4c466dfee3e193b",
+  "source_objects": [
+    {
+      "sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+      "tree": "876aa62d1ab49458d29e9168f4c69e7b47b8884b",
+      "parent": "6bf73a220ec147dba333da2404bd6c3ce7f4b1f8"
+    },
+    {
+      "sha": "bfa5cf58953a67dd9b9a27ce52b63524933a029d",
+      "tree": "4b08c77fd511466c8f2e5bc46307e0d6fd629063",
+      "parents": [
+        "c84162378f34b9284e90587df4c466dfee3e193b",
+        "e338c000f26e9357ed33213624da787a3a009ed9"
+      ]
+    }
+  ],
+  "scope": "Read existing terminal runs/jobs and necessary failed/cancelled-job logs; create content-addressed evidence blobs only. No code/ref/PR/workflow mutation, rerun, native test, host command, or artifact ZIP download.",
+  "preservation": {
+    "api_json": "Exact string returned by github_fetch structuredContent.content; no parsing/reserialization before upload.",
+    "job_logs": "Exact decoded UTF-8 string returned by github_fetch_workflow_job_logs, re-encoded UTF-8. All 18 BOMs, line endings, timestamps, ANSI bytes, long lines and meaningful whitespace retained. This does not claim possession of the original redirect/ZIP HTTP wire bytes.",
+    "split": "40 parts; each <=380402 bytes, concatenated without separators. Whole decoded-string equality and UTF-8 byte length/SHA256/Git hash verified before upload. Every create_blob return equals the locally computed Git blob ID.",
+    "errors": "5 serialized original tool-return records: baseline jobs first read timeout, two unavailable macOS logs, two unsupported check-runs reads. These are connector retrieval results, not additional native failures.",
+    "success_logs_not_reread": true,
+    "codeql_existing_archive_not_reread": true,
+    "archive_zip_members_not_read": true,
+    "all_evidence_blobs_created": true,
+    "branch_or_pr_updated": false
+  },
+  "runs": [
+    {
+      "id": 43030977438,
+      "name": "PoN priority acceptance",
+      "workflow_path": ".github/workflows/pon-priority-acceptance.yml",
+      "run_attempt": 1,
+      "head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-11T13:38:38Z",
+      "updated_at": "2026-11-11T15:29:35Z",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977438",
+      "total_jobs": 14,
+      "returned_jobs": 14,
+      "job_conclusions": {
+        "failure": 7,
+        "success": 6,
+        "skipped": 1
+      },
+      "jobs": [
+        {
+          "id": 130582693678,
+          "name": "retained-pressure-failure",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-11T14:25:09Z",
+          "completed_at": "2026-11-11T14:25:13Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977438/job/130582693678",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [
+            {
+              "number": 2,
+              "name": "Retrieve exact historical failed artifact without reclassifying it",
+              "started_at": "2026-11-11T14:25:10Z",
+              "completed_at": "2026-11-11T14:25:11Z"
+            }
+          ],
+          "actual_source": {
+            "job_id": 130582693678,
+            "checkout_git_log": [],
+            "tested_commit_from_verifier_receipt": [],
+            "tested_tree_from_verifier_receipt": []
+          },
+          "log": {
+            "job_id": 130582693678,
+            "bytes": 4112,
+            "sha256": "4e1b4e50d91ad9e9b7ffd7e259ee16c1938383c602f001f0769b31616949e9e7",
+            "expected_whole_git_blob": "2e7de3f5e4572097c9ee2f6daaed124d573c8c09",
+            "whole_blob_uploaded": true,
+            "byte_reconstruction": "concatenate listed UTF-8 parts in part order without separator",
+            "exact_decoded_string_reassembled": true,
+            "utf8_bom": true,
+            "crlf_count": 0,
+            "lf_count": 57,
+            "ends_with_newline": true,
+            "parts": [
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582693678/part-000.log",
+                "part": 0,
+                "byte_start": 0,
+                "byte_end_exclusive": 4112,
+                "bytes": 4112,
+                "sha256": "4e1b4e50d91ad9e9b7ffd7e259ee16c1938383c602f001f0769b31616949e9e7",
+                "git_blob": "2e7de3f5e4572097c9ee2f6daaed124d573c8c09"
+              }
+            ]
+          },
+          "diagnosis": {
+            "classification": "historical_evidence_retrieval_failed",
+            "cause_observed": "actions/download-artifact found zero artifacts when requesting artifact 11531476198 from historical run 37730166589; no current source checkout in this job log.",
+            "unknown": "Why the historical artifact is unavailable is not established. This does not reclassify the historical failure.",
+            "excerpts": [
+              {
+                "line": 36,
+                "text": "2026-11-11T14:25:10.9296863Z   artifact-ids: 11531476198",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 37,
+                "text": "2026-11-11T14:25:10.9297269Z   run-id: 37730166589",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 54,
+                "text": "2026-11-11T14:25:11.5792806Z Found 0 artifact(s)",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 55,
+                "text": "2026-11-11T14:25:11.5812698Z ##[error]Unable to download artifact(s): None of the provided artifact IDs were found",
+                "original_line_bytes_exceed_excerpt_cap": false
+              }
+            ]
+          }
+        },
+        {
+          "id": 130582694361,
+          "name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T14:27:37Z",
+          "completed_at": "2026-11-11T15:11:24Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977438/job/130582694361",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130582694472,
+          "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-11T14:30:13Z",
+          "completed_at": "2026-11-11T14:48:48Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977438/job/130582694472",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [
+            {
+              "number": 7,
+              "name": "Execute original release from-zero controls",
+              "started_at": "2026-11-11T14:31:16Z",
+              "completed_at": "2026-11-11T14:35:19Z"
+            }
+          ],
+          "actual_source": {
+            "job_id": 130582694472,
+            "checkout_git_log": [
+              {
+                "line": 1125,
+                "sha": "bfa5cf58953a67dd9b9a27ce52b63524933a029d"
+              }
+            ],
+            "tested_commit_from_verifier_receipt": [
+              "bfa5cf58953a67dd9b9a27ce52b63524933a029d"
+            ],
+            "tested_tree_from_verifier_receipt": [
+              "4b08c77fd511466c8f2e5bc46307e0d6fd629063"
+            ]
+          },
+          "log": {
+            "job_id": 130582694472,
+            "bytes": 1937292,
+            "sha256": "2416177d9bb557828f209e12e587398af9e79e9451b43350e28b3ec2b54b66c8",
+            "expected_whole_git_blob": "d17c52d6802e71084e21e4743f2d9508bf3033b3",
+            "whole_blob_uploaded": false,
+            "byte_reconstruction": "concatenate listed UTF-8 parts in part order without separator",
+            "exact_decoded_string_reassembled": true,
+            "utf8_bom": true,
+            "crlf_count": 0,
+            "lf_count": 3486,
+            "ends_with_newline": true,
+            "parts": [
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694472/part-000.log",
+                "part": 0,
+                "byte_start": 0,
+                "byte_end_exclusive": 380402,
+                "bytes": 380402,
+                "sha256": "1834c33704c9e4907f8660cec31b8279e638aa252d182b64e3c69b11abe7b350",
+                "git_blob": "b471b79c57a37f47b8fdbd0984763458ac3f03ac"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694472/part-001.log",
+                "part": 1,
+                "byte_start": 380402,
+                "byte_end_exclusive": 760402,
+                "bytes": 380000,
+                "sha256": "4398946246829f42a7f1171aa7deec0519239389f9c34d43625ccff60615374b",
+                "git_blob": "14b03ac0b93391f83cf87ac9a2b976b555af5a3b"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694472/part-002.log",
+                "part": 2,
+                "byte_start": 760402,
+                "byte_end_exclusive": 1140408,
+                "bytes": 380006,
+                "sha256": "6df6ae9574ba8fb29b26bcb24c2414431de3bebed47afcc54e4457ed248cc82b",
+                "git_blob": "b69ea7152f109b3c4582717f4f6f903a9edc16c5"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694472/part-003.log",
+                "part": 3,
+                "byte_start": 1140408,
+                "byte_end_exclusive": 1520408,
+                "bytes": 380000,
+                "sha256": "96b8ba386bff2f5bf9139a93e4c3434645d8021a274e14fb2b919a40c79dc25e",
+                "git_blob": "1aaa7bbc97ebae9ff0bec9be27dd06010e321350"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694472/part-004.log",
+                "part": 4,
+                "byte_start": 1520408,
+                "byte_end_exclusive": 1900408,
+                "bytes": 380000,
+                "sha256": "755cbcfe3edb799599d9eba50c2b7f6511c031e9a238adf2a743e5ce8281d667",
+                "git_blob": "3c8f624f62822ad879b5aa427a4750ee906c3812"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694472/part-005.log",
+                "part": 5,
+                "byte_start": 1900408,
+                "byte_end_exclusive": 1937292,
+                "bytes": 36884,
+                "sha256": "6416506cbcc7919dfd5b72bbad70d8e33fc3b24e3449738980bcd9990a723f5d",
+                "git_blob": "2ba88b6ee0ce703311cdeb12657505a32d4c1609"
+              }
+            ]
+          },
+          "diagnosis": {
+            "classification": "from_zero_native_child_failed_cause_unresolved",
+            "cause_observed": "The original host controller reports passed=false and systemd_run_exit=1; source verification completed. Its failure field is null and final_host_errors is empty.",
+            "unknown": "The failed child assertion or child stderr is not exposed in the job-log summary. Artifact metadata was retained, but the ZIP payload was not retrieved. No product/environment root cause or timeout is inferred.",
+            "derived_host_summaries": [
+              {
+                "original_line": 1371,
+                "schema": "trnm-ci-original-public-host-controller-v2",
+                "command_argv": [
+                  "python3",
+                  "scripts/ci/run_from_zero_native.py",
+                  "--out",
+                  "/home/runner/work/_temp/priority-observations/from-zero-native"
+                ],
+                "passed": false,
+                "systemd_run_exit": 1,
+                "failure": null,
+                "final_host_errors": [],
+                "cleanup": "already-collected",
+                "preparation_completed": true
+              }
+            ]
+          }
+        },
+        {
+          "id": 130582694482,
+          "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-11T14:31:19Z",
+          "completed_at": "2026-11-11T14:55:47Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977438/job/130582694482",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [
+            {
+              "number": 7,
+              "name": "Execute original release from-zero controls",
+              "started_at": "2026-11-11T14:32:30Z",
+              "completed_at": "2026-11-11T14:38:00Z"
+            }
+          ],
+          "actual_source": {
+            "job_id": 130582694482,
+            "checkout_git_log": [
+              {
+                "line": 1122,
+                "sha": "e338c000f26e9357ed33213624da787a3a009ed9"
+              }
+            ],
+            "tested_commit_from_verifier_receipt": [
+              "e338c000f26e9357ed33213624da787a3a009ed9"
+            ],
+            "tested_tree_from_verifier_receipt": [
+              "876aa62d1ab49458d29e9168f4c69e7b47b8884b"
+            ]
+          },
+          "log": {
+            "job_id": 130582694482,
+            "bytes": 1936480,
+            "sha256": "d044aeb3e7db711071db5de98da2c77f2036555b3ca07ab199317df3b2d7c19a",
+            "expected_whole_git_blob": "f0a35597feef63ba371453943b593c10fbef5beb",
+            "whole_blob_uploaded": false,
+            "byte_reconstruction": "concatenate listed UTF-8 parts in part order without separator",
+            "exact_decoded_string_reassembled": true,
+            "utf8_bom": true,
+            "crlf_count": 0,
+            "lf_count": 3483,
+            "ends_with_newline": true,
+            "parts": [
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694482/part-000.log",
+                "part": 0,
+                "byte_start": 0,
+                "byte_end_exclusive": 380402,
+                "bytes": 380402,
+                "sha256": "df673c21c09e53e55c9a66dc933be96021e8b411d976f4ff452bb447386b1fb5",
+                "git_blob": "d7470f522bfbcc82dfd68833a60ce0fbf226bde4"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694482/part-001.log",
+                "part": 1,
+                "byte_start": 380402,
+                "byte_end_exclusive": 760402,
+                "bytes": 380000,
+                "sha256": "1b8bd8baca6be313d30ffb5084d713cea762af40d1263d21c44c9c109dc7e07e",
+                "git_blob": "1c2c9d64ad3198c5e61d2d94dfbdee2823f2555a"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694482/part-002.log",
+                "part": 2,
+                "byte_start": 760402,
+                "byte_end_exclusive": 1140408,
+                "bytes": 380006,
+                "sha256": "2da1f6c778a1a7d016378ded20c06779789f1425dd5e2603ec500721c63605fc",
+                "git_blob": "c5fe76d00d38014fb6172f1c130a20e954d0a2e6"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694482/part-003.log",
+                "part": 3,
+                "byte_start": 1140408,
+                "byte_end_exclusive": 1520408,
+                "bytes": 380000,
+                "sha256": "f19b2d2c527cc41d2509d88b8c4947e08026a497f9901fe0600f82ca47a2829c",
+                "git_blob": "bd2e6f8fbb001f286759905bd6912924f8d14629"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694482/part-004.log",
+                "part": 4,
+                "byte_start": 1520408,
+                "byte_end_exclusive": 1900408,
+                "bytes": 380000,
+                "sha256": "42aab2e532f2490a5e1f2dfb1e6d52155ff0941efa12a7f977b9a02ba906596c",
+                "git_blob": "727fee3f4108baabf1faf3ed352400a402a98f81"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694482/part-005.log",
+                "part": 5,
+                "byte_start": 1900408,
+                "byte_end_exclusive": 1936480,
+                "bytes": 36072,
+                "sha256": "45baf1588d654f53f30b4c05fcee7ba0efea467ad2830cb139a4c66765d8f9f8",
+                "git_blob": "77ea25122a84ca27a8c0443c5c60e7046d578405"
+              }
+            ]
+          },
+          "diagnosis": {
+            "classification": "from_zero_native_child_failed_cause_unresolved",
+            "cause_observed": "The original host controller reports passed=false and systemd_run_exit=1; source verification completed. Its failure field is null and final_host_errors is empty.",
+            "unknown": "The failed child assertion or child stderr is not exposed in the job-log summary. Artifact metadata was retained, but the ZIP payload was not retrieved. No product/environment root cause or timeout is inferred.",
+            "derived_host_summaries": [
+              {
+                "original_line": 1368,
+                "schema": "trnm-ci-original-public-host-controller-v2",
+                "command_argv": [
+                  "python3",
+                  "scripts/ci/run_from_zero_native.py",
+                  "--out",
+                  "/home/runner/work/_temp/priority-observations/from-zero-native"
+                ],
+                "passed": false,
+                "systemd_run_exit": 1,
+                "failure": null,
+                "final_host_errors": [],
+                "cleanup": "already-collected",
+                "preparation_completed": true
+              }
+            ]
+          }
+        },
+        {
+          "id": 130582694530,
+          "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-11T14:31:06Z",
+          "completed_at": "2026-11-11T14:56:10Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977438/job/130582694530",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [
+            {
+              "number": 7,
+              "name": "Execute original release from-zero controls",
+              "started_at": "2026-11-11T14:32:13Z",
+              "completed_at": "2026-11-11T14:37:49Z"
+            }
+          ],
+          "actual_source": {
+            "job_id": 130582694530,
+            "checkout_git_log": [
+              {
+                "line": 1126,
+                "sha": "bfa5cf58953a67dd9b9a27ce52b63524933a029d"
+              }
+            ],
+            "tested_commit_from_verifier_receipt": [
+              "bfa5cf58953a67dd9b9a27ce52b63524933a029d"
+            ],
+            "tested_tree_from_verifier_receipt": [
+              "4b08c77fd511466c8f2e5bc46307e0d6fd629063"
+            ]
+          },
+          "log": {
+            "job_id": 130582694530,
+            "bytes": 1937557,
+            "sha256": "787cea3accb94d82244a56256f90e5f0bc9ecbf5d7d28e897c4ec138d20c9471",
+            "expected_whole_git_blob": "57630ebdcabd7e43f9962d3207d25f6f5d35b545",
+            "whole_blob_uploaded": false,
+            "byte_reconstruction": "concatenate listed UTF-8 parts in part order without separator",
+            "exact_decoded_string_reassembled": true,
+            "utf8_bom": true,
+            "crlf_count": 0,
+            "lf_count": 3487,
+            "ends_with_newline": true,
+            "parts": [
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694530/part-000.log",
+                "part": 0,
+                "byte_start": 0,
+                "byte_end_exclusive": 380402,
+                "bytes": 380402,
+                "sha256": "4cfa5f97938093cf6f707daa88a9ebbda92b955f76e8c99e8d7661f759c85394",
+                "git_blob": "88abf58a3a00c300fd6dcee907c8422a5bcf56f0"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694530/part-001.log",
+                "part": 1,
+                "byte_start": 380402,
+                "byte_end_exclusive": 760402,
+                "bytes": 380000,
+                "sha256": "07e8031a5b6d94a9f5d81e349693d8ddd2efae81132e9599ee3eed2f44a0106a",
+                "git_blob": "12d5df5125232fcc379f45aa4852454663eeec6b"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694530/part-002.log",
+                "part": 2,
+                "byte_start": 760402,
+                "byte_end_exclusive": 1140408,
+                "bytes": 380006,
+                "sha256": "73a264c361f283fb3fdd8d6ff3522d501bb13d10e63f7eacc5e1cf95e63e56bc",
+                "git_blob": "0b8446eb97f6cdeec3b76a3beca5537346b8cd4b"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694530/part-003.log",
+                "part": 3,
+                "byte_start": 1140408,
+                "byte_end_exclusive": 1520408,
+                "bytes": 380000,
+                "sha256": "8c2cbe40513aa3ce784eafb4ffe60004cec4b35d96bdb47339094311a34f3dd1",
+                "git_blob": "bc3df7cc4b37f4ae0bf11ce7aeac9f4e8f37c9df"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694530/part-004.log",
+                "part": 4,
+                "byte_start": 1520408,
+                "byte_end_exclusive": 1900408,
+                "bytes": 380000,
+                "sha256": "b9be8e99b2928bdba098fd2f53f2c22d3ae7f9cd521bd5572d686dc2c5a0aa32",
+                "git_blob": "881308524270ddc966f6604312309b63f72e0bfa"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694530/part-005.log",
+                "part": 5,
+                "byte_start": 1900408,
+                "byte_end_exclusive": 1937557,
+                "bytes": 37149,
+                "sha256": "4b254e081e3e55ed6bd3716a36442bf9397a8fd6e47a19ee4ac6b8aef64aa02f",
+                "git_blob": "c528538301dc42bd7b6c6e5eb459a81da4666360"
+              }
+            ]
+          },
+          "diagnosis": {
+            "classification": "from_zero_native_child_failed_cause_unresolved",
+            "cause_observed": "The original host controller reports passed=false and systemd_run_exit=1; source verification completed. Its failure field is null and final_host_errors is empty.",
+            "unknown": "The failed child assertion or child stderr is not exposed in the job-log summary. Artifact metadata was retained, but the ZIP payload was not retrieved. No product/environment root cause or timeout is inferred.",
+            "derived_host_summaries": [
+              {
+                "original_line": 1372,
+                "schema": "trnm-ci-original-public-host-controller-v2",
+                "command_argv": [
+                  "python3",
+                  "scripts/ci/run_from_zero_native.py",
+                  "--out",
+                  "/home/runner/work/_temp/priority-observations/from-zero-native"
+                ],
+                "passed": false,
+                "systemd_run_exit": 1,
+                "failure": null,
+                "final_host_errors": [],
+                "cleanup": "already-collected",
+                "preparation_completed": true
+              }
+            ]
+          }
+        },
+        {
+          "id": 130582694539,
+          "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-11T14:30:12Z",
+          "completed_at": "2026-11-11T15:29:35Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977438/job/130582694539",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [
+            {
+              "number": 21,
+              "name": "Execute 4105 real work blocks and paid public full sync",
+              "started_at": "2026-11-11T14:35:02Z",
+              "completed_at": "2026-11-11T15:29:21Z"
+            }
+          ],
+          "actual_source": {
+            "job_id": 130582694539,
+            "checkout_git_log": [
+              {
+                "line": 1127,
+                "sha": "bfa5cf58953a67dd9b9a27ce52b63524933a029d"
+              }
+            ],
+            "tested_commit_from_verifier_receipt": [
+              "bfa5cf58953a67dd9b9a27ce52b63524933a029d"
+            ],
+            "tested_tree_from_verifier_receipt": [
+              "4b08c77fd511466c8f2e5bc46307e0d6fd629063"
+            ]
+          },
+          "log": {
+            "job_id": 130582694539,
+            "bytes": 176325,
+            "sha256": "5fdff23942705de926686eb769520ce594d1e37192dab3fad1922513d264b64c",
+            "expected_whole_git_blob": "721fa50c11d29eabb0c4688a63541ed7ea74266e",
+            "whole_blob_uploaded": true,
+            "byte_reconstruction": "concatenate listed UTF-8 parts in part order without separator",
+            "exact_decoded_string_reassembled": true,
+            "utf8_bom": true,
+            "crlf_count": 0,
+            "lf_count": 1334,
+            "ends_with_newline": true,
+            "parts": [
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694539/part-000.log",
+                "part": 0,
+                "byte_start": 0,
+                "byte_end_exclusive": 176325,
+                "bytes": 176325,
+                "sha256": "5fdff23942705de926686eb769520ce594d1e37192dab3fad1922513d264b64c",
+                "git_blob": "721fa50c11d29eabb0c4688a63541ed7ea74266e"
+              }
+            ]
+          },
+          "diagnosis": {
+            "classification": "history_native_child_failed_cause_unresolved",
+            "cause_observed": "The original host controller reports passed=false and systemd_run_exit=1; source verification completed. Its failure field is null and final_host_errors is empty.",
+            "unknown": "The failed child assertion or child stderr is not exposed in the job-log summary. Artifact metadata was retained, but the ZIP payload was not retrieved. No product/environment root cause or timeout is inferred.",
+            "derived_host_summaries": [
+              {
+                "original_line": 1239,
+                "schema": "trnm-ci-original-public-host-controller-v2",
+                "command_argv": [
+                  "python3",
+                  "scripts/ci/run_history_native.py",
+                  "--out",
+                  "/home/runner/work/_temp/priority-observations/history-native"
+                ],
+                "passed": false,
+                "systemd_run_exit": 1,
+                "failure": null,
+                "final_host_errors": [],
+                "cleanup": "already-collected",
+                "preparation_completed": true
+              }
+            ]
+          }
+        },
+        {
+          "id": 130582694549,
+          "name": "native priorities (ubuntu-24.04, head, state)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T14:34:41Z",
+          "completed_at": "2026-11-11T15:21:24Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977438/job/130582694549",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130582694558,
+          "name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T14:33:56Z",
+          "completed_at": "2026-11-11T15:28:10Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977438/job/130582694558",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130582694631,
+          "name": "native priorities (ubuntu-24.04, head, history)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-11T14:28:07Z",
+          "completed_at": "2026-11-11T15:25:16Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977438/job/130582694631",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [
+            {
+              "number": 21,
+              "name": "Execute 4105 real work blocks and paid public full sync",
+              "started_at": "2026-11-11T14:32:09Z",
+              "completed_at": "2026-11-11T15:25:02Z"
+            }
+          ],
+          "actual_source": {
+            "job_id": 130582694631,
+            "checkout_git_log": [
+              {
+                "line": 1123,
+                "sha": "e338c000f26e9357ed33213624da787a3a009ed9"
+              }
+            ],
+            "tested_commit_from_verifier_receipt": [
+              "e338c000f26e9357ed33213624da787a3a009ed9"
+            ],
+            "tested_tree_from_verifier_receipt": [
+              "876aa62d1ab49458d29e9168f4c69e7b47b8884b"
+            ]
+          },
+          "log": {
+            "job_id": 130582694631,
+            "bytes": 175379,
+            "sha256": "ff39b934ce66b055830976a4b74af2445ad76cc1d8383752e8662ed467822780",
+            "expected_whole_git_blob": "ce2e75945d90b0e5a39cb1d135c5c1d2d9a16511",
+            "whole_blob_uploaded": true,
+            "byte_reconstruction": "concatenate listed UTF-8 parts in part order without separator",
+            "exact_decoded_string_reassembled": true,
+            "utf8_bom": true,
+            "crlf_count": 0,
+            "lf_count": 1330,
+            "ends_with_newline": true,
+            "parts": [
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694631/part-000.log",
+                "part": 0,
+                "byte_start": 0,
+                "byte_end_exclusive": 175379,
+                "bytes": 175379,
+                "sha256": "ff39b934ce66b055830976a4b74af2445ad76cc1d8383752e8662ed467822780",
+                "git_blob": "ce2e75945d90b0e5a39cb1d135c5c1d2d9a16511"
+              }
+            ]
+          },
+          "diagnosis": {
+            "classification": "history_native_child_failed_cause_unresolved",
+            "cause_observed": "The original host controller reports passed=false and systemd_run_exit=1; source verification completed. Its failure field is null and final_host_errors is empty.",
+            "unknown": "The failed child assertion or child stderr is not exposed in the job-log summary. Artifact metadata was retained, but the ZIP payload was not retrieved. No product/environment root cause or timeout is inferred.",
+            "derived_host_summaries": [
+              {
+                "original_line": 1235,
+                "schema": "trnm-ci-original-public-host-controller-v2",
+                "command_argv": [
+                  "python3",
+                  "scripts/ci/run_history_native.py",
+                  "--out",
+                  "/home/runner/work/_temp/priority-observations/history-native"
+                ],
+                "passed": false,
+                "systemd_run_exit": 1,
+                "failure": null,
+                "final_host_errors": [],
+                "cleanup": "already-collected",
+                "preparation_completed": true
+              }
+            ]
+          }
+        },
+        {
+          "id": 130582694651,
+          "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T14:30:47Z",
+          "completed_at": "2026-11-11T15:23:57Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977438/job/130582694651",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130582694652,
+          "name": "native priorities (ubuntu-24.04-arm, head, history)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T14:25:17Z",
+          "completed_at": "2026-11-11T15:19:20Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977438/job/130582694652",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130582694687,
+          "name": "native priorities (ubuntu-24.04-arm, head, state)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T14:25:09Z",
+          "completed_at": "2026-11-11T15:08:43Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977438/job/130582694687",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130582694747,
+          "name": "native priorities (ubuntu-24.04, head, service-model)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-11T14:36:47Z",
+          "completed_at": "2026-11-11T15:01:36Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977438/job/130582694747",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [
+            {
+              "number": 7,
+              "name": "Execute original release from-zero controls",
+              "started_at": "2026-11-11T14:38:08Z",
+              "completed_at": "2026-11-11T14:43:38Z"
+            }
+          ],
+          "actual_source": {
+            "job_id": 130582694747,
+            "checkout_git_log": [
+              {
+                "line": 1125,
+                "sha": "e338c000f26e9357ed33213624da787a3a009ed9"
+              }
+            ],
+            "tested_commit_from_verifier_receipt": [
+              "e338c000f26e9357ed33213624da787a3a009ed9"
+            ],
+            "tested_tree_from_verifier_receipt": [
+              "876aa62d1ab49458d29e9168f4c69e7b47b8884b"
+            ]
+          },
+          "log": {
+            "job_id": 130582694747,
+            "bytes": 1936746,
+            "sha256": "c533419660ac01ac2c4204802ef15b0c284bd86c7e8b9cc91f1745759b127c9d",
+            "expected_whole_git_blob": "ac221f956849e8f70d81dc6cd78ab94b4ec0bab2",
+            "whole_blob_uploaded": false,
+            "byte_reconstruction": "concatenate listed UTF-8 parts in part order without separator",
+            "exact_decoded_string_reassembled": true,
+            "utf8_bom": true,
+            "crlf_count": 0,
+            "lf_count": 3486,
+            "ends_with_newline": true,
+            "parts": [
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694747/part-000.log",
+                "part": 0,
+                "byte_start": 0,
+                "byte_end_exclusive": 380402,
+                "bytes": 380402,
+                "sha256": "9f30153728b24687939beef2e4dac7ae2fcdc6a05e555707fa3ef9da09bb5655",
+                "git_blob": "9267897344a40246fe171c46fa648571e3549f6d"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694747/part-001.log",
+                "part": 1,
+                "byte_start": 380402,
+                "byte_end_exclusive": 760402,
+                "bytes": 380000,
+                "sha256": "25a840f66878aef798917cecbce00e5ee9e4c27df726be68b2adce2beb05bab7",
+                "git_blob": "bb3f90edc32ad2b0e952099367c61a938c3a2189"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694747/part-002.log",
+                "part": 2,
+                "byte_start": 760402,
+                "byte_end_exclusive": 1140408,
+                "bytes": 380006,
+                "sha256": "1dc88555030dfbcad8584cb6b7e61e0ab314e15a9d3bfd0256a0ebe732835d36",
+                "git_blob": "96ec3117704a6cf25d086980a030c8a97ff0bf97"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694747/part-003.log",
+                "part": 3,
+                "byte_start": 1140408,
+                "byte_end_exclusive": 1520408,
+                "bytes": 380000,
+                "sha256": "65c8a20fd5f2e7034287bc9d4c54eee246c8db6cf9595fba1abd0ace1b8ccc21",
+                "git_blob": "8631f576cccf88c0128fb8aed4b883acf157268b"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694747/part-004.log",
+                "part": 4,
+                "byte_start": 1520408,
+                "byte_end_exclusive": 1900408,
+                "bytes": 380000,
+                "sha256": "6b99e055418ed539a53a993af6d2774e0c433fe5b4acf2781f1b1d575bb16782",
+                "git_blob": "a2a754d6c01f9c5d6f2138f8fe129c35b51ac113"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694747/part-005.log",
+                "part": 5,
+                "byte_start": 1900408,
+                "byte_end_exclusive": 1936746,
+                "bytes": 36338,
+                "sha256": "8d0968578e174133b28f1da3328dc30edfda3fd37f4388904e3fd0099c756624",
+                "git_blob": "506828640cee0488de466ae90943533102137dc3"
+              }
+            ]
+          },
+          "diagnosis": {
+            "classification": "from_zero_native_child_failed_cause_unresolved",
+            "cause_observed": "The original host controller reports passed=false and systemd_run_exit=1; source verification completed. Its failure field is null and final_host_errors is empty.",
+            "unknown": "The failed child assertion or child stderr is not exposed in the job-log summary. Artifact metadata was retained, but the ZIP payload was not retrieved. No product/environment root cause or timeout is inferred.",
+            "derived_host_summaries": [
+              {
+                "original_line": 1371,
+                "schema": "trnm-ci-original-public-host-controller-v2",
+                "command_argv": [
+                  "python3",
+                  "scripts/ci/run_from_zero_native.py",
+                  "--out",
+                  "/home/runner/work/_temp/priority-observations/from-zero-native"
+                ],
+                "passed": false,
+                "systemd_run_exit": 1,
+                "failure": null,
+                "final_host_errors": [],
+                "cleanup": "already-collected",
+                "preparation_completed": true
+              }
+            ]
+          }
+        },
+        {
+          "id": 130582696470,
+          "name": "Freeze actual integration push source",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-11-11T14:24:52Z",
+          "completed_at": "2026-11-11T14:24:52Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977438/job/130582696470",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        }
+      ]
+    },
+    {
+      "id": 43030977601,
+      "name": "trnm-required-baseline",
+      "workflow_path": ".github/workflows/trnm-required-baseline.yml",
+      "run_attempt": 1,
+      "head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-11T13:38:38Z",
+      "updated_at": "2026-11-11T16:54:13Z",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601",
+      "total_jobs": 21,
+      "returned_jobs": 21,
+      "job_conclusions": {
+        "success": 10,
+        "failure": 11
+      },
+      "jobs": [
+        {
+          "id": 130598327314,
+          "name": "fuzz-smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T14:59:14Z",
+          "completed_at": "2026-11-11T15:14:37Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130598327314",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130598327693,
+          "name": "cross-arch-cost (x64)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-11T14:53:41Z",
+          "completed_at": "2026-11-11T15:02:25Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130598327693",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [
+            {
+              "number": 12,
+              "name": "Execute exact native from-zero service controls",
+              "started_at": "2026-11-11T14:56:43Z",
+              "completed_at": "2026-11-11T15:02:18Z"
+            }
+          ],
+          "actual_source": {
+            "job_id": 130598327693,
+            "checkout_git_log": [
+              {
+                "line": 1123,
+                "sha": "e338c000f26e9357ed33213624da787a3a009ed9"
+              }
+            ],
+            "tested_commit_from_verifier_receipt": [
+              "e338c000f26e9357ed33213624da787a3a009ed9"
+            ],
+            "tested_tree_from_verifier_receipt": [
+              "876aa62d1ab49458d29e9168f4c69e7b47b8884b"
+            ]
+          },
+          "log": {
+            "job_id": 130598327693,
+            "bytes": 180669,
+            "sha256": "3de31e22aeff53f03f1b73c9ddea5111053a487233639dc2c4a6bf2816d06741",
+            "expected_whole_git_blob": "a4bdc9101ea1086394ea0d931721b8ffde9ff697",
+            "whole_blob_uploaded": true,
+            "byte_reconstruction": "concatenate listed UTF-8 parts in part order without separator",
+            "exact_decoded_string_reassembled": true,
+            "utf8_bom": true,
+            "crlf_count": 0,
+            "lf_count": 1413,
+            "ends_with_newline": true,
+            "parts": [
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598327693/part-000.log",
+                "part": 0,
+                "byte_start": 0,
+                "byte_end_exclusive": 180669,
+                "bytes": 180669,
+                "sha256": "3de31e22aeff53f03f1b73c9ddea5111053a487233639dc2c4a6bf2816d06741",
+                "git_blob": "a4bdc9101ea1086394ea0d931721b8ffde9ff697"
+              }
+            ]
+          },
+          "diagnosis": {
+            "classification": "from_zero_native_child_failed_cause_unresolved",
+            "cause_observed": "The original host controller reports passed=false and systemd_run_exit=1; source verification completed. Its failure field is null and final_host_errors is empty.",
+            "unknown": "The failed child assertion or child stderr is not exposed in the job-log summary. Artifact metadata was retained, but the ZIP payload was not retrieved. No product/environment root cause or timeout is inferred.",
+            "derived_host_summaries": [
+              {
+                "original_line": 1333,
+                "schema": "trnm-ci-original-public-host-controller-v2",
+                "command_argv": [
+                  "python3",
+                  "scripts/ci/run_from_zero_native.py",
+                  "--out",
+                  "/home/runner/work/_temp/ci-observations/from-zero-native"
+                ],
+                "passed": false,
+                "systemd_run_exit": 1,
+                "failure": null,
+                "final_host_errors": [],
+                "cleanup": "already-collected",
+                "preparation_completed": true
+              }
+            ]
+          }
+        },
+        {
+          "id": 130598327706,
+          "name": "rust-baseline shard (runtime)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T15:01:23Z",
+          "completed_at": "2026-11-11T16:53:06Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130598327706",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130598327708,
+          "name": "rust-baseline shard (quality)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-11T15:01:08Z",
+          "completed_at": "2026-11-11T15:07:55Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130598327708",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [
+            {
+              "number": 9,
+              "name": "Run retained Rust shard",
+              "started_at": "2026-11-11T15:06:29Z",
+              "completed_at": "2026-11-11T15:07:46Z"
+            }
+          ],
+          "actual_source": {
+            "job_id": 130598327708,
+            "checkout_git_log": [
+              {
+                "line": 1122,
+                "sha": "e338c000f26e9357ed33213624da787a3a009ed9"
+              }
+            ],
+            "tested_commit_from_verifier_receipt": [
+              "e338c000f26e9357ed33213624da787a3a009ed9"
+            ],
+            "tested_tree_from_verifier_receipt": [
+              "876aa62d1ab49458d29e9168f4c69e7b47b8884b"
+            ]
+          },
+          "log": {
+            "job_id": 130598327708,
+            "bytes": 195643,
+            "sha256": "94fab9c751578a73bd3d308d9d4fef8ee00d480bae17f5656ffca6cb1b27e7e0",
+            "expected_whole_git_blob": "009de6bb3051f594507fabdf2c5b82f192715b8d",
+            "whole_blob_uploaded": true,
+            "byte_reconstruction": "concatenate listed UTF-8 parts in part order without separator",
+            "exact_decoded_string_reassembled": true,
+            "utf8_bom": true,
+            "crlf_count": 0,
+            "lf_count": 1717,
+            "ends_with_newline": true,
+            "parts": [
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598327708/part-000.log",
+                "part": 0,
+                "byte_start": 0,
+                "byte_end_exclusive": 195643,
+                "bytes": 195643,
+                "sha256": "94fab9c751578a73bd3d308d9d4fef8ee00d480bae17f5656ffca6cb1b27e7e0",
+                "git_blob": "009de6bb3051f594507fabdf2c5b82f192715b8d"
+              }
+            ]
+          },
+          "diagnosis": {
+            "classification": "dependency_policy_gate_refusal_details_unresolved",
+            "cause_observed": "The quality shard reports dependency policy refused one or more graphs and a retained supply-chain result FAIL; process exit 1.",
+            "unknown": "Which dependency graph or advisory caused refusal is not visible in this job log. The observation artifact was listed but not downloaded.",
+            "excerpts": [
+              {
+                "line": 1578,
+                "text": "2026-11-11T15:07:39.5816119Z dependency policy refused one or more graphs; inspect retained diagnostics",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 1579,
+                "text": "2026-11-11T15:07:42.7908499Z {\"receipt\": \"/home/runner/work/_temp/ci-observations/supply-chain\", \"result\": \"FAIL\"}",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 1580,
+                "text": "2026-11-11T15:07:46.0486330Z ##[error]Process completed with exit code 1.",
+                "original_line_bytes_exceed_excerpt_cap": false
+              }
+            ]
+          }
+        },
+        {
+          "id": 130598327796,
+          "name": "prospective Rust shard (quality)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-11T15:01:40Z",
+          "completed_at": "2026-11-11T15:08:30Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130598327796",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [
+            {
+              "number": 9,
+              "name": "Run retained Rust shard",
+              "started_at": "2026-11-11T15:07:05Z",
+              "completed_at": "2026-11-11T15:08:21Z"
+            }
+          ],
+          "actual_source": {
+            "job_id": 130598327796,
+            "checkout_git_log": [
+              {
+                "line": 1125,
+                "sha": "bfa5cf58953a67dd9b9a27ce52b63524933a029d"
+              }
+            ],
+            "tested_commit_from_verifier_receipt": [
+              "bfa5cf58953a67dd9b9a27ce52b63524933a029d"
+            ],
+            "tested_tree_from_verifier_receipt": [
+              "4b08c77fd511466c8f2e5bc46307e0d6fd629063"
+            ]
+          },
+          "log": {
+            "job_id": 130598327796,
+            "bytes": 198886,
+            "sha256": "81d8a4102ba599c1fff7dffc2f352b82e199b4b2ec0427a3b01d9a4eacf08d53",
+            "expected_whole_git_blob": "1a5bbcae1bccb3679c08c4eae418ab3cbc16902d",
+            "whole_blob_uploaded": true,
+            "byte_reconstruction": "concatenate listed UTF-8 parts in part order without separator",
+            "exact_decoded_string_reassembled": true,
+            "utf8_bom": true,
+            "crlf_count": 0,
+            "lf_count": 1740,
+            "ends_with_newline": true,
+            "parts": [
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598327796/part-000.log",
+                "part": 0,
+                "byte_start": 0,
+                "byte_end_exclusive": 198886,
+                "bytes": 198886,
+                "sha256": "81d8a4102ba599c1fff7dffc2f352b82e199b4b2ec0427a3b01d9a4eacf08d53",
+                "git_blob": "1a5bbcae1bccb3679c08c4eae418ab3cbc16902d"
+              }
+            ]
+          },
+          "diagnosis": {
+            "classification": "dependency_policy_gate_refusal_details_unresolved",
+            "cause_observed": "The quality shard reports dependency policy refused one or more graphs and a retained supply-chain result FAIL; process exit 1.",
+            "unknown": "Which dependency graph or advisory caused refusal is not visible in this job log. The observation artifact was listed but not downloaded.",
+            "excerpts": [
+              {
+                "line": 1595,
+                "text": "2026-11-11T15:08:14.9320717Z dependency policy refused one or more graphs; inspect retained diagnostics",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 1596,
+                "text": "2026-11-11T15:08:18.1013470Z {\"receipt\": \"/home/runner/work/_temp/ci-observations/supply-chain\", \"result\": \"FAIL\"}",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 1597,
+                "text": "2026-11-11T15:08:21.3319616Z ##[error]Process completed with exit code 1.",
+                "original_line_bytes_exceed_excerpt_cap": false
+              }
+            ]
+          }
+        },
+        {
+          "id": 130598327819,
+          "name": "protocol-contract",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-11T15:00:23Z",
+          "completed_at": "2026-11-11T15:25:02Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130598327819",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [
+            {
+              "number": 8,
+              "name": "Run actual protocol-contract checks",
+              "started_at": "2026-11-11T15:02:44Z",
+              "completed_at": "2026-11-11T15:24:55Z"
+            }
+          ],
+          "actual_source": {
+            "job_id": 130598327819,
+            "checkout_git_log": [
+              {
+                "line": 1120,
+                "sha": "e338c000f26e9357ed33213624da787a3a009ed9"
+              }
+            ],
+            "tested_commit_from_verifier_receipt": [
+              "e338c000f26e9357ed33213624da787a3a009ed9"
+            ],
+            "tested_tree_from_verifier_receipt": [
+              "876aa62d1ab49458d29e9168f4c69e7b47b8884b"
+            ]
+          },
+          "log": {
+            "job_id": 130598327819,
+            "bytes": 206001,
+            "sha256": "db7902950cae6b3c7b69c46877f607bb5246adc4ee7372b0c7a51a5d36263621",
+            "expected_whole_git_blob": "a97b4e44641b90a83a404d9f7f3f19013ae87d35",
+            "whole_blob_uploaded": true,
+            "byte_reconstruction": "concatenate listed UTF-8 parts in part order without separator",
+            "exact_decoded_string_reassembled": true,
+            "utf8_bom": true,
+            "crlf_count": 0,
+            "lf_count": 1471,
+            "ends_with_newline": true,
+            "parts": [
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598327819/part-000.log",
+                "part": 0,
+                "byte_start": 0,
+                "byte_end_exclusive": 206001,
+                "bytes": 206001,
+                "sha256": "db7902950cae6b3c7b69c46877f607bb5246adc4ee7372b0c7a51a5d36263621",
+                "git_blob": "a97b4e44641b90a83a404d9f7f3f19013ae87d35"
+              }
+            ]
+          },
+          "diagnosis": {
+            "classification": "from_zero_native_child_failed_cause_unresolved",
+            "cause_observed": "The original host controller reports passed=false and systemd_run_exit=1; source verification completed. Its failure field is null and final_host_errors is empty.",
+            "unknown": "The failed child assertion or child stderr is not exposed in the job-log summary. Artifact metadata was retained, but the ZIP payload was not retrieved. No product/environment root cause or timeout is inferred.",
+            "derived_host_summaries": [
+              {
+                "original_line": 1379,
+                "schema": "trnm-ci-original-public-host-controller-v2",
+                "command_argv": [
+                  "python3",
+                  "scripts/ci/run_from_zero_native.py",
+                  "--out",
+                  "/home/runner/work/_temp/ci-observations/from-zero-native"
+                ],
+                "passed": false,
+                "systemd_run_exit": 1,
+                "failure": null,
+                "final_host_errors": [],
+                "cleanup": "already-collected",
+                "preparation_completed": true
+              }
+            ]
+          }
+        },
+        {
+          "id": 130598327852,
+          "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T15:00:11Z",
+          "completed_at": "2026-11-11T15:06:46Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130598327852",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130598327866,
+          "name": "repository-truth",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T15:02:30Z",
+          "completed_at": "2026-11-11T15:12:30Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130598327866",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130598327904,
+          "name": "W1 actual reuse V3 (x64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T15:02:38Z",
+          "completed_at": "2026-11-11T15:07:29Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130598327904",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130598327905,
+          "name": "cross-arch-cost (arm64)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-11T14:54:04Z",
+          "completed_at": "2026-11-11T15:02:32Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130598327905",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [
+            {
+              "number": 12,
+              "name": "Execute exact native from-zero service controls",
+              "started_at": "2026-11-11T14:56:39Z",
+              "completed_at": "2026-11-11T15:02:25Z"
+            }
+          ],
+          "actual_source": {
+            "job_id": 130598327905,
+            "checkout_git_log": [
+              {
+                "line": 1122,
+                "sha": "e338c000f26e9357ed33213624da787a3a009ed9"
+              }
+            ],
+            "tested_commit_from_verifier_receipt": [
+              "e338c000f26e9357ed33213624da787a3a009ed9"
+            ],
+            "tested_tree_from_verifier_receipt": [
+              "876aa62d1ab49458d29e9168f4c69e7b47b8884b"
+            ]
+          },
+          "log": {
+            "job_id": 130598327905,
+            "bytes": 180752,
+            "sha256": "1bb59afce62522d84280f18b272a9ee7c3d60735566cd07b7508701b85cda2f1",
+            "expected_whole_git_blob": "fb3492cd7667cab33230969b88f4c83f469697a9",
+            "whole_blob_uploaded": true,
+            "byte_reconstruction": "concatenate listed UTF-8 parts in part order without separator",
+            "exact_decoded_string_reassembled": true,
+            "utf8_bom": true,
+            "crlf_count": 0,
+            "lf_count": 1413,
+            "ends_with_newline": true,
+            "parts": [
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598327905/part-000.log",
+                "part": 0,
+                "byte_start": 0,
+                "byte_end_exclusive": 180752,
+                "bytes": 180752,
+                "sha256": "1bb59afce62522d84280f18b272a9ee7c3d60735566cd07b7508701b85cda2f1",
+                "git_blob": "fb3492cd7667cab33230969b88f4c83f469697a9"
+              }
+            ]
+          },
+          "diagnosis": {
+            "classification": "from_zero_native_child_failed_cause_unresolved",
+            "cause_observed": "The original host controller reports passed=false and systemd_run_exit=1; source verification completed. Its failure field is null and final_host_errors is empty.",
+            "unknown": "The failed child assertion or child stderr is not exposed in the job-log summary. Artifact metadata was retained, but the ZIP payload was not retrieved. No product/environment root cause or timeout is inferred.",
+            "derived_host_summaries": [
+              {
+                "original_line": 1332,
+                "schema": "trnm-ci-original-public-host-controller-v2",
+                "command_argv": [
+                  "python3",
+                  "scripts/ci/run_from_zero_native.py",
+                  "--out",
+                  "/home/runner/work/_temp/ci-observations/from-zero-native"
+                ],
+                "passed": false,
+                "systemd_run_exit": 1,
+                "failure": null,
+                "final_host_errors": [],
+                "cleanup": "already-collected",
+                "preparation_completed": true
+              }
+            ]
+          }
+        },
+        {
+          "id": 130598327976,
+          "name": "external-evidence-contract",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-11T15:00:00Z",
+          "completed_at": "2026-11-11T15:05:46Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130598327976",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [
+            {
+              "number": 6,
+              "name": "Run actual external-evidence-contract checks",
+              "started_at": "2026-11-11T15:01:04Z",
+              "completed_at": "2026-11-11T15:05:40Z"
+            }
+          ],
+          "actual_source": {
+            "job_id": 130598327976,
+            "checkout_git_log": [
+              {
+                "line": 1122,
+                "sha": "e338c000f26e9357ed33213624da787a3a009ed9"
+              }
+            ],
+            "tested_commit_from_verifier_receipt": [
+              "e338c000f26e9357ed33213624da787a3a009ed9"
+            ],
+            "tested_tree_from_verifier_receipt": [
+              "876aa62d1ab49458d29e9168f4c69e7b47b8884b"
+            ]
+          },
+          "log": {
+            "job_id": 130598327976,
+            "bytes": 309493,
+            "sha256": "ae21e8b83dcb4bc8c90b6d76b3a73589802be72ed9693221b0cfcefef973f97b",
+            "expected_whole_git_blob": "9b71457a4b5760cc7dc9c936e7b488ef7323aa31",
+            "whole_blob_uploaded": true,
+            "byte_reconstruction": "concatenate listed UTF-8 parts in part order without separator",
+            "exact_decoded_string_reassembled": true,
+            "utf8_bom": true,
+            "crlf_count": 0,
+            "lf_count": 2411,
+            "ends_with_newline": true,
+            "parts": [
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598327976/part-000.log",
+                "part": 0,
+                "byte_start": 0,
+                "byte_end_exclusive": 309493,
+                "bytes": 309493,
+                "sha256": "ae21e8b83dcb4bc8c90b6d76b3a73589802be72ed9693221b0cfcefef973f97b",
+                "git_blob": "9b71457a4b5760cc7dc9c936e7b488ef7323aa31"
+              }
+            ]
+          },
+          "diagnosis": {
+            "classification": "source_guard_selected_implementation_hash_mismatch",
+            "cause_observed": "check_public_readiness_evidence.py native_durable_schema rejects sha(selected_body.encode()) != reviewed_bodies[observation_field] with ValueError: durable backend selected implementation. Several negative-control assertions then see this earlier error instead of their expected later schema rejection.",
+            "reported_suite": {
+              "methods": 71,
+              "failures": 46,
+              "errors": 22,
+              "note": "Subtest failure/error totals are original unittest output, not 68 independent causes. The repeated head/merge suite is not added together."
+            },
+            "unknown": "No baseline execution or source comparison was performed here; the underlying source change versus stale reviewed reference is not resolved by these logs, and no hash was refreshed.",
+            "excerpts": [
+              {
+                "line": 1484,
+                "text": "2026-11-11T15:05:40.5141433Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/check_public_readiness_evidence.py\", line 501, in native_durable_schema",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 1485,
+                "text": "2026-11-11T15:05:40.5142239Z     require(sha(selected_body.encode()) == reviewed_bodies[observation_field],",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 1488,
+                "text": "2026-11-11T15:05:40.5143937Z ValueError: durable backend selected implementation",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 1497,
+                "text": "2026-11-11T15:05:40.5150054Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/check_public_readiness_evidence.py\", line 501, in native_durable_schema",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 2331,
+                "text": "2026-11-11T15:05:40.5652091Z Ran 71 tests in 42.006s",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 2333,
+                "text": "2026-11-11T15:05:40.5652322Z FAILED (failures=46, errors=22)",
+                "original_line_bytes_exceed_excerpt_cap": false
+              }
+            ]
+          }
+        },
+        {
+          "id": 130598328074,
+          "name": "prospective-merge (repository-truth)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T15:02:53Z",
+          "completed_at": "2026-11-11T15:15:04Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130598328074",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130598328085,
+          "name": "prospective-merge (protocol-contract)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-11T15:02:49Z",
+          "completed_at": "2026-11-11T15:36:44Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130598328085",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [
+            {
+              "number": 12,
+              "name": "Execute the same lane on the prospective merge",
+              "started_at": "2026-11-11T15:05:56Z",
+              "completed_at": "2026-11-11T15:36:37Z"
+            }
+          ],
+          "actual_source": {
+            "job_id": 130598328085,
+            "checkout_git_log": [
+              {
+                "line": 1126,
+                "sha": "bfa5cf58953a67dd9b9a27ce52b63524933a029d"
+              }
+            ],
+            "tested_commit_from_verifier_receipt": [
+              "bfa5cf58953a67dd9b9a27ce52b63524933a029d"
+            ],
+            "tested_tree_from_verifier_receipt": [
+              "4b08c77fd511466c8f2e5bc46307e0d6fd629063"
+            ]
+          },
+          "log": {
+            "job_id": 130598328085,
+            "bytes": 208813,
+            "sha256": "7734feb6727e42589c2966b76bd50ffaa5286711c8a3b9445644527d650ecc9a",
+            "expected_whole_git_blob": "63374c3a723f929454630f3533792fad23eefef4",
+            "whole_blob_uploaded": true,
+            "byte_reconstruction": "concatenate listed UTF-8 parts in part order without separator",
+            "exact_decoded_string_reassembled": true,
+            "utf8_bom": true,
+            "crlf_count": 0,
+            "lf_count": 1493,
+            "ends_with_newline": true,
+            "parts": [
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598328085/part-000.log",
+                "part": 0,
+                "byte_start": 0,
+                "byte_end_exclusive": 208813,
+                "bytes": 208813,
+                "sha256": "7734feb6727e42589c2966b76bd50ffaa5286711c8a3b9445644527d650ecc9a",
+                "git_blob": "63374c3a723f929454630f3533792fad23eefef4"
+              }
+            ]
+          },
+          "diagnosis": {
+            "classification": "from_zero_native_child_failed_cause_unresolved",
+            "cause_observed": "The original host controller reports passed=false and systemd_run_exit=1; source verification completed. Its failure field is null and final_host_errors is empty.",
+            "unknown": "The failed child assertion or child stderr is not exposed in the job-log summary. Artifact metadata was retained, but the ZIP payload was not retrieved. No product/environment root cause or timeout is inferred.",
+            "derived_host_summaries": [
+              {
+                "original_line": 1397,
+                "schema": "trnm-ci-original-public-host-controller-v2",
+                "command_argv": [
+                  "python3",
+                  "scripts/ci/run_from_zero_native.py",
+                  "--out",
+                  "/home/runner/work/_temp/ci-observations/from-zero-native"
+                ],
+                "passed": false,
+                "systemd_run_exit": 1,
+                "failure": null,
+                "final_host_errors": [],
+                "cleanup": "already-collected",
+                "preparation_completed": true
+              }
+            ]
+          }
+        },
+        {
+          "id": 130598328088,
+          "name": "prospective-merge (external-evidence-contract)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-11T15:02:58Z",
+          "completed_at": "2026-11-11T15:08:58Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130598328088",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [
+            {
+              "number": 12,
+              "name": "Execute the same lane on the prospective merge",
+              "started_at": "2026-11-11T15:04:12Z",
+              "completed_at": "2026-11-11T15:08:50Z"
+            }
+          ],
+          "actual_source": {
+            "job_id": 130598328088,
+            "checkout_git_log": [
+              {
+                "line": 1126,
+                "sha": "bfa5cf58953a67dd9b9a27ce52b63524933a029d"
+              }
+            ],
+            "tested_commit_from_verifier_receipt": [
+              "bfa5cf58953a67dd9b9a27ce52b63524933a029d"
+            ],
+            "tested_tree_from_verifier_receipt": [
+              "4b08c77fd511466c8f2e5bc46307e0d6fd629063"
+            ]
+          },
+          "log": {
+            "job_id": 130598328088,
+            "bytes": 311720,
+            "sha256": "8e6b60d4c13e8e1817a74869fff16e9a82b8e4ac9541b7a3192b2928a5d1d9dd",
+            "expected_whole_git_blob": "3407839c288d1488b219594a3b10dc962343a149",
+            "whole_blob_uploaded": true,
+            "byte_reconstruction": "concatenate listed UTF-8 parts in part order without separator",
+            "exact_decoded_string_reassembled": true,
+            "utf8_bom": true,
+            "crlf_count": 0,
+            "lf_count": 2427,
+            "ends_with_newline": true,
+            "parts": [
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598328088/part-000.log",
+                "part": 0,
+                "byte_start": 0,
+                "byte_end_exclusive": 311720,
+                "bytes": 311720,
+                "sha256": "8e6b60d4c13e8e1817a74869fff16e9a82b8e4ac9541b7a3192b2928a5d1d9dd",
+                "git_blob": "3407839c288d1488b219594a3b10dc962343a149"
+              }
+            ]
+          },
+          "diagnosis": {
+            "classification": "source_guard_selected_implementation_hash_mismatch",
+            "cause_observed": "check_public_readiness_evidence.py native_durable_schema rejects sha(selected_body.encode()) != reviewed_bodies[observation_field] with ValueError: durable backend selected implementation. Several negative-control assertions then see this earlier error instead of their expected later schema rejection.",
+            "reported_suite": {
+              "methods": 71,
+              "failures": 46,
+              "errors": 22,
+              "note": "Subtest failure/error totals are original unittest output, not 68 independent causes. The repeated head/merge suite is not added together."
+            },
+            "unknown": "No baseline execution or source comparison was performed here; the underlying source change versus stale reviewed reference is not resolved by these logs, and no hash was refreshed.",
+            "excerpts": [
+              {
+                "line": 1496,
+                "text": "2026-11-11T15:08:50.7599421Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/check_public_readiness_evidence.py\", line 501, in native_durable_schema",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 1497,
+                "text": "2026-11-11T15:08:50.7600810Z     require(sha(selected_body.encode()) == reviewed_bodies[observation_field],",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 1500,
+                "text": "2026-11-11T15:08:50.7603665Z ValueError: durable backend selected implementation",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 1509,
+                "text": "2026-11-11T15:08:50.7611863Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/check_public_readiness_evidence.py\", line 501, in native_durable_schema",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 2343,
+                "text": "2026-11-11T15:08:50.8128884Z Ran 71 tests in 41.517s",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 2345,
+                "text": "2026-11-11T15:08:50.8129158Z FAILED (failures=46, errors=22)",
+                "original_line_bytes_exceed_excerpt_cap": false
+              }
+            ]
+          }
+        },
+        {
+          "id": 130598328115,
+          "name": "W1 actual reuse V3 (x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T15:02:42Z",
+          "completed_at": "2026-11-11T15:07:44Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130598328115",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130598328156,
+          "name": "prospective-merge (fuzz-smoke)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T15:02:59Z",
+          "completed_at": "2026-11-11T15:21:24Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130598328156",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130598328213,
+          "name": "prospective Rust shard (runtime)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-11T15:03:04Z",
+          "completed_at": "2026-11-11T16:18:44Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130598328213",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [
+            {
+              "number": 9,
+              "name": "Run retained Rust shard",
+              "started_at": "2026-11-11T15:08:07Z",
+              "completed_at": "2026-11-11T16:18:18Z"
+            }
+          ],
+          "actual_source": {
+            "job_id": 130598328213,
+            "checkout_git_log": [
+              {
+                "line": 1125,
+                "sha": "bfa5cf58953a67dd9b9a27ce52b63524933a029d"
+              }
+            ],
+            "tested_commit_from_verifier_receipt": [
+              "bfa5cf58953a67dd9b9a27ce52b63524933a029d"
+            ],
+            "tested_tree_from_verifier_receipt": [
+              "4b08c77fd511466c8f2e5bc46307e0d6fd629063"
+            ]
+          },
+          "log": {
+            "job_id": 130598328213,
+            "bytes": 945901,
+            "sha256": "5722b82907df8b67843089909573afaf569cbfec7f7d684a896bf88feb121b61",
+            "expected_whole_git_blob": "8356f2e0b9a8c7c392012a0ea3551fdb2aa737cf",
+            "whole_blob_uploaded": false,
+            "byte_reconstruction": "concatenate listed UTF-8 parts in part order without separator",
+            "exact_decoded_string_reassembled": true,
+            "utf8_bom": true,
+            "crlf_count": 0,
+            "lf_count": 8261,
+            "ends_with_newline": true,
+            "parts": [
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598328213/part-000.log",
+                "part": 0,
+                "byte_start": 0,
+                "byte_end_exclusive": 380402,
+                "bytes": 380402,
+                "sha256": "15a0940aebb92a2dee028f2bd96d72edd427bf83692c47b3648bf8e6e31f1720",
+                "git_blob": "f211c1d9be8b19fd183bc47c660a845399c01a8e"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598328213/part-001.log",
+                "part": 1,
+                "byte_start": 380402,
+                "byte_end_exclusive": 760402,
+                "bytes": 380000,
+                "sha256": "dba14cd32cb44a5d3f2abc4bcff717ddd276564fa45aa2af6441179e85e60a20",
+                "git_blob": "5c5bd88cca7e21c46ba7ea07b392c4d6137c33b8"
+              },
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598328213/part-002.log",
+                "part": 2,
+                "byte_start": 760402,
+                "byte_end_exclusive": 945901,
+                "bytes": 185499,
+                "sha256": "9b5a17fdedbb8f8830ff5a1c7b2fe3e29ca8938fc6640a0a76f2178ec083ab7b",
+                "git_blob": "f006459488a050cf4b75c9d23c3bbd02ee19a55c"
+              }
+            ]
+          },
+          "diagnosis": {
+            "classification": "prospective_merge_native_test_transport_failure",
+            "cause_observed": "ordinary_npq6_witness_selection_dispatches_account_packet_without_owner_downgrade panicked at crates/trnm-pon-node/tests/pq_parent_npq6_cli.rs:244:14 by unwrapping Transport/ConnectionReset, os error 104. The failing binary reports 5 passed, 1 failed; cargo exits 101.",
+            "unknown": "The server-side reason for resetting the connection is not established. This is not attributed to the head-only source or declared an environmental-only failure.",
+            "excerpts": [
+              {
+                "line": 8100,
+                "text": "2026-11-11T16:18:14.3577290Z test ordinary_npq6_witness_selection_dispatches_account_packet_without_owner_downgrade ... FAILED",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 8106,
+                "text": "2026-11-11T16:18:14.3579047Z thread 'ordinary_npq6_witness_selection_dispatches_account_packet_without_owner_downgrade' (42962) panicked at crates/trnm-pon-node/tests/pq_parent_npq6_cli.rs:244:14:",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 8107,
+                "text": "2026-11-11T16:18:14.3580083Z called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Connection reset by peer (os error 104)\", source: Some(Os { code: 104, kind: ConnectionReset, message: \"Connection reset by peer\" }), request_history_budget: false }",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 8114,
+                "text": "2026-11-11T16:18:14.3582042Z test result: FAILED. 5 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 36.88s",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 8117,
+                "text": "2026-11-11T16:18:18.5571379Z ##[error]Process completed with exit code 101.",
+                "original_line_bytes_exceed_excerpt_cap": false
+              }
+            ]
+          }
+        },
+        {
+          "id": 130598328249,
+          "name": "W1 actual reuse V3 (arm64, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T14:56:29Z",
+          "completed_at": "2026-11-11T15:01:14Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130598328249",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130604184690,
+          "name": "cross-arch-cost-consistency",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T15:03:16Z",
+          "completed_at": "2026-11-11T15:04:46Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130604184690",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130649216164,
+          "name": "prospective-merge (rust-baseline)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-11T16:19:00Z",
+          "completed_at": "2026-11-11T16:20:07Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130649216164",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [
+            {
+              "number": 5,
+              "name": "Require both successful exact-source Rust shards",
+              "started_at": "2026-11-11T16:19:58Z",
+              "completed_at": "2026-11-11T16:20:01Z"
+            }
+          ],
+          "actual_source": {
+            "job_id": 130649216164,
+            "checkout_git_log": [
+              {
+                "line": 1130,
+                "sha": "bfa5cf58953a67dd9b9a27ce52b63524933a029d"
+              }
+            ],
+            "tested_commit_from_verifier_receipt": [
+              "bfa5cf58953a67dd9b9a27ce52b63524933a029d"
+            ],
+            "tested_tree_from_verifier_receipt": [
+              "4b08c77fd511466c8f2e5bc46307e0d6fd629063"
+            ]
+          },
+          "log": {
+            "job_id": 130649216164,
+            "bytes": 170328,
+            "sha256": "822760ca6cd3b5da6700e058febf9872d207754033a05776c9a6ff5088a680d0",
+            "expected_whole_git_blob": "a90c4556f39d5ae3e93cb28137fdbe815b9431c9",
+            "whole_blob_uploaded": true,
+            "byte_reconstruction": "concatenate listed UTF-8 parts in part order without separator",
+            "exact_decoded_string_reassembled": true,
+            "utf8_bom": true,
+            "crlf_count": 0,
+            "lf_count": 1309,
+            "ends_with_newline": true,
+            "parts": [
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130649216164/part-000.log",
+                "part": 0,
+                "byte_start": 0,
+                "byte_end_exclusive": 170328,
+                "bytes": 170328,
+                "sha256": "822760ca6cd3b5da6700e058febf9872d207754033a05776c9a6ff5088a680d0",
+                "git_blob": "a90c4556f39d5ae3e93cb28137fdbe815b9431c9"
+              }
+            ]
+          },
+          "diagnosis": {
+            "classification": "aggregate_failure_from_failed_required_shard",
+            "cause_observed": "The aggregation gate refuses because every Rust shard job must succeed. This is a consequence of failed shard jobs, not another test failure.",
+            "excerpts": [
+              {
+                "line": 1231,
+                "text": "2026-11-11T16:20:01.4138787Z ValueError: every Rust shard job must succeed",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 1232,
+                "text": "2026-11-11T16:20:01.4314624Z ##[error]Process completed with exit code 1.",
+                "original_line_bytes_exceed_excerpt_cap": false
+              }
+            ]
+          }
+        },
+        {
+          "id": 130669194540,
+          "name": "rust-baseline",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-11T16:53:10Z",
+          "completed_at": "2026-11-11T16:54:12Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977601/job/130669194540",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [
+            {
+              "number": 5,
+              "name": "Require both successful exact-source Rust shards",
+              "started_at": "2026-11-11T16:54:04Z",
+              "completed_at": "2026-11-11T16:54:07Z"
+            }
+          ],
+          "actual_source": {
+            "job_id": 130669194540,
+            "checkout_git_log": [
+              {
+                "line": 1126,
+                "sha": "e338c000f26e9357ed33213624da787a3a009ed9"
+              }
+            ],
+            "tested_commit_from_verifier_receipt": [
+              "e338c000f26e9357ed33213624da787a3a009ed9"
+            ],
+            "tested_tree_from_verifier_receipt": [
+              "876aa62d1ab49458d29e9168f4c69e7b47b8884b"
+            ]
+          },
+          "log": {
+            "job_id": 130669194540,
+            "bytes": 168096,
+            "sha256": "879f901e752b67c08c1fd2e6fd3a181a8e31146ab24bc4e9b0cf0a0eacb20aab",
+            "expected_whole_git_blob": "b81900e6cc4a754330cd52d5a863cc5947f78223",
+            "whole_blob_uploaded": true,
+            "byte_reconstruction": "concatenate listed UTF-8 parts in part order without separator",
+            "exact_decoded_string_reassembled": true,
+            "utf8_bom": true,
+            "crlf_count": 0,
+            "lf_count": 1295,
+            "ends_with_newline": true,
+            "parts": [
+              {
+                "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130669194540/part-000.log",
+                "part": 0,
+                "byte_start": 0,
+                "byte_end_exclusive": 168096,
+                "bytes": 168096,
+                "sha256": "879f901e752b67c08c1fd2e6fd3a181a8e31146ab24bc4e9b0cf0a0eacb20aab",
+                "git_blob": "b81900e6cc4a754330cd52d5a863cc5947f78223"
+              }
+            ]
+          },
+          "diagnosis": {
+            "classification": "aggregate_failure_from_failed_required_shard",
+            "cause_observed": "The aggregation gate refuses because every Rust shard job must succeed. This is a consequence of failed shard jobs, not another test failure.",
+            "excerpts": [
+              {
+                "line": 1221,
+                "text": "2026-11-11T16:54:07.8776525Z ValueError: every Rust shard job must succeed",
+                "original_line_bytes_exceed_excerpt_cap": false
+              },
+              {
+                "line": 1222,
+                "text": "2026-11-11T16:54:07.8922504Z ##[error]Process completed with exit code 1.",
+                "original_line_bytes_exceed_excerpt_cap": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 43030977513,
+      "name": "PoN owned process cleanup",
+      "workflow_path": ".github/workflows/pon-owned-process-cleanup.yml",
+      "run_attempt": 1,
+      "head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-11T13:38:38Z",
+      "updated_at": "2026-11-11T13:53:42Z",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977513",
+      "total_jobs": 8,
+      "returned_jobs": 8,
+      "job_conclusions": {
+        "success": 6,
+        "cancelled": 2
+      },
+      "jobs": [
+        {
+          "id": 130557619957,
+          "name": "aggregate-owner-controls (head)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T13:38:41Z",
+          "completed_at": "2026-11-11T13:41:34Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977513/job/130557619957",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130557620401,
+          "name": "cleanup (ubuntu-24.04, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T13:38:42Z",
+          "completed_at": "2026-11-11T13:39:43Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977513/job/130557620401",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130557620426,
+          "name": "aggregate-owner-controls (prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T13:38:42Z",
+          "completed_at": "2026-11-11T13:41:25Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977513/job/130557620426",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130557620460,
+          "name": "cleanup (ubuntu-24.04-arm, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T13:38:44Z",
+          "completed_at": "2026-11-11T13:39:44Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977513/job/130557620460",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130557620566,
+          "name": "cleanup (macos-15, prospective-merge)",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "started_at": "2026-11-11T13:38:39Z",
+          "completed_at": "2026-11-11T13:53:41Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977513/job/130557620566",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "macos_job_cancelled_without_available_log",
+            "cause_observed": "GitHub jobs metadata reports cancelled, no steps, runner_id=0, blank runner name. Both formal log requests returned 404 BlobNotFound.",
+            "unknown": "No checkout, test execution, cancellation cause, or native timeout was established. check-runs GET was rejected by the connector endpoint allowlist and was not bypassed."
+          }
+        },
+        {
+          "id": 130557620590,
+          "name": "cleanup (ubuntu-24.04, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T13:38:41Z",
+          "completed_at": "2026-11-11T13:39:42Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977513/job/130557620590",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130557620635,
+          "name": "cleanup (ubuntu-24.04-arm, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-11T13:38:44Z",
+          "completed_at": "2026-11-11T13:42:52Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977513/job/130557620635",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "metadata_only",
+            "cause_observed": "Status from the original jobs API response. Success logs were intentionally not reread."
+          }
+        },
+        {
+          "id": 130557620949,
+          "name": "cleanup (macos-15, head)",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "started_at": "2026-11-11T13:38:39Z",
+          "completed_at": "2026-11-11T13:53:41Z",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43030977513/job/130557620949",
+          "run_metadata_head_sha": "e338c000f26e9357ed33213624da787a3a009ed9",
+          "failed_steps": [],
+          "actual_source": {
+            "checkout_not_read_in_this_review": true
+          },
+          "log": null,
+          "diagnosis": {
+            "classification": "macos_job_cancelled_without_available_log",
+            "cause_observed": "GitHub jobs metadata reports cancelled, no steps, runner_id=0, blank runner name. Both formal log requests returned 404 BlobNotFound.",
+            "unknown": "No checkout, test execution, cancellation cause, or native timeout was established. check-runs GET was rejected by the connector endpoint allowlist and was not bypassed."
+          }
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/raw/run-43030977438.json",
+      "role": "original_api_json",
+      "bytes": 15372,
+      "sha256": "3f7bac34b9af8cc18f5d2906122b881087505d76b992c9029c2e7a6d964d946a",
+      "git_blob": "fa4c5f5ad1beb66bde9f2acf736a7dc61451215f",
+      "create_blob_return_sha": "fa4c5f5ad1beb66bde9f2acf736a7dc61451215f"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/raw/jobs-43030977438.json",
+      "role": "original_api_json",
+      "bytes": 76095,
+      "sha256": "bcb14d185e9ac3bf36478b1af5114432b9e0216ef32049c545525b89c7024716",
+      "git_blob": "7c4132bc8c96d1b926f4ef94f84ae3ac96ae1923",
+      "create_blob_return_sha": "7c4132bc8c96d1b926f4ef94f84ae3ac96ae1923"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/raw/run-43030977601.json",
+      "role": "original_api_json",
+      "bytes": 15370,
+      "sha256": "aa0e68b1fc0acb2bd28a324939225ccc87bd34c94401913987c80df8a831ea87",
+      "git_blob": "c309141bff06fdbbc0c9ca1fe60e225594d48730",
+      "create_blob_return_sha": "c309141bff06fdbbc0c9ca1fe60e225594d48730"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/raw/jobs-43030977601.json",
+      "role": "original_api_json",
+      "bytes": 71241,
+      "sha256": "9d6d0ca1005ddc1e45794a86c71698493a2d74057e8f91407f7509802c181f69",
+      "git_blob": "92e44dcb2e176fc3f519b6fbb3c0af8416961b5e",
+      "create_blob_return_sha": "92e44dcb2e176fc3f519b6fbb3c0af8416961b5e"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/raw/run-43030977513.json",
+      "role": "original_api_json",
+      "bytes": 15376,
+      "sha256": "0858f9f4b68149816eb96921a70fadbc5c492fcc5a6a43bdcb2bf0de1091a324",
+      "git_blob": "a48912b92b4ce52dcc5984e898b6dbb9138fa5ba",
+      "create_blob_return_sha": "a48912b92b4ce52dcc5984e898b6dbb9138fa5ba"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/raw/jobs-43030977513.json",
+      "role": "original_api_json",
+      "bytes": 20176,
+      "sha256": "52511537b84e8d102efe147bcda5f0915d6aac7f6f68bd50f1e934a60e657cb8",
+      "git_blob": "800d13a0136eca318bf00109660fb85ea47b1ec7",
+      "create_blob_return_sha": "800d13a0136eca318bf00109660fb85ea47b1ec7"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/raw/artifacts-43030977438.json",
+      "role": "original_api_json",
+      "bytes": 10130,
+      "sha256": "7baeeb946e65ef0d0296028d60791f7ca229a5075b26ec83877613fea0718668",
+      "git_blob": "181a067d8d145cd347f18491941edf853520e27a",
+      "create_blob_return_sha": "181a067d8d145cd347f18491941edf853520e27a"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/raw/artifacts-43030977601.json",
+      "role": "original_api_json",
+      "bytes": 20577,
+      "sha256": "7bcbf34894f85a64646241e062cb8a628bea7b8d8dda2d0bc3baee518925fffc",
+      "git_blob": "d8d1a1719e28f11583641931b92e4eb2bea0ca4e",
+      "create_blob_return_sha": "d8d1a1719e28f11583641931b92e4eb2bea0ca4e"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/raw/commit-e338c000f26e9357ed33213624da787a3a009ed9.json",
+      "role": "original_api_json",
+      "bytes": 1473,
+      "sha256": "f911c98796fa7e1b798b5cecb8b749eb7c4389e0068d61a9f74725f767900a5a",
+      "git_blob": "05df2b600478afa7999c659347781c40a77dee96",
+      "create_blob_return_sha": "05df2b600478afa7999c659347781c40a77dee96"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/raw/commit-bfa5cf58953a67dd9b9a27ce52b63524933a029d.json",
+      "role": "original_api_json",
+      "bytes": 2812,
+      "sha256": "ca589b4de3994d4d5bd4e025648afa86359d00ba3b53de79f4eb7aa12bd4cbfe",
+      "git_blob": "c0b21441c723d552461abc91c13ba602eb78cf1d",
+      "create_blob_return_sha": "c0b21441c723d552461abc91c13ba602eb78cf1d"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/tool-errors/jobs-43030977601_response.json",
+      "role": "serialized_original_tool_return_not_http_wire",
+      "bytes": 258,
+      "sha256": "e1c7fa0319fe2eb635642ed075f5c4d6710029f324bd2d042254f6ba1af1705d",
+      "git_blob": "2947eed5c9cdd66a8243f3cacaf57ff814fb5eb3",
+      "create_blob_return_sha": "2947eed5c9cdd66a8243f3cacaf57ff814fb5eb3"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/tool-errors/log-130557620566_response.json",
+      "role": "serialized_original_tool_return_not_http_wire",
+      "bytes": 1018,
+      "sha256": "fc46c3c64681c3e58bfae0469d0c41658f87db48ac81985833caf926b2e9d74e",
+      "git_blob": "d986a7279b73d99aa1d7705d12fb4eb0d132b2a7",
+      "create_blob_return_sha": "d986a7279b73d99aa1d7705d12fb4eb0d132b2a7"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/tool-errors/log-130557620949_response.json",
+      "role": "serialized_original_tool_return_not_http_wire",
+      "bytes": 1018,
+      "sha256": "0892cb96374138a4a99609565ab4568bf3b6f069b8a0be4852cc2b5a18cab549",
+      "git_blob": "3b261f498d067e87ab1149d399040e88558018e7",
+      "create_blob_return_sha": "3b261f498d067e87ab1149d399040e88558018e7"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/tool-errors/check-130557620566_response.json",
+      "role": "serialized_original_tool_return_not_http_wire",
+      "bytes": 465,
+      "sha256": "56cfce617e452be55af728168eea921fd6e12bdf4671da0a1a8fcebe0ffb9caa",
+      "git_blob": "8a6cedbfc976bb998254b78e0aa2f050e4d5bf92",
+      "create_blob_return_sha": "8a6cedbfc976bb998254b78e0aa2f050e4d5bf92"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/tool-errors/check-130557620949_response.json",
+      "role": "serialized_original_tool_return_not_http_wire",
+      "bytes": 465,
+      "sha256": "56cfce617e452be55af728168eea921fd6e12bdf4671da0a1a8fcebe0ffb9caa",
+      "git_blob": "8a6cedbfc976bb998254b78e0aa2f050e4d5bf92",
+      "create_blob_return_sha": "8a6cedbfc976bb998254b78e0aa2f050e4d5bf92"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582693678/part-000.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 4112,
+      "sha256": "4e1b4e50d91ad9e9b7ffd7e259ee16c1938383c602f001f0769b31616949e9e7",
+      "git_blob": "2e7de3f5e4572097c9ee2f6daaed124d573c8c09",
+      "create_blob_return_sha": "2e7de3f5e4572097c9ee2f6daaed124d573c8c09"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694472/part-000.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380402,
+      "sha256": "1834c33704c9e4907f8660cec31b8279e638aa252d182b64e3c69b11abe7b350",
+      "git_blob": "b471b79c57a37f47b8fdbd0984763458ac3f03ac",
+      "create_blob_return_sha": "b471b79c57a37f47b8fdbd0984763458ac3f03ac"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694472/part-001.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380000,
+      "sha256": "4398946246829f42a7f1171aa7deec0519239389f9c34d43625ccff60615374b",
+      "git_blob": "14b03ac0b93391f83cf87ac9a2b976b555af5a3b",
+      "create_blob_return_sha": "14b03ac0b93391f83cf87ac9a2b976b555af5a3b"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694472/part-002.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380006,
+      "sha256": "6df6ae9574ba8fb29b26bcb24c2414431de3bebed47afcc54e4457ed248cc82b",
+      "git_blob": "b69ea7152f109b3c4582717f4f6f903a9edc16c5",
+      "create_blob_return_sha": "b69ea7152f109b3c4582717f4f6f903a9edc16c5"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694472/part-003.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380000,
+      "sha256": "96b8ba386bff2f5bf9139a93e4c3434645d8021a274e14fb2b919a40c79dc25e",
+      "git_blob": "1aaa7bbc97ebae9ff0bec9be27dd06010e321350",
+      "create_blob_return_sha": "1aaa7bbc97ebae9ff0bec9be27dd06010e321350"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694472/part-004.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380000,
+      "sha256": "755cbcfe3edb799599d9eba50c2b7f6511c031e9a238adf2a743e5ce8281d667",
+      "git_blob": "3c8f624f62822ad879b5aa427a4750ee906c3812",
+      "create_blob_return_sha": "3c8f624f62822ad879b5aa427a4750ee906c3812"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694472/part-005.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 36884,
+      "sha256": "6416506cbcc7919dfd5b72bbad70d8e33fc3b24e3449738980bcd9990a723f5d",
+      "git_blob": "2ba88b6ee0ce703311cdeb12657505a32d4c1609",
+      "create_blob_return_sha": "2ba88b6ee0ce703311cdeb12657505a32d4c1609"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694482/part-000.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380402,
+      "sha256": "df673c21c09e53e55c9a66dc933be96021e8b411d976f4ff452bb447386b1fb5",
+      "git_blob": "d7470f522bfbcc82dfd68833a60ce0fbf226bde4",
+      "create_blob_return_sha": "d7470f522bfbcc82dfd68833a60ce0fbf226bde4"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694482/part-001.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380000,
+      "sha256": "1b8bd8baca6be313d30ffb5084d713cea762af40d1263d21c44c9c109dc7e07e",
+      "git_blob": "1c2c9d64ad3198c5e61d2d94dfbdee2823f2555a",
+      "create_blob_return_sha": "1c2c9d64ad3198c5e61d2d94dfbdee2823f2555a"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694482/part-002.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380006,
+      "sha256": "2da1f6c778a1a7d016378ded20c06779789f1425dd5e2603ec500721c63605fc",
+      "git_blob": "c5fe76d00d38014fb6172f1c130a20e954d0a2e6",
+      "create_blob_return_sha": "c5fe76d00d38014fb6172f1c130a20e954d0a2e6"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694482/part-003.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380000,
+      "sha256": "f19b2d2c527cc41d2509d88b8c4947e08026a497f9901fe0600f82ca47a2829c",
+      "git_blob": "bd2e6f8fbb001f286759905bd6912924f8d14629",
+      "create_blob_return_sha": "bd2e6f8fbb001f286759905bd6912924f8d14629"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694482/part-004.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380000,
+      "sha256": "42aab2e532f2490a5e1f2dfb1e6d52155ff0941efa12a7f977b9a02ba906596c",
+      "git_blob": "727fee3f4108baabf1faf3ed352400a402a98f81",
+      "create_blob_return_sha": "727fee3f4108baabf1faf3ed352400a402a98f81"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694482/part-005.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 36072,
+      "sha256": "45baf1588d654f53f30b4c05fcee7ba0efea467ad2830cb139a4c66765d8f9f8",
+      "git_blob": "77ea25122a84ca27a8c0443c5c60e7046d578405",
+      "create_blob_return_sha": "77ea25122a84ca27a8c0443c5c60e7046d578405"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694530/part-000.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380402,
+      "sha256": "4cfa5f97938093cf6f707daa88a9ebbda92b955f76e8c99e8d7661f759c85394",
+      "git_blob": "88abf58a3a00c300fd6dcee907c8422a5bcf56f0",
+      "create_blob_return_sha": "88abf58a3a00c300fd6dcee907c8422a5bcf56f0"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694530/part-001.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380000,
+      "sha256": "07e8031a5b6d94a9f5d81e349693d8ddd2efae81132e9599ee3eed2f44a0106a",
+      "git_blob": "12d5df5125232fcc379f45aa4852454663eeec6b",
+      "create_blob_return_sha": "12d5df5125232fcc379f45aa4852454663eeec6b"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694530/part-002.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380006,
+      "sha256": "73a264c361f283fb3fdd8d6ff3522d501bb13d10e63f7eacc5e1cf95e63e56bc",
+      "git_blob": "0b8446eb97f6cdeec3b76a3beca5537346b8cd4b",
+      "create_blob_return_sha": "0b8446eb97f6cdeec3b76a3beca5537346b8cd4b"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694530/part-003.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380000,
+      "sha256": "8c2cbe40513aa3ce784eafb4ffe60004cec4b35d96bdb47339094311a34f3dd1",
+      "git_blob": "bc3df7cc4b37f4ae0bf11ce7aeac9f4e8f37c9df",
+      "create_blob_return_sha": "bc3df7cc4b37f4ae0bf11ce7aeac9f4e8f37c9df"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694530/part-004.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380000,
+      "sha256": "b9be8e99b2928bdba098fd2f53f2c22d3ae7f9cd521bd5572d686dc2c5a0aa32",
+      "git_blob": "881308524270ddc966f6604312309b63f72e0bfa",
+      "create_blob_return_sha": "881308524270ddc966f6604312309b63f72e0bfa"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694530/part-005.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 37149,
+      "sha256": "4b254e081e3e55ed6bd3716a36442bf9397a8fd6e47a19ee4ac6b8aef64aa02f",
+      "git_blob": "c528538301dc42bd7b6c6e5eb459a81da4666360",
+      "create_blob_return_sha": "c528538301dc42bd7b6c6e5eb459a81da4666360"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694539/part-000.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 176325,
+      "sha256": "5fdff23942705de926686eb769520ce594d1e37192dab3fad1922513d264b64c",
+      "git_blob": "721fa50c11d29eabb0c4688a63541ed7ea74266e",
+      "create_blob_return_sha": "721fa50c11d29eabb0c4688a63541ed7ea74266e"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694631/part-000.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 175379,
+      "sha256": "ff39b934ce66b055830976a4b74af2445ad76cc1d8383752e8662ed467822780",
+      "git_blob": "ce2e75945d90b0e5a39cb1d135c5c1d2d9a16511",
+      "create_blob_return_sha": "ce2e75945d90b0e5a39cb1d135c5c1d2d9a16511"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694747/part-000.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380402,
+      "sha256": "9f30153728b24687939beef2e4dac7ae2fcdc6a05e555707fa3ef9da09bb5655",
+      "git_blob": "9267897344a40246fe171c46fa648571e3549f6d",
+      "create_blob_return_sha": "9267897344a40246fe171c46fa648571e3549f6d"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694747/part-001.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380000,
+      "sha256": "25a840f66878aef798917cecbce00e5ee9e4c27df726be68b2adce2beb05bab7",
+      "git_blob": "bb3f90edc32ad2b0e952099367c61a938c3a2189",
+      "create_blob_return_sha": "bb3f90edc32ad2b0e952099367c61a938c3a2189"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694747/part-002.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380006,
+      "sha256": "1dc88555030dfbcad8584cb6b7e61e0ab314e15a9d3bfd0256a0ebe732835d36",
+      "git_blob": "96ec3117704a6cf25d086980a030c8a97ff0bf97",
+      "create_blob_return_sha": "96ec3117704a6cf25d086980a030c8a97ff0bf97"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694747/part-003.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380000,
+      "sha256": "65c8a20fd5f2e7034287bc9d4c54eee246c8db6cf9595fba1abd0ace1b8ccc21",
+      "git_blob": "8631f576cccf88c0128fb8aed4b883acf157268b",
+      "create_blob_return_sha": "8631f576cccf88c0128fb8aed4b883acf157268b"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694747/part-004.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380000,
+      "sha256": "6b99e055418ed539a53a993af6d2774e0c433fe5b4acf2781f1b1d575bb16782",
+      "git_blob": "a2a754d6c01f9c5d6f2138f8fe129c35b51ac113",
+      "create_blob_return_sha": "a2a754d6c01f9c5d6f2138f8fe129c35b51ac113"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130582694747/part-005.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 36338,
+      "sha256": "8d0968578e174133b28f1da3328dc30edfda3fd37f4388904e3fd0099c756624",
+      "git_blob": "506828640cee0488de466ae90943533102137dc3",
+      "create_blob_return_sha": "506828640cee0488de466ae90943533102137dc3"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598327693/part-000.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 180669,
+      "sha256": "3de31e22aeff53f03f1b73c9ddea5111053a487233639dc2c4a6bf2816d06741",
+      "git_blob": "a4bdc9101ea1086394ea0d931721b8ffde9ff697",
+      "create_blob_return_sha": "a4bdc9101ea1086394ea0d931721b8ffde9ff697"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598327708/part-000.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 195643,
+      "sha256": "94fab9c751578a73bd3d308d9d4fef8ee00d480bae17f5656ffca6cb1b27e7e0",
+      "git_blob": "009de6bb3051f594507fabdf2c5b82f192715b8d",
+      "create_blob_return_sha": "009de6bb3051f594507fabdf2c5b82f192715b8d"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598327796/part-000.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 198886,
+      "sha256": "81d8a4102ba599c1fff7dffc2f352b82e199b4b2ec0427a3b01d9a4eacf08d53",
+      "git_blob": "1a5bbcae1bccb3679c08c4eae418ab3cbc16902d",
+      "create_blob_return_sha": "1a5bbcae1bccb3679c08c4eae418ab3cbc16902d"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598327819/part-000.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 206001,
+      "sha256": "db7902950cae6b3c7b69c46877f607bb5246adc4ee7372b0c7a51a5d36263621",
+      "git_blob": "a97b4e44641b90a83a404d9f7f3f19013ae87d35",
+      "create_blob_return_sha": "a97b4e44641b90a83a404d9f7f3f19013ae87d35"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598327905/part-000.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 180752,
+      "sha256": "1bb59afce62522d84280f18b272a9ee7c3d60735566cd07b7508701b85cda2f1",
+      "git_blob": "fb3492cd7667cab33230969b88f4c83f469697a9",
+      "create_blob_return_sha": "fb3492cd7667cab33230969b88f4c83f469697a9"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598327976/part-000.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 309493,
+      "sha256": "ae21e8b83dcb4bc8c90b6d76b3a73589802be72ed9693221b0cfcefef973f97b",
+      "git_blob": "9b71457a4b5760cc7dc9c936e7b488ef7323aa31",
+      "create_blob_return_sha": "9b71457a4b5760cc7dc9c936e7b488ef7323aa31"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598328085/part-000.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 208813,
+      "sha256": "7734feb6727e42589c2966b76bd50ffaa5286711c8a3b9445644527d650ecc9a",
+      "git_blob": "63374c3a723f929454630f3533792fad23eefef4",
+      "create_blob_return_sha": "63374c3a723f929454630f3533792fad23eefef4"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598328088/part-000.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 311720,
+      "sha256": "8e6b60d4c13e8e1817a74869fff16e9a82b8e4ac9541b7a3192b2928a5d1d9dd",
+      "git_blob": "3407839c288d1488b219594a3b10dc962343a149",
+      "create_blob_return_sha": "3407839c288d1488b219594a3b10dc962343a149"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598328213/part-000.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380402,
+      "sha256": "15a0940aebb92a2dee028f2bd96d72edd427bf83692c47b3648bf8e6e31f1720",
+      "git_blob": "f211c1d9be8b19fd183bc47c660a845399c01a8e",
+      "create_blob_return_sha": "f211c1d9be8b19fd183bc47c660a845399c01a8e"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598328213/part-001.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 380000,
+      "sha256": "dba14cd32cb44a5d3f2abc4bcff717ddd276564fa45aa2af6441179e85e60a20",
+      "git_blob": "5c5bd88cca7e21c46ba7ea07b392c4d6137c33b8",
+      "create_blob_return_sha": "5c5bd88cca7e21c46ba7ea07b392c4d6137c33b8"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130598328213/part-002.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 185499,
+      "sha256": "9b5a17fdedbb8f8830ff5a1c7b2fe3e29ca8938fc6640a0a76f2178ec083ab7b",
+      "git_blob": "f006459488a050cf4b75c9d23c3bbd02ee19a55c",
+      "create_blob_return_sha": "f006459488a050cf4b75c9d23c3bbd02ee19a55c"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130649216164/part-000.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 170328,
+      "sha256": "822760ca6cd3b5da6700e058febf9872d207754033a05776c9a6ff5088a680d0",
+      "git_blob": "a90c4556f39d5ae3e93cb28137fdbe815b9431c9",
+      "create_blob_return_sha": "a90c4556f39d5ae3e93cb28137fdbe815b9431c9"
+    },
+    {
+      "path": "qualification/chain-pr909-final-ci-20261112/logs/job-130669194540/part-000.log",
+      "role": "original_decoded_job_log_utf8_part",
+      "bytes": 168096,
+      "sha256": "879f901e752b67c08c1fd2e6fd3a181a8e31146ab24bc4e9b0cf0a0eacb20aab",
+      "git_blob": "b81900e6cc4a754330cd52d5a863cc5947f78223",
+      "create_blob_return_sha": "b81900e6cc4a754330cd52d5a863cc5947f78223"
+    }
+  ],
+  "artifact_totals": {
+    "paths": 55,
+    "unique_git_blobs": 54,
+    "bytes": 11432039,
+    "raw_api_json": 10,
+    "serialized_tool_errors": 5,
+    "decoded_log_parts": 40,
+    "complete_failed_job_logs": 18,
+    "unavailable_cancelled_job_logs": 2,
+    "maximum_blob_bytes": 380402
+  },
+  "acceptance_limitations": [
+    "Job counts are not test counts and are not added to previous native counts.",
+    "A failed aggregate job is not a new independent root cause.",
+    "The merge-only runtime failure is not a head-source test failure; head runtime job metadata is success.",
+    "The earlier structure/closure/work-time/large-state/workspace-profile successes remain their own evidence and do not establish whole-repository green status.",
+    "This review establishes no ordinary A-to-C business loop, independent consumer C, positive adoption, or ordinary NoUpdateRollback."
+  ]
+}
