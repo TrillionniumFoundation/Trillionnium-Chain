@@ -1,3 +1,35 @@
+**Root runner process ownership, 2026-11-12 UTC — HOLD:**
+
+Continue exact native source `92934b64f80ee9b20bcc070a08ca0966b7c5741d`
+(tree `b1882c2e46827abfd1db5f8744be043d5776df6d`) as the sole parent.
+Validation-v2 retained a V4 provider-readback timeout at 1,200 seconds with
+1,712 log bytes and SHA256 `adff49e4073515834c7dbf94a952eea72141d0eba200cc6fecc5abc41db69e2f`.
+The later stable log had 1,798 bytes and SHA256
+`07aaeed74218f6e156096d7fc8e096fc0d26941ecd7ccdfcdd415c47d1c3f5ce`.
+The original receipt remains unchanged. Retain the native probe, complete
+original files, prefix comparison and any publisher integrity refusal outside
+this source tree. A stable final log does not repair an earlier receipt.
+
+Use the existing `ci_observation.run` owner for every V3 and V4 inner Cargo
+target, so its created process group is cleaned before the runner hashes the
+log. Preserve the original argv, working directory, inherited environment,
+1,200-second execution deadlines, test names, selectors and receipt fields.
+Retain the owner's existing termination grace and its explicit limits for
+descendants that create new sessions and kernel cleanup latency.
+No timeout becomes success, and no original receipt is rehashed.
+
+This continuation changes only the two Python runners, this sole-plan prepend
+and three existing corpus pins: the two runners and this plan. All other
+product source, Rust code, dependency identities, profiles, refusal thresholds
+and the previous plan suffix remain byte-identical. PoN behavior is unchanged.
+
+Run the original nineteen native validation commands on the actual new
+committed source and tree. Old v2 outcomes remain bound to their original
+source; source reconstruction, static checks and physical verification do not
+substitute for those executions. Preserve every timeout, partial result and
+integrity failure. Production activation, whole-chain qualification, independent
+freshness custody, external-effect qualification and M15 assembly remain open.
+
 **Root/execution V6 continuation, 2026-11-12 UTC — HOLD:**
 
 Continue PR #940 at exact base `8970e2c81abbf48e2a4d3f0802d79624ab20fadd`.
