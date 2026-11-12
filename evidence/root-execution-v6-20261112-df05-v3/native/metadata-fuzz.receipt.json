@@ -1,0 +1,27 @@
+{
+  "bytes": 739395,
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--format-version",
+    "1",
+    "--manifest-path",
+    "tests/fuzz/Cargo.toml"
+  ],
+  "cwd": "/data/chain-root-operation-owned-20261112-df05-v4",
+  "elapsed_ns": 12604473135,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "log": "metadata-fuzz.log",
+  "name": "metadata-fuzz",
+  "process_exit_code": 0,
+  "sha256": "4e82aaed28b910f2c47e89313c7c9ad88afede55261cf240c61fbfd1e1ce1066",
+  "source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}

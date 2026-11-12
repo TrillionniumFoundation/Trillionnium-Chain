@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "test",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-checkpoint-store",
+    "--test",
+    "socket_ownership",
+    "--",
+    "--show-output",
+    "--test-threads=1"
+  ],
+  "native_environment_sha256": "62cf6344c0c44f0da02f1bb2ab0c3ef13a90f4744ae6ab81c2354ef2d0ae877e",
+  "operation_key": "root-operation-20261112-df05-native-publication-v2-socket-ownership",
+  "outer_timeout_seconds": 1200,
+  "required_tests": [
+    "rejected_nonprivate_socket_parent_does_not_unlink_existing_listener",
+    "different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint",
+    "copied_lease_record_cannot_replace_a_live_checkpoint_endpoint"
+  ],
+  "source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "timeout_scope": "new supplemental outer bound; original tests unchanged",
+  "tree": "5d2538f404e32319ea1084a6c79f37c52503546f"
+}

@@ -1,0 +1,24 @@
+{
+  "bytes": 2686,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/run_pq_root_continuation_v4.py",
+    "--out",
+    "/data/chain-root-validation-20261112-df05-v3/root-v4"
+  ],
+  "cwd": "/data/chain-root-operation-owned-20261112-df05-v4",
+  "elapsed_ns": 1686045922902,
+  "executed": true,
+  "exit_code": 1,
+  "expected_source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "log": "root-v4.log",
+  "name": "root-v4",
+  "process_exit_code": 1,
+  "sha256": "43d4894144ac437d9e69ba7b6adefad010377a4b00b60f232962ecdff521cc7c",
+  "source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}

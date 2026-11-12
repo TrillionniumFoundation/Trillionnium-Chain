@@ -1,0 +1,29 @@
+   Compiling syn v2.0.117
+   Compiling rustix v1.1.6
+   Compiling linux-raw-sys v0.12.1
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling serde_derive v1.0.228
+   Compiling thiserror-impl v1.0.69
+   Compiling thiserror v1.0.69
+   Compiling curve25519-dalek v4.1.3
+   Compiling serde v1.0.228
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/work/chain-root-operation-recovered-20261112-df05/trillionnium/crates/trnm-protocol)
+   Compiling ed25519-dalek v2.2.0
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/chain-root-operation-recovered-20261112-df05/trillionnium/crates/trnm-crypto-primitives)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 42s
+     Running unittests src/lib.rs (/data/chain-root-operation-v6-df05-target-v2/debug/deps/trnm_crypto_primitives-bf68acd34d72ffea)
+
+running 10 tests
+test pq_root_v3::tests::canonical_codec_roundtrips_and_rejects_all_truncations_and_trailing_bytes ... ok
+test pq_root_v3::tests::complete_statement_is_framed_and_maximum_payload_is_supported ... ok
+test pq_root_v3::tests::decoder_refuses_noncanonical_order_or_altered_policy_or_lengths ... ok
+test pq_root_v3::tests::entire_roster_is_exact_distinct_and_immutable_including_unused_keys ... ok
+test pq_root_v3::tests::exact_spki_lengths_and_suite_identity_are_bound ... ok
+test pq_root_v3::tests::failed_reservations_remain_charged_and_never_wrap_or_reset ... ok
+test pq_root_v3::tests::operation_identity_contains_intent_but_no_selected_quorum_or_signature_bytes ... ok
+test pq_root_v3::tests::same_length_shake_oid_and_weaker_mldsa_cannot_be_mislabeled ... ok
+test pq_root_v3::tests::shared_budget_has_one_absolute_deadline_and_irreversible_cancellation ... ok
+test pq_root_v3::tests::successor_possession_binds_full_roster_role_and_full_intent ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 186 filtered out; finished in 0.02s
+

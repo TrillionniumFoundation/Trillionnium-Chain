@@ -1,0 +1,8 @@
+{
+  "branch": "fix/chain-root-operation-recovered-20261112-df05",
+  "expected_cloud_source": "87bf6bb07c4ccdd75741cfb79c7447d8d8c54758",
+  "head": "92934b64f80ee9b20bcc070a08ca0966b7c5741d",
+  "same_full_tree": true,
+  "tree": "b1882c2e46827abfd1db5f8744be043d5776df6d",
+  "worktree": "/home/qian-qi/work/chain-root-operation-recovered-20261112-df05"
+}

@@ -1,0 +1,22 @@
+{
+  "bytes": 795,
+  "command": [
+    "/home/qian-qi/credit-envelope-f7e62-provider2/runner/trnm-pq-provider-3.5.9.5yXdk2mN/install/bin/openssl",
+    "version",
+    "-a"
+  ],
+  "cwd": "/data/chain-root-operation-owned-20261112-df05-v4",
+  "elapsed_ns": 12415806066,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "log": "openssl-version.log",
+  "name": "openssl-version",
+  "process_exit_code": 0,
+  "sha256": "6a5f30b4dc344636f86abaecceec752798a15d5b4c6ecd161bb4631538d5f00c",
+  "source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}

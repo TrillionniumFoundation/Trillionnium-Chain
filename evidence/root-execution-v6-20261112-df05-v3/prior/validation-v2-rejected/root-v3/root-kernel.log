@@ -1,0 +1,23 @@
+   Compiling bitflags v2.11.0
+   Compiling openssl v0.10.81
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/chain-root-operation-recovered-20261112-df05/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-release-bundle v0.1.0 (/home/qian-qi/work/chain-root-operation-recovered-20261112-df05/trillionnium/crates/trnm-release-bundle)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 25.37s
+     Running unittests src/lib.rs (/data/chain-root-operation-v6-df05-target-v2/debug/deps/trnm_release_bundle-2d7176ccb334ce63)
+
+running 12 tests
+test root_recovery_v3::tests::native_v3_all_five_actions_require_real_fixed_dual_quorum ... ok
+test root_recovery_v3::tests::native_v3_bounded_intent_rejects_unbounded_material_before_hashing ... ok
+test root_recovery_v3::tests::native_v3_canonical_wire_rejects_aliases_truncation_and_unknown_action ... ok
+test root_recovery_v3::tests::native_v3_capacity_never_prunes_nonce_history ... ok
+test root_recovery_v3::tests::native_v3_current_intent_rechecks_rotation_revocation_and_expiry ... ok
+test root_recovery_v3::tests::native_v3_expired_recovery_keeps_both_current_quorums ... ok
+test root_recovery_v3::tests::native_v3_full_intent_scope_epoch_predecessor_and_time_are_bound ... ok
+test root_recovery_v3::tests::native_v3_nine_quorum_choices_share_semantic_operation ... ok
+test root_recovery_v3::tests::native_v3_nonce_and_revocations_survive_generation_change ... ok
+test root_recovery_v3::tests::native_v3_shared_budget_does_not_reset_between_old_and_successor ... ok
+test root_recovery_v3::tests::native_v3_successor_requires_every_separate_possession ... ok
+test root_recovery_v3::tests::native_v3_time_is_exclusive_unix_and_artifact_observations_are_exact ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 55 filtered out; finished in 160.49s
+
