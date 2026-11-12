@@ -404,6 +404,28 @@ class CorpusGateTests(unittest.TestCase):
                 with self.assertRaisesRegex(IntegrityError, "PNQ2 bounded-profile"):
                     check(self.root)
 
+    def test_upstream_withdrawal_and_posterior_sources_cannot_be_dropped_and_repinned(self):
+        original = copy.deepcopy(self.manifest)
+        self.assertFalse(check(self.root)['cryptographic_acceptance'])
+        # Independent literal names prevent removal from both inventories from
+        # silently turning a security-lifecycle check into optional evidence.
+        for path in (
+            'config/pon/w1-upstream-security-v1.json',
+            'scripts/ci/w1_upstream_security.py',
+            'formal/pon-nakamoto-v1/quantum_posterior_policy.py',
+            'evidence/pon-quantum-lifetime-20261111-e464/upstream-security-report.json',
+        ):
+            with self.subTest(path=path):
+                self.manifest = copy.deepcopy(original)
+                self.manifest['required_paths'].remove(path)
+                del self.manifest['pinned_blobs'][path]
+                self.save()
+                with self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        self.assertFalse(check(self.root)['cryptographic_acceptance'])
+
     def test_native_wire_numeric_claims_refuse_bool_or_wrong_version(self):
         original = copy.deepcopy(self.manifest["native_network_owner_slice_v2"])
         for field, value in (("tpq1_peer_purpose", True), ("tpq1_peer_purpose", 1),

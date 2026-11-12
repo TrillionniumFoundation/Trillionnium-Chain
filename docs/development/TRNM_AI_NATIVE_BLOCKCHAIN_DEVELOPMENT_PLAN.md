@@ -1,3 +1,41 @@
+**Persistent-domain policies and upstream proof withdrawal, 2026-11-11 UTC — HOLD:**
+
+Continue from #908 at `6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d` with
+implementation checkpoint `1f2b0187d4522b5248294ddab318f34a63bdc5a3`.
+The [new evidence scope](../../evidence/pon-quantum-lifetime-20261111-e464/README.md)
+retains the existing complete fixed-context reversible oracle construction.
+Constructed gate/qubit costs remain implementation upper bounds. A reproduced
+resource-model inconsistency accepted T depth above total decomposition depth
+or T count; explicit validation now refuses both, without changing valid
+default models or claiming physical calibration.
+
+The [finite posterior policy](../../formal/pon-nakamoto-v1/QUANTUM_POSTERIOR_POLICY_V1.md)
+updates the hidden marked-count distribution after failed measurements and
+optimizes retry/paid-refresh/stop over a declared finite action set. All
+processors and failed trials are charged. Its exact optimum is conditional on
+Boolean observations, re-prepared uniform states, a fixed-cost ideal proof,
+the supplied prior and budget. It does not establish real W1 marked-set
+statistics, global quantum optimality or joint DAA/timestamp/chainwork safety.
+
+RISC Zero's official 3.1.0 release, published `2026-11-10T23:26:01Z`, requires
+upgrading and regenerating receipts after repairs affecting every receipt
+format. The selected verifier 3.0.6 and guest 3.0.3 locks remain affected.
+The mandatory upstream reader now binds that withdrawal to actual selected
+source/proof bytes; proof-profile result v2 reports
+`PROFILE_BOUND_UPSTREAM_REVOKED_HOLD`, and `--require-current` refuses use.
+Changing SDK labels or replaying an old receipt cannot approve migration.
+This is not a reproduced W1 exploit; Groth16 lock presence does not imply its
+use by the selected succinct/Poseidon2 entry point. Historical locks, receipts
+and reports remain unchanged, with a separate namespace for current findings.
+
+The lifetime successor selects the reviewed resource fix and retains the two
+prior reports byte-for-byte. Security bits, lifetime error bounds and all three
+independent qualification lines remain unknown or false. Exact-source tests
+and failures must retain their actual observed identities; this plan assigns
+no terminal PASS before execution. Hardware execution, fault-tolerance
+calibration, coherent 3.1.0 proof regeneration and the missing security
+theorems remain separate unresolved work.
+
 **C5 lossless evidence storage after C4 source refusal, 2026-11-11 UTC — HOLD:**
 
 Continue draft PR #908 above #901. The committed C4 evidence/Root-maintenance

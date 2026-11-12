@@ -918,6 +918,28 @@ NATIVE_REQUIRED_PATHS |= frozenset((
 ))
 
 
+# Current upstream withdrawal and finite posterior calculations must not evade
+# inventory merely because their names do not start with the PQ prefix.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "config/pon/w1-upstream-security-v1.json",
+    "scripts/ci/w1_upstream_security.py",
+    "scripts/ci/test_w1_upstream_security.py",
+    "formal/pon-nakamoto-v1/quantum_posterior_policy.py",
+    "formal/pon-nakamoto-v1/test_quantum_posterior_policy.py",
+    "formal/pon-nakamoto-v1/test_quantum_resource_clock.py",
+    "formal/pon-nakamoto-v1/QUANTUM_POSTERIOR_POLICY_V1.md",
+    "evidence/pon-quantum-lifetime-20261111-e464/README.md",
+    "evidence/pon-quantum-lifetime-20261111-e464/resource-model-counterexample.json",
+    "evidence/pon-quantum-lifetime-20261111-e464/lifetime-input.json",
+    "evidence/pon-quantum-lifetime-20261111-e464/lifetime-report.json",
+    "evidence/pon-quantum-lifetime-20261111-e464/upstream-security-report.json",
+    "evidence/pon-quantum-lifetime-20261111-e464/proof-profile-binding-report.json",
+    "evidence/pon-quantum-lifetime-20261111-e464/persistent-request.json",
+    "evidence/pon-quantum-lifetime-20261111-e464/persistent-report.json",
+    "evidence/pon-quantum-lifetime-20261111-e464/refresh-request.json",
+    "evidence/pon-quantum-lifetime-20261111-e464/refresh-report.json",
+))
+
 # Account scope and durable retry provenance controls remain distinct from the
 # original 52-control PNQ2/PqWitnessV4 roster and its historical observations.
 NATIVE_REQUIRED_PATHS |= frozenset((

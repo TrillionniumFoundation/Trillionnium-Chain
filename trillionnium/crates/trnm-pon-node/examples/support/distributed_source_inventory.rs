@@ -428,6 +428,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/w1-upstream-security-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/w1-upstream-security-v1.json"
+        )),
+    ),
+    (
         "config/pon/work-profile-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

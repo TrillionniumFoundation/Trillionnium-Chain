@@ -58,16 +58,16 @@ class LifetimeLedgerTests(unittest.TestCase):
         cls.survey = ledger.source_survey(cls.sources)
 
     def test_project_unknowns_do_not_produce_a_target_or_qualification(self):
-        input_path = ROOT / "evidence/pq-live-retry-20261111-fa62381e/lifetime-input.json"
+        input_path = ROOT / "evidence/pon-quantum-lifetime-20261111-e464/lifetime-input.json"
         raw = ledger.strict_json(input_path.read_bytes())
         self.assertEqual(raw, ledger.template())
         result = ledger.make_report(raw, ROOT)
-        fixture = ROOT / "evidence/pq-live-retry-20261111-fa62381e/lifetime-report.json"
+        fixture = ROOT / "evidence/pon-quantum-lifetime-20261111-e464/lifetime-report.json"
         self.assertEqual((json.dumps(result, indent=2, sort_keys=True, allow_nan=False)
                           + "\n").encode(), fixture.read_bytes())
-        # The source successor changes only its reviewed checkpoint and two
-        # dependency pins. Historical bytes and every accounting/HOLD field stay
-        # intact; copying a stale report into the current namespace must fail.
+        # Preserve both earlier reports. The dependency successor changed two
+        # pins; this successor changes the resource-model pin, size and matching
+        # observation identity only. No accounting/HOLD value may drift.
         archived_input = ROOT / "evidence/pq-chain-convergence-20261111-d4d2/lifetime-input.json"
         archived_report = ROOT / "evidence/pq-chain-convergence-20261111-d4d2/lifetime-report.json"
         self.assertEqual(hashlib.sha256(archived_input.read_bytes()).hexdigest(),
@@ -75,16 +75,32 @@ class LifetimeLedgerTests(unittest.TestCase):
         self.assertEqual(hashlib.sha256(archived_report.read_bytes()).hexdigest(),
                          "ed80f8de4f4880406242411fdfeef45fdcdc0667b410a2ced18abd99f2af344e")
         self.assertEqual(input_path.read_bytes(), archived_input.read_bytes())
+        previous = ROOT / "evidence/pq-live-retry-20261111-fa62381e/lifetime-report.json"
+        previous_input = ROOT / "evidence/pq-live-retry-20261111-fa62381e/lifetime-input.json"
+        self.assertEqual(hashlib.sha256(previous.read_bytes()).hexdigest(),
+                         "2c3915cd2ab8bf0e93ea47728d82ec76762ba028416da17ea21a959fd506f81e")
+        self.assertEqual(previous_input.read_bytes(), archived_input.read_bytes())
         expected = ledger.strict_json(archived_report.read_bytes())
         self.assertEqual(expected["selected_source_survey"]["base_commit"],
                          "8add285b6c0a91d8b7812efe2d02c9342f74c91b")
         self.assertNotEqual(result, expected)
-        expected["selected_source_survey"]["base_commit"] = ledger.SOURCE_BASE
+        expected["selected_source_survey"]["base_commit"] = "7f83ea843d6d1578a475a7a0c4dc026da564a795"
         changed = {"trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
                    "trillionnium/Cargo.lock"}
         for row in expected["selected_source_survey"]["sources"]:
             if row["path"] in changed:
                 row["sha256"] = ledger.SOURCE_PINS[row["path"]]
+        self.assertEqual(expected, ledger.strict_json(previous.read_bytes()))
+        self.assertNotEqual(result, expected)
+        expected["selected_source_survey"]["base_commit"] = ledger.SOURCE_BASE
+        resource = "formal/pon-nakamoto-v1/quantum_oracle_resources.py"
+        for row in expected["selected_source_survey"]["sources"]:
+            if row["path"] == resource:
+                row["sha256"] = ledger.SOURCE_PINS[resource]
+                row["bytes"] = str(len(self.sources[resource]))
+        observation = expected["selected_source_survey"]["observations"]["resource_accounting"]
+        self.assertEqual(observation["anchor_line"], "175")
+        observation["sha256"] = ledger.SOURCE_PINS[resource]
         self.assertEqual(result, expected)
         budget = result["lifetime_ledger"]
         self.assertIsNone(budget["sum_of_group_adversary_query_envelopes"])
@@ -282,6 +298,13 @@ class LifetimeLedgerTests(unittest.TestCase):
             del sources[changed]
             with self.subTest(missing=changed), self.assertRaises(ledger.LedgerError):
                 ledger.source_survey(sources)
+        resource = "formal/pon-nakamoto-v1/quantum_oracle_resources.py"
+        sources = dict(self.sources)
+        sources[resource] = git_blob("6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d", resource)
+        self.assertEqual(hashlib.sha256(sources[resource]).hexdigest(),
+                         "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f")
+        with self.assertRaisesRegex(ledger.LedgerError, "source identity mismatch: " + resource):
+            ledger.source_survey(sources)
         # These are the real dependency bytes behind the archived d4d2 survey.
         # Neither old manifest nor old lock is valid for the current checkpoint.
         for path in ("trillionnium/crates/trnm-crypto-primitives/Cargo.toml", lock):

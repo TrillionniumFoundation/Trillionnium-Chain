@@ -40,10 +40,11 @@ OUTPUT_SCHEMA = "TRNM-W1-LIFETIME-LEDGER-REPORT1"
 # of the child commit containing this ledger and its successor report. This is
 # selected source identity only; it does not identify an executed binary or
 # establish any proof, lifetime, consensus, or production qualification.
-# Rustix 1.1.6 changes only the selected crypto manifest and workspace lock.
-# The successor retains the prior report; all eighteen other selected sources,
+# This successor adds the reviewed rejection of internally impossible Toffoli
+# decomposition depths. The preceding Rustix dependency pins remain unchanged.
+# Historical reports are retained; the other nineteen selected sources, ledger
 # arithmetic, unknown inputs and independent HOLD qualifications are unchanged.
-SOURCE_BASE = "7f83ea843d6d1578a475a7a0c4dc026da564a795"
+SOURCE_BASE = "1f2b0187d4522b5248294ddab318f34a63bdc5a3"
 MAX_INPUT_BYTES = 262144
 MAX_INTEGER_BITS = 512
 PHASES = (
@@ -131,7 +132,7 @@ SOURCE_PINS = {
     "formal/pon-nakamoto-v1/work_query_bound.py": "d6b5c3b25f6cd8287de5b927f271d0436ffe736470eb914d02a8a17497ea0909",
     "formal/pon-nakamoto-v1/w1_quantum_oracle.py": "5a1a250680299561cb83b0b7d17ab57cf180e64277f981f5130cdf04e70aeb99",
     "formal/pon-nakamoto-v1/w1_quantum_restricted_oracle.py": "b590ed91d491577c494a667a9271410b420dc35b7088705ef99982c2abd3b702",
-    "formal/pon-nakamoto-v1/quantum_oracle_resources.py": "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f",
+    "formal/pon-nakamoto-v1/quantum_oracle_resources.py": "23a2f810685e5f352b3cc4b7b9e8b8ab76d6208122d7e2379ee9c9d51edf849a",
     "formal/pon-nakamoto-v1/quantum_resource_clock.py": "8d7257c315da4590e463b6bdb49434d284c0239681d6d8e50759dafda42c456a",
     "formal/pon-nakamoto-v1/quantum_daa_model.py": "4dd08a40f9719b6a8e310c65b63fc3af44b6d4fb6a6db83af296600334da747b",
     "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs": "53048b6a7fd413bfb25abee86c4b7868be1c28364d43f53dc1bb2e40b14ae4b5",
