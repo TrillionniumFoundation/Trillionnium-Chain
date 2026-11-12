@@ -1,3 +1,26 @@
+## 已验证的来源级结算 V6 延续，2026-11-12
+
+固定测试源码 `214e2224fd4d18134aa9b50dc1467041651112eb`（tree `b4b02cca0aff2af5603618ffea510743d54a2f2d`）的第二轮验证已真实完成：
+19/19 命令成功，原生 V6 4/4 通过，直接执行的二进制为 `PINNED_AND_OBSERVED`，
+SHA256 `f374c315f104569850e7164af5627abfb86c5ee33efd05c2241d8b5a578bab7b`。独立收据复算通过，11 项 reader 自测通过。
+MVCC fee 164 通过、9 忽略；保留 V4 5 通过；M10 35 通过；error registry 11 通过。
+
+同一完整来源更新的 original / aliased / split / permuted 四种已准入表示，
+该来源 gross entitlement 均为 66,666，另一来源均为 33,333，release 托管残余为 1。
+原生报告扣除自身费用后的账户变化依次为 60,051 / 60,051 / 56,980 / 56,980；
+独立 reader 不重放账户净变化。残余 1 按既有 expiry 规则处理，不声称观察高度已返款。
+
+四种表示的连续签名 M06 执行与另一个实际 98-packet PNW1 owner / reorg / reopen
+测试分别记录。结论限于已知来源、注册 checked-integer profile、相同冻结来源游戏，
+且两种表示均通过准入；不授予未知 Sybil、任意 Cell 等价、真实市场或生产资格。
+完整模型与来源消融的有效反事实、来源预算/上限/舍入及费用单列保持为规范边界。
+
+[最终原始证据归档](../../evidence/chain-source-incentive-v6-20261112/README.md)保留首轮 15 项收据中的真实失败、
+preliminary 编译失败、旧 reader 的 release-domain 失败及更正后的实际重跑。
+本段和证据目录属于后续文档子提交；原生测试仍归属上述固定源码，不改写为子提交执行。
+`trillionnium/`、`formal/`、`scripts/`、`config/` 受完整源码清单保护，唯一例外是
+source corpus 已有 sole-plan pin 的单字段更新。原 V4 反例、历史 HOLD 和 false 资格字段保留。
+
 **Source V6 exact-source continuation, 2026-11-12 UTC — HOLD:**
 
 Checkpoint 8cb8b743bccd93a5fac49a072990d18e0d4b4a21 executed 15 recorded commands:
