@@ -1,3 +1,23 @@
+**Source V6 exact-source continuation, 2026-11-12 UTC — HOLD:**
+
+Checkpoint 8cb8b743bccd93a5fac49a072990d18e0d4b4a21 executed 15 recorded commands:
+14 succeeded and the full new native suite failed at one fixture read of a
+contribution already retired after parent publication. Preserve that failed
+receipt. Its other three cases passed, including complete-source split, alias,
+permutation equality and two generations using the actual parent. Retained M06
+tests passed 164 cases with nine pre-existing ignored cases; V4 passed five and
+M10 passed 35. Strict all-feature Clippy and both locked Cargo graphs passed.
+These remain source-specific observations, without production or economic acceptance.
+
+This continuation captures the source at actual intake, preserves the later
+paid/reopen/reorg assertions, adds independent retained-byte readback, and refreshes
+only the affected distributed inventory and reviewed authority source lock.
+That lock still covers seven routes and 44 paths, with only the executor changed;
+all scope and HOLD fields remain. The next frozen-source batch must rerun the
+complete V6 owner case and source gates. See the
+[research contract](SOURCE_INCENTIVE_RESEARCH_CONTRACT_20261112.md) and
+[liability boundary](INCENTIVE_LIABILITY_BOUNDARIES_20261112.md).
+
 **Source-normalized incentive continuation, 2026-11-12 UTC — HOLD:**
 
 Continue from #939 at `4a59131acdf9b8c3210c9b6cd728aeb6c48291fc` in an isolated

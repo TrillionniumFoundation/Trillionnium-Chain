@@ -4,7 +4,7 @@
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
 routes to the current reviewed source
-`813620f387199bef3eae2493e2af07c70444db58`. The
+`8cb8b743bccd93a5fac49a072990d18e0d4b4a21`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -18,7 +18,38 @@ a signature, context comparison, downloaded artifact or certificate observation
 must not be recorded as a different downstream permission. That original source
 inventory did not itself establish a classical bypass of a PQ owner.
 
-## Current combined candidate binding, 2026-11-12
+## Current source-composition continuation, 2026-11-12
+
+The reviewed runtime checkpoint is `8cb8b743bccd93a5fac49a072990d18e0d4b4a21`, tree
+`ad9301c83be53df1937aa2b7eebf5aee131fbb99`. All 44 regular-file blobs were read with
+`git show` at that immutable checkpoint and compared with the actual checkout.
+The canonical lock SHA-256, including that checkpoint, is
+`d504cae561835c3e98c3078ceb6d306805d1b1a550074ce3c01f2b9516227001`.
+
+Forty-three curated pins retain the prior `813620f387199bef3eae2493e2af07c70444db58` bytes.
+Only `trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs` changes, from
+`4ed0629cd9a543ae58402a1fabc459993c8e0037fe47fd53dd29efa619516fb4` to
+`cd97b36dd9901b57156040b4afabfa1070f8b9f727fef7a301e11fa502092c90`. This dispatch change adds the separately named
+source-composition V6 configuration, complete-source release validation and
+the new allocation-leaf/release domains. Its claims read the frozen source
+payment record. Original PNX1 authentication, sender/nonce checks and
+transaction publication remain prerequisites; a record digest is not an
+independent grant of payment authority.
+
+The unchanged prior reader was executed against the changed checkout and
+returned `source lock hash mismatch` for that executor. The staged continuation
+retains this refusal, fixes the reviewed checkpoint and lock explicitly, and
+adds the prior `813620f` revision to the stale-context negative control. It
+retains all seven route definitions, the 44-path roster, account/network
+profile separation and all false qualification fields. New V6 implementation,
+policy and native-test files have separate source inventory/corpus coverage;
+this partial register does not become their transitive authority proof.
+
+This byte review supplies no native execution, public activation or PQ
+qualification. Earlier checkpoint identities and failed observations remain
+historical records.
+
+## Retained combined candidate binding, 2026-11-12
 
 The reviewed source is `813620f387199bef3eae2493e2af07c70444db58`, tree
 `4670d4ca9354d862ed2a5b3061dcaa61c759004e`. All 44 regular-file blobs

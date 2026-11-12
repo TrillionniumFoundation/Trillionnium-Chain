@@ -22,12 +22,12 @@ RESULT_SCHEMA = 'trnm-pq-authority-effects-result-v1'
 DEFAULT_MANIFEST = 'config/pon/pq-authority-effects-v1.json'
 # The seven route definitions and 44 source paths retain their reviewed scope.
 # Prior review lineages are documented in PQ_AUTHORITY_EFFECT_REGISTER_V1.md.
-SOURCE_REVISION = '813620f387199bef3eae2493e2af07c70444db58'
+SOURCE_REVISION = '8cb8b743bccd93a5fac49a072990d18e0d4b4a21'
 PURPOSE = 'curated-source-consistency-only'
 MAX_BYTES = 1024 * 1024
 # SHA-256 of canonical {"source_revision": SOURCE_REVISION, "files": ...}.
 # Generated from git show at the exact revision, not from current-tree hashes.
-REVIEWED_SOURCE_LOCK_SHA256 = '3eef9a9a1431914cae0f25f49a009a6103cf30caf0bc5f189918ad71fe91b71d'
+REVIEWED_SOURCE_LOCK_SHA256 = 'd504cae561835c3e98c3078ceb6d306805d1b1a550074ce3c01f2b9516227001'
 
 CRATES = 'trillionnium/crates/'
 TRANSFER = CRATES + 'trnm-types/src/transfer.rs'

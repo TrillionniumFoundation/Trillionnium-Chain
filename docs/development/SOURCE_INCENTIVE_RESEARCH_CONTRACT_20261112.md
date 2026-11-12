@@ -340,3 +340,24 @@ A failing or insufficient-evidence result returns nonzero. A passing tool result
 does not close actual source provenance, independent scientific evaluation,
 native funding/slashing integration, real-market behavior, general Sybil
 resistance, or a qualified post-quantum randomness source.
+
+## Independent retained-byte readback
+
+The [native receipt reader](../../scripts/experiments/read_source_incentive_native_v6.py)
+reads actual PNX1/ILF2 bytes, ignores fixture author ordinals, binds actual component
+senders to the installed source map, reconstructs all 3,855 ILM2 coefficients,
+materializes valid source-alone and source-omission models, and recomputes the
+installed 25-row evaluations. It checks source delta hashes, function/contribution
+IDs, the fixed-marker allocation Merkle root, the fresh V6 release ID, source
+record and complete game digests, reported caps, once-only floors, internal payouts,
+and the budget remainder. Reproduce after an actual native run with:
+
+    python3 scripts/experiments/read_source_incentive_native_v6.py --self-test --repo . --log /absolute/path/to/native-v6.log
+
+A positive readback is limited to retained bytes and reported payment arithmetic.
+It does not verify Ed25519 signatures, PoN work, ledger roots, actual funding,
+prepublication reservation authority, underlying source-control truth, actual
+claim-account execution, or prospective efficacy. Native execution receipts own
+those separately tested transition claims. A reader PASS cannot turn a failed
+native suite into a passing one. The historical-domain reader refusal and its
+corrected fresh-domain rerun are retained; no check was removed or relaxed.

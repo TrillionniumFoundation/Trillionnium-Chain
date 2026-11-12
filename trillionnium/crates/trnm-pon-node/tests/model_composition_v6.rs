@@ -997,6 +997,7 @@ fn native_source_release_reorg_reopen_and_duplicate_claim_are_atomic() {
     let mut tip = settings.genesis();
     let mut before_release_tip = tip;
     let mut released = [0; 32];
+    let mut admitted_source = None;
     for height in 1..=76 {
         let before = node.state_at(tip).unwrap();
         let txs = match height {
@@ -1016,6 +1017,21 @@ fn native_source_release_reorg_reopen_and_duplicate_claim_are_atomic() {
             before_release_tip = tip;
         }
         let state = node.state_at(tip).unwrap();
+        if height == 1 {
+            // Parent changes retire active contribution rows. Capture the actual
+            // admitted identity before that cleanup; the release keeps its own record.
+            let source = read_hash(
+                &object(&state, fixture.components[0].contribution_id)["model_evidence_v6"]
+                    ["source"],
+            );
+            for component in &fixture.components {
+                assert_eq!(
+                    object(&state, component.contribution_id)["model_evidence_v6"]["source"],
+                    hex::encode(source)
+                );
+            }
+            admitted_source = Some(source);
+        }
         continuity_v1::check_state(&state, height, &c).unwrap();
         for (_, value) in state.iter().filter(|(key, _)| key.starts_with("release:")) {
             assert!(serde_json::to_vec(value).unwrap().len() <= 4096);
@@ -1039,8 +1055,10 @@ fn native_source_release_reorg_reopen_and_duplicate_claim_are_atomic() {
     for allocation in &fixture.allocations {
         assert_eq!(record["claims"][hex::encode(allocation.cid)], 50_000);
     }
-    let source = read_hash(
-        &object(&completed.2, fixture.components[0].contribution_id)["model_evidence_v6"]["source"],
+    let source = admitted_source.expect("source captured at native intake");
+    assert_eq!(
+        record["model_composition_v6"]["sources"][0]["source"],
+        hex::encode(source)
     );
     assert_eq!(
         completed.2[&composition::source_key(0, source)]["reserved_units"],
