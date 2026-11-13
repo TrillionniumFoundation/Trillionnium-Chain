@@ -425,6 +425,166 @@ fn native_payment_rejects_late_context_replacement() {
 }
 
 #[test]
+fn native_no_gain_research_fee_preserves_escrow_source_and_chainwork() {
+    for backend in [
+        StateBackend::Legacy,
+        StateBackend::AuthenticatedV1,
+        StateBackend::PermanentAccountGrowthV2,
+    ] {
+        for resources in [
+            NativeBudgetResourcesV1::Contribution {
+                training_cpu_ns: 100,
+                parameter_bytes: 20,
+            },
+            NativeBudgetResourcesV1::Evaluation {
+                evaluation_cpu_ns: 100,
+                evaluated_examples: 20,
+            },
+        ] {
+            let dir = tempfile::tempdir().unwrap();
+            let path = dir.path().join("node");
+            let journal = dir.path().join("budget.sqlite");
+            let mut node = open(&path, backend);
+            let settings = node.settings.clone();
+            let genesis = settings.genesis();
+            let sponsor_before = balance(&node, public(0));
+            let provider_before = balance(&node, public(1));
+            let (task, reservation) = reserve_task(&settings, 1, 2_000, 20);
+            let reserve_fee = exact_fee(&settings, &reservation);
+            let first = mine(&mut node, genesis, vec![reservation]);
+            assert_eq!(
+                balance(&node, public(0)),
+                sponsor_before - 2_000 - reserve_fee
+            );
+            // This is a completed controlled output, not evidence of a trained
+            // model's improvement or an independent research result.
+            let output = [171; 32];
+            let source = NativeFundingSourceV1::Task(task);
+            for alias in [
+                NativeFundingSourceV1::Release(task),
+                NativeFundingSourceV1::Reward(task),
+                NativeFundingSourceV1::Quota(task),
+            ] {
+                assert!(node.observe_funding(alias).unwrap().row.is_none());
+            }
+            let config = configuration(&node);
+            let mut budgets = NativeBudgetStoreV1::open(&journal, config.clone()).unwrap();
+            let policy = NativeBudgetPolicyV1 {
+                budget: [172; 32],
+                source,
+                monetary_cap: 2_000,
+                deadline: 19,
+                resource_cap: resources.clone(),
+                max_inflight: 1,
+            };
+            budgets.open_budget(&mut node, policy.clone()).unwrap();
+            let claim = NativeBudgetClaimV1 {
+                claim: [173; 32],
+                budget: policy.budget,
+                subject: output,
+                beneficiary: public(1),
+                monetary_reservation: 2_000,
+                resource_reservation: resources.clone(),
+            };
+            budgets.reserve(&mut node, claim.clone()).unwrap();
+            let mut duplicate_budget = policy;
+            duplicate_budget.budget = [179; 32];
+            assert!(budgets.open_budget(&mut node, duplicate_budget).is_err());
+            budgets
+                .begin_effect(&mut node, claim.claim, [174; 32], output)
+                .unwrap();
+            budgets
+                .complete_effect(claim.claim, [174; 32], [175; 32])
+                .unwrap();
+            budgets
+                .record_resources(
+                    claim.claim,
+                    NativeResourceOutcomeV1::NoGain,
+                    Some(resources),
+                )
+                .unwrap();
+            let payload = [task.as_slice(), output.as_slice()].concat();
+            let receipt = signed(&settings, 1, 1, 4, payload.clone());
+            let settle = signed(&settings, 0, 2, 5, payload);
+            let receipt_fee = exact_fee(&settings, &receipt);
+            let settle_fee = exact_fee(&settings, &settle);
+            let operation = transaction_id(&settle);
+            assert!(
+                budgets
+                    .record_native_payment(&mut node, claim.claim, operation)
+                    .is_err(),
+                "an unexecuted signed transaction cannot pay the research fee"
+            );
+            let settled = mine(&mut node, first, vec![receipt, settle]);
+            let paid_state = working(&node);
+            let paid_work = node.record(settled).unwrap().work;
+            assert_eq!(
+                balance(&node, public(0)),
+                sponsor_before - 2_000 - reserve_fee - settle_fee
+            );
+            assert_eq!(
+                balance(&node, public(1)),
+                provider_before + 2_000 - receipt_fee
+            );
+            assert_eq!(paid_state[&source.key()]["remaining"], 0);
+            assert_eq!(paid_state[&source.key()]["status"], "settled");
+            assert!(!paid_state.keys().any(|key| key.starts_with("release:")));
+            assert_eq!(
+                budgets
+                    .record_native_payment(&mut node, claim.claim, operation)
+                    .unwrap(),
+                NativeBudgetReplayV1::New
+            );
+            assert_eq!(working(&node), paid_state);
+            assert_eq!(node.record(settled).unwrap().work, paid_work);
+            let report = budgets.report().unwrap();
+            assert_eq!(
+                report["budgets"][0]["historically_observed_native_gross_debit"],
+                2_000
+            );
+            assert_eq!(report["authorizes_native_payment"], false);
+            assert_eq!(
+                budgets
+                    .record_native_payment(&mut node, claim.claim, operation)
+                    .unwrap(),
+                NativeBudgetReplayV1::Done
+            );
+            assert_eq!(budgets.report().unwrap(), report);
+            // A same-height block with no paid research earns exactly the same
+            // target-derived work. Payment volume never multiplies chainwork.
+            let sibling = mine(&mut node, first, vec![]);
+            assert_eq!(node.record(sibling).unwrap().work, paid_work);
+            let fork = mine(&mut node, sibling, vec![]);
+            assert!(budgets
+                .reobserve_native_payment(&mut node, claim.claim)
+                .is_err());
+            assert_eq!(budgets.report().unwrap(), report);
+            let fork_state = working(&node);
+            let fork_work = node.record(fork).unwrap().work;
+            drop(node);
+            drop(budgets);
+            let mut node = open(&path, backend);
+            let mut budgets = NativeBudgetStoreV1::open(&journal, config).unwrap();
+            assert_eq!(budgets.report().unwrap(), report);
+            assert_eq!(
+                budgets
+                    .record_native_payment(&mut node, claim.claim, operation)
+                    .unwrap(),
+                NativeBudgetReplayV1::Done
+            );
+            assert_eq!(working(&node), fork_state);
+            assert_eq!(node.record(fork).unwrap().work, fork_work);
+            assert!(budgets
+                .reobserve_native_payment(&mut node, claim.claim)
+                .is_err());
+            let mut duplicate_claim = claim;
+            duplicate_claim.claim = [176; 32];
+            assert!(budgets.reserve(&mut node, duplicate_claim).is_err());
+        }
+    }
+}
+
+#[test]
 fn native_payment_bridge_task_exact_signed_transition_net_balance_and_reorg() {
     for backend in [
         StateBackend::Legacy,

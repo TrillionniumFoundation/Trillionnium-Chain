@@ -131,6 +131,30 @@ impl CellVersionRetentionStoreV3 {
         check_deadline(deadline)
     }
 
+    /// Read the original physical member identity for its separate native
+    /// effect owner. This grants neither funding nor another payload copy.
+    pub fn object_contract(
+        &self,
+        object_operation: CellDigestV1,
+        deadline: Instant,
+    ) -> CellResultV1<CellRetentionContractV1> {
+        self.check(deadline)?;
+        let result = self.retention.contract(object_operation)?;
+        check_deadline(deadline)?;
+        Ok(result)
+    }
+
+    /// Read an already completed physical retirement without adopting a new
+    /// successor. Native ownership and all rooted GC fences remain mandatory.
+    pub fn retired_object_readback(
+        &self,
+        object_operation: CellDigestV1,
+        deadline: Instant,
+    ) -> CellResultV1<Option<CellRetentionReadbackV1>> {
+        self.check(deadline)?;
+        self.retention.retired_readback(object_operation, deadline)
+    }
+
     /// Hold the complete catalog writer through physical retirement. Every
     /// reference, including Pending and expired-unretired roots, must be retired.
     pub fn retire_object(
