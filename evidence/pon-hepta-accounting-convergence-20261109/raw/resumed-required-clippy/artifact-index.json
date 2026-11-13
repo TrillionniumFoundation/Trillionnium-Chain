@@ -1,0 +1,104 @@
+{
+  "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "files": [
+    {
+      "bytes": 0,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/cargo-identity.stderr",
+      "relative_path": "cargo-identity.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 339,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/cargo-identity.stdout",
+      "relative_path": "cargo-identity.stdout",
+      "sha256": "c034ed37e1ee0ec102326f27e9b3b8fe6a481f8c8ad28df58a2e117b241c0f0e"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/preflight.stderr",
+      "relative_path": "preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 183,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/preflight.stdout",
+      "relative_path": "preflight.stdout",
+      "sha256": "118d30aadf0b69f8e01a98ce46f2eef79d0a32bbff3663d771d11bbbb3a564c6"
+    },
+    {
+      "bytes": 4061,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/preparation-commands.json",
+      "relative_path": "preparation-commands.json",
+      "sha256": "e523b691213414a657f113486dc8f8179dc24bd8972fa9e40a954958de8d8258"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/provider-version.stderr",
+      "relative_path": "provider-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 63,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/provider-version.stdout",
+      "relative_path": "provider-version.stdout",
+      "sha256": "ce02e695a9cdef937642d2397d874af20e0dbca21e9f43e0395d6809813a0547"
+    },
+    {
+      "bytes": 546,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/retained-provider-original.env",
+      "relative_path": "retained-provider-original.env",
+      "sha256": "6eb7842501dc1e58325aacbd0c461c5eb8fc1608bd374e14e6fe774066ca7e83"
+    },
+    {
+      "bytes": 3059,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/retained-provider-original.json",
+      "relative_path": "retained-provider-original.json",
+      "sha256": "194fa809eeb74ae99703a64f427eba28d5030063c772c46dcefa13c81ddbb9d9"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/rustc-identity.stderr",
+      "relative_path": "rustc-identity.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/rustc-identity.stdout",
+      "relative_path": "rustc-identity.stdout",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/strict-clippy-recorder.stderr",
+      "relative_path": "strict-clippy-recorder.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 137,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/strict-clippy-recorder.stdout",
+      "relative_path": "strict-clippy-recorder.stdout",
+      "sha256": "f3118af02c9fd0e01089c3dc6ef202c991cb6557eaa2e114b0ddff0986a122f8"
+    },
+    {
+      "bytes": 2452,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/strict-clippy.json",
+      "relative_path": "strict-clippy.json",
+      "sha256": "a08f59427ecbac8551d6f9af5ab287b38d0af86f0f503097ab89c022e092a964"
+    },
+    {
+      "bytes": 6704,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/strict-clippy.log",
+      "relative_path": "strict-clippy.log",
+      "sha256": "97b46f7ac20867973b519045b4c440f64b72f7dc32c6870aaf4fae046cffae91"
+    },
+    {
+      "bytes": 9887,
+      "path": "/home/qq/work/chain-c1-gates-resume-20261109-cadence-01/summary.json",
+      "relative_path": "summary.json",
+      "sha256": "3d32328ab822c2fecc39489b10f907677afaee88ad2b5599c6457a893b30df51"
+    }
+  ],
+  "qualification": "HOLD_NO_GO",
+  "schema": "chain-c1-gate-resume-artifacts-v1",
+  "tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978"
+}

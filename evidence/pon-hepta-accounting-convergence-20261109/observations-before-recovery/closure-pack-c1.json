@@ -1,0 +1,570 @@
+{
+  "schema": "pon-hepta-accounting-convergence-closure-pack-v1",
+  "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "qualification": "HOLD_NO_GO",
+  "delivery_index": {
+    "schema": "pon-hepta-accounting-convergence-delivery-index-v1",
+    "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+    "source_host": "ai395",
+    "root": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results",
+    "artifacts": [
+      {
+        "name": "PR_BODY_C1.md",
+        "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/PR_BODY_C1.md",
+        "size": 5707,
+        "sha256": "6abf1eae3d66bfa0d460db3f55580c7d34217952b80b2c3d8eb0933c84f9700b",
+        "version": "66306:46179350:5707:1794198323435477701:1794198323481750334",
+        "classification": "draft_pr_description"
+      },
+      {
+        "name": "observed-validation-summary-c1.json",
+        "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/observed-validation-summary-c1.json",
+        "size": 6864,
+        "sha256": "bd450ef04c9f66514f44bdd52115f825c29e5785909928971a9d2d9373695bdb",
+        "version": "66306:46179352:6864:1794198325705685927:1794198325726664227",
+        "classification": "reconstructed_observation_summary"
+      },
+      {
+        "name": "failure-and-gate-status-c1.json",
+        "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/failure-and-gate-status-c1.json",
+        "size": 3632,
+        "sha256": "2ee3c1d0916b81503c36f202c986a4269aac06dc8184475d47bcccdef6621445",
+        "version": "66306:46179354:3632:1794198329549036704:1794198329587516151",
+        "classification": "reconstructed_observation_summary"
+      },
+      {
+        "name": "remote-setup-02-process-read.json",
+        "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/remote-setup-02-process-read.json",
+        "size": 3954,
+        "sha256": "04bdac98dd1349e3c33bbc6bf83caa4c8cbe68bc82b5d275e317dddf2437c784",
+        "version": "66306:46179356:3954:1794198358187627890:1794198358211418857",
+        "classification": "original_h_process_payload_reserialized_with_raw_stream_bytes"
+      },
+      {
+        "name": "remote-setup-02-status.json",
+        "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/remote-setup-02-status.json",
+        "size": 732,
+        "sha256": "0f5e446694e22d50ab47756a109d038f3d54a0f7115e3c35cf44d5e51c64e57b",
+        "version": "66306:46179358:732:1794198360765343686:1794198360782320346",
+        "classification": "original_h_process_payload_reserialized_with_raw_stream_bytes"
+      },
+      {
+        "name": "remote-setup-03-process-read.json",
+        "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/remote-setup-03-process-read.json",
+        "size": 2401,
+        "sha256": "c1c6584cfc4a143312d8ebb180031447c9a1451bc2cfa554daabd78712a5b39c",
+        "version": "66306:46179360:2401:1794198363361297271:1794198363377220921",
+        "classification": "original_h_process_payload_reserialized_with_raw_stream_bytes"
+      },
+      {
+        "name": "remote-setup-03-status.json",
+        "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/remote-setup-03-status.json",
+        "size": 733,
+        "sha256": "c77b688b0c023c3482169a331c49b1f6e64ae96fd461778a2cf9e42baea18951",
+        "version": "66306:46179362:733:1794198367752379899:1794198367783052127",
+        "classification": "original_h_process_payload_reserialized_with_raw_stream_bytes"
+      },
+      {
+        "name": "source-inputs-c1-copy.json",
+        "path": "/home/qq/work/chain-hepta-accounting-d9bb-20261109-results/source-inputs-c1-copy.json",
+        "size": 4073,
+        "sha256": "bc53319e019624efec86e8f8a4228035dd231b229dd9c61613349bc3f4a0c7c6",
+        "version": "66306:46179364:4073:1794198372557119829:1794198372577868453",
+        "classification": "byte_exact_copy_of_committed_provenance_manifest"
+      }
+    ],
+    "small_bundle": {
+      "path": "/home/qq/chain-hepta-accounting-d9bb-candidate-c1.bundle",
+      "size": 26924,
+      "sha256": "147a9587ea34c2622875892690a048cdf6efade5053c3a796a9b732f194328ef",
+      "prerequisite": "fd1cf356fcc557dbd2aee2318ffc524d17aa02f0",
+      "ref": "HEAD",
+      "commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e"
+    },
+    "available_raw": {
+      "setup_failed_job": "1a1be7a3223-5e21-103",
+      "setup_success_job": "1a1be7bb27b-5e21-110",
+      "note": "Process payload JSON is reserialized; bytes_hex contains the original stdout/stderr bytes. Both streams were read from offset 0 to EOF. Status records confirm complete/durable outputs.",
+      "scope": "Remote checkout/import/preflight preparation; no remote native tests.",
+      "candidate_source_manifest": "The copied source-inputs manifest was read as exact binary bytes from C1 on ai395."
+    },
+    "unavailable_local_raw": {
+      "root": "/workspace/scratch/d9bbb5ad0229/accounting-convergence-setup",
+      "reason": "Execution workspace became unavailable before artifact transfer.",
+      "known_locations": [
+        "results/summary.json and raw Python logs",
+        "unchanged-native-rerun/summary.json and native/cross-language raw logs",
+        "source-checks/summary.json and graph/format/CI command logs",
+        "full-source-before.json",
+        "gates-c1/ partial receipts",
+        "selected-source.json"
+      ],
+      "final_gate_session": 58416,
+      "final_gate_terminal": "not observed",
+      "retained_native_build_source": "91dd3082633ea0b3a5ec9b0ed91f28603229be01",
+      "reconstruction_warning": "Observed-validation summary records seen results; it must not substitute for missing original command receipts."
+    },
+    "publishing_status": "Not published by this agent. Parent may publish exact C1 as draft with HOLD.",
+    "qualification": "HOLD_NO_GO"
+  },
+  "pr_body": "## Why this change is needed\n\nThe native factored Hepta work in #824 and the work-accounting/service changes in #828 existed on separate branches. This candidate combines the already reviewed changes on the #824 source line, so a single source revision contains native low-rank execution, stable shared-work identity and the reference settlement behavior.\n\n## Resulting behavior\n\n- Preserve the native `B(Ax)` execution, exact factor comparison, original verifier, actual-versus-dense counters and payment-readback fences from #824.\n- Keep each fixed packet work identifier anchored to its original producer slot across carrier and receiver layouts. Shared work retains one identity when the same packet is presented through those layouts.\n- Retain paired reference outcome/result/cost/fee pins across monetary branch rewind. `Unknown` remains nonterminal; the pins do not authorize redispatch, payment or new chainwork.\n- Preserve the qualified base service fee for an evaluated `NoUpdate`. Improvement bonuses and consensus credit remain separate.\n- Preserve owner fences, zero-credit policy and `HOLD_NO_GO`.\n\nThe additional settlement metadata is in-memory reference state. Durable native effect ownership remains a separate qualification requirement.\n\n## Exact source and scope\n\n| Item | Identity |\n| --- | --- |\n| Candidate C1 | `e8f81ca15634d0393e7bc6257193b4dbe88d9b2e` |\n| Candidate tree | `563992ef5bd3db98d95b7e249ea67cbbec2e2978` |\n| Parent / #824 source | `fd1cf356fcc557dbd2aee2318ffc524d17aa02f0` |\n| Selective source / #828 | `3388a6810b5ae8f41f238f878d56bcc5669bc8b9` |\n| Branch | `fix/chain-hepta-accounting-convergence-20261109-d9bb` |\n\nThe diff changes 12 files: four Python implementation/analysis files, three Python test files, two specifications, the sole development plan, the current plan blob entry in the cross-branch corpus configuration, and a new source-provenance manifest. Nine source files are byte-identical selections from #828. The source manifest records their commits, blobs, byte counts and SHA256 values, including `source_is_ancestor: false`.\n\nProvenance: [source-inputs.json](evidence/pon-hepta-accounting-convergence-20261109/source-inputs.json).\n\nNative Rust, lockfiles, toolchain, signed domains and historical evidence remain unchanged. Only the current development-plan blob pin is updated; historical validation pins are preserved.\n\n## Observed validation\n\n| Validation | Observed result and scope |\n| --- | --- |\n| C1 Python: fixed packet cost identity | 50 passed |\n| C1 Python: offline fanout reanalysis | 21 passed |\n| C1 Python: service settlement / NoUpdate | 38 passed |\n| C1 Python: legal strategies | 19 passed |\n| C1 Python: low rank | 6 passed |\n| C1 Python total | 134 passed |\n| C1 Python calling retained native grouped CLI | 14 passed, 0 skipped |\n| Retained crypto binary rerun | 186 passed |\n| Retained service settlement binary rerun | 71 passed |\n| Retained Node task-operation binary rerun | 4 passed |\n| Retained Node NoGain fee/reopen/reorg binary rerun | 2 passed |\n| Locked offline dependency graphs | 26 workspace / 176 default; 26 / 181 all features |\n| Rust 1.95 formatting | Passed |\n| CI contract and distributed source inventory checks | Passed |\n| Development/staged preflight and diff check | Passed |\n| Nine selective-source SHA256 comparisons | Passed |\n| Original full raw-source verifier on C1 | 26,132 tracked entries / 2,495,315,152 bytes verified |\n\n**Native provenance:** the 263 native tests above actually reran retained binaries originally built from `91dd3082633ea0b3a5ec9b0ed91f28603229be01`. Their native source tree is `1305c43ca8891f6a07fcec493c32f007679e2416`. The diff from that revision to C1 is empty for `trillionnium` and `rust-toolchain.toml`; individual binary hashes are retained in the observed-validation summary. This work did not freshly compile those binaries from C1.\n\nThe full raw-source check used the existing verifier unchanged and reported candidate C1, the tree above and `tracked_worktree_verified: true`. This source-identity check does not execute tests.\n\n## Evidence availability and incomplete checks\n\nThe local workspace became unavailable during the final sequential gate runner. Terminal outcomes for source-integrity negatives, CI-contract negatives, corpus negatives, corpus identity, repository links and strict all-targets/all-features clippy were not observed. These gates remain **unconfirmed**.\n\nThe detailed local validation logs were not transferred before the outage. The accompanying observed-validation summary reconstructs observations from tool output and labels that limitation explicitly. It is separate from the original raw receipts. Complete raw remote setup process reads/status records are available; they establish checkout and preflight preparation only.\n\nThe C1 source and small prerequisite bundle are preserved on `ai395`. Bundle SHA256: `147a9587ea34c2622875892690a048cdf6efade5053c3a796a9b732f194328ef` (26,924 bytes; prerequisite #824 head). No evidence-only child commit was created.\n\n## Remaining gates\n\nThis PR remains **draft / HOLD_NO_GO**. The inherited public-readiness reader mismatch, QROM lifetime source pin, QROM implementation fixture bound and resource campaign gaps remain open; this candidate does not repin them to claim success.\n\nQualification still requires the cheapest legal classical/quantum lifecycle-cost analysis, joint time/difficulty/credit checks, independent learning/cost/retention, real funding/effects, WAN/public-service validation and independent recovery evidence. The retained native rank-1 fixture is not a speedup or minimum-cost proof. Main merge, production activation and deployment are outside this candidate.\n",
+  "observed_validation_summary": {
+    "schema": "pon-hepta-accounting-convergence-observed-validation-v1",
+    "record_kind": "reconstruction_of_observed_tool_outputs",
+    "raw_local_validation_receipts_transferred": false,
+    "raw_local_validation_receipts_state": "Local workspace became unavailable before transfer; retained local paths are indexed separately. This summary is not an original command receipt.",
+    "candidate_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+    "candidate_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+    "parent_commit": "fd1cf356fcc557dbd2aee2318ffc524d17aa02f0",
+    "selective_source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+    "selective_source_is_ancestor": false,
+    "branch": "fix/chain-hepta-accounting-convergence-20261109-d9bb",
+    "diff": {
+      "files": 12,
+      "insertions": 863,
+      "deletions": 28,
+      "exact_source_files": 9
+    },
+    "source_manifest": {
+      "path": "evidence/pon-hepta-accounting-convergence-20261109/source-inputs.json",
+      "sha256": "bc53319e019624efec86e8f8a4228035dd231b229dd9c61613349bc3f4a0c7c6"
+    },
+    "implementation_scope": {
+      "native_rust_changed": false,
+      "toolchain_changed": false,
+      "lockfiles_changed": false,
+      "historical_evidence_changed": false,
+      "work_identity": "Fixed packet identity follows original producer slots across carrier and receiver layouts.",
+      "settlement": "Reference outcome/result/cost/fee paired pins survive monetary branch rewind; Unknown is nonterminal.",
+      "state_boundary": "The added reference metadata is in memory; this change does not establish a durable native effect authority.",
+      "service_fee": "Evaluated NoUpdate retains the qualified base service fee; improvement bonus remains separate.",
+      "consensus_credit": "Owner fences and zero-credit/HOLD remain. Model scores, quotes and votes do not add chainwork."
+    },
+    "observed_passes": {
+      "candidate_python": {
+        "total": 134,
+        "suites": [
+          {
+            "name": "grouped_fresh_deployment_cost_v0",
+            "passed": 50
+          },
+          {
+            "name": "grouped_fanout_reanalysis_v1",
+            "passed": 21
+          },
+          {
+            "name": "service_work_settlement_v1",
+            "passed": 38
+          },
+          {
+            "name": "legal strategy",
+            "passed": 19
+          },
+          {
+            "name": "low-rank",
+            "passed": 6
+          }
+        ]
+      },
+      "candidate_python_to_retained_native_cli": {
+        "passed": 14,
+        "skipped": 0
+      },
+      "retained_native_binary_reruns": {
+        "original_build_source_commit": "91dd3082633ea0b3a5ec9b0ed91f28603229be01",
+        "fresh_cargo_build": false,
+        "unchanged_native_tree": "1305c43ca8891f6a07fcec493c32f007679e2416",
+        "source_equality_check": "git diff 91dd3082633ea0b3a5ec9b0ed91f28603229be01 e8f81ca15634d0393e7bc6257193b4dbe88d9b2e -- trillionnium rust-toolchain.toml",
+        "source_equality_check_empty": true,
+        "total": 263,
+        "binaries": [
+          {
+            "name": "crypto lib",
+            "passed": 186,
+            "sha256": "2c65471c09b950b86b70bc03d81e9e70496224dfd2e5ebfb72a2e606cfa55918"
+          },
+          {
+            "name": "service settlement",
+            "passed": 71,
+            "sha256": "39c7dbe4c390d24cccdcc68273ef48e1741d82051678d4a7ae00396329d635bd"
+          },
+          {
+            "name": "Node task operation v2",
+            "passed": 4,
+            "sha256": "a89d34a4b73a235482c98d44edc60c14ce6ed0f64c93628e615adb982beb0ee3"
+          },
+          {
+            "name": "Node NoGain fee/reopen/reorg",
+            "passed": 2,
+            "sha256": "cb3ece326ba34891643d6eb3c0aad429e423497df1bd4e9b4d780d48f9413352"
+          }
+        ],
+        "grouped_example_sha256": "8479dc70f2b2db1245bfe21abb58ea5960bc469a86c3d50b9c3e78599e7b80ea",
+        "provider": {
+          "name": "OpenSSL",
+          "version": "3.5.9",
+          "sha256": "2b1c8c97c617f33f76bb38ca6aac088cd9ea41cf07244d755b4a41825d6af05b"
+        }
+      },
+      "locked_offline_default_graph": {
+        "workspace_packages": 26,
+        "total_packages": 176
+      },
+      "locked_offline_all_features_graph": {
+        "workspace_packages": 26,
+        "total_packages": 181
+      },
+      "formatting": {
+        "command": "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check",
+        "observed": "PASS"
+      },
+      "ci_contract": {
+        "command": "python3 -B scripts/ci/check_ci_contract.py",
+        "observed": "PASS"
+      },
+      "distributed_source_inventory": {
+        "command": "python3 -B scripts/refresh_distributed_source_inventory.py --check",
+        "observed": "PASS"
+      },
+      "preflight_dev": "PASS",
+      "preflight_staged": "PASS",
+      "git_diff_check": "PASS",
+      "nine_selective_source_files_match": "PASS",
+      "original_full_raw_source_verifier": {
+        "command": "python3 scripts/ci/verify_ci_source.py --kind head --expected-head e8f81ca15634d0393e7bc6257193b4dbe88d9b2e --output <local full-source-before.json>",
+        "observed_output": {
+          "base": null,
+          "candidate": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+          "tested_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 2495315152,
+          "tracked_entries": 26132,
+          "tracked_worktree_verified": true
+        }
+      },
+      "preliminary_sparse_manifest": {
+        "entries": 4890,
+        "omitted_historical_evidence_entries": 21242,
+        "before_after_sha256": "a821396cf6ea35c928e6bf598ae4d016ada773688b67134f1305d3b59eb04ba4",
+        "scope": "Preliminary materialized-file equality only; full source was subsequently verified by the unmodified full raw-source verifier."
+      }
+    },
+    "unconfirmed_final_gate_runner": {
+      "session_id": 58416,
+      "terminal_observed": false,
+      "reason": "Local execution workspace unavailable before terminal gate output was observed.",
+      "checks": [
+        "source integrity negatives",
+        "CI contract negatives",
+        "corpus negatives",
+        "corpus identity",
+        "repository links",
+        "strict all-targets all-features clippy"
+      ],
+      "strict_clippy_command": "cargo +1.95.0 clippy --manifest-path trillionnium/Cargo.toml --locked --offline --workspace --all-targets --all-features -- -D warnings",
+      "passed": false
+    },
+    "remote_setup": {
+      "host": "ai395",
+      "checkout": "/home/qq/work/chain-hepta-accounting-d9bb-20261109",
+      "job_id": "1a1be7bb27b-5e21-110",
+      "exit_code": 0,
+      "output_complete": true,
+      "output_durable": true,
+      "scope": "Checkout/import/preflight preparation only; no remote native validation was launched."
+    },
+    "qualification": "HOLD_NO_GO",
+    "ready_for_merge": false,
+    "activation_authorized": false,
+    "evidence_child_commit_created": false
+  },
+  "failure_and_gate_status": {
+    "schema": "pon-hepta-accounting-convergence-failure-register-v1",
+    "candidate_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+    "record_kind": "Observed outcome register; only explicitly indexed remote process records retain raw bytes here.",
+    "observations": [
+      {
+        "id": "local-shared-clone",
+        "outcome": "failed",
+        "detail": "Could not lock refs/remotes/origin/HEAD. Replaced by isolated gitdir/alternates and sparse checkout; source repository preserved."
+      },
+      {
+        "id": "sparse-add-option",
+        "outcome": "failed_then_corrected",
+        "detail": "git sparse-checkout add --no-cone unsupported. Existing non-cone setting used."
+      },
+      {
+        "id": "historical-evidence-reflink",
+        "outcome": "unsupported",
+        "detail": "Reflink probe returned Operation not supported. Immutable historical evidence was materialized with hardlinks for the original full-source verifier."
+      },
+      {
+        "id": "remote-prep-01",
+        "job_id": "1a1be781f37-5e21-f5",
+        "outcome": "launch_unknown",
+        "detail": "Job directory/status unavailable; read-only reconciliation job 1a1be79207d-5e21-f9 completed with exit 0 and showed candidate/results directories absent."
+      },
+      {
+        "id": "remote-prep-02",
+        "job_id": "1a1be7a3223-5e21-103",
+        "outcome": "failed",
+        "exit_code": 1,
+        "detail": "Preflight passed; local clone of a promisor repository could not fetch missing blob 45a43d40fcb87760835c0efd4c641a5466c2ab36. Replaced by independent GitHub clone plus exact bundle."
+      },
+      {
+        "id": "remote-prep-03",
+        "job_id": "1a1be7bb27b-5e21-110",
+        "outcome": "passed",
+        "exit_code": 0,
+        "detail": "Independent clone, exact bundle import, branch checkout, development preflight and toolchain listing completed."
+      },
+      {
+        "id": "remote-provider-probes",
+        "outcome": "unconfirmed",
+        "detail": "Read-only shell calls timed out or returned no usable result; one h_view returned SSH connection closed. No remote native tests launched."
+      },
+      {
+        "id": "local-final-gate-runner",
+        "session_id": 58416,
+        "outcome": "terminal_unobserved",
+        "detail": "Workspace became unavailable before final gate outputs could be read. Includes strict clippy; remains unpassed."
+      }
+    ],
+    "inherited_open_gates": [
+      {
+        "id": "public-readiness-reader",
+        "state": "HOLD",
+        "detail": "Checker expects growth_observation_only while current opener uses observation_only with broader observation-only store handling. Existing opener-body hash contract was not changed."
+      },
+      {
+        "id": "qrom-lifetime",
+        "state": "HOLD",
+        "detail": "Historical store.rs source pin mismatch retained."
+      },
+      {
+        "id": "qrom-implementation",
+        "state": "HOLD",
+        "detail": "Historical fixture bound 9233 versus current file 11172 retained."
+      },
+      {
+        "id": "resource-campaign",
+        "state": "HOLD",
+        "detail": "Existing failed or unconfirmed resource results were not rerun or repinned."
+      },
+      {
+        "id": "lifecycle-cost-and-activation",
+        "state": "HOLD_NO_GO",
+        "detail": "Cheapest legal classical/quantum lifecycle cost, joint time/difficulty/credit, independent learning/cost/retention, real funding/effects, WAN/public service and independent recovery qualification remain open."
+      }
+    ],
+    "constraints_preserved": {
+      "owner_fences": true,
+      "zero_credit": true,
+      "NoUpdate_base_fee": true,
+      "signed_domains_unchanged": true,
+      "historical_pins_unchanged_except_current_plan_blob": true
+    },
+    "overall": "DRAFT_HOLD_NO_GO"
+  },
+  "source_inputs": {
+    "schema": "pon-hepta-accounting-selective-source-v1",
+    "base": "fd1cf356fcc557dbd2aee2318ffc524d17aa02f0",
+    "selective_source": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+    "source_is_ancestor": false,
+    "files": [
+      {
+        "path": "formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py",
+        "source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+        "source_blob": "d7fd9ffc55260b5dc1608a24818b3a21b2ae1add",
+        "bytes": 25674,
+        "sha256": "aa02dcc782b45d70975ac8024a9d5c6fc953ec153a5108655482fb61c1fff2db",
+        "base_sha256": "eeec2e1cc1fa5b269635d3dfa1fcf800325b5d3a6ebe5dba2c935638d4bf3773"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/service_work_settlement_v1.py",
+        "source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+        "source_blob": "7eb9aeca054c1d7971e31d95cc1157ea18e4dc25",
+        "bytes": 31262,
+        "sha256": "e9fcb38c6f964678fb24de545a65085ab8dbdf6eb4b470aefc98626dfe05e899",
+        "base_sha256": "42f8b451b9ccbfab0ee2ac7c432f5f4ff6042710620e13e407d69e6f6a32dda2"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/experiments/grouped_fresh_fanout_v0.py",
+        "source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+        "source_blob": "c7efd801684389233fe2f6d2f064b08a7ae5022c",
+        "bytes": 43417,
+        "sha256": "aa1aef8264333b91e6df4adb8a3ccf94207d02123ed3301f2d63104693156af3",
+        "base_sha256": "2eb7a2aa940dcaf53be76bea0ae5bbc0a72c7dac5337fd5516a620e9be614b94"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/experiments/reanalyze_grouped_fanout_v1.py",
+        "source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+        "source_blob": "dc4371daae3989a22adc54507b3e1a5a90f27483",
+        "bytes": 11203,
+        "sha256": "c1663aa6dea82fcd8dace728b8213aa4cb6359f149805b4e80fb38ea02af9b5e",
+        "base_sha256": "3ac9a625421addd573aba827da1830ab6579af17fff82cf24dcf35222d1208a9"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_grouped_fanout_reanalysis_v1.py",
+        "source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+        "source_blob": "a6a31d3a393ca6eb49616acfa17f3a761e359e03",
+        "bytes": 19697,
+        "sha256": "aa5d1a1a1c01e505a07378af9b16b37e666f1e1be5916e9cff94021af9964624",
+        "base_sha256": "03f24af7ba0db3d05ef87220803b6511fbb678df108b96677f00950c0576ca56"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_grouped_fresh_deployment_cost_v0.py",
+        "source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+        "source_blob": "f73bf4181f985779895f2d58c3cd63be7f26deb1",
+        "bytes": 35737,
+        "sha256": "af0ca743bd003762ffbabfb4f8d0262ca698a221c5c3189b38e98edfe9438eeb",
+        "base_sha256": "9ce117792b57c2ee6656f2141094404b2eb829d0272910fe3481980b89c90dab"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_service_work_settlement_v1.py",
+        "source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+        "source_blob": "c9fb542ea739cef718f7d8b2a291bb1d6c1b7b07",
+        "bytes": 35328,
+        "sha256": "0fd97146f9bb9cb10abfa03b6929381627a9ab9e4f257da63d57a5732b5b4023",
+        "base_sha256": "bf51ff532d996962f44b574435020f83bef0566186dacc7d6fe191889f5c77a6"
+      },
+      {
+        "path": "docs/development/specs/pon/GROUPED_SECURITY_WORK_METERING_V1.md",
+        "source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+        "source_blob": "987884cf40fa02a6a58844db23dced775ee2d433",
+        "bytes": 12385,
+        "sha256": "004ec14765fe815a13f40e443158a8e146e3ff351f1fdfecf98cd1320106fac3",
+        "base_sha256": "66bec0d9bf69587715b02c2c04d194163433533318d5f41bddff07dc811fe1c1"
+      },
+      {
+        "path": "docs/development/specs/pon/SERVICE_WORK_SETTLEMENT_V1.md",
+        "source_commit": "3388a6810b5ae8f41f238f878d56bcc5669bc8b9",
+        "source_blob": "2ecd6eca2966ac88dbc30294dd9a50b27ee25e09",
+        "bytes": 20274,
+        "sha256": "7a4aa9c1b7a05dcb0b774c13311115518ad2dbc381f028f765758198879f56de",
+        "base_sha256": "f478337bf8cc6dec859ae5b06a573a718ac29fa4a375e42042f3076bee10d550"
+      }
+    ],
+    "native_rust_changed": false,
+    "production_activation": false,
+    "qualification": "HOLD_NO_GO"
+  },
+  "remote_setup_02_process_read": {
+    "audit_recorded": true,
+    "job_id": "1a1be7a3223-5e21-103",
+    "stderr": {
+      "bytes_hex": "436c6f6e696e6720696e746f20272f686f6d652f71712f776f726b2f636861696e2d68657074612d6163636f756e74696e672d643962622d3230323631313039272e2e2e0a72656d6f74653a207761726e696e673a206c617a79206665746368696e672064697361626c65643b20736f6d65206f626a65637473206d6179206e6f7420626520617661696c61626c6520202020202020200a72656d6f74653a20666174616c3a20636f756c64206e6f7420666574636820343561343364343066636238373736303833356330656664346336343161353436366332616233362066726f6d2070726f6d69736f722072656d6f746520202020202020200a6572726f723a206769742075706c6f61642d7061636b3a206769742d7061636b2d6f626a6563747320646965642077697468206572726f722e0a666174616c3a206769742075706c6f61642d7061636b3a2061626f7274696e672064756520746f20706f737369626c65207265706f7369746f727920636f7272757074696f6e206f6e207468652072656d6f746520736964652e0a72656d6f74653a2061626f7274696e672064756520746f20706f737369626c65207265706f7369746f727920636f7272757074696f6e206f6e207468652072656d6f746520736964652e0a666174616c3a206561726c7920454f460a666174616c3a2066657463682d7061636b3a20696e76616c696420696e6465782d7061636b206f75747075740a54726163656261636b20286d6f737420726563656e742063616c6c206c617374293a0a202046696c6520223c737464696e3e222c206c696e652031302c20696e203c6d6f64756c653e0a202046696c6520222f7573722f6c69622f707974686f6e332e31342f73756270726f636573732e7079222c206c696e65203537382c20696e2072756e0a2020202072616973652043616c6c656450726f636573734572726f7228726574636f64652c2070726f636573732e617267732c0a20202020202020202020202020202020202020202020202020202020206f75747075743d7374646f75742c207374646572723d737464657272290a73756270726f636573732e43616c6c656450726f636573734572726f723a20436f6d6d616e6420275b27676974272c2027636c6f6e65272c20272d2d736861726564272c20272d2d6e6f2d636865636b6f7574272c20272f686f6d652f71712f776f726b2f636861696e2d706f6e2d6a6f696e742d3538666435392d3230323631313039272c20272f686f6d652f71712f776f726b2f636861696e2d68657074612d6163636f756e74696e672d643962622d3230323631313039275d272072657475726e6564206e6f6e2d7a65726f206578697420737461747573203132382e0a",
+      "eof": true,
+      "next_offset": 1010,
+      "offset": 0,
+      "size": 1010,
+      "text": "Cloning into '/home/qq/work/chain-hepta-accounting-d9bb-20261109'...\nremote: warning: lazy fetching disabled; some objects may not be available        \nremote: fatal: could not fetch 45a43d40fcb87760835c0efd4c641a5466c2ab36 from promisor remote        \nerror: git upload-pack: git-pack-objects died with error.\nfatal: git upload-pack: aborting due to possible repository corruption on the remote side.\nremote: aborting due to possible repository corruption on the remote side.\nfatal: early EOF\nfatal: fetch-pack: invalid index-pack output\nTraceback (most recent call last):\n  File \"<stdin>\", line 10, in <module>\n  File \"/usr/lib/python3.14/subprocess.py\", line 578, in run\n    raise CalledProcessError(retcode, process.args,\n                             output=stdout, stderr=stderr)\nsubprocess.CalledProcessError: Command '['git', 'clone', '--shared', '--no-checkout', '/home/qq/work/chain-pon-joint-58fd59-20261109', '/home/qq/work/chain-hepta-accounting-d9bb-20261109']' returned non-zero exit status 128.\n"
+    },
+    "stdout": {
+      "bytes_hex": "7b22726573756c74223a202250415353222c20226d6f6465223a20222d2d6175646974222c202270726f6a656374223a20227472696c6c696f6e6e69756d2d636861696e222c20227061636b61676573223a2032362c20226272616e6368223a20226669782f636861696e2d706f6e2d6a6f696e742d7265736f757263652d636f6e74726163742d32303236313130392d353866643539222c202272656d6f74655f706f6c6963795f6d757461746564223a2066616c73657d0a",
+      "eof": true,
+      "next_offset": 186,
+      "offset": 0,
+      "size": 186,
+      "text": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-pon-joint-resource-contract-20261109-58fd59\", \"remote_policy_mutated\": false}\n"
+    }
+  },
+  "remote_setup_02_status": {
+    "at_unix_ms": 1794197057234,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 1,
+    "job_id": "1a1be7a3223-5e21-103",
+    "launch_nonce": "994ef66f94fc61831f68a8609a2caaa2",
+    "log_bytes": {
+      "stderr": {
+        "seen": 1010,
+        "stored": 1010
+      },
+      "stdout": {
+        "seen": 186,
+        "stored": 186
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "failed",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "remote_setup_03_process_read": {
+    "audit_recorded": true,
+    "job_id": "1a1be7bb27b-5e21-110",
+    "stderr": {
+      "bytes_hex": "436c6f6e696e6720696e746f20272f686f6d652f71712f776f726b2f636861696e2d68657074612d6163636f756e74696e672d643962622d3230323631313039272e2e2e0a46726f6d202f686f6d652f71712f636861696e2d68657074612d6163636f756e74696e672d643962622d63616e6469646174652d63312e62756e646c650a202a205b6e6577207265665d20202020202020202048454144202020202020202d3e206669782f636861696e2d68657074612d6163636f756e74696e672d636f6e76657267656e63652d32303236313130392d643962620a537769746368656420746f206272616e636820276669782f636861696e2d68657074612d6163636f756e74696e672d636f6e76657267656e63652d32303236313130392d64396262270a",
+      "eof": true,
+      "next_offset": 293,
+      "offset": 0,
+      "size": 293,
+      "text": "Cloning into '/home/qq/work/chain-hepta-accounting-d9bb-20261109'...\nFrom /home/qq/chain-hepta-accounting-d9bb-candidate-c1.bundle\n * [new ref]         HEAD       -> fix/chain-hepta-accounting-convergence-20261109-d9bb\nSwitched to branch 'fix/chain-hepta-accounting-convergence-20261109-d9bb'\n"
+    },
+    "stdout": {
+      "bytes_hex": "7b22726573756c74223a202250415353222c20226d6f6465223a20222d2d646576222c202270726f6a656374223a20227472696c6c696f6e6e69756d2d636861696e222c20227061636b61676573223a2032362c20226272616e6368223a20226669782f636861696e2d68657074612d6163636f756e74696e672d636f6e76657267656e63652d32303236313130392d64396262222c202272656d6f74655f706f6c6963795f6d757461746564223a2066616c73657d0a737461626c652d7838365f36342d756e6b6e6f776e2d6c696e75782d676e7520286163746976652c2064656661756c74290a312e39352e302d7838365f36342d756e6b6e6f776e2d6c696e75782d676e750a312e39362e302d7838365f36342d756e6b6e6f776e2d6c696e75782d676e750a312e39382e302d7838365f36342d756e6b6e6f776e2d6c696e75782d676e750a5052455041524544202f686f6d652f71712f776f726b2f636861696e2d68657074612d6163636f756e74696e672d643962622d32303236313130390a",
+      "eof": true,
+      "next_offset": 389,
+      "offset": 0,
+      "size": 389,
+      "text": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-hepta-accounting-convergence-20261109-d9bb\", \"remote_policy_mutated\": false}\nstable-x86_64-unknown-linux-gnu (active, default)\n1.95.0-x86_64-unknown-linux-gnu\n1.96.0-x86_64-unknown-linux-gnu\n1.98.0-x86_64-unknown-linux-gnu\nPREPARED /home/qq/work/chain-hepta-accounting-d9bb-20261109\n"
+    }
+  },
+  "remote_setup_03_status": {
+    "at_unix_ms": 1794197325144,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1be7bb27b-5e21-110",
+    "launch_nonce": "247206b8aa7aa8b75201031ce5142564",
+    "log_bytes": {
+      "stderr": {
+        "seen": 293,
+        "stored": 293
+      },
+      "stdout": {
+        "seen": 389,
+        "stored": 389
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  }
+}

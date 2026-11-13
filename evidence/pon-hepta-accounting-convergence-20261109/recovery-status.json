@@ -1,0 +1,155 @@
+{
+  "schema": "pon-hepta-accounting-convergence-recovery-status-v1",
+  "recorded_utc": "2026-11-09T04:51:32.578368+00:00",
+  "source_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "source_tree": "563992ef5bd3db98d95b7e249ea67cbbec2e2978",
+  "source_pr": 832,
+  "parent_source_commit": "fd1cf356fcc557dbd2aee2318ffc524d17aa02f0",
+  "evidence_child_of": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "scope": "Evidence-only child; source code, old pins and runtime behavior remain unchanged.",
+  "raw_local_logs_recovered": true,
+  "original_stream_hashes_verified": 30,
+  "original_completed_tests_rerun_during_recovery": false,
+  "retained_test_counts": {
+    "candidate_python": 134,
+    "candidate_python_to_actual_retained_cli": 14,
+    "retained_native_binary_rerun": 263
+  },
+  "retained_native_provenance": {
+    "original_build_source": "91dd3082633ea0b3a5ec9b0ed91f28603229be01",
+    "fresh_cargo_build": false,
+    "native_git_tree": "1305c43ca8891f6a07fcec493c32f007679e2416",
+    "provider_sha256": "2b1c8c97c617f33f76bb38ca6aac088cd9ea41cf07244d755b4a41825d6af05b",
+    "original_receipt": "raw/local-original/unchanged-native-rerun/summary.json"
+  },
+  "resumed_clippy_provenance": {
+    "source_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+    "new_target": true,
+    "argv": [
+      "cargo",
+      "+1.95.0",
+      "clippy",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "provider_sha256": "f98be2651b5c922e6f51cefa7d71389df3b3d87eae543de1be4fbbb34685980f",
+    "native_tests_executed": 0,
+    "log_sha256": "97b46f7ac20867973b519045b4c440f64b72f7dc32c6870aaf4fae046cffae91",
+    "process_job_id": "1a1be9e96a7-5e21-1b7",
+    "terminal_exit_code": 0,
+    "output_complete": true,
+    "output_durable": true
+  },
+  "initial_interrupted_attempt": {
+    "session_id": 58416,
+    "terminal_observed": false,
+    "receipt_status": "running",
+    "exit_code": null,
+    "credited_as_pass": false,
+    "details": "interrupted-attempt-recovery.json"
+  },
+  "resumed_required_gates": [
+    {
+      "label": "source-negatives",
+      "status": "PASS",
+      "exit_code": 0,
+      "receipt": "raw/resumed-required-local/source-negatives.json",
+      "log_sha256": "5264fe9aba0784a5cfa90e1c1825410255363f412e27420d2ffa46ab9fec7052",
+      "before_after_source_equal": true
+    },
+    {
+      "label": "ci-negatives",
+      "status": "PASS",
+      "exit_code": 0,
+      "receipt": "raw/resumed-required-local/ci-negatives.json",
+      "log_sha256": "11637fac81390f157b102a3d410404d1703c09e04c8b0ddfbb1167482293dcde",
+      "before_after_source_equal": true
+    },
+    {
+      "label": "corpus-negatives",
+      "status": "PASS",
+      "exit_code": 0,
+      "receipt": "raw/resumed-required-local/corpus-negatives.json",
+      "log_sha256": "f1e11d517a7931415a9a26f70801c7cf0419d53c046d8edd1280831214455dec",
+      "before_after_source_equal": true
+    },
+    {
+      "label": "corpus-identity",
+      "status": "PASS",
+      "exit_code": 0,
+      "receipt": "raw/resumed-required-local/corpus-identity.json",
+      "log_sha256": "049ea5dda28da5d075f30488ec5359d5e6a69dc1fbc81c3d62af17ad211911de",
+      "before_after_source_equal": true
+    },
+    {
+      "label": "repository-links",
+      "status": "PASS",
+      "exit_code": 0,
+      "receipt": "raw/resumed-required-local/repository-links.json",
+      "log_sha256": "51827eab02a908a4d427a50ef3db1142d72be4aa65cac1b4a2a9cf18c0032634",
+      "before_after_source_equal": true
+    },
+    {
+      "label": "strict-clippy",
+      "status": "PASS",
+      "exit_code": 0,
+      "receipt": "raw/resumed-required-clippy/strict-clippy.json",
+      "log_sha256": "97b46f7ac20867973b519045b4c440f64b72f7dc32c6870aaf4fae046cffae91",
+      "before_after_source_equal": true
+    }
+  ],
+  "all_six_resumed_required_gates_passed": true,
+  "resumed_negative_suite_counts": {
+    "source_integrity": 43,
+    "ci_contract": 164,
+    "corpus": 57
+  },
+  "resumed_identity_checks": {
+    "corpus_blobs": 899,
+    "upstream_heads": 6,
+    "repository_local_links": 6000,
+    "before_after_tracked_entries": 26132,
+    "before_after_tracked_bytes": 2495315152
+  },
+  "availability_updates_supersede_historical_snapshots": true,
+  "historical_snapshots_byte_preserved": true,
+  "snapshot_directory": "observations-before-recovery",
+  "inherited_source_inputs_sha256": "bc53319e019624efec86e8f8a4228035dd231b229dd9c61613349bc3f4a0c7c6",
+  "raw_archive": {
+    "path": "raw-records.tar.gz",
+    "bytes": 186041,
+    "sha256": "cd71c0c6571e995cf8351c360bcb142a17c9b19fef0db66e8f33779384bd7798",
+    "member_count": 100,
+    "member_bytes": 347520
+  },
+  "unchanged_boundaries": {
+    "source_inputs_preserved": true,
+    "historical_pins_preserved": true,
+    "owner_fences_preserved": true,
+    "zero_consensus_credit_preserved": true,
+    "NoUpdate_qualified_base_service_fee_preserved": true,
+    "production_activation": false
+  },
+  "remaining_qualification_gates": [
+    "public-readiness reader contract",
+    "QROM lifetime source pin",
+    "QROM implementation fixture bound",
+    "resource campaign gaps",
+    "cheapest legal classical/quantum lifecycle cost",
+    "joint time/difficulty/credit",
+    "independent learning/cost/retention",
+    "real funding/effects",
+    "WAN/public service",
+    "independent recovery qualification"
+  ],
+  "qualification": "HOLD_NO_GO",
+  "ready_for_production": false
+}
