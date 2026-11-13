@@ -4,7 +4,9 @@ use crate::pon_executor::{Config, Result};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::collections::BTreeSet;
-use trnm_crypto_primitives::{public_key_hex, signing_key_from_hex, verifying_key_from_hex};
+use trnm_crypto_primitives::{
+    public_key_hex, signing_key_from_hex, verifying_key_from_hex, WeakEd25519Key,
+};
 use trnm_protocol::pon_wire::{hash, Hash};
 pub const PROFILE: &str = "native-operator-actors-dev-v1";
 pub const SPEC_BYTES: usize = 32768;
@@ -81,7 +83,13 @@ pub fn digest(raw: &str) -> Result<Hash> {
 /// This does not detect arbitrary predictable seeds or undisclosed key sharing.
 pub fn operator_key(raw: &str) -> Result<Hash> {
     let key = digest(raw)?;
-    let public = verifying_key_from_hex(raw).map_err(|_| "ACTOR_KEY")?;
+    let public = verifying_key_from_hex(raw).map_err(|error| {
+        if error.is::<WeakEd25519Key>() {
+            "ACTOR_WEAK_KEY"
+        } else {
+            "ACTOR_KEY"
+        }
+    })?;
     require(!public.is_weak(), "ACTOR_WEAK_KEY")?;
     for i in 0u64..16 {
         let secret = hash(b"DEV-ONLY-KEY", &[&i.to_le_bytes()]);
@@ -252,5 +260,49 @@ impl Config {
         );
         cfg.evaluators = spec.evaluators.iter().cloned().collect();
         Ok(cfg)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn operator_key_rejection_classes_preserve_validation_order() {
+        for value in [
+            String::new(),
+            "01".to_owned(),
+            "00".repeat(32),
+            "gg".repeat(32),
+        ] {
+            assert_eq!(operator_key(&value), Err("ACTOR_IDENTITY"));
+        }
+
+        let mut identity = [0_u8; 32];
+        identity[0] = 1;
+        assert_eq!(operator_key(&hex::encode(identity)), Err("ACTOR_WEAK_KEY"));
+        identity[31] = 128;
+        assert_eq!(operator_key(&hex::encode(identity)), Err("ACTOR_KEY"));
+        let mut field_modulus = [255_u8; 32];
+        field_modulus[0] = 237;
+        field_modulus[31] = 127;
+        assert_eq!(operator_key(&hex::encode(field_modulus)), Err("ACTOR_KEY"));
+
+        let signing_key = signing_key_from_hex(&hex::encode([7_u8; 32])).unwrap();
+        let public = public_key_hex(&signing_key);
+        assert_eq!(
+            operator_key(&public),
+            Ok(signing_key.verifying_key().to_bytes())
+        );
+        let uppercase = public.to_ascii_uppercase();
+        assert_ne!(uppercase, public);
+        assert_eq!(operator_key(&uppercase), Err("ACTOR_IDENTITY"));
+
+        let known_seed = hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()]);
+        let known_key = signing_key_from_hex(&hex::encode(known_seed)).unwrap();
+        assert_eq!(
+            operator_key(&public_key_hex(&known_key)),
+            Err("ACTOR_KNOWN_FIXTURE_KEY")
+        );
     }
 }
