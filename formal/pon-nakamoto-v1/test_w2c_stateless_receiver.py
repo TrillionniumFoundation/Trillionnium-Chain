@@ -146,5 +146,59 @@ class StatelessAdmissionControls(unittest.TestCase):
         self.assertEqual(self.issuer.pending_paid(), 1)
 
 
+    def test_server_price_floor_rejects_client_selected_discount_without_spending(self):
+        priced = Receiver(self.receiver, self.secret, self.epoch,
+                          capacity=2, minimum_bits=12,
+                          entropy=lambda n: bytes([0x64])*n)
+        for caller in (self.alice, self.bob):
+            with self.assertRaisesRegex(ValueError, '^PRICE_POLICY
+):
+                priced.offer(self.proposal, caller, 8, 100)
+        self.assertEqual(priced.pending_paid(), 0)
+        grant = priced.offer(self.proposal, self.alice, 12, 100)
+        nonce, _ = solve(grant, 262144)
+        self.assertIsNotNone(nonce)
+        self.assertEqual(priced.consume(grant, self.proposal, self.alice, nonce, 120),
+                         'READY_RESOURCE_ONLY')
+        self.assertEqual(priced.pending_paid(), 1)
+        self.assertFalse(hasattr(priced, 'verified_work'))
+
+    def test_outstanding_old_ticket_rejected_after_price_increase_without_free_w1(self):
+        old, nonce = self.grant()
+        self.issuer.raise_minimum_bits(12)
+        self.assertEqual(self.issuer.consume(old, self.proposal, self.alice,
+                                             nonce, 120), 'PRICE_POLICY')
+        self.assertEqual(self.issuer.pending_paid(), 0)
+        with self.assertRaisesRegex(ValueError, '^PRICE_POLICY
+):
+            self.issuer.offer(self.proposal, self.alice, 8, 121)
+        new = self.issuer.offer(self.proposal, self.alice, 12, 121)
+        ticket_nonce, _ = solve(new, 262144)
+        self.assertIsNotNone(ticket_nonce)
+        self.assertEqual(self.issuer.consume(new, self.proposal, self.alice,
+                                             ticket_nonce, 140), 'READY_RESOURCE_ONLY')
+        with self.assertRaisesRegex(ValueError, '^PRICE_ROLLBACK
+):
+            self.issuer.raise_minimum_bits(8)
+        self.assertEqual(self.issuer.minimum_bits, 12)
+        self.assertEqual(self.issuer.pending_paid(), 1)
+
+    def test_invalid_server_price_and_mac_tampering_do_not_lower_price(self):
+        with self.assertRaisesRegex(ValueError, '^PRICE_BITS
+):
+            Receiver(self.receiver, self.secret, self.epoch, minimum_bits=7)
+        with self.assertRaisesRegex(ValueError, '^PRICE_BITS
+):
+            self.issuer.raise_minimum_bits(25)
+        grant, nonce = self.grant()
+        self.issuer.raise_minimum_bits(12)
+        self.assertEqual(self.issuer.consume(
+            replace(grant, mac=bytes(32)), self.proposal, self.alice, nonce, 120),
+            'GRANT_MAC')
+        self.assertEqual(self.issuer.consume(grant, self.proposal, self.alice,
+                                             nonce, 120), 'PRICE_POLICY')
+        self.assertEqual(self.issuer.pending_paid(), 0)
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)
