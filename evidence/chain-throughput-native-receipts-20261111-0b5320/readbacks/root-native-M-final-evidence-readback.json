@@ -1,0 +1,298 @@
+{
+  "schema": "root-native-M-final-evidence-readback-v1",
+  "result": "PASS",
+  "scope": "Copied original text, recorded source/provider/binary guards and runtime receipt. No native execution, independent ELF/provider download or business qualification.",
+  "source": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "tree": "1f42f41923d7761c02fc68b478df5b019c7d83e8",
+  "archive_bytes": 188684,
+  "archive_sha256": "195c77615f45a15b1c547ccad35532bc9764d13f52255ecc1832d3d3b5dbc2bd",
+  "original_files_verified": 36,
+  "summary_sha256": "ab05426922986387ed65bf3b90ef0179da5989506516f93ed5ff6e614d17dc34",
+  "process_streams_verified": 30,
+  "fixed_report_sha256": "a9d8e655dd2a6c9b78c68bdbfa5fa25ca514d5a285a5242085c8ff83c31cc4cf",
+  "processes": {
+    "fixed_process": {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/chain-throughput-m-driver-0b5320/scripts/ci/run_pon_budget_controls.py",
+        "--source",
+        "/tmp/chain-throughput-m-subject-0b5320",
+        "--source-sha",
+        "11e242dbaaae14a9d16282fe8deaf36827e98395",
+        "--driver-sha",
+        "11e242dbaaae14a9d16282fe8deaf36827e98395",
+        "--mode",
+        "fixed",
+        "--out",
+        "/dev/shm/chain-throughput-0b5320/m-fixed-v1"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_ns": 1953475927570,
+      "stdout": {
+        "path": "/dev/shm/chain-throughput-0b5320/m-validation-v1/actual-fixed-runner.stdout",
+        "bytes": 301,
+        "sha256": "5ecdd92c33511a73311c344a87cf9c96d07a91dbb6f00e37c7be1b2cbbc923f0"
+      },
+      "stderr": {
+        "path": "/dev/shm/chain-throughput-0b5320/m-validation-v1/actual-fixed-runner.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "library_process": {
+      "command": [
+        "/dev/shm/chain-throughput-0b5320/m-fixed-v1/trnm-pon-node-libtest",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_ns": 4283766136552,
+      "stdout": {
+        "path": "/dev/shm/chain-throughput-0b5320/m-validation-v1/node-library.stdout",
+        "bytes": 2791993,
+        "sha256": "c7e31dae59da7094ced954793791c9e49e3bce8907609c35d4e4d2635a84d6ea"
+      },
+      "stderr": {
+        "path": "/dev/shm/chain-throughput-0b5320/m-validation-v1/node-library.stderr",
+        "bytes": 327120,
+        "sha256": "75a780c0591a5fe8fe3d5c188084b3adb8ad43bac9b35dcdbe54c15a3d20b964"
+      }
+    },
+    "format_process": {
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_ns": 22733546287,
+      "stdout": {
+        "path": "/dev/shm/chain-throughput-0b5320/m-validation-v1/format.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/dev/shm/chain-throughput-0b5320/m-validation-v1/format.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "provider_version_process": {
+      "command": [
+        "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install/bin/openssl",
+        "version",
+        "-a"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_ns": 3901402,
+      "stdout": {
+        "path": "/dev/shm/chain-throughput-0b5320/m-validation-v1/provider-version.stdout",
+        "bytes": 891,
+        "sha256": "9ee8890a318f46bf1186a598a0652076ebacf9cd1da3d46cab176c4c5ccf2b60"
+      },
+      "stderr": {
+        "path": "/dev/shm/chain-throughput-0b5320/m-validation-v1/provider-version.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "clippy_process": {
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_ns": 277704520546,
+      "stdout": {
+        "path": "/dev/shm/chain-throughput-0b5320/m-validation-v1/strict-clippy.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/dev/shm/chain-throughput-0b5320/m-validation-v1/strict-clippy.stderr",
+        "bytes": 4226,
+        "sha256": "e5a9ee9908cff735d7b290cdd0cc33bf31ff6b933f403a96ea4ec21790f6cda3"
+      }
+    }
+  },
+  "whole_library": {
+    "passed": 1313,
+    "failed": 0,
+    "ignored": 39,
+    "measured": 0,
+    "filtered_out": 0,
+    "listed_tests": 1352,
+    "reported_seconds": "4283.75",
+    "all_libtest_summaries_in_stream": 4,
+    "selected_summary": "test result: ok. 1313 passed; 0 failed; 39 ignored; 0 measured; 0 filtered out; finished in 4283.75s"
+  },
+  "source_before_after_final_equal": true,
+  "provider_before_after_equal": true,
+  "recorded_final_binary_guards": {
+    "cli": {
+      "built_after_all": {
+        "path": "/dev/shm/chain-throughput-0b5320/m-target-v1/release/trnm-pon-node",
+        "bytes": 17187680,
+        "sha256": "4b0ed0d62e4c56af7e030737ef2b95e57744c539d0832d95554d66fbd91bb6f9"
+      },
+      "retained_after_all": {
+        "path": "/dev/shm/chain-throughput-0b5320/m-fixed-v1/trnm-pon-node-cli",
+        "bytes": 17187680,
+        "sha256": "4b0ed0d62e4c56af7e030737ef2b95e57744c539d0832d95554d66fbd91bb6f9"
+      },
+      "equal": true,
+      "compiler_artifact": {
+        "executable": "/dev/shm/chain-throughput-0b5320/m-target-v1/release/trnm-pon-node",
+        "features": [
+          "default"
+        ],
+        "filenames": [
+          "/dev/shm/chain-throughput-0b5320/m-target-v1/release/trnm-pon-node"
+        ],
+        "fresh": false,
+        "manifest_path": "/tmp/chain-throughput-m-subject-0b5320/trillionnium/crates/trnm-pon-node/Cargo.toml",
+        "package_id": "path+file:///tmp/chain-throughput-m-subject-0b5320/trillionnium/crates/trnm-pon-node#0.1.0",
+        "profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "bin"
+          ],
+          "doc": true,
+          "doctest": false,
+          "edition": "2021",
+          "kind": [
+            "bin"
+          ],
+          "name": "trnm-pon-node",
+          "src_path": "/tmp/chain-throughput-m-subject-0b5320/trillionnium/crates/trnm-pon-node/src/main.rs",
+          "test": true
+        }
+      }
+    },
+    "libtest": {
+      "built_after_all": {
+        "path": "/dev/shm/chain-throughput-0b5320/m-target-v1/release/deps/trnm_pon_node-b9510f5893fe9b62",
+        "bytes": 102339856,
+        "sha256": "97b219b88db96705cdd297427f408674fd8d1705f27990b72b6de2aea9ae3e4a"
+      },
+      "retained_after_all": {
+        "path": "/dev/shm/chain-throughput-0b5320/m-fixed-v1/trnm-pon-node-libtest",
+        "bytes": 102339856,
+        "sha256": "97b219b88db96705cdd297427f408674fd8d1705f27990b72b6de2aea9ae3e4a"
+      },
+      "equal": true,
+      "compiler_artifact": {
+        "executable": "/dev/shm/chain-throughput-0b5320/m-target-v1/release/deps/trnm_pon_node-b9510f5893fe9b62",
+        "features": [
+          "default"
+        ],
+        "filenames": [
+          "/dev/shm/chain-throughput-0b5320/m-target-v1/release/deps/trnm_pon_node-b9510f5893fe9b62"
+        ],
+        "fresh": false,
+        "manifest_path": "/tmp/chain-throughput-m-subject-0b5320/trillionnium/crates/trnm-pon-node/Cargo.toml",
+        "package_id": "path+file:///tmp/chain-throughput-m-subject-0b5320/trillionnium/crates/trnm-pon-node#0.1.0",
+        "profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": true
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "src_path": "/tmp/chain-throughput-m-subject-0b5320/trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "test": true
+        }
+      }
+    },
+    "pool-integration": {
+      "built_after_all": {
+        "path": "/dev/shm/chain-throughput-0b5320/m-target-v1/release/deps/pool_mining-cd547e0a2db22b02",
+        "bytes": 10150744,
+        "sha256": "ed9d6a7db469bf2c164e1f69d8b9655682df1ff7bf61ad7925ab412fd19469b8"
+      },
+      "retained_after_all": {
+        "path": "/dev/shm/chain-throughput-0b5320/m-fixed-v1/trnm-pon-node-pool-integration",
+        "bytes": 10150744,
+        "sha256": "ed9d6a7db469bf2c164e1f69d8b9655682df1ff7bf61ad7925ab412fd19469b8"
+      },
+      "equal": true,
+      "compiler_artifact": {
+        "executable": "/dev/shm/chain-throughput-0b5320/m-target-v1/release/deps/pool_mining-cd547e0a2db22b02",
+        "features": [
+          "default"
+        ],
+        "filenames": [
+          "/dev/shm/chain-throughput-0b5320/m-target-v1/release/deps/pool_mining-cd547e0a2db22b02"
+        ],
+        "fresh": false,
+        "manifest_path": "/tmp/chain-throughput-m-subject-0b5320/trillionnium/crates/trnm-pon-node/Cargo.toml",
+        "package_id": "path+file:///tmp/chain-throughput-m-subject-0b5320/trillionnium/crates/trnm-pon-node#0.1.0",
+        "profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": true
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "bin"
+          ],
+          "doc": false,
+          "doctest": false,
+          "edition": "2021",
+          "kind": [
+            "test"
+          ],
+          "name": "pool_mining",
+          "src_path": "/tmp/chain-throughput-m-subject-0b5320/trillionnium/crates/trnm-pon-node/tests/pool_mining.rs",
+          "test": true
+        }
+      }
+    }
+  },
+  "runtime_receipt_sha256": "2fbba78231297f221fc8c76f47ec33b4e29ef1a7d5a99c3d0dec951357ad26d0",
+  "qualification": {
+    "complete_business_liveness": false,
+    "sustained_tps": false,
+    "wan_capacity": false,
+    "production_activation": false
+  }
+}

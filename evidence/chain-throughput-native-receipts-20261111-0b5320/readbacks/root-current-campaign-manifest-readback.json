@@ -1,0 +1,53 @@
+{
+  "schema": "root-current-campaign-manifest-readback-v1",
+  "scope": "Decoded original GitHub job manifest plus independently read official artifact metadata. Phase/round/receiver/depletion counts are not inferred here. No native execution or independent ZIP download.",
+  "result": "PASS",
+  "measured_commit": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "measured_tree": "1f42f41923d7761c02fc68b478df5b019c7d83e8",
+  "source_manifest_sha256": "ff20cd52b9f4f70a5808fd2ebf5e5a9a661d7c077df912cabb347abe6c9983f7",
+  "official_artifact": {
+    "id": 13833660378,
+    "name": "pon-native-campaign-x64-head-release-11e242dbaaae14a9d16282fe8deaf36827e98395-1",
+    "size_in_bytes": 81779634,
+    "digest": "sha256:96b801074e063222a807a75a012da57f3255f95f3cc0301b7eb012f8188aec78",
+    "created_at": "2026-11-11T06:09:24Z",
+    "expired": false,
+    "workflow_run": {
+      "id": 42960214803,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-throughput-budget-20261110-065438",
+      "head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395"
+    }
+  },
+  "actual_campaigns": 3,
+  "complete_campaigns": 0,
+  "phase_counts_evaluated": false,
+  "round_counts_evaluated": false,
+  "reports": [
+    {
+      "number": 1,
+      "report_directory": "run-1-raw",
+      "report_sha256": "20b0610468fa9b781e69f80a1210442cbfc8536a99b28c567ed6ee2b0b0bc08f",
+      "exit_code": 101,
+      "elapsed_seconds": 109.208960075
+    },
+    {
+      "number": 2,
+      "report_directory": "run-2-raw",
+      "report_sha256": "5d56f8557c165a8ed326c54f329767ad60d28b2c366ba17b1dff404042cace86",
+      "exit_code": 101,
+      "elapsed_seconds": 108.519297071
+    },
+    {
+      "number": 3,
+      "report_directory": "run-3-raw",
+      "report_sha256": "4866a9ed85a261de4b7d4fa427b719e40009dd9b930fb62cfde8aaa22dc49327",
+      "exit_code": 101,
+      "elapsed_seconds": 108.308430607
+    }
+  ],
+  "complete_business_liveness": false,
+  "sustained_tps_qualified": false,
+  "production_activation": false
+}

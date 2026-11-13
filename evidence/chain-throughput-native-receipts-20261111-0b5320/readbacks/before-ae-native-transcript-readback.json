@@ -1,0 +1,80 @@
+{
+  "schema": "pon-independent-native-transcript-readback-v1",
+  "reader_source": "6de2d42002c662f5dd707a37bddf338b2dc73cbf",
+  "reader_sha256": "6acf7c2db61a4af3ee346ce497cc1a46a4f801a68656d13d7d4f995e0931259c",
+  "actual_subject": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+  "source_guards_identical": true,
+  "source_guard_sha256": "43a97dddfd327e8a07f65d1cd185f66c2f343e12a38329cf64246f0bec648750",
+  "cases": [
+    {
+      "native_step": {
+        "stage": "test-01",
+        "argv": [
+          "/dev/shm/chain-throughput-0b5320/before-target/release/deps/trnm_pon_node-b9510f5893fe9b62",
+          "mining::pool_reconcile_control_tests::pool_run_stop_interrupts_reconciliation_pool_rows",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit": 101,
+        "timed_out": false,
+        "elapsed_seconds": 0.3656173930503428,
+        "stdout": "test-01.stdout.log",
+        "stderr": "test-01.stderr.log",
+        "stdout_sha256": "d842bf8739a2c69cb43a34da27cb7194c0de19884bf0625d459466e4be0fabda",
+        "stderr_sha256": "2b78ba2c9e4e9b3fc9a93462a93b7ecd753a2d986e4e8485ad70d0d9cbabb9cd"
+      },
+      "mapped_process": {
+        "started": true,
+        "exit_code": 101,
+        "failure": null,
+        "cleanup_errors": []
+      },
+      "validated": {
+        "test": "mining::pool_reconcile_control_tests::pool_run_stop_interrupts_reconciliation_pool_rows",
+        "group": "pool-scan",
+        "expected": "fail",
+        "expected_outcome_observed": true
+      }
+    },
+    {
+      "native_step": {
+        "stage": "test-02",
+        "argv": [
+          "/dev/shm/chain-throughput-0b5320/before-target/release/deps/trnm_pon_node-b9510f5893fe9b62",
+          "mining::pool_reconcile_control_tests::pool_run_deadline_interrupts_reconciliation_pool_rows",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit": 101,
+        "timed_out": false,
+        "elapsed_seconds": 5.379996899049729,
+        "stdout": "test-02.stdout.log",
+        "stderr": "test-02.stderr.log",
+        "stdout_sha256": "b8034366af6a514a4ac76585c90bbecb02848f51252ca480c39b2eea369ade4b",
+        "stderr_sha256": "c83c7fd21b70f6e9649f0741c5d1296724b0da2b9bcc425b2cbc2a967c111625"
+      },
+      "mapped_process": {
+        "started": true,
+        "exit_code": 101,
+        "failure": null,
+        "cleanup_errors": []
+      },
+      "validated": {
+        "test": "mining::pool_reconcile_control_tests::pool_run_deadline_interrupts_reconciliation_pool_rows",
+        "group": "pool-scan",
+        "expected": "fail",
+        "expected_outcome_observed": true
+      }
+    }
+  ],
+  "matched_native_negative_controls": 2,
+  "original_ad_hoc_wrapper_success": false,
+  "original_ad_hoc_wrapper_result_reclassified": false,
+  "original_wrapper_classifier_defect": "Overescaped whitespace regex; original wrapper remains failed. This separately reads its actual native exit statuses and raw transcripts.",
+  "process_mapping_justification": "The preserved invoked job script appends each step only after Popen succeeds and wait returns. timed_out=false means its termination/cleanup branch did not execute. The recorded native exit101 and both stream SHA256 values were independently checked.",
+  "whole_hosted_workflow_pass_claimed": false,
+  "whole_business_liveness_qualified": false,
+  "throughput_measured": false
+}

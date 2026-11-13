@@ -1,0 +1,79 @@
+{
+  "schema": "root-protocol-M-failure-readback-v1",
+  "result": "PASS",
+  "scope": "Verify copied original-member projection and independently read GitHub artifact metadata; not a second ZIP download or a passing protocol gate.",
+  "source": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "tree": "1f42f41923d7761c02fc68b478df5b019c7d83e8",
+  "artifact": {
+    "id": 13834081764,
+    "name": "head-protocol-contract-11e242dbaaae14a9d16282fe8deaf36827e98395-1",
+    "bytes": 123886,
+    "sha256": "28c7ad48d1b39e2380e7cafb11894e3652390be3d4ddfea460338822dd62e840"
+  },
+  "job_id": 130324695713,
+  "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324695713",
+  "readback_sha256": "4e5d3ead061c13cd11112971cd922fc7ecd01830c6e69f4651df3b6312ff8ae9",
+  "gate_result": "FAIL",
+  "failure_stage": "pre-native cargo fmt --check original 60-second timeout",
+  "format_process": {
+    "command": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit_code": -9,
+    "timed_out": true,
+    "wall_ns": 60002692917,
+    "user_cpu_ns": 34401000,
+    "system_cpu_ns": 32745000,
+    "cpu_ns": 67146000,
+    "max_rss_kib": 40696,
+    "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+    "minor_faults": 8753,
+    "major_faults": 0,
+    "voluntary_switches": 15,
+    "involuntary_switches": 4,
+    "cpu_scope": "entire child, not apportioned to nested wall intervals",
+    "wait4_cpu_resolution_ns": 1000,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "unexecuted_native_tests": [
+    {
+      "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+      "status": "not_executed",
+      "exit_code": null,
+      "timed_out": null
+    },
+    {
+      "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+      "status": "not_executed",
+      "exit_code": null,
+      "timed_out": null
+    },
+    {
+      "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+      "status": "not_executed",
+      "exit_code": null,
+      "timed_out": null
+    },
+    {
+      "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+      "status": "not_executed",
+      "exit_code": null,
+      "timed_out": null
+    },
+    {
+      "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+      "status": "not_executed",
+      "exit_code": null,
+      "timed_out": null
+    }
+  ],
+  "service_confirmation_reports_executed": false,
+  "underlying_wait_cause_determined": false
+}

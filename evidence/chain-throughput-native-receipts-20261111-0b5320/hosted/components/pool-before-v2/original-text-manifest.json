@@ -1,0 +1,406 @@
+{
+  "artifact": {
+    "id": 13832229500,
+    "name": "pon-budget-controls-pool-before-v2-84e68b4f7a9b2f48f9c47ed05c9a44229d186e30-1",
+    "bytes": 30700264,
+    "sha256": "4fc83c261d2dbe98c8902e5cfe6a69805a9fc850a0727e7f36e4a42077d73fbc",
+    "mode": "pool-before-v2"
+  },
+  "files": [
+    {
+      "zip_member": "native/build.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 900,
+      "sha256": "4e95521202ef9f2d9ad0bf68d47c068279fdf7c6d6f78b69cb35075dbc590897",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/build.process.json"
+    },
+    {
+      "zip_member": "native/build.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 120874,
+      "sha256": "703b94e2a23d37ff9f9b11733848479d02a738f8889b4d42f39533c2d4bc4c9a",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/build.stdout"
+    },
+    {
+      "zip_member": "native/build.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 4343,
+      "sha256": "d5a58b111bfce002e154fde05fa355bb54944d05b30612ca1f415e31f3f55caa",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/build.stderr"
+    },
+    {
+      "zip_member": "native/cargo-graph.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 841,
+      "sha256": "e2a5d0caa62def705985d50bf84f3f3f7df13dfb52a08d8cd2046612002e72d0",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/cargo-graph.process.json"
+    },
+    {
+      "zip_member": "native/cargo-graph.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 4876,
+      "sha256": "e4af2ea5d6eb7dc5b024bc380333830a70a47af06662b22504a4c20d097eaec4",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/cargo-graph.stderr"
+    },
+    {
+      "zip_member": "native/cargo-graph.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 891677,
+      "sha256": "6b14fe4bd82e09291ff45fccb3d7c1318f1c6f5e1cefc126fe1ba1d23e22f04f",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/cargo-graph.stdout"
+    },
+    {
+      "zip_member": "native/cargo-version.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 729,
+      "sha256": "9c32d22e3901d1f38b827a1e9b72c65ce45d24a5fbec5764b227a38d71684e85",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/cargo-version.process.json"
+    },
+    {
+      "zip_member": "native/cargo-version.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/cargo-version.stderr"
+    },
+    {
+      "zip_member": "native/cargo-version.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 336,
+      "sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/cargo-version.stdout"
+    },
+    {
+      "zip_member": "native/compiler-artifacts.json",
+      "role": "original hosted artifact text",
+      "bytes": 1164,
+      "sha256": "f3530a3d548d711d485e14f67d274cbe629185a831c037d198a62572c7c3599b",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/compiler-artifacts.json"
+    },
+    {
+      "zip_member": "native/driver-preflight.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 758,
+      "sha256": "ac3e9bac714bed88b657e8c6dcd5f7fd457ca254cd458da8297066a2b6f2e182",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/driver-preflight.process.json"
+    },
+    {
+      "zip_member": "native/driver-preflight.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/driver-preflight.stderr"
+    },
+    {
+      "zip_member": "native/driver-preflight.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/driver-preflight.stdout"
+    },
+    {
+      "zip_member": "native/driver-source-after.json",
+      "role": "original hosted artifact text",
+      "bytes": 423,
+      "sha256": "03bd6956b3711c85ef2505ab09ec990ac1ab8ccbeffe4fcf3cecc8173601e731",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/driver-source-after.json"
+    },
+    {
+      "zip_member": "native/driver-source-before.json",
+      "role": "original hosted artifact text",
+      "bytes": 423,
+      "sha256": "03bd6956b3711c85ef2505ab09ec990ac1ab8ccbeffe4fcf3cecc8173601e731",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/driver-source-before.json"
+    },
+    {
+      "zip_member": "native/libtest-list.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 836,
+      "sha256": "610791c05349e7875e0dc2a2a8d2eb829defa18fca6a36d9266dffa1b81ae8de",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/libtest-list.process.json"
+    },
+    {
+      "zip_member": "native/libtest-list.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/libtest-list.stderr"
+    },
+    {
+      "zip_member": "native/libtest-list.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 152049,
+      "sha256": "19ef917980c66c5900e198c4bf0f6c6e3cd732057a9197bc5508afb981b069b0",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/libtest-list.stdout"
+    },
+    {
+      "zip_member": "native/report.json",
+      "role": "original hosted artifact text",
+      "bytes": 26994,
+      "sha256": "a4cd8d6e81a5420897dc5b3ebda0040290a9b13a6d03ba7e4881d11a2b80ffca",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/report.json"
+    },
+    {
+      "zip_member": "native/rustc-path.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 755,
+      "sha256": "3e9cd3f1d6cb0f20e083ab2b610501252ab657c56ed40095ca86e606d3afe2ef",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/rustc-path.process.json"
+    },
+    {
+      "zip_member": "native/rustc-path.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/rustc-path.stderr"
+    },
+    {
+      "zip_member": "native/rustc-path.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 74,
+      "sha256": "d0193700af7f567877ce9dbc20f915552972e146926733da26ae3fe0e363efcc",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/rustc-path.stdout"
+    },
+    {
+      "zip_member": "native/rustc-version.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 781,
+      "sha256": "9c8f951cb4442af80953ad2cc377348b89963e462e0de696e57dfd85a7872ac7",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/rustc-version.process.json"
+    },
+    {
+      "zip_member": "native/rustc-version.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/rustc-version.stderr"
+    },
+    {
+      "zip_member": "native/rustc-version.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/rustc-version.stdout"
+    },
+    {
+      "zip_member": "native/subject-preflight.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 761,
+      "sha256": "b0bd8cfbacf8332fb65d8d2ebd44438d13c535cf1344fa553b03d0bd79801a92",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/subject-preflight.process.json"
+    },
+    {
+      "zip_member": "native/subject-preflight.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/subject-preflight.stderr"
+    },
+    {
+      "zip_member": "native/subject-preflight.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/subject-preflight.stdout"
+    },
+    {
+      "zip_member": "native/subject-source-after.json",
+      "role": "original hosted artifact text",
+      "bytes": 423,
+      "sha256": "61ec589dd4ee23078a1be86805a6c22d58c90be7bdec2a483f787733b25cca83",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/subject-source-after.json"
+    },
+    {
+      "zip_member": "native/subject-source-before.json",
+      "role": "original hosted artifact text",
+      "bytes": 423,
+      "sha256": "61ec589dd4ee23078a1be86805a6c22d58c90be7bdec2a483f787733b25cca83",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/subject-source-before.json"
+    },
+    {
+      "zip_member": "native/test-01.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 932,
+      "sha256": "b68713d6a63a6c0d258611814df277598d7a8062c488e246748d69a10bfe6d77",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-01.process.json"
+    },
+    {
+      "zip_member": "native/test-01.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 345,
+      "sha256": "34a01fa132bbabd52f0bdefe6cfad493514b398a6513685cca351f919de77565",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-01.stderr"
+    },
+    {
+      "zip_member": "native/test-01.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 311,
+      "sha256": "0e08fd85db141bcf96c8cfb18ad14aaee298646d4e6fe6bf3f166d644492fdf0",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-01.stdout"
+    },
+    {
+      "zip_member": "native/test-02.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 944,
+      "sha256": "69a476d66e58cae85e638b9f06de23d8db9af46c9f78c38923bec08830043a98",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-02.process.json"
+    },
+    {
+      "zip_member": "native/test-02.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 354,
+      "sha256": "4fd50651e15c198c96f9074b405a4d5b5032cd220217430798a6a7f225d7a657",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-02.stderr"
+    },
+    {
+      "zip_member": "native/test-02.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 335,
+      "sha256": "0e4d3ae5226c18bcbf36f30c936525cf726cd0332601f8dec9f6b0dd54ad74b7",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-02.stdout"
+    },
+    {
+      "zip_member": "native/test-03.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 939,
+      "sha256": "2cb4c90e02eea749b39cc5e457a2ab950b4507cd7c3cc14eb65956055b8e3991",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-03.process.json"
+    },
+    {
+      "zip_member": "native/test-03.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 360,
+      "sha256": "037ca52051d68b8c682e586ba4f8dcb4f74d3de790c92ead7ee915729ce462df",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-03.stderr"
+    },
+    {
+      "zip_member": "native/test-03.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 325,
+      "sha256": "6125c4e4b45c17df3ff8c2fd3642c30a8f44a3b505541f0992ce26bbd9a22f45",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-03.stdout"
+    },
+    {
+      "zip_member": "native/test-04.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 940,
+      "sha256": "9c72aee9149cfd60b2ef3ffc8d0a4f2abc14d77dd6a4bf1fd0dee433eb906d90",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-04.process.json"
+    },
+    {
+      "zip_member": "native/test-04.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 352,
+      "sha256": "f5b4bcaad23ab1f3d04127c42d6b246ab5d5ee5c5701b9fd6d432f2d3bfe4a10",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-04.stderr"
+    },
+    {
+      "zip_member": "native/test-04.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 325,
+      "sha256": "c7beced5abdf9211098d4808633305cc81a25933f7ec815b266d6d74cd62ec63",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-04.stdout"
+    },
+    {
+      "zip_member": "native/test-05.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 950,
+      "sha256": "81ae99a2151b01b0092a6e01e3ecd135edea1e1f41f01e6ffea99336b7f67c73",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-05.process.json"
+    },
+    {
+      "zip_member": "native/test-05.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 342,
+      "sha256": "06bfacdeeae96e5bd99cb6731b0a7d301cbf431d46a363ed00747cb9b3edb05e",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-05.stderr"
+    },
+    {
+      "zip_member": "native/test-05.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 347,
+      "sha256": "6470d21edf4822e4d118ddd7cdaafe81e9ee23c621557b6721163f69dbf7f09a",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-05.stdout"
+    },
+    {
+      "zip_member": "native/test-06.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 941,
+      "sha256": "70a366b824400be6ca62233b22f287b96bbd7fc7554528667ceebe13630d4a87",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-06.process.json"
+    },
+    {
+      "zip_member": "native/test-06.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-06.stderr"
+    },
+    {
+      "zip_member": "native/test-06.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 216,
+      "sha256": "91f9d55d375becf6641067385fadd45ae43884898ee7480b469bb786fbca9ca9",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-06.stdout"
+    },
+    {
+      "zip_member": "native/test-07.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 948,
+      "sha256": "044e698adfba266937d743b89a849ed8dd232ff0bcaee7e25ac9919298b24480",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-07.process.json"
+    },
+    {
+      "zip_member": "native/test-07.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-07.stderr"
+    },
+    {
+      "zip_member": "native/test-07.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 222,
+      "sha256": "4f630dea4ace20d2b019cb24b59a4fc3cc7b6541c379d976ea7c85e7f95a4855",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/native/test-07.stdout"
+    },
+    {
+      "zip_member": "request.txt",
+      "role": "original hosted artifact text",
+      "bytes": 147,
+      "sha256": "2a7bcb3c3cb9f6899a8bd08a72a575b6d58430827610b2f0928ab93dcc50b898",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/request.txt"
+    },
+    {
+      "zip_member": "runner-controls.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 6697,
+      "sha256": "bf523f930240ed8943e85a36134049c48c8254d7cdca4e15a9ce51c720095cc6",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/runner-controls.stderr"
+    },
+    {
+      "zip_member": "runner-controls.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text/runner-controls.stdout"
+    }
+  ],
+  "binary_members_validated_but_not_reextracted": [
+    {
+      "role": "libtest",
+      "zip_member": "native/trnm-pon-node-libtest",
+      "bytes": 101800704,
+      "sha256": "e7f03949e34e43d82539cfc0056e8c0f1874ca811f14bdd9651aacfdfb9f77e0",
+      "profile": {
+        "debug_assertions": false,
+        "debuginfo": 0,
+        "opt_level": "3",
+        "overflow_checks": false,
+        "test": true
+      },
+      "source_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/subject/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "binary_before_equals_after": true
+    }
+  ]
+}

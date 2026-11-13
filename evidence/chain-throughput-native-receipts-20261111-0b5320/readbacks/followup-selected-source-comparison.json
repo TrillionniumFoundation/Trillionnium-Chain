@@ -1,0 +1,92 @@
+{
+  "schema": "throughput-followup-source-comparison-v1",
+  "old_campaign_subject": "7d6567b92575d1d84766afd49d0720b6f197b0e0",
+  "current_component_subject": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "scope": "selected source bytes only; no claim of unchanged complete runtime or current-source campaign execution",
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "identical": true,
+      "old_sha256": "92bfaca74ad0b7e5f9c7559d05a13a5535420b7df536a474de4035191e7a838f",
+      "current_sha256": "92bfaca74ad0b7e5f9c7559d05a13a5535420b7df536a474de4035191e7a838f",
+      "bytes": 94925
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+      "identical": true,
+      "old_sha256": "0300641717d460097a5e6172184b0129db6b0d734967d409de623d8fe7eb9605",
+      "current_sha256": "0300641717d460097a5e6172184b0129db6b0d734967d409de623d8fe7eb9605",
+      "bytes": 13930
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "identical": true,
+      "old_sha256": "f39f1d5e30c7ca81c5c373ffdd981c6070e8f497bffe93710101203e4ae795ac",
+      "current_sha256": "f39f1d5e30c7ca81c5c373ffdd981c6070e8f497bffe93710101203e4ae795ac",
+      "bytes": 23257
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+      "identical": true,
+      "old_sha256": "8de3fc5f217f38c87d37f0b41bda580b593b00b601af254e2e75b6326b8e1e18",
+      "current_sha256": "8de3fc5f217f38c87d37f0b41bda580b593b00b601af254e2e75b6326b8e1e18",
+      "bytes": 27602
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs",
+      "identical": true,
+      "old_sha256": "29fc9dfa3adfeff27c2daa134fdcf237255331d1cef1e6b6f025620dacd975ea",
+      "current_sha256": "29fc9dfa3adfeff27c2daa134fdcf237255331d1cef1e6b6f025620dacd975ea",
+      "bytes": 12380
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_reader.rs",
+      "identical": true,
+      "old_sha256": "ec5350aff6e8ea735e9bcc5d941e39850e60df0ae64e87a48db55c2ed193a554",
+      "current_sha256": "ec5350aff6e8ea735e9bcc5d941e39850e60df0ae64e87a48db55c2ed193a554",
+      "bytes": 2658
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_decode.rs",
+      "identical": true,
+      "old_sha256": "3a71260b94c41de83a4789ccc8aa771517148fc18b601f8f4b19042a5171bf86",
+      "current_sha256": "3a71260b94c41de83a4789ccc8aa771517148fc18b601f8f4b19042a5171bf86",
+      "bytes": 35660
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+      "identical": true,
+      "old_sha256": "210461095842347918bdc34aad0b8f0531dee11735e23848d6c4867240df3bcd",
+      "current_sha256": "210461095842347918bdc34aad0b8f0531dee11735e23848d6c4867240df3bcd",
+      "bytes": 65121
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope.rs",
+      "identical": true,
+      "old_sha256": "e37440b86b7521631232b6486a7b9bb74c66bf54d9a7b81131c91960417e3160",
+      "current_sha256": "e37440b86b7521631232b6486a7b9bb74c66bf54d9a7b81131c91960417e3160",
+      "bytes": 12748
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "identical": true,
+      "old_sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf",
+      "current_sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf",
+      "bytes": 111313
+    },
+    {
+      "path": "scripts/ci/run_native_phase_host.py",
+      "identical": true,
+      "old_sha256": "0d3def84ec4d00fb15e040e14b7c1d8f26908e63eb03f363c4d4f8cb9a8aa7c7",
+      "current_sha256": "0d3def84ec4d00fb15e040e14b7c1d8f26908e63eb03f363c4d4f8cb9a8aa7c7",
+      "bytes": 18895
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs",
+      "identical": true,
+      "old_sha256": "d7657fc6c5bd85b630cb4402846ef7e408cb30b7cf4466b4e9e16a67d018a5fd",
+      "current_sha256": "d7657fc6c5bd85b630cb4402846ef7e408cb30b7cf4466b4e9e16a67d018a5fd",
+      "bytes": 20219
+    }
+  ]
+}
