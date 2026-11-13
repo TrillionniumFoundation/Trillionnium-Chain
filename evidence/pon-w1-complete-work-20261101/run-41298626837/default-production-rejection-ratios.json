@@ -1,0 +1,313 @@
+{
+  "cheapest_adversary_lower_bound": false,
+  "default_kernel": "FullLimb",
+  "denominator": "sum of actual inclusive attacker setup-and-four-search cohort CPU, including every attempt, from the same capture",
+  "explicit_full_column_added_to_default": false,
+  "modes": {
+    "explicit-5-path-campaign": {
+      "lanes": [
+        {
+          "actual_attacker_cohort_cpu_ns": 9618088,
+          "all_attempts": 573,
+          "architecture": "arm64",
+          "artifact_id": 13080377955,
+          "complete_record_counts": {
+            "campaign": 1,
+            "candidate": 288,
+            "cohort": 72,
+            "end": 1,
+            "material": 9,
+            "search": 288,
+            "verifier": 1440
+          },
+          "exhausted_searches": 0,
+          "per_material_ratio_range": {
+            "maximum": 23.16811860647512,
+            "minimum": 19.924532681469017
+          },
+          "receiver_cpu_ns": 197960160,
+          "reported_cpu_fields": {
+            "CPU architecture": [
+              "8"
+            ],
+            "CPU implementer": [
+              "0x41"
+            ],
+            "CPU part": [
+              "0xd49"
+            ],
+            "model name": []
+          },
+          "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+          "source_kind": "head",
+          "whole_lane_ratio": 20.582069949869453
+        },
+        {
+          "actual_attacker_cohort_cpu_ns": 9414088,
+          "all_attempts": 573,
+          "architecture": "arm64",
+          "artifact_id": 13080333217,
+          "complete_record_counts": {
+            "campaign": 1,
+            "candidate": 288,
+            "cohort": 72,
+            "end": 1,
+            "material": 9,
+            "search": 288,
+            "verifier": 1440
+          },
+          "exhausted_searches": 0,
+          "per_material_ratio_range": {
+            "maximum": 23.33946393291106,
+            "minimum": 20.39157977601521
+          },
+          "receiver_cpu_ns": 197720392,
+          "reported_cpu_fields": {
+            "CPU architecture": [
+              "8"
+            ],
+            "CPU implementer": [
+              "0x41"
+            ],
+            "CPU part": [
+              "0xd49"
+            ],
+            "model name": []
+          },
+          "source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+          "source_kind": "prospective-merge",
+          "whole_lane_ratio": 21.002607156423437
+        },
+        {
+          "actual_attacker_cohort_cpu_ns": 5395678,
+          "all_attempts": 573,
+          "architecture": "x64",
+          "artifact_id": 13079739170,
+          "complete_record_counts": {
+            "campaign": 1,
+            "candidate": 288,
+            "cohort": 72,
+            "end": 1,
+            "material": 9,
+            "search": 288,
+            "verifier": 1440
+          },
+          "exhausted_searches": 0,
+          "per_material_ratio_range": {
+            "maximum": 23.89611503939767,
+            "minimum": 16.44716934075983
+          },
+          "receiver_cpu_ns": 96021685,
+          "reported_cpu_fields": {
+            "CPU architecture": [],
+            "CPU implementer": [],
+            "CPU part": [],
+            "model name": [
+              "AMD EPYC 9V74 80-Core Processor"
+            ]
+          },
+          "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+          "source_kind": "head",
+          "whole_lane_ratio": 17.796036939194668
+        },
+        {
+          "actual_attacker_cohort_cpu_ns": 5761032,
+          "all_attempts": 573,
+          "architecture": "x64",
+          "artifact_id": 13080552293,
+          "complete_record_counts": {
+            "campaign": 1,
+            "candidate": 288,
+            "cohort": 72,
+            "end": 1,
+            "material": 9,
+            "search": 288,
+            "verifier": 1440
+          },
+          "exhausted_searches": 0,
+          "per_material_ratio_range": {
+            "maximum": 26.588793821079182,
+            "minimum": 18.605936406067677
+          },
+          "receiver_cpu_ns": 114431727,
+          "reported_cpu_fields": {
+            "CPU architecture": [],
+            "CPU implementer": [],
+            "CPU part": [],
+            "model name": [
+              "AMD EPYC 7763 64-Core Processor"
+            ]
+          },
+          "source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+          "source_kind": "prospective-merge",
+          "whole_lane_ratio": 19.863060472498677
+        }
+      ],
+      "per_material_ratio_range": {
+        "maximum": 26.588793821079182,
+        "minimum": 16.44716934075983
+      },
+      "whole_lane_ratio_range": {
+        "maximum": 21.002607156423437,
+        "minimum": 17.796036939194668
+      }
+    },
+    "original-4-path-campaign": {
+      "lanes": [
+        {
+          "actual_attacker_cohort_cpu_ns": 9022512,
+          "all_attempts": 573,
+          "architecture": "arm64",
+          "artifact_id": 13080377955,
+          "complete_record_counts": {
+            "campaign": 1,
+            "candidate": 288,
+            "cohort": 72,
+            "end": 1,
+            "material": 9,
+            "search": 288,
+            "verifier": 1152
+          },
+          "exhausted_searches": 0,
+          "per_material_ratio_range": {
+            "maximum": 24.546418766041548,
+            "minimum": 19.836006151935475
+          },
+          "receiver_cpu_ns": 197808424,
+          "reported_cpu_fields": {
+            "CPU architecture": [
+              "8"
+            ],
+            "CPU implementer": [
+              "0x41"
+            ],
+            "CPU part": [
+              "0xd49"
+            ],
+            "model name": []
+          },
+          "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+          "source_kind": "head",
+          "whole_lane_ratio": 21.92387485879764
+        },
+        {
+          "actual_attacker_cohort_cpu_ns": 8897312,
+          "all_attempts": 573,
+          "architecture": "arm64",
+          "artifact_id": 13080333217,
+          "complete_record_counts": {
+            "campaign": 1,
+            "candidate": 288,
+            "cohort": 72,
+            "end": 1,
+            "material": 9,
+            "search": 288,
+            "verifier": 1152
+          },
+          "exhausted_searches": 0,
+          "per_material_ratio_range": {
+            "maximum": 24.52250394923559,
+            "minimum": 20.632084974591816
+          },
+          "receiver_cpu_ns": 198013680,
+          "reported_cpu_fields": {
+            "CPU architecture": [
+              "8"
+            ],
+            "CPU implementer": [
+              "0x41"
+            ],
+            "CPU part": [
+              "0xd49"
+            ],
+            "model name": []
+          },
+          "source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+          "source_kind": "prospective-merge",
+          "whole_lane_ratio": 22.25544973583033
+        },
+        {
+          "actual_attacker_cohort_cpu_ns": 4621205,
+          "all_attempts": 573,
+          "architecture": "x64",
+          "artifact_id": 13079739170,
+          "complete_record_counts": {
+            "campaign": 1,
+            "candidate": 288,
+            "cohort": 72,
+            "end": 1,
+            "material": 9,
+            "search": 288,
+            "verifier": 1152
+          },
+          "exhausted_searches": 0,
+          "per_material_ratio_range": {
+            "maximum": 28.70652051170369,
+            "minimum": 16.463665140606693
+          },
+          "receiver_cpu_ns": 95873856,
+          "reported_cpu_fields": {
+            "CPU architecture": [],
+            "CPU implementer": [],
+            "CPU part": [],
+            "model name": [
+              "AMD EPYC 9V74 80-Core Processor"
+            ]
+          },
+          "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+          "source_kind": "head",
+          "whole_lane_ratio": 20.74650572740227
+        },
+        {
+          "actual_attacker_cohort_cpu_ns": 5087086,
+          "all_attempts": 573,
+          "architecture": "x64",
+          "artifact_id": 13080552293,
+          "complete_record_counts": {
+            "campaign": 1,
+            "candidate": 288,
+            "cohort": 72,
+            "end": 1,
+            "material": 9,
+            "search": 288,
+            "verifier": 1152
+          },
+          "exhausted_searches": 0,
+          "per_material_ratio_range": {
+            "maximum": 30.248471095776335,
+            "minimum": 18.14883601223298
+          },
+          "receiver_cpu_ns": 113884350,
+          "reported_cpu_fields": {
+            "CPU architecture": [],
+            "CPU implementer": [],
+            "CPU part": [],
+            "model name": [
+              "AMD EPYC 7763 64-Core Processor"
+            ]
+          },
+          "source_commit": "a7169139ce2a24f0d582ac348be8f74d56d44f9f",
+          "source_kind": "prospective-merge",
+          "whole_lane_ratio": 22.38695197997439
+        }
+      ],
+      "per_material_ratio_range": {
+        "maximum": 30.248471095776335,
+        "minimum": 16.463665140606693
+      },
+      "whole_lane_ratio_range": {
+        "maximum": 22.38695197997439,
+        "minimum": 20.74650572740227
+      }
+    }
+  },
+  "modes_averaged": false,
+  "modes_pooled": false,
+  "numerator": "sum of production-column complete native receiver rejection CPU for all observed candidates in that capture",
+  "public_network_amplification_measured": false,
+  "public_service_accepted": false,
+  "run_id": 41298626837,
+  "schema": "pon-w1-default-production-rejection-ratios-v1",
+  "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+  "source_summary_sha256": "5ad779356d31ecbde979ad52465161073bb3f7263f7c893aac7a83dcdb1bcfd7"
+}

@@ -1,0 +1,63 @@
+run 41297071118：原始服务失败独立复核
+
+结论
+
+两条服务 job 的四个压力场景确实未达到原定“4 秒内由独立客户端完成六层/所需工作确认”目标。它们不是 fmt 失败、构建失败或没有执行测试。所有场景接收方均 ACK 7/7 并激活高度 7，但独立公共 History 导入因 PUBLIC_REQUEST_DEADLINE 停止，确认数均为 0。
+
+来源与复算
+
+head：8d9a7015cadd39780c4a047b5a36e0fd4d5f494b。
+prospective merge：bc2ed69f8aa9c53b07a57efbd88342d3234c1a87。
+二者源码树均为 721b601aca93a069d3d9d20e1502983789924877。
+二者保留的服务二进制 SHA256 完全相同：b1a994518ebe936da7c1cb4c979d71d0dc9e9680551f42d39ea6ce61b214c249。
+独立读入两个 artifact 的全部 108 个文件，49,653,559 字节；验证 manifest 引用的全部 52 个文件 SHA256。用 8d9 固定源码读取器重跑，四个结果与收据失败标签完全一致；独立重建攻击尝试、请求摘要、时间顺序、CPU 嵌套分母和 SQLite 状态，11,721 项检查通过。此检查不重新执行原生 W1，不认证宿主时钟或 artifact 提供者，不使失败实验获得资格。
+
+原始测试与 fresh 测试的失败含义不同
+
+原始 diagnostic 只对安全/记账不变量作 Rust assert，所以 native exit 0、1 个测试通过；实际 finite_target_met=false，外层 reader 正确拒绝 CONFIRMATION_TARGET。
+fresh 测试实际执行到 fresh_challenge.rs:220 的四秒/六层业务 assert，native exit 101。外层先检查进程返回码，所以标签为 FRESH_NATIVE_PROCESS_REQUIRED；直接读取实际报告会拒绝 FRESH_BUSINESS_TARGET。这不是未执行 native 测试。
+
+具体结果（时间单位为秒，从该 phase 原始窗口开始计）
+
+lane                 fixture   baseline确认时刻  压力第7个ACK  攻击调用  收到Transcript拒绝  网络/截止错误  History取得  独立持久最高/活跃高度  压力确认
+head                 repeated  3.491569          2.351625     212       196                 16            1            0 / 0                  0
+head                 fresh     3.405566          2.561125     185       169                 16            1            0 / 0                  0
+prospective-merge    repeated  2.595850          1.560888     306       290                 16            3            2 / 0                  0
+prospective-merge    fresh     2.698705          1.582435     277       262                 15            3            2 / 0                  0
+
+所有 baseline 均独立激活高度 7，确认 depth=6、required work=12，finalized=false、execution_authority=false。
+所有压力接收方均激活高度 7、累计工作 14，只存原来的合法七块；没有攻击输入进入 blocks。
+merge 的“存入高度 2”不是“活跃高度 2”：History 只有收到完整末页才激活目标 tip。四个压力独立客户端 active 全是创世高度 0；head 甚至尚未持久存入第一块。缺少时间/资源导致的部分导入不等于共识无效。
+接收方 work_started/work_finished：204/204、179/179、299/299、273/273；work_failed：197、172、292、266。该计数包括中途取消，不能一律称作完成完整 transcript。客户实际收到的 196、169、290、262 个 WORK:Transcript 才是完整 transcript 拒绝的直接回执证据。
+四个压力的诚实 Head 成功数为 19、16、24、21，最大无成功间隔约 0.298–0.302 秒，证明读请求仍可推进，但不能代替独立确认。
+
+CPU 与原始预算
+
+固定 Host 父组 cpu.max 为 25000 100000、burst 0，即 0.25 CPU；内存 2 GiB、swap 0、任务 256。接收方、攻击客户端、读客户端、独立验证客户端和控制器都在这个同一父组内。不是接收方独占 0.25 CPU 后再加免费客户端，也不是独立公网参与者。
+应用层 mutation bucket 仍是 burst 2 秒、refill 0.25 秒/秒、start reserve 0.1 秒、worker limit 2。
+
+压力 fixture          接收方mutation CPU  其中完整工作scope CPU  攻击setup+workers CPU  独立重放/确认CPU  结束credit
+head repeated        0.538089             0.312188               0.251701                0.084406         1.997958
+head fresh           0.488690             0.276598               0.326565                0.055803         1.999413
+merge repeated       0.503637             0.313983               0.229068                0.153345         1.999980
+merge fresh          0.460346             0.283668               0.291668                0.140140         1.999672
+
+上述不同 actor CPU 可比较但并非统一同一窗口的全部进程 CPU；接收方含收尾，攻击线程按 join 封闭，独立重放包含历史网络请求与本地处理。嵌套工作 CPU 已包含于 mutation CPU，fresh 构造 CPU 已包含于攻击 worker CPU，不可重复相加。
+所有 phase 的 mutation_cpu_refusals=0、clock failures=0、work started=finished，收尾 in-flight=0。没有观察到应用层额度耗尽导致拒绝；初末余额不证明每个中间时刻余额始终充足。
+整个 wrapper 的 cgroup CPU 增量分别为 12.129747 秒/49.706212 秒 wall、9.507526 秒/40.890458 秒 wall；throttled periods 增量分别 480/497、374/409。该范围还包括控制器和构建检查，不能分摊成某个四秒 phase 的 CPU，也不能把 throttled_usec 当作普通顺序 wall 时间相加。
+
+具体实现定位及可证明边界
+
+1. public_v3_from_zero.rs:1277 的 signed_confirmation_phase_with_builder 先串行提交七块，再在同一个绝对截止时间内调用 receive_public_page_from_before。压力下提交阶段已消耗 1.56–2.56 秒。随后 History 导入报 PUBLIC_REQUEST_DEADLINE；本地没有得到窗口后的排空或补成功信用。
+
+2. history_import.rs admit_packet 里的每个 W1 callback 都执行 history_checkpoint(..., &|| control.check())；scalar_cpu.rs:685 的 observe_with_control 在 CPU observation 前调用 resource，并在每次补额等待继续调用。control.check 会做实际 Host 核验。这是当前“每 native boundary 资源/撤销检查”的明确合同，不能将 1099 个检查本身称作 bug 或直接删掉。
+
+3. 同一 callback 后面还运行 history_kernel_work_checkpoint(point) 的稀疏分支，触发第二次 Host 核验。对保留的七个真实合法 proof 重算 noise 扩展，没有拒采样，每个 proof 为 1099 个 callback + 30 个额外稀疏核验，共至少 1129 次 Host 检查；每次读取 boot ID、实际线程 cgroup、五项 limits，并核对父组元数据。ingress.rs 的“每64 tiles” helper 单测只数 predicate，不计这条整合调用路径。因此存在可精确定位的成本位置，但没有实际独立 History 分阶段 CPU 或 syscall trace，不能宣称它独自解释了全部失败，也不能仅依据稀疏 helper 改变既有 guard 合同。
+
+4. 两个 fixture 都使用 PublicServer::new，arithmetic_facts=None、w1_rejection_cache=None。接收方 Submit 经 public_v3.rs:1564–1571、store.rs:624 到 pon_work::verify_with_progress；独立 History 经 history_import.rs:240 同样到默认验证器。切换默认 FullLimb 会作用于这两条实际路径。ArithmeticFactCache 固定 Transposed 不参与本组；生产者 PreparedTask 也不因默认验证核切换而改变。
+
+建议的下一项判别性工作
+
+先独立切换 FullLimb 默认核，保持原 4 秒/16 worker/0.25 CPU 和全部 guard 语义，保留新的正负收据。若仍失败，再在同一预算下为独立 History 分别测量 decode、W1、Host核验、M06、activation、SQLite commit；对实际 resource callback 数做集成计数并覆盖撤销/取消/补额测试。可以优化保持全部物理读与失败顺序的实现成本；不能把删 guard 或扩大预算包装成修复。
+
+当前无法从这些 artifact 证明一个确定的实现逻辑 bug。已证明的是：原始服务门槛真实失败；接收方拒绝与记账正确；公共页独立验证推进不足；固定 Host 的资源竞争与具体 History 检查路径值得下一步测量。该结论不关闭工作硬度、安全经济性或公网资源公平验收。
