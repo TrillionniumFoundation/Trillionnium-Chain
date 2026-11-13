@@ -1,0 +1,16 @@
+{
+  "observed_at": "2026-11-08T00:56:43.207079+00:00",
+  "artifact_count": 9,
+  "candidates": [],
+  "names": [
+    "cost-consistency-b5c655ebe9611b3d62cf739e61e6867decc053e3-1",
+    "cost-x64-b5c655ebe9611b3d62cf739e61e6867decc053e3-1",
+    "w1-reuse-v3-prospective-merge-arm64-b5adba8cfe5307675aac8482aa569312354bb3e4-1",
+    "merge-protocol-contract-b5adba8cfe5307675aac8482aa569312354bb3e4-1",
+    "w1-reuse-v3-prospective-merge-x64-b5adba8cfe5307675aac8482aa569312354bb3e4-1",
+    "w1-reuse-v3-head-arm64-b5c655ebe9611b3d62cf739e61e6867decc053e3-1",
+    "cost-arm64-b5c655ebe9611b3d62cf739e61e6867decc053e3-1",
+    "w1-reuse-v3-head-x64-b5c655ebe9611b3d62cf739e61e6867decc053e3-1",
+    "head-protocol-contract-b5c655ebe9611b3d62cf739e61e6867decc053e3-1"
+  ]
+}

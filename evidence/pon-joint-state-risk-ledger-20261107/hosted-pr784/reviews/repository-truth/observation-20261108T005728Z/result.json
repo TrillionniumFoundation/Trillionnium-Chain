@@ -1,0 +1,16 @@
+{
+  "directory": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-repository-truth-review/observation-20261108T005728Z",
+  "run_id": 42431209912,
+  "job_id": 128580281254,
+  "expected_head": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "job_status": "in_progress",
+  "job_conclusion": null,
+  "run_status": "in_progress",
+  "run_conclusion": null,
+  "log_fetch_exit_code": 1,
+  "log_bytes": 215,
+  "local_identity_unchanged": true,
+  "tracked_status_unchanged": true,
+  "tracked_clean_before_after": true,
+  "finished_at": "2026-11-08T00:57:34.602364+00:00"
+}

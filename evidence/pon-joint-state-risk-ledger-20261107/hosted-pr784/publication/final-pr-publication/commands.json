@@ -1,0 +1,113 @@
+[
+  {
+    "name": "local-head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "local-clean",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=normal"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "github-identity",
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "published-head",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-pon-joint-state-risk-ledger-20261107",
+      "--jq",
+      ".object.sha"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "base-before",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-six-axis-performance-20261103",
+      "--jq",
+      ".object.sha"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "preflight-before-pr",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "existing-prs",
+    "argv": [
+      "gh",
+      "pr",
+      "list",
+      "--repo",
+      "TrillionniumFoundation/Trillionnium-Chain",
+      "--head",
+      "fix/chain-pon-joint-state-risk-ledger-20261107",
+      "--state",
+      "open",
+      "--json",
+      "number,url,baseRefName,headRefOid,isDraft"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "create-draft",
+    "argv": [
+      "gh",
+      "pr",
+      "create",
+      "--repo",
+      "TrillionniumFoundation/Trillionnium-Chain",
+      "--draft",
+      "--base",
+      "fix/chain-six-axis-performance-20261103",
+      "--head",
+      "fix/chain-pon-joint-state-risk-ledger-20261107",
+      "--title",
+      "Add finite joint-state/event certificates and native risk accounting (HOLD)",
+      "--body-file",
+      "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-pr-publication/body.md"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "pr-readback",
+    "argv": [
+      "gh",
+      "pr",
+      "view",
+      "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/784",
+      "--repo",
+      "TrillionniumFoundation/Trillionnium-Chain",
+      "--json",
+      "number,url,state,isDraft,baseRefName,baseRefOid,headRefName,headRefOid,title,author,mergeStateStatus,statusCheckRollup"
+    ],
+    "returncode": 1
+  }
+]

@@ -1,0 +1,71 @@
+2026-11-08T00:46:58.3514825Z   SOURCE_KIND: prospective-merge
+2026-11-08T00:46:58.3515283Z   EXPECTED_SOURCE: b5adba8cfe5307675aac8482aa569312354bb3e4
+2026-11-08T00:46:58.3515779Z   TRNM_EXPECTED_SOURCE_SHA: b5adba8cfe5307675aac8482aa569312354bb3e4
+2026-11-08T00:46:58.3516429Z   EXPECTED_HEAD: b5c655ebe9611b3d62cf739e61e6867decc053e3
+2026-11-08T00:46:58.3516874Z   EXPECTED_BASE: cb314bb4656e5da4844325cd83994ab4764fe8e9
+2026-11-08T00:46:58.3517300Z   EXPECTED_MERGE: b5adba8cfe5307675aac8482aa569312354bb3e4
+2026-11-08T00:46:58.3517883Z   OUT: /home/runner/work/_temp/w1-fresh-service-prospective-merge-42431209904-1
+2026-11-08T00:46:58.3518534Z   TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/w1-fresh-service-prospective-merge-42431209904-1
+2026-11-08T00:46:58.3519152Z   CARGO_HOME: /home/runner/work/_temp/cargo-w1-fresh
+2026-11-08T00:46:58.3519589Z   CARGO_TARGET_DIR: /home/runner/work/_temp/target-w1-fresh
+2026-11-08T00:46:58.3519967Z ##[endgroup]
+2026-11-08T00:51:42.4021249Z {"cleanup": "already-collected", "command_argv": ["python3", "scripts/ci/run_w1_fresh_service_v1.py", "--out", "/home/runner/work/_temp/w1-fresh-service-prospective-merge-42431209904-1/fresh-service"], "consensus_or_model_authority": false, "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain", "failure": null, "final_host_errors": [], "final_parent_lease": {"consensus_or_model_authority": false, "creator_service": "trnm-from-zero-42431209904-1-fresh-challenge-service-2626.service", "current_service": "trnm-from-zero-42431209904-1-fresh-challenge-service-2626.service", "host_readiness_only": true, "parent_identity": {"boot_id": "5b73cc95-4b8c-40c0-9117-c039f1480c62", "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622", "limits": {"cpu.max": "25000 100000", "cpu.max.burst": "0", "memory.max": "2147483648", "memory.swap.max": "0", "pids.max": "256"}, "parent": {"canonical_path": "/sys/fs/cgroup/trnmponpublic.slice", "device": 31, "directory": true, "gid": 0, "inode": 6880, "mode": 493, "symlink": false, "uid": 0}, "unit_file": {"ctime_ns": 1794099018219069236, "device": 29, "inode": 1510, "mtime_ns": 1794099018219069236, "path": "/run/systemd/system/trnmponpublic.slice", "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622", "size_bytes": 325}}, "schema": "trnm-ci-public-fixture-parent-binding-v1", "seal_file": {"ctime_ns": 1794099020237816175, "device": 29, "inode": 1556, "mtime_ns": 1794099020237816175, "path": "/run/trnm-public-fixture-42431209904-1-fresh-challenge-service/parent.json", "sha256": "2696eaabab2a0eae411a702738209ac38340bc5a7f9bbb1840ba8b8e7e554e04", "size_bytes": 3458}, "seal_sha256": "2696eaabab2a0eae411a702738209ac38340bc5a7f9bbb1840ba8b8e7e554e04"}, "gid": 1001, "host_readiness_only": true, "parent_lease": {"consensus_or_model_authority": false, "creator_service": "trnm-from-zero-42431209904-1-fresh-challenge-service-2626.service", "current_service": "trnm-from-zero-42431209904-1-fresh-challenge-service-2626.service", "host_readiness_only": true, "parent_identity": {"boot_id": "5b73cc95-4b8c-40c0-9117-c039f1480c62", "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622", "limits": {"cpu.max": "25000 100000", "cpu.max.burst": "0", "memory.max": "2147483648", "memory.swap.max": "0", "pids.max": "256"}, "parent": {"canonical_path": "/sys/fs/cgroup/trnmponpublic.slice", "device": 31, "directory": true, "gid": 0, "inode": 6880, "mode": 493, "symlink": false, "uid": 0}, "unit_file": {"ctime_ns": 1794099018219069236, "device": 29, "inode": 1510, "mtime_ns": 1794099018219069236, "path": "/run/systemd/system/trnmponpublic.slice", "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622", "size_bytes": 325}}, "schema": "trnm-ci-public-fixture-parent-binding-v1", "seal_file": {"ctime_ns": 1794099020237816175, "device": 29, "inode": 1556, "mtime_ns": 1794099020237816175, "path": "/run/trnm-public-fixture-42431209904-1-fresh-challenge-service/parent.json", "sha256": "2696eaabab2a0eae411a702738209ac38340bc5a7f9bbb1840ba8b8e7e554e04", "size_bytes": 3458}, "seal_sha256": "2696eaabab2a0eae411a702738209ac38340bc5a7f9bbb1840ba8b8e7e554e04"}, "parent_reused": false, "passed": false, "preparation": {"binary_path": "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-ff17be0917ddd87e", "binary_sha256": "033beb4d71224a51faca558dbd015a1ff935492158859b7e10cff0aaa86759a6", "build_env": {"CARGO_BUILD_JOBS": "2", "CARGO_ENCODED_RUSTFLAGS": null, "CARGO_HOME": "/home/runner/work/_temp/cargo-w1-fresh", "CARGO_INCREMENTAL": "0", "CARGO_TARGET_DIR": "/home/runner/work/_temp/target-w1-fresh", "OPENSSL_CONF": null, "OPENSSL_DIR": null, "OPENSSL_MODULES": null, "OPENSSL_STATIC": null, "RUSTFLAGS": null, "RUSTUP_TOOLCHAIN": null, "TRNM_PQ_OPENSSL": null, "TRNM_PQ_OPENSSL_SHA256": null, "TRNM_PQ_OPENSSL_VERSION": null}, "completed": true, "consensus_or_model_authority": false, "failure_type": null, "native_tests_executed": false, "process": {"command": ["cargo", "test", "--locked", "--release", "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-pon-node", "--test", "public_v3_from_zero", "--no-run", "--message-format=json"], "cpu_ns": 366728401000, "cpu_scope": "entire child, not apportioned to nested wall intervals", "exit_code": 0, "involuntary_switches": 3121, "major_faults": 2114, "max_rss_kib": 1559876, "minor_faults": 3954420, "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution", "stderr_sha256": "636e7ca4036a8fa3a60301e3d77dad3836daad56967328ce503c646287a95a6f", "stdout_sha256": "01d35556cda27023ccad06632381727a6c93cefbb2d2f607d414eae7c26be205", "system_cpu_ns": 10075269000, "timed_out": false, "user_cpu_ns": 356653132000, "voluntary_switches": 17522, "wait4_cpu_resolution_ns": 1000, "wall_ns": 194375635218}, "schema": "trnm-ci-original-native-build-preparation-v1", "service_resource_observation": false, "source_after": {"commit": "b5adba8cfe5307675aac8482aa569312354bb3e4", "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a", "tracked_source_identity": {"base": null, "candidate": "b5adba8cfe5307675aac8482aa569312354bb3e4", "kind": "head", "prospective_merge": null, "schema": "trnm-ci-source-v1", "tested_commit": "b5adba8cfe5307675aac8482aa569312354bb3e4", "tested_tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff", "tests_executed_by_identity_check": false, "tracked_bytes": 1733895581, "tracked_entries": 16739, "tracked_worktree_verified": true}, "tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff"}, "source_before": {"commit": "b5adba8cfe5307675aac8482aa569312354bb3e4", "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a", "tracked_source_identity": {"base": null, "candidate": "b5adba8cfe5307675aac8482aa569312354bb3e4", "kind": "head", "prospective_merge": null, "schema": "trnm-ci-source-v1", "tested_commit": "b5adba8cfe5307675aac8482aa569312354bb3e4", "tested_tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff", "tests_executed_by_identity_check": false, "tracked_bytes": 1733895581, "tracked_entries": 16739, "tracked_worktree_verified": true}, "tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff"}, "source_error": null}, "schema": "trnm-ci-original-public-host-controller-v2", "service": "trnm-from-zero-42431209904-1-fresh-challenge-service-2626.service", "systemd_run_exit": 1, "uid": 1001}
+2026-11-08T00:51:42.4116039Z ##[error]Process completed with exit code 1.
+2026-11-08T00:51:42.4176801Z ##[group]Run set -euo pipefail
+2026-11-08T00:51:42.4177222Z [36;1mset -euo pipefail[0m
+2026-11-08T00:51:42.4177655Z [36;1margs=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")[0m
+2026-11-08T00:51:42.4178166Z [36;1mif test "$SOURCE_KIND" = prospective-merge; then[0m
+2026-11-08T00:51:42.4178692Z [36;1m  args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")[0m
+2026-11-08T00:51:42.4179218Z [36;1mfi[0m
+2026-11-08T00:51:42.4179653Z [36;1mpython3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$OUT/source-after.json"[0m
+2026-11-08T00:51:42.4194197Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-08T00:51:42.4194653Z env:
+2026-11-08T00:51:42.4194951Z   CI: true
+2026-11-08T00:51:42.4195247Z   CARGO_INCREMENTAL: 0
+2026-11-08T00:51:42.4195600Z   CARGO_BUILD_JOBS: 2
+2026-11-08T00:51:42.4195895Z   RUST_TEST_THREADS: 1
+2026-11-08T00:51:44.2776395Z   CI: true
+2026-11-08T00:51:44.2776581Z   CARGO_INCREMENTAL: 0
+2026-11-08T00:51:44.2776786Z   CARGO_BUILD_JOBS: 2
+2026-11-08T00:51:44.2776989Z   RUST_TEST_THREADS: 1
+2026-11-08T00:51:44.2777195Z   CARGO_TERM_COLOR: never
+2026-11-08T00:51:44.2777417Z   PYTHONDONTWRITEBYTECODE: 1
+2026-11-08T00:51:44.2777714Z   SOURCE_KIND: prospective-merge
+2026-11-08T00:51:44.2778026Z   EXPECTED_SOURCE: b5adba8cfe5307675aac8482aa569312354bb3e4
+2026-11-08T00:51:44.2778416Z   TRNM_EXPECTED_SOURCE_SHA: b5adba8cfe5307675aac8482aa569312354bb3e4
+2026-11-08T00:51:44.2778794Z   EXPECTED_HEAD: b5c655ebe9611b3d62cf739e61e6867decc053e3
+2026-11-08T00:51:44.2779130Z   EXPECTED_BASE: cb314bb4656e5da4844325cd83994ab4764fe8e9
+2026-11-08T00:51:44.2779462Z   EXPECTED_MERGE: b5adba8cfe5307675aac8482aa569312354bb3e4
+2026-11-08T00:51:44.2779872Z   OUT: /home/runner/work/_temp/w1-fresh-service-prospective-merge-42431209904-1
+2026-11-08T00:51:44.2780394Z   TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/w1-fresh-service-prospective-merge-42431209904-1
+2026-11-08T00:51:44.2780852Z   CARGO_HOME: /home/runner/work/_temp/cargo-w1-fresh
+2026-11-08T00:51:44.2781185Z   CARGO_TARGET_DIR: /home/runner/work/_temp/target-w1-fresh
+2026-11-08T00:51:44.2781482Z ##[endgroup]
+2026-11-08T00:51:44.4459784Z (node:5723) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-08T00:51:44.4460533Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-08T00:51:44.4623433Z With the provided path, there will be 57 files uploaded
+2026-11-08T00:51:44.4624886Z Artifact name is valid!
+2026-11-08T00:51:44.4625673Z Root directory input is valid!
+2026-11-08T00:51:44.8173816Z Beginning upload of artifact content to blob storage
+2026-11-08T00:51:45.4413889Z (node:5723) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-11-08T00:51:46.0643827Z Uploaded bytes 5643607
+2026-11-08T00:51:46.1209837Z Finished uploading artifact content to blob storage!
+2026-11-08T00:51:46.1210699Z SHA256 digest of uploaded artifact zip is 4b87ab491989d30ace5b06c6d6e719ae33415cc942630eaf5bad111ede37b6fd
+2026-11-08T00:51:46.1212742Z Finalizing artifact upload
+2026-11-08T00:51:46.5150646Z Artifact w1-fresh-service-prospective-merge-b5adba8cfe5307675aac8482aa569312354bb3e4-1.zip successfully finalized. Artifact ID 13597946101
+2026-11-08T00:51:46.5152645Z Artifact w1-fresh-service-prospective-merge-b5adba8cfe5307675aac8482aa569312354bb3e4-1 has been successfully uploaded! Final size is 5643607 bytes. Artifact ID is 13597946101
+2026-11-08T00:51:46.5158423Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42431209904/artifacts/13597946101
+2026-11-08T00:51:46.5401826Z Post job cleanup.
+2026-11-08T00:51:46.6226427Z [command]/usr/bin/git version
+2026-11-08T00:51:46.6276683Z git version 2.56.0
+2026-11-08T00:51:46.6318969Z Temporarily overriding HOME='/home/runner/work/_temp/095dbcfc-222d-4232-b5b2-67273a67fd66' before making global git config changes
+2026-11-08T00:51:46.6320206Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-08T00:51:46.6325991Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain
+2026-11-08T00:51:46.6368546Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-08T00:51:46.6403861Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-08T00:51:46.6665533Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-08T00:51:46.6700199Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-08T00:51:46.6944839Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-08T00:51:46.6981741Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-08T00:51:46.7404823Z Cleaning up orphan processes
+2026-11-08T00:51:46.7737993Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
