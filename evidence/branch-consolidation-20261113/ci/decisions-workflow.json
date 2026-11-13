@@ -1,0 +1,144 @@
+{
+  "55033605dc": {
+    "decision": "COMPATIBLE_SOURCE_PORTED_AND_HISTORICAL_CAMPAIGN_RETAINED",
+    "integration_commits": [
+      "11e21b3135aaefeeb6b27191f734301cdb29b8af",
+      "f733da79b23b88bb84231806a5bfa20d1789ec98"
+    ],
+    "reason": "Ported legal full-W1 attempt journaling, grouped Python delivery cost, failed fixed-Host readback, additive staged-cost summaries, anchored read-only trial reconciliation and explicit V4 external recovery-file handoff. Current deferred cancellation, finalization and acknowledgement owners remain. Source audit separately removed only the redundant outer History Host check, retaining its final alive fence and four owner controls. Original 162 absent archive files and the dated fixed-Host workflow remain original Git history; no historical run is relabelled as current execution.",
+    "selected_anchors": [
+      "formal/pon-nakamoto-v1/useful_cell_attempt_journal_v1.py",
+      "formal/pon-nakamoto-v1/experiments/grouped_delivery_cost_v1.py",
+      "formal/pon-nakamoto-v1/experiments/fixed_host_service_readback_v1.py",
+      "scripts/llm_runtime_trial_ledger.py",
+      "scripts/llm_cell_host_handoff.py",
+      "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs"
+    ],
+    "qualification_limit": "Two actual nonroot installed-ELF controls are refused by this host's non-root-owned /usr ancestors. Original bounded source replay also timed out under shared-host pressure. No policy or deadline was relaxed."
+  },
+  "c592cccdfb": {
+    "decision": "EXACT_INERT_ARCHIVE_ALREADY_RETAINED",
+    "reason": "All six source archive paths are present at the selected e531 checkpoint. PQL3/PCS1 sandbox material remains inert evidence; its independent historical replay does not qualify current native source.",
+    "selected_anchors": [
+      "library-recovery/chain-pql3-pcs1-source-20261104"
+    ]
+  },
+  "2c5349cb78": {
+    "decision": "HISTORICAL_WORKFLOW_ONLY",
+    "reason": "Frozen Cargo/ASM-lock diagnostic uses a dated push target and original source identity. It is a one-off diagnostic, not a reusable gate for the composed source. Current fuzz locks and qualification workflow remain selected; no old workflow activation.",
+    "selected_anchors": [
+      "scripts/ci/check_ci_contract.py"
+    ]
+  },
+  "1ac0628e1b": {
+    "decision": "EXACT_INERT_ARCHIVE_ALREADY_RETAINED",
+    "reason": "All eight desktop source-custody archive paths are already present at e531 with exact retained bytes. Historical custody remains distinct from current execution or external independence.",
+    "selected_anchors": [
+      "library-recovery/host-source-custody-20261103"
+    ]
+  },
+  "3f0f21db85": {
+    "decision": "ALTERNATIVE_INITIAL_ROOT_OPTIMIZATION_ARCHIVED",
+    "reason": "The five original initial-root implementation files share exact blobs with the 01404de/e0f831 source cluster; selected FullRootArithmetic retains the complete-state root owner. The optional immutable projection/canonical-decoder optimization is not claimed as implemented. Its four cloud artifacts and historical 304 native results remain pinned to their original source in Git history.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs"
+    ],
+    "cross_owner": "source_audit: initial-root file-by-file cluster comparison"
+  },
+  "38fda50fa3": {
+    "decision": "ALTERNATIVE_INITIAL_ROOT_OPTIMIZATION_ARCHIVED",
+    "reason": "Same initial-root alternative cluster with an older initial_root_tests variant and original failed fixture state. Preserve the failed borrow-fix observation and source; do not replace the selected complete-state root owner or claim optimization equivalence.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs"
+    ]
+  },
+  "28fb63124e": {
+    "decision": "ALTERNATIVE_INITIAL_ROOT_OPTIMIZATION_ARCHIVED",
+    "reason": "Older canonical JSON/cache-root-arithmetic variant is an unsuccessful candidate, not a current implementation obligation. Its exact original failure remains in history; the selected FullRootArithmetic owner is not replaced by this encoder.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs"
+    ]
+  },
+  "98447abce3": {
+    "decision": "EXACT_INERT_ARCHIVE_ALREADY_RETAINED",
+    "reason": "All 80 archive source paths already exist at e531. Original source-context objects are preserved as inactive material, without execution or authority promotion.",
+    "selected_anchors": [
+      "library-recovery/documentation-source-preservation-20261103"
+    ]
+  },
+  "d48c8070f1": {
+    "decision": "EXACT_INERT_ARCHIVE_ALREADY_RETAINED",
+    "reason": "All 29 recovered model-release source-object paths are already present at e531. No installation, model campaign or old release activation was performed.",
+    "selected_anchors": [
+      "library-recovery/bundle-source-20261103"
+    ]
+  },
+  "d3b9abedeb": {
+    "decision": "FROZEN_ALTERNATIVE_PROOF_PROFILE_ARCHIVED",
+    "reason": "Preserve the standalone original-witness W1 continuation and PWSR0001 succinct research profile in history. Its 62 original witness policy, 26 byte-identical receipt reuse rule, SDK 3.0.6/circuit 4.0.5 and fixed remote run/artifact identities are not the current composed proof or Node-admission profile. The old shared_snapshot Layout parser targets a backend absent from the selected source; current SelectedOpen/header/body binding is retained. No legacy proof workflow, new entropy continuation or expensive historical proof run is activated.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0",
+      "scripts/ci/check_public_readiness_evidence.py"
+    ],
+    "qualification_limit": "This is an explicit alternative-profile disposition, not a claim that all 61 old implementation paths are present."
+  },
+  "c61e2112de": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "Selected runner retains the original valid-work ROOT cohort and adds finally-based post-observation failure preservation. Current Rust campaign keeps the Host actor, source ownership and arithmetic checks. Historical cohort observations retain their source identity.",
+    "selected_anchors": [
+      "scripts/run_pon_root_supplement.py",
+      "scripts/ci/test_run_pon_root_supplement.py",
+      "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs"
+    ]
+  },
+  "086a5b67d0": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "Current worker commit/reveal main-target code and workflow retain the private journal fields and deterministic fallback. The frozen #316 workflow observation is historical and is not a new production qualification.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-pon-node/src/main.rs"
+    ]
+  },
+  "634fd8efb8": {
+    "decision": "ALTERNATIVE_RESERVATION_POLICY_ARCHIVED",
+    "reason": "The older global spent_start_reserves credit changes admission accounting. Selected per-request reservation plus actual CpuFlow charging preserves other live reservations and rejects budget exhaustion. Do not combine both accounting owners or treat the old policy as an equivalent arithmetic refactor.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs"
+    ]
+  },
+  "2d20365dd5": {
+    "decision": "ALTERNATIVE_COMPILER_QUALIFICATION_ARCHIVED",
+    "reason": "Rust 1.99/compiler API and constant-chunk compatibility changes belong to an alternate toolchain qualification. The selected required baseline, cost contracts, lock owners and frozen native evidence remain pinned to Rust 1.95.0. Do not silently update compiler pins or carry the alternate baseline and measurement claims into current gates.",
+    "selected_anchors": [
+      "rust-toolchain.toml",
+      ".github/workflows/trnm-required-baseline.yml",
+      "scripts/ci/check_cross_arch_cost.py"
+    ]
+  },
+  "a6e78fd090": {
+    "decision": "COMPATIBLE_CALLER_CONTROL_PORTED_ALTERNATE_CLEANUP_ARCHIVED",
+    "reason": "Ported the actual TypeError caller-boundary control for externally supplied digest values, replacing self-equality and argument-name introspection. The remaining 295-path compiler closure includes broad historical removals and optional parser/cache/walk optimizations. Selected active owner modules and complete source/maturity gates remain authoritative. The old fuzz-lane repository-test removal is not adopted; source_binding_fixture and efficiency alternatives are explicitly archived, not falsely counted as covered. Original compiler closure and failures retain their identity.",
+    "selected_anchors": [
+      "scripts/ci/check_invariants.py",
+      "scripts/ci/check_repository.py",
+      "scripts/ci/report_module_evidence.py",
+      "config/portability-inventory-v1.json",
+      "formal/pon-nakamoto-v1/test_reference.py"
+    ],
+    "integration_commits": [
+      "OUTBOUND_CHECKPOINT"
+    ]
+  },
+  "2c3e885e03": {
+    "decision": "OBSOLETE_DOCUMENT_DELETION_ARCHIVED",
+    "reason": "Clearing the root README would remove the selected project navigation. Preserve the old deletion commit in history while keeping current documentation.",
+    "selected_anchors": [
+      "README.md"
+    ]
+  },
+  "b1a787f084": {
+    "decision": "HISTORICAL_OPERATIONAL_WORKFLOW_ONLY",
+    "reason": "Dated self-hosted Linux/X64/x230 command-relay recovery performs systemctl restarts, process termination and external SSH relay operations. It is an old operational task, not a repository qualification control. Preserve history; no execution or activation.",
+    "selected_anchors": []
+  }
+}

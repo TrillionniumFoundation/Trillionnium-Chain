@@ -1,0 +1,14 @@
+{
+  "writer_session": 29600,
+  "observed_exit_code": 130,
+  "original": "/workspace/scratch/415d5ba2202d/Trillionnium-Chain/.git/worktrees/ci-fixes/index.lock",
+  "preserved_as": "/workspace/scratch/415d5ba2202d/ci-audit/cancelled-writer-29600-index.lock",
+  "bytes": 0,
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "source_head_before_recovery": "11e21b3135aaefeeb6b27191f734301cdb29b8af",
+  "other_cancelled_read_sessions": {
+    "49152": 130,
+    "37725": 130
+  },
+  "old_outbound_doctest": "session and final status unknown; not represented as cancelled or passed"
+}

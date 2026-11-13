@@ -1,0 +1,180 @@
+{
+  "35b4e13594": {
+    "decision": "COVERED_BY_SELECTED_SOURCE_WITH_FINAL_REBIND",
+    "reason": "Current consensus roster requires the named native_arithmetic_matches_versioned_python_domain_vectors control. Actual-registry names replace the old grep-count strategy. Original source-lock/corpus identities remain historical; final canonical source bindings are required.",
+    "selected_anchors": [
+      "scripts/ci/check_consensus_roster.py",
+      "config/pon/pq-cross-branch-corpus-v1.json"
+    ]
+  },
+  "b8672afb70": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "Current system-security reader, documentation, explicit lane commands and closed CI contract retain the eight release blockers without granting authority. Original evidence pins stay historical.",
+    "selected_anchors": [
+      "scripts/ci/check_ci_contract.py",
+      "scripts/ci/ci_job.sh"
+    ]
+  },
+  "4906dbad8e": {
+    "decision": "COMPATIBLE_PERMISSION_NARROWING_PORTED",
+    "integration_commits": [
+      "4b542e32cb4ac70e556b13c5540f9be61a6338d7"
+    ],
+    "reason": "Selected exact head/merge CodeQL already retains local SARIF with upload: never. Dropped unused security-events: write while preserving contents: read and actual analysis/artifact retention; no remote upload introduced.",
+    "selected_anchors": [
+      ".github/workflows/codeql-real-exact-source.yml"
+    ]
+  },
+  "f006f0d971": {
+    "decision": "CURRENT_STRONGER_BUDGET_CONTROL_RETAINED",
+    "reason": "Do not increase the old0.2s setup test to5s merely to pass. Selected observer explicitly accepts setup-budget exhaustion and verifies that exhausted initialization starts no preparation; original cumulative deadline remains unchanged.",
+    "selected_anchors": [
+      "scripts/ci/test_w1_staged_observer.py"
+    ]
+  },
+  "919e738373": {
+    "decision": "SAFER_SELECTED_CODEQL_OWNER_RETAINED",
+    "integration_commits": [
+      "4b542e32cb4ac70e556b13c5540f9be61a6338d7"
+    ],
+    "reason": "The older SARIF-upload variant conflicts with selected local-only upload: never contract. Retained exact source/head+merge analysis and local SARIF artifacts, removed unused write permission, and archived the alternate uploader.",
+    "selected_anchors": [
+      ".github/workflows/codeql-real-exact-source.yml"
+    ]
+  },
+  "728297c907": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "Current durable-schema reader follows the closed selected owner wrapper with SelectedOpen and explicit header/body binding. It is stronger than admitting the old owner-mode string alone; do not broaden the selected schema parser.",
+    "selected_anchors": [
+      "scripts/ci/check_public_readiness_evidence.py",
+      "scripts/ci/test_public_readiness_evidence.py"
+    ]
+  },
+  "058a729a27": {
+    "decision": "COMPATIBLE_SOURCE_PORTED",
+    "integration_commits": [
+      "bc02f03bdecd840652d0334dcf06cbc8fa3bd7f2"
+    ],
+    "reason": "Ported declared-control transitive grouping, bounded externally pinned local-material reader and explicit WANV3 common-control/V4 joint matching. OriginalV1/V2 denominators and authority limits remain. Historical source-only fixture is exact and pinned; all results remain HOLD and independent_administration_verified:false.",
+    "selected_anchors": [
+      "scripts/pon_decentralization_audit.py",
+      "scripts/pon_decentralization_evidence.py",
+      "scripts/pon_wan_evidence.py",
+      "config/pon/decentralization-audit-v1.json"
+    ]
+  },
+  "b6c5ca4651": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "Selected pinned packaging wheel supports marker evaluation without the incompatible context keyword. Existing pre25 API-shape controls preserve compatibility without relaxing the pinned release dependency.",
+    "selected_anchors": [
+      "scripts/ci/runtime-release-requirements.txt",
+      "scripts/ci/model-runtime-cpu-requirements.txt"
+    ]
+  },
+  "53f65ff33e": {
+    "decision": "HISTORICAL_READBACK_WORKFLOWS_ONLY",
+    "reason": "Thirty-one dated frozen readback workflows and sixteen fixed-source/artifact readers preserve original failed Legacy/bd campaign observations. They are historical read-only comparisons, not new native executions or required current gates. No manual dispatch or legacy workflow activation.",
+    "selected_anchors": []
+  },
+  "3a862b0d4b": {
+    "decision": "HISTORICAL_READBACK_WORKFLOW_ONLY",
+    "reason": "The exact original-manifest failure reader remains a historical source/artifact observation. Its dated workflow is preserved in Git without reactivation or relabelling as current evidence.",
+    "selected_anchors": []
+  },
+  "2c7c262724": {
+    "decision": "HISTORICAL_READBACK_WORKFLOW_ONLY",
+    "reason": "The nested-child DA transcript replay targets an exact original frozen transcript and parser. Preserve that source and evidence identity; the selected current DA controls remain independently required.",
+    "selected_anchors": []
+  },
+  "1bb63dabe6": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "Current exact canonical-origin allowlist retains the same three allowed origins and actual audit/dev/push negative controls for host/path confusion. Do not restore the older empty README or narrow this to a substring check.",
+    "selected_anchors": [
+      "scripts/ci/test_project_boundary.py",
+      "config/repository-policy-v1.json"
+    ]
+  },
+  "ad490ed4b1": {
+    "decision": "COVERED_BY_SELECTED_SOURCE_AND_HISTORICAL_EXPORTERS",
+    "reason": "The semantic exit-refusal test already injects a fixed clock so host preemption cannot create a different failure. Remaining old prepare-cloud/export helpers are one-off source/model material packaging; preserve history without activating exporters.",
+    "selected_anchors": [
+      "scripts/test_llm_runtime_release.py"
+    ]
+  },
+  "07f22452e4": {
+    "decision": "SELECTED_V4_OWNER_RETAINED_HISTORICAL_CAMPAIGN_DRIVER_ARCHIVED",
+    "reason": "SelectedV4 task objective, preflight, frozen-plan and runtime admission controls are retained. The absent run_llm_task_research_v4.py is an explicit fixed six-arm public-model research campaign driver, not the admission or verification owner. Its offline model/material pins and zero-gain observation remain historical; no training campaign or model installation is triggered, and no equivalence claim is made for the absent driver.",
+    "selected_anchors": [
+      "scripts/llm_runtime_pilot.py"
+    ]
+  },
+  "e34a60bf63": {
+    "decision": "COMPATIBLE_VERSIONED_SOURCE_PORTED",
+    "integration_commits": [
+      "facb8e9c2e2fd38e8fdd7cd926206854939b6474"
+    ],
+    "reason": "Added explicit V5 exit-mm observation/probe and original-frontier PF_EXITING check while retainingV2/V3/V4 behavior, registered-plan wrapper and stop_request. No RSS-zero/release fallback. Required CI now explicitly retainsV3/V4 andV5 alongsideV2. Historical cloud exporters remain inactive.",
+    "selected_anchors": [
+      "scripts/llm_runtime_exit_mm_observation.py",
+      "scripts/run_llm_runtime_exit_mm_probe.py",
+      "scripts/test_llm_runtime_exit_mm_observation.py",
+      "docs/protocol/pon-nakamoto-v1/details/RUNTIME_EXIT_MM_V5.md"
+    ]
+  },
+  "5328d75283": {
+    "decision": "COMPATIBLE_FULL_NAME_ASSERTIONS_PORTED",
+    "integration_commits": [
+      "4b542e32cb4ac70e556b13c5540f9be61a6338d7"
+    ],
+    "reason": "From-zero negatives now assert the complete ordered native W1 names and dynamic full roster length, retaining all five failure cases. This closes the older truncated expected-name assertion without weakening execution readback.",
+    "selected_anchors": [
+      "scripts/ci/test_run_from_zero_native.py"
+    ]
+  },
+  "c2e0e70fed": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "All five from-zero native negative cases are retained in the selected runner tests; full-name/order assertions were also carried from5328 in4b542. No control is dropped for faster qualification.",
+    "selected_anchors": [
+      "scripts/ci/test_run_from_zero_native.py"
+    ]
+  },
+  "428d084bce": {
+    "decision": "COMPATIBLE_SOURCE_PORTED",
+    "integration_commits": [
+      "bc02f03bdecd840652d0334dcf06cbc8fa3bd7f2"
+    ],
+    "reason": "Ported P0-P6 declared evidence shape reader with the complete three-mode by three-run P4 denominator. Even positive self-declarations yield HOLD_NO_GO; independent attestation and production activation stay false. This source-only reader does not execute campaigns.",
+    "selected_anchors": [
+      "scripts/pon_p0_p6_evidence_gate.py"
+    ]
+  },
+  "83ecbbd361": {
+    "decision": "COMPATIBLE_SOURCE_PORTED",
+    "integration_commits": [
+      "bc02f03bdecd840652d0334dcf06cbc8fa3bd7f2"
+    ],
+    "reason": "Ported declared honest/candidate cost arithmetic with unchanged8-20bit, two-second cookie research profile. Synthetic fixtures remain synthetic; no hardware measurement, traffic generation, admission change or activation follows from a feasible arithmetic row.",
+    "selected_anchors": [
+      "scripts/pon_admission_price_model.py"
+    ]
+  },
+  "34a0f50914": {
+    "decision": "EXACT_COMPATIBLE_SOURCE_ALREADY_RETAINED",
+    "reason": "Both flood-cost/P2 evidence comparison files and24 declared controls are exact reverse-diff matches. They retain externally frozen head/tree and W1 profile rather than infer qualification from the current directory.",
+    "selected_anchors": []
+  },
+  "a598d58623": {
+    "decision": "SELECTED_DENY_BY_DEFAULT_OWNER_RETAINED",
+    "reason": "Current frozen mainline policy rejects recursive enablement and requires active implementation null. Explicit finality-v1 remains specified-but-disabled with four keys and threshold three. The older work-profile status checker is not compatible with the selected owner and stays historical; no finality activation.",
+    "selected_anchors": [
+      "config/pon/work-profile-v1.json"
+    ]
+  },
+  "eb94f835ad": {
+    "decision": "COVERED_BY_SELECTED_DENY_BY_DEFAULT_OWNER",
+    "reason": "Selected strict activation boundary supersedes the older permissive shape and retains recursive false flags, inactive implementation and disabled versioned finality. Do not restore older active-status assumptions.",
+    "selected_anchors": [
+      "config/pon/work-profile-v1.json"
+    ]
+  }
+}

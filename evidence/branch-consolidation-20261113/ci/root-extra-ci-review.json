@@ -1,0 +1,510 @@
+[
+  {
+    "name": "fix/chain-security-ci-source-lock-20261110",
+    "sha": "35b4e135949fb069d6d0082a5a7b8c2ce4e38376",
+    "commit_date": "2026-11-10T19:38:31-05:00",
+    "subject": "fix(ci): rebind PQ source lock and require full consensus test set (HOLD)",
+    "unique_commits": 1,
+    "merge_base": "e4abb172147e941b62483652b0ceabaae4317624",
+    "core_paths": [
+      ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "config/pon/pq128-source-lock-v1.json"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 3,
+      "evidence_or_documentation": 2
+    }
+  },
+  {
+    "name": "fix/chain-system-security-ab60-20261109",
+    "sha": "b8672afb702e4b0bfff8e2bef2b6144d355442dd",
+    "commit_date": "2026-11-09T22:10:08+08:00",
+    "subject": "security: project eight release blockers without promoting authority",
+    "unique_commits": 1,
+    "merge_base": "e2a02f9271b49f146e70806c8a66e161b5973971",
+    "core_paths": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "scripts/ci/check_ci_contract.py",
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/test_ci_contract.py"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 4,
+      "evidence_or_documentation": 23
+    }
+  },
+  {
+    "name": "fix/chain-codeql-local-sarif-no-upload-20261107",
+    "sha": "4906dbad8e97c2a252a395b7b581ebbe21a59204",
+    "commit_date": "2026-11-06T23:31:18-05:00",
+    "subject": "fix(ci): retain local CodeQL SARIF without conflicting upload",
+    "unique_commits": 1,
+    "merge_base": "fa1f6a89cc812c5b6daca4e22464b777eeeb3e04",
+    "core_paths": [
+      ".github/workflows/codeql-real-exact-source.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "fix/w1-staged-observer-budget-test-20261107",
+    "sha": "f006f0d971b25802dda4b6d12ce0f770b1fb993f",
+    "commit_date": "2026-11-06T21:07:46-05:00",
+    "subject": "test(w1): avoid sub-setup staged deadline race",
+    "unique_commits": 1,
+    "merge_base": "987e0a476c3780d89d2d2333aa8b5fa5583cdcfd",
+    "core_paths": [
+      "scripts/ci/test_w1_staged_observer.py"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "fix/chain-native-codeql-source-scan-20261106-gpt6",
+    "sha": "919e7383739b2577836c25c5d39c3bfc1698e46c",
+    "commit_date": "2026-11-06T20:51:40-05:00",
+    "subject": "ci(codeql): upload real exact-source SARIF for exporter",
+    "unique_commits": 11,
+    "merge_base": "b75699ffeacf30bcee3794211d64915010e6dda8",
+    "core_paths": [
+      ".github/workflows/codeql-real-exact-source.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "fix/chain-durable-schema-parser-mode-20261107",
+    "sha": "728297c907821a92724e189430d1a0ba5c0e61c9",
+    "commit_date": "2026-11-06T19:09:19-05:00",
+    "subject": "fix(ci): follow selected durable schema owner mode",
+    "unique_commits": 1,
+    "merge_base": "840522d0b65b4989f1a2a1d09c0ad51af1a1956d",
+    "core_paths": [
+      "scripts/ci/check_public_readiness_evidence.py",
+      "scripts/ci/test_public_readiness_evidence.py"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 2
+    }
+  },
+  {
+    "name": "fix/chain-control-domain-evidence-20261106",
+    "sha": "058a729a274b431ed1617efee2725cad8471d966",
+    "commit_date": "2026-11-06T10:11:20-05:00",
+    "subject": "docs(audit): retain complete continuation evidence and native limits",
+    "unique_commits": 5,
+    "merge_base": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+    "core_paths": [
+      "config/pon/decentralization-audit-v1.json",
+      "scripts/ci/check_ci_contract.py",
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/fixtures/pon_decentralization_v1.json",
+      "scripts/ci/test_ci_contract.py",
+      "scripts/ci/test_pon_decentralization_audit.py",
+      "scripts/ci/test_pon_decentralization_evidence.py",
+      "scripts/ci/test_pon_wan_control_domains.py",
+      "scripts/pon_decentralization_audit.py",
+      "scripts/pon_decentralization_evidence.py",
+      "scripts/pon_wan_evidence.py"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 8,
+      "evidence_or_documentation": 203,
+      "implementation_or_tooling": 3
+    }
+  },
+  {
+    "name": "fix/chain-runtime-marker-metadata-compat-20261106",
+    "sha": "b6c5ca46517710d703e0e059bc3c681c73c22901",
+    "commit_date": "2026-11-06T05:03:54-05:00",
+    "subject": "Rebase packaging marker compatibility fix onto current six-axis head",
+    "unique_commits": 4,
+    "merge_base": "56897f125df27994efa1dda935f2c62eceb36de9",
+    "core_paths": [
+      "scripts/llm_runtime_release.py",
+      "scripts/test_llm_runtime_release.py"
+    ],
+    "residual_counts": {
+      "implementation_or_tooling": 2
+    }
+  },
+  {
+    "name": "fix/chain-retained-failure-readback-20261104",
+    "sha": "53f65ff33eb8b47646b8a95cc5a7923dd50acd20",
+    "commit_date": "2026-11-04T08:12:48-05:00",
+    "subject": "ci(pon): read exact failed Legacy and bd service archives without rerunning native",
+    "unique_commits": 38,
+    "merge_base": "be0d5f978dc86008115524a6be85c38e03982b33",
+    "core_paths": [
+      ".github/workflows/pon-1b-legacy-history-failure-readback-20261104.yml",
+      ".github/workflows/pon-44d-history-failure-readback-20261104.yml",
+      ".github/workflows/pon-44d-service-model-failure-readback-20261104.yml",
+      ".github/workflows/pon-69d-history-failure-readback-20261104.yml",
+      ".github/workflows/pon-73ab-history-failure-readback-20261104.yml",
+      ".github/workflows/pon-73ab-service-w1-failure-readback-20261104.yml",
+      ".github/workflows/pon-93e-history-failure-readback-20261104.yml",
+      ".github/workflows/pon-93e-w1-failure-readback-20261104.yml",
+      ".github/workflows/pon-baseline-w1-failure-readback-20261104.yml",
+      ".github/workflows/pon-cell-inventory-closure-20261104.yml",
+      ".github/workflows/pon-current-native-cost-readback-20261104.yml",
+      ".github/workflows/pon-current-native-host-readback-20261104.yml",
+      ".github/workflows/pon-current-source-preflight-20261104.yml",
+      ".github/workflows/pon-d073-integration-preflight-20261104.yml",
+      ".github/workflows/pon-frozen-40a-fetch-failure-readback-20261104.yml",
+      ".github/workflows/pon-frozen-40a-native-cost-readback-20261104.yml",
+      ".github/workflows/pon-frozen-44d-native-cost-readback-20261104.yml",
+      ".github/workflows/pon-frozen-44d-native-host-readback-20261104.yml",
+      ".github/workflows/pon-frozen-73ab-native-cost-readback-20261104.yml",
+      ".github/workflows/pon-frozen-73ab-native-host-readback-20261104.yml",
+      ".github/workflows/pon-frozen-93e-native-cost-readback-20261104.yml",
+      ".github/workflows/pon-frozen-93e-native-host-readback-20261104.yml",
+      ".github/workflows/pon-frozen-93e-w1-report-readback-20261104.yml",
+      ".github/workflows/pon-frozen-bd-native-cost-readback-20261104.yml",
+      ".github/workflows/pon-frozen-bd-w1-report-readback-20261104.yml",
+      ".github/workflows/pon-history-w1-failure-readback-20261104.yml",
+      ".github/workflows/pon-retained-69d-history-db-readback-20261104.yml",
+      ".github/workflows/pon-retained-failure-artifacts-20261104.yml",
+      ".github/workflows/pon-retained-locked-fetch-validation.yml",
+      ".github/workflows/pon-scoped-state-native-20261104.yml",
+      ".github/workflows/pon-sigkill-marker-native-20261104.yml",
+      "scripts/ci/current_native_cost_readback.py",
+      "scripts/ci/current_native_decode_delta.py",
+      "scripts/ci/current_native_host_readback.py",
+      "scripts/ci/current_native_sql_delta.py",
+      "scripts/ci/frozen_40a_fetch_failure_readback.py",
+      "scripts/ci/frozen_40a_native_cost_readback.py",
+      "scripts/ci/frozen_44d_native_cost_readback.py",
+      "scripts/ci/frozen_44d_native_host_readback.py",
+      "scripts/ci/frozen_73ab_native_cost_readback.py",
+      "scripts/ci/frozen_73ab_native_host_readback.py",
+      "scripts/ci/frozen_93e_native_cost_readback.py",
+      "scripts/ci/frozen_93e_native_host_readback.py",
+      "scripts/ci/frozen_93e_w1_report_readback.py",
+      "scripts/ci/frozen_bd_native_cost_readback.py",
+      "scripts/ci/frozen_bd_w1_report_readback.py",
+      "scripts/ci/retained_69d_history_db_readback.py"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 47,
+      "evidence_or_documentation": 82
+    }
+  },
+  {
+    "name": "research/chain-original-cpu-readback-20261103-gpt6",
+    "sha": "3a862b0d4b6423885e48e839ad8208b037771239",
+    "commit_date": "2026-11-04T01:52:59-05:00",
+    "subject": "proof: scope fresh failure readback to original manifest",
+    "unique_commits": 20,
+    "merge_base": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+    "core_paths": [
+      ".github/workflows/chain-exact-da-native.yml",
+      ".github/workflows/chain-original-artifact-readback.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 2,
+      "evidence_or_documentation": 111,
+      "implementation_or_tooling": 49
+    }
+  },
+  {
+    "name": "research/chain-da-sequence-readback-20261104-gpt6",
+    "sha": "2c7c262724158833d7d00a7782f6318dad7e3e3f",
+    "commit_date": "2026-11-03T23:55:12-05:00",
+    "subject": "research(da): replay the original nested-child transcript through exact parser controls",
+    "unique_commits": 16,
+    "merge_base": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+    "core_paths": [
+      ".github/workflows/chain-da-sequence-log-readback.yml",
+      ".github/workflows/chain-original-artifact-readback.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 2,
+      "evidence_or_documentation": 101,
+      "implementation_or_tooling": 27
+    }
+  },
+  {
+    "name": "fix/ci-owner-cleared-readme-origin-20261103-gpt6",
+    "sha": "1bb63dabe64029cb51c1e064bcd7489981d2d25c",
+    "commit_date": "2026-11-03T05:47:44-05:00",
+    "subject": "ci: assert canonical checkout origin negatives in required repository-truth lane",
+    "unique_commits": 4,
+    "merge_base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "core_paths": [
+      "README.md",
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/project_boundary.py",
+      "scripts/ci/test_project_boundary_origin.py"
+    ],
+    "residual_counts": {
+      "evidence_or_documentation": 1,
+      "checks_or_configuration": 3
+    }
+  },
+  {
+    "name": "fix/chain-exit-worker-count-boundary-20261029",
+    "sha": "ad490ed4b1132a333159fd76702809fd248a4462",
+    "commit_date": "2026-10-28T23:50:12-04:00",
+    "subject": "test(runtime): isolate semantic exit refusal from host clock preemption",
+    "unique_commits": 14,
+    "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+    "core_paths": [
+      ".github/workflows/pon-cloud-build-inputs.yml",
+      ".github/workflows/pon-model-controls-diagnostic.yml",
+      ".github/workflows/pon-model-parent-acceptance.yml",
+      "config/portability-inventory-v1.json",
+      "scripts/ci/check_ci_contract.py",
+      "scripts/ci/check_model_runtime_unit_log.py",
+      "scripts/ci/check_public_readiness_evidence.py",
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/prepare_model_cloud_inputs.py",
+      "scripts/ci/test_ci_contract.py",
+      "scripts/ci/test_public_readiness_evidence.py",
+      "scripts/llm_cell_release.py",
+      "scripts/llm_runtime_parent_step.py",
+      "scripts/llm_runtime_parent_step_v2.py",
+      "scripts/llm_runtime_release.py",
+      "scripts/run_llm_task_research_v4.py",
+      "scripts/test_llm_runtime_release.py"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 11,
+      "evidence_or_documentation": 52,
+      "implementation_or_tooling": 6
+    }
+  },
+  {
+    "name": "fix/chain-hepta-task-bound-objective-20261027",
+    "sha": "07f22452e4bab3f42c38ff522fab55c07ab0c5a2",
+    "commit_date": "2026-10-27T20:10:24-04:00",
+    "subject": "research(model): retain real parent task training and zero-gain decision",
+    "unique_commits": 11,
+    "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+    "core_paths": [
+      ".github/workflows/pon-cloud-build-inputs.yml",
+      ".github/workflows/pon-model-controls-diagnostic.yml",
+      ".github/workflows/pon-model-parent-acceptance.yml",
+      "config/portability-inventory-v1.json",
+      "scripts/ci/check_ci_contract.py",
+      "scripts/ci/check_model_runtime_unit_log.py",
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/prepare_model_cloud_inputs.py",
+      "scripts/ci/test_ci_contract.py",
+      "scripts/llm_cell_release.py",
+      "scripts/llm_runtime_parent_step.py",
+      "scripts/llm_runtime_parent_step_v2.py",
+      "scripts/llm_runtime_release.py",
+      "scripts/run_llm_task_research_v4.py",
+      "scripts/test_llm_runtime_release.py"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 9,
+      "evidence_or_documentation": 49,
+      "implementation_or_tooling": 6
+    }
+  },
+  {
+    "name": "fix/chain-rss-mm-detached-v5-20261027",
+    "sha": "e34a60bf63236b10f104873ac9ee3190c38f7ec3",
+    "commit_date": "2026-10-27T10:23:49-04:00",
+    "subject": "fix(runtime): observe exiting detached mm before original RSS gap",
+    "unique_commits": 11,
+    "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+    "core_paths": [
+      ".github/workflows/pon-cloud-build-inputs.yml",
+      ".github/workflows/pon-model-controls-diagnostic.yml",
+      ".github/workflows/pon-model-parent-acceptance.yml",
+      "config/portability-inventory-v1.json",
+      "scripts/ci/check_ci_contract.py",
+      "scripts/ci/check_model_runtime_unit_log.py",
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/prepare_model_cloud_inputs.py",
+      "scripts/ci/test_ci_contract.py",
+      "scripts/llm_cell_release.py",
+      "scripts/llm_runtime_exit_mm_observation.py",
+      "scripts/llm_runtime_exit_observation.py",
+      "scripts/llm_runtime_parent_step.py",
+      "scripts/llm_runtime_parent_step_v2.py",
+      "scripts/llm_runtime_pilot.py",
+      "scripts/llm_runtime_release.py",
+      "scripts/run_llm_runtime_exit_mm_probe.py",
+      "scripts/test_llm_runtime_exit_mm_observation.py",
+      "scripts/test_llm_runtime_exit_worker_observation.py",
+      "scripts/test_llm_runtime_release.py"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 9,
+      "evidence_or_documentation": 43,
+      "implementation_or_tooling": 11
+    }
+  },
+  {
+    "name": "automation/chain506-five-native-tests-20261027-1117",
+    "sha": "5328d7528350df4c910ae25e60f9e97b988ee054",
+    "commit_date": "2026-10-27T07:23:30-04:00",
+    "subject": "test(chain): bind from-zero negative expectations to all named native W1 tests",
+    "unique_commits": 1,
+    "merge_base": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+    "core_paths": [
+      "scripts/ci/test_run_from_zero_native.py"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "audit/chain-506-from-zero-five-tests-20261027",
+    "sha": "c2e0e70fed5ac1f7b49dad41dd82d4ca43fe7436",
+    "commit_date": "2026-10-27T07:21:10-04:00",
+    "subject": "test(ci): keep all five from-zero native negative cases fail-closed",
+    "unique_commits": 1,
+    "merge_base": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+    "core_paths": [
+      "scripts/ci/test_run_from_zero_native.py"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "dot/pon-p0-p6-evidence-failclosed-20261026",
+    "sha": "428d084bceee9699504cfef19617a62fed1c2af8",
+    "commit_date": "2026-10-26T15:03:34-04:00",
+    "subject": "docs(pon): preserve strict A03 3x3 evidence coverage without granting source-only activation",
+    "unique_commits": 4,
+    "merge_base": "db0dad68f0909460e8b1cf0c248d8bab4b59c129",
+    "core_paths": [
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/test_pon_p0_p6_evidence_gate.py",
+      "scripts/pon_p0_p6_evidence_gate.py"
+    ],
+    "residual_counts": {
+      "evidence_or_documentation": 1,
+      "checks_or_configuration": 2,
+      "implementation_or_tooling": 1
+    }
+  },
+  {
+    "name": "dot/p2-v3-economic-feasibility-20261026",
+    "sha": "83ecbbd361c15fb11df26d2abbc544bbf530bef7",
+    "commit_date": "2026-10-26T08:41:38-04:00",
+    "subject": "docs(security): document hostile GPU versus honest Cookie latency impossibility fixture",
+    "unique_commits": 4,
+    "merge_base": "db0dad68f0909460e8b1cf0c248d8bab4b59c129",
+    "core_paths": [
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/test_pon_admission_price_model.py",
+      "scripts/pon_admission_price_model.py"
+    ],
+    "residual_counts": {
+      "evidence_or_documentation": 1,
+      "checks_or_configuration": 2,
+      "implementation_or_tooling": 1
+    }
+  },
+  {
+    "name": "dot/p2-false-work-cost-envelope-20261026",
+    "sha": "34a0f509145607746a1e6b156709bd5680213227",
+    "commit_date": "2026-10-26T06:06:45-04:00",
+    "subject": "docs(pon): compare actual P2 evidence against externally frozen head/tree and W1 profile",
+    "unique_commits": 22,
+    "merge_base": "db0dad68f0909460e8b1cf0c248d8bab4b59c129",
+    "core_paths": [
+      "scripts/ci/test_pon_w1_flood_cost_envelope.py",
+      "scripts/pon_w1_flood_cost_envelope.py"
+    ],
+    "residual_counts": {
+      "evidence_or_documentation": 1,
+      "checks_or_configuration": 1,
+      "implementation_or_tooling": 1
+    }
+  },
+  {
+    "name": "fix/chain-finality-profile-20261014",
+    "sha": "a598d586239b9c019d4a1cd4df01d70c1d39f387",
+    "commit_date": "2026-10-13T21:57:07-07:00",
+    "subject": "chain: add disabled versioned finality profile contract",
+    "unique_commits": 2,
+    "merge_base": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+    "core_paths": [
+      "config/activation-policy-v1.json",
+      "config/finality-profile-v1.json",
+      "scripts/ci/check_activation_boundary.py",
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/test_activation_boundary.py",
+      "scripts/ci/test_finality_profile.py"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 6,
+      "evidence_or_documentation": 2
+    }
+  },
+  {
+    "name": "codex/freeze-pon-experimental-20261014",
+    "sha": "eb94f835ade72eaa7b0eaf82d6989b783186a913",
+    "commit_date": "2026-10-13T21:23:29-07:00",
+    "subject": "chain: enforce deny-by-default PoN activation boundary",
+    "unique_commits": 1,
+    "merge_base": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+    "core_paths": [
+      "config/activation-policy-v1.json",
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/test_activation_boundary.py"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 3,
+      "evidence_or_documentation": 1
+    }
+  },
+  {
+    "name": "test/chain-cached-owner-stage-20261009",
+    "sha": "0774bb04ca90333737898c79bb7ee9c70feabfc4",
+    "commit_date": "2026-10-09T23:38:10+08:00",
+    "subject": "test(pon): stage four native cached-owner regressions on exact SQL source",
+    "unique_commits": 1,
+    "merge_base": "c664737f8b135f4a9b8aa9adcbd9c5738ca70238",
+    "core_paths": [
+      ".github/workflows/pon-cached-owner-stage.yml",
+      "scripts/ci/staged_cached_owner_tests.rs"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 2
+    }
+  },
+  {
+    "name": "perf/pon-branch-encoding-stage-20261009",
+    "sha": "b879ab7f4bd1500c2f49e1580a1aa560524b880e",
+    "commit_date": "2026-10-09T20:09:06+08:00",
+    "subject": "test(perf): preserve release-only observation while satisfying strict lint",
+    "unique_commits": 2,
+    "merge_base": "9f5ebd9283457358fcec067fe0452005fa232b42",
+    "core_paths": [
+      ".github/workflows/pon-branch-encoding-stage.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "fix/chain-owner-hotpath-delivery-20261006",
+    "sha": "f0c69ed85d1b044d8b38112ed1ff10a5beed592c",
+    "commit_date": "2026-10-06T20:03:41+08:00",
+    "subject": "fix: call the repository existing exact-source verifier in isolated rerun",
+    "unique_commits": 3,
+    "merge_base": "a580aaf8df5664e1981545c155366802efb8b5cb",
+    "core_paths": [
+      ".delivery/owner-hotpath/part0",
+      ".delivery/owner-hotpath/part1",
+      ".delivery/owner-hotpath/part2",
+      ".github/workflows/owner-hotpath-delivery-20261006.yml"
+    ],
+    "residual_counts": {
+      "implementation_or_tooling": 3,
+      "checks_or_configuration": 1
+    }
+  }
+]

@@ -1,0 +1,8 @@
+test_exact_nine_controls_preserve_all_original_rosters (__main__.DurableOutboundRosterTests.test_exact_nine_controls_preserve_all_original_rosters) ... ok
+test_invalid_roster_count_name_or_qualification_refused (__main__.DurableOutboundRosterTests.test_invalid_roster_count_name_or_qualification_refused) ... ok
+test_missing_duplicate_or_unreviewed_registered_control_refused (__main__.DurableOutboundRosterTests.test_missing_duplicate_or_unreviewed_registered_control_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 8.149s
+
+OK

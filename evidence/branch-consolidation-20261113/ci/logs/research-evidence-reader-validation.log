@@ -1,0 +1,491 @@
+COMMAND ["/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3", "scripts/ci/test_pon_decentralization_audit.py", "-v"]
+test_cli_rejects_duplicate_json_nonfinite_bad_policy_and_oversize (__main__.CommandLine.test_cli_rejects_duplicate_json_nonfinite_bad_policy_and_oversize) ... ok
+test_existing_output_and_input_evidence_are_never_overwritten (__main__.CommandLine.test_existing_output_and_input_evidence_are_never_overwritten) ... ok
+test_valid_cli_report_is_bound_and_hold (__main__.CommandLine.test_valid_cli_report_is_bound_and_hold) ... ok
+test_common_control_cycle_is_not_three_independent_roots (__main__.ControlDomains.test_common_control_cycle_is_not_three_independent_roots) ... ok
+test_common_parent_and_transitive_aliases_collapse (__main__.ControlDomains.test_common_parent_and_transitive_aliases_collapse) ... ok
+test_distinct_synthetic_controllers_are_only_declared_groups (__main__.ControlDomains.test_distinct_synthetic_controllers_are_only_declared_groups) ... ok
+test_duplicate_identities_and_undeclared_fields_reject (__main__.ControlDomains.test_duplicate_identities_and_undeclared_fields_reject) ... ok
+test_duplicate_json_nonfinite_and_malformed_root_reject (__main__.ControlDomains.test_duplicate_json_nonfinite_and_malformed_root_reject) ... ok
+test_external_context_and_registry_digest_pins_reject_substitution (__main__.ControlDomains.test_external_context_and_registry_digest_pins_reject_substitution) ... ok
+test_graph_order_changes_neither_partition_nor_reported_relationships (__main__.ControlDomains.test_graph_order_changes_neither_partition_nor_reported_relationships) ... ok
+test_invalid_alias_evidence_cannot_erase_known_common_control (__main__.ControlDomains.test_invalid_alias_evidence_cannot_erase_known_common_control) ... ok
+test_one_controller_cannot_multiply_nodes_keys_or_witnesses (__main__.ControlDomains.test_one_controller_cannot_multiply_nodes_keys_or_witnesses) ... ok
+test_quorum_rejects_duplicate_subjects_bad_threshold_and_unknown_subject (__main__.ControlDomains.test_quorum_rejects_duplicate_subjects_bad_threshold_and_unknown_subject) ... ok
+test_repeated_queries_do_not_rescan_component_evidence (__main__.ControlDomains.test_repeated_queries_do_not_rescan_component_evidence) ... ok
+test_revoked_unknown_and_expired_evidence_does_not_count (__main__.ControlDomains.test_revoked_unknown_and_expired_evidence_does_not_count) ... ok
+test_roster_digest_detects_omission_or_reassignment (__main__.ControlDomains.test_roster_digest_detects_omission_or_reassignment) ... ok
+test_same_key_is_related_even_when_owner_is_unknown (__main__.ControlDomains.test_same_key_is_related_even_when_owner_is_unknown) ... ok
+test_same_public_key_under_distinct_ids_collapses_controller_claims (__main__.ControlDomains.test_same_public_key_under_distinct_ids_collapses_controller_claims) ... ok
+test_snapshot_eligibility_is_not_shared_across_registry_context_or_window (__main__.ControlDomains.test_snapshot_eligibility_is_not_shared_across_registry_context_or_window) ... ok
+test_snapshot_views_cannot_relabel_cached_control_or_reference_eligibility (__main__.ControlDomains.test_snapshot_views_cannot_relabel_cached_control_or_reference_eligibility) ... ok
+test_unknown_graph_or_subject_references_reject (__main__.ControlDomains.test_unknown_graph_or_subject_references_reject) ... ok
+test_unknown_owner_does_not_contribute_one_independent_group (__main__.ControlDomains.test_unknown_owner_does_not_contribute_one_independent_group) ... ok
+test_verified_map_is_a_snapshot_not_mutable_registry_aliases (__main__.ControlDomains.test_verified_map_is_a_snapshot_not_mutable_registry_aliases) ... ok
+test_wrong_types_and_noncanonical_identifiers_reject (__main__.ControlDomains.test_wrong_types_and_noncanonical_identifiers_reject) ... ok
+test_author_inventory_requires_a_json_array_not_scalar_or_mapping (__main__.FiveAxisReports.test_author_inventory_requires_a_json_array_not_scalar_or_mapping) ... ok
+test_callers_cannot_promote_external_acceptance_with_extra_fields (__main__.FiveAxisReports.test_callers_cannot_promote_external_acceptance_with_extra_fields) ... ok
+test_complete_zero_activity_in_a_defined_unit_is_not_missing_data (__main__.FiveAxisReports.test_complete_zero_activity_in_a_defined_unit_is_not_missing_data) ... ok
+test_data_roles_under_common_controller_collapse_independently (__main__.FiveAxisReports.test_data_roles_under_common_controller_collapse_independently) ... ok
+test_distinct_role_keys_cannot_hide_cross_role_control_even_when_stale (__main__.FiveAxisReports.test_distinct_role_keys_cannot_hide_cross_role_control_even_when_stale) ... ok
+test_duplicate_assets_receipts_and_invalid_resource_denominators_reject (__main__.FiveAxisReports.test_duplicate_assets_receipts_and_invalid_resource_denominators_reject) ... ok
+test_emergency_release_or_recovery_route_cannot_hide_behind_normal_multisig (__main__.FiveAxisReports.test_emergency_release_or_recovery_route_cannot_hide_behind_normal_multisig) ... ok
+test_frozen_roster_authority_inventory_and_policy_commitments_reject_substitution (__main__.FiveAxisReports.test_frozen_roster_authority_inventory_and_policy_commitments_reject_substitution) ... ok
+test_half_known_funding_is_not_majority_after_unknown_share_is_dropped (__main__.FiveAxisReports.test_half_known_funding_is_not_majority_after_unknown_share_is_dropped) ... ok
+test_honest_three_slot_development_declaration_without_real_keys_stays_unknown (__main__.FiveAxisReports.test_honest_three_slot_development_declaration_without_real_keys_stays_unknown) ... ok
+test_missing_denominator_and_missing_unit_never_get_invented_percentages (__main__.FiveAxisReports.test_missing_denominator_and_missing_unit_never_get_invented_percentages) ... ok
+test_missing_or_revoked_authority_remains_visible (__main__.FiveAxisReports.test_missing_or_revoked_authority_remains_visible) ... ok
+test_open_work_rule_does_not_substitute_for_other_access_facets (__main__.FiveAxisReports.test_open_work_rule_does_not_substitute_for_other_access_facets) ... ok
+test_report_source_context_cannot_change_after_return (__main__.FiveAxisReports.test_report_source_context_cannot_change_after_return) ... ok
+test_same_controller_resource_assets_aggregate_but_hardware_keeps_own_unit (__main__.FiveAxisReports.test_same_controller_resource_assets_aggregate_but_hardware_keeps_own_unit) ... ok
+test_synthetic_success_remains_hold_with_every_external_flag_false (__main__.FiveAxisReports.test_synthetic_success_remains_hold_with_every_external_flag_false) ... ok
+test_transitive_author_control_exclusion_preserves_original_threshold (__main__.FiveAxisReports.test_transitive_author_control_exclusion_preserves_original_threshold) ... ok
+test_unattributed_or_stale_resources_remain_in_budget_as_unknown (__main__.FiveAxisReports.test_unattributed_or_stale_resources_remain_in_budget_as_unknown) ... ok
+test_unknown_author_inventory_does_not_create_empty_conflict_free_set (__main__.FiveAxisReports.test_unknown_author_inventory_does_not_create_empty_conflict_free_set) ... ok
+test_unknown_author_key_alias_retains_transitive_conflict_without_credit (__main__.FiveAxisReports.test_unknown_author_key_alias_retains_transitive_conflict_without_credit) ... ok
+test_unknown_funding_stays_in_original_denominator (__main__.FiveAxisReports.test_unknown_funding_stays_in_original_denominator) ... ok
+test_unknown_unit_with_current_reference_keeps_positive_denominator_unresolved (__main__.FiveAxisReports.test_unknown_unit_with_current_reference_keeps_positive_denominator_unresolved) ... ok
+test_unknown_unit_with_current_reference_keeps_zero_denominator_unresolved (__main__.FiveAxisReports.test_unknown_unit_with_current_reference_keeps_zero_denominator_unresolved) ... ok
+test_unresolved_nonempty_producer_inventory_remains_a_distinct_finding (__main__.FiveAxisReports.test_unresolved_nonempty_producer_inventory_remains_a_distinct_finding) ... ok
+test_different_subjects_without_fingerprints_are_not_merged_into_one_key (__main__.IdentityReuseDiagnostics.test_different_subjects_without_fingerprints_are_not_merged_into_one_key) ... ok
+test_repeated_identity_across_alternate_routes_of_one_role_is_visible (__main__.IdentityReuseDiagnostics.test_repeated_identity_across_alternate_routes_of_one_role_is_visible) ... ok
+test_same_subject_without_fingerprint_remains_visible_across_roles_and_evaluation (__main__.IdentityReuseDiagnostics.test_same_subject_without_fingerprint_remains_visible_across_roles_and_evaluation) ... ok
+test_unknown_owner_key_reuse_between_authority_roles_needs_no_evaluator_match (__main__.IdentityReuseDiagnostics.test_unknown_owner_key_reuse_between_authority_roles_needs_no_evaluator_match) ... ok
+test_unknown_owners_share_known_key_across_authority_and_evaluation_without_credit (__main__.IdentityReuseDiagnostics.test_unknown_owners_share_known_key_across_authority_and_evaluation_without_credit) ... ok
+test_unrelated_unknown_fingerprints_do_not_invent_reuse (__main__.IdentityReuseDiagnostics.test_unrelated_unknown_fingerprints_do_not_invent_reuse) ... ok
+test_aliases_change_actual_coalitions_even_with_unique_key_fingerprints (__main__.QuorumCoalitions.test_aliases_change_actual_coalitions_even_with_unique_key_fingerprints) ... ok
+test_batched_author_exclusion_matches_pairwise_stale_and_unknown_relations (__main__.QuorumCoalitions.test_batched_author_exclusion_matches_pairwise_stale_and_unknown_relations) ... ok
+test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) ... ok
+test_invalid_declared_roster_size_never_rescales_threshold (__main__.QuorumCoalitions.test_invalid_declared_roster_size_never_rescales_threshold) ... ok
+test_missing_keys_preserve_frozen_threshold_and_do_not_invent_minima (__main__.QuorumCoalitions.test_missing_keys_preserve_frozen_threshold_and_do_not_invent_minima) ... ok
+test_stale_controller_cannot_turn_partial_known_groups_into_exact_minimum (__main__.QuorumCoalitions.test_stale_controller_cannot_turn_partial_known_groups_into_exact_minimum) ... ok
+test_three_keys_can_require_one_or_two_controllers (__main__.QuorumCoalitions.test_three_keys_can_require_one_or_two_controllers) ... ok
+test_unknown_owner_or_key_prevents_claimed_global_minimum (__main__.QuorumCoalitions.test_unknown_owner_or_key_prevents_claimed_global_minimum) ... ok
+test_context_cannot_drop_mandatory_identity_fields (__main__.StrictRegistry.test_context_cannot_drop_mandatory_identity_fields) ... ok
+test_direct_constructor_obeys_same_byte_limit_as_cli (__main__.StrictRegistry.test_direct_constructor_obeys_same_byte_limit_as_cli) ... ok
+test_duplicate_keys_after_unicode_unescaping_and_nested_json_reject (__main__.StrictRegistry.test_duplicate_keys_after_unicode_unescaping_and_nested_json_reject) ... ok
+test_empty_registry_is_honest_unresolved_input (__main__.StrictRegistry.test_empty_registry_is_honest_unresolved_input) ... ok
+test_fingerprints_are_full_canonical_sha256_not_labels (__main__.StrictRegistry.test_fingerprints_are_full_canonical_sha256_not_labels) ... ok
+test_integer_boundaries_and_reversed_evidence_windows_reject (__main__.StrictRegistry.test_integer_boundaries_and_reversed_evidence_windows_reject) ... ok
+test_unknown_fields_are_rejected_at_each_trust_bearing_layer (__main__.StrictRegistry.test_unknown_fields_are_rejected_at_each_trust_bearing_layer) ... ok
+
+----------------------------------------------------------------------
+Ran 69 tests in 2.533s
+
+OK
+COMMAND ["/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3", "scripts/ci/test_pon_decentralization_evidence.py", "-v"]
+test_actual_source_only_input_is_empty_with_all_findings_retained (__main__.Materialization.test_actual_source_only_input_is_empty_with_all_findings_retained) ... ERROR
+test_artifact_directory_replacement_is_detected (__main__.Materialization.test_artifact_directory_replacement_is_detected) ... ERROR
+test_changes_to_previously_read_material_or_input_are_rejected (__main__.Materialization.test_changes_to_previously_read_material_or_input_are_rejected) ... ERROR
+test_cli_fatal_input_error_leaves_no_report (__main__.Materialization.test_cli_fatal_input_error_leaves_no_report) ... ERROR
+test_cli_is_create_only_and_does_not_write_input_or_artifact_directory (__main__.Materialization.test_cli_is_create_only_and_does_not_write_input_or_artifact_directory) ... ERROR
+test_cli_rejects_drifted_installed_policy_without_report (__main__.Materialization.test_cli_rejects_drifted_installed_policy_without_report) ... ERROR
+test_duplicate_json_and_duplicate_evidence_are_rejected (__main__.Materialization.test_duplicate_json_and_duplicate_evidence_are_rejected) ... ERROR
+test_expected_digest_binds_raw_input_bytes_before_artifact_access (__main__.Materialization.test_expected_digest_binds_raw_input_bytes_before_artifact_access) ... ERROR
+test_file_symlinks_hardlinks_directories_and_fifos_never_read (__main__.Materialization.test_file_symlinks_hardlinks_directories_and_fifos_never_read) ... ERROR
+test_growth_during_read_is_bounded (__main__.Materialization.test_growth_during_read_is_bounded) ... ERROR
+test_initially_missing_material_cannot_appear_after_its_check (__main__.Materialization.test_initially_missing_material_cannot_appear_after_its_check) ... ERROR
+test_input_symlink_hardlink_or_nonregular_is_refused (__main__.Materialization.test_input_symlink_hardlink_or_nonregular_is_refused) ... ERROR
+test_invalid_digest_paths_unknown_references_and_extra_fields_reject (__main__.Materialization.test_invalid_digest_paths_unknown_references_and_extra_fields_reject) ... ERROR
+test_matched_bytes_and_repeated_uses_are_deterministic_without_mutation (__main__.Materialization.test_matched_bytes_and_repeated_uses_are_deterministic_without_mutation) ... ERROR
+test_matching_bytes_do_not_clear_revoked_unknown_or_declared_time_gaps (__main__.Materialization.test_matching_bytes_do_not_clear_revoked_unknown_or_declared_time_gaps) ... ERROR
+test_missing_and_mismatched_files_keep_original_references (__main__.Materialization.test_missing_and_mismatched_files_keep_original_references) ... ERROR
+test_per_file_input_and_total_caps_are_enforced_before_large_reads (__main__.Materialization.test_per_file_input_and_total_caps_are_enforced_before_large_reads) ... ERROR
+test_root_and_ancestor_symlinks_and_traversal_are_refused (__main__.Materialization.test_root_and_ancestor_symlinks_and_traversal_are_refused) ... ERROR
+test_same_size_mutation_and_replacement_during_read_reject (__main__.Materialization.test_same_size_mutation_and_replacement_during_read_reject) ... ERROR
+test_unused_material_is_not_a_deployment_inventory (__main__.Materialization.test_unused_material_is_not_a_deployment_inventory) ... ERROR
+
+======================================================================
+ERROR: test_actual_source_only_input_is_empty_with_all_findings_retained (__main__.Materialization.test_actual_source_only_input_is_empty_with_all_findings_retained)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_artifact_directory_replacement_is_detected (__main__.Materialization.test_artifact_directory_replacement_is_detected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_changes_to_previously_read_material_or_input_are_rejected (__main__.Materialization.test_changes_to_previously_read_material_or_input_are_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_cli_fatal_input_error_leaves_no_report (__main__.Materialization.test_cli_fatal_input_error_leaves_no_report)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_cli_is_create_only_and_does_not_write_input_or_artifact_directory (__main__.Materialization.test_cli_is_create_only_and_does_not_write_input_or_artifact_directory)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_cli_rejects_drifted_installed_policy_without_report (__main__.Materialization.test_cli_rejects_drifted_installed_policy_without_report)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_duplicate_json_and_duplicate_evidence_are_rejected (__main__.Materialization.test_duplicate_json_and_duplicate_evidence_are_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_expected_digest_binds_raw_input_bytes_before_artifact_access (__main__.Materialization.test_expected_digest_binds_raw_input_bytes_before_artifact_access)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_file_symlinks_hardlinks_directories_and_fifos_never_read (__main__.Materialization.test_file_symlinks_hardlinks_directories_and_fifos_never_read)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_growth_during_read_is_bounded (__main__.Materialization.test_growth_during_read_is_bounded)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_initially_missing_material_cannot_appear_after_its_check (__main__.Materialization.test_initially_missing_material_cannot_appear_after_its_check)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_input_symlink_hardlink_or_nonregular_is_refused (__main__.Materialization.test_input_symlink_hardlink_or_nonregular_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_invalid_digest_paths_unknown_references_and_extra_fields_reject (__main__.Materialization.test_invalid_digest_paths_unknown_references_and_extra_fields_reject)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_matched_bytes_and_repeated_uses_are_deterministic_without_mutation (__main__.Materialization.test_matched_bytes_and_repeated_uses_are_deterministic_without_mutation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_matching_bytes_do_not_clear_revoked_unknown_or_declared_time_gaps (__main__.Materialization.test_matching_bytes_do_not_clear_revoked_unknown_or_declared_time_gaps)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_missing_and_mismatched_files_keep_original_references (__main__.Materialization.test_missing_and_mismatched_files_keep_original_references)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_per_file_input_and_total_caps_are_enforced_before_large_reads (__main__.Materialization.test_per_file_input_and_total_caps_are_enforced_before_large_reads)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_root_and_ancestor_symlinks_and_traversal_are_refused (__main__.Materialization.test_root_and_ancestor_symlinks_and_traversal_are_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_same_size_mutation_and_replacement_during_read_reject (__main__.Materialization.test_same_size_mutation_and_replacement_during_read_reject)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+======================================================================
+ERROR: test_unused_material_is_not_a_deployment_inventory (__main__.Materialization.test_unused_material_is_not_a_deployment_inventory)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/scripts/ci/test_pon_decentralization_evidence.py", line 38, in setUp
+    self.value = json.loads(CURRENT.read_bytes())
+                            ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/415d5ba2202d/ci-fixes/evidence/pon-decentralization-20261106/current-input.json'
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.017s
+
+FAILED (errors=20)
+COMMAND ["/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3", "scripts/ci/test_pon_wan_evidence.py", "-v"]
+test_delayed_send_cannot_reset_confirmation_clock (__main__.Accounting.test_delayed_send_cannot_reset_confirmation_clock) ... ok
+test_dropped_timeout_stays_in_original_denominator (__main__.Accounting.test_dropped_timeout_stays_in_original_denominator) ... ok
+test_duplicates_unknown_ids_and_original_operation_swaps_reject (__main__.Accounting.test_duplicates_unknown_ids_and_original_operation_swaps_reject) ... ok
+test_every_failure_outcome_reduces_service_without_dropping_resources (__main__.Accounting.test_every_failure_outcome_reduces_service_without_dropping_resources) ... ok
+test_late_success_is_not_timely_success (__main__.Accounting.test_late_success_is_not_timely_success) ... ok
+test_negative_nonfinite_and_duplicate_json_cannot_supply_costs (__main__.Accounting.test_negative_nonfinite_and_duplicate_json_cannot_supply_costs) ... ok
+test_repeated_polls_cannot_inflate_unique_operations (__main__.Accounting.test_repeated_polls_cannot_inflate_unique_operations) ... ok
+test_short_campaign_same_admin_and_missing_operator_cohort_reject (__main__.Accounting.test_short_campaign_same_admin_and_missing_operator_cohort_reject) ... ok
+test_synthetic_success_never_grants_independence_or_wan_acceptance (__main__.Accounting.test_synthetic_success_never_grants_independence_or_wan_acceptance) ... ok
+test_bool_negative_and_unbounded_costs_are_not_integers (__main__.TypedWindowAccounting.test_bool_negative_and_unbounded_costs_are_not_integers) ... ok
+test_confirmation_cannot_impersonate_retrieval_repair_or_recovery (__main__.TypedWindowAccounting.test_confirmation_cannot_impersonate_retrieval_repair_or_recovery) ... ok
+test_duplicate_operation_receipt_observation_and_context_are_rejected (__main__.TypedWindowAccounting.test_duplicate_operation_receipt_observation_and_context_are_rejected) ... ok
+test_failure_in_one_window_cannot_hide_behind_successful_aggregate (__main__.TypedWindowAccounting.test_failure_in_one_window_cannot_hide_behind_successful_aggregate) ... ok
+test_failures_retain_full_reported_resource_costs (__main__.TypedWindowAccounting.test_failures_retain_full_reported_resource_costs) ... ok
+test_frozen_thresholds_preregistration_windows_duration_and_operators_are_required (__main__.TypedWindowAccounting.test_frozen_thresholds_preregistration_windows_duration_and_operators_are_required) ... ok
+test_late_success_and_delayed_send_cannot_reset_the_service_clock (__main__.TypedWindowAccounting.test_late_success_and_delayed_send_cannot_reset_the_service_clock) ... ok
+test_missing_late_and_out_of_window_records_keep_the_frozen_denominator (__main__.TypedWindowAccounting.test_missing_late_and_out_of_window_records_keep_the_frozen_denominator) ... ok
+test_missing_scheduled_operator_cohort_window_is_reported_even_without_observations (__main__.TypedWindowAccounting.test_missing_scheduled_operator_cohort_window_is_reported_even_without_observations) ... ok
+test_recovery_cannot_redeliver_or_repay_and_all_modes_bind_exact_state (__main__.TypedWindowAccounting.test_recovery_cannot_redeliver_or_repay_and_all_modes_bind_exact_state) ... ok
+test_repairs_need_three_declared_complete_independent_replicas (__main__.TypedWindowAccounting.test_repairs_need_three_declared_complete_independent_replicas) ... ok
+test_same_cli_reports_arithmetic_success_and_failure_without_pn5_acceptance (__main__.TypedWindowAccounting.test_same_cli_reports_arithmetic_success_and_failure_without_pn5_acceptance) ... ok
+test_start_only_rows_cannot_turn_declared_73_hours_into_coverage (__main__.TypedWindowAccounting.test_start_only_rows_cannot_turn_declared_73_hours_into_coverage) ... ok
+test_tail_floor_is_independent_of_timely_ratio (__main__.TypedWindowAccounting.test_tail_floor_is_independent_of_timely_ratio) ... ok
+test_typed_synthetic_success_keeps_every_qualification_false (__main__.TypedWindowAccounting.test_typed_synthetic_success_keeps_every_qualification_false) ... ok
+test_wrong_cell_and_forbidden_origin_are_failed_results_not_new_successes (__main__.TypedWindowAccounting.test_wrong_cell_and_forbidden_origin_are_failed_results_not_new_successes) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 1.748s
+
+OK
+COMMAND ["/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3", "scripts/ci/test_pon_wan_control_domains.py", "-v"]
+test_alias_of_forbidden_source_is_excluded_with_three_other_groups (__main__.ControlDomains.test_alias_of_forbidden_source_is_excluded_with_three_other_groups) ... ok
+test_bound_context_does_not_retain_mutable_caller_mappings (__main__.ControlDomains.test_bound_context_does_not_retain_mutable_caller_mappings) ... ok
+test_cli_emits_bound_v3_report_with_real_failure_exit (__main__.ControlDomains.test_cli_emits_bound_v3_report_with_real_failure_exit) ... ok
+test_common_parent_and_reused_subject_cannot_increase_domain_count (__main__.ControlDomains.test_common_parent_and_reused_subject_cannot_increase_domain_count) ... ok
+test_controller_evidence_expiring_midcampaign_gets_no_credit (__main__.ControlDomains.test_controller_evidence_expiring_midcampaign_gets_no_credit) ... ok
+test_distinct_node_admin_ip_labels_do_not_hide_common_control (__main__.ControlDomains.test_distinct_node_admin_ip_labels_do_not_hide_common_control) ... ok
+test_distinct_synthetic_declarations_never_grant_external_acceptance (__main__.ControlDomains.test_distinct_synthetic_declarations_never_grant_external_acceptance) ... ok
+test_duplicate_physical_key_under_different_subjects_is_still_common_control (__main__.ControlDomains.test_duplicate_physical_key_under_different_subjects_is_still_common_control) ... ok
+test_failure_domains_are_still_a_separate_floor (__main__.ControlDomains.test_failure_domains_are_still_a_separate_floor) ... ok
+test_foreign_context_rejects_even_when_attacker_rehashes_registry (__main__.ControlDomains.test_foreign_context_rejects_even_when_attacker_rehashes_registry) ... ok
+test_original_late_missing_failure_resource_denominators_remain (__main__.ControlDomains.test_original_late_missing_failure_resource_denominators_remain) ... ok
+test_registry_and_subject_roster_commitments_are_both_required (__main__.ControlDomains.test_registry_and_subject_roster_commitments_are_both_required) ... ok
+test_stale_alias_is_not_an_escape_from_known_common_control (__main__.ControlDomains.test_stale_alias_is_not_an_escape_from_known_common_control) ... ok
+test_two_source_ids_under_one_controller_cannot_meet_two_group_floor (__main__.ControlDomains.test_two_source_ids_under_one_controller_cannot_meet_two_group_floor) ... ok
+test_unknown_extra_or_missing_operator_subject_binding_rejects (__main__.ControlDomains.test_unknown_extra_or_missing_operator_subject_binding_rejects) ... ok
+test_unknown_forbidden_origin_cannot_be_asserted_unrelated (__main__.ControlDomains.test_unknown_forbidden_origin_cannot_be_asserted_unrelated) ... ok
+test_user_supplied_acceptance_flags_and_unknown_v3_fields_reject (__main__.ControlDomains.test_user_supplied_acceptance_flags_and_unknown_v3_fields_reject) ... ok
+test_v2_retains_original_declaration_semantics (__main__.ControlDomains.test_v2_retains_original_declaration_semantics) ... ok
+test_all_small_graphs_match_independent_exhaustive_oracle (__main__.JointControlDomainsV4.test_all_small_graphs_match_independent_exhaustive_oracle) ... ok
+test_augmenting_path_finds_matching_that_first_edge_greedy_misses (__main__.JointControlDomainsV4.test_augmenting_path_finds_matching_that_first_edge_greedy_misses) ... ok
+test_cli_requires_explicit_v4_and_retains_real_arithmetic_failure_exit (__main__.JointControlDomainsV4.test_cli_requires_explicit_v4_and_retains_real_arithmetic_failure_exit) ... ok
+test_duplicate_edge_does_not_add_credit_and_duplicate_operator_rejects (__main__.JointControlDomainsV4.test_duplicate_edge_does_not_add_credit_and_duplicate_operator_rejects) ... ok
+test_five_operator_marginal_trap_is_v3_success_but_v4_failure (__main__.JointControlDomainsV4.test_five_operator_marginal_trap_is_v3_success_but_v4_failure) ... ok
+test_global_joint_floor_applies_without_any_repair_cohort (__main__.JointControlDomainsV4.test_global_joint_floor_applies_without_any_repair_cohort) ... ok
+test_input_order_does_not_change_the_matching_or_repair_diagnostics (__main__.JointControlDomainsV4.test_input_order_does_not_change_the_matching_or_repair_diagnostics) ... ok
+test_registry_pass_cannot_replace_each_repair_result_matching (__main__.JointControlDomainsV4.test_registry_pass_cannot_replace_each_repair_result_matching) ... ok
+test_three_joint_synthetic_pairs_keep_all_external_acceptance_false (__main__.JointControlDomainsV4.test_three_joint_synthetic_pairs_keep_all_external_acceptance_false) ... ok
+test_unequal_marginal_floors_preserve_each_floor_and_match_their_minimum (__main__.JointControlDomainsV4.test_unequal_marginal_floors_preserve_each_floor_and_match_their_minimum) ... ok
+test_unknown_or_stale_control_never_adds_a_matching_edge (__main__.JointControlDomainsV4.test_unknown_or_stale_control_never_adds_a_matching_edge) ... ok
+test_v4_rejects_foreign_context_rebinding_and_invalid_version_or_fields (__main__.JointControlDomainsV4.test_v4_rejects_foreign_context_rebinding_and_invalid_version_or_fields) ... ok
+test_wrong_cell_effect_and_failed_or_missing_rows_cannot_be_repaired_by_matching (__main__.JointControlDomainsV4.test_wrong_cell_effect_and_failed_or_missing_rows_cannot_be_repaired_by_matching) ... ok
+
+----------------------------------------------------------------------
+Ran 31 tests in 1.259s
+
+OK
+COMMAND ["/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3", "scripts/ci/test_pon_p0_p6_evidence_gate.py", "-v"]
+test_a03_requires_all_nine_runs_with_true_denominator (__main__.FailClosedEvidenceTests.test_a03_requires_all_nine_runs_with_true_denominator) ... ok
+test_absent_report_is_hold_no_go (__main__.FailClosedEvidenceTests.test_absent_report_is_hold_no_go) ... ok
+test_cannot_skip_any_phase_or_field (__main__.FailClosedEvidenceTests.test_cannot_skip_any_phase_or_field) ... ok
+test_full_unverified_self_claim_never_activates (__main__.FailClosedEvidenceTests.test_full_unverified_self_claim_never_activates) ... ok
+test_source_pin_rejects_noncanonical_sha (__main__.FailClosedEvidenceTests.test_source_pin_rejects_noncanonical_sha) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.003s
+
+OK
+COMMAND ["/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3", "scripts/ci/test_pon_admission_price_model.py", "-v"]
+test_fast_gpu_wins_cheapest_attacker_arm (__main__.PriceGate.test_fast_gpu_wins_cheapest_attacker_arm) ... ok
+test_missing_and_bad_measures_fail_closed (__main__.PriceGate.test_missing_and_bad_measures_fail_closed) ... ok
+test_no_solution_when_needed_20_bit_hashcash_exceeds_cookie (__main__.PriceGate.test_no_solution_when_needed_20_bit_hashcash_exceeds_cookie) ... ok
+test_slower_receiver_can_have_a_model_solution_but_no_activation (__main__.PriceGate.test_slower_receiver_can_have_a_model_solution_but_no_activation) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.001s
+
+OK
+RESULTS [{"test": "test_pon_decentralization_audit.py", "exit_code": 0, "seconds": 2.781606020000254}, {"test": "test_pon_decentralization_evidence.py", "exit_code": 1, "seconds": 0.3139884169995639}, {"test": "test_pon_wan_evidence.py", "exit_code": 0, "seconds": 1.958650934000616}, {"test": "test_pon_wan_control_domains.py", "exit_code": 0, "seconds": 1.5122084129998257}, {"test": "test_pon_p0_p6_evidence_gate.py", "exit_code": 0, "seconds": 0.13853586400000495}, {"test": "test_pon_admission_price_model.py", "exit_code": 0, "seconds": 0.14982129399959376}]
