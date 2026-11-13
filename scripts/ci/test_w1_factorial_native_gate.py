@@ -22,9 +22,13 @@ COUNTS = {
     "legal-native-controls": (13, 0),
     "factorial-kernel-tests": (14, 0), "factorial-example-tests": (11, 0),
     "header-binding-tests": (1, 0), "history-w1-tests": (5, 0),
-    "history-import-tests": (38, 1), "cpu-completion-tests": (11, 0),
+    "history-import-tests": (42, 1), "cpu-completion-tests": (11, 0),
 }
 HISTORY = [
+    "history_owner_each_uncontended_acquisition_observes_host_once_outside_lock",
+    "history_owner_busy_retry_observes_changed_host_before_action",
+    "history_owner_exclusive_rechecks_host_for_each_action",
+    "history_owner_host_observation_crossing_deadline_never_enters_action",
     "deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline",
     "deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu",
     "history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors",
@@ -230,9 +234,10 @@ class NativeGateTests(unittest.TestCase):
     def test_original_old_counts_cannot_certify_the_current_roster(self):
         for suite, old, current in (("legal-native-controls", 8, 13),
                                     ("factorial-example-tests", 6, 11),
-                                    ("history-import-tests", 28, 38),
-                                    ("history-import-tests", 33, 38),
-                                    ("history-import-tests", 36, 38)):
+                                    ("history-import-tests", 28, 42),
+                                    ("history-import-tests", 33, 42),
+                                    ("history-import-tests", 36, 42),
+                                    ("history-import-tests", 38, 42)):
             self.rejects(suite, self.logs[suite].replace(f"{current} passed;", f"{old} passed;"))
 
     def test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control(self):

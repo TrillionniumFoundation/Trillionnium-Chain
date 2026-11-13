@@ -256,6 +256,137 @@ fn history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_e
     }
 }
 
+#[test]
+fn history_owner_each_uncontended_acquisition_observes_host_once_outside_lock() {
+    let (_directory, _settings, node, _packet, _clock) = fixture();
+    let node = Mutex::new(node);
+    let calls = AtomicUsize::new(0);
+    let resource = || {
+        assert!(
+            node.try_lock().is_ok(),
+            "Host work must not own the Node writer"
+        );
+        calls.fetch_add(1, Ordering::SeqCst);
+        Ok(())
+    };
+    let control = Control {
+        deadline: Instant::now() + Duration::from_secs(10),
+        resource: &resource,
+    };
+    let mut owner = Owner::Shared(&node);
+    for expected in 1..=2 {
+        owner
+            .with(&control, |_| {
+                assert_eq!(calls.load(Ordering::SeqCst), expected);
+                assert!(matches!(node.try_lock(), Err(TryLockError::WouldBlock)));
+                Ok(())
+            })
+            .unwrap();
+    }
+    assert_eq!(calls.load(Ordering::SeqCst), 2);
+}
+
+#[test]
+fn history_owner_busy_retry_observes_changed_host_before_action() {
+    let (_directory, _settings, node, _packet, _clock) = fixture();
+    let node = Mutex::new(node);
+    let held = node.lock().unwrap();
+    let calls = AtomicUsize::new(0);
+    let actions = AtomicUsize::new(0);
+    let resource = || {
+        let call = calls.fetch_add(1, Ordering::SeqCst);
+        ensure(call == 0, "PUBLIC_HOST_KERNEL_LIMITS_CHANGED")
+    };
+    let error = Owner::Shared(&node)
+        .with(
+            &Control {
+                deadline: Instant::now() + Duration::from_secs(10),
+                resource: &resource,
+            },
+            |_| {
+                actions.fetch_add(1, Ordering::SeqCst);
+                Ok(())
+            },
+        )
+        .unwrap_err();
+    assert_eq!(error.to_string(), "PUBLIC_HOST_KERNEL_LIMITS_CHANGED");
+    assert_eq!(calls.load(Ordering::SeqCst), 2);
+    assert_eq!(actions.load(Ordering::SeqCst), 0);
+    drop(held);
+    // A resource refusal does not poison the owner or cache an admission result.
+    Owner::Shared(&node)
+        .with(
+            &Control {
+                deadline: Instant::now() + Duration::from_secs(10),
+                resource: &|| Ok(()),
+            },
+            |_| Ok(()),
+        )
+        .unwrap();
+}
+
+#[test]
+fn history_owner_exclusive_rechecks_host_for_each_action() {
+    let (_directory, _settings, mut node, _packet, _clock) = fixture();
+    let calls = AtomicUsize::new(0);
+    let actions = AtomicUsize::new(0);
+    let resource = || {
+        let call = calls.fetch_add(1, Ordering::SeqCst);
+        ensure(call == 0, "PUBLIC_HOST_KERNEL_LIMITS_CHANGED")
+    };
+    let control = Control {
+        deadline: Instant::now() + Duration::from_secs(10),
+        resource: &resource,
+    };
+    let mut owner = Owner::Exclusive(&mut node);
+    owner
+        .with(&control, |_| {
+            actions.fetch_add(1, Ordering::SeqCst);
+            Ok(())
+        })
+        .unwrap();
+    assert_eq!(calls.load(Ordering::SeqCst), 1);
+    assert_eq!(
+        owner.with(&control, |_| Ok(())).unwrap_err().to_string(),
+        "PUBLIC_HOST_KERNEL_LIMITS_CHANGED"
+    );
+    assert_eq!(calls.load(Ordering::SeqCst), 2);
+    assert_eq!(actions.load(Ordering::SeqCst), 1);
+}
+
+#[test]
+fn history_owner_host_observation_crossing_deadline_never_enters_action() {
+    for shared in [false, true] {
+        let (_directory, _settings, node, _packet, _clock) = fixture();
+        let node = Mutex::new(node);
+        let mut exclusive = node.lock().unwrap();
+        let actions = AtomicUsize::new(0);
+        let deadline = Instant::now() + Duration::from_millis(20);
+        let resource = || {
+            thread::sleep(deadline.saturating_duration_since(Instant::now()));
+            Ok(())
+        };
+        let control = Control {
+            deadline,
+            resource: &resource,
+        };
+        let action = |_: &mut Node| {
+            actions.fetch_add(1, Ordering::SeqCst);
+            Ok(())
+        };
+        let error = if shared {
+            drop(exclusive);
+            Owner::Shared(&node).with(&control, action).unwrap_err()
+        } else {
+            Owner::Exclusive(&mut exclusive)
+                .with(&control, action)
+                .unwrap_err()
+        };
+        assert_eq!(error.to_string(), "PUBLIC_REQUEST_DEADLINE");
+        assert_eq!(actions.load(Ordering::SeqCst), 0);
+    }
+}
+
 fn native_work_boundaries(
     packet: &Packet,
 ) -> Vec<trnm_crypto_primitives::pon_work::VerificationProgress> {

@@ -9,6 +9,15 @@ import run_pq_root_continuation_v4 as runner
 
 
 class ContinuationRunnerControls(unittest.TestCase):
+    def test_floor_roster_covers_every_native_rust_test_in_source(self):
+        source = (Path(__file__).resolve().parents[2] /
+                  "trillionnium/crates/trnm-pon-node/tests/recovery_floor_v4_native.rs").read_text()
+        rust_tests = re.findall(r"(?m)^#\[test\]\s*\nfn ([A-Za-z_]\w*)\s*\(", source)
+        self.assertTrue(rust_tests)
+        self.assertEqual(len(rust_tests), len(set(rust_tests)))
+        self.assertEqual(set(rust_tests), set(runner.FLOOR))
+
+
     def test_all_three_explicit_native_selectors_are_locked_and_nonempty(self):
         entries = runner.suites()
         self.assertEqual([name for name, _, _ in entries], ["recovery-floor", "provider-readback", "callback-budget"])

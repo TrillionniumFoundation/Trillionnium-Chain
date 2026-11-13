@@ -18,6 +18,40 @@ def cp(sequence, state=1, journal=1, network=NETWORK):
 
 
 class TestExternalRollback(unittest.TestCase):
+    def test_reused_challenge_can_replay_old_authentic_receipt(self):
+        # A caller-controlled/stored challenge is not proof of freshness.
+        previous = self.witness.respond_to_fresh_challenge(CHALLENGE)
+        self.witness.publish(cp(2, state=2, journal=2))
+        self.rejected(self.first, previous, NEXT_CHALLENGE)
+
+        # The old authenticated response verifies under a repeated challenge.
+        # A real verifier must generate its nonce outside the rollback domain
+        # and obtain the current witness reply, not replay captured bytes.
+        authorize_restore(self.first, challenge=CHALLENGE,
+                          fresh_witness_reply=previous,
+                          pinned_external_verification_key=KEY)
+
+
+    def test_common_restore_of_witness_state_cannot_be_detected_locally(self):
+        # Necessary-assumption counterexample, NOT a safe restore. The external
+        # witness must survive a joint node/backup/anchor rollback independently.
+        latest = cp(2, state=2, journal=2)
+        self.witness.publish(latest)
+        self.rejected(self.first,
+                      self.witness.respond_to_fresh_challenge(NEXT_CHALLENGE),
+                      NEXT_CHALLENGE)
+
+        # If the same backup administration can also restore witness state,
+        # an old but valid key/head can answer even a genuinely new challenge.
+        co_restored_witness = ExternalMonotonicWitness(NETWORK, KEY)
+        co_restored_witness.publish(self.first)
+        authorize_restore(
+            self.first, challenge=NEXT_CHALLENGE,
+            fresh_witness_reply=co_restored_witness.respond_to_fresh_challenge(
+                NEXT_CHALLENGE),
+            pinned_external_verification_key=KEY)
+
+
     def setUp(self):
         self.witness = ExternalMonotonicWitness(NETWORK, KEY)
         self.first = cp(1)

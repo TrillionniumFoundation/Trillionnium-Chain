@@ -65,10 +65,14 @@ impl Owner<'_> {
         control: &Control<'_>,
         action: impl FnOnce(&mut Node) -> Result<T>,
     ) -> Result<T> {
-        control.check()?;
         match self {
-            Self::Exclusive(node) => action(node),
+            Self::Exclusive(node) => {
+                control.check()?;
+                action(node)
+            }
             Self::Shared(node) => loop {
+                // One fresh Host observation precedes every acquisition attempt.
+                // Control::check also fences time after that same observation.
                 control.check()?;
                 match node.try_lock() {
                     Ok(mut guard) => return action(&mut guard),
