@@ -3410,6 +3410,12 @@ pub struct PublicClientMetrics {
     pub construction_ns: u64,
     pub challenge_ns: u64,
     pub solution_search_ns: u64,
+    /// Actual calling-thread CPU for Cookie identity and the complete local
+    /// nonce search, including failed trials and the success/error tail.
+    /// None means unavailable or not entered; it is never a zero estimate.
+    /// This optional local diagnostic changes no signed policy or wire bytes.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub solution_search_thread_cpu_ns: Option<u64>,
     pub solution_trials: u64,
     pub solution_found: bool,
     pub solution_body_response_ns: u64,
@@ -3417,6 +3423,16 @@ pub struct PublicClientMetrics {
     pub failed_stage: Option<PublicClientStage>,
 }
 impl PublicClientMetrics {
+    fn measure_solution_search<T>(
+        &mut self,
+        search: impl FnOnce(&mut Self) -> Result<T>,
+    ) -> Result<T> {
+        let started = ThreadCpuStamp::start();
+        let result = search(self);
+        self.solution_search_thread_cpu_ns = started.and_then(ThreadCpuStamp::finish);
+        result
+    }
+
     fn record_failure(&mut self, stage: PublicClientStage, elapsed_ns: u64) {
         self.failed_stage = Some(stage);
         match stage {
@@ -3429,7 +3445,8 @@ impl PublicClientMetrics {
     }
 }
 /// Wire and signed profile are identical to the ordinary client. The observation
-/// reports elapsed stage time, never an adversarial cost bound or server CPU time.
+/// reports elapsed stage time and available client search CPU, never an
+/// adversarial cost bound or server CPU time.
 pub fn call_public_protected_v3(
     address: SocketAddr,
     request: &Request,
@@ -3601,26 +3618,30 @@ fn call_public_authenticated(
         phase = PublicClientStage::SolutionSearch;
         phase_start = Instant::now();
         let started = Instant::now();
-        let id = cookie.id()?;
-        let mut solved = None;
-        for nonce in 0..1_048_576u64 {
-            if nonce % 256 == 0 {
-                if outer_deadline.is_some() {
-                    ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
+        // Retain the original deadline origin, and close the actual CPU
+        // interval before propagating either success or the original error.
+        let (id, nonce, solve_elapsed_ns) = metrics.measure_solution_search(|metrics| {
+            let id = cookie.id()?;
+            let mut solved = None;
+            for nonce in 0..1_048_576u64 {
+                if nonce % 256 == 0 {
+                    if outer_deadline.is_some() {
+                        ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
+                    }
+                    ensure(
+                        started.elapsed() < Duration::from_millis(policy.lifetime_ms),
+                        "PUBLIC_SOLVE_EXPIRED",
+                    )?;
                 }
-                ensure(
-                    started.elapsed() < Duration::from_millis(policy.lifetime_ms),
-                    "PUBLIC_SOLVE_EXPIRED",
-                )?;
+                metrics.solution_trials = nonce + 1;
+                if winner(id, nonce, policy.bits) {
+                    solved = Some(nonce);
+                    break;
+                }
             }
-            metrics.solution_trials = nonce + 1;
-            if winner(id, nonce, policy.bits) {
-                solved = Some(nonce);
-                break;
-            }
-        }
-        let nonce = solved.ok_or("PUBLIC_SOLVE_BUDGET")?;
-        let solve_elapsed_ns = elapsed_ns(started);
+            let nonce = solved.ok_or("PUBLIC_SOLVE_BUDGET")?;
+            Ok((id, nonce, elapsed_ns(started)))
+        })?;
         metrics.solution_search_ns = elapsed_ns(phase_start);
         metrics.solution_found = true;
         phase = PublicClientStage::SolutionBodyResponse;
@@ -4066,6 +4087,7 @@ mod tests {
             construction_ns: 11,
             challenge_ns: 12,
             solution_search_ns: 13,
+            solution_search_thread_cpu_ns: None,
             solution_trials: 17,
             solution_found: true,
             solution_body_response_ns: 14,
@@ -4083,6 +4105,11 @@ mod tests {
             "failed_stage": null,
         });
         assert_eq!(serde_json::to_value(initial()).unwrap(), expected);
+        let mut measured = initial();
+        measured.solution_search_thread_cpu_ns = Some(7);
+        let mut measured_expected = expected.clone();
+        measured_expected["solution_search_thread_cpu_ns"] = json!(7);
+        assert_eq!(serde_json::to_value(measured).unwrap(), measured_expected);
         for (stage, label, changed_field) in [
             (
                 PublicClientStage::Construction,
@@ -4138,6 +4165,33 @@ mod tests {
             );
             expected = serde_json::to_value(initial()).unwrap();
         }
+    }
+
+    #[test]
+    fn client_solution_cpu_measurement_closes_original_error_interval() {
+        use std::error::Error as _;
+
+        let mut metrics = PublicClientMetrics::default();
+        assert!(metrics.solution_search_thread_cpu_ns.is_none());
+        let error = metrics
+            .measure_solution_search::<()>(|_| {
+                Err(Error::from(std::io::Error::new(
+                    std::io::ErrorKind::Interrupted,
+                    "client search cancelled",
+                )))
+            })
+            .unwrap_err();
+        assert_eq!(error.kind(), crate::ErrorKind::Transport);
+        assert_eq!(
+            error.source().unwrap().to_string(),
+            "client search cancelled"
+        );
+        #[cfg(target_os = "linux")]
+        assert!(metrics.solution_search_thread_cpu_ns.is_some());
+        #[cfg(not(target_os = "linux"))]
+        assert!(metrics.solution_search_thread_cpu_ns.is_none());
+        assert_eq!(metrics.solution_trials, 0);
+        assert!(!metrics.solution_found);
     }
 
     fn identity(n: u8) -> DevelopmentIdentity {

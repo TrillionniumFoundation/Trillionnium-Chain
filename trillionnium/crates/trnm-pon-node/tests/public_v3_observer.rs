@@ -62,6 +62,10 @@ fn external_read_only_observer_survives_shutdown_with_actual_paid_snapshot_count
     assert!(reply.unwrap().ok);
     assert!(cost.solution_found);
     assert!(cost.solution_trials > 0);
+    #[cfg(target_os = "linux")]
+    assert!(cost.solution_search_thread_cpu_ns.is_some());
+    #[cfg(not(target_os = "linux"))]
+    assert!(cost.solution_search_thread_cpu_ns.is_none());
     assert!(cost.construction_ns > 0);
     assert!(cost.challenge_ns > 0);
     assert!(cost.solution_body_response_ns > 0);
@@ -100,6 +104,7 @@ fn refusal_retains_partial_challenge_cost_without_body_or_ticket_claim() {
     assert!(cost.challenge_ns > 0);
     assert!(cost.total_elapsed_ns >= cost.challenge_ns);
     assert_eq!(cost.solution_trials, 0);
+    assert!(cost.solution_search_thread_cpu_ns.is_none());
     assert!(!cost.solution_found);
     assert_eq!(cost.solution_body_response_ns, 0);
 }

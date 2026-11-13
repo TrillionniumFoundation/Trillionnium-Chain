@@ -14278,3 +14278,19 @@ kind at every liability-scan boundary, and reject a generation change during
 that scan. Existing first/last callback, retained-state integrity and exact
 typed-source controls remain. Only the current progress-interval constant name
 is adapted; no production algorithm, budget, namespace or gate is changed.
+
+### 2026-11-13 retain optional actual client search CPU observation
+
+The branch review retains the reusable client diagnostic from
+`55e4a75f91c783e7bdd8c9f698f8699df7080c02`: the actual calling-thread CPU interval
+around Cookie identity and the original bounded nonce search, including error
+completion. The same original Instant still bounds search and solution write.
+No scheduling credit, admission rule, signed policy, Cookie bytes or persisted
+state schema changes. The optional diagnostic is omitted when unavailable or
+not entered, preserving the exact pre-existing JSON shape in that case.
+
+Existing failed-stage and ordinary signed TCP observer controls retain their
+assertions; local JSON and original-error controls cover the added field.
+Client CPU stays separate from wall time and receiver W1 accounting. Historical
+cost/depletion experiments and their outputs are not transplanted or relabelled;
+this diagnostic is not an adversarial-cost or production-readiness claim.
