@@ -15,7 +15,7 @@ import tomllib
 import unittest
 from pathlib import Path
 
-from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINUITY_BUILD, CONTINUITY_TRANSITIONS,
+from check_ci_contract import (ROOT, validate, check_inline_source_pins, check_manual_research_workflows, CONTINUITY_BUILD, CONTINUITY_TRANSITIONS,
                                MODEL_OBSERVATION_BLOCK, RUST_ALL_TARGETS, RUST_DOCS, SIGNED_STATE_PYTHON,
                                RUNTIME_RELEASE_PYTHON, MERGE_RUNTIME_RELEASE_PYTHON,
                                RUNTIME_RELEASE_COMMAND,
@@ -81,6 +81,115 @@ synthetic_growth_v2_native() {
   printf '%s\n' 'running 1 test' 'test store::growth::tests::native_growth_v2_signed_cross_65536_bounded_io_zero_nonce_and_reopen ... ok' 'test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s'
 }
 '''
+
+
+class ManualResearchWorkflowTests(unittest.TestCase):
+    # Keep the two reviewed paths explicit and independent of the checker map.
+    WORKFLOWS = ('pon-native-campaign-qualification.yml',
+                 'pon-fixed-host-root-f0.yml')
+
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory(prefix='trnm-manual-research-')
+        self.addCleanup(directory.cleanup)
+        self.root = Path(directory.name)
+        self.directory = self.root / '.github/workflows'
+        self.directory.mkdir(parents=True)
+        for name in self.WORKFLOWS:
+            (self.directory / name).write_bytes(
+                (ROOT / '.github/workflows' / name).read_bytes())
+
+    def reject(self, name, changed):
+        path = self.directory / name
+        original = path.read_bytes()
+        try:
+            path.write_text(changed)
+            with self.assertRaisesRegex(ValueError, 'manual research workflow'):
+                check_manual_research_workflows(self.root)
+        finally:
+            path.write_bytes(original)
+
+    def test_actual_two_workflows_are_manual_only(self):
+        check_manual_research_workflows(ROOT)
+        check_manual_research_workflows(self.root)
+
+    def test_each_automatic_or_indirect_event_is_rejected(self):
+        events = ('push', 'pull_request', 'pull_request_target', 'schedule',
+                  'workflow_run', 'workflow_call', 'repository_dispatch',
+                  'release', 'deployment', 'deployment_status')
+        for name in self.WORKFLOWS:
+            original = (self.directory / name).read_text()
+            for event in events:
+                with self.subTest(workflow=name, event=event):
+                    self.reject(name, original.replace(
+                        '  workflow_dispatch:\npermissions:\n',
+                        '  workflow_dispatch:\n  ' + event + ':\npermissions:\n', 1))
+
+    def test_alternative_or_duplicate_event_syntax_is_rejected(self):
+        event = 'on:\n  workflow_dispatch:\n'
+        alternatives = (
+            'on: workflow_dispatch\n',
+            'on: [workflow_dispatch]\n',
+            '"on":\n  workflow_dispatch:\n',
+            "'on':\n  workflow_dispatch:\n",
+            'on: &manual\n  workflow_dispatch:\n',
+            'on:\n  <<: *manual\n',
+        )
+        tails = (
+            '\non:\n  pull_request:\n',
+            '\n"on":\n  push:\n',
+            '\n<<: *events\n',
+            '\n---\non:\n  workflow_dispatch:\n',
+        )
+        for name in self.WORKFLOWS:
+            original = (self.directory / name).read_text()
+            for replacement in alternatives:
+                with self.subTest(workflow=name, replacement=replacement):
+                    self.reject(name, original.replace(event, replacement, 1))
+            for tail in tails:
+                with self.subTest(workflow=name, tail=tail):
+                    self.reject(name, original + tail)
+
+    def test_missing_and_symlinked_workflows_are_rejected(self):
+        for name in self.WORKFLOWS:
+            path = self.directory / name
+            original = path.read_bytes()
+            path.unlink()
+            try:
+                with self.subTest(workflow=name, case='missing'):
+                    with self.assertRaisesRegex(ValueError, 'regular file'):
+                        check_manual_research_workflows(self.root)
+                path.symlink_to(ROOT / '.github/workflows' / name)
+                with self.subTest(workflow=name, case='symlink'):
+                    with self.assertRaisesRegex(ValueError, 'regular file'):
+                        check_manual_research_workflows(self.root)
+            finally:
+                if path.is_symlink():
+                    path.unlink()
+                path.write_bytes(original)
+
+    def test_manual_entrypoint_configuration_is_exact(self):
+        for name in self.WORKFLOWS:
+            original = (self.directory / name).read_text()
+            changes = (
+                original.replace('  workflow_dispatch:\n', '', 1),
+                original.replace('  workflow_dispatch:\n',
+                                 '  workflow_dispatch:\n    inputs:\n      mode:\n        type: string\n', 1),
+                original.replace('permissions:\n', 'permissions: {}\n', 1),
+                original + '\njobs:\n',
+            )
+            for changed in changes:
+                with self.subTest(workflow=name, changed=changed[:100]):
+                    self.reject(name, changed)
+
+    def test_nested_event_conditions_and_comments_remain_allowed(self):
+        # The retained F0 job already mentions PR events in its source guard.
+        f0 = (self.directory / self.WORKFLOWS[1]).read_text()
+        self.assertIn("github.event_name == 'pull_request'", f0)
+        for name in self.WORKFLOWS:
+            path = self.directory / name
+            path.write_text(path.read_text() +
+                            '\n      # on: [push, pull_request] is only a nested comment.\n')
+        check_manual_research_workflows(self.root)
 
 
 class InlineSourcePinTests(unittest.TestCase):

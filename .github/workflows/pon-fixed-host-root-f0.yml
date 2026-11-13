@@ -1,24 +1,5 @@
 name: PoN fixed Host ROOT F0 diagnostic
 on:
-  # Bootstrap only this separately reviewed route from a same-repository PR.
-  # A new dispatch-only workflow is unavailable before it reaches default branch.
-  pull_request:
-    paths:
-      - .github/workflows/pon-fixed-host-root-f0.yml
-      - scripts/run_fixed_host_root_f0.py
-      - scripts/ci/run_fixed_root_phase_host.py
-      - scripts/ci/fixed_root_f0_ownership.py
-      - scripts/ci/fixed_root_f0_resources.py
-      - scripts/ci/finalize_fixed_root_f0.py
-      - scripts/ci/test_fixed_root_f0.py
-      - scripts/ci/test_fixed_root_phase_host.py
-      - scripts/ci/test_fixed_root_resources.py
-      - scripts/ci/fixtures/fixed_root_f0_legacy_resource_counterexample.json
-      - trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs
-      - trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs
-      - trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host_resources.rs
-      - trillionnium/crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs
-      - docs/security/PUBLIC_V3_FIXED_HOST_ROOT_EXPERIMENT_R10.md
   workflow_dispatch:
 permissions:
   contents: read
