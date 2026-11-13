@@ -505,13 +505,20 @@ fn public_growth_v1_rechecks_future_ancestry_before_new_and_duplicate_activation
             );
             let node = run.owner.as_ref().unwrap().lock().unwrap();
             assert_eq!(node.active().unwrap(), before);
-            assert_eq!(
-                node.growth_packet(id).unwrap().encode().unwrap(),
-                packet.encode().unwrap()
-            );
+            if already_stored {
+                // A current-clock refusal cannot erase historical admission.
+                assert_eq!(
+                    node.growth_packet(id).unwrap().encode().unwrap(),
+                    packet.encode().unwrap()
+                );
+            } else {
+                // The complete parent-history check now precedes W1 and
+                // native admission. Its refusal must leave no new packet.
+                assert!(node.growth_packet(id).is_err());
+            }
         }
         let metrics = run.finish();
-        assert_eq!(metrics.work_started, u64::from(!already_stored));
+        assert_eq!(metrics.work_started, 0);
         assert!(metrics.mutation_cpu_charged_ns > 0);
         assert_eq!(metrics.mutation_cpu_in_flight_after_shutdown, 0);
         assert_eq!(metrics.paid_body_reserved_bytes_after_shutdown, 0);

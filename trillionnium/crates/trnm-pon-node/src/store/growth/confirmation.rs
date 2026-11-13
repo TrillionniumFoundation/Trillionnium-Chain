@@ -73,24 +73,46 @@ impl Node {
         progress()?;
         self.growth_guard()?;
         self.ready()?;
-        let read = self.db.unchecked_transaction()?;
-        self.growth_guard()?;
-        let changes = self.db.total_changes();
-        self.growth_parent(tip)?;
-        self.growth_observed_members_in_read(tip, observed_now, &BTreeSet::new(), &mut |_| {
-            progress()
-        })?;
-        self.growth_guard()?;
-        ensure(
-            self.db.total_changes() == changes,
-            "GROWTH_OBSERVATION_WRITE",
-        )
-        .map_err(Error::local_integrity)?;
-        read.rollback()?;
+        // Reuse a caller-owned read scope without committing or rolling it
+        // back. Only this function's own snapshot is closed below.
+        let read = self
+            .db
+            .is_autocommit()
+            .then(|| self.db.unchecked_transaction())
+            .transpose()?;
+        let mut progress_failed = false;
+        let result = (|| {
+            self.growth_guard()?;
+            let changes = self.db.total_changes();
+            self.growth_parent(tip)?;
+            self.growth_observed_members_in_read(tip, observed_now, &BTreeSet::new(), &mut |_| {
+                let result = progress();
+                progress_failed |= result.is_err();
+                result
+            })?;
+            self.growth_guard()?;
+            ensure(
+                self.db.total_changes() == changes,
+                "GROWTH_OBSERVATION_WRITE",
+            )
+            .map_err(Error::local_integrity)
+        })();
+        if let Some(read) = read {
+            read.rollback()?;
+        }
+        // Keep the caller's original cancellation/deadline/CPU refusal and do
+        // not invoke its callback again after it has already stopped the walk.
+        if progress_failed {
+            return result;
+        }
         // data_version is snapshot-local. A foreign WAL commit during any
-        // callback must still refuse after the read snapshot has ended.
-        progress()?;
-        self.growth_guard()
+        // callback must still refuse after our snapshot ends, including when
+        // the walk first observed a deferred timestamp or another stale fact.
+        if result.is_ok() {
+            progress()?;
+        }
+        self.growth_guard()?;
+        result
     }
 
     /// Real growth-owner batch confirmation with the original full W1/M06

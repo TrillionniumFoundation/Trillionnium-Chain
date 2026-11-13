@@ -5406,7 +5406,10 @@ mod tests {
             &client,
             1,
             Request::Confirm {
-                transaction: hex::encode([0; 32]),
+                // A permanently malformed digest remains terminal. A missing
+                // parent is now a typed retryable context observation and is
+                // covered separately by authenticated_recovery_tests.
+                transaction: hex::encode([0; 31]),
                 block: hex::encode([0; 32]),
             },
         )
@@ -5425,7 +5428,7 @@ mod tests {
                     .unwrap();
             assert!(terminal);
             assert!(!ok);
-            assert!(value.get("error").and_then(Value::as_str).is_some());
+            assert_eq!(value.get("error").and_then(Value::as_str), Some("HASH"));
             if let Some(original) = &first {
                 assert_eq!(original, &reply);
             } else {
