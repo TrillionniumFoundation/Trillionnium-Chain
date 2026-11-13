@@ -2619,6 +2619,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-data-availability/src/cell_swarm.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell_swarm.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell_swarm_xor_repair.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell_swarm_xor_repair.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-data-availability/src/codec.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
