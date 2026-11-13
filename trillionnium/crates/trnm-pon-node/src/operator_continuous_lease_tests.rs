@@ -141,8 +141,7 @@ fn mode5_lease_edge_refuses_immutable_source_da_and_expiry_rebinding_even_after_
 #[test]
 fn mode5_lease_edge_accepts_valid_final_height_overlap_without_granting_authority() {
     let (old, mut next, mut edge) = fixture();
-    let mut lease =
-        DemandLeaseV2::decode(&hex::decode(&edge.new_complete_lease).unwrap()).unwrap();
+    let mut lease = DemandLeaseV2::decode(&hex::decode(&edge.new_complete_lease).unwrap()).unwrap();
     lease.not_before = 100; // inclusion possible at old.expires == 100
     lease.expires = 101;
     lease.available_until = 201;
